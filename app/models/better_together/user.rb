@@ -21,7 +21,9 @@ module BetterTogether
               )
             },
             as: :agent,
-            class_name: 'BetterTogether::Identification'
+            class_name: 'BetterTogether::Identification',
+            dependent: :destroy,
+            autosave: true
 
     has_one :person,
             through: :person_identification,
@@ -71,6 +73,7 @@ module BetterTogether
       else
         # Build new Person object if it doesn't exist
         build_person(attributes)
+        # The person is now accessible via person_identification.identity
       end
     end
 

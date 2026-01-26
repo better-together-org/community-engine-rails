@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_24_011954) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1044,6 +1044,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_24_011954) do
     t.string "template"
     t.uuid "sidebar_nav_id"
     t.uuid "creator_id"
+    t.uuid "community_id"
+    t.jsonb "display_settings", default: {}, null: false
+    t.index ["community_id"], name: "by_better_together_pages_primary_community"
     t.index ["creator_id"], name: "by_better_together_pages_creator"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
     t.index ["privacy"], name: "by_page_privacy"
@@ -1610,6 +1613,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_24_011954) do
   add_foreign_key "better_together_metrics_user_account_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
+  add_foreign_key "better_together_pages", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"
   add_foreign_key "better_together_pages", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_people", "better_together_communities", column: "community_id"

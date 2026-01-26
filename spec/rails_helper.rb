@@ -48,6 +48,8 @@ end
 # rubocop:todo Metrics/PerceivedComplexity
 # rubocop:todo Lint/CopDirectiveSyntax
 ESSENTIAL_TABLES = %w[
+  better_together_communities
+  better_together_platforms
   better_together_roles
   better_together_resource_permissions
   better_together_role_resource_permissions
@@ -73,6 +75,11 @@ RSpec.configure do |config|
 
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Enable assigns method in request specs (requires rails-controller-testing gem)
+  config.include Rails::Controller::Testing::TestProcess, type: :request
+  config.include Rails::Controller::Testing::TemplateAssertions, type: :request
+  config.include Rails::Controller::Testing::Integration, type: :request
 
   config.include Warden::Test::Helpers
   config.after { Warden.test_reset! }

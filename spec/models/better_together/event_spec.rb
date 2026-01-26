@@ -392,15 +392,18 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#host_community' do
         let(:event) { build(:event) }
 
-        context 'when host community exists' do
-          let!(:host_community) { create(:community, :host) }
+        context 'when host community exists', :skip_host_setup do
+          let!(:host_community) { create(:community) }
+
+          before do
+            allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.where(id: host_community.id))
+          end
 
           it 'returns the host community' do
             expect(event.host_community).to eq(host_community)
           end
 
           it 'caches the host community' do
-            allow(BetterTogether::Community).to receive(:host).and_call_original
             expect(event.host_community).to eq(host_community)
             event.host_community
             expect(BetterTogether::Community).to have_received(:host).once
@@ -408,6 +411,10 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         end
 
         context 'when no host community exists' do
+          before do
+            allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.none)
+          end
+
           it 'returns nil when no host community exists' do
             expect(event.host_community).to be_nil
           end

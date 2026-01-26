@@ -289,8 +289,9 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     describe 'pageable_type filter' do
       it 'filters page views by pageable_type' do
         # Create test data inline
-        page = create(:page, slug: 'content-page')
-        community = create(:community, slug: 'test-community')
+        slug_suffix = SecureRandom.hex(4)
+        page = create(:page, slug: "content-page-#{slug_suffix}")
+        community = create(:community, slug: "test-community-#{slug_suffix}")
         # Use the actual generated page paths
         page_path = "/#{locale}/#{page.slug}"
         community_path = "/#{locale}/communities/#{community.slug}"
@@ -313,9 +314,10 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
       it 'returns all types when no pageable_type filter is specified' do
         # Create test data inline
-        page = create(:page, slug: 'content-page')
-        community = create(:community, slug: 'test-community')
-        # Use the actual generated page paths (note: community show route uses /c/ not /communities/)
+        slug_suffix = SecureRandom.hex(4)
+        page = create(:page, slug: "content-page-#{slug_suffix}")
+        community = create(:community, slug: "test-community-#{slug_suffix}")
+        # Use the actual generated page paths
         page_path = "/#{locale}/#{page.slug}"
         community_path = "/#{locale}/c/#{community.slug}"
 
@@ -389,16 +391,26 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     describe 'day_of_week filter' do
       it 'filters page views by day of week' do
         # Create Pages with specific slugs for day-of-week testing
-        monday_page = create(:page, slug: 'monday-page')
-        wednesday_page = create(:page, slug: 'wednesday-page')
+        monday_page = create(:page, slug_en: 'monday-page')
+        wednesday_page = create(:page, slug_en: 'wednesday-page')
 
-        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
+        # Find next Monday and Wednesday from today
+        today = Time.current.to_date
+        next_monday = today + ((1 - today.wday) % 7).days
+        next_monday += 7.days if next_monday == today # Ensure future date
+        next_wednesday = today + ((3 - today.wday) % 7).days
+        next_wednesday += 7.days if next_wednesday == today
+
+        create(:metrics_page_view, pageable: monday_page, viewed_at: next_monday.noon)
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: next_wednesday.noon)
 
         # Monday is day 1 in PostgreSQL's EXTRACT(DOW)
         get "#{base_path}/page_views_by_url_data",
-            params: { day_of_week: 1 },
+            params: {
+              day_of_week: 1,
+              start_date: (next_monday - 7.days).to_s,
+              end_date: (next_wednesday + 7.days).to_s
+            },
             headers: { 'Accept' => 'application/json' }
 
         expect(response).to have_http_status(:success)
@@ -412,14 +424,24 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
 
       it 'returns all days when no day filter is specified' do
         # Create Pages with specific slugs for day-of-week testing
-        monday_page = create(:page, slug: 'monday-page')
-        wednesday_page = create(:page, slug: 'wednesday-page')
+        monday_page = create(:page, slug_en: 'monday-page')
+        wednesday_page = create(:page, slug_en: 'wednesday-page')
 
-        # Use dates within the default 30-day range - Jan 12, 2026 is Monday, Jan 14, 2026 is Wednesday
-        create(:metrics_page_view, pageable: monday_page, viewed_at: Time.zone.local(2026, 1, 12, 12, 0, 0))
-        create(:metrics_page_view, pageable: wednesday_page, viewed_at: Time.zone.local(2026, 1, 14, 12, 0, 0))
+        # Find next Monday and Wednesday from today
+        today = Time.current.to_date
+        next_monday = today + ((1 - today.wday) % 7).days
+        next_monday += 7.days if next_monday == today
+        next_wednesday = today + ((3 - today.wday) % 7).days
+        next_wednesday += 7.days if next_wednesday == today
+
+        create(:metrics_page_view, pageable: monday_page, viewed_at: next_monday.noon)
+        create(:metrics_page_view, pageable: wednesday_page, viewed_at: next_wednesday.noon)
 
         get "#{base_path}/page_views_by_url_data",
+            params: {
+              start_date: (next_monday - 7.days).to_s,
+              end_date: (next_wednesday + 7.days).to_s
+            },
             headers: { 'Accept' => 'application/json' }
 
         expect(response).to have_http_status(:success)

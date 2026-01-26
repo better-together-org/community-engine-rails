@@ -287,6 +287,7 @@ en:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Rich text translations
+        show_title: Show Title
         slug: Slug
         slugs: Slugs
         string_translations: String translations
@@ -514,6 +515,8 @@ en:
         seen_at: Seen at
     errors:
       messages:
+        file_not_found: file does not exist
+        invalid_file_type: must be a markdown file (.md or .markdown)
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
@@ -551,6 +554,8 @@ en:
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/image: Image
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Mermaid Diagram
       better_together/content/page_block: Page Block
       better_together/content/rich_text: Rich Text
       better_together/content/template: Template File
@@ -832,6 +837,72 @@ en:
     content:
       blocks:
         associated_pages: Associated Pages
+        markdown:
+          fields:
+            auto_sync: Always load from file (ignore database content)
+            file_path: Markdown File Path
+            file_path_placeholder: docs/README.md or /absolute/path/to/file.md
+            markdown_source: Markdown Source
+            preview: Preview
+            reference_file: Reference a Markdown File
+            refresh_preview: Refresh Preview
+            write_inline: Write Markdown Inline
+          help:
+            auto_sync: When checked, content is always loaded from the file. When
+              unchecked, file content is imported into the database and can be edited
+              separately.
+            available_translations: 'Available translations:'
+            file_path: Path to a markdown file. Can be relative to Rails.root (e.g.,
+              docs/README.md) or absolute (e.g., /path/to/file.md). File must have
+              a .md or .markdown extension.
+            inline_content: Write your markdown content directly. Supports GitHub-flavored
+              markdown including tables, code blocks, and more. Content is translatable
+              for each locale.
+            localized_files: The system automatically looks for locale-specific versions
+              (e.g., privacy.en.md, privacy.es.md, privacy.fr.md) and falls back to
+              the base file if not found.
+            preview_placeholder: Preview will appear here...
+        template:
+          default: Default template
+          host_community_contact_details: Host community contact details
+      mermaid_diagram:
+        help:
+          auto_height: When enabled, the diagram height adjusts automatically to fit
+            the content. When disabled, uses a fixed height.
+          caption: Optional caption to display below the diagram
+          diagram_file_path: Path to a .mmd file containing the Mermaid diagram definition.
+            Can be relative to Rails.root (e.g., docs/diagrams/source/example.mmd)
+            or absolute.
+          diagram_source: 'Write your Mermaid diagram syntax directly. Supports all
+            Mermaid diagram types: flowcharts, sequence diagrams, class diagrams,
+            state diagrams, and more.'
+          theme: 'Visual theme for the diagram. Options: Default (standard colors),
+            Dark (dark mode), Forest (green tones), Neutral (minimal grayscale).'
+        javascript_required: JavaScript is required to view interactive diagrams.
+          Please enable JavaScript or view the static image version.
+        no_content: No diagram content available
+        no_preview: Add diagram source or file path to see a preview
+        preview_title: Diagram Preview
+        tabs:
+          file: Load from File
+          source: Write Diagram
+        themes:
+          dark: Dark
+          default: Default
+          forest: Forest
+          neutral: Neutral
+      static_pages:
+        accessibility: Accessibility
+        better_together: What is Better Together?
+        code_contributor_agreement: Code Contributor Agreement
+        code_of_conduct: Code of Conduct
+        community_engine: Community Engine
+        content_contributor_agreement: Content Contributor Agreement
+        cookie_consent: Cookie Policy
+        faq: FAQ
+        privacy: Privacy Policy
+        subprocessors: Subprocessors
+        terms_of_service: Terms of Service
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -2541,6 +2612,9 @@ en:
     unlocks:
       new:
         resend_unlock_instructions: Resend unlock instructions
+        template:
+          default: Default template
+          host_community_contact_details: Host community contact details
       send_instructions: You will receive an email with instructions for how to unlock
         your account in a few minutes.
       send_paranoid_instructions: If your account exists, you will receive an email

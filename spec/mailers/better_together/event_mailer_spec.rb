@@ -6,6 +6,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe EventMailer do
     let(:person) { create(:person) }
     let(:event) { create(:event, :upcoming, :with_simple_location) }
+    let!(:platform) { configure_host_platform }
+    let(:host_community) { BetterTogether::Community.host.first || platform.community }
 
     describe '#event_reminder' do
       let(:mail) { described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder }
@@ -128,7 +130,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it 'includes organization branding' do
         mail = described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder
         # The platform name should appear in the email
-        expect(mail.body.encoded).to include('Better Together')
+        expect(mail.body.encoded).to include(host_community.name)
       end
     end
 

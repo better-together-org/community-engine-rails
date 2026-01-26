@@ -4,6 +4,8 @@ locales:
   - en
   - es
   - fr
+  - uk
+
 # Paths to scan for translations
 search:
   # Paths in the dummy app
@@ -23,3 +25,21 @@ exclude:
   - 'spec/**'
   - 'tmp/**'
   - 'log/**'
+
+# Ignore keys (both missing and unused checks)
+# Keys that are provided by external gems like i18n-timezones
+ignore_missing:
+  - '{timezones,timezones.*}'
+
+ignore_unused:
+  - '{timezones,timezones.*}'
+
+# Alternative: use eq_base to ignore keys that are the same as base locale
+# This tells i18n-tasks that these keys are intentionally the same in all locales
+ignore_eq_base:
+  es:
+    - '{timezones,timezones.*}'
+  fr:
+    - '{timezones,timezones.*}'
+  uk:
+    - '{timezones,timezones.*}'

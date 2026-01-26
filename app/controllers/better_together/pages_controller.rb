@@ -229,7 +229,7 @@ module BetterTogether
     def basic_page_attributes
       [
         :meta_description, :keywords, :published_at, :sidebar_nav_id,
-        :privacy, :layout, :template, *Page.localized_attribute_list,
+        :privacy, :layout, :template, :show_title, *Page.localized_attribute_list,
         *Page.extra_permitted_attributes
       ]
     end

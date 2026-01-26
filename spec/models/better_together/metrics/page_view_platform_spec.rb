@@ -3,8 +3,10 @@
 require 'rails_helper'
 
 # rubocop:disable RSpec/SpecFilePathFormat, RSpec/DescribeMethod
-RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking' do
-  let(:platform) { create(:better_together_platform, :host) }
+RSpec.describe BetterTogether::Metrics::PageView, 'Platform URL tracking', :skip_host_setup do
+  let(:platform) do
+    BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+  end
   let(:locale) { I18n.default_locale }
 
   describe 'when pageable is a Platform' do
