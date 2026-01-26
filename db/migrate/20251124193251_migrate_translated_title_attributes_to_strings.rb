@@ -5,7 +5,7 @@
 # - BetterTogether::Post
 # - BetterTogether::Agreement
 # - BetterTogether::Geography::Map
-class MigrateTranslatedTitleAttributesToStrings < ActiveRecord::Migration[8.0]
+class MigrateTranslatedTitleAttributesToStrings < ActiveRecord::Migration[7.2]
   def up
     # Move title translations from text to string translations
     # This handles cases where titles were incorrectly stored as text type
