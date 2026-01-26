@@ -17,6 +17,7 @@
           <li><a href="#optional-cookies">Optional Cookies</a></li>
           <li><a href="#your-choices">Your Choices Regarding Cookies</a></li>
           <li><a href="#cookie-management">How to Manage Cookies</a></li>
+          <li><a href="#privacy-laws">Canadian and International Privacy Laws</a></li>
           <li><a href="#contact">Contact Us</a></li>
         </ol>
       </nav>
@@ -141,7 +142,37 @@
       <h3>Mobile Device Cookie Management</h3>
       <p>Most mobile devices allow you to control cookies through their settings. Please refer to your device manufacturer's instructions for specific guidance.</p>
 
-      <h2 id="gdpr-rights">8. Your Rights Under GDPR</h2>
+      <h2 id="privacy-laws">8. Canadian and International Privacy Laws</h2>
+
+      <h3>Canadian Privacy Law Compliance (PIPEDA)</h3>
+
+      <p>This Cookie Policy is part of our compliance with Canada's Personal Information Protection and Electronic Documents Act (PIPEDA). Under PIPEDA:</p>
+
+      <ul>
+        <li><strong>Consent:</strong> We obtain your meaningful consent for the collection and use of personal information through cookies, except for essential cookies necessary for the platform to function</li>
+        <li><strong>Purpose:</strong> We clearly identify why we use cookies and how they support platform functionality</li>
+        <li><strong>Access:</strong> You have the right to access information about what cookies we use and how they collect data about you</li>
+        <li><strong>Withdrawal:</strong> You can withdraw consent for optional cookies at any time through your browser settings or account preferences</li>
+        <li><strong>Safeguards:</strong> We implement appropriate security measures to protect data collected through cookies</li>
+      </ul>
+
+      <p><strong>Your Rights:</strong> Under PIPEDA, you have the right to:</p>
+      <ul>
+        <li>Know what personal information we collect through cookies and why</li>
+        <li>Access information about our cookie practices</li>
+        <li>Withdraw consent for optional cookies (essential cookies are required for platform operation)</li>
+        <li>File a complaint about our cookie practices with our Privacy Officer or the Office of the Privacy Commissioner of Canada</li>
+      </ul>
+
+      <p><strong>Privacy Officer Contact:</strong> If you have questions about our cookie practices under Canadian privacy law, contact our Privacy Officer at <a href="mailto:privacy@bettertogethersolutions.com">privacy@bettertogethersolutions.com</a>.</p>
+
+      <p><strong>Filing a Complaint:</strong> You may file complaints with the Office of the Privacy Commissioner of Canada:</p>
+      <ul>
+        <li>Website: <a href="https://www.priv.gc.ca" target="_blank" rel="noopener noreferrer">www.priv.gc.ca</a></li>
+        <li>Phone: 1-800-282-1376 (toll-free) or (819) 994-5444</li>
+      </ul>
+
+      <h3 id="gdpr-rights">GDPR Rights (European Economic Area)</h3>
 
       <p>If you are located in the European Economic Area (EEA), you have certain data protection rights. We aim to take reasonable steps to allow you to correct, amend, delete, or limit the use of your personal data.</p>
 
@@ -172,15 +203,29 @@
         <strong>Better Together Solutions</strong><br>
         Email: <a href="mailto:hello@bettertogethersolutions.com">hello@bettertogethersolutions.com</a><br>
         <%= link_to 'Privacy Policy', better_together.render_page_path('privacy', locale: I18n.locale) %><br>
-        <%= link_to 'Terms of Service', better_together.render_page_path('terms_of_service', locale: I18n.locale) %>
+        <%= link_to 'Terms of Service', better_together.render_page_path('terms-of-service', locale: I18n.locale) %>
       </address>
 
       <hr class="my-5">
 
       <div class="alert alert-info" role="alert">
-        <h4 class="alert-heading">Your Privacy Matters</h4>
-        <p>We are committed to transparency about how we collect and use data. This Cookie Policy is part of our broader commitment to your privacy.</p>
+        <h4 class="alert-heading"><i class="fas fa-lightbulb me-2" aria-hidden="true"></i>Plain Language Summary</h4>
+        <p>Here's what you need to know about cookies on our platform:</p>
+        <ul class="mb-2">
+          <li><strong>Essential cookies:</strong> Required for login and basic platform functions (we must use these)</li>
+          <li><strong>Analytics cookies:</strong> Help us understand how people use the platform (you can opt out)</li>
+          <li><strong>Your choice:</strong> You can manage cookie preferences in your browser or account settings</li>
+          <li><strong>Third parties:</strong> We only use trusted services (listed above) and they follow strict privacy rules</li>
+          <li><strong>Your rights:</strong> You can see, export, or delete data collected via cookies at any time</li>
+          <li><strong>Canadian compliance (PIPEDA):</strong> We follow Canadian privacy law for cookie data</li>
+          <li><strong>GDPR (EU) compliance:</strong> European users have full GDPR rights for cookie data</li>
+        </ul>
         <p class="mb-0">For more comprehensive information about how we handle your personal data, please review our <%= link_to 'Privacy Policy', better_together.render_page_path('privacy', locale: I18n.locale) %>.</p>
+      </div>
+
+      <div class="alert alert-secondary mt-3" role="alert">
+        <h5 class="alert-heading">Your Privacy Matters</h5>
+        <p class="mb-0">We are committed to transparency about how we collect and use data. This Cookie Policy is part of our broader commitment to your privacy.</p>
       </div>
     </div>
   </div>

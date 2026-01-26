@@ -2,12 +2,16 @@
 
 require 'rails_helper'
 
-RSpec.describe 'User registration agreements', :as_platform_manager, :user_registration do
+RSpec.describe 'User registration agreements', :no_auth, :user_registration do
   let!(:privacy_agreement) { BetterTogether::Agreement.find_by!(identifier: 'privacy_policy') }
   # rubocop:enable RSpec/LetSetup
   # rubocop:todo RSpec/LetSetup
   let!(:tos_agreement) { BetterTogether::Agreement.find_by!(identifier: 'terms_of_service') }
   # rubocop:enable RSpec/LetSetup
+
+  before do
+    configure_host_platform.update!(requires_invitation: false, privacy: 'public')
+  end
 
   it 'requires accepting agreements during sign up' do
     visit new_user_registration_path(locale: I18n.default_locale)

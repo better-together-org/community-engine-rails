@@ -28,7 +28,7 @@ module BetterTogether
     end
 
     def event_valid?(event)
-      event.present? && event.starts_at.present?
+      event.present? && event.starts_at.present? && event.starts_at > 15.minutes.ago
     end
 
     def going_attendees(event)

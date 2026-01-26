@@ -158,10 +158,11 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [✅ Validate Documentation Tooling](scripts/validate_documentation_tooling.sh) - Validation suite
 - [📈 Update Progress](scripts/update_progress.sh) - Progress tracking utility
 
-### 📁 **Legacy and Reference**
+### 📁 **Development and Reference**
 
-#### 🏗️ **Development Environment** - [`development/`](development/)
+#### 🏗️ **Development** - [`development/`](development/)
 *Development setup and configuration*
+- [📝 README](development/README.md) - Development resources overview
 - [🛠️ Development Setup](development/dev-setup.md) - Local development guide
 
 #### 🤝 **Joatu Exchange System** - [`joatu/`](joatu/)

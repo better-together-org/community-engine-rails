@@ -14,6 +14,7 @@ module BetterTogether
 
     before_action :check_platform_setup
     before_action :set_locale
+    around_action :set_time_zone
     before_action :store_user_location!, if: :storable_location?
     before_action :handle_debug_mode
     before_action :set_debug_headers
@@ -256,6 +257,27 @@ module BetterTogether
 
       I18n.locale = locale
       session[:locale] = locale # Store the locale in the session
+    end
+
+    # Set timezone for the duration of the request based on user/platform preferences
+    def set_time_zone(&)
+      tz = determine_timezone
+      Time.use_zone(tz, &)
+    end
+
+    # Determine the appropriate timezone for the current request
+    # Priority hierarchy: user timezone → platform timezone → app config → UTC
+    def determine_timezone
+      user_tz = current_user&.person&.time_zone.presence
+      return user_tz if user_tz
+
+      platform_tz = helpers.host_platform&.time_zone.presence
+      return platform_tz if platform_tz
+
+      app_tz = Rails.application.config.time_zone.presence
+      return app_tz if app_tz
+
+      'UTC'
     end
 
     # Its important that the location is NOT stored if:

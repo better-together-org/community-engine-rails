@@ -512,7 +512,7 @@ namespace :better_together do
 end
 ```
 
-**Cron Schedule:** Run weekly via `whenever` gem or platform scheduler.
+**Cron Schedule:** Run weekly via `sidekiq-scheduler` (see `config/sidekiq_scheduler.yml`).
 
 ---
 

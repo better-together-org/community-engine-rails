@@ -5,7 +5,7 @@ require 'rails_helper'
 module BetterTogether
   RSpec.describe ConversationMailer do
     describe 'new_message_notification' do
-      let!(:host_platform) { create(:platform, :host) }
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
       let(:sender) { create(:user) }
       let(:recipient) { create(:user) }
       let(:conversation) { create(:conversation, creator: sender.person) }
@@ -23,7 +23,8 @@ module BetterTogether
       end
 
       it 'renders the body' do
-        expect(mail.body.encoded).to have_content("Hello #{recipient.person.name}")
+        # Check factory-generated name with HTML-aware helper
+        expect_mail_html_content(mail, recipient.person.name)
         expect(mail.body.encoded).to have_content('You have an unread message')
       end
 

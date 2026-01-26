@@ -6,6 +6,7 @@ module BetterTogether
     include BetterTogether::NotificationReadable
 
     before_action :authenticate_user!
+    before_action :require_person
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
     before_action :set_conversation, only: %i[show update leave_conversation]
@@ -217,6 +218,14 @@ module BetterTogether
 
     private
 
+    def require_person
+      return if helpers.current_person
+
+      skip_authorization
+      flash[:alert] = t('better_together.conversations.errors.person_required')
+      redirect_to BetterTogether::Engine.routes.url_helpers.root_path
+    end
+
     def available_participants
       # Delegate to policy to centralize participant permission logic
       ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
@@ -233,7 +242,7 @@ module BetterTogether
       permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
       permitted_ids = permitted.pluck(:id)
       # Always allow the current person (creator/participant) to appear in the list
-      permitted_ids << helpers.current_person.id if helpers.current_person
+      permitted_ids << helpers.current_person.id
 
       cp = conversation_params.dup
 

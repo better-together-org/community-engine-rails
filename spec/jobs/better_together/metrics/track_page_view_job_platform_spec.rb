@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # rubocop:disable RSpec/SpecFilePathFormat, RSpec/DescribeMethod
 RSpec.describe BetterTogether::Metrics::TrackPageViewJob, 'Platform tracking' do
-  let(:platform) { create(:better_together_platform, :host) }
+  let(:platform) { BetterTogether::Platform.find_by(host: true) }
   let(:locale) { I18n.default_locale }
 
   describe 'tracking platform page views' do

@@ -91,6 +91,9 @@ module BetterTogether
     # Validate that permission_identifier is only set when privacy is not public
     validate :permission_identifier_requires_non_public_privacy
 
+    before_validation :set_default_visibility_strategy
+    before_validation :set_default_privacy
+
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
@@ -134,7 +137,8 @@ module BetterTogether
           item_type: 'link',
           url: '',
           linkable: page,
-          privacy: page.privacy
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
         )
       end
     end
@@ -151,7 +155,8 @@ module BetterTogether
           item_type: 'link',
           url: '',
           linkable: page,
-          privacy: page.privacy
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
         )
       end
     end
@@ -192,6 +197,14 @@ module BetterTogether
 
       max_position = navigation_area.navigation_items.maximum(:position)
       max_position ? max_position + 1 : 0
+    end
+
+    def set_default_visibility_strategy
+      self.visibility_strategy ||= 'authenticated'
+    end
+
+    def set_default_privacy
+      self.privacy ||= 'public'
     end
 
     def title(options = {})

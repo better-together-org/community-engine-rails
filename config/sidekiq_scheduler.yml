@@ -1,8 +1,14 @@
-"better_together:metrics:link_checker_daily":
-  cron: "0 2 * * *" # daily at 02:00 UTC
+"better_together:metrics:link_checker_weekly":
+  cron: "0 2 * * 1" # weekly on Mondays at 02:00 UTC
   class: "BetterTogether::Metrics::LinkCheckerReportSchedulerJob"
   queue: "metrics"
-  description: "Generate Link Checker daily report and email it to the app from-address"
+  description: "Generate Link Checker weekly report and email it to the app from-address (only sends if there are new broken links)"
+
+"better_together:metrics:orphaned_link_cleanup_monthly":
+  cron: "0 3 1 * *" # monthly on the 1st at 03:00 UTC
+  class: "BetterTogether::Metrics::OrphanedRichTextLinkCleanupJob"
+  queue: "maintenance"
+  description: "Remove orphaned RichTextLink records where the associated record has been deleted"
 
 "better_together:event_reminder_scan_hourly":
   cron: "0 * * * *" # hourly

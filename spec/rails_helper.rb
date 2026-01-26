@@ -41,12 +41,15 @@ begin
   ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
-  puts e.to_s.strip
   exit 1
 end
 
 # Essential tables that should be preserved across tests
+# rubocop:todo Metrics/PerceivedComplexity
+# rubocop:todo Lint/CopDirectiveSyntax
 ESSENTIAL_TABLES = %w[
+  better_together_communities
+  better_together_platforms
   better_together_roles
   better_together_resource_permissions
   better_together_role_resource_permissions
@@ -63,12 +66,20 @@ ESSENTIAL_TABLES = %w[
   active_storage_attachments
   active_storage_variant_records
 ].freeze
+# rubocop:enable Lint/CopDirectiveSyntax
+# rubocop:enable Metrics/PerceivedComplexity
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  # Enable assigns method in request specs (requires rails-controller-testing gem)
+  config.include Rails::Controller::Testing::TestProcess, type: :request
+  config.include Rails::Controller::Testing::TemplateAssertions, type: :request
+  config.include Rails::Controller::Testing::Integration, type: :request
 
   config.include Warden::Test::Helpers
   config.after { Warden.test_reset! }
@@ -128,14 +139,27 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:deletion)
 
     # Load essential seed data with explicit clearing for deterministic baseline
-    def build_with_retry(times: 3)
+    # In parallel execution, handle race conditions gracefully
+    def build_with_retry(times: 3) # rubocop:todo Metrics/MethodLength, Metrics/PerceivedComplexity
       attempts = 0
       begin
         yield
-      rescue ActiveRecord::Deadlocked
+      rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
         attempts += 1
-        retry if attempts < times
-        raise
+        is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
+                             e.is_a?(ActiveRecord::RecordNotUnique)
+        if attempts < times
+          # In parallel execution, another worker may have already seeded the data
+          # If it's a duplicate key error, just continue - data is already seeded
+          if is_duplicate_error
+            Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+          else
+            retry
+          end
+        else
+          # On final attempt, accept duplicate errors as success (data exists)
+          raise unless is_duplicate_error
+        end
       end
     end
 
@@ -144,8 +168,6 @@ RSpec.configure do |config|
     build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
     build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
     build_with_retry { BetterTogether::AgreementBuilder.build(clear: true) }
-
-    puts '✅ Loaded essential seed data for test suite'
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL

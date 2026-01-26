@@ -11,11 +11,11 @@ FactoryBot.define do
     end
 
     trait :published do
-      published_at { DateTime.current - 1.day }
+      published_at { Time.current - 1.day }
     end
 
     trait :scheduled do
-      published_at { DateTime.current + 1.day }
+      published_at { Time.current + 1.day }
     end
   end
 end

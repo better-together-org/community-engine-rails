@@ -14,6 +14,7 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Protected
+    include TimezoneAttributeAliasing
     include ::Storext.model
 
     has_community
@@ -42,7 +43,12 @@ module BetterTogether
 
     validates :host_url, presence: true, uniqueness: true,
                          format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
-    validates :time_zone, presence: true
+    validates :time_zone,
+              presence: true,
+              inclusion: {
+                in: -> { TZInfo::Timezone.all_identifiers },
+                message: '%<value>s is not a valid timezone'
+              }
     validates :external, inclusion: { in: [true, false] }
 
     scope :external, -> { where(external: true) }

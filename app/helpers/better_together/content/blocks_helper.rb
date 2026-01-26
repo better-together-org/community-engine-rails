@@ -4,6 +4,25 @@ module BetterTogether
   module Content
     # Helpers for Content Blocks
     module BlocksHelper
+      TEMPLATE_TRANSLATION_KEYS = {
+        'better_together/content/blocks/template/default' => 'better_together.content.blocks.template.default',
+        'better_together/content/blocks/template/host_community_contact_details' =>
+          'better_together.content.blocks.template.host_community_contact_details',
+        'better_together/static_pages/privacy' => 'better_together.static_pages.privacy',
+        'better_together/static_pages/terms_of_service' => 'better_together.static_pages.terms_of_service',
+        'better_together/static_pages/code_of_conduct' => 'better_together.static_pages.code_of_conduct',
+        'better_together/static_pages/accessibility' => 'better_together.static_pages.accessibility',
+        'better_together/static_pages/cookie_consent' => 'better_together.static_pages.cookie_consent',
+        'better_together/static_pages/code_contributor_agreement' =>
+          'better_together.static_pages.code_contributor_agreement',
+        'better_together/static_pages/content_contributor_agreement' =>
+          'better_together.static_pages.content_contributor_agreement',
+        'better_together/static_pages/faq' => 'better_together.static_pages.faq',
+        'better_together/static_pages/better_together' => 'better_together.static_pages.better_together',
+        'better_together/static_pages/community_engine' => 'better_together.static_pages.community_engine',
+        'better_together/static_pages/subprocessors' => 'better_together.static_pages.subprocessors'
+      }.freeze
+
       # Returns an array of acceptable image file types
       def acceptable_image_file_types
         BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES
@@ -31,6 +50,20 @@ module BetterTogether
         sanitized.gsub!(/expression\s*\(/i, '')
         sanitized.gsub!(/url\s*\(\s*javascript:[^)]*\)/i, 'url("")')
         sanitized
+      end
+
+      # Returns data attributes for mermaid controller if markdown contains mermaid diagrams
+      def mermaid_controller_attributes(markdown)
+        return {} unless markdown.contains_mermaid?
+
+        { data: { controller: 'better-together--mermaid' } }
+      end
+
+      def template_options_for(block)
+        block.class.available_templates.map do |path|
+          key = TEMPLATE_TRANSLATION_KEYS.fetch(path, path.tr('/', '.'))
+          [I18n.t(key, default: path.tr('/', ' ').tr('_', ' ').titleize), path]
+        end
       end
     end
   end

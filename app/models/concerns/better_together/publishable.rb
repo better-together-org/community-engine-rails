@@ -11,11 +11,11 @@ module BetterTogether
       end
 
       def self.published
-        where(arel_table[:published_at].lteq(DateTime.current))
+        where(arel_table[:published_at].lteq(Time.current))
       end
 
       def self.scheduled
-        where(arel_table[:published_at].gt(DateTime.current))
+        where(arel_table[:published_at].gt(Time.current))
       end
 
       def draft?
@@ -25,13 +25,13 @@ module BetterTogether
       def published?
         return false if published_at.nil?
 
-        published_at <= DateTime.current
+        published_at <= Time.current
       end
 
       def scheduled?
         return false if published_at.nil?
 
-        published_at >= DateTime.current
+        published_at >= Time.current
       end
     end
 
