@@ -108,6 +108,9 @@ module BetterTogether
         target_event.present? &&
           target_event.starts_at.present? &&
           target_event.starts_at > 15.minutes.ago &&
+          (!recipient.respond_to?(:notification_preferences) ||
+           recipient.notification_preferences.fetch('event_reminders', true))
+      end
 
       def should_send_email?
         # Check for unread notifications for the recipient for the record's event
