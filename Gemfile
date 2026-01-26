@@ -20,7 +20,7 @@ gem 'fog-aws'
 # Database adapter for PostgreSQL
 gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
-gem 'puma', '~> 7.1'
+gem 'puma', '~> 7.2'
 
 # Pundit for authorization, custom fork for Better Together
 gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources'
@@ -84,7 +84,7 @@ group :development do
 
   gem 'easy_translate'
   # Listen for file system changes
-  gem 'listen', '>= 3.0.5', '< 3.10'
+  gem 'listen', '>= 3.0.5', '< 3.11'
   # Rack mini profiler for performance profiling
   gem 'rack-mini-profiler'
   # Readline implementation for Ruby
@@ -100,6 +100,10 @@ group :development do
 end
 
 group :test do
+  # axe-core for accessibility testing
+  gem 'axe-core-capybara'
+  gem 'axe-core-rspec'
+  gem 'axe-core-selenium'
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'

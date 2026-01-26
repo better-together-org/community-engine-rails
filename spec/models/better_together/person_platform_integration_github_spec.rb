@@ -7,12 +7,14 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
   let(:user) { create(:user, :confirmed) }
   let(:person) { user.person }
   let(:github_platform) do
-    create(:better_together_platform,
-           :external,
-           identifier: 'github',
-           name: 'GitHub',
-           url: 'https://github.com',
-           privacy: 'public')
+    BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |platform|
+      platform.external = true
+      platform.host = false
+      platform.name = 'GitHub'
+      platform.url = 'https://github.com'
+      platform.privacy = 'public'
+      platform.time_zone = 'UTC'
+    end
   end
   let(:github_integration) do
     create(:person_platform_integration,
@@ -29,7 +31,14 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
     end
 
     it 'returns false for non-GitHub integration' do
-      facebook_platform = create(:better_together_platform, :external, identifier: 'facebook')
+      facebook_platform = BetterTogether::Platform.find_or_create_by!(identifier: 'facebook') do |platform|
+        platform.external = true
+        platform.host = false
+        platform.name = 'Facebook'
+        platform.url = 'https://facebook.com'
+        platform.privacy = 'public'
+        platform.time_zone = 'UTC'
+      end
       facebook_integration = create(:person_platform_integration,
                                     :facebook,
                                     user:,
@@ -64,7 +73,16 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
     end
 
     context 'when integration is not for GitHub' do
-      let(:facebook_platform) { create(:better_together_platform, :external, identifier: 'facebook') }
+      let(:facebook_platform) do
+        BetterTogether::Platform.find_or_create_by!(identifier: 'facebook') do |platform|
+          platform.external = true
+          platform.host = false
+          platform.name = 'Facebook'
+          platform.url = 'https://facebook.com'
+          platform.privacy = 'public'
+          platform.time_zone = 'UTC'
+        end
+      end
       let(:facebook_integration) do
         create(:person_platform_integration,
                :facebook,

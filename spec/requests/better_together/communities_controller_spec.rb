@@ -22,25 +22,8 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
              creator: platform_manager.person)
     end
 
-    before do
-      puts "\n=== BEFORE BLOCK ==="
-      puts "Platform manager: #{platform_manager.inspect}"
-      puts "Metadata: #{RSpec.current_example.metadata[:as_platform_manager]}"
-      puts "Already authenticated: #{RSpec.current_example.metadata[:already_authenticated]}"
-    end
-
     it 'renders the index page successfully', :as_platform_manager do
-      puts "\n=== IN TEST ==="
-      puts "Communities path: #{better_together.communities_path(locale:)}"
-      puts "Request env warden user: #{request.env['warden']&.user&.inspect}" if defined?(request)
-      puts "Request env warden authenticated?: #{request.env['warden']&.authenticated?(:user)}" if defined?(request)
-
       get better_together.communities_path(locale:)
-
-      puts "Response status: #{response.status}"
-      puts "Response location: #{response.location}" if response.redirect?
-      puts "Response body (first 1000 chars):\n#{response.body[0..1000]}" if response.status == 404
-
       expect(response).to have_http_status(:ok)
     end
 
@@ -228,10 +211,11 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
   end
 
   describe 'POST /:locale/c', :as_platform_manager do
+    let(:community_name) { "New Community #{SecureRandom.hex(4)}" }
     let(:valid_params) do
       {
         community: {
-          name_en: 'New Community',
+          name_en: community_name,
           description_en: 'A new test community',
           privacy: 'public'
         }
@@ -254,7 +238,7 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     it 'generates a slug from the name' do
       post better_together.communities_path(locale:), params: valid_params
       community = BetterTogether::Community.last
-      expect(community.slug).to eq('new-community')
+      expect(community.slug).to eq(community_name.parameterize)
     end
   end
 
@@ -309,15 +293,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
 
     it 'updates slug when explicitly set' do
+      custom_slug = "custom-slug-#{SecureRandom.hex(4)}"
       params_with_slug = {
         community: {
           name_en: 'Updated Name',
-          identifier: 'custom-slug'
+          identifier: custom_slug
         }
       }
       patch better_together.community_path(locale:, id: community.slug), params: params_with_slug
       community.reload
-      expect(community.slug).to eq('custom-slug')
+      expect(community.slug).to eq(custom_slug)
     end
   end
 

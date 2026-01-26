@@ -14,6 +14,8 @@ module BetterTogether
     include Invitable
     include Metrics::Viewable
     include Privacy
+    include RecurringSchedulable
+    include TimezoneAttributeAliasing
     include TrackedActivity
 
     attachable_cover_image
@@ -46,13 +48,58 @@ module BetterTogether
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
     validates :duration_minutes, presence: true, numericality: { greater_than: 0 }, if: :starts_at?
+    validates :timezone, presence: true, inclusion: {
+      in: -> { TZInfo::Timezone.all_identifiers },
+      message: '%<value>s is not a valid timezone'
+    }
+    validates :event_hosts, length: { minimum: 1 }
     validate :ends_at_after_starts_at
 
     before_validation :set_host
     before_validation :set_default_duration
     before_validation :sync_time_duration_relationship
 
-    accepts_nested_attributes_for :event_hosts, reject_if: :all_blank
+    accepts_nested_attributes_for :event_hosts, allow_destroy: true, reject_if: :all_blank
+
+    # Timezone helper methods
+
+    # Returns starts_at in the event's timezone
+    def local_starts_at
+      return nil if starts_at.nil?
+
+      starts_at.in_time_zone(timezone)
+    end
+
+    # Returns ends_at in the event's timezone
+    def local_ends_at
+      return nil if ends_at.nil?
+
+      ends_at.in_time_zone(timezone)
+    end
+
+    # Returns starts_at in a specified timezone
+    def starts_at_in_zone(zone)
+      return nil if starts_at.nil?
+
+      starts_at.in_time_zone(zone)
+    end
+
+    # Returns ends_at in a specified timezone
+    def ends_at_in_zone(zone)
+      return nil if ends_at.nil?
+
+      ends_at.in_time_zone(zone)
+    end
+
+    # Returns a human-friendly timezone display
+    def timezone_display
+      tz = ActiveSupport::TimeZone[timezone]
+      if tz
+        "#{tz} (#{timezone})"
+      else
+        timezone
+      end
+    end
 
     scope :draft, lambda {
       start_query = arel_table[:starts_at].eq(nil)
@@ -121,13 +168,14 @@ module BetterTogether
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        starts_at ends_at duration_minutes registration_url
+        starts_at ends_at duration_minutes registration_url timezone
       ] + [
         {
-          location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: true,
-                                                                                                 destroy: true),
-          address_attributes: BetterTogether::Address.permitted_attributes(id: true),
-          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: true)
+          location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,
+                                                                                                 destroy: destroy),
+          address_attributes: BetterTogether::Address.permitted_attributes(id: id),
+          event_hosts_attributes: BetterTogether::EventHost.permitted_attributes(id: id, destroy: destroy),
+          recurrence_attributes: BetterTogether::Recurrence.permitted_attributes(id: id, destroy: destroy)
         }
       ]
     end
@@ -158,8 +206,7 @@ module BetterTogether
 
     # Minimal iCalendar representation for export
     def to_ics
-      lines = ics_header_lines + ics_event_lines + ics_footer_lines
-      "#{lines.join("\r\n")}\r\n"
+      BetterTogether::Ics::Generator.new(self).generate
     end
 
     configure_attachment_cleanup
@@ -167,6 +214,7 @@ module BetterTogether
     # Callbacks for notifications and reminders
     after_update :send_update_notifications
     after_update :schedule_reminder_notifications, if: :requires_reminder_scheduling?
+    after_update :sync_calendar_entry_times, if: :saved_change_to_temporal_fields?
 
     # Get the host community for calendar functionality
     def host_community
@@ -232,6 +280,11 @@ module BetterTogether
     # Delegate location methods
     delegate :display_name, to: :location, prefix: true, allow_nil: true
     delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
+
+    # Public URL to this event for use in ICS export
+    def url
+      BetterTogether::Engine.routes.url_helpers.event_url(self, locale: I18n.locale)
+    end
 
     private
 
@@ -316,6 +369,20 @@ module BetterTogether
       BetterTogether::EventReminderSchedulerJob.perform_later(id)
     end
 
+    # Sync temporal data to calendar entries when event times change
+    def sync_calendar_entry_times
+      calendar_entries.update_all(
+        starts_at: starts_at,
+        ends_at: ends_at,
+        duration_minutes: duration_minutes
+      )
+    end
+
+    # Check if temporal fields changed
+    def saved_change_to_temporal_fields?
+      saved_change_to_starts_at? || saved_change_to_ends_at? || saved_change_to_duration_minutes?
+    end
+
     # Check if we should schedule reminders after save (for updates)
     def should_schedule_reminders_after_save?
       !new_record? && requires_reminder_scheduling?
@@ -326,77 +393,11 @@ module BetterTogether
       starts_at.present? && attendees.reload.any?
     end
 
-    def ics_header_lines
-      [
-        'BEGIN:VCALENDAR',
-        'VERSION:2.0',
-        'PRODID:-//Better Together Community Engine//EN',
-        'CALSCALE:GREGORIAN',
-        'METHOD:PUBLISH',
-        'BEGIN:VEVENT'
-      ]
-    end
-
-    def ics_event_lines
-      lines = []
-      lines.concat(ics_basic_event_info)
-      lines << ics_description_line if ics_description_present?
-      lines.concat(ics_timing_info)
-      lines << "URL:#{url}"
-      lines
-    end
-
-    def ics_basic_event_info
-      [
-        "DTSTAMP:#{ics_timestamp}",
-        "UID:event-#{id}@better-together",
-        "SUMMARY:#{name}"
-      ]
-    end
-
-    def ics_timing_info
-      lines = []
-      lines << "DTSTART:#{ics_start_time}" if starts_at
-      lines << "DTEND:#{ics_end_time}" if ends_at
-      lines
-    end
-
-    def ics_footer_lines
-      ['END:VEVENT', 'END:VCALENDAR']
-    end
-
-    def ics_timestamp
-      Time.current.utc.strftime('%Y%m%dT%H%M%SZ')
-    end
-
-    def ics_start_time
-      starts_at&.utc&.strftime('%Y%m%dT%H%M%SZ')
-    end
-
-    def ics_end_time
-      ends_at&.utc&.strftime('%Y%m%dT%H%M%SZ')
-    end
-
-    def ics_description_present?
-      respond_to?(:description) && description
-    end
-
-    def ics_description_line
-      desc_text = ActionView::Base.full_sanitizer.sanitize(description.to_plain_text)
-      desc_text += "\n\n#{I18n.t('better_together.events.ics.view_details_url', url: url)}"
-      "DESCRIPTION:#{desc_text}"
-    end
-
     def ends_at_after_starts_at
       return if ends_at.blank? || starts_at.blank?
       return if ends_at > starts_at
 
       errors.add(:ends_at, I18n.t('errors.models.ends_at_before_starts_at'))
-    end
-
-    # Public URL to this event for use in ICS export
-    def url
-      BetterTogether::Engine.routes.url_helpers.event_url(self, locale: I18n.locale)
     end
   end
   # rubocop:enable Metrics/ClassLength

@@ -6,6 +6,6 @@ FactoryBot.define do
     inviter
     invitee
     status { %w[pending declined accepted].sample }
-    valid_from { DateTime.now }
+    valid_from { Time.now }
   end
 end

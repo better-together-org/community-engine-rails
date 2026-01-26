@@ -38,10 +38,10 @@ module BetterTogether
       context 'when event is in the past' do
         let(:past_event) { create(:event, :past, :with_attendees) }
 
-        it 'still sends notifications (for missed events)' do
+        it 'does not send notifications (reminders only for future events)' do
           expect do
             job.perform(past_event.id)
-          end.to have_enqueued_job(Noticed::EventJob).at_least(1).times
+          end.not_to have_enqueued_job(Noticed::EventJob)
         end
       end
     end

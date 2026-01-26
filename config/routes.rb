@@ -64,6 +64,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       get 'agreements/status', to: 'agreements_status#index', as: :agreements_status
       post 'agreements/status', to: 'agreements_status#create'
 
+      # Calendar feed route - accessible without authentication (token-based auth in controller)
+      get 'calendars/:id/feed', to: 'calendars#feed', as: :feed_calendar
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :agreements
@@ -92,6 +95,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         resources :events, except: %i[index show] do
+          collection do
+            get :available_hosts
+          end
           resources :invitations, only: %i[create destroy] do
             collection do
               get :available_people
@@ -347,6 +353,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         post 'checklists/:checklist_id/checklist_items/:id/person_checklist_item', to: 'person_checklist_items#create'
         get  'checklists/:checklist_id/checklist_items/:id/person_checklist_item', to: 'person_checklist_items#show'
       end
+
+      # Preview endpoint for markdown blocks - controller has authentication via before_action
+      post 'content/blocks/preview_markdown', to: 'content/blocks#preview_markdown', as: :preview_content_block_markdown
 
       resources :events, only: %i[index show] do
         member do
