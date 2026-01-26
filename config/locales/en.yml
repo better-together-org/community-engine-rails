@@ -287,6 +287,7 @@ en:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Rich text translations
+        show_title: Show Title
         slug: Slug
         slugs: Slugs
         string_translations: String translations
@@ -514,11 +515,17 @@ en:
         seen_at: Seen at
     errors:
       messages:
+        file_not_found: file does not exist
+        invalid_file_type: must be a markdown file (.md or .markdown)
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Events must have at least one host
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -547,6 +554,8 @@ en:
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/image: Image
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Mermaid Diagram
       better_together/content/page_block: Page Block
       better_together/content/rich_text: Rich Text
       better_together/content/template: Template File
@@ -718,7 +727,7 @@ en:
       tabs:
         details: Details
         images: Images
-        time-and-place: Time-and-place
+        time-and-place: Time & Place
       view_call_for_interest: View call for interest
     categories:
       back_to_categories: Back to Categories
@@ -831,6 +840,72 @@ en:
     content:
       blocks:
         associated_pages: Associated Pages
+        markdown:
+          fields:
+            auto_sync: Always load from file (ignore database content)
+            file_path: Markdown File Path
+            file_path_placeholder: docs/README.md or /absolute/path/to/file.md
+            markdown_source: Markdown Source
+            preview: Preview
+            reference_file: Reference a Markdown File
+            refresh_preview: Refresh Preview
+            write_inline: Write Markdown Inline
+          help:
+            auto_sync: When checked, content is always loaded from the file. When
+              unchecked, file content is imported into the database and can be edited
+              separately.
+            available_translations: 'Available translations:'
+            file_path: Path to a markdown file. Can be relative to Rails.root (e.g.,
+              docs/README.md) or absolute (e.g., /path/to/file.md). File must have
+              a .md or .markdown extension.
+            inline_content: Write your markdown content directly. Supports GitHub-flavored
+              markdown including tables, code blocks, and more. Content is translatable
+              for each locale.
+            localized_files: The system automatically looks for locale-specific versions
+              (e.g., privacy.en.md, privacy.es.md, privacy.fr.md) and falls back to
+              the base file if not found.
+            preview_placeholder: Preview will appear here...
+        template:
+          default: Default template
+          host_community_contact_details: Host community contact details
+      mermaid_diagram:
+        help:
+          auto_height: When enabled, the diagram height adjusts automatically to fit
+            the content. When disabled, uses a fixed height.
+          caption: Optional caption to display below the diagram
+          diagram_file_path: Path to a .mmd file containing the Mermaid diagram definition.
+            Can be relative to Rails.root (e.g., docs/diagrams/source/example.mmd)
+            or absolute.
+          diagram_source: 'Write your Mermaid diagram syntax directly. Supports all
+            Mermaid diagram types: flowcharts, sequence diagrams, class diagrams,
+            state diagrams, and more.'
+          theme: 'Visual theme for the diagram. Options: Default (standard colors),
+            Dark (dark mode), Forest (green tones), Neutral (minimal grayscale).'
+        javascript_required: JavaScript is required to view interactive diagrams.
+          Please enable JavaScript or view the static image version.
+        no_content: No diagram content available
+        no_preview: Add diagram source or file path to see a preview
+        preview_title: Diagram Preview
+        tabs:
+          file: Load from File
+          source: Write Diagram
+        themes:
+          dark: Dark
+          default: Default
+          forest: Forest
+          neutral: Neutral
+      static_pages:
+        accessibility: Accessibility
+        better_together: What is Better Together?
+        code_contributor_agreement: Code Contributor Agreement
+        code_of_conduct: Code of Conduct
+        community_engine: Community Engine
+        content_contributor_agreement: Content Contributor Agreement
+        cookie_consent: Cookie Policy
+        faq: FAQ
+        privacy: Privacy Policy
+        subprocessors: Subprocessors
+        terms_of_service: Terms of Service
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -868,6 +943,9 @@ en:
       errors:
         no_permitted_participants: You can only add platform managers or members who
           have opted in to receive messages.
+        not_found: The conversation you're looking for could not be found or you don't
+          have permission to view it.
+        person_required: You must have a profile to create conversations.
       form:
         add_participants: Add participants
         create_conversation: Create conversation
@@ -1006,22 +1084,52 @@ en:
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
+      date_and_time: Date & Time
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
-        description: Description
+        description: Provide details about what attendees can expect at this event
         duration_minutes: How long the event will last. Changes automatically when
           start or end time changes.
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        name: Name
+        ends_at: When the event concludes. Updates automatically when duration changes.
+        location: Where attendees will meet for this event
+        location_name: Name of the venue or meeting place
+        name: A clear, descriptive title for your event
         select_address: Select address
         select_building: Select building
-        slug: Slug
-        starts_at: Starts at
+        slug: URL-friendly identifier for this event
+        starts_at: When the event begins. All times are in the timezone selected above.
+        timezone: The timezone where this event will take place
       hosted_by: Hosted By
+      hosts:
+        add_host: Add Host
+        can_edit_event: Can edit event details
+        cancel: Cancel
+        cancel_add_host: Cancel adding host
+        cannot_remove_last: Cannot remove the last host. Please add another host first.
+        cannot_remove_last_host: Cannot remove the last host. Please add another host
+          first.
+        description: Event hosts can edit all event details and manage other hosts.
+          Events must have at least one host.
+        error_loading: Error loading hosts
+        host_label: Host
+        host_removed: Host removed
+        host_type: Host Type
+        loading: Loading...
+        member_count:
+          one: "%{count} member"
+          other: "%{count} members"
+        new_host: New Host
+        remove_host: Remove %{host}
+        remove_host_short: Remove
+        select_host: Select Host
+        select_placeholder: Select a host
+        type_label: Type
       ics:
+        reminders:
+          1_hour: 'Reminder: %{event_name} starts in 1 hour'
+          24_hours: 'Reminder: %{event_name} starts in 24 hours'
+          at_start: "%{event_name} is starting now"
         view_details_url: View details url
       in: must be in %{count}
       inclusion: is not included in the list
@@ -1036,8 +1144,10 @@ en:
         select_address: Select address
         select_building: Select building
         starts_at: Starts at
+        timezone: Event Timezone
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      location: Location
       location_types:
         address: Address
         building: Building
@@ -1062,6 +1172,34 @@ en:
       prompts:
         select_address: Select address
         select_building: Select building
+      recurrence:
+        end_types:
+          after_count: After occurrences
+          never: Never
+          on_date: On date
+        hints:
+          count: Number of times this event should repeat
+          end_type: How the recurrence should end
+          ends_on: The last date this event will occur
+          exception_dates: Dates when this event should NOT occur (comma-separated,
+            YYYY-MM-DD format)
+          frequency: How often this event repeats
+          interval: Repeat every N periods (e.g., every 2 weeks)
+          preview_placeholder: Select recurrence options to see upcoming dates
+          weekdays: Days of the week when this event occurs
+        labels:
+          count: Number of occurrences
+          end_type: Ends
+          ends_on: End date
+          exception_dates: Exception dates
+          frequency: Repeats
+          interval: Repeat every
+          preview: Upcoming occurrences
+          weekdays: Repeat on
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Does not repeat
       register: Register
       relationship:
         calendar: Calendar event
@@ -1080,8 +1218,10 @@ en:
       save_event: Save Event
       tabs:
         details: Details
+        hosts: Hosts
         images: Images
-        time-and-place: Time-and-place
+        recurrence: Recurrence
+        time-and-place: Time & Place
       taken: ya está en uso
       time:
         hour: hour
@@ -1422,11 +1562,25 @@ en:
           title: Date & Time Filter
       mailer:
         link_checker_report:
-          body: Attached is the Link Checker report for %{date}.
+          actions:
+            edit: Edit →
+            manual_edit: Manual edit required
+          body: Attached is the weekly Link Checker report for %{date}.
           greeting: Hello,
           report_file: 'Report file: %{filename}'
+          see_csv: See attached CSV for complete list.
+          showing_partial: Showing %{shown} of %{total} %{type} records with broken
+            links.
           signature: Regards
-          subject: 'Link Checker Report: %{date}'
+          subject: 'Weekly Link Checker Report: %{count} broken links - %{date}'
+          summary_header: Broken Links by Record Type
+          table_headers:
+            action: Action
+            broken_url: Broken URL
+            field: Field
+            record: Record
+            status: Status
+          total_count: 'Total broken links: %{count}'
       reports:
         actions:
           chart_toolbar: Chart actions
@@ -2027,6 +2181,8 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      privacy_level: 'Privacy: %{privacy}'
+      privacy_tooltip: This content is %{privacy}
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -2098,6 +2254,7 @@ en:
               help: Your unique handle (no spaces). This will appear in your profile
                 URL and mentions.
               label: Username
+              profile_url: Your profile URL
             name:
               help: Use your real name or the name you want your community to recognize
                 you by.
@@ -2458,6 +2615,9 @@ en:
     unlocks:
       new:
         resend_unlock_instructions: Resend unlock instructions
+        template:
+          default: Default template
+          host_community_contact_details: Host community contact details
       send_instructions: You will receive an email with instructions for how to unlock
         your account in a few minutes.
       send_paranoid_instructions: If your account exists, you will receive an email

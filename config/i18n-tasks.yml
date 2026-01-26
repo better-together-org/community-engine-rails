@@ -64,6 +64,9 @@ ignore_unused:
   # Keys that may be used dynamically
   - 'better_together.invitations.status.*'
   - 'better_together.*.status.*'
+  # Template paths are used dynamically by converting path separators to dots
+  - 'better_together.content.blocks.template.*'
+  - 'better_together.static_pages.*'
   
 # Ignore inconsistent interpolations (variables) in these keys
 ignore_inconsistent_interpolations:

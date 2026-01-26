@@ -5,7 +5,7 @@ module BetterTogether
     after_action :verify_authorized
 
     def create
-      @report = current_person.reports_made.new(report_params)
+      @report = helpers.current_person.reports_made.new(report_params)
       authorize @report
 
       if @report.save
@@ -16,10 +16,6 @@ module BetterTogether
     end
 
     private
-
-    def current_person
-      current_user.person
-    end
 
     def report_params
       params.require(:report).permit(:reportable_id, :reportable_type, :reason)

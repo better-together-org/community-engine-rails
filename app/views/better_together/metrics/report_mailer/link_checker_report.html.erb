@@ -2,7 +2,60 @@
 
 <p><%= t('better_together.metrics.mailer.link_checker_report.body', date: content_tag(:strong, @report.created_at.strftime('%Y-%m-%d'))).html_safe %></p>
 
-<p><%= t('better_together.metrics.mailer.link_checker_report.report_file', filename: @report.report_file.filename.to_s) if @report&.report_file&.attached? %></p>
+<% grouped_links = @report.broken_links_grouped_by_type %>
+<% if grouped_links.any? %>
+  <h3 style="margin-top: 24px; color: #333;"><%= t('better_together.metrics.mailer.link_checker_report.summary_header') %></h3>
+  <p><strong><%= t('better_together.metrics.mailer.link_checker_report.total_count', count: @report.total_broken_links) %></strong></p>
+
+  <% grouped_links.each do |record_type, links| %>
+    <h4 style="margin-top: 20px; color: #555;"><%= record_type %> (<%= links.size %> <%= 'link'.pluralize(links.size) %>)</h4>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <thead>
+        <tr style="background-color: #f5f5f5;">
+          <th style="padding: 8px; border: 1px solid #ddd; text-align: left;"><%= t('better_together.metrics.mailer.link_checker_report.table_headers.record') %></th>
+          <th style="padding: 8px; border: 1px solid #ddd; text-align: left;"><%= t('better_together.metrics.mailer.link_checker_report.table_headers.field') %></th>
+          <th style="padding: 8px; border: 1px solid #ddd; text-align: left;"><%= t('better_together.metrics.mailer.link_checker_report.table_headers.broken_url') %></th>
+          <th style="padding: 8px; border: 1px solid #ddd; text-align: left;"><%= t('better_together.metrics.mailer.link_checker_report.table_headers.status') %></th>
+          <th style="padding: 8px; border: 1px solid #ddd; text-align: left;"><%= t('better_together.metrics.mailer.link_checker_report.table_headers.action') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% links.first(5).each do |link| %>
+          <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;"><%= link['record_identifier'] || link[:record_identifier] %></td>
+            <td style="padding: 8px; border: 1px solid #ddd;"><%= link['field_name'] || link[:field_name] %></td>
+            <td style="padding: 8px; border: 1px solid #ddd; word-break: break-all;">
+              <%= truncate((link['url'] || link[:url]), length: 50) %>
+            </td>
+            <td style="padding: 8px; border: 1px solid #ddd; <%= (link['status_code'] || link[:status_code]).to_s.start_with?('4', '5') ? 'color: #d32f2f;' : '' %>">
+              <%= link['status_code'] || link[:status_code] %>
+            </td>
+            <td style="padding: 8px; border: 1px solid #ddd;">
+              <% edit_url = link['edit_url'] || link[:edit_url] %>
+              <% if edit_url.present? %>
+                <a href="<%= edit_url %>" style="display: inline-block; padding: 4px 12px; background-color: #1976d2; color: white; text-decoration: none; border-radius: 4px;">
+                  <%= t('better_together.metrics.mailer.link_checker_report.actions.edit') %>
+                </a>
+              <% else %>
+                <span style="color: #999;"><%= t('better_together.metrics.mailer.link_checker_report.actions.manual_edit') %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <% if links.size > 5 %>
+      <p style="color: #666; font-style: italic; margin-top: -10px;">
+        <%= t('better_together.metrics.mailer.link_checker_report.showing_partial', shown: 5, total: links.size, type: record_type) %>
+        <%= t('better_together.metrics.mailer.link_checker_report.see_csv') %>
+      </p>
+    <% end %>
+  <% end %>
+<% end %>
+
+<p style="margin-top: 24px;"><%= t('better_together.metrics.mailer.link_checker_report.report_file', filename: @report.report_file.filename.to_s) if @report&.report_file&.attached? %></p>
 
 <p><%= t('better_together.metrics.mailer.link_checker_report.signature') %>,<br>
 <%= BetterTogether::ApplicationMailer.default[:from] %></p>

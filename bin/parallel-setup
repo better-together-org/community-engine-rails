@@ -6,7 +6,7 @@ set -e
 echo "Setting up parallel test databases..."
 
 # Run from the dummy app directory where the database configuration lives
-bin/dc-run bash -c "cd spec/dummy && bundle exec rake db:parallel:create db:parallel:prepare"
+bin/dc-run-dummy bundle exec rake db:parallel:create db:parallel:prepare
 
 echo "✅ Parallel test databases created successfully!"
 echo "You can now run: bin/dc-run bash -c 'cd spec/dummy && prspec ../../spec/'"

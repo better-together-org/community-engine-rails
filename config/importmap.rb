@@ -33,6 +33,7 @@ pin 'bootstrap', to: 'bootstrap.min.js', preload: true
 pin 'chart.js', to: 'https://cdn.jsdelivr.net/npm/chart.js', preload: true
 pin 'slim-select', to: 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.9.2/slimselect.umd.min.js', preload: true
 pin 'trix', to: 'https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js', preload: true
+pin 'mermaid', to: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs', preload: true
 
 pin 'masonry', to: 'masonry.min.js' # @4.2.2
 pin 'imagesloaded', to: 'imagesloaded.min.js' # @5.0.0

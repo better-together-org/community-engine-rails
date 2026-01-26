@@ -12,6 +12,7 @@ module BetterTogether
           build_host
           build_better_together
           build_footer
+          # DocumentationBuilder.build # TODO: Re-enable when documentation is ready
 
           create_unassociated_pages
         end
@@ -29,7 +30,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/better_together'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/better_together',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'About the Community Engine',
@@ -37,19 +46,29 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/community_engine',
-                layout: 'layouts/better_together/full_width_page'
+                layout: 'layouts/better_together/full_width_page',
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/community_engine',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               }
             ]
           )
 
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'better-together'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'better-together') do |area|
             area.name = 'Better Together'
             area.slug = 'better-together'
             area.visible = true
             area.protected = true
           end
+
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
 
           # Create Host Navigation Item
           better_together_nav_item = area.navigation_items.create!(
@@ -83,7 +102,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/faq'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/faq',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Privacy Policy',
@@ -91,7 +118,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/privacy'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/privacy',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Terms of Service',
@@ -99,7 +134,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/terms_of_service'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/terms_of_service',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Code of Conduct',
@@ -107,7 +150,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/code_of_conduct'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/code_of_conduct',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Accessibility',
@@ -115,10 +166,34 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/accessibility'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/accessibility',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               },
               {
-                title_en: 'Contact',
+                title_en: 'Cookie Policy',
+                slug_en: 'cookie-policy',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/cookie_consent',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Contact Us',
                 slug_en: 'contact',
                 published_at: Time.zone.now,
                 privacy: 'public',
@@ -129,7 +204,6 @@ module BetterTogether
                       type: 'BetterTogether::Content::RichText',
                       # rubocop:todo Lint/CopDirectiveSyntax
                       content_en: <<-HTML
-                        <h1 class="page-header mb-3">Contact Us</h1>
                         <p>This is a default contact page for your platform. Be sure to write a real one!</p>
                       HTML
                       # rubocop:enable Lint/CopDirectiveSyntax
@@ -138,7 +212,46 @@ module BetterTogether
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/content/blocks/template/host_community_contact_details'
+                      template_path: 'better_together/content/blocks/template/host_community_contact_details',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              }
+            ]
+          )
+
+          # Create contributor agreement pages separately for nested navigation
+          contributor_agreement_pages = ::BetterTogether::Page.create!(
+            [
+              {
+                title_en: 'Code Contributor Agreement',
+                slug_en: 'code-contributor-agreement',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/code_contributor_agreement',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Content Contributor Agreement',
+                slug_en: 'content-contributor-agreement',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/content_contributor_agreement',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
                   }
                 ]
@@ -147,15 +260,42 @@ module BetterTogether
           )
 
           # Create Platform Footer Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'platform-footer'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-footer') do |area|
             area.name = 'Platform Footer'
             area.slug = 'platform-footer'
             area.visible = true
             area.protected = true
           end
 
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
+
+          # Build navigation items for main footer pages
           area.reload.build_page_navigation_items(footer_pages)
+
+          # Create parent "Contributor Agreements" dropdown navigation item
+          # Position it after the existing footer items
+          next_position = area.navigation_items.maximum(:position).to_i + 1
+          contributor_agreements_parent = area.navigation_items.create!(
+            title_en: 'Contributor Agreements',
+            item_type: 'dropdown',
+            position: next_position,
+            visible: true,
+            protected: true
+          )
+
+          # Build child navigation items for contributor agreements
+          contributor_agreement_pages.each_with_index do |page, index|
+            area.navigation_items.create!(
+              title_en: page.title,
+              linkable: page,
+              parent: contributor_agreements_parent,
+              position: index,
+              item_type: 'link',
+              visible: true,
+              protected: true
+            )
+          end
 
           area.save!
         end
@@ -177,7 +317,6 @@ module BetterTogether
                     block_attributes: {
                       type: 'BetterTogether::Content::RichText',
                       content_en: <<-HTML
-                        <h1 class="page-header mb-3">About</h1>
                         <p>This is a default about page. Be sure to write a real one!</p>
                       HTML
                     }
@@ -188,13 +327,15 @@ module BetterTogether
           )
 
           # Create Platform Header Navigation Area
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'platform-header'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-header') do |area|
             area.name = 'Platform Header'
             area.slug = 'platform-header'
             area.visible = true
             area.protected = true
           end
+
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
 
           area.build_page_navigation_items(header_pages)
 
@@ -252,6 +393,17 @@ module BetterTogether
             area.navigation_items.create!(attrs)
           end
 
+          unless area.valid?
+            puts "\n=== Navigation Area Validation Errors ==="
+            area.errors.full_messages.each { |msg| puts "  Area error: #{msg}" }
+            area.navigation_items.each_with_index do |item, idx|
+              next if item.valid?
+
+              puts "  Item #{idx} (#{item.identifier}) errors: #{item.errors.full_messages.join(', ')}"
+            end
+            puts "===\n"
+          end
+
           area.save!
         end
       end
@@ -260,13 +412,15 @@ module BetterTogether
       def build_host # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Lint/CopDirectiveSyntax, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Header Host Navigation Area and its Navigation Items
-          area = ::BetterTogether::NavigationArea.create! do |area|
-            area.identifier = 'platform-host'
+          area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-host') do |area|
             area.name = 'Platform Host'
             area.slug = 'platform-host'
             area.visible = true
             area.protected = true
           end
+
+          # Clear existing navigation items if area already existed
+          area.reload.navigation_items.delete_all
 
           # Create Host Navigation Item
           host_nav = area.navigation_items.create!(
@@ -414,8 +568,60 @@ module BetterTogether
         delete_navigation_areas
       end
 
-      def create_unassociated_pages # rubocop:todo Metrics/MethodLength
+      # Reset and reseed navigation areas only (preserves pages)
+      # Usage: BetterTogether::NavigationBuilder.reset_navigation_areas
+      def reset_navigation_areas
+        puts 'Resetting navigation areas...'
+        delete_navigation_items
+        delete_navigation_areas
+        puts 'Rebuilding navigation areas...'
         I18n.with_locale(:en) do
+          build_header
+          build_host
+          build_better_together
+          build_footer
+          # DocumentationBuilder.build # TODO: Re-enable when documentation is ready
+        end
+        puts 'Navigation areas reset complete!'
+      end
+
+      # Reset and reseed a specific navigation area
+      # Usage: BetterTogether::NavigationBuilder.reset_navigation_area('platform-header')
+      def reset_navigation_area(slug) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Lint/CopDirectiveSyntax, Metrics/MethodLength
+        area = ::BetterTogether::NavigationArea.i18n.find_by(slug: slug)
+        if area
+          puts "Resetting navigation area: #{area.name} (#{slug})"
+          # Delete items for this area
+          area.navigation_items.where.not(parent_id: nil).delete_all
+          area.navigation_items.where(parent_id: nil).delete_all
+          area.delete
+        else
+          puts "Navigation area with slug '#{slug}' not found - creating it"
+        end
+
+        # Rebuild the specific area
+        I18n.with_locale(:en) do
+          case slug
+          when 'platform-header'
+            build_header
+          when 'platform-host'
+            build_host
+          when 'better-together'
+            build_better_together
+          when 'platform-footer'
+            build_footer
+          when 'documentation'
+            DocumentationBuilder.build # Available but not auto-seeded
+          else
+            puts "Unknown navigation area slug: #{slug}"
+            return
+          end
+        end
+        puts "Navigation area '#{slug}' reset complete!"
+      end
+
+      def create_unassociated_pages # rubocop:todo Metrics/MethodLength
+        I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Pages not associated with a navigation area
           ::BetterTogether::Page.create!(
             [
@@ -425,8 +631,16 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/community_engine',
-                layout: 'layouts/better_together/full_width_page'
+                layout: 'layouts/better_together/full_width_page',
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/community_engine',
+                      css_settings: { container_class: 'container-fluid' }
+                    }
+                  }
+                ]
               },
               {
                 title_en: 'Subprocessors',
@@ -434,7 +648,15 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
-                template: 'better_together/static_pages/subprocessors'
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/subprocessors',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
               }
             ]
           )
@@ -448,6 +670,8 @@ module BetterTogether
       end
 
       def delete_navigation_areas
+        # Clear sidebar_nav references before deleting navigation areas
+        ::BetterTogether::Page.update_all(sidebar_nav_id: nil)
         ::BetterTogether::NavigationArea.delete_all
       end
 

@@ -7,7 +7,16 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
 
   let(:platform) { configure_host_platform }
   let(:community) { platform.community }
-  let!(:github_platform) { create(:better_together_platform, :oauth_provider, identifier: 'github', name: 'GitHub') }
+  let!(:github_platform) do
+    BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |github|
+      github.external = true
+      github.host = false
+      github.name = 'GitHub'
+      github.url = 'https://github.com'
+      github.privacy = 'public'
+      github.time_zone = 'UTC'
+    end
+  end
 
   before do
     platform # Ensure platform is created
