@@ -54,6 +54,10 @@ module BetterTogether
     # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
     config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
 
+    # Add routes directory to paths for draw() method
+    config.paths['config/routes.rb'] = 'config/routes.rb'
+    config.paths.add 'config/routes', glob: '**/*.rb'
+
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
       g.fixture_replacement :factory_bot, dir: 'spec/factories'

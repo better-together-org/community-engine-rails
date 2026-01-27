@@ -6,6 +6,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
 
+  # API Authentication routes (JSON-only, no locale requirement)
+  draw :api_auth
+
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
                      only: :omniauth_callbacks,
@@ -21,6 +24,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
     # bt base path
     scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
+      # API v1 resource routes (locale-aware for I18n error messages)
+      draw :api_v1
+
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
       # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
       # Uncomment unlocks if/when used
