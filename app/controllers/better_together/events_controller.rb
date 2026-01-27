@@ -27,10 +27,16 @@ module BetterTogether
     before_action :process_recurrence_attributes, only: %i[create update]
 
     def index
+      @events = @events
+                  .includes(:categories, cover_image_attachment: :blob)
+
       @draft_events = @events.draft
+                               .page(params[:draft_page]).per(params[:per])
       @upcoming_events = @events.upcoming
-      @ongoing_events = @events.ongoing
+                                 .page(params[:upcoming_page]).per(params[:per])
+      @ongoing_events = @events.ongoing.page(params[:ongoing_page]).per(params[:per])
       @past_events = @events.past
+                              .page(params[:past_page]).per(params[:per])
     end
 
     def show

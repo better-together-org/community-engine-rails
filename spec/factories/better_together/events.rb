@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'faker'
+
 FactoryBot.define do
   factory 'better_together/event',
           class: 'BetterTogether::Event',
