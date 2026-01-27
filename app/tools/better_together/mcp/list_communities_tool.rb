@@ -48,7 +48,7 @@ module BetterTogether
           privacy: community.privacy,
           slug: community.slug,
           member_count: community.person_members.count,
-          created_at: community.created_at.iso8601
+          created_at: community.created_at.in_time_zone.iso8601
         }
       end
     end

@@ -133,8 +133,11 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
       community_data = communities.first
 
       # created_at should be in ISO8601 format with timezone
-      created_at = Time.parse(community_data['created_at'])
-      expect(created_at.zone).to eq('NZDT') # New Zealand Daylight Time
+      created_at = Time.iso8601(community_data['created_at'])
+      expected_offset = ActiveSupport::TimeZone['Pacific/Auckland']
+                        .period_for_utc(community.created_at)
+                        .utc_total_offset
+      expect(created_at.utc_offset).to eq(expected_offset)
     end
   end
 

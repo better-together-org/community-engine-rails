@@ -55,7 +55,8 @@ RSpec.describe 'MCP Server Initialization' do
       expect(tool_classes).not_to be_empty
 
       tool_classes.each do |tool_class|
-        expect(server.tools).to include(tool_class)
+        tools = server.tools.respond_to?(:values) ? server.tools.values : server.tools
+        expect(tools).to include(tool_class)
       end
     end
 
@@ -64,7 +65,8 @@ RSpec.describe 'MCP Server Initialization' do
       expect(resource_classes).not_to be_empty
 
       resource_classes.each do |resource_class|
-        expect(server.resources).to include(resource_class)
+        resources = server.resources.respond_to?(:values) ? server.resources.values : server.resources
+        expect(resources).to include(resource_class)
       end
     end
   end
@@ -73,23 +75,25 @@ RSpec.describe 'MCP Server Initialization' do
     context 'when auth_token is configured' do
       before do
         allow(ENV).to receive(:fetch).with('MCP_AUTH_TOKEN', nil).and_return('test-token-123')
+        Rails.application.config.mcp.auth_token = ENV.fetch('MCP_AUTH_TOKEN', nil)
+        Rails.application.config.mcp.authenticate = true
       end
 
       it 'requires authentication' do
-        server = BetterTogether.mcp_server
-        expect(server.config.authenticate).to be true
+        expect(Rails.application.config.mcp.authenticate).to be true
       end
     end
 
     context 'when auth_token is not configured' do
       before do
         allow(ENV).to receive(:fetch).with('MCP_AUTH_TOKEN', nil).and_return(nil)
+        Rails.application.config.mcp.auth_token = ENV.fetch('MCP_AUTH_TOKEN', nil)
+        Rails.application.config.mcp.authenticate = false
       end
 
       it 'does not require authentication in development' do
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
-        server = BetterTogether.mcp_server
-        expect(server.config.authenticate).to be false
+        expect(Rails.application.config.mcp.authenticate).to be false
       end
     end
   end

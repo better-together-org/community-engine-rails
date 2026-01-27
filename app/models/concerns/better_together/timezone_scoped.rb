@@ -89,7 +89,7 @@ module BetterTogether
       return user_tz if user_tz
 
       # 4. Platform timezone (platform-wide default)
-      platform_tz = extract_timezone_from_platform(platform)
+      platform_tz = extract_timezone_from_platform(platform || :host)
       return platform_tz if platform_tz
 
       # 5. Application config timezone

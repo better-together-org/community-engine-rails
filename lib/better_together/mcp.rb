@@ -10,15 +10,15 @@ module BetterTogether
         version: BetterTogether::VERSION
       )
 
-      # Auto-register all ApplicationTool descendants
-      Rails.application.config.after_initialize do
-        BetterTogether::Mcp::ApplicationTool.descendants.each do |tool_class|
-          server.register_tool(tool_class)
-        end
+      Rails.application.eager_load!
 
-        BetterTogether::Mcp::ApplicationResource.descendants.each do |resource_class|
-          server.register_resource(resource_class)
-        end
+      # Auto-register all ApplicationTool descendants
+      BetterTogether::Mcp::ApplicationTool.descendants.each do |tool_class|
+        server.register_tool(tool_class)
+      end
+
+      BetterTogether::Mcp::ApplicationResource.descendants.each do |resource_class|
+        server.register_resource(resource_class)
       end
 
       server

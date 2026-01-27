@@ -80,6 +80,10 @@ RSpec.describe BetterTogether::Mcp::PublicCommunitiesResource, type: :model do
       # Explicitly create communities for this test
       public_community1
 
+      allow_any_instance_of(described_class).to receive(:request).and_return(
+        instance_double(Rack::Request, params: {})
+      )
+
       resource = described_class.new
       content = JSON.parse(resource.content)
       community = content['communities'].first

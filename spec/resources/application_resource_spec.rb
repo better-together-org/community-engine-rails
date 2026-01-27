@@ -120,11 +120,12 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
 
         before do
           platform_manager_permission = BetterTogether::ResourcePermission.find_or_create_by!(
-            identifier: 'bt_manage_platform',
-            resource_type: 'BetterTogether::Platform',
-            action: 'manage',
-            target: 'platform'
-          )
+            identifier: 'manage_platform'
+          ) do |permission|
+            permission.resource_type = 'BetterTogether::Platform'
+            permission.action = 'manage'
+            permission.target = 'platform'
+          end
           platform_manager_role = BetterTogether::Role.find_or_create_by!(
             identifier: "platform_manager_#{SecureRandom.hex(4)}",
             resource_type: 'BetterTogether::Platform'

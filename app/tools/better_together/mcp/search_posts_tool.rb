@@ -31,7 +31,13 @@ module BetterTogether
           # - Published status
           # - Blocked users (excluded automatically by PostPolicy::Scope)
           posts = policy_scope(BetterTogether::Post)
-                  .where('title ILIKE ? OR content::text ILIKE ?', "%#{query}%", "%#{query}%")
+                  .i18n
+                  .joins(:string_translations)
+                  .where(
+                    'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+                    "%#{query}%",
+                    %w[title]
+                  )
                   .order(published_at: :desc)
                   .limit([limit, 100].min) # Cap at 100 to prevent abuse
 

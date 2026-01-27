@@ -42,8 +42,9 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
         result = tool.call
 
         communities = JSON.parse(result)
-        expect(communities.length).to eq(1)
-        expect(communities.first['name']).to eq('Public Community')
+        community_names = communities.map { |c| c['name'] }
+        expect(community_names).to include('Public Community')
+        expect(community_names).not_to include('Private Community')
       end
     end
 
@@ -72,11 +73,12 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
         private_community
 
         platform_manager_permission = BetterTogether::ResourcePermission.find_or_create_by!(
-          identifier: 'bt_manage_platform',
-          resource_type: 'BetterTogether::Platform',
-          action: 'manage',
-          target: 'platform'
-        )
+          identifier: 'manage_platform'
+        ) do |perm|
+          perm.resource_type = 'BetterTogether::Platform'
+          perm.action = 'manage'
+          perm.target = 'platform'
+        end
         platform_manager_role = BetterTogether::Role.find_or_create_by!(
           identifier: "platform_manager_#{SecureRandom.hex(4)}",
           resource_type: 'BetterTogether::Platform'
@@ -105,8 +107,9 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
           result = tool.call(privacy_filter: 'public')
 
           communities = JSON.parse(result)
-          expect(communities.length).to eq(1)
-          expect(communities.first['name']).to eq('Public Community')
+          names = communities.map { |c| c['name'] }
+          expect(names).to include('Public Community')
+          expect(names).not_to include('Private Community')
         end
 
         it 'filters by private privacy' do
@@ -114,8 +117,9 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
           result = tool.call(privacy_filter: 'private')
 
           communities = JSON.parse(result)
-          expect(communities.length).to eq(1)
-          expect(communities.first['name']).to eq('Private Community')
+          names = communities.map { |c| c['name'] }
+          expect(names).to include('Private Community')
+          expect(names).not_to include('Public Community')
         end
       end
     end

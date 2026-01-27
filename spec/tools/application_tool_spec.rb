@@ -126,17 +126,22 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
     end
 
     context 'when user has permission' do
+      let(:community_role) { create(:role, :community_role) }
+
       before do
         # Make user a member of the community
-        community.person_community_memberships.find_or_create_by!(member: user.person)
+        community.person_community_memberships.find_or_create_by!(member: user.person) do |membership|
+          membership.role = community_role
+        end
 
         # Make user a platform manager
         platform_manager_permission = BetterTogether::ResourcePermission.find_or_create_by!(
-          identifier: 'bt_manage_platform',
-          resource_type: 'BetterTogether::Platform',
-          action: 'manage',
-          target: 'platform'
-        )
+          identifier: 'manage_platform'
+        ) do |permission|
+          permission.resource_type = 'BetterTogether::Platform'
+          permission.action = 'manage'
+          permission.target = 'platform'
+        end
         platform_manager_role = BetterTogether::Role.find_or_create_by!(
           identifier: "platform_manager_#{SecureRandom.hex(4)}",
           resource_type: 'BetterTogether::Platform'
