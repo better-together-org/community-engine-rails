@@ -2,6 +2,7 @@
 
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
+require 'better_together/mcp'
 
 # Convenience setters and getters for the engine
 module BetterTogether
