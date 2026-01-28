@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth, type: :request do
+RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth do
   let(:user) { create(:better_together_user, :confirmed) }
   let(:person) { user.person }
   let(:token) { api_sign_in_and_get_token(user) }

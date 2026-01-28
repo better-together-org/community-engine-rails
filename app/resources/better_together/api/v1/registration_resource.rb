@@ -21,9 +21,11 @@ module BetterTogether
         end
 
         # JSONAPI attribute accessor
+        # rubocop:disable Naming/PredicateMethod
         def confirmed
           confirmed?
         end
+        # rubocop:enable Naming/PredicateMethod
 
         # NOTE: password and password_confirmation should only be accepted
         # via strong parameters in the controller, never exposed in responses

@@ -12,17 +12,13 @@ module BetterTogether
         skip_before_action :verify_signed_out_user, only: :destroy
 
         def create
-          email = params.dig(:user, :email)
-          password = params.dig(:user, :password)
+          self.resource = find_resource
 
-          self.resource = resource_class.find_for_authentication(email:)
-
-          if resource&.valid_password?(password) && resource.active_for_authentication?
+          if valid_credentials?(resource)
             sign_in(resource_name, resource)
             respond_with(resource)
           else
-            render json: { error: I18n.t('devise.failure.invalid', authentication_keys: 'email') },
-                   status: :unauthorized
+            render_invalid_credentials
           end
         end
 
@@ -37,6 +33,20 @@ module BetterTogether
         end
 
         protected
+
+        def find_resource
+          resource_class.find_for_authentication(email: params.dig(:user, :email))
+        end
+
+        def valid_credentials?(resource)
+          password = params.dig(:user, :password)
+          resource&.valid_password?(password) && resource.active_for_authentication?
+        end
+
+        def render_invalid_credentials
+          render json: { error: I18n.t('devise.failure.invalid', authentication_keys: 'email') },
+                 status: :unauthorized
+        end
 
         # Return JWT token and user info on successful authentication
         def respond_with(resource, _opts = {}) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength

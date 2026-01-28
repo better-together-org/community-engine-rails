@@ -28,35 +28,51 @@ module BetterTogether
 
         # GET /resource/confirmation?confirmation_token=abcdef
         def show
-          self.resource = resource_class.confirm_by_token(params[:confirmation_token])
-          yield resource if block_given?
+          confirm_resource
+          return render_confirmation_error(resource) unless confirmation_successful?
 
-          if resource.errors.empty?
-            # Activate pending memberships after successful confirmation (matches parent behavior)
-            activate_pending_memberships(resource)
-
-            render json: {
-              message: I18n.t('devise.confirmations.confirmed'),
-              data: {
-                type: 'users',
-                id: resource.id,
-                attributes: {
-                  email: resource.email,
-                  confirmed: true
-                }
-              }
-            }, status: :ok
-          else
-            render json: {
-              errors: resource.errors.full_messages
-            }, status: :unprocessable_entity
-          end
+          # Activate pending memberships after successful confirmation (matches parent behavior)
+          activate_pending_memberships(resource)
+          render_confirmation_success(resource)
         end
 
         protected
 
         def resource_name
           :user
+        end
+
+        private
+
+        def render_confirmation_success(resource)
+          render json: confirmation_payload(resource), status: :ok
+        end
+
+        def render_confirmation_error(resource)
+          render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
+        end
+
+        def confirmation_payload(resource)
+          {
+            message: I18n.t('devise.confirmations.confirmed'),
+            data: {
+              type: 'users',
+              id: resource.id,
+              attributes: {
+                email: resource.email,
+                confirmed: true
+              }
+            }
+          }
+        end
+
+        def confirm_resource
+          self.resource = resource_class.confirm_by_token(params[:confirmation_token])
+          yield resource if block_given?
+        end
+
+        def confirmation_successful?
+          resource.errors.empty?
         end
       end
     end

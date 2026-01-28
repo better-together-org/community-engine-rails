@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::User, type: :model do
+RSpec.describe BetterTogether::User do
   describe 'platform manager factory' do
     subject(:user) { create(:better_together_user, :confirmed, :platform_manager) }
 

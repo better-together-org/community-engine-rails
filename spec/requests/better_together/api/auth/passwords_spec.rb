@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::Auth::Passwords', :no_auth, type: :request do
+RSpec.describe 'BetterTogether::Api::Auth::Passwords', :no_auth do
   include ActiveJob::TestHelper
 
   let(:user) { create(:better_together_user, :confirmed, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
@@ -10,41 +10,39 @@ RSpec.describe 'BetterTogether::Api::Auth::Passwords', :no_auth, type: :request 
   describe 'POST /api/auth/password' do
     let(:url) { '/api/auth/password' }
 
-    context 'when requesting password reset' do
-      context 'with valid email' do
-        before do
-          perform_enqueued_jobs do
-            post url, params: { user: { email: user.email } }, as: :json
-          end
-        end
-
-        it 'returns success status' do
-          expect(response).to have_http_status(:ok)
-        end
-
-        it 'sends password reset email' do
-          expect(ActionMailer::Base.deliveries.count).to be > 0
+    context 'with valid email' do
+      before do
+        perform_enqueued_jobs do
+          post url, params: { user: { email: user.email } }, as: :json
         end
       end
 
-      context 'with non-existent email' do
-        before do
-          post url, params: { user: { email: 'nonexistent@example.com' } }, as: :json
-        end
-
-        it 'returns success status to prevent email enumeration' do
-          expect(response).to have_http_status(:ok)
-        end
+      it 'returns success status' do
+        expect(response).to have_http_status(:ok)
       end
 
-      context 'with missing email' do
-        before do
-          post url, params: { user: { email: '' } }, as: :json
-        end
+      it 'sends password reset email' do
+        expect(ActionMailer::Base.deliveries.count).to be > 0
+      end
+    end
 
-        it 'returns success status to prevent email enumeration' do
-          expect(response).to have_http_status(:ok)
-        end
+    context 'with non-existent email' do
+      before do
+        post url, params: { user: { email: 'nonexistent@example.com' } }, as: :json
+      end
+
+      it 'returns success status to prevent email enumeration' do
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'with missing email' do
+      before do
+        post url, params: { user: { email: '' } }, as: :json
+      end
+
+      it 'returns success status to prevent email enumeration' do
+        expect(response).to have_http_status(:ok)
       end
     end
   end

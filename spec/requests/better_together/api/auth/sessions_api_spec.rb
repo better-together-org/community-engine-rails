@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::Auth::Sessions', :no_auth, type: :request do
+RSpec.describe 'BetterTogether::Api::Auth::Sessions', :no_auth do
   let(:user) { create(:better_together_user, :confirmed, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
   let(:person) { user.person }
 

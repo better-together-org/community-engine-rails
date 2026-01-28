@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::Auth::Registrations', :no_auth, type: :request do
+RSpec.describe 'BetterTogether::Api::Auth::Registrations', :no_auth do
   include ActiveJob::TestHelper
 
   describe 'POST /api/auth/sign-up' do

@@ -6,6 +6,7 @@ module BetterTogether
       # JSONAPI resource for user registrations
       class RegistrationsController < BetterTogether::Users::RegistrationsController
         include InvitationSessionManagement
+        include BetterTogether::Api::Auth::RegistrationHelpers
 
         respond_to :json
 
@@ -35,62 +36,7 @@ module BetterTogether
           end
 
           # Use transaction for all user creation and associated records (matches parent)
-          ActiveRecord::Base.transaction do
-            build_resource(sign_up_params)
-
-            # Setup user from invitations before saving (matches parent)
-            setup_user_from_invitations(resource)
-            resource.build_person(person_params) unless resource.person
-
-            resource.save
-            yield resource if block_given?
-
-            if resource.persisted? && resource.errors.empty?
-              # Handle post-registration setup (matches parent behavior)
-              handle_user_creation(resource)
-
-              if resource.respond_to?(:send_confirmation_instructions) &&
-                 resource.respond_to?(:confirmation_sent_at) &&
-                 resource.confirmation_sent_at.blank?
-                resource.send_confirmation_instructions
-              end
-
-              if resource.active_for_authentication?
-                sign_up(resource_name, resource)
-                render json: {
-                  message: I18n.t('devise.registrations.signed_up'),
-                  data: {
-                    type: 'users',
-                    id: resource.id,
-                    attributes: {
-                      email: resource.email,
-                      confirmed: resource.confirmed_at.present?
-                    }
-                  }
-                }, status: :created
-              else
-                expire_data_after_sign_in!
-                render json: {
-                  message: I18n.t('devise.registrations.signed_up_but_inactive'),
-                  data: {
-                    type: 'users',
-                    id: resource.id,
-                    attributes: {
-                      email: resource.email,
-                      confirmed: resource.confirmed_at.present?
-                    }
-                  }
-                }, status: :created
-              end
-            elsif resource.persisted?
-              # User was created but has errors - rollback to maintain consistency
-              raise ActiveRecord::Rollback
-            else
-              clean_up_passwords resource
-              set_minimum_password_length
-              render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
-            end
-          end
+          ActiveRecord::Base.transaction { register_user!(&block) }
         rescue ActiveRecord::RecordInvalid, ActiveRecord::InvalidForeignKey => e
           # Clean up and show user-friendly error
           Rails.logger.error "API Registration failed: #{e.message}"
@@ -104,77 +50,82 @@ module BetterTogether
 
         protected
 
-        def sign_up_params
-          user_params = params[:user] || params.dig(:registration, :user) || {}
-          user_params = user_params.to_unsafe_h if user_params.is_a?(ActionController::Parameters)
-          ActionController::Parameters.new(user_params).permit(
-            :email,
-            :password,
-            :password_confirmation,
-            :invitation_code,
-            person_attributes: %i[identifier name description]
-          )
-        end
-
-        def configure_permitted_parameters
-          # for user account creation i.e sign up
-          devise_parameter_sanitizer.permit(:sign_up,
-                                            keys: [:email, :password, :password_confirmation, :invitation_code,
-                                                   { person_attributes: %i[identifier name description] }])
-        end
-
-        def person_params
-          user_params = params[:user] || params.dig(:registration, :user)
-          return {} unless user_params && user_params[:person_attributes]
-
-          user_params = user_params.to_unsafe_h if user_params.is_a?(ActionController::Parameters)
-          ActionController::Parameters.new(user_params)
-                                      .require(:person_attributes)
-                                      .permit(%i[identifier name description])
-        rescue ActionController::ParameterMissing => e
-          Rails.logger.error "Missing person parameters: #{e.message}"
-          {}
-        end
-
         def after_inactive_sign_up_path_for(resource); end
 
         def after_sign_up_path_for(resource); end
 
-        # Validate platform invitation requirement for API registrations
-        def validate_invitation_requirement
-          return unless helpers.host_platform&.requires_invitation?
+        private
 
-          invitation_code = params.dig(:user, :invitation_code) || params[:invitation_code]
-          return if invitation_code.present? && valid_invitation_code?(invitation_code)
+        def register_user! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+          build_resource(sign_up_params)
 
-          render json: {
-            error: I18n.t('devise.registrations.invitation_required',
-                          default: 'Registration requires a valid invitation code')
-          }, status: :forbidden
+          # Setup user from invitations before saving (matches parent)
+          setup_user_from_invitations(resource)
+          resource.build_person(person_params) unless resource.person
+
+          resource.save
+          yield resource if block_given?
+
+          return handle_successful_registration if registration_successful?
+          return rollback_persisted_with_errors if resource.persisted?
+
+          handle_failed_registration
         end
 
-        # Check if invitation code is valid
-        def valid_invitation_code?(code)
-          BetterTogether::Invitation.pending.not_expired.exists?(token: code)
+        def registration_successful?
+          resource.persisted? && resource.errors.empty?
         end
 
-        # Load invitations from request params instead of session (API is stateless)
-        def load_invitations_from_params
-          invitation_code = params.dig(:user, :invitation_code) || params[:invitation_code]
-          return unless invitation_code.present?
+        def rollback_persisted_with_errors
+          # User was created but has errors - rollback to maintain consistency
+          raise ActiveRecord::Rollback
+        end
 
-          invitation = BetterTogether::Invitation.pending.not_expired.find_by(token: invitation_code)
-          return unless invitation
+        def handle_successful_registration
+          # Handle post-registration setup (matches parent behavior)
+          handle_user_creation(resource)
+          send_confirmation_if_needed(resource)
+          render_signed_up_response(resource)
+        end
 
-          # Determine type and store in instance variables for use during registration
-          case invitation
-          when BetterTogether::CommunityInvitation
-            @community_invitation = invitation
-          when BetterTogether::EventInvitation
-            @event_invitation = invitation
-          when BetterTogether::PlatformInvitation
-            @platform_invitation = invitation
+        def send_confirmation_if_needed(resource)
+          return unless resource.respond_to?(:send_confirmation_instructions) &&
+                        resource.respond_to?(:confirmation_sent_at) &&
+                        resource.confirmation_sent_at.blank?
+
+          resource.send_confirmation_instructions
+        end
+
+        def render_signed_up_response(resource)
+          if resource.active_for_authentication?
+            sign_up(resource_name, resource)
+            render json: signed_up_payload(resource, I18n.t('devise.registrations.signed_up')),
+                   status: :created
+          else
+            expire_data_after_sign_in!
+            render json: signed_up_payload(resource, I18n.t('devise.registrations.signed_up_but_inactive')),
+                   status: :created
           end
+        end
+
+        def signed_up_payload(resource, message)
+          {
+            message:,
+            data: {
+              type: 'users',
+              id: resource.id,
+              attributes: {
+                email: resource.email,
+                confirmed: resource.confirmed_at.present?
+              }
+            }
+          }
+        end
+
+        def handle_failed_registration
+          clean_up_passwords resource
+          set_minimum_password_length
+          render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
         end
       end
     end

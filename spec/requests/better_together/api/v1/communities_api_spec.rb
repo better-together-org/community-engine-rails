@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth, type: :request do
+RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
   let(:user) { create(:better_together_user, :confirmed) }
   let(:person) { user.person }
   let(:token) { api_sign_in_and_get_token(user) }
@@ -127,7 +127,9 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth, type: :request 
     end
 
     context 'when authenticated with permission' do
-      before do
+      before { post url, params: valid_params.to_json, headers: platform_manager_headers }
+
+      it 'verifies platform manager permissions' do
         expect(platform_manager_token).to be_present
         expect(platform_manager_user.permitted_to?('manage_platform')).to be(true)
 
@@ -148,27 +150,9 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth, type: :request 
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
         expect(json.dig('data', 'id')).to eq(platform_manager_user.person.id)
-
-        post url, params: valid_params.to_json, headers: platform_manager_headers
       end
 
       it 'creates a new community' do
-        if response.status != 201
-          puts "\n=== DEBUG INFO ==="
-          puts "Response status: #{response.status}"
-          json = begin
-            JSON.parse(response.body)
-          rescue StandardError
-            nil
-          end
-          if json && json['errors']
-            puts "Errors: #{json['errors'].map { |e| e['detail'] }.join(', ')}"
-            puts "Full error: #{json['errors'].first.inspect}" if json['errors'].first
-          else
-            puts "Response body: #{response.body}"
-          end
-          puts "==================\n"
-        end
         expect(response).to have_http_status(:created)
       end
 

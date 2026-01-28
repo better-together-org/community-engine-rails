@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'API Security - Password Exposure Prevention', :no_auth, type: :request do
+RSpec.describe 'API Security - Password Exposure Prevention', :no_auth do
   let(:user) { create(:better_together_user, :confirmed, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
   let(:person) { user.person }
   let(:token) { api_sign_in_and_get_token(user) }
@@ -135,12 +135,10 @@ RSpec.describe 'API Security - Password Exposure Prevention', :no_auth, type: :r
         json = JSON.parse(response.body)
 
         # Errors might be present, but they shouldn't include the actual password value
-        if json['errors']
-          json['errors'].each do |error|
-            next if error['detail'].nil?
+        json['errors']&.each do |error|
+          next if error['detail'].nil?
 
-            expect(error['detail']).not_to include('SecureTest123!@#')
-          end
+          expect(error['detail']).not_to include('SecureTest123!@#')
         end
       end
     end

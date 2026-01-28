@@ -18,8 +18,8 @@ module BetterTogether
       before_action :authenticate_user!
 
       # Override JSONAPI's handle_exceptions to convert Pundit errors to 404
-      def handle_exceptions(e)
-        case e
+      def handle_exceptions(exception)
+        case exception
         when Pundit::NotAuthorizedError
           # Return 404 instead of 403 for security (don't reveal resource existence)
           errors = [JSONAPI::Error.new(
