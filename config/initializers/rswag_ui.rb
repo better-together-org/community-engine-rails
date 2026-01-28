@@ -10,7 +10,11 @@ Rswag::Ui.configure do |c|
   # NOTE: If you're using rspec-api to expose Swagger files (under swagger_root) as JSON or YAML endpoints,
   # then the list below should correspond to the relative paths for those endpoints
 
-  c.openapi_endpoint '/bt/api/docs/v1/swagger.yaml', 'Community Engine API V1 Docs'
+  # Full path accounts for BetterTogether.route_scope_path and the /api/docs mount point
+  # When route_scope_path is empty, this becomes '/api/docs/v1/swagger.yaml'
+  # When route_scope_path is '/bt', this becomes '/bt/api/docs/v1/swagger.yaml'
+  scope_path = BetterTogether.route_scope_path.present? ? BetterTogether.route_scope_path : ''
+  c.openapi_endpoint "#{scope_path}/api/docs/v1/swagger.yaml", 'Community Engine API V1 Docs'
 
   # Add Basic Auth in case your API is private
   # c.basic_auth_enabled = true

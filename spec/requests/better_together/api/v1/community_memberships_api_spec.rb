@@ -16,7 +16,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
   let(:member_role) { create(:better_together_role, :community_role) }
 
   describe 'GET /api/v1/person_community_memberships' do
-    let(:url) { '/en/api/v1/person_community_memberships' }
+    let(:url) { '/api/v1/person_community_memberships' }
     let!(:user_membership) do
       create(:better_together_person_community_membership,
              member: person,
@@ -76,7 +76,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
              joinable: community,
              role: member_role)
     end
-    let(:url) { "/en/api/v1/person_community_memberships/#{membership.id}" }
+    let(:url) { "/api/v1/person_community_memberships/#{membership.id}" }
 
     context 'when viewing own membership' do
       before { get url, headers: auth_headers }
@@ -104,7 +104,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
                joinable: other_community,
                role: create(:better_together_role, :community_role))
       end
-      let(:url) { "/en/api/v1/person_community_memberships/#{other_membership.id}" }
+      let(:url) { "/api/v1/person_community_memberships/#{other_membership.id}" }
 
       before { get url, headers: auth_headers }
 
@@ -124,7 +124,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
   end
 
   describe 'POST /api/v1/person_community_memberships' do
-    let(:url) { '/en/api/v1/person_community_memberships' }
+    let(:url) { '/api/v1/person_community_memberships' }
     let(:new_person) { create(:better_together_person) }
     let(:valid_params) do
       {
@@ -190,7 +190,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
              role: member_role,
              status: 'pending')
     end
-    let(:url) { "/en/api/v1/person_community_memberships/#{membership.id}" }
+    let(:url) { "/api/v1/person_community_memberships/#{membership.id}" }
     let(:update_params) do
       {
         data: {
@@ -241,7 +241,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
              joinable: community,
              role: member_role)
     end
-    let(:url) { "/en/api/v1/person_community_memberships/#{membership.id}" }
+    let(:url) { "/api/v1/person_community_memberships/#{membership.id}" }
 
     context 'when user leaves own community' do
       before { delete url, headers: auth_headers }
@@ -262,7 +262,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
                joinable: community,
                role: member_role)
       end
-      let(:url) { "/en/api/v1/person_community_memberships/#{other_membership.id}" }
+      let(:url) { "/api/v1/person_community_memberships/#{other_membership.id}" }
 
       before { delete url, headers: platform_manager_headers }
 
@@ -281,7 +281,7 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
                joinable: community,
                role: member_role)
       end
-      let(:url) { "/en/api/v1/person_community_memberships/#{other_membership.id}" }
+      let(:url) { "/api/v1/person_community_memberships/#{other_membership.id}" }
 
       before { delete url, headers: auth_headers }
 

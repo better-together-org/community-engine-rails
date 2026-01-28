@@ -20,5 +20,8 @@ scope path: BetterTogether.route_scope_path do
                  passwords: 'better_together/api/auth/passwords',
                  confirmations: 'better_together/api/auth/confirmations'
                }
+
+    draw :api_v1
+    draw :api_docs
   end
 end

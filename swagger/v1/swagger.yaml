@@ -3,105 +3,228 @@ openapi: 3.0.1
 info:
   title: Community Engine API
   version: v1
+  description: |
+    Better Together Community Engine REST API
+
+    ## Authentication
+
+    Most endpoints require JWT authentication via Bearer token in the Authorization header.
+    See the Authentication section for how to obtain tokens via sign-in.
 paths:
-  "/bt/api/v1/communities":
+  "/api/auth/sign-up":
     post:
-      summary: Create a community
+      summary: Register a new user account
       tags:
-      - Communities
-      parameters: []
+      - Authentication
+      description: "Creates a new user account with email/password authentication.\nRequires
+        acceptance of platform agreements (privacy policy, terms of service, code
+        of conduct).\nSends a confirmation email to verify the email address.\n\n**Localization:**
+        The API accepts an `Accept-Language` header to control the language \nof error
+        messages and email content. Supported locales: en, es, fr, uk. Defaults to
+        English.\n\n**Note:** Users must confirm their email before they can sign
+        in.\n"
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        enum:
+        - en
+        - fr
+        - es
+        - uk
+        description: "Preferred language for error messages and emails (optional):\n
+          * `en` \n * `fr` \n * `es` \n * `uk` \n "
+        example: en
+        schema:
+          type: string
       responses:
         '201':
-          description: community created
-          content: {}
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Successful registration response
+                properties:
+                  message:
+                    type: string
+                    example: Welcome! You have signed up successfully.
+                    description: Success message
+                  data:
+                    type: object
+                    description: User data (JSONAPI format)
+                    properties:
+                      type:
+                        type: string
+                        example: users
+                        description: Resource type
+                      id:
+                        type: string
+                        format: uuid
+                        example: 550e8400-e29b-41d4-a716-446655440000
+                        description: User UUID
+                      attributes:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                            example: newuser@example.com
+                            description: User email address
+                          confirmed:
+                            type: boolean
+                            example: false
+                            description: Email confirmation status (false until user
+                              clicks confirmation link)
+                    required:
+                    - type
+                    - id
+                    - attributes
+                required:
+                - message
+                - data
         '422':
-          description: invalid request
-          content: {}
+          description: Missing required field (email)
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ValidationErrors"
+                type: object
+                description: Validation error response
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    description: Array of validation error messages (localized)
+                required:
+                - errors
+              examples:
+                example_0:
+                  value:
+                    en:
+                      errors:
+                      - Email can't be blank
+                    es:
+                      errors:
+                      - El correo electrónico no puede estar en blanco
+                    fr:
+                      errors:
+                      - L'email ne peut pas être vide
+                    uk:
+                      errors:
+                      - Email не може бути порожнім
       requestBody:
         content:
-          application/vnd.api+json:
+          application/json:
             schema:
               type: object
               properties:
-                name:
+                user:
+                  type: object
+                  description: User credentials and profile information
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      example: newuser@example.com
+                      description: User email address (must be unique)
+                    password:
+                      type: string
+                      format: password
+                      minLength: 8
+                      example: "!SecurePass12345?"
+                      description: Password (minimum 8 characters, mix of letters,
+                        numbers, symbols recommended)
+                    password_confirmation:
+                      type: string
+                      format: password
+                      example: "!SecurePass12345?"
+                      description: Password confirmation (must match password)
+                    person_attributes:
+                      type: object
+                      description: Associated person profile information
+                      properties:
+                        name:
+                          type: string
+                          example: John Doe
+                          description: Display name for the person
+                        identifier:
+                          type: string
+                          example: john-doe
+                          description: Unique URL-friendly identifier
+                        description:
+                          type: string
+                          example: Software developer and community organizer
+                          description: Brief bio or description (optional)
+                      required:
+                      - name
+                      - identifier
+                  required:
+                  - email
+                  - password
+                  - password_confirmation
+                  - person_attributes
+                privacy_policy_agreement:
                   type: string
-              required:
-              - name
-              - description
-  "/bt/api/v1/community_memberships":
-    post:
-      summary: Create a community_membership
-      tags:
-      - Community Memberships
-      parameters: []
-      responses:
-        '201':
-          description: community_membership created
-          content: {}
-        '500':
-          description: invalid request
-          content: {}
-      requestBody:
-        content:
-          application/vnd.api+json:
-            schema:
-              type: object
-              properties:
-                name:
+                  enum:
+                  - '0'
+                  - '1'
+                  example: '1'
+                  description: Acceptance of privacy policy (1 = accepted)
+                terms_of_service_agreement:
                   type: string
-              required:
-              - name
-              - description
-  "/bt/api/v1/people":
-    post:
-      summary: Create a person
-      tags:
-      - People
-      parameters: []
-      responses:
-        '201':
-          description: person created
-          content: {}
-        '422':
-          description: invalid request
-          content: {}
-      requestBody:
-        content:
-          application/vnd.api+json:
-            schema:
-              type: object
-              properties:
-                name:
+                  enum:
+                  - '0'
+                  - '1'
+                  example: '1'
+                  description: Acceptance of terms of service (1 = accepted)
+                code_of_conduct_agreement:
                   type: string
+                  enum:
+                  - '0'
+                  - '1'
+                  example: '1'
+                  description: Acceptance of code of conduct (1 = accepted)
               required:
-              - name
-              - description
-  "/bt/api/v1/roles":
-    post:
-      summary: Create a role
-      tags:
-      - Roles
-      parameters: []
-      responses:
-        '201':
-          description: role created
-          content: {}
-        '422':
-          description: invalid request
-          content: {}
-      requestBody:
-        content:
-          application/vnd.api+json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-              required:
-              - name
-              - description
+              - user
+              - privacy_policy_agreement
+              - terms_of_service_agreement
+              - code_of_conduct_agreement
+        required: true
 servers:
-- url: https://{defaultHost}
-  variables:
-    defaultHost:
-      default: api.bebettertogether.ca
+- url: http://localhost:3000
+  description: Platform server
+components:
+  schemas:
+    ValidationErrors:
+      type: object
+      description: Standard validation error response format
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+          description: Array of human-readable error messages
+          example:
+          - Email can't be blank
+          - Password is too short
+    User:
+      type: object
+      description: User account with authentication credentials
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique user identifier
+        email:
+          type: string
+          format: email
+          description: User email address
+        created_at:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+      required:
+      - id
+      - email
+      - created_at

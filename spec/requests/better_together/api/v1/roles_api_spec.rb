@@ -12,7 +12,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
   describe 'GET /api/v1/roles' do
-    let(:url) { '/en/api/v1/roles' }
+    let(:url) { '/api/v1/roles' }
     # Use existing roles created by automatic test setup to avoid uniqueness violations
     let!(:platform_role) do
       BetterTogether::Role.find_or_create_by!(identifier: 'platform_manager') do |role|
@@ -95,7 +95,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
         r.protected = true
       end
     end
-    let(:url) { "/en/api/v1/roles/#{role.id}" }
+    let(:url) { "/api/v1/roles/#{role.id}" }
 
     context 'when authenticated as platform manager' do
       before { get url, headers: platform_manager_headers }
@@ -135,7 +135,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
           r.protected = false
         end
       end
-      let(:url) { "/en/api/v1/roles/#{community_role.id}" }
+      let(:url) { "/api/v1/roles/#{community_role.id}" }
 
       before do
         # Make user a member so they can see the role
@@ -161,7 +161,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
           r.protected = false
         end
       end
-      let(:url) { "/en/api/v1/roles/#{private_role.id}" }
+      let(:url) { "/api/v1/roles/#{private_role.id}" }
 
       before { get url, headers: auth_headers }
 
@@ -180,7 +180,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
   end
 
   describe 'POST /api/v1/roles' do
-    let(:url) { '/en/api/v1/roles' }
+    let(:url) { '/api/v1/roles' }
     let(:valid_params) do
       {
         data: {
@@ -212,7 +212,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
         r.protected = true
       end
     end
-    let(:url) { "/en/api/v1/roles/#{role.id}" }
+    let(:url) { "/api/v1/roles/#{role.id}" }
     let(:update_params) do
       {
         data: {
@@ -242,7 +242,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
         r.protected = true
       end
     end
-    let(:url) { "/en/api/v1/roles/#{role.id}" }
+    let(:url) { "/api/v1/roles/#{role.id}" }
 
     context 'when attempting to delete role' do
       before { delete url, headers: platform_manager_headers }
@@ -261,7 +261,7 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
           r.protected = true
         end
       end
-      let(:url) { "/en/api/v1/roles/#{protected_role.id}" }
+      let(:url) { "/api/v1/roles/#{protected_role.id}" }
 
       before { delete url, headers: platform_manager_headers }
 

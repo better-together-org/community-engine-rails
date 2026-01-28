@@ -12,7 +12,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
   describe 'GET /api/v1/people' do
-    let(:url) { '/en/api/v1/people' }
+    let(:url) { '/api/v1/people' }
     let!(:public_person) { create(:better_together_person, privacy: 'public') }
     let!(:private_person) { create(:better_together_person, privacy: 'private') }
 
@@ -80,7 +80,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
   end
 
   describe 'GET /api/v1/people/:id' do
-    let(:url) { "/en/api/v1/people/#{public_person.id}" }
+    let(:url) { "/api/v1/people/#{public_person.id}" }
     let(:public_person) { create(:better_together_person, privacy: 'public') }
 
     context 'when authenticated' do
@@ -112,7 +112,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
 
     context 'when viewing private person without permission' do
       let(:private_person) { create(:better_together_person, privacy: 'private') }
-      let(:url) { "/en/api/v1/people/#{private_person.id}" }
+      let(:url) { "/api/v1/people/#{private_person.id}" }
 
       before { get url, headers: auth_headers }
 
@@ -124,7 +124,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
     end
 
     context 'when viewing own profile' do
-      let(:url) { "/en/api/v1/people/#{person.id}" }
+      let(:url) { "/api/v1/people/#{person.id}" }
 
       before { get url, headers: auth_headers }
 
@@ -144,7 +144,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
   end
 
   describe 'GET /api/v1/people/me' do
-    let(:url) { '/en/api/v1/people/me' }
+    let(:url) { '/api/v1/people/me' }
 
     context 'when authenticated' do
       before { get url, headers: auth_headers }
@@ -171,7 +171,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
   end
 
   describe 'POST /api/v1/people' do
-    let(:url) { '/en/api/v1/people' }
+    let(:url) { '/api/v1/people' }
     let(:valid_params) do
       {
         data: {
@@ -211,7 +211,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
   end
 
   describe 'PATCH /api/v1/people/:id' do
-    let(:url) { "/en/api/v1/people/#{person.id}" }
+    let(:url) { "/api/v1/people/#{person.id}" }
     let(:update_params) do
       {
         data: {
@@ -238,7 +238,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
 
     context 'when updating another person without permission' do
       let(:other_person) { create(:better_together_person) }
-      let(:url) { "/en/api/v1/people/#{other_person.id}" }
+      let(:url) { "/api/v1/people/#{other_person.id}" }
 
       before do
         update_params[:data][:id] = other_person.id
@@ -254,7 +254,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
   end
 
   describe 'DELETE /api/v1/people/:id' do
-    let(:url) { "/en/api/v1/people/#{person.id}" }
+    let(:url) { "/api/v1/people/#{person.id}" }
 
     context 'when not authorized' do
       before { delete url, headers: auth_headers }

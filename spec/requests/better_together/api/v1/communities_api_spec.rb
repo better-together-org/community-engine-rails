@@ -13,7 +13,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
   describe 'GET /api/v1/communities' do
-    let(:url) { '/en/api/v1/communities' }
+    let(:url) { '/api/v1/communities' }
     let!(:public_community) { create(:better_together_community, privacy: 'public') }
     let!(:private_community) { create(:better_together_community, privacy: 'private') }
 
@@ -66,7 +66,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
 
   describe 'GET /api/v1/communities/:id' do
     let(:community) { create(:better_together_community, privacy: 'public') }
-    let(:url) { "/en/api/v1/communities/#{community.id}" }
+    let(:url) { "/api/v1/communities/#{community.id}" }
 
     context 'when authenticated' do
       before { get url, headers: auth_headers }
@@ -92,7 +92,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
 
     context 'when viewing private community without access' do
       let(:private_community) { create(:better_together_community, privacy: 'private') }
-      let(:url) { "/en/api/v1/communities/#{private_community.id}" }
+      let(:url) { "/api/v1/communities/#{private_community.id}" }
 
       before { get url, headers: auth_headers }
 
@@ -112,7 +112,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
   end
 
   describe 'POST /api/v1/communities' do
-    let(:url) { '/en/api/v1/communities' }
+    let(:url) { '/api/v1/communities' }
     let(:valid_params) do
       {
         data: {
@@ -146,7 +146,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
           BetterTogether::Person.find(platform_manager_user.person.id).permitted_to?('create_community')
         ).to be(true)
 
-        get '/en/api/v1/people/me', headers: platform_manager_headers
+        get '/api/v1/people/me', headers: platform_manager_headers
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
         expect(json.dig('data', 'id')).to eq(platform_manager_user.person.id)
@@ -189,7 +189,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
   describe 'PATCH /api/v1/communities/:id' do
     let(:community) { create(:better_together_community, creator: platform_manager_user.person) }
     let(:resource_id) { community.id }
-    let(:url) { "/en/api/v1/communities/#{community.id}" }
+    let(:url) { "/api/v1/communities/#{community.id}" }
     let(:update_params) do
       {
         data: {
@@ -219,7 +219,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
     context 'when updating without permission' do
       let(:other_community) { create(:better_together_community) }
       let(:resource_id) { other_community.id }
-      let(:url) { "/en/api/v1/communities/#{other_community.id}" }
+      let(:url) { "/api/v1/communities/#{other_community.id}" }
 
       before { patch url, params: update_params.to_json, headers: auth_headers }
 
@@ -232,7 +232,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
 
   describe 'DELETE /api/v1/communities/:id' do
     let(:community) { create(:better_together_community, creator: platform_manager_user.person) }
-    let(:url) { "/en/api/v1/communities/#{community.id}" }
+    let(:url) { "/api/v1/communities/#{community.id}" }
 
     context 'when deleting with permission' do
       before { delete url, headers: platform_manager_headers }
@@ -248,7 +248,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
 
     context 'when deleting without permission' do
       let(:other_community) { create(:better_together_community) }
-      let(:url) { "/en/api/v1/communities/#{other_community.id}" }
+      let(:url) { "/api/v1/communities/#{other_community.id}" }
 
       before { delete url, headers: auth_headers }
 
@@ -260,7 +260,7 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
 
     context 'when deleting protected community' do
       let(:protected_community) { create(:better_together_community, protected: true, creator: platform_manager_user.person) }
-      let(:url) { "/en/api/v1/communities/#{protected_community.id}" }
+      let(:url) { "/api/v1/communities/#{protected_community.id}" }
 
       before { delete url, headers: platform_manager_headers }
 

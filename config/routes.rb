@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'sidekiq/web'
+require 'rswag/ui'
+require 'rswag/api'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
@@ -21,9 +23,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
     # bt base path
     scope path: BetterTogether.route_scope_path do # rubocop:todo Metrics/BlockLength
-      # API v1 resource routes (locale-aware for I18n error messages)
-      draw :api_v1
-
       # Aug 2nd 2024: Inherit from blank devise controllers to fix issue generating locale paths for devise
       # https://github.com/heartcombo/devise/issues/4282#issuecomment-259706108
       # Uncomment unlocks if/when used
@@ -441,7 +440,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
   # API Authentication routes (JSON-only, no locale requirement)
   # Placed after localized routes to ensure proper controller resolution
-  draw :api_auth
+  draw :api
 
   # Only allow authenticated users to get access
   # to the Sidekiq web interface

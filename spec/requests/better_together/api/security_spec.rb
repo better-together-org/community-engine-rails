@@ -68,7 +68,7 @@ RSpec.describe 'API Security - Password Exposure Prevention', :no_auth do
   describe 'User resource endpoints' do
     context 'GET /api/v1/people (list)' do
       it 'does not expose password fields for any user' do
-        get '/en/api/v1/people', headers: auth_headers
+        get '/api/v1/people', headers: auth_headers
 
         json = JSON.parse(response.body)
 
@@ -82,7 +82,7 @@ RSpec.describe 'API Security - Password Exposure Prevention', :no_auth do
 
     context 'GET /api/v1/people/:id (show)' do
       it 'does not expose password fields' do
-        get "/en/api/v1/people/#{person.id}", headers: auth_headers
+        get "/api/v1/people/#{person.id}", headers: auth_headers
 
         json = JSON.parse(response.body)
 
@@ -94,7 +94,7 @@ RSpec.describe 'API Security - Password Exposure Prevention', :no_auth do
 
     context 'GET /api/v1/people/me' do
       it 'does not expose password fields in own profile' do
-        get '/en/api/v1/people/me', headers: auth_headers
+        get '/api/v1/people/me', headers: auth_headers
 
         json = JSON.parse(response.body)
 
@@ -147,7 +147,7 @@ RSpec.describe 'API Security - Password Exposure Prevention', :no_auth do
   describe 'Included relationships' do
     context 'when person includes user relationship' do
       it 'does not expose password fields in included user data' do
-        get "/en/api/v1/people/#{person.id}?include=user", headers: auth_headers
+        get "/api/v1/people/#{person.id}?include=user", headers: auth_headers
 
         json = JSON.parse(response.body)
 
