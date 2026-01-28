@@ -13,106 +13,66 @@ info:
 paths:
   "/api/auth/sign-up":
     post:
-      summary: Register a new user account
+      summary: Create a new user account
       tags:
       - Authentication
-      description: "Creates a new user account with email/password authentication.\nRequires
-        acceptance of platform agreements (privacy policy, terms of service, code
-        of conduct).\nSends a confirmation email to verify the email address.\n\n**Localization:**
-        The API accepts an `Accept-Language` header to control the language \nof error
-        messages and email content. Supported locales: en, es, fr, uk. Defaults to
-        English.\n\n**Note:** Users must confirm their email before they can sign
-        in.\n"
+      description: Register a new user account with email and password. Requires acceptance
+        of platform agreements.
       parameters:
       - name: Accept-Language
         in: header
         required: false
-        enum:
-        - en
-        - fr
-        - es
-        - uk
-        description: "Preferred language for error messages and emails (optional):\n
-          * `en` \n * `fr` \n * `es` \n * `uk` \n "
+        description: Preferred language for error messages
         example: en
         schema:
           type: string
       responses:
         '201':
-          description: User created successfully
+          description: user created successfully
           content:
             application/json:
               schema:
                 type: object
-                description: Successful registration response
                 properties:
                   message:
                     type: string
-                    example: Welcome! You have signed up successfully.
-                    description: Success message
+                    description: Confirmation message about account status
                   data:
                     type: object
-                    description: User data (JSONAPI format)
                     properties:
                       type:
                         type: string
                         example: users
-                        description: Resource type
                       id:
                         type: string
                         format: uuid
-                        example: 550e8400-e29b-41d4-a716-446655440000
-                        description: User UUID
                       attributes:
                         type: object
                         properties:
                           email:
                             type: string
-                            example: newuser@example.com
-                            description: User email address
+                            format: email
                           confirmed:
                             type: boolean
-                            example: false
-                            description: Email confirmation status (false until user
-                              clicks confirmation link)
-                    required:
-                    - type
-                    - id
-                    - attributes
+                            description: Whether email is confirmed (false for new
+                              accounts)
                 required:
                 - message
                 - data
         '422':
-          description: Missing required field (email)
+          description: missing agreements
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/ValidationErrors"
                 type: object
-                description: Validation error response
                 properties:
                   errors:
                     type: array
                     items:
                       type: string
-                    description: Array of validation error messages (localized)
+                    description: Array of validation error messages
                 required:
                 - errors
-              examples:
-                example_0:
-                  value:
-                    en:
-                      errors:
-                      - Email can't be blank
-                    es:
-                      errors:
-                      - El correo electrónico no puede estar en blanco
-                    fr:
-                      errors:
-                      - L'email ne peut pas être vide
-                    uk:
-                      errors:
-                      - Email не може бути порожнім
       requestBody:
         content:
           application/json:
@@ -121,41 +81,33 @@ paths:
               properties:
                 user:
                   type: object
-                  description: User credentials and profile information
                   properties:
                     email:
                       type: string
                       format: email
-                      example: newuser@example.com
-                      description: User email address (must be unique)
+                      description: User email address
                     password:
                       type: string
                       format: password
+                      description: User password (minimum 8 characters, must include
+                        uppercase, lowercase, and special characters)
                       minLength: 8
-                      example: "!SecurePass12345?"
-                      description: Password (minimum 8 characters, mix of letters,
-                        numbers, symbols recommended)
                     password_confirmation:
                       type: string
                       format: password
-                      example: "!SecurePass12345?"
                       description: Password confirmation (must match password)
                     person_attributes:
                       type: object
-                      description: Associated person profile information
                       properties:
                         name:
                           type: string
-                          example: John Doe
-                          description: Display name for the person
+                          description: Display name for the user
                         identifier:
                           type: string
-                          example: john-doe
-                          description: Unique URL-friendly identifier
+                          description: Unique identifier/username for the user
                         description:
                           type: string
-                          example: Software developer and community organizer
-                          description: Brief bio or description (optional)
+                          description: Optional profile description
                       required:
                       - name
                       - identifier
@@ -166,35 +118,206 @@ paths:
                   - person_attributes
                 privacy_policy_agreement:
                   type: string
+                  description: Must be "1" to indicate acceptance
                   enum:
-                  - '0'
                   - '1'
-                  example: '1'
-                  description: Acceptance of privacy policy (1 = accepted)
                 terms_of_service_agreement:
                   type: string
+                  description: Must be "1" to indicate acceptance
                   enum:
-                  - '0'
                   - '1'
-                  example: '1'
-                  description: Acceptance of terms of service (1 = accepted)
                 code_of_conduct_agreement:
                   type: string
+                  description: Must be "1" to indicate acceptance
                   enum:
-                  - '0'
                   - '1'
-                  example: '1'
-                  description: Acceptance of code of conduct (1 = accepted)
               required:
               - user
               - privacy_policy_agreement
               - terms_of_service_agreement
               - code_of_conduct_agreement
         required: true
+  "/api/auth/sign-in":
+    post:
+      summary: Sign in to obtain JWT token
+      tags:
+      - Authentication
+      description: Authenticate with email and password to receive a JWT token for
+        subsequent API requests
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        description: Preferred language for error messages
+        example: en
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: sessions
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                            format: email
+                          token:
+                            type: string
+                            description: JWT token for authentication
+                          confirmed:
+                            type: boolean
+                            description: Whether email is confirmed
+                      relationships:
+                        type: object
+                        properties:
+                          person:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                nullable: true
+                                properties:
+                                  type:
+                                    type: string
+                                    example: people
+                                  id:
+                                    type: string
+                                    format: uuid
+                  included:
+                    type: array
+                    description: Related resources (person profile if exists)
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: people
+                        id:
+                          type: string
+                          format: uuid
+                        attributes:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            identifier:
+                              type: string
+                            privacy:
+                              type: string
+                            locale:
+                              type: string
+                            time_zone:
+                              type: string
+                required:
+                - data
+        '401':
+          description: unconfirmed account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message describing authentication failure
+                required:
+                - error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      description: User email address
+                    password:
+                      type: string
+                      format: password
+                      description: User password
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+        required: true
+  "/api/auth/sign-out":
+    delete:
+      summary: Sign out and invalidate JWT token
+      tags:
+      - Authentication
+      description: Sign out from the current session. Requires a valid JWT token in
+        the Authorization header.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        description: Preferred language for error messages
+        example: en
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successfully signed out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Logout success message
+                required:
+                - message
+        '401':
+          description: missing authorization header
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating missing authentication
+                required:
+                - error
 servers:
 - url: http://localhost:3000
   description: Platform server
 components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from sign-in endpoint
   schemas:
     ValidationErrors:
       type: object

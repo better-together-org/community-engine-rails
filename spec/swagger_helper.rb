@@ -45,6 +45,14 @@ RSpec.configure do |config|
          end)
       ].compact,
       components: {
+        securitySchemes: {
+          bearer_auth: {
+            type: :http,
+            scheme: :bearer,
+            bearerFormat: 'JWT',
+            description: 'JWT token obtained from sign-in endpoint'
+          }
+        },
         schemas: {
           ValidationErrors: {
             type: :object,
