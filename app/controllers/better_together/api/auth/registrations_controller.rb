@@ -19,7 +19,7 @@ module BetterTogether
         # rubocop:todo Metrics/PerceivedComplexity
         # rubocop:todo Metrics/MethodLength
         # rubocop:todo Metrics/AbcSize
-        def create # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        def create(&) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
           # Check agreements acceptance (matches parent behavior)
           unless agreements_accepted?
             build_resource(sign_up_params)
@@ -36,7 +36,7 @@ module BetterTogether
           end
 
           # Use transaction for all user creation and associated records (matches parent)
-          ActiveRecord::Base.transaction { register_user!(&block) }
+          ActiveRecord::Base.transaction { register_user!(&) }
         rescue ActiveRecord::RecordInvalid, ActiveRecord::InvalidForeignKey => e
           # Clean up and show user-friendly error
           Rails.logger.error "API Registration failed: #{e.message}"

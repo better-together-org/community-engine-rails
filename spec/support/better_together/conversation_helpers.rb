@@ -29,17 +29,32 @@ module BetterTogether
       # Then wait for SlimSelect Stimulus controller to initialize and create its wrapper
       expect(page).to have_css('.ss-main', wait: 5)
 
+      select_element = find('select[name="conversation[participant_ids][]"]', visible: :all)
+      ss_main = select_element.find(:xpath, 'following-sibling::div[contains(@class, "ss-main")]', visible: :all)
+
       participants.each_with_index do |participant, index|
-        # Open SlimSelect dropdown
-        find('.ss-main', match: :first).click
+        # Open SlimSelect dropdown for the participants select
+        ss_main.click
 
         # Prefer matching by name to align with select_option_title output
         option_matcher = Regexp.new(Regexp.escape(participant.name.to_s))
-        option = find('.ss-content .ss-list .ss-option', text: option_matcher, wait: 10)
+        content_id = ss_main[:'aria-controls']
+        ss_content = content_id.present? ? find("##{content_id}", visible: :all) : find('.ss-content', match: :first)
+        option = ss_content.find('.ss-option', text: option_matcher, wait: 10)
         option.click
 
+        # Ensure hidden select reflects the selection before submitting
+        selected_values = page.evaluate_script(<<~JS)
+          (function(){
+            var select = document.querySelector('select[name="conversation[participant_ids][]"]');
+            if (!select) return [];
+            return Array.from(select.selectedOptions).map(function(opt){ return opt.value; });
+          })();
+        JS
+        expect(selected_values).to include(participant.id)
+
         # SlimSelect closes after selection; reopen for the next participant
-        find('.ss-main', match: :first).click if index < participants.length - 1
+        ss_main.click if index < participants.length - 1
       end
 
       # Give the widget a moment to update (widget reflects selections visually)
