@@ -12,32 +12,34 @@ module BetterTogether
       include Pundit::Authorization
       include Pundit::ResourceController
 
-      protect_from_forgery with: :exception, unless: -> { request.format.json? }
+      protect_from_forgery with: :exception, unless: -> { request.format.json? || request.format == Mime[:jsonapi] }
 
       # Ensure authentication by default (controllers can skip if needed)
       before_action :authenticate_user!
 
-      # Ensure authorization is called on all actions
-      after_action :verify_authorized, except: :index, unless: :devise_controller?
-      after_action :verify_policy_scoped, only: :index, unless: :devise_controller?
-
-      # Handle authorization failures
-      rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+      # Override JSONAPI's handle_exceptions to convert Pundit errors to 404
+      def handle_exceptions(e)
+        case e
+        when Pundit::NotAuthorizedError
+          # Return 404 instead of 403 for security (don't reveal resource existence)
+          errors = [JSONAPI::Error.new(
+            code: JSONAPI::RECORD_NOT_FOUND,
+            status: :not_found,
+            title: 'Record not found',
+            detail: "The record identified by #{params[:id]} could not be found."
+          )]
+          response_document.add_result(JSONAPI::ErrorsOperationResult.new(404, errors), nil)
+        else
+          super
+        end
+      end
 
       private
 
-      # Render authorization error in JSONAPI format
-      def user_not_authorized
-        render jsonapi_errors: [{
-          title: 'Not Authorized',
-          detail: 'You are not authorized to perform this action',
-          status: '403'
-        }], status: :forbidden
-      end
-
-      # Provide context to JSONAPI resources and Pundit policies
-      def context
-        { user: current_user, agent: current_user&.person }
+      # Pundit needs this method to get the current user for policy initialization
+      # This method is called by Pundit to determine who to pass as the first argument to policies
+      def pundit_user
+        current_user
       end
 
       # Check if this is a Devise controller (auth endpoints)

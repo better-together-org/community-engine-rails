@@ -8,6 +8,33 @@ module BetterTogether
         respond_to :json
 
         skip_before_action :check_platform_privacy, raise: false
+        prepend_before_action :authenticate_user!, only: :destroy
+        skip_before_action :verify_signed_out_user, only: :destroy
+
+        def create
+          email = params.dig(:user, :email)
+          password = params.dig(:user, :password)
+
+          self.resource = resource_class.find_for_authentication(email:)
+
+          if resource&.valid_password?(password) && resource.active_for_authentication?
+            sign_in(resource_name, resource)
+            respond_with(resource)
+          else
+            render json: { error: I18n.t('devise.failure.invalid', authentication_keys: 'email') },
+                   status: :unauthorized
+          end
+        end
+
+        def destroy
+          unless request.headers['Authorization'].present?
+            return render json: { error: I18n.t('devise.failure.unauthenticated') }, status: :unauthorized
+          end
+
+          return render json: { error: I18n.t('devise.failure.unauthenticated') }, status: :unauthorized unless current_user
+
+          super
+        end
 
         protected
 

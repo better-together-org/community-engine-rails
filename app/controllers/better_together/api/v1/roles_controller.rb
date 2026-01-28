@@ -7,7 +7,7 @@ module BetterTogether
       # Provides API equivalent functionality to BetterTogether::RolesController
       # NOTE: HTML controller allows full CRUD for platform managers
       # API restricts to read-only operations - roles managed via HTML interface
-      class RolesController < JSONAPI::ResourceController
+      class RolesController < BetterTogether::Api::ApplicationController
         before_action :authenticate_user!
 
         # GET /api/v1/roles

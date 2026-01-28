@@ -49,6 +49,12 @@ module BetterTogether
               # Handle post-registration setup (matches parent behavior)
               handle_user_creation(resource)
 
+              if resource.respond_to?(:send_confirmation_instructions) &&
+                 resource.respond_to?(:confirmation_sent_at) &&
+                 resource.confirmation_sent_at.blank?
+                resource.send_confirmation_instructions
+              end
+
               if resource.active_for_authentication?
                 sign_up(resource_name, resource)
                 render json: {
@@ -98,6 +104,18 @@ module BetterTogether
 
         protected
 
+        def sign_up_params
+          user_params = params[:user] || params.dig(:registration, :user) || {}
+          user_params = user_params.to_unsafe_h if user_params.is_a?(ActionController::Parameters)
+          ActionController::Parameters.new(user_params).permit(
+            :email,
+            :password,
+            :password_confirmation,
+            :invitation_code,
+            person_attributes: %i[identifier name description]
+          )
+        end
+
         def configure_permitted_parameters
           # for user account creation i.e sign up
           devise_parameter_sanitizer.permit(:sign_up,
@@ -106,9 +124,13 @@ module BetterTogether
         end
 
         def person_params
-          return {} unless params[:user] && params[:user][:person_attributes]
+          user_params = params[:user] || params.dig(:registration, :user)
+          return {} unless user_params && user_params[:person_attributes]
 
-          params.require(:user).require(:person_attributes).permit(%i[identifier name description])
+          user_params = user_params.to_unsafe_h if user_params.is_a?(ActionController::Parameters)
+          ActionController::Parameters.new(user_params)
+                                      .require(:person_attributes)
+                                      .permit(%i[identifier name description])
         rescue ActionController::ParameterMissing => e
           Rails.logger.error "Missing person parameters: #{e.message}"
           {}

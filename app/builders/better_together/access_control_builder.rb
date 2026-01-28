@@ -133,6 +133,18 @@ module BetterTogether
             delete_community
             manage_community_roles
             invite_community_members
+          ],
+          'platform_manager' => %w[
+            read_community
+            list_community
+            create_community
+            update_community
+            delete_community
+            manage_community_settings
+            manage_community_content
+            manage_community_roles
+            manage_community_notifications
+            invite_community_members
           ]
           # Add more mappings as needed...
         }

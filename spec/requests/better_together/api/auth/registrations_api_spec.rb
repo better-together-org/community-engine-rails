@@ -2,19 +2,35 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
+RSpec.describe 'BetterTogether::Api::Auth::Registrations', :no_auth, type: :request do
+  include ActiveJob::TestHelper
+
   describe 'POST /api/auth/sign-up' do
     let(:url) { '/api/auth/sign-up' }
+    let(:agreement_params) do
+      {
+        privacy_policy_agreement: '1',
+        terms_of_service_agreement: '1',
+        code_of_conduct_agreement: '1'
+      }
+    end
+    let(:person_attributes) do
+      {
+        person_attributes: {
+          name: 'Test User',
+          identifier: 'test-user',
+          description: 'Test user description'
+        }
+      }
+    end
     let(:valid_params) do
       {
         user: {
           email: 'newuser@example.com',
           password: 'SecureTest123!@#',
           password_confirmation: 'SecureTest123!@#'
-        },
-        privacy_policy_agreement: '1',
-        terms_of_service_agreement: '1',
-        code_of_conduct_agreement: '1'
+        }.merge(person_attributes),
+        **agreement_params
       }
     end
 
@@ -56,7 +72,9 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
 
       it 'sends a confirmation email' do
         expect do
-          post url, params: valid_params, as: :json
+          perform_enqueued_jobs do
+            post url, params: valid_params, as: :json
+          end
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
 
         email = ActionMailer::Base.deliveries.last
@@ -71,7 +89,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
           user: {
             password: 'SecureTest123!@#',
             password_confirmation: 'SecureTest123!@#'
-          }
+          }.merge(person_attributes),
+          **agreement_params
         }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -83,7 +102,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
             user: {
               password: 'SecureTest123!@#',
               password_confirmation: 'SecureTest123!@#'
-            }
+            }.merge(person_attributes),
+            **agreement_params
           }, as: :json
         end.not_to change(BetterTogether::User, :count)
       end
@@ -96,7 +116,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
             email: 'not-an-email',
             password: 'SecureTest123!@#',
             password_confirmation: 'SecureTest123!@#'
-          }
+          }.merge(person_attributes),
+          **agreement_params
         }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -112,7 +133,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
             email: 'existing@example.com',
             password: 'SecureTest123!@#',
             password_confirmation: 'SecureTest123!@#'
-          }
+          }.merge(person_attributes),
+          **agreement_params
         }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -125,7 +147,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
               email: 'existing@example.com',
               password: 'SecureTest123!@#',
               password_confirmation: 'SecureTest123!@#'
-            }
+            }.merge(person_attributes),
+            **agreement_params
           }, as: :json
         end.not_to change(BetterTogether::User, :count)
       end
@@ -138,7 +161,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
             email: 'newuser@example.com',
             password: '12345',
             password_confirmation: '12345'
-          }
+          }.merge(person_attributes),
+          **agreement_params
         }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -152,7 +176,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', type: :request do
             email: 'newuser@example.com',
             password: 'SecureTest123!@#',
             password_confirmation: 'DifferentSecure!'
-          }
+          }.merge(person_attributes),
+          **agreement_params
         }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)

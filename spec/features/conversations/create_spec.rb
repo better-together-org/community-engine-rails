@@ -13,7 +13,10 @@ RSpec.describe 'creating a new conversation', :as_platform_manager, retry: 0 do
     capybara_login_as_platform_manager
 
     # Ensure this person can be messaged by members so they appear in permitted_participants
-    user.person.update!(preferences: (user.person.preferences || {}).merge('receive_messages_from_members' => true))
+    user.person.update!(
+      privacy: 'public',
+      preferences: (user.person.preferences || {}).merge('receive_messages_from_members' => true)
+    )
   end
 
   scenario 'between a platform manager and normal user', :js do

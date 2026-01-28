@@ -5,7 +5,7 @@ module BetterTogether
     module V1
       # JSONAPI resource for communities
       # Provides API equivalent functionality to BetterTogether::CommunitiesController
-      class CommunitiesController < JSONAPI::ResourceController
+      class CommunitiesController < BetterTogether::Api::ApplicationController
         before_action :authenticate_user!, except: %i[index show]
 
         # GET /api/v1/communities

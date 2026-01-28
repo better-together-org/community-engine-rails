@@ -2,7 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::Auth::Passwords', type: :request do
+RSpec.describe 'BetterTogether::Api::Auth::Passwords', :no_auth, type: :request do
+  include ActiveJob::TestHelper
+
   let(:user) { create(:better_together_user, :confirmed, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
 
   describe 'POST /api/auth/password' do
@@ -11,7 +13,9 @@ RSpec.describe 'BetterTogether::Api::Auth::Passwords', type: :request do
     context 'when requesting password reset' do
       context 'with valid email' do
         before do
-          post url, params: { user: { email: user.email } }, as: :json
+          perform_enqueued_jobs do
+            post url, params: { user: { email: user.email } }, as: :json
+          end
         end
 
         it 'returns success status' do
@@ -38,8 +42,8 @@ RSpec.describe 'BetterTogether::Api::Auth::Passwords', type: :request do
           post url, params: { user: { email: '' } }, as: :json
         end
 
-        it 'returns unprocessable entity status' do
-          expect(response).to have_http_status(:unprocessable_content)
+        it 'returns success status to prevent email enumeration' do
+          expect(response).to have_http_status(:ok)
         end
       end
     end
@@ -61,7 +65,7 @@ RSpec.describe 'BetterTogether::Api::Auth::Passwords', type: :request do
       end
 
       it 'returns success status' do
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:no_content)
       end
 
       it 'resets the password' do
@@ -69,8 +73,7 @@ RSpec.describe 'BetterTogether::Api::Auth::Passwords', type: :request do
       end
 
       it 'does not expose password in response' do
-        json = JSON.parse(response.body)
-        expect(json.to_s).not_to include('NewSecure456!@#')
+        expect(response.body.to_s).not_to include('NewSecure456!@#')
       end
     end
 

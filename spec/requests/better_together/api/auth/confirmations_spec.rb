@@ -2,7 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::Auth::Confirmations', type: :request do
+RSpec.describe 'BetterTogether::Api::Auth::Confirmations', :no_auth, type: :request do
+  include ActiveJob::TestHelper
+
   let(:user) { create(:better_together_user, confirmed_at: nil) }
   let(:confirmation_token) { user.confirmation_token }
 
@@ -12,7 +14,9 @@ RSpec.describe 'BetterTogether::Api::Auth::Confirmations', type: :request do
     context 'when requesting a new confirmation email' do
       context 'with valid email' do
         before do
-          post url, params: { user: { email: user.email } }, as: :json
+          perform_enqueued_jobs do
+            post url, params: { user: { email: user.email } }, as: :json
+          end
         end
 
         it 'returns success status' do

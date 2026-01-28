@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::Auth::Sessions', type: :request do
+RSpec.describe 'BetterTogether::Api::Auth::Sessions', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
   let(:person) { user.person }
 
@@ -116,7 +116,7 @@ RSpec.describe 'BetterTogether::Api::Auth::Sessions', type: :request do
 
   describe 'DELETE /api/auth/sign-out' do
     let(:url) { '/api/auth/sign-out' }
-    let(:token) { sign_in_and_get_token(user) }
+    let(:token) { api_sign_in_and_get_token(user) }
 
     context 'with valid token' do
       before do
@@ -157,19 +157,11 @@ RSpec.describe 'BetterTogether::Api::Auth::Sessions', type: :request do
     end
   end
 
-  def sign_in_and_get_token(user)
-    post '/api/auth/sign-in', params: {
-      user: {
-        email: user.email,
-        password: 'SecureTest123!@#'
-      }
-    }, as: :json
-
-    response.headers['Authorization'].sub('Bearer ', '')
-  end
-
   def extract_jti_from_token(token)
-    JWT.decode(token, Rails.application.credentials.devise_jwt_secret_key!)[0]['jti']
+    secret = ENV.fetch('DEVISE_SECRET') do
+      Rails.application.credentials.devise_jwt_secret_key.presence || Rails.application.credentials.secret_key_base
+    end
+    JWT.decode(token, secret)[0]['jti']
   rescue JWT::DecodeError
     nil
   end

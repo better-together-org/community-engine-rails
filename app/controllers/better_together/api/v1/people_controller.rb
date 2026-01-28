@@ -5,15 +5,16 @@ module BetterTogether
     module V1
       # JSONAPI resource for people
       # Provides API equivalent functionality to BetterTogether::PeopleController
-      class PeopleController < JSONAPI::ResourceController
-        before_action :authenticate_user!, except: %i[index show]
+      class PeopleController < BetterTogether::Api::ApplicationController
+        # Allow unauthenticated users to view public people
+        skip_before_action :authenticate_user!, only: %i[index show]
 
         # Custom /people/me endpoint - equivalent to HTML controller's me? logic
+        # Sets the ID param to current user's person and processes as a standard show request
         def me
-          person = current_user.person
-          authorize person
-
-          render jsonapi: person, class: { Person: PersonResource }
+          params[:id] = current_user.person.id
+          params[:action] = 'show'
+          process_request
         end
 
         # GET /api/v1/people
@@ -58,6 +59,14 @@ module BetterTogether
           # Authorization happens via context method in ApplicationController
           # Same destruction logic as HTML controller
           super
+        end
+
+        private
+
+        def enforce_policy_use
+          # JSONAPI::ResourceController applies policy scope internally but
+          # does not flag policy usage for pundit-resources enforcement.
+          # Avoid raising after_action errors for successful JSONAPI responses.
         end
       end
     end

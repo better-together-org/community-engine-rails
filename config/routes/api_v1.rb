@@ -7,14 +7,14 @@ namespace :api, defaults: { format: :json } do
     # People
     get 'people/me', to: 'people#me'
     jsonapi_resources :people
-    # Note: Relationship routes omitted until all related resources exist
+    # NOTE: Relationship routes omitted until all related resources exist
 
     # Communities
     jsonapi_resources :communities
-    # Note: Relationship routes omitted until all related resources exist
+    # NOTE: Relationship routes omitted until all related resources exist
 
-    # Community Memberships (PersonCommunityMemberships)
-    jsonapi_resources :community_memberships, controller: 'community_memberships'
+    # Person Community Memberships
+    jsonapi_resources :person_community_memberships, controller: 'person_community_memberships'
 
     # Roles (read-only)
     jsonapi_resources :roles

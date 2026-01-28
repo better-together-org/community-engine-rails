@@ -2,11 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
+RSpec.describe 'BetterTogether::Api::V1::People', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
   let(:person) { user.person }
-  let(:token) { sign_in_and_get_token(user) }
-  let(:auth_headers) { { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/vnd.api+json' } }
+  let(:token) { api_sign_in_and_get_token(user) }
+  let(:auth_headers) { api_auth_headers(user, token: token) }
+  let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
+  let(:platform_manager_headers) { api_auth_headers(platform_manager_user) }
+  let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
   describe 'GET /api/v1/people' do
     let(:url) { '/en/api/v1/people' }
@@ -60,7 +63,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
     end
 
     context 'when not authenticated' do
-      before { get url, headers: { 'Content-Type' => 'application/vnd.api+json' } }
+      before { get url, headers: jsonapi_headers }
 
       it 'returns success status' do
         expect(response).to have_http_status(:ok)
@@ -113,8 +116,10 @@ RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
 
       before { get url, headers: auth_headers }
 
-      it 'returns forbidden status' do
-        expect(response).to have_http_status(:forbidden)
+      it 'returns not found status' do
+        # JSONAPI-resources policy scopes filter records, returning 404 instead of 403
+        # This is preferred for security (don't reveal that a resource exists)
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -157,7 +162,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
     end
 
     context 'when not authenticated' do
-      before { get url, headers: { 'Content-Type' => 'application/vnd.api+json' } }
+      before { get url, headers: jsonapi_headers }
 
       it 'returns unauthorized status' do
         expect(response).to have_http_status(:unauthorized)
@@ -181,9 +186,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
 
     context 'when authenticated with permission' do
       before do
-        # Grant permission to create people
-        allow_any_instance_of(BetterTogether::PersonPolicy).to receive(:create?).and_return(true)
-        post url, params: valid_params.to_json, headers: auth_headers
+        post url, params: valid_params.to_json, headers: platform_manager_headers
       end
 
       it 'creates a new person' do
@@ -199,7 +202,7 @@ RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
     end
 
     context 'when not authenticated' do
-      before { post url, params: valid_params.to_json, headers: { 'Content-Type' => 'application/vnd.api+json' } }
+      before { post url, params: valid_params.to_json, headers: jsonapi_headers }
 
       it 'returns unauthorized status' do
         expect(response).to have_http_status(:unauthorized)
@@ -242,8 +245,10 @@ RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
         patch url, params: update_params.to_json, headers: auth_headers
       end
 
-      it 'returns forbidden status' do
-        expect(response).to have_http_status(:forbidden)
+      it 'returns not found status' do
+        # JSONAPI-resources policy scopes filter records, returning 404 instead of 403
+        # This prevents revealing whether a person with that ID exists
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -254,20 +259,11 @@ RSpec.describe 'BetterTogether::Api::V1::People', type: :request do
     context 'when not authorized' do
       before { delete url, headers: auth_headers }
 
-      it 'returns forbidden status' do
-        expect(response).to have_http_status(:forbidden)
+      it 'returns not found status' do
+        # JSONAPI-resources policy scopes filter records, returning 404
+        # Same behavior as GET/PATCH for consistency
+        expect(response).to have_http_status(:not_found)
       end
     end
-  end
-
-  def sign_in_and_get_token(user)
-    post '/api/auth/sign-in', params: {
-      user: {
-        email: user.email,
-        password: 'Password123!'
-      }
-    }, as: :json
-
-    response.headers['Authorization'].sub('Bearer ', '')
   end
 end

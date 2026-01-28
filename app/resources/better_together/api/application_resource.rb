@@ -12,6 +12,8 @@ module BetterTogether
       abstract
       include Pundit::Resource
 
+      key_type :string
+
       attributes :created_at, :updated_at
 
       # Helper method for defining translatable attributes

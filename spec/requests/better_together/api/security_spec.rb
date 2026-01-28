@@ -2,11 +2,26 @@
 
 require 'rails_helper'
 
-RSpec.describe 'API Security - Password Exposure Prevention', type: :request do
-  let(:user) { create(:better_together_user, :confirmed, password: 'Password123!', password_confirmation: 'Password123!') }
+RSpec.describe 'API Security - Password Exposure Prevention', :no_auth, type: :request do
+  let(:user) { create(:better_together_user, :confirmed, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
   let(:person) { user.person }
-  let(:token) { sign_in_and_get_token(user) }
-  let(:auth_headers) { { 'Authorization' => "Bearer #{token}", 'Content-Type' => 'application/vnd.api+json' } }
+  let(:token) { api_sign_in_and_get_token(user) }
+  let(:auth_headers) { api_auth_headers(user, token: token) }
+  let(:agreement_params) do
+    {
+      privacy_policy_agreement: '1',
+      terms_of_service_agreement: '1',
+      code_of_conduct_agreement: '1'
+    }
+  end
+  let(:person_attributes) do
+    {
+      person_attributes: {
+        name: 'Test User',
+        identifier: 'test-user'
+      }
+    }
+  end
 
   describe 'Authentication endpoints' do
     context 'POST /api/auth/sign-in' do
@@ -14,7 +29,7 @@ RSpec.describe 'API Security - Password Exposure Prevention', type: :request do
         post '/api/auth/sign-in', params: {
           user: {
             email: user.email,
-            password: 'Password123!'
+            password: 'SecureTest123!@#'
           }
         }, as: :json
 
@@ -33,9 +48,10 @@ RSpec.describe 'API Security - Password Exposure Prevention', type: :request do
         post '/api/auth/sign-up', params: {
           user: {
             email: 'newuser@example.com',
-            password: 'Password123!',
-            password_confirmation: 'Password123!'
-          }
+            password: 'SecureTest123!@#',
+            password_confirmation: 'SecureTest123!@#'
+          }.merge(person_attributes),
+          **agreement_params
         }, as: :json
 
         json = JSON.parse(response.body)
@@ -110,9 +126,10 @@ RSpec.describe 'API Security - Password Exposure Prevention', type: :request do
         post '/api/auth/sign-up', params: {
           user: {
             email: user.email, # Duplicate email
-            password: 'Password123!',
-            password_confirmation: 'Password123!'
-          }
+            password: 'SecureTest123!@#',
+            password_confirmation: 'SecureTest123!@#'
+          }.merge(person_attributes),
+          **agreement_params
         }, as: :json
 
         json = JSON.parse(response.body)
@@ -120,7 +137,9 @@ RSpec.describe 'API Security - Password Exposure Prevention', type: :request do
         # Errors might be present, but they shouldn't include the actual password value
         if json['errors']
           json['errors'].each do |error|
-            expect(error['detail']).not_to include('Password123!')
+            next if error['detail'].nil?
+
+            expect(error['detail']).not_to include('SecureTest123!@#')
           end
         end
       end
@@ -152,27 +171,17 @@ RSpec.describe 'API Security - Password Exposure Prevention', type: :request do
       post '/api/auth/sign-in', params: {
         user: {
           email: user.email,
-          password: 'Password123!'
+          password: 'SecureTest123!@#'
         }
       }, as: :json
 
       token = response.headers['Authorization'].sub('Bearer ', '')
-      decoded_token = JWT.decode(token, Rails.application.credentials.devise_jwt_secret_key!)[0]
+      jwt_secret = Rails.application.credentials.devise_jwt_secret_key.presence || Rails.application.credentials.secret_key_base
+      decoded_token = JWT.decode(token, jwt_secret)[0]
 
       expect(decoded_token).not_to have_key('password')
       expect(decoded_token).not_to have_key('encrypted_password')
-      expect(decoded_token.to_json).not_to include('Password123!')
+      expect(decoded_token.to_json).not_to include('SecureTest123!@#')
     end
-  end
-
-  def sign_in_and_get_token(user)
-    post '/api/auth/sign-in', params: {
-      user: {
-        email: user.email,
-        password: 'Password123!'
-      }
-    }, as: :json
-
-    response.headers['Authorization'].sub('Bearer ', '')
   end
 end

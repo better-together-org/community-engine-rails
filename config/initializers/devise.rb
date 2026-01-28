@@ -333,16 +333,20 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # config.sign_in_after_change_password = true
 
   config.jwt do |jwt|
-    jwt.secret = ENV.fetch('DEVISE_SECRET', nil)
+    jwt.secret = ENV.fetch('DEVISE_SECRET') do
+      Rails.application.credentials.devise_jwt_secret_key.presence || Rails.application.credentials.secret_key_base
+    end
+    route_scope = BetterTogether.route_scope_path.to_s
+    path_prefix = route_scope.present? ? "/#{route_scope}" : ''
     jwt.dispatch_requests = [
-      ['POST', %r{^/bt/api/auth/sign-in$}]
+      ['POST', %r{^#{path_prefix}/api/auth/sign-in$}]
     ]
     jwt.revocation_requests = [
-      ['DELETE', %r{^/bt/api/auth/sign-out$}]
+      ['DELETE', %r{^#{path_prefix}/api/auth/sign-out$}]
     ]
     jwt.expiration_time = 1.hour.to_i
     jwt.request_formats = {
-      user: [nil, :json, 'application/vnd.api+json']
+      user: [nil, :json, :jsonapi, 'application/vnd.api+json']
     }
   end
 end

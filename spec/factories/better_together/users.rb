@@ -30,14 +30,11 @@ FactoryBot.define do
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
 
+        # Always run seed_data to ensure permissions are up-to-date (idempotent)
+        BetterTogether::AccessControlBuilder.seed_data
+
         # Use the platform_manager role from RBAC builder (which has all required permissions)
         platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-
-        # If role doesn't exist, run the RBAC builder to ensure proper setup
-        unless platform_manager_role
-          BetterTogether::AccessControlBuilder.seed_data
-          platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        end
 
         # Assign platform manager role to the user
         if platform_manager_role

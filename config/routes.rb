@@ -6,9 +6,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
 
-  # API Authentication routes (JSON-only, no locale requirement)
-  draw :api_auth
-
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
                      only: :omniauth_callbacks,
@@ -441,6 +438,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     get 'bt' => 'static_pages#community_engine', as: :community_engine
     get '', to: 'pages#show', defaults: { path: 'home' }, as: :home_page
   end
+
+  # API Authentication routes (JSON-only, no locale requirement)
+  # Placed after localized routes to ensure proper controller resolution
+  draw :api_auth
 
   # Only allow authenticated users to get access
   # to the Sidekiq web interface
