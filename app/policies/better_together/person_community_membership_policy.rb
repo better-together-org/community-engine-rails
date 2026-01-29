@@ -27,7 +27,11 @@ module BetterTogether
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
-      def resolve
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Lint/CopDirectiveSyntax
+      def resolve # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+        # rubocop:enable Lint/CopDirectiveSyntax
         return scope.none unless user.present?
 
         # Check if we have a community context (viewing community members)
@@ -50,6 +54,8 @@ module BetterTogether
 
         scope.where(member_id: agent.id)
       end
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/PerceivedComplexity
 
       private
 
