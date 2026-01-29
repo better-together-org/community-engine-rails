@@ -65,16 +65,8 @@ RSpec.describe 'BetterTogether::Api::V1::People', :no_auth do
     context 'when not authenticated' do
       before { get url, headers: jsonapi_headers }
 
-      it 'returns success status' do
-        expect(response).to have_http_status(:ok)
-      end
-
-      it 'only includes public people' do
-        json = JSON.parse(response.body)
-        person_ids = json['data'].map { |p| p['id'] }
-
-        expect(person_ids).to include(public_person.id)
-        expect(person_ids).not_to include(private_person.id)
+      it 'returns unauthorized status' do
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end

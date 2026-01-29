@@ -50,23 +50,15 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
     context 'when not authenticated' do
       before { get url, headers: jsonapi_headers }
 
-      it 'returns success status' do
-        expect(response).to have_http_status(:ok)
-      end
-
-      it 'only includes public communities' do
-        json = JSON.parse(response.body)
-        community_ids = json['data'].map { |c| c['id'] }
-
-        expect(community_ids).to include(public_community.id)
-        expect(community_ids).not_to include(private_community.id)
+      it 'returns unauthorized status' do
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end
 
   describe 'GET /api/v1/communities/:id' do
-    let(:community) { create(:better_together_community, privacy: 'public') }
-    let(:url) { "/api/v1/communities/#{community.id}" }
+    let(:url) { "/api/v1/communities/#{test_community.id}" }
+    let(:test_community) { create(:better_together_community, privacy: 'public') }
 
     context 'when authenticated' do
       before { get url, headers: auth_headers }
@@ -81,11 +73,16 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
         expect(json).to have_key('data')
         expect(json['data']).to include(
           'type' => 'communities',
-          'id' => community.id
+          'id' => test_community.id
         )
+      end
+
+      it 'includes community attributes' do
+        json = JSON.parse(response.body)
+
         expect(json['data']['attributes']).to include(
-          'name' => community.name,
-          'slug' => community.slug
+          'name' => test_community.name,
+          'slug' => test_community.slug
         )
       end
     end
@@ -105,8 +102,8 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
     context 'when not authenticated' do
       before { get url, headers: jsonapi_headers }
 
-      it 'returns success status for public community' do
-        expect(response).to have_http_status(:ok)
+      it 'returns unauthorized status' do
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end

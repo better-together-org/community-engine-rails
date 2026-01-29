@@ -6,9 +6,6 @@ module BetterTogether
       # JSONAPI resource for people
       # Provides API equivalent functionality to BetterTogether::PeopleController
       class PeopleController < BetterTogether::Api::ApplicationController
-        # Allow unauthenticated users to view public people
-        skip_before_action :authenticate_user!, only: %i[index show]
-
         # Custom /people/me endpoint - equivalent to HTML controller's me? logic
         # Sets the ID param to current user's person and processes as a standard show request
         def me

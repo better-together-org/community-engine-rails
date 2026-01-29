@@ -57,6 +57,18 @@ module BetterTogether
         def self.updatable_fields(context)
           creatable_fields(context)
         end
+
+        private
+
+        # Helper method for generating attachment URLs
+        def attachment_url(attachment_name)
+          return nil unless @model.send(attachment_name).attached?
+
+          Rails.application.routes.url_helpers.rails_blob_url(
+            @model.send(attachment_name),
+            only_path: true
+          )
+        end
       end
     end
   end
