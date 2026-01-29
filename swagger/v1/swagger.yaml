@@ -11,6 +11,207 @@ info:
     Most endpoints require JWT authentication via Bearer token in the Authorization header.
     See the Authentication section for how to obtain tokens via sign-in.
 paths:
+  "/api/auth/confirmation":
+    post:
+      summary: Resend confirmation instructions
+      tags:
+      - Authentication
+      description: Resend email confirmation instructions to the user. Always returns
+        success to prevent email enumeration attacks.
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        description: Preferred language for email content
+        example: en
+        schema:
+          type: string
+      responses:
+        '200':
+          description: confirmation instructions sent (or email not found - same response
+            to prevent enumeration)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+                required:
+                - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      description: Email address to send confirmation instructions
+                  required:
+                  - email
+              required:
+              - user
+        required: true
+    get:
+      summary: Confirm email address
+      tags:
+      - Authentication
+      description: Confirm user email address using the token received via email
+      parameters:
+      - name: confirmation_token
+        in: query
+        required: true
+        description: Token received via confirmation email
+        schema:
+          type: string
+      - name: Accept-Language
+        in: header
+        required: false
+        description: Preferred language for response messages
+        example: en
+        schema:
+          type: string
+      responses:
+        '200':
+          description: email successfully confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+                required:
+                - message
+        '422':
+          description: already confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                    description: Validation error messages
+                required:
+                - errors
+  "/api/auth/password":
+    post:
+      summary: Request password reset email
+      tags:
+      - Authentication
+      description: Send password reset instructions to the user's email address. Always
+        returns success to prevent email enumeration attacks.
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        description: Preferred language for email content
+        example: en
+        schema:
+          type: string
+      responses:
+        '200':
+          description: reset instructions sent (or email not found - same response
+            to prevent enumeration)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+                required:
+                - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      description: Email address to send password reset instructions
+                  required:
+                  - email
+              required:
+              - user
+        required: true
+    put:
+      summary: Reset password with token
+      tags:
+      - Authentication
+      description: Reset user password using the token received via email
+      parameters:
+      - name: Accept-Language
+        in: header
+        required: false
+        description: Preferred language for error messages
+        example: en
+        schema:
+          type: string
+      responses:
+        '204':
+          description: password successfully reset
+        '422':
+          description: weak password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Validation errors by field name
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                required:
+                - errors
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    reset_password_token:
+                      type: string
+                      description: Token received via password reset email
+                    password:
+                      type: string
+                      format: password
+                      description: New password (minimum 8 characters, must include
+                        uppercase, lowercase, and special characters)
+                      minLength: 8
+                    password_confirmation:
+                      type: string
+                      format: password
+                      description: Password confirmation (must match password)
+                  required:
+                  - reset_password_token
+                  - password
+                  - password_confirmation
+              required:
+              - user
+        required: true
   "/api/auth/sign-up":
     post:
       summary: Create a new user account
