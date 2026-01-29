@@ -89,7 +89,8 @@ module BetterTogether
       return user_tz if user_tz
 
       # 4. Platform timezone (platform-wide default)
-      platform_tz = extract_timezone_from_platform(platform || :host)
+      # In MCP/controller contexts, automatically use host platform if no platform specified
+      platform_tz = extract_timezone_from_platform(platform || (in_request_context? ? :host : nil))
       return platform_tz if platform_tz
 
       # 5. Application config timezone
@@ -101,6 +102,17 @@ module BetterTogether
     end
 
     private
+
+    # Check if we're in a request context (controller or MCP tool)
+    # @return [Boolean] true if in request context
+    def in_request_context?
+      # MCP tools have current_user method
+      respond_to?(:current_user, true) ||
+        # Controllers have helpers
+        respond_to?(:helpers, true) ||
+        # Check if we respond to request (both controllers and MCP tools have this)
+        respond_to?(:request, true)
+    end
 
     # Extract timezone from recipient (Person or User)
     # @param recipient [Person, User, nil] The recipient
