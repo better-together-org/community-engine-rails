@@ -12,9 +12,6 @@ namespace :v1 do
   jsonapi_resources :communities
   # NOTE: Relationship routes omitted until all related resources exist
 
-  # Person Community Memberships
-  jsonapi_resources :person_community_memberships, controller: 'person_community_memberships'
-
   # Roles (read-only)
   jsonapi_resources :roles
 end

@@ -19,6 +19,24 @@ module BetterTogether
         filter :status
         filter :member_id
         filter :joinable_id
+
+        # Override records to scope by parent resource
+        def self.records(options = {})
+          context = options[:context]
+          records = super
+
+          # Scope by community_id if nested under communities
+          if context && context[:community_id].present?
+            records = records.where(joinable_id: context[:community_id], joinable_type: 'BetterTogether::Community')
+          end
+
+          # Scope by person_id if nested under people
+          if context && context[:person_id].present?
+            records = records.where(member_id: context[:person_id])
+          end
+
+          records
+        end
       end
     end
   end

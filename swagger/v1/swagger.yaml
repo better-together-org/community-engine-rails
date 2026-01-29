@@ -11,25 +11,301 @@ info:
     Most endpoints require JWT authentication via Bearer token in the Authorization header.
     See the Authentication section for how to obtain tokens via sign-in.
 paths:
-  "/api/auth/confirmation":
+  "/api/v1/roles":
     post:
-      summary: Resend confirmation instructions
+      summary: Create a new role (read-only endpoint)
       tags:
-      - Authentication
-      description: Resend email confirmation instructions to the user. Always returns
-        success to prevent email enumeration attacks.
+      - Roles
+      description: Roles are read-only via the API. Create operations are not permitted.
+      security:
+      - bearer_auth: []
       parameters:
-      - name: Accept-Language
+      - name: Authorization
         in: header
-        required: false
-        description: Preferred language for email content
-        example: en
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
         schema:
           type: string
+      - name: Content-Type
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '400':
+          description: bad request - create not permitted
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: roles
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        identifier:
+                          type: string
+                        description:
+                          type: string
+        required: true
+    get:
+      summary: List all roles
+      tags:
+      - Roles
+      description: Retrieve a list of roles. Requires authentication. Results are
+        filtered based on user permissions.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      - name: page[number]
+        in: query
+        required: false
+        description: Page number for pagination
+        schema:
+          type: integer
+      - name: page[size]
+        in: query
+        required: false
+        description: Number of items per page
+        schema:
+          type: integer
+      responses:
+        '401':
+          description: unauthorized
+        '200':
+          description: roles list retrieved
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: roles
+                        id:
+                          type: string
+                          format: uuid
+                        attributes:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            identifier:
+                              type: string
+                            resource_type:
+                              type: string
+                              description: Class name of resource this role applies
+                                to
+                            protected:
+                              type: boolean
+                              description: Whether this is a system role that cannot
+                                be deleted
+                required:
+                - data
+  "/api/v1/roles/{id}":
+    parameters:
+    - name: id
+      in: path
+      format: uuid
+      description: Role ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update a role
+      tags:
+      - Roles
+      description: Update a role. Limited updates may be permitted based on role configuration
+        and user permissions.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
       responses:
         '200':
-          description: confirmation instructions sent (or email not found - same response
-            to prevent enumeration)
+          description: role updated
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: roles
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                required:
+                - data
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: roles
+                    id:
+                      type: string
+                      format: uuid
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+        required: true
+    get:
+      summary: Get a specific role
+      tags:
+      - Roles
+      description: Retrieve a specific role by ID. Requires authentication. Access
+        is filtered by user permissions.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '401':
+          description: unauthorized
+        '200':
+          description: role found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: roles
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          identifier:
+                            type: string
+                          resource_type:
+                            type: string
+                          protected:
+                            type: boolean
+                required:
+                - data
+    delete:
+      summary: Delete a role (not permitted)
+      tags:
+      - Roles
+      description: Roles cannot be deleted via the API. Protected roles and system
+        roles are not deletable.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '404':
+          description: not found - delete not permitted
+  "/api/auth/confirmation":
+    post:
+      summary: Resend confirmation email
+      tags:
+      - Authentication
+      description: Resend email confirmation instructions. Returns success even for
+        non-existent emails to prevent email enumeration.
+      parameters: []
+      responses:
+        '200':
+          description: confirmation email sent (or email not found)
           content:
             application/json:
               schema:
@@ -37,9 +313,6 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Success message
-                required:
-                - message
       requestBody:
         content:
           application/json:
@@ -51,15 +324,14 @@ paths:
                   properties:
                     email:
                       type: string
-                      format: email
-                      description: Email address to send confirmation instructions
+                      example: user@example.com
                   required:
                   - email
               required:
               - user
         required: true
     get:
-      summary: Confirm email address
+      summary: Confirm email with token
       tags:
       - Authentication
       description: Confirm user email address using the token received via email
@@ -67,19 +339,13 @@ paths:
       - name: confirmation_token
         in: query
         required: true
-        description: Token received via confirmation email
-        schema:
-          type: string
-      - name: Accept-Language
-        in: header
-        required: false
-        description: Preferred language for response messages
-        example: en
+        description: Confirmation token from email
+        example: abc123confirmtoken
         schema:
           type: string
       responses:
         '200':
-          description: email successfully confirmed
+          description: email confirmed successfully
           content:
             application/json:
               schema:
@@ -87,11 +353,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Success message
-                required:
-                - message
         '422':
-          description: already confirmed
+          description: invalid or expired confirmation token
           content:
             application/json:
               schema:
@@ -101,306 +364,108 @@ paths:
                     type: array
                     items:
                       type: string
-                    description: Validation error messages
-                required:
-                - errors
-  "/api/auth/password":
-    post:
-      summary: Request password reset email
+  "/api/v1/people/me":
+    get:
+      summary: Get current user's person profile
       tags:
-      - Authentication
-      description: Send password reset instructions to the user's email address. Always
-        returns success to prevent email enumeration attacks.
+      - People
+      description: Retrieve the authenticated user's person profile. Requires authentication.
+      security:
+      - bearer_auth: []
       parameters:
-      - name: Accept-Language
+      - name: Authorization
         in: header
-        required: false
-        description: Preferred language for email content
-        example: en
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
         schema:
           type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
       responses:
+        '401':
+          description: unauthorized
         '200':
-          description: reset instructions sent (or email not found - same response
-            to prevent enumeration)
+          description: current person retrieved
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    description: Success message
-                required:
-                - message
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user:
-                  type: object
-                  properties:
-                    email:
-                      type: string
-                      format: email
-                      description: Email address to send password reset instructions
-                  required:
-                  - email
-              required:
-              - user
-        required: true
-    put:
-      summary: Reset password with token
-      tags:
-      - Authentication
-      description: Reset user password using the token received via email
-      parameters:
-      - name: Accept-Language
-        in: header
-        required: false
-        description: Preferred language for error messages
-        example: en
-        schema:
-          type: string
-      responses:
-        '204':
-          description: password successfully reset
-        '422':
-          description: weak password
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: object
-                    description: Validation errors by field name
-                    additionalProperties:
-                      type: array
-                      items:
-                        type: string
-                required:
-                - errors
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user:
-                  type: object
-                  properties:
-                    reset_password_token:
-                      type: string
-                      description: Token received via password reset email
-                    password:
-                      type: string
-                      format: password
-                      description: New password (minimum 8 characters, must include
-                        uppercase, lowercase, and special characters)
-                      minLength: 8
-                    password_confirmation:
-                      type: string
-                      format: password
-                      description: Password confirmation (must match password)
-                  required:
-                  - reset_password_token
-                  - password
-                  - password_confirmation
-              required:
-              - user
-        required: true
-  "/api/auth/sign-up":
-    post:
-      summary: Create a new user account
-      tags:
-      - Authentication
-      description: Register a new user account with email and password. Requires acceptance
-        of platform agreements.
-      parameters:
-      - name: Accept-Language
-        in: header
-        required: false
-        description: Preferred language for error messages
-        example: en
-        schema:
-          type: string
-      responses:
-        '201':
-          description: user created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Confirmation message about account status
                   data:
                     type: object
                     properties:
                       type:
                         type: string
-                        example: users
+                        example: people
                       id:
                         type: string
                         format: uuid
                       attributes:
                         type: object
                         properties:
+                          name:
+                            type: string
+                          identifier:
+                            type: string
                           email:
                             type: string
                             format: email
-                          confirmed:
-                            type: boolean
-                            description: Whether email is confirmed (false for new
-                              accounts)
                 required:
-                - message
                 - data
-        '422':
-          description: missing agreements
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: array
-                    items:
-                      type: string
-                    description: Array of validation error messages
-                required:
-                - errors
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user:
-                  type: object
-                  properties:
-                    email:
-                      type: string
-                      format: email
-                      description: User email address
-                    password:
-                      type: string
-                      format: password
-                      description: User password (minimum 8 characters, must include
-                        uppercase, lowercase, and special characters)
-                      minLength: 8
-                    password_confirmation:
-                      type: string
-                      format: password
-                      description: Password confirmation (must match password)
-                    person_attributes:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          description: Display name for the user
-                        identifier:
-                          type: string
-                          description: Unique identifier/username for the user
-                        description:
-                          type: string
-                          description: Optional profile description
-                      required:
-                      - name
-                      - identifier
-                  required:
-                  - email
-                  - password
-                  - password_confirmation
-                  - person_attributes
-                privacy_policy_agreement:
-                  type: string
-                  description: Must be "1" to indicate acceptance
-                  enum:
-                  - '1'
-                terms_of_service_agreement:
-                  type: string
-                  description: Must be "1" to indicate acceptance
-                  enum:
-                  - '1'
-                code_of_conduct_agreement:
-                  type: string
-                  description: Must be "1" to indicate acceptance
-                  enum:
-                  - '1'
-              required:
-              - user
-              - privacy_policy_agreement
-              - terms_of_service_agreement
-              - code_of_conduct_agreement
-        required: true
-  "/api/auth/sign-in":
-    post:
-      summary: Sign in to obtain JWT token
+  "/api/v1/people":
+    get:
+      summary: List all people
       tags:
-      - Authentication
-      description: Authenticate with email and password to receive a JWT token for
-        subsequent API requests
+      - People
+      description: Retrieve a list of people. Unauthenticated users only see public
+        profiles. Authenticated users see public profiles and their own profile.
+      security:
+      - bearer_auth: []
       parameters:
-      - name: Accept-Language
+      - name: Authorization
         in: header
         required: false
-        description: Preferred language for error messages
-        example: en
+        description: JWT token (optional for public access)
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
         schema:
           type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      - name: page[number]
+        in: query
+        required: false
+        description: Page number for pagination
+        schema:
+          type: integer
+      - name: page[size]
+        in: query
+        required: false
+        description: Number of items per page
+        schema:
+          type: integer
       responses:
         '200':
-          description: successful authentication
+          description: people list retrieved
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 type: object
                 properties:
                   data:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                        example: sessions
-                      id:
-                        type: string
-                        format: uuid
-                      attributes:
-                        type: object
-                        properties:
-                          email:
-                            type: string
-                            format: email
-                          token:
-                            type: string
-                            description: JWT token for authentication
-                          confirmed:
-                            type: boolean
-                            description: Whether email is confirmed
-                      relationships:
-                        type: object
-                        properties:
-                          person:
-                            type: object
-                            properties:
-                              data:
-                                type: object
-                                nullable: true
-                                properties:
-                                  type:
-                                    type: string
-                                    example: people
-                                  id:
-                                    type: string
-                                    format: uuid
-                  included:
                     type: array
-                    description: Related resources (person profile if exists)
                     items:
                       type: object
                       properties:
@@ -419,24 +484,628 @@ paths:
                               type: string
                             privacy:
                               type: string
-                            locale:
+                              enum:
+                              - public
+                              - private
+                            description:
                               type: string
-                            time_zone:
-                              type: string
+                              nullable: true
+                required:
+                - data
+    post:
+      summary: Create a new person
+      tags:
+      - People
+      description: Create a new person profile. Requires authentication and create_person
+        permission.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '401':
+          description: unauthorized
+        '201':
+          description: person created
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: people
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          identifier:
+                            type: string
+                          privacy:
+                            type: string
+                required:
+                - data
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: people
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Display name
+                        identifier:
+                          type: string
+                          description: Unique identifier/username
+                        privacy:
+                          type: string
+                          enum:
+                          - public
+                          - private
+                          default: public
+                        description:
+                          type: string
+                          description: Profile description
+                      required:
+                      - name
+                  required:
+                  - type
+                  - attributes
+              required:
+              - data
+        required: true
+  "/api/v1/people/{id}":
+    parameters:
+    - name: id
+      in: path
+      format: uuid
+      description: Person ID
+      required: true
+      schema:
+        type: string
+    delete:
+      summary: Delete a person
+      tags:
+      - People
+      description: Delete a person profile. Requires delete_person permission.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '404':
+          description: person not found or not accessible
+    get:
+      summary: Get a specific person
+      tags:
+      - People
+      description: Retrieve a specific person by ID. Public profiles are accessible
+        to all. Private profiles require authentication and permission.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        description: JWT token (optional for public profiles)
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '200':
+          description: person found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: people
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          identifier:
+                            type: string
+                          privacy:
+                            type: string
+                required:
+                - data
+        '404':
+          description: person not found or not accessible
+    patch:
+      summary: Update a person
+      tags:
+      - People
+      description: Update a person profile. Users can update their own profile. Platform
+        managers can update any profile.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '404':
+          description: person not found or not accessible
+        '200':
+          description: person updated
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: people
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                required:
+                - data
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: people
+                    id:
+                      type: string
+                      format: uuid
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                  required:
+                  - type
+                  - id
+                  - attributes
+              required:
+              - data
+        required: true
+  "/api/v1/communities":
+    post:
+      summary: Create a new community
+      tags:
+      - Communities
+      description: Create a new community. Requires authentication and create_community
+        permission.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '201':
+          description: community created
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: communities
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          slug:
+                            type: string
+                          privacy:
+                            type: string
                 required:
                 - data
         '401':
-          description: unconfirmed account
+          description: unauthorized
+        '404':
+          description: forbidden - insufficient permissions
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: communities
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Community name
+                        description:
+                          type: string
+                          description: Community description
+                        privacy:
+                          type: string
+                          enum:
+                          - public
+                          - private
+                          default: public
+                      required:
+                      - name
+                  required:
+                  - type
+                  - attributes
+              required:
+              - data
+        required: true
+    get:
+      summary: List all communities
+      tags:
+      - Communities
+      description: Retrieve a list of communities. Unauthenticated users only see
+        public communities. Authenticated users see public communities and communities
+        they have access to.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        description: JWT token (optional for public access)
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      - name: page[number]
+        in: query
+        required: false
+        description: Page number for pagination
+        schema:
+          type: integer
+      - name: page[size]
+        in: query
+        required: false
+        description: Number of items per page
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: communities list retrieved
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: communities
+                        id:
+                          type: string
+                          format: uuid
+                        attributes:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            slug:
+                              type: string
+                            privacy:
+                              type: string
+                              enum:
+                              - public
+                              - private
+                            description:
+                              type: string
+                              nullable: true
+                required:
+                - data
+  "/api/v1/communities/{id}":
+    parameters:
+    - name: id
+      in: path
+      format: uuid
+      description: Community ID
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update a community
+      tags:
+      - Communities
+      description: Update a community. Requires authentication and update_community
+        permission for the specific community.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Content-Type
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '200':
+          description: community updated
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: communities
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                required:
+                - data
+        '404':
+          description: community not found or not accessible
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: communities
+                    id:
+                      type: string
+                      format: uuid
+                    attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                  required:
+                  - type
+                  - id
+                  - attributes
+              required:
+              - data
+        required: true
+    get:
+      summary: Get a specific community
+      tags:
+      - Communities
+      description: Retrieve a specific community by ID. Public communities are accessible
+        to all. Private communities require authentication and membership.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        description: JWT token (optional for public communities)
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '200':
+          description: community found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: communities
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          slug:
+                            type: string
+                          privacy:
+                            type: string
+                required:
+                - data
+        '404':
+          description: community not found or not accessible
+    delete:
+      summary: Delete a community
+      tags:
+      - Communities
+      description: Delete a community. Requires delete_community permission. Protected
+        communities cannot be deleted.
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      - name: Accept
+        in: header
+        type: string
+        required: true
+        description: JSONAPI media type
+        schema:
+          type: string
+          default: application/vnd.api+json
+      responses:
+        '404':
+          description: community not found, not accessible, or protected
+        '204':
+          description: community deleted
+  "/api/auth/password":
+    post:
+      summary: Request password reset email
+      tags:
+      - Authentication
+      description: Send password reset instructions to the user email. Returns success
+        even for non-existent emails to prevent email enumeration.
+      parameters: []
+      responses:
+        '200':
+          description: password reset email sent (or email not found)
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  error:
+                  message:
                     type: string
-                    description: Error message describing authentication failure
-                required:
-                - error
       requestBody:
         content:
           application/json:
@@ -448,12 +1117,148 @@ paths:
                   properties:
                     email:
                       type: string
-                      format: email
-                      description: User email address
+                      example: user@example.com
+                  required:
+                  - email
+              required:
+              - user
+        required: true
+    put:
+      summary: Reset password with token
+      tags:
+      - Authentication
+      description: Reset password using the token received via email
+      parameters: []
+      responses:
+        '204':
+          description: password reset successfully
+        '422':
+          description: invalid reset token or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    reset_password_token:
+                      type: string
+                      example: abc123token
                     password:
                       type: string
-                      format: password
-                      description: User password
+                      example: NewSecurePassword123!@#
+                    password_confirmation:
+                      type: string
+                      example: NewSecurePassword123!@#
+                  required:
+                  - reset_password_token
+                  - password
+                  - password_confirmation
+              required:
+              - user
+        required: true
+  "/api/auth/sign-in":
+    post:
+      summary: Sign in to get JWT token
+      tags:
+      - Authentication
+      description: Authenticate with email and password to receive a JWT token in
+        the Authorization header
+      parameters: []
+      responses:
+        '200':
+          description: user signed in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: sessions
+                      id:
+                        type: string
+                      attributes:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          token:
+                            type: string
+                          confirmed:
+                            type: boolean
+                      relationships:
+                        type: object
+                        properties:
+                          person:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    example: people
+                                  id:
+                                    type: string
+                                    format: uuid
+                  included:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        id:
+                          type: string
+                        attributes:
+                          type: object
+                required:
+                - data
+        '401':
+          description: invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: user@example.com
+                    password:
+                      type: string
+                      example: SecurePassword123!@#
                   required:
                   - email
                   - password
@@ -462,21 +1267,13 @@ paths:
         required: true
   "/api/auth/sign-out":
     delete:
-      summary: Sign out and invalidate JWT token
+      summary: Sign out (revoke JWT token)
       tags:
       - Authentication
-      description: Sign out from the current session. Requires a valid JWT token in
-        the Authorization header.
+      description: Sign out and invalidate the current JWT token
       security:
       - bearer_auth: []
       parameters:
-      - name: Accept-Language
-        in: header
-        required: false
-        description: Preferred language for error messages
-        example: en
-        schema:
-          type: string
       - name: Authorization
         in: header
         required: true
@@ -486,7 +1283,7 @@ paths:
           type: string
       responses:
         '200':
-          description: successfully signed out
+          description: user signed out successfully
           content:
             application/json:
               schema:
@@ -494,11 +1291,8 @@ paths:
                 properties:
                   message:
                     type: string
-                    description: Logout success message
-                required:
-                - message
         '401':
-          description: missing authorization header
+          description: unauthorized - no valid token
           content:
             application/json:
               schema:
@@ -506,9 +1300,119 @@ paths:
                 properties:
                   error:
                     type: string
-                    description: Error message indicating missing authentication
+  "/api/auth/sign-up":
+    post:
+      summary: Register a new user account
+      tags:
+      - Authentication
+      description: Create a new user account with email, password, and person details.
+        Sends a confirmation email.
+      parameters: []
+      responses:
+        '422':
+          description: invalid registration data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '201':
+          description: user registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: users
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          confirmed:
+                            type: boolean
+                      relationships:
+                        type: object
+                        properties:
+                          person:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    example: people
+                                  id:
+                                    type: string
+                                    format: uuid
                 required:
-                - error
+                - data
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: newuser@example.com
+                    password:
+                      type: string
+                      example: SecurePassword123!@#
+                    password_confirmation:
+                      type: string
+                      example: SecurePassword123!@#
+                    person_attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: John Doe
+                        identifier:
+                          type: string
+                          example: john-doe
+                        description:
+                          type: string
+                          example: Software developer
+                      required:
+                      - name
+                      - identifier
+                  required:
+                  - email
+                  - password
+                  - password_confirmation
+                  - person_attributes
+                privacy_policy_agreement:
+                  type: string
+                  example: '1'
+                terms_of_service_agreement:
+                  type: string
+                  example: '1'
+                code_of_conduct_agreement:
+                  type: string
+                  example: '1'
+              required:
+              - user
+              - privacy_policy_agreement
+              - terms_of_service_agreement
+              - code_of_conduct_agreement
+        required: true
 servers:
 - url: http://localhost:3000
   description: Platform server
