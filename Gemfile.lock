@@ -593,7 +593,7 @@ GEM
       net-smtp
       premailer (~> 1.7, >= 1.7.9)
     prettyprint (0.2.0)
-    prism (1.8.0)
+    prism (1.9.0)
     pry (0.16.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -879,7 +879,7 @@ GEM
     translate_enum (0.2.0)
       activesupport
     tsort (0.2.0)
-    turbo-rails (2.0.21)
+    turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
     tzinfo (2.0.6)
