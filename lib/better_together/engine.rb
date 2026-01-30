@@ -18,6 +18,7 @@ require 'devise/jwt'
 require 'devise_zxcvbn'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
+require 'fast_mcp'
 require 'font-awesome-sass'
 require 'geocoder'
 require 'groupdate'
@@ -53,6 +54,12 @@ module BetterTogether
 
     # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
     config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+
+    # Add MCP tools and resources to autoload paths
+    config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/app/tools",
+      "#{root}/app/resources"
+    ]
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -150,6 +157,21 @@ module BetterTogether
 
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
+    end
+
+    # MCP (Model Context Protocol) configuration
+    initializer 'better_together.mcp', after: :load_config_initializers do |app|
+      # Set default MCP configuration
+      mcp_config = ActiveSupport::OrderedOptions.new
+      mcp_config.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development?).to_s == 'true'
+      mcp_config.path_prefix = ENV.fetch('MCP_PATH_PREFIX', '/mcp')
+      mcp_config.auth_token = ENV.fetch('MCP_AUTH_TOKEN', nil)
+      mcp_config.authenticate = mcp_config.auth_token.present? || Rails.env.production?
+
+      app.config.mcp = mcp_config
+
+      # Auto-load MCP support files
+      require 'better_together/mcp/pundit_context'
     end
 
     rake_tasks do
