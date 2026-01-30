@@ -223,7 +223,7 @@ module BetterTogether
 
       skip_authorization
       flash[:alert] = t('better_together.conversations.errors.person_required')
-      redirect_to BetterTogether::Engine.routes.url_helpers.root_path
+      redirect_to main_app.root_path(locale: I18n.locale)
     end
 
     def available_participants
