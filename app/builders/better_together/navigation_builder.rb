@@ -30,6 +30,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -46,6 +47,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 layout: 'layouts/better_together/full_width_page',
                 page_blocks_attributes: [
                   {
@@ -102,6 +104,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -118,6 +121,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -134,6 +138,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -150,6 +155,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -166,6 +172,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -182,6 +189,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -230,6 +238,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -246,6 +255,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -632,12 +642,13 @@ module BetterTogether
                 privacy: 'public',
                 protected: true,
                 layout: 'layouts/better_together/full_width_page',
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       template_path: 'better_together/static_pages/community_engine',
-                      css_settings: { container_class: 'container-fluid' }
+                      css_settings: { container_class: '' }
                     }
                   }
                 ]
