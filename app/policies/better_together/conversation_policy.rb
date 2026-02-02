@@ -4,13 +4,13 @@ module BetterTogether
   # Access control for conversations
   class ConversationPolicy < ApplicationPolicy
     def index?
-      user.present?
+      user.present? && agent.present?
     end
 
     # Determines whether the current user can create a conversation.
     # When `participants:` are provided, ensures they are within the permitted set.
     def create?(participants: nil)
-      return false unless user.present?
+      return false unless user.present? && agent.present?
 
       return true if participants.nil?
 
@@ -23,15 +23,15 @@ module BetterTogether
     end
 
     def update?
-      user.present? && record.creator == agent
+      user.present? && agent.present? && record.creator == agent
     end
 
     def show?
-      user.present? && record.participants.include?(agent)
+      user.present? && agent.present? && record.participants.include?(agent)
     end
 
     def leave_conversation?
-      user.present? && record.participants.size > 1
+      user.present? && agent.present? && record.participants.size > 1
     end
 
     # Returns the people that the agent is permitted to message
@@ -48,6 +48,10 @@ module BetterTogether
 
         BetterTogether::Person.includes(:string_translations).where(id: manager_ids).or(opted_in).distinct
       end
+    end
+
+    def new?
+      user.present? && agent.present?
     end
 
     class Scope < ApplicationPolicy::Scope

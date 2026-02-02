@@ -6,7 +6,6 @@ module BetterTogether
     include BetterTogether::NotificationReadable
 
     before_action :authenticate_user!
-    before_action :require_person
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
     before_action :set_conversation, only: %i[show update leave_conversation]
@@ -31,10 +30,10 @@ module BetterTogether
         @conversation = Conversation.new
       end
 
+      authorize @conversation
+
       # Ensure nested message is available for the form (so users can create the first message inline)
       @conversation.messages.build if @conversation.messages.empty?
-
-      authorize @conversation
     end
 
     def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
@@ -217,14 +216,6 @@ module BetterTogether
     end
 
     private
-
-    def require_person
-      return if helpers.current_person
-
-      skip_authorization
-      flash[:alert] = t('better_together.conversations.errors.person_required')
-      redirect_to BetterTogether::Engine.routes.url_helpers.root_path
-    end
 
     def available_participants
       # Delegate to policy to centralize participant permission logic
