@@ -1875,6 +1875,16 @@ uk:
         message: Нову інтеграцію %{provider} підключено %{created_at}
         title: Підключено нову інтеграцію %{provider}
       time_ago: "%{time} ago"
+    oauth:
+      applications:
+        create:
+          success: "Додаток OAuth '%{name}' успішно створено. Тепер ви можете використовувати облікові дані клієнта для автентифікації запитів API."
+        destroy:
+          success: "Додаток OAuth '%{name}' видалено. Усі пов'язані токени доступу відкликано."
+        set_application:
+          not_found: "Додаток OAuth, який ви шукаєте, не знайдено. Можливо, його видалено або у вас немає дозволу на доступ до нього."
+        update:
+          success: "Додаток OAuth '%{name}' успішно оновлено."
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"

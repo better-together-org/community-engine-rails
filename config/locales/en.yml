@@ -1859,6 +1859,16 @@ en:
         message: New %{provider} integration connected on %{created_at}
         title: New %{provider} integration connected
       time_ago: "%{time} ago"
+    oauth:
+      applications:
+        create:
+          success: "OAuth application '%{name}' was successfully created. You can now use the client credentials to authenticate API requests."
+        destroy:
+          success: "OAuth application '%{name}' has been deleted. All associated access tokens have been revoked."
+        set_application:
+          not_found: "The OAuth application you're looking for could not be found. It may have been deleted or you don't have permission to access it."
+        update:
+          success: "OAuth application '%{name}' has been updated successfully."
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"

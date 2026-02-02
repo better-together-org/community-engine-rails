@@ -1889,6 +1889,16 @@ fr:
         message: Nouvelle intégration %{provider} connectée le %{created_at}
         title: Nouvelle intégration %{provider} connectée
       time_ago: il y a %{time}
+    oauth:
+      applications:
+        create:
+          success: "L'application OAuth '%{name}' a été créée avec succès. Vous pouvez maintenant utiliser les identifiants client pour authentifier les requêtes API."
+        destroy:
+          success: "L'application OAuth '%{name}' a été supprimée. Tous les jetons d'accès associés ont été révoqués."
+        set_application:
+          not_found: "L'application OAuth que vous recherchez est introuvable. Elle a peut-être été supprimée ou vous n'avez pas la permission d'y accéder."
+        update:
+          success: "L'application OAuth '%{name}' a été mise à jour avec succès."
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
       added_by: "%{actor_name} vous a ajouté comme auteur sur %{page_title}"
