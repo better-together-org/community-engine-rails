@@ -349,4 +349,140 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
     end
   end
+
+  describe 'timezone-aware datetime handling', :as_platform_manager do
+    let(:locale) { I18n.default_locale }
+
+    context 'when creating an event with Eastern timezone while user is in Newfoundland timezone' do
+      # rubocop:disable RSpec/MultipleExpectations
+      it 'interprets datetime values in the event timezone, not user timezone' do
+        # Simulate user in Newfoundland time viewing the form
+        # User enters "2026-03-15 14:00" in the form with Eastern timezone selected
+        # Expected: Event stores 2026-03-15 14:00 EST/EDT (which is 2026-03-15 18:00 UTC in winter, 19:00 in summer)
+
+        # March 15, 2026 is after DST starts (March 8, 2026), so EDT is active (UTC-4)
+        # User enters 2:00 PM in form, event timezone is America/New_York
+        # Should store as 2026-03-15 18:00 UTC (2 PM EDT = 6 PM UTC)
+
+        params = {
+          event: {
+            name: 'Timezone Test Event',
+            timezone: 'America/New_York',
+            starts_at: '2026-03-15T14:00',  # 2:00 PM in local time
+            ends_at: '2026-03-15T16:00',    # 4:00 PM in local time
+            identifier: SecureRandom.uuid,
+            privacy: 'public'
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+
+        # Verify event was created
+        expect(event).to be_present
+        expect(event.timezone).to eq('America/New_York')
+
+        # Verify times are stored correctly in UTC
+        # 2:00 PM EDT = 6:00 PM UTC (14:00 + 4 hours for EDT offset)
+        expect(event.starts_at.utc.hour).to eq(18)
+        expect(event.starts_at.utc.day).to eq(15)
+        expect(event.starts_at.utc.month).to eq(3)
+
+        # 4:00 PM EDT = 8:00 PM UTC
+        expect(event.ends_at.utc.hour).to eq(20)
+
+        # Verify local times match what user entered
+        expect(event.local_starts_at.hour).to eq(14)
+        expect(event.local_ends_at.hour).to eq(16)
+      end
+      # rubocop:enable RSpec/MultipleExpectations
+    end
+
+    context 'when updating an event timezone and datetime values' do
+      let(:existing_event) do
+        create(:better_together_event,
+               timezone: 'America/St_Johns', # Newfoundland time
+               starts_at: Time.utc(2026, 4, 1, 15, 30),  # 11:00 AM NDT (UTC-2:30 after DST)
+               ends_at: Time.utc(2026, 4, 1, 17, 30),    # 1:00 PM NDT
+               creator: BetterTogether::User.find_by(email: 'manager@example.test').person)
+      end
+
+      # rubocop:disable RSpec/MultipleExpectations
+      it 'interprets new datetime values in the new event timezone' do
+        # User changes timezone to Eastern and enters new times
+        # New times should be interpreted as Eastern, not Newfoundland
+
+        params = {
+          event: {
+            timezone: 'America/New_York',
+            starts_at: '2026-04-01T14:00',  # 2:00 PM in form (should be EDT)
+            ends_at: '2026-04-01T16:00'     # 4:00 PM in form (should be EDT)
+          },
+          locale: locale
+        }
+
+        patch better_together.event_path(existing_event, locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        existing_event.reload
+
+        # Verify timezone changed
+        expect(existing_event.timezone).to eq('America/New_York')
+
+        # April 1, 2026 is after DST starts, so EDT is active (UTC-4)
+        # 2:00 PM EDT = 6:00 PM UTC
+        expect(existing_event.starts_at.utc.hour).to eq(18)
+        expect(existing_event.ends_at.utc.hour).to eq(20)
+
+        # Verify local times in new timezone
+        expect(existing_event.local_starts_at.hour).to eq(14)
+        expect(existing_event.local_ends_at.hour).to eq(16)
+        # rubocop:enable RSpec/MultipleExpectations
+      end
+    end
+
+    context 'when updating only datetime without changing timezone' do
+      let(:existing_event) do
+        create(:better_together_event,
+               timezone: 'America/Los_Angeles',
+               starts_at: Time.utc(2026, 5, 15, 19, 0),  # 12:00 PM PDT
+               ends_at: Time.utc(2026, 5, 15, 21, 0),    # 2:00 PM PDT
+               creator: BetterTogether::User.find_by(email: 'manager@example.test').person)
+      end
+      # rubocop:disable RSpec/MultipleExpectations
+
+      it 'interprets datetime values in the existing event timezone' do
+        params = {
+          event: {
+            starts_at: '2026-05-15T15:00',  # 3:00 PM in form
+            ends_at: '2026-05-15T17:00'     # 5:00 PM in form
+          },
+          locale: locale
+        }
+
+        patch better_together.event_path(existing_event, locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        existing_event.reload
+
+        # Timezone unchanged
+        expect(existing_event.timezone).to eq('America/Los_Angeles')
+
+        # May 15, 2026 has PDT active (UTC-7)
+        # 3:00 PM PDT = 10:00 PM UTC
+        expect(existing_event.starts_at.utc.hour).to eq(22)
+        # 5:00 PM PDT = 12:00 AM UTC next day
+        expect(existing_event.ends_at.utc.hour).to eq(0)
+        expect(existing_event.ends_at.utc.day).to eq(16)
+
+        # Verify local times
+        expect(existing_event.local_starts_at.hour).to eq(15)
+        # rubocop:enable RSpec/MultipleExpectations
+        expect(existing_event.local_ends_at.hour).to eq(17)
+      end
+    end
+  end
 end

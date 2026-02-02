@@ -201,6 +201,24 @@ module BetterTogether
         'secondary'
       end
     end
+
+    # Returns the datetime value for form fields in the event's timezone
+    # This ensures the form displays times in the event's local timezone
+    # Format: YYYY-MM-DDTHH:MM (HTML5 datetime-local format)
+    #
+    # @param event [Event] The event object
+    # @param field [Symbol] :starts_at or :ends_at
+    # @return [String, nil] Formatted datetime string or nil
+    def event_datetime_field_value(event, field)
+      datetime = event.public_send(field)
+      return nil unless datetime.present?
+
+      # Get timezone or default to UTC
+      event_timezone = event.timezone.presence || 'UTC'
+
+      # Convert to event timezone and format for datetime-local input
+      datetime.in_time_zone(event_timezone).strftime('%Y-%m-%dT%H:%M')
+    end
   end
   # rubocop:enable Metrics/ModuleLength
 end

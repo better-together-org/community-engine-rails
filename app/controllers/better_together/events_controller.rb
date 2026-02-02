@@ -25,6 +25,7 @@ module BetterTogether
 
     before_action :build_event_hosts, only: :new
     before_action :process_recurrence_attributes, only: %i[create update]
+    before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
 
     def index
       @draft_events = @events.draft
@@ -416,6 +417,43 @@ module BetterTogether
         params[:event][:recurrence_attributes].delete(key)
       end
     end
+
+    # Convert datetime parameters from event timezone to UTC for storage
+    # This ensures that times entered in the form are interpreted as being in the event's timezone,
+    # not the user's current timezone
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
+    def convert_datetime_params_to_event_timezone
+      return unless params[:event].present?
+
+      event_params = params[:event]
+
+      # Determine the timezone to use for parsing datetime values
+      # Priority: 1) timezone in params (for new/updated timezone), 2) existing event timezone, 3) UTC
+      event_timezone = if event_params[:timezone].present?
+                         event_params[:timezone]
+                       elsif @resource&.timezone.present?
+                         @resource.timezone
+                       else
+                         'UTC'
+                       end
+
+      # Convert starts_at if present
+      if event_params[:starts_at].present? && event_params[:starts_at].is_a?(String)
+        Time.zone.parse(event_params[:starts_at])
+        # Re-interpret the time as being in the event's timezone
+        params[:event][:starts_at] = ActiveSupport::TimeZone[event_timezone].parse(event_params[:starts_at])
+      end
+
+      # Convert ends_at if present
+      return unless event_params[:ends_at].present? && event_params[:ends_at].is_a?(String)
+
+      Time.zone.parse(event_params[:ends_at])
+      # Re-interpret the time as being in the event's timezone
+      params[:event][:ends_at] = ActiveSupport::TimeZone[event_timezone].parse(event_params[:ends_at])
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
 
     # Build an IceCube schedule from form parameters
     # rubocop:disable Metrics/CyclomaticComplexity
