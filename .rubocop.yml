@@ -29,6 +29,18 @@ RSpec/MessageSpies:
   Enabled: false
 RSpec/LetSetup:
   Enabled: false
+RSpec/EmptyExampleGroup:
+  Enabled: false
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/integration/**/*'
+    - 'spec/features/**/*'
+    - 'spec/requests/**/*'
+    - 'spec/system/**/*'
+    - 'spec/views/**/*'
+RSpec/VariableName:
+  Exclude:
+    - 'spec/integration/**/*'  # rswag uses capitalized HTTP header names
 
 Style/StringLiterals:
   Exclude:

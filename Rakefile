@@ -27,6 +27,7 @@ end
 load 'rails/tasks/statistics.rake'
 
 Dir[File.join(File.dirname(__FILE__), 'tasks/**/*.rake')].each { |f| load f }
+Dir[File.join(File.dirname(__FILE__), 'lib/tasks/**/*.rake')].each { |f| load f }
 
 require 'rspec/core'
 require 'rspec/core/rake_task'
@@ -34,8 +35,14 @@ require 'rspec/core/rake_task'
 # Load rswag rake tasks for API documentation generation
 begin
   require 'rswag/specs/rake_task'
-  RSwag::Specs::RakeTask.new(:swaggerize) do |t|
-    t.pattern = 'spec/integration/**/*_spec.rb'
+
+  # Define the swaggerize task with our custom pattern
+  RSwag::Specs::RakeTask.new('rswag:specs:swaggerize') do |t|
+    # Include only integration specs which have the rswag 'path' DSL
+    t.pattern = 'spec/integration/**/api/**/*_spec.rb'
+    # Remove --dry-run to actually execute the specs
+    t.rspec_opts = ['--format', 'Rswag::Specs::SwaggerFormatter', '--order', 'defined']
+    t.dry_run = false
   end
 rescue LoadError
   # rswag not available
