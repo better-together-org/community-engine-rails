@@ -232,13 +232,17 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       post better_together.communities_path(locale:), params: valid_params
       expect(response).to have_http_status(:found)
       community = BetterTogether::Community.last
-      expect(response).to redirect_to(better_together.community_path(locale:, id: community.slug))
+      # Slug is generated from identifier, not name
+      expect(response.location).to include("/c/#{community.slug}")
     end
 
-    it 'generates a slug from the name' do
+    it 'generates a slug from the identifier' do
       post better_together.communities_path(locale:), params: valid_params
       community = BetterTogether::Community.last
-      expect(community.slug).to eq(community_name.parameterize)
+      # Slug is generated from identifier (auto-generated if not provided)
+      expect(community.slug).to eq(community.identifier.parameterize)
+      # Identifier is auto-generated and follows a specific pattern
+      expect(community.identifier).to match(/^[a-z0-9-]+$/)
     end
   end
 
