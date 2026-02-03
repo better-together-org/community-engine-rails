@@ -61,5 +61,4 @@ module OmniauthTestHelpers
                            })
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-  config.include OmniauthTestHelpers, :omniauth
 end
