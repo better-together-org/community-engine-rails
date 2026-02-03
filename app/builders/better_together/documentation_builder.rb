@@ -24,11 +24,17 @@ module BetterTogether
                    end
                  end
 
-          entries.each_with_index do |entry, index|
-            create_documentation_navigation_item(area, entry, index)
+          # Disable touch callbacks during bulk creation to prevent stale object errors
+          ::BetterTogether::NavigationItem.no_touching do
+            ::BetterTogether::Page.no_touching do
+              entries.each_with_index do |entry, index|
+                create_documentation_navigation_item(area, entry, index)
+              end
+            end
           end
 
-          area.reload.save!
+          # Explicitly touch the area once after all items are created
+          area.reload.touch
         end
       end
 

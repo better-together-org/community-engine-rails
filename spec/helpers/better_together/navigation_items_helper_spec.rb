@@ -11,8 +11,7 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
 
   before do
     helper.extend(BetterTogether::ApplicationHelper)
-    allow_any_instance_of(BetterTogether::ApplicationHelper).to receive(:host_platform).and_return(platform)
-    allow(helper).to receive(:current_user).and_return(nil)
+    allow(helper).to receive_messages(host_platform: platform, current_user: nil)
   end
 
   describe '#render_navigation_items_list' do

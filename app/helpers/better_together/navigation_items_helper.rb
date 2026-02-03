@@ -32,7 +32,8 @@ module BetterTogether
       [
         'nav_area_items',
         nav.cache_key_with_version, # Ensure cache expires when nav updates
-        current_user&.cache_key_with_version
+        current_user&.cache_key_with_version,
+        request.path.hash # Include path to prevent active state caching across pages
       ].compact # removes nil values for unauthenticated users
     end
 
@@ -58,6 +59,8 @@ module BetterTogether
       classes = dom_class(navigation_item, navigation_item.slug)
       classes += ' nav-link text-center'
       classes += ' dropdown-toggle' if navigation_item.children?
+      # Don't add 'active' class here - it's request-dependent and breaks caching
+      # The active state is handled client-side via Stimulus or via data attribute
       classes += ' active' if nav_link_active?(navigation_item, path:)
       classes
     end

@@ -404,8 +404,8 @@ module BetterTogether
                 .reject(&:blank?)
                 .map do |d|
                   Date.parse(d)
-        rescue StandardError
-          nil
+                rescue StandardError
+                  nil
         end
                 .compact
 
