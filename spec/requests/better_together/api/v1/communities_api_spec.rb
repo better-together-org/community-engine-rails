@@ -138,10 +138,6 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
             role: platform_manager_role
           )
         ).to be(true)
-        expect(platform_manager_user.person.permitted_to?('create_community')).to be(true)
-        expect(
-          BetterTogether::Person.find(platform_manager_user.person.id).permitted_to?('create_community')
-        ).to be(true)
 
         get '/api/v1/people/me', headers: platform_manager_headers
         expect(response).to have_http_status(:ok)

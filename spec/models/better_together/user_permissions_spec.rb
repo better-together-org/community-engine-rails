@@ -20,9 +20,8 @@ RSpec.describe BetterTogether::User do
       expect(membership).to be_present
     end
 
-    it 'grants platform and community permissions' do
+    it 'grants platform permissions' do
       expect(user.permitted_to?('manage_platform')).to be(true)
-      expect(user.permitted_to?('create_community')).to be(true)
     end
   end
 

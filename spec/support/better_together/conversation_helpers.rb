@@ -92,6 +92,10 @@ module BetterTogether
 
       # Submit using the button label present in the UI (keep original label to avoid brittle tests)
       click_button 'Create Conversation'
+
+      # Wait for the form submission to complete and redirect to the conversation show page
+      # This prevents the test from checking the count before the conversation is created
+      expect(page).to have_current_path(%r{/conversations/[a-f0-9-]+}, wait: 10)
     end
   end
 end
