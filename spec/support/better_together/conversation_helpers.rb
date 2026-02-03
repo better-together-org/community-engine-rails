@@ -29,8 +29,7 @@ module BetterTogether
       # Then wait for SlimSelect Stimulus controller to initialize and create its wrapper
       expect(page).to have_css('.ss-main', wait: 5)
 
-      select_element = find('select[name="conversation[participant_ids][]"]', visible: :all)
-      ss_main = select_element.find(:xpath, 'following-sibling::div[contains(@class, "ss-main")]', visible: :all)
+      ss_main = find('.ss-main', match: :first, visible: :all)
 
       participants.each_with_index do |participant, index|
         # Open SlimSelect dropdown for the participants select
