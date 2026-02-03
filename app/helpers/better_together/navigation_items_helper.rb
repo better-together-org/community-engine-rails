@@ -21,7 +21,10 @@ module BetterTogether
       return unless better_together_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(better_together_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items
+        render_navigation_items_list(
+          navigation_items: better_together_nav_items,
+          navigation_area: better_together_nav_area
+        )
       end
     end
 
@@ -77,9 +80,10 @@ module BetterTogether
       return unless platform_host_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_host_nav_area)) do
-        render 'better_together/navigation_items/navigation_items',
-               navigation_items: platform_host_nav_items,
-               navigation_area: platform_host_nav_area
+        render_navigation_items_list(
+          navigation_items: platform_host_nav_items,
+          navigation_area: platform_host_nav_area
+        )
       end
     end
 
@@ -142,9 +146,10 @@ module BetterTogether
       return unless platform_footer_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_footer_nav_area)) do
-        render 'better_together/navigation_items/navigation_items',
-               navigation_items: platform_footer_nav_items,
-               navigation_area: platform_footer_nav_area
+        render_navigation_items_list(
+          navigation_items: platform_footer_nav_items,
+          navigation_area: platform_footer_nav_area
+        )
       end
     end
 
@@ -173,9 +178,10 @@ module BetterTogether
       return unless platform_header_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_header_nav_area)) do
-        render 'better_together/navigation_items/navigation_items',
-               navigation_items: platform_header_nav_items,
-               navigation_area: platform_header_nav_area
+        render_navigation_items_list(
+          navigation_items: platform_header_nav_items,
+          navigation_area: platform_header_nav_area
+        )
       end
     end
 
@@ -186,6 +192,45 @@ module BetterTogether
         end,
         nav_item&.route_name
       )
+    end
+
+    # Renders a navigation items list with optional navigation area styling
+    # @param navigation_items [Array<NavigationItem>] The navigation items to render
+    # @param navigation_area [NavigationArea, nil] Optional navigation area for DOM classes/IDs
+    # @param justify [String] Bootstrap justify class (default: 'center')
+    # @param base_class [String] Base navbar class (default: 'navbar-nav')
+    # @param flex_direction_class [String] Responsive flex direction (default: 'flex-lg-row')
+    # @param flex_wrap_class [String] Flex wrapping behavior (default: 'flex-wrap')
+    # @param gap_class [String] Default gap spacing (default: 'gap-2')
+    # @param gap_md_class [String] Medium breakpoint gap spacing (default: 'gap-md-3')
+    # @return [String] HTML ul element with navigation items
+    # rubocop:disable Metrics/ParameterLists
+    def render_navigation_items_list(
+      navigation_items:,
+      navigation_area: nil,
+      justify: 'center',
+      base_class: 'navbar-nav',
+      flex_direction_class: 'flex-lg-row',
+      flex_wrap_class: 'flex-wrap',
+      gap_class: 'gap-2',
+      gap_md_class: 'gap-md-3'
+    )
+      # rubocop:enable Metrics/ParameterLists
+      nav_class = [
+        base_class,
+        flex_direction_class,
+        flex_wrap_class,
+        gap_class,
+        gap_md_class,
+        "justify-content-#{justify}"
+      ].compact.join(' ')
+      nav_class += " #{dom_class(navigation_area, :nav_items)}" if navigation_area
+      nav_id = navigation_area ? dom_id(navigation_area, :nav_items) : nil
+
+      content_tag :ul, class: nav_class, id: nav_id do
+        render partial: 'better_together/navigation_items/navigation_item',
+               collection: navigation_items, as: :navigation_item
+      end
     end
 
     protected
