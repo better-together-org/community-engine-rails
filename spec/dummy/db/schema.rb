@@ -471,15 +471,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
     t.integer "duration_minutes"
     t.string "registration_url"
     t.string "timezone", default: "UTC", null: false
-    t.text "recurrence_rule"
-    t.boolean "is_recurring", default: false, null: false
-    t.uuid "parent_event_id"
-    t.date "recurrence_exception_dates", default: [], array: true
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
-    t.index ["is_recurring"], name: "index_better_together_events_on_is_recurring"
-    t.index ["parent_event_id"], name: "index_better_together_events_on_parent_event_id"
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
@@ -1046,7 +1040,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
     t.uuid "creator_id"
     t.uuid "community_id"
     t.jsonb "display_settings", default: {}, null: false
-    t.index ["community_id"], name: "by_better_together_pages_primary_community"
+    t.index ["community_id"], name: "by_better_together_pages_community"
     t.index ["creator_id"], name: "by_better_together_pages_creator"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
     t.index ["privacy"], name: "by_page_privacy"

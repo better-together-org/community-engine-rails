@@ -21,7 +21,10 @@ scope path: BetterTogether.route_scope_path do
                  confirmations: 'better_together/api/auth/confirmations'
                }
 
+    # Version 1 JSON API endpoints (resources, collections, etc.)
     draw :api_v1
+
+    # API documentation endpoints (e.g., OpenAPI / Swagger UI)
     draw :api_docs
   end
 end

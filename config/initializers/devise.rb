@@ -346,7 +346,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
     ]
     jwt.expiration_time = 1.hour.to_i
     jwt.request_formats = {
-      user: [nil, :json, :jsonapi, 'application/vnd.api+json']
+      user: [nil, :json, :jsonapi]
     }
   end
 end

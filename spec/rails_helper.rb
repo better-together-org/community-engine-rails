@@ -122,6 +122,7 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
   # config.include RequestSpecHelper, type: :controller
   config.include BetterTogether::CapybaraFeatureHelpers, type: :feature
+  config.include OmniauthTestHelpers, :omniauth
 
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
