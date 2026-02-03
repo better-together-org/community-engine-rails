@@ -2,41 +2,23 @@
 
 require 'rails_helper'
 
-RSpec.describe 'GitHub OAuth Integration', :no_auth do
+RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
   include BetterTogether::DeviseSessionHelpers
 
-  let(:platform) { configure_host_platform }
-  let(:community) { platform.community }
+  let!(:platform) { configure_host_platform }
+  let!(:community) { platform.community }
 
   before do
     # Set up test platform for host application
-    platform # Ensure platform is created
     platform.update!(requires_invitation: false, privacy: 'public')
   end
 
   describe 'OAuth authentication flow' do
+    let(:oauth_email) { unique_email }
+    let(:oauth_uid) { unique_oauth_uid }
+    let(:oauth_nickname) { unique_username }
     let(:github_auth_hash) do
-      OmniAuth::AuthHash.new({
-                               provider: 'github',
-                               uid: '123456',
-                               info: {
-                                 email: 'test@example.com',
-                                 name: 'Test User',
-                                 nickname: 'testuser',
-                                 image: 'https://avatars.githubusercontent.com/u/123456?v=4'
-                               },
-                               credentials: {
-                                 token: 'github_access_token_123',
-                                 secret: 'github_secret_456',
-                                 expires_at: 1.hour.from_now.to_i
-                               },
-                               extra: {
-                                 raw_info: {
-                                   login: 'testuser',
-                                   html_url: 'https://github.com/testuser'
-                                 }
-                               }
-                             })
+      github_oauth_hash(email: oauth_email, uid: oauth_uid, nickname: oauth_nickname)
     end
 
     before do
@@ -51,22 +33,22 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
     end
 
     context 'when user does not exist' do
-      it 'creates new user and signs them in' do
+      it 'creates new user and signs them in', :aggregate_failures do
         visit '/users/auth/github/callback'
 
         expect(page).to have_current_path('/en/agreements/status', ignore_query: true)
 
         # Check that user was created
-        user = BetterTogether.user_class.find_by(email: 'test@example.com')
+        user = BetterTogether.user_class.find_by(email: oauth_email)
         expect(user).to be_present
         expect(user.person.name).to eq('Test User')
-        expect(user.person.handle).to eq('testuser')
+        expect(user.person.handle).to eq(oauth_nickname)
 
         # Check that PersonPlatformIntegration was created
         integration = user.person_platform_integrations.first
         expect(integration.provider).to eq('github')
-        expect(integration.uid).to eq('123456')
-        expect(integration.access_token).to eq('github_access_token_123')
+        expect(integration.uid).to eq(oauth_uid)
+        expect(integration.access_token).to start_with('github_token_')
       end
     end
 
@@ -74,7 +56,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
       let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
       let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
-      let!(:existing_user) { create(:user, :confirmed, email: 'test@example.com') }
+      let!(:existing_user) { create(:user, :confirmed, email: oauth_email) }
 
       before do
         # Accept all required agreements so OAuth flow proceeds
@@ -83,7 +65,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
         create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
       end
 
-      it 'signs in existing user and links GitHub account' do
+      it 'signs in existing user and links GitHub account', :aggregate_failures do
         initial_count = BetterTogether.user_class.count
         visit '/users/auth/github/callback'
 
@@ -95,10 +77,10 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
         expect(BetterTogether.user_class.count).to be >= initial_count
 
         # Check that PersonPlatformIntegration was created
-        integration = BetterTogether::PersonPlatformIntegration.find_by(provider: 'github', uid: '123456')
+        integration = BetterTogether::PersonPlatformIntegration.find_by(provider: 'github', uid: oauth_uid)
         expect(integration).to be_present
         expect(integration.provider).to eq('github')
-        expect(integration.uid).to eq('123456')
+        expect(integration.uid).to eq(oauth_uid)
       end
     end
 
@@ -106,12 +88,12 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
       let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
       let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
-      let!(:existing_user) { create(:user, :confirmed, email: 'test@example.com') }
+      let!(:existing_user) { create(:user, :confirmed, email: oauth_email) }
       let!(:existing_integration) do
         create(:person_platform_integration,
                user: existing_user,
                provider: 'github',
-               uid: '123456',
+               uid: oauth_uid,
                access_token: 'old_token')
       end
 
@@ -122,7 +104,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
         create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
       end
 
-      it 'updates existing integration and signs in user' do
+      it 'updates existing integration and signs in user', :aggregate_failures do
         visit '/users/auth/github/callback'
 
         # User with existing integration connects again → treated as returning user
@@ -130,15 +112,15 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
 
         # Check that integration was updated
         existing_integration.reload
-        expect(existing_integration.access_token).to eq('github_access_token_123')
+        expect(existing_integration.access_token).to start_with('github_token_')
         expect(existing_integration.name).to eq('Test User')
-        expect(existing_integration.handle).to eq('testuser')
+        expect(existing_integration.handle).to eq(oauth_nickname)
       end
     end
 
     context 'when user is already signed in' do
       # Use same email as OAuth to test linking behavior
-      let(:current_user) { create(:user, :confirmed, email: 'test@example.com', password: 'MyS3cur3T3st!') }
+      let(:current_user) { create(:user, :confirmed, email: oauth_email, password: 'MyS3cur3T3st!') }
 
       it 'links GitHub account to current user' do
         # Sign in the user first using Capybara
@@ -153,7 +135,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth do
         expect(BetterTogether.user_class.count).to eq(initial_user_count)
 
         # Check that PersonPlatformIntegration was linked to the signed-in user
-        integration = BetterTogether::PersonPlatformIntegration.find_by(provider: 'github', uid: '123456')
+        integration = BetterTogether::PersonPlatformIntegration.find_by(provider: 'github', uid: oauth_uid)
         expect(integration).to be_present
         expect(integration.user).to eq(current_user)
         expect(integration.person).to eq(current_user.person)

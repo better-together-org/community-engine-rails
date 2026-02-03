@@ -57,8 +57,6 @@ RSpec.describe 'Event Timezone Selector' do
 
   describe 'POST /events', :as_platform_manager do
     let(:manager_user) { BetterTogether::User.find_by(email: 'manager@example.test') }
-    let(:manager_person) { manager_user.person }
-
     let(:event_params) do
       {
         event: {
@@ -80,6 +78,12 @@ RSpec.describe 'Event Timezone Selector' do
           }
         }
       }
+    end
+    let(:manager_person) { manager_user&.person }
+
+    before do
+      # Ensure manager exists (automatic test configuration should have created this)
+      raise 'Manager user not found - automatic test configuration may have failed' unless manager_user
     end
 
     it 'creates event with specified timezone' do
@@ -143,8 +147,6 @@ RSpec.describe 'Event Timezone Selector' do
 
   describe 'PATCH /events/:id', :as_platform_manager do
     let(:manager_user) { BetterTogether::User.find_by(email: 'manager@example.test') }
-    let(:manager_person) { manager_user.person }
-
     let(:event) do
       create(:event,
              timezone: 'America/Toronto',
@@ -152,8 +154,12 @@ RSpec.describe 'Event Timezone Selector' do
              starts_at: Time.current,
              ends_at: 2.hours.from_now)
     end
+    let(:manager_person) { manager_user&.person }
 
     before do
+      # Ensure manager exists (automatic test configuration should have created this)
+      raise 'Manager user not found - automatic test configuration may have failed' unless manager_user
+
       create(:better_together_event_host, event: event, host: community)
     end
 

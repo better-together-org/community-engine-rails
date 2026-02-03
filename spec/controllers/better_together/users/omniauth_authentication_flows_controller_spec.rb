@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups, RSpec/MultipleMemoizedHelpers, RSpec/SpecFilePathFormat
-RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_setup do
+RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :omniauth, :skip_host_setup do
   routes { BetterTogether::Engine.routes }
   include Devise::Test::ControllerHelpers
 
@@ -12,9 +12,9 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
     unless host_platform
       begin
         host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
-          c.name = Faker::Company.unique.name
-          c.description = Faker::Lorem.paragraph
-          c.identifier = Faker::Internet.unique.username(specifier: 10..20)
+          c.name = "Test Community #{SecureRandom.uuid}"
+          c.description = 'Test community for OAuth flows'
+          c.identifier = "test-community-#{SecureRandom.hex(10)}"
           c.privacy = 'public'
           c.protected = true
         end
@@ -24,7 +24,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
           p.description = host_community.description
           p.identifier = host_community.identifier
           p.host_url = 'http://localhost:3000'
-          p.time_zone = Faker::Address.time_zone
+          p.time_zone = 'UTC'
           p.privacy = 'public'
           p.protected = true
           p.community = host_community
@@ -50,8 +50,8 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
 
     host_platform
   end
-  let(:platform) { configure_host_platform }
-  let(:community) { platform.community }
+  let!(:platform) { configure_host_platform }
+  let!(:community) { platform.community }
   let!(:github_platform) do
     BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |github|
       github.external = true
@@ -66,55 +66,26 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
 
   # Helper to create GitHub auth hash with custom options
   # rubocop:disable Metrics/MethodLength
-  def github_auth_hash(email: 'test@example.com', uid: '123456')
-    OmniAuth::AuthHash.new({
-                             provider: 'github',
-                             uid: uid,
-                             info: {
-                               email: email,
-                               name: 'Test User',
-                               nickname: 'testuser',
-                               image: 'https://avatars.githubusercontent.com/u/123456?v=4'
-                             },
-                             credentials: {
-                               token: 'github_access_token_123',
-                               secret: 'github_secret_456',
-                               expires_at: 1.hour.from_now.to_i
-                             },
-                             extra: {
-                               raw_info: {
-                                 login: 'testuser',
-                                 html_url: 'https://github.com/testuser'
-                               }
-                             }
-                           })
+  def github_auth_hash(email: unique_email, uid: unique_oauth_uid, **)
+    github_oauth_hash(email: email, uid: uid, **)
   end
   # rubocop:enable Metrics/MethodLength
 
   before do
-    platform # Ensure platform is created
     request.host = 'localhost'
     @request.env['devise.mapping'] = devise_mapping # rubocop:todo RSpec/InstanceVariable
-
-    # Clean up any existing test users
-    BetterTogether.user_class.where(email: 'user@example.test').delete_all
   end
 
   describe 'OAuth Authentication Scenarios', :no_auth do
     context 'when new user signs up via OAuth' do
-      let(:oauth_email) { 'newuser@example.com' }
+      let(:oauth_email) { unique_email }
+      let(:oauth_uid) { unique_oauth_uid }
 
       before do
-        request.env['omniauth.auth'] = github_auth_hash(email: oauth_email)
-
-        # Clean up any existing integrations
-        BetterTogether::PersonPlatformIntegration.where(
-          provider: 'github',
-          uid: '123456'
-        ).delete_all
+        request.env['omniauth.auth'] = github_auth_hash(email: oauth_email, uid: oauth_uid)
       end
 
-      it 'creates new user and signs them in' do
+      it 'creates new user and signs them in', :aggregate_failures do
         expect do
           get :github
         end.to change(BetterTogether.user_class, :count).by(1)
@@ -127,7 +98,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         expect(controller.current_user).to eq(new_user)
       end
 
-      it 'creates PersonPlatformIntegration record' do
+      it 'creates PersonPlatformIntegration record', :aggregate_failures do
         expect do
           get :github
         end.to change(BetterTogether::PersonPlatformIntegration, :count).by(1)
@@ -135,23 +106,24 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         integration = BetterTogether::PersonPlatformIntegration.last
         expect(integration.provider).to eq('github')
         expect(integration.platform).to eq(github_platform)
-        expect(integration.uid).to eq('123456')
+        expect(integration.uid).to eq(oauth_uid)
       end
     end
 
     context 'when existing user (created via email/password) authenticates via OAuth' do
-      let(:existing_email) { 'existing@example.com' }
+      let(:existing_email) { unique_email }
+      let(:existing_uid) { unique_oauth_uid }
       let!(:existing_user) do
         create(:better_together_user, email: existing_email, password: 'MyStr0ng!Phrase#2024')
       end
 
       before do
-        request.env['omniauth.auth'] = github_auth_hash(email: existing_email, uid: '789012')
+        request.env['omniauth.auth'] = github_auth_hash(email: existing_email, uid: existing_uid)
 
         # Clean up any existing integrations
         BetterTogether::PersonPlatformIntegration.where(
           provider: 'github',
-          uid: '789012'
+          uid: existing_uid
         ).delete_all
       end
 
@@ -172,7 +144,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         integration = BetterTogether::PersonPlatformIntegration.last
         expect(integration.user).to eq(existing_user)
         expect(integration.provider).to eq('github')
-        expect(integration.uid).to eq('789012')
+        expect(integration.uid).to eq(existing_uid)
       end
     end
 

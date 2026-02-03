@@ -130,7 +130,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it 'includes organization branding' do
         mail = described_class.with(person: person, event: event, reminder_type: '24_hours').event_reminder
         # The platform name should appear in the email
-        expect(mail.body.encoded).to include(host_community.name)
+        expect_mail_html_content(mail, host_community.name)
       end
     end
 

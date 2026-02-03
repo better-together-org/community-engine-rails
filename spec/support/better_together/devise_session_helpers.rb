@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  module CapybaraFeatureHelpers
+  module CapybaraFeatureHelpers # rubocop:todo Metrics/ModuleLength
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
     include BetterTogether::Engine.routes.url_helpers
@@ -70,18 +70,35 @@ module BetterTogether
       capybara_sign_in_user('user@example.test', 'SecureTest123!@#')
     end
 
-    def capybara_sign_in_user(email, password)
+    # rubocop:todo Metrics/MethodLength
+    # rubocop:todo Lint/CopDirectiveSyntax
+    def capybara_sign_in_user(email, password) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # rubocop:enable Lint/CopDirectiveSyntax
       visit new_user_session_path(locale: I18n.default_locale)
       # If already authenticated, Devise may redirect to a dashboard. Only fill when fields exist.
       return unless page.has_field?('user[email]', disabled: false)
+
+      # Ensure user exists and is confirmed before attempting sign in
+      user = BetterTogether::User.find_by(email: email)
+      unless user&.confirmed?
+        raise "User #{email} does not exist or is not confirmed. Cannot sign in."
+      end
 
       fill_in 'user[email]', with: email
       fill_in 'user[password]', with: password
       click_button 'Sign In'
 
       # Wait for redirect away from login page (authentication complete)
-      expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
+      # If still on login page, check for error messages
+      begin
+        expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
+      rescue RSpec::Expectations::ExpectationNotMetError
+        # Capture error message for debugging
+        error_msg = page.has_css?('.alert') ? page.find('.alert').text : 'No error message displayed'
+        raise "Failed to sign in as #{email}. Still on login page. Error: #{error_msg}"
+      end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def capybara_sign_out_current_user
       click_on 'Log Out'
