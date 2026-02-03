@@ -28,7 +28,7 @@ module BetterTogether
             title: 'Record not found',
             detail: "The record identified by #{params[:id]} could not be found."
           )]
-          response_document.add_result(JSONAPI::ErrorsOperationResult.new(404, errors), nil)
+          self.response_document.add_result(JSONAPI::ErrorsOperationResult.new(404, errors), nil)
         else
           super
         end
