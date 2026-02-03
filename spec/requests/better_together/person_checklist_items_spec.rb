@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rubocop:todo RSpec/SpecFilePathFormat
   include Devise::Test::IntegrationHelpers
 
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :confirmed) }
   let!(:person) { create(:better_together_person, user: user) }
   let(:checklist) { create(:better_together_checklist) }
   let(:items) { create_list(:better_together_checklist_item, 3, checklist: checklist) }
@@ -13,8 +13,7 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
   before do
     configure_host_platform
     # Use project's HTTP login helper to satisfy route constraints
-    test_user = find_or_create_test_user(user.email, 'SecureTest123!@#', :user)
-    login(test_user.email, 'SecureTest123!@#')
+    login(user.email, 'SecureTest123!@#')
   end
 
   # rubocop:todo RSpec/MultipleExpectations
