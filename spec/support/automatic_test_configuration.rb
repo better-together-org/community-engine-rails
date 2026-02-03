@@ -389,18 +389,6 @@ RSpec.configure do |config|
     ensure_clean_session
   end
 
-  # Run certain navigation steps after example-level lets have been evaluated
-  config.append_before(:each, type: :feature) do |example|
-    full_description = [
-      example.example_group.description,
-      example.example_group.parent_groups.map(&:description)
-    ].flatten.compact.join(' ').downcase
-
-    if full_description.include?('creating a new conversation') && example.metadata[:as_platform_manager]
-      visit new_conversation_path(locale: I18n.default_locale)
-    end
-  end
-
   # Extend RSpec DSL to support description-based auto-authentication
   config.extend(Module.new do
     def describe(*args, **options, &)

@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
 module BetterTogether
-  RSpec.describe SetupWizardStepsController, :skip_host_setup do
+  RSpec.describe SetupWizardStepsController, :no_auth, :skip_host_setup do
     let(:wizard) { Wizard.find_or_create_by!(identifier: 'host_setup') }
     let(:platform_details_step) do
       WizardStepDefinition.find_or_create_by!(

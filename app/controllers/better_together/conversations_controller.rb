@@ -268,11 +268,9 @@ module BetterTogether
     end
 
     def set_conversation # rubocop:todo Metrics/MethodLength
-      scope = helpers.current_person.conversations.includes(participants: [
-                                                              :string_translations,
-                                                              :contact_detail,
-                                                              { profile_image_attachment: :blob }
-                                                            ])
+      scope = policy_scope(helpers.current_person.conversations)
+      return unless scope
+
       @conversation = scope.find(params[:id])
       @set_conversation ||= Conversation.includes(participants: [
                                                     :string_translations,
@@ -282,12 +280,17 @@ module BetterTogether
     end
 
     def set_conversations
-      @conversations = helpers.current_person.conversations.includes(messages: [:sender],
-                                                                     participants: [
-                                                                       :string_translations,
-                                                                       :contact_detail,
-                                                                       { profile_image_attachment: :blob }
-                                                                     ]).order(updated_at: :desc).distinct(:id)
+      person = helpers.current_person
+      @conversations = if person
+                         person.conversations.includes(messages: [:sender],
+                                                       participants: [
+                                                         :string_translations,
+                                                         :contact_detail,
+                                                         { profile_image_attachment: :blob }
+                                                       ]).order(updated_at: :desc).distinct(:id)
+                       else
+                         BetterTogether::Conversation.none
+                       end
     end
 
     # platform_manager_ids now inferred by policy; kept here only if needed elsewhere

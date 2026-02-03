@@ -216,6 +216,14 @@ module BetterTogether
       # Get timezone or default to UTC
       event_timezone = event.timezone.presence || 'UTC'
 
+      # Validate timezone before using it
+      begin
+        Time.find_zone!(event_timezone)
+      rescue ArgumentError, TZInfo::InvalidTimezoneIdentifier
+        # If timezone is invalid, fall back to UTC
+        event_timezone = 'UTC'
+      end
+
       # Convert to event timezone and format for datetime-local input
       datetime.in_time_zone(event_timezone).strftime('%Y-%m-%dT%H:%M')
     end

@@ -54,7 +54,15 @@ module BetterTogether
       user.present? && agent.present?
     end
 
+    # Authorization scope for conversations
     class Scope < ApplicationPolicy::Scope
+      def resolve
+        scope.includes(participants: [
+                         :string_translations,
+                         :contact_detail,
+                         { profile_image_attachment: :blob }
+                       ])
+      end
     end
   end
 end

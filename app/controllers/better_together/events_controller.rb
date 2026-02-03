@@ -438,11 +438,14 @@ module BetterTogether
                          'UTC'
                        end
 
+      # Get the timezone object, falling back to UTC if invalid
+      timezone_obj = ActiveSupport::TimeZone[event_timezone] || ActiveSupport::TimeZone['UTC']
+
       # Convert starts_at if present
       if event_params[:starts_at].present? && event_params[:starts_at].is_a?(String)
         Time.zone.parse(event_params[:starts_at])
         # Re-interpret the time as being in the event's timezone
-        params[:event][:starts_at] = ActiveSupport::TimeZone[event_timezone].parse(event_params[:starts_at])
+        params[:event][:starts_at] = timezone_obj.parse(event_params[:starts_at])
       end
 
       # Convert ends_at if present
@@ -450,7 +453,7 @@ module BetterTogether
 
       Time.zone.parse(event_params[:ends_at])
       # Re-interpret the time as being in the event's timezone
-      params[:event][:ends_at] = ActiveSupport::TimeZone[event_timezone].parse(event_params[:ends_at])
+      params[:event][:ends_at] = timezone_obj.parse(event_params[:ends_at])
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
