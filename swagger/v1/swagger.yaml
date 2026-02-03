@@ -11,6 +11,400 @@ info:
     Most endpoints require JWT authentication via Bearer token in the Authorization header.
     See the Authentication section for how to obtain tokens via sign-in.
 paths:
+  "/api/auth/confirmation":
+    post:
+      summary: Resend confirmation email
+      tags:
+      - Authentication
+      description: Resend email confirmation instructions. Returns success even for
+        non-existent emails to prevent email enumeration.
+      parameters: []
+      responses:
+        '200':
+          description: confirmation email sent (or email not found)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: user@example.com
+                  required:
+                  - email
+              required:
+              - user
+        required: true
+    get:
+      summary: Confirm email with token
+      tags:
+      - Authentication
+      description: Confirm user email address using the token received via email
+      parameters:
+      - name: confirmation_token
+        in: query
+        required: true
+        description: Confirmation token from email
+        example: abc123confirmtoken
+        schema:
+          type: string
+      responses:
+        '200':
+          description: email confirmed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          description: invalid or expired confirmation token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+  "/api/auth/password":
+    post:
+      summary: Request password reset email
+      tags:
+      - Authentication
+      description: Send password reset instructions to the user email. Returns success
+        even for non-existent emails to prevent email enumeration.
+      parameters: []
+      responses:
+        '200':
+          description: password reset email sent (or email not found)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: user@example.com
+                  required:
+                  - email
+              required:
+              - user
+        required: true
+    put:
+      summary: Reset password with token
+      tags:
+      - Authentication
+      description: Reset password using the token received via email
+      parameters: []
+      responses:
+        '204':
+          description: password reset successfully
+        '422':
+          description: invalid reset token or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    oneOf:
+                    - type: array
+                      items:
+                        type: string
+                    - type: object
+                      additionalProperties:
+                        type: array
+                        items:
+                          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    reset_password_token:
+                      type: string
+                      example: abc123token
+                    password:
+                      type: string
+                      example: NewSecurePassword123!@#
+                    password_confirmation:
+                      type: string
+                      example: NewSecurePassword123!@#
+                  required:
+                  - reset_password_token
+                  - password
+                  - password_confirmation
+              required:
+              - user
+        required: true
+  "/api/auth/sign-up":
+    post:
+      summary: Register a new user account
+      tags:
+      - Authentication
+      description: Create a new user account with email, password, and person details.
+        Sends a confirmation email.
+      parameters: []
+      responses:
+        '201':
+          description: user registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: users
+                      id:
+                        type: string
+                        format: uuid
+                      attributes:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          confirmed:
+                            type: boolean
+                      relationships:
+                        type: object
+                        properties:
+                          person:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    example: people
+                                  id:
+                                    type: string
+                                    format: uuid
+                required:
+                - data
+        '422':
+          description: invalid registration data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: newuser@example.com
+                    password:
+                      type: string
+                      example: SecurePassword123!@#
+                    password_confirmation:
+                      type: string
+                      example: SecurePassword123!@#
+                    person_attributes:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: John Doe
+                        identifier:
+                          type: string
+                          example: john-doe
+                        description:
+                          type: string
+                          example: Software developer
+                      required:
+                      - name
+                      - identifier
+                  required:
+                  - email
+                  - password
+                  - password_confirmation
+                  - person_attributes
+                privacy_policy_agreement:
+                  type: string
+                  example: '1'
+                terms_of_service_agreement:
+                  type: string
+                  example: '1'
+                code_of_conduct_agreement:
+                  type: string
+                  example: '1'
+              required:
+              - user
+              - privacy_policy_agreement
+              - terms_of_service_agreement
+              - code_of_conduct_agreement
+        required: true
+  "/api/auth/sign-in":
+    post:
+      summary: Sign in to get JWT token
+      tags:
+      - Authentication
+      description: Authenticate with email and password to receive a JWT token in
+        the Authorization header
+      parameters: []
+      responses:
+        '200':
+          description: user signed in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: sessions
+                      id:
+                        type: string
+                      attributes:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          token:
+                            type: string
+                          confirmed:
+                            type: boolean
+                      relationships:
+                        type: object
+                        properties:
+                          person:
+                            type: object
+                            properties:
+                              data:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    example: people
+                                  id:
+                                    type: string
+                                    format: uuid
+                  included:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        id:
+                          type: string
+                        attributes:
+                          type: object
+                required:
+                - data
+        '401':
+          description: invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: user@example.com
+                    password:
+                      type: string
+                      example: SecurePassword123!@#
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+        required: true
+  "/api/auth/sign-out":
+    delete:
+      summary: Sign out (revoke JWT token)
+      tags:
+      - Authentication
+      description: Sign out and invalidate the current JWT token
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: JWT token
+        example: Bearer eyJhbGciOiJIUzI1NiJ9...
+        schema:
+          type: string
+      responses:
+        '200':
+          description: user signed out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: unauthorized - no valid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
   "/api/v1/communities":
     get:
       summary: List all communities
