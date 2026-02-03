@@ -1884,13 +1884,17 @@ es:
     oauth:
       applications:
         create:
-          success: "La aplicación OAuth '%{name}' se creó correctamente. Ahora puede usar las credenciales del cliente para autenticar solicitudes de API."
+          success: La aplicación OAuth '%{name}' se creó correctamente. Ahora puede
+            usar las credenciales del cliente para autenticar solicitudes de API.
         destroy:
-          success: "La aplicación OAuth '%{name}' ha sido eliminada. Todos los tokens de acceso asociados han sido revocados."
+          success: La aplicación OAuth '%{name}' ha sido eliminada. Todos los tokens
+            de acceso asociados han sido revocados.
         set_application:
-          not_found: "No se pudo encontrar la aplicación OAuth que está buscando. Es posible que haya sido eliminada o que no tenga permiso para acceder a ella."
+          not_found: No se pudo encontrar la aplicación OAuth que está buscando. Es
+            posible que haya sido eliminada o que no tenga permiso para acceder a
+            ella.
         update:
-          success: "La aplicación OAuth '%{name}' se ha actualizado correctamente."
+          success: La aplicación OAuth '%{name}' se ha actualizado correctamente.
     page_authorship_notifier:
       added: Has sido añadido como autor en %{page_title}
       added_by: "%{actor_name} te añadió como autor en %{page_title}"
