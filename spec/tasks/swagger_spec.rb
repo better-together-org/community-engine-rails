@@ -7,10 +7,8 @@ require 'rake'
 RSpec.describe 'swagger rake tasks', type: :task do
   before do
     Rake.application = Rake::Application.new
-    Rake.application.rake_require(
-      'tasks/swagger',
-      [BetterTogether::Engine.root.join('lib').to_s]
-    )
+    # Load the rake task file directly
+    load BetterTogether::Engine.root.join('lib/tasks/swagger.rake')
     Rake::Task.define_task(:environment)
   end
 
