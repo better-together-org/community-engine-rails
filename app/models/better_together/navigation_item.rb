@@ -44,7 +44,7 @@ module BetterTogether
     }
 
     belongs_to :navigation_area, touch: true
-    belongs_to :linkable, polymorphic: true, optional: true, autosave: true
+    belongs_to :linkable, polymorphic: true, optional: true, touch: true
 
     # Association with parent item
     belongs_to :parent,
@@ -214,7 +214,9 @@ module BetterTogether
     end
 
     def title=(arg, options = {})
-      linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
+      # Pass locale from options or use current Mobility locale
+      target_locale = options[:locale] || Mobility.locale
+      linkable.public_send :title=, arg, locale: target_locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
       super(arg, **options)
     end
@@ -327,6 +329,18 @@ module BetterTogether
       return false unless platform
 
       user.permitted_to?(permission_identifier, platform)
+    end
+
+    def touch_navigation_area_on_translation_change
+      navigation_area&.reload&.touch
+    end
+
+    def touch_navigation_area_on_create
+      navigation_area&.reload&.touch
+    end
+
+    def touch_navigation_area_on_destroy
+      navigation_area&.reload&.touch
     end
   end
 end

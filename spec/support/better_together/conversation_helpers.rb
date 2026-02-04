@@ -29,14 +29,31 @@ module BetterTogether
       # Then wait for SlimSelect Stimulus controller to initialize and create its wrapper
       expect(page).to have_css('.ss-main', wait: 5)
 
-      # Now interact with the SlimSelect UI
-      select_wrapper = find('.ss-main', match: :first)
-      select_wrapper.click
+      ss_main = find('.ss-main', match: :first, visible: :all)
 
-      participants.each do |participant|
-        # pick option by slug (keeps existing behaviour) but wait for it to appear
-        option = find('.ss-content > .ss-list > .ss-option', text: Regexp.new(Regexp.escape(participant.slug.to_s)))
+      participants.each_with_index do |participant, index|
+        # Open SlimSelect dropdown for the participants select
+        ss_main.click
+
+        # Prefer matching by name to align with select_option_title output
+        option_matcher = Regexp.new(Regexp.escape(participant.name.to_s))
+        content_id = ss_main[:'aria-controls']
+        ss_content = content_id.present? ? find("##{content_id}", visible: :all) : find('.ss-content', match: :first)
+        option = ss_content.find('.ss-option', text: option_matcher, wait: 10)
         option.click
+
+        # Ensure hidden select reflects the selection before submitting
+        selected_values = page.evaluate_script(<<~JS)
+          (function(){
+            var select = document.querySelector('select[name="conversation[participant_ids][]"]');
+            if (!select) return [];
+            return Array.from(select.selectedOptions).map(function(opt){ return opt.value; });
+          })();
+        JS
+        expect(selected_values).to include(participant.id)
+
+        # SlimSelect closes after selection; reopen for the next participant
+        ss_main.click if index < participants.length - 1
       end
 
       # Give the widget a moment to update (widget reflects selections visually)
@@ -74,6 +91,10 @@ module BetterTogether
 
       # Submit using the button label present in the UI (keep original label to avoid brittle tests)
       click_button 'Create Conversation'
+
+      # Wait for the form submission to complete and redirect to the conversation show page
+      # This prevents the test from checking the count before the conversation is created
+      expect(page).to have_current_path(%r{/conversations/[a-f0-9-]+}, wait: 10)
     end
   end
 end

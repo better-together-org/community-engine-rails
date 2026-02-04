@@ -53,6 +53,9 @@ module BetterTogether
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
     belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
 
+    # Inverse of NavigationItem polymorphic association - allows touch: true to work
+    has_many :navigation_items, as: :linkable, class_name: 'BetterTogether::NavigationItem', dependent: :nullify
+
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
     translates :title, type: :string
@@ -72,6 +75,9 @@ module BetterTogether
 
     # Automatically grant the page creator an authorship record
     after_create :add_creator_as_author
+
+    # Touch navigation items when page is updated (propagates to navigation_areas)
+    after_update :touch_navigation_items_on_change, if: -> { saved_changes.key?('lock_version') }
 
     # Scopes
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
@@ -170,6 +176,18 @@ module BetterTogether
       return unless respond_to?(:creator_id) && creator_id.present?
 
       authorships.find_or_create_by(author_id: creator_id)
+    end
+
+    def touch_navigation_items_on_change
+      # Touch all navigation items that link to this page
+      # This propagates through to navigation_areas via navigation_item's touch: true
+      # Ignore stale object errors that may occur during bulk operations
+      navigation_items.each do |item|
+        item.touch
+      rescue ActiveRecord::StaleObjectError
+        # Silently ignore - this is expected during bulk operations with pessimistic locking
+        Rails.logger.debug "Skipping touch on navigation item #{item.id} due to stale object (expected during bulk operations)"
+      end
     end
   end
 end

@@ -30,14 +30,10 @@ FactoryBot.define do
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
 
-        # Use the platform_manager role from RBAC builder (which has all required permissions)
+        # Find the platform_manager role from RBAC data seeded in before(:suite)
+        # Note: AccessControlBuilder.seed_data is already called once per test suite
+        # in spec/rails_helper.rb:166, so we don't need to call it here
         platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-
-        # If role doesn't exist, run the RBAC builder to ensure proper setup
-        unless platform_manager_role
-          BetterTogether::AccessControlBuilder.seed_data
-          platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        end
 
         # Assign platform manager role to the user
         if platform_manager_role

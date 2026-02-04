@@ -73,16 +73,14 @@ module BetterTogether
       # Permission check against cached resource permissions, with optional record
       def permitted_to?(permission_identifier, record = nil) # rubocop:todo Metrics/MethodLength
         Rails.cache.fetch(cache_key_for(:permitted_to, permission_identifier, record), expires_in: 12.hours) do
-          # Cache permissions by identifier to avoid repeated lookups
-          @permissions_by_identifier ||= resource_permissions.index_by(&:identifier)
+          permissions_by_identifier = resource_permissions.index_by(&:identifier)
 
           # Convert symbol to string for hash lookup
-          resource_permission = @permissions_by_identifier[permission_identifier.to_s]
+          resource_permission = permissions_by_identifier[permission_identifier.to_s]
           return false if resource_permission.nil?
 
           if record
-            record_permission_granted?(resource_permission,
-                                       record)
+            record_permission_granted?(resource_permission, record)
           else
             global_permission_granted?(resource_permission)
           end
