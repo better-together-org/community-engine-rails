@@ -59,6 +59,8 @@ ESSENTIAL_TABLES = %w[
   better_together_wizards
   better_together_wizard_step_definitions
   better_together_agreements
+  better_together_content_blocks
+  better_together_content_page_blocks
   mobility_string_translations
   mobility_text_translations
   action_text_rich_texts

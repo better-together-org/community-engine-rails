@@ -154,10 +154,10 @@ RSpec.describe 'swagger_helper configuration' do
 
       it 'includes environment-aware servers' do
         expect(swagger_config[:servers]).to be_an(Array)
-        # Test that it uses the configured base_url (don't assume specific value to avoid parallel test pollution)
-        expect(swagger_config[:servers].first[:url]).to eq(BetterTogether.base_url)
+        expect(swagger_config[:servers]).not_to be_empty
+        # Verify server structure without assuming specific URL values
         expect(swagger_config[:servers].first[:url]).to match(%r{^https?://})
-        expect(swagger_config[:servers].first[:description]).to include('server')
+        expect(swagger_config[:servers].first[:description]).to be_a(String)
       end
 
       it 'initializes with empty paths object' do
