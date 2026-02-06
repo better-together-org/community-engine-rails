@@ -85,6 +85,42 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to allow_value('#').for(:url) }
       it { is_expected.to allow_value('').for(:url) }
 
+      describe 'title validation with linked page' do
+        it 'is valid when title is blank but linkable page has a title' do
+          page = create(:page, title: 'Page Title')
+          nav_item = build(:better_together_navigation_item, 
+                          title: nil, 
+                          linkable: page)
+          
+          expect(nav_item).to be_valid
+        end
+
+        it 'is invalid when title is blank and no linkable is present' do
+          nav_item = build(:better_together_navigation_item, title: nil)
+          
+          expect(nav_item).not_to be_valid
+          expect(nav_item.errors[:title]).to include("can't be blank")
+        end
+
+        it 'uses linkable title when nav item title is not set' do
+          page = create(:page, title: 'Linked Page Title')
+          nav_item = build(:better_together_navigation_item, 
+                          title: nil, 
+                          linkable: page)
+          
+          expect(nav_item.title).to eq('Linked Page Title')
+        end
+
+        it 'is valid when both nav item title and linkable are present' do
+          page = create(:page, title: 'Page Title')
+          nav_item = build(:better_together_navigation_item, 
+                          title: 'Nav Title', 
+                          linkable: page)
+          
+          expect(nav_item).to be_valid
+        end
+      end
+
       describe 'visibility_strategy validation' do
         it { is_expected.to validate_inclusion_of(:visibility_strategy).in_array(%w[authenticated permission]) }
       end

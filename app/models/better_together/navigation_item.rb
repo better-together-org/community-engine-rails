@@ -75,7 +75,7 @@ module BetterTogether
 
     slugged :title
 
-    validates :title, presence: true, length: { maximum: 255 }
+    validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
               format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
                         message: 'must be a valid URL, "start with #", or be an absolute path' }
@@ -300,6 +300,10 @@ module BetterTogether
     end
 
     private
+
+    def linkable_provides_title?
+      linkable.present? && linkable.respond_to?(:title)
+    end
 
     def retrieve_route(route)
       # Use `send` to dispatch the correct URL helper
