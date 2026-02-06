@@ -403,7 +403,7 @@ module BetterTogether
                 .map(&:strip)
                 .reject(&:blank?)
                 .map do |d|
-                  Date.parse(d)
+          Date.parse(d)
         rescue StandardError
           nil
         end

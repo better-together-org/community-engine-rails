@@ -60,7 +60,7 @@ module BetterTogether
 
     def self.included_in_models
       Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
-      ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(BetterTogether::Searchable) }
+      ActiveRecord::Base.descendants.select { |model| model.include?(BetterTogether::Searchable) }
     end
 
     private

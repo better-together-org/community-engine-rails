@@ -18,7 +18,7 @@ class AddChildrenCountToChecklistItems < ActiveRecord::Migration[7.1]
   private
 
   def backfill_children_count # rubocop:todo Metrics/MethodLength
-    execute(<<-SQL.squish)
+    execute(<<~SQL.squish)
       UPDATE better_together_checklist_items parent
       SET children_count = sub.count
       FROM (
