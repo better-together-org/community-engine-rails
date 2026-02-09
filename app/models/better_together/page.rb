@@ -181,17 +181,23 @@ module BetterTogether
       authorships.find_or_create_by(author_id: creator_id)
     end
 
-    # Touch all navigation items that link to this page to invalidate their navigation area cache
+    # Touch navigation areas for all navigation items that link to this page
+    # to invalidate their navigation area cache. We only touch each distinct
+    # navigation area once to avoid redundant writes when multiple items in
+    # the same area link to this page.
     def touch_navigation_items
       return if BetterTogether.skip_navigation_touches
 
-      # Each touch will trigger the belongs_to navigation_area touch callback
-      # Reload each item to avoid StaleObjectError during mass operations
-      navigation_items.find_each do |item|
-        item.reload.touch
-      rescue ActiveRecord::StaleObjectError
-        # Retry once with a fresh reload
-        item.reload.touch
+      navigation_area_ids = navigation_items.select(:navigation_area_id).distinct.pluck(:navigation_area_id).compact
+      return if navigation_area_ids.empty?
+
+      BetterTogether::NavigationArea.where(id: navigation_area_ids).find_each do |navigation_area|
+        begin
+          navigation_area.touch
+        rescue ActiveRecord::StaleObjectError
+          # Retry once with a fresh reload
+          navigation_area.reload.touch
+        end
       end
     end
   end

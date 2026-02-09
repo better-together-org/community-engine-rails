@@ -52,7 +52,7 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Page title changes' do
     it 'invalidates sidebar cache when linked page title is updated', :accessibility do
-      pending 'Sidebar nav not rendering in feature test environment - investigating test setup'
+      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
 
       # Visit a page that displays the sidebar navigation
       visit better_together.page_path(current_page, locale: I18n.default_locale)

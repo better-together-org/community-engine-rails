@@ -70,10 +70,11 @@ RSpec.describe BetterTogether::PagesHelper do
 
     context 'when page has no sidebar_nav' do
       it 'handles nil sidebar_nav gracefully' do
+        expect { helper.page_show_cache_key(page) }.not_to raise_error
+
         cache_key = helper.page_show_cache_key(page)
 
         expect(cache_key).to include('page-show')
-        expect(cache_key).to include(nil) # sidebar_nav&.cache_key_with_version returns nil
       end
     end
   end

@@ -94,9 +94,6 @@ module BetterTogether
     before_validation :set_default_visibility_strategy
     before_validation :set_default_privacy
 
-    # Touch navigation_area when linkable association changes to invalidate cache
-    after_save :touch_navigation_area_on_linkable_change, if: :saved_change_to_linkable?
-
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
