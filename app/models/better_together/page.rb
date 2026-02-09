@@ -192,12 +192,10 @@ module BetterTogether
       return if navigation_area_ids.empty?
 
       BetterTogether::NavigationArea.where(id: navigation_area_ids).find_each do |navigation_area|
-        begin
-          navigation_area.touch
-        rescue ActiveRecord::StaleObjectError
-          # Retry once with a fresh reload
-          navigation_area.reload.touch
-        end
+        navigation_area.touch
+      rescue ActiveRecord::StaleObjectError
+        # Retry once with a fresh reload
+        navigation_area.reload.touch
       end
     end
   end
