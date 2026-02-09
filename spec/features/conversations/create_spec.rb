@@ -20,6 +20,10 @@ RSpec.describe 'creating a new conversation', retry: 0 do
     end
 
     scenario 'between a platform manager and normal user', :js do
+      # Ensure user record is visible to application server
+      ensure_record_visible(user)
+      ensure_record_visible(user.person)
+
       expect do
         create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
       end.to change(BetterTogether::Conversation, :count).by(1)
@@ -28,10 +32,18 @@ RSpec.describe 'creating a new conversation', retry: 0 do
 
   context 'as a normal user', :as_user do
     let!(:normal_user) do
-      BetterTogether::User.find_by(email: 'user@example.test') ||
-        create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
+      user = BetterTogether::User.find_by(email: 'user@example.test') ||
+             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
+      ensure_record_visible(user) if defined?(ensure_record_visible)
+      ensure_record_visible(user.person) if defined?(ensure_record_visible)
+      user
     end
-    let(:user2) { create(:better_together_user) }
+    let(:user2) do
+      user = create(:better_together_user)
+      ensure_record_visible(user) if defined?(ensure_record_visible)
+      ensure_record_visible(user.person) if defined?(ensure_record_visible)
+      user
+    end
 
     before do
       normal_user # Ensure user exists before login
@@ -43,6 +55,10 @@ RSpec.describe 'creating a new conversation', retry: 0 do
       # Ensure target is public and opted-in to receive messages from members
       target.person.reload.update!(privacy: 'public',
                                    preferences: (target.person.preferences || {}).merge('receive_messages_from_members' => true)) # rubocop:disable Layout/LineLength
+
+      # Ensure record is visible to application server before creating conversation
+      ensure_record_visible(target)
+      ensure_record_visible(target.person)
 
       expect do
         create_conversation([target.person], first_message: 'Hi there')

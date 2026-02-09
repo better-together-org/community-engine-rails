@@ -17,9 +17,13 @@ RSpec.describe 'Checklist item creation appends to bottom', :js do
     checklist = create(:better_together_checklist, title: 'Append Test Checklist')
 
     # Create five existing items with positions 0..4
-    5.times do |i|
+    items = 5.times.map do |i|
       create(:better_together_checklist_item, checklist: checklist, position: i, label: "Existing #{i + 1}")
     end
+
+    # Ensure all records are visible to application server thread before visiting page
+    ensure_record_visible(checklist)
+    ensure_records_visible(items)
 
     visit better_together.checklist_path(checklist, locale: I18n.default_locale)
 
