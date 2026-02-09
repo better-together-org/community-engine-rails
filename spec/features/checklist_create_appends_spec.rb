@@ -29,8 +29,15 @@ RSpec.describe 'Checklist item creation appends to bottom', :js do
 
     list_selector = "##{dom_id(checklist, :checklist_items)}"
 
-    # Wait for page to fully load and Stimulus controllers to initialize
+    # CRITICAL: Wait for page to fully load AND for Stimulus controllers to initialize
+    # Each checklist item has a person-checklist-item controller that makes an AJAX
+    # request on connect() to fetch completion status. These AJAX calls must find
+    # the checklist record, so we wait for all controllers to be connected.
     expect(page).to have_css('[data-controller*="better_together--checklist-items"]', wait: 10)
+
+    # Wait for all person-checklist-item controllers to initialize and complete their AJAX calls
+    # There should be 5 items, each with a controller that fetches from PersonChecklistItemsController
+    expect(page).to have_css('[data-controller*="better_together--person-checklist-item"]', count: 5, wait: 10)
 
     # sanity: we have 5 items initially
     expect(page).to have_selector("#{list_selector} li.list-group-item", count: 5, wait: 5)
