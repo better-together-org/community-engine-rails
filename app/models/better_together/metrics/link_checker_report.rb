@@ -65,8 +65,6 @@ module BetterTogether
       end
       # rubocop:enable Metrics/MethodLength
 
-      private
-
       def purge_report_file
         report_file.purge_later if report_file.attached?
       end
