@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a new conversation', :as_platform_manager, :skip_host_setup, retry: 0 do
+RSpec.describe 'creating a new conversation', retry: 0 do
   include BetterTogether::ConversationHelpers
   include BetterTogether::CapybaraFeatureHelpers
 
@@ -10,25 +10,32 @@ RSpec.describe 'creating a new conversation', :as_platform_manager, :skip_host_s
 
   before do
     configure_host_platform
-    capybara_login_as_platform_manager
-
     # Ensure this person can be messaged by members so they appear in permitted_participants
     user.person.reload.update!(preferences: (user.person.preferences || {}).merge('receive_messages_from_members' => true))
   end
 
-  scenario 'between a platform manager and normal user', :js do
-    expect do
-      create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
-    end.to change(BetterTogether::Conversation, :count).by(1)
+  context 'as a platform manager', :as_platform_manager do
+    before do
+      capybara_login_as_platform_manager
+    end
+
+    scenario 'between a platform manager and normal user', :js do
+      expect do
+        create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
+      end.to change(BetterTogether::Conversation, :count).by(1)
+    end
   end
 
   context 'as a normal user', :as_user do
-    let!(:normal_user) { create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#') }
+    let!(:normal_user) do
+      BetterTogether::User.find_by(email: 'user@example.test') ||
+        create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
+    end
     let(:user2) { create(:better_together_user) }
 
     before do
-      # Ensure preferences are set for the normal user
-      normal_user.person.reload.update!(preferences: (normal_user.person.preferences || {}).merge('receive_messages_from_members' => true))
+      normal_user # Ensure user exists before login
+      capybara_login_as_user
     end
 
     scenario 'can create a conversation with a public person who opted into messages', :js do
