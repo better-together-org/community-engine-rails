@@ -94,6 +94,9 @@ module BetterTogether
     before_validation :set_default_visibility_strategy
     before_validation :set_default_privacy
 
+    # Touch navigation_area when linkable association changes to invalidate cache
+    after_save :touch_navigation_area_on_linkable_change, if: :saved_change_to_linkable?
+
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
@@ -331,6 +334,21 @@ module BetterTogether
       return false unless platform
 
       user.permitted_to?(permission_identifier, platform)
+    end
+
+    def saved_change_to_linkable?
+      saved_change_to_linkable_id? || saved_change_to_linkable_type?
+    end
+
+    def touch_navigation_area_on_linkable_change
+      return unless navigation_area
+      return if BetterTogether.skip_navigation_touches
+
+      # Reload to get latest lock_version before touching (prevents StaleObjectError)
+      # Retry once if we still get a stale object error
+      navigation_area.reload.touch
+    rescue ActiveRecord::StaleObjectError
+      navigation_area.reload.touch
     end
   end
 end
