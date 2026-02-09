@@ -9,11 +9,21 @@ module DatabaseVisibilityHelpers
     # Force write to database if record is new or has changes
     record.save! if record.new_record? || record.changed?
 
-    # Clear any ActiveRecord query cache
-    ActiveRecord::Base.connection.clear_query_cache
+    # Clear ActiveRecord query cache across all connections
+    ActiveRecord::Base.connection_pool.connections.each(&:clear_query_cache)
 
-    # Verify record is findable via fresh query
-    record.class.find(record.id)
+    # Verify record is findable via fresh query across different connection
+    # Use a new connection from the pool to simulate what app server will see
+    record.class.connection_pool.with_connection do |conn|
+      # Clear cache on this connection too
+      conn.clear_query_cache
+      # Query using this fresh connection
+      record.class.find(record.id)
+    end
+
+    # Small sleep to ensure database has flushed writes to disk
+    # Critical for PostgreSQL with multiple connections
+    sleep 0.05
 
     record
   end
@@ -21,6 +31,8 @@ module DatabaseVisibilityHelpers
   # Ensures an array of records are visible
   def ensure_records_visible(records)
     Array(records).each { |record| ensure_record_visible(record) }
+    # Additional small sleep after batch to ensure all are committed
+    sleep 0.05
     records
   end
 
@@ -28,8 +40,10 @@ module DatabaseVisibilityHelpers
   def wait_for_record(klass, id, timeout: 5)
     Timeout.timeout(timeout) do
       loop do
+        # Clear query cache on each attempt
+        ActiveRecord::Base.connection_pool.connections.each(&:clear_query_cache)
+
         record = klass.find(id)
-        ActiveRecord::Base.connection.clear_query_cache
         return record
       rescue ActiveRecord::RecordNotFound
         sleep 0.1

@@ -29,8 +29,14 @@ RSpec.describe 'Checklist item creation appends to bottom', :js do
 
     list_selector = "##{dom_id(checklist, :checklist_items)}"
 
+    # Wait for page to fully load and Stimulus controllers to initialize
+    expect(page).to have_css('[data-controller*="better_together--checklist-items"]', wait: 10)
+
     # sanity: we have 5 items initially
     expect(page).to have_selector("#{list_selector} li.list-group-item", count: 5, wait: 5)
+
+    # Ensure form is ready before interaction
+    expect(page).to have_css('#new_checklist_item form', wait: 5)
 
     # Fill the new item form (uses the stable new_checklist_item turbo frame + form)
     within '#new_checklist_item' do
