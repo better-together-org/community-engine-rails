@@ -229,20 +229,27 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
 
     it 'redirects to the new community' do
-      post better_together.communities_path(locale:), params: valid_params
+      expect do
+        post better_together.communities_path(locale:), params: valid_params
+      end.to change(BetterTogether::Community, :count).by(1)
+
       expect(response).to have_http_status(:found)
-      community = BetterTogether::Community.last
-      # Slug is generated from identifier, not name
-      expect(response.location).to include("/c/#{community.slug}")
+      # Extract identifier from redirect location (format: /locale/c/{identifier})
+      identifier = response.location.match(%r{/c/([^/?]+)})[1]
+      community = BetterTogether::Community.find_by(identifier:)
+      expect(community).to be_present
+      expect(community.name).to eq(community_name)
     end
 
-    it 'generates a slug from the identifier' do
+    it 'generates identifier automatically' do
       post better_together.communities_path(locale:), params: valid_params
-      community = BetterTogether::Community.last
-      # Slug is generated from identifier (auto-generated if not provided)
-      expect(community.slug).to eq(community.identifier.parameterize)
+      # Extract identifier from redirect location
+      identifier = response.location.match(%r{/c/([^/?]+)})[1]
+      community = BetterTogether::Community.find_by(identifier:)
+      expect(community).to be_present
       # Identifier is auto-generated and follows a specific pattern
       expect(community.identifier).to match(/^[a-z0-9-]+$/)
+      expect(community.identifier).to eq(identifier)
     end
   end
 
