@@ -197,9 +197,9 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     context 'when attempting to create role' do
       before { post url, params: valid_params.to_json, headers: platform_manager_headers }
 
-      it 'returns bad request status' do
-        # Roles are read-only via API (creatable_fields returns []), JSONAPI returns 400
-        expect(response).to have_http_status(:bad_request)
+      it 'returns not found status' do
+        # Roles are read-only via API - create route not exposed
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -228,8 +228,9 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     context 'when attempting to update role' do
       before { patch url, params: update_params.to_json, headers: platform_manager_headers }
 
-      it 'returns success status' do
-        expect(response).to have_http_status(:ok)
+      it 'returns not found status' do
+        # Roles are read-only via API - update route not exposed
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
