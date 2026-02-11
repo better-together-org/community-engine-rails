@@ -13,5 +13,5 @@ namespace :v1 do
   # NOTE: Relationship routes omitted until all related resources exist
 
   # Roles (read-only)
-  jsonapi_resources :roles
+  jsonapi_resources :roles, only: %i[index show]
 end

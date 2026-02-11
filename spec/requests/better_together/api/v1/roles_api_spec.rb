@@ -195,11 +195,11 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     end
 
     context 'when attempting to create role' do
-      before { post url, params: valid_params.to_json, headers: platform_manager_headers }
-
-      it 'returns bad request status' do
-        # Roles are read-only via API (creatable_fields returns []), JSONAPI returns 400
-        expect(response).to have_http_status(:bad_request)
+      it 'raises routing error because route does not exist' do
+        # Routes are restricted to read-only (only: [:index, :show])
+        expect {
+          post url, params: valid_params.to_json, headers: platform_manager_headers
+        }.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
   end
@@ -226,10 +226,11 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     end
 
     context 'when attempting to update role' do
-      before { patch url, params: update_params.to_json, headers: platform_manager_headers }
-
-      it 'returns success status' do
-        expect(response).to have_http_status(:ok)
+      it 'raises routing error because route does not exist' do
+        # Routes are restricted to read-only (only: [:index, :show])
+        expect {
+          patch url, params: update_params.to_json, headers: platform_manager_headers
+        }.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
   end
@@ -245,11 +246,11 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     let(:url) { "/api/v1/roles/#{role.id}" }
 
     context 'when attempting to delete role' do
-      before { delete url, headers: platform_manager_headers }
-
-      it 'returns not found status' do
-        # JSONAPI-resources returns 404 when destroy is not permitted
-        expect(response).to have_http_status(:not_found)
+      it 'raises routing error because route does not exist' do
+        # Routes are restricted to read-only (only: [:index, :show])
+        expect {
+          delete url, headers: platform_manager_headers
+        }.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
 
@@ -263,10 +264,11 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
       end
       let(:url) { "/api/v1/roles/#{protected_role.id}" }
 
-      before { delete url, headers: platform_manager_headers }
-
-      it 'returns not found status' do
-        expect(response).to have_http_status(:not_found)
+      it 'raises routing error because route does not exist' do
+        # Routes are restricted to read-only (only: [:index, :show])
+        expect {
+          delete url, headers: platform_manager_headers
+        }.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
   end

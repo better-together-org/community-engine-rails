@@ -35,7 +35,7 @@ module BetterTogether
         #
         # Roles are read-only via API for security
         # HTML controller allows full CRUD for platform managers
-        # create, update, destroy actions are blocked by RoleResource.creatable_fields returning []
+        # Mutation routes are restricted at the routing level (only: [:index, :show])
         # To manage roles, use the HTML interface at /:locale/host/roles
       end
     end
