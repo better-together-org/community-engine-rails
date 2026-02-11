@@ -7,7 +7,7 @@ module BetterTogether
   class DocumentationBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
       def build # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-        I18n.with_locale(:en) do
+        I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Skip navigation touch callbacks during bulk operations to avoid StaleObjectError
           BetterTogether.skip_navigation_touches = true
 
