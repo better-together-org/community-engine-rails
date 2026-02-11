@@ -172,7 +172,9 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Content exceeds maximum allowed size')
+          expect(json_response['error']).to eq(
+            'Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.'
+          )
         end
 
         it 'does not call TranslationBot' do

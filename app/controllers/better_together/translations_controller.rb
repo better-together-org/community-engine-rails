@@ -28,7 +28,9 @@ module BetterTogether
 
       # Guard: cap payload size to prevent excessive OpenAI token usage / cost.
       if content.bytesize > MAX_CONTENT_SIZE
-        return render json: { error: 'Content exceeds maximum allowed size' }, status: :unprocessable_content
+        return render json: {
+          error: 'Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.'
+        }, status: :unprocessable_content
       end
 
       # Guard: locale values are interpolated into the AI prompt, so they must

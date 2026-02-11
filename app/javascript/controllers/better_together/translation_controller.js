@@ -94,9 +94,7 @@ export default class extends Controller {
     // This provides immediate feedback instead of waiting for a 422 from the API.
     const contentBytes = new Blob([content]).size;
     if (contentBytes > this.constructor.MAX_CONTENT_BYTES) {
-      const maxKB = Math.round(this.constructor.MAX_CONTENT_BYTES / 1024);
-      const contentKB = Math.round(contentBytes / 1024);
-      alert(`Content is too large to translate (${contentKB} KB). Maximum allowed size is ${maxKB} KB. Please shorten the content and try again.`);
+      alert(`Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.`);
       return;
     }
 
