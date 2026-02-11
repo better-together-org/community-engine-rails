@@ -83,7 +83,12 @@ module BetterTogether
     after_create :add_creator_as_author
 
     # Touch associated navigation_items to invalidate navigation cache when page title changes
-    after_save :touch_navigation_items, if: :saved_change_to_title?
+    # Use title_previously_changed? for Mobility-translated attributes
+    after_save :touch_navigation_items, if: :title_previously_changed?
+
+    # Update updated_at when title translation changes (for touch: true on navigation_items)
+    # This is needed because Mobility stores translations in a separate table
+    after_save :update_timestamp_for_title_change, if: :title_previously_changed?
 
     # Scopes
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
@@ -200,6 +205,19 @@ module BetterTogether
         # Retry once with a fresh reload
         navigation_area.reload.touch
       end
+    end
+
+    # Update the page's updated_at timestamp when title translation changes
+    # This is needed because Mobility stores translations in a separate table,
+    # so changing the title doesn't automatically update the Page's updated_at.
+    # This allows the touch: true on navigation_items to work correctly.
+    def update_timestamp_for_title_change
+      # Skip callbacks and validations but update the timestamp
+      # Then manually touch associated navigation items
+      update_columns(updated_at: Time.current)
+
+      # Manually trigger touch on navigation items since update_columns bypasses callbacks
+      navigation_items.find_each(&:touch)
     end
   end
 end
