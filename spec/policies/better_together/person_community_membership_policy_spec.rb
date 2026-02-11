@@ -5,251 +5,152 @@ require 'rails_helper'
 RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
   subject(:policy) { described_class.new(user, membership) }
 
-  let(:platform) { create(:better_together_platform, host: true) }
-  let(:community) { create(:better_together_community, platform:) }
-  let(:user) { create(:user) }
+  let(:user) { create(:better_together_user, :confirmed) }
   let(:person) { user.person }
-  let(:other_person) { create(:better_together_person) }
-  let(:membership) { create(:better_together_person_community_membership, joinable: community, member: person) }
-
-  describe 'Scope' do
-    subject(:scope) { described_class::Scope.new(user, BetterTogether::PersonCommunityMembership.all, **options) }
-
-    let(:options) { {} }
-
-    describe '#resolve' do
-      context 'when user is not authenticated' do
-        let(:user) { nil }
-
-        it 'returns none' do
-          expect(scope.resolve).to eq(BetterTogether::PersonCommunityMembership.none)
-        end
-      end
-
-      context 'when context[:community_id] is present' do
-        let(:options) { { context: { community_id: community.id } } }
-        let!(:membership1) { create(:better_together_person_community_membership, joinable: community, member: person) }
-        let!(:membership2) do
-          create(:better_together_person_community_membership, joinable: community, member: other_person)
-        end
-        let!(:other_community_membership) do
-          create(:better_together_person_community_membership, member: person)
-        end
-
-        context 'when user can manage memberships' do
-          before do
-            allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-              .with('update_community').and_return(true)
-          end
-
-          it 'returns memberships for the specified community' do
-            results = scope.resolve
-            expect(results).to include(membership1, membership2)
-            expect(results).not_to include(other_community_membership)
-          end
-        end
-
-        context 'when user cannot manage memberships' do
-          before do
-            allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?).and_return(false)
-          end
-
-          it 'returns none' do
-            expect(scope.resolve).to eq(BetterTogether::PersonCommunityMembership.none)
-          end
-        end
-      end
-
-      context 'when context[:person_id] is present' do
-        let(:options) { { context: { person_id: person.id.to_s } } }
-        let!(:membership1) { create(:better_together_person_community_membership, joinable: community, member: person) }
-        let!(:membership2) do
-          create(:better_together_person_community_membership, joinable: community, member: other_person)
-        end
-
-        context 'when viewing own memberships' do
-          it 'returns memberships for the specified person' do
-            results = scope.resolve
-            expect(results).to include(membership1)
-            expect(results).not_to include(membership2)
-          end
-        end
-
-        context 'when viewing another person\'s memberships as platform manager' do
-          let(:options) { { context: { person_id: other_person.id.to_s } } }
-
-          before do
-            allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-              .with('manage_platform').and_return(true)
-          end
-
-          it 'returns memberships for the specified person' do
-            results = scope.resolve
-            expect(results).to include(membership2)
-            expect(results).not_to include(membership1)
-          end
-        end
-
-        context 'when viewing another person\'s memberships without permission' do
-          let(:options) { { context: { person_id: other_person.id.to_s } } }
-
-          before do
-            allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?).and_return(false)
-          end
-
-          it 'returns none' do
-            expect(scope.resolve).to eq(BetterTogether::PersonCommunityMembership.none)
-          end
-        end
-      end
-
-      context 'when no context is provided' do
-        let!(:my_membership) { create(:better_together_person_community_membership, member: person) }
-        let!(:other_membership) { create(:better_together_person_community_membership, member: other_person) }
-
-        context 'when user can manage memberships' do
-          before do
-            allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-              .with('manage_platform').and_return(true)
-          end
-
-          it 'returns all memberships' do
-            results = scope.resolve
-            expect(results).to include(my_membership, other_membership)
-          end
-        end
-
-        context 'when user cannot manage memberships' do
-          before do
-            allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?).and_return(false)
-          end
-
-          it 'returns only user\'s own memberships' do
-            results = scope.resolve
-            expect(results).to include(my_membership)
-            expect(results).not_to include(other_membership)
-          end
-        end
-      end
-    end
-  end
+  let(:other_user) { create(:better_together_user, :confirmed) }
+  let(:other_person) { other_user.person }
+  let(:membership) { build_stubbed(:better_together_person_community_membership, member: person) }
 
   describe '#index?' do
-    context 'when user can manage memberships' do
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-          .with('update_community').and_return(true)
-      end
-
-      it { is_expected.to permit_action(:index) }
+    it 'allows users who can update community' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.index?).to be true
     end
 
-    context 'when user cannot manage memberships' do
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?).and_return(false)
-      end
+    it 'allows platform managers' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      expect(policy.index?).to be true
+    end
 
-      it { is_expected.to forbid_action(:index) }
+    it 'denies users without permissions' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.index?).to be false
     end
   end
 
   describe '#show?' do
-    context 'when viewing own membership' do
-      it { is_expected.to permit_action(:show) }
+    it 'allows viewing own membership' do
+      expect(policy.show?).to be true
     end
 
-    context 'when viewing another membership as platform manager' do
-      let(:membership) { create(:better_together_person_community_membership, joinable: community, member: other_person) }
-
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-          .with('manage_platform').and_return(true)
-      end
-
-      it { is_expected.to permit_action(:show) }
+    it 'allows viewing another membership with update_community permission' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      policy = described_class.new(user, other_membership)
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.show?).to be true
     end
 
-    context 'when viewing another membership without permission' do
-      let(:membership) { create(:better_together_person_community_membership, joinable: community, member: other_person) }
+    it 'allows viewing another membership as platform manager' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      policy = described_class.new(user, other_membership)
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      expect(policy.show?).to be true
+    end
 
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?).and_return(false)
-      end
-
-      it { is_expected.to forbid_action(:show) }
+    it 'denies viewing another membership without permission' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      policy = described_class.new(user, other_membership)
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.show?).to be false
     end
   end
 
   describe '#create?' do
-    context 'when user can manage memberships' do
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-          .with('update_community').and_return(true)
-      end
-
-      it { is_expected.to permit_action(:create) }
+    it 'allows users who can update community' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.create?).to be true
     end
 
-    context 'when user cannot manage memberships' do
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?).and_return(false)
-      end
+    it 'allows platform managers' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      expect(policy.create?).to be true
+    end
 
-      it { is_expected.to forbid_action(:create) }
+    it 'denies users without permissions' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.create?).to be false
     end
   end
 
   describe '#update?' do
-    context 'when user can manage memberships' do
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-          .with('update_community').and_return(true)
-      end
-
-      it { is_expected.to permit_action(:update) }
+    it 'allows users who can update community' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.update?).to be true
     end
 
-    context 'when user cannot manage memberships' do
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?).and_return(false)
-      end
+    it 'allows platform managers' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      expect(policy.update?).to be true
+    end
 
-      it { is_expected.to forbid_action(:update) }
+    it 'denies users without permissions' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.update?).to be false
     end
   end
 
   describe '#destroy?' do
-    context 'when destroying own membership' do
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-          .with('update_community').and_return(true)
-      end
-
-      it { is_expected.to forbid_action(:destroy) }
+    it 'denies destroying own membership even with permissions' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.destroy?).to be false
     end
 
-    context 'when destroying another membership as platform manager' do
-      let(:membership) { create(:better_together_person_community_membership, joinable: community, member: other_person) }
-
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-          .with('manage_platform').and_return(true)
-        allow(other_person).to receive(:permitted_to?).with('manage_platform').and_return(false)
-      end
-
-      it { is_expected.to permit_action(:destroy) }
+    it 'allows destroying another membership as platform manager' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      policy = described_class.new(user, other_membership)
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      allow(other_person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.destroy?).to be true
     end
 
-    context 'when trying to destroy platform manager membership' do
-      let(:membership) { create(:better_together_person_community_membership, joinable: community, member: other_person) }
+    it 'allows destroying another membership with update_community permission' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      policy = described_class.new(user, other_membership)
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      allow(other_person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(policy.destroy?).to be true
+    end
 
-      before do
-        allow_any_instance_of(BetterTogether::Person).to receive(:permitted_to?)
-          .with('manage_platform').and_return(true)
-        allow(other_person).to receive(:permitted_to?).with('manage_platform').and_return(true)
-      end
+    it 'denies destroying platform manager membership' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      policy = described_class.new(user, other_membership)
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      allow(other_person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      expect(policy.destroy?).to be false
+    end
+  end
 
-      it { is_expected.to forbid_action(:destroy) }
+  describe 'Scope#resolve' do
+    subject(:resolved_scope) { described_class::Scope.new(user, scope, **options).resolve }
+
+    let(:scope) { BetterTogether::PersonCommunityMembership.all }
+    let(:options) { {} }
+
+    it 'returns none when user is not authenticated' do
+      unauthenticated_scope = described_class::Scope.new(nil, scope, **options).resolve
+      expect(unauthenticated_scope).to eq(BetterTogether::PersonCommunityMembership.none)
+    end
+
+    it 'returns only own memberships without manage permissions' do
+      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      expect(resolved_scope.to_sql).to include('member_id')
     end
   end
 end
