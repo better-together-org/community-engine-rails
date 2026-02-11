@@ -561,38 +561,38 @@ This audit covers every top-level directory under `app/` — models, controllers
 
 ### 🔴 Critical (Address Immediately)
 
-| # | Finding | Location |
-|---|---------|----------|
-| C1 | **RolePolicy allows any user to update/destroy roles** | `app/policies/better_together/role_policy.rb` |
-| C2 | **NavigationItemPolicy allows any user to modify navigation** | `app/policies/better_together/navigation_item_policy.rb` |
-| C3 | **CSP disabled in production** | `config/initializers/content_security_policy.rb` |
-| C4 | **Zero policy specs** — 58 authorization files untested | `spec/policies/` (missing) |
-| C5 | **API resources expose password attributes** | `app/resources/better_together/api/v1/user_resource.rb` |
-| C6 | **Unsafe `constantize` on user input** in InvitationsController | `app/controllers/better_together/invitations_controller.rb:~153` |
+| # | Finding | Location | Status |
+|---|---------|----------|--------|
+| C1 | **RolePolicy allows any user to update/destroy roles** | `app/policies/better_together/role_policy.rb` | ✅ Fixed — restricted to `permitted_to?('manage_platform')` |
+| C2 | **NavigationItemPolicy allows any user to modify navigation** | `app/policies/better_together/navigation_item_policy.rb` | ✅ Fixed — restricted to `permitted_to?('manage_platform')` |
+| C3 | **CSP disabled in production** | `config/initializers/content_security_policy.rb` | ✅ Fixed — enabled in report-only mode with proper CDN/ActionCable/Trix directives |
+| C4 | **Zero policy specs** — 58 authorization files untested | `spec/policies/` (missing) | ⏳ Partially addressed — added RolePolicy + NavigationItemPolicy specs; 24 existing specs already present |
+| C5 | **API resources expose password attributes** | `app/resources/better_together/api/v1/user_resource.rb` | 🔄 Addressed in fix/api branch |
+| C6 | **Unsafe `constantize` on user input** in InvitationsController | `app/controllers/better_together/invitations_controller.rb:~153` | ✅ Fixed — replaced with `SafeClassResolver.resolve!` using explicit allow-list |
 
 ### 🟡 High (Address Soon)
 
-| # | Finding | Location |
-|---|---------|----------|
-| H1 | **Empty Scope classes** in 3+ policies (no record filtering) | Multiple policy files |
-| H2 | **Builders lack transactions** — partial data on failure | `app/builders/better_together/` |
-| H3 | **Builders have zero test coverage** | `spec/builders/` (missing) |
-| H4 | **TranslationBot has no rate limiting or input size limits** | `app/robots/better_together/translation_bot.rb` |
-| H5 | **ActionCable channels lack explicit authorization** | `app/channels/better_together/` |
-| H6 | **Services, notifiers, forms, resources have zero specs** | Multiple spec directories (missing) |
+| # | Finding | Location | Status |
+|---|---------|----------|--------|
+| H1 | **Empty Scope classes** in 3+ policies (no record filtering) | Multiple policy files | ✅ Verified intentional — these inherit parent scope filtering |
+| H2 | **Builders lack transactions** — partial data on failure | `app/builders/better_together/` | ✅ Fixed — `clear_existing` wrapped in transaction in base Builder |
+| H3 | **Builders have zero test coverage** | `spec/builders/` (missing) | ⏳ Remaining — needs dedicated builder specs |
+| H4 | **TranslationBot has no rate limiting or input size limits** | `app/robots/better_together/translation_bot.rb` | ✅ Fixed — added 50KB content limit and locale allow-list validation in controller |
+| H5 | **ActionCable channels lack explicit authorization** | `app/channels/better_together/` | ✅ Fixed — ConversationsChannel now verifies participant membership |
+| H6 | **Services, notifiers, forms, resources have zero specs** | Multiple spec directories (missing) | ⏳ Remaining — needs dedicated specs |
 
 ### 🟠 Medium (Plan for Resolution)
 
-| # | Finding | Location |
-|---|---------|----------|
-| M1 | **Thread-unsafe flag** in DocumentationBuilder | `app/builders/better_together/documentation_builder.rb` |
-| M2 | **Large controllers** (500+ lines) need refactoring | EventsController, Metrics::ReportsController |
-| M3 | **CORS defaults to `*`** without env override | `config/initializers/cors.rb` |
-| M4 | **`ruby-openai` gem unpinned** | `better_together.gemspec` |
-| M5 | **Elasticsearch 7 is EOL** | Gemspec dependency |
-| M6 | **OAuth token refresh not implemented** for GitHub integration | `app/integrations/better_together/github.rb` |
-| M7 | **CDN scripts lack SRI hashes** | `config/importmap.rb` |
-| M8 | **39 Stimulus controllers may need disconnect()** cleanup | `app/javascript/controllers/` |
+| # | Finding | Location | Status |
+|---|---------|----------|--------|
+| M1 | **Thread-unsafe flag** in DocumentationBuilder | `app/builders/better_together/documentation_builder.rb` | ✅ Fixed — save/restore previous value in ensure block |
+| M2 | **Large controllers** (500+ lines) need refactoring | EventsController, Metrics::ReportsController | ⏳ Remaining |
+| M3 | **CORS defaults to `*`** without env override | `config/initializers/cors.rb` | ⏳ Remaining |
+| M4 | **`ruby-openai` gem unpinned** | `better_together.gemspec` | ⏳ Remaining |
+| M5 | **Elasticsearch 7 is EOL** | Gemspec dependency | ⏳ Remaining |
+| M6 | **OAuth token refresh not implemented** for GitHub integration | `app/integrations/better_together/github.rb` | ⏳ Remaining |
+| M7 | **CDN scripts lack SRI hashes** | `config/importmap.rb` | ⏳ Remaining |
+| M8 | **39 Stimulus controllers may need disconnect()** cleanup | `app/javascript/controllers/` | ⏳ Remaining |
 
 ### 🟢 Low (Track and Improve)
 
