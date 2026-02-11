@@ -2111,6 +2111,10 @@ es:
     registrations:
       captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
         de nuevo.
+      invalid_invitation: Código de invitación inválido o vencido. Por favor, verifica
+        tu correo de invitación.
+      invitation_required: Se requiere un código de invitación para registrarse en
+        esta plataforma
     remove: Eliminar
     resource_permissions:
       actions:

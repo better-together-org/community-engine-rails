@@ -2120,6 +2120,10 @@ fr:
         roles: Rôles
     registrations:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
+      invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
+        votre courriel d'invitation.
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
+        plateforme
     remove: Supprimer
     resource_permissions:
       actions:

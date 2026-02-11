@@ -10,7 +10,15 @@ module BetterTogether
       skip_before_action :check_platform_privacy
       before_action :configure_permitted_parameters
       # Process invitation code parameters before loading from session
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Lint/CopDirectiveSyntax
       before_action :process_invitation_code_parameters, only: %i[new create]
+      # rubocop:enable Lint/CopDirectiveSyntax
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
       # rubocop:todo Metrics/PerceivedComplexity
       # rubocop:todo Metrics/AbcSize
       # rubocop:todo Lint/CopDirectiveSyntax
@@ -19,6 +27,7 @@ module BetterTogether
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/PerceivedComplexity
       before_action :load_all_invitations_from_session, only: %i[new create]
+      before_action :check_invitation_requirement, only: [:create]
       before_action :configure_account_update_params, only: [:update]
 
       # PUT /resource
@@ -330,6 +339,32 @@ module BetterTogether
         store_invitation_token_in_session(invitation, invitation_type)
         # Also directly set the instance variable for immediate use
         store_invitation_instance(invitation_type, invitation)
+      end
+
+      # Check if platform requires invitation and if valid invitation exists
+      def check_invitation_requirement # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        return unless helpers.host_platform&.requires_invitation?
+
+        # If invitation code was provided but no valid session invitation exists, it's invalid
+        if params[:invitation_code].present? && !valid_invitation_in_session?
+          @user = resource_class.new(sign_up_params)
+          @resource = @user # Devise looks for @resource
+          @user.build_person unless @user.person
+          @minimum_password_length = resource_class.password_length.min if resource_class.respond_to?(:password_length)
+          @user.errors.add(:base, I18n.t('better_together.registrations.invalid_invitation'))
+          render :new, status: :unprocessable_entity and return
+        end
+
+        # Check if any valid invitation exists in session
+        return if valid_invitation_in_session?
+
+        # No invitation code provided at all
+        @user = resource_class.new(sign_up_params)
+        @resource = @user # Devise looks for @resource
+        @user.build_person unless @user.person
+        @minimum_password_length = resource_class.password_length.min if resource_class.respond_to?(:password_length)
+        @user.errors.add(:base, I18n.t('better_together.registrations.invitation_required'))
+        render :new, status: :unprocessable_entity
       end
 
       # Determine the invitation type from the invitation class
