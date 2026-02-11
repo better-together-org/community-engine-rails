@@ -143,20 +143,33 @@ module BetterTogether
 
     # === Authenticated Invitation Management Helpers ===
 
+    # Allow-list of invitable class names that can be resolved from route parameters
+    ALLOWED_INVITABLE_TYPES = %w[
+      BetterTogether::Community
+      BetterTogether::Event
+      BetterTogether::Platform
+    ].freeze
+
     def set_invitable_resource
       # Determine invitable type from route parameters
       invitable_param = determine_invitable_param
       invitable_id = params[invitable_param]
 
-      # Get the invitable class from the parameter name
+      # Get the invitable class from the parameter name using safe resolution
       invitable_type = invitable_param.to_s.gsub('_id', '').classify
-      invitable_class = "BetterTogether::#{invitable_type}".constantize
+      invitable_class = BetterTogether::SafeClassResolver.resolve!(
+        "BetterTogether::#{invitable_type}",
+        allowed: ALLOWED_INVITABLE_TYPES
+      )
 
       @invitable_resource = if invitable_class.respond_to?(:friendly)
                               invitable_class.friendly.find(invitable_id)
                             else
                               invitable_class.find(invitable_id)
                             end
+    rescue NameError => e
+      Rails.logger.error "Unsafe or unknown invitable resource type attempted: #{e.message}"
+      render_not_found
     rescue StandardError => e
       Rails.logger.error "Failed to find invitable resource: #{e.message}"
       render_not_found

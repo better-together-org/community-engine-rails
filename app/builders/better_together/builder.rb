@@ -7,8 +7,10 @@ module BetterTogether
   class Builder
     class << self
       def build(clear: false)
-        clear_existing if clear
-        seed_data
+        ActiveRecord::Base.transaction do
+          clear_existing if clear
+          seed_data
+        end
       end
 
       def seed_data

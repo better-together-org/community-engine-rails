@@ -9,33 +9,36 @@ module BetterTogether
       def build # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         I18n.with_locale(:en) do
           # Skip navigation touch callbacks during bulk operations to avoid StaleObjectError
+          previous_skip_touches = BetterTogether.skip_navigation_touches
           BetterTogether.skip_navigation_touches = true
 
-          entries = documentation_entries
-          return if entries.blank?
+          ActiveRecord::Base.transaction do
+            entries = documentation_entries
+            return if entries.blank?
 
-          area = if (existing_area = ::BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation'))
-                   existing_area.navigation_items.delete_all
-                   existing_area.update!(name: 'Documentation', visible: true, protected: true)
-                   existing_area
-                 else
-                   ::BetterTogether::NavigationArea.create! do |area|
-                     area.name = 'Documentation'
-                     area.slug = 'documentation'
-                     area.visible = true
-                     area.protected = true
+            area = if (existing_area = ::BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation'))
+                     existing_area.navigation_items.delete_all
+                     existing_area.update!(name: 'Documentation', visible: true, protected: true)
+                     existing_area
+                   else
+                     ::BetterTogether::NavigationArea.create! do |area|
+                       area.name = 'Documentation'
+                       area.slug = 'documentation'
+                       area.visible = true
+                       area.protected = true
+                     end
                    end
-                 end
 
-          entries.each_with_index do |entry, index|
-            create_documentation_navigation_item(area, entry, index)
+            entries.each_with_index do |entry, index|
+              create_documentation_navigation_item(area, entry, index)
+            end
+
+            area.reload.save!
+            area.touch
           end
-
-          area.reload.save!
-          area.touch
         ensure
-          # Always re-enable navigation touches, even if error occurs
-          BetterTogether.skip_navigation_touches = false
+          # Always restore previous flag value, even if error occurs
+          BetterTogether.skip_navigation_touches = previous_skip_touches
         end
       end
 

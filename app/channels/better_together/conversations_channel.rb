@@ -5,7 +5,12 @@ module BetterTogether
   class ConversationsChannel < ApplicationCable::Channel
     def subscribed
       conversation = BetterTogether::Conversation.find(params[:id])
-      stream_for conversation
+
+      if conversation.participants.exists?(id: current_person.id)
+        stream_for conversation
+      else
+        reject
+      end
     end
 
     def unsubscribed
