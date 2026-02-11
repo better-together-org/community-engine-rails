@@ -2,6 +2,14 @@
 
 Instructions for GitHub Copilot and other automated contributors working in this repository.
 
+## Quick Navigation
+
+- **For architectural patterns and coding standards**: See [`.github/copilot-instructions.md`](.github/copilot-instructions.md) 
+- **For technology-specific guidelines**: See [`.github/instructions/`](.github/instructions/) directory
+- **This file**: Command reference, test execution workflows, Docker setup, and debugging practices
+
+> **Note**: This file complements `.github/copilot-instructions.md`. While that file focuses on *what* to build and *how* to structure code, this file focuses on *how* to run, test, and validate your changes.
+
 ## Project
 - Ruby: 3.4.4 (installed via rbenv in setup)
 - Rails: 7.2
@@ -906,3 +914,44 @@ Time.use_zone(user.time_zone) { formatted_time = event.starts_at.strftime('%I:%M
 - **Request-level handling**: `ApplicationController#set_time_zone` with user → platform → app config → UTC hierarchy
 - **Model validation**: All timezone attributes validated against `TZInfo::Timezone.all_identifiers`
 - **Form helpers**: `iana_time_zone_select` for IANA identifier selection
+
+## See Also
+
+- **[.github/copilot-instructions.md](.github/copilot-instructions.md)** - Core architectural patterns, coding standards, and principles
+- **[.github/instructions/](.github/instructions/)** - Technology-specific guidelines (Hotwire, accessibility, i18n, etc.)
+- **[docs/table_of_contents.md](docs/table_of_contents.md)** - Comprehensive documentation organized by stakeholder
+- **[README.md](README.md)** - Project overview and installation
+- **[docs/development/](docs/development/)** - Development guides and best practices
+
+## Quick Command Reference
+
+For quick reference, here are the most commonly used commands:
+
+```bash
+# Development Setup
+bin/dc build                                    # Build containers
+bin/dc up -d                                    # Start services
+bin/dc-run rails db:prepare                     # Setup database
+
+# Testing (ALWAYS test specific files first, see §Test Execution Guidelines)
+bin/dc-run bundle exec prspec spec/models/user_spec.rb          # Single file
+bin/dc-run bundle exec prspec spec/models/user_spec.rb:42       # Specific line
+bin/dc-run bin/ci                                                # Full suite (USE SPARINGLY)
+
+# Code Quality
+bin/dc-run bundle exec brakeman --quiet --no-pager             # Security
+bin/dc-run bundle exec rubocop                                  # Style
+bin/dc-run bundle exec rubocop -A                              # Auto-fix
+bin/dc-run bin/codex_style_guard                               # Style guard
+bin/dc-run bin/i18n                                            # I18n check
+
+# Documentation
+bin/render_diagrams                              # Render Mermaid diagrams
+docs/scripts/update_progress.sh                  # Update doc progress
+docs/scripts/validate_documentation_tooling.sh   # Validate docs
+
+# Utility
+bin/dc ps                                        # Check service status
+bin/dc logs -f                                   # View logs
+bin/dc down                                      # Stop services
+```
