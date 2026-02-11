@@ -25,26 +25,26 @@ module BetterTogether
       end
 
       # Helper method for attachment URLs
-      # Returns the URL for an Active Storage attachment
+      # Returns the URL for an Active Storage attachment using the storage proxy
       def attachment_url(attachment_name)
         attachment = @model.send(attachment_name)
         return nil unless attachment.attached?
 
-        Rails.application.routes.url_helpers.url_for(attachment)
+        Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment)
       rescue ActiveStorage::FileNotFoundError
         nil
       end
 
       # Helper method for polymorphic attachment URLs with variant support
-      # Returns optimized variant URL based on image type
+      # Returns optimized variant URL based on image type using the storage proxy
       def optimized_attachment_url(attachment_name, variant: :optimized_jpeg)
         attachment = @model.send(attachment_name)
         return nil unless attachment.attached?
 
         if attachment.content_type == 'image/svg+xml'
-          Rails.application.routes.url_helpers.url_for(attachment)
+          Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment)
         else
-          Rails.application.routes.url_helpers.url_for(attachment.variant(variant))
+          Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment.variant(variant))
         end
       rescue ActiveStorage::FileNotFoundError
         nil
