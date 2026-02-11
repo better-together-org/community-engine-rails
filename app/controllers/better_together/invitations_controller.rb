@@ -143,7 +143,7 @@ module BetterTogether
 
     # === Authenticated Invitation Management Helpers ===
 
-    def set_invitable_resource
+    def set_invitable_resource # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       # Determine invitable type from route parameters
       invitable_param = determine_invitable_param
       invitable_id = params[invitable_param]

@@ -16,7 +16,7 @@ module BetterTogether
     # This limits OpenAI token consumption and prevents abuse.
     MAX_CONTENT_SIZE = 50.kilobytes
 
-    def translate # rubocop:todo Metrics/MethodLength
+    def translate # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       content = params[:content]
       source_locale = params[:source_locale]
       target_locale = params[:target_locale]

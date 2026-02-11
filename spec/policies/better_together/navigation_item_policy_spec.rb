@@ -85,37 +85,35 @@ RSpec.describe BetterTogether::NavigationItemPolicy, type: :policy do
     end
   end
 
-  describe '#destroy?' do
-    context 'unprotected item' do
-      subject { described_class.new(user, navigation_item).destroy? }
+  describe '#destroy? unprotected item' do
+    subject { described_class.new(user, navigation_item).destroy? }
 
-      context 'platform manager' do
-        let(:user) { manager_user }
+    context 'platform manager' do
+      let(:user) { manager_user }
 
-        it { is_expected.to be true }
-      end
-
-      context 'normal user' do
-        let(:user) { normal_user }
-
-        it { is_expected.to be false }
-      end
-
-      context 'guest' do
-        let(:user) { nil }
-
-        it { is_expected.to be false }
-      end
+      it { is_expected.to be true }
     end
 
-    context 'protected item' do
-      subject { described_class.new(user, protected_item).destroy? }
+    context 'normal user' do
+      let(:user) { normal_user }
 
-      context 'platform manager' do
-        let(:user) { manager_user }
+      it { is_expected.to be false }
+    end
 
-        it { is_expected.to be false }
-      end
+    context 'guest' do
+      let(:user) { nil }
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#destroy? protected item' do
+    subject { described_class.new(user, protected_item).destroy? }
+
+    context 'platform manager' do
+      let(:user) { manager_user }
+
+      it { is_expected.to be false }
     end
   end
 end

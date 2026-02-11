@@ -73,37 +73,35 @@ RSpec.describe BetterTogether::RolePolicy, type: :policy do
     end
   end
 
-  describe '#destroy?' do
-    context 'unprotected role' do
-      subject { described_class.new(user, role).destroy? }
+  describe '#destroy? unprotected role' do
+    subject { described_class.new(user, role).destroy? }
 
-      context 'platform manager' do
-        let(:user) { manager_user }
+    context 'platform manager' do
+      let(:user) { manager_user }
 
-        it { is_expected.to be true }
-      end
-
-      context 'normal user' do
-        let(:user) { normal_user }
-
-        it { is_expected.to be false }
-      end
-
-      context 'guest' do
-        let(:user) { nil }
-
-        it { is_expected.to be false }
-      end
+      it { is_expected.to be true }
     end
 
-    context 'protected role' do
-      subject { described_class.new(user, protected_role).destroy? }
+    context 'normal user' do
+      let(:user) { normal_user }
 
-      context 'platform manager' do
-        let(:user) { manager_user }
+      it { is_expected.to be false }
+    end
 
-        it { is_expected.to be false }
-      end
+    context 'guest' do
+      let(:user) { nil }
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#destroy? protected role' do
+    subject { described_class.new(user, protected_role).destroy? }
+
+    context 'platform manager' do
+      let(:user) { manager_user }
+
+      it { is_expected.to be false }
     end
   end
 end
