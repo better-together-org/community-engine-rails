@@ -3,6 +3,9 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["aiTranslate", "input", "tab", "tabButton", "tabContent", "trix"];
 
+  // Must match TranslationsController::MAX_CONTENT_SIZE (50 KB)
+  static MAX_CONTENT_BYTES = 50 * 1024;
+
   connect() {
     this.element.setAttribute("novalidate", true); // Disable default HTML5 validation
 
@@ -87,6 +90,16 @@ export default class extends Controller {
       return;
     }
 
+    // Client-side size guard: reject content over the server limit before sending the request.
+    // This provides immediate feedback instead of waiting for a 422 from the API.
+    const contentBytes = new Blob([content]).size;
+    if (contentBytes > this.constructor.MAX_CONTENT_BYTES) {
+      const maxKB = Math.round(this.constructor.MAX_CONTENT_BYTES / 1024);
+      const contentKB = Math.round(contentBytes / 1024);
+      alert(`Content is too large to translate (${contentKB} KB). Maximum allowed size is ${maxKB} KB. Please shorten the content and try again.`);
+      return;
+    }
+
   // Find the closest dropdown-toggle button, then locate the language icon within it
   const dropdownButton = event.target.closest('.input-group').querySelector('.dropdown-toggle');
   const languageIcon = dropdownButton.querySelector('.fa-language');
@@ -107,13 +120,15 @@ export default class extends Controller {
       .then(data => {
         if (data.translation) {
           setContent(targetContainer, data.translation);
-          // Optional: Update UI indicators if you have them
-          // this.setTranslationIndicator(targetContainer.closest(".tab-pane").querySelector(".nav-link.tab-button"), true);
         } else if (data.error) {
           console.error("Translation error:", data.error);
+          alert(`Translation failed: ${data.error}`);
         }
       })
-      .catch(error => console.error("Error:", error)).finally(() => {
+      .catch(error => {
+        console.error("Error:", error);
+        alert("Translation request failed. Please try again.");
+      }).finally(() => {
         // Remove the spin class after request completes
         languageIcon.classList.remove('spin-horizontal');
       });
