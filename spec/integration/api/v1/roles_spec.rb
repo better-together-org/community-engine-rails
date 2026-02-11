@@ -104,11 +104,11 @@ RSpec.describe 'API V1 - Roles', :skip_host_setup do
       end
     end
 
-    post 'Create a new role (read-only endpoint)' do
+    post 'Create a new role (route not exposed)' do
       tags 'Roles'
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
-      description 'Roles are read-only via the API. Create operations are not permitted.'
+      description 'Roles are read-only via the API. The create route is not exposed - returns 404.'
       security [{ bearer_auth: [] }]
 
       parameter name: :Authorization,
@@ -148,7 +148,7 @@ RSpec.describe 'API V1 - Roles', :skip_host_setup do
                   }
                 }
 
-      response '400', 'bad request - create not permitted' do
+      response '404', 'not found - create route not exposed' do
         let(:Authorization) { "Bearer #{platform_manager_token}" }
         let(:'Content-Type') { 'application/vnd.api+json' }
         let(:role) do
@@ -164,8 +164,8 @@ RSpec.describe 'API V1 - Roles', :skip_host_setup do
         end
 
         run_test! do |response|
-          # Roles have no creatable_fields, JSONAPI returns 400
-          expect(response).to have_http_status(:bad_request)
+          # Route restricted to read-only (only: [:index, :show])
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
@@ -250,11 +250,11 @@ RSpec.describe 'API V1 - Roles', :skip_host_setup do
       end
     end
 
-    patch 'Update a role' do
+    patch 'Update a role (route not exposed)' do
       tags 'Roles'
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
-      description 'Update a role. Limited updates may be permitted based on role configuration and user permissions.'
+      description 'Roles are read-only via the API. The update route is not exposed - returns 404.'
       security [{ bearer_auth: [] }]
 
       parameter name: :Authorization,
@@ -293,7 +293,7 @@ RSpec.describe 'API V1 - Roles', :skip_host_setup do
                   }
                 }
 
-      response '200', 'role updated' do
+      response '404', 'not found - update route not exposed' do
         let!(:test_role) do
           BetterTogether::Role.find_or_create_by!(identifier: 'community_member') do |r|
             r.name = 'Community Member'
@@ -316,25 +316,10 @@ RSpec.describe 'API V1 - Roles', :skip_host_setup do
           }
         end
 
-        schema type: :object,
-               properties: {
-                 data: {
-                   type: :object,
-                   properties: {
-                     type: { type: :string, example: 'roles' },
-                     id: { type: :string, format: :uuid },
-                     attributes: {
-                       type: :object,
-                       properties: {
-                         name: { type: :string }
-                       }
-                     }
-                   }
-                 }
-               },
-               required: ['data']
-
-        run_test!
+        run_test! do |response|
+          # Route restricted to read-only (only: [:index, :show])
+          expect(response).to have_http_status(:not_found)
+        end
       end
     end
 
