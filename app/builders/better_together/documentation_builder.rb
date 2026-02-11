@@ -9,6 +9,8 @@ module BetterTogether
       def build # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Skip navigation touch callbacks during bulk operations to avoid StaleObjectError
+          # Save previous value to restore in ensure block (supports nested bulk operations)
+          previous_skip_navigation_touches = BetterTogether.skip_navigation_touches
           BetterTogether.skip_navigation_touches = true
 
           entries = documentation_entries
@@ -39,8 +41,8 @@ module BetterTogether
           area.reload.save!
           area.touch
         ensure
-          # Always re-enable navigation touches, even if error occurs
-          BetterTogether.skip_navigation_touches = false
+          # Restore previous value to support nested bulk operations
+          BetterTogether.skip_navigation_touches = previous_skip_navigation_touches
         end
       end
 
