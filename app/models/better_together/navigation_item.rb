@@ -332,5 +332,20 @@ module BetterTogether
 
       user.permitted_to?(permission_identifier, platform)
     end
+
+    def saved_change_to_linkable?
+      saved_change_to_linkable_id? || saved_change_to_linkable_type?
+    end
+
+    def touch_navigation_area_on_linkable_change
+      return unless navigation_area
+      return if BetterTogether.skip_navigation_touches
+
+      # Reload to get latest lock_version before touching (prevents StaleObjectError)
+      # Retry once if we still get a stale object error
+      navigation_area.reload.touch
+    rescue ActiveRecord::StaleObjectError
+      navigation_area.reload.touch
+    end
   end
 end

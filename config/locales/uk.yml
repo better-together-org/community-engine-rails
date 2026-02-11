@@ -2103,6 +2103,9 @@ uk:
     registrations:
       captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
         знову.
+      invalid_invitation: Недійсний або прострочений код запрошення. Будь ласка, перевірте
+        свій електронний лист із запрошенням.
+      invitation_required: Для реєстрації на цій платформі потрібен код запрошення
     remove: Видалити
     resource_permissions:
       actions:

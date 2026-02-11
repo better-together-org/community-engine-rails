@@ -36,6 +36,8 @@ gem 'rswag'
 
 # Sidekiq for background processing
 gem 'sidekiq', '~> 8.0.10'
+# Pin connection_pool to avoid breaking changes in 3.x
+gem 'connection_pool', '~> 2.5.5'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -52,10 +54,6 @@ gem 'storext', github: 'better-together-org/storext'
 gem 'uglifier', '>= 1.3.0'
 
 group :development, :test do
-  # Better errors for enhanced error pages
-  gem 'better_errors'
-  # Binding of caller provides pry console at breakpoints
-  gem 'binding_of_caller'
   # Debugger tool
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   # Faker for generating fake data
@@ -75,6 +73,10 @@ group :development, :test do
 end
 
 group :development do
+  # Better errors for enhanced error pages (excluded from test to prevent marshal errors with parallel_rspec)
+  gem 'better_errors'
+  # Binding of caller provides pry console at breakpoints (excluded from test to prevent marshal errors)
+  gem 'binding_of_caller'
   # Brakeman for static analysis security vulnerability scanning
   gem 'brakeman', require: false
   # Bundler audit for checking gem vulnerabilities

@@ -406,7 +406,7 @@ module BetterTogether
                   Date.parse(d)
                 rescue StandardError
                   nil
-        end
+                end
                 .compact
 
         params[:event][:recurrence_attributes][:exception_dates] = dates

@@ -2080,6 +2080,9 @@ en:
         roles: Roles
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
+      invalid_invitation: Invalid or expired invitation code. Please check your invitation
+        email.
+      invitation_required: An invitation code is required to register on this platform
     remove: Remove
     resource_permissions:
       actions:
