@@ -107,11 +107,13 @@ module BetterTogether
 
       # Additional wait to ensure conversation is fully persisted in database
       # Extract conversation ID from URL and verify it's findable
-      return unless page.current_path =~ %r{/conversations/([^/]+)}
+      # Match UUID format (8-4-4-4-12 hex digits) to avoid matching routes like /conversations/new
+      return unless page.current_path =~ %r{/conversations/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})}
 
       conversation_id = ::Regexp.last_match(1)
       if defined?(wait_for_record)
-        wait_for_record(BetterTogether::Conversation, conversation_id, timeout: 5)
+        # Increased timeout for CI environments with parallel execution
+        wait_for_record(BetterTogether::Conversation, conversation_id, timeout: 15)
       else
         sleep 0.5 # Fallback: brief wait for database commit
       end

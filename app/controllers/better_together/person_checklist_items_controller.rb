@@ -9,8 +9,13 @@ module BetterTogether
     # Some host layouts do not include the CSRF meta tag in test snapshots,
     # so allow this JSON endpoint to be called without the CSRF token.
 
-    def show
-      # Handle case where checklist_item might not be visible yet due to transaction timing
+    def show # rubocop:todo Metrics/MethodLength
+      # Handle case where checklist or item might not be visible yet due to transaction timing
+      unless @checklist
+        render json: { id: nil, completed_at: nil, error: 'Checklist not found' }, status: :not_found
+        return
+      end
+
       unless @checklist_item
         render json: { id: nil, completed_at: nil, error: 'Checklist item not found' }, status: :not_found
         return
@@ -28,7 +33,13 @@ module BetterTogether
 
     # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      # Handle case where checklist_item might not be visible yet due to transaction timing
+      # Handle case where checklist or item might not be visible yet due to transaction timing
+      unless @checklist
+        render json: { errors: ['Checklist not found'], flash: { type: 'alert', message: 'Checklist not found' } },
+               status: :not_found
+        return
+      end
+
       unless @checklist_item
         render json: { errors: ['Checklist item not found'], flash: { type: 'alert', message: 'Checklist item not found' } },
                status: :not_found
@@ -101,7 +112,9 @@ module BetterTogether
     private
 
     def set_checklist
-      @checklist = BetterTogether::Checklist.find(params[:checklist_id])
+      # Use find_by instead of find to handle race conditions in tests where
+      # the checklist might not be visible yet due to transaction timing
+      @checklist = BetterTogether::Checklist.find_by(id: params[:checklist_id])
     end
 
     def set_checklist_item
