@@ -118,6 +118,8 @@ module BetterTogether
     end
 
     def set_checklist_item
+      return if @checklist.nil?
+
       item_param = params[:checklist_item_id] || params[:id]
       # Use find_by instead of find to handle race conditions in tests where
       # the item might not be visible yet due to transaction timing
@@ -125,6 +127,8 @@ module BetterTogether
     end
 
     def notify_if_checklist_complete(person)
+      return if @checklist.nil?
+
       total = @checklist.checklist_items.count
       completed = BetterTogether::PersonChecklistItem.where(person:,
                                                             checklist: @checklist).where.not(completed_at: nil).count
