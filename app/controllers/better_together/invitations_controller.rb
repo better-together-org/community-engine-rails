@@ -143,23 +143,18 @@ module BetterTogether
 
     # === Authenticated Invitation Management Helpers ===
 
-    # Allow-list of invitable class names that can be resolved from route parameters
-    ALLOWED_INVITABLE_TYPES = %w[
-      BetterTogether::Community
-      BetterTogether::Event
-      BetterTogether::Platform
-    ].freeze
-
     def set_invitable_resource
       # Determine invitable type from route parameters
       invitable_param = determine_invitable_param
       invitable_id = params[invitable_param]
 
       # Get the invitable class from the parameter name using safe resolution
+      # Allow-list is dynamically built from models that include the Invitable concern
       invitable_type = invitable_param.to_s.gsub('_id', '').classify
+      allowed = BetterTogether::Invitable.included_in_models.map(&:name)
       invitable_class = BetterTogether::SafeClassResolver.resolve!(
         "BetterTogether::#{invitable_type}",
-        allowed: ALLOWED_INVITABLE_TYPES
+        allowed: allowed
       )
 
       @invitable_resource = if invitable_class.respond_to?(:friendly)
