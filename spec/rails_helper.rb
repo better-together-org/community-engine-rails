@@ -91,6 +91,8 @@ RSpec.configure do |config|
 
   config.after do
     OmniAuth.config.mock_auth[:github] = nil
+    # Reset navigation touch flag to prevent test pollution
+    BetterTogether.skip_navigation_touches = false
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
@@ -122,6 +124,7 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
   # config.include RequestSpecHelper, type: :controller
   config.include BetterTogether::CapybaraFeatureHelpers, type: :feature
+  config.include OmniauthTestHelpers, :omniauth
 
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']

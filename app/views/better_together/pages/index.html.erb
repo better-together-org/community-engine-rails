@@ -19,8 +19,8 @@
     <div class="d-flex justify-content-between align-items-center">
       <h1><%= resource_class.model_name.human.pluralize %></h1>
       <% if policy(resource_class).create? %>
-        <%= link_to new_page_path, class: 'btn btn-primary', 'aria-label' => t('.new_page') do %>
-          <i class="fas fa-plus"></i> <%= t('.new_page') %>
+        <%= link_to new_page_path, class: 'btn btn-primary', 'aria-label' => t('better_together.pages.index.new_page') do %>
+          <i class="fas fa-plus"></i> <%= t('better_together.pages.index.new_page') %>
         <% end %>
       <% end %>
     </div>
@@ -50,8 +50,8 @@
                     <%= form.text_field :title_filter, 
                         value: current_title_filter,
                         class: 'form-control form-control-sm',
-                        placeholder: t('.search_by_title'),
-                        'aria-label' => t('.search_by_title') %>
+                        placeholder: t('better_together.pages.index.search_by_title'),
+                        'aria-label' => t('better_together.pages.index.search_by_title') %>
                     <% if params[:title_filter].present? %>
                       <%= link_to pages_path(
                             slug_filter: params[:slug_filter],
@@ -59,8 +59,8 @@
                             sort_direction: params[:sort_direction],
                             page: params[:page]
                           ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
-                          title: t('.clear_filter'),
-                          'aria-label' => t('.clear_filter') do %>
+                          title: t('better_together.pages.index.clear_filter'),
+                          'aria-label' => t('better_together.pages.index.clear_filter') do %>
                         <i class="fas fa-times" aria-hidden="true"></i>
                       <% end %>
                     <% end %>
@@ -90,8 +90,8 @@
                     <%= form.text_field :slug_filter, 
                         value: current_slug_filter,
                         class: 'form-control form-control-sm',
-                        placeholder: t('.search_by_slug'),
-                        'aria-label' => t('.search_by_slug') %>
+                        placeholder: t('better_together.pages.index.search_by_slug'),
+                        'aria-label' => t('better_together.pages.index.search_by_slug') %>
                     <% if params[:slug_filter].present? %>
                       <%= link_to pages_path(
                             title_filter: params[:title_filter],
@@ -99,8 +99,8 @@
                             sort_direction: params[:sort_direction],
                             page: params[:page]
                           ), class: 'input-group-text btn btn-outline-secondary btn-sm', 
-                          title: t('.clear_filter'),
-                          'aria-label' => t('.clear_filter') do %>
+                          title: t('better_together.pages.index.clear_filter'),
+                          'aria-label' => t('better_together.pages.index.clear_filter') do %>
                         <i class="fas fa-times" aria-hidden="true"></i>
                       <% end %>
                     <% end %>

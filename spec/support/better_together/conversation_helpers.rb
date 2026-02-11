@@ -7,7 +7,16 @@ module BetterTogether
 
     # participants - array of Person-like objects (respond_to? :slug)
     # options - optional hash: :title, :first_message
-    def create_conversation(participants, options = {}) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def create_conversation(participants, options = {}) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+      # Ensure participant records are visible to app server before navigating
+      Array(participants).each do |participant|
+        next unless defined?(ensure_record_visible)
+
+        user_record = participant.respond_to?(:user) ? participant.user : nil
+        ensure_record_visible(user_record) if user_record
+        ensure_record_visible(participant)
+      end
+
       # Always navigate to the conversation form to ensure clean state
       visit new_conversation_path(locale: I18n.default_locale)
 
@@ -74,6 +83,21 @@ module BetterTogether
 
       # Submit using the button label present in the UI (keep original label to avoid brittle tests)
       click_button 'Create Conversation'
+
+      # Wait for successful submission - form uses turbo: false, so full page redirect on success
+      # Should redirect to the newly created conversation show page
+      expect(page).to have_current_path(%r{/[a-z]{2}/conversations/.+}, wait: 10)
+
+      # Additional wait to ensure conversation is fully persisted in database
+      # Extract conversation ID from URL and verify it's findable
+      return unless page.current_path =~ %r{/conversations/([^/]+)}
+
+      conversation_id = ::Regexp.last_match(1)
+      if defined?(wait_for_record)
+        wait_for_record(BetterTogether::Conversation, conversation_id, timeout: 5)
+      else
+        sleep 0.5 # Fallback: brief wait for database commit
+      end
     end
   end
 end

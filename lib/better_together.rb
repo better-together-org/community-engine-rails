@@ -12,6 +12,10 @@ module BetterTogether
                  :user_class,
                  :user_confirmation_path
 
+  # Thread-safe flag to skip navigation touch callbacks during bulk operations
+  thread_mattr_accessor :skip_navigation_touches
+  self.skip_navigation_touches = false
+
   class << self
     def base_path
       BetterTogether::Engine.routes.find_script_name({})
