@@ -197,9 +197,9 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     context 'when attempting to create role' do
       it 'raises routing error because route does not exist' do
         # Routes are restricted to read-only (only: [:index, :show])
-        expect {
+        expect do
           post url, params: valid_params.to_json, headers: platform_manager_headers
-        }.to raise_error(ActionController::RoutingError, /No route matches/)
+        end.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
   end
@@ -228,9 +228,9 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     context 'when attempting to update role' do
       it 'raises routing error because route does not exist' do
         # Routes are restricted to read-only (only: [:index, :show])
-        expect {
+        expect do
           patch url, params: update_params.to_json, headers: platform_manager_headers
-        }.to raise_error(ActionController::RoutingError, /No route matches/)
+        end.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
   end
@@ -248,9 +248,9 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
     context 'when attempting to delete role' do
       it 'raises routing error because route does not exist' do
         # Routes are restricted to read-only (only: [:index, :show])
-        expect {
+        expect do
           delete url, headers: platform_manager_headers
-        }.to raise_error(ActionController::RoutingError, /No route matches/)
+        end.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
 
@@ -266,9 +266,9 @@ RSpec.describe 'BetterTogether::Api::V1::Roles', :no_auth do
 
       it 'raises routing error because route does not exist' do
         # Routes are restricted to read-only (only: [:index, :show])
-        expect {
+        expect do
           delete url, headers: platform_manager_headers
-        }.to raise_error(ActionController::RoutingError, /No route matches/)
+        end.to raise_error(ActionController::RoutingError, /No route matches/)
       end
     end
   end
