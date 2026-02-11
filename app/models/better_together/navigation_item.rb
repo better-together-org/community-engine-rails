@@ -75,7 +75,7 @@ module BetterTogether
 
     slugged :title
 
-    validates :title, presence: true, length: { maximum: 255 }
+    validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
               format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
                         message: 'must be a valid URL, "start with #", or be an absolute path' }
@@ -303,6 +303,10 @@ module BetterTogether
 
     private
 
+    def linkable_provides_title?
+      linkable.present? && linkable.respond_to?(:title)
+    end
+
     def retrieve_route(route)
       # Use `send` to dispatch the correct URL helper
       Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
@@ -331,16 +335,19 @@ module BetterTogether
       user.permitted_to?(permission_identifier, platform)
     end
 
-    def touch_navigation_area_on_translation_change
-      navigation_area&.reload&.touch
+    def saved_change_to_linkable?
+      saved_change_to_linkable_id? || saved_change_to_linkable_type?
     end
 
-    def touch_navigation_area_on_create
-      navigation_area&.reload&.touch
-    end
+    def touch_navigation_area_on_linkable_change
+      return unless navigation_area
+      return if BetterTogether.skip_navigation_touches
 
-    def touch_navigation_area_on_destroy
-      navigation_area&.reload&.touch
+      # Reload to get latest lock_version before touching (prevents StaleObjectError)
+      # Retry once if we still get a stale object error
+      navigation_area.reload.touch
+    rescue ActiveRecord::StaleObjectError
+      navigation_area.reload.touch
     end
   end
 end

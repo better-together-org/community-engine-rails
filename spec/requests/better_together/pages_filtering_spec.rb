@@ -80,6 +80,27 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
       end
     end
 
+    context 'with valid parameters and turbo_stream format' do
+      it 'redirects to the edit page' do
+        post better_together.pages_path, params: valid_params, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+        created_page = BetterTogether::Page.last
+        expect(response).to redirect_to(edit_page_path(created_page))
+      end
+
+      it 'sets a flash notice' do
+        post better_together.pages_path, params: valid_params, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+        expect(flash[:notice]).to eq(I18n.t('flash.generic.created', resource: I18n.t('resources.page')))
+      end
+
+      it 'returns see_other status for turbo compatibility' do
+        post better_together.pages_path, params: valid_params, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+        expect(response).to have_http_status(:see_other)
+      end
+    end
+
     context 'with invalid parameters' do
       it 'does not create a page' do
         expect do

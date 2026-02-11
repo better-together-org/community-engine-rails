@@ -93,6 +93,8 @@ RSpec.configure do |config|
 
   config.after do
     OmniAuth.config.mock_auth[:github] = nil
+    # Reset navigation touch flag to prevent test pollution
+    BetterTogether.skip_navigation_touches = false
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

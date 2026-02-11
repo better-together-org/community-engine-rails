@@ -17,16 +17,33 @@ RSpec.describe 'Checklist item creation appends to bottom', :js do
     checklist = create(:better_together_checklist, title: 'Append Test Checklist')
 
     # Create five existing items with positions 0..4
-    5.times do |i|
+    items = 5.times.map do |i|
       create(:better_together_checklist_item, checklist: checklist, position: i, label: "Existing #{i + 1}")
     end
+
+    # Ensure all records are visible to application server thread before visiting page
+    ensure_record_visible(checklist)
+    ensure_records_visible(items)
 
     visit better_together.checklist_path(checklist, locale: I18n.default_locale)
 
     list_selector = "##{dom_id(checklist, :checklist_items)}"
 
+    # CRITICAL: Wait for page to fully load AND for Stimulus controllers to initialize
+    # Each checklist item has a person-checklist-item controller that makes an AJAX
+    # request on connect() to fetch completion status. These AJAX calls must find
+    # the checklist record, so we wait for all controllers to be connected.
+    expect(page).to have_css('[data-controller*="better_together--checklist-items"]', wait: 10)
+
+    # Wait for all person-checklist-item controllers to initialize and complete their AJAX calls
+    # There should be 5 items, each with a controller that fetches from PersonChecklistItemsController
+    expect(page).to have_css('[data-controller*="better_together--person-checklist-item"]', count: 5, wait: 10)
+
     # sanity: we have 5 items initially
     expect(page).to have_selector("#{list_selector} li.list-group-item", count: 5, wait: 5)
+
+    # Ensure form is ready before interaction
+    expect(page).to have_css('#new_checklist_item form', wait: 5)
 
     # Fill the new item form (uses the stable new_checklist_item turbo frame + form)
     within '#new_checklist_item' do

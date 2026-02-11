@@ -50,6 +50,12 @@ module BetterTogether
       where(type: 'BetterTogether::Content::Template')
     }, through: :page_blocks, source: :block
 
+    # Navigation items that link to this page (polymorphic linkable association)
+    has_many :navigation_items,
+             as: :linkable,
+             class_name: 'BetterTogether::NavigationItem',
+             dependent: :nullify
+
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
     belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
 
@@ -76,8 +82,8 @@ module BetterTogether
     # Automatically grant the page creator an authorship record
     after_create :add_creator_as_author
 
-    # Touch navigation items when page is updated (propagates to navigation_areas)
-    after_update :touch_navigation_items_on_change, if: -> { saved_changes.key?('lock_version') }
+    # Touch associated navigation_items to invalidate navigation cache when page title changes
+    after_save :touch_navigation_items, if: :saved_change_to_title?
 
     # Scopes
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
@@ -178,15 +184,21 @@ module BetterTogether
       authorships.find_or_create_by(author_id: creator_id)
     end
 
-    def touch_navigation_items_on_change
-      # Touch all navigation items that link to this page
-      # This propagates through to navigation_areas via navigation_item's touch: true
-      # Ignore stale object errors that may occur during bulk operations
-      navigation_items.each do |item|
-        item.touch
+    # Touch navigation areas for all navigation items that link to this page
+    # to invalidate their navigation area cache. We only touch each distinct
+    # navigation area once to avoid redundant writes when multiple items in
+    # the same area link to this page.
+    def touch_navigation_items
+      return if BetterTogether.skip_navigation_touches
+
+      navigation_area_ids = navigation_items.select(:navigation_area_id).distinct.pluck(:navigation_area_id).compact
+      return if navigation_area_ids.empty?
+
+      BetterTogether::NavigationArea.where(id: navigation_area_ids).find_each do |navigation_area|
+        navigation_area.touch
       rescue ActiveRecord::StaleObjectError
-        # Silently ignore - this is expected during bulk operations with pessimistic locking
-        Rails.logger.debug "Skipping touch on navigation item #{item.id} due to stale object (expected during bulk operations)"
+        # Retry once with a fresh reload
+        navigation_area.reload.touch
       end
     end
   end
