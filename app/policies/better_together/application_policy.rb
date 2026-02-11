@@ -40,13 +40,14 @@ module BetterTogether
     end
 
     class Scope # rubocop:todo Style/Documentation
-      attr_reader :user, :scope, :agent, :invitation_token
+      attr_reader :user, :scope, :agent, :invitation_token, :options
 
-      def initialize(user, scope, invitation_token: nil)
+      def initialize(user, scope, invitation_token: nil, **options)
         @user = user
         @agent = user&.person
         @scope = scope
         @invitation_token = invitation_token
+        @options = options
       end
 
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
