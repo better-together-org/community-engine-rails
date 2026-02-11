@@ -10,6 +10,12 @@ module BetterTogether
     # so allow this JSON endpoint to be called without the CSRF token.
 
     def show
+      # Handle case where checklist_item might not be visible yet due to transaction timing
+      unless @checklist_item
+        render json: { id: nil, completed_at: nil, error: 'Checklist item not found' }, status: :not_found
+        return
+      end
+
       person = current_user.person
       pci = BetterTogether::PersonChecklistItem.find_by(person:, checklist: @checklist, checklist_item: @checklist_item)
 
@@ -20,7 +26,15 @@ module BetterTogether
       end
     end
 
+    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # Handle case where checklist_item might not be visible yet due to transaction timing
+      unless @checklist_item
+        render json: { errors: ['Checklist item not found'], flash: { type: 'alert', message: 'Checklist item not found' } },
+               status: :not_found
+        return
+      end
+
       # Diagnostic log to confirm authentication state for incoming requests
       # rubocop:todo Layout/LineLength
       Rails.logger.info("DBG PersonChecklistItemsController#create: current_user_id=#{current_user&.id}, warden_user_id=#{request.env['warden']&.user&.id}")
@@ -82,6 +96,7 @@ module BetterTogether
       render json: { errors: [e.message], flash: { type: 'alert', message: e.message } },
              status: :internal_server_error
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     private
 
@@ -91,7 +106,9 @@ module BetterTogether
 
     def set_checklist_item
       item_param = params[:checklist_item_id] || params[:id]
-      @checklist_item = @checklist.checklist_items.find(item_param)
+      # Use find_by instead of find to handle race conditions in tests where
+      # the item might not be visible yet due to transaction timing
+      @checklist_item = @checklist.checklist_items.find_by(id: item_param)
     end
 
     def notify_if_checklist_complete(person)
