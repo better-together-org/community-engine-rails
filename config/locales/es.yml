@@ -2229,6 +2229,17 @@ es:
       platform: Plataforma
       title: Cuentas de Redes Sociales
       url: URL
+    translations:
+      errors:
+        content_blank: El contenido no puede estar en blanco
+        content_too_long: El contenido es demasiado largo para traducir. Por favor,
+          limite su texto a aproximadamente 8.000 palabras (~50.000 caracteres) e
+          inténtelo de nuevo.
+        invalid_source_locale: Idioma de origen no válido
+        invalid_target_locale: Idioma de destino no válido
+        translation_failed: 'La traducción falló: %{message}'
+        translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
+          de nuevo.
     view_switcher:
       button_label: Vista %{view}
       change_view: Cambiar tipo de vista

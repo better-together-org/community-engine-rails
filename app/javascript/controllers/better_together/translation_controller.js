@@ -94,7 +94,7 @@ export default class extends Controller {
     // This provides immediate feedback instead of waiting for a 422 from the API.
     const contentBytes = new Blob([content]).size;
     if (contentBytes > this.constructor.MAX_CONTENT_BYTES) {
-      alert(`Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.`);
+      alert(this.getTranslation('content_too_long'));
       return;
     }
 
@@ -120,12 +120,12 @@ export default class extends Controller {
           setContent(targetContainer, data.translation);
         } else if (data.error) {
           console.error("Translation error:", data.error);
-          alert(`Translation failed: ${data.error}`);
+          alert(data.error);
         }
       })
       .catch(error => {
         console.error("Error:", error);
-        alert("Translation request failed. Please try again.");
+        alert(this.getTranslation('translation_request_failed'));
       }).finally(() => {
         // Remove the spin class after request completes
         languageIcon.classList.remove('spin-horizontal');
@@ -240,5 +240,23 @@ export default class extends Controller {
         contentPane.classList.remove("show", "active");
       }
     });
+  }
+
+  // Returns a translated string from data attributes, falling back to English defaults.
+  // Follows the Stimulus I18n pattern: Rails views pass translations as data attributes
+  // on the controller element (e.g., data-better-together--translation-content-too-long-text).
+  getTranslation(key) {
+    const fallbacks = {
+      'content_too_long': 'Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.',
+      'translation_request_failed': 'Translation request failed. Please try again.'
+    }
+
+    // Convert snake_case key to the dataset format with hyphens
+    // e.g., 'content_too_long' -> 'betterTogether-TranslationContentTooLongText'
+    const words = key.split('_')
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    const dataKey = `betterTogether-Translation${capitalizedWords.join('')}Text`
+
+    return this.element.dataset[dataKey] || fallbacks[key] || key
   }
 }

@@ -24,7 +24,7 @@ module DatabaseVisibilityHelpers
 
     # Longer sleep to ensure PostgreSQL visibility across all connections
     # Critical for AJAX requests that fire immediately on page load
-    sleep 0.15
+    sleep 0.3
 
     record
   end
@@ -55,7 +55,7 @@ module DatabaseVisibilityHelpers
     # Additional aggressive cache clear after batch
     clear_all_connection_caches!
     # Longer sleep after batch to ensure all are committed
-    sleep 0.15
+    sleep 0.3
     records
   end
 

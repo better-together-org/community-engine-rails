@@ -2239,6 +2239,15 @@ fr:
       platform: Plateforme
       title: Comptes de réseaux sociaux
       url: URL
+    translations:
+      errors:
+        content_blank: Le contenu ne peut pas être vide
+        content_too_long: Le contenu est trop long pour être traduit. Veuillez limiter
+          votre texte à environ 8 000 mots (~50 000 caractères) et réessayer.
+        invalid_source_locale: Langue source non valide
+        invalid_target_locale: Langue cible non valide
+        translation_failed: 'La traduction a échoué : %{message}'
+        translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
     view_switcher:
       button_label: Vue %{view}
       change_view: Changer le type de vue

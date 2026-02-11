@@ -23,13 +23,14 @@ module BetterTogether
 
       # Guard: reject blank content early to avoid a wasted API call.
       if content.blank?
-        return render json: { error: 'Content cannot be blank' }, status: :unprocessable_content
+        return render json: { error: t('better_together.translations.errors.content_blank') },
+                      status: :unprocessable_content
       end
 
       # Guard: cap payload size to prevent excessive OpenAI token usage / cost.
       if content.bytesize > MAX_CONTENT_SIZE
         return render json: {
-          error: 'Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.'
+          error: t('better_together.translations.errors.content_too_long')
         }, status: :unprocessable_content
       end
 
@@ -37,11 +38,13 @@ module BetterTogether
       # come from the application's configured locale list — not arbitrary user input.
       available = I18n.available_locales.map(&:to_s)
       unless available.include?(target_locale.to_s)
-        return render json: { error: 'Invalid target locale' }, status: :unprocessable_content
+        return render json: { error: t('better_together.translations.errors.invalid_target_locale') },
+                      status: :unprocessable_content
       end
 
       unless available.include?(source_locale.to_s)
-        return render json: { error: 'Invalid source locale' }, status: :unprocessable_content
+        return render json: { error: t('better_together.translations.errors.invalid_source_locale') },
+                      status: :unprocessable_content
       end
 
       initiator = helpers.current_person
@@ -56,7 +59,8 @@ module BetterTogether
       # Return the translated content as JSON
       render json: { translation: translated_content }
     rescue StandardError => e
-      render json: { error: "Translation failed: #{e.message}" }, status: :unprocessable_content
+      render json: { error: t('better_together.translations.errors.translation_failed', message: e.message) },
+             status: :unprocessable_content
     end
   end
 end

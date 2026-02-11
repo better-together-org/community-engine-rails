@@ -2,7 +2,9 @@
 
 <%- temp_id = temp_id_for(model, temp_id:) %>
 
-<div id="<%= dom_id(model) %>-<%= attribute %>-translation-fields" class="localized-fields" data-controller="better_together--translation">
+<div id="<%= dom_id(model) %>-<%= attribute %>-translation-fields" class="localized-fields" data-controller="better_together--translation"
+     data-better-together--translation-content-too-long-text="<%= t('better_together.translations.errors.content_too_long') %>"
+     data-better-together--translation-translation-request-failed-text="<%= t('better_together.translations.errors.translation_request_failed') %>">
   <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>
       <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>

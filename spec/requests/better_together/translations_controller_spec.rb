@@ -114,7 +114,9 @@ module BetterTogether
 
         it 'returns error message as JSON' do
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Translation failed: API connection failed')
+          expect(json_response['error']).to eq(
+            I18n.t('better_together.translations.errors.translation_failed', message: 'API connection failed')
+          )
         end
       end
 
@@ -143,7 +145,7 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Content cannot be blank')
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.content_blank'))
         end
 
         it 'rejects nil content' do
@@ -152,7 +154,7 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Content cannot be blank')
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.content_blank'))
         end
 
         it 'does not call TranslationBot' do
@@ -173,7 +175,7 @@ module BetterTogether
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
           expect(json_response['error']).to eq(
-            'Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.'
+            I18n.t('better_together.translations.errors.content_too_long')
           )
         end
 
@@ -207,7 +209,7 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Invalid target locale')
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.invalid_target_locale'))
         end
 
         it 'rejects invalid source locale' do
@@ -216,7 +218,7 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Invalid source locale')
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.invalid_source_locale'))
         end
 
         it 'rejects missing target locale' do
@@ -225,7 +227,7 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Invalid target locale')
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.invalid_target_locale'))
         end
 
         it 'rejects missing source locale' do
@@ -234,7 +236,7 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Invalid source locale')
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.invalid_source_locale'))
         end
 
         it 'rejects prompt-injection-style locale values' do
@@ -247,7 +249,7 @@ module BetterTogether
 
           expect(response).to have_http_status(:unprocessable_content)
           json_response = JSON.parse(response.body)
-          expect(json_response['error']).to eq('Invalid target locale')
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.invalid_target_locale'))
         end
 
         it 'does not call TranslationBot for invalid locales' do
