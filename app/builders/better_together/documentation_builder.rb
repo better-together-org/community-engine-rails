@@ -12,30 +12,28 @@ module BetterTogether
           previous_skip_touches = BetterTogether.skip_navigation_touches
           BetterTogether.skip_navigation_touches = true
 
-          ActiveRecord::Base.transaction do
-            entries = documentation_entries
-            return if entries.blank?
+          entries = documentation_entries
+          return if entries.blank?
 
-            area = if (existing_area = ::BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation'))
-                     existing_area.navigation_items.delete_all
-                     existing_area.update!(name: 'Documentation', visible: true, protected: true)
-                     existing_area
-                   else
-                     ::BetterTogether::NavigationArea.create! do |area|
-                       area.name = 'Documentation'
-                       area.slug = 'documentation'
-                       area.visible = true
-                       area.protected = true
-                     end
+          area = if (existing_area = ::BetterTogether::NavigationArea.i18n.find_by(slug: 'documentation'))
+                   existing_area.navigation_items.delete_all
+                   existing_area.update!(name: 'Documentation', visible: true, protected: true)
+                   existing_area
+                 else
+                   ::BetterTogether::NavigationArea.create! do |area|
+                     area.name = 'Documentation'
+                     area.slug = 'documentation'
+                     area.visible = true
+                     area.protected = true
                    end
+                 end
 
-            entries.each_with_index do |entry, index|
-              create_documentation_navigation_item(area, entry, index)
-            end
-
-            area.reload.save!
-            area.touch
+          entries.each_with_index do |entry, index|
+            create_documentation_navigation_item(area, entry, index)
           end
+
+          area.reload.save!
+          area.touch
         ensure
           # Always restore previous flag value, even if error occurs
           BetterTogether.skip_navigation_touches = previous_skip_touches
