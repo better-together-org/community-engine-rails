@@ -59,6 +59,7 @@ module BetterTogether
         page.updated_at,
         page.page_blocks.maximum(:updated_at),
         page.blocks.maximum(:updated_at),
+        page.sidebar_nav&.cache_key_with_version,
         current_user&.id,
         I18n.locale,
         'v1'

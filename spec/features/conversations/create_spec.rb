@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'creating a new conversation', :as_platform_manager, :skip_host_setup, retry: 0 do
+RSpec.describe 'creating a new conversation', retry: 0 do
   include BetterTogether::ConversationHelpers
   include BetterTogether::CapybaraFeatureHelpers
 
@@ -10,25 +10,44 @@ RSpec.describe 'creating a new conversation', :as_platform_manager, :skip_host_s
 
   before do
     configure_host_platform
-    capybara_login_as_platform_manager
-
     # Ensure this person can be messaged by members so they appear in permitted_participants
     user.person.reload.update!(preferences: (user.person.preferences || {}).merge('receive_messages_from_members' => true))
   end
 
-  scenario 'between a platform manager and normal user', :js do
-    expect do
-      create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
-    end.to change(BetterTogether::Conversation, :count).by(1)
+  context 'as a platform manager', :as_platform_manager do
+    before do
+      capybara_login_as_platform_manager
+    end
+
+    scenario 'between a platform manager and normal user', :js do
+      # Ensure user record is visible to application server
+      ensure_record_visible(user)
+      ensure_record_visible(user.person)
+
+      expect do
+        create_conversation([user.person], first_message: Faker::Lorem.sentence(word_count: 8))
+      end.to change(BetterTogether::Conversation, :count).by(1)
+    end
   end
 
   context 'as a normal user', :as_user do
-    let!(:normal_user) { create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#') }
-    let(:user2) { create(:better_together_user) }
+    let!(:normal_user) do
+      user = BetterTogether::User.find_by(email: 'user@example.test') ||
+             create(:better_together_user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#')
+      ensure_record_visible(user) if defined?(ensure_record_visible)
+      ensure_record_visible(user.person) if defined?(ensure_record_visible)
+      user
+    end
+    let(:user2) do
+      user = create(:better_together_user)
+      ensure_record_visible(user) if defined?(ensure_record_visible)
+      ensure_record_visible(user.person) if defined?(ensure_record_visible)
+      user
+    end
 
     before do
-      # Ensure preferences are set for the normal user
-      normal_user.person.reload.update!(preferences: (normal_user.person.preferences || {}).merge('receive_messages_from_members' => true))
+      normal_user # Ensure user exists before login
+      capybara_login_as_user
     end
 
     scenario 'can create a conversation with a public person who opted into messages', :js do
@@ -36,6 +55,10 @@ RSpec.describe 'creating a new conversation', :as_platform_manager, :skip_host_s
       # Ensure target is public and opted-in to receive messages from members
       target.person.reload.update!(privacy: 'public',
                                    preferences: (target.person.preferences || {}).merge('receive_messages_from_members' => true)) # rubocop:disable Layout/LineLength
+
+      # Ensure record is visible to application server before creating conversation
+      ensure_record_visible(target)
+      ensure_record_visible(target.person)
 
       expect do
         create_conversation([target.person], first_message: 'Hi there')

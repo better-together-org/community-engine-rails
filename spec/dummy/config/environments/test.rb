@@ -60,4 +60,12 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+
+  # Disable Rack::Attack throttling in tests to prevent false 503 errors
+  config.middleware.delete Rack::Attack
+
+  # Disable BetterErrors in test environment to prevent marshal errors with parallel_rspec
+  # BetterErrors attaches Binding objects to exceptions which cannot be marshaled when
+  # parallel_rspec tries to send results between workers, causing "no _dump_data is defined for class Binding" errors
+  config.middleware.delete BetterErrors::Middleware if defined?(BetterErrors::Middleware)
 end

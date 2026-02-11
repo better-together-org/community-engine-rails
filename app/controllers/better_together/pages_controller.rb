@@ -48,8 +48,8 @@ module BetterTogether
               redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
             end
             format.turbo_stream do
-              flash.now[:notice] = t('flash.generic.created', resource: t('resources.page'))
-              render turbo_stream: turbo_stream.redirect_to(edit_page_path(@page))
+              flash[:notice] = t('flash.generic.created', resource: t('resources.page'))
+              redirect_to edit_page_path(@page), status: :see_other
             end
           else
             format.turbo_stream do

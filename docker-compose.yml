@@ -4,6 +4,7 @@ volumes:
   community-engine-db-data:
   community-engine-elasticsearch:
   community-engine-redis:
+  community-engine-redis-rack-attack:
 
 x-env-info: &env-info
   env_file:
@@ -20,6 +21,7 @@ x-app-shared: &app-shared
   depends_on:
     - db
     - redis
+    - redis-rack-attack
     - elasticsearch
 
 services:
@@ -77,6 +79,13 @@ services:
     command: redis-server
     volumes:
       - community-engine-redis:/data
+
+  redis-rack-attack:
+    image: 'redis:7.2-alpine'
+    container_name: community-engine-redis-rack-attack
+    command: redis-server
+    volumes:
+      - community-engine-redis-rack-attack:/data
 
   mail-server:
     image: mailhog/mailhog

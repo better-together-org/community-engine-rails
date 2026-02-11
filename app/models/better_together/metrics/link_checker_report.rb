@@ -65,8 +65,6 @@ module BetterTogether
       end
       # rubocop:enable Metrics/MethodLength
 
-      private
-
       def purge_report_file
         report_file.purge_later if report_file.attached?
       end
@@ -74,6 +72,40 @@ module BetterTogether
       def export_file_if_report_exists
         export_file! if report_data.present? && !report_data.empty?
       end
+
+      # Check if report has no broken links
+      def no_broken_links?
+        invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+        invalid_by_host.values.sum.zero?
+      end
+
+      # Deprecated: Use no_broken_links? instead
+      alias has_no_broken_links? no_broken_links?
+
+      # Check if broken links have changed compared to another report
+      def broken_links_changed_since?(other_report)
+        return true if other_report.nil?
+
+        current_invalid = extract_invalid_by_host
+        previous_invalid = extract_invalid_by_host_from(other_report)
+
+        # Compare the sets of broken links by host
+        current_invalid != previous_invalid
+      end
+
+      # Get total count of broken links
+      def total_broken_links
+        invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
+        invalid_by_host.values.sum
+      end
+
+      # Group broken links by record type
+      def broken_links_grouped_by_type
+        broken_links = report_data&.dig('broken_links') || report_data&.dig(:broken_links) || []
+        broken_links.group_by { |link| link['record_type'] || link[:record_type] }
+      end
+
+      private
 
       # Collect detailed information about broken links including record context
       def collect_broken_links_details(base_scope)
@@ -200,26 +232,6 @@ module BetterTogether
       # rubocop:enable Metrics/MethodLength
       # rubocop:enable Metrics/AbcSize
 
-      # Check if report has no broken links
-      def no_broken_links?
-        invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
-        invalid_by_host.values.sum.zero?
-      end
-
-      # Deprecated: Use no_broken_links? instead
-      alias has_no_broken_links? no_broken_links?
-
-      # Check if broken links have changed compared to another report
-      def broken_links_changed_since?(other_report)
-        return true if other_report.nil?
-
-        current_invalid = extract_invalid_by_host
-        previous_invalid = extract_invalid_by_host_from(other_report)
-
-        # Compare the sets of broken links by host
-        current_invalid != previous_invalid
-      end
-
       def extract_invalid_by_host
         report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
       end
@@ -227,18 +239,6 @@ module BetterTogether
       def extract_invalid_by_host_from(other_report)
         other_report.report_data&.dig('invalid_by_host') ||
           other_report.report_data&.dig(:invalid_by_host) || {}
-      end
-
-      # Get total count of broken links
-      def total_broken_links
-        invalid_by_host = report_data&.dig('invalid_by_host') || report_data&.dig(:invalid_by_host) || {}
-        invalid_by_host.values.sum
-      end
-
-      # Group broken links by record type
-      def broken_links_grouped_by_type
-        broken_links = report_data&.dig('broken_links') || report_data&.dig(:broken_links) || []
-        broken_links.group_by { |link| link['record_type'] || link[:record_type] }
       end
 
       # Humanize record type (strip namespace and format)
