@@ -151,8 +151,10 @@ config.cache_store = :redis_cache_store, {
 ```ruby
 def render_better_together_nav_items
   Rails.cache.fetch(cache_key_for_nav_area(better_together_nav_area)) do
-    render 'better_together/navigation_items/navigation_items', 
-           navigation_items: better_together_nav_items
+    render_navigation_items_list(
+      navigation_items: better_together_nav_items,
+      navigation_area: better_together_nav_area
+    )
   end
 end
 ```

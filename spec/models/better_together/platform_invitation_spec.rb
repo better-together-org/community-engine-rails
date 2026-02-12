@@ -164,9 +164,17 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#throttled?' do
         context 'when more than 10 invitations have been created in the last 15 minutes by the same inviter' do
           let(:inviter) { create(:person) }
+          let(:invitable) { create(:platform) }
+          let(:community_role) { create(:role, :community_role) }
+          let(:platform_role) { create(:role, :platform_role) }
 
           before do
-            create_list(:better_together_platform_invitation, 11, inviter:, created_at: 10.minutes.ago)
+            create_list(:better_together_platform_invitation, 11,
+                        inviter:,
+                        invitable:,
+                        community_role:,
+                        platform_role:,
+                        created_at: 10.minutes.ago)
             platform_invitation.inviter = inviter
           end
 
@@ -177,9 +185,17 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
         context 'when 10 or fewer invitations have been created in the last 15 minutes by the same inviter' do
           let(:inviter) { create(:person) }
+          let(:invitable) { create(:platform) }
+          let(:community_role) { create(:role, :community_role) }
+          let(:platform_role) { create(:role, :platform_role) }
 
           before do
-            create_list(:better_together_platform_invitation, 10, inviter:, created_at: 10.minutes.ago)
+            create_list(:better_together_platform_invitation, 10,
+                        inviter:,
+                        invitable:,
+                        community_role:,
+                        platform_role:,
+                        created_at: 10.minutes.ago)
             platform_invitation.inviter = inviter
           end
 

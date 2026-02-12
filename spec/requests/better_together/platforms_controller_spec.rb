@@ -210,9 +210,10 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       end
 
       context 'when CSS block update fails validation' do # rubocop:todo RSpec/NestedGroups
+        let(:css_identifier) { "existing-platform-css-#{SecureRandom.hex(4)}" }
         let(:existing_css_block) do
           create(:better_together_content_css,
-                 identifier: 'existing-platform-css',
+                 identifier: css_identifier,
                  content_text: '.old-class { color: red; }',
                  protected: true)
         end

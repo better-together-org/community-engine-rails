@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Generate Swagger documentation for the current environment
+# Usage: 
+#   Development: bin/swagger_generate
+#   Production: RAILS_ENV=production bin/swagger_generate
+
+export RAILS_ENV="${RAILS_ENV:-development}"
+
+echo "Generating Swagger documentation for ${RAILS_ENV}..."
+
+# For Docker-based environments
+if [ -f "bin/dc-run" ]; then
+  bin/dc-run bundle exec rake swagger:generate
+else
+  bundle exec rake swagger:generate
+fi
+
+echo "✓ Swagger documentation generated"
