@@ -25,6 +25,10 @@ RSpec.describe 'Checklist item creation appends to bottom', :js do
     ensure_record_visible(checklist)
     ensure_records_visible(items)
 
+    # Additional wait for parallel CI environments where DB visibility
+    # across connection pools may take longer
+    sleep 0.5
+
     visit better_together.checklist_path(checklist, locale: I18n.default_locale)
 
     list_selector = "##{dom_id(checklist, :checklist_items)}"

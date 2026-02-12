@@ -2233,6 +2233,16 @@ uk:
       platform: Платформа
       title: Акаунти соціальних мереж
       url: URL-адреса
+    translations:
+      errors:
+        content_blank: Вміст не може бути порожнім
+        content_too_long: Вміст занадто довгий для перекладу. Будь ласка, обмежте
+          текст приблизно до 8 000 слів (~50 000 символів) і спробуйте знову.
+        invalid_source_locale: Недійсна мова джерела
+        invalid_target_locale: Недійсна мова перекладу
+        translation_failed: 'Переклад не вдався: %{message}'
+        translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
+          знову.
     view_switcher:
       button_label: Перегляд %{view}
       change_view: Змінити тип перегляду

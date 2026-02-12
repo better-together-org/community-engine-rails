@@ -87,14 +87,14 @@ module BetterTogether
       end
 
       def permitted_to?(permission_identifier, record = nil)
-        agent&.permitted_to?(permission_identifier, record)
+        !!agent&.permitted_to?(permission_identifier, record)
       end
     end
 
     protected
 
     def permitted_to?(permission_identifier, record = nil)
-      agent&.permitted_to?(permission_identifier, record)
+      !!agent&.permitted_to?(permission_identifier, record)
     end
   end
 end
