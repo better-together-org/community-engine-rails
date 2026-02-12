@@ -2,6 +2,71 @@
 
 This repository contains the **Better Together Community Engine** (an isolated Rails engine under the `BetterTogether` namespace) and/or a host Rails app that mounts it. Use these instructions for all code generation.
 
+## Quick Reference
+
+- **For AI agents and automated coding**: See [`AGENTS.md`](../AGENTS.md) in the repository root for detailed command reference, test execution guidelines, and project setup
+- **For path-specific instructions**: See [`.github/instructions/`](instructions/) for technology-specific guidelines that apply to particular file types
+- **This file**: Provides core principles, architecture patterns, and coding guidelines that apply across the entire codebase
+
+## Instruction Files Overview
+
+This repository uses a comprehensive system of instruction files:
+
+1. **`AGENTS.md`** (root): Detailed command reference, test workflows, Docker setup, and debugging guidelines
+2. **`.github/copilot-instructions.md`** (this file): Core architectural principles, coding standards, and patterns
+3. **`.github/instructions/*.instructions.md`**: Technology-specific guidelines:
+   - `accessibility.instructions.md` - WCAG AA/AAA compliance (ERB, Ruby, JS, SCSS)
+   - `bootstrap.instructions.md` - Bootstrap 5.3 & Font Awesome 6 (ERB, SCSS, CSS)
+   - `deployment.instructions.md` - Dokku, Cloudflare, backups (Ruby, YAML, Procfile, shell)
+   - `hotwire.instructions.md` - Turbo + Stimulus patterns (JS, ERB, HTML)
+   - `hotwire-native.instructions.md` - Native mobile integration (Ruby, JS, HTML)
+   - `i18n-mobility.instructions.md` - Internationalization & translations (Ruby, YAML, ERB)
+   - `importmaps.instructions.md` - JavaScript module management (JS, importmap.rb)
+   - `notifications-noticed.instructions.md` - Noticed gem patterns (Ruby)
+   - `rails-engine.instructions.md` - Rails 7.1+ & engine conventions (Ruby)
+   - `search-elasticsearch.instructions.md` - Elasticsearch 7 integration (Ruby)
+   - `security-encryption.instructions.md` - Security & Active Record Encryption (Ruby, ERB, JS)
+   - `sidekiq-redis.instructions.md` - Background jobs & caching (job files, Redis, initializers)
+   - `view-helpers.instructions.md` - Action View & helper patterns (ERB, Ruby, helpers)
+
+## Quick Start Commands
+
+### Essential Commands (See AGENTS.md for full details)
+
+**Build & Setup:**
+```bash
+bin/dc build                    # Build Docker containers
+bin/dc up -d                    # Start services (Postgres, Redis, Elasticsearch)
+bin/dc-run rails db:prepare     # Setup/migrate database
+```
+
+**Testing:**
+```bash
+# Run specific tests (PREFERRED - faster)
+bin/dc-run bundle exec prspec spec/models/user_spec.rb
+bin/dc-run bundle exec prspec spec/models/user_spec.rb:42
+
+# Run full test suite (USE SPARINGLY - takes 13-18 minutes)
+bin/dc-run bin/ci
+```
+
+**Code Quality:**
+```bash
+bin/dc-run bundle exec brakeman --quiet --no-pager          # Security scan
+bin/dc-run bundle exec rubocop                               # Style check  
+bin/dc-run bundle exec rubocop -A                           # Auto-fix style
+bin/dc-run bin/codex_style_guard                            # Style guard
+bin/dc-run bin/i18n                                         # I18n validation
+```
+
+**Common Workflows:**
+- **Before coding**: Run `bin/dc-run bundle exec brakeman` to check for existing security issues
+- **During development**: Run specific tests with `prspec` to validate changes
+- **Before committing**: Run RuboCop and ensure tests pass
+- **Documentation**: Run `bin/render_diagrams` after updating `.mmd` files
+
+> **Critical**: Always use `bin/dc-run` for commands that access database, Redis, or Elasticsearch. See AGENTS.md for complete command reference.
+
 ## Core Principles
 
 - **Security first**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager` before generating code; fix high-confidence vulnerabilities
@@ -622,3 +687,147 @@ expect_mail_html_contents(mail, event.name, person.name)  # Multiple checks
 
 #### Critical Rule
 **Never check factory-generated content without HTML helpers** - Faker may randomly generate apostrophes or quotes that get HTML-encoded, causing flaky tests.
+
+## Common Issues and Solutions
+
+### Build and Environment Issues
+
+**Problem: Database connection errors**
+```bash
+# Solution: Ensure Docker services are running
+bin/dc up -d
+bin/dc-run rails db:prepare
+```
+
+**Problem: `bin/dc-run` command not found**
+```bash
+# Solution: Use the Docker Compose wrapper scripts in bin/
+ls bin/dc*  # Should show: bin/dc, bin/dc-run, bin/dc-run-dummy
+chmod +x bin/dc*  # If needed
+```
+
+**Problem: Elasticsearch not available**
+```bash
+# Solution: Check Docker services and wait for ES to be ready
+bin/dc ps  # Should show elasticsearch running
+# Wait ~30 seconds for ES to fully start
+```
+
+**Problem: Test database schema out of sync**
+```bash
+# Solution: Reset test database
+bin/dc-run rails db:test:prepare
+# Or reset both dev and test:
+bin/dc-run rails db:drop db:create db:migrate
+bin/dc-run rails db:test:prepare
+```
+
+### Testing Issues
+
+**Problem: Full test suite takes too long**
+```bash
+# Solution: Run specific tests first (see AGENTS.md §Test Execution Guidelines)
+# 1. Run individual failing tests
+bin/dc-run bundle exec prspec spec/models/user_spec.rb:42
+# 2. Verify fixes work
+# 3. ONLY THEN run full suite
+bin/dc-run bin/ci
+```
+
+**Problem: Flaky tests with factory-generated names**
+```ruby
+# Solution: Use HTML assertion helpers (see §HTML Assertion Helpers above)
+# ❌ Wrong: expect(response.body).to include(person.name)
+# ✅ Correct: expect_html_content(person.name)
+```
+
+**Problem: `default_url_options` errors in specs**
+```ruby
+# Solution: Use request specs instead of controller specs
+# Controller specs need special routing config in Rails engines
+# See AGENTS.md §Testing Architecture Consistency
+```
+
+**Problem: Test authentication/authorization failures**
+```ruby
+# Solution: Use automatic test configuration (see §Test Environment Setup)
+RSpec.describe 'Feature', type: :request, :as_user do
+  # Automatically sets up platform and authenticates user
+end
+```
+
+### Code Quality Issues
+
+**Problem: Brakeman security warnings**
+```bash
+# Solution: Fix high-confidence issues immediately
+bin/dc-run bundle exec brakeman --quiet --no-pager
+# Never use: constantize, safe_constantize, eval on user input
+# Use allow-lists for dynamic class resolution (see §Security Requirements)
+```
+
+**Problem: RuboCop style offenses**
+```bash
+# Solution: Auto-fix where possible
+bin/dc-run bundle exec rubocop -A
+# Then manually review and fix remaining issues
+bin/dc-run bundle exec rubocop
+```
+
+**Problem: I18n missing translation keys**
+```bash
+# Solution: Use i18n tools
+bin/dc-run bin/i18n normalize  # Format locale files
+bin/dc-run bin/i18n missing    # Find missing keys
+bin/dc-run bin/i18n health     # Check overall status
+```
+
+### Development Workflow Issues
+
+**Problem: Need to debug but console doesn't work well**
+```ruby
+# Solution: Debug through comprehensive tests (see AGENTS.md §Debugging Guidelines)
+# ❌ Don't use: bin/dc-run-dummy rails console (not for debugging)
+# ✅ Do use: Write detailed test scenarios to reproduce issues
+```
+
+**Problem: Timezone-related test failures**
+```ruby
+# Solution: Use IANA identifiers, match factory timezone (see §Timezone Management)
+# ✅ Factory: factory :event do timezone { 'UTC' } end
+# ✅ Test: Time.zone = 'UTC'
+# ❌ Don't use Rails timezone names like "Eastern Time (US & Canada)"
+```
+
+**Problem: Accessibility test failures**
+```ruby
+# Solution: Use proper label patterns (see §Accessibility Requirements)
+# Every form input needs a label or aria-label
+<%= form.label :field_name, t('label.key'), class: 'form-label' %>
+<%= form.text_field :field_name, id: 'unique_id', class: 'form-control' %>
+```
+
+### Documentation and Diagram Issues
+
+**Problem: Diagrams not rendering**
+```bash
+# Solution: Regenerate from Mermaid source
+bin/render_diagrams
+# Or for specific file:
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams/source/file.mmd -o docs/diagrams/exports/png/file.png
+```
+
+**Problem: Documentation seems outdated**
+```bash
+# Solution: Update progress tracking
+docs/scripts/update_progress.sh [system_name] [start|complete]
+docs/scripts/validate_documentation_tooling.sh
+```
+
+## See Also
+
+- **[AGENTS.md](../AGENTS.md)** - Complete command reference, debugging guidelines, test workflows
+- **[docs/table_of_contents.md](../docs/table_of_contents.md)** - Comprehensive documentation index
+- **[.github/instructions/](instructions/)** - Technology-specific coding guidelines
+- **[README.md](../README.md)** - Project overview and installation instructions
+- **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Contribution guidelines

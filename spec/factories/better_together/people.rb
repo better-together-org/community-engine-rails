@@ -9,6 +9,7 @@ module BetterTogether
       name { "#{Faker::Name.name} #{SecureRandom.hex(4)}" }
       description { Faker::Lorem.paragraph(sentence_count: 3) }
       identifier { "person-#{SecureRandom.hex(10)}" }
+      privacy { 'private' } # Explicit default to match database migration
 
       community
 

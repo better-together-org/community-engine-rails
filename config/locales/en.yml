@@ -1859,6 +1859,19 @@ en:
         message: New %{provider} integration connected on %{created_at}
         title: New %{provider} integration connected
       time_ago: "%{time} ago"
+    oauth:
+      applications:
+        create:
+          success: OAuth application '%{name}' was successfully created. You can now
+            use the client credentials to authenticate API requests.
+        destroy:
+          success: OAuth application '%{name}' has been deleted. All associated access
+            tokens have been revoked.
+        set_application:
+          not_found: The OAuth application you're looking for could not be found.
+            It may have been deleted or you don't have permission to access it.
+        update:
+          success: OAuth application '%{name}' has been updated successfully.
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"
@@ -2196,6 +2209,15 @@ en:
       platform: Platform
       title: Social Media Accounts
       url: Url
+    translations:
+      errors:
+        content_blank: Content cannot be blank
+        content_too_long: Content is too long to translate. Please limit your text
+          to approximately 8,000 words (~50,000 characters) and try again.
+        invalid_source_locale: Invalid source locale
+        invalid_target_locale: Invalid target locale
+        translation_failed: 'Translation failed: %{message}'
+        translation_request_failed: Translation request failed. Please try again.
     view_switcher:
       button_label: "%{view} view"
       change_view: Change view type

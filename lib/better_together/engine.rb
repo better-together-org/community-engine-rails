@@ -60,6 +60,9 @@ module BetterTogether
       "#{root}/app/tools",
       "#{root}/app/resources"
     ]
+    # Add routes directory to paths for draw() method
+    config.paths['config/routes.rb'] = 'config/routes.rb'
+    config.paths.add 'config/routes', glob: '**/*.rb'
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid

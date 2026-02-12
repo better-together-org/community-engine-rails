@@ -24,7 +24,7 @@ module DatabaseVisibilityHelpers
 
     # Longer sleep to ensure PostgreSQL visibility across all connections
     # Critical for AJAX requests that fire immediately on page load
-    sleep 0.15
+    sleep 0.3
 
     record
   end
@@ -55,11 +55,22 @@ module DatabaseVisibilityHelpers
     # Additional aggressive cache clear after batch
     clear_all_connection_caches!
     # Longer sleep after batch to ensure all are committed
-    sleep 0.15
+    sleep 0.3
     records
   end
 
-  # Wait for a record to be findable in database (useful after async operations)
+  # Wait for a record to be findable in database (useful after async background job operations)
+  #
+  # WARNING: Do NOT use this for records created by Capybara/feature spec server actions.
+  # When the Rails server creates a record and redirects to it, the redirect itself confirms
+  # the record was committed to the database. Trying to verify it from the test thread can
+  # cause timeout issues due to connection pooling and transaction isolation.
+  #
+  # PROPER USE CASE: Waiting for records created by background jobs (Sidekiq) that run
+  # asynchronously and may not be immediately visible in the database.
+  #
+  # INCORRECT USE: Verifying records created by form submissions in feature specs.
+  # Solution: Just verify the redirect/success feedback; subsequent queries will see the record.
   def wait_for_record(klass, id, timeout: 5)
     Timeout.timeout(timeout) do
       loop do

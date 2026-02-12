@@ -1,6 +1,11 @@
 name: "Ruby on Rails CI"
 
-on: { push: { branches: [main, dev] }, pull_request: { branches: [main, dev] } }
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
 
 jobs:
   rspec:
