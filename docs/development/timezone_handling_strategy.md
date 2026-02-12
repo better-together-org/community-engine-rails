@@ -689,7 +689,7 @@ end
 
 ```ruby
 # app/controllers/api/v1/events_controller.rb
-class Api::V1::EventsController < ApiController
+class Api::V1::EventsController < BetterTogether::Api::ApplicationController
   def show
     event = Event.find(params[:id])
     user_timezone = current_user&.person&.time_zone || 'UTC'

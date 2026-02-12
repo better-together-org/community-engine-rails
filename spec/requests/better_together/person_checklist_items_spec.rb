@@ -38,4 +38,31 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
     expect(data['flash']['type']).to eq('notice')
     expect(data['flash']['message']).to eq(I18n.t('flash.checklist_item.updated'))
   end
+
+  context 'with invalid checklist_id' do
+    let(:invalid_id) { SecureRandom.uuid }
+
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'returns 404 for show action' do # rubocop:todo RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
+      # rubocop:todo Layout/LineLength
+      get "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{invalid_id}/checklist_items/#{items.first.id}/person_checklist_item"
+      # rubocop:enable Layout/LineLength
+      expect(response).to have_http_status(:not_found)
+      data = JSON.parse(response.body)
+      expect(data['error']).to eq('Checklist not found')
+    end
+
+    # rubocop:todo RSpec/MultipleExpectations
+    it 'returns 404 for create action' do # rubocop:todo RSpec/MultipleExpectations
+      # rubocop:enable RSpec/MultipleExpectations
+      # rubocop:todo Layout/LineLength
+      post "/#{I18n.default_locale}/#{BetterTogether.route_scope_path}/checklists/#{invalid_id}/checklist_items/#{items.first.id}/person_checklist_item",
+           # rubocop:enable Layout/LineLength
+           params: { completed: true }, as: :json
+      expect(response).to have_http_status(:not_found)
+      data = JSON.parse(response.body)
+      expect(data['errors']).to include('Checklist not found')
+    end
+  end
 end

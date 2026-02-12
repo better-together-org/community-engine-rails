@@ -11,6 +11,12 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     sleep 1 # Allow submission to process
   end
 
+  before do
+    # Ensure clean session state to prevent parallel test pollution
+    visit better_together.destroy_user_session_path(locale: locale)
+    capybara_login_as_platform_manager
+  end
+
   scenario 'creating an event with datetime values respects event timezone' do
     visit better_together.new_event_path(locale: locale)
 
