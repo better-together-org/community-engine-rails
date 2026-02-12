@@ -86,18 +86,13 @@ module BetterTogether
 
       # Wait for successful submission - form uses turbo: false, so full page redirect on success
       # Should redirect to the newly created conversation show page
+      # The successful redirect confirms the conversation was created and committed to database
       expect(page).to have_current_path(%r{/[a-z]{2}/conversations/.+}, wait: 10)
 
-      # Additional wait to ensure conversation is fully persisted in database
-      # Extract conversation ID from URL and verify it's findable
-      return unless page.current_path =~ %r{/conversations/([^/]+)}
-
-      conversation_id = ::Regexp.last_match(1)
-      if defined?(wait_for_record)
-        wait_for_record(BetterTogether::Conversation, conversation_id, timeout: 5)
-      else
-        sleep 0.5 # Fallback: brief wait for database commit
-      end
+      # Brief sleep to ensure database commit is visible across all connection pool connections
+      # This prevents race conditions in parallel test environments where the test thread's
+      # connection might not immediately see the conversation created by the Capybara server
+      sleep 0.2
     end
   end
 end
