@@ -68,4 +68,13 @@ Rails.application.configure do
   # BetterErrors attaches Binding objects to exceptions which cannot be marshaled when
   # parallel_rspec tries to send results between workers, causing "no _dump_data is defined for class Binding" errors
   config.middleware.delete BetterErrors::Middleware if defined?(BetterErrors::Middleware)
+
+  # Do not require a master key for tests
+  config.require_master_key = false
+
+  # Configure Active Record encryption for tests
+  config.active_record.encryption.support_unencrypted_data = true
+  config.active_record.encryption.extend_queries = true
+  config.active_record.encryption.primary_key = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY', SecureRandom.hex(16))
+  config.active_record.encryption.key_derivation_salt = ENV.fetch('ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT', SecureRandom.hex(16))
 end

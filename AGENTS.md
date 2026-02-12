@@ -107,6 +107,48 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.
 
+## Pre-Commit Quality Checks (MANDATORY)
+
+Before committing any changes to the target branch, **ALWAYS** run and fix errors from these commands:
+
+### 1. RuboCop Auto-Correct
+```bash
+bin/dc-run bundle exec rubocop -A
+```
+- **Purpose**: Automatically fix style violations and code quality issues
+- **Action Required**: If RuboCop reports any remaining offenses after auto-correct:
+  - Review each offense carefully
+  - Fix manually or suppress with inline comments if justified
+  - Re-run `rubocop -A` until output shows `no offenses detected`
+- **Critical**: Never commit code with RuboCop violations
+
+### 2. I18n Health Check
+```bash
+bin/dc-run bin/i18n health
+```
+- **Purpose**: Ensure internationalization integrity across all locales
+- **Checks Performed**:
+  - Missing translation keys
+  - Unused translation keys
+  - Inconsistent interpolations
+  - Locale file formatting
+- **Action Required**: If issues are found:
+  - Run `bin/dc-run bin/i18n normalize` to fix formatting issues
+  - Add missing translations for all supported locales (en, es, fr, uk)
+  - Remove unused keys or add them to ignore list if intentional
+  - Fix interpolation mismatches
+- **Critical**: Never commit code that breaks i18n consistency
+
+### Pre-Commit Checklist
+
+Before running `report_progress` or committing changes:
+- [ ] All tests pass (`prspec` for changed files)
+- [ ] `bin/dc-run bundle exec rubocop -A` shows no offenses
+- [ ] `bin/dc-run bin/i18n health` reports no issues
+- [ ] `bin/dc-run bundle exec brakeman` shows no new high-confidence warnings
+- [ ] Code changes are minimal and focused
+- [ ] Commit message is clear and concise
+
 ## String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries.
 - **Follow existing pattern**: Use full English words as enum values (current average: ~7 characters).

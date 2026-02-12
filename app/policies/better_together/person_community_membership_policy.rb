@@ -70,7 +70,7 @@ module BetterTogether
       end
 
       def context
-        @context ||= options[:context]
+        options[:context]
       end
     end
 

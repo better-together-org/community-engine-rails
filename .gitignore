@@ -56,3 +56,10 @@ spec/dummy/storage/*
 
 .env.prod
 spec/dummy/config/master.key
+
+# Temporary test files
+*.original
+rspec_output.txt
+rspec_result.json
+*.bak
+spec/dummy/config/credentials/test.yml
