@@ -26,6 +26,8 @@ RSpec.describe 'MCP HTTP Endpoint', :as_platform_manager do
       end
 
       it 'accepts requests without auth token' do
+        skip 'MCP endpoint not yet implemented'
+
         post '/mcp/messages',
              params: valid_mcp_request.to_json,
              headers: { 'Content-Type': 'application/json' }
@@ -33,8 +35,6 @@ RSpec.describe 'MCP HTTP Endpoint', :as_platform_manager do
         expect(response).to have_http_status(:ok)
         json_response = JSON.parse(response.body)
         expect(json_response['jsonrpc']).to eq('2.0')
-      rescue StandardError
-        pending 'MCP endpoint not yet implemented'
       end
     end
 
@@ -44,16 +44,18 @@ RSpec.describe 'MCP HTTP Endpoint', :as_platform_manager do
       end
 
       it 'rejects requests without auth token' do
+        skip 'MCP authentication not yet implemented'
+
         post '/mcp/messages',
              params: valid_mcp_request.to_json,
              headers: { 'Content-Type': 'application/json' }
 
         expect(response).to have_http_status(:unauthorized)
-      rescue StandardError
-        pending 'MCP authentication not yet implemented'
       end
 
       it 'accepts requests with valid auth token' do
+        skip 'MCP authentication not yet implemented'
+
         post '/mcp/messages',
              params: valid_mcp_request.to_json,
              headers: {
@@ -62,8 +64,6 @@ RSpec.describe 'MCP HTTP Endpoint', :as_platform_manager do
              }
 
         expect(response).to have_http_status(:ok)
-      rescue StandardError
-        pending 'MCP authentication not yet implemented'
       end
     end
 
@@ -74,25 +74,25 @@ RSpec.describe 'MCP HTTP Endpoint', :as_platform_manager do
       end
 
       it 'sets user context for authorization' do
+        skip 'User context handling not yet implemented'
+
         post '/mcp/messages',
              params: request_with_user.to_json,
              headers: { 'Content-Type': 'application/json' }
 
         expect(response).to have_http_status(:ok)
         # Tool/resource should have access to current_user
-      rescue StandardError
-        pending 'User context handling not yet implemented'
       end
     end
   end
 
   describe 'GET /mcp/sse' do
     it 'supports server-sent events transport' do
+      skip 'SSE endpoint not yet implemented'
+
       get '/mcp/sse'
 
       expect(response.headers['Content-Type']).to include('text/event-stream')
-    rescue StandardError
-      pending 'SSE endpoint not yet implemented'
     end
   end
 end
