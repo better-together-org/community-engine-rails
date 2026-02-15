@@ -18,12 +18,14 @@ module BetterTogether
       # - ping: health check / connectivity test
       class WebhooksController < BetterTogether::Api::ApplicationController
         skip_before_action :verify_authenticity_token
+        skip_after_action :enforce_policy_use # Custom endpoint; authorization via OAuth scopes
         require_oauth_scopes :write, :admin, only: %i[receive]
 
         # POST /api/v1/webhooks/receive
         # rubocop:disable Metrics/MethodLength
         def receive
           validate_webhook_payload!
+          return if performed?
 
           result = process_webhook_event(
             event: webhook_params[:event],

@@ -15,7 +15,7 @@ RSpec.describe 'OAuth E2E Integration', :no_auth do
 
     it 'obtains a token and accesses webhook endpoints API' do
       # Step 1: Request a client_credentials token
-      post '/oauth/token',
+      post '/api/oauth/token',
            params: {
              grant_type: 'client_credentials',
              client_id: oauth_app.uid,
@@ -50,7 +50,7 @@ RSpec.describe 'OAuth E2E Integration', :no_auth do
       read_only_app = create(:better_together_oauth_application,
                              owner: platform_manager_user.person)
 
-      post '/oauth/token',
+      post '/api/oauth/token',
            params: {
              grant_type: 'client_credentials',
              client_id: read_only_app.uid,
@@ -117,7 +117,7 @@ RSpec.describe 'OAuth E2E Integration', :no_auth do
              owner: platform_manager_user.person)
     end
     let(:oauth_headers) do
-      post '/oauth/token',
+      post '/api/oauth/token',
            params: {
              grant_type: 'client_credentials',
              client_id: oauth_app.uid,
@@ -137,7 +137,7 @@ RSpec.describe 'OAuth E2E Integration', :no_auth do
       # Create
       create_params = {
         data: {
-          type: 'webhook-endpoints',
+          type: 'webhook_endpoints',
           attributes: {
             name: 'OAuth Test Webhook',
             url: 'https://n8n.example.com/webhook/test',

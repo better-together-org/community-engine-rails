@@ -1143,6 +1143,7 @@ es:
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
+      invalid_url: no es una URL válida
       labels:
         duration_minutes: Duración
         ends_at: Termina en

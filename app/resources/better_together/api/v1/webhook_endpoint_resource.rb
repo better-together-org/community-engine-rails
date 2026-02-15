@@ -17,6 +17,11 @@ module BetterTogether
 
         filter :active
 
+        # Auto-assign person from current user on create
+        before_create do
+          _model.person = context[:current_user]&.person
+        end
+
         def self.creatable_fields(context)
           super - [:secret]
         end
@@ -32,6 +37,7 @@ module BetterTogether
 
         def self.records(options = {})
           context = options[:context]
+          context[:policy_used]&.call
           user = context&.dig(:current_user)
 
           if user&.person&.permitted_to?('manage_platform')

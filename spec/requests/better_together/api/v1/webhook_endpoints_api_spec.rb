@@ -93,7 +93,7 @@ RSpec.describe 'BetterTogether::Api::V1::WebhookEndpoints', :no_auth do
 
         expect(json).to have_key('data')
         expect(json['data']).to include(
-          'type' => 'webhook-endpoints',
+          'type' => 'webhook_endpoints',
           'id' => endpoint.id
         )
       end
@@ -116,7 +116,7 @@ RSpec.describe 'BetterTogether::Api::V1::WebhookEndpoints', :no_auth do
     let(:valid_params) do
       {
         data: {
-          type: 'webhook-endpoints',
+          type: 'webhook_endpoints',
           attributes: {
             name: 'Test Webhook',
             url: 'https://example.com/webhooks',
@@ -156,7 +156,7 @@ RSpec.describe 'BetterTogether::Api::V1::WebhookEndpoints', :no_auth do
       let(:invalid_params) do
         {
           data: {
-            type: 'webhook-endpoints',
+            type: 'webhook_endpoints',
             attributes: {
               name: '',
               url: 'not-a-url'
@@ -178,7 +178,7 @@ RSpec.describe 'BetterTogether::Api::V1::WebhookEndpoints', :no_auth do
     let(:update_params) do
       {
         data: {
-          type: 'webhook-endpoints',
+          type: 'webhook_endpoints',
           id: endpoint.id,
           attributes: {
             name: 'Updated Webhook Name'

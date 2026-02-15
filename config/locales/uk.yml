@@ -1136,6 +1136,7 @@ uk:
       in: має бути в %{count}
       inclusion: не включено до списку
       invalid: недійсний
+      invalid_url: не є дійсною URL-адресою
       labels:
         duration_minutes: Тривалість
         ends_at: Закінчується о

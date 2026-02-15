@@ -1,0 +1,128 @@
+<%= form_with(model: oauth_application,
+                class: 'form',
+                id: dom_id(oauth_application, 'form'),
+                data: { controller: "better-together--form-validation" }) do |form| %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label', default: 'Form actions') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.oauth_applications.back_to_list', default: 'Back to Applications'),
+                    oauth_applications_path,
+                    class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.oauth_applications.save', default: 'Save Application'),
+                        class: 'btn btn-primary' %>
+      </div>
+      <% if oauth_application.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.oauth_applications.view', default: 'View Application'),
+                      oauth_application,
+                      class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <div id="form_errors">
+    <%= render 'layouts/better_together/errors', object: oauth_application %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :name, t('activerecord.attributes.better_together/oauth_application.name', default: 'Name'),
+                   class: 'form-label' %>
+    <%= form.text_field :name,
+                        class: 'form-control',
+                        required: true,
+                        placeholder: t('better_together.oauth_applications.name_placeholder', default: 'e.g., My Integration App'),
+                        'aria-describedby' => 'app-name-help' %>
+    <div id="app-name-help" class="form-text">
+      <%= t('better_together.oauth_applications.name_help', default: 'A descriptive name for this OAuth application.') %>
+    </div>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :redirect_uri, t('activerecord.attributes.better_together/oauth_application.redirect_uri', default: 'Redirect URI'),
+                   class: 'form-label' %>
+    <%= form.text_area :redirect_uri,
+                       class: 'form-control font-monospace',
+                       rows: 3,
+                       placeholder: 'https://example.com/oauth/callback',
+                       'aria-describedby' => 'app-redirect-help' %>
+    <div id="app-redirect-help" class="form-text">
+      <%= t('better_together.oauth_applications.redirect_help', default: 'One redirect URI per line. For machine-to-machine (client_credentials) flows, use urn:ietf:wg:oauth:2.0:oob') %>
+    </div>
+  </div>
+
+  <fieldset class="mb-3">
+    <legend class="form-label"><%= t('activerecord.attributes.better_together/oauth_application.scopes', default: 'Scopes') %></legend>
+    <p class="form-text mt-0 mb-2">
+      <%= t('better_together.oauth_applications.scopes_help', default: 'Select the permissions this application should have.') %>
+    </p>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">
+      <% available_scopes = BetterTogether::OauthApplication.available_scopes %>
+      <% current_scopes = oauth_application.scopes.to_a %>
+      <% available_scopes.each do |scope| %>
+        <div class="col">
+          <div class="form-check">
+            <%= check_box_tag "oauth_application[scopes][]",
+                              scope,
+                              current_scopes.include?(scope.to_s),
+                              class: 'form-check-input',
+                              id: "scope_#{scope}" %>
+            <%= label_tag "scope_#{scope}", scope, class: 'form-check-label' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
+
+  <div class="form-check form-switch mb-3">
+    <%= form.check_box :confidential,
+                       class: 'form-check-input',
+                       role: 'switch',
+                       id: 'app_confidential' %>
+    <%= form.label :confidential,
+                   t('activerecord.attributes.better_together/oauth_application.confidential', default: 'Confidential'),
+                   class: 'form-check-label',
+                   for: 'app_confidential' %>
+    <div class="form-text">
+      <%= t('better_together.oauth_applications.confidential_help', default: 'Confidential clients can securely store their credentials (server-side apps). Public clients cannot (SPAs, mobile apps).') %>
+    </div>
+  </div>
+
+  <% if oauth_application.persisted? %>
+    <div class="card bg-light mb-3">
+      <div class="card-body">
+        <h3 class="card-title h6"><%= t('better_together.oauth_applications.credentials', default: 'Credentials') %></h3>
+        <dl class="row mb-0">
+          <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_client_id', default: 'Client ID') %></dt>
+          <dd class="col-sm-9"><code class="user-select-all"><%= oauth_application.uid %></code></dd>
+
+          <% if oauth_application.confidential? %>
+            <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_secret', default: 'Client Secret') %></dt>
+            <dd class="col-sm-9">
+              <div class="input-group input-group-sm" style="max-width: 450px;"
+                   data-controller="better-together--secret-toggle">
+                <input type="password"
+                       value="<%= oauth_application.secret %>"
+                       class="form-control form-control-sm font-monospace"
+                       readonly
+                       aria-label="<%= t('better_together.oauth_applications.secret_aria', default: 'Client secret value') %>"
+                       data-better-together--secret-toggle-target="field">
+                <button class="btn btn-outline-secondary" type="button"
+                        data-action="better-together--secret-toggle#toggle"
+                        aria-label="<%= t('better_together.oauth_applications.toggle_secret', default: 'Toggle secret visibility') %>">
+                  <i class="fas fa-eye" aria-hidden="true" data-better-together--secret-toggle-target="icon"></i>
+                </button>
+              </div>
+            </dd>
+          <% end %>
+        </dl>
+      </div>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+<% end %>

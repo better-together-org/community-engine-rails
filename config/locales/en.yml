@@ -1872,6 +1872,53 @@ en:
             It may have been deleted or you don't have permission to access it.
         update:
           success: OAuth application '%{name}' has been updated successfully.
+    oauth_applications:
+      title: OAuth Applications
+      back_to_list: Back to Applications
+      save: Save Application
+      view: View Application
+      name_placeholder: e.g., My Integration App
+      name_help: A descriptive name for this OAuth application.
+      redirect_help: One redirect URI per line. For machine-to-machine (client_credentials)
+        flows, use urn:ietf:wg:oauth:2.0:oob
+      scopes_help: Select the permissions this application should have.
+      confidential_help: Confidential clients can securely store their credentials
+        (server-side apps). Public clients cannot (SPAs, mobile apps).
+      credentials: Credentials
+      details: Application Details
+      field_client_id: Client ID
+      field_secret: Client Secret
+      field_type: Type
+      field_scopes: Scopes
+      field_redirect_uri: Redirect URI
+      field_owner: Owner
+      field_trusted: Trusted
+      field_created: Created
+      confidential: Confidential
+      public_type: Public
+      no_scopes: Default
+      no_secret_public: Not applicable (public client)
+      no_redirect: Not configured
+      default_scopes: Default scopes
+      trusted_yes: 'Yes'
+      trusted_no: 'No'
+      secret_aria: Client secret value
+      toggle_secret: Toggle secret visibility
+      actions_aria: Application actions
+      edit_aria: Edit OAuth application
+      delete_aria: Delete OAuth application
+      index:
+        title: OAuth Applications
+        new_btn_text: New Application
+        new_btn_aria: Create new OAuth application
+        table_aria: OAuth applications list
+        header_name: Name
+        header_client_id: Client ID
+        header_scopes: Scopes
+        header_confidential: Type
+        header_created: Created
+        header_actions: Actions
+        no_applications: No OAuth applications have been registered yet.
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"
@@ -2674,6 +2721,7 @@ en:
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
+      invalid_url: is not a valid URL
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
       model_invalid: 'Validation failed: %{errors}'
@@ -2726,6 +2774,62 @@ en:
       header:
         one: "%{count} error prohibited this %{model} from being saved"
         other: "%{count} errors prohibited this %{model} from being saved"
+    webhook_endpoints:
+      title: Webhook Endpoints
+      back_to_list: Back to Webhooks
+      save: Save Webhook
+      view: View Webhook
+      name_placeholder: e.g., My Integration Webhook
+      name_help: A friendly name to identify this webhook endpoint.
+      url_help: The HTTPS URL where webhook payloads will be delivered.
+      description_placeholder: Optional description of this webhook's purpose.
+      events_help: Comma-separated list of event names to subscribe to. Leave blank
+        to receive all events. Format resource.action (e.g., community.created, person.updated).
+      no_oauth_app: "— None —"
+      oauth_help: Optionally link this webhook to an OAuth application.
+      active_help: Enable or disable webhook delivery for this endpoint.
+      field_url: URL
+      field_status: Status
+      field_secret: Signing Secret
+      field_events: Events
+      field_description: Description
+      field_oauth_app: OAuth Application
+      field_created: Created
+      status_active: Active
+      status_inactive: Inactive
+      all_events: All events
+      details: Endpoint Details
+      secret_aria: Signing secret value
+      toggle_secret: Toggle secret visibility
+      secret_note: Use this secret to verify webhook signatures. It was generated
+        when the endpoint was created and cannot be changed.
+      send_test: Send Test
+      test_confirm: Send a test webhook?
+      test_queued: Test webhook delivery has been queued.
+      actions_aria: Webhook actions
+      edit_aria: Edit webhook endpoint
+      delete_aria: Delete webhook endpoint
+      recent_deliveries: Recent Deliveries
+      deliveries_aria: Webhook delivery history
+      delivery_event: Event
+      delivery_status: Status
+      delivery_response: Response
+      delivery_attempts: Attempts
+      delivery_time: Time
+      no_deliveries: No deliveries yet. Use the "Send Test" button to verify your
+        endpoint.
+      index:
+        title: Webhook Endpoints
+        new_btn_text: New Webhook
+        new_btn_aria: Create new webhook endpoint
+        table_aria: Webhook endpoints list
+        header_name: Name
+        header_url: URL
+        header_status: Status
+        header_events: Events
+        header_deliveries: Deliveries
+        header_actions: Actions
+        no_webhooks: No webhook endpoints have been configured yet.
     wizard:
       max_completions: Maximum number of completions reached for this wizard and step
         definition.

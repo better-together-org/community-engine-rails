@@ -330,6 +330,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             resources :users
 
+            # Webhook and OAuth application management
+            resources :webhook_endpoints do
+              member do
+                post :test
+              end
+            end
+            resources :oauth_applications
+
             # Geography Routes for WIP Geography Feature
             namespace :geography do
               resources :continents, except: %i[new create destroy]

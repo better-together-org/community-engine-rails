@@ -48,8 +48,8 @@ module BetterTogether
 
     # Permitted attributes for strong parameters
     # @return [Array<Symbol>]
-    def self.permitted_attributes
-      %i[url name description events active oauth_application_id]
+    def self.permitted_attributes(id: false, destroy: false)
+      super + %i[url name description events active oauth_application_id]
     end
 
     private

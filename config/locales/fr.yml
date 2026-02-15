@@ -1146,6 +1146,7 @@ fr:
       in: doit être dans %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
+      invalid_url: n'est pas une URL valide
       labels:
         duration_minutes: Durée
         ends_at: Se termine à

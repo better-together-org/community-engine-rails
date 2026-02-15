@@ -559,6 +559,28 @@ module BetterTogether
               privacy: 'private',
               visibility_strategy: 'permission',
               permission_identifier: 'manage_platform'
+            },
+            {
+              identifier: 'webhook_endpoints',
+              title_en: 'Webhooks',
+              slug_en: 'webhook_endpoints',
+              position: 10,
+              item_type: 'link',
+              route_name: 'webhook_endpoints_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
+            },
+            {
+              identifier: 'oauth_applications',
+              title_en: 'OAuth Apps',
+              slug_en: 'oauth_applications',
+              position: 11,
+              item_type: 'link',
+              route_name: 'oauth_applications_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             }
           ]
 

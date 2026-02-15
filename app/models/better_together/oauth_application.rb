@@ -33,8 +33,11 @@ module BetterTogether
 
     # Permitted attributes for strong parameters
     # @return [Array<Symbol>]
-    def self.permitted_attributes
-      %i[name redirect_uri scopes confidential]
+    def self.permitted_attributes(id: false, destroy: false)
+      attrs = %i[name redirect_uri scopes confidential]
+      attrs << :id if id
+      attrs << :_destroy if destroy
+      attrs
     end
   end
 end
