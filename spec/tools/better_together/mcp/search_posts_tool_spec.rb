@@ -5,14 +5,14 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Mcp::SearchPostsTool, type: :model do
   let(:user) { create(:user) }
   let(:blocked_user) { create(:user) }
-  let!(:post1) do
+  let!(:public_post) do
     create(:post,
            title: 'Ruby on Rails Tutorial',
            creator: user.person,
            privacy: 'public',
            published_at: Time.current)
   end
-  let!(:post2) do
+  let!(:private_post) do
     create(:post,
            title: 'Private Ruby Guide',
            creator: user.person,

@@ -97,26 +97,24 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
         expect(names).to include('Public Community', 'Private Community')
       end
 
-      context 'with privacy_filter parameter' do
-        it 'filters by public privacy' do
-          tool = described_class.new
-          result = tool.call(privacy_filter: 'public')
+      it 'filters by public privacy when privacy_filter is set' do
+        tool = described_class.new
+        result = tool.call(privacy_filter: 'public')
 
-          communities = JSON.parse(result)
-          names = communities.map { |c| c['name'] }
-          expect(names).to include('Public Community')
-          expect(names).not_to include('Private Community')
-        end
+        communities = JSON.parse(result)
+        names = communities.map { |c| c['name'] }
+        expect(names).to include('Public Community')
+        expect(names).not_to include('Private Community')
+      end
 
-        it 'filters by private privacy' do
-          tool = described_class.new
-          result = tool.call(privacy_filter: 'private')
+      it 'filters by private privacy when privacy_filter is set' do
+        tool = described_class.new
+        result = tool.call(privacy_filter: 'private')
 
-          communities = JSON.parse(result)
-          names = communities.map { |c| c['name'] }
-          expect(names).to include('Private Community')
-          expect(names).not_to include('Public Community')
-        end
+        communities = JSON.parse(result)
+        names = communities.map { |c| c['name'] }
+        expect(names).to include('Private Community')
+        expect(names).not_to include('Public Community')
       end
     end
 

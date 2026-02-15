@@ -92,7 +92,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
       configure_host_platform
     end
 
-    context 'when user is authenticated' do
+    context 'when user is authenticated as regular user' do
       before do
         stub_mcp_request_for(resource_class, user: user)
       end
@@ -108,40 +108,42 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
         expect(community_ids).to include(public_community.id)
         expect(community_ids).not_to include(private_community.id)
       end
+    end
 
-      context 'when user is platform manager' do
-        let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    context 'when user is platform manager' do
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
 
-        before do
-          platform_manager_permission = BetterTogether::ResourcePermission.find_or_create_by!(
-            identifier: 'manage_platform'
-          ) do |permission|
-            permission.resource_type = 'BetterTogether::Platform'
-            permission.action = 'manage'
-            permission.target = 'platform'
-          end
-          platform_manager_role = BetterTogether::Role.find_or_create_by!(
-            identifier: "platform_manager_#{SecureRandom.hex(4)}",
-            resource_type: 'BetterTogether::Platform'
-          ) do |role|
-            role.name = 'Platform Manager'
-          end
-          platform_manager_role.role_resource_permissions.find_or_create_by!(resource_permission: platform_manager_permission)
-          host_platform.person_platform_memberships.find_or_create_by!(member: user.person) do |member|
-            member.role = platform_manager_role
-          end
+      before do
+        stub_mcp_request_for(resource_class, user: user)
+
+        platform_manager_permission = BetterTogether::ResourcePermission.find_or_create_by!(
+          identifier: 'manage_platform'
+        ) do |permission|
+          permission.resource_type = 'BetterTogether::Platform'
+          permission.action = 'manage'
+          permission.target = 'platform'
         end
-
-        it 'returns all communities' do
-          public_community
-          private_community
-
-          resource = resource_class.new
-          content = JSON.parse(resource.content)
-
-          community_ids = content.map { |c| c['id'] }
-          expect(community_ids).to include(public_community.id, private_community.id)
+        platform_manager_role = BetterTogether::Role.find_or_create_by!(
+          identifier: "platform_manager_#{SecureRandom.hex(4)}",
+          resource_type: 'BetterTogether::Platform'
+        ) do |role|
+          role.name = 'Platform Manager'
         end
+        platform_manager_role.role_resource_permissions.find_or_create_by!(resource_permission: platform_manager_permission)
+        host_platform.person_platform_memberships.find_or_create_by!(member: user.person) do |member|
+          member.role = platform_manager_role
+        end
+      end
+
+      it 'returns all communities' do
+        public_community
+        private_community
+
+        resource = resource_class.new
+        content = JSON.parse(resource.content)
+
+        community_ids = content.map { |c| c['id'] }
+        expect(community_ids).to include(public_community.id, private_community.id)
       end
     end
 

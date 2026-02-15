@@ -24,31 +24,31 @@ module BetterTogether
       # @param limit [Integer] Maximum results (default: 20)
       # @return [String] JSON array of post objects
       def call(query:, limit: 20)
-        # Execute in user's timezone for consistent date/time formatting
         with_timezone_scope do
-          # Use policy_scope to automatically filter by:
-          # - Privacy settings (public posts, or own private posts)
-          # - Published status
-          # - Blocked users (excluded automatically by PostPolicy::Scope)
-          posts = policy_scope(BetterTogether::Post)
-                  .i18n
-                  .joins(:string_translations)
-                  .where(
-                    'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
-                    "%#{query}%",
-                    %w[title]
-                  )
-                  .order(published_at: :desc)
-                  .limit([limit, 100].min) # Cap at 100 to prevent abuse
-
-          # Serialize posts to JSON
-          JSON.generate(
-            posts.map { |post| serialize_post(post) }
-          )
+          posts = search_accessible_posts(query, limit)
+          JSON.generate(posts.map { |post| serialize_post(post) })
         end
       end
 
       private
+
+      # Search posts with authorization and privacy filtering
+      # Uses policy_scope to automatically exclude:
+      # - Private posts from other users
+      # - Unpublished posts
+      # - Posts from blocked users (via PostPolicy::Scope)
+      def search_accessible_posts(query, limit)
+        policy_scope(BetterTogether::Post)
+          .i18n
+          .joins(:string_translations)
+          .where(
+            'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+            "%#{query}%",
+            %w[title]
+          )
+          .order(published_at: :desc)
+          .limit([limit, 100].min)
+      end
 
       # Serialize a post to a hash
       # @param post [BetterTogether::Post] The post to serialize

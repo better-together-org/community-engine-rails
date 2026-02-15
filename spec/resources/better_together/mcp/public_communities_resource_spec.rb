@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Mcp::PublicCommunitiesResource, type: :model do
-  let(:public_community1) { create(:community, name: 'Public One', privacy: 'public') }
-  let(:public_community2) { create(:community, name: 'Public Two', privacy: 'public') }
+  let(:first_public_community) { create(:community, name: 'Public One', privacy: 'public') }
+  let(:second_public_community) { create(:community, name: 'Public Two', privacy: 'public') }
   let(:private_community) { create(:community, name: 'Private', privacy: 'private') }
 
   before do
@@ -33,8 +33,8 @@ RSpec.describe BetterTogether::Mcp::PublicCommunitiesResource, type: :model do
     context 'when unauthenticated' do
       before do
         # Explicitly create communities for this test
-        public_community1
-        public_community2
+        first_public_community
+        second_public_community
         private_community
 
         stub_mcp_request_for(described_class, user: nil)
@@ -55,8 +55,8 @@ RSpec.describe BetterTogether::Mcp::PublicCommunitiesResource, type: :model do
 
       before do
         # Explicitly create communities for this test
-        public_community1
-        public_community2
+        first_public_community
+        second_public_community
         private_community
 
         stub_mcp_request_for(described_class, user: user)
@@ -74,7 +74,7 @@ RSpec.describe BetterTogether::Mcp::PublicCommunitiesResource, type: :model do
 
     it 'includes community details' do
       # Explicitly create communities for this test
-      public_community1
+      first_public_community
 
       stub_mcp_request_for(described_class, user: nil)
 
