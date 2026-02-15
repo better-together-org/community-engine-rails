@@ -9,9 +9,7 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
 
   before do
     configure_host_platform
-    allow_any_instance_of(described_class).to receive(:request).and_return(
-      instance_double(Rack::Request, params: { 'user_id' => user.id })
-    )
+    stub_mcp_request_for(described_class, user: user)
   end
 
   describe '.description' do
@@ -32,9 +30,7 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
         public_community
         private_community
 
-        allow_any_instance_of(described_class).to receive(:request).and_return(
-          instance_double(Rack::Request, params: {})
-        )
+        stub_mcp_request_for(described_class, user: nil)
       end
 
       it 'returns only public communities' do

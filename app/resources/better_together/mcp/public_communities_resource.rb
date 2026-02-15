@@ -19,6 +19,7 @@ module BetterTogether
           # Use policy_scope to get communities, then explicitly filter to public only
           # This ensures we only return public communities even if user is platform manager
           communities = policy_scope(BetterTogether::Community)
+                        .includes(:person_community_memberships)
                         .where(privacy: 'public')
                         .order(created_at: :desc)
 
@@ -41,7 +42,7 @@ module BetterTogether
           name: community.name,
           description: community.description,
           slug: community.slug,
-          member_count: community.person_members.count,
+          member_count: community.person_community_memberships.size,
           created_at: community.created_at.iso8601
         }
       end

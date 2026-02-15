@@ -61,7 +61,7 @@ module BetterTogether
           published_at: post.published_at&.iso8601,
           creator_name: post.creator&.name,
           privacy: post.privacy,
-          url: "/posts/#{post.slug}"
+          url: BetterTogether::Engine.routes.url_helpers.post_path(post, locale: I18n.locale)
         }
       end
     end

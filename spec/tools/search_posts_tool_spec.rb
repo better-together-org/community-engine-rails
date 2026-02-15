@@ -30,9 +30,7 @@ RSpec.describe BetterTogether::Mcp::SearchPostsTool, type: :model do
   before do
     configure_host_platform
     create(:person_block, blocker: user.person, blocked: blocked_user.person)
-    allow_any_instance_of(described_class).to receive(:request).and_return(
-      instance_double(Rack::Request, params: { 'user_id' => user.id })
-    )
+    stub_mcp_request_for(described_class, user: user)
   end
 
   describe '.description' do
@@ -59,9 +57,7 @@ RSpec.describe BetterTogether::Mcp::SearchPostsTool, type: :model do
 
     it 'excludes private posts from other users' do
       other_user = create(:user)
-      allow_any_instance_of(described_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => other_user.id })
-      )
+      stub_mcp_request_for(described_class, user: other_user)
 
       tool = described_class.new
       result = tool.call(query: 'Ruby')
@@ -106,9 +102,7 @@ RSpec.describe BetterTogether::Mcp::SearchPostsTool, type: :model do
 
     context 'when unauthenticated' do
       before do
-        allow_any_instance_of(described_class).to receive(:request).and_return(
-          instance_double(Rack::Request, params: {})
-        )
+        stub_mcp_request_for(described_class, user: nil)
       end
 
       it 'returns only public posts' do

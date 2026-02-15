@@ -24,6 +24,7 @@ module BetterTogether
           # - User permissions (platform manager sees all)
           # - Community membership (members see their communities)
           communities = policy_scope(BetterTogether::Community)
+                        .includes(:person_community_memberships)
 
           # Apply optional privacy filter
           communities = communities.where(privacy: privacy_filter) if privacy_filter.present?
@@ -47,7 +48,7 @@ module BetterTogether
           description: community.description,
           privacy: community.privacy,
           slug: community.slug,
-          member_count: community.person_members.count,
+          member_count: community.person_community_memberships.size,
           created_at: community.created_at.in_time_zone.iso8601
         }
       end

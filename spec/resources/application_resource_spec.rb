@@ -33,9 +33,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
 
     before do
       configure_host_platform
-      allow_any_instance_of(resource_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(resource_class, user: user)
     end
 
     it 'returns PunditContext from request' do
@@ -62,9 +60,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
 
     before do
       configure_host_platform
-      allow_any_instance_of(resource_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(resource_class, user: user)
     end
 
     it 'returns user from pundit context' do
@@ -98,9 +94,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
 
     context 'when user is authenticated' do
       before do
-        allow_any_instance_of(resource_class).to receive(:request).and_return(
-          instance_double(Rack::Request, params: { 'user_id' => user.id })
-        )
+        stub_mcp_request_for(resource_class, user: user)
       end
 
       it 'returns only public communities for regular user' do
@@ -153,9 +147,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
 
     context 'when user is not authenticated' do
       before do
-        allow_any_instance_of(resource_class).to receive(:request).and_return(
-          instance_double(Rack::Request, params: {})
-        )
+        stub_mcp_request_for(resource_class, user: nil)
       end
 
       it 'returns only public communities' do
@@ -195,9 +187,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationResource, type: :model do
     before do
       configure_host_platform
       create(:person_block, blocker: user.person, blocked: blocked_user.person)
-      allow_any_instance_of(resource_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(resource_class, user: user)
     end
 
     it 'excludes posts from blocked users' do

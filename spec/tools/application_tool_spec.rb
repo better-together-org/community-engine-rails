@@ -12,6 +12,10 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
       expect(described_class.included_modules).to include(Pundit::Authorization)
     end
 
+    it 'includes PunditIntegration concern' do
+      expect(described_class.included_modules).to include(BetterTogether::Mcp::PunditIntegration)
+    end
+
     it 'has ActionTool::Base alias' do
       expect(BetterTogether::ActionTool::Base).to eq(described_class)
     end
@@ -19,7 +23,6 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
 
   describe '#pundit_user' do
     let(:user) { create(:user) }
-    let(:context) { BetterTogether::Mcp::PunditContext.new(user: user) }
     let(:tool_class) do
       Class.new(described_class) do
         description 'Test tool'
@@ -32,10 +35,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
 
     before do
       configure_host_platform
-      # Stub the request context to provide our user
-      allow_any_instance_of(tool_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(tool_class, user: user)
     end
 
     it 'returns PunditContext from request' do
@@ -60,9 +60,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
 
     before do
       configure_host_platform
-      allow_any_instance_of(tool_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(tool_class, user: user)
     end
 
     it 'returns user from pundit context' do
@@ -86,15 +84,36 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
 
     before do
       configure_host_platform
-      allow_any_instance_of(tool_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(tool_class, user: user)
     end
 
     it 'returns person from user' do
       tool = tool_class.new
 
       expect(tool.call).to eq(user.person)
+    end
+  end
+
+  describe 'anonymous access' do
+    let(:tool_class) do
+      Class.new(described_class) do
+        description 'Test tool'
+
+        def call
+          current_user
+        end
+      end
+    end
+
+    before do
+      configure_host_platform
+      stub_mcp_request_for(tool_class, user: nil)
+    end
+
+    it 'returns nil for anonymous requests' do
+      tool = tool_class.new
+
+      expect(tool.call).to be_nil
     end
   end
 
@@ -120,9 +139,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
 
     before do
       configure_host_platform
-      allow_any_instance_of(tool_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(tool_class, user: user)
     end
 
     context 'when user has permission' do
