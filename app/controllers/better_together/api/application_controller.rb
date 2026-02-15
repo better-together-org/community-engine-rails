@@ -62,6 +62,13 @@ module BetterTogether
         current_user
       end
 
+      # Provide current person in JSONAPI context for resources that scope by participant
+      # Resources can access this via options[:context][:current_person]
+      # Merges with Pundit::ResourceController's context (current_user, policy_used)
+      def context
+        super.merge(current_person: current_user&.person)
+      end
+
       # Check if this is a Devise controller (auth endpoints)
       def devise_controller?
         is_a?(Devise::SessionsController) ||

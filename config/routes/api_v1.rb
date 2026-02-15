@@ -14,4 +14,20 @@ namespace :v1 do
 
   # Roles (read-only)
   jsonapi_resources :roles, only: %i[index show]
+
+  # Events
+  jsonapi_resources :events
+
+  # Posts
+  jsonapi_resources :posts
+
+  # Conversations
+  jsonapi_resources :conversations, only: %i[index show create update]
+
+  # Messages (create-only for sending, index/show for reading)
+  jsonapi_resources :messages, only: %i[index show create]
+
+  # Notifications (read + mark as read)
+  jsonapi_resources :notifications, only: %i[index show update]
+  post 'notifications/mark_all_read', to: 'notifications#mark_all_read'
 end
