@@ -30,4 +30,16 @@ namespace :v1 do
   # Notifications (read + mark as read)
   jsonapi_resources :notifications, only: %i[index show update]
   post 'notifications/mark_all_read', to: 'notifications#mark_all_read'
+
+  # Person Community Memberships
+  jsonapi_resources :person_community_memberships, only: %i[index show create update]
+
+  # Person Blocks
+  jsonapi_resources :person_blocks, only: %i[index show create destroy]
+
+  # Invitations
+  jsonapi_resources :invitations, only: %i[index show create update]
+
+  # Metrics (custom summary endpoint, read-only)
+  get 'metrics/summary', to: 'metrics_summary#show'
 end
