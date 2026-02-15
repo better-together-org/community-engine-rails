@@ -14,6 +14,7 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
+    include SitemapRefreshable
     include TrackedActivity
 
     attachable_cover_image

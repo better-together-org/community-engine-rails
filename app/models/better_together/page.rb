@@ -17,6 +17,7 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
+    include SitemapRefreshable
     include TrackedActivity
     include ::Storext.model
 
@@ -94,8 +95,6 @@ module BetterTogether
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
-    after_commit :refresh_sitemap, on: %i[create update destroy]
-
     def hero_block
       @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
     end
@@ -156,12 +155,6 @@ module BetterTogether
     end
 
     private
-
-    def refresh_sitemap
-      return if Rails.env.test?
-
-      SitemapRefreshJob.perform_later
-    end
 
     def sync_name_and_title
       self.name = title if respond_to?(:name) && name.blank? && title.present?

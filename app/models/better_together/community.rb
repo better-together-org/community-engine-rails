@@ -13,6 +13,7 @@ module BetterTogether
     include PlatformHost
     include Protected
     include Privacy
+    include SitemapRefreshable
     include Metrics::Viewable
 
     belongs_to :creator,

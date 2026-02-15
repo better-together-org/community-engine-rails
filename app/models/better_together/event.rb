@@ -15,6 +15,7 @@ module BetterTogether
     include Metrics::Viewable
     include Privacy
     include RecurringSchedulable
+    include SitemapRefreshable
     include TimezoneAttributeAliasing
     include TrackedActivity
 

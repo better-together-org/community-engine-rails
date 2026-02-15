@@ -77,13 +77,17 @@ module BetterTogether
         end
       end
 
-      # Add public published pages
+      # Add public published pages sorted by slug depth so parent pages appear
+      # before their children in the sitemap. Deeper pages receive a lower
+      # priority value to signal relative importance to crawlers.
       # @param sitemap [SitemapGenerator::Builder::SitemapFile] The sitemap builder instance
       # @param locale [Symbol, String] The locale to generate URLs for
       def add_pages(sitemap, locale = I18n.default_locale)
-        BetterTogether::Page.published.privacy_public.find_each do |page|
+        pages = BetterTogether::Page.published.privacy_public.to_a
+        pages.sort_by! { |page| [slug_depth(page.slug), page.slug] }
+        pages.each do |page|
           sitemap.add helpers.render_page_path(path: page.slug, locale: locale),
-                      lastmod: page.updated_at
+                      **page_sitemap_options(page)
         end
       end
 
@@ -92,6 +96,40 @@ module BetterTogether
       # @return [Module] URL helpers from the Better Together engine
       def helpers
         @helpers ||= BetterTogether::Engine.routes.url_helpers
+      end
+
+      # Number of path segments in a slug. A simple slug like "about" has
+      # depth 1, while "arrival/transportation" has depth 2.
+      # @param slug [String]
+      # @return [Integer]
+      def slug_depth(slug)
+        return 1 if slug.blank?
+
+        slug.count('/') + 1
+      end
+
+      # Map slug depth to a sitemap priority value (0.0–1.0).
+      # Top-level pages get the highest priority; deeper pages get less.
+      # @param depth [Integer]
+      # @return [Float]
+      def priority_for_depth(depth)
+        case depth
+        when 1 then 0.8
+        when 2 then 0.6
+        else        0.4
+        end
+      end
+
+      # Build sitemap metadata options for a page based on its slug depth.
+      # @param page [BetterTogether::Page]
+      # @return [Hash]
+      def page_sitemap_options(page)
+        depth = slug_depth(page.slug)
+        {
+          lastmod: page.updated_at,
+          priority: priority_for_depth(depth),
+          changefreq: depth == 1 ? 'weekly' : 'monthly'
+        }
       end
     end
   end
