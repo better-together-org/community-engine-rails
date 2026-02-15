@@ -26,6 +26,29 @@ module BetterTogether
     #   end
     class ApplicationTool < FastMcp::Tool
       include BetterTogether::Mcp::PunditIntegration
+
+      protected
+
+      # Log MCP tool invocations for audit and debugging.
+      # Produces structured JSON entries tagged [MCP][tool] in Rails logs.
+      # Future: persist to Metrics::McpInvocation model for queryable audit trails.
+      # @param tool_name [String] Name of the invoked tool
+      # @param args [Hash] Arguments passed to the tool (sensitive keys stripped)
+      # @param result_bytes [Integer] Size of the result payload
+      def log_invocation(tool_name, args, result_bytes)
+        Rails.logger.tagged('MCP', 'tool') do
+          Rails.logger.info(
+            {
+              tool: tool_name,
+              user_id: current_user&.id,
+              person_id: agent&.id,
+              args: args,
+              result_bytes: result_bytes,
+              timestamp: Time.current.iso8601
+            }.to_json
+          )
+        end
+      end
     end
   end
 end

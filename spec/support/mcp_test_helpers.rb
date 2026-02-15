@@ -13,7 +13,13 @@ module McpTestHelpers
     request
   end
 
-  # Stub an MCP tool/resource class to use Warden-based auth with the given user
+  # Stub an MCP tool/resource class to use Warden-based auth with the given user.
+  #
+  # NOTE: allow_any_instance_of is intentional here. FastMcp instantiates tool and
+  # resource classes internally during request handling — we cannot obtain a reference
+  # to the instance before `call`/`content` is invoked. This is the only reliable way
+  # to inject a Warden-backed request into the tool/resource under test.
+  #
   # @param klass [Class] The tool or resource class
   # @param user [User, nil] The authenticated user
   def stub_mcp_request_for(klass, user:)

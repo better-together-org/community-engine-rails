@@ -2453,6 +2453,10 @@ en:
       month: Month
       second: Second
       year: Year
+  doorkeeper:
+    errors:
+      unauthorized: You are not authorized to manage OAuth applications. Platform manager
+        access is required.
   devise:
     confirmations:
       confirmed: Your email address has been successfully confirmed.

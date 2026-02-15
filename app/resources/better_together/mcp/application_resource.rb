@@ -27,6 +27,26 @@ module BetterTogether
     #   end
     class ApplicationResource < FastMcp::Resource
       include BetterTogether::Mcp::PunditIntegration
+
+      protected
+
+      # Log MCP resource access for audit and debugging.
+      # Produces structured JSON entries tagged [MCP][resource] in Rails logs.
+      # @param resource_name [String] Name of the accessed resource
+      # @param result_bytes [Integer] Size of the result payload
+      def log_access(resource_name, result_bytes)
+        Rails.logger.tagged('MCP', 'resource') do
+          Rails.logger.info(
+            {
+              resource: resource_name,
+              user_id: current_user&.id,
+              person_id: agent&.id,
+              result_bytes: result_bytes,
+              timestamp: Time.current.iso8601
+            }.to_json
+          )
+        end
+      end
     end
   end
 end

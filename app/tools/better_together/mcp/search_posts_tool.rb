@@ -26,7 +26,10 @@ module BetterTogether
       def call(query:, limit: 20)
         with_timezone_scope do
           posts = search_accessible_posts(query, limit)
-          JSON.generate(posts.map { |post| serialize_post(post) })
+          result = JSON.generate(posts.map { |post| serialize_post(post) })
+
+          log_invocation('search_posts', { query: query, limit: limit }, result.bytesize)
+          result
         end
       end
 
@@ -57,7 +60,9 @@ module BetterTogether
         {
           id: post.id,
           title: post.title,
-          excerpt: post.content.to_plain_text.truncate(200),
+          excerpt: post.content.to_plain_text.truncate(
+            Rails.application.config.mcp.excerpt_length
+          ),
           published_at: post.published_at&.iso8601,
           creator_name: post.creator&.name,
           privacy: post.privacy,

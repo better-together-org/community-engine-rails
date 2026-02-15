@@ -23,11 +23,14 @@ module BetterTogether
                         .where(privacy: 'public')
                         .order(created_at: :desc)
 
-          JSON.generate({
-                          communities: communities.map { |community| serialize_community(community) },
-                          total: communities.count,
-                          generated_at: Time.current.iso8601
-                        })
+          result = JSON.generate({
+                                   communities: communities.map { |community| serialize_community(community) },
+                                   total: communities.count,
+                                   generated_at: Time.current.iso8601
+                                 })
+
+          log_access('public_communities', result.bytesize)
+          result
         end
       end
 

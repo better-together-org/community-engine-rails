@@ -16,6 +16,7 @@ require 'devise'
 require 'devise-i18n'
 require 'devise/jwt'
 require 'devise_zxcvbn'
+require 'doorkeeper'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
 require 'fast_mcp'
@@ -170,6 +171,7 @@ module BetterTogether
       mcp_config.path_prefix = ENV.fetch('MCP_PATH_PREFIX', '/mcp')
       mcp_config.auth_token = ENV.fetch('MCP_AUTH_TOKEN', nil)
       mcp_config.authenticate = mcp_config.auth_token.present? || Rails.env.production?
+      mcp_config.excerpt_length = ENV.fetch('MCP_EXCERPT_LENGTH', 200).to_i
 
       app.config.mcp = mcp_config
 

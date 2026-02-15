@@ -16,6 +16,9 @@ Rails.application.config.after_initialize do
   # Skip if MCP not configured or disabled
   next unless Rails.application.config.respond_to?(:mcp) && Rails.application.config.mcp.enabled
 
+  # Skip MCP mount during db:migrate and similar tasks where middleware is frozen
+  next if defined?(Rake) && Rake.application.top_level_tasks.any? { |t| t.start_with?('db:') }
+
   require 'better_together/mcp'
 
   # Mount MCP in Rails application
@@ -45,6 +48,15 @@ Rails.application.config.after_initialize do
     server.filter_tools do |request, tools|
       context = BetterTogether::Mcp::PunditContext.from_request(request)
 
+      # If no authenticated user, also try Doorkeeper OAuth2 token
+      if context.guest? && defined?(Doorkeeper)
+        doorkeeper_token = Doorkeeper::OAuth::Token.authenticate(request, :from_bearer_authorization)
+        if doorkeeper_token&.accessible? && doorkeeper_token&.acceptable?(:mcp_access)
+          user = BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
+          context = BetterTogether::Mcp::PunditContext.new(user) if user
+        end
+      end
+
       # Platform managers can see all tools
       if context.permitted_to?('manage_platform')
         tools
@@ -57,6 +69,15 @@ Rails.application.config.after_initialize do
     # Filter resources based on user permissions
     server.filter_resources do |request, resources|
       context = BetterTogether::Mcp::PunditContext.from_request(request)
+
+      # If no authenticated user, also try Doorkeeper OAuth2 token
+      if context.guest? && defined?(Doorkeeper)
+        doorkeeper_token = Doorkeeper::OAuth::Token.authenticate(request, :from_bearer_authorization)
+        if doorkeeper_token&.accessible? && doorkeeper_token&.acceptable?(:mcp_access)
+          user = BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
+          context = BetterTogether::Mcp::PunditContext.new(user) if user
+        end
+      end
 
       # Platform managers can see all resources
       if context.permitted_to?('manage_platform')

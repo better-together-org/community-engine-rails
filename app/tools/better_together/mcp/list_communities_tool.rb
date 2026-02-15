@@ -30,9 +30,12 @@ module BetterTogether
           communities = communities.where(privacy: privacy_filter) if privacy_filter.present?
 
           # Serialize communities to JSON
-          JSON.generate(
+          result = JSON.generate(
             communities.map { |community| serialize_community(community) }
           )
+
+          log_invocation('list_communities', { privacy_filter: privacy_filter }, result.bytesize)
+          result
         end
       end
 

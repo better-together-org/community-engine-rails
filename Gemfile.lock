@@ -30,6 +30,7 @@ PATH
       devise-i18n
       devise-jwt
       devise_zxcvbn
+      doorkeeper (>= 5.7, < 6.0)
       elasticsearch-model (~> 7)
       elasticsearch-rails (~> 7)
       fast-mcp (>= 1.6.0)
@@ -302,6 +303,8 @@ GEM
       declarative (>= 0.0.9, < 1.0.0)
       representable (>= 3.1.1, < 4)
     docile (1.4.1)
+    doorkeeper (5.8.2)
+      railties (>= 5)
     drb (2.2.3)
     dry-auto_inject (1.1.0)
       dry-core (~> 1.1)
