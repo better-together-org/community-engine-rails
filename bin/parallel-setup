@@ -5,7 +5,13 @@ set -e
 
 echo "Setting up parallel test databases..."
 
+# Ensure the primary test database schema is up to date first
+echo "Running db:migrate to ensure primary test DB is current..."
+bin/dc-run rails db:migrate
+bin/dc-run rails db:test:prepare
+
 # Run from the dummy app directory where the database configuration lives
+echo "Creating and preparing parallel test databases..."
 bin/dc-run-dummy bundle exec rake db:parallel:create db:parallel:prepare
 
 echo "✅ Parallel test databases created successfully!"

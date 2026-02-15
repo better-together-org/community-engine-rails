@@ -66,4 +66,11 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
+
+  # Webhook management (outbound subscriptions)
+  jsonapi_resources :webhook_endpoints
+  post 'webhook_endpoints/:id/test', to: 'webhook_endpoints#test'
+
+  # Inbound webhooks (receive events from external systems)
+  post 'webhooks/receive', to: 'webhooks#receive'
 end
