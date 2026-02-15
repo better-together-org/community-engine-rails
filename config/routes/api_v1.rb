@@ -2,7 +2,7 @@
 
 # API v1 resource routes
 
-namespace :v1 do
+namespace :v1 do # rubocop:disable Metrics/BlockLength
   # People
   get 'people/me', to: 'people#me'
   jsonapi_resources :people
@@ -42,4 +42,28 @@ namespace :v1 do
 
   # Metrics (custom summary endpoint, read-only)
   get 'metrics/summary', to: 'metrics_summary#show'
+
+  # Pages
+  jsonapi_resources :pages
+
+  # Navigation
+  jsonapi_resources :navigation_areas, only: %i[index show create update]
+  jsonapi_resources :navigation_items
+
+  # Geography (read-only)
+  jsonapi_resources :geography_continents, only: %i[index show]
+  jsonapi_resources :geography_countries, only: %i[index show]
+  jsonapi_resources :geography_states, only: %i[index show]
+  jsonapi_resources :geography_regions, only: %i[index show]
+  jsonapi_resources :geography_settlements, only: %i[index show]
+
+  # Uploads
+  jsonapi_resources :uploads
+
+  # Joatu Exchange
+  jsonapi_resources :joatu_offers
+  jsonapi_resources :joatu_requests
+  jsonapi_resources :joatu_agreements, only: %i[index show create update]
+  post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
+  post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
 end
