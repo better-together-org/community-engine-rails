@@ -173,12 +173,28 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
     end
 
-    # Additional method tests
-    # Example:
-    # describe '#method_name' do
-    #   it 'performs expected behavior' do
-    #     # Test custom method behavior
-    #   end
-    # end
+    describe 'OAuth associations' do
+      subject(:person) { create(:person) }
+
+      it 'has many oauth_applications' do
+        expect(person).to respond_to(:oauth_applications)
+      end
+
+      it 'can create an OAuth application' do
+        app = person.oauth_applications.create!(
+          name: 'Test App',
+          redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+          scopes: 'read'
+        )
+        expect(app).to be_persisted
+        expect(app.owner).to eq(person)
+      end
+
+      it 'configures dependent destroy on oauth_applications' do
+        association = described_class.reflect_on_association(:oauth_applications)
+        expect(association).to be_present
+        expect(association.options[:dependent]).to eq(:destroy)
+      end
+    end
   end
 end
