@@ -1873,52 +1873,52 @@ en:
         update:
           success: OAuth application '%{name}' has been updated successfully.
     oauth_applications:
-      title: OAuth Applications
+      actions_aria: Application actions
       back_to_list: Back to Applications
-      save: Save Application
-      view: View Application
-      name_placeholder: e.g., My Integration App
-      name_help: A descriptive name for this OAuth application.
-      redirect_help: One redirect URI per line. For machine-to-machine (client_credentials)
-        flows, use urn:ietf:wg:oauth:2.0:oob
-      scopes_help: Select the permissions this application should have.
+      confidential: Confidential
       confidential_help: Confidential clients can securely store their credentials
         (server-side apps). Public clients cannot (SPAs, mobile apps).
       credentials: Credentials
-      details: Application Details
-      field_client_id: Client ID
-      field_secret: Client Secret
-      field_type: Type
-      field_scopes: Scopes
-      field_redirect_uri: Redirect URI
-      field_owner: Owner
-      field_trusted: Trusted
-      field_created: Created
-      confidential: Confidential
-      public_type: Public
-      no_scopes: Default
-      no_secret_public: Not applicable (public client)
-      no_redirect: Not configured
       default_scopes: Default scopes
-      trusted_yes: 'Yes'
-      trusted_no: 'No'
-      secret_aria: Client secret value
-      toggle_secret: Toggle secret visibility
-      actions_aria: Application actions
-      edit_aria: Edit OAuth application
       delete_aria: Delete OAuth application
+      details: Application Details
+      edit_aria: Edit OAuth application
+      field_client_id: Client ID
+      field_created: Created
+      field_owner: Owner
+      field_redirect_uri: Redirect URI
+      field_scopes: Scopes
+      field_secret: Client Secret
+      field_trusted: Trusted
+      field_type: Type
       index:
-        title: OAuth Applications
-        new_btn_text: New Application
-        new_btn_aria: Create new OAuth application
-        table_aria: OAuth applications list
-        header_name: Name
+        header_actions: Actions
         header_client_id: Client ID
-        header_scopes: Scopes
         header_confidential: Type
         header_created: Created
-        header_actions: Actions
+        header_name: Name
+        header_scopes: Scopes
+        new_btn_aria: Create new OAuth application
+        new_btn_text: New Application
         no_applications: No OAuth applications have been registered yet.
+        table_aria: OAuth applications list
+        title: OAuth Applications
+      name_help: A descriptive name for this OAuth application.
+      name_placeholder: e.g., My Integration App
+      no_redirect: Not configured
+      no_scopes: Default
+      no_secret_public: Not applicable (public client)
+      public_type: Public
+      redirect_help: One redirect URI per line. For machine-to-machine (client_credentials)
+        flows, use urn:ietf:wg:oauth:2.0:oob
+      save: Save Application
+      scopes_help: Select the permissions this application should have.
+      secret_aria: Client secret value
+      title: OAuth Applications
+      toggle_secret: Toggle secret visibility
+      trusted_no: 'No'
+      trusted_yes: 'Yes'
+      view: View Application
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"
@@ -2500,10 +2500,6 @@ en:
       month: Month
       second: Second
       year: Year
-  doorkeeper:
-    errors:
-      unauthorized: You are not authorized to manage OAuth applications. Platform manager
-        access is required.
   devise:
     confirmations:
       confirmed: Your email address has been successfully confirmed.
@@ -2699,6 +2695,10 @@ en:
   devise_omniauth_callbacks:
     failure: There was a problem signing you in through %{kind}. %{reason}
     success: Successfully authenticated from %{kind} account.
+  doorkeeper:
+    errors:
+      unauthorized: You are not authorized to manage OAuth applications. Platform
+        manager access is required.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2775,61 +2775,61 @@ en:
         one: "%{count} error prohibited this %{model} from being saved"
         other: "%{count} errors prohibited this %{model} from being saved"
     webhook_endpoints:
-      title: Webhook Endpoints
+      actions_aria: Webhook actions
+      active_help: Enable or disable webhook delivery for this endpoint.
+      all_events: All events
       back_to_list: Back to Webhooks
-      save: Save Webhook
-      view: View Webhook
-      name_placeholder: e.g., My Integration Webhook
-      name_help: A friendly name to identify this webhook endpoint.
-      url_help: The HTTPS URL where webhook payloads will be delivered.
+      delete_aria: Delete webhook endpoint
+      deliveries_aria: Webhook delivery history
+      delivery_attempts: Attempts
+      delivery_event: Event
+      delivery_response: Response
+      delivery_status: Status
+      delivery_time: Time
       description_placeholder: Optional description of this webhook's purpose.
+      details: Endpoint Details
+      edit_aria: Edit webhook endpoint
       events_help: Comma-separated list of event names to subscribe to. Leave blank
         to receive all events. Format resource.action (e.g., community.created, person.updated).
+      field_created: Created
+      field_description: Description
+      field_events: Events
+      field_oauth_app: OAuth Application
+      field_secret: Signing Secret
+      field_status: Status
+      field_url: URL
+      index:
+        header_actions: Actions
+        header_deliveries: Deliveries
+        header_events: Events
+        header_name: Name
+        header_status: Status
+        header_url: URL
+        new_btn_aria: Create new webhook endpoint
+        new_btn_text: New Webhook
+        no_webhooks: No webhook endpoints have been configured yet.
+        table_aria: Webhook endpoints list
+        title: Webhook Endpoints
+      name_help: A friendly name to identify this webhook endpoint.
+      name_placeholder: e.g., My Integration Webhook
+      no_deliveries: No deliveries yet. Use the "Send Test" button to verify your
+        endpoint.
       no_oauth_app: "— None —"
       oauth_help: Optionally link this webhook to an OAuth application.
-      active_help: Enable or disable webhook delivery for this endpoint.
-      field_url: URL
-      field_status: Status
-      field_secret: Signing Secret
-      field_events: Events
-      field_description: Description
-      field_oauth_app: OAuth Application
-      field_created: Created
-      status_active: Active
-      status_inactive: Inactive
-      all_events: All events
-      details: Endpoint Details
+      recent_deliveries: Recent Deliveries
+      save: Save Webhook
       secret_aria: Signing secret value
-      toggle_secret: Toggle secret visibility
       secret_note: Use this secret to verify webhook signatures. It was generated
         when the endpoint was created and cannot be changed.
       send_test: Send Test
+      status_active: Active
+      status_inactive: Inactive
       test_confirm: Send a test webhook?
       test_queued: Test webhook delivery has been queued.
-      actions_aria: Webhook actions
-      edit_aria: Edit webhook endpoint
-      delete_aria: Delete webhook endpoint
-      recent_deliveries: Recent Deliveries
-      deliveries_aria: Webhook delivery history
-      delivery_event: Event
-      delivery_status: Status
-      delivery_response: Response
-      delivery_attempts: Attempts
-      delivery_time: Time
-      no_deliveries: No deliveries yet. Use the "Send Test" button to verify your
-        endpoint.
-      index:
-        title: Webhook Endpoints
-        new_btn_text: New Webhook
-        new_btn_aria: Create new webhook endpoint
-        table_aria: Webhook endpoints list
-        header_name: Name
-        header_url: URL
-        header_status: Status
-        header_events: Events
-        header_deliveries: Deliveries
-        header_actions: Actions
-        no_webhooks: No webhook endpoints have been configured yet.
+      title: Webhook Endpoints
+      toggle_secret: Toggle secret visibility
+      url_help: The HTTPS URL where webhook payloads will be delivered.
+      view: View Webhook
     wizard:
       max_completions: Maximum number of completions reached for this wizard and step
         definition.
