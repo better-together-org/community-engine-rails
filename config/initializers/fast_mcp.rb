@@ -12,7 +12,7 @@
 #
 # See docs/implementation/mcp_integration_acceptance_criteria.md for details
 
-Rails.application.config.after_initialize do
+Rails.application.config.after_initialize do # rubocop:disable Metrics/BlockLength
   # Skip if MCP not configured or disabled
   next unless Rails.application.config.respond_to?(:mcp) && Rails.application.config.mcp.enabled
 
@@ -22,7 +22,7 @@ Rails.application.config.after_initialize do
   require 'better_together/mcp'
 
   # Mount MCP in Rails application
-  FastMcp.mount_in_rails(
+  FastMcp.mount_in_rails( # rubocop:disable Metrics/BlockLength
     Rails.application,
     name: 'better-together',
     version: BetterTogether::VERSION,

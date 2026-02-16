@@ -56,7 +56,7 @@ module BetterTogether
       # Serialize a post to a hash
       # @param post [BetterTogether::Post] The post to serialize
       # @return [Hash] Serialized post data
-      def serialize_post(post)
+      def serialize_post(post) # rubocop:disable Metrics/AbcSize
         {
           id: post.id,
           title: post.title,

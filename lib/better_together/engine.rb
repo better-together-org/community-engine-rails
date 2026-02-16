@@ -49,7 +49,7 @@ require 'stackprof'
 
 module BetterTogether
   # Engine configuration for BetterTogether
-  class Engine < ::Rails::Engine
+  class Engine < ::Rails::Engine # rubocop:disable Metrics/ClassLength
     engine_name 'better_together'
     isolate_namespace BetterTogether
 

@@ -22,7 +22,7 @@ module BetterTogether
 
         # Override records to bypass abstract policy scope options issue
         # and handle scoping manually
-        def self.records(options = {})
+        def self.records(options = {}) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           context = options[:context]
           user = context[:current_user]
           person = context[:current_person]
@@ -46,7 +46,7 @@ module BetterTogether
           return scope.all if person&.permitted_to?('update_community') || person&.permitted_to?('manage_platform')
 
           scope.where(member_id: person&.id)
-        end
+        end # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       end
     end
   end

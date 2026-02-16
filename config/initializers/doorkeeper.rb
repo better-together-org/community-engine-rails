@@ -12,7 +12,7 @@
 # Guard: only configure Doorkeeper when the gem is available
 return unless defined?(Doorkeeper)
 
-Doorkeeper.configure do
+Doorkeeper.configure do # rubocop:disable Metrics/BlockLength
   # Use custom ORM models with BetterTogether namespace and UUID primary keys
   orm :active_record
 

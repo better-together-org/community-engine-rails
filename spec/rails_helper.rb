@@ -145,7 +145,7 @@ RSpec.configure do |config|
 
     # Load essential seed data with explicit clearing for deterministic baseline
     # In parallel execution, handle race conditions gracefully
-    def build_with_retry(times: 3) # rubocop:todo Metrics/MethodLength, Metrics/PerceivedComplexity
+    def build_with_retry(times: 3) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       attempts = 0
       begin
         yield

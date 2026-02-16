@@ -75,7 +75,7 @@ module BetterTogether
     # @param recipient [Person, User, nil] Recipient with timezone preference
     # @param platform [Platform, nil] Platform with timezone setting
     # @return [String] IANA timezone identifier
-    def resolve_timezone(timezone: nil, user: nil, recipient: nil, platform: nil)
+    def resolve_timezone(timezone: nil, user: nil, recipient: nil, platform: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       # 1. Explicit timezone parameter (highest priority)
       return timezone if timezone.present?
 
@@ -99,7 +99,7 @@ module BetterTogether
 
       # 6. UTC fallback
       'UTC'
-    end
+    end # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     private
 
@@ -130,7 +130,7 @@ module BetterTogether
     # Extract timezone from user
     # @param user [User, nil] The user
     # @return [String, nil] IANA timezone or nil
-    def extract_timezone_from_user(user)
+    def extract_timezone_from_user(user) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       return nil unless user
       return current_user_timezone if user == :current && respond_to?(:current_user, true)
 
@@ -139,7 +139,7 @@ module BetterTogether
       elsif user.respond_to?(:time_zone)
         user.time_zone.presence
       end
-    end
+    end # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     # Extract timezone from platform
     # @param platform [Platform, nil] The platform

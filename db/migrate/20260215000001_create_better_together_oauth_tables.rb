@@ -3,7 +3,7 @@
 # Creates OAuth2 tables for Doorkeeper integration.
 # Uses UUID primary keys and better_together_ prefix to match engine conventions.
 class CreateBetterTogetherOauthTables < ActiveRecord::Migration[7.2]
-  def change
+  def change # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     create_bt_table :oauth_applications do |t|
       t.string :name, null: false
       t.string :uid, null: false

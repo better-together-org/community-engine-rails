@@ -54,7 +54,7 @@ module BetterTogether
         # EventPolicy::Scope#resolve includes categorizations with polymorphic :category
         # which ActiveRecord cannot eagerly load via includes(). We apply an API-specific
         # scope that provides the same authorization without the problematic includes.
-        def self.records(options = {})
+        def self.records(options = {}) # rubocop:disable Metrics/AbcSize
           context = options[:context]
           context[:policy_used]&.call
 
