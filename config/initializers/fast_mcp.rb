@@ -51,9 +51,9 @@ Rails.application.config.after_initialize do # rubocop:disable Metrics/BlockLeng
       # If no authenticated user, also try Doorkeeper OAuth2 token
       if context.guest? && defined?(Doorkeeper)
         doorkeeper_token = Doorkeeper::OAuth::Token.authenticate(request, :from_bearer_authorization)
-        if doorkeeper_token&.accessible? && doorkeeper_token.acceptable?(:mcp_access)
+        if doorkeeper_token&.accessible? && doorkeeper_token.acceptable?('mcp_access')
           user = BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
-          context = BetterTogether::Mcp::PunditContext.new(user) if user
+          context = BetterTogether::Mcp::PunditContext.new(user: user) if user
         end
       end
 
@@ -73,9 +73,9 @@ Rails.application.config.after_initialize do # rubocop:disable Metrics/BlockLeng
       # If no authenticated user, also try Doorkeeper OAuth2 token
       if context.guest? && defined?(Doorkeeper)
         doorkeeper_token = Doorkeeper::OAuth::Token.authenticate(request, :from_bearer_authorization)
-        if doorkeeper_token&.accessible? && doorkeeper_token.acceptable?(:mcp_access)
+        if doorkeeper_token&.accessible? && doorkeeper_token.acceptable?('mcp_access')
           user = BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
-          context = BetterTogether::Mcp::PunditContext.new(user) if user
+          context = BetterTogether::Mcp::PunditContext.new(user: user) if user
         end
       end
 

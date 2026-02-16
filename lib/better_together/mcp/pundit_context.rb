@@ -42,6 +42,19 @@ module BetterTogether
         @user = user
       end
 
+      # Anonymous MCP clients (no browser session and no OAuth context)
+      # should be treated as guests.
+      # @return [Boolean]
+      def guest?
+        user.nil?
+      end
+
+      # Convenience predicate
+      # @return [Boolean]
+      def authenticated?
+        !guest?
+      end
+
       # Get the Person (agent) associated with the user
       # @return [BetterTogether::Person, nil] The person or nil if no user
       def agent

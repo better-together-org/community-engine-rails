@@ -64,6 +64,23 @@ RSpec.describe 'OAuth Applications API', :as_user do
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'rejects privileged scopes for non-platform-managers' do
+      post '/api/oauth_applications',
+           params: {
+             oauth_application: {
+               name: 'Privileged App',
+               redirect_uri: 'https://example.com/callback',
+               scopes: 'read admin mcp_access',
+               confidential: true
+             }
+           }.to_json,
+           headers: auth_headers
+
+      expect(response).to have_http_status(:unprocessable_content)
+      json = JSON.parse(response.body)
+      expect(json['errors']).to be_present
+    end
   end
 
   describe 'GET /api/oauth_applications/:id' do

@@ -20,7 +20,9 @@ module BetterTogether
         # CSRF protection is already handled by Api::ApplicationController which skips it for JSON/JSONAPI
         # requests. No need to skip_before_action here — doing so triggers CodeQL CSRF alerts.
         skip_after_action :enforce_policy_use # Custom endpoint; authorization via OAuth scopes
-        require_oauth_scopes :write, :admin, only: %i[receive]
+        skip_before_action :authenticate_user!
+        before_action :require_oauth_token!
+        require_oauth_scopes :admin, only: %i[receive]
 
         # POST /api/v1/webhooks/receive
         # rubocop:disable Metrics/MethodLength
@@ -47,6 +49,18 @@ module BetterTogether
         # rubocop:enable Metrics/MethodLength
 
         private
+
+        def require_oauth_token!
+          return if oauth2_authenticated?
+
+          render json: {
+            errors: [{
+              status: '401',
+              title: 'Unauthorized',
+              detail: 'This endpoint requires an OAuth Bearer token.'
+            }]
+          }, status: :unauthorized
+        end
 
         def webhook_params
           params.permit(:event, payload: {})

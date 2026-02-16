@@ -92,8 +92,22 @@ RSpec.describe BetterTogether::OauthApplication do
       expect(app.scopes.to_a).to include('read', 'write', 'read_communities')
     end
 
-    it 'allows MCP-scoped applications' do
-      app = create(:oauth_application, :with_mcp_scope)
+    it 'rejects MCP-scoped applications for untrusted owners' do
+      person = create(:person)
+      allow(person).to receive(:permitted_to?).with('manage_platform').and_return(false)
+
+      app = build(:oauth_application, owner: person, scopes: 'read mcp_access')
+
+      expect(app).not_to be_valid
+      expect(app.errors[:scopes].join).to include('mcp_access')
+    end
+
+    it 'allows MCP-scoped applications for trusted owners' do
+      person = create(:person)
+      allow(person).to receive(:permitted_to?).with('manage_platform').and_return(true)
+
+      app = create(:oauth_application, owner: person, scopes: 'read mcp_access')
+
       expect(app.scopes.to_a).to include('mcp_access')
     end
   end

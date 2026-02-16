@@ -36,6 +36,13 @@ RSpec.describe BetterTogether::WebhookEndpoint do
         expect(webhook_endpoint).to be_valid
       end
 
+      it 'rejects private/localhost URLs when private targets are disabled' do
+        allow(described_class).to receive(:allow_private_targets?).and_return(false)
+
+        webhook_endpoint.url = 'http://127.0.0.1:5678/webhook/handler'
+        expect(webhook_endpoint).not_to be_valid
+      end
+
       it 'rejects invalid URLs' do
         webhook_endpoint.url = 'not-a-url'
         expect(webhook_endpoint).not_to be_valid

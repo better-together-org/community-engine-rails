@@ -3,20 +3,28 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
-  let(:user) { create(:better_together_user, :confirmed) }
-  let(:token) { api_sign_in_and_get_token(user) }
-  let(:auth_headers) do
-    {
-      'Authorization' => "Bearer #{token}",
-      'Content-Type' => 'application/json',
-      'Accept' => 'application/json'
-    }
-  end
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
-  let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
-  let(:platform_manager_headers) do
+  let(:oauth_app) do
+    create(:oauth_application,
+           owner: platform_manager_user.person,
+           scopes: 'admin write',
+           redirect_uri: 'urn:ietf:wg:oauth:2.0:oob')
+  end
+
+  let(:oauth_access_token) do
+    post '/api/oauth/token', params: {
+      grant_type: 'client_credentials',
+      client_id: oauth_app.uid,
+      client_secret: oauth_app.secret,
+      scope: 'admin'
+    }, as: :json
+
+    JSON.parse(response.body).fetch('access_token')
+  end
+
+  let(:oauth_headers) do
     {
-      'Authorization' => "Bearer #{platform_manager_token}",
+      'Authorization' => "Bearer #{oauth_access_token}",
       'Content-Type' => 'application/json',
       'Accept' => 'application/json'
     }
@@ -29,7 +37,10 @@ RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
       let(:payload) { { event: 'ping' } }
 
       it 'returns pong response' do
-        post url, params: payload.to_json, headers: platform_manager_headers
+        expect(oauth_access_token).to be_present
+        expect(response).to have_http_status(:ok)
+
+        post url, params: payload.to_json, headers: oauth_headers
 
         expect(response).to have_http_status(:ok)
 
@@ -51,7 +62,7 @@ RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
       end
 
       it 'returns accepted status' do
-        post url, params: payload.to_json, headers: platform_manager_headers
+        post url, params: payload.to_json, headers: oauth_headers
 
         expect(response).to have_http_status(:accepted)
 
@@ -72,7 +83,7 @@ RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
       end
 
       it 'returns accepted status' do
-        post url, params: payload.to_json, headers: platform_manager_headers
+        post url, params: payload.to_json, headers: oauth_headers
 
         expect(response).to have_http_status(:accepted)
 
@@ -85,7 +96,7 @@ RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
       let(:payload) { { event: 'invalid.event_type' } }
 
       it 'returns unprocessable entity status' do
-        post url, params: payload.to_json, headers: platform_manager_headers
+        post url, params: payload.to_json, headers: oauth_headers
 
         expect(response).to have_http_status(:unprocessable_content)
 
@@ -98,7 +109,7 @@ RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
       let(:payload) { { payload: { data: 'something' } } }
 
       it 'returns unprocessable entity with error message' do
-        post url, params: payload.to_json, headers: platform_manager_headers
+        post url, params: payload.to_json, headers: oauth_headers
 
         expect(response).to have_http_status(:unprocessable_content)
 
@@ -112,6 +123,23 @@ RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
         post url,
              params: { event: 'ping' }.to_json,
              headers: { 'Content-Type' => 'application/json' }
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'when authenticated with JWT (not OAuth)' do
+      let(:jwt_user) { create(:better_together_user, :confirmed) }
+      let(:jwt_token) { api_sign_in_and_get_token(jwt_user) }
+
+      it 'returns unauthorized status' do
+        post url,
+             params: { event: 'ping' }.to_json,
+             headers: {
+               'Authorization' => "Bearer #{jwt_token}",
+               'Content-Type' => 'application/json',
+               'Accept' => 'application/json'
+             }
 
         expect(response).to have_http_status(:unauthorized)
       end

@@ -98,6 +98,24 @@ RSpec.describe BetterTogether::Mcp::PunditContext do
     end
   end
 
+  describe 'guest/authenticated predicates' do
+    let(:user) { create(:user) }
+
+    it 'is a guest when user is nil' do
+      context = described_class.new(user: nil)
+
+      expect(context.guest?).to be true
+      expect(context.authenticated?).to be false
+    end
+
+    it 'is authenticated when user is present' do
+      context = described_class.new(user: user)
+
+      expect(context.guest?).to be false
+      expect(context.authenticated?).to be true
+    end
+  end
+
   describe '#agent' do
     let(:user) { create(:user) }
 
