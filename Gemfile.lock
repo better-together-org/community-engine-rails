@@ -818,9 +818,10 @@ GEM
     sentry-rails (6.3.0)
       railties (>= 5.2.0)
       sentry-ruby (~> 6.3.0)
-    sentry-ruby (6.3.0)
+    sentry-ruby (6.3.1)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
+      logger
     shoulda-callback-matchers (1.1.4)
       activesupport (>= 3)
     shoulda-matchers (7.0.1)
