@@ -1,0 +1,61 @@
+<tr id="<%= dom_id(webhook_endpoint) %>">
+  <td>
+    <%= link_to webhook_endpoint.name, webhook_endpoint, class: 'text-decoration-none' %>
+  </td>
+  <td>
+    <code class="small"><%= truncate(webhook_endpoint.url, length: 50) %></code>
+  </td>
+  <td>
+    <% if webhook_endpoint.active? %>
+      <span class="badge bg-success">
+        <i class="fas fa-check-circle" aria-hidden="true"></i>
+        <%= t('better_together.webhook_endpoints.status_active', default: 'Active') %>
+      </span>
+    <% else %>
+      <span class="badge bg-secondary">
+        <i class="fas fa-pause-circle" aria-hidden="true"></i>
+        <%= t('better_together.webhook_endpoints.status_inactive', default: 'Inactive') %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <% if webhook_endpoint.events.present? && webhook_endpoint.events.any? %>
+      <% webhook_endpoint.events.first(3).each do |event| %>
+        <span class="badge bg-light text-dark border"><%= event %></span>
+      <% end %>
+      <% if webhook_endpoint.events.size > 3 %>
+        <span class="badge bg-light text-dark border">+<%= webhook_endpoint.events.size - 3 %></span>
+      <% end %>
+    <% else %>
+      <span class="text-muted small"><%= t('better_together.webhook_endpoints.all_events', default: 'All events') %></span>
+    <% end %>
+  </td>
+  <td>
+    <span class="badge bg-light text-dark border">
+      <%= webhook_endpoint.webhook_deliveries.count %>
+    </span>
+  </td>
+  <td>
+    <div class="btn-group btn-group-sm" role="group" aria-label="<%= t('better_together.webhook_endpoints.actions_aria', default: 'Webhook actions') %>">
+      <% if policy(webhook_endpoint).show? %>
+        <%= link_to webhook_endpoint, class: 'btn btn-outline-secondary btn-sm', 'aria-label' => t('globals.view') do %>
+          <i class="fas fa-eye" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+      <% if policy(webhook_endpoint).edit? %>
+        <%= link_to edit_webhook_endpoint_path(webhook_endpoint), class: 'btn btn-outline-primary btn-sm', 'aria-label' => t('globals.edit') do %>
+          <i class="fas fa-edit" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+      <% if policy(webhook_endpoint).test? %>
+        <%= button_to test_webhook_endpoint_path(webhook_endpoint),
+                      method: :post,
+                      class: 'btn btn-outline-info btn-sm',
+                      'aria-label' => t('better_together.webhook_endpoints.send_test', default: 'Send test'),
+                      form: { data: { turbo_confirm: t('better_together.webhook_endpoints.test_confirm', default: 'Send a test webhook?') } } do %>
+          <i class="fas fa-paper-plane" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+    </div>
+  </td>
+</tr>

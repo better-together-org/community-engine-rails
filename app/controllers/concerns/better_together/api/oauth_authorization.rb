@@ -17,30 +17,40 @@ module BetterTogether
         required_scopes = self.class.required_scopes_for_action(action_name)
         return if required_scopes.empty?
 
+        # Check token validity first (expired, revoked)
+        unless doorkeeper_token.accessible?
+          render_token_invalid
+          return
+        end
+
+        # Check if token has any of the required scopes
         unless doorkeeper_token.acceptable?(required_scopes)
           render_insufficient_scope(required_scopes)
         end
       rescue StandardError => e
-        # If scope verification fails (e.g., expired token), render forbidden
         Rails.logger.warn("OAuth scope verification failed: #{e.message}")
-        render_insufficient_scope(required_scopes)
+        render_token_invalid
+      end
+
+      def render_token_invalid
+        render json: {
+          errors: [{
+            status: '401',
+            title: 'Unauthorized',
+            detail: 'The access token is invalid, expired, or revoked.'
+          }]
+        }, status: :unauthorized
       end
 
       def render_insufficient_scope(required_scopes)
-        errors = [build_insufficient_scope_error(required_scopes)]
-        response_document = JSONAPI::ErrorsOperationResult.new(403, errors)
-        render json: JSONAPI::ResourceSerializer.new(nil).serialize_errors(response_document.errors),
-               status: :forbidden
-      end
-
-      def build_insufficient_scope_error(required_scopes)
-        JSONAPI::Error.new(
-          code: 'INSUFFICIENT_SCOPE',
-          status: :forbidden,
-          title: 'Insufficient OAuth scope',
-          detail: "This action requires one of these scopes: #{required_scopes.join(', ')}",
-          meta: { required_scopes: required_scopes, provided_scopes: token_scopes }
-        )
+        render json: {
+          errors: [{
+            status: '403',
+            title: 'Insufficient OAuth scope',
+            detail: "This action requires one of these scopes: #{required_scopes.join(', ')}",
+            meta: { required_scopes: required_scopes, provided_scopes: token_scopes }
+          }]
+        }, status: :forbidden
       end
 
       def token_scopes

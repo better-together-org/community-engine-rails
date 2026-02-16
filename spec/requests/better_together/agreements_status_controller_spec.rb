@@ -12,19 +12,22 @@ RSpec.describe BetterTogether::AgreementsStatusController do
   end
 
   let!(:privacy_policy) do
-    BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') do |a|
-      a.title = 'Privacy Policy'
-    end
+    agreement = BetterTogether::Agreement.find_or_initialize_by(identifier: 'privacy_policy')
+    agreement.title = 'Privacy Policy'
+    agreement.save!
+    agreement
   end
   let!(:terms_of_service) do
-    BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') do |a|
-      a.title = 'Terms of Service'
-    end
+    agreement = BetterTogether::Agreement.find_or_initialize_by(identifier: 'terms_of_service')
+    agreement.title = 'Terms of Service'
+    agreement.save!
+    agreement
   end
   let!(:code_of_conduct) do
-    BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') do |a|
-      a.title = 'Code of Conduct'
-    end
+    agreement = BetterTogether::Agreement.find_or_initialize_by(identifier: 'code_of_conduct')
+    agreement.title = 'Code of Conduct'
+    agreement.save!
+    agreement
   end
 
   before do

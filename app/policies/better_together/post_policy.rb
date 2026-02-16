@@ -39,6 +39,7 @@ module BetterTogether
         return scope.all if permitted_to?('manage_platform')
 
         base = scope.published
+        base = base.excluding_blocked_for(agent) if agent
         public_posts = posts_table[:privacy].eq('public')
         return base.where(public_posts) unless agent
 

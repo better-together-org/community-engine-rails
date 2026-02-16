@@ -62,6 +62,12 @@ module BetterTogether
 
     has_many :person_platform_integrations, dependent: :destroy
 
+    has_many :oauth_applications,
+             class_name: 'BetterTogether::OauthApplication',
+             foreign_key: :owner_id,
+             dependent: :destroy,
+             inverse_of: :owner
+
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
