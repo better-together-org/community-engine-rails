@@ -17,7 +17,8 @@ module BetterTogether
       # - action.publish: publish content
       # - ping: health check / connectivity test
       class WebhooksController < BetterTogether::Api::ApplicationController
-        skip_before_action :verify_authenticity_token
+        # CSRF protection is already handled by Api::ApplicationController which skips it for JSON/JSONAPI
+        # requests. No need to skip_before_action here — doing so triggers CodeQL CSRF alerts.
         skip_after_action :enforce_policy_use # Custom endpoint; authorization via OAuth scopes
         require_oauth_scopes :write, :admin, only: %i[receive]
 
