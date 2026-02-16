@@ -267,6 +267,11 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
+      better_together/oauth_application:
+        confidential: Confidential
+        name: Name
+        redirect_uri: Redirect URI
+        scopes: Scopes
       better_together/page:
         blocks: Blocks
         identifier: Identifier
@@ -431,6 +436,13 @@ en:
         string_translations: String translations
         unconfirmed_email: Unconfirmed email
         unlock_token: Unlock token
+      better_together/webhook_endpoint:
+        active: Active
+        description: Description
+        events: Events
+        name: Name
+        oauth_application: OAuth Application
+        url: URL
       better_together/wizard:
         current_completions: Current completions
         first_completed_at: First completed at
@@ -583,6 +595,7 @@ en:
       better_together/navigation_item: Navigation Item
       better_together/new_message_notifier: New Message Notifier
       better_together/new_message_notifier/notification: New Message Notifier Notification
+      better_together/oauth_application: OAuth Application
       better_together/page: Page
       better_together/person: Person
       better_together/person_community_membership: Person Community Membership
@@ -595,6 +608,7 @@ en:
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
       better_together/user: User
+      better_together/webhook_endpoint: Webhook Endpoint
       better_together/wizard: Wizard
       better_together/wizard_step: Wizard Step
       better_together/wizard_step_definition: Wizard Step Definition
@@ -1128,9 +1142,6 @@ en:
           24_hours: 'Reminder: %{event_name} starts in 24 hours'
           at_start: "%{event_name} is starting now"
         view_details_url: View details url
-      in: must be in %{count}
-      inclusion: is not included in the list
-      invalid: is not valid
       labels:
         duration_minutes: Duration
         ends_at: Ends at
@@ -2277,6 +2288,63 @@ en:
         card: Card
         list: List
         table: Table
+    webhook_endpoints:
+      actions_aria: Webhook actions
+      active_help: Enable or disable webhook delivery for this endpoint.
+      all_events: All events
+      back_to_list: Back to Webhooks
+      delete_aria: Delete webhook endpoint
+      deliveries_aria: Webhook delivery history
+      delivery_attempts: Attempts
+      delivery_event: Event
+      delivery_response: Response
+      delivery_status: Status
+      delivery_time: Time
+      description_placeholder: Optional description of this webhook's purpose.
+      details: Endpoint Details
+      edit_aria: Edit webhook endpoint
+      events_help: Comma-separated list of event names to subscribe to. Leave blank
+        to receive all events. Format resource.action (e.g., community.created, person.updated).
+      field_created: Created
+      field_description: Description
+      field_events: Events
+      field_oauth_app: OAuth Application
+      field_secret: Signing Secret
+      field_status: Status
+      field_url: URL
+      index:
+        header_actions: Actions
+        header_deliveries: Deliveries
+        header_events: Events
+        header_name: Name
+        header_status: Status
+        header_url: URL
+        new_btn_aria: Create new webhook endpoint
+        new_btn_text: New Webhook
+        no_webhooks: No webhook endpoints have been configured yet.
+        table_aria: Webhook endpoints list
+        title: Webhook Endpoints
+      name_help: A friendly name to identify this webhook endpoint.
+      name_placeholder: e.g., My Integration Webhook
+      no_deliveries: No deliveries yet. Use the "Send Test" button to verify your
+        endpoint.
+      no_oauth_app: "— None —"
+      oauth_help: Optionally link this webhook to an OAuth application.
+      recent_deliveries: Recent Deliveries
+      save: Save Webhook
+      secret_aria: Signing secret value
+      secret_note: Use this secret to verify webhook signatures. It was generated
+        when the endpoint was created and cannot be changed.
+      send_test: Send Test
+      status_active: Active
+      status_inactive: Inactive
+      test:
+        test_queued: Test webhook delivery has been queued.
+      test_confirm: Send a test webhook?
+      title: Webhook Endpoints
+      toggle_secret: Toggle secret visibility
+      url_help: The HTTPS URL where webhook payloads will be delivered.
+      view: View Webhook
     website_links:
       add: Add Website Link
       labels:
@@ -2774,62 +2842,6 @@ en:
       header:
         one: "%{count} error prohibited this %{model} from being saved"
         other: "%{count} errors prohibited this %{model} from being saved"
-    webhook_endpoints:
-      actions_aria: Webhook actions
-      active_help: Enable or disable webhook delivery for this endpoint.
-      all_events: All events
-      back_to_list: Back to Webhooks
-      delete_aria: Delete webhook endpoint
-      deliveries_aria: Webhook delivery history
-      delivery_attempts: Attempts
-      delivery_event: Event
-      delivery_response: Response
-      delivery_status: Status
-      delivery_time: Time
-      description_placeholder: Optional description of this webhook's purpose.
-      details: Endpoint Details
-      edit_aria: Edit webhook endpoint
-      events_help: Comma-separated list of event names to subscribe to. Leave blank
-        to receive all events. Format resource.action (e.g., community.created, person.updated).
-      field_created: Created
-      field_description: Description
-      field_events: Events
-      field_oauth_app: OAuth Application
-      field_secret: Signing Secret
-      field_status: Status
-      field_url: URL
-      index:
-        header_actions: Actions
-        header_deliveries: Deliveries
-        header_events: Events
-        header_name: Name
-        header_status: Status
-        header_url: URL
-        new_btn_aria: Create new webhook endpoint
-        new_btn_text: New Webhook
-        no_webhooks: No webhook endpoints have been configured yet.
-        table_aria: Webhook endpoints list
-        title: Webhook Endpoints
-      name_help: A friendly name to identify this webhook endpoint.
-      name_placeholder: e.g., My Integration Webhook
-      no_deliveries: No deliveries yet. Use the "Send Test" button to verify your
-        endpoint.
-      no_oauth_app: "— None —"
-      oauth_help: Optionally link this webhook to an OAuth application.
-      recent_deliveries: Recent Deliveries
-      save: Save Webhook
-      secret_aria: Signing secret value
-      secret_note: Use this secret to verify webhook signatures. It was generated
-        when the endpoint was created and cannot be changed.
-      send_test: Send Test
-      status_active: Active
-      status_inactive: Inactive
-      test_confirm: Send a test webhook?
-      test_queued: Test webhook delivery has been queued.
-      title: Webhook Endpoints
-      toggle_secret: Toggle secret visibility
-      url_help: The HTTPS URL where webhook payloads will be delivered.
-      view: View Webhook
     wizard:
       max_completions: Maximum number of completions reached for this wizard and step
         definition.

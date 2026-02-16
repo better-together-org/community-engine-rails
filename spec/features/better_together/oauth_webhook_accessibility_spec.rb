@@ -37,7 +37,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'OAuth Applications index'
+      it_behaves_like 'axe-clean page', 'OAuth Applications index'
     end
 
     describe 'show page' do
@@ -50,7 +50,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'OAuth Applications show'
+      it_behaves_like 'axe-clean page', 'OAuth Applications show'
     end
 
     describe 'new page' do
@@ -63,7 +63,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'OAuth Applications new'
+      it_behaves_like 'axe-clean page', 'OAuth Applications new'
     end
 
     describe 'edit page' do
@@ -76,7 +76,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'OAuth Applications edit'
+      it_behaves_like 'axe-clean page', 'OAuth Applications edit'
     end
   end
 
@@ -96,7 +96,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'Webhook Endpoints index'
+      it_behaves_like 'axe-clean page', 'Webhook Endpoints index'
     end
 
     describe 'show page' do
@@ -109,7 +109,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'Webhook Endpoints show'
+      it_behaves_like 'axe-clean page', 'Webhook Endpoints show'
     end
 
     describe 'new page' do
@@ -122,7 +122,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'Webhook Endpoints new'
+      it_behaves_like 'axe-clean page', 'Webhook Endpoints new'
     end
 
     describe 'edit page' do
@@ -135,7 +135,7 @@ RSpec.describe 'OAuth & Webhook Accessibility', :accessibility, :as_platform_man
         end
       end
 
-      include_examples 'axe-clean page', 'Webhook Endpoints edit'
+      it_behaves_like 'axe-clean page', 'Webhook Endpoints edit'
     end
   end
 end

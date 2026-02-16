@@ -18,7 +18,7 @@ RSpec.describe BetterTogether::OauthApplicationPolicy do
     end
 
     it 'denies unauthenticated users' do
-      expect(described_class.new(nil, BetterTogether::OauthApplication).index?).to be_falsey
+      expect(described_class.new(nil, BetterTogether::OauthApplication)).not_to be_index
     end
   end
 
@@ -36,7 +36,7 @@ RSpec.describe BetterTogether::OauthApplicationPolicy do
     end
 
     it 'denies unauthenticated users' do
-      expect(described_class.new(nil, oauth_app).show?).to be_falsey
+      expect(described_class.new(nil, oauth_app)).not_to be_show
     end
   end
 
@@ -50,7 +50,7 @@ RSpec.describe BetterTogether::OauthApplicationPolicy do
     end
 
     it 'denies unauthenticated users' do
-      expect(described_class.new(nil, BetterTogether::OauthApplication).create?).to be_falsey
+      expect(described_class.new(nil, BetterTogether::OauthApplication)).not_to be_create
     end
   end
 

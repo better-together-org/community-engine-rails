@@ -18,7 +18,7 @@ RSpec.describe BetterTogether::WebhookEndpointPolicy do
     end
 
     it 'denies unauthenticated users' do
-      expect(described_class.new(nil, BetterTogether::WebhookEndpoint).index?).to be_falsey
+      expect(described_class.new(nil, BetterTogether::WebhookEndpoint)).not_to be_index
     end
   end
 
@@ -36,7 +36,7 @@ RSpec.describe BetterTogether::WebhookEndpointPolicy do
     end
 
     it 'denies unauthenticated users' do
-      expect(described_class.new(nil, endpoint).show?).to be_falsey
+      expect(described_class.new(nil, endpoint)).not_to be_show
     end
   end
 
@@ -50,7 +50,7 @@ RSpec.describe BetterTogether::WebhookEndpointPolicy do
     end
 
     it 'denies unauthenticated users' do
-      expect(described_class.new(nil, BetterTogether::WebhookEndpoint).create?).to be_falsey
+      expect(described_class.new(nil, BetterTogether::WebhookEndpoint)).not_to be_create
     end
   end
 

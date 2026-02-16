@@ -267,6 +267,11 @@ es:
         recipient: :activerecord.models.recipient
         recipient_type: Tipo de destinatario
         seen_at: Visto en
+      better_together/oauth_application:
+        confidential: Confidencial
+        name: Nombre
+        redirect_uri: URI de redirección
+        scopes: Alcances
       better_together/page:
         blocks: Bloques
         identifier: Identificador
@@ -431,6 +436,13 @@ es:
         string_translations: Traducciones de cadenas
         unconfirmed_email: Email no confirmado
         unlock_token: Código de desbloqueo
+      better_together/webhook_endpoint:
+        active: Activo
+        description: Descripción
+        events: Eventos
+        name: Nombre
+        oauth_application: Aplicación OAuth
+        url: URL
       better_together/wizard:
         current_completions: Terminaciones actuales
         first_completed_at: Completado por primera vez en
@@ -584,6 +596,7 @@ es:
       better_together/navigation_item: Elemento de Navegación
       better_together/new_message_notifier: Notificador de mensajes nuevos
       better_together/new_message_notifier/notification: Notificación
+      better_together/oauth_application: Aplicación OAuth
       better_together/page: Página
       better_together/person: Persona
       better_together/person_community_membership: Pertenencia a la comunidad
@@ -596,6 +609,7 @@ es:
       better_together/role: Papel
       better_together/role_resource_permission: Permiso de recursos de rol
       better_together/user: Usuario
+      better_together/webhook_endpoint: Punto de conexión de webhook
       better_together/wizard: Mago
       better_together/wizard_step: Paso del asistente
       better_together/wizard_step_definition: Definición de pasos del asistente
@@ -1140,10 +1154,6 @@ es:
           24_hours: 'Recordatorio: %{event_name} comienza en 24 horas'
           at_start: "%{event_name} está comenzando ahora"
         view_details_url: View details url
-      in: debe estar en %{count}
-      inclusion: no está incluido en la lista
-      invalid: no es válido
-      invalid_url: no es una URL válida
       labels:
         duration_minutes: Duración
         ends_at: Termina en
@@ -1896,6 +1906,54 @@ es:
             ella.
         update:
           success: La aplicación OAuth '%{name}' se ha actualizado correctamente.
+    oauth_applications:
+      actions_aria: Acciones de la aplicación
+      back_to_list: Volver a aplicaciones
+      confidential: Confidencial
+      confidential_help: Los clientes confidenciales pueden almacenar sus credenciales
+        de forma segura (aplicaciones del lado del servidor). Los clientes públicos
+        no pueden (SPAs, aplicaciones móviles).
+      credentials: Credenciales
+      default_scopes: Alcances predeterminados
+      delete_aria: Eliminar aplicación OAuth
+      details: Detalles de la aplicación
+      edit_aria: Editar aplicación OAuth
+      field_client_id: ID del cliente
+      field_created: Creado
+      field_owner: Propietario
+      field_redirect_uri: URI de redirección
+      field_scopes: Alcances
+      field_secret: Secreto del cliente
+      field_trusted: De confianza
+      field_type: Tipo
+      index:
+        header_actions: Acciones
+        header_client_id: ID del cliente
+        header_confidential: Tipo
+        header_created: Creado
+        header_name: Nombre
+        header_scopes: Alcances
+        new_btn_aria: Crear nueva aplicación OAuth
+        new_btn_text: Nueva aplicación
+        no_applications: No se han registrado aplicaciones OAuth todavía.
+        table_aria: Lista de aplicaciones OAuth
+        title: Aplicaciones OAuth
+      name_help: Un nombre descriptivo para esta aplicación OAuth.
+      name_placeholder: ej., Mi aplicación de integración
+      no_redirect: No configurado
+      no_scopes: Predeterminado
+      no_secret_public: No aplica (cliente público)
+      public_type: Público
+      redirect_help: Una URI de redirección por línea. Para flujos máquina-a-máquina
+        (client_credentials), use urn:ietf:wg:oauth:2.0:oob
+      save: Guardar aplicación
+      scopes_help: Seleccione los permisos que esta aplicación debería tener.
+      secret_aria: Valor del secreto del cliente
+      title: Aplicaciones OAuth
+      toggle_secret: Alternar visibilidad del secreto
+      trusted_no: 'No'
+      trusted_yes: Sí
+      view: Ver aplicación
     page_authorship_notifier:
       added: Has sido añadido como autor en %{page_title}
       added_by: "%{actor_name} te añadió como autor en %{page_title}"
@@ -2267,6 +2325,65 @@ es:
         card: Tarjetas
         list: Lista
         table: Tabla
+    webhook_endpoints:
+      actions_aria: Acciones del webhook
+      active_help: Habilitar o deshabilitar la entrega de webhooks para este punto
+        de conexión.
+      all_events: Todos los eventos
+      back_to_list: Volver a webhooks
+      delete_aria: Eliminar punto de conexión de webhook
+      deliveries_aria: Historial de entregas de webhooks
+      delivery_attempts: Intentos
+      delivery_event: Evento
+      delivery_response: Respuesta
+      delivery_status: Estado
+      delivery_time: Hora
+      description_placeholder: Descripción opcional del propósito de este webhook.
+      details: Detalles del punto de conexión
+      edit_aria: Editar punto de conexión de webhook
+      events_help: Lista de nombres de eventos separados por comas. Deje en blanco
+        para recibir todos los eventos. Formato recurso.acción (ej., community.created,
+        person.updated).
+      field_created: Creado
+      field_description: Descripción
+      field_events: Eventos
+      field_oauth_app: Aplicación OAuth
+      field_secret: Secreto de firma
+      field_status: Estado
+      field_url: URL
+      index:
+        header_actions: Acciones
+        header_deliveries: Entregas
+        header_events: Eventos
+        header_name: Nombre
+        header_status: Estado
+        header_url: URL
+        new_btn_aria: Crear nuevo punto de conexión de webhook
+        new_btn_text: Nuevo webhook
+        no_webhooks: No se han configurado puntos de conexión de webhook todavía.
+        table_aria: Lista de puntos de conexión de webhooks
+        title: Puntos de conexión de webhooks
+      name_help: Un nombre amigable para identificar este punto de conexión de webhook.
+      name_placeholder: ej., Mi webhook de integración
+      no_deliveries: No hay entregas aún. Use el botón "Enviar prueba" para verificar
+        su punto de conexión.
+      no_oauth_app: "— Ninguna —"
+      oauth_help: Opcionalmente vincule este webhook a una aplicación OAuth.
+      recent_deliveries: Entregas recientes
+      save: Guardar webhook
+      secret_aria: Valor del secreto de firma
+      secret_note: Use este secreto para verificar las firmas del webhook. Fue generado
+        cuando se creó el punto de conexión y no se puede cambiar.
+      send_test: Enviar prueba
+      status_active: Activo
+      status_inactive: Inactivo
+      test:
+        test_queued: La entrega de prueba del webhook se ha puesto en cola.
+      test_confirm: "¿Enviar un webhook de prueba?"
+      title: Puntos de conexión de webhooks
+      toggle_secret: Alternar visibilidad del secreto
+      url_help: La URL HTTPS donde se entregarán las cargas del webhook.
+      view: Ver webhook
     website_links:
       add: Agregar Enlace de Sitio Web
       labels:
@@ -2695,6 +2812,9 @@ es:
   devise_omniauth_callbacks:
     failure: Hubo un problema al iniciar sesión a través de %{kind}. %{reason}
     success: Autenticado exitosamente desde la cuenta de %{kind}.
+  doorkeeper:
+    errors:
+      unauthorized: No autorizado. Se requiere un token de acceso válido.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2717,6 +2837,7 @@ es:
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
+      invalid_url: no es una URL válida
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       model_invalid: 'La validación falló: %{errors}'

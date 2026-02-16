@@ -267,6 +267,11 @@ uk:
         recipient: :activerecord.models.recipient
         recipient_type: Тип одержувача
         seen_at: Переглянуто о
+      better_together/oauth_application:
+        confidential: Конфіденційний
+        name: Назва
+        redirect_uri: URI перенаправлення
+        scopes: Області доступу
       better_together/page:
         blocks: Блоки
         identifier: Ідентифікатор
@@ -431,6 +436,13 @@ uk:
         string_translations: Переклади рядків
         unconfirmed_email: Непідтверджена електронна пошта
         unlock_token: Токен розблокування
+      better_together/webhook_endpoint:
+        active: Активний
+        description: Опис
+        events: Події
+        name: Назва
+        oauth_application: Додаток OAuth
+        url: URL
       better_together/wizard:
         current_completions: Поточні завершення
         first_completed_at: Вперше завершено о
@@ -577,6 +589,7 @@ uk:
       better_together/navigation_item: Елемент навігації
       better_together/new_message_notifier: Сповіщувач Нових Повідомлень
       better_together/new_message_notifier/notification: Сповіщувач Нових Повідомлень/Сповіщення
+      better_together/oauth_application: Додаток OAuth
       better_together/page: Сторінка
       better_together/person: Особа
       better_together/person_community_membership: Членство особи в спільноті
@@ -589,6 +602,7 @@ uk:
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
       better_together/user: Користувач
+      better_together/webhook_endpoint: Кінцева точка вебхука
       better_together/wizard: Майстер
       better_together/wizard_step: Крок майстра
       better_together/wizard_step_definition: Визначення кроку майстра
@@ -1133,10 +1147,6 @@ uk:
           24_hours: 'Нагадування: %{event_name} починається через 24 години'
           at_start: "%{event_name} починається зараз"
         view_details_url: URL деталей перегляду
-      in: має бути в %{count}
-      inclusion: не включено до списку
-      invalid: недійсний
-      invalid_url: не є дійсною URL-адресою
       labels:
         duration_minutes: Тривалість
         ends_at: Закінчується о
@@ -1889,6 +1899,53 @@ uk:
             або у вас немає дозволу на доступ до нього.
         update:
           success: Додаток OAuth '%{name}' успішно оновлено.
+    oauth_applications:
+      actions_aria: Дії додатка
+      back_to_list: Назад до додатків
+      confidential: Конфіденційний
+      confidential_help: Конфіденційні клієнти можуть безпечно зберігати свої облікові
+        дані (серверні додатки). Публічні клієнти не можуть (SPA, мобільні додатки).
+      credentials: Облікові дані
+      default_scopes: Області доступу за замовчуванням
+      delete_aria: Видалити додаток OAuth
+      details: Деталі додатка
+      edit_aria: Редагувати додаток OAuth
+      field_client_id: ID клієнта
+      field_created: Створено
+      field_owner: Власник
+      field_redirect_uri: URI перенаправлення
+      field_scopes: Області доступу
+      field_secret: Секрет клієнта
+      field_trusted: Довірений
+      field_type: Тип
+      index:
+        header_actions: Дії
+        header_client_id: ID клієнта
+        header_confidential: Тип
+        header_created: Створено
+        header_name: Назва
+        header_scopes: Області доступу
+        new_btn_aria: Створити новий додаток OAuth
+        new_btn_text: Новий додаток
+        no_applications: Жодного додатка OAuth ще не зареєстровано.
+        table_aria: Список додатків OAuth
+        title: Додатки OAuth
+      name_help: Описова назва для цього додатка OAuth.
+      name_placeholder: напр., Мій додаток інтеграції
+      no_redirect: Не налаштовано
+      no_scopes: За замовчуванням
+      no_secret_public: Не застосовується (публічний клієнт)
+      public_type: Публічний
+      redirect_help: Один URI перенаправлення на рядок. Для потоків машина-до-машини
+        (client_credentials) використовуйте urn:ietf:wg:oauth:2.0:oob
+      save: Зберегти додаток
+      scopes_help: Виберіть дозволи, які повинен мати цей додаток.
+      secret_aria: Значення секрету клієнта
+      title: Додатки OAuth
+      toggle_secret: Перемкнути видимість секрету
+      trusted_no: Ні
+      trusted_yes: Так
+      view: Переглянути додаток
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"
@@ -2256,6 +2313,63 @@ uk:
         card: Картки
         list: Список
         table: Таблиця
+    webhook_endpoints:
+      actions_aria: Дії вебхука
+      active_help: Увімкнути або вимкнути доставку вебхуків для цієї кінцевої точки.
+      all_events: Всі події
+      back_to_list: Назад до вебхуків
+      delete_aria: Видалити кінцеву точку вебхука
+      deliveries_aria: Історія доставок вебхуків
+      delivery_attempts: Спроби
+      delivery_event: Подія
+      delivery_response: Відповідь
+      delivery_status: Статус
+      delivery_time: Час
+      description_placeholder: Необов'язковий опис призначення цього вебхука.
+      details: Деталі кінцевої точки
+      edit_aria: Редагувати кінцеву точку вебхука
+      events_help: Список назв подій через кому. Залиште порожнім, щоб отримувати
+        всі події. Формат ресурс.дія (напр., community.created, person.updated).
+      field_created: Створено
+      field_description: Опис
+      field_events: Події
+      field_oauth_app: Додаток OAuth
+      field_secret: Секрет підпису
+      field_status: Статус
+      field_url: URL
+      index:
+        header_actions: Дії
+        header_deliveries: Доставки
+        header_events: Події
+        header_name: Назва
+        header_status: Статус
+        header_url: URL
+        new_btn_aria: Створити нову кінцеву точку вебхука
+        new_btn_text: Новий вебхук
+        no_webhooks: Кінцеві точки вебхуків ще не налаштовані.
+        table_aria: Список кінцевих точок вебхуків
+        title: Кінцеві точки вебхуків
+      name_help: Зручна назва для ідентифікації цієї кінцевої точки вебхука.
+      name_placeholder: напр., Мій вебхук інтеграції
+      no_deliveries: Доставок ще немає. Скористайтеся кнопкою «Надіслати тест» для
+        перевірки вашої кінцевої точки.
+      no_oauth_app: "— Немає —"
+      oauth_help: За бажанням прив'яжіть цей вебхук до додатка OAuth.
+      recent_deliveries: Нещодавні доставки
+      save: Зберегти вебхук
+      secret_aria: Значення секрету підпису
+      secret_note: Використовуйте цей секрет для перевірки підписів вебхука. Він був
+        згенерований при створенні кінцевої точки і не може бути змінений.
+      send_test: Надіслати тест
+      status_active: Активний
+      status_inactive: Неактивний
+      test:
+        test_queued: Тестову доставку вебхука поставлено в чергу.
+      test_confirm: Надіслати тестовий вебхук?
+      title: Кінцеві точки вебхуків
+      toggle_secret: Перемкнути видимість секрету
+      url_help: HTTPS URL, на який будуть доставлятися навантаження вебхука.
+      view: Переглянути вебхук
     website_links:
       add: Додати посилання на веб-сайт
       labels:
@@ -2701,6 +2815,9 @@ uk:
   devise_omniauth_callbacks:
     failure: Виникла проблема з входом через %{kind}. %{reason}
     success: Успішно автентифіковано з облікового запису %{kind}.
+  doorkeeper:
+    errors:
+      unauthorized: Не авторизовано. Потрібен дійсний токен доступу.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2723,6 +2840,7 @@ uk:
       in: має бути в %{count}
       inclusion: не включено до списку
       invalid: неправильний
+      invalid_url: не є дійсною URL-адресою
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       model_invalid: 'Перевірка не вдалася: %{errors}'
