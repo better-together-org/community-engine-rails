@@ -49,7 +49,7 @@ module BetterTogether
       # Override current_user to support both Devise and Doorkeeper authentication
       # When an OAuth2 token is present with a resource_owner_id, resolve the user
       # For client_credentials tokens, resolve the user from the application owner
-      def current_user
+      def current_user # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         if oauth2_authenticated? && doorkeeper_token.resource_owner_id.present?
           @current_user ||= BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
         elsif oauth2_authenticated?

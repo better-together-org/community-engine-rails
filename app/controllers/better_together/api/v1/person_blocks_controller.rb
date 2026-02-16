@@ -48,7 +48,7 @@ module BetterTogether
 
         private
 
-        def serialize_person_block(block)
+        def serialize_person_block(block) # rubocop:disable Metrics/MethodLength
           {
             data: {
               type: 'person_blocks',
