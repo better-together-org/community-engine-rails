@@ -12,7 +12,7 @@ module BetterTogether
         # GET /api/v1/metrics/summary
         def show # rubocop:disable Metrics/MethodLength
           unless current_user&.person&.permitted_to?('manage_platform')
-            return render json: { errors: [{ status: '403', title: 'Forbidden' }] }, status: :forbidden
+            return render json: { errors: [{ status: '404', title: 'Not Found' }] }, status: :not_found
           end
 
           @policy_used = true

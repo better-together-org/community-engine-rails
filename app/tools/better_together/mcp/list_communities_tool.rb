@@ -11,12 +11,16 @@ module BetterTogether
         optional(:privacy_filter)
           .filled(:string)
           .description('Filter by privacy level: public or private')
+        optional(:limit)
+          .filled(:integer)
+          .description('Maximum number of results to return (default: 50)')
       end
 
       # List communities with authorization and privacy filtering
       # @param privacy_filter [String, nil] Optional privacy level filter
+      # @param limit [Integer] Maximum results (default: 50, max: 100)
       # @return [String] JSON array of community objects
-      def call(privacy_filter: nil)
+      def call(privacy_filter: nil, limit: 50)
         # Execute in user's timezone for consistent date/time formatting
         with_timezone_scope do
           # Use policy_scope to automatically filter by:
@@ -28,6 +32,9 @@ module BetterTogether
 
           # Apply optional privacy filter
           communities = communities.where(privacy: privacy_filter) if privacy_filter.present?
+
+          # Apply limit with a maximum cap
+          communities = communities.limit([limit, 100].min)
 
           # Serialize communities to JSON
           result = JSON.generate(

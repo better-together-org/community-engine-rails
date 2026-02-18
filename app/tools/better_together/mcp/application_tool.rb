@@ -29,6 +29,14 @@ module BetterTogether
 
       protected
 
+      # Escape LIKE metacharacters (%, _) in user-supplied search queries
+      # to prevent unintended pattern matching.
+      # @param query [String] Raw user input
+      # @return [String] Escaped query safe for use in LIKE clauses
+      def sanitize_like(query)
+        ActiveRecord::Base.sanitize_sql_like(query.to_s)
+      end
+
       # Log MCP tool invocations for audit and debugging.
       # Produces structured JSON entries tagged [MCP][tool] in Rails logs.
       # Future: persist to Metrics::McpInvocation model for queryable audit trails.

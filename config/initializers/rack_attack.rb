@@ -87,6 +87,28 @@ module Rack
       req.ip if req.path.include?('/users/sign-in') && req.post?
     end
 
+    ### API Authentication Endpoint Throttling ###
+
+    # Throttle API login endpoint by IP (5 requests per 20 seconds)
+    throttle('api_logins/ip', limit: 5, period: 20.seconds) do |req|
+      req.ip if req.path.include?('/api/auth/sign_in') && req.post?
+    end
+
+    # Throttle API registration endpoint by IP (3 requests per minute)
+    throttle('api_registrations/ip', limit: 3, period: 1.minute) do |req|
+      req.ip if req.path.include?('/api/auth/sign_up') && req.post?
+    end
+
+    # Throttle API password reset endpoint by IP (5 requests per minute)
+    throttle('api_password_resets/ip', limit: 5, period: 1.minute) do |req|
+      req.ip if req.path.include?('/api/auth/password') && req.post?
+    end
+
+    # Throttle OAuth token endpoint by IP (10 requests per minute)
+    throttle('oauth/token/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.path.include?('/oauth/token') && req.post?
+    end
+
     # Throttle POST requests to /users/sign-in by email param
     #
     # Key: "rack::attack:#{Time.now.to_i/:period}:logins/email:#{normalized_email}"

@@ -9,7 +9,7 @@ module BetterTogether
       #
       # Also provides a test ping action to verify endpoint connectivity.
       class WebhookEndpointsController < BetterTogether::Api::ApplicationController
-        require_oauth_scopes :admin, :write, only: %i[create update destroy test]
+        require_oauth_scopes :admin, only: %i[create update destroy test]
         require_oauth_scopes :admin, :read, only: %i[index show]
 
         # GET /api/v1/webhook_endpoints

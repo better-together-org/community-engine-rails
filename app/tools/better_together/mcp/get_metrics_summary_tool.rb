@@ -40,9 +40,20 @@ module BetterTogether
 
       def build_scope(from_date, to_date)
         scope = BetterTogether::Metrics::PageView.all
-        scope = scope.where('viewed_at >= ?', Date.parse(from_date)) if from_date.present?
-        scope = scope.where('viewed_at <= ?', Date.parse(to_date)) if to_date.present?
+        scope = scope.where('viewed_at >= ?', safe_parse_date(from_date)) if from_date.present? && safe_parse_date(from_date)
+        scope = scope.where('viewed_at <= ?', safe_parse_date(to_date)) if to_date.present? && safe_parse_date(to_date)
         scope
+      end
+
+      # Safely parse a date string, returning nil on invalid input
+      # @param value [String, nil] Date string in ISO 8601 format
+      # @return [Date, nil]
+      def safe_parse_date(value)
+        return nil if value.blank?
+
+        Date.parse(value)
+      rescue Date::Error, ArgumentError
+        nil
       end
 
       def build_summary(scope) # rubocop:disable Metrics/MethodLength

@@ -16,12 +16,16 @@ module BetterTogether
                class_name: 'BetterTogether::WebhookEndpoint'
 
     validates :event, presence: true
-    validates :status, presence: true,
-                       inclusion: { in: %w[pending delivered failed retrying] }
 
-    scope :pending, -> { where(status: 'pending') }
-    scope :delivered, -> { where(status: 'delivered') }
-    scope :failed, -> { where(status: 'failed') }
+    enum :status, {
+      pending: 'pending',
+      delivered: 'delivered',
+      failed: 'failed',
+      retrying: 'retrying'
+    }
+
+    validates :status, presence: true
+
     scope :recent, -> { order(created_at: :desc) }
 
     # Mark as successfully delivered

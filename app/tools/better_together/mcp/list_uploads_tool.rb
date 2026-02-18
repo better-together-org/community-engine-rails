@@ -17,6 +17,8 @@ module BetterTogether
       # @param limit [Integer] Maximum results (default: 20)
       # @return [String] JSON array of upload objects
       def call(limit: 20)
+        return JSON.generate({ error: 'Authentication required' }) unless current_user
+
         with_timezone_scope do
           uploads = fetch_uploads(limit)
           result = JSON.generate(uploads.map { |upload| serialize_upload(upload) })

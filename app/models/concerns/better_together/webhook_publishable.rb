@@ -69,7 +69,7 @@ module BetterTogether
         )
         WebhookDeliveryJob.perform_later(delivery.id)
       end
-    rescue StandardError => e
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
       Rails.logger.error("Failed to publish webhook event #{event_name}: #{e.message}")
     end
 

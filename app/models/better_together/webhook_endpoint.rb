@@ -15,6 +15,9 @@ module BetterTogether
   class WebhookEndpoint < ApplicationRecord
     self.table_name = 'better_together_webhook_endpoints'
 
+    # Encrypt webhook signing secret at rest using Active Record Encryption
+    encrypts :secret
+
     VALID_EVENT_PATTERN = /\A[a-z_]+\.[a-z_]+\z/
 
     PRIVATE_IP_RANGES = [
@@ -52,7 +55,7 @@ module BetterTogether
 
     scope :active, -> { where(active: true) }
     scope :for_event, lambda { |event|
-      active.where('events = :empty OR :event = ANY(events)', empty: '{}', event: event)
+      active.where("events = :empty OR :event = ANY(events)", empty: '{}', event: event.to_s)
     }
 
     # Check whether this endpoint should receive the given event

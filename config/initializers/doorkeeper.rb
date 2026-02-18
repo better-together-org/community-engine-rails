@@ -46,8 +46,19 @@ Doorkeeper.configure do # rubocop:disable Metrics/BlockLength
   # Enable refresh token rotation
   use_refresh_token
 
+  # Refresh tokens expire after 30 days
+  custom_access_token_expires_in do |context|
+    context.grant_type == 'client_credentials' ? 2.hours : 2.hours
+  end
+
   # Revoke old refresh tokens when a new one is issued
   revoke_previous_client_credentials_token
+
+  # Enable PKCE for authorization code flow (prevents code interception attacks)
+  force_pkce
+
+  # Hash application secrets at rest
+  hash_application_secrets
 
   # Available scopes for OAuth applications
   # Organized by resource type with read/write granularity
@@ -79,8 +90,10 @@ Doorkeeper.configure do # rubocop:disable Metrics/BlockLength
   # Grant flows enabled
   grant_flows %w[authorization_code client_credentials]
 
-  # Allow token introspection for resource servers
-  allow_token_introspection true
+  # Restrict token introspection to the token's own application
+  allow_token_introspection do |token, _authorized_token|
+    token&.application.present?
+  end
 
   # Skip authorization screen for trusted applications
   skip_authorization do |_resource_owner, client|

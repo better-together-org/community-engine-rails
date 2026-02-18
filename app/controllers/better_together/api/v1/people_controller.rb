@@ -9,6 +9,8 @@ module BetterTogether
         # Custom /people/me endpoint - equivalent to HTML controller's me? logic
         # Sets the ID param to current user's person and processes as a standard show request
         def me
+          return head(:unauthorized) unless current_user&.person
+
           params[:id] = current_user.person.id
           params[:action] = 'show'
           process_request
