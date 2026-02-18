@@ -25,4 +25,5 @@
 
   <!-- Render the block's specific fields -->
   <%= render partial: "better_together/content/blocks/fields/#{block.block_name}", locals: { block:, scope:, temp_id: } %>
+  <%= render partial: "better_together/content/blocks/fields/shared/extra_block_fields", locals: { block:, scope:, temp_id: } %>
 </div>
