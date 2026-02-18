@@ -35,17 +35,17 @@ module BetterTogether
       def search_people(query, limit)
         sanitized = sanitize_like(query)
         base = policy_scope(BetterTogether::Person)
-        base
-          .i18n
-          .joins(:string_translations)
-          .where(
-            'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
-            "%#{sanitized}%",
-            %w[name]
-          )
-          .or(
-            base.where('identifier ILIKE ?', "%#{sanitized}%")
-          )
+
+        matches_by_name = base.i18n
+                              .joins(:string_translations)
+                              .where(
+                                'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+                                "%#{sanitized}%",
+                                %w[name]
+                              )
+
+        matches_by_name
+          .or(base.where('identifier ILIKE ?', "%#{sanitized}%"))
           .distinct
           .limit([limit, 100].min)
       end

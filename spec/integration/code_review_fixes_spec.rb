@@ -4,8 +4,9 @@ require 'rails_helper'
 
 # TDD specs for code review fixes across Phases 1-5.
 # Each context maps to a specific fix from the implementation plan.
-RSpec.describe 'Code Review Fixes' do
+RSpec.describe BetterTogether::CodeReviewFixes do
   include McpTestHelpers
+
   # ─────────────────────────────────────────────────────────────────────────────
   # Phase 1: Critical Security
   # ─────────────────────────────────────────────────────────────────────────────
@@ -159,7 +160,7 @@ RSpec.describe 'Code Review Fixes' do
       it 'uses hashed secret storage' do
         skip 'Doorkeeper not loaded' unless defined?(Doorkeeper)
         strategy = Doorkeeper.config.application_secret_strategy
-        expect(strategy).not_to eq(::Doorkeeper::SecretStoring::Plain)
+        expect(strategy).not_to eq(Doorkeeper::SecretStoring::Plain)
       end
     end
   end
@@ -298,7 +299,7 @@ RSpec.describe 'Code Review Fixes' do
         source = File.read(
           Rails.root.join('..', '..', 'app', 'models', 'better_together', 'person.rb')
         )
-        count = source.scan(/has_many :agreement_participants/).count
+        count = source.scan('has_many :agreement_participants').count
         expect(count).to eq(1), "Expected 1 declaration of has_many :agreement_participants, found #{count}"
       end
     end
@@ -308,7 +309,7 @@ RSpec.describe 'Code Review Fixes' do
         source = File.read(
           Rails.root.join('..', '..', 'app', 'models', 'better_together', 'page.rb')
         )
-        count = source.scan(/has_many :navigation_items/).count
+        count = source.scan('has_many :navigation_items').count
         expect(count).to eq(1), "Expected 1 declaration of has_many :navigation_items, found #{count}"
       end
     end
@@ -397,7 +398,7 @@ RSpec.describe 'Code Review Fixes' do
 
       it 'returns a PunditContext from Warden when session is present' do
         user = create(:user)
-        warden = instance_double('Warden::Proxy', user: user)
+        warden = instance_double(Warden::Proxy, user: user)
         request = instance_double(Rack::Request, env: { 'warden' => warden })
 
         context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
@@ -408,15 +409,15 @@ RSpec.describe 'Code Review Fixes' do
 
       it 'falls back to Doorkeeper token when Warden has no user' do
         user = create(:user)
-        warden = instance_double('Warden::Proxy', user: nil)
+        warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(Rack::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = double(
-          'doorkeeper_token',
+        doorkeeper_token = instance_double(
+          Doorkeeper::AccessToken,
           accessible?: true,
+          acceptable?: true,
           resource_owner_id: user.id
         )
-        allow(doorkeeper_token).to receive(:acceptable?).with('mcp_access').and_return(true)
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
           .with(request, :from_bearer_authorization)
           .and_return(doorkeeper_token)
@@ -427,7 +428,7 @@ RSpec.describe 'Code Review Fixes' do
       end
 
       it 'returns guest context when neither Warden nor Doorkeeper authenticate' do
-        warden = instance_double('Warden::Proxy', user: nil)
+        warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(Rack::Request, env: { 'warden' => warden })
 
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
@@ -440,15 +441,15 @@ RSpec.describe 'Code Review Fixes' do
 
       it 'rejects Doorkeeper token without mcp_access scope' do
         user = create(:user)
-        warden = instance_double('Warden::Proxy', user: nil)
+        warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(Rack::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = double(
-          'doorkeeper_token',
+        doorkeeper_token = instance_double(
+          Doorkeeper::AccessToken,
           accessible?: true,
+          acceptable?: false,
           resource_owner_id: user.id
         )
-        allow(doorkeeper_token).to receive(:acceptable?).with('mcp_access').and_return(false)
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
           .with(request, :from_bearer_authorization)
           .and_return(doorkeeper_token)
@@ -465,9 +466,11 @@ RSpec.describe 'Code Review Fixes' do
         )
         # Count occurrences of the Doorkeeper::OAuth::Token.authenticate pattern
         matches = source.scan('Doorkeeper::OAuth::Token.authenticate')
-        expect(matches.length).to be <= 0,
+        message =
           "Expected zero inline Doorkeeper token extractions in fast_mcp.rb, found #{matches.length}. " \
           'Doorkeeper fallback should be extracted into PunditContext.from_request_or_doorkeeper'
+
+        expect(matches.length).to eq(0), message
       end
 
       it 'calls from_request_or_doorkeeper in filter blocks' do
@@ -479,38 +482,28 @@ RSpec.describe 'Code Review Fixes' do
     end
 
     describe '6.3 — Search tools use sanitize_like for LIKE queries' do
-      describe 'SearchPeopleTool' do
-        it 'escapes LIKE metacharacters in queries' do
-          source = File.read(
-            Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_people_tool.rb')
-          )
-          # Should NOT have raw interpolation in LIKE
-          expect(source).not_to match(/%#\{query\}%/),
-            'SearchPeopleTool should use sanitize_like(query) instead of raw #{query} in LIKE patterns'
-          expect(source).to include('sanitize_like')
-        end
+      it 'uses sanitize_like in SearchPeopleTool LIKE patterns' do
+        source = File.read(
+          Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_people_tool.rb')
+        )
+        expect(source).not_to match(/%#\{query\}%/)
+        expect(source).to include('sanitize_like')
       end
 
-      describe 'SearchGeographyTool' do
-        it 'escapes LIKE metacharacters in queries' do
-          source = File.read(
-            Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_geography_tool.rb')
-          )
-          expect(source).not_to match(/%#\{query\}%/),
-            'SearchGeographyTool should use sanitize_like(query) instead of raw #{query} in LIKE patterns'
-          expect(source).to include('sanitize_like')
-        end
+      it 'uses sanitize_like in SearchGeographyTool LIKE patterns' do
+        source = File.read(
+          Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_geography_tool.rb')
+        )
+        expect(source).not_to match(/%#\{query\}%/)
+        expect(source).to include('sanitize_like')
       end
 
-      describe 'SearchPostsTool' do
-        it 'escapes LIKE metacharacters in queries' do
-          source = File.read(
-            Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_posts_tool.rb')
-          )
-          expect(source).not_to match(/%#\{query\}%/),
-            'SearchPostsTool should use sanitize_like(query) instead of raw #{query} in LIKE patterns'
-          expect(source).to include('sanitize_like')
-        end
+      it 'uses sanitize_like in SearchPostsTool LIKE patterns' do
+        source = File.read(
+          Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_posts_tool.rb')
+        )
+        expect(source).not_to match(/%#\{query\}%/)
+        expect(source).to include('sanitize_like')
       end
     end
 
@@ -521,8 +514,8 @@ RSpec.describe 'Code Review Fixes' do
         )
         matches = source.scan('policy_scope(BetterTogether::Person)')
         expect(matches.length).to eq(1),
-          "Expected single policy_scope call in search_people, found #{matches.length}. " \
-          'Assign base scope to a variable and reuse it in .or() clause.'
+                                  "Expected single policy_scope call in search_people, found #{matches.length}. " \
+                                  'Assign base scope to a variable and reuse it in .or() clause.'
       end
     end
 
@@ -532,7 +525,7 @@ RSpec.describe 'Code Review Fixes' do
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'send_message_tool.rb')
         )
         expect(source).to include('authorize'),
-          'SendMessageTool should call authorize for Pundit policy enforcement'
+                          'SendMessageTool should call authorize for Pundit policy enforcement'
       end
     end
 

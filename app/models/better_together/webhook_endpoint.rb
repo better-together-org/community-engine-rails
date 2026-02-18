@@ -55,7 +55,7 @@ module BetterTogether
 
     scope :active, -> { where(active: true) }
     scope :for_event, lambda { |event|
-      active.where("events = :empty OR :event = ANY(events)", empty: '{}', event: event.to_s)
+      active.where('events = :empty OR :event = ANY(events)', empty: '{}', event: event.to_s)
     }
 
     # Check whether this endpoint should receive the given event

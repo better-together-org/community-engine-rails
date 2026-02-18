@@ -2495,7 +2495,6 @@ es:
             una base donde todos puedan reunirse y colaborar.
           progress:
             step: Paso 1 de 2
-  block: :activerecord.models.block
   community:
     create_failed: Creación fallida
     created: Creado
@@ -2896,7 +2895,6 @@ es:
       one_uncompleted: Solo se permite un paso sin completar por persona.
       step_limit: El número de completaciones para este paso alcanzó el límite del
         asistente.
-  event: :activerecord.models.event
   flash:
     checklist_item:
       update_failed: Failed to update checklist item.

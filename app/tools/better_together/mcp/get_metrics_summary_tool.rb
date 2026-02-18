@@ -52,7 +52,7 @@ module BetterTogether
         return nil if value.blank?
 
         Date.parse(value)
-      rescue Date::Error, ArgumentError
+      rescue ArgumentError
         nil
       end
 

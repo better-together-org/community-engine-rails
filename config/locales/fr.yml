@@ -2510,7 +2510,6 @@ fr:
             vous aurez une base où tout le monde pourra se rassembler et collaborer.
           progress:
             step: Étape 1 sur 2
-  block: :activerecord.models.block
   community:
     create_failed: Échec de la création
     created: Créé
@@ -2913,7 +2912,6 @@ fr:
       one_uncompleted: Une seule étape non terminée par personne est autorisée.
       step_limit: Le nombre de validations pour cette étape a atteint la limite de
         l'assistant.
-  event: :activerecord.models.event
   flash:
     checklist_item:
       update_failed: Échec de la mise à jour de l'élément de la liste.

@@ -2454,7 +2454,6 @@ en:
             have a home base where everyone can gather and collaborate.
           progress:
             step: Step 1 of 2
-  block: :activerecord.models.block
   community:
     create_failed: Create failed
     created: Created
@@ -2848,7 +2847,6 @@ en:
       one_uncompleted: Only one uncompleted step per person is allowed.
       step_limit: Number of completions for this step has reached the wizard's max
         completions limit.
-  event: :activerecord.models.event
   flash:
     checklist_item:
       update_failed: Failed to update checklist item.

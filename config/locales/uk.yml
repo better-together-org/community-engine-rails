@@ -2477,7 +2477,6 @@ uk:
             основа, де всі зможуть збиратися та співпрацювати.
           progress:
             step: Крок 1 з 2
-  block: :activerecord.models.block
   community:
     create_failed: Створення не вдалося
     created: Створено
@@ -2910,7 +2909,6 @@ uk:
       one_uncompleted: Дозволено тільки один незавершений крок на людину.
       step_limit: Кількість завершень для цього кроку досягла максимального ліміту
         завершень майстра.
-  event: :activerecord.models.event
   flash:
     checklist_item:
       update_failed: Не вдалося оновити елемент чек-листа.

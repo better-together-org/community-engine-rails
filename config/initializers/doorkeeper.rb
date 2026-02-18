@@ -47,8 +47,8 @@ Doorkeeper.configure do # rubocop:disable Metrics/BlockLength
   use_refresh_token
 
   # Refresh tokens expire after 30 days
-  custom_access_token_expires_in do |context|
-    context.grant_type == 'client_credentials' ? 2.hours : 2.hours
+  custom_access_token_expires_in do |_context|
+    2.hours
   end
 
   # Revoke old refresh tokens when a new one is issued
