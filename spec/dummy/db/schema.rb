@@ -471,15 +471,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
     t.integer "duration_minutes"
     t.string "registration_url"
     t.string "timezone", default: "UTC", null: false
-    t.text "recurrence_rule"
-    t.boolean "is_recurring", default: false, null: false
-    t.uuid "parent_event_id"
-    t.date "recurrence_exception_dates", default: [], array: true
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
-    t.index ["is_recurring"], name: "index_better_together_events_on_is_recurring"
-    t.index ["parent_event_id"], name: "index_better_together_events_on_parent_event_id"
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
@@ -1095,7 +1089,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
     t.uuid "creator_id"
     t.uuid "community_id"
     t.jsonb "display_settings", default: {}, null: false
-    t.index ["community_id"], name: "by_better_together_pages_primary_community"
+    t.index ["community_id"], name: "by_better_together_pages_community"
     t.index ["creator_id"], name: "by_better_together_pages_creator"
     t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
     t.index ["privacy"], name: "by_page_privacy"
@@ -1618,54 +1612,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
-  create_table "oauth_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "resource_owner_id", null: false
-    t.uuid "application_id", null: false
-    t.string "token", null: false
-    t.integer "expires_in", null: false
-    t.text "redirect_uri", null: false
-    t.string "scopes", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "revoked_at"
-    t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
-    t.index ["resource_owner_id"], name: "index_oauth_access_grants_on_resource_owner_id"
-    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
-  end
-
-  create_table "oauth_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "resource_owner_id"
-    t.uuid "application_id", null: false
-    t.string "token", null: false
-    t.string "refresh_token"
-    t.integer "expires_in"
-    t.string "scopes"
-    t.datetime "created_at", null: false
-    t.datetime "revoked_at"
-    t.string "previous_refresh_token", default: "", null: false
-    t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
-    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
-    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
-    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
-  end
-
-  create_table "oauth_applications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name", null: false
-    t.string "uid", null: false
-    t.string "secret", null: false
-    t.text "redirect_uri", null: false
-    t.string "scopes", default: "", null: false
-    t.boolean "confidential", default: true, null: false
-    t.string "owner_type"
-    t.uuid "owner_id"
-    t.string "application_type", default: "web", null: false
-    t.string "rate_limit_tier", default: "free", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["owner_type", "owner_id"], name: "index_oauth_applications_on_owner"
-    t.index ["owner_type", "owner_id"], name: "index_oauth_applications_on_owner_type_and_owner_id"
-    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
@@ -1792,6 +1738,4 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
   add_foreign_key "better_together_wizard_steps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "wizard_step_definition_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id"
-  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
-  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
 end

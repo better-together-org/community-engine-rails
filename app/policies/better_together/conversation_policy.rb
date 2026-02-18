@@ -34,6 +34,12 @@ module BetterTogether
       user.present? && agent.present? && record.participants.size > 1
     end
 
+    # Determines whether the current user can send a message in the conversation.
+    # Requires authentication and conversation participation.
+    def send_message?
+      show? # Delegates to participant check
+    end
+
     # Returns the people that the agent is permitted to message
     def permitted_participants
       if permitted_to?('manage_platform')

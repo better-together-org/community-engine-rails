@@ -33,17 +33,18 @@ module BetterTogether
       private
 
       def search_people(query, limit)
-        policy_scope(BetterTogether::Person)
+        sanitized = sanitize_like(query)
+        base = policy_scope(BetterTogether::Person)
+        base
           .i18n
           .joins(:string_translations)
           .where(
             'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
-            "%#{query}%",
+            "%#{sanitized}%",
             %w[name]
           )
           .or(
-            policy_scope(BetterTogether::Person)
-              .where('identifier ILIKE ?', "%#{query}%")
+            base.where('identifier ILIKE ?', "%#{sanitized}%")
           )
           .distinct
           .limit([limit, 100].min)

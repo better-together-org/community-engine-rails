@@ -57,7 +57,7 @@ module BetterTogether
 
       def search_model(model, query, limit)
         policy_scope(model)
-          .where('identifier ILIKE ?', "%#{query}%")
+          .where('identifier ILIKE ?', "%#{sanitize_like(query)}%")
           .limit(limit)
           .map { |loc| serialize_location(loc) }
       end

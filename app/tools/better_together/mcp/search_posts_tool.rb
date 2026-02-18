@@ -46,7 +46,7 @@ module BetterTogether
           .joins(:string_translations)
           .where(
             'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
-            "%#{query}%",
+            "%#{sanitize_like(query)}%",
             %w[title]
           )
           .order(published_at: :desc)

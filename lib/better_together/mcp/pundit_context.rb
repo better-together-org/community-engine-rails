@@ -23,6 +23,19 @@ module BetterTogether
         new(user: user)
       end
 
+      # Create context from Rack request, trying Warden first, then falling back
+      # to Doorkeeper OAuth2 bearer token. This consolidates the authentication
+      # logic previously duplicated in fast_mcp.rb filter blocks.
+      # @param request [Rack::Request] The HTTP request
+      # @return [PunditContext] Context with authenticated user or anonymous
+      def self.from_request_or_doorkeeper(request)
+        context = from_request(request)
+        return context if context.authenticated?
+
+        user = extract_user_from_doorkeeper(request)
+        user ? new(user: user) : context
+      end
+
       # Extract authenticated user from Warden session
       # @param request [Rack::Request] The HTTP request
       # @return [User, nil] The authenticated user or nil for anonymous access
@@ -35,6 +48,20 @@ module BetterTogether
         warden.user
       end
       private_class_method :extract_user_from_warden
+
+      # Extract authenticated user from Doorkeeper OAuth2 bearer token.
+      # Only accepts tokens with the 'mcp_access' scope.
+      # @param request [Rack::Request] The HTTP request
+      # @return [User, nil] The resource owner or nil
+      def self.extract_user_from_doorkeeper(request)
+        return nil unless defined?(Doorkeeper)
+
+        token = Doorkeeper::OAuth::Token.authenticate(request, :from_bearer_authorization)
+        return nil unless token&.accessible? && token.acceptable?('mcp_access')
+
+        BetterTogether::User.find_by(id: token.resource_owner_id)
+      end
+      private_class_method :extract_user_from_doorkeeper
 
       # Initialize with user
       # @param user [User, nil] The authenticated user or nil for anonymous

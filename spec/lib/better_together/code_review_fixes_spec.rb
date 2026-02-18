@@ -385,4 +385,195 @@ RSpec.describe 'Code Review Fixes' do
       end
     end
   end
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Phase 6: Operational / DRY / Remaining Tool Fixes
+  # ─────────────────────────────────────────────────────────────────────────────
+  describe 'Phase 6: Operational & DRY Improvements' do
+    describe '6.1 — PunditContext.from_request_or_doorkeeper extracts Doorkeeper fallback' do
+      it 'responds to from_request_or_doorkeeper' do
+        expect(BetterTogether::Mcp::PunditContext).to respond_to(:from_request_or_doorkeeper)
+      end
+
+      it 'returns a PunditContext from Warden when session is present' do
+        user = create(:user)
+        warden = instance_double('Warden::Proxy', user: user)
+        request = instance_double(Rack::Request, env: { 'warden' => warden })
+
+        context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
+        expect(context).to be_a(BetterTogether::Mcp::PunditContext)
+        expect(context.user).to eq(user)
+        expect(context).to be_authenticated
+      end
+
+      it 'falls back to Doorkeeper token when Warden has no user' do
+        user = create(:user)
+        warden = instance_double('Warden::Proxy', user: nil)
+        request = instance_double(Rack::Request, env: { 'warden' => warden })
+
+        doorkeeper_token = double(
+          'doorkeeper_token',
+          accessible?: true,
+          resource_owner_id: user.id
+        )
+        allow(doorkeeper_token).to receive(:acceptable?).with('mcp_access').and_return(true)
+        allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
+          .with(request, :from_bearer_authorization)
+          .and_return(doorkeeper_token)
+
+        context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
+        expect(context.user).to eq(user)
+        expect(context).to be_authenticated
+      end
+
+      it 'returns guest context when neither Warden nor Doorkeeper authenticate' do
+        warden = instance_double('Warden::Proxy', user: nil)
+        request = instance_double(Rack::Request, env: { 'warden' => warden })
+
+        allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
+          .with(request, :from_bearer_authorization)
+          .and_return(nil)
+
+        context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
+        expect(context).to be_guest
+      end
+
+      it 'rejects Doorkeeper token without mcp_access scope' do
+        user = create(:user)
+        warden = instance_double('Warden::Proxy', user: nil)
+        request = instance_double(Rack::Request, env: { 'warden' => warden })
+
+        doorkeeper_token = double(
+          'doorkeeper_token',
+          accessible?: true,
+          resource_owner_id: user.id
+        )
+        allow(doorkeeper_token).to receive(:acceptable?).with('mcp_access').and_return(false)
+        allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
+          .with(request, :from_bearer_authorization)
+          .and_return(doorkeeper_token)
+
+        context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
+        expect(context).to be_guest
+      end
+    end
+
+    describe '6.2 — fast_mcp.rb uses PunditContext.from_request_or_doorkeeper (no duplicate)' do
+      it 'does not contain duplicate Doorkeeper token extraction blocks' do
+        source = File.read(
+          Rails.root.join('..', '..', 'config', 'initializers', 'fast_mcp.rb')
+        )
+        # Count occurrences of the Doorkeeper::OAuth::Token.authenticate pattern
+        matches = source.scan('Doorkeeper::OAuth::Token.authenticate')
+        expect(matches.length).to be <= 0,
+          "Expected zero inline Doorkeeper token extractions in fast_mcp.rb, found #{matches.length}. " \
+          'Doorkeeper fallback should be extracted into PunditContext.from_request_or_doorkeeper'
+      end
+
+      it 'calls from_request_or_doorkeeper in filter blocks' do
+        source = File.read(
+          Rails.root.join('..', '..', 'config', 'initializers', 'fast_mcp.rb')
+        )
+        expect(source).to include('from_request_or_doorkeeper')
+      end
+    end
+
+    describe '6.3 — Search tools use sanitize_like for LIKE queries' do
+      describe 'SearchPeopleTool' do
+        it 'escapes LIKE metacharacters in queries' do
+          source = File.read(
+            Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_people_tool.rb')
+          )
+          # Should NOT have raw interpolation in LIKE
+          expect(source).not_to match(/%#\{query\}%/),
+            'SearchPeopleTool should use sanitize_like(query) instead of raw #{query} in LIKE patterns'
+          expect(source).to include('sanitize_like')
+        end
+      end
+
+      describe 'SearchGeographyTool' do
+        it 'escapes LIKE metacharacters in queries' do
+          source = File.read(
+            Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_geography_tool.rb')
+          )
+          expect(source).not_to match(/%#\{query\}%/),
+            'SearchGeographyTool should use sanitize_like(query) instead of raw #{query} in LIKE patterns'
+          expect(source).to include('sanitize_like')
+        end
+      end
+
+      describe 'SearchPostsTool' do
+        it 'escapes LIKE metacharacters in queries' do
+          source = File.read(
+            Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_posts_tool.rb')
+          )
+          expect(source).not_to match(/%#\{query\}%/),
+            'SearchPostsTool should use sanitize_like(query) instead of raw #{query} in LIKE patterns'
+          expect(source).to include('sanitize_like')
+        end
+      end
+    end
+
+    describe '6.4 — SearchPeopleTool avoids double policy_scope call' do
+      it 'calls policy_scope only once in search_people' do
+        source = File.read(
+          Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_people_tool.rb')
+        )
+        matches = source.scan('policy_scope(BetterTogether::Person)')
+        expect(matches.length).to eq(1),
+          "Expected single policy_scope call in search_people, found #{matches.length}. " \
+          'Assign base scope to a variable and reuse it in .or() clause.'
+      end
+    end
+
+    describe '6.5 — SendMessageTool uses Pundit authorize' do
+      it 'calls authorize on the conversation' do
+        source = File.read(
+          Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'send_message_tool.rb')
+        )
+        expect(source).to include('authorize'),
+          'SendMessageTool should call authorize for Pundit policy enforcement'
+      end
+    end
+
+    describe '6.6 — ConversationPolicy#send_message? method exists' do
+      it 'defines send_message? method' do
+        expect(BetterTogether::ConversationPolicy.instance_methods).to include(:send_message?)
+      end
+
+      it 'returns true when user is a participant' do
+        user = create(:user)
+        person = user.person || create(:person, user: user)
+        conversation = create(:conversation)
+        create(:conversation_participant, conversation: conversation, person: person)
+        conversation.reload # Refresh participants association after adding new participant
+
+        pundit_context = BetterTogether::Mcp::PunditContext.new(user: user)
+        policy = BetterTogether::ConversationPolicy.new(pundit_context, conversation)
+
+        expect(policy.send_message?).to be true
+      end
+
+      it 'returns false for a non-participant' do
+        user = create(:user)
+        create(:person, user: user) unless user.person
+        conversation = create(:conversation)
+        # user is NOT a participant
+
+        pundit_context = BetterTogether::Mcp::PunditContext.new(user: user)
+        policy = BetterTogether::ConversationPolicy.new(pundit_context, conversation)
+
+        expect(policy.send_message?).to be false
+      end
+
+      it 'returns false for a guest' do
+        conversation = create(:conversation)
+
+        pundit_context = BetterTogether::Mcp::PunditContext.new(user: nil)
+        policy = BetterTogether::ConversationPolicy.new(pundit_context, conversation)
+
+        expect(policy.send_message?).to be false
+      end
+    end
+  end
 end

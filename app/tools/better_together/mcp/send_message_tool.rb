@@ -23,6 +23,8 @@ module BetterTogether
           conversation = find_conversation(conversation_id)
           return conversation_error unless conversation
 
+          authorize conversation, :send_message?
+
           message = create_message(conversation, content)
           result = build_result(message)
 

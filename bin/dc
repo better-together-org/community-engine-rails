@@ -1,3 +1,16 @@
 #!/usr/bin/env bash
 
-USER=$(id -u) docker compose $@
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+compose_files=("-f" "docker-compose.yml")
+
+# Local dev convenience: if a developer has a .env file, layer in
+# docker-compose.dev.yml which opts services into loading it.
+if [[ -f ".env" && -f "docker-compose.dev.yml" ]]; then
+	compose_files+=("-f" "docker-compose.dev.yml")
+fi
+
+USER="$(id -u)" docker compose "${compose_files[@]}" "$@"
