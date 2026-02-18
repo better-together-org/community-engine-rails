@@ -1,2 +1,8 @@
-<h1>Files#index</h1>
-<p>Find me in app/views/better_together/files/index.html.erb</p>
+<% content_for :page_title do %>
+  <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= resource_class.model_name.human.pluralize %></h1>
+  <p><%= t('.storage_usage', size: number_to_human_size(@total_size)) %></p>
+</div>

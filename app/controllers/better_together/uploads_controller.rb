@@ -6,6 +6,10 @@ module BetterTogether
     before_action :set_resource_instance, only: %i[show edit update destroy download]
     before_action :authorize_resource, only: %i[new show edit update destroy download]
 
+    def index
+      @total_size = policy_scope(Upload).sum(&:byte_size)
+    end
+
     def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       if resource_instance.attached?
         # Trigger the background job to log the download
