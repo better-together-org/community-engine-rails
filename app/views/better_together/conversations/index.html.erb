@@ -2,6 +2,8 @@
   <%= BetterTogether::Conversation.model_name.human.pluralize %>
 <% end %>
 
+<% set_meta_description('conversations.index', platform_name: host_platform.name) %>
+
 <div id="conversations_index">
   <div class="p-2 bg-secondary rounded-0 text-white d-flex flex-row justify-content-between align-items-center">
     <h5 class="mb-0">

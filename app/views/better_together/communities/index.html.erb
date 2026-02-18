@@ -2,6 +2,8 @@
   <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
+<% set_meta_description('communities.index', platform_name: host_platform.name) %>
+
 <div class="container my-3">
   <div class="d-flex justify-content-between align-items-center">
     <h1><%= resource_class.model_name.human.pluralize %></h1>
