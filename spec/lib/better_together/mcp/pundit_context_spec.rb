@@ -5,16 +5,28 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Mcp::PunditContext do
   describe '.from_request' do
     let(:user) { create(:user) }
-    let(:request) { instance_double(Rack::Request, params: { 'user_id' => user.id }) }
 
-    it 'creates context with user from request params' do
-      context = described_class.from_request(request)
+    context 'with Warden session' do
+      let(:warden) { instance_double(Warden::Proxy, user: user) }
+      let(:request) do
+        req = instance_double(Rack::Request, env: { 'warden' => warden })
+        allow(req).to receive(:respond_to?).with(:env).and_return(true)
+        req
+      end
 
-      expect(context.user).to eq(user)
+      it 'creates context with user from Warden session' do
+        context = described_class.from_request(request)
+
+        expect(context.user).to eq(user)
+      end
     end
 
-    context 'when user_id not in params' do
-      let(:request) { instance_double(Rack::Request, params: {}) }
+    context 'without Warden session' do
+      let(:request) do
+        req = instance_double(Rack::Request, env: {})
+        allow(req).to receive(:respond_to?).with(:env).and_return(true)
+        req
+      end
 
       it 'creates context with nil user' do
         context = described_class.from_request(request)
@@ -23,10 +35,46 @@ RSpec.describe BetterTogether::Mcp::PunditContext do
       end
     end
 
-    context 'when user not found' do
-      let(:request) { instance_double(Rack::Request, params: { 'user_id' => 'nonexistent' }) }
+    context 'when Warden returns nil user' do
+      let(:warden) { instance_double(Warden::Proxy, user: nil) }
+      let(:request) do
+        req = instance_double(Rack::Request, env: { 'warden' => warden })
+        allow(req).to receive(:respond_to?).with(:env).and_return(true)
+        req
+      end
 
       it 'creates context with nil user' do
+        context = described_class.from_request(request)
+
+        expect(context.user).to be_nil
+      end
+    end
+
+    context 'when request does not support env' do
+      let(:request) do
+        req = instance_double(Rack::Request)
+        allow(req).to receive(:respond_to?).with(:env).and_return(false)
+        req
+      end
+
+      it 'creates context with nil user' do
+        context = described_class.from_request(request)
+
+        expect(context.user).to be_nil
+      end
+    end
+
+    context 'security: ignores user_id from params' do
+      let(:warden) { instance_double(Warden::Proxy, user: nil) }
+      let(:request) do
+        req = instance_double(Rack::Request,
+                              env: { 'warden' => warden },
+                              params: { 'user_id' => user.id })
+        allow(req).to receive(:respond_to?).with(:env).and_return(true)
+        req
+      end
+
+      it 'does NOT use user_id from params' do
         context = described_class.from_request(request)
 
         expect(context.user).to be_nil
@@ -47,6 +95,24 @@ RSpec.describe BetterTogether::Mcp::PunditContext do
       context = described_class.new(user: nil)
 
       expect(context.user).to be_nil
+    end
+  end
+
+  describe 'guest/authenticated predicates' do
+    let(:user) { create(:user) }
+
+    it 'is a guest when user is nil' do
+      context = described_class.new(user: nil)
+
+      expect(context.guest?).to be true
+      expect(context.authenticated?).to be false
+    end
+
+    it 'is authenticated when user is present' do
+      context = described_class.new(user: user)
+
+      expect(context.guest?).to be false
+      expect(context.authenticated?).to be true
     end
   end
 

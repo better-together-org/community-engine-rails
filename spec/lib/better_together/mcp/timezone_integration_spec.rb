@@ -21,9 +21,7 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
     before do
       configure_host_platform
       user.person.update(time_zone: 'America/Los_Angeles')
-      allow_any_instance_of(tool_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(tool_class, user: user)
     end
 
     it 'executes in user timezone' do
@@ -86,9 +84,7 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
     before do
       configure_host_platform
       user.person.update(time_zone: 'Europe/London')
-      allow_any_instance_of(resource_class).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(resource_class, user: user)
     end
 
     it 'generates content in user timezone' do
@@ -120,9 +116,7 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
     before do
       configure_host_platform
       user.person.update(time_zone: 'Pacific/Auckland')
-      allow_any_instance_of(BetterTogether::Mcp::ListCommunitiesTool).to receive(:request).and_return(
-        instance_double(Rack::Request, params: { 'user_id' => user.id })
-      )
+      stub_mcp_request_for(BetterTogether::Mcp::ListCommunitiesTool, user: user)
     end
 
     it 'formats timestamps in user timezone' do

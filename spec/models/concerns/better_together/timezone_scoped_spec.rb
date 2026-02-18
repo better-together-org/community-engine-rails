@@ -41,7 +41,7 @@ RSpec.describe BetterTogether::TimezoneScoped do
         expect(result).to eq('Asia/Tokyo')
       end
 
-      context 'when recipient is a User' do
+      context 'when recipient is a User' do # rubocop:disable RSpec/NestedGroups
         it 'extracts timezone from user.person' do
           result = instance.resolve_timezone(recipient: user)
 
@@ -72,7 +72,7 @@ RSpec.describe BetterTogether::TimezoneScoped do
         expect(result).to eq('America/New_York')
       end
 
-      context 'with :host symbol' do
+      context 'with :host symbol' do # rubocop:disable RSpec/NestedGroups
         it 'looks up host platform timezone' do
           # Use the existing host platform from configure_host_platform
           host_platform = BetterTogether::Platform.find_by(host: true)

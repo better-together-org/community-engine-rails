@@ -19,14 +19,18 @@ module BetterTogether
           # Use policy_scope to get communities, then explicitly filter to public only
           # This ensures we only return public communities even if user is platform manager
           communities = policy_scope(BetterTogether::Community)
+                        .includes(:person_community_memberships)
                         .where(privacy: 'public')
                         .order(created_at: :desc)
 
-          JSON.generate({
-                          communities: communities.map { |community| serialize_community(community) },
-                          total: communities.count,
-                          generated_at: Time.current.iso8601
-                        })
+          result = JSON.generate({
+                                   communities: communities.map { |community| serialize_community(community) },
+                                   total: communities.count,
+                                   generated_at: Time.current.iso8601
+                                 })
+
+          log_access('public_communities', result.bytesize)
+          result
         end
       end
 
@@ -41,7 +45,7 @@ module BetterTogether
           name: community.name,
           description: community.description,
           slug: community.slug,
-          member_count: community.person_members.count,
+          member_count: community.person_community_memberships.size,
           created_at: community.created_at.iso8601
         }
       end

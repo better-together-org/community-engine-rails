@@ -1,0 +1,171 @@
+<% content_for :page_title do %>
+  <%= @webhook_endpoint.name %> | <%= t('better_together.webhook_endpoints.title', default: 'Webhook Endpoints') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0"><%= @webhook_endpoint.name %></h1>
+    <div class="btn-group" role="group" aria-label="<%= t('better_together.webhook_endpoints.actions_aria', default: 'Webhook actions') %>">
+      <% if policy(resource_class).index? %>
+        <%= link_to t('better_together.webhook_endpoints.back_to_list', default: 'Back to Webhooks'),
+                    webhook_endpoints_path,
+                    class: 'btn btn-outline-secondary btn-sm' %>
+      <% end %>
+      <% if policy(@resource).edit? %>
+        <%= link_to t('globals.edit', default: 'Edit'),
+                    edit_webhook_endpoint_path(@resource),
+                    class: 'btn btn-primary btn-sm' %>
+      <% end %>
+      <% if policy(@resource).test? %>
+        <%= button_to t('better_together.webhook_endpoints.send_test', default: 'Send Test'),
+                      test_webhook_endpoint_path(@resource),
+                      method: :post,
+                      class: 'btn btn-info btn-sm',
+                      form: { data: { turbo_confirm: t('better_together.webhook_endpoints.test_confirm', default: 'Send a test webhook?') } } %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Endpoint Details Card %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="card-title h5 mb-0"><%= t('better_together.webhook_endpoints.details', default: 'Endpoint Details') %></h2>
+    </div>
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-sm-3"><%= t('better_together.webhook_endpoints.field_url', default: 'URL') %></dt>
+        <dd class="col-sm-9"><code><%= @webhook_endpoint.url %></code></dd>
+
+        <dt class="col-sm-3"><%= t('better_together.webhook_endpoints.field_status', default: 'Status') %></dt>
+        <dd class="col-sm-9">
+          <% if @webhook_endpoint.active? %>
+            <span class="badge bg-success"><i class="fas fa-check-circle" aria-hidden="true"></i> <%= t('better_together.webhook_endpoints.status_active', default: 'Active') %></span>
+          <% else %>
+            <span class="badge bg-secondary"><i class="fas fa-pause-circle" aria-hidden="true"></i> <%= t('better_together.webhook_endpoints.status_inactive', default: 'Inactive') %></span>
+          <% end %>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('better_together.webhook_endpoints.field_secret', default: 'Signing Secret') %></dt>
+        <dd class="col-sm-9">
+          <div class="input-group input-group-sm" style="max-width: 450px;"
+               data-controller="better-together--secret-toggle">
+            <input type="password"
+                   value="<%= @webhook_endpoint.secret %>"
+                   class="form-control form-control-sm font-monospace"
+                   readonly
+                   aria-label="<%= t('better_together.webhook_endpoints.secret_aria', default: 'Signing secret value') %>"
+                   data-better-together--secret-toggle-target="field">
+            <button class="btn btn-outline-secondary" type="button"
+                    data-action="better-together--secret-toggle#toggle"
+                    aria-label="<%= t('better_together.webhook_endpoints.toggle_secret', default: 'Toggle secret visibility') %>">
+              <i class="fas fa-eye" aria-hidden="true" data-better-together--secret-toggle-target="icon"></i>
+            </button>
+          </div>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('better_together.webhook_endpoints.field_events', default: 'Events') %></dt>
+        <dd class="col-sm-9">
+          <% if @webhook_endpoint.events.present? && @webhook_endpoint.events.any? %>
+            <% @webhook_endpoint.events.each do |event| %>
+              <span class="badge bg-light text-dark border"><%= event %></span>
+            <% end %>
+          <% else %>
+            <span class="text-muted"><%= t('better_together.webhook_endpoints.all_events', default: 'All events (no filter)') %></span>
+          <% end %>
+        </dd>
+
+        <% if @webhook_endpoint.description.present? %>
+          <dt class="col-sm-3"><%= t('better_together.webhook_endpoints.field_description', default: 'Description') %></dt>
+          <dd class="col-sm-9"><%= @webhook_endpoint.description %></dd>
+        <% end %>
+
+        <% if @webhook_endpoint.oauth_application.present? %>
+          <dt class="col-sm-3"><%= t('better_together.webhook_endpoints.field_oauth_app', default: 'OAuth Application') %></dt>
+          <dd class="col-sm-9">
+            <% if policy(@webhook_endpoint.oauth_application).show? %>
+              <%= link_to @webhook_endpoint.oauth_application.name, oauth_application_path(@webhook_endpoint.oauth_application) %>
+            <% else %>
+              <%= @webhook_endpoint.oauth_application.name %>
+            <% end %>
+          </dd>
+        <% end %>
+
+        <dt class="col-sm-3"><%= t('better_together.webhook_endpoints.field_created', default: 'Created') %></dt>
+        <dd class="col-sm-9"><%= l(@webhook_endpoint.created_at, format: :long) %></dd>
+      </dl>
+    </div>
+  </div>
+
+  <%# Recent Deliveries %>
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title h5 mb-0"><%= t('better_together.webhook_endpoints.recent_deliveries', default: 'Recent Deliveries') %></h2>
+    </div>
+    <div class="card-body p-0">
+      <% deliveries = @webhook_endpoint.webhook_deliveries.order(created_at: :desc).limit(20) %>
+      <% if deliveries.any? %>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-0" aria-label="<%= t('better_together.webhook_endpoints.deliveries_aria', default: 'Webhook delivery history') %>">
+            <thead class="table-light">
+              <tr>
+                <th scope="col"><%= t('better_together.webhook_endpoints.delivery_event', default: 'Event') %></th>
+                <th scope="col"><%= t('better_together.webhook_endpoints.delivery_status', default: 'Status') %></th>
+                <th scope="col"><%= t('better_together.webhook_endpoints.delivery_response', default: 'Response') %></th>
+                <th scope="col"><%= t('better_together.webhook_endpoints.delivery_attempts', default: 'Attempts') %></th>
+                <th scope="col"><%= t('better_together.webhook_endpoints.delivery_time', default: 'Time') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% deliveries.each do |delivery| %>
+                <tr>
+                  <td><code class="small"><%= delivery.event %></code></td>
+                  <td>
+                    <% case delivery.status %>
+                    <% when 'delivered' %>
+                      <span class="badge bg-success"><%= delivery.status.humanize %></span>
+                    <% when 'failed' %>
+                      <span class="badge bg-danger"><%= delivery.status.humanize %></span>
+                    <% when 'retrying' %>
+                      <span class="badge bg-warning text-dark"><%= delivery.status.humanize %></span>
+                    <% else %>
+                      <span class="badge bg-secondary"><%= delivery.status.humanize %></span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if delivery.response_code.present? %>
+                      <code class="small"><%= delivery.response_code %></code>
+                    <% else %>
+                      <span class="text-muted">—</span>
+                    <% end %>
+                  </td>
+                  <td><%= delivery.attempts %></td>
+                  <td>
+                    <abbr title="<%= l(delivery.created_at, format: :long) %>">
+                      <%= time_ago_in_words(delivery.created_at) %> <%= t('better_together.notifications.time_ago', time: '', default: 'ago') %>
+                    </abbr>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-3 text-muted">
+          <i class="fas fa-inbox" aria-hidden="true"></i>
+          <%= t('better_together.webhook_endpoints.no_deliveries', default: 'No deliveries yet. Use the "Send Test" button to verify your endpoint.') %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= render 'shared/resource_toolbar',
+               back_to_list_path: policy(resource_class).index? ? webhook_endpoints_path : nil,
+               back_to_list_aria_label: t('better_together.webhook_endpoints.back_to_list', default: 'Back to Webhooks'),
+               edit_path: policy(@resource).edit? ? edit_webhook_endpoint_path(@resource) : nil,
+               edit_aria_label: t('better_together.webhook_endpoints.edit_aria', default: 'Edit webhook endpoint'),
+               destroy_path: policy(@resource).destroy? ? webhook_endpoint_path(@resource) : nil,
+               destroy_confirm: t('globals.confirm_delete'),
+               destroy_aria_label: t('better_together.webhook_endpoints.delete_aria', default: 'Delete webhook endpoint') %>
+  </div>
+</div>

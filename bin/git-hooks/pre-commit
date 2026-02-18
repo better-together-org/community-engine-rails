@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Pre-commit hook: Ensure ActiveRecord schema and migration versions use 7.2, never 8.0
+# Install: bin/install-git-hooks (or manually symlink to .git/hooks/pre-commit)
+
+set -euo pipefail
+
+REQUIRED_VERSION="7.2"
+BAD_VERSION="8.0"
+FIXED=0
+
+# Check staged files only
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+for file in $staged_files; do
+  case "$file" in
+    spec/dummy/db/schema.rb)
+      if grep -q "ActiveRecord::Schema\[${BAD_VERSION}\]" "$file" 2>/dev/null; then
+        sed -i "s/ActiveRecord::Schema\[${BAD_VERSION}\]/ActiveRecord::Schema[${REQUIRED_VERSION}]/g" "$file"
+        git add "$file"
+        FIXED=$((FIXED + 1))
+        echo "pre-commit: Fixed schema version ${BAD_VERSION} → ${REQUIRED_VERSION} in $file"
+      fi
+      ;;
+    db/migrate/*.rb)
+      if grep -q "ActiveRecord::Migration\[${BAD_VERSION}\]" "$file" 2>/dev/null; then
+        sed -i "s/ActiveRecord::Migration\[${BAD_VERSION}\]/ActiveRecord::Migration[${REQUIRED_VERSION}]/g" "$file"
+        git add "$file"
+        FIXED=$((FIXED + 1))
+        echo "pre-commit: Fixed migration version ${BAD_VERSION} → ${REQUIRED_VERSION} in $file"
+      fi
+      ;;
+  esac
+done
+
+if [ "$FIXED" -gt 0 ]; then
+  echo "pre-commit: Auto-fixed $FIXED file(s) to use ActiveRecord version [${REQUIRED_VERSION}]"
+fi
+
+exit 0

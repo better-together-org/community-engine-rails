@@ -24,44 +24,49 @@ module BetterTogether
       # @param limit [Integer] Maximum results (default: 20)
       # @return [String] JSON array of post objects
       def call(query:, limit: 20)
-        # Execute in user's timezone for consistent date/time formatting
         with_timezone_scope do
-          # Use policy_scope to automatically filter by:
-          # - Privacy settings (public posts, or own private posts)
-          # - Published status
-          # - Blocked users (excluded automatically by PostPolicy::Scope)
-          posts = policy_scope(BetterTogether::Post)
-                  .i18n
-                  .joins(:string_translations)
-                  .where(
-                    'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
-                    "%#{query}%",
-                    %w[title]
-                  )
-                  .order(published_at: :desc)
-                  .limit([limit, 100].min) # Cap at 100 to prevent abuse
+          posts = search_accessible_posts(query, limit)
+          result = JSON.generate(posts.map { |post| serialize_post(post) })
 
-          # Serialize posts to JSON
-          JSON.generate(
-            posts.map { |post| serialize_post(post) }
-          )
+          log_invocation('search_posts', { query: query, limit: limit }, result.bytesize)
+          result
         end
       end
 
       private
 
+      # Search posts with authorization and privacy filtering
+      # Uses policy_scope to automatically exclude:
+      # - Private posts from other users
+      # - Unpublished posts
+      # - Posts from blocked users (via PostPolicy::Scope)
+      def search_accessible_posts(query, limit)
+        policy_scope(BetterTogether::Post)
+          .i18n
+          .joins(:string_translations)
+          .where(
+            'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+            "%#{query}%",
+            %w[title]
+          )
+          .order(published_at: :desc)
+          .limit([limit, 100].min)
+      end
+
       # Serialize a post to a hash
       # @param post [BetterTogether::Post] The post to serialize
       # @return [Hash] Serialized post data
-      def serialize_post(post)
+      def serialize_post(post) # rubocop:disable Metrics/AbcSize
         {
           id: post.id,
           title: post.title,
-          excerpt: post.content.to_plain_text.truncate(200),
+          excerpt: post.content.to_plain_text.truncate(
+            Rails.application.config.mcp.excerpt_length
+          ),
           published_at: post.published_at&.iso8601,
           creator_name: post.creator&.name,
           privacy: post.privacy,
-          url: "/posts/#{post.slug}"
+          url: BetterTogether::Engine.routes.url_helpers.post_path(post, locale: I18n.locale)
         }
       end
     end

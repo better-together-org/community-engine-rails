@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= t('globals.edit') %> <%= @oauth_application.name %> | <%= resource_class.model_name.human %>
+<% end %>
+
+<div class="container my-3">
+  <h1 class="mb-4"><%= t('globals.edit') %> <%= @oauth_application.name %></h1>
+
+  <%= render "form", oauth_application: @oauth_application %>
+</div>

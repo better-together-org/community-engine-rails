@@ -1,0 +1,41 @@
+<% content_for :page_title do %>
+  <%= t('.title', default: 'Webhook Endpoints') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= t('.title', default: 'Webhook Endpoints') %></h1>
+    <% if policy(resource_class).create? %>
+      <%= link_to new_webhook_endpoint_path, class: 'btn btn-primary', 'aria-label' => t('.new_btn_aria', default: 'Create new webhook endpoint') do %>
+        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn_text', default: 'New Webhook') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if resource_collection.any? %>
+    <div class="table-responsive">
+      <table class="table table-hover" aria-label="<%= t('.table_aria', default: 'Webhook endpoints list') %>">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('.header_name', default: 'Name') %></th>
+            <th scope="col"><%= t('.header_url', default: 'URL') %></th>
+            <th scope="col"><%= t('.header_status', default: 'Status') %></th>
+            <th scope="col"><%= t('.header_events', default: 'Events') %></th>
+            <th scope="col"><%= t('.header_deliveries', default: 'Deliveries') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('.header_actions', default: 'Actions') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'better_together/webhook_endpoints/webhook_endpoint',
+                     collection: resource_collection,
+                     as: :webhook_endpoint %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info" role="status">
+      <i class="fas fa-info-circle" aria-hidden="true"></i>
+      <%= t('.no_webhooks', default: 'No webhook endpoints have been configured yet.') %>
+    </div>
+  <% end %>
+</div>

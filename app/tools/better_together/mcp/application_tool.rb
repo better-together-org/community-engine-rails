@@ -5,6 +5,9 @@ module BetterTogether
     # Base class for all MCP tools in the Better Together engine
     # Provides Pundit authorization integration and timezone handling for privacy-aware AI interactions
     #
+    # User identity is resolved securely via Warden/Devise session.
+    # MCP clients without a browser session operate as anonymous users.
+    #
     # @example Creating a privacy-aware tool
     #   class ListCommunitiesTool < BetterTogether::Mcp::ApplicationTool
     #     description "List communities accessible to the current user"
@@ -22,37 +25,29 @@ module BetterTogether
     #     end
     #   end
     class ApplicationTool < FastMcp::Tool
-      include Pundit::Authorization
-      include BetterTogether::TimezoneScoped
+      include BetterTogether::Mcp::PunditIntegration
 
       protected
 
-      # Returns Pundit user context from the current request
-      # This enables Pundit authorization in tools
-      # @return [BetterTogether::Mcp::PunditContext] Context with current user
-      def pundit_user
-        @pundit_user ||= BetterTogether::Mcp::PunditContext.from_request(request)
-      end
-
-      # Get the current authenticated user
-      # @return [User, nil] The authenticated user or nil
-      def current_user
-        pundit_user.user
-      end
-
-      # Get the current person (agent) associated with the user
-      # @return [BetterTogether::Person, nil] The person or nil
-      def agent
-        pundit_user.agent
-      end
-
-      # Override request to make it available from FastMcp context
-      # FastMcp provides this through the tool's execution context
-      # @return [Rack::Request] The HTTP request
-      def request
-        # This will be provided by FastMcp when tool is executed
-        # During tests, we stub this method
-        @request || super
+      # Log MCP tool invocations for audit and debugging.
+      # Produces structured JSON entries tagged [MCP][tool] in Rails logs.
+      # Future: persist to Metrics::McpInvocation model for queryable audit trails.
+      # @param tool_name [String] Name of the invoked tool
+      # @param args [Hash] Arguments passed to the tool (sensitive keys stripped)
+      # @param result_bytes [Integer] Size of the result payload
+      def log_invocation(tool_name, args, result_bytes)
+        Rails.logger.tagged('MCP', 'tool') do
+          Rails.logger.info(
+            {
+              tool: tool_name,
+              user_id: current_user&.id,
+              person_id: agent&.id,
+              args: args,
+              result_bytes: result_bytes,
+              timestamp: Time.current.iso8601
+            }.to_json
+          )
+        end
       end
     end
   end

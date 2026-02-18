@@ -4,22 +4,55 @@ module BetterTogether
   module Mcp
     # Provides Pundit user context for MCP tools and resources
     # Wraps a User record to make it compatible with Pundit authorization
+    #
+    # User identity is resolved securely via Warden/Devise session.
+    # MCP clients without a browser session operate as anonymous users
+    # and see only public data controlled by Pundit policies.
+    #
+    # SECURITY: Never trust user identity from client-supplied params or headers.
+    # The MCP auth_token provides transport-level access control but does NOT
+    # identify individual users.
     class PunditContext
       attr_reader :user
 
-      # Create context from Rack request
+      # Create context from Rack request using Warden/Devise session
       # @param request [Rack::Request] The HTTP request
-      # @return [PunditContext] Context with user from request params
+      # @return [PunditContext] Context with authenticated user or anonymous
       def self.from_request(request)
-        user_id = request.params['user_id']
-        user = user_id.present? ? BetterTogether::User.find_by(id: user_id) : nil
+        user = extract_user_from_warden(request)
         new(user: user)
       end
+
+      # Extract authenticated user from Warden session
+      # @param request [Rack::Request] The HTTP request
+      # @return [User, nil] The authenticated user or nil for anonymous access
+      def self.extract_user_from_warden(request)
+        return nil unless request.respond_to?(:env)
+
+        warden = request.env['warden']
+        return nil unless warden
+
+        warden.user
+      end
+      private_class_method :extract_user_from_warden
 
       # Initialize with user
       # @param user [User, nil] The authenticated user or nil for anonymous
       def initialize(user:)
         @user = user
+      end
+
+      # Anonymous MCP clients (no browser session and no OAuth context)
+      # should be treated as guests.
+      # @return [Boolean]
+      def guest?
+        user.nil?
+      end
+
+      # Convenience predicate
+      # @return [Boolean]
+      def authenticated?
+        !guest?
       end
 
       # Get the Person (agent) associated with the user

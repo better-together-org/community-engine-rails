@@ -1,0 +1,52 @@
+<tr id="<%= dom_id(oauth_application) %>">
+  <td>
+    <%= link_to oauth_application.name, oauth_application, class: 'text-decoration-none' %>
+  </td>
+  <td>
+    <code class="small"><%= truncate(oauth_application.uid, length: 24) %></code>
+  </td>
+  <td>
+    <% if oauth_application.scopes.present? %>
+      <% oauth_application.scopes.to_a.first(3).each do |scope| %>
+        <span class="badge bg-light text-dark border"><%= scope %></span>
+      <% end %>
+      <% if oauth_application.scopes.to_a.size > 3 %>
+        <span class="badge bg-light text-dark border">+<%= oauth_application.scopes.to_a.size - 3 %></span>
+      <% end %>
+    <% else %>
+      <span class="text-muted small"><%= t('better_together.oauth_applications.no_scopes', default: 'Default') %></span>
+    <% end %>
+  </td>
+  <td>
+    <% if oauth_application.confidential? %>
+      <span class="badge bg-primary">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+        <%= t('better_together.oauth_applications.confidential', default: 'Confidential') %>
+      </span>
+    <% else %>
+      <span class="badge bg-info text-dark">
+        <i class="fas fa-globe" aria-hidden="true"></i>
+        <%= t('better_together.oauth_applications.public_type', default: 'Public') %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <abbr title="<%= l(oauth_application.created_at, format: :long) %>">
+      <%= time_ago_in_words(oauth_application.created_at) %> <%= t('better_together.notifications.time_ago', time: '', default: 'ago') %>
+    </abbr>
+  </td>
+  <td>
+    <div class="btn-group btn-group-sm" role="group" aria-label="<%= t('better_together.oauth_applications.actions_aria', default: 'Application actions') %>">
+      <% if policy(oauth_application).show? %>
+        <%= link_to oauth_application, class: 'btn btn-outline-secondary btn-sm', 'aria-label' => t('globals.view') do %>
+          <i class="fas fa-eye" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+      <% if policy(oauth_application).edit? %>
+        <%= link_to edit_oauth_application_path(oauth_application), class: 'btn btn-outline-primary btn-sm', 'aria-label' => t('globals.edit') do %>
+          <i class="fas fa-edit" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+    </div>
+  </td>
+</tr>

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterTogether
+module BetterTogether # rubocop:disable Style/Documentation
   # MCP Server instance accessor
   # @return [FastMcp::Server] The MCP server instance
   def self.mcp_server
