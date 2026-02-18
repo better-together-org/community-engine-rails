@@ -62,7 +62,11 @@ bin/dc-run bin/i18n                                         # I18n validation
 **Common Workflows:**
 - **Before coding**: Run `bin/dc-run bundle exec brakeman` to check for existing security issues
 - **During development**: Run specific tests with `prspec` to validate changes
-- **Before committing**: Run RuboCop and ensure tests pass
+- **Before committing** (MANDATORY):
+  1. Run `bin/dc-run bundle exec rubocop -A` and fix all offenses
+  2. Run `bin/dc-run bin/i18n health` and resolve all issues
+  3. Ensure all targeted tests pass
+  4. Verify no new security warnings from brakeman
 - **Documentation**: Run `bin/render_diagrams` after updating `.mmd` files
 
 > **Critical**: Always use `bin/dc-run` for commands that access database, Redis, or Elasticsearch. See AGENTS.md for complete command reference.
@@ -185,6 +189,39 @@ getTranslation(key) {
 
 
 ## Coding Guidelines
+
+### Code Quality Checks (Pre-Commit Requirements)
+
+**MANDATORY**: Before committing any changes, ensure code passes all quality checks:
+
+#### 1. RuboCop Auto-Correct
+```bash
+bin/dc-run bundle exec rubocop -A
+```
+- Automatically fixes style violations and code quality issues
+- Must show `no offenses detected` before committing
+- If offenses remain after auto-correct, fix manually or justify with inline comments
+- Never commit code with RuboCop violations
+
+#### 2. I18n Health Check
+```bash
+bin/dc-run bin/i18n health
+```
+- Validates translation consistency across all locales (en, es, fr, uk)
+- Checks for missing keys, unused keys, and interpolation mismatches
+- Fix issues with:
+  - `bin/dc-run bin/i18n normalize` for formatting
+  - Add missing translations for all locales
+  - Remove or ignore unused keys appropriately
+- Never commit code that breaks i18n integrity
+
+#### 3. Security Scan
+```bash
+bin/dc-run bundle exec brakeman --quiet --no-pager
+```
+- Identifies security vulnerabilities before code review
+- Fix high-confidence warnings immediately
+- Review and address medium-confidence security-relevant warnings
 
 ### Accessibility Requirements (WCAG 2.1 AA)
 
