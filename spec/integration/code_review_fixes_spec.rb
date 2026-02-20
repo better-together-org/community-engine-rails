@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # TDD specs for code review fixes across Phases 1-5.
 # Each context maps to a specific fix from the implementation plan.
-RSpec.describe BetterTogether::CodeReviewFixes do
+RSpec.describe 'BetterTogether::CodeReviewFixes' do
   include McpTestHelpers
 
   # ─────────────────────────────────────────────────────────────────────────────
