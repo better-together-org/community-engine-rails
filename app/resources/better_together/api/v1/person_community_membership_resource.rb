@@ -20,23 +20,33 @@ module BetterTogether
         filter :member_id
         filter :joinable_id
 
-        # Override records to scope by parent resource
-        def self.records(options = {})
+        # Override records to bypass abstract policy scope options issue
+        # and handle scoping manually
+        def self.records(options = {}) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           context = options[:context]
-          records = super
+          user = context[:current_user]
+          person = context[:current_person]
+          context[:policy_used]&.call
+
+          scope = BetterTogether::PersonCommunityMembership.all
+          return scope.none unless user.present?
 
           # Scope by community_id if nested under communities
-          if context && context[:community_id].present?
-            records = records.where(joinable_id: context[:community_id], joinable_type: 'BetterTogether::Community')
+          if context[:community_id].present?
+            scope = scope.where(joinable_id: context[:community_id], joinable_type: 'BetterTogether::Community')
           end
 
           # Scope by person_id if nested under people
-          if context && context[:person_id].present?
-            records = records.where(member_id: context[:person_id])
+          if context[:person_id].present?
+            return scope.none unless context[:person_id] == person&.id.to_s || person&.permitted_to?('manage_platform')
+
+            scope = scope.where(member_id: context[:person_id])
           end
 
-          records
-        end
+          return scope.all if person&.permitted_to?('update_community') || person&.permitted_to?('manage_platform')
+
+          scope.where(member_id: person&.id)
+        end # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       end
     end
   end

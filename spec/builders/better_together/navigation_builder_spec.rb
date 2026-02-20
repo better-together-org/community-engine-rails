@@ -362,7 +362,7 @@ module BetterTogether
           host_nav = area.navigation_items.find_by(identifier: 'host-nav')
           children = host_nav.children.order(:position)
 
-          expect(children.count).to eq(10)
+          expect(children.count).to eq(12)
           expect(children.map(&:identifier)).to eq(%w[
                                                      host-dashboard
                                                      analytics
@@ -374,6 +374,8 @@ module BetterTogether
                                                      platforms
                                                      roles
                                                      resource_permissions
+                                                     webhook_endpoints
+                                                     oauth_applications
                                                    ])
         end
 

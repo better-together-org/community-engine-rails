@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1024,6 +1024,55 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
     t.index ["visibility_strategy"], name: "index_better_together_navigation_items_on_visibility_strategy"
   end
 
+  create_table "better_together_oauth_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "resource_owner_id", null: false
+    t.uuid "application_id", null: false
+    t.string "token", null: false
+    t.integer "expires_in", null: false
+    t.text "redirect_uri", null: false
+    t.string "scopes", default: "", null: false
+    t.datetime "revoked_at"
+    t.index ["application_id"], name: "index_bt_oauth_grants_on_application_id"
+    t.index ["resource_owner_id"], name: "index_bt_oauth_grants_on_resource_owner_id"
+    t.index ["token"], name: "index_bt_oauth_grants_on_token", unique: true
+  end
+
+  create_table "better_together_oauth_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "resource_owner_id"
+    t.uuid "application_id"
+    t.string "token", null: false
+    t.string "refresh_token"
+    t.integer "expires_in"
+    t.string "scopes", default: "", null: false
+    t.datetime "revoked_at"
+    t.string "previous_refresh_token", default: "", null: false
+    t.index ["application_id"], name: "index_bt_oauth_tokens_on_application_id"
+    t.index ["refresh_token"], name: "index_bt_oauth_tokens_on_refresh_token", unique: true
+    t.index ["resource_owner_id"], name: "index_bt_oauth_tokens_on_resource_owner_id"
+    t.index ["token"], name: "index_bt_oauth_tokens_on_token", unique: true
+  end
+
+  create_table "better_together_oauth_applications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.string "uid", null: false
+    t.string "secret", null: false
+    t.text "redirect_uri"
+    t.string "scopes", default: "", null: false
+    t.boolean "confidential", default: true, null: false
+    t.uuid "owner_id"
+    t.index ["owner_id"], name: "index_bt_oauth_apps_on_owner_id"
+    t.index ["uid"], name: "index_bt_oauth_apps_on_uid", unique: true
+  end
+
   create_table "better_together_pages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1402,6 +1451,42 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
     t.index ["unlock_token"], name: "index_better_together_users_on_unlock_token", unique: true
   end
 
+  create_table "better_together_webhook_deliveries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "webhook_endpoint_id", null: false
+    t.string "event", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.integer "response_code"
+    t.text "response_body"
+    t.datetime "delivered_at"
+    t.integer "attempts", default: 0, null: false
+    t.string "status", default: "pending", null: false
+    t.index ["delivered_at"], name: "index_better_together_webhook_deliveries_on_delivered_at"
+    t.index ["event"], name: "index_better_together_webhook_deliveries_on_event"
+    t.index ["status"], name: "index_better_together_webhook_deliveries_on_status"
+    t.index ["webhook_endpoint_id"], name: "idx_on_webhook_endpoint_id_e214a3b4eb"
+  end
+
+  create_table "better_together_webhook_endpoints", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "url", null: false
+    t.string "secret", null: false
+    t.string "events", default: [], null: false, array: true
+    t.boolean "active", default: true, null: false
+    t.string "name", null: false
+    t.text "description"
+    t.uuid "person_id", null: false
+    t.uuid "oauth_application_id"
+    t.index ["active"], name: "index_better_together_webhook_endpoints_on_active"
+    t.index ["events"], name: "index_better_together_webhook_endpoints_on_events", using: :gin
+    t.index ["oauth_application_id"], name: "idx_on_oauth_application_id_da369a7306"
+    t.index ["person_id"], name: "index_better_together_webhook_endpoints_on_person_id"
+  end
+
   create_table "better_together_website_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1607,6 +1692,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
   add_foreign_key "better_together_metrics_user_account_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
+  add_foreign_key "better_together_oauth_access_grants", "better_together_oauth_applications", column: "application_id"
+  add_foreign_key "better_together_oauth_access_grants", "better_together_users", column: "resource_owner_id"
+  add_foreign_key "better_together_oauth_access_tokens", "better_together_oauth_applications", column: "application_id"
+  add_foreign_key "better_together_oauth_access_tokens", "better_together_users", column: "resource_owner_id"
+  add_foreign_key "better_together_oauth_applications", "better_together_people", column: "owner_id"
   add_foreign_key "better_together_pages", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"
   add_foreign_key "better_together_pages", "better_together_people", column: "creator_id"
@@ -1640,6 +1730,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_25_182230) do
   add_foreign_key "better_together_sitemaps", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_uploads", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_webhook_deliveries", "better_together_webhook_endpoints", column: "webhook_endpoint_id"
+  add_foreign_key "better_together_webhook_endpoints", "better_together_oauth_applications", column: "oauth_application_id"
+  add_foreign_key "better_together_webhook_endpoints", "better_together_people", column: "person_id"
   add_foreign_key "better_together_website_links", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_wizard_step_definitions", "better_together_wizards", column: "wizard_id"
   add_foreign_key "better_together_wizard_steps", "better_together_people", column: "creator_id"

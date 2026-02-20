@@ -1,0 +1,125 @@
+<% content_for :page_title do %>
+  <%= @oauth_application.name %> | <%= t('better_together.oauth_applications.title', default: 'OAuth Applications') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0"><%= @oauth_application.name %></h1>
+    <div class="btn-group" role="group" aria-label="<%= t('better_together.oauth_applications.actions_aria', default: 'Application actions') %>">
+      <% if policy(resource_class).index? %>
+        <%= link_to t('better_together.oauth_applications.back_to_list', default: 'Back to Applications'),
+                    oauth_applications_path,
+                    class: 'btn btn-outline-secondary btn-sm' %>
+      <% end %>
+      <% if policy(@resource).edit? %>
+        <%= link_to t('globals.edit', default: 'Edit'),
+                    edit_oauth_application_path(@resource),
+                    class: 'btn btn-primary btn-sm' %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Application Credentials Card %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="card-title h5 mb-0"><%= t('better_together.oauth_applications.credentials', default: 'Credentials') %></h2>
+    </div>
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_client_id', default: 'Client ID') %></dt>
+        <dd class="col-sm-9">
+          <code class="user-select-all"><%= @oauth_application.uid %></code>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_secret', default: 'Client Secret') %></dt>
+        <dd class="col-sm-9">
+          <% if @oauth_application.confidential? %>
+            <div class="input-group input-group-sm" style="max-width: 450px;"
+                 data-controller="better-together--secret-toggle">
+              <input type="password"
+                     value="<%= @oauth_application.secret %>"
+                     class="form-control form-control-sm font-monospace"
+                     readonly
+                     aria-label="<%= t('better_together.oauth_applications.secret_aria', default: 'Client secret value') %>"
+                     data-better-together--secret-toggle-target="field">
+              <button class="btn btn-outline-secondary" type="button"
+                      data-action="better-together--secret-toggle#toggle"
+                      aria-label="<%= t('better_together.oauth_applications.toggle_secret', default: 'Toggle secret visibility') %>">
+                <i class="fas fa-eye" aria-hidden="true" data-better-together--secret-toggle-target="icon"></i>
+              </button>
+            </div>
+          <% else %>
+            <span class="text-muted"><%= t('better_together.oauth_applications.no_secret_public', default: 'Not applicable (public client)') %></span>
+          <% end %>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <%# Application Details Card %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="card-title h5 mb-0"><%= t('better_together.oauth_applications.details', default: 'Application Details') %></h2>
+    </div>
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_type', default: 'Type') %></dt>
+        <dd class="col-sm-9">
+          <% if @oauth_application.confidential? %>
+            <span class="badge bg-primary"><i class="fas fa-lock" aria-hidden="true"></i> <%= t('better_together.oauth_applications.confidential', default: 'Confidential') %></span>
+          <% else %>
+            <span class="badge bg-info text-dark"><i class="fas fa-globe" aria-hidden="true"></i> <%= t('better_together.oauth_applications.public_type', default: 'Public') %></span>
+          <% end %>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_scopes', default: 'Scopes') %></dt>
+        <dd class="col-sm-9">
+          <% if @oauth_application.scopes.present? %>
+            <% @oauth_application.scopes.to_a.each do |scope| %>
+              <span class="badge bg-light text-dark border"><%= scope %></span>
+            <% end %>
+          <% else %>
+            <span class="text-muted"><%= t('better_together.oauth_applications.default_scopes', default: 'Default scopes') %></span>
+          <% end %>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_redirect_uri', default: 'Redirect URI') %></dt>
+        <dd class="col-sm-9">
+          <% if @oauth_application.redirect_uri.present? %>
+            <code class="small"><%= @oauth_application.redirect_uri %></code>
+          <% else %>
+            <span class="text-muted"><%= t('better_together.oauth_applications.no_redirect', default: 'Not configured') %></span>
+          <% end %>
+        </dd>
+
+        <% if @oauth_application.owner.present? %>
+          <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_owner', default: 'Owner') %></dt>
+          <dd class="col-sm-9"><%= @oauth_application.owner.name %></dd>
+        <% end %>
+
+        <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_trusted', default: 'Trusted') %></dt>
+        <dd class="col-sm-9">
+          <% if @oauth_application.trusted? %>
+            <span class="badge bg-success"><i class="fas fa-shield-alt" aria-hidden="true"></i> <%= t('better_together.oauth_applications.trusted_yes', default: 'Yes') %></span>
+          <% else %>
+            <span class="text-muted"><%= t('better_together.oauth_applications.trusted_no', default: 'No') %></span>
+          <% end %>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('better_together.oauth_applications.field_created', default: 'Created') %></dt>
+        <dd class="col-sm-9"><%= l(@oauth_application.created_at, format: :long) %></dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= render 'shared/resource_toolbar',
+               back_to_list_path: policy(resource_class).index? ? oauth_applications_path : nil,
+               back_to_list_aria_label: t('better_together.oauth_applications.back_to_list', default: 'Back to Applications'),
+               edit_path: policy(@resource).edit? ? edit_oauth_application_path(@resource) : nil,
+               edit_aria_label: t('better_together.oauth_applications.edit_aria', default: 'Edit OAuth application'),
+               destroy_path: policy(@resource).destroy? ? oauth_application_path(@resource) : nil,
+               destroy_confirm: t('globals.confirm_delete'),
+               destroy_aria_label: t('better_together.oauth_applications.delete_aria', default: 'Delete OAuth application') %>
+  </div>
+</div>

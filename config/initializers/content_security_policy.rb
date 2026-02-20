@@ -28,7 +28,8 @@ Rails.application.configure do
   end
 
   # Generate nonce for inline scripts and apply to Turbo/UJS
-  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+  # Use cryptographically random nonce per request — never derive from session ID
+  config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
   config.content_security_policy_nonce_directives = %w[script-src]
 
   # Report-Only mode initially — switch to enforcing once validated in staging

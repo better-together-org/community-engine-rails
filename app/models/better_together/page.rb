@@ -59,9 +59,6 @@ module BetterTogether
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
     belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
 
-    # Inverse of NavigationItem polymorphic association - allows touch: true to work
-    has_many :navigation_items, as: :linkable, class_name: 'BetterTogether::NavigationItem', dependent: :nullify
-
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
     translates :title, type: :string

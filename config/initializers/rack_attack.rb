@@ -49,6 +49,28 @@ module Rack
     # Key: "rack::attack:#{Time.now.to_i/:period}:req/ip:#{req.ip}"
     throttle('req/ip', limit: 300, period: 5.minutes, &:ip)
 
+    ### MCP Endpoint Throttling ###
+
+    # MCP tool invocations are compute-intensive (DB queries, policy evaluation).
+    # Apply tighter per-IP limits than global request throttle.
+
+    # Throttle all MCP requests by IP (60 per minute)
+    throttle('mcp/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.path.start_with?('/mcp')
+    end
+
+    # Throttle MCP tool call POSTs more aggressively (30 per minute)
+    throttle('mcp/tool-calls/ip', limit: 30, period: 1.minute) do |req|
+      req.ip if req.path == '/mcp/messages' && req.post?
+    end
+
+    # Per-token MCP throttle (uses first 32 chars of Bearer token as key)
+    throttle('mcp/token', limit: 120, period: 1.minute) do |req|
+      if req.path.start_with?('/mcp')
+        req.env['HTTP_AUTHORIZATION']&.sub(/^Bearer\s+/i, '')&.first(32)
+      end
+    end
+
     ### Prevent Brute-Force Login Attacks ###
 
     # The most common brute-force login attack is a brute-force password
@@ -63,6 +85,28 @@ module Rack
     # Key: "rack::attack:#{Time.now.to_i/:period}:logins/ip:#{req.ip}"
     throttle('logins/ip', limit: 5, period: 20.seconds) do |req|
       req.ip if req.path.include?('/users/sign-in') && req.post?
+    end
+
+    ### API Authentication Endpoint Throttling ###
+
+    # Throttle API login endpoint by IP (5 requests per 20 seconds)
+    throttle('api_logins/ip', limit: 5, period: 20.seconds) do |req|
+      req.ip if req.path.include?('/api/auth/sign_in') && req.post?
+    end
+
+    # Throttle API registration endpoint by IP (3 requests per minute)
+    throttle('api_registrations/ip', limit: 3, period: 1.minute) do |req|
+      req.ip if req.path.include?('/api/auth/sign_up') && req.post?
+    end
+
+    # Throttle API password reset endpoint by IP (5 requests per minute)
+    throttle('api_password_resets/ip', limit: 5, period: 1.minute) do |req|
+      req.ip if req.path.include?('/api/auth/password') && req.post?
+    end
+
+    # Throttle OAuth token endpoint by IP (10 requests per minute)
+    throttle('oauth/token/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.path.include?('/oauth/token') && req.post?
     end
 
     # Throttle POST requests to /users/sign-in by email param

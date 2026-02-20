@@ -9,6 +9,8 @@ Rails.application.config.to_prepare do
   if jsonapi_mime_type && !ActionDispatch::Request.parameter_parsers.key?(jsonapi_mime_type.symbol)
     ActionDispatch::Request.parameter_parsers[:jsonapi] = lambda do |body|
       JSON.parse(body)
+    rescue JSON::ParserError => e
+      raise ActionDispatch::Http::Parameters::ParseError, e.message
     end
   end
 end

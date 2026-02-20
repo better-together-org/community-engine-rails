@@ -34,13 +34,15 @@ module BetterTogether
       joatu_requests: 'joatu_requests_url',
       metrics_reports: 'metrics_reports_url',
       navigation_areas: 'navigation_areas_url',
+      oauth_applications: 'oauth_applications_url',
       pages: 'pages_url',
       people: 'people_url',
       posts: 'posts_url',
       platforms: 'platforms_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
-      users: 'users_url'
+      users: 'users_url',
+      webhook_endpoints: 'webhook_endpoints_url'
     }
 
     belongs_to :navigation_area, touch: true
@@ -174,7 +176,7 @@ module BetterTogether
     end
 
     def dropdown_with_visible_children?
-      @dropdown_with_visible_children ||= dropdown? and children? && children.to_a.any?(&:visible?)
+      @dropdown_with_visible_children ||= dropdown? && children? && children.to_a.any?(&:visible?)
     end
 
     def item_type
