@@ -19,7 +19,7 @@ RSpec.describe 'OAuth E2E Integration', :no_auth do
            params: {
              grant_type: 'client_credentials',
              client_id: oauth_app.uid,
-             client_secret: oauth_app.secret,
+             client_secret: oauth_app.plaintext_secret,
              scope: 'read write admin'
            }
 
@@ -54,7 +54,7 @@ RSpec.describe 'OAuth E2E Integration', :no_auth do
            params: {
              grant_type: 'client_credentials',
              client_id: read_only_app.uid,
-             client_secret: read_only_app.secret,
+             client_secret: read_only_app.plaintext_secret,
              scope: 'read'
            }
 
@@ -121,7 +121,7 @@ RSpec.describe 'OAuth E2E Integration', :no_auth do
            params: {
              grant_type: 'client_credentials',
              client_id: oauth_app.uid,
-             client_secret: oauth_app.secret,
+             client_secret: oauth_app.plaintext_secret,
              scope: 'read write admin'
            }
 

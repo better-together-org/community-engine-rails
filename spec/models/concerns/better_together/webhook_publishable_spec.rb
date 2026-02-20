@@ -153,11 +153,13 @@ RSpec.describe BetterTogether::WebhookPublishable do
 
       # Stub the endpoint's deliveries to raise on create!
       deliveries_double = double('deliveries') # rubocop:disable RSpec/VerifiedDoubles
-      allow(deliveries_double).to receive(:create!).and_raise(StandardError, 'DB error')
+      allow(deliveries_double).to receive(:create!).and_raise(ActiveRecord::RecordNotFound, 'not found')
       allow(endpoint).to receive(:webhook_deliveries).and_return(deliveries_double)
+      endpoint_scope = double('endpoint_scope') # rubocop:disable RSpec/VerifiedDoubles
+      allow(endpoint_scope).to receive(:find_each).and_yield(endpoint)
       allow(BetterTogether::WebhookEndpoint).to receive(:for_event)
         .with('test_publishable_model.updated')
-        .and_return([endpoint])
+        .and_return(endpoint_scope)
 
       expect(Rails.logger).to receive(:error).with(/Failed to publish webhook event/)
       expect { instance.send(:publish_webhook_event, 'updated') }.not_to raise_error

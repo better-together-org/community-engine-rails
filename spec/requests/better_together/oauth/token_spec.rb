@@ -16,7 +16,7 @@ RSpec.describe 'Doorkeeper OAuth Token Endpoints', :no_auth do
       post '/api/oauth/token', params: {
         grant_type: 'client_credentials',
         client_id: oauth_app.uid,
-        client_secret: oauth_app.secret,
+        client_secret: oauth_app.plaintext_secret,
         scope: 'read'
       }, as: :json
 
@@ -42,7 +42,7 @@ RSpec.describe 'Doorkeeper OAuth Token Endpoints', :no_auth do
       post '/api/oauth/token', params: {
         grant_type: 'client_credentials',
         client_id: oauth_app.uid,
-        client_secret: oauth_app.secret,
+        client_secret: oauth_app.plaintext_secret,
         scope: 'nonexistent_scope'
       }, as: :json
 
@@ -63,7 +63,7 @@ RSpec.describe 'Doorkeeper OAuth Token Endpoints', :no_auth do
       post '/api/oauth/revoke', params: {
         token: access_token.token,
         client_id: oauth_app.uid,
-        client_secret: oauth_app.secret
+        client_secret: oauth_app.plaintext_secret
       }, as: :json
 
       expect(response).to have_http_status(:ok)

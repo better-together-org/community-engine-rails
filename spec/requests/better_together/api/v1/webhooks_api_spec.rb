@@ -15,7 +15,7 @@ RSpec.describe 'BetterTogether::Api::V1::Webhooks', :no_auth do
     post '/api/oauth/token', params: {
       grant_type: 'client_credentials',
       client_id: oauth_app.uid,
-      client_secret: oauth_app.secret,
+      client_secret: oauth_app.plaintext_secret,
       scope: 'admin'
     }, as: :json
 

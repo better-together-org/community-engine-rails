@@ -75,8 +75,8 @@ RSpec.describe 'BetterTogether::Api::V1::MetricsSummary', :no_auth do
     context 'when authenticated as regular user' do
       before { get url, headers: regular_headers }
 
-      it 'returns forbidden status' do
-        expect(response).to have_http_status(:forbidden)
+      it 'returns not found status' do
+        expect(response).to have_http_status(:not_found)
       end
     end
 

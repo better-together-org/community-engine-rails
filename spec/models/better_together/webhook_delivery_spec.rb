@@ -14,8 +14,7 @@ RSpec.describe BetterTogether::WebhookDelivery do
     it { is_expected.to validate_presence_of(:status) }
 
     it 'validates status inclusion' do
-      webhook_delivery.status = 'invalid'
-      expect(webhook_delivery).not_to be_valid
+      expect { webhook_delivery.status = 'invalid' }.to raise_error(ArgumentError)
     end
 
     %w[pending delivered failed retrying].each do |valid_status|

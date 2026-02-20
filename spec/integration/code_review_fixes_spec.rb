@@ -412,8 +412,8 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(Rack::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = instance_double(
-          Doorkeeper::AccessToken,
+        doorkeeper_token = double(
+          'BetterTogether::OauthAccessToken',
           accessible?: true,
           acceptable?: true,
           resource_owner_id: user.id
@@ -444,8 +444,8 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(Rack::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = instance_double(
-          Doorkeeper::AccessToken,
+        doorkeeper_token = double(
+          'BetterTogether::OauthAccessToken',
           accessible?: true,
           acceptable?: false,
           resource_owner_id: user.id

@@ -50,12 +50,12 @@ RSpec.describe BetterTogether::Mcp::ListUploadsTool, type: :model do
     context 'when not authenticated' do
       before { stub_mcp_request_for(described_class, user: nil) }
 
-      it 'returns empty results for anonymous users' do
+      it 'returns authentication error for anonymous users' do
         tool = described_class.new
         result = JSON.parse(tool.call)
 
-        expect(result).to be_an(Array)
-        expect(result).to be_empty
+        expect(result).to have_key('error')
+        expect(result['error']).to include('Authentication')
       end
     end
   end
