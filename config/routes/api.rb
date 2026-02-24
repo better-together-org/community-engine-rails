@@ -25,8 +25,9 @@ scope path: BetterTogether.route_scope_path do
     # Provides /api/oauth/token, /api/oauth/authorize, /api/oauth/revoke, etc.
     # Wrapper controllers in BetterTogether::Doorkeeper:: namespace handle engine namespacing
     use_doorkeeper do
-      # Skip default Doorkeeper views — we use API-only JSON responses
-      skip_controllers :authorizations, :applications, :authorized_applications
+      # Skip Doorkeeper's application-management UIs; we use our own application management.
+      # Keep `:authorizations` enabled to support the authorization_code grant flow.
+      skip_controllers :applications, :authorized_applications
     end
 
     # OAuth application management (custom controller)
