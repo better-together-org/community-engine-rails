@@ -16,7 +16,7 @@ RSpec.describe 'Doorkeeper authorization endpoint', :skip_host_setup do
       )
     end
 
-    it 'is routable (not a 404)' do
+    it 'supports browser authorization flow requests' do
       get(
         "#{BetterTogether.route_scope_path}/api/oauth/authorize",
         params: {
@@ -25,10 +25,12 @@ RSpec.describe 'Doorkeeper authorization endpoint', :skip_host_setup do
           response_type: 'code',
           scope: 'read',
           state: 'abc123'
-        }
+        },
+        headers: { 'ACCEPT' => 'text/html' }
       )
 
       expect(response).not_to have_http_status(:not_found)
+      expect(response.media_type).to eq('text/html')
     end
   end
 end
