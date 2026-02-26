@@ -14,7 +14,6 @@ module BetterTogether
         attribute :valid_from
         attribute :valid_until
         attribute :accepted_at
-        attribute :created_at
 
         # Relationships
         has_one :inviter, class_name: 'Person', foreign_key: :inviter_id
