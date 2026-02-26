@@ -12,6 +12,8 @@
     <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
     <%= open_graph_meta_tags %>
     <%= seo_meta_tags %>
+    <%= structured_data_tag([platform_structured_data(host_platform), community_structured_data(host_community)]) %>
+    <%= yield(:structured_data) if content_for?(:structured_data) %>
     <%= canonical_link_tag %>
     <%= robots_meta_tag %>
     <meta name="color-scheme" content="light dark">
