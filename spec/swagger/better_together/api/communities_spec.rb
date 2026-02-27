@@ -2,9 +2,9 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Communities API', type: :request, no_auth: true do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Communities API', :no_auth, type: :request do # rubocop:disable RSpec/DescribeClass
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/communities' do
     get 'List communities' do
@@ -26,7 +26,7 @@ RSpec.describe 'Communities API', type: :request, no_auth: true do # rubocop:dis
 
       response '401', 'unauthorized' do
         schema type: :object, properties: { error: { type: :string } }
-        let(:Authorization) { 'Bearer invalid' }
+        let(:Authorization) { 'Bearer invalid' } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end
@@ -65,7 +65,7 @@ RSpec.describe 'Communities API', type: :request, no_auth: true do # rubocop:dis
 
       response '201', 'community created' do
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let(:body) do
           {
             data: {
@@ -81,7 +81,7 @@ RSpec.describe 'Communities API', type: :request, no_auth: true do # rubocop:dis
       end
 
       response '401', 'unauthorized' do
-        let(:Authorization) { 'Bearer invalid' }
+        let(:Authorization) { 'Bearer invalid' } # rubocop:disable RSpec/VariableName
         let(:body) { { data: { type: 'communities', attributes: { name: 'Test' } } } }
         run_test!
       end
@@ -141,7 +141,7 @@ RSpec.describe 'Communities API', type: :request, no_auth: true do # rubocop:dis
 
       response '200', 'community updated' do
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let(:body) { { data: { type: 'communities', id: community.id, attributes: { name: 'Updated Name' } } } }
         run_test!
       end
@@ -160,7 +160,7 @@ RSpec.describe 'Communities API', type: :request, no_auth: true do # rubocop:dis
         let!(:deletable) { create(:better_together_community, privacy: 'public', protected: false) }
         let(:id) { deletable.id }
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end

@@ -2,9 +2,9 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Events API', type: :request, no_auth: true do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Events API', :no_auth, type: :request do # rubocop:disable RSpec/DescribeClass
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/events' do
     get 'List events' do
@@ -22,7 +22,7 @@ RSpec.describe 'Events API', type: :request, no_auth: true do # rubocop:disable 
       end
 
       response '401', 'unauthorized' do
-        let(:Authorization) { 'Bearer invalid' }
+        let(:Authorization) { 'Bearer invalid' } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end
@@ -60,7 +60,7 @@ RSpec.describe 'Events API', type: :request, no_auth: true do # rubocop:disable 
 
       response '201', 'event created' do
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let(:body) do
           {
             data: {
@@ -141,7 +141,7 @@ RSpec.describe 'Events API', type: :request, no_auth: true do # rubocop:disable 
 
       response '204', 'event deleted' do
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let!(:own_event) { create(:better_together_event, privacy: 'public', creator: pm_user.person) }
         let(:id) { own_event.id }
         run_test!

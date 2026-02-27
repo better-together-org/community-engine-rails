@@ -2,10 +2,10 @@
 
 require 'swagger_helper'
 
-# rubocop:disable RSpec/DescribeClass
-RSpec.describe 'OAuth Applications API', type: :request, no_auth: true do
+# rubocop:disable RSpec/DescribeClass, RSpec/MultipleDescribes
+RSpec.describe 'OAuth Applications API', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/oauth_applications' do
     get 'List OAuth applications' do
@@ -36,7 +36,7 @@ RSpec.describe 'OAuth Applications API', type: :request, no_auth: true do
       end
 
       response '401', 'unauthorized' do
-        let(:Authorization) { 'Bearer invalid' }
+        let(:Authorization) { 'Bearer invalid' } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end
@@ -117,7 +117,7 @@ RSpec.describe 'OAuth Applications API', type: :request, no_auth: true do
   end
 end
 
-RSpec.describe 'Doorkeeper OAuth Token Endpoint', type: :request, no_auth: true do
+RSpec.describe 'Doorkeeper OAuth Token Endpoint', :no_auth, type: :request do
   path '/api/oauth/token' do
     post 'Request OAuth2 access token' do
       tags 'OAuth'
@@ -197,3 +197,5 @@ RSpec.describe 'Doorkeeper OAuth Token Endpoint', type: :request, no_auth: true 
   end
 end
 # rubocop:enable RSpec/DescribeClass
+
+# rubocop:enable RSpec/MultipleDescribes
