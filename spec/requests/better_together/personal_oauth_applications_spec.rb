@@ -11,34 +11,22 @@ RSpec.describe 'Personal OAuth Applications (/settings/applications)' do
 
   describe 'access by authenticated regular users', :as_user do
     describe 'GET /settings/applications (index)' do
-      it 'returns 200' do
+      it 'returns 200 and renders the index' do
         get better_together.personal_oauth_applications_path(locale:)
         expect(response).to have_http_status(:ok)
       end
 
-      context 'when the user has no apps' do
-        it 'renders the empty index' do
-          get better_together.personal_oauth_applications_path(locale:)
-          expect(response).to have_http_status(:ok)
-        end
+      it 'shows app name when user has an app' do
+        create(:better_together_oauth_application, name: 'Personal CLI', owner: person)
+        get better_together.personal_oauth_applications_path(locale:)
+        expect_html_content('Personal CLI')
       end
 
-      context 'when the user has an app' do
-        let!(:oauth_app) do
-          create(:better_together_oauth_application, name: 'Personal CLI', owner: person)
-        end
-
-        it 'shows the app name' do
-          get better_together.personal_oauth_applications_path(locale:)
-          expect_html_content('Personal CLI')
-        end
-
-        it 'does not show apps owned by other people' do
-          other = create(:better_together_person)
-          other_app = create(:better_together_oauth_application, name: 'Other App', owner: other)
-          get better_together.personal_oauth_applications_path(locale:)
-          expect(response.body).not_to include(other_app.name)
-        end
+      it 'does not show apps owned by other people' do
+        other = create(:better_together_person)
+        other_app = create(:better_together_oauth_application, name: 'Other App', owner: other)
+        get better_together.personal_oauth_applications_path(locale:)
+        expect(response.body).not_to include(other_app.name)
       end
     end
 
@@ -83,19 +71,17 @@ RSpec.describe 'Personal OAuth Applications (/settings/applications)' do
         expect(response).to have_http_status(:found)
       end
 
-      context 'with invalid params (missing name)' do
-        it 'does not create an application' do
-          expect do
-            post better_together.personal_oauth_applications_path(locale:),
-                 params: { oauth_application: { name: '', redirect_uri: '' } }
-          end.not_to change(BetterTogether::OauthApplication, :count)
-        end
-
-        it 'returns unprocessable entity' do
+      it 'does not create an application with invalid params' do
+        expect do
           post better_together.personal_oauth_applications_path(locale:),
                params: { oauth_application: { name: '', redirect_uri: '' } }
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
+        end.not_to change(BetterTogether::OauthApplication, :count)
+      end
+
+      it 'returns unprocessable_content with invalid params' do
+        post better_together.personal_oauth_applications_path(locale:),
+             params: { oauth_application: { name: '', redirect_uri: '' } }
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

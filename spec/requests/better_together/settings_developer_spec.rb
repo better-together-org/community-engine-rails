@@ -76,7 +76,7 @@ RSpec.describe 'Settings Developer Tab', :as_user do
       patch update_settings_preferences_path(locale:),
             params: { person: { locale: 'invalid_locale_xyz' } }
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       # Should not raise nil.any? error — developer tab vars must be set
       expect(response.body).to include('id="developer"')
     end

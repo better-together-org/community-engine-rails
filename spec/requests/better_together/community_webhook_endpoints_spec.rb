@@ -123,7 +123,7 @@ RSpec.describe 'Community Webhook Endpoints', :as_platform_manager do
 
       it 'returns unprocessable entity' do
         post index_path, params: { webhook_endpoint: { url: 'not-a-url', name: '' } }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

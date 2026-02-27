@@ -49,23 +49,29 @@ module BetterTogether
 
     # Scope: platform managers see all, others see their own + community endpoints they admin
     class Scope < ApplicationPolicy::Scope
+      # rubocop:disable Metrics/AbcSize
       def resolve
         if user&.person&.permitted_to?('manage_platform')
           scope.all
         elsif user&.person
-          managed_community_ids = BetterTogether::Community
-                                  .select(:id)
-                                  .joins(:person_community_memberships)
-                                  .where(
-                                    better_together_person_community_memberships: { member_id: user.person.id }
-                                  ).filter_map do |community|
-                                    community.id if user.person.permitted_to?('update_community', community)
-                                  end
           scope.where(person: user.person)
                .or(scope.where(community_id: managed_community_ids))
         else
           scope.none
         end
+      end
+      # rubocop:enable Metrics/AbcSize
+
+      private
+
+      def managed_community_ids
+        BetterTogether::Community
+          .select(:id)
+          .joins(:person_community_memberships)
+          .where(better_together_person_community_memberships: { member_id: user.person.id })
+          .filter_map do |community|
+            community.id if user.person.permitted_to?('update_community', community)
+          end
       end
     end
   end

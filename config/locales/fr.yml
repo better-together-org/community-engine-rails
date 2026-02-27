@@ -2243,6 +2243,28 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        developer:
+          apps:
+            client_id_label: ID Client
+            description: Applications que vous avez enregistrées pour utiliser l'API
+              Better Together.
+            edit_aria: Modifier %{name}
+            new_aria: Enregistrer une nouvelle application OAuth
+            new_btn: Nouvelle Application
+            none: Vous n'avez pas encore enregistré d'applications OAuth.
+            title: Vos Applications OAuth
+            view_aria: Voir %{name}
+          tokens:
+            col_app: Application
+            col_created: Émis
+            col_expires: Expire
+            col_scopes: Portées
+            description: Tokens d'accès API actifs émis sur votre compte.
+            no_app: Token personnel
+            no_expiry: Jamais
+            none: Aucun token d'accès actif.
+            table_aria: Tokens d'accès actifs
+            title: Tokens d'Accès API
         device_permissions:
           description: Gérez les autorisations du navigateur pour la localisation,
             les notifications, la caméra et le microphone.
@@ -2269,27 +2291,6 @@ fr:
           description: Contrôlez vos préférences de confidentialité et partage de
             données.
           title: Paramètres de Confidentialité
-        developer:
-          apps:
-            client_id_label: ID Client
-            description: Applications que vous avez enregistrées pour utiliser l'API Better Together.
-            edit_aria: Modifier %{name}
-            new_aria: Enregistrer une nouvelle application OAuth
-            new_btn: Nouvelle Application
-            none: Vous n'avez pas encore enregistré d'applications OAuth.
-            title: Vos Applications OAuth
-            view_aria: Voir %{name}
-          tokens:
-            col_app: Application
-            col_created: Émis
-            col_expires: Expire
-            col_scopes: Portées
-            description: Tokens d'accès API actifs émis sur votre compte.
-            no_app: Token personnel
-            no_expiry: Jamais
-            none: Aucun token d'accès actif.
-            table_aria: Tokens d'accès actifs
-            title: Tokens d'Accès API
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées

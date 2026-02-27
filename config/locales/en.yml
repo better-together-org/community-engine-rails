@@ -2199,6 +2199,28 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        developer:
+          apps:
+            client_id_label: Client ID
+            description: Applications you have registered to use the Better Together
+              API.
+            edit_aria: Edit %{name}
+            new_aria: Register a new OAuth application
+            new_btn: New Application
+            none: You have not registered any OAuth applications yet.
+            title: Your OAuth Applications
+            view_aria: View %{name}
+          tokens:
+            col_app: Application
+            col_created: Issued
+            col_expires: Expires
+            col_scopes: Scopes
+            description: Active API access tokens issued to your account.
+            no_app: Personal token
+            no_expiry: Never
+            none: No active access tokens.
+            table_aria: Active access tokens
+            title: Active API Tokens
         device_permissions:
           description: Manage browser permissions for location, notifications, camera,
             and microphone.
@@ -2224,27 +2246,6 @@ en:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
           title: Privacy Settings
-        developer:
-          apps:
-            client_id_label: Client ID
-            description: Applications you have registered to use the Better Together API.
-            edit_aria: Edit %{name}
-            new_aria: Register a new OAuth application
-            new_btn: New Application
-            none: You have not registered any OAuth applications yet.
-            title: Your OAuth Applications
-            view_aria: View %{name}
-          tokens:
-            col_app: Application
-            col_created: Issued
-            col_expires: Expires
-            col_scopes: Scopes
-            description: Active API access tokens issued to your account.
-            no_app: Personal token
-            no_expiry: Never
-            none: No active access tokens.
-            table_aria: Active access tokens
-            title: Active API Tokens
         tabs:
           account: Account
           blocked_people: Blocked People
