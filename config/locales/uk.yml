@@ -2248,10 +2248,28 @@ uk:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
           title: Privacy Settings
+        developer:
+          apps:
+            client_id_label: ID клієнта
+            description: Програми, які ви зареєстрували для використання API Better Together.
+            edit_aria: Редагувати %{name}
+            new_aria: Зареєструвати новий OAuth-додаток
+            new_btn: Новий додаток
+            none: Ви ще не зареєстрували жодного OAuth-додатку.
+            title: Ваші OAuth-додатки
+            view_aria: Переглянути %{name}
+          tokens:
+            col_app: Додаток
+            col_created: Видано
+            col_expires: Закінчується
+            col_scopes: Дозволи
+            description: Активні токени доступу до API, видані вашому акаунту.
+            no_app: Особистий токен
+            no_expiry: Ніколи
+            none: Немає активних токенів доступу.
+            table_aria: Активні токени доступу
+            title: Токени доступу API
         tabs:
-          account: Обліковий запис
-          blocked_people: Заблоковані люди
-          developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
           personal: Особисті
