@@ -20,7 +20,7 @@ module BetterTogether
         # CSRF protection is already handled by Api::ApplicationController which skips it for JSON/JSONAPI
         # requests. No need to skip_before_action here — doing so triggers CodeQL CSRF alerts.
         skip_after_action :enforce_policy_use # Custom endpoint; authorization via OAuth scopes
-        skip_before_action :authenticate_user!
+        skip_before_action :authenticate_api_user! # OAuth token validation handled by require_oauth_token!
         before_action :require_oauth_token!
         require_oauth_scopes :admin, only: %i[receive]
 

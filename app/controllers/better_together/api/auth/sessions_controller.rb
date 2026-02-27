@@ -7,6 +7,10 @@ module BetterTogether
       class SessionsController < BetterTogether::Users::SessionsController
         respond_to :json
 
+        # Devise::SessionsController inherits from ApplicationController (with CSRF).
+        # API JSON requests must use null_session strategy instead of raising an exception.
+        protect_from_forgery with: :null_session, if: -> { request.format.json? }
+
         skip_before_action :check_platform_privacy, raise: false
         prepend_before_action :authenticate_user!, only: :destroy
         skip_before_action :verify_signed_out_user, only: :destroy

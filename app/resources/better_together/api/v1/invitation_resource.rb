@@ -11,6 +11,8 @@ module BetterTogether
         # Attributes
         attributes :status, :locale, :invitee_email
         attribute :invitation_type
+        attribute :invitable_type
+        attribute :invitable_id
         attribute :valid_from
         attribute :valid_until
         attribute :accepted_at
@@ -30,9 +32,16 @@ module BetterTogether
           @model.invitation_type.to_s
         end
 
+        # Auto-set defaults on create
+        before_create do
+          @model.status   ||= 'pending'
+          @model.valid_from ||= Time.current
+          @model.inviter  ||= context[:current_user]&.person
+        end
+
         # Restrict creatable fields
         def self.creatable_fields(_context)
-          %i[invitee_email locale role]
+          %i[invitee_email locale role invitable_type invitable_id]
         end
 
         # Restrict updatable fields
