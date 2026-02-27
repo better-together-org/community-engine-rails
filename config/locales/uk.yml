@@ -2251,6 +2251,7 @@ uk:
         tabs:
           account: Обліковий запис
           blocked_people: Заблоковані люди
+          developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
           personal: Особисті

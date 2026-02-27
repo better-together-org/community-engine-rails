@@ -5,7 +5,7 @@ module BetterTogether
   # Owners can view/manage their own applications.
   class OauthApplicationPolicy < ApplicationPolicy
     def index?
-      platform_manager?
+      platform_manager? || user&.person.present?
     end
 
     def show?
@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      platform_manager?
+      platform_manager? || user&.person.present?
     end
 
     def update?

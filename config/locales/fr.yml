@@ -2272,6 +2272,7 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
           personal: Personnel

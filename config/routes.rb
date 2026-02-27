@@ -87,6 +87,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
 
           resources :person_community_memberships, only: %i[create destroy]
+
+          # Community-scoped integrations (accessible to community admins)
+          namespace :community, path: '' do
+            resources :webhook_endpoints do
+              member do
+                post :test
+              end
+            end
+          end
         end
 
         resources :conversations, only: %i[index new create update show] do
@@ -220,6 +229,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
                                                              as: :mark_integration_notifications_read
+
+        # Personal OAuth application management (accessible to all authenticated users)
+        scope path: 'settings' do
+          resources :oauth_applications,
+                    controller: 'oauth_applications',
+                    as: :personal_oauth_applications,
+                    path: 'applications'
+        end
 
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do

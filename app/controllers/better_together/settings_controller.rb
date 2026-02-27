@@ -12,7 +12,12 @@ module BetterTogether
     before_action :set_person
 
     def index
-      # Settings page with various tabs
+      @person_oauth_apps = OauthApplication.where(owner: @person).order(created_at: :desc)
+      @access_tokens = OauthAccessToken
+                       .where(resource_owner_id: current_user.id)
+                       .where(revoked_at: nil)
+                       .includes(:application)
+                       .order(created_at: :desc)
     end
 
     def mark_integration_notifications_read
