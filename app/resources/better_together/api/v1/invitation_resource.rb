@@ -34,9 +34,9 @@ module BetterTogether
 
         # Auto-set defaults on create
         before_create do
-          @model.status   ||= 'pending'
+          @model.status ||= 'pending'
           @model.valid_from ||= Time.current
-          @model.inviter  ||= context[:current_user]&.person
+          @model.inviter ||= context[:current_user]&.person
         end
 
         # Restrict creatable fields
