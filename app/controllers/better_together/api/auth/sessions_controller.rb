@@ -12,7 +12,7 @@ module BetterTogether
         protect_from_forgery with: :null_session, if: -> { request.format.json? }
 
         skip_before_action :check_platform_privacy, raise: false
-        prepend_before_action :authenticate_user!, only: :destroy
+        prepend_before_action :authenticate_api_user!, only: :destroy
         skip_before_action :verify_signed_out_user, only: :destroy
 
         def create
@@ -31,9 +31,12 @@ module BetterTogether
             return render json: { error: I18n.t('devise.failure.unauthenticated') }, status: :unauthorized
           end
 
-          return render json: { error: I18n.t('devise.failure.unauthenticated') }, status: :unauthorized unless current_user
+          return render json: { error: I18n.t('devise.failure.unauthenticated') }, status: :unauthorized unless current_api_user
 
-          super
+          # devise-jwt revokes the token at the Rack/Warden level via revocation_requests config.
+          # We just need to sign out the api_user scope and respond.
+          sign_out(:api_user)
+          respond_to_on_destroy
         end
 
         protected
