@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'better_together/version'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
 require 'better_together/mcp'
