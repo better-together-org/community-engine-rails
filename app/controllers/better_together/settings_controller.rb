@@ -12,12 +12,7 @@ module BetterTogether
     before_action :set_person
 
     def index
-      @person_oauth_apps = OauthApplication.where(owner: @person).order(created_at: :desc)
-      @access_tokens = OauthAccessToken
-                       .where(resource_owner_id: current_user.id)
-                       .where(revoked_at: nil)
-                       .includes(:application)
-                       .order(created_at: :desc)
+      load_developer_tab_data
     end
 
     def mark_integration_notifications_read
@@ -49,11 +44,21 @@ module BetterTogether
         redirect_to settings_path(locale: I18n.locale),
                     notice: t('flash.generic.updated', resource: Person.model_name.human)
       else
+        load_developer_tab_data
         render :index, status: :unprocessable_entity
       end
     end
 
     private
+
+    def load_developer_tab_data
+      @person_oauth_apps = OauthApplication.where(owner: @person).order(created_at: :desc)
+      @access_tokens = OauthAccessToken
+                       .where(resource_owner_id: current_user.id)
+                       .where(revoked_at: nil)
+                       .includes(:application)
+                       .order(created_at: :desc)
+    end
 
     def set_person
       @person = current_user.person

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_27_002623) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1481,7 +1481,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
     t.text "description"
     t.uuid "person_id", null: false
     t.uuid "oauth_application_id"
+    t.uuid "community_id"
     t.index ["active"], name: "index_better_together_webhook_endpoints_on_active"
+    t.index ["community_id"], name: "index_better_together_webhook_endpoints_on_community_id"
     t.index ["events"], name: "index_better_together_webhook_endpoints_on_events", using: :gin
     t.index ["oauth_application_id"], name: "idx_on_oauth_application_id_da369a7306"
     t.index ["person_id"], name: "index_better_together_webhook_endpoints_on_person_id"
@@ -1731,6 +1733,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_15_000003) do
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_uploads", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_webhook_deliveries", "better_together_webhook_endpoints", column: "webhook_endpoint_id"
+  add_foreign_key "better_together_webhook_endpoints", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_webhook_endpoints", "better_together_oauth_applications", column: "oauth_application_id"
   add_foreign_key "better_together_webhook_endpoints", "better_together_people", column: "person_id"
   add_foreign_key "better_together_website_links", "better_together_contact_details", column: "contact_detail_id"

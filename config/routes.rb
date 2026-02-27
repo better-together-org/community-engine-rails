@@ -89,11 +89,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :person_community_memberships, only: %i[create destroy]
 
           # Community-scoped integrations (accessible to community admins)
-          namespace :community, path: '' do
-            resources :webhook_endpoints do
-              member do
-                post :test
-              end
+          resources :webhook_endpoints,
+                    controller: 'community_webhook_endpoints',
+                    as: :community_webhook_endpoints do
+            member do
+              post :test
             end
           end
         end
