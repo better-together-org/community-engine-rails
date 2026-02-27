@@ -2281,6 +2281,9 @@ es:
             table_aria: Tokens de acceso activos
             title: Tokens de Acceso API
         tabs:
+          account: Cuenta
+          blocked_people: Personas Bloqueadas
+          developer: Desarrollador
           device_permissions: Permisos del Dispositivo
           integrations: Integraciones
           personal: Personal

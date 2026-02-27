@@ -2270,6 +2270,9 @@ uk:
             table_aria: Активні токени доступу
             title: Токени доступу API
         tabs:
+          account: Обліковий запис
+          blocked_people: Заблоковані люди
+          developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
           personal: Особисті
