@@ -6,6 +6,7 @@ module BetterTogether
     # Respects privacy settings and block lists
     class SearchPeopleTool < ApplicationTool
       description 'Search people by name or handle, respecting privacy settings and block lists'
+      tags :public
 
       arguments do
         required(:query)

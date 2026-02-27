@@ -6,6 +6,7 @@ module BetterTogether
     # Supports filtering by read/unread status
     class ListNotificationsTool < ApplicationTool
       description 'List notifications for the current user, with optional read/unread filter'
+      tags :authenticated
 
       arguments do
         optional(:unread_only)

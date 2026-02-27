@@ -6,6 +6,7 @@ module BetterTogether
     # Respects privacy settings and publication status
     class ListPagesTool < ApplicationTool
       description 'List published pages with titles and content excerpts'
+      tags :public
 
       arguments do
         optional(:privacy)

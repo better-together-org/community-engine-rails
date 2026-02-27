@@ -6,6 +6,7 @@ module BetterTogether
     # Requires authentication and event creation permissions
     class CreateEventTool < ApplicationTool
       description 'Create a new event with the specified details'
+      tags :authenticated
 
       arguments do
         required(:name).filled(:string).description('Event name')

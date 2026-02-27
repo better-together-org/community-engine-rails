@@ -6,6 +6,7 @@ module BetterTogether
     # Shows invitations the user can manage based on their permissions
     class ListInvitationsTool < ApplicationTool
       description 'List invitations the current user can manage, with optional status filter'
+      tags :authenticated
 
       arguments do
         optional(:status_filter)

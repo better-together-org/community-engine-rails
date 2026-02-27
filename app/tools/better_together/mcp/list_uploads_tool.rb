@@ -6,6 +6,7 @@ module BetterTogether
     # Scoped to creator's own uploads via policy
     class ListUploadsTool < ApplicationTool
       description 'List uploads owned by the current user'
+      tags :authenticated
 
       arguments do
         optional(:limit)

@@ -6,6 +6,7 @@ module BetterTogether
     # Requires authentication and post creation permissions
     class CreatePostTool < ApplicationTool
       description 'Create a new post with the specified content, optionally as a draft'
+      tags :authenticated
 
       arguments do
         required(:title).filled(:string).description('Post title')

@@ -9,6 +9,7 @@ module BetterTogether
     # - Unpublished posts
     class SearchPostsTool < ApplicationTool
       description 'Search published posts accessible to the current user, respecting privacy settings and blocks'
+      tags :public
 
       arguments do
         required(:query)

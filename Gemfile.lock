@@ -19,7 +19,7 @@ GIT
 PATH
   remote: .
   specs:
-    better_together (0.8.1)
+    better_together (0.10.0)
       active_storage_svg_sanitizer
       active_storage_validations
       activerecord-import
