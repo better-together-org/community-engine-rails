@@ -35,6 +35,10 @@ module BetterTogether
     belongs_to :person,
                class_name: 'BetterTogether::Person'
 
+    belongs_to :community,
+               class_name: 'BetterTogether::Community',
+               optional: true
+
     belongs_to :oauth_application,
                class_name: 'BetterTogether::OauthApplication',
                optional: true
