@@ -112,11 +112,23 @@ if defined?(Rails)
 
       # Eager-load tool/resource classes so .descendants is populated in development
       # (Zeitwerk lazy-loads in development; descendants are empty until the files are required)
+      engine_root = BetterTogether::Engine.root
       [
-        BetterTogether::Engine.root.join('app', 'tools'),
-        BetterTogether::Engine.root.join('app', 'resources')
+        engine_root.join('app', 'tools'),
+        engine_root.join('app', 'resources')
       ].each do |dir|
         Rails.autoloaders.main.eager_load_dir(dir.to_s) if dir.exist?
+      end
+
+      # Also eager-load host application tools/resources so host app subclasses
+      # of ApplicationTool / ApplicationResource are registered automatically.
+      [
+        Rails.root.join('app', 'tools'),
+        Rails.root.join('app', 'resources')
+      ].each do |dir|
+        next unless dir.exist? && !dir.to_s.start_with?(engine_root.to_s)
+
+        Rails.autoloaders.main.eager_load_dir(dir.to_s)
       end
 
       server = FastMcp.server

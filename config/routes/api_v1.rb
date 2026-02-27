@@ -73,4 +73,12 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Inbound webhooks (receive events from external systems)
   post 'webhooks/receive', to: 'webhooks#receive'
+
+  # Host app extension point — add app-specific JSONAPI resources to this namespace.
+  # Configure in host app (e.g. config/initializers/better_together.rb):
+  #   BetterTogether.api_v1_routes_extension = proc do
+  #     jsonapi_resources :wayfinders
+  #     jsonapi_resources :venues
+  #   end
+  instance_exec(&BetterTogether.api_v1_routes_extension) if BetterTogether.api_v1_routes_extension
 end

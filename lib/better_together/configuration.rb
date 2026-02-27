@@ -15,5 +15,9 @@ module BetterTogether
     delegate :user_class=, to: :BetterTogether
 
     delegate :user_confirmation_path=, to: :BetterTogether
+
+    delegate :api_v1_routes_extension=, to: :BetterTogether
+
+    delegate :swagger_additional_endpoints=, to: :BetterTogether
   end
 end
