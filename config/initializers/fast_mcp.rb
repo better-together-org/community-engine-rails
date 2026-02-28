@@ -7,8 +7,11 @@
 #
 # Configuration via environment variables:
 # - MCP_ENABLED: Enable/disable MCP endpoints (default: true in development)
-# - MCP_AUTH_TOKEN: Authentication token for MCP requests (required in production)
 # - MCP_PATH_PREFIX: URL path prefix for MCP endpoints (default: /mcp)
+#
+# Authentication is handled at the tool/resource level via Pundit RBAC (see filter_tools
+# and filter_resources blocks below). No transport-level bearer token is required.
+# Rate limiting is provided by Rack::Attack (mcp/ip, mcp/tool-calls/ip, mcp/token throttles).
 #
 # See docs/implementation/mcp_integration_acceptance_criteria.md for details
 
@@ -25,8 +28,6 @@ if defined?(Rails)
 
   if mcp_enabled && !skip_for_db_tasks
     mcp_path_prefix = ENV.fetch('MCP_PATH_PREFIX', '/mcp')
-    mcp_auth_token = ENV.fetch('MCP_AUTH_TOKEN', nil)
-    mcp_authenticate = mcp_auth_token.present? || Rails.env.production?
 
     # In development/test, allow connections from localhost and private network ranges
     # (covers Docker gateway, LAN hosts, and host-machine connections to containerised apps).
@@ -56,12 +57,13 @@ if defined?(Rails)
         path_prefix: mcp_path_prefix,
         messages_route: 'messages',
         sse_route: 'sse',
-        authenticate: mcp_authenticate,
-        auth_token: mcp_auth_token,
-        # In development/test: allow localhost + common private/Docker IPs.
-        # In production: keep localhost-only (restricted by default).
-        localhost_only: !(Rails.env.development? || Rails.env.test?),
-        allowed_ips: dev_allowed_ips || FastMcp::Transports::RackTransport::DEFAULT_ALLOWED_IPS,
+        # No transport-level token auth: Pundit RBAC in filter_tools/filter_resources
+        # handles authentication and authorization at the tool level. Rack::Attack
+        # provides rate limiting. localhost_only: false is required for any proxy-fronted
+        # deployment (Cloudflare, Pangolin/newt, Caddy) where the app sees the proxy IP.
+        authenticate: false,
+        localhost_only: false,
+        allowed_ips: dev_allowed_ips || [],
         allowed_origins: Rails.env.development? ? ['localhost', '127.0.0.1', '0.0.0.0'] : []
       ) do |server|
         # Filter tools based on CE RBAC tier:
