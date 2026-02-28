@@ -1054,7 +1054,7 @@ paths:
           description: not found or private
   "/api/v1/roles":
     get:
-      summary: List roles
+      summary: List all roles
       tags:
       - Roles
       security:

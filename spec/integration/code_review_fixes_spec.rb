@@ -410,7 +410,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
       it 'falls back to Doorkeeper token when Warden has no user' do
         user = create(:user)
         warden = instance_double(Warden::Proxy, user: nil)
-        request = instance_double(Rack::Request, env: { 'warden' => warden })
+        request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
         doorkeeper_token = double(
           'BetterTogether::OauthAccessToken',
@@ -429,7 +429,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
 
       it 'returns guest context when neither Warden nor Doorkeeper authenticate' do
         warden = instance_double(Warden::Proxy, user: nil)
-        request = instance_double(Rack::Request, env: { 'warden' => warden })
+        request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
           .with(request, :from_bearer_authorization)
@@ -442,7 +442,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
       it 'rejects Doorkeeper token without mcp_access scope' do
         user = create(:user)
         warden = instance_double(Warden::Proxy, user: nil)
-        request = instance_double(Rack::Request, env: { 'warden' => warden })
+        request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
         doorkeeper_token = double(
           'BetterTogether::OauthAccessToken',

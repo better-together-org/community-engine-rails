@@ -93,7 +93,7 @@ RSpec.describe 'Roles API (read-only)', :no_auth, type: :request do
   let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/roles' do
-    get 'List roles' do
+    get 'List all roles' do
       tags 'Roles'
       security [bearer_auth: []]
       produces 'application/vnd.api+json'
