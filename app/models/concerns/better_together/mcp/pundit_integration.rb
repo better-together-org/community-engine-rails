@@ -51,11 +51,21 @@ module BetterTogether
         mcp_pundit_context.agent
       end
 
-      # Override request to make it available from FastMcp context
-      # FastMcp provides this through the tool/resource execution context
-      # @return [Rack::Request] The HTTP request
+      # Override request to make it available from FastMcp context.
+      # FastMcp::Tool provides @headers (the HTTP_* env hash) but has no #request method,
+      # so calling super raises NoMethodError. Reconstruct an ActionDispatch::Request from
+      # @headers so Warden/Devise can resolve the current user from the session cookie.
+      # @return [ActionDispatch::Request] The HTTP request built from tool headers
       def request
-        @request || super
+        return @request if @request
+
+        env = (@headers || {}).merge(
+          'rack.input' => StringIO.new,
+          'REQUEST_METHOD' => 'GET',
+          'SERVER_NAME' => 'localhost',
+          'SERVER_PORT' => '443'
+        )
+        @request = ActionDispatch::Request.new(env)
       end
     end
   end

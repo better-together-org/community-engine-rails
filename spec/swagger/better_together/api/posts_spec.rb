@@ -2,9 +2,9 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Posts API', type: :request, no_auth: true do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/DescribeClass
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/posts' do
     get 'List posts' do
@@ -23,7 +23,7 @@ RSpec.describe 'Posts API', type: :request, no_auth: true do # rubocop:disable R
       end
 
       response '401', 'unauthorized' do
-        let(:Authorization) { 'Bearer invalid' }
+        let(:Authorization) { 'Bearer invalid' } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end
@@ -62,7 +62,7 @@ RSpec.describe 'Posts API', type: :request, no_auth: true do # rubocop:disable R
 
       response '201', 'post created' do
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let(:body) do
           { data: { type: 'posts', attributes: { title: 'Test Post', content: 'Content', privacy: 'public' } } }
         end
@@ -121,7 +121,7 @@ RSpec.describe 'Posts API', type: :request, no_auth: true do # rubocop:disable R
       }
 
       response '200', 'post updated' do
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let(:body) { { data: { type: 'posts', id: post_record.id, attributes: { title: 'Updated' } } } }
         run_test!
       end
@@ -135,7 +135,7 @@ RSpec.describe 'Posts API', type: :request, no_auth: true do # rubocop:disable R
       parameter name: :Authorization, in: :header, type: :string, required: true
 
       response '204', 'post deleted' do
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end

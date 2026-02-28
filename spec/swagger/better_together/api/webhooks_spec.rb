@@ -3,9 +3,9 @@
 require 'swagger_helper'
 
 # rubocop:disable RSpec/DescribeClass
-RSpec.describe 'Webhook Endpoints API', type: :request, no_auth: true do
+RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/webhook_endpoints' do
     get 'List webhook endpoints' do
@@ -59,7 +59,7 @@ RSpec.describe 'Webhook Endpoints API', type: :request, no_auth: true do
 
       response '201', 'webhook endpoint created' do
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let(:body) do
           {
             data: {
@@ -178,7 +178,7 @@ RSpec.describe 'Webhook Endpoints API', type: :request, no_auth: true do
       }
 
       response '401', 'missing or invalid OAuth token' do
-        let(:Authorization) { nil }
+        let(:Authorization) { nil } # rubocop:disable RSpec/VariableName
         let(:body) { { event: 'ping', payload: {} } }
         run_test!
       end

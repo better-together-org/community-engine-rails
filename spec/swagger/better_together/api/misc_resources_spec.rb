@@ -2,10 +2,10 @@
 
 require 'swagger_helper'
 
-# rubocop:disable RSpec/DescribeClass
-RSpec.describe 'Notifications API', type: :request, no_auth: true do
+# rubocop:disable RSpec/DescribeClass, RSpec/MultipleDescribes
+RSpec.describe 'Notifications API', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/notifications' do
     get 'List notifications' do
@@ -40,9 +40,9 @@ RSpec.describe 'Notifications API', type: :request, no_auth: true do
   end
 end
 
-RSpec.describe 'Invitations API', type: :request, no_auth: true do
+RSpec.describe 'Invitations API', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/invitations' do
     get 'List invitations' do
@@ -91,7 +91,7 @@ RSpec.describe 'Invitations API', type: :request, no_auth: true do
       response '201', 'invitation created' do
         let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
         let(:community) { create(:better_together_community) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
         let(:body) do
           {
             data: {
@@ -110,9 +110,9 @@ RSpec.describe 'Invitations API', type: :request, no_auth: true do
   end
 end
 
-RSpec.describe 'Pages API', type: :request, no_auth: true do
+RSpec.describe 'Pages API', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/pages' do
     get 'List pages' do
@@ -149,9 +149,9 @@ RSpec.describe 'Pages API', type: :request, no_auth: true do
   end
 end
 
-RSpec.describe 'Metrics API', type: :request, no_auth: true do
+RSpec.describe 'Metrics API', :no_auth, type: :request do
   let(:pm_user) { create(:better_together_user, :confirmed, :platform_manager) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(pm_user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/metrics/summary' do
     get 'Get platform metrics summary' do
@@ -179,10 +179,12 @@ RSpec.describe 'Metrics API', type: :request, no_auth: true do
       end
 
       response '404', 'not authorized or not found' do
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(create(:better_together_user, :confirmed))}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(create(:better_together_user, :confirmed))}" } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end
   end
 end
 # rubocop:enable RSpec/DescribeClass
+
+# rubocop:enable RSpec/MultipleDescribes

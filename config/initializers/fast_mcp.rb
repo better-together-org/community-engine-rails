@@ -35,8 +35,8 @@ if defined?(Rails)
     dev_allowed_ips = if Rails.env.development? || Rails.env.test?
                         require 'socket'
                         local_ips = Socket.ip_address_list
-                                         .select { |a| a.ipv4? || a.ipv6_loopback? }
-                                         .map(&:ip_address)
+                                          .select { |a| a.ipv4? || a.ipv6_loopback? }
+                                          .map(&:ip_address)
                         (FastMcp::Transports::RackTransport::DEFAULT_ALLOWED_IPS +
                           local_ips +
                           # Common Docker bridge / Compose network gateway IPs

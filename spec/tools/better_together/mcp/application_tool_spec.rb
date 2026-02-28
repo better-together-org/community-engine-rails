@@ -27,7 +27,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
   #   :authenticated → visible to signed-in users (hidden from guests)
   #   :admin         → visible only to users with manage_platform permission
   describe 'tool RBAC tag classification' do
-    let(:all_tools) { BetterTogether::Mcp::ApplicationTool.descendants }
+    let(:all_tools) { described_class.descendants }
 
     before { Rails.application.eager_load! }
 
@@ -36,7 +36,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
         tags = tool_class.tags
         rbac_tags = tags & %i[public authenticated admin]
         expect(rbac_tags.length).to eq(1),
-          "#{tool_class.name} must declare exactly one of :public/:authenticated/:admin, got: #{tags.inspect}"
+                                    "#{tool_class.name} must declare exactly one of :public/:authenticated/:admin, got: #{tags.inspect}"
       end
     end
 

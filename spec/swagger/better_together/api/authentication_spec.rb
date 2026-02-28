@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Authentication', type: :request, no_auth: true do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Authentication', :no_auth, type: :request do # rubocop:disable RSpec/DescribeClass
   path '/api/auth/sign-in' do
     post 'Sign in to get JWT token' do
       tags 'Authentication'
@@ -71,7 +71,7 @@ RSpec.describe 'Authentication', type: :request, no_auth: true do # rubocop:disa
       response '200', 'signed out successfully' do
         schema type: :object, properties: { message: { type: :string } }
         let(:user) { create(:better_together_user, :confirmed) }
-        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+        let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end

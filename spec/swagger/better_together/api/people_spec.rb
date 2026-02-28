@@ -2,10 +2,10 @@
 
 require 'swagger_helper'
 
-# rubocop:disable RSpec/DescribeClass
-RSpec.describe 'People API', type: :request, no_auth: true do
+# rubocop:disable RSpec/DescribeClass, RSpec/MultipleDescribes
+RSpec.describe 'People API', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/people/me' do
     get 'Get current user profile' do
@@ -39,7 +39,7 @@ RSpec.describe 'People API', type: :request, no_auth: true do
       end
 
       response '401', 'unauthorized' do
-        let(:Authorization) { 'Bearer invalid' }
+        let(:Authorization) { 'Bearer invalid' } # rubocop:disable RSpec/VariableName
         run_test!
       end
     end
@@ -88,12 +88,12 @@ RSpec.describe 'People API', type: :request, no_auth: true do
   end
 end
 
-RSpec.describe 'Roles API (read-only)', type: :request, no_auth: true do
+RSpec.describe 'Roles API (read-only)', :no_auth, type: :request do
   let(:user) { create(:better_together_user, :confirmed) }
-  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" }
+  let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
 
   path '/api/v1/roles' do
-    get 'List roles' do
+    get 'List all roles' do
       tags 'Roles'
       security [bearer_auth: []]
       produces 'application/vnd.api+json'
@@ -127,3 +127,5 @@ RSpec.describe 'Roles API (read-only)', type: :request, no_auth: true do
   end
 end
 # rubocop:enable RSpec/DescribeClass
+
+# rubocop:enable RSpec/MultipleDescribes
