@@ -419,7 +419,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
           resource_owner_id: user.id
         )
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
-          .with(request, :from_bearer_authorization)
+          .with(anything, :from_bearer_authorization)
           .and_return(doorkeeper_token)
 
         context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
@@ -432,7 +432,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
-          .with(request, :from_bearer_authorization)
+          .with(anything, :from_bearer_authorization)
           .and_return(nil)
 
         context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
@@ -451,7 +451,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
           resource_owner_id: user.id
         )
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
-          .with(request, :from_bearer_authorization)
+          .with(anything, :from_bearer_authorization)
           .and_return(doorkeeper_token)
 
         context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
