@@ -26,6 +26,7 @@ module BetterTogether
 
       # Preload content blocks with their associations for better performance
       @content_blocks = @page.content_blocks.includes(
+        :string_translations,
         background_image_file_attachment: :blob
       )
       @layout = 'layouts/better_together/page'
@@ -189,7 +190,7 @@ module BetterTogether
       resource_collection.includes(
         :string_translations,
         page_blocks: {
-          block: [{ background_image_file_attachment: :blob }]
+          block: [:string_translations, { background_image_file_attachment: :blob }]
         }
       )
     end
@@ -213,7 +214,7 @@ module BetterTogether
         :string_translations,
         :sidebar_nav,
         { page_blocks: {
-          block: [{ background_image_file_attachment: :blob }]
+          block: [:string_translations, { background_image_file_attachment: :blob }]
         } }
       ]
     end
