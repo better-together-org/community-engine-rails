@@ -485,4 +485,16 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
     end
   end
+
+  describe 'GET /:locale/events', :as_platform_manager do
+    it 'renders index without N+1 on categories association' do
+      events = create_list(:event, 3)
+      category = create(:event_category)
+      events.each { |e| e.categories << category }
+
+      get better_together.events_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

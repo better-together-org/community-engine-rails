@@ -9,7 +9,7 @@ module BetterTogether
     before_action :disallow_robots
 
     def index
-      @notifications = helpers.current_person.notifications.includes(:event).order(created_at: :desc)
+      @notifications = helpers.current_person.notifications.includes(event: :record).order(created_at: :desc)
       @unread_count = helpers.current_person.notifications.unread.size
     end
 

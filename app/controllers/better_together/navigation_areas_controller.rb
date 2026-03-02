@@ -7,7 +7,7 @@ module BetterTogether
 
     def index
       authorize resource_class
-      @navigation_areas = policy_scope(resource_class.with_translations)
+      @navigation_areas = policy_scope(resource_class.with_translations.includes(:platform))
     end
 
     def show # rubocop:todo Metrics/MethodLength

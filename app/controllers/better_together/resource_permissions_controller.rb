@@ -9,7 +9,7 @@ module BetterTogether
     def index
       authorize resource_class
       @resource_permissions = policy_scope(resource_class.with_translations)
-                              .includes(:roles)
+                              .includes(:roles, :platform)
                               .order(:resource_type, :action, :position, :identifier)
       @resource_permissions_by_resource_type = @resource_permissions.group_by(&:resource_type)
       @rbac_nav_counts = {
