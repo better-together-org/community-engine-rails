@@ -14,7 +14,7 @@ module BetterTogether
 
     def find_verified_person
       if (current_user = env['warden'].user)
-        current_user.person
+        current_user.person || reject_unauthorized_connection
       else
         reject_unauthorized_connection
       end
