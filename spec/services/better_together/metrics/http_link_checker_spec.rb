@@ -24,5 +24,30 @@ module BetterTogether
       expect(result.status_code).to be_nil
       expect(result.error).to be_a(StandardError)
     end
+
+    describe 'invalid URI handling' do
+      it 'returns failure without raising for non-ASCII URI (French accented slug)' do
+        result = described_class.new('https://example.com/fréquemment-posées').call
+
+        expect(result.success).to be(false)
+        expect(result.status_code).to be_nil
+        expect(result.error).to be_a(StandardError)
+      end
+
+      it 'returns failure without raising for CSS gradient stored as href' do
+        gradient_uri = 'linear-gradient(to bottom, #ffffff 0%, #000000 100%)'
+        result = described_class.new(gradient_uri).call
+
+        expect(result.success).to be(false)
+        expect(result.status_code).to be_nil
+        expect(result.error).to be_a(StandardError)
+      end
+
+      it 'does not raise URI::InvalidURIError for malformed URIs' do
+        expect do
+          described_class.new('https://example.com/path with spaces').call
+        end.not_to raise_error
+      end
+    end
   end
 end
