@@ -12,7 +12,8 @@ module BetterTogether
       def index
         authorize %i[metrics link_click_report], :index?,
                   policy_class: BetterTogether::Metrics::LinkClickReportPolicy
-        @link_click_reports = BetterTogether::Metrics::LinkClickReport.order(created_at: :desc)
+        @link_click_reports = BetterTogether::Metrics::LinkClickReport.with_attached_report_file
+                                                                       .order(created_at: :desc)
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/link_click_reports/index',
                  locals: { link_click_reports: @link_click_reports }, layout: false
