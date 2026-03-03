@@ -190,7 +190,7 @@ module BetterTogether
       resource_collection.includes(
         :string_translations,
         page_blocks: {
-          block: [:string_translations, { background_image_file_attachment: :blob }]
+          block: [{ background_image_file_attachment: :blob }]
         }
       )
     end
@@ -206,7 +206,9 @@ module BetterTogether
     end
 
     def preload_page_associations(page)
-      resource_class.includes(page_includes).find(page.id)
+      loaded_page = resource_class.includes(page_includes).find(page.id)
+      preload_block_string_translations(loaded_page.page_blocks.map(&:block))
+      loaded_page
     end
 
     def page_includes
@@ -214,7 +216,7 @@ module BetterTogether
         :string_translations,
         :sidebar_nav,
         { page_blocks: {
-          block: [:string_translations, { background_image_file_attachment: :blob }]
+          block: [{ background_image_file_attachment: :blob }]
         } }
       ]
     end
@@ -251,6 +253,16 @@ module BetterTogether
         *BetterTogether::Content::Block.storext_keys,
         *BetterTogether::Content::Block.extra_permitted_attributes
       ]
+    end
+
+    # Preloads string_translations only on block types that define the association,
+    # avoiding AssociationNotFoundError on STI subclasses (e.g. Content::Template)
+    # that do not have any Mobility string-translated attributes.
+    def preload_block_string_translations(blocks)
+      translatable = blocks.select { |b| b.class.reflect_on_association(:string_translations) }
+      return if translatable.empty?
+
+      ActiveRecord::Associations::Preloader.new(records: translatable, associations: :string_translations).call
     end
   end
 end
