@@ -24,11 +24,17 @@ module BetterTogether
       # Hide pages that don't exist or aren't viewable to the current user as 404s
       render_not_found and return if @page.nil?
 
-      # Preload content blocks with their associations for better performance
-      @content_blocks = @page.content_blocks.includes(
-        :string_translations,
+      # Preload content blocks with their associations for better performance.
+      # Do NOT include :string_translations here — block STI collections may
+      # contain Content::Template records that have no string_translations
+      # association, causing AssociationNotFoundError in Rails 8 (branch.rb:85).
+      # Instead, use preload_block_string_translations to selectively preload
+      # only on block types that define the association.
+      content_blocks = @page.content_blocks.includes(
         background_image_file_attachment: :blob
-      )
+      ).load
+      preload_block_string_translations(content_blocks)
+      @content_blocks = content_blocks
       @layout = 'layouts/better_together/page'
       @layout = @page.layout if @page.layout.present?
     end
