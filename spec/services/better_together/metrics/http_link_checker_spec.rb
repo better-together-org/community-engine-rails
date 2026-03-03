@@ -27,6 +27,8 @@ module BetterTogether
 
     describe 'invalid URI handling' do
       it 'returns failure without raising for non-ASCII URI (French accented slug)' do
+        stub_request(:head, 'https://example.com/fr%C3%A9quemment-pos%C3%A9es').to_timeout
+
         result = described_class.new('https://example.com/fréquemment-posées').call
 
         expect(result.success).to be(false)
@@ -44,6 +46,8 @@ module BetterTogether
       end
 
       it 'does not raise URI::InvalidURIError for malformed URIs' do
+        stub_request(:head, 'https://example.com/path%20with%20spaces').to_timeout
+
         expect do
           described_class.new('https://example.com/path with spaces').call
         end.not_to raise_error
