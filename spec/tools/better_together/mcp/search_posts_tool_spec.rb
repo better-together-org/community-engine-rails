@@ -46,13 +46,29 @@ RSpec.describe BetterTogether::Mcp::SearchPostsTool, type: :model do
   end
 
   describe '#call' do
-    it 'searches posts by query string' do
+    it 'searches posts by title' do
       tool = described_class.new
       result = tool.call(query: 'Tutorial')
 
       posts = JSON.parse(result)
       expect(posts.length).to eq(1)
       expect(posts.first['title']).to eq('Ruby on Rails Tutorial')
+    end
+
+    it 'searches posts by content' do
+      content_only_post = create(:post,
+                                 title: 'General Thoughts',
+                                 content: 'A deep dive into Elixir programming.',
+                                 creator: user.person,
+                                 privacy: 'public',
+                                 published_at: Time.current)
+
+      tool = described_class.new
+      result = tool.call(query: 'Elixir')
+
+      posts = JSON.parse(result)
+      ids = posts.map { |p| p['id'] }
+      expect(ids).to include(content_only_post.id)
     end
 
     it 'excludes private posts from other users' do

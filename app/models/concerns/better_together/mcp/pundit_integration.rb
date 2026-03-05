@@ -27,7 +27,7 @@ module BetterTogether
       # Memoized to avoid repeated lookups during a single tool/resource call.
       # @return [BetterTogether::Mcp::PunditContext] Context with current user
       def mcp_pundit_context
-        @mcp_pundit_context ||= BetterTogether::Mcp::PunditContext.from_request(request)
+        @mcp_pundit_context ||= BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
       end
 
       # Override Pundit's pundit_user to return our MCP-specific PunditContext.
