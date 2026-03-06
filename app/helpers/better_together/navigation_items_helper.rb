@@ -337,7 +337,9 @@ module BetterTogether
       return @visible_navigation_items_cache[cache_key] if @visible_navigation_items_cache.key?(cache_key)
 
       nav_items = Mobility.with_locale(current_locale) do
-        nav_area.top_level_nav_items_includes_children.includes(NAV_TREE_PRELOADS).to_a
+        relation = nav_area.top_level_nav_items_includes_children
+        relation = relation.includes(NAV_TREE_PRELOADS) if relation.respond_to?(:includes)
+        relation.to_a
       end
       @visible_navigation_items_cache[cache_key] =
         nav_items.select { |item| navigation_item_visible_for?(item, platform: host_platform) }
@@ -345,7 +347,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def nav_visibility_context_key
-      @nav_visibility_context_key ||= build_nav_visibility_context_key
+      build_nav_visibility_context_key
     end
 
     # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
@@ -368,21 +370,28 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def nav_permission_cache_stamp
-      @nav_permission_cache_stamp ||= begin
+      context_key = current_user&.cache_key_with_version || 'guest'
+      @nav_permission_cache_stamp_cache ||= {}
+      return @nav_permission_cache_stamp_cache[context_key] if @nav_permission_cache_stamp_cache.key?(context_key)
+
+      @nav_permission_cache_stamp_cache[context_key] =
         if current_user.nil?
           'guest'
         else
-          segments = [current_user.cache_key_with_version]
+          segments = [context_key]
           segments.concat(membership_cache_segments)
           segments.concat(role_cache_segments)
           Digest::SHA256.hexdigest(segments.compact.join('|'))
         end
-      end
     end
 
     # rubocop:todo Metrics/AbcSize
     def membership_cache_segments
-      @membership_cache_segments ||= begin
+      context_key = current_user&.cache_key_with_version || 'guest'
+      @membership_cache_segments_cache ||= {}
+      return @membership_cache_segments_cache[context_key] if @membership_cache_segments_cache.key?(context_key)
+
+      @membership_cache_segments_cache[context_key] = begin
         if current_user.class.respond_to?(:joinable_membership_classes)
           current_user.class.joinable_membership_classes.filter_map do |membership_class_name|
             membership_class = membership_class_name.to_s.safe_constantize
@@ -400,7 +409,11 @@ module BetterTogether
     # rubocop:enable Metrics/AbcSize
 
     def role_cache_segments
-      @role_cache_segments ||= begin
+      context_key = current_user&.cache_key_with_version || 'guest'
+      @role_cache_segments_cache ||= {}
+      return @role_cache_segments_cache[context_key] if @role_cache_segments_cache.key?(context_key)
+
+      @role_cache_segments_cache[context_key] = begin
         if current_user.respond_to?(:roles)
           roles_scope = current_user.roles
           max_updated_at = roles_scope.maximum(:updated_at).to_i
