@@ -57,7 +57,7 @@ RSpec.describe BetterTogether::Mcp::ListPagesTool, type: :model do
     end
 
     describe 'topic_slug filtering' do
-      let!(:employment_category) { create(:better_together_category, identifier: 'employment') }
+      let!(:employment_category) { create(:category, identifier: 'employment') }
       let!(:tagged_page) { create(:better_together_page, :published_public) }
       let!(:other_page)  { create(:better_together_page, :published_public) }
 

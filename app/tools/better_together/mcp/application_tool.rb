@@ -59,7 +59,12 @@ module BetterTogether
                     )
 
         content_ids = rich_texts
-                      .project(rich_texts[:record_id].cast('uuid'))
+                      .project(
+                        Arel::Nodes::NamedFunction.new(
+                          'CAST',
+                          [Arel::Nodes::As.new(rich_texts[:record_id], Arel.sql('uuid'))]
+                        )
+                      )
                       .where(
                         rich_texts[:record_type].eq(model_class_str)
                           .and(rich_texts[:name].eq('content'))
