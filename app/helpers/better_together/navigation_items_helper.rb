@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'digest'
 
 module BetterTogether
@@ -332,17 +333,11 @@ module BetterTogether
     def visible_nav_items_for(nav_area)
       return [] unless nav_area
 
-      @visible_navigation_items_cache ||= {}
-      cache_key = [nav_area.id, nav_area.cache_key_with_version, nav_visibility_context_key]
-      return @visible_navigation_items_cache[cache_key] if @visible_navigation_items_cache.key?(cache_key)
+      cache = visible_navigation_items_cache
+      key = visible_nav_items_cache_key(nav_area)
+      return cache[key] if cache.key?(key)
 
-      nav_items = Mobility.with_locale(current_locale) do
-        relation = nav_area.top_level_nav_items_includes_children
-        relation = relation.includes(NAV_TREE_PRELOADS) if relation.respond_to?(:includes)
-        relation.to_a
-      end
-      @visible_navigation_items_cache[cache_key] =
-        nav_items.select { |item| navigation_item_visible_for?(item, platform: host_platform) }
+      cache[key] = load_nav_items_for(nav_area).select { |item| navigation_item_visible_for?(item, platform: host_platform) }
     end
 
     # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
@@ -391,20 +386,7 @@ module BetterTogether
       @membership_cache_segments_cache ||= {}
       return @membership_cache_segments_cache[context_key] if @membership_cache_segments_cache.key?(context_key)
 
-      @membership_cache_segments_cache[context_key] = begin
-        if current_user.class.respond_to?(:joinable_membership_classes)
-          current_user.class.joinable_membership_classes.filter_map do |membership_class_name|
-            membership_class = membership_class_name.to_s.safe_constantize
-            next unless membership_class&.column_names&.include?('member_id')
-
-            scope = membership_class.where(member_id: current_user.id)
-            max_updated_at = scope.maximum(:updated_at).to_i
-            "#{membership_class_name}:#{scope.count}:#{max_updated_at}"
-          end
-        else
-          []
-        end
-      end
+      @membership_cache_segments_cache[context_key] = membership_segments_for_user
     end
     # rubocop:enable Metrics/AbcSize
 
@@ -433,6 +415,39 @@ module BetterTogether
         current_user&.cache_key_with_version,
         request.path.hash
       ].compact
+    end
+
+    def visible_navigation_items_cache
+      @visible_navigation_items_cache ||= {}
+    end
+
+    def visible_nav_items_cache_key(nav_area)
+      [nav_area.id, nav_area.cache_key_with_version, nav_visibility_context_key]
+    end
+
+    def load_nav_items_for(nav_area)
+      Mobility.with_locale(current_locale) do
+        relation = nav_area.top_level_nav_items_includes_children
+        relation = relation.includes(NAV_TREE_PRELOADS) if relation.respond_to?(:includes)
+        relation.to_a
+      end
+    end
+
+    def membership_segments_for_user
+      return [] unless current_user.class.respond_to?(:joinable_membership_classes)
+
+      current_user.class.joinable_membership_classes.filter_map do |membership_class_name|
+        membership_segment_for(membership_class_name)
+      end
+    end
+
+    def membership_segment_for(membership_class_name)
+      membership_class = membership_class_name.to_s.safe_constantize
+      return nil unless membership_class&.column_names&.include?('member_id')
+
+      scope = membership_class.where(member_id: current_user.id)
+      max_updated_at = scope.maximum(:updated_at).to_i
+      "#{membership_class_name}:#{scope.count}:#{max_updated_at}"
     end
   end
   # rubocop:enable Metrics/ModuleLength

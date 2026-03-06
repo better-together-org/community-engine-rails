@@ -278,10 +278,12 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
     let(:nav_area) { build_stubbed(:better_together_navigation_area) }
 
     it 'changes with auth context' do
-      allow(helper).to receive(:request).and_return(double(path: '/en/pre-arrival'))
-      allow(helper).to receive(:current_locale).and_return(:en)
-      allow(helper).to receive(:host_platform).and_return(platform)
-      allow(helper).to receive(:current_user).and_return(nil)
+      allow(helper).to receive_messages(
+        request: double(path: '/en/pre-arrival'),
+        current_locale: :en,
+        host_platform: platform,
+        current_user: nil
+      )
 
       guest_key = helper.cache_key_for_nav_area(nav_area)
 
@@ -294,9 +296,11 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
 
     it 'changes with locale for same user context' do
       user = create(:better_together_user)
-      allow(helper).to receive(:request).and_return(double(path: '/en/pre-arrival'))
-      allow(helper).to receive(:host_platform).and_return(platform)
-      allow(helper).to receive(:current_user).and_return(user)
+      allow(helper).to receive_messages(
+        request: double(path: '/en/pre-arrival'),
+        host_platform: platform,
+        current_user: user
+      )
       allow(helper).to receive(:current_locale).and_return(:en)
       en_key = helper.cache_key_for_nav_area(nav_area)
 
@@ -337,11 +341,13 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
     end
 
     it 'preloads once and filters hidden items' do
-      allow(helper).to receive(:platform_footer_nav_area).and_return(nav_area)
-      allow(helper).to receive(:host_platform).and_return(platform)
-      allow(helper).to receive(:current_locale).and_return(:en)
-      allow(helper).to receive(:request).and_return(double(path: '/en/pre-arrival'))
-      allow(helper).to receive(:current_user).and_return(nil)
+      allow(helper).to receive_messages(
+        platform_footer_nav_area: nav_area,
+        host_platform: platform,
+        current_locale: :en,
+        request: double(path: '/en/pre-arrival'),
+        current_user: nil
+      )
 
       expect(helper.platform_footer_nav_items).to eq([visible_item])
       expect(helper.platform_footer_nav_items).to eq([visible_item])
