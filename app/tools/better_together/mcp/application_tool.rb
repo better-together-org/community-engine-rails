@@ -37,9 +37,48 @@ module BetterTogether
         ActiveRecord::Base.sanitize_sql_like(query.to_s)
       end
 
+      # AREL-based search condition for models using Mobility (string translations)
+      # and ActionText (rich text content). Avoids raw SQL strings.
+      # model_klass: the AR class (e.g. BetterTogether::Page)
+      # Returns an AREL node suitable for use in .where()
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def translatable_content_search_condition(model_klass, query)
+        sanitized = "%#{sanitize_like(query)}%"
+        model_class_str = model_klass.to_s
+        model_table = model_klass.arel_table
+
+        str_trans = Arel::Table.new(:mobility_string_translations)
+        rich_texts = Arel::Table.new(:action_text_rich_texts)
+
+        title_ids = str_trans
+                    .project(str_trans[:translatable_id])
+                    .where(
+                      str_trans[:translatable_type].eq(model_class_str)
+                        .and(str_trans[:key].eq('title'))
+                        .and(str_trans[:value].matches(sanitized))
+                    )
+
+        content_ids = rich_texts
+                      .project(rich_texts[:record_id].cast('uuid'))
+                      .where(
+                        rich_texts[:record_type].eq(model_class_str)
+                          .and(rich_texts[:name].eq('content'))
+                          .and(rich_texts[:body].matches(sanitized))
+                      )
+
+        union = Arel::Nodes::Union.new(title_ids, content_ids)
+
+        model_table[:id].in(
+          Arel::SelectManager.new.tap do |m|
+            m.project(Arel.star)
+            m.from(union.as('matches'))
+          end
+        )
+      end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
       # Log MCP tool invocations for audit and debugging.
       # Produces structured JSON entries tagged [MCP][tool] in Rails logs.
-      # Future: persist to Metrics::McpInvocation model for queryable audit trails.
       # @param tool_name [String] Name of the invoked tool
       # @param args [Hash] Arguments passed to the tool (sensitive keys stripped)
       # @param result_bytes [Integer] Size of the result payload

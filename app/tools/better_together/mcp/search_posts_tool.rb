@@ -44,24 +44,9 @@ module BetterTogether
       def search_accessible_posts(query, limit)
         policy_scope(BetterTogether::Post)
           .i18n
-          .where(post_matches_query(query))
+          .where(translatable_content_search_condition(BetterTogether::Post, query))
           .order(published_at: :desc)
           .limit([limit, 100].min)
-      end
-
-      def post_matches_query(query)
-        sanitized = "%#{sanitize_like(query)}%"
-        [
-          "id IN (
-            SELECT translatable_id FROM mobility_string_translations
-            WHERE translatable_type = ? AND key = 'title' AND value ILIKE ?
-            UNION
-            SELECT record_id::uuid FROM action_text_rich_texts
-            WHERE record_type = ? AND name = 'content' AND body ILIKE ?
-          )",
-          'BetterTogether::Post', sanitized,
-          'BetterTogether::Post', sanitized
-        ]
       end
 
       # Serialize a post to a hash
