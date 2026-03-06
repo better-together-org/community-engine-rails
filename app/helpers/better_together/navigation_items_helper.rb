@@ -4,6 +4,23 @@ require 'digest'
 module BetterTogether
   # rubocop:todo Metrics/ModuleLength
   module NavigationItemsHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
+    NAV_TREE_PRELOADS = [
+      :string_translations,
+      { linkable: [:string_translations] },
+      {
+        children: [
+          :string_translations,
+          { linkable: [:string_translations] },
+          {
+            children: [
+              :string_translations,
+              { linkable: [:string_translations] }
+            ]
+          }
+        ]
+      }
+    ].freeze
+
     def better_together_nav_area
   # rubocop:todo Layout/IndentationWidth
   @better_together_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'better-together')
@@ -191,6 +208,19 @@ module BetterTogether
       end
     end
 
+    def nav_fragment_cache_key(fragment_name, nav_areas: [])
+      nav_area_keys = Array(nav_areas).compact.map(&:cache_key_with_version).sort
+      [
+        'layout_fragment',
+        fragment_name,
+        "locale:#{current_locale}",
+        "platform:#{host_platform&.cache_key_with_version || 'none'}",
+        "community:#{host_community&.cache_key_with_version || 'none'}",
+        "areas:#{Digest::SHA256.hexdigest(nav_area_keys.join('|'))}",
+        "visibility:#{nav_visibility_context_key}"
+      ]
+    end
+
     def route_names_for_select(nav_item = nil)
       options_for_select(
         BetterTogether::NavigationItem.route_names.map do |name, route|
@@ -306,13 +336,20 @@ module BetterTogether
       cache_key = [nav_area.id, nav_area.cache_key_with_version, nav_visibility_context_key]
       return @visible_navigation_items_cache[cache_key] if @visible_navigation_items_cache.key?(cache_key)
 
-      nav_items = Mobility.with_locale(current_locale) { nav_area.top_level_nav_items_includes_children.to_a }
+      nav_items = Mobility.with_locale(current_locale) do
+        nav_area.top_level_nav_items_includes_children.includes(NAV_TREE_PRELOADS).to_a
+      end
       @visible_navigation_items_cache[cache_key] =
         nav_items.select { |item| navigation_item_visible_for?(item, platform: host_platform) }
     end
 
     # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def nav_visibility_context_key
+      @nav_visibility_context_key ||= build_nav_visibility_context_key
+    end
+
+    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    def build_nav_visibility_context_key
       context_parts = [
         "locale:#{current_locale}",
         "platform:#{host_platform&.cache_key_with_version || 'none'}",
@@ -331,37 +368,49 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def nav_permission_cache_stamp
-      return 'guest' unless current_user
-
-      segments = [current_user.cache_key_with_version]
-      segments.concat(membership_cache_segments)
-      segments.concat(role_cache_segments)
-      Digest::SHA256.hexdigest(segments.compact.join('|'))
+      @nav_permission_cache_stamp ||= begin
+        if current_user.nil?
+          'guest'
+        else
+          segments = [current_user.cache_key_with_version]
+          segments.concat(membership_cache_segments)
+          segments.concat(role_cache_segments)
+          Digest::SHA256.hexdigest(segments.compact.join('|'))
+        end
+      end
     end
 
     # rubocop:todo Metrics/AbcSize
     def membership_cache_segments
-      return [] unless current_user.class.respond_to?(:joinable_membership_classes)
+      @membership_cache_segments ||= begin
+        if current_user.class.respond_to?(:joinable_membership_classes)
+          current_user.class.joinable_membership_classes.filter_map do |membership_class_name|
+            membership_class = membership_class_name.to_s.safe_constantize
+            next unless membership_class&.column_names&.include?('member_id')
 
-      current_user.class.joinable_membership_classes.filter_map do |membership_class_name|
-        membership_class = membership_class_name.to_s.safe_constantize
-        next unless membership_class&.column_names&.include?('member_id')
-
-        scope = membership_class.where(member_id: current_user.id)
-        max_updated_at = scope.maximum(:updated_at).to_i
-        "#{membership_class_name}:#{scope.count}:#{max_updated_at}"
+            scope = membership_class.where(member_id: current_user.id)
+            max_updated_at = scope.maximum(:updated_at).to_i
+            "#{membership_class_name}:#{scope.count}:#{max_updated_at}"
+          end
+        else
+          []
+        end
       end
     end
     # rubocop:enable Metrics/AbcSize
 
     def role_cache_segments
-      return [] unless current_user.respond_to?(:roles)
-
-      roles_scope = current_user.roles
-      max_updated_at = roles_scope.maximum(:updated_at).to_i
-      ["roles:#{roles_scope.count}:#{max_updated_at}"]
-    rescue StandardError
-      []
+      @role_cache_segments ||= begin
+        if current_user.respond_to?(:roles)
+          roles_scope = current_user.roles
+          max_updated_at = roles_scope.maximum(:updated_at).to_i
+          ["roles:#{roles_scope.count}:#{max_updated_at}"]
+        else
+          []
+        end
+      rescue StandardError
+        []
+      end
     end
 
     def default_nav_cache_key(nav)
