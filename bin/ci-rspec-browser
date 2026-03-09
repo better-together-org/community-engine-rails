@@ -5,4 +5,8 @@ export RAILS_ENV="${RAILS_ENV:-test}"
 export NODE_ENV="${NODE_ENV:-test}"
 export DISABLE_SPRING=1
 
-bin/ci-rspec-core
+pushd spec/dummy >/dev/null
+bundle exec rails db:prepare
+popd >/dev/null
+
+bundle exec rspec spec/features spec/system

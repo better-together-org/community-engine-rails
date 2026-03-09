@@ -2,7 +2,15 @@
 
 ## Overview
 
-The test suite runs in parallel using the `parallel_rspec` gem, achieving a **75% speedup** (20 minutes → 5 minutes with 4 workers). All `before(:all)` and `after(:all)` hooks have been converted to `before(:each)` and `after(:each)` to ensure proper test isolation.
+The test suite runs in parallel using the `parallel_rspec` gem, achieving a **75% speedup** (20 minutes to 5 minutes with 4 workers). All `before(:all)` and `after(:all)` hooks have been converted to `before(:each)` and `after(:each)` to ensure proper test isolation.
+
+CI now uses explicit Rails-versioned gemfiles for the required lanes instead of mutating the bundle during the job:
+
+- `gemfiles/rails_7_2.gemfile`
+- `gemfiles/rails_8_0.gemfile`
+- `gemfiles/rails_8_1.gemfile`
+
+The required compatibility lanes are Rails `7.2.x` and `8.0.x`. Rails `8.1.x` runs as a preview lane and does not block merges. The `8.1.x` lane currently resolves its bundle dynamically because the custom forks still need expanded Rails support before a committed lockfile is viable.
 
 ## Current Performance
 
@@ -56,14 +64,17 @@ This will:
 2. Create a database for each worker (community_engine_test, community_engine_test2, etc.)
 3. Load the schema into each database
 
-## Running Tests in Parallel
+## Running Tests In Parallel
 
-### Using prspec (Recommended)
+### Using `prspec` (Recommended)
 
 The `parallel_rspec` gem provides the `prspec` command which automatically detects CPU cores:
 
 ```bash
-# Run all specs in parallel (auto-detects CPU cores)
+# Run the CI core suite locally
+bin/ci-rspec-core
+
+# Run all specs in parallel directly
 bin/dc-run prspec spec
 
 # Run specific directories
@@ -71,9 +82,18 @@ bin/dc-run prspec spec/models
 
 # Run specific files
 bin/dc-run prspec spec/models/better_together/agreement_spec.rb spec/models/better_together/person_spec.rb
+```
 
-# Run with specific line numbers
-bin/dc-run prspec spec/models/better_together/agreement_spec.rb:21 spec/features/events/edit_spec.rb:15
+### Browser Specs
+
+Browser and accessibility specs run outside the main `prspec` pool.
+
+```bash
+# Run the browser lane locally
+bin/ci-rspec-browser
+
+# Run only feature specs directly
+bin/dc-run bundle exec rspec spec/features spec/system
 ```
 
 ### Controlling Worker Count
@@ -89,11 +109,13 @@ bin/dc-run prspec spec -n 2
 
 # Use all available CPU cores
 bin/dc-run prspec spec -n $(nproc)
-```Worker Count
+```
 
-- **4 workers**: Best balance for most development systems (recommended)
+Worker Count
+
+- **4 workers**: Best balance for most development systems
 - **2 workers**: Good for debugging or systems with limited memory
-- **Auto-detect**: Let prspec detect CPU cores automatically
+- **Auto-detect**: Let `prspec` detect CPU cores automatically
 
 ### Test Distribution & Runtime Optimization
 
@@ -177,23 +199,37 @@ Your `spec/support/automatic_test_configuration.rb` is **already compatible** be
 
 ## CI Integration
 
-GitHub Actions is already configured for parallel testing in `.github/workflows/rubyonrails.yml`:
+GitHub Actions now uses separate jobs for:
 
-```yaml
-env:
-  PARALLEL_WORKERS: 4
+- `rspec-core (3.4.4, 7.2.x required)`
+- `rspec-core (3.4.4, 8.0.x required)`
+- `rspec-core (3.4.4, 8.1.x preview)`
+- `rspec-browser (3.4.4, 8.0.x required)`
 
-steps:
-  - name: Prepare parallel test databases
-    run: |
-      cd spec/dummy && bundle exec rake db:parallel:create db:parallel:prepare PARALLEL_TEST_PROCESSORS=$PARALLEL_WORKERS
+Core jobs use `bin/ci-rspec-core`. The browser job uses `bin/ci-rspec-browser`. This keeps slow Selenium-heavy specs out of the main `prspec` worker pool while preserving required compatibility coverage.
 
-  - name: Run RSpec in parallel
-    run: |
-      bundle exec parallel_rspec spec/ -n $PARALLEL_WORKERS --runtime-log tmp/parallel_runtime_rspec.log
+## Rails Versioned Bundles
+
+Use the matching gemfile when you need to reproduce a CI lane locally:
+
+```bash
+BUNDLE_GEMFILE=gemfiles/rails_7_2.gemfile bundle install
+BUNDLE_GEMFILE=gemfiles/rails_8_0.gemfile bundle install
 ```
 
-This achieves the same 75% speedup in CI as local development.
+The Rails `8.1.x` preview lane intentionally resolves fresh until the custom forks permit a stable lockfile:
+
+```bash
+BUNDLE_GEMFILE=gemfiles/rails_8_1.gemfile bundle lock --update rails --conservative --lockfile=gemfiles/rails_8_1.gemfile.lock
+```
+
+Use the preview helper to reproduce the non-blocking CI lane locally:
+
+```bash
+BUNDLE_GEMFILE=gemfiles/rails_8_1.gemfile bin/ci-rails-preview
+```
+
+If the preview lane fails before tests begin, treat the reported dependency ceiling as the upgrade blocker to clear in the custom forks before promoting Rails `8.1.x` to a required lane.
 
 ## Docker Configuration
 

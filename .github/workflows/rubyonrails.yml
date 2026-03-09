@@ -8,19 +8,25 @@ on:
   pull_request:
 
 jobs:
-  rspec:
+  rspec-core:
+    name: "rspec-core (${{ matrix.ruby }}, ${{ matrix.rails_label }})"
     runs-on: ubuntu-latest
     environment: test
+    continue-on-error: ${{ matrix.allowed_failure }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - ruby: '3.4.4'
             rails: '7.2.2.2'
-            allowed_failure: false   # ✅ required
+            rails_label: '7.2.x required'
+            gemfile: gemfiles/rails_7_2.gemfile
+            allowed_failure: false
           - ruby: '3.4.4'
             rails: '8.0.3'
-            allowed_failure: false   # ✅ required
+            rails_label: '8.0.x required'
+            gemfile: gemfiles/rails_8_0.gemfile
+            allowed_failure: false
 
     env:
       RAILS_ENV: test
@@ -29,7 +35,7 @@ jobs:
       ES_HOST:  "http://localhost"
       ELASTICSEARCH_URL: "http://localhost:9200"
       RAILS_VERSION: ${{ matrix.rails }}
-      # Parallel test configuration
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       WORKERS: 4
 
     services:
@@ -74,53 +80,22 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-
-          # Run the automatic bundle-install only on 7.2.
-          # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
-          # that we’ll reuse in the later manual install.
-          bundler-cache: ${{ matrix.rails == '8.0.3' }}
-
-          # One cache bucket per Rails version so they don’t clobber each other.
+          bundler-cache: true
           cache-version: rails-${{ matrix.rails }}
 
-      # Updating Rails can legitimately blow up on the experimental tracks,
-      # so we allow that *step* to error out without failing the job.
-      - name: Update Rails & install gems
-        if: matrix.rails != '8.0.3'
-        id: update
-        run: |
-          # turn off deployment mode
-          bundle config set deployment false
-          # conservative upgrade to the target rails version
-          bundle update rails --conservative
-          # install missing gems (writes bin/rspec, etc)
-          bundle install --jobs 4 --retry 3
-        continue-on-error: ${{ matrix.allowed_failure }}
-
-      - name: Prepare parallel test databases
-        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
-        run: |
-          rm -f spec/dummy/tmp/pids/server.pid
-          cd spec/dummy && bundle exec rake db:parallel:create db:parallel:prepare
-        continue-on-error: ${{ matrix.allowed_failure }}
-
-      - name: Wait for Elasticsearch
-        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
+      - name: Prepare search service
         run: |
           echo "Waiting for Elasticsearch to be healthy..."
           curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
-
-      - name: Run RSpec in parallel
-        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
+      - name: Run core RSpec in parallel
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
           GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec prspec spec
-        continue-on-error: ${{ matrix.allowed_failure }}
+          bin/ci-rspec-core
 
       - name: Upload coverage report
         if: always()
@@ -145,6 +120,144 @@ jobs:
         with:
           commit_message: "chore: update coverage badge"
           file_pattern: coverage.svg
+
+  rspec-browser:
+    name: "rspec-browser (3.4.4, 8.0.x required)"
+    runs-on: ubuntu-latest
+    environment: test
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
+      ES_HOST: "http://localhost"
+      ELASTICSEARCH_URL: "http://localhost:9200"
+      RAILS_VERSION: "8.0.3"
+      BUNDLE_GEMFILE: gemfiles/rails_8_0.gemfile
+
+    services:
+      postgres:
+        image: postgis/postgis:latest
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      elasticsearch:
+        image: elasticsearch:7.17.23
+        ports: ["9200:9200"]
+        env:
+          node.name: elasticsearch
+          cluster.name: better-together-es
+          discovery.seed_hosts: elasticsearch
+          discovery.type: single-node
+          bootstrap.memory_lock: "true"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Ruby & gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.4"
+          bundler-cache: true
+          cache-version: rails-8.0.3-browser
+
+      - name: Prepare search service
+        run: |
+          echo "Waiting for Elasticsearch to be healthy..."
+          curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
+
+      - name: Run browser RSpec
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+        run: |
+          rm -f spec/dummy/tmp/pids/server.pid
+          bin/ci-rspec-browser
+
+  rspec-core-preview-8-1:
+    name: "rspec-core (3.4.4, 8.1.x preview)"
+    runs-on: ubuntu-latest
+    environment: test
+    continue-on-error: true
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
+      ES_HOST: "http://localhost"
+      ELASTICSEARCH_URL: "http://localhost:9200"
+      RAILS_VERSION: "8.1.2"
+      BUNDLE_GEMFILE: gemfiles/rails_8_1.gemfile
+      WORKERS: 4
+
+    services:
+      postgres:
+        image: postgis/postgis:latest
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+          POSTGRES_INITDB_ARGS: "-c max_connections=50"
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      elasticsearch:
+        image: elasticsearch:7.17.23
+        ports: ["9200:9200"]
+        env:
+          node.name: elasticsearch
+          cluster.name: better-together-es
+          discovery.seed_hosts: elasticsearch
+          discovery.type: single-node
+          bootstrap.memory_lock: "true"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.4"
+          bundler-cache: false
+
+      - name: Resolve Rails 8.1 preview bundle
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+        run: |
+          bundle config set deployment false
+          rm -f spec/dummy/tmp/pids/server.pid
+          bin/ci-rails-preview
 
   # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:

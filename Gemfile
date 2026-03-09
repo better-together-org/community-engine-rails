@@ -23,7 +23,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 7.2'
 
 # Pundit for authorization, custom fork for Better Together
-gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources'
+gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources', ref: '4e50d1f97a1e7c864bc45e2613b763ecf8f079ce'
 
 # Core Rails gem
 gem 'rack-protection'
@@ -48,7 +48,7 @@ gem 'stackprof'
 gem 'sitemap_generator'
 
 # Storext for easier json attributes, custom fork for Better Together
-gem 'storext', github: 'better-together-org/storext'
+gem 'storext', github: 'better-together-org/storext', ref: 'ebc92461e95d07c34f5d8eac4eb7ad13cfd92afa'
 
 # Uglifier for JavaScript compression
 gem 'uglifier', '>= 1.3.0'
