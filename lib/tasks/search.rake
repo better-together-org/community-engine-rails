@@ -17,8 +17,8 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       all_models = ENV['ALL_MODELS'].to_s.downcase == 'true'
       models = if all_models
                  BetterTogether::Searchable.included_in_models
-                   .select { |model| model.respond_to?(:elastic_import) }
-                   .sort_by(&:name)
+                                           .select { |model| model.respond_to?(:elastic_import) }
+                                           .sort_by(&:name)
                else
                  [BetterTogether::Page]
                end
