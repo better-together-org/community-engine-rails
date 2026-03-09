@@ -8,6 +8,16 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       puts "✓ Reindexed #{model.count} #{model.model_name.human(count: 2).downcase}"
     end
 
+    def searchable_models_for_reindex(all_models:)
+      return [BetterTogether::Page] unless all_models
+
+      Rails.application.eager_load!
+
+      BetterTogether::Searchable.included_in_models
+                                .select { |model| model.respond_to?(:elastic_import) }
+                                .sort_by(&:name)
+    end
+
     desc 'Reindex all searchable models in Elasticsearch'
     task reindex_all: :environment do
       puts 'Reindexing all searchable models...'
@@ -15,13 +25,7 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       # Opt in to full model reindex with ALL_MODELS=true.
       # Default behavior remains page-only for backward compatibility.
       all_models = ENV['ALL_MODELS'].to_s.downcase == 'true'
-      models = if all_models
-                 BetterTogether::Searchable.included_in_models
-                                           .select { |model| model.respond_to?(:elastic_import) }
-                                           .sort_by(&:name)
-               else
-                 [BetterTogether::Page]
-               end
+      models = searchable_models_for_reindex(all_models:)
 
       models.each { |model| reindex_searchable_model(model) }
 
