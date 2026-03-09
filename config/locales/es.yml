@@ -2018,6 +2018,8 @@ es:
         images: Imágenes
         preferences: Preferences
     reports:
+      actions:
+        report: Reportar
       attributes:
         category: Categoría
         harm_level: Nivel de daño
@@ -2173,6 +2175,9 @@ es:
         update_case: Actualizar caso
         values_review: Revisión de valores
         values_review_placeholder: Explica la revisión de valores para esta medida
+    safety_notes:
+      notices:
+        created: Se agregó una nota al caso.
     person_block:
       cannot_block_manager: no puede ser un administrador de la plataforma
       cannot_block_self: no puedes bloquearte a ti mismo

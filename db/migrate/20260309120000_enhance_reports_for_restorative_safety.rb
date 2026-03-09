@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Extends report intake records with restorative-safety triage fields.
 class EnhanceReportsForRestorativeSafety < ActiveRecord::Migration[7.1]
   def change
     change_table :better_together_reports, bulk: true do |t|

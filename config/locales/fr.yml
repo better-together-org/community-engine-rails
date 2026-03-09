@@ -2026,6 +2026,8 @@ fr:
         images: Images
         preferences: Preferences
     reports:
+      actions:
+        report: Signaler
       attributes:
         category: Catégorie
         harm_level: Niveau de préjudice
@@ -2181,6 +2183,9 @@ fr:
         update_case: Mettre à jour le dossier
         values_review: Examen des valeurs
         values_review_placeholder: Expliquez l'examen des valeurs pour cette mesure
+    safety_notes:
+      notices:
+        created: Une note a été ajoutée au dossier.
     person_block:
       cannot_block_manager: ne peut pas être un gestionnaire de plateforme
       cannot_block_self: ne peut pas vous bloquer vous-même

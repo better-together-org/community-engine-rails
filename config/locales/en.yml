@@ -1992,6 +1992,8 @@ en:
         images: Images
         preferences: Preferences
     reports:
+      actions:
+        report: Report
       attributes:
         category: Category
         harm_level: Harm level
@@ -2147,6 +2149,9 @@ en:
         update_case: Update case
         values_review: Values review
         values_review_placeholder: Explain the values review for this action
+    safety_notes:
+      notices:
+        created: Case note added.
     person_block:
       cannot_block_manager: cannot be a platform manager
       cannot_block_self: cannot block yourself

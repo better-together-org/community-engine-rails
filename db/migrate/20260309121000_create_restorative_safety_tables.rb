@@ -1,7 +1,18 @@
 # frozen_string_literal: true
 
+# Creates the operational safety-case tables for triage, actions, notes, and agreements.
 class CreateRestorativeSafetyTables < ActiveRecord::Migration[7.1]
   def change
+    create_safety_cases_table
+    create_safety_actions_table
+    create_safety_notes_table
+    create_safety_agreements_table
+  end
+
+  private
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def create_safety_cases_table
     create_table :better_together_safety_cases, id: :uuid do |t|
       t.integer :lock_version, default: 0, null: false
       t.references :report, null: false, type: :uuid, foreign_key: { to_table: :better_together_reports }
@@ -24,6 +35,10 @@ class CreateRestorativeSafetyTables < ActiveRecord::Migration[7.1]
     add_index :better_together_safety_cases, :status
     add_index :better_together_safety_cases, :lane
     add_index :better_together_safety_cases, :created_at
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def create_safety_actions_table
     create_table :better_together_safety_actions, id: :uuid do |t|
       t.integer :lock_version, default: 0, null: false
       t.references :safety_case, null: false, type: :uuid, foreign_key: { to_table: :better_together_safety_cases }
@@ -47,7 +62,10 @@ class CreateRestorativeSafetyTables < ActiveRecord::Migration[7.1]
 
     add_index :better_together_safety_actions, :action_type
     add_index :better_together_safety_actions, :status
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  def create_safety_notes_table
     create_table :better_together_safety_notes, id: :uuid do |t|
       t.integer :lock_version, default: 0, null: false
       t.references :safety_case, null: false, type: :uuid, foreign_key: { to_table: :better_together_safety_cases }
@@ -58,7 +76,9 @@ class CreateRestorativeSafetyTables < ActiveRecord::Migration[7.1]
     end
 
     add_index :better_together_safety_notes, :visibility
+  end
 
+  def create_safety_agreements_table
     create_table :better_together_safety_agreements, id: :uuid do |t|
       t.integer :lock_version, default: 0, null: false
       t.references :safety_case, null: false, type: :uuid, foreign_key: { to_table: :better_together_safety_cases }
@@ -75,4 +95,5 @@ class CreateRestorativeSafetyTables < ActiveRecord::Migration[7.1]
 
     add_index :better_together_safety_agreements, :status
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end

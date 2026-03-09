@@ -2008,6 +2008,8 @@ uk:
         images: Images
         preferences: Preferences
     reports:
+      actions:
+        report: Поскаржитися
       attributes:
         category: Категорія
         harm_level: Рівень шкоди
@@ -2163,6 +2165,9 @@ uk:
         update_case: Оновити справу
         values_review: Огляд цінностей
         values_review_placeholder: Поясніть оцінку цінностей для цього заходу
+    safety_notes:
+      notices:
+        created: До справи додано нотатку.
     person_block:
       cannot_block_manager: не може бути менеджером платформи
       cannot_block_self: не можете заблокувати себе
