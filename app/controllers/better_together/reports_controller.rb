@@ -16,15 +16,16 @@ module BetterTogether
     end
 
     def new
-      @report = helpers.current_person.reports_made.new(
-        reportable_id: params[:reportable_id],
-        reportable_type: params[:reportable_type]
-      )
+      @report = build_report_from_query
+      return render_invalid_reportable unless valid_reportable_request?
+
       authorize @report
     end
 
     def create
       @report = build_report
+      return render_invalid_reportable unless valid_reportable_request?
+
       authorize @report
 
       if @report.save
@@ -38,9 +39,16 @@ module BetterTogether
 
     private
 
+    def build_report_from_query
+      helpers.current_person.reports_made.new(
+        reportable_id: params[:reportable_id],
+        reportable_type: params[:reportable_type]
+      ).tap { |report| assign_reportable(report, params[:reportable_type], params[:reportable_id]) }
+    end
+
     def build_report
       helpers.current_person.reports_made.new(report_params).tap do |report|
-        report.reportable = resolved_reportable if report_params[:reportable_type].present?
+        assign_reportable(report, report_params[:reportable_type], report_params[:reportable_id])
       end
     end
 
@@ -63,16 +71,37 @@ module BetterTogether
       )
     end
 
-    def resolved_reportable
+    def resolved_reportable(reportable_type, reportable_id)
       klass = BetterTogether::SafeClassResolver.resolve!(
-        report_params[:reportable_type],
+        reportable_type,
         allowed: BetterTogether::Report::ALLOWED_REPORTABLES,
         error_class: SecurityError
       )
 
-      klass.find(report_params[:reportable_id])
+      klass.find(reportable_id)
     rescue NameError, SecurityError, ActiveRecord::RecordNotFound
       nil
+    end
+
+    def valid_reportable_request?
+      return true unless reportable_lookup_requested?
+
+      @report.reportable.present?
+    end
+
+    def assign_reportable(report, reportable_type, reportable_id)
+      return unless reportable_type.present?
+
+      report.reportable = resolved_reportable(reportable_type, reportable_id)
+    end
+
+    def reportable_lookup_requested?
+      @report.reportable_type.present? || @report.reportable_id.present?
+    end
+
+    def render_invalid_reportable
+      skip_authorization
+      head :not_found
     end
   end
 end

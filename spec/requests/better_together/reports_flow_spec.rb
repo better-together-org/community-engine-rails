@@ -18,6 +18,12 @@ RSpec.describe 'BetterTogether reports flow' do
     expect(response.body).to include('Report a safety concern')
   end
 
+  it 'returns not found for an invalid reportable type on the new form' do
+    get better_together.new_report_path(locale:, reportable_type: 'Kernel', reportable_id: target_person.id)
+
+    expect(response).to have_http_status(:not_found)
+  end
+
   it 'creates a report and redirects to report history' do
     expect do
       post better_together.reports_path(locale:), params: {
@@ -40,5 +46,20 @@ RSpec.describe 'BetterTogether reports flow' do
     expect(response).to have_http_status(:redirect)
     follow_redirect!
     expect(response.body).to include('Current status')
+  end
+
+  it 'returns not found for an invalid reportable type on create' do
+    post better_together.reports_path(locale:), params: {
+      report: {
+        reportable_type: 'Kernel',
+        reportable_id: target_person.id,
+        category: 'boundary_violation',
+        harm_level: 'medium',
+        requested_outcome: 'boundary_support',
+        reason: 'Need help setting a boundary'
+      }
+    }
+
+    expect(response).to have_http_status(:not_found)
   end
 end

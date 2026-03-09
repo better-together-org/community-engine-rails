@@ -9,28 +9,23 @@ module BetterTogether
       end
 
       def show?
-        platform_manager? || reporter?
+        platform_manager?
       end
 
       def update?
         platform_manager?
       end
 
-      # Limits case visibility to platform managers or the reporting person.
+      # Limits case visibility to platform managers.
       class Scope < ApplicationPolicy::Scope
         def resolve
           return scope.all if agent&.permitted_to?('manage_platform')
-          return scope.none unless agent
 
-          scope.joins(:report).where(better_together_reports: { reporter_id: agent.id })
+          scope.none
         end
       end
 
       private
-
-      def reporter?
-        record.report.reporter == agent
-      end
 
       def platform_manager?
         agent&.permitted_to?('manage_platform')

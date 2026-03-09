@@ -14,9 +14,9 @@ RSpec.describe BetterTogether::Safety::CasePolicy do
     expect(policy.update?).to be true
   end
 
-  it 'permits reporters to view their own case' do
+  it 'denies reporters from viewing their own case' do
     policy = described_class.new(reporter_user, safety_case)
-    expect(policy.show?).to be true
+    expect(policy.show?).to be false
     expect(policy.update?).to be false
   end
 

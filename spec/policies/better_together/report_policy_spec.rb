@@ -42,4 +42,15 @@ RSpec.describe BetterTogether::ReportPolicy do
     )
     expect(described_class.new(user, record).create?).to be false
   end
+
+  it 'denies create when reportable is missing' do
+    record = BetterTogether::Report.new(
+      reporter: agent,
+      reason: 'spam',
+      category: 'spam_or_scam',
+      harm_level: 'medium',
+      requested_outcome: 'content_review'
+    )
+    expect(described_class.new(user, record).create?).to be false
+  end
 end

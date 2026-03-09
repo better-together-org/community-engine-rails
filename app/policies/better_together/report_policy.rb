@@ -16,7 +16,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && record.reporter == agent && record.reporter != record.reportable
+      user.present? && record.reportable.present? && record.reporter == agent && record.reporter != record.reportable
     end
 
     # Restricts report visibility to the reporting person and platform managers.
