@@ -5,7 +5,7 @@
 
 ## Getting Started
 
-- [🛠️ Development Setup](dev-setup.md) - Complete local development environment setup guide
+- [Development Setup](dev-setup.md) - Complete local development environment setup guide
 
 ## Quick Links
 
@@ -42,6 +42,12 @@ bin/dc-run bin/i18n all
 # Render diagrams
 bin/render_diagrams
 ```
+
+## Accessibility And Documentation Quality
+
+- [Accessibility Testing](accessibility_testing.md) - Capybara, Selenium, and axe-core guidance for WCAG 2.1 AA coverage
+- [Screenshot And Documentation Tooling Assessment](screenshot_and_documentation_tooling_assessment.md) - Current-state assessment of CE and management-tool automation
+- [Documentation Accessibility Rubric](../shared/documentation_accessibility_rubric.md) - Canonical rubric for user docs, inline help, and hints
 
 ## Development Workflow
 
