@@ -40,15 +40,14 @@ module BetterTogether
     private
 
     def build_report_from_query
-      helpers.current_person.reports_made.new(
-        reportable_id: params[:reportable_id],
-        reportable_type: params[:reportable_type]
-      ).tap { |report| assign_reportable(report, params[:reportable_type], params[:reportable_id]) }
+      helpers.current_person.reports_made.new.tap do |report|
+        assign_reportable(report, requested_reportable_type, requested_reportable_id)
+      end
     end
 
     def build_report
       helpers.current_person.reports_made.new(report_params).tap do |report|
-        assign_reportable(report, report_params[:reportable_type], report_params[:reportable_id])
+        assign_reportable(report, requested_reportable_type, requested_reportable_id)
       end
     end
 
@@ -96,7 +95,23 @@ module BetterTogether
     end
 
     def reportable_lookup_requested?
-      @report.reportable_type.present? || @report.reportable_id.present?
+      requested_reportable_type.present? || requested_reportable_id.present?
+    end
+
+    def requested_reportable_type
+      @requested_reportable_type ||= reportable_source_params[:reportable_type]
+    end
+
+    def requested_reportable_id
+      @requested_reportable_id ||= reportable_source_params[:reportable_id]
+    end
+
+    def reportable_source_params
+      @reportable_source_params ||= if params[:report].is_a?(ActionController::Parameters)
+                                      params.require(:report).permit(:reportable_type, :reportable_id)
+                                    else
+                                      params.permit(:reportable_type, :reportable_id)
+                                    end
     end
 
     def render_invalid_reportable
