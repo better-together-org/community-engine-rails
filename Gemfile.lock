@@ -463,9 +463,12 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.8, >= 1.8.1)
       terminal-table (>= 1.5.1)
-    i18n-timezones (1.4.8)
-      i18n (>= 0.9.3)
-      rails (>= 5.1.6.2)
+    i18n-timezones (2.3.0)
+      activesupport (>= 7.0, < 9)
+      i18n (>= 1.0, < 3)
+      i18n-timezones-data (~> 1.1)
+      railties (>= 7.0, < 9)
+    i18n-timezones-data (1.1.0)
     i18n_generators (2.2.2)
       activerecord (>= 3.0.0)
       railties (>= 3.0.0)
@@ -560,7 +563,7 @@ GEM
     multipart-post (2.4.1)
     net-http (0.9.1)
       uri (>= 0.11.1)
-    net-imap (0.6.2)
+    net-imap (0.6.3)
       date
       net-protocol
     net-pop (0.1.2)
@@ -907,7 +910,7 @@ GEM
     thread (0.2.2)
     thread_safe (0.3.6)
     tilt (2.6.0)
-    timeout (0.6.0)
+    timeout (0.6.1)
     tins (1.38.0)
       bigdecimal
       sync
