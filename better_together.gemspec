@@ -40,7 +40,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'devise_zxcvbn'
   spec.add_dependency 'doorkeeper', '>= 5.7', '< 6.0'
   spec.add_dependency 'elasticsearch-model', '~> 7'
-  spec.add_dependency 'elasticsearch-rails', '~> 7'
+  spec.add_dependency 'elasticsearch-rails', '>= 7', '< 9'
   spec.add_dependency 'fast-mcp', '>= 1.6.0'
   spec.add_dependency 'font-awesome-sass', '~> 6.5'
   spec.add_dependency 'friendly_id', '>= 5.2', '< 5.6'
