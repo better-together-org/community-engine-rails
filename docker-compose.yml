@@ -2,19 +2,14 @@
 volumes:
   community-engine-bundler-gems:
     name: community-engine-rails_community-engine-bundler-gems
-    external: true
   community-engine-db-data:
     name: community-engine-rails_community-engine-db-data
-    external: true
   community-engine-elasticsearch:
     name: community-engine-rails_community-engine-elasticsearch
-    external: true
   community-engine-redis:
     name: community-engine-rails_community-engine-redis
-    external: true
   community-engine-redis-rack-attack:
     name: community-engine-rails_community-engine-redis-rack-attack
-    external: true
 
 x-env-info: &env-info
   env_file:
