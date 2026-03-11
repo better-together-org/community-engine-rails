@@ -5,10 +5,16 @@ on:
     branches:
       - main
       - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
   pull_request:
     branches:
       - main
       - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
 
 jobs:
   i18n-health:
@@ -45,4 +51,3 @@ jobs:
         with:
           name: i18n-health-report
           path: i18n-health.txt
-    continue-on-error: true
