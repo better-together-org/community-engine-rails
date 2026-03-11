@@ -21,6 +21,7 @@ The contract covers:
 - request tenant resolution
 - schema switching
 - `Current` context
+- authentication and identity mapping
 - job and mailer propagation
 - cross-tenant admin behavior
 
@@ -66,6 +67,7 @@ Unknown hosts must not silently fall through to arbitrary tenant data.
 | `Current.platform` | Public-schema platform metadata for the resolved tenant |
 | `Current.tenant_schema` | Active tenant schema name |
 | `Current.community` | Current community in tenant context when route or UI establishes one |
+| `Current.user` | Authenticated public-global credential record |
 | `Current.person` | Current authenticated person for the tenant |
 
 ### Context Rules
@@ -73,7 +75,16 @@ Unknown hosts must not silently fall through to arbitrary tenant data.
 - `Current.platform` is always set for tenant-local requests.
 - `Current.tenant_schema` is always set together with `Current.platform`.
 - `Current.community` is optional and only set when route context or selection logic establishes it.
-- `Current.person` is tenant-local and must be loaded after schema switching.
+- `Current.user` is authenticated before or alongside tenant resolution, but it is not sufficient for tenant-local authorization on its own.
+- `Current.person` is tenant-local and must be loaded after schema switching from the public-global user identity mapping.
+
+### Authentication And Identity Rules
+
+- `User` credentials remain public-global.
+- `Person` remains tenant-local.
+- Authentication establishes `Current.user`; tenant entry then resolves the corresponding tenant-local `Current.person`.
+- If a valid `Current.user` has no corresponding tenant-local person profile for the active tenant, the request must fail closed or enter an explicit onboarding/membership flow.
+- Tenant-local authorization always runs against `Current.person`, not just `Current.user`.
 
 ### Host Community Rules
 
@@ -107,6 +118,13 @@ Community context is established by one of:
 - host-community default only where the feature is intentionally tenant-wide and no explicit community is selected
 
 The host community must not become a universal silent fallback for every record type.
+
+### Domain Ownership Rules At Runtime
+
+- tenant-global messaging may reference community context, but its primary tenant boundary is the active schema
+- product notifications, product search, and product analytics run inside one tenant context
+- fleet reporting, delivery telemetry, and observability run in cross-tenant-admin context only
+- navigation and content blocks must resolve either as tenant-global assets or community-owned assets; request handling must not guess implicitly
 
 ---
 
@@ -147,11 +165,13 @@ Mailers must render in tenant context so that:
 - links use the tenant’s domain
 - platform branding is tenant-specific
 
+Mailers may use `Current.user` for delivery identity, but all content lookups must use tenant-local records after schema switching.
+
 ### Notifications
 
 Notifications should be treated as tenant-local unless explicitly marked as fleet-admin notifications.
 
-If notification delivery infrastructure needs global storage, that must be modeled explicitly and not assumed from the current shared-schema implementation.
+Fleet delivery telemetry and provider diagnostics are separate cross-tenant-admin concerns and must not leak into product notification ownership rules.
 
 ---
 
@@ -165,6 +185,8 @@ Cross-tenant operations are not normal tenant requests. They run in a dedicated 
 - provisioning and backup status
 - support diagnostics
 - fleet-level reporting and observability
+- cross-tenant delivery telemetry
+- explicit fleet search or reporting pipelines
 
 ### Cross-Tenant Query Pattern
 
@@ -189,6 +211,7 @@ The implementation plan should assume these additions:
 
 - `Platform` routing fields in `public` for domain/subdomain/schema mapping
 - runtime support for `Current.platform`, `Current.tenant_schema`, and `Current.community`
+- runtime support for mapping public-global `Current.user` to tenant-local `Current.person`
 - tenant-aware middleware for request switching
 - tenant-aware job and mailer context wrappers
 
