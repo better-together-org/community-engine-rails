@@ -34,5 +34,8 @@ else
     } >>"${GITHUB_STEP_SUMMARY}"
   fi
 
-  exit 1
+  # The preview lane is informational: dependency solver incompatibilities
+  # should be surfaced, but they should not block required CI.
+  echo "Rails 8.1 preview is currently blocked by dependency resolution." >&2
+  exit 0
 fi
