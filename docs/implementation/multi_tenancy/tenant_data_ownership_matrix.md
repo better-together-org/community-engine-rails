@@ -1,27 +1,28 @@
-# Tenant Data Ownership Matrix
+# Federated Platform Ownership Matrix
 
 **Date:** March 11, 2026  
 **Status:** Draft architecture baseline  
-**Purpose:** Canonical ownership map for schema-per-platform multi-tenancy
+**Purpose:** Canonical ownership map for schema-per-platform tenancy plus federated CE platform networking
 
 ---
 
 ## Summary
 
-This document defines the target ownership class for major CE domains under the intended tenancy model:
+This document defines target ownership for major CE domains under the new architecture:
 
-- one PostgreSQL schema per hosted platform
-- `public` schema reserved for fleet-level routing and provisioning metadata
-- communities as the primary in-schema partition
-- personal communities treated as first-class communities inside a tenant
+- each hosted CE platform on this server keeps its own tenant schema
+- remote CE and non-CE platforms can exist as external platform records
+- each platform keeps its own local `User`, `Person`, memberships, onboarding, and private spaces
+- cross-platform sign-in and API access use OAuth between platforms
+- linked platform accounts form one layer of the social and platform network
+- platform, community, and person connection requests use a shared request primitive
+- shared content is opt-in, agreement-backed, mirrored locally, and may support bi-directional sync where both platforms allow it
 
 This matrix is the source of truth for:
 
 - `tenant_runtime_contract.md`
 - `schema_per_tenant_implementation_plan.md`
-- future migration and implementation work
-
-If a domain cannot be confidently placed yet, it must be marked `needs-redesign` instead of inferred.
+- future federation, sync, and tenancy implementation work
 
 ---
 
@@ -29,12 +30,12 @@ If a domain cannot be confidently placed yet, it must be marked `needs-redesign`
 
 | Class | Meaning |
 |-------|---------|
-| `public-global` | Lives in `public`; required for routing, provisioning, or fleet administration |
-| `tenant-global` | Lives in a tenant schema; visible across that hosted platform |
-| `community-scoped` | Lives in a tenant schema and must resolve to a community |
-| `personal-community-scoped` | Lives in a tenant schema and is anchored to a person’s personal community |
-| `cross-tenant-admin` | Fleet-level operational or reporting data spanning tenants |
-| `needs-redesign` | Current implementation is mixed or unclear; target placement must be resolved before implementation |
+| `public-global` | Lives in `public`; shared across the host CE instance for routing, peer platform metadata, or fleet administration |
+| `tenant-global` | Lives in one local tenant schema and is visible across that platform |
+| `community-scoped` | Lives in one local tenant schema and resolves to a community |
+| `personal-community-scoped` | Lives in one local tenant schema and is anchored to a person’s personal community |
+| `network-shared` | Represents a cross-platform linkage, mirror, agreement, or sync contract spanning more than one platform |
+| `cross-tenant-admin` | Fleet-level operational or reporting data spanning many locally hosted tenants |
 
 ---
 
@@ -42,73 +43,82 @@ If a domain cannot be confidently placed yet, it must be marked `needs-redesign`
 
 | Domain / Model Family | Current Shape | Target Ownership | Notes |
 |-----------------------|---------------|------------------|-------|
-| `Platform` | Shared-schema platform table | `public-global` | Global source for domain routing, schema name, provisioning status, backup metadata |
-| Platform provisioning state | Not implemented | `public-global` | Includes schema lifecycle, provisioning errors, timestamps, backup health |
-| Domain / subdomain routing metadata | Not implemented | `public-global` | Must resolve request host to one tenant schema |
-| Fleet support metadata | Not implemented | `cross-tenant-admin` | Support tooling, operational notes, schema inventory, incident metadata |
+| Local hosted `Platform` | Shared-schema platform table | `public-global` | Source of routing, schema name, provisioning state, privacy defaults, peer metadata |
+| External peer `Platform` | `external` flag already exists | `public-global` | Represents remote CE or non-CE platforms known to the host app |
+| Platform provisioning state | Not implemented | `public-global` | Tracks schema lifecycle for locally hosted platforms only |
+| Platform network trust / visibility settings | Not implemented | `public-global` | Controls default privacy, sharing opt-in, peer/member platform relationships |
+| Host CE platform default connection request | Not implemented | `public-global` | Pre-seeded outbound request from the BTS/CE host platform to new private platforms |
+| Fleet support metadata | Not implemented | `cross-tenant-admin` | Local operations, tenant inventory, schema health, sync diagnostics |
+| Local `User` credentials | Already local today | `tenant-global` | Each platform owns its own accounts; no host-wide global credential table |
+| Local `Person` profile | Already local today | `tenant-global` | Platform-local identity profile used for memberships, content, and community graph |
+| `Identification` inside a platform | Already local today | `tenant-global` | Links local account and local person within one platform |
+| Network account linkage | Partially approximated by integrations today | `network-shared` | Links one local platform account to another platform account and may drive sign-in, sync, and graph edges |
 | `Community` | Shared-schema main organizing boundary | `community-scoped` | First-class in-tenant partition for host, personal, and additional communities |
-| Host community designation | Host flag in shared schema | `community-scoped` | One per tenant; platform default community |
-| Personal community | Emerges via `PrimaryCommunity` concern | `personal-community-scoped` | Must be formalized as a first-class community concept |
-| `Person` profile | Mixed; has `community_id` plus memberships | `tenant-global` | Tenant-local person record; may reference a personal community |
-| `User` credentials | Shared app auth today | `public-global` | One credential identity can authenticate across hosted platforms |
-| `Identification` link layer | Shared auth-to-person link today | `public-global` | Maps public-global user credentials to tenant-local person profiles |
-| `PersonCommunityMembership` | Community membership | `community-scoped` | Remains community-based inside tenant |
-| `PersonPlatformMembership` | Platform membership | `tenant-global` | Tenant-wide organizer/admin/member relationships |
-| Roles | Shared definitions today | `tenant-global` | Seeded or copied into each tenant schema |
-| Resource permissions | Shared definitions today | `tenant-global` | Must align to tenant-local role assignment |
-| Pages | Community-oriented | `community-scoped` | Defaulting should use explicit current community rules, not host fallback magic |
-| Posts | Mixed/shared today | `community-scoped` | Target is community ownership inside tenant |
-| Page-owned content blocks | Mixed/shared today | `community-scoped` | Blocks attached to pages or community-owned records inherit community ownership |
-| Reusable templates and branding blocks | Mixed/shared today | `tenant-global` | Shared presentation assets, CSS blocks, reusable templates |
-| Platform blocks / tenant branding blocks | Platform-scoped today | `tenant-global` | Tenant-wide theming, CSS, shared platform presentation |
-| Tenant-global navigation | Mixed/shared today | `tenant-global` | Global headers, footer nav, account and organizer navigation inside one platform |
-| Community navigation | Mixed/shared today | `community-scoped` | Community hub/sidebar/navigation trees owned by one community |
-| Calendars | Community-scoped | `community-scoped` | Personal calendars remain community-anchored through personal community |
-| Events | Community-oriented | `community-scoped` | Event host and visibility remain community-driven |
-| Event attendance / invitations | Mixed around events and people | `community-scoped` | Belongs with the event’s community, with tenant-local people |
-| Geography / places / infrastructure | Community-scoped | `community-scoped` | Strong fit for in-schema community boundary |
-| Conversations / messages | Mixed/shared today | `tenant-global` | Direct messaging spans communities within one platform; optional community context may be attached |
-| Notifications | Shared/infrastructure today | `tenant-global` | Product notifications are tenant-local; fleet delivery telemetry is separate |
-| Person blocks / reports / moderation records | Mixed social safety records | `tenant-global` | Safety operations are tenant-wide, though some records reference community context |
-| Webhook endpoints | Community-scoped today | `community-scoped` | Community-owned endpoints stay community-owned unless an explicit tenant-global class is introduced |
-| Tenant integrations / OAuth applications | Mixed/shared today | `tenant-global` | Integrations and OAuth apps belong to one hosted platform unless explicitly fleet-admin |
-| Search indexes / search metadata | Shared today | `tenant-global` | Product search indexes are tenant-local; fleet search requires separate admin indexing |
-| Product metrics / analytics | Shared today | `tenant-global` | Product analytics belong to one tenant; fleet observability remains separate |
-| Fleet observability / delivery telemetry | Shared ops concern today | `cross-tenant-admin` | Monitoring, indexing, backup oversight, and delivery telemetry span tenants |
-| Background job context | No tenant support today | `tenant-global` | Execution context belongs to one tenant, optionally one community |
-| Mailer rendering context | No tenant support today | `tenant-global` | URLs, branding, and lookups must run in one tenant context |
+| Host community designation | Host flag in shared schema | `community-scoped` | One per platform; default local community |
+| Personal community | Emerges via `PrimaryCommunity` concern | `personal-community-scoped` | Explicit community used for person-owned mutual aid and direct connection flows |
+| `PersonCommunityMembership` | Community membership | `community-scoped` | Remains the main in-platform community participation model |
+| `PersonPlatformMembership` | Platform membership | `tenant-global` | Platform-wide organizer/member/admin roles remain local |
+| Roles | Shared definitions today | `tenant-global` | Seeded per local platform schema |
+| Resource permissions | Shared definitions today | `tenant-global` | Applied inside one platform |
+| Connection request subtype | `Joatu::Request` already has polymorphic target | `network-shared` | Shared request primitive for person/community/platform connection workflows |
+| Accepted connection edges | Not implemented | `network-shared` | Canonical relationship layer between people, communities, and platforms |
+| Agreements for auth/sharing/sync consent | Existing agreement system | `network-shared` | Records consent and terms for linked identities, mirrored content, and publication rights |
+| Pages | Community-oriented | `community-scoped` | Local canonical records inside one platform |
+| Posts | Mixed/shared today | `community-scoped` | Local canonical records inside one platform |
+| Page-owned content blocks | Mixed/shared today | `community-scoped` | Blocks attached to local community-owned records inherit community ownership |
+| Reusable templates and branding blocks | Mixed/shared today | `tenant-global` | Platform-wide assets inside one local platform |
+| Tenant-global navigation | Mixed/shared today | `tenant-global` | Account, organizer, and tenant-level nav inside one platform |
+| Community navigation | Mixed/shared today | `community-scoped` | Community-local navigation structures |
+| Calendars | Community-scoped | `community-scoped` | Personal calendars remain tied to personal communities |
+| Events | Community-oriented | `community-scoped` | Local canonical records tied to communities |
+| Event attendance / invitations | Mixed around events and people | `community-scoped` | Local participation records |
+| Geography / places / infrastructure | Community-scoped | `community-scoped` | Remains local and community-owned |
+| Conversations / messages | Mixed/shared today | `tenant-global` | Direct messaging stays local to one platform; cross-platform sharing happens through the network layer, not message table reuse |
+| Notifications | Shared/infrastructure today | `tenant-global` | Product notifications are local to one platform |
+| Person blocks / reports / moderation records | Mixed safety records | `tenant-global` | Moderation remains platform-local unless a separate federation policy is added later |
+| Webhook endpoints | Community-scoped today | `community-scoped` | Community-owned local endpoints |
+| OAuth applications / peer platform auth config | Mixed/shared today | `tenant-global` | Each CE platform can act as OAuth provider and client for other CE platforms |
+| Person platform integrations | OAuth with external services today | `network-shared` | Expands to include CE peer account links in addition to external service integrations |
+| Mirrored network content records | Not implemented | `network-shared` | Local mirror/cache of authorized remote content with source metadata and sync state |
+| Mirror refresh / publish jobs | Not implemented | `network-shared` | Sync orchestration across platforms, scoped by agreements and sharing policy |
+| Product search indexes / search metadata | Shared today | `tenant-global` | Local platform search indexes local plus authorized mirrored content |
+| Product metrics / analytics | Shared today | `tenant-global` | Local platform analytics for native and mirrored content consumption |
+| Network feed aggregation state | Not implemented | `network-shared` | Tracks what connected platforms and linked accounts contribute to the feed |
+| Fleet observability / delivery telemetry | Shared ops concern today | `cross-tenant-admin` | Monitoring, indexing, sync diagnostics, backup oversight, and local operations telemetry |
+| Background job context | No tenant support today | `tenant-global` | Local job execution belongs to one platform, with optional network sync context |
+| Mailer rendering context | No tenant support today | `tenant-global` | Mailers render in one platform context; network invitations and connection flows may reference remote peers |
 
 ---
 
 ## Defaults Chosen For Planning
 
-The following defaults are chosen for the planning package and should be treated as provisional architecture decisions unless superseded by a dedicated ADR:
-
-1. `Platform` remains in `public`.
-2. `Community` remains the primary data partition inside each tenant.
-3. `Person` is tenant-local, while `User` credentials and `Identification` remain public-global.
-4. Personal communities are explicit tenant-local communities, not incidental side effects of callbacks.
-5. Roles and permissions are tenant-local definitions, even if seeded from a common template.
-6. Product notifications, search, and analytics are tenant-local; fleet observability is a separate cross-tenant-admin concern.
+1. Each platform keeps its own local accounts and people.
+2. CE-to-CE OAuth is used for federated sign-in and authorized API access between platforms.
+3. Linked platform accounts serve both as identity links and as network relationship edges.
+4. Platforms are private by default and must opt in to sharing content with networked platforms.
+5. New private platforms receive a pre-seeded connection request from the BTS/CE host platform.
+6. Mirrored content is stored locally with source metadata and sync state; bi-directional sync requires explicit opt-in and agreement-backed consent.
+7. Direct messages, moderation, and private community participation remain local to each platform unless later federation work explicitly expands them.
 
 ---
 
 ## Resolution Notes
 
-This draft resolution pass makes the following architectural choices:
+This draft chooses:
 
-- identity is split between public-global credentials and tenant-local person profiles
-- messaging is tenant-global so direct messaging can cross communities within a platform
-- navigation and content blocks are split into tenant-global and community-scoped families
-- product search, notifications, and analytics are tenant-local
-- fleet monitoring and observability are separate cross-tenant-admin systems
+- local account ownership plus federated OAuth, not host-wide global credentials
+- one shared connection-request primitive for people, communities, and platforms
+- one network graph layer for linked accounts and configured platform/community/person connections
+- opt-in mirrored network content instead of pure live remote fetch
+- agreement-backed consent for shared authentication, sync, and publishing
 
-Any implementation that diverges from these decisions should introduce an ADR first.
+Any implementation that diverges from these defaults should introduce an ADR first.
 
 ---
 
 ## Review Checklist
 
 - Every major domain has exactly one target ownership class.
-- No target row depends on schema-per-tenant behavior that is undefined in the runtime contract.
+- Local platform records are clearly distinguished from network-shared linkages and mirrors.
+- OAuth, agreements, and connection requests line up as one coherent federation model.
 - Any future exception to these ownership defaults is captured explicitly as an ADR.

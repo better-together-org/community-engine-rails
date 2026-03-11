@@ -1,6 +1,6 @@
-# Schema-Per-Tenant Multi-Tenancy Implementation Plan
+# Schema-Per-Platform And Federated Network Implementation Plan
 
-**Version:** 2.0  
+**Version:** 3.0  
 **Date:** March 11, 2026  
 **Status:** Planning baseline  
 **Depends On:** `tenant_data_ownership_matrix.md`, `tenant_runtime_contract.md`
@@ -9,75 +9,67 @@
 
 ## Executive Summary
 
-Implement PostgreSQL schema-per-platform tenancy for Community Engine so that each hosted platform gets its own tenant schema, while communities remain the primary organizing boundary inside that schema.
+Implement a hybrid architecture for Community Engine:
 
-This plan supersedes the earlier draft baseline that described CE as primarily row-scoped by `platform_id`. The current implementation is better understood as:
+- locally hosted CE platforms on this server use one PostgreSQL schema per platform
+- each platform keeps its own local accounts, people, memberships, onboarding, and private communities
+- CE-powered platforms can authenticate against one another through OAuth
+- linked platform accounts create one layer of the network graph
+- platform-manager-configured peer/member platform relationships create another layer
+- content sharing is private by default, opt-in, agreement-backed, mirrored locally, and may support bi-directional sync
 
-- one shared PostgreSQL schema
-- strong community-oriented scoping patterns
-- host-platform and host-community conventions
-- a smaller set of platform-scoped records
-- several shared or mixed infrastructure domains
-
-The implementation strategy therefore has two prerequisites before code work begins:
-
-1. adopt the ownership model in `tenant_data_ownership_matrix.md`
-2. adopt the runtime rules in `tenant_runtime_contract.md`
-
-No implementation phase in this document should be started until those two artifacts are approved.
+This plan replaces the earlier identity-split direction that treated users as host-global and people as tenant-local. The new architecture preserves local platform autonomy and uses federation rather than a host-wide account model.
 
 ---
 
 ## Target Architecture
 
-### Tenant Boundary
+### Local Hosting Model
 
-- each hosted platform is assigned one PostgreSQL schema
-- `public` stores fleet routing and provisioning metadata
-- each tenant schema stores tenant-local application data
+- each locally hosted platform has one tenant schema
+- `public` stores local platform routing metadata and external peer platform records
+- each tenant schema stores the platform’s local accounts, people, communities, content, memberships, and settings
 
-### In-Tenant Structure
+### Federated Network Model
 
-- each tenant has one host community
-- people may have personal communities inside the tenant
-- other hosted communities coexist in the same tenant schema
-- community scope remains the main ownership boundary for content and many operational records
+- CE platforms can act as OAuth providers and clients for one another
+- local accounts can be linked to remote platform accounts
+- accepted person/community/platform connections form a network graph
+- platform managers can configure peer/member platform relationships and content-sharing rules
+- mirrored content from authorized peer platforms can appear in local network feeds and search
 
-### Runtime Model
+### Consent Model
 
-- request host resolves the platform in `public`
-- middleware switches to the platform’s schema
-- `Current.platform` and `Current.tenant_schema` are always set in tenant requests
-- `Current.community` is set only when community context is established
+- agreements govern shared authentication scopes, mirrored content permissions, and publication rights
+- connection request acceptance creates the relationship edge and activates any required agreement-backed consent
 
 ---
 
 ## Architecture Decisions Locked By This Plan
 
-### Decision 1: Public Schema Contract
+### Decision 1: Local Account Ownership
 
-`public` is reserved for:
+Each platform owns its own local `User`, `Person`, memberships, and onboarding. Federated sign-in does not eliminate local account creation; it accelerates and links it.
 
-- platform routing metadata
-- provisioning state
-- schema lifecycle and backup metadata
-- fleet-admin and support metadata that must span tenants
+### Decision 2: OAuth-Based Federation
 
-### Decision 2: Community Contract
+CE-to-CE OAuth is the standard mechanism for:
 
-Communities are the main in-schema partition for:
+- social login between CE platforms
+- linked account establishment
+- API access for mirroring and publish-back workflows
 
-- host community
-- personal community
-- additional communities within a tenant
+### Decision 3: Shared Connection Primitive
 
-### Decision 3: Identity Split
+`ConnectionRequest` is implemented as a subtype of `Joatu::Request` and is used for person, community, and platform connection workflows.
 
-`User` credentials and `Identification` remain `public-global`, while `Person` profiles remain tenant-local.
+### Decision 4: Private-By-Default Networking
 
-### Decision 4: Product Versus Fleet Operations
+Platforms start private. Sharing content with peer platforms requires explicit opt-in and agreement-backed consent.
 
-Messaging, notifications, search, and analytics are tenant-local product concerns. Fleet observability and delivery telemetry are separate cross-tenant-admin concerns.
+### Decision 5: Mirrored Network Content
+
+Authorized remote content is mirrored locally with source metadata and sync state. Bi-directional sync requires mutual authorization on both platforms.
 
 ---
 
@@ -87,118 +79,145 @@ Messaging, notifications, search, and analytics are tenant-local product concern
 
 Complete before code implementation:
 
-- confirm the ownership class of all major domains
-- confirm runtime `Current` contract
-- record any exceptions to the ownership matrix as ADRs
+- confirm the ownership matrix
+- confirm the federated runtime contract
+- map existing OAuth, integrations, agreements, and Joatu request primitives to the new model
+- record any deviations from the planning defaults as ADRs
 
 Acceptance criteria:
 
 - no major model family lacks a target ownership class
-- no implementation phase depends on an unstated runtime assumption
+- federation, tenancy, agreements, and mirroring use one coherent vocabulary
 
-## Workstream 1: Public-Schema Platform Metadata
+## Workstream 1: Public Platform Registry And Routing
 
-Introduce or extend `public` platform metadata to support:
+Extend `public.better_together_platforms` to support:
 
-- domain and subdomain routing
-- schema name
-- provisioning status and error state
-- backup and restore metadata
-
-Acceptance criteria:
-
-- each tenant platform can be resolved from host metadata in `public`
-- provisioning state is visible without switching into tenant schemas
-
-## Workstream 2: Tenant Resolution And Schema Switching
-
-Implement runtime schema selection:
-
-- request host resolver
-- middleware or elevator for schema switching
-- `Current.platform` and `Current.tenant_schema`
-- public-route exceptions for setup and fleet-admin workflows
+- local hosted platform routing and schema metadata
+- external peer platform records
+- trust, privacy, and sharing defaults
+- pre-seeded host-platform connection bootstrap
 
 Acceptance criteria:
 
-- tenant-local requests never execute against the wrong schema
-- unknown hosts fail closed
-- public-only flows remain accessible without a tenant schema
+- local hosted platforms and external peer platforms can coexist in the same registry
+- host resolution for local tenants remains unambiguous
 
-## Workstream 3: Tenant Context Propagation
+## Workstream 2: CE OAuth Federation
 
-Implement tenant context for:
+Implement CE-to-CE OAuth provider/client behavior for:
 
-- authentication and user-to-person mapping
-- background jobs
-- mailers
-- notifications
+- federated sign-in
+- linked account establishment
+- scoped API access for sync and publishing
 
 Acceptance criteria:
 
-- authenticated users resolve deterministically to tenant-local people
-- jobs replay with the same tenant identity
-- mailers render correct tenant URLs and branding
-- schema state resets cleanly after execution
+- one CE platform can authenticate a user for another CE platform
+- peer platform OAuth scopes can be constrained by agreements and platform policy
+- existing invitation and onboarding gates are still enforced locally
 
-## Workstream 4: Community-Scope Refactor
+## Workstream 3: Local Join And Account Link Flow
 
-Refactor host-centric defaults into explicit tenant-aware community behavior:
+Add the local admission flow for federated sign-in:
 
-- replace shared-schema host community fallbacks with tenant-local host community resolution
-- formalize personal communities as explicit tenant-local communities
-- ensure community-owned records derive ownership from tenant-local community context
-
-Acceptance criteria:
-
-- host community resolution is tenant-aware
-- personal-community behavior is explicit and testable
-- community-owned records no longer depend on shared-schema shortcuts
-
-## Workstream 5: Tenant Data Migration
-
-Migrate existing shared-schema data into tenant schemas according to the ownership matrix:
-
-- seed tenant-global definitions where required
-- move community-owned data into the appropriate tenant schema
-- migrate host platform data into its tenant schema
-- leave only approved `public-global` records in `public`
+- authenticate through peer CE OAuth
+- determine whether a local account and person exist
+- if not, prompt the user to join locally
+- enforce invitation-only rules, onboarding wizards, and agreements before participation
+- create the local account/person and the cross-platform linkage once admitted
 
 Acceptance criteria:
 
-- migration inventory matches ownership matrix classifications
-- moved data passes row-count and referential checks
-- rollback path exists for each migration stage
+- federated auth never bypasses local participation rules
+- linked accounts are visible and manageable by the user and the platform where appropriate
 
-## Workstream 6: Tenant Operations
+## Workstream 4: Connection Requests And Relationship Graph
 
-Implement operational support for:
+Implement `ConnectionRequest` on top of `Joatu::Request` and define accepted connection edges for:
+
+- person-to-person
+- person-to-community
+- community-to-community
+- platform-to-platform
+
+Acceptance criteria:
+
+- all four connection types use the same request primitive
+- acceptance creates the relationship edge and any associated agreement state
+- personal-community participation can use the same connection model
+
+## Workstream 5: Agreements And Consent
+
+Extend agreement usage to cover:
+
+- shared authentication consent
+- content mirroring consent
+- publish-back or bi-directional sync consent
+- platform-manager sharing terms
+
+Acceptance criteria:
+
+- no mirrored or publish-back flow runs without agreement-backed authorization where required
+- agreement state can be audited and revoked
+
+## Workstream 6: Mirrored Content And Network Feed
+
+Implement the local mirror model for peer platform content:
+
+- ingest authorized remote content into local mirror records
+- retain source attribution and sync metadata
+- refresh mirrors regularly
+- support local feed and search over native plus mirrored content
+- support optional publish/update back to peers when both sides allow it
+
+Acceptance criteria:
+
+- mirrored content is attributable, refreshable, and permission-aware
+- local network feed composition reflects platform-manager configuration plus linked-account relevance
+- sync failures do not corrupt canonical source ownership
+
+## Workstream 7: Platform-Manager Network Controls
+
+Add manager-facing controls for:
+
+- peer/member platform connections
+- inbound and outbound platform requests
+- sharing settings and visibility
+- sync health and mirror review
+
+Acceptance criteria:
+
+- platform managers can see and control what enters the network feed
+- platform managers can approve, deny, or revoke sharing relationships
+
+## Workstream 8: Local Tenancy Operations
+
+Implement the local tenancy operations needed for hosted platforms:
 
 - schema provisioning
-- migration execution across tenants
+- migration execution across local platforms
 - backup and restore
-- tenant health and provisioning observability
-- fleet-admin support workflows
+- sync diagnostics
+- fleet-admin oversight of locally hosted tenants
 
 Acceptance criteria:
 
-- schema lifecycle is automatable and auditable
-- operators can inspect, back up, and restore one tenant without affecting others
-- fleet-admin workflows do not depend on shared tenant tables
+- local hosted platforms can be provisioned and operated independently
+- federation features do not require abandoning local schema isolation
 
 ---
 
 ## Domain-Specific Migration Notes
 
-The following domains require targeted migration design even though their ownership class is now chosen:
-
 | Domain | Migration Concern |
 |--------|-------------------|
-| user identity / authentication boundary | map public-global credentials to tenant-local people without ambiguous joins |
-| content blocks | separate tenant-global reusable assets from community-owned content |
-| navigation | separate tenant-global navigation from community-owned navigation |
-| integrations / OAuth | preserve tenant isolation while keeping any fleet-admin connectors out of tenant schemas |
-| search / analytics | split tenant-local product indexes from cross-tenant-admin reporting and observability |
+| local account model | keep platform-local accounts while layering federated auth and linked accounts on top |
+| platform registry | distinguish local hosted platforms from external peers cleanly |
+| Joatu requests | add connection subtype without breaking existing request/offer/agreement semantics |
+| agreements | extend to cover auth and content-sharing consent without overloading existing exchange flows beyond repair |
+| mirrored content | define canonical local mirror schema and source attribution |
+| search and feed | combine native and mirrored content without erasing source platform boundaries |
 
 ---
 
@@ -206,59 +225,52 @@ The following domains require targeted migration design even though their owners
 
 ### Unit Tests
 
-- platform routing metadata validation
-- tenant resolver host matching
-- `Current` context setup and teardown
-- public-global user to tenant-local person resolution
-- tenant-aware host community and personal community resolution
+- platform registry behavior for local and external platforms
+- CE OAuth provider/client scope rules
+- connection-request subtype validation and acceptance behavior
+- agreement activation rules for auth and sharing consent
+- mirror ingest and sync-state transitions
 
 ### Integration Tests
 
-- request host resolves correct schema
-- tenant-local controllers operate only inside active schema
-- authenticated user resolves to the correct tenant-local person profile
-- jobs and mailers preserve tenant context
-- public-only routes remain outside tenant schemas
-
-### Migration Tests
-
-- host platform migration from shared schema to tenant schema
-- representative community-owned record migrations
-- seed/bootstrap of tenant-global definitions
-- rollback and retry behavior for failed tenant provisioning
+- federated sign-in to a second CE platform
+- invitation-required local join after federated auth
+- onboarding-required local join after federated auth
+- person/community/platform connection request flows
+- mirrored content ingest and refresh
+- opt-in publish-back flow between consenting platforms
 
 ### Security Tests
 
-- unknown-host fail-closed behavior
-- no cross-tenant data leakage
-- no accidental fallback to `public` for tenant-local writes
-- cross-tenant admin operations isolated from end-user routes
-- authenticated users cannot read or mutate tenant-local data without a valid tenant-local person mapping
+- federated auth cannot bypass local invitation/onboarding restrictions
+- mirrored content never appears without source platform authorization
+- bi-directional sync never runs without mutual consent
+- remote platform outage or revoked token fails safely
+- local private spaces stay local unless explicitly exposed through allowed network flows
 
 ---
 
 ## Rollout Sequence
 
-1. Approve ownership matrix and runtime contract.
-2. Record ADRs for any deviation from the ownership matrix defaults.
-3. Add public-schema platform routing and provisioning metadata.
-4. Implement tenant resolution and schema switching.
-5. Propagate tenant context to jobs and mailers.
-6. Refactor host-community and personal-community behavior to be tenant-aware.
-7. Execute staged data migration into tenant schemas.
-8. Enable backup, restore, and fleet-admin support tooling.
-
-Production rollout should migrate the host platform first in a controlled staging-tested path before onboarding additional hosted platforms.
+1. Approve the ownership matrix and runtime contract.
+2. Extend the platform registry for local hosted and external peer platforms.
+3. Add CE OAuth provider/client capabilities and linked-account flows.
+4. Add `ConnectionRequest` and accepted connection edge models.
+5. Extend agreements for auth and content-sharing consent.
+6. Build mirrored content ingest, refresh, and publish-back workflows.
+7. Add platform-manager network controls and feed configuration.
+8. Finish local tenancy operations for provisioning, backup, restore, and sync diagnostics.
 
 ---
 
 ## Success Criteria
 
-- hosted platform requests resolve to exactly one tenant schema
-- communities remain the primary in-tenant organizing boundary
-- personal communities are explicit and testable
-- no end-user workflow depends on shared-schema host-community shortcuts
-- fleet-admin operations work without reintroducing shared tenant tables
+- each locally hosted platform remains autonomous in accounts, onboarding, and community governance
+- CE-powered platforms can authenticate users for one another through OAuth
+- linked platform accounts and configured platform connections both contribute to the network graph
+- private-by-default sharing is enforced
+- mirrored content is consent-backed, attributable, and refreshable
+- local schema isolation and federated networking coexist without collapsing into one global account store
 
 ---
 

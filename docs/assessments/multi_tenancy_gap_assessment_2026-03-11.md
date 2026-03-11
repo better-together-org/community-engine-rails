@@ -16,6 +16,13 @@ Community Engine is not yet implemented as a schema-per-platform multi-tenant sy
 - a smaller set of platform-scoped records and memberships
 - several global or effectively shared tables
 
+Subsequent planning after this assessment changed one important architectural assumption:
+
+- the recommended direction is no longer a host-wide global account model with tenant-local people
+- the current preferred direction is local platform autonomy plus federated CE-to-CE OAuth, linked platform accounts, connection requests, agreements, and opt-in mirrored network content
+
+This assessment remains useful as a description of the current implementation baseline, but the implementation package under `docs/implementation/multi_tenancy/` should be treated as the latest architecture direction.
+
 The main existing multi-tenancy branch is `feat/multi-tenant`, exposed as draft PR `#1215` titled `WIP multi-tenant`. As of March 11, 2026, that PR is planning-only. Its sole change is `docs/implementation/multi_tenancy/schema_per_tenant_implementation_plan.md`; there is no corresponding Apartment integration, tenant resolver, schema provisioning, migration support, or runtime tenant switching in the codebase.
 
 The current docs often describe CE as a "multi-tenant" platform because the domain model supports `Platform -> Community -> Person` relationships and separate platform/community memberships. That is a useful conceptual foundation, but it overstates the current isolation model. In implementation terms, CE is presently a single-schema app with mixed record scoping, not a schema-isolated hosted-platform architecture.

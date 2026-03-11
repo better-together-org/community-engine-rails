@@ -1,225 +1,281 @@
-# Tenant Runtime Contract
+# Federated Platform Runtime Contract
 
 **Date:** March 11, 2026  
 **Status:** Draft architecture baseline  
-**Purpose:** Canonical request, context, and execution contract for schema-per-platform tenancy
+**Purpose:** Canonical runtime contract for local CE tenancy plus federated platform networking
 
 ---
 
 ## Summary
 
-This document defines how CE should behave at runtime once schema-per-platform tenancy is introduced.
+This document defines how CE should behave at runtime under the revised architecture:
 
-It assumes:
+- locally hosted platforms still use schema-per-platform tenancy
+- each platform keeps its own local accounts, people, memberships, and onboarding
+- CE-powered platforms can authenticate against one another via OAuth
+- linked accounts and configured platform connections form a network graph
+- authorized remote content can be mirrored locally for feed/search/display and refreshed regularly
 
-- the ownership rules in `tenant_data_ownership_matrix.md`
-- one tenant schema per hosted platform
-- communities as the primary in-schema structure
-
-The contract covers:
-
-- request tenant resolution
-- schema switching
-- `Current` context
-- authentication and identity mapping
-- job and mailer propagation
-- cross-tenant admin behavior
+It assumes the ownership rules in `tenant_data_ownership_matrix.md`.
 
 ---
 
-## Request Resolution
+## Local Platform Resolution
 
 ### Request Input
 
-Each incoming request is resolved from:
+Each request is resolved from:
 
 - request host
 - optional subdomain
-- path and route
+- route and path
 
-### Resolution Rules
+### Resolution Rules For Locally Hosted Platforms
 
 1. Look up the request host in `public.better_together_platforms`.
 2. Match exact custom domain first.
 3. Match known subdomain + base domain second.
-4. Load the target platform’s routing metadata from `public`.
-5. Resolve the tenant schema name from that platform record.
-6. Switch to the tenant schema before controller logic runs.
+4. Load the local hosted platform metadata from `public`.
+5. Resolve the tenant schema name.
+6. Switch to that schema before controller logic runs.
+
+### External Platform Records
+
+External peer platforms in `public.better_together_platforms` are not directly switched into as local tenant schemas. They are peer metadata records used for:
+
+- OAuth provider/client configuration
+- connection requests and accepted network edges
+- remote content sync configuration
+- source attribution for mirrored content
 
 ### Public-Schema Exceptions
 
-The following request classes run in `public` without switching to a tenant schema:
+The following flows run in `public` without switching to a local tenant schema:
 
-- provisioning and setup flows before a tenant exists
-- fleet-admin and support routes that explicitly operate across tenants
-- unknown-host fallback handling
+- provisioning flows before a tenant exists
+- fleet-admin and support routes spanning local tenants
+- peer platform discovery, trust bootstrap, and local routing fallbacks
 
-Unknown hosts must not silently fall through to arbitrary tenant data.
+Unknown hosts must fail closed.
 
 ---
 
-## Current Context Contract
+## Local Context Contract
 
-### Required `Current` Fields
+### Required `Current` Fields For Local Platform Requests
 
 | Field | Meaning |
 |-------|---------|
-| `Current.platform` | Public-schema platform metadata for the resolved tenant |
-| `Current.tenant_schema` | Active tenant schema name |
-| `Current.community` | Current community in tenant context when route or UI establishes one |
-| `Current.user` | Authenticated public-global credential record |
-| `Current.person` | Current authenticated person for the tenant |
+| `Current.platform` | Local hosted platform metadata resolved from `public` |
+| `Current.tenant_schema` | Active local tenant schema |
+| `Current.community` | Current community when route or UI establishes it |
+| `Current.user` | Authenticated local account for the active platform |
+| `Current.person` | Local person profile for the active platform |
 
 ### Context Rules
 
-- `Current.platform` is always set for tenant-local requests.
-- `Current.tenant_schema` is always set together with `Current.platform`.
-- `Current.community` is optional and only set when route context or selection logic establishes it.
-- `Current.user` is authenticated before or alongside tenant resolution, but it is not sufficient for tenant-local authorization on its own.
-- `Current.person` is tenant-local and must be loaded after schema switching from the public-global user identity mapping.
-
-### Authentication And Identity Rules
-
-- `User` credentials remain public-global.
-- `Person` remains tenant-local.
-- Authentication establishes `Current.user`; tenant entry then resolves the corresponding tenant-local `Current.person`.
-- If a valid `Current.user` has no corresponding tenant-local person profile for the active tenant, the request must fail closed or enter an explicit onboarding/membership flow.
-- Tenant-local authorization always runs against `Current.person`, not just `Current.user`.
-
-### Host Community Rules
-
-- Each tenant has exactly one host community.
-- The host community is the platform-default community inside the tenant.
-- Flows that previously fell back to "host community in shared schema" must instead resolve host community within the active tenant schema.
-
-### Personal Community Rules
-
-- A person may have exactly one personal community inside a tenant.
-- Personal communities are explicit community records, not hidden context.
-- Personal calendars and similar person-owned resources resolve through the person’s personal community.
+- `Current.platform` and `Current.tenant_schema` are always set for local platform requests.
+- `Current.user` and `Current.person` are local to the active platform.
+- Cross-platform OAuth does not replace local accounts; it is an authentication and authorization bridge into local account creation, login, and sync flows.
+- If a federated sign-in succeeds but the local platform requires invitation or onboarding, the request must enter a join/onboarding gate before the user can participate in private spaces.
 
 ---
 
-## Community Selection Rules
+## Federated Sign-In Contract
 
-CE must distinguish between tenant context and community context.
+### CE-to-CE OAuth
 
-### Tenant Context
+Each CE-powered platform should be able to act as:
 
-Tenant context is established by host/domain routing.
+- an OAuth provider for its own users
+- an OAuth client to peer CE platforms
 
-### Community Context
+### Sign-In Flow
 
-Community context is established by one of:
+1. A user on platform B chooses to sign in with a connected CE platform account from platform A.
+2. Platform B authenticates the user via OAuth against platform A.
+3. Platform B receives authorized identity claims and permitted scopes.
+4. Platform B checks local admission rules:
+   - invitation requirement
+   - onboarding wizard requirement
+   - agreement acceptance requirement
+5. Platform B either:
+   - links to an existing local account
+   - creates a new local account and local person after the user joins
+   - or holds the authenticated session in a join-pending state until onboarding is complete
 
-- route nesting under a community resource
-- explicit community selector in the UI
-- record ownership when operating on a community-owned record
-- host-community default only where the feature is intentionally tenant-wide and no explicit community is selected
+### Admission Rules
+
+Federated sign-in must never bypass:
+
+- invitation-only restrictions
+- platform-specific onboarding steps
+- agreement acceptance requirements
+- private community access gates
+
+### Account Materialization
+
+The current planning default is:
+
+- federated sign-in authenticates first
+- the local platform then prompts the user to join if a local account and person do not yet exist
+- successful join creates the local records and records the cross-platform account linkage
+
+---
+
+## Community And Personal Community Rules
+
+- Each platform has exactly one host community.
+- Each person may have one personal community inside each platform where they hold a local account.
+- Person-to-person connection requests may be used to manage participation in personal communities.
+- Community-owned records remain local to the platform and derive ownership from explicit community context.
 
 The host community must not become a universal silent fallback for every record type.
 
-### Domain Ownership Rules At Runtime
+---
 
-- tenant-global messaging may reference community context, but its primary tenant boundary is the active schema
-- product notifications, product search, and product analytics run inside one tenant context
-- fleet reporting, delivery telemetry, and observability run in cross-tenant-admin context only
-- navigation and content blocks must resolve either as tenant-global assets or community-owned assets; request handling must not guess implicitly
+## Connection Request Contract
+
+### Shared Primitive
+
+`Joatu::Request` gains a `ConnectionRequest` subtype used for:
+
+- person to person connections
+- person to community join/connection requests
+- community to community connections
+- platform to platform connections
+
+### Acceptance Behavior
+
+Acceptance creates:
+
+- the network edge or local relationship edge
+- any required agreement state for auth, sync, or shared data permissions
+- any pending next-step workflow such as onboarding, membership creation, or sync bootstrap
+
+### Agreement Rules
+
+Agreements are used to record:
+
+- consent for shared authentication
+- consent for mirrored content ingestion
+- consent for publication/sync back to a peer platform
+- terms for what content types and scopes may be shared
+
+---
+
+## Network Feed And Mirrored Content
+
+### Network Layers
+
+The platform network is composed of two layers:
+
+- manager-configured peer/member platform connections
+- person-linked platform account connections
+
+### Feed Rules
+
+People can see:
+
+- local platform content
+- network content shared by directly connected platforms that opted in
+- content relevant to their linked platform accounts where permissions allow it
+
+### Mirroring Rules
+
+- remote CE content authorized for sharing is mirrored locally with source attribution and sync metadata
+- mirror refresh runs on a schedule and may also be event-triggered
+- mirrored content is shown in local feeds and search subject to local and remote permissions
+- bi-directional sync is allowed only when both platforms and agreements authorize publishing both ways
+
+### Source Of Truth
+
+- canonical ownership remains on the source platform
+- mirrored local copies exist for caching, feed aggregation, search, and controlled publication workflows
 
 ---
 
 ## Background Jobs
 
-### Enqueue Contract
+### Local Job Context
 
-Every tenant-local job payload must include:
+Every local job payload must include:
 
-- platform identifier or schema identifier sufficient to restore tenant context
-- optional community identifier if the job acts on a community-owned record
+- local platform identifier or tenant schema identity
+- optional local community identifier
+- optional network sync context when acting on peer content or linked accounts
 
-### Execution Contract
+### Network Sync Context
 
-Before job work begins:
+When a job involves a peer platform, it must also include:
 
-1. Load platform metadata from `public`.
-2. Switch to the tenant schema.
-3. Set `Current.platform` and `Current.tenant_schema`.
-4. Set `Current.community` if the job is community-specific.
+- source or target platform identifier
+- linkage or agreement identifier when relevant
+- sync direction (`ingest`, `refresh`, `publish`)
 
-After execution:
-
-- reset schema state
-- clear `Current` context
-
-Job retries must preserve tenant identity and community identity.
+Jobs must fail closed if local tenant context, peer auth context, or agreement requirements are missing.
 
 ---
 
 ## Mailers And Notifications
 
-### Mailers
-
-Mailers must render in tenant context so that:
-
-- lookups happen inside the correct tenant schema
-- links use the tenant’s domain
-- platform branding is tenant-specific
-
-Mailers may use `Current.user` for delivery identity, but all content lookups must use tenant-local records after schema switching.
-
-### Notifications
-
-Notifications should be treated as tenant-local unless explicitly marked as fleet-admin notifications.
-
-Fleet delivery telemetry and provider diagnostics are separate cross-tenant-admin concerns and must not leak into product notification ownership rules.
+- Mailers render in one local platform context.
+- Network invitations, connection requests, and join prompts may reference remote platforms but still use local branding and policy context.
+- Product notifications remain local to one platform.
+- Cross-platform sync telemetry and delivery diagnostics belong to fleet/admin operations, not the local product notification stream.
 
 ---
 
-## Cross-Tenant Administration
+## Cross-Tenant And Cross-Platform Administration
 
-Cross-tenant operations are not normal tenant requests. They run in a dedicated fleet-admin context.
+### Local Fleet Admin
 
-### Allowed Cross-Tenant Operations
+Fleet-admin routes operate across locally hosted tenant schemas for:
 
-- tenant inventory
-- provisioning and backup status
-- support diagnostics
-- fleet-level reporting and observability
-- cross-tenant delivery telemetry
-- explicit fleet search or reporting pipelines
+- local tenant inventory
+- provisioning status
+- backup and restore oversight
+- sync diagnostics
 
-### Cross-Tenant Query Pattern
+### Cross-Platform Network Admin
 
-Cross-tenant operations must iterate or aggregate deliberately. They must not assume shared-table visibility after tenant schemas are introduced.
+Platform managers operate within their local platform and can manage:
 
-If product-level global search is required, it should use a dedicated cross-tenant index or reporting pipeline instead of ad hoc schema iteration in request paths.
+- outbound and inbound platform connection requests
+- trust and sharing settings
+- mirrored content policies
+- connected account and peer platform status
+
+These are product-level platform-manager actions, not fleet-admin actions.
 
 ---
 
 ## Failure And Safety Rules
 
-- Unknown or invalid hosts must fail closed.
-- Missing tenant schema must fail with a provisioning or unavailable state, not fall into another tenant.
-- Jobs missing tenant context must raise clear errors and not run in `public` by accident.
-- Community-owned mutations without explicit or derivable community context must fail closed.
+- Unknown hosts fail closed.
+- Federated sign-in without local admission must stop in a join/onboarding state.
+- Missing or revoked OAuth linkage must block sync and sign-in continuation.
+- Missing agreement consent must block content sharing and publish-back actions.
+- Remote platform unavailability must degrade gracefully without corrupting mirrored content state.
+- Bi-directional sync must never occur without explicit opt-in on both sides.
 
 ---
 
 ## Interface Additions Implied By This Contract
 
-The implementation plan should assume these additions:
-
-- `Platform` routing fields in `public` for domain/subdomain/schema mapping
-- runtime support for `Current.platform`, `Current.tenant_schema`, and `Current.community`
-- runtime support for mapping public-global `Current.user` to tenant-local `Current.person`
-- tenant-aware middleware for request switching
-- tenant-aware job and mailer context wrappers
+- local platform routing metadata in `public`
+- CE OAuth provider/client support for peer platforms
+- linked-account records between local accounts and remote platform accounts
+- `ConnectionRequest` subtype on `Joatu::Request`
+- accepted connection edge model for people, communities, and platforms
+- mirrored-content records with source and sync metadata
+- agreement-backed sharing and auth scopes for sync and publish rights
 
 ---
 
 ## Review Checklist
 
-- A tenant request can be traced from host resolution to schema switch to `Current` context.
-- A community-owned request can be traced from tenant context to explicit community context.
-- A queued job can be replayed with the same tenant and community identity.
-- Fleet-admin operations are defined separately from tenant-local behavior.
+- A local platform request can be traced from host resolution to schema switch to local account context.
+- A federated sign-in can be traced from peer OAuth to local join/onboarding gate to local account creation or linkage.
+- A connection request can be traced from request creation to relationship edge plus agreement activation.
+- Mirrored content can be traced from remote authorization to local ingest, refresh, and optional publish-back behavior.
