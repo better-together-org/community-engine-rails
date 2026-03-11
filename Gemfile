@@ -36,7 +36,6 @@ gem 'rswag'
 
 # Sidekiq for background processing
 gem 'sidekiq', '~> 8.1.1'
-
 gem 'connection_pool', '~> 3.0.2'
 
 # Error and performance monitoring with Sentry
