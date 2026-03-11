@@ -165,23 +165,39 @@ jobs:
           file_pattern: coverage.svg
 
   rubocop:
+    needs: prepare
     runs-on: ubuntu-latest
+    env:
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4.4"
-          bundler-cache: true
+      - name: Resolve branch-native bundle
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
       - run: bundle exec rubocop --parallel
 
   security:
+    needs: prepare
     runs-on: ubuntu-latest
+    env:
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4.4"
-          bundler-cache: true
+      - name: Resolve branch-native bundle
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
       - run: bundle binstubs bundler-audit --force
       - run: bundle exec bundler-audit --update
       - run: bundle exec brakeman -q -w2
