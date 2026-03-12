@@ -10,10 +10,23 @@ module BetterTogether
       can_view_network_connections?
     end
 
+    def create?
+      can_manage_network_connections?
+    end
+    alias new? create?
+
     def update?
       can_manage_network_connections? || can_approve_network_connections?
     end
     alias edit? update?
+
+    def approve?
+      can_manage_network_connections? || can_approve_network_connections?
+    end
+
+    def suspend?
+      can_manage_network_connections?
+    end
 
     def destroy?
       can_manage_network_connections?

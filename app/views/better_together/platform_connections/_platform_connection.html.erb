@@ -6,7 +6,17 @@
   <td><%= platform_connection.content_sharing_policy.humanize %></td>
   <td><%= platform_connection.federation_auth_policy.humanize %></td>
   <td class="text-end">
-    <%= link_to 'View', platform_connection, class: 'btn btn-sm btn-outline-primary' %>
-    <%= link_to 'Edit', edit_platform_connection_path(platform_connection), class: 'btn btn-sm btn-outline-secondary' %>
+    <%= link_to 'View', better_together.platform_connection_path(platform_connection), class: 'btn btn-sm btn-outline-primary' %>
+    <%= link_to 'Edit', better_together.edit_platform_connection_path(platform_connection), class: 'btn btn-sm btn-outline-secondary' %>
+    <% if policy(platform_connection).approve? && (platform_connection.pending? || platform_connection.suspended?) %>
+      <%= button_to 'Approve', better_together.approve_platform_connection_path(platform_connection),
+                    method: :patch, class: 'btn btn-sm btn-success',
+                    data: { turbo_confirm: 'Approve this connection?' } %>
+    <% end %>
+    <% if policy(platform_connection).suspend? && platform_connection.active? %>
+      <%= button_to 'Suspend', better_together.suspend_platform_connection_path(platform_connection),
+                    method: :patch, class: 'btn btn-sm btn-warning',
+                    data: { turbo_confirm: 'Suspend this connection?' } %>
+    <% end %>
   </td>
 </tr>

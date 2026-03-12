@@ -143,7 +143,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
         resources :reports, only: [:create]
-        resources :platform_connections, only: %i[index show edit update]
+        resources :platform_connections, only: %i[index show new create edit update] do
+          member do
+            patch :approve
+            patch :suspend
+          end
+        end
 
         namespace :joatu, path: 'exchange' do
           # Exchange hub landing page

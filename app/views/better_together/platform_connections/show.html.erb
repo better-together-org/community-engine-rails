@@ -7,8 +7,18 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1><%= @platform_connection.source_platform.name %> → <%= @platform_connection.target_platform.name %></h1>
       <div class="btn-group">
-        <%= link_to 'Back', platform_connections_path, class: 'btn btn-outline-secondary' %>
-        <%= link_to 'Edit', edit_platform_connection_path(@platform_connection), class: 'btn btn-primary' %>
+        <%= link_to 'Back', better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
+        <%= link_to 'Edit', better_together.edit_platform_connection_path(@platform_connection), class: 'btn btn-primary' %>
+        <% if policy(@platform_connection).approve? && (@platform_connection.pending? || @platform_connection.suspended?) %>
+          <%= button_to 'Approve', better_together.approve_platform_connection_path(@platform_connection),
+                        method: :patch, class: 'btn btn-success',
+                        data: { turbo_confirm: 'Approve this connection and set it to active?' } %>
+        <% end %>
+        <% if policy(@platform_connection).suspend? && @platform_connection.active? %>
+          <%= button_to 'Suspend', better_together.suspend_platform_connection_path(@platform_connection),
+                        method: :patch, class: 'btn btn-warning',
+                        data: { turbo_confirm: 'Suspend this connection? Federation and sync will pause.' } %>
+        <% end %>
       </div>
     </div>
 
