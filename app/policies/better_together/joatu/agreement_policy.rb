@@ -9,20 +9,19 @@ module BetterTogether
       def show?
         return false unless user.present?
 
-        participant? || permitted_to?('manage_platform')
+        participant? || can_manage_joatu?
       end
 
       def create?
         return false unless user.present?
 
-        # Allow either offer or request creator to create an agreement
-        participant? || permitted_to?('manage_platform')
+        participant? || can_manage_joatu?
       end
 
       def update?
         return false unless user.present?
 
-        participant? || permitted_to?('manage_platform')
+        participant? || can_manage_joatu?
       end
       alias accept? update?
       alias reject? update?
@@ -30,7 +29,7 @@ module BetterTogether
       def destroy?
         return false unless user.present?
 
-        participant? || permitted_to?('manage_platform')
+        participant? || can_manage_joatu?
       end
 
       def participant?
@@ -42,7 +41,7 @@ module BetterTogether
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
         def resolve # rubocop:todo Metrics/AbcSize
           return scope.none unless user.present?
-          return scope.all if permitted_to?('manage_platform')
+          return scope.all if can_manage_joatu?
 
           # Agreements where the agent is either the offer or request creator
           offers = BetterTogether::Joatu::Offer.arel_table
@@ -53,6 +52,18 @@ module BetterTogether
             offers[:creator_id].eq(agent&.id).or(requests[:creator_id].eq(agent&.id))
           )
         end
+
+        private
+
+        def can_manage_joatu?
+          permitted_to?('manage_joatu')
+        end
+      end
+
+      private
+
+      def can_manage_joatu?
+        permitted_to?('manage_joatu')
       end
     end
   end

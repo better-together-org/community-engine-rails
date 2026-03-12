@@ -6,7 +6,7 @@ module BetterTogether
     include Rails.application.routes.url_helpers
     include BetterTogether::Engine.routes.url_helpers
 
-    # Setup or update a single host platform and return a platform_manager user
+    # Setup or update a single host platform and return a platform-steward user
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def configure_host_platform
       # Reuse existing host platform if present, don't try to create a new one
@@ -48,11 +48,11 @@ module BetterTogether
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
 
-      platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+      platform_steward = BetterTogether::User.find_by(email: 'manager@example.test')
 
-      unless platform_manager
+      unless platform_steward
         create(
-          :user, :confirmed, :platform_manager,
+          :user, :confirmed, :platform_steward,
           email: 'manager@example.test',
           password: 'SecureTest123!@#'
         )
@@ -62,8 +62,12 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-    def capybara_login_as_platform_manager
+    def capybara_login_as_platform_steward
       capybara_sign_in_user('manager@example.test', 'SecureTest123!@#')
+    end
+
+    def capybara_login_as_platform_manager
+      capybara_login_as_platform_steward
     end
 
     def capybara_login_as_user
@@ -89,6 +93,7 @@ module BetterTogether
     end
 
     # Legacy method names for backward compatibility
+    alias login_as_platform_steward capybara_login_as_platform_steward
     alias login_as_platform_manager capybara_login_as_platform_manager
     alias sign_in_user capybara_sign_in_user
     alias sign_out_current_user capybara_sign_out_current_user

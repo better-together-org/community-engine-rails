@@ -22,6 +22,7 @@ This matrix is the source of truth for:
 
 - `tenant_runtime_contract.md`
 - `schema_per_tenant_implementation_plan.md`
+- `federated_rbac_reassessment_and_coverage_plan.md`
 - future federation, sync, and tenancy implementation work
 
 ---
@@ -58,8 +59,8 @@ This matrix is the source of truth for:
 | Personal community | Emerges via `PrimaryCommunity` concern | `personal-community-scoped` | Explicit community used for person-owned mutual aid and direct connection flows |
 | `PersonCommunityMembership` | Community membership | `community-scoped` | Remains the main in-platform community participation model |
 | `PersonPlatformMembership` | Platform membership | `tenant-global` | Platform-wide organizer/member/admin roles remain local |
-| Roles | Shared definitions today | `tenant-global` | Seeded per local platform schema |
-| Resource permissions | Shared definitions today | `tenant-global` | Applied inside one platform |
+| Roles | Shared definitions today | `tenant-global` | Seeded per local platform schema; role catalog must be streamlined before federation work |
+| Resource permissions | Shared definitions today | `tenant-global` | Applied inside one platform; new federation and mirrored-content permission families are required |
 | Connection request subtype | `Joatu::Request` already has polymorphic target | `network-shared` | Shared request primitive for person/community/platform connection workflows |
 | Accepted connection edges | Not implemented | `network-shared` | Canonical relationship layer between people, communities, and platforms |
 | Agreements for auth/sharing/sync consent | Existing agreement system | `network-shared` | Records consent and terms for linked identities, mirrored content, and publication rights |
@@ -99,6 +100,7 @@ This matrix is the source of truth for:
 5. New private platforms receive a pre-seeded connection request from the BTS/CE host platform.
 6. Mirrored content is stored locally with source metadata and sync state; bi-directional sync requires explicit opt-in and agreement-backed consent.
 7. Direct messages, moderation, and private community participation remain local to each platform unless later federation work explicitly expands them.
+8. Local RBAC must be reassessed before federation-sensitive actions are implemented, especially platform connections, OAuth trust, mirrored-content moderation, and publish-back.
 
 ---
 

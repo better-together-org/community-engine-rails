@@ -89,12 +89,26 @@ module BetterTogether
             delete_community
             invite_community_members
           ],
+          'community_organizer' => %w[
+            read_community
+            list_community
+            create_community
+            update_community
+            delete_community
+            manage_community_members
+            manage_community_settings
+            manage_community_content
+            manage_community_roles
+            manage_community_notifications
+            invite_community_members
+          ],
           'community_coordinator' => %w[
             read_community
             list_community
             create_community
             update_community
             delete_community
+            manage_community_members
             manage_community_settings
             manage_community_content
             manage_community_roles
@@ -131,6 +145,7 @@ module BetterTogether
             create_community
             update_community
             delete_community
+            manage_community_members
             manage_community_roles
             invite_community_members
           ]
@@ -143,6 +158,28 @@ module BetterTogether
       def assign_platform_permissions_to_roles # rubocop:todo Metrics/MethodLength
         # Mapping of platform roles to platform permissions
         platform_role_permissions = {
+          'platform_steward' => %w[
+            read_platform
+            list_platform
+            create_platform
+            update_platform
+            delete_platform
+            manage_platform
+            manage_platform_members
+            manage_joatu
+            manage_platform_api
+            manage_platform_data_privacy
+            manage_platform_database
+            manage_platform_deployment
+            manage_platform_roles
+            manage_platform_security
+            manage_platform_settings
+            manage_platform_users
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
+            view_platform_logs
+          ],
           'platform_manager' => %w[
             read_platform
             list_platform
@@ -150,6 +187,8 @@ module BetterTogether
             update_platform
             delete_platform
             manage_platform
+            manage_platform_members
+            manage_joatu
             manage_platform_api
             manage_platform_data_privacy
             manage_platform_database
@@ -164,6 +203,11 @@ module BetterTogether
             view_platform_logs
           ],
           'platform_analytics_viewer' => %w[
+            view_metrics_dashboard
+            create_metrics_reports
+            download_metrics_reports
+          ],
+          'analytics_viewer' => %w[
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports
@@ -276,6 +320,13 @@ module BetterTogether
       def assign_person_permissions_to_roles # rubocop:todo Metrics/MethodLength
         # Mapping of platform roles to platform permissions
         person_role_permissions = {
+          'platform_steward' => %w[
+            read_person
+            list_person
+            create_person
+            update_person
+            delete_person
+          ],
           'platform_manager' => %w[
             read_person
             list_person
@@ -359,8 +410,17 @@ module BetterTogether
           },
           {
             protected: true,
-            identifier: 'community_coordinator',
+            identifier: 'community_organizer',
             position: 3,
+            resource_type: 'BetterTogether::Community',
+            name: 'Community Organizer',
+            description: 'Coordinates the day-to-day functioning of a community, supporting members, events, ' \
+                         'content, and participation workflows.'
+          },
+          {
+            protected: true,
+            identifier: 'community_coordinator',
+            position: 4,
             resource_type: 'BetterTogether::Community',
             name: 'Community Coordinator',
             description: 'Manages community engagement and events, enhancing interaction and supporting ' \
@@ -369,7 +429,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'community_content_curator',
-            position: 4,
+            position: 5,
             resource_type: 'BetterTogether::Community',
             name: 'Community Content Curator',
             description: 'Manages the creation and curation of educational and engaging content, ensuring it meets ' \
@@ -378,7 +438,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'community_strategist',
-            position: 5,
+            position: 6,
             resource_type: 'BetterTogether::Community',
             name: 'Community Strategist',
             description: 'Focuses on aligning community activities with broader platform goals and managing ' \
@@ -387,7 +447,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'community_legal_advisor',
-            position: 6,
+            position: 7,
             resource_type: 'BetterTogether::Community',
             name: 'Community Legal Advisor',
             description: 'Advises on legal matters pertaining to community interactions and content, ensuring ' \
@@ -396,7 +456,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'community_governance_council',
-            position: 7,
+            position: 8,
             resource_type: 'BetterTogether::Community',
             name: 'Community Governance Council',
             description: 'Oversees platform governance, ensuring that decisions reflect community interests and ' \
@@ -432,20 +492,24 @@ module BetterTogether
             identifier: 'manage_community_settings', protected: true, position: 7
           },
           {
+            action: 'manage', target: 'members', resource_type: 'BetterTogether::Community',
+            identifier: 'manage_community_members', protected: true, position: 8
+          },
+          {
             action: 'manage', target: 'content', resource_type: 'BetterTogether::Community',
-            identifier: 'manage_community_content', protected: true, position: 8
+            identifier: 'manage_community_content', protected: true, position: 9
           },
           {
             action: 'manage', target: 'roles', resource_type: 'BetterTogether::Community',
-            identifier: 'manage_community_roles', protected: true, position: 9
+            identifier: 'manage_community_roles', protected: true, position: 10
           },
           {
             action: 'manage', target: 'notifications', resource_type: 'BetterTogether::Community',
-            identifier: 'manage_community_notifications', protected: true, position: 10
+            identifier: 'manage_community_notifications', protected: true, position: 11
           },
           {
             action: 'manage', target: 'member_invitations', resource_type: 'BetterTogether::Community',
-            identifier: 'invite_community_members', protected: true, position: 11
+            identifier: 'invite_community_members', protected: true, position: 12
           }
         ]
       end
@@ -454,8 +518,17 @@ module BetterTogether
         [
           {
             protected: true,
-            identifier: 'platform_manager',
+            identifier: 'platform_steward',
             position: 0,
+            resource_type: 'BetterTogether::Platform',
+            name: 'Platform Steward',
+            description: 'Stewards the platform as shared infrastructure, maintaining its operations and guiding ' \
+                         'platform-level decisions.'
+          },
+          {
+            protected: true,
+            identifier: 'platform_manager',
+            position: 1,
             resource_type: 'BetterTogether::Platform',
             name: 'Platform Manager',
             description: 'Manages daily operations and technical updates, ensuring the platform remains stable and ' \
@@ -464,7 +537,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'platform_infrastructure_architect',
-            position: 1,
+            position: 2,
             resource_type: 'BetterTogether::Platform',
             name: 'Platform Infrastructure Architect',
             description: 'Designs and manages the platform\'s IT infrastructure, ensuring scalability, security, ' \
@@ -473,7 +546,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'platform_tech_support',
-            position: 2,
+            position: 3,
             resource_type: 'BetterTogether::Platform',
             name: 'Platform Tech Support',
             description: 'Provides ongoing technical support and troubleshooting, ensuring that technical issues ' \
@@ -482,7 +555,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'platform_developer',
-            position: 3,
+            position: 4,
             resource_type: 'BetterTogether::Platform',
             name: 'Platform Developer',
             description: 'Develops new features and maintains the existing codebase, integrating community ' \
@@ -491,7 +564,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'platform_quality_assurance_lead',
-            position: 4,
+            position: 5,
             resource_type: 'BetterTogether::Platform',
             name: 'Platform Quality Assurance Lead',
             description: 'Ensures that all platform updates and features pass rigorous testing, maintaining high ' \
@@ -500,7 +573,7 @@ module BetterTogether
           {
             protected: true,
             identifier: 'platform_accessibility_officer',
-            position: 5,
+            position: 6,
             resource_type: 'BetterTogether::Platform',
             name: 'Platform Accessibility Officer',
             description: 'Ensures that the platform is accessible to all users, advocating for and implementing ' \
@@ -508,8 +581,17 @@ module BetterTogether
           },
           {
             protected: true,
+            identifier: 'analytics_viewer',
+            position: 7,
+            resource_type: 'BetterTogether::Platform',
+            name: 'Analytics Viewer',
+            description: 'Has read-only access to platform analytics and metrics, and can generate and download ' \
+                         'reports without broader platform-management authority.'
+          },
+          {
+            protected: true,
             identifier: 'platform_analytics_viewer',
-            position: 6,
+            position: 8,
             resource_type: 'BetterTogether::Platform',
             name: 'Platform Analytics Viewer',
             description: 'Has read-only access to platform analytics and metrics, can generate and download ' \
@@ -545,52 +627,60 @@ module BetterTogether
             identifier: 'manage_platform', protected: true, position: 6
           },
           {
+            action: 'manage', target: 'platform_members', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_members', protected: true, position: 7
+          },
+          {
+            action: 'manage', target: 'joatu', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_joatu', protected: true, position: 8
+          },
+          {
             action: 'manage', target: 'platform_api', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_api', protected: true, position: 7
+            identifier: 'manage_platform_api', protected: true, position: 9
           },
           {
             action: 'manage', target: 'platform_data_privacy', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_data_privacy', protected: true, position: 8
+            identifier: 'manage_platform_data_privacy', protected: true, position: 10
           },
           {
             action: 'manage', target: 'platform_database', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_database', protected: true, position: 9
+            identifier: 'manage_platform_database', protected: true, position: 11
           },
           {
             action: 'manage', target: 'platform_deployment', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_deployment', protected: true, position: 10
+            identifier: 'manage_platform_deployment', protected: true, position: 12
           },
           {
             action: 'manage', target: 'platform_roles', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_roles', protected: true, position: 11
+            identifier: 'manage_platform_roles', protected: true, position: 13
           },
           {
             action: 'manage', target: 'platform_security', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_security', protected: true, position: 12
+            identifier: 'manage_platform_security', protected: true, position: 14
           },
           {
             action: 'manage', target: 'platform_settings', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_settings', protected: true, position: 13
+            identifier: 'manage_platform_settings', protected: true, position: 15
           },
           {
             action: 'manage', target: 'platform_users', resource_type: 'BetterTogether::Platform',
-            identifier: 'manage_platform_users', protected: true, position: 14
+            identifier: 'manage_platform_users', protected: true, position: 16
           },
           {
             action: 'view', target: 'metrics_dashboard', resource_type: 'BetterTogether::Platform',
-            identifier: 'view_metrics_dashboard', protected: true, position: 15
+            identifier: 'view_metrics_dashboard', protected: true, position: 17
           },
           {
             action: 'create', target: 'metrics_reports', resource_type: 'BetterTogether::Platform',
-            identifier: 'create_metrics_reports', protected: true, position: 16
+            identifier: 'create_metrics_reports', protected: true, position: 18
           },
           {
             action: 'download', target: 'metrics_reports', resource_type: 'BetterTogether::Platform',
-            identifier: 'download_metrics_reports', protected: true, position: 17
+            identifier: 'download_metrics_reports', protected: true, position: 19
           },
           {
             action: 'view', target: 'platform_logs', resource_type: 'BetterTogether::Platform',
-            identifier: 'view_platform_logs', protected: true, position: 18
+            identifier: 'view_platform_logs', protected: true, position: 20
           }
         ]
       end

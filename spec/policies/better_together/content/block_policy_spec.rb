@@ -3,15 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
-  let(:manager_user) { create(:better_together_user, :platform_manager) }
+  let(:steward_user) { create(:better_together_user, :platform_steward) }
   let(:normal_user) { create(:better_together_user) }
   let(:block) { create(:content_markdown) }
 
   describe '#index?' do
     subject { described_class.new(user, block).index? }
 
-    context 'when user is a platform manager' do
-      let(:user) { manager_user }
+    context 'when user is a platform steward' do
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -32,8 +32,8 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
   describe '#show?' do
     subject { described_class.new(user, block).show? }
 
-    context 'when user is a platform manager' do
-      let(:user) { manager_user }
+    context 'when user is a platform steward' do
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -54,8 +54,8 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
   describe '#create?' do
     subject { described_class.new(user, block).create? }
 
-    context 'when user is a platform manager' do
-      let(:user) { manager_user }
+    context 'when user is a platform steward' do
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -77,7 +77,7 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
     subject { described_class.new(user, block).new? }
 
     it 'delegates to create?' do
-      policy = described_class.new(manager_user, block)
+      policy = described_class.new(steward_user, block)
       expect(policy.new?).to eq(policy.create?)
     end
   end
@@ -85,8 +85,8 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
   describe '#update?' do
     subject { described_class.new(user, block).update? }
 
-    context 'when user is a platform manager' do
-      let(:user) { manager_user }
+    context 'when user is a platform steward' do
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -108,7 +108,7 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
     subject { described_class.new(user, block).edit? }
 
     it 'delegates to update?' do
-      policy = described_class.new(manager_user, block)
+      policy = described_class.new(steward_user, block)
       expect(policy.edit?).to eq(policy.update?)
     end
   end
@@ -116,8 +116,8 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
   describe '#destroy?' do
     subject { described_class.new(user, block).destroy? }
 
-    context 'when user is a platform manager' do
-      let(:user) { manager_user }
+    context 'when user is a platform steward' do
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -144,8 +144,8 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
       it { is_expected.to be true }
     end
 
-    context 'when user is a platform manager' do
-      let(:user) { manager_user }
+    context 'when user is a platform steward' do
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -175,8 +175,8 @@ RSpec.describe BetterTogether::Content::BlockPolicy, type: :policy do
       create(:page_content_block, page: page, block: html_block)
     end
 
-    context 'when user is a platform manager' do
-      let(:user) { manager_user }
+    context 'when user is a platform steward' do
+      let(:user) { steward_user }
 
       it 'returns all blocks ordered by created_at DESC' do
         expect(scope).to include(markdown_block, html_block)

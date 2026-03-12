@@ -3,7 +3,7 @@
 **Version:** 3.0  
 **Date:** March 11, 2026  
 **Status:** Planning baseline  
-**Depends On:** `tenant_data_ownership_matrix.md`, `tenant_runtime_contract.md`
+**Depends On:** `tenant_data_ownership_matrix.md`, `tenant_runtime_contract.md`, `governance_bodies_and_mandates.md`, `rbac_role_permission_matrix.md`, `federated_rbac_reassessment_and_coverage_plan.md`
 
 ---
 
@@ -81,6 +81,9 @@ Complete before code implementation:
 
 - confirm the ownership matrix
 - confirm the federated runtime contract
+- confirm the governance bodies and mandates
+- confirm the RBAC role and permission matrix
+- confirm the federated RBAC redesign and coverage plan
 - map existing OAuth, integrations, agreements, and Joatu request primitives to the new model
 - record any deviations from the planning defaults as ADRs
 
@@ -88,6 +91,26 @@ Acceptance criteria:
 
 - no major model family lacks a target ownership class
 - federation, tenancy, agreements, and mirroring use one coherent vocabulary
+- governance bodies and role identifiers are defined before authorization migration starts
+- role-permission boundaries are defined before federation or policy refactor starts
+- federation-sensitive actions have an explicit authorization plan instead of relying on `manage_platform`
+
+## Workstream 0A: RBAC Cleanup And Coverage Audit
+
+Complete before Workstreams 2 through 7:
+
+- streamline the seeded role catalog
+- rename canonical roles so role names describe responsibility, not model names
+- add federation and mirrored-content permission families
+- audit policy coverage across platform, community, content, OAuth, Joatu, messaging, safety, and metrics domains
+- identify placeholder or under-specified policies and replace them with explicit action matrices
+
+Acceptance criteria:
+
+- platform connection approval, OAuth trust, mirrored-content ingestion, and publish-back each have explicit permissions
+- redundant platform-specialist roles are retired or deprecated
+- mirrored-content policies distinguish local moderation from remote canonical ownership
+- high-risk policy domains have policy specs and request or system coverage
 
 ## Workstream 1: Public Platform Registry And Routing
 
@@ -116,6 +139,7 @@ Acceptance criteria:
 - one CE platform can authenticate a user for another CE platform
 - peer platform OAuth scopes can be constrained by agreements and platform policy
 - existing invitation and onboarding gates are still enforced locally
+- OAuth trust configuration is restricted by explicit federation permissions, not generic platform admin alone
 
 ## Workstream 3: Local Join And Account Link Flow
 
@@ -146,6 +170,7 @@ Acceptance criteria:
 - all four connection types use the same request primitive
 - acceptance creates the relationship edge and any associated agreement state
 - personal-community participation can use the same connection model
+- platform-to-platform connection approval is governed by explicit network permissions
 
 ## Workstream 5: Agreements And Consent
 

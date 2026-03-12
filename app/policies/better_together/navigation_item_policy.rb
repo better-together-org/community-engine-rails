@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present?
+      platform_navigation_manager?
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present?
+      platform_navigation_manager?
     end
 
     def edit?
@@ -29,17 +29,29 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected?
+      platform_navigation_manager? && !record.protected?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        if user.present?
+        if platform_navigation_manager?
           scope.all
         else
-          scope.visible.top_level.ordered.includes(:children)
+          scope.visible.top_level.ordered.includes(:children).select { |item| item.visible_to?(user) }
         end
       end
+
+      private
+
+      def platform_navigation_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
+    end
+
+    private
+
+    def platform_navigation_manager?
+      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
     end
   end
 end

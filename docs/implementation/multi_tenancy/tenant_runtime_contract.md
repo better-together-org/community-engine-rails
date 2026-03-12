@@ -16,7 +16,7 @@ This document defines how CE should behave at runtime under the revised architec
 - linked accounts and configured platform connections form a network graph
 - authorized remote content can be mirrored locally for feed/search/display and refreshed regularly
 
-It assumes the ownership rules in `tenant_data_ownership_matrix.md`.
+It assumes the ownership rules in `tenant_data_ownership_matrix.md` and the authorization cleanup in `federated_rbac_reassessment_and_coverage_plan.md`.
 
 ---
 
@@ -158,9 +158,43 @@ Acceptance creates:
 Agreements are used to record:
 
 - consent for shared authentication
-- consent for mirrored content ingestion
-- consent for publication/sync back to a peer platform
-- terms for what content types and scopes may be shared
+- mirrored-content sharing and refresh rights
+- publish-back or bi-directional sync rights
+- network-connection operating terms
+
+---
+
+## Authorization Contract
+
+### Local RBAC Remains Authoritative
+
+Every federated action still begins with local RBAC inside the active tenant schema.
+
+Local roles and permissions decide whether a user may attempt to:
+
+- manage a platform connection
+- configure CE OAuth trust
+- enable mirrored-content ingestion
+- moderate a mirrored record locally
+- request or approve publish-back
+
+### Additional Network Gates
+
+For cross-platform actions, local RBAC is necessary but not sufficient.
+
+The runtime must also check:
+
+- active connection state
+- active agreements and granted scopes
+- platform sharing policy
+- record provenance and sync state
+
+### Mirrored Content Rules
+
+- mirrored content is identified by `record.platform_id != Current.platform.id`
+- local platform roles may govern local visibility, curation, and moderation of the mirror
+- canonical remote ownership stays with the source platform
+- publish-back requires an explicit permission family plus an active agreement allowing it
 
 ---
 

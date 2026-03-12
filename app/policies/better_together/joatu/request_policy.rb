@@ -15,7 +15,7 @@ module BetterTogether
       def update?
         return false unless user.present?
 
-        permitted_to?('manage_platform') || record.creator_id == agent&.id
+        can_manage_joatu? || record.creator_id == agent&.id
       end
       alias edit? update?
       alias matches? update?
@@ -26,8 +26,7 @@ module BetterTogether
         # Prevent destroy if there are any agreements for this request — applies to everyone
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
-        # Platform managers or the creator may destroy when there are no agreements
-        permitted_to?('manage_platform') || record.creator_id == agent&.id
+        can_manage_joatu? || record.creator_id == agent&.id
       end
 
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
@@ -35,8 +34,7 @@ module BetterTogether
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           return scope.none unless user.present?
 
-          # Platform managers see everything
-          return scope.all if permitted_to?('manage_platform')
+          return scope.all if can_manage_joatu?
 
           agent_id = agent&.id
 
@@ -69,6 +67,18 @@ module BetterTogether
           # rubocop:enable Layout/LineLength
         end
         # rubocop:enable Metrics/MethodLength
+
+        private
+
+        def can_manage_joatu?
+          permitted_to?('manage_joatu')
+        end
+      end
+
+      private
+
+      def can_manage_joatu?
+        permitted_to?('manage_joatu')
       end
     end
   end

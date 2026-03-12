@@ -10,13 +10,13 @@ module BetterTogether
       record.privacy_public? ||
         member_of_community? ||
         creator_of_community? ||
-        permitted_to?('manage_platform') ||
+        can_manage_community? ||
         invitation? ||
         valid_invitation_token?
     end
 
     def create?
-      user.present? && (permitted_to?('manage_platform') || permitted_to?('create_community'))
+      user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || permitted_to?('create_community'))
     end
 
     def new?
@@ -24,7 +24,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && (permitted_to?('manage_platform') || permitted_to?('update_community', record))
+      user.present? && (can_manage_community? || permitted_to?('update_community', record))
     end
 
     def create_events?
@@ -37,7 +37,8 @@ module BetterTogether
 
       member_of_community? ||
         creator_of_community? ||
-        permitted_to?('manage_platform')
+        permitted_to?('manage_community_members', record) ||
+        can_manage_community?
     end
 
     def edit?
@@ -45,9 +46,8 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected? && !record.host? && (permitted_to?('manage_platform') || permitted_to?(
-        'destroy_community', record
-      ))
+      user.present? && !record.protected? && !record.host? &&
+        ((can_manage_community? || permitted_to?('destroy_community', record)))
     end
 
     def invitation?
@@ -104,7 +104,7 @@ module BetterTogether
         # Only list communities that are public and where the current person is a member or a creator
         query = communities_table[:privacy].eq('public')
 
-        if permitted_to?('manage_platform')
+        if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
           query = query.or(communities_table[:privacy].eq('private'))
         elsif agent
           query = query.or(
@@ -133,6 +133,15 @@ module BetterTogether
         query
       end
       # rubocop:enable Metrics/MethodLength
+    end
+
+    private
+
+    def can_manage_community?
+      permitted_to?('manage_community_settings', record) ||
+        permitted_to?('manage_community_members', record) ||
+        permitted_to?('manage_platform_settings') ||
+        permitted_to?('manage_platform')
     end
   end
 end
