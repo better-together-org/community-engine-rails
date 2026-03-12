@@ -105,6 +105,7 @@ module BetterTogether
         end
 
         apply_source_prefill(resource_instance)
+        apply_target_prefill(resource_instance)
       end
 
       private
@@ -165,7 +166,49 @@ module BetterTogether
       def resource_params
         rp = super
         rp[:creator_id] ||= helpers.current_person&.id
+        rp[:type] ||= requested_request_type if requested_request_type.present?
         rp
+      end
+
+      def resource_instance(attrs = {})
+        @resource ||= (requested_resource_class || resource_class).new(attrs)
+
+        instance_variable_set("@#{resource_name}", @resource)
+      end
+
+      def requested_request_type
+        @requested_request_type ||= params[:type].presence ||
+                                    params.dig(:joatu_request, :type).presence ||
+                                    params.dig(:better_together_joatu_connection_request, :type).presence
+      end
+
+      def requested_resource_class
+        @requested_resource_class ||= if requested_request_type.present?
+                                        allowed_request_classes.fetch(requested_request_type, nil)
+                                      end
+      end
+
+      def allowed_request_classes
+        {
+          'BetterTogether::Joatu::Request' => ::BetterTogether::Joatu::Request,
+          'BetterTogether::Joatu::ConnectionRequest' => ::BetterTogether::Joatu::ConnectionRequest
+        }
+      end
+
+      def apply_target_prefill(request)
+        return unless request.is_a?(::BetterTogether::Joatu::ConnectionRequest)
+
+        target_type = params[:target_type].presence || params.dig(resource_name.to_sym, :target_type).presence
+        target_id = params[:target_id].presence || params.dig(resource_name.to_sym, :target_id).presence
+
+        return unless target_type == 'BetterTogether::Platform' && target_id.present?
+
+        @target = ::BetterTogether::Platform.find_by(id: target_id)
+        return unless @target
+
+        request.target ||= @target
+        request.target_type ||= @target.class.to_s
+        request.target_id ||= @target.id
       end
     end
   end
