@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_12_220000) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_12_223000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -475,11 +475,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_220000) do
     t.boolean "is_recurring", default: false, null: false
     t.uuid "parent_event_id"
     t.date "recurrence_exception_dates", default: [], array: true
+    t.uuid "platform_id"
+    t.string "source_id"
+    t.datetime "source_updated_at"
+    t.datetime "last_synced_at"
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
     t.index ["is_recurring"], name: "index_better_together_events_on_is_recurring"
     t.index ["parent_event_id"], name: "index_better_together_events_on_parent_event_id"
+    t.index ["platform_id", "source_id"], name: "index_bt_events_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
+    t.index ["platform_id"], name: "index_better_together_events_on_platform_id"
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
@@ -1839,6 +1845,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_220000) do
   add_foreign_key "better_together_event_attendances", "better_together_people", column: "person_id"
   add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
