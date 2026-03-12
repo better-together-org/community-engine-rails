@@ -344,6 +344,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # These routes all are accessible to unauthenticated users
       namespace :federation do
+        post 'oauth/token', to: 'oauth_tokens#create', as: :oauth_token
         resource :content_feed, only: :show, controller: :content_feed
       end
 

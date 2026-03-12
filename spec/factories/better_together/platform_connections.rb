@@ -18,6 +18,7 @@ FactoryBot.define do
     allow_identity_scope { false }
     allow_profile_read_scope { false }
     allow_content_read_scope { false }
+    allow_linked_content_read_scope { false }
     allow_content_write_scope { false }
 
     trait :active do

@@ -43,6 +43,9 @@ module BetterTogether
     belongs_to :source_platform, class_name: '::BetterTogether::Platform'
     belongs_to :target_platform, class_name: '::BetterTogether::Platform'
     has_many :person_links, class_name: '::BetterTogether::PersonLink', dependent: :destroy
+    has_many :federation_access_tokens,
+             class_name: '::BetterTogether::FederationAccessToken',
+             dependent: :destroy
 
     store_attributes :settings do
       content_sharing_policy String, default: 'none'
@@ -53,6 +56,7 @@ module BetterTogether
       allow_identity_scope Boolean, default: false
       allow_profile_read_scope Boolean, default: false
       allow_content_read_scope Boolean, default: false
+      allow_linked_content_read_scope Boolean, default: false
       allow_content_write_scope Boolean, default: false
       sync_cursor String, default: ''
       last_sync_status String, default: 'idle'
@@ -76,6 +80,7 @@ module BetterTogether
 
     before_validation :apply_connection_policy_defaults
     before_validation :ensure_federation_access_token
+    before_validation :ensure_oauth_client_credentials
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
     scope :for_platform, lambda { |platform|
@@ -106,6 +111,7 @@ module BetterTogether
         types << 'identity' if allow_identity_scope?
         types << 'profile_read' if allow_profile_read_scope?
         types << 'content_read' if allow_content_read_scope?
+        types << 'linked_content_read' if allow_linked_content_read_scope?
         types << 'content_write' if allow_content_write_scope?
       end
     end
@@ -132,6 +138,12 @@ module BetterTogether
 
     def api_read_enabled?
       federation_auth_policy.in?(%w[api_read api_write]) && allows_federation_scope?('content_read')
+    end
+
+    def linked_content_read_enabled?
+      federation_auth_policy.in?(%w[api_read api_write]) &&
+        allows_federation_scope?('content_read') &&
+        allows_federation_scope?('linked_content_read')
     end
 
     def api_write_enabled?
@@ -204,6 +216,18 @@ module BetterTogether
       update!(federation_access_token: generate_federation_access_token)
     end
 
+    def rotate_oauth_client_secret!
+      update!(oauth_client_secret: generate_oauth_client_secret)
+    end
+
+    def oauth_client_secret
+      self[:oauth_client_secret_ciphertext].to_s
+    end
+
+    def oauth_client_secret=(value)
+      self[:oauth_client_secret_ciphertext] = value.to_s
+    end
+
     private
 
     def source_and_target_must_differ
@@ -236,6 +260,7 @@ module BetterTogether
         self.allow_identity_scope = false
         self.allow_profile_read_scope = false
         self.allow_content_read_scope = false
+        self.allow_linked_content_read_scope = false
         self.allow_content_write_scope = false
       end
 
@@ -250,7 +275,20 @@ module BetterTogether
       self.federation_access_token = generate_federation_access_token if federation_access_token.blank?
     end
 
+    def ensure_oauth_client_credentials
+      self.oauth_client_id = generate_oauth_client_id if oauth_client_id.blank?
+      self.oauth_client_secret = generate_oauth_client_secret if oauth_client_secret.blank?
+    end
+
     def generate_federation_access_token
+      SecureRandom.hex(32)
+    end
+
+    def generate_oauth_client_id
+      "ce-#{SecureRandom.hex(12)}"
+    end
+
+    def generate_oauth_client_secret
       SecureRandom.hex(32)
     end
 

@@ -3,6 +3,7 @@
 require 'json'
 require 'net/http'
 require 'uri'
+require 'cgi'
 
 module BetterTogether
   # Pulls one content-feed batch from a federated peer platform.
@@ -73,8 +74,51 @@ module BetterTogether
         read_timeout: DEFAULT_READ_TIMEOUT
       ) do |http|
         request = Net::HTTP::Get.new(uri.request_uri)
-        request['Authorization'] = "Bearer #{connection.federation_access_token}"
+        request['Authorization'] = "Bearer #{access_token_for_request}"
         request['Accept'] = 'application/json'
+        http.request(request)
+      end
+    end
+
+    def access_token_for_request
+      oauth_access_token || connection.federation_access_token
+    end
+
+    def oauth_access_token
+      return if connection.oauth_client_id.blank? || connection.oauth_client_secret.blank?
+
+      response = http_post_form(token_uri, {
+                                  grant_type: 'client_credentials',
+                                  client_id: connection.oauth_client_id,
+                                  client_secret: connection.oauth_client_secret,
+                                  scope: 'content.feed.read'
+                                })
+      return unless response.is_a?(Net::HTTPSuccess)
+
+      JSON.parse(response.body).fetch('access_token')
+    rescue JSON::ParserError, KeyError
+      nil
+    end
+
+    def token_uri
+      base_uri = URI.parse(connection.source_platform.oauth_issuer_url.presence || connection.source_platform.resolved_host_url)
+      base_uri.path = ::BetterTogether::Engine.routes.url_helpers.federation_oauth_token_path(locale: I18n.default_locale)
+      base_uri.query = nil
+      base_uri
+    end
+
+    def http_post_form(uri, params)
+      Net::HTTP.start(
+        uri.host,
+        uri.port,
+        use_ssl: uri.scheme == 'https',
+        open_timeout: DEFAULT_OPEN_TIMEOUT,
+        read_timeout: DEFAULT_READ_TIMEOUT
+      ) do |http|
+        request = Net::HTTP::Post.new(uri.request_uri)
+        request['Accept'] = 'application/json'
+        request['Content-Type'] = 'application/x-www-form-urlencoded'
+        request.body = URI.encode_www_form(params)
         http.request(request)
       end
     end

@@ -8,6 +8,7 @@ module BetterTogether
       'person.profile.read' => ->(connection) { connection.allows_federation_scope?('profile_read') },
       'content.read' => ->(connection) { connection.api_read_enabled? },
       'content.feed.read' => ->(connection) { connection.api_read_enabled? && connection.mirrored_content_enabled? },
+      'linked_content.read' => ->(connection) { connection.linked_content_read_enabled? },
       'content.mirror.write' => ->(connection) { connection.api_write_enabled? && connection.mirrored_content_enabled? },
       'content.publish.write' => ->(connection) { connection.publish_back_enabled? }
     }.freeze

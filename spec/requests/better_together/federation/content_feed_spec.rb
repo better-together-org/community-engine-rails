@@ -20,6 +20,12 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
       allow_content_read_scope: true
     )
   end
+  let(:oauth_access_token) do
+    BetterTogether::FederationAccessTokenIssuer.call(
+      connection:,
+      requested_scopes: 'content.feed.read'
+    ).access_token
+  end
 
   before do
     source_platform.update!(
@@ -43,7 +49,7 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
     post = create(:better_together_post, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
 
     get better_together.federation_content_feed_path(locale:),
-        headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" }
+        headers: { 'Authorization' => "Bearer #{oauth_access_token}" }
 
     expect(response).to have_http_status(:ok)
 
@@ -72,5 +78,12 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
         headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" }
 
     expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'still accepts the legacy long-lived bearer token during transition' do
+    get better_together.federation_content_feed_path(locale:),
+        headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" }
+
+    expect(response).to have_http_status(:ok)
   end
 end

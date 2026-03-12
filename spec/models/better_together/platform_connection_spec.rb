@@ -70,6 +70,8 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.federation_auth_enabled).to be true
       expect(connection.shared_content_types).to include('posts')
       expect(connection.federation_scope_types).to include('identity', 'content_read')
+      expect(connection.oauth_client_id).to be_present
+      expect(connection.oauth_client_secret).to be_present
     end
 
     it 'clears scoped flags when the policy mode is none' do
@@ -96,6 +98,7 @@ RSpec.describe BetterTogether::PlatformConnection do
         share_events: true,
         allow_identity_scope: true,
         allow_content_read_scope: true,
+        allow_linked_content_read_scope: true,
         allow_content_write_scope: true
       )
 
@@ -104,10 +107,12 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.allows_content_type?(:pages)).to be false
       expect(connection.allows_federation_scope?('identity')).to be true
       expect(connection.allows_federation_scope?(:content_write)).to be true
+      expect(connection.allows_federation_scope?(:linked_content_read)).to be true
       expect(connection.mirrored_content_enabled?).to be true
       expect(connection.publish_back_enabled?).to be true
       expect(connection.login_enabled?).to be true
       expect(connection.api_read_enabled?).to be true
+      expect(connection.linked_content_read_enabled?).to be true
       expect(connection.api_write_enabled?).to be true
     end
 

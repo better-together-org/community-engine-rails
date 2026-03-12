@@ -10,6 +10,7 @@ module BetterTogether
 
       def show
         return head :unauthorized unless connection
+        return head :forbidden if access_token_record.present? && !access_token_record.includes_scope?('content.feed.read')
 
         auth_result = ::BetterTogether::FederationScopeAuthorizer.call(
           source_platform: connection.source_platform,
@@ -34,10 +35,21 @@ module BetterTogether
       private
 
       def connection
-        @connection ||= resolve_connection_from_bearer_token
+        @connection ||= access_token_record&.platform_connection || resolve_connection_from_legacy_bearer_token
       end
 
-      def resolve_connection_from_bearer_token
+      def access_token_record
+        @access_token_record ||= begin
+          token = ::BetterTogether::FederationAccessToken.find_active_by_plaintext(bearer_token)
+
+          if token.present? && token.platform_connection.source_platform == Current.platform
+            token.touch_last_used!
+            token
+          end
+        end
+      end
+
+      def resolve_connection_from_legacy_bearer_token
         token = bearer_token
         return if token.blank? || Current.platform.blank?
 

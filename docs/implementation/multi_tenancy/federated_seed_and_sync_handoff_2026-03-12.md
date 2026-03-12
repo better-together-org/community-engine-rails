@@ -56,7 +56,8 @@ Conceptual language should remain human-centered:
 - `PlatformConnection` is the durable platform-to-platform relationship edge.
 - `Joatu::ConnectionRequest` is the negotiation flow for creating platform connections.
 - Platform sync is asynchronous and uses the dedicated `platform_sync` Sidekiq queue.
-- The current bearer-token feed auth is temporary scaffolding. The intended target remains CE-to-CE OAuth.
+- CE-to-CE OAuth-style token issuance is now partially implemented for platform-shared feed transport.
+- The legacy long-lived bearer token still exists as a transition fallback and should be removed after the OAuth path is fully adopted.
 
 ### Seeds, Plantings, and Tending
 
@@ -252,6 +253,25 @@ Key commit:
 
 - `71f923b7`
 
+### 11. OAuth-style federation token exchange
+
+Implemented:
+
+- connection-bound OAuth client credentials on `PlatformConnection`
+- short-lived scoped `FederationAccessToken`
+- `FederationAccessTokenIssuer`
+- `POST /:locale/.../federation/oauth/token`
+- feed export auth updated to accept scoped access tokens
+- pull service updated to obtain a short-lived access token before requesting the shared content feed
+- new `linked_content.read` scope added to the authorization model for the account-to-account lane, defaulting off
+
+Behavior:
+
+- current implementation is a bounded CE client-credentials flow over existing platform connections
+- shared content feed tending now prefers short-lived scoped access tokens
+- legacy `federation_access_token` remains as transition fallback for feed reads and pulls
+- private linked-content transport is not implemented yet, but the scope vocabulary now reserves `linked_content.read`
+
 ## Current Completion Status
 
 ### Substantially complete foundations
@@ -268,14 +288,14 @@ Key commit:
 
 ### Partially complete / transitional
 
-- federation feed auth still uses a temporary bearer-token path in places
-- CE-to-CE OAuth remains planned but not yet wired end-to-end
+- platform-shared feed auth now supports scoped token exchange, but the OAuth path is still transitional rather than a full provider implementation
+- federation feed auth still includes the old long-lived bearer-token fallback
 - seed-based exchange is integrated, but not yet fully generalized into all federation endpoints and workflows
 - person-linked private sync storage exists, but a full export/import API flow for linked private seeds is not implemented yet
 
 ### Not yet complete
 
-- CE-to-CE OAuth token issuance and validation path for federation transport
+- full CE-to-CE OAuth provider/client lifecycle beyond the current bounded client-credentials transport
 - private linked-seed export endpoint and pull/ingest flow
 - grant management UI for updating, revoking, and expiring person access grants
 - complete non-leakage audit across all feed/search/listing surfaces
@@ -323,10 +343,10 @@ The engine harness handles the migration wiring. Earlier confusion around missin
 
 Do next:
 
-- establish CE-to-CE OAuth app/client relationship per active `PlatformConnection`
-- issue scoped access tokens based on `FederationScopeAuthorizer`
-- move feed and tending endpoints to OAuth-backed auth
-- deprecate `PlatformConnection#federation_access_token`
+- extend the current bounded token exchange into the remaining federation surfaces
+- remove legacy bearer-token fallback after the new path is used everywhere
+- decide whether to keep the current lightweight CE provider path or replace it with a fuller provider stack
+- add linked private-content token flow on top of the same scope model
 
 ### 2. Build the private linked-seed tending flow
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_12_235000) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_13_004500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -489,6 +489,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_235000) do
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
+  end
+
+  create_table "better_together_federation_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "platform_connection_id", null: false
+    t.text "token_ciphertext"
+    t.string "token_digest", null: false
+    t.text "scopes", default: "", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "last_used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["platform_connection_id"], name: "index_bt_federation_access_tokens_on_platform_connection_id"
+    t.index ["token_digest"], name: "index_bt_federation_access_tokens_on_token_digest", unique: true
   end
 
   create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1315,7 +1329,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_235000) do
     t.jsonb "settings", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "oauth_client_id"
+    t.text "oauth_client_secret_ciphertext"
     t.index ["connection_kind"], name: "index_better_together_platform_connections_on_connection_kind"
+    t.index ["oauth_client_id"], name: "index_bt_platform_connections_on_oauth_client_id", unique: true
     t.index ["source_platform_id", "target_platform_id"], name: "index_bt_platform_connections_on_source_and_target", unique: true
     t.index ["source_platform_id"], name: "idx_on_source_platform_id_bed3ccb00c"
     t.index ["status"], name: "index_better_together_platform_connections_on_status"
@@ -1933,6 +1950,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_235000) do
   add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_federation_access_tokens", "better_together_platform_connections", column: "platform_connection_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
