@@ -1,0 +1,89 @@
+name: Compat Branch Sync PRs
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "15 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-sync-pr:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target_branch:
+          - compat/rails-7.2
+          - compat/rails-8.0
+          - compat/rails-8.1
+    steps:
+      - name: Open or reuse sync PR
+        uses: actions/github-script@v7
+        env:
+          TARGET_BRANCH: ${{ matrix.target_branch }}
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const base = process.env.TARGET_BRANCH;
+            const head = "main";
+
+            try {
+              await github.rest.repos.getBranch({ owner, repo, branch: base });
+            } catch (error) {
+              if (error.status === 404) {
+                core.notice(`Skipping ${base}: branch does not exist yet.`);
+                return;
+              }
+
+              throw error;
+            }
+
+            const openPrs = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: "open",
+              base,
+              head: `${owner}:${head}`
+            });
+
+            if (openPrs.data.length > 0) {
+              core.notice(`Open sync PR already exists for ${base}: #${openPrs.data[0].number}`);
+              return;
+            }
+
+            try {
+              const pr = await github.rest.pulls.create({
+                owner,
+                repo,
+                base,
+                head,
+                title: `chore(compat): merge main into ${base}`,
+                body: [
+                  "## Summary",
+                  "",
+                  `Automated maintenance sync from \`main\` into \`${base}\`.`,
+                  "",
+                  "## Expectations",
+                  "",
+                  "- Resolve branch-specific Rails and dependency conflicts on the target branch",
+                  "- Run the target branch's native CI before merge",
+                  "- Keep security fixes and feature work flowing down from main"
+                ].join("\n")
+              });
+
+              core.notice(`Created sync PR #${pr.data.number} for ${base}`);
+            } catch (error) {
+              if (error.status === 422 && /No commits between/i.test(error.message)) {
+                core.notice(`Skipping ${base}: no commits to sync from main.`);
+                return;
+              }
+
+              throw error;
+            }

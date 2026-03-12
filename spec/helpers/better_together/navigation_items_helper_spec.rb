@@ -273,4 +273,85 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
       helper.render_platform_header_nav_items
     end
   end
+
+  describe '#cache_key_for_nav_area' do
+    let(:nav_area) { build_stubbed(:better_together_navigation_area) }
+
+    it 'changes with auth context' do
+      allow(helper).to receive_messages(
+        request: double(path: '/en/pre-arrival'),
+        current_locale: :en,
+        host_platform: platform,
+        current_user: nil
+      )
+
+      guest_key = helper.cache_key_for_nav_area(nav_area)
+
+      user = create(:better_together_user)
+      allow(helper).to receive(:current_user).and_return(user)
+      user_key = helper.cache_key_for_nav_area(nav_area)
+
+      expect(user_key).not_to eq(guest_key)
+    end
+
+    it 'changes with locale for same user context' do
+      user = create(:better_together_user)
+      allow(helper).to receive_messages(
+        request: double(path: '/en/pre-arrival'),
+        host_platform: platform,
+        current_user: user
+      )
+      allow(helper).to receive(:current_locale).and_return(:en)
+      en_key = helper.cache_key_for_nav_area(nav_area)
+
+      allow(helper).to receive(:current_locale).and_return(:fr)
+      fr_key = helper.cache_key_for_nav_area(nav_area)
+
+      expect(fr_key).not_to eq(en_key)
+    end
+  end
+
+  describe '#platform_footer_nav_items' do
+    let(:visible_item) do
+      instance_double(
+        BetterTogether::NavigationItem,
+        id: 101,
+        visible_to?: true,
+        dropdown?: false,
+        children: []
+      )
+    end
+    let(:hidden_item) do
+      instance_double(
+        BetterTogether::NavigationItem,
+        id: 102,
+        visible_to?: false,
+        dropdown?: false,
+        children: []
+      )
+    end
+    let(:nav_items_relation) { instance_double(ActiveRecord::Relation, to_a: [visible_item, hidden_item]) }
+    let(:nav_area) do
+      instance_double(
+        BetterTogether::NavigationArea,
+        id: 55,
+        cache_key_with_version: 'nav/55-1',
+        top_level_nav_items_includes_children: nav_items_relation
+      )
+    end
+
+    it 'preloads once and filters hidden items' do
+      allow(helper).to receive_messages(
+        platform_footer_nav_area: nav_area,
+        host_platform: platform,
+        current_locale: :en,
+        request: double(path: '/en/pre-arrival'),
+        current_user: nil
+      )
+
+      expect(helper.platform_footer_nav_items).to eq([visible_item])
+      expect(helper.platform_footer_nav_items).to eq([visible_item])
+      expect(nav_items_relation).to have_received(:to_a).once
+    end
+  end
 end
