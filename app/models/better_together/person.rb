@@ -62,6 +62,15 @@ module BetterTogether
 
     has_many :person_platform_integrations, dependent: :destroy
 
+    has_many :source_person_links, foreign_key: :source_person_id, dependent: :destroy,
+                                   class_name: 'BetterTogether::PersonLink', inverse_of: :source_person
+    has_many :target_person_links, foreign_key: :target_person_id, dependent: :destroy,
+                                   class_name: 'BetterTogether::PersonLink', inverse_of: :target_person
+    has_many :granted_person_access_grants, foreign_key: :grantor_person_id, dependent: :destroy,
+                                            class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantor_person
+    has_many :received_person_access_grants, foreign_key: :grantee_person_id, dependent: :destroy,
+                                             class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantee_person
+
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_12_223000) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_12_234000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1131,6 +1131,26 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_223000) do
     t.index ["privacy"], name: "by_better_together_people_privacy"
   end
 
+  create_table "better_together_person_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "person_link_id", null: false
+    t.uuid "grantor_person_id", null: false
+    t.uuid "grantee_person_id"
+    t.string "status", default: "pending", null: false
+    t.string "remote_grantee_identifier"
+    t.string "remote_grantee_name"
+    t.datetime "accepted_at"
+    t.datetime "revoked_at"
+    t.datetime "expires_at"
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["grantee_person_id"], name: "idx_on_grantee_person_id_ecbd23756c"
+    t.index ["grantor_person_id"], name: "idx_on_grantor_person_id_f154f48033"
+    t.index ["person_link_id", "grantor_person_id", "grantee_person_id"], name: "index_bt_person_access_grants_on_link_and_people", unique: true
+    t.index ["person_link_id"], name: "index_better_together_person_access_grants_on_person_link_id"
+    t.index ["status"], name: "index_better_together_person_access_grants_on_status"
+  end
+
   create_table "better_together_person_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1172,6 +1192,25 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_223000) do
     t.index ["member_id"], name: "person_community_membership_by_member"
     t.index ["role_id"], name: "person_community_membership_by_role"
     t.index ["status"], name: "index_better_together_person_community_memberships_on_status"
+  end
+
+  create_table "better_together_person_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "platform_connection_id", null: false
+    t.uuid "source_person_id", null: false
+    t.uuid "target_person_id"
+    t.string "status", default: "pending", null: false
+    t.string "remote_target_identifier"
+    t.string "remote_target_name"
+    t.datetime "verified_at"
+    t.datetime "revoked_at"
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["platform_connection_id", "source_person_id", "target_person_id"], name: "index_bt_person_links_on_connection_and_people", unique: true
+    t.index ["platform_connection_id"], name: "index_better_together_person_links_on_platform_connection_id"
+    t.index ["source_person_id"], name: "index_better_together_person_links_on_source_person_id"
+    t.index ["status"], name: "index_better_together_person_links_on_status"
+    t.index ["target_person_id"], name: "index_better_together_person_links_on_target_person_id"
   end
 
   create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1925,6 +1964,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_223000) do
   add_foreign_key "better_together_pages", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_pages", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_people", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_person_access_grants", "better_together_people", column: "grantee_person_id"
+  add_foreign_key "better_together_person_access_grants", "better_together_people", column: "grantor_person_id"
+  add_foreign_key "better_together_person_access_grants", "better_together_person_links", column: "person_link_id"
   add_foreign_key "better_together_person_blocks", "better_together_people", column: "blocked_id"
   add_foreign_key "better_together_person_blocks", "better_together_people", column: "blocker_id"
   add_foreign_key "better_together_person_checklist_items", "better_together_checklist_items", column: "checklist_item_id"
@@ -1933,6 +1975,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_223000) do
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "joinable_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_person_links", "better_together_people", column: "source_person_id"
+  add_foreign_key "better_together_person_links", "better_together_people", column: "target_person_id"
+  add_foreign_key "better_together_person_links", "better_together_platform_connections", column: "platform_connection_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"

@@ -166,6 +166,8 @@ module BetterTogether
       def offer_matches_request_target
         return unless targets_present?
         return if connection_request_target_pair?
+        return if person_link_request_target_pair?
+        return if person_access_grant_request_target_pair?
         return if offer.target_type == request.target_type && offer.target_id == request.target_id
 
         errors.add(:offer, 'target does not match request target')
@@ -180,6 +182,18 @@ module BetterTogether
         request.is_a?(BetterTogether::Joatu::ConnectionRequest) &&
           offer.target.is_a?(BetterTogether::Platform) &&
           request.target.is_a?(BetterTogether::Platform)
+      end
+
+      def person_link_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::PersonLinkRequest) &&
+          offer.target.is_a?(BetterTogether::Person) &&
+          request.target.is_a?(BetterTogether::Person)
+      end
+
+      def person_access_grant_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::PersonAccessGrantRequest) &&
+          offer.target.is_a?(BetterTogether::Person) &&
+          request.target.is_a?(BetterTogether::Person)
       end
 
       def notify_creators

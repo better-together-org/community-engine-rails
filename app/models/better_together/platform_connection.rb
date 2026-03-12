@@ -42,6 +42,7 @@ module BetterTogether
 
     belongs_to :source_platform, class_name: '::BetterTogether::Platform'
     belongs_to :target_platform, class_name: '::BetterTogether::Platform'
+    has_many :person_links, class_name: '::BetterTogether::PersonLink', dependent: :destroy
 
     store_attributes :settings do
       content_sharing_policy String, default: 'none'
