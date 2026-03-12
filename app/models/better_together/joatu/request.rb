@@ -19,6 +19,11 @@ module BetterTogether
       def self.permitted_attributes(id: true, destroy: false)
         super + response_link_permitted_attributes
       end
+
+      def after_agreement_acceptance!(offer:)
+        offer
+        true
+      end
     end
   end
 end

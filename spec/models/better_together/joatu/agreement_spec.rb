@@ -66,5 +66,20 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       # Same request cannot accept another agreement
       expect { ag3.accept! }.to raise_error(ActiveRecord::RecordInvalid)
     end
+
+    it 'creates or activates a platform connection when accepting a connection request agreement' do
+      source_platform = create(:better_together_platform)
+      target_platform = create(:better_together_platform)
+      connection_offer = create(:better_together_joatu_offer, creator: creator_a, target: source_platform)
+      connection_request = create(:better_together_joatu_connection_request, creator: creator_b, target: target_platform)
+      agreement = create(:better_together_joatu_agreement, offer: connection_offer, request: connection_request)
+
+      expect { agreement.accept! }
+        .to change(BetterTogether::PlatformConnection.active, :count).by(1)
+
+      connection = BetterTogether::PlatformConnection.find_by(source_platform:, target_platform:)
+      expect(connection).to be_present
+      expect(connection).to be_active
+    end
   end
 end

@@ -58,6 +58,7 @@ module BetterTogether
           update!(status: :accepted)
           offer.status_closed!
           request.status_closed!
+          request.after_agreement_acceptance!(offer:)
         end
       end
 
@@ -151,6 +152,7 @@ module BetterTogether
       # Ensures the offer targets the same record as the request
       def offer_matches_request_target
         return unless targets_present?
+        return if connection_request_target_pair?
         return if offer.target_type == request.target_type && offer.target_id == request.target_id
 
         errors.add(:offer, 'target does not match request target')
@@ -159,6 +161,12 @@ module BetterTogether
       def targets_present?
         offer && request &&
           [offer, request].all? { |r| r.respond_to?(:target_type) && r.respond_to?(:target_id) }
+      end
+
+      def connection_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::ConnectionRequest) &&
+          offer.target.is_a?(BetterTogether::Platform) &&
+          request.target.is_a?(BetterTogether::Platform)
       end
 
       def notify_creators
