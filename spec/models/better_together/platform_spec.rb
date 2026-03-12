@@ -73,4 +73,32 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       end
     end
   end
+
+  describe 'platform domain synchronization' do
+    it 'creates a primary platform domain for internal platforms from host_url' do
+      platform = create(:better_together_platform, host_url: "https://primary-#{SecureRandom.hex(4)}.example.test")
+
+      primary_domain = platform.reload.primary_platform_domain
+
+      expect(primary_domain).to be_present
+      expect(primary_domain.hostname).to eq(URI.parse(platform.host_url).host)
+      expect(primary_domain).to be_primary
+      expect(primary_domain).to be_active
+    end
+
+    it 'updates the primary platform domain hostname when host_url changes' do
+      platform = create(:better_together_platform, host_url: "https://primary-#{SecureRandom.hex(4)}.example.test")
+      new_host = "https://renamed-#{SecureRandom.hex(4)}.example.test"
+
+      platform.update!(host_url: new_host)
+
+      expect(platform.reload.primary_platform_domain.hostname).to eq(URI.parse(new_host).host)
+    end
+
+    it 'does not create a primary platform domain for external platforms' do
+      platform = create(:better_together_platform, :external, host_url: "https://remote-#{SecureRandom.hex(4)}.example.test")
+
+      expect(platform.reload.primary_platform_domain).to be_nil
+    end
+  end
 end

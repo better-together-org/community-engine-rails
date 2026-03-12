@@ -62,6 +62,9 @@ module BetterTogether
 
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
+    has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+
+    after_commit :sync_primary_platform_domain!, on: %i[create update]
 
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image
@@ -72,6 +75,16 @@ module BetterTogether
 
     def cache_key
       "#{super}/#{css_block&.updated_at&.to_i}"
+    end
+
+    def primary_platform_domain
+      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+
+      platform_domains.primary.active.first
+    end
+
+    def resolved_host_url
+      primary_platform_domain&.url || host_url
     end
 
     # Return the routing URL for this platform (used by metrics tracking)
@@ -138,6 +151,30 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    private
+
+    def sync_primary_platform_domain!
+      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return if external?
+
+      hostname = platform_hostname_from_host_url
+      return if hostname.blank?
+
+      primary_domain = platform_domains.primary.first_or_initialize
+      primary_domain.hostname = hostname
+      primary_domain.active = true
+      primary_domain.primary = true
+      primary_domain.save! if primary_domain.new_record? || primary_domain.changed?
+    end
+
+    def platform_hostname_from_host_url
+      return if host_url.blank?
+
+      BetterTogether::PlatformDomain.normalize_hostname(URI.parse(host_url).host)
+    rescue URI::InvalidURIError
+      nil
     end
   end
 end

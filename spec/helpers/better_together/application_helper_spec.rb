@@ -4,21 +4,37 @@ require 'rails_helper'
 
 module BetterTogether
   RSpec.describe ApplicationHelper do
-    describe '#canonical_link_tag' do
-      before do
-        allow(helper).to receive(:base_url_with_locale).and_return('https://example.com/en')
-      end
+    describe '#base_url' do
+      it 'uses the resolved platform primary domain when available' do
+        platform_domain = double('platform_domain', url: 'https://primary.example.test')
+        platform = double('platform', primary_platform_domain: platform_domain, resolved_host_url: 'https://primary.example.test')
+        Current.platform = platform
 
+        expect(helper.base_url).to eq('https://primary.example.test')
+      ensure
+        Current.reset
+      end
+    end
+
+    describe '#canonical_link_tag' do
       context 'when no canonical_url is provided' do
-        it 'defaults to request.original_url' do
-          allow(helper.request).to receive(:original_url).and_return('https://example.com/en/posts')
+        it 'rewrites request.original_url onto the resolved base host' do
+          platform_domain = double('platform_domain', url: 'https://primary.example.test')
+          platform = double('platform', primary_platform_domain: platform_domain, resolved_host_url: 'https://primary.example.test')
+          Current.platform = platform
+          allow(helper.request).to receive(:original_url).and_return('https://alias.example.test/en/posts')
+
           result = helper.canonical_link_tag
-          expect(result).to include('href="https://example.com/en/posts"')
+
+          expect(result).to include('href="https://primary.example.test/en/posts"')
+        ensure
+          Current.reset
         end
       end
 
       context 'when canonical_url is a relative path with locale' do
         it 'prefixes base_url_with_locale and removes duplicate locale' do
+          allow(helper).to receive(:base_url).and_return('https://example.com')
           helper.content_for(:canonical_url, '/en/custom')
           result = helper.canonical_link_tag
           expect(result).to include('href="https://example.com/en/custom"')
@@ -45,6 +61,20 @@ module BetterTogether
 
         expect(html).to include('rel="alternate" hreflang="en" href="http://example.com/en"')
         expect(html).to include('rel="alternate" hreflang="fr" href="http://example.com/fr"')
+      end
+    end
+
+    describe '#host_platform' do
+      it 'prefers the request-resolved platform over the global host platform' do
+        host_platform = instance_double(BetterTogether::Platform)
+        resolved_platform = instance_double(BetterTogether::Platform)
+        allow(BetterTogether::Platform).to receive(:find_by).with(host: true).and_return(host_platform)
+        Current.platform = resolved_platform
+
+        expect(helper.host_platform).to eq(resolved_platform)
+        expect(helper.host_platform).not_to eq(host_platform)
+      ensure
+        Current.reset
       end
     end
 

@@ -12,6 +12,8 @@ module BetterTogether
 
     layout :determine_layout
 
+    before_action :set_current_platform_context
+    after_action :reset_current_platform_context
     before_action :check_platform_setup
     before_action :set_locale
     around_action :set_time_zone
@@ -42,7 +44,7 @@ module BetterTogether
     end
 
     def default_url_options
-      super.merge(locale: I18n.locale)
+      super.merge(resolved_url_options).merge(locale: I18n.locale)
     end
 
     protected
@@ -135,6 +137,25 @@ module BetterTogether
     # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)
 
     private
+
+    def set_current_platform_context
+      Current.platform_domain = BetterTogether::PlatformDomain.resolve(request.host)
+      Current.platform = Current.platform_domain&.platform || BetterTogether::Platform.find_by(host: true)
+      ActiveStorage::Current.url_options = resolved_url_options
+    end
+
+    def reset_current_platform_context
+      Current.reset
+      ActiveStorage::Current.reset
+    end
+
+    def resolved_url_options
+      uri = URI.parse(helpers.base_url)
+      options = { host: uri.host }
+      options[:protocol] = uri.scheme if uri.scheme.present?
+      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
+      options
+    end
 
     def handle_debug_mode # rubocop:todo Metrics/AbcSize
       # Check if debug session has expired (30 minutes)
