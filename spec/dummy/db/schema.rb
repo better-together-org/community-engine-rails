@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_12_193000) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_12_213000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1327,8 +1327,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_193000) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.datetime "published_at"
     t.uuid "creator_id"
+    t.uuid "platform_id"
+    t.string "source_id"
+    t.datetime "source_updated_at"
+    t.datetime "last_synced_at"
     t.index ["creator_id"], name: "by_better_together_posts_creator"
     t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
+    t.index ["platform_id", "source_id"], name: "index_bt_posts_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
+    t.index ["platform_id"], name: "index_better_together_posts_on_platform_id"
     t.index ["privacy"], name: "by_better_together_posts_privacy"
     t.index ["published_at"], name: "by_post_publication_date"
   end
@@ -1907,6 +1913,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_193000) do
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_posts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"

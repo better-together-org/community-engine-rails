@@ -35,4 +35,28 @@ RSpec.describe BetterTogether::Post do
       expect(post.authors.reload.map(&:id)).to include(creator.id)
     end
   end
+
+  describe 'federation provenance' do
+    it 'assigns Current.platform when available' do
+      platform = create(:better_together_platform)
+      Current.platform = platform
+
+      post = create(:better_together_post)
+
+      expect(post.platform).to eq(platform)
+    ensure
+      Current.reset
+    end
+
+    it 'distinguishes local and remote mirrored origin' do
+      local_platform = create(:better_together_platform)
+      remote_platform = create(:better_together_platform)
+      post = create(:better_together_post, platform: remote_platform, source_id: 'remote-123')
+
+      expect(post.mirrored?).to be true
+      expect(post.remote_to_platform?(local_platform)).to be true
+      expect(post.local_to_platform?(remote_platform)).to be true
+      expect(post.source_identifier).to eq('remote-123')
+    end
+  end
 end
