@@ -29,4 +29,14 @@ RSpec.describe BetterTogether::PersonLink do
     expect(person_link).to be_valid
     expect(person_link).to be_remote_target
   end
+
+  it 'revokes linked access grants when the person link is revoked' do
+    person_link = create(:better_together_person_link)
+    grant = create(:better_together_person_access_grant, person_link:)
+
+    person_link.revoke!
+
+    expect(person_link.reload).to be_revoked
+    expect(grant.reload).to be_revoked
+  end
 end

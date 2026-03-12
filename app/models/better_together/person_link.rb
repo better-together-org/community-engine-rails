@@ -41,7 +41,14 @@ module BetterTogether
     end
 
     def revoke!(revoked_at: Time.current)
-      update!(status: :revoked, revoked_at:)
+      transaction do
+        update!(status: :revoked, revoked_at:)
+        person_access_grants.find_each do |grant|
+          next if grant.revoked?
+
+          grant.revoke!(revoked_at:)
+        end
+      end
     end
 
     def local_target?

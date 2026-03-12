@@ -208,6 +208,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :revoke
           end
         end
+        resources :person_links, path: 'person-links', only: %i[index show] do
+          member do
+            post :revoke
+          end
+        end
         resources :person_linked_seeds, path: 'linked-seeds', only: %i[index show]
 
 
