@@ -65,7 +65,6 @@ module BetterTogether
       last_sync_error_at String, default: ''
       last_sync_error_message String, default: ''
       last_sync_item_count Integer, default: 0
-      federation_access_token String, default: ''
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
@@ -79,7 +78,6 @@ module BetterTogether
     validate :source_and_target_must_differ
 
     before_validation :apply_connection_policy_defaults
-    before_validation :ensure_federation_access_token
     before_validation :ensure_oauth_client_credentials
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
@@ -212,10 +210,6 @@ module BetterTogether
       )
     end
 
-    def rotate_federation_access_token!
-      update!(federation_access_token: generate_federation_access_token)
-    end
-
     def rotate_oauth_client_secret!
       update!(oauth_client_secret: generate_oauth_client_secret)
     end
@@ -271,17 +265,9 @@ module BetterTogether
       value.to_s.strip.downcase
     end
 
-    def ensure_federation_access_token
-      self.federation_access_token = generate_federation_access_token if federation_access_token.blank?
-    end
-
     def ensure_oauth_client_credentials
       self.oauth_client_id = generate_oauth_client_id if oauth_client_id.blank?
       self.oauth_client_secret = generate_oauth_client_secret if oauth_client_secret.blank?
-    end
-
-    def generate_federation_access_token
-      SecureRandom.hex(32)
     end
 
     def generate_oauth_client_id

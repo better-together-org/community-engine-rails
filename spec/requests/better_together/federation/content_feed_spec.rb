@@ -82,9 +82,9 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
     expect(response).to have_http_status(:forbidden)
   end
 
-  it 'rejects legacy long-lived platform connection bearer tokens' do
+  it 'rejects unrecognized bearer tokens' do
     get better_together.federation_content_feed_path(locale:),
-        headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" }
+        headers: { 'Authorization' => "Bearer #{SecureRandom.hex(32)}" }
 
     expect(response).to have_http_status(:unauthorized)
   end
