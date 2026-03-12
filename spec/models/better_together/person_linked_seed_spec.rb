@@ -3,6 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonLinkedSeed do
+  it 'is not eligible for global search surfaces' do
+    expect(described_class.global_searchable?).to be(false)
+    expect(BetterTogether::Searchable.included_in_models).not_to include(described_class)
+  end
+
   it 'is visible only to the recipient while the grant is active' do
     linked_seed = create(:better_together_person_linked_seed)
 

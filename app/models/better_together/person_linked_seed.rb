@@ -20,6 +20,10 @@ module BetterTogether
         .merge(::BetterTogether::PersonAccessGrant.current_active)
     }
 
+    def self.global_searchable?
+      false
+    end
+
     def payload_data
       JSON.parse(payload)
     rescue JSON::ParserError
