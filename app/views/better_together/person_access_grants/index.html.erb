@@ -1,0 +1,30 @@
+<section class="container py-4">
+  <header class="mb-4">
+    <h1><%= t('better_together.person_access_grants.index.title', default: 'Access Grants') %></h1>
+    <p class="text-muted mb-0">
+      <%= t('better_together.person_access_grants.index.description',
+            default: 'Review linked private sharing grants where you are the grantor or recipient.') %>
+    </p>
+  </header>
+
+  <% if @person_access_grants.any? %>
+    <div class="list-group">
+      <% @person_access_grants.each do |grant| %>
+        <%= link_to person_access_grant_path(grant), class: 'list-group-item list-group-item-action' do %>
+          <div class="d-flex w-100 justify-content-between align-items-start gap-3">
+            <div>
+              <h2 class="h6 mb-1"><%= grant.person_link.remote_target_name.presence || grant.grantee_person&.name || grant.remote_grantee_name || grant.id %></h2>
+              <p class="mb-1 text-muted">
+                <%= grant.grantor_person == current_person ? 'You are sharing' : 'Shared with you' %>
+              </p>
+              <small class="text-muted"><%= grant.status.humanize %></small>
+            </div>
+            <small class="text-muted"><%= l(grant.updated_at, format: :short) %></small>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted"><%= t('better_together.person_access_grants.index.empty', default: 'No access grants are currently available.') %></p>
+  <% end %>
+</section>
