@@ -2,7 +2,7 @@
 
 module BetterTogether
   class FederatedContentIngestJob < ApplicationJob
-    queue_as :default
+    queue_as :platform_sync
 
     def perform(platform_connection_id:, items:, sync_cursor: nil)
       connection = ::BetterTogether::PlatformConnection.find(platform_connection_id)
