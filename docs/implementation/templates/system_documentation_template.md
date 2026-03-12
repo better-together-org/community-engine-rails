@@ -128,6 +128,20 @@ DELETE /[resources]/:id       # Delete
 # Debugging examples
 ```
 
+## Accessibility And Help Text
+
+### UI Accessibility Expectations
+
+- Describe WCAG 2.1 AA considerations for any user-facing UI in this system.
+- Document keyboard, focus, and screen-reader expectations where relevant.
+- Link to browser-level accessibility specs when they exist.
+
+### Documentation And In-Place Help
+
+- Document the task guidance users receive.
+- Explain any help banners, hints, notices, or validation messages.
+- Confirm alignment with the shared documentation accessibility rubric.
+
 ## Integration Points
 
 ### Dependencies
@@ -150,7 +164,10 @@ DELETE /[resources]/:id       # Delete
 - [ ] Performance considerations covered
 - [ ] Security implications addressed
 - [ ] Monitoring/debugging tools provided
+- [ ] Accessibility and help-text expectations documented
+- [ ] Shared documentation accessibility rubric applied
 - [ ] Integration points identified
+- [ ] User-facing docs or inline help updated if behavior changed
 - [ ] Process flow diagram created
 - [ ] Mermaid source file (.mmd)
 - [ ] PNG diagram generated

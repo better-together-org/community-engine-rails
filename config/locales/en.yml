@@ -1991,9 +1991,170 @@ en:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    reports:
+      actions:
+        report: Report
+      attributes:
+        category: Category
+        harm_level: Harm level
+        requested_outcome: Requested outcome
+        reason: Short summary
+        private_details: Private details for the safety team
+      errors:
+        already_reported_by_you: has already been reported by you
+      index:
+        empty: You have not submitted any safety reports yet.
+        new: New report
+        title: My safety reports
+      new:
+        category_help: Choose the option that best matches the harm or concern you are reporting.
+        consent_to_contact: You may contact me about this report
+        consent_to_restorative_process: You may consider restorative options if appropriate
+        error_summary: Please correct the following issues.
+        harm_level_help: Tell us how urgent or harmful this feels so the safety team can triage it appropriately.
+        intro: Use this form to ask for safety support, boundary support, accountability, or urgent protection.
+        preferences_help: Tell us whether we may contact you, whether you want restorative options considered, and whether retaliation risk is part of this report.
+        preferences_title: Safety preferences
+        private_details_help: Add any context, patterns, dates, or evidence that should stay with the safety review team.
+        reason_help: Tell us what happened in a short summary. Focus on the main concern first.
+        requested_outcome_help: Choose what kind of support you want from the safety team. You can ask for support even if you are unsure.
+        retaliation_risk: I am worried about retaliation or escalation
+        submit: Submit report
+        title: Report a safety concern
+        urgent_help: Contact local emergency services first. This form is for community and platform follow-up, not emergency dispatch.
+        urgent_title: "If you are in immediate danger:"
+      notices:
+        created: Report was successfully submitted.
+      show:
+        back: Back to reports
+        pending_copy: This case is still in progress. A moderator may follow up based on your consent settings.
+        status: Current status
+        summary: Case summary
+        title: Safety report
+    safety:
+      action_statuses:
+        active: Active
+        cancelled: Cancelled
+        completed: Completed
+      action_types:
+        contact_restriction: Contact restriction
+        content_hidden: Content hidden
+        content_removed: Content removed
+        event_restriction: Event restriction
+        messaging_restriction: Messaging restriction
+        restorative_referral: Restorative referral
+        temporary_suspension: Temporary suspension
+        watch_flag: Watch flag
+      agreement_statuses:
+        active: Active
+        breached: Breached
+        completed: Completed
+        proposed: Proposed
+        withdrawn: Withdrawn
+      case_lanes:
+        administrative: Administrative
+        immediate_safety: Immediate safety
+        restorative: Restorative
+      case_statuses:
+        closed_no_action: Closed with no action
+        needs_reporter_followup: Needs reporter follow-up
+        protective_action_in_effect: Protective action in effect
+        resolved: Resolved
+        restorative_in_progress: Restorative process in progress
+        submitted: Submitted
+        triaged: Triaged
+      closure_types:
+        no_action: No action
+        protective_action: Protective action
+        restorative_agreement: Restorative agreement
+        unsupported: Unsupported
+        voluntary_resolution: Voluntary resolution
+      harm_levels:
+        high: High
+        low: Low
+        medium: Medium
+        urgent: Urgent
+      note_visibilities:
+        internal_only: Internal only
+        participant_visible: Participant visible
+      report_categories:
+        boundary_violation: Boundary violation
+        discrimination: Discrimination
+        fraud: Fraud
+        harassment: Harassment
+        hate_speech: Hate speech
+        impersonation: Impersonation
+        misinformation: Misinformation
+        other: Other
+        privacy_violation: Privacy violation
+        spam_or_scam: Spam or scam
+      reporter_visible_statuses:
+        closed_no_action: Closed with no action
+        needs_reporter_followup: Needs more information from you
+        protective_action_in_effect: Protective action in effect
+        resolved: Resolved
+        restorative_in_progress: Restorative process in progress
+        submitted: Submitted
+        triaged: Under review
+        under_review: Under review
+      requested_outcomes:
+        boundary_support: Boundary support
+        community_accountability: Community accountability
+        content_review: Content review
+        mediated_conversation: Mediated conversation
+        other: Other
+        temporary_protection: Temporary protection
+      shared:
+        any: Any
+    safety_cases:
+      attributes:
+        accountability_check: Accountability and stewardship check
+        action_details: Action details
+        action_reason: Reason for action
+        action_status: Action status
+        action_type: Action type
+        agreement_summary: Agreement summary
+        care_check: Care and resilience check
+        closure_summary: Closure summary
+        closure_type: Closure type
+        commitments: Commitments
+        expires_at: Expires at
+        harmed_party_consented: Harmed party consented
+        lane: Lane
+        love_inclusivity_check: Love and inclusivity check
+        note_body: Note
+        note_visibility: Note visibility
+        reporter: Reporter
+        responsible_party_consented: Responsible party consented
+        review_at: Review at
+        solidarity_check: Cooperation and solidarity check
+        status: Case status
+      index:
+        filter: Filter
+        title: Safety cases
+      notices:
+        updated: Safety case was updated.
+      show:
+        actions: Protective and accountability actions
+        add_action: Record action
+        add_agreement: Create agreement
+        add_note: Add note
+        agreements: Restorative agreements
+        back: Back to queue
+        intake: Report intake
+        manage: Case management
+        notes: Internal notes
+        title: Safety case
+        update_agreement: Update agreement
+        update_case: Update case
+        values_review: Values review
+        values_review_placeholder: Explain the values review for this action
+    safety_notes:
+      notices:
+        created: Case note added.
     person_block:
-      cannot_block_manager: no puede ser un administrador de la plataforma
-      cannot_block_self: no puedes bloquearte a ti mismo
+      cannot_block_manager: cannot be a platform manager
+      cannot_block_self: cannot block yourself
     person_blocks:
       index:
         actions: Actions
