@@ -54,4 +54,61 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(described_class.for_platform(platform)).to contain_exactly(outgoing, incoming)
     end
   end
+
+  describe 'policy settings' do
+    it 'derives compatibility booleans from explicit policy modes' do
+      connection = create(
+        :better_together_platform_connection,
+        content_sharing_policy: 'mirror_network_feed',
+        federation_auth_policy: 'api_read',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+
+      expect(connection.content_sharing_enabled).to be true
+      expect(connection.federation_auth_enabled).to be true
+      expect(connection.shared_content_types).to include('posts')
+      expect(connection.federation_scope_types).to include('identity', 'content_read')
+    end
+
+    it 'clears scoped flags when the policy mode is none' do
+      connection = create(
+        :better_together_platform_connection,
+        content_sharing_policy: 'none',
+        federation_auth_policy: 'none',
+        share_posts: true,
+        allow_identity_scope: true
+      )
+
+      expect(connection.content_sharing_enabled).to be false
+      expect(connection.federation_auth_enabled).to be false
+      expect(connection.shared_content_types).to be_empty
+      expect(connection.federation_scope_types).to be_empty
+    end
+
+    it 'exposes explicit runtime capability helpers for sync and auth' do
+      connection = create(
+        :better_together_platform_connection,
+        content_sharing_policy: 'mirrored_publish_back',
+        federation_auth_policy: 'api_write',
+        share_posts: true,
+        share_events: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true,
+        allow_content_write_scope: true
+      )
+
+      expect(connection.allows_content_type?('posts')).to be true
+      expect(connection.allows_content_type?(:events)).to be true
+      expect(connection.allows_content_type?(:pages)).to be false
+      expect(connection.allows_federation_scope?('identity')).to be true
+      expect(connection.allows_federation_scope?(:content_write)).to be true
+      expect(connection.mirrored_content_enabled?).to be true
+      expect(connection.publish_back_enabled?).to be true
+      expect(connection.login_enabled?).to be true
+      expect(connection.api_read_enabled?).to be true
+      expect(connection.api_write_enabled?).to be true
+    end
+  end
 end

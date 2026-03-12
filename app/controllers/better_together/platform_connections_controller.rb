@@ -26,8 +26,17 @@ module BetterTogether
       params.require(:platform_connection).permit(
         :status,
         :connection_kind,
+        :content_sharing_policy,
+        :federation_auth_policy,
         :content_sharing_enabled,
-        :federation_auth_enabled
+        :federation_auth_enabled,
+        :share_posts,
+        :share_pages,
+        :share_events,
+        :allow_identity_scope,
+        :allow_profile_read_scope,
+        :allow_content_read_scope,
+        :allow_content_write_scope
       )
     end
 

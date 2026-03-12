@@ -3,8 +3,8 @@
   <td><%= link_to platform_connection.target_platform.name, platform_connection.target_platform %></td>
   <td><span class="badge text-bg-secondary"><%= platform_connection.status.humanize %></span></td>
   <td><%= platform_connection.connection_kind.humanize %></td>
-  <td><%= platform_connection.content_sharing_enabled? ? 'Enabled' : 'Disabled' %></td>
-  <td><%= platform_connection.federation_auth_enabled? ? 'Enabled' : 'Disabled' %></td>
+  <td><%= platform_connection.content_sharing_policy.humanize %></td>
+  <td><%= platform_connection.federation_auth_policy.humanize %></td>
   <td class="text-end">
     <%= link_to 'View', platform_connection, class: 'btn btn-sm btn-outline-primary' %>
     <%= link_to 'Edit', edit_platform_connection_path(platform_connection), class: 'btn btn-sm btn-outline-secondary' %>

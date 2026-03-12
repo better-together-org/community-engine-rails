@@ -37,11 +37,21 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
       sign_in network_admin
 
       patch better_together.platform_connection_path(platform_connection, locale:),
-            params: { platform_connection: { status: 'suspended', content_sharing_enabled: true } }
+            params: { platform_connection: {
+              status: 'suspended',
+              content_sharing_policy: 'mirror_network_feed',
+              federation_auth_policy: 'api_read',
+              share_posts: true,
+              allow_identity_scope: true,
+              allow_content_read_scope: true
+            } }
 
       expect(response).to have_http_status(:see_other)
       expect(platform_connection.reload.status).to eq('suspended')
       expect(platform_connection.content_sharing_enabled).to be true
+      expect(platform_connection.content_sharing_policy).to eq('mirror_network_feed')
+      expect(platform_connection.share_posts).to be true
+      expect(platform_connection.federation_auth_policy).to eq('api_read')
     end
 
     it 'rejects updates from regular users' do

@@ -24,6 +24,33 @@
 
       <dt class="col-sm-3">Federation Auth</dt>
       <dd class="col-sm-9"><%= @platform_connection.federation_auth_enabled? ? 'Enabled' : 'Disabled' %></dd>
+
+      <dt class="col-sm-3">Content Sharing Policy</dt>
+      <dd class="col-sm-9"><%= @platform_connection.content_sharing_policy.humanize %></dd>
+
+      <dt class="col-sm-3">Shared Content Types</dt>
+      <dd class="col-sm-9"><%= @platform_connection.shared_content_types.presence&.join(', ')&.humanize || 'None' %></dd>
+
+      <dt class="col-sm-3">Federation Auth Policy</dt>
+      <dd class="col-sm-9"><%= @platform_connection.federation_auth_policy.humanize %></dd>
+
+      <dt class="col-sm-3">Federation Scopes</dt>
+      <dd class="col-sm-9"><%= @platform_connection.federation_scope_types.presence&.join(', ')&.humanize || 'None' %></dd>
+
+      <dt class="col-sm-3">Mirroring</dt>
+      <dd class="col-sm-9"><%= @platform_connection.mirrored_content_enabled? ? 'Enabled' : 'Disabled' %></dd>
+
+      <dt class="col-sm-3">Publish Back</dt>
+      <dd class="col-sm-9"><%= @platform_connection.publish_back_enabled? ? 'Enabled' : 'Disabled' %></dd>
+
+      <dt class="col-sm-3">Login</dt>
+      <dd class="col-sm-9"><%= @platform_connection.login_enabled? ? 'Enabled' : 'Disabled' %></dd>
+
+      <dt class="col-sm-3">API Read</dt>
+      <dd class="col-sm-9"><%= @platform_connection.api_read_enabled? ? 'Enabled' : 'Disabled' %></dd>
+
+      <dt class="col-sm-3">API Write</dt>
+      <dd class="col-sm-9"><%= @platform_connection.api_write_enabled? ? 'Enabled' : 'Disabled' %></dd>
     </dl>
   </div>
 <% end %>
