@@ -17,7 +17,7 @@ module BetterTogether
 
       joins(:person_access_grant)
         .where(recipient_person: person)
-        .merge(::BetterTogether::PersonAccessGrant.active)
+        .merge(::BetterTogether::PersonAccessGrant.current_active)
     }
 
     def payload_data
@@ -31,6 +31,10 @@ module BetterTogether
       return false unless person_access_grant.active_now?
 
       recipient_person_id == person.id
+    end
+
+    def soft_hidden?
+      !person_access_grant.active_now?
     end
 
     private

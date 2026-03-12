@@ -24,4 +24,14 @@ RSpec.describe BetterTogether::PersonLinkedSeed do
     expect(linked_seed).not_to be_valid
     expect(linked_seed.errors[:recipient_person]).to include('must match the access grant grantee person')
   end
+
+  it 'becomes soft-hidden when the access grant is revoked' do
+    linked_seed = create(:better_together_person_linked_seed)
+
+    linked_seed.person_access_grant.revoke!
+
+    expect(linked_seed.reload.soft_hidden?).to be(true)
+    expect(linked_seed.viewable_by?(linked_seed.recipient_person)).to be(false)
+    expect(described_class.visible_to(linked_seed.recipient_person)).not_to include(linked_seed)
+  end
 end

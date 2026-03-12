@@ -114,13 +114,13 @@ module BetterTogether
       end
 
       def resolve_grant(origin)
-        grant = ::BetterTogether::PersonAccessGrant.active
+        grant = ::BetterTogether::PersonAccessGrant.current_active
                                                    .joins(:person_link)
                                                    .find_by(
                                                      id: origin[:person_access_grant_id],
                                                      better_together_person_links: { platform_connection_id: connection.id }
                                                    )
-        grant ||= ::BetterTogether::PersonAccessGrant.active.find_by(id: origin[:person_access_grant_id])
+        grant ||= ::BetterTogether::PersonAccessGrant.current_active.find_by(id: origin[:person_access_grant_id])
         return unless grant&.active_now?
         return unless grant.grantee_person_id == recipient_person.id
 

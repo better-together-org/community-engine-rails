@@ -56,12 +56,9 @@ module BetterTogether
       attr_reader :connection, :recipient_identifier, :cursor, :limit
 
       def active_access_grant
-        ::BetterTogether::PersonAccessGrant.active
-                                           .joins(:person_link)
-                                           .where(better_together_person_links: { platform_connection_id: connection.id })
+        ::BetterTogether::PersonAccessGrant.current_active
+                                           .for_connection(connection)
                                            .find do |grant|
-          next false unless grant.active_now?
-
           grant.remote_grantee_identifier.to_s == recipient_identifier ||
             grant.grantee_person&.identifier.to_s == recipient_identifier
         end

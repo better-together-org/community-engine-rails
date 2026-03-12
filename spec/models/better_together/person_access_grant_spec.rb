@@ -29,4 +29,20 @@ RSpec.describe BetterTogether::PersonAccessGrant do
     expect(grant.allows_scope?('private_posts')).to be(true)
     expect(grant.allows_scope?('private_events')).to be(false)
   end
+
+  it 'treats revoked grants as inactive immediately' do
+    grant = create(:better_together_person_access_grant)
+
+    grant.revoke!
+
+    expect(grant.reload.active_now?).to be(false)
+    expect(described_class.current_active).not_to include(grant)
+  end
+
+  it 'treats expired grants as inactive immediately' do
+    grant = create(:better_together_person_access_grant, expires_at: 1.minute.ago)
+
+    expect(grant.active_now?).to be(false)
+    expect(described_class.current_active).not_to include(grant)
+  end
 end

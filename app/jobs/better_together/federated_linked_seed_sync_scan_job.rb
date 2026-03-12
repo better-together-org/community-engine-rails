@@ -19,7 +19,7 @@ module BetterTogether
     private
 
     def eligible_grants
-      ::BetterTogether::PersonAccessGrant.active
+      ::BetterTogether::PersonAccessGrant.current_active
                                          .joins(person_link: :platform_connection)
                                          .includes(:grantee_person, person_link: :platform_connection)
                                          .where(

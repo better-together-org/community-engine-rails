@@ -12,6 +12,19 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob, type: :job do
   describe '#perform' do
     let(:connection) { create(:better_together_platform_connection, :active) }
     let(:recipient_person) { create(:better_together_person) }
+    let!(:grant) do
+      create(
+        :better_together_person_access_grant,
+        person_link: create(
+          :better_together_person_link,
+          platform_connection: connection,
+          source_person: create(:better_together_person),
+          target_person: recipient_person
+        ),
+        grantee_person: recipient_person,
+        allow_private_posts: true
+      )
+    end
     let(:pull_result) do
       BetterTogether::FederatedLinkedSeedPullService::Result.new(
         connection:,
@@ -37,6 +50,19 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob, type: :job do
         recipient_person: recipient_person,
         seeds: pull_result.seeds
       )
+    end
+
+    it 'does nothing when the recipient no longer has an active linked private grant' do
+      connection = create(:better_together_platform_connection, :active)
+      recipient_person = create(:better_together_person)
+
+      allow(BetterTogether::FederatedLinkedSeedPullService).to receive(:call)
+      allow(BetterTogether::Seeds::LinkedSeedIngestService).to receive(:call)
+
+      described_class.perform_now(platform_connection_id: connection.id, recipient_person_id: recipient_person.id, sync_cursor: 'private-cursor-1')
+
+      expect(BetterTogether::FederatedLinkedSeedPullService).not_to have_received(:call)
+      expect(BetterTogether::Seeds::LinkedSeedIngestService).not_to have_received(:call)
     end
   end
 end

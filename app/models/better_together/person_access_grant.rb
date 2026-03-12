@@ -38,6 +38,16 @@ module BetterTogether
     validate :grantee_or_remote_identifier_present
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
+    scope :current_active, lambda {
+      active.where(revoked_at: nil)
+            .where(arel_table[:expires_at].eq(nil).or(arel_table[:expires_at].gt(Time.current)))
+    }
+    scope :for_connection, lambda { |connection|
+      joins(:person_link).where(better_together_person_links: { platform_connection_id: connection.id })
+    }
+    scope :for_recipient, lambda { |person|
+      where(grantee_person_id: person&.id)
+    }
 
     def activate!(accepted_at: Time.current)
       update!(status: :active, accepted_at:, revoked_at: nil)
@@ -52,7 +62,7 @@ module BetterTogether
     end
 
     def active_now?
-      active? && !expired?
+      active? && revoked_at.blank? && !expired?
     end
 
     def expired?
@@ -79,7 +89,7 @@ module BetterTogether
     def visible_to?(person)
       return false unless person
 
-      grantor_person_id == person.id || grantee_person_id == person.id
+      active_now? && (grantor_person_id == person.id || grantee_person_id == person.id)
     end
 
     private
