@@ -70,6 +70,8 @@ module BetterTogether
                                             class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantor_person
     has_many :received_person_access_grants, foreign_key: :grantee_person_id, dependent: :destroy,
                                              class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantee_person
+    has_many :person_linked_seeds, foreign_key: :recipient_person_id, dependent: :destroy,
+                                   class_name: 'BetterTogether::PersonLinkedSeed', inverse_of: :recipient_person
 
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 

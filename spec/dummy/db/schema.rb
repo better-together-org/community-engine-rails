@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_12_234000) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_12_235000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1194,6 +1194,30 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_234000) do
     t.index ["status"], name: "index_better_together_person_community_memberships_on_status"
   end
 
+  create_table "better_together_person_linked_seeds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "person_access_grant_id", null: false
+    t.uuid "recipient_person_id", null: false
+    t.uuid "source_platform_id", null: false
+    t.string "identifier", null: false
+    t.string "source_record_type", null: false
+    t.string "source_record_id", null: false
+    t.string "seed_type", null: false
+    t.string "version", null: false
+    t.string "privacy", default: "private", null: false
+    t.text "payload", null: false
+    t.datetime "source_updated_at"
+    t.datetime "last_synced_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_access_grant_id", "identifier"], name: "index_bt_person_linked_seeds_on_grant_and_identifier", unique: true
+    t.index ["person_access_grant_id"], name: "idx_on_person_access_grant_id_07fe8e7660"
+    t.index ["recipient_person_id"], name: "idx_on_recipient_person_id_aa2fd4f94b"
+    t.index ["recipient_person_id"], name: "index_bt_person_linked_seeds_on_recipient_person_id"
+    t.index ["source_platform_id"], name: "idx_on_source_platform_id_6333ed1d9c"
+    t.index ["source_platform_id"], name: "index_bt_person_linked_seeds_on_source_platform_id"
+  end
+
   create_table "better_together_person_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "platform_connection_id", null: false
     t.uuid "source_person_id", null: false
@@ -1975,6 +1999,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_234000) do
   add_foreign_key "better_together_person_community_memberships", "better_together_communities", column: "joinable_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_community_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_person_linked_seeds", "better_together_people", column: "recipient_person_id"
+  add_foreign_key "better_together_person_linked_seeds", "better_together_person_access_grants", column: "person_access_grant_id"
+  add_foreign_key "better_together_person_linked_seeds", "better_together_platforms", column: "source_platform_id"
   add_foreign_key "better_together_person_links", "better_together_people", column: "source_person_id"
   add_foreign_key "better_together_person_links", "better_together_people", column: "target_person_id"
   add_foreign_key "better_together_person_links", "better_together_platform_connections", column: "platform_connection_id"

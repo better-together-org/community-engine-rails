@@ -52,7 +52,7 @@ module BetterTogether
     end
 
     def active_now?
-      status_active? && !expired?
+      active? && !expired?
     end
 
     def expired?
