@@ -60,6 +60,7 @@ module BetterTogether
       last_sync_error_at String, default: ''
       last_sync_error_message String, default: ''
       last_sync_item_count Integer, default: 0
+      federation_access_token String, default: ''
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
@@ -73,6 +74,7 @@ module BetterTogether
     validate :source_and_target_must_differ
 
     before_validation :apply_connection_policy_defaults
+    before_validation :ensure_federation_access_token
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
     scope :for_platform, lambda { |platform|
@@ -197,6 +199,10 @@ module BetterTogether
       )
     end
 
+    def rotate_federation_access_token!
+      update!(federation_access_token: generate_federation_access_token)
+    end
+
     private
 
     def source_and_target_must_differ
@@ -237,6 +243,14 @@ module BetterTogether
 
     def normalize_policy_key(value)
       value.to_s.strip.downcase
+    end
+
+    def ensure_federation_access_token
+      self.federation_access_token = generate_federation_access_token if federation_access_token.blank?
+    end
+
+    def generate_federation_access_token
+      SecureRandom.hex(32)
     end
 
     def normalized_cursor(value)
