@@ -281,6 +281,7 @@ Implemented:
 - linked-private pull service
 - linked-private ingest service
 - linked-private pull job on `platform_sync`
+- linked-private sync scan job on `platform_sync`
 
 Files added in this slice include:
 
@@ -297,6 +298,7 @@ Behavior:
 - requires recipient identifier targeting
 - imports into `PersonLinkedSeed` through `PersonLinkedSeedCacheService`
 - does not route private linked content through the shared platform mirror tables
+- can now be orchestrated through a scan job that enqueues recipient-scoped pulls only for active grants on linked-content-enabled connections
 
 ## Current Completion Status
 
@@ -319,6 +321,7 @@ Behavior:
 - federation feed auth still includes the old long-lived bearer-token fallback
 - seed-based exchange is integrated, but not yet fully generalized into all federation endpoints and workflows
 - linked-private seed export/pull/ingest exists, but scheduling, lifecycle controls, and broader recipient-content coverage are still incomplete
+- linked-private scan scheduling exists, but revocation-aware cleanup and more advanced cadence controls are still incomplete
 
 ### Not yet complete
 

@@ -21,3 +21,9 @@
   class: "BetterTogether::FederatedSyncScanJob"
   queue: "platform_sync"
   description: "Scan active federated platform connections and enqueue content pull jobs"
+
+"better_together:federated_linked_seed_sync_scan_hourly":
+  cron: "20 * * * *" # hourly at :20 UTC
+  class: "BetterTogether::FederatedLinkedSeedSyncScanJob"
+  queue: "platform_sync"
+  description: "Scan active linked private grants and enqueue recipient-scoped linked seed pulls"
