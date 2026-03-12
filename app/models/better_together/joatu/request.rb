@@ -21,7 +21,6 @@ module BetterTogether
       end
 
       def after_agreement_acceptance!(offer:)
-        offer
         true
       end
     end

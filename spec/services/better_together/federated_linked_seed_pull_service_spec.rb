@@ -37,7 +37,10 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullService do
         .with(headers: { 'Authorization' => 'Bearer oauth-linked-token' })
         .to_return(
           status: 200,
-          body: { seeds: [{ 'better_together' => { 'seed' => { 'origin' => { 'lane' => 'private_linked' } }, 'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid } } }], next_cursor: 'linked-2' }.to_json,
+          body: {
+            seeds: [{ 'better_together' => { 'seed' => { 'origin' => { 'lane' => 'private_linked' } },
+                                             'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid } } }], next_cursor: 'linked-2'
+          }.to_json,
           headers: { 'Content-Type' => 'application/json' }
         )
 

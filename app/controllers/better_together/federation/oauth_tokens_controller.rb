@@ -53,7 +53,7 @@ module BetterTogether
         candidate
       end
 
-      def render_oauth_error(error, description: nil, status:)
+      def render_oauth_error(error, status:, description: nil)
         payload = { error: }
         payload[:error_description] = description if description.present?
         render json: payload, status:

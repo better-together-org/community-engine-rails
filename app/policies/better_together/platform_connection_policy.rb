@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Pundit policy governing who can view, create, approve, suspend, and
+  # manage federation platform connections.
   class PlatformConnectionPolicy < ApplicationPolicy
     def index?
       can_view_network_connections?
@@ -32,6 +34,7 @@ module BetterTogether
       can_manage_network_connections?
     end
 
+    # Scopes platform connections to those the current user is permitted to see.
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless can_view_network_connections?

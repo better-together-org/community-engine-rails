@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
   let(:creator_user)   { create(:better_together_user, person: creator_person) }
   let(:steward_user)   { create(:better_together_user, :platform_steward) }
   let(:network_admin_user) { create(:better_together_user, :network_admin) }
-  let(:normal_user)    { create(:better_together_user) }
+  let(:normal_user) { create(:better_together_user) }
 
   let(:request_rec) { create(:better_together_joatu_request, creator: creator_person) }
   let(:connection_request) do

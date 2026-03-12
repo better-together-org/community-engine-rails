@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::FederatedContentPullJob, type: :job do
+RSpec.describe BetterTogether::FederatedContentPullJob do
   describe 'queueing' do
     it 'uses the platform_sync queue' do
       expect(described_class.new.queue_name).to eq('platform_sync')
@@ -14,7 +14,8 @@ RSpec.describe BetterTogether::FederatedContentPullJob, type: :job do
     let(:pull_result) do
       BetterTogether::FederatedContentPullService::Result.new(
         connection:,
-        seeds: [{ 'better_together' => { 'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid, 'attributes' => { 'title' => 'Remote Post', 'content' => 'Body' } } } }],
+        seeds: [{ 'better_together' => { 'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid,
+                                                        'attributes' => { 'title' => 'Remote Post', 'content' => 'Body' } } } }],
         next_cursor: 'cursor-5'
       )
     end

@@ -47,7 +47,7 @@ module BetterTogether
 
     def destroy?
       user.present? && !record.protected? && !record.host? &&
-        ((can_manage_community? || permitted_to?('destroy_community', record)))
+        (can_manage_community? || permitted_to?('destroy_community', record))
     end
 
     def invitation?

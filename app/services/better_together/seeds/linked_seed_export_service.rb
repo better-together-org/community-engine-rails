@@ -59,8 +59,8 @@ module BetterTogether
         ::BetterTogether::PersonAccessGrant.current_active
                                            .for_connection(connection)
                                            .find do |grant|
-          grant.remote_grantee_identifier.to_s == recipient_identifier ||
-            grant.grantee_person&.identifier.to_s == recipient_identifier
+                                             grant.remote_grantee_identifier.to_s == recipient_identifier ||
+                                               grant.grantee_person&.identifier.to_s == recipient_identifier
         end
       end
 

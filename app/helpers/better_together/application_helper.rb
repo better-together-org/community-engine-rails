@@ -501,8 +501,6 @@ module BetterTogether
       rails_tz ? rails_tz.to_s : tz_id
     end
 
-    private
-
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def main_app_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && main_app.respond_to?(method)

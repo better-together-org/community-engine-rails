@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Manages platform-to-platform federation connections, including create,
+  # approve, suspend, and policy configuration.
   class PlatformConnectionsController < ResourceController
     before_action :set_connection_for_transition, only: %i[approve suspend]
 
@@ -86,7 +88,7 @@ module BetterTogether
       )
     end
 
-    def platform_connection_params
+    def platform_connection_params # rubocop:disable Metrics/MethodLength
       params.require(:platform_connection).permit(
         :status,
         :connection_kind,

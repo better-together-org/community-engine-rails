@@ -28,7 +28,7 @@ module BetterTogether
                                            }
                                          )
                                          .select do |grant|
-        grant.person_link.platform_connection.linked_content_read_enabled?
+                                           grant.person_link.platform_connection.linked_content_read_enabled?
       end
     end
   end

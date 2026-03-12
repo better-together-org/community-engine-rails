@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::PlatformDomain, type: :model do
+RSpec.describe BetterTogether::PlatformDomain do
   describe '.resolve' do
     it 'matches hostnames case-insensitively and without a trailing dot' do
       platform_domain = create(:better_together_platform_domain, hostname: 'Example.TEST')

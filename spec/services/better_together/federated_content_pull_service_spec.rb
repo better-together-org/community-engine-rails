@@ -48,7 +48,8 @@ RSpec.describe BetterTogether::FederatedContentPullService do
         .to_return(
           status: 200,
           body: {
-            seeds: [{ better_together: { payload: { type: 'post', id: SecureRandom.uuid, attributes: { title: 'Remote Post', content: 'Body' } } } }],
+            seeds: [{ better_together: { payload: { type: 'post', id: SecureRandom.uuid,
+                                                    attributes: { title: 'Remote Post', content: 'Body' } } } }],
             next_cursor: 'cursor-2'
           }.to_json,
           headers: { 'Content-Type' => 'application/json' }

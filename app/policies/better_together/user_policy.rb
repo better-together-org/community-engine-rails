@@ -38,8 +38,8 @@ module BetterTogether
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.where(id: user.id) unless permitted_to?('manage_platform_users') ||
-                                             permitted_to?('manage_platform_settings') ||
-                                             permitted_to?('manage_platform')
+                                               permitted_to?('manage_platform_settings') ||
+                                               permitted_to?('manage_platform')
 
         scope.order(created_at: :desc)
       end

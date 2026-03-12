@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
     create(:better_together_joatu_agreement,
            offer: create(:better_together_joatu_offer, creator: offer_creator.person, target: create(:better_together_platform)),
            request: create(:better_together_joatu_connection_request, creator: request_creator.person,
-                                                             target: create(:better_together_platform)))
+                                                                      target: create(:better_together_platform)))
   end
 
   context 'as offer creator' do

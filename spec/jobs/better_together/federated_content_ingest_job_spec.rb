@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::FederatedContentIngestJob, type: :job do
+RSpec.describe BetterTogether::FederatedContentIngestJob do
   describe 'queueing' do
     it 'uses the platform_sync queue' do
       expect(described_class.new.queue_name).to eq('platform_sync')

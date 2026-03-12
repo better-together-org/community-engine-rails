@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::FederatedLinkedSeedPullJob, type: :job do
+RSpec.describe BetterTogether::FederatedLinkedSeedPullJob do
   describe 'queueing' do
     it 'uses the platform_sync queue' do
       expect(described_class.new.queue_name).to eq('platform_sync')
@@ -29,7 +29,8 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob, type: :job do
       BetterTogether::FederatedLinkedSeedPullService::Result.new(
         connection:,
         recipient_identifier: recipient_person.identifier,
-        seeds: [{ 'better_together' => { 'seed' => { 'origin' => { 'lane' => 'private_linked' } }, 'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid } } }],
+        seeds: [{ 'better_together' => { 'seed' => { 'origin' => { 'lane' => 'private_linked' } },
+                                         'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid } } }],
         next_cursor: 'private-cursor-2'
       )
     end
@@ -38,7 +39,8 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob, type: :job do
       allow(BetterTogether::FederatedLinkedSeedPullService).to receive(:call).and_return(pull_result)
       allow(BetterTogether::Seeds::LinkedSeedIngestService).to receive(:call)
 
-      described_class.perform_now(platform_connection_id: connection.id, recipient_person_id: recipient_person.id, sync_cursor: 'private-cursor-1')
+      described_class.perform_now(platform_connection_id: connection.id, recipient_person_id: recipient_person.id,
+                                  sync_cursor: 'private-cursor-1')
 
       expect(BetterTogether::FederatedLinkedSeedPullService).to have_received(:call).with(
         connection:,
@@ -59,7 +61,8 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullJob, type: :job do
       allow(BetterTogether::FederatedLinkedSeedPullService).to receive(:call)
       allow(BetterTogether::Seeds::LinkedSeedIngestService).to receive(:call)
 
-      described_class.perform_now(platform_connection_id: connection.id, recipient_person_id: recipient_person.id, sync_cursor: 'private-cursor-1')
+      described_class.perform_now(platform_connection_id: connection.id, recipient_person_id: recipient_person.id,
+                                  sync_cursor: 'private-cursor-1')
 
       expect(BetterTogether::FederatedLinkedSeedPullService).not_to have_received(:call)
       expect(BetterTogether::Seeds::LinkedSeedIngestService).not_to have_received(:call)
