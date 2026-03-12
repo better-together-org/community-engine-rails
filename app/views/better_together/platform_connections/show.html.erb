@@ -1,0 +1,29 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= @platform_connection.source_platform.name %> → <%= @platform_connection.target_platform.name %>
+  <% end %>
+
+  <div class="container my-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1><%= @platform_connection.source_platform.name %> → <%= @platform_connection.target_platform.name %></h1>
+      <div class="btn-group">
+        <%= link_to 'Back', platform_connections_path, class: 'btn btn-outline-secondary' %>
+        <%= link_to 'Edit', edit_platform_connection_path(@platform_connection), class: 'btn btn-primary' %>
+      </div>
+    </div>
+
+    <dl class="row">
+      <dt class="col-sm-3">Status</dt>
+      <dd class="col-sm-9"><%= @platform_connection.status.humanize %></dd>
+
+      <dt class="col-sm-3">Connection Kind</dt>
+      <dd class="col-sm-9"><%= @platform_connection.connection_kind.humanize %></dd>
+
+      <dt class="col-sm-3">Content Sharing</dt>
+      <dd class="col-sm-9"><%= @platform_connection.content_sharing_enabled? ? 'Enabled' : 'Disabled' %></dd>
+
+      <dt class="col-sm-3">Federation Auth</dt>
+      <dd class="col-sm-9"><%= @platform_connection.federation_auth_enabled? ? 'Enabled' : 'Disabled' %></dd>
+    </dl>
+  </div>
+<% end %>

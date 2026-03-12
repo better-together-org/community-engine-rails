@@ -1,0 +1,48 @@
+<%= form_with(model: platform_connection, class: 'form') do |form| %>
+  <% if platform_connection.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% platform_connection.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <label class="form-label">Source Platform</label>
+    <input class="form-control" value="<%= platform_connection.source_platform.name %>" readonly>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Target Platform</label>
+    <input class="form-control" value="<%= platform_connection.target_platform.name %>" readonly>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :status, class: 'form-label' %>
+      <%= form.select :status, BetterTogether::PlatformConnection::STATUS_VALUES.values.map { |value| [value.humanize, value] }, {}, class: 'form-select' %>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <%= form.label :connection_kind, class: 'form-label' %>
+      <%= form.select :connection_kind, BetterTogether::PlatformConnection::CONNECTION_KINDS.values.map { |value| [value.humanize, value] }, {}, class: 'form-select' %>
+    </div>
+  </div>
+
+  <div class="form-check mb-2">
+    <%= form.check_box :content_sharing_enabled, class: 'form-check-input' %>
+    <%= form.label :content_sharing_enabled, class: 'form-check-label' %>
+  </div>
+
+  <div class="form-check mb-3">
+    <%= form.check_box :federation_auth_enabled, class: 'form-check-input' %>
+    <%= form.label :federation_auth_enabled, class: 'form-check-label' %>
+  </div>
+
+  <div class="btn-group">
+    <%= link_to 'Back', platform_connection_path(platform_connection), class: 'btn btn-outline-secondary' %>
+    <%= form.submit 'Save Changes', class: 'btn btn-primary' %>
+  </div>
+<% end %>
