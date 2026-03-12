@@ -156,4 +156,18 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       expect(platform.errors[:network_visibility]).to be_present
     end
   end
+
+  describe '#connected_platforms' do
+    it 'returns active incoming and outgoing connected peers' do
+      platform = create(:better_together_platform)
+      active_outgoing = create(:better_together_platform_connection, :active, source_platform: platform)
+      active_incoming = create(:better_together_platform_connection, :active, target_platform: platform)
+      create(:better_together_platform_connection, source_platform: platform)
+
+      expect(platform.connected_platforms).to contain_exactly(
+        active_outgoing.target_platform,
+        active_incoming.source_platform
+      )
+    end
+  end
 end

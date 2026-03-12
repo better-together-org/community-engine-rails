@@ -82,6 +82,16 @@ module BetterTogether
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
     has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :outgoing_platform_connections,
+             class_name: '::BetterTogether::PlatformConnection',
+             foreign_key: :source_platform_id,
+             dependent: :destroy,
+             inverse_of: :source_platform
+    has_many :incoming_platform_connections,
+             class_name: '::BetterTogether::PlatformConnection',
+             foreign_key: :target_platform_id,
+             dependent: :destroy,
+             inverse_of: :target_platform
 
     after_commit :sync_primary_platform_domain!, on: %i[create update]
 
@@ -128,6 +138,15 @@ module BetterTogether
 
     def pending_host_connection_bootstrap?
       local_hosted? && connection_bootstrap_state == 'pending_host_request'
+    end
+
+    def platform_connections
+      BetterTogether::PlatformConnection.for_platform(self)
+    end
+
+    def connected_platforms
+      outgoing_platform_connections.active.includes(:target_platform).map(&:target_platform) +
+        incoming_platform_connections.active.includes(:source_platform).map(&:source_platform)
     end
 
     # Return the routing URL for this platform (used by metrics tracking)

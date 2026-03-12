@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_12_170000) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_12_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1228,6 +1228,23 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_170000) do
     t.index ["space_id"], name: "index_better_together_places_on_space_id"
   end
 
+  create_table "better_together_platform_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "source_platform_id", null: false
+    t.uuid "target_platform_id", null: false
+    t.string "status", default: "pending", null: false
+    t.string "connection_kind", default: "peer", null: false
+    t.boolean "content_sharing_enabled", default: false, null: false
+    t.boolean "federation_auth_enabled", default: false, null: false
+    t.jsonb "settings", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["connection_kind"], name: "index_better_together_platform_connections_on_connection_kind"
+    t.index ["source_platform_id", "target_platform_id"], name: "index_bt_platform_connections_on_source_and_target", unique: true
+    t.index ["source_platform_id"], name: "idx_on_source_platform_id_bed3ccb00c"
+    t.index ["status"], name: "index_better_together_platform_connections_on_status"
+    t.index ["target_platform_id"], name: "idx_on_target_platform_id_24cfb3a8bf"
+  end
+
   create_table "better_together_platform_domains", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "platform_id", null: false
     t.string "hostname", null: false
@@ -1877,6 +1894,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_170000) do
   add_foreign_key "better_together_places", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_places", "better_together_geography_spaces", column: "space_id"
   add_foreign_key "better_together_places", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "source_platform_id"
+  add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "target_platform_id"
   add_foreign_key "better_together_platform_domains", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_platform_invitations", "better_together_people", column: "invitee_id"
   add_foreign_key "better_together_platform_invitations", "better_together_people", column: "inviter_id"
