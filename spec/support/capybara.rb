@@ -29,7 +29,8 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
-    options: options
+    options: options,
+    service: service
   )
 end
 
