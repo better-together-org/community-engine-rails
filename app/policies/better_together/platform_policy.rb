@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && can_manage_platform_settings?
+      user.present? && (can_manage_platform_settings? || can_manage_network_connections?)
     end
 
     def new?
@@ -56,6 +56,10 @@ module BetterTogether
 
     def can_manage_platform_settings?
       user.permitted_to?('manage_platform_settings', record) || user.permitted_to?('manage_platform')
+    end
+
+    def can_manage_network_connections?
+      user.permitted_to?('manage_network_connections')
     end
   end
 end

@@ -9,6 +9,11 @@
       <%= link_to 'Back', better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
     </div>
 
+    <p class="text-muted small mb-3">
+      Need to register a remote platform first?
+      <%= link_to 'Register External Platform →', better_together.new_platform_path %>
+    </p>
+
     <%= render 'form', platform_connection: @platform_connection %>
   </div>
 <% end %>
