@@ -69,6 +69,27 @@ FactoryBot.define do
       end
     end
 
+    trait :network_admin do
+      after(:create) do |user|
+        host_platform = BetterTogether::Platform.find_by(host: true) ||
+                        create(:better_together_platform, :host, community: user.person.community)
+
+        network_admin_role = BetterTogether::Role.find_by(identifier: 'network_admin')
+
+        unless network_admin_role
+          BetterTogether::AccessControlBuilder.seed_data
+          network_admin_role = BetterTogether::Role.find_by(identifier: 'network_admin')
+        end
+
+        next unless network_admin_role
+
+        host_platform.person_platform_memberships.find_or_create_by!(
+          member: user.person,
+          role: network_admin_role
+        )
+      end
+    end
+
     before :create do |instance|
       next if instance.person.present?
 

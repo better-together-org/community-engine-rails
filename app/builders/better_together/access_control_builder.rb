@@ -179,6 +179,7 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            view_network
           ],
           'platform_manager' => %w[
             read_platform
@@ -201,6 +202,15 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            view_network
+          ],
+          'network_admin' => %w[
+            read_platform
+            list_platform
+            view_network
+            manage_network_connections
+            approve_network_connections
+            manage_federation_auth
           ],
           'platform_analytics_viewer' => %w[
             view_metrics_dashboard
@@ -596,6 +606,15 @@ module BetterTogether
             name: 'Platform Analytics Viewer',
             description: 'Has read-only access to platform analytics and metrics, can generate and download ' \
                          'reports without access to other platform management functions.'
+          },
+          {
+            protected: true,
+            identifier: 'network_admin',
+            position: 9,
+            resource_type: 'BetterTogether::Platform',
+            name: 'Network Admin',
+            description: 'Manages platform-to-platform network relationships, connection approvals, and ' \
+                         'federation trust settings without inheriting full local platform stewardship.'
           }
         ]
       end
@@ -681,6 +700,22 @@ module BetterTogether
           {
             action: 'view', target: 'platform_logs', resource_type: 'BetterTogether::Platform',
             identifier: 'view_platform_logs', protected: true, position: 20
+          },
+          {
+            action: 'view', target: 'network', resource_type: 'BetterTogether::Platform',
+            identifier: 'view_network', protected: true, position: 21
+          },
+          {
+            action: 'manage', target: 'network_connections', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_network_connections', protected: true, position: 22
+          },
+          {
+            action: 'manage', target: 'network_connection_approvals', resource_type: 'BetterTogether::Platform',
+            identifier: 'approve_network_connections', protected: true, position: 23
+          },
+          {
+            action: 'manage', target: 'federation_auth', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_federation_auth', protected: true, position: 24
           }
         ]
       end

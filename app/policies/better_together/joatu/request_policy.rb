@@ -5,8 +5,22 @@ module BetterTogether
     # Access control for Joatu::Request
     class RequestPolicy < ApplicationPolicy
       def index? = user.present?
-      def show?  = user.present?
-      def create? = user.present?
+
+      def show?
+        return false unless user.present?
+
+        return can_view_network_request? if connection_request?
+
+        true
+      end
+
+      def create?
+        return false unless user.present?
+
+        return can_manage_network_connections? if connection_request?
+
+        true
+      end
       alias new? create?
 
       # Permission helper for the "respond with offer" flow (creating an Offer from a Request)
@@ -14,6 +28,8 @@ module BetterTogether
 
       def update?
         return false unless user.present?
+
+        return can_manage_network_connections? if connection_request?
 
         can_manage_joatu? || record.creator_id == agent&.id
       end
@@ -26,6 +42,8 @@ module BetterTogether
         # Prevent destroy if there are any agreements for this request — applies to everyone
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
+        return can_manage_network_connections? if connection_request?
+
         can_manage_joatu? || record.creator_id == agent&.id
       end
 
@@ -35,6 +53,7 @@ module BetterTogether
           return scope.none unless user.present?
 
           return scope.all if can_manage_joatu?
+          return scope.all if can_manage_network_connections? && connection_request_scope?
 
           agent_id = agent&.id
 
@@ -73,12 +92,32 @@ module BetterTogether
         def can_manage_joatu?
           permitted_to?('manage_joatu')
         end
+
+        def can_manage_network_connections?
+          permitted_to?('manage_network_connections')
+        end
+
+        def connection_request_scope?
+          scope <= BetterTogether::Joatu::ConnectionRequest
+        end
       end
 
       private
 
+      def connection_request?
+        record.is_a?(BetterTogether::Joatu::ConnectionRequest)
+      end
+
       def can_manage_joatu?
         permitted_to?('manage_joatu')
+      end
+
+      def can_manage_network_connections?
+        permitted_to?('manage_network_connections')
+      end
+
+      def can_view_network_request?
+        can_manage_network_connections? || record.creator_id == agent&.id
       end
     end
   end
