@@ -26,7 +26,7 @@ module BetterTogether
         )
 
         render json: {
-          items: export.items,
+          seeds: export.seeds,
           next_cursor: export.next_cursor
         }
       end

@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
   let(:locale) { I18n.default_locale }
-  let(:source_platform) { create(:better_together_platform, host: true) }
-  let(:source_domain) { create(:better_together_platform_domain, platform: source_platform, domain: 'source.example.test', primary: true) }
+  let(:source_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:source_hostname) { "source-#{SecureRandom.hex(4)}.example.test" }
   let(:target_platform) { create(:better_together_platform, :community_engine_peer) }
   let(:connection) do
     create(
@@ -22,8 +22,21 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
   end
 
   before do
-    source_domain
-    host! 'source.example.test'
+    source_platform.update!(
+      host_url: 'https://primary.example.test',
+      privacy: 'public',
+      requires_invitation: false
+    )
+
+    create(
+      :better_together_platform_domain,
+      platform: source_platform,
+      hostname: source_hostname,
+      primary: false,
+      active: true
+    )
+
+    host! source_hostname
   end
 
   it 'returns a cursor-paginated content batch for an authorized peer' do
@@ -35,8 +48,8 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
     expect(response).to have_http_status(:ok)
 
     payload = JSON.parse(response.body)
-    expect(payload['items'].first['type']).to eq('post')
-    expect(payload['items'].first['id']).to eq(post.id)
+    expect(payload['seeds'].first['better_together']['payload']['type']).to eq('post')
+    expect(payload['seeds'].first['better_together']['payload']['id']).to eq(post.id)
     expect(payload['next_cursor']).to be_present
   end
 

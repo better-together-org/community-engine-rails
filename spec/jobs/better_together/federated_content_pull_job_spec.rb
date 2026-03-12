@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::FederatedContentPullJob, type: :job do
     let(:pull_result) do
       BetterTogether::FederatedContentPullService::Result.new(
         connection:,
-        items: [{ 'type' => 'post', 'id' => SecureRandom.uuid, 'attributes' => { 'title' => 'Remote Post', 'content' => 'Body' } }],
+        seeds: [{ 'better_together' => { 'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid, 'attributes' => { 'title' => 'Remote Post', 'content' => 'Body' } } } }],
         next_cursor: 'cursor-5'
       )
     end
@@ -25,7 +25,7 @@ RSpec.describe BetterTogether::FederatedContentPullJob, type: :job do
       expect do
         described_class.perform_now(platform_connection_id: connection.id, cursor: 'cursor-4')
       end.to have_enqueued_job(BetterTogether::FederatedContentIngestJob)
-        .with(platform_connection_id: connection.id, items: pull_result.items, sync_cursor: 'cursor-5')
+        .with(platform_connection_id: connection.id, seeds: pull_result.seeds, sync_cursor: 'cursor-5')
         .on_queue('platform_sync')
     end
 

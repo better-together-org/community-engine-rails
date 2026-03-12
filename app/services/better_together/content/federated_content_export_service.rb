@@ -9,10 +9,14 @@ module BetterTogether
 
       Result = Struct.new(
         :connection,
-        :items,
+        :seeds,
         :next_cursor,
         keyword_init: true
-      )
+      ) do
+        def items
+          seeds
+        end
+      end
 
       def self.call(connection:, cursor: nil, limit: DEFAULT_LIMIT)
         new(connection:, cursor:, limit:).call
@@ -27,7 +31,7 @@ module BetterTogether
       def call
         Result.new(
           connection:,
-          items: serialized_items,
+          seeds: serialized_seeds,
           next_cursor: next_cursor
         )
       end
@@ -36,8 +40,14 @@ module BetterTogether
 
       attr_reader :connection, :cursor, :limit
 
-      def serialized_items
-        @serialized_items ||= selected_records.map { |record| serialize_record(record) }
+      def serialized_seeds
+        @serialized_seeds ||= selected_records.map do |record|
+          ::BetterTogether::Seeds::FederatedSeedBuilder.call(
+            record:,
+            connection:,
+            lane: 'platform_shared'
+          )
+        end
       end
 
       def selected_records
@@ -77,66 +87,6 @@ module BetterTogether
 
         record.updated_at > cursor[:updated_at] ||
           (record.updated_at == cursor[:updated_at] && record.id > cursor[:id])
-      end
-
-      def serialize_record(record)
-        {
-          type: serialized_type(record),
-          id: record.id,
-          preserve_remote_uuid: true,
-          source_updated_at: record.updated_at.iso8601,
-          attributes: serialized_attributes(record)
-        }
-      end
-
-      def serialized_type(record)
-        case record
-        when ::BetterTogether::Post then 'post'
-        when ::BetterTogether::Page then 'page'
-        when ::BetterTogether::Event then 'event'
-        else
-          raise ArgumentError, "unsupported record type: #{record.class.name}"
-        end
-      end
-
-      def serialized_attributes(record)
-        case record
-        when ::BetterTogether::Post
-          {
-            title: record.title,
-            content: record.content&.body&.to_plain_text.to_s,
-            identifier: record.identifier,
-            privacy: record.privacy,
-            published_at: record.published_at,
-            updated_at: record.updated_at
-          }
-        when ::BetterTogether::Page
-          {
-            title: record.title,
-            content: record.content&.body&.to_plain_text.to_s,
-            identifier: record.identifier,
-            privacy: record.privacy,
-            published_at: record.published_at,
-            layout: record.layout,
-            template: record.template,
-            meta_description: record.meta_description,
-            keywords: record.keywords,
-            updated_at: record.updated_at
-          }
-        when ::BetterTogether::Event
-          {
-            name: record.name,
-            description: record.description&.body&.to_plain_text.to_s,
-            identifier: record.identifier,
-            privacy: record.privacy,
-            starts_at: record.starts_at,
-            ends_at: record.ends_at,
-            duration_minutes: record.duration_minutes,
-            registration_url: record.registration_url,
-            timezone: record.timezone,
-            updated_at: record.updated_at
-          }
-        end
       end
 
       def next_cursor

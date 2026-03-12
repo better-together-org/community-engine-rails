@@ -4,13 +4,13 @@ module BetterTogether
   class FederatedContentIngestJob < ApplicationJob
     queue_as :platform_sync
 
-    def perform(platform_connection_id:, items:, sync_cursor: nil)
+    def perform(platform_connection_id:, seeds:, sync_cursor: nil)
       connection = ::BetterTogether::PlatformConnection.find(platform_connection_id)
       connection.mark_sync_started!(cursor: sync_cursor)
 
       result = ::BetterTogether::Content::FederatedContentIngestService.call(
         connection:,
-        items:
+        seeds:
       )
 
       connection.mark_sync_succeeded!(

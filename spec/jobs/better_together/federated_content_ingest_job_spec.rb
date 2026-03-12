@@ -11,27 +11,39 @@ RSpec.describe BetterTogether::FederatedContentIngestJob, type: :job do
 
   describe '#perform' do
     let(:connection) { create(:better_together_platform_connection, :active) }
-    let(:items) do
+    let(:seeds) do
       [
         {
-          type: 'post',
-          id: SecureRandom.uuid,
-          attributes: {
-            title: 'Remote Post',
-            content: 'Post content',
-            identifier: 'remote-post'
+          'better_together' => {
+            'payload' => {
+              'type' => 'post',
+              'id' => SecureRandom.uuid,
+              'attributes' => {
+                'title' => 'Remote Post',
+                'content' => 'Post content',
+                'identifier' => 'remote-post'
+              }
+            }
           }
         }
       ]
     end
 
     it 'delegates to the federated content ingest service' do
-      expect(BetterTogether::Content::FederatedContentIngestService).to receive(:call).with(
-        connection:,
-        items:
+      allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(
+        BetterTogether::Content::FederatedContentIngestService::Result.new(
+          connection:,
+          processed_count: 1,
+          imported_seeds: [],
+          imported_records: [],
+          unsupported_seeds: [],
+          planting: nil
+        )
       )
 
-      described_class.perform_now(platform_connection_id: connection.id, items:)
+      expect(BetterTogether::Content::FederatedContentIngestService).to receive(:call).with(connection:, seeds:)
+
+      described_class.perform_now(platform_connection_id: connection.id, seeds:)
     end
 
     it 'marks sync status around a successful ingest' do
@@ -39,12 +51,14 @@ RSpec.describe BetterTogether::FederatedContentIngestJob, type: :job do
         BetterTogether::Content::FederatedContentIngestService::Result.new(
           connection:,
           processed_count: 1,
+          imported_seeds: [],
           imported_records: [],
-          unsupported_items: []
+          unsupported_seeds: [],
+          planting: nil
         )
       )
 
-      described_class.perform_now(platform_connection_id: connection.id, items:, sync_cursor: 'cursor-1')
+      described_class.perform_now(platform_connection_id: connection.id, seeds:, sync_cursor: 'cursor-1')
 
       connection.reload
       expect(connection).to be_sync_succeeded
@@ -56,7 +70,7 @@ RSpec.describe BetterTogether::FederatedContentIngestJob, type: :job do
       allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_raise(StandardError, 'boom')
 
       expect do
-        described_class.perform_now(platform_connection_id: connection.id, items:, sync_cursor: 'cursor-2')
+        described_class.perform_now(platform_connection_id: connection.id, seeds:, sync_cursor: 'cursor-2')
       end.to raise_error(StandardError, 'boom')
 
       connection.reload

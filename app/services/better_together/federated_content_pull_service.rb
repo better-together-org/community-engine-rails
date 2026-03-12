@@ -13,10 +13,14 @@ module BetterTogether
 
     Result = Struct.new(
       :connection,
-      :items,
+      :seeds,
       :next_cursor,
       keyword_init: true
-    )
+    ) do
+      def items
+        seeds
+      end
+    end
 
     def self.call(connection:, cursor: nil, limit: DEFAULT_LIMIT)
       new(connection:, cursor:, limit:).call
@@ -38,7 +42,7 @@ module BetterTogether
 
       Result.new(
         connection:,
-        items: payload.fetch('items', []),
+        seeds: payload['seeds'] || payload.fetch('items', []),
         next_cursor: payload['next_cursor']
       )
     end

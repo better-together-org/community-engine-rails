@@ -5,7 +5,8 @@ require 'webmock/rspec'
 
 RSpec.describe BetterTogether::FederatedContentPullService do
   describe '#call' do
-    let(:source_platform) { create(:better_together_platform, :community_engine_peer, url: 'https://peer.example.test') }
+    let(:peer_host) { "https://peer-#{SecureRandom.hex(4)}.example.test" }
+    let(:source_platform) { create(:better_together_platform, :community_engine_peer, host_url: peer_host, oauth_issuer_url: peer_host) }
     let(:target_platform) { create(:better_together_platform) }
     let(:connection) do
       create(
@@ -22,12 +23,12 @@ RSpec.describe BetterTogether::FederatedContentPullService do
     end
 
     it 'pulls one batch from the remote federation feed' do
-      stub_request(:get, 'https://peer.example.test/en/federation/content_feed?limit=50')
+      stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
         .with(headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" })
         .to_return(
           status: 200,
           body: {
-            items: [{ type: 'post', id: SecureRandom.uuid, attributes: { title: 'Remote Post', content: 'Body' } }],
+            seeds: [{ better_together: { payload: { type: 'post', id: SecureRandom.uuid, attributes: { title: 'Remote Post', content: 'Body' } } } }],
             next_cursor: 'cursor-2'
           }.to_json,
           headers: { 'Content-Type' => 'application/json' }
@@ -35,12 +36,12 @@ RSpec.describe BetterTogether::FederatedContentPullService do
 
       result = described_class.call(connection:)
 
-      expect(result.items.length).to eq(1)
+      expect(result.seeds.length).to eq(1)
       expect(result.next_cursor).to eq('cursor-2')
     end
 
     it 'raises on non-success responses' do
-      stub_request(:get, 'https://peer.example.test/en/federation/content_feed?limit=50')
+      stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
         .to_return(status: 403, body: 'forbidden')
 
       expect do

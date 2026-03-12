@@ -25,9 +25,10 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
       event = create(:event, platform: source_platform, privacy: 'public', starts_at: 2.days.from_now, ends_at: 2.days.from_now + 1.hour)
 
       result = described_class.call(connection:, limit: 10)
+      payloads = result.seeds.map { |seed| seed['better_together'][:payload] }
 
-      expect(result.items.map { |item| item[:type] }).to include('post', 'page', 'event')
-      expect(result.items.map { |item| item[:id] }).to include(post.id, page.id, event.id)
+      expect(payloads.map { |payload| payload[:type] }).to include('post', 'page', 'event')
+      expect(payloads.map { |payload| payload[:id] }).to include(post.id, page.id, event.id)
       expect(result.next_cursor).to be_present
     end
 
@@ -42,7 +43,7 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
 
       result = described_class.call(connection:, limit: 10)
 
-      expect(result.items).to be_empty
+      expect(result.seeds).to be_empty
     end
 
     it 'respects the cursor and limit' do
@@ -52,9 +53,9 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
       first_result = described_class.call(connection:, limit: 1)
       second_result = described_class.call(connection:, cursor: first_result.next_cursor, limit: 10)
 
-      expect(first_result.items.length).to eq(1)
-      expect(first_result.items.first[:id]).to eq(first_post.id)
-      expect(second_result.items.map { |item| item[:id] }).to include(second_post.id)
+      expect(first_result.seeds.length).to eq(1)
+      expect(first_result.seeds.first['better_together'][:payload][:id]).to eq(first_post.id)
+      expect(second_result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(second_post.id)
     end
   end
 end

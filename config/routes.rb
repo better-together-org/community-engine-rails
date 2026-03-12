@@ -344,7 +344,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # These routes all are accessible to unauthenticated users
       namespace :federation do
-        resource :content_feed, only: :show
+        resource :content_feed, only: :show, controller: :content_feed
       end
 
       resources :agreements, only: :show

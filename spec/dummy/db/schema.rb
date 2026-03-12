@@ -1509,6 +1509,30 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_12_223000) do
     t.index ["visibility"], name: "index_better_together_safety_notes_on_visibility"
   end
 
+  create_table "better_together_seed_plantings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.string "status", default: "pending", null: false
+    t.text "source"
+    t.string "planting_type", default: "seed", null: false
+    t.uuid "creator_id"
+    t.uuid "seed_id"
+    t.text "error_message"
+    t.jsonb "result", default: {}
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.string "privacy", default: "private", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completed_at"], name: "index_better_together_seed_plantings_on_completed_at"
+    t.index ["creator_id"], name: "by_better_together_seed_plantings_creator"
+    t.index ["planting_type"], name: "index_better_together_seed_plantings_on_planting_type"
+    t.index ["privacy"], name: "by_better_together_seed_plantings_privacy"
+    t.index ["seed_id"], name: "index_better_together_seed_plantings_on_seed_id"
+    t.index ["started_at"], name: "index_better_together_seed_plantings_on_started_at"
+    t.index ["status"], name: "index_better_together_seed_plantings_on_status"
+  end
+
   create_table "better_together_seeds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false

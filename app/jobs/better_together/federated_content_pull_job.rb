@@ -14,11 +14,11 @@ module BetterTogether
         limit:
       )
 
-      return if result.items.blank?
+      return if result.seeds.blank?
 
       ::BetterTogether::FederatedContentIngestJob.perform_later(
         platform_connection_id: connection.id,
-        items: result.items,
+        seeds: result.seeds,
         sync_cursor: result.next_cursor
       )
     rescue StandardError => e
