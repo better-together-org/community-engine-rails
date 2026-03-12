@@ -71,6 +71,19 @@ module BetterTogether
         "#{offer} ↔ #{request}"
       end
 
+      def connection_request?
+        request.is_a?(BetterTogether::Joatu::ConnectionRequest)
+      end
+
+      def platform_connection
+        return unless connection_request?
+
+        BetterTogether::PlatformConnection.find_by(
+          source_platform: offer&.target,
+          target_platform: request&.target
+        )
+      end
+
       private
 
       def ensure_accept_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
