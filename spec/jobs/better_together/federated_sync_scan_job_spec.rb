@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::FederatedSyncScanJob do
+  include ActiveJob::TestHelper
   describe 'queueing' do
     it 'uses the platform_sync queue' do
       expect(described_class.new.queue_name).to eq('platform_sync')

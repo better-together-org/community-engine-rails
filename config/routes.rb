@@ -147,6 +147,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           member do
             patch :approve
             patch :suspend
+            patch :rotate_secret
           end
         end
 
@@ -332,7 +333,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :person_community_memberships
 
             # Platform list
-            resources :platforms, only: %i[index show edit update] do
+            resources :platforms, only: %i[index show new create edit update] do
               member do
                 get :available_people
               end

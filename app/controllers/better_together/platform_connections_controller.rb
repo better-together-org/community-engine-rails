@@ -3,8 +3,8 @@
 module BetterTogether
   # Manages platform-to-platform federation connections, including create,
   # approve, suspend, and policy configuration.
-  class PlatformConnectionsController < ResourceController
-    before_action :set_connection_for_transition, only: %i[approve suspend]
+  class PlatformConnectionsController < ResourceController # rubocop:disable Metrics/ClassLength
+    before_action :set_connection_for_transition, only: %i[approve suspend rotate_secret]
 
     def index
       @platform_connections = resource_collection
@@ -70,6 +70,15 @@ module BetterTogether
                     alert: "Cannot suspend a connection with status '#{@platform_connection.status}'.",
                     status: :see_other
       end
+    rescue Pundit::NotAuthorizedError
+      render_not_found
+    end
+
+    def rotate_secret
+      authorize @platform_connection, :update?
+
+      @platform_connection.rotate_oauth_client_secret!
+      redirect_to @platform_connection, notice: 'OAuth client secret rotated. Update the remote platform configuration.', status: :see_other
     rescue Pundit::NotAuthorizedError
       render_not_found
     end
