@@ -47,6 +47,17 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
         expect(public_platform.privacy).to eq('public')
       end
     end
+
+    describe ':community_engine_peer' do
+      subject(:community_engine_peer) { create(:better_together_platform, :community_engine_peer) }
+
+      it 'creates an external CE-capable peer platform' do
+        expect(community_engine_peer).to be_external_peer
+        expect(community_engine_peer).to be_community_engine
+        expect(community_engine_peer.federation_protocol).to eq('ce_oauth')
+        expect(community_engine_peer.effective_oauth_issuer_url).to eq(community_engine_peer.host_url)
+      end
+    end
   end
 
   describe 'validations' do
@@ -99,6 +110,50 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       platform = create(:better_together_platform, :external, host_url: "https://remote-#{SecureRandom.hex(4)}.example.test")
 
       expect(platform.reload.primary_platform_domain).to be_nil
+    end
+  end
+
+  describe 'registry semantics' do
+    it 'defaults local hosted platforms to community engine federation metadata' do
+      platform = create(:better_together_platform, host_url: "https://registry-#{SecureRandom.hex(4)}.example.test")
+
+      expect(platform).to be_local_hosted
+      expect(platform).to be_community_engine
+      expect(platform.network_visibility).to eq('private')
+      expect(platform.connection_bootstrap_state).to eq('pending_host_request')
+      expect(platform.federation_protocol).to eq('ce_oauth')
+      expect(platform.effective_oauth_issuer_url).to eq(platform.resolved_host_url)
+      expect(platform).to be_pending_host_connection_bootstrap
+    end
+
+    it 'defaults generic external peers to pending review without federation metadata' do
+      platform = create(:better_together_platform, :external, host_url: "https://generic-#{SecureRandom.hex(4)}.example.test")
+
+      expect(platform).to be_external_peer
+      expect(platform).not_to be_community_engine
+      expect(platform.network_visibility).to eq('private')
+      expect(platform.connection_bootstrap_state).to eq('pending_review')
+      expect(platform.federation_protocol).to be_blank
+      expect(platform.effective_oauth_issuer_url).to be_nil
+      expect(platform).not_to be_pending_host_connection_bootstrap
+    end
+
+    it 'allows external CE peers to advertise federation metadata explicitly' do
+      platform = create(:better_together_platform, :community_engine_peer,
+                        host_url: "https://peer-#{SecureRandom.hex(4)}.example.test")
+
+      expect(platform).to be_external_peer
+      expect(platform).to be_community_engine
+      expect(platform.connection_bootstrap_state).to eq('pending_review')
+      expect(platform.federation_protocol).to eq('ce_oauth')
+      expect(platform.effective_oauth_issuer_url).to eq(platform.host_url)
+    end
+
+    it 'rejects invalid network visibility values' do
+      platform = build(:better_together_platform, network_visibility: 'friends_only')
+
+      expect(platform).not_to be_valid
+      expect(platform.errors[:network_visibility]).to be_present
     end
   end
 end

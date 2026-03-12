@@ -147,7 +147,14 @@ module BetterTogether
     end
 
     def settings_attributes
-      %i[requires_invitation]
+      %i[
+        requires_invitation
+        software_variant
+        network_visibility
+        connection_bootstrap_state
+        federation_protocol
+        oauth_issuer_url
+      ]
     end
 
     def resource_class

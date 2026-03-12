@@ -17,6 +17,11 @@ module BetterTogether
     include TimezoneAttributeAliasing
     include ::Storext.model
 
+    NETWORK_VISIBILITIES = %w[private peer member public].freeze
+    CONNECTION_BOOTSTRAP_STATES = %w[pending_host_request pending_review connected opted_out disabled].freeze
+    FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
+    SOFTWARE_VARIANTS = %w[community_engine generic].freeze
+
     has_community
 
     joinable joinable_type: 'platform',
@@ -36,6 +41,11 @@ module BetterTogether
 
     store_attributes :settings do
       requires_invitation Boolean, default: false
+      software_variant String
+      network_visibility String, default: 'private'
+      connection_bootstrap_state String
+      federation_protocol String
+      oauth_issuer_url String
     end
 
     # Alias the database url column to host_url for clarity
@@ -50,6 +60,15 @@ module BetterTogether
                 message: '%<value>s is not a valid timezone'
               }
     validates :external, inclusion: { in: [true, false] }
+    validates :software_variant, inclusion: { in: SOFTWARE_VARIANTS }, allow_blank: true
+    validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
+    validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
+    validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
+    validates :oauth_issuer_url,
+              format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+              allow_blank: true
+
+    before_validation :apply_platform_registry_defaults
 
     scope :external, -> { where(external: true) }
     scope :internal, -> { where(external: false) }
@@ -85,6 +104,30 @@ module BetterTogether
 
     def resolved_host_url
       primary_platform_domain&.url || host_url
+    end
+
+    def local_hosted?
+      !external?
+    end
+
+    def external_peer?
+      external?
+    end
+
+    def community_engine?
+      local_hosted? || software_variant == 'community_engine'
+    end
+
+    def federated?
+      federation_protocol.present?
+    end
+
+    def effective_oauth_issuer_url
+      oauth_issuer_url.presence || (community_engine? ? resolved_host_url : nil)
+    end
+
+    def pending_host_connection_bootstrap?
+      local_hosted? && connection_bootstrap_state == 'pending_host_request'
     end
 
     # Return the routing URL for this platform (used by metrics tracking)
@@ -154,6 +197,14 @@ module BetterTogether
     end
 
     private
+
+    def apply_platform_registry_defaults
+      self.network_visibility = 'private' if network_visibility.blank?
+      self.connection_bootstrap_state ||= local_hosted? ? 'pending_host_request' : 'pending_review'
+      self.software_variant ||= 'community_engine' if local_hosted?
+      self.federation_protocol ||= 'ce_oauth' if community_engine?
+      self.oauth_issuer_url ||= resolved_host_url if community_engine?
+    end
 
     def sync_primary_platform_domain!
       return unless self.class.connection.data_source_exists?('better_together_platform_domains')
