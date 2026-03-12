@@ -272,6 +272,32 @@ Behavior:
 - legacy `federation_access_token` remains as transition fallback for feed reads and pulls
 - private linked-content transport is not implemented yet, but the scope vocabulary now reserves `linked_content.read`
 
+### 12. Private linked-seed transport
+
+Implemented:
+
+- linked-private seed export service
+- linked-private feed endpoint
+- linked-private pull service
+- linked-private ingest service
+- linked-private pull job on `platform_sync`
+
+Files added in this slice include:
+
+- `app/services/better_together/seeds/linked_seed_export_service.rb`
+- `app/services/better_together/seeds/linked_seed_ingest_service.rb`
+- `app/services/better_together/federated_linked_seed_pull_service.rb`
+- `app/jobs/better_together/federated_linked_seed_pull_job.rb`
+- `app/controllers/better_together/federation/linked_seeds_controller.rb`
+
+Behavior:
+
+- exports only grantor-authored private `Post` / `Page` / `Event` records allowed by an active `PersonAccessGrant`
+- requires `linked_content.read`
+- requires recipient identifier targeting
+- imports into `PersonLinkedSeed` through `PersonLinkedSeedCacheService`
+- does not route private linked content through the shared platform mirror tables
+
 ## Current Completion Status
 
 ### Substantially complete foundations
@@ -285,18 +311,18 @@ Behavior:
 - seed/planting/tending core model layer
 - person-link and access-grant data model
 - private linked-seed encrypted cache lane
+- first private linked-seed transport path
 
 ### Partially complete / transitional
 
 - platform-shared feed auth now supports scoped token exchange, but the OAuth path is still transitional rather than a full provider implementation
 - federation feed auth still includes the old long-lived bearer-token fallback
 - seed-based exchange is integrated, but not yet fully generalized into all federation endpoints and workflows
-- person-linked private sync storage exists, but a full export/import API flow for linked private seeds is not implemented yet
+- linked-private seed export/pull/ingest exists, but scheduling, lifecycle controls, and broader recipient-content coverage are still incomplete
 
 ### Not yet complete
 
 - full CE-to-CE OAuth provider/client lifecycle beyond the current bounded client-credentials transport
-- private linked-seed export endpoint and pull/ingest flow
 - grant management UI for updating, revoking, and expiring person access grants
 - complete non-leakage audit across all feed/search/listing surfaces
 - eventual migration from temporary bearer-token sync auth to OAuth-only federation auth
@@ -352,13 +378,9 @@ Do next:
 
 Do next:
 
-- add linked private-seed export endpoint or service lane
-- gate it on:
-  - active `PlatformConnection`
-  - active `PersonLink`
-  - active `PersonAccessGrant`
-  - private linked-content scopes
-- add pull + ingest flow on `platform_sync`
+- extend the current linked-private path beyond the first bounded transport lane
+- decide how linked-private pulls should be scheduled or user-triggered
+- expand beyond grantor-authored private `Post` / `Page` / `Event` records if needed
 - keep imported records recipient-scoped only
 
 ### 3. Complete non-leakage policy and query review

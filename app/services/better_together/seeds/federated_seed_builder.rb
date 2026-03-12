@@ -8,14 +8,15 @@ module BetterTogether
     class FederatedSeedBuilder
       VERSION = '1.0'
 
-      def self.call(record:, connection:, lane: 'platform_shared')
-        new(record:, connection:, lane:).call
+      def self.call(record:, connection:, lane: 'platform_shared', origin_metadata: {})
+        new(record:, connection:, lane:, origin_metadata:).call
       end
 
-      def initialize(record:, connection:, lane:)
+      def initialize(record:, connection:, lane:, origin_metadata: {})
         @record = record
         @connection = connection
         @lane = lane
+        @origin_metadata = origin_metadata
       end
 
       def call
@@ -30,7 +31,7 @@ module BetterTogether
 
       private
 
-      attr_reader :record, :connection, :lane
+      attr_reader :record, :connection, :lane, :origin_metadata
 
       def seed_metadata
         {
@@ -46,7 +47,7 @@ module BetterTogether
             source_platform_url: connection.source_platform.resolved_host_url,
             visibility: serialized_attributes[:privacy],
             content_type: serialized_type
-          },
+          }.merge(origin_metadata),
           seedable_type: record.class.name,
           seedable_id: record.id
         }

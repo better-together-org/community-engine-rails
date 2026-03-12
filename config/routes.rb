@@ -346,6 +346,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       namespace :federation do
         post 'oauth/token', to: 'oauth_tokens#create', as: :oauth_token
         resource :content_feed, only: :show, controller: :content_feed
+        resources :linked_seeds, only: :index, controller: :linked_seeds
       end
 
       resources :agreements, only: :show
