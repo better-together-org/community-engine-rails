@@ -203,6 +203,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
 
+        resources :person_linked_seeds, path: 'linked-seeds', only: %i[index show]
+
         resources :person_platform_integrations
 
         resources :posts
