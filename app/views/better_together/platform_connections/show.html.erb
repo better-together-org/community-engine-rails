@@ -51,6 +51,31 @@
 
       <dt class="col-sm-3">API Write</dt>
       <dd class="col-sm-9"><%= @platform_connection.api_write_enabled? ? 'Enabled' : 'Disabled' %></dd>
+
+      <dt class="col-sm-3">Sync Status</dt>
+      <dd class="col-sm-9"><%= @platform_connection.last_sync_status.humanize %></dd>
+
+      <dt class="col-sm-3">Last Sync Started</dt>
+      <dd class="col-sm-9"><%= @platform_connection.last_sync_started_at_time&.iso8601 || 'Never' %></dd>
+
+      <dt class="col-sm-3">Last Sync Completed</dt>
+      <dd class="col-sm-9"><%= @platform_connection.last_synced_at_time&.iso8601 || 'Never' %></dd>
+
+      <dt class="col-sm-3">Last Sync Item Count</dt>
+      <dd class="col-sm-9"><%= @platform_connection.last_sync_item_count %></dd>
+
+      <dt class="col-sm-3">Sync Cursor</dt>
+      <dd class="col-sm-9"><%= @platform_connection.sync_cursor.presence || 'None' %></dd>
+
+      <dt class="col-sm-3">Last Sync Error</dt>
+      <dd class="col-sm-9">
+        <% if @platform_connection.last_sync_error_message.present? %>
+          <div><%= @platform_connection.last_sync_error_message %></div>
+          <small class="text-muted"><%= @platform_connection.last_sync_error_at_time&.iso8601 %></small>
+        <% else %>
+          None
+        <% end %>
+      </dd>
     </dl>
   </div>
 <% end %>

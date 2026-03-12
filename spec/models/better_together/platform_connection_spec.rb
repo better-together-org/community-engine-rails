@@ -110,5 +110,34 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.api_read_enabled?).to be true
       expect(connection.api_write_enabled?).to be true
     end
+
+    it 'tracks sync lifecycle state in settings' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_started!(cursor: 'cursor-1', started_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+      expect(connection.reload).to be_sync_running
+      expect(connection.sync_cursor).to eq('cursor-1')
+      expect(connection.last_sync_started_at_time).to be_present
+
+      connection.mark_sync_succeeded!(cursor: 'cursor-2', item_count: 3, synced_at: Time.zone.parse('2026-03-12 12:05:00 UTC'))
+      expect(connection.reload).to be_sync_succeeded
+      expect(connection.sync_cursor).to eq('cursor-2')
+      expect(connection.last_sync_item_count).to eq(3)
+      expect(connection.last_synced_at_time).to be_present
+      expect(connection.last_sync_error_message).to be_blank
+    end
+
+    it 'records sync failures without clearing the last successful completion' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_succeeded!(item_count: 1, synced_at: Time.zone.parse('2026-03-12 12:05:00 UTC'))
+
+      connection.mark_sync_failed!(message: 'Remote timeout', cursor: 'cursor-3', failed_at: Time.zone.parse('2026-03-12 12:10:00 UTC'))
+
+      expect(connection.reload).to be_sync_failed
+      expect(connection.sync_cursor).to eq('cursor-3')
+      expect(connection.last_sync_error_message).to eq('Remote timeout')
+      expect(connection.last_sync_error_at_time).to be_present
+      expect(connection.last_synced_at_time).to be_present
+    end
   end
 end

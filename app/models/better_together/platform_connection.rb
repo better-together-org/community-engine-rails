@@ -33,6 +33,13 @@ module BetterTogether
       api_write: 'api_write'
     }.freeze
 
+    SYNC_STATUS_VALUES = {
+      idle: 'idle',
+      running: 'running',
+      succeeded: 'succeeded',
+      failed: 'failed'
+    }.freeze
+
     belongs_to :source_platform, class_name: '::BetterTogether::Platform'
     belongs_to :target_platform, class_name: '::BetterTogether::Platform'
 
@@ -46,6 +53,13 @@ module BetterTogether
       allow_profile_read_scope Boolean, default: false
       allow_content_read_scope Boolean, default: false
       allow_content_write_scope Boolean, default: false
+      sync_cursor String, default: ''
+      last_sync_status String, default: 'idle'
+      last_sync_started_at String, default: ''
+      last_synced_at String, default: ''
+      last_sync_error_at String, default: ''
+      last_sync_error_message String, default: ''
+      last_sync_item_count Integer, default: 0
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
@@ -55,6 +69,7 @@ module BetterTogether
     validates :content_sharing_enabled, :federation_auth_enabled, inclusion: { in: [true, false] }
     validates :content_sharing_policy, inclusion: { in: CONTENT_SHARING_POLICIES.values }
     validates :federation_auth_policy, inclusion: { in: FEDERATION_AUTH_POLICIES.values }
+    validates :last_sync_status, inclusion: { in: SYNC_STATUS_VALUES.values }
     validate :source_and_target_must_differ
 
     before_validation :apply_connection_policy_defaults
@@ -120,6 +135,68 @@ module BetterTogether
       federation_auth_policy == 'api_write' && allows_federation_scope?('content_write')
     end
 
+    def sync_idle?
+      last_sync_status == 'idle'
+    end
+
+    def sync_running?
+      last_sync_status == 'running'
+    end
+
+    def sync_succeeded?
+      last_sync_status == 'succeeded'
+    end
+
+    def sync_failed?
+      last_sync_status == 'failed'
+    end
+
+    def sync_healthy?
+      !sync_failed?
+    end
+
+    def last_sync_started_at_time
+      parse_time_value(last_sync_started_at)
+    end
+
+    def last_synced_at_time
+      parse_time_value(last_synced_at)
+    end
+
+    def last_sync_error_at_time
+      parse_time_value(last_sync_error_at)
+    end
+
+    def mark_sync_started!(cursor: nil, started_at: Time.current)
+      update!(
+        sync_cursor: normalized_cursor(cursor),
+        last_sync_status: 'running',
+        last_sync_started_at: started_at.iso8601,
+        last_sync_error_at: '',
+        last_sync_error_message: ''
+      )
+    end
+
+    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current)
+      update!(
+        sync_cursor: normalized_cursor(cursor),
+        last_sync_status: 'succeeded',
+        last_synced_at: synced_at.iso8601,
+        last_sync_error_at: '',
+        last_sync_error_message: '',
+        last_sync_item_count: item_count.to_i
+      )
+    end
+
+    def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current)
+      update!(
+        sync_cursor: normalized_cursor(cursor),
+        last_sync_status: 'failed',
+        last_sync_error_at: failed_at.iso8601,
+        last_sync_error_message: message.to_s.truncate(500)
+      )
+    end
+
     private
 
     def source_and_target_must_differ
@@ -160,6 +237,18 @@ module BetterTogether
 
     def normalize_policy_key(value)
       value.to_s.strip.downcase
+    end
+
+    def normalized_cursor(value)
+      value.to_s
+    end
+
+    def parse_time_value(value)
+      return if value.blank?
+
+      Time.zone.parse(value)
+    rescue ArgumentError
+      nil
     end
   end
 end
