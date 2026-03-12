@@ -81,7 +81,7 @@ module BetterTogether
     end
 
     def access_token_for_request
-      oauth_access_token || connection.federation_access_token
+      oauth_access_token || raise('content feed token request failed')
     end
 
     def oauth_access_token

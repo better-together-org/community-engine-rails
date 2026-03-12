@@ -81,21 +81,13 @@ RSpec.describe BetterTogether::FederatedContentPullService do
       end.to raise_error(/403/)
     end
 
-    it 'falls back to the legacy connection token when oauth token exchange is unavailable' do
+    it 'raises when oauth token exchange is unavailable' do
       stub_request(:post, "#{peer_host}/en/federation/oauth/token")
         .to_return(status: 401, body: { error: 'invalid_client' }.to_json, headers: { 'Content-Type' => 'application/json' })
 
-      stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
-        .with(headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" })
-        .to_return(
-          status: 200,
-          body: { seeds: [], next_cursor: nil }.to_json,
-          headers: { 'Content-Type' => 'application/json' }
-        )
-
-      result = described_class.call(connection:)
-
-      expect(result.seeds).to eq([])
+      expect do
+        described_class.call(connection:)
+      end.to raise_error('content feed token request failed')
     end
   end
 end

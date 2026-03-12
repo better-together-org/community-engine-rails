@@ -69,21 +69,23 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
   end
 
   it 'returns forbidden when the connection lacks feed-read authorization' do
+    issued_token = oauth_access_token
+
     connection.update!(
       federation_auth_policy: 'login_only',
       allow_content_read_scope: false
     )
 
     get better_together.federation_content_feed_path(locale:),
-        headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" }
+        headers: { 'Authorization' => "Bearer #{issued_token}" }
 
     expect(response).to have_http_status(:forbidden)
   end
 
-  it 'still accepts the legacy long-lived bearer token during transition' do
+  it 'rejects legacy long-lived platform connection bearer tokens' do
     get better_together.federation_content_feed_path(locale:),
         headers: { 'Authorization' => "Bearer #{connection.federation_access_token}" }
 
-    expect(response).to have_http_status(:ok)
+    expect(response).to have_http_status(:unauthorized)
   end
 end

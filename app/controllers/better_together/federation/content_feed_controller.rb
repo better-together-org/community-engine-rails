@@ -35,7 +35,7 @@ module BetterTogether
       private
 
       def connection
-        @connection ||= access_token_record&.platform_connection || resolve_connection_from_legacy_bearer_token
+        @connection ||= access_token_record&.platform_connection
       end
 
       def access_token_record
@@ -46,18 +46,6 @@ module BetterTogether
             token.touch_last_used!
             token
           end
-        end
-      end
-
-      def resolve_connection_from_legacy_bearer_token
-        token = bearer_token
-        return if token.blank? || Current.platform.blank?
-
-        ::BetterTogether::PlatformConnection.active
-                                           .where(source_platform: Current.platform)
-                                           .find do |candidate|
-          candidate.federation_access_token.present? &&
-            ActiveSupport::SecurityUtils.secure_compare(candidate.federation_access_token, token)
         end
       end
 
