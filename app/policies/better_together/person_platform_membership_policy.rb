@@ -40,6 +40,8 @@ module BetterTogether
     protected
 
     def can_manage_platform_members?
+      return true if permitted_to?('manage_platform_members') || permitted_to?('manage_platform_roles')
+
       platform = record.try(:joinable)
 
       permitted_to?('manage_platform_members', platform) ||

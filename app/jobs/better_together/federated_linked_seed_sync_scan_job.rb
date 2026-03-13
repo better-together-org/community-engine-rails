@@ -23,17 +23,27 @@ module BetterTogether
 
     private
 
-    def eligible_grants
+    def eligible_grants # rubocop:todo Metrics/MethodLength
       ::BetterTogether::PersonAccessGrant.current_active
                                          .joins(person_link: :platform_connection)
                                          .includes(:grantee_person, person_link: :platform_connection)
                                          .where(
                                            better_together_platform_connections: {
-                                             status: ::BetterTogether::PlatformConnection::STATUS_VALUES[:active],
-                                             federation_auth_policy: %w[api_read api_write],
-                                             allow_content_read_scope: true,
-                                             allow_linked_content_read_scope: true
+                                             status: ::BetterTogether::PlatformConnection::STATUS_VALUES[:active]
                                            }
+                                         )
+                                         .where(
+                                           "better_together_platform_connections.settings->>'federation_auth_policy' " \
+                                           'IN (?)',
+                                           %w[api_read api_write]
+                                         )
+                                         .where(
+                                           "better_together_platform_connections.settings->>'allow_content_read_scope' " \
+                                           "= 'true'"
+                                         )
+                                         .where(
+                                           "better_together_platform_connections.settings->>'allow_linked_content_read_scope' " \
+                                           "= 'true'"
                                          )
     end
   end

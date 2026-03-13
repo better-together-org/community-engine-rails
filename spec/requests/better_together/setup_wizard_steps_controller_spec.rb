@@ -57,8 +57,18 @@ module BetterTogether # :nodoc:
 
     describe 'POST #create_host_platform' do
       before do
+        @original_host_platform_ids = BetterTogether::Platform.where(host: true).pluck(:id)
+        @original_host_community_ids = BetterTogether::Community.where(host: true).pluck(:id)
         BetterTogether::Platform.where(host: true).update_all(host: false)
         BetterTogether::Community.where(host: true).update_all(host: false)
+      end
+
+      after do
+        BetterTogether::Platform.update_all(host: false)
+        BetterTogether::Community.update_all(host: false)
+        BetterTogether::Platform.where(id: @original_host_platform_ids).update_all(host: true,
+                                                                                   host_url: 'http://www.example.com')
+        BetterTogether::Community.where(id: @original_host_community_ids).update_all(host: true)
       end
 
       let(:platform_suffix) { SecureRandom.hex(4) }

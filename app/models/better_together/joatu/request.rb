@@ -20,7 +20,7 @@ module BetterTogether
         super + response_link_permitted_attributes
       end
 
-      def after_agreement_acceptance!(_offer:)
+      def after_agreement_acceptance!(offer:) # rubocop:disable Lint/UnusedMethodArgument
         nil
       end
     end

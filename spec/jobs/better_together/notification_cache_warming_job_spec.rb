@@ -57,7 +57,7 @@ RSpec.describe BetterTogether::NotificationCacheWarmingJob do
                                      notification_type_fragment_cache_key: 'test-type-key')
       allow(Rails.cache).to receive(:exist?).and_return(false)
 
-      expect(ApplicationController.renderer).to receive(:render).with(
+      expect(BetterTogether::ApplicationController.renderer).to receive(:render).with(
         partial: notification,
         locals: {},
         formats: [:html]
@@ -71,7 +71,7 @@ RSpec.describe BetterTogether::NotificationCacheWarmingJob do
                                      notification_type_fragment_cache_key: 'test-type-key')
       allow(Rails.cache).to receive(:exist?).and_return(true)
 
-      expect(ApplicationController.renderer).not_to receive(:render)
+      expect(BetterTogether::ApplicationController.renderer).not_to receive(:render)
 
       job.send(:warm_notification_fragments, notification)
     end
@@ -80,7 +80,7 @@ RSpec.describe BetterTogether::NotificationCacheWarmingJob do
       allow(job).to receive_messages(notification_fragment_cache_key: 'test-key',
                                      notification_type_fragment_cache_key: 'test-type-key')
       allow(Rails.cache).to receive(:exist?).and_return(false)
-      allow(ApplicationController.renderer).to receive(:render).and_raise(StandardError.new('Test error'))
+      allow(BetterTogether::ApplicationController.renderer).to receive(:render).and_raise(StandardError.new('Test error'))
 
       expect(Rails.logger).to receive(:warn).with(/Failed to warm cache/)
 

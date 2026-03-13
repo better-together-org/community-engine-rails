@@ -40,7 +40,7 @@ module BetterTogether
                       title:,
                       image:,
                       share_tracking_url:,
-                      shareable_type:,
+                      shareable_type: shareable_type.to_s,
                       shareable_id:
                     },
                     # rubocop:todo Layout/LineLength

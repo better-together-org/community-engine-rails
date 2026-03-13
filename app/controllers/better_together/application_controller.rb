@@ -228,6 +228,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def handle_error(exception) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return user_not_authorized(exception) if exception.is_a?(Pundit::NotAuthorizedError)
+      return render_not_found if exception.is_a?(ActiveRecord::RecordNotFound)
 
       if Rails.env.test?
         msg = "[TEST][Exception] #{exception.class}: #{exception.message}"
