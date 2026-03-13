@@ -17,7 +17,9 @@ module Rack
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
       Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-        url: rack_attack_redis
+        url: rack_attack_redis,
+        pool_size: 5,
+        pool_timeout: 5
       )
     end
 
