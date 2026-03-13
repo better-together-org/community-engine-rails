@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   module Content
-    RSpec.describe ChecklistBlock, type: :model do
+    RSpec.describe ChecklistBlock do
       subject(:block) { described_class.new(display_style: 'grid', item_limit: 6) }
 
       it 'is a subclass of Content::Block' do

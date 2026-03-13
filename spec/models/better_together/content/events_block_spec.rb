@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   module Content
-    RSpec.describe EventsBlock, type: :model do
+    RSpec.describe EventsBlock do
       subject(:block) { described_class.new(display_style: 'grid', item_limit: 6, event_scope: 'upcoming') }
 
       it 'is a subclass of Content::Block' do

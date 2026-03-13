@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether
   module Content
-    RSpec.describe PostsBlock, type: :model do
+    RSpec.describe PostsBlock do
       subject(:block) { described_class.new(display_style: 'grid', item_limit: 6, posts_scope: 'published') }
 
       it 'is a subclass of Content::Block' do
