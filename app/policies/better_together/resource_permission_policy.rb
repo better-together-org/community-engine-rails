@@ -60,7 +60,7 @@ module BetterTogether
       when 'BetterTogether::Community'
         permitted_to?('manage_community_roles')
       else
-        false
+        can_manage_any_roles?
       end
     end
 
