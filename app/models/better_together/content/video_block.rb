@@ -31,11 +31,12 @@ module BetterTogether
       end
 
       # Returns a clean embed URL usable in an iframe src attribute.
+      # YouTube uses the privacy-enhanced nocookie domain, matching the live embed pattern in ce.app/nnnl.ca.
       def embed_url
         case provider
         when :youtube
           id = video_url.match(YOUTUBE_PATTERN)&.captures&.first
-          "https://www.youtube.com/embed/#{id}"
+          "https://www.youtube-nocookie.com/embed/#{id}"
         when :vimeo
           id = video_url.match(VIMEO_PATTERN)&.captures&.first
           "https://player.vimeo.com/video/#{id}"

@@ -66,14 +66,14 @@ module BetterTogether
       end
 
       describe '#embed_url' do
-        it 'returns YouTube embed URL for youtube.com' do
+        it 'returns YouTube nocookie embed URL for youtube.com' do
           block.video_url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-          expect(block.embed_url).to eq('https://www.youtube.com/embed/dQw4w9WgXcQ')
+          expect(block.embed_url).to eq('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ')
         end
 
-        it 'returns YouTube embed URL for youtu.be' do
+        it 'returns YouTube nocookie embed URL for youtu.be' do
           block.video_url = 'https://youtu.be/dQw4w9WgXcQ'
-          expect(block.embed_url).to eq('https://www.youtube.com/embed/dQw4w9WgXcQ')
+          expect(block.embed_url).to eq('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ')
         end
 
         it 'returns Vimeo player URL' do

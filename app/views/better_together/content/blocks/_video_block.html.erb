@@ -3,12 +3,9 @@
   <%= render layout: 'better_together/content/blocks/block', locals: { block: video_block } do %>
     <% if video_block.video_url.present? %>
       <figure class="video-block">
-        <div class="ratio ratio-<%= video_block.aspect_ratio.tr('x', 'x') %>">
+        <div class="ratio ratio-<%= video_block.aspect_ratio %>">
           <iframe src="<%= video_block.embed_url %>"
-                  title="<%= video_block.caption.presence || t('better_together.content.blocks.video_block.title', default: 'Video') %>"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen></iframe>
+                  title="<%= video_block.caption.presence || t('better_together.content.blocks.video_block.title', default: 'Video') %>"></iframe>
         </div>
         <% if video_block.caption.present? %>
           <figcaption class="video-block__caption text-muted small mt-2 text-center">
