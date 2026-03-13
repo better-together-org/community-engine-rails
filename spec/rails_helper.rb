@@ -43,7 +43,7 @@ Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| requi
 begin
   ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
-rescue ActiveRecord::PendingMigrationError => e
+rescue ActiveRecord::PendingMigrationError
   exit 1
 end
 
@@ -134,18 +134,13 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
 
-    # Pre-clear FK-dependent tables to avoid violations when referential integrity cannot be disabled
-    begin
-      BetterTogether::RoleResourcePermission.delete_all
-      BetterTogether::WizardStepDefinition.delete_all
-      BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
-      BetterTogether::NavigationItem.where(parent_id: nil).delete_all
-    rescue StandardError => e
-      Rails.logger.debug "Pre-clean step skipped or failed: #{e.message}"
-    end
-
-    # Full clean to start fresh using deletions to avoid deadlocks with Postgres TRUNCATE
+    # Full clean to start fresh. Disable FK constraint triggers for the initial clean so
+    # that new FK chains (ActiveStorage, etc.) never require manual pre-clear ordering.
+    # session_replication_role=replica suppresses FK and trigger checks in PostgreSQL.
+    conn = ActiveRecord::Base.connection
+    conn.execute('SET session_replication_role = replica')
     DatabaseCleaner.clean_with(:deletion)
+    conn.execute('SET session_replication_role = DEFAULT')
 
     # Load essential seed data with explicit clearing for deterministic baseline
     # In parallel execution, handle race conditions gracefully
