@@ -4,9 +4,7 @@ module BetterTogether
   # Handles dispatching search queries to elasticsearch and displaying the results
   class SearchController < ApplicationController
     def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      searchable_models = BetterTogether::Searchable.included_in_models.select do |model|
-        !model.respond_to?(:global_searchable?) || model.global_searchable?
-      end
+      searchable_models = BetterTogether::Searchable.included_in_models
       @query = params[:q]
       search_results = []
       suggestions = []

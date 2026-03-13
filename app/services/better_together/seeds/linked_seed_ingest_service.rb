@@ -3,7 +3,7 @@
 module BetterTogether
   module Seeds
     # Imports recipient-scoped private linked seeds into the encrypted local cache.
-    class LinkedSeedIngestService
+    class LinkedSeedIngestService # rubocop:disable Metrics/ClassLength
       Result = Struct.new(
         :connection,
         :recipient_person,
@@ -31,7 +31,7 @@ module BetterTogether
         @seeds = Array(seeds)
       end
 
-      def call
+      def call # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         raise ArgumentError, 'connection is required' unless connection
         raise ArgumentError, 'recipient_person is required' unless recipient_person
 
@@ -81,7 +81,7 @@ module BetterTogether
 
       attr_reader :connection, :recipient_person, :seeds
 
-      def cache_linked_seed(seed)
+      def cache_linked_seed(seed) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         return unless seed.private_linked?
 
         payload = seed.payload_data.with_indifferent_access
@@ -114,13 +114,14 @@ module BetterTogether
       end
 
       def resolve_grant(origin)
+        # Scope strictly to this connection — do not fall back to a connection-agnostic
+        # lookup, which would allow cross-connection private-seed ingestion.
         grant = ::BetterTogether::PersonAccessGrant.current_active
                                                    .joins(:person_link)
                                                    .find_by(
                                                      id: origin[:person_access_grant_id],
                                                      better_together_person_links: { platform_connection_id: connection.id }
                                                    )
-        grant ||= ::BetterTogether::PersonAccessGrant.current_active.find_by(id: origin[:person_access_grant_id])
         return unless grant&.active_now?
         return unless grant.grantee_person_id == recipient_person.id
 
