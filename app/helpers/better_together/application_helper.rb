@@ -314,35 +314,6 @@ module BetterTogether
       'Africa/Johannesburg'  # South Africa
     ].freeze
 
-    private
-
-    def current_platform_base_url
-      Current.platform&.resolved_host_url ||
-        current_platform_domain&.url ||
-        ::BetterTogether::Platform.find_by(host: true)&.resolved_host_url ||
-        ::BetterTogether.base_url
-    end
-
-    def build_url_for_path(root_url, path)
-      root = root_url.to_s.chomp('/')
-      normalized_path = normalize_relative_path(path)
-      "#{root}#{normalized_path}"
-    end
-
-    def normalize_relative_path(path)
-      normalized = path.to_s
-      normalized = "/#{normalized}" unless normalized.start_with?('/')
-      normalized
-    end
-
-    def resolved_url_options
-      uri = URI.parse(base_url)
-      options = { host: uri.host }
-      options[:protocol] = uri.scheme if uri.scheme.present?
-      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
-      options
-    end
-
     # Returns timezone options sorted by UTC offset (ascending), then alphabetically
     # Display format: "(GMT-05:00) Eastern Time (US & Canada)"
     # Value is the IANA identifier: "America/New_York"
@@ -508,6 +479,35 @@ module BetterTogether
     def friendly_timezone_label(tz_id)
       rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
       rails_tz ? rails_tz.to_s : tz_id
+    end
+
+    private
+
+    def current_platform_base_url
+      Current.platform&.resolved_host_url ||
+        current_platform_domain&.url ||
+        ::BetterTogether::Platform.find_by(host: true)&.resolved_host_url ||
+        ::BetterTogether.base_url
+    end
+
+    def build_url_for_path(root_url, path)
+      root = root_url.to_s.chomp('/')
+      normalized_path = normalize_relative_path(path)
+      "#{root}#{normalized_path}"
+    end
+
+    def normalize_relative_path(path)
+      normalized = path.to_s
+      normalized = "/#{normalized}" unless normalized.start_with?('/')
+      normalized
+    end
+
+    def resolved_url_options
+      uri = URI.parse(base_url)
+      options = { host: uri.host }
+      options[:protocol] = uri.scheme if uri.scheme.present?
+      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
+      options
     end
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.

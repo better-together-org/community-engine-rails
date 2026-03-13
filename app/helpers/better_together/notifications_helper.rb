@@ -64,13 +64,13 @@ module BetterTogether
     # Cache expiration utilities for notifications
     def expire_notification_fragments(notification)
       # Expire all fragments related to this notification
-      expire_fragment(notification_fragment_cache_key(notification))
-      expire_fragment(notification_type_fragment_cache_key(notification))
+      Rails.cache.delete(notification_fragment_cache_key(notification))
+      Rails.cache.delete(notification_type_fragment_cache_key(notification))
 
       # Expire header/content/footer fragments
-      expire_fragment(['notification_header', notification.cache_key_with_version])
-      expire_fragment(['notification_content', notification.cache_key_with_version])
-      expire_fragment(['notification_footer', notification.cache_key_with_version])
+      Rails.cache.delete(['notification_header', notification.cache_key_with_version])
+      Rails.cache.delete(['notification_content', notification.cache_key_with_version])
+      Rails.cache.delete(['notification_footer', notification.cache_key_with_version])
     end
 
     # Expire fragments for a specific notification type pattern

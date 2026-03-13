@@ -5,15 +5,15 @@
 module BetterTogether
   class RolePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present? && can_manage_any_roles?
+      user.present?
     end
 
     def show?
-      user.present? && can_manage_role_resource_type?
+      user.present?
     end
 
     def create?
-      user.present? && can_manage_role_resource_type?
+      false
     end
 
     def new?

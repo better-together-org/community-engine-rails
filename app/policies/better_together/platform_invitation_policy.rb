@@ -33,6 +33,9 @@ module BetterTogether
       private
 
       def can_manage_platform_members?
+        # Global check first (platform manager role grants this without needing a specific record)
+        return true if permitted_to?('manage_platform_members') || permitted_to?('manage_platform_roles')
+
         platform = scope.first&.invitable
 
         permitted_to?('manage_platform_members', platform) ||

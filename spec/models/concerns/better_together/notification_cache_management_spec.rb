@@ -44,7 +44,7 @@ RSpec.describe BetterTogether::NotificationCacheManagement do
     describe '#respond_to_cache_methods?' do
       it 'returns true when helper methods are available' do
         mock_helpers = double('helpers') # rubocop:todo RSpec/VerifiedDoubles
-        allow(ApplicationController).to receive(:helpers).and_return(mock_helpers)
+        allow(BetterTogether::ApplicationController).to receive(:helpers).and_return(mock_helpers)
         allow(mock_helpers).to receive(:respond_to?).with(:expire_notification_fragments).and_return(true)
 
         expect(notification.send(:respond_to_cache_methods?)).to be true
@@ -52,14 +52,14 @@ RSpec.describe BetterTogether::NotificationCacheManagement do
 
       it 'returns false when helper methods are not available' do
         mock_helpers = double('helpers') # rubocop:todo RSpec/VerifiedDoubles
-        allow(ApplicationController).to receive(:helpers).and_return(mock_helpers)
+        allow(BetterTogether::ApplicationController).to receive(:helpers).and_return(mock_helpers)
         allow(mock_helpers).to receive(:respond_to?).with(:expire_notification_fragments).and_return(false)
 
         expect(notification.send(:respond_to_cache_methods?)).to be false
       end
 
       it 'returns false when helpers raise an error' do
-        allow(ApplicationController).to receive(:helpers).and_raise(StandardError.new('test error'))
+        allow(BetterTogether::ApplicationController).to receive(:helpers).and_raise(StandardError.new('test error'))
 
         expect(notification.send(:respond_to_cache_methods?)).to be false
       end
@@ -68,7 +68,7 @@ RSpec.describe BetterTogether::NotificationCacheManagement do
     describe '#expire_notification_caches' do
       it 'calls helper methods when available' do
         mock_helpers = double('helpers') # rubocop:todo RSpec/VerifiedDoubles
-        allow(ApplicationController).to receive(:helpers).and_return(mock_helpers)
+        allow(BetterTogether::ApplicationController).to receive(:helpers).and_return(mock_helpers)
         allow(mock_helpers).to receive(:respond_to?).with(:expire_notification_fragments).and_return(true)
         allow(mock_helpers).to receive(:expire_notification_fragments)
 
@@ -78,14 +78,14 @@ RSpec.describe BetterTogether::NotificationCacheManagement do
 
       it 'handles missing helper methods gracefully' do
         mock_helpers = double('helpers') # rubocop:todo RSpec/VerifiedDoubles
-        allow(ApplicationController).to receive(:helpers).and_return(mock_helpers)
+        allow(BetterTogether::ApplicationController).to receive(:helpers).and_return(mock_helpers)
         allow(mock_helpers).to receive(:respond_to?).with(:expire_notification_fragments).and_return(false)
 
         expect { notification.send(:expire_notification_caches) }.not_to raise_error
       end
 
       it 'handles errors gracefully' do
-        allow(ApplicationController).to receive(:helpers).and_raise(StandardError.new('test error'))
+        allow(BetterTogether::ApplicationController).to receive(:helpers).and_raise(StandardError.new('test error'))
 
         expect { notification.send(:expire_notification_caches) }.not_to raise_error
       end

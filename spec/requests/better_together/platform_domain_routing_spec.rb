@@ -20,6 +20,10 @@ RSpec.describe 'Platform domain routing' do
            active: true)
   end
 
+  after do
+    host_platform.update_columns(host_url: 'http://www.example.com')
+  end
+
   it 'renders canonical links on the primary domain when requested from an alias hostname' do
     host! 'alias.example.test'
 

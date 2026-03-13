@@ -39,6 +39,10 @@ RSpec.describe 'BetterTogether::Federation::OauthTokens', :no_auth do
     host! source_hostname
   end
 
+  after do
+    source_platform.update_columns(host_url: 'http://www.example.com')
+  end
+
   it 'issues a scoped bearer token for a valid client credentials request' do
     post better_together.federation_oauth_token_path(locale:),
          params: {
