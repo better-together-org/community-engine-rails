@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # FactoryBot factories for BetterTogether models.
-module BetterTogether
+module BetterTogether # :nodoc:
   FactoryBot.define do
     factory :identification, class: Identification do
       id { Faker::Internet.uuid }

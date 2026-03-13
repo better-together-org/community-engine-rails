@@ -82,7 +82,6 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
           BetterTogether::Mcp::SearchGeographyTool,
           BetterTogether::Mcp::SearchPeopleTool,
           BetterTogether::Mcp::ListPagesTool,
-          BetterTogether::Mcp::SearchPagesTool,
           BetterTogether::Mcp::ListOffersTool,
           BetterTogether::Mcp::ListRequestsTool,
           BetterTogether::Mcp::ManageNavigationTool

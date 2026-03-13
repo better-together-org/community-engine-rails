@@ -159,6 +159,13 @@ module BetterTogether
       ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
     end
 
+    initializer 'better_together.mcp_defaults' do |app|
+      unless app.config.respond_to?(:mcp)
+        app.config.mcp = ActiveSupport::OrderedOptions.new
+        app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
+      end
+    end
+
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
     end

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # Specs for event reminder job classes.
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe EventReminderJob do
     include ActiveJob::TestHelper
 

@@ -5,7 +5,7 @@
 require 'factory_bot_rails'
 
 # Spec helpers for BetterTogether.
-module BetterTogether
+module BetterTogether # :nodoc:
   # Mailer preview for PlatformInvitationMailer.
   class PlatformInvitationMailerPreview < ActionMailer::Preview
     include FactoryBot::Syntax::Methods

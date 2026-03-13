@@ -2,9 +2,9 @@
 
 # rubocop:disable Metrics/ModuleLength
 # Capybara feature test helpers.
-module BetterTogether
+module BetterTogether # :nodoc:
   # Capybara helpers for BetterTogether feature specs.
-  module CapybaraFeatureHelpers
+  module CapybaraFeatureHelpers # :nodoc:
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
     include BetterTogether::Engine.routes.url_helpers

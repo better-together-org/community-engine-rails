@@ -30,11 +30,11 @@ require 'parallel_rspec'
 WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
 
 # Monkey-patch RSpec profiler to handle nil durations gracefully (occurs with parallel_rspec)
-module RSpec
-  module Core
-    module Formatters
+module RSpec # :nodoc:
+  module Core # :nodoc:
+    module Formatters # :nodoc:
       # Patched to handle nil durations gracefully (parallel_rspec compatibility).
-      module Helpers
+      module Helpers # :nodoc:
         class << self
           alias original_format_seconds format_seconds
 

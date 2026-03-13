@@ -18,7 +18,7 @@
 #   - "authenticated", "logged in", "signed in"
 
 # Automatically applies shared contexts and configuration for spec types.
-module AutomaticTestConfiguration
+module AutomaticTestConfiguration # :nodoc:
   extend ActiveSupport::Concern
   include FactoryBot::Syntax::Methods
 
@@ -46,7 +46,7 @@ module AutomaticTestConfiguration
   ].freeze
 
   # Class methods mixed in by AutomaticTestConfiguration.
-  module ClassMethods
+  module ClassMethods # :nodoc:
     # Configure automatic authentication based on describe/context text
     def auto_authenticate_from_description(description)
       description_lower = description.downcase

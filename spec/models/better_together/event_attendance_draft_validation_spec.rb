@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # :nodoc:
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe EventAttendance, 'draft event validation' do
     let(:person) { create(:better_together_person) }
     let(:draft_event) { create(:event, :draft) }

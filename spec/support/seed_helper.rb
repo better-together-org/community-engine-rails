@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Ensures essential seed data is loaded before specs that require it.
-module SeedHelper
+module SeedHelper # :nodoc:
   # Ensures essential seed data is available for tests
   def self.ensure_seeded!
     return if @seeded && essential_data_exists?

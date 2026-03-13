@@ -22,7 +22,7 @@ module BetterTogether
       authorize @platform_connection
 
       if @platform_connection.save
-        redirect_to better_together_platform_connection_path(@platform_connection),
+        redirect_to better_together.platform_connection_path(@platform_connection),
                     notice: t('flash.generic.created', resource: 'Platform connection'),
                     status: :see_other
       else
@@ -36,7 +36,7 @@ module BetterTogether
 
     def update
       if resource_instance.update(platform_connection_params)
-        redirect_to better_together_platform_connection_path(resource_instance),
+        redirect_to better_together.platform_connection_path(resource_instance),
                     notice: t('flash.generic.updated', resource: 'Platform connection'),
                     status: :see_other
       else

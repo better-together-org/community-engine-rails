@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # :nodoc:
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe File do
     it 'exists' do
       expect(described_class).to be # rubocop:todo RSpec/Be

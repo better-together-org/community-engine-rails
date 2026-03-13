@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Helpers for authenticating API requests in request specs.
-module ApiAuthHelpers
+module ApiAuthHelpers # :nodoc:
   def api_sign_in_and_get_token(user, password: 'SecureTest123!@#')
     post '/api/auth/sign-in',
          params: {

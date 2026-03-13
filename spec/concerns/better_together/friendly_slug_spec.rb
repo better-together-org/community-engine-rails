@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # Spec helpers for BetterTogether.
-module BetterTogether
+module BetterTogether # :nodoc:
   describe FriendlySlug do
     # rubocop:todo RSpec/LeakyConstantDeclaration
     class TestClass < ApplicationRecord # rubocop:todo Lint/ConstantDefinitionInBlock

@@ -47,9 +47,9 @@ FactoryBot.define do
 end
 
 # Helper module for generating test sitemap content
-module BetterTogether
+module BetterTogether # :nodoc:
   # Factory helpers for BetterTogether::Sitemap records.
-  module SitemapFactory
+  module SitemapFactory # :nodoc:
     module_function
 
     # Helper method to generate compressed sitemap content

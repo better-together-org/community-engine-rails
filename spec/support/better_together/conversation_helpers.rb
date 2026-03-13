@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Test helper modules for BetterTogether conversation specs.
-module BetterTogether
+module BetterTogether # :nodoc:
   # Test helpers for conversation-related specs.
-  module ConversationHelpers
+  module ConversationHelpers # :nodoc:
     include Rails.application.routes.url_helpers
     include BetterTogether::Engine.routes.url_helpers
 

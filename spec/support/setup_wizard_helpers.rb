@@ -13,7 +13,7 @@ RSpec.shared_context 'skip_host_setup', :skip_host_setup do
 end
 
 # Helpers for setup wizard specs.
-module SetupWizardSpecHelpers
+module SetupWizardSpecHelpers # :nodoc:
   # Mark the current example to skip host platform setup.
   # Useful in examples that need to simulate a fresh install / wizard flow.
   def skip_host_setup!

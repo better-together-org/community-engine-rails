@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Helpers for ensuring DB records created in one thread are visible to another.
-module DatabaseVisibilityHelpers
+module DatabaseVisibilityHelpers # :nodoc:
   # Ensures records created in test thread are visible to application server thread
   # Critical for :js feature specs using DatabaseCleaner with :deletion strategy
   def ensure_record_visible(record)

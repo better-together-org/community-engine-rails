@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # FactoryBot factories for BetterTogether models.
-module BetterTogether
+module BetterTogether # :nodoc:
   FactoryBot.define do
     factory :report, class: Report do
       association :reporter, factory: :better_together_person

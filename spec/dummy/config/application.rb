@@ -15,7 +15,7 @@ require 'turbo-rails'
 require 'better_together'
 
 # Spec helpers for Dummy.
-module Dummy
+module Dummy # :nodoc:
   # Dummy Rails application for specs.
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.

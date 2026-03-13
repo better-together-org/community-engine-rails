@@ -60,6 +60,11 @@ Metrics/MethodLength:
   Exclude:
     - 'db/migrate/*'
 
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'spec/support/**/*'
+
 Metrics/AbcSize:
   Exclude:
     - 'db/migrate/*'
