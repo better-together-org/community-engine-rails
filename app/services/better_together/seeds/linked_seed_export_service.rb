@@ -36,12 +36,9 @@ module BetterTogether
         raise ArgumentError, 'recipient_identifier is required' if recipient_identifier.blank?
 
         grant = active_access_grant
-        return Result.new(connection:, person_access_grant: nil, seeds: [], next_cursor: nil) unless grant
+        return empty_result unless grant
 
-        visible_records = exportable_records_for(grant)
-        start_index = normalized_cursor
-        batch = visible_records.drop(start_index).first(limit)
-        next_cursor = batch.length == limit ? (start_index + batch.length).to_s : nil
+        batch, next_cursor = paginate_records(exportable_records_for(grant))
 
         Result.new(
           connection:,
@@ -111,6 +108,17 @@ module BetterTogether
       def normalized_cursor
         value = cursor.to_i
         value.negative? ? 0 : value
+      end
+
+      def empty_result
+        Result.new(connection:, person_access_grant: nil, seeds: [], next_cursor: nil)
+      end
+
+      def paginate_records(records)
+        start_index = normalized_cursor
+        batch = records.drop(start_index).first(limit)
+        next_cursor = batch.length == limit ? (start_index + batch.length).to_s : nil
+        [batch, next_cursor]
       end
     end
   end

@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require 'ostruct'
 
 RSpec.describe BetterTogether::ShareButtonsHelper do
-  let(:shareable_page) { OpenStruct.new(id: 'page-id', title: 'Test Page', name: nil) }
-  let(:shareable_post) { OpenStruct.new(id: 'post-id', title: 'Test Post', name: nil) }
-  let(:shareable_without_title) { OpenStruct.new(id: 'test-id', title: nil, name: nil) }
+  ShareableDouble = Struct.new(:id, :title, :name, keyword_init: true)
+
+  let(:shareable_page) { ShareableDouble.new(id: 'page-id', title: 'Test Page', name: nil) }
+  let(:shareable_post) { ShareableDouble.new(id: 'post-id', title: 'Test Post', name: nil) }
+  let(:shareable_without_title) { ShareableDouble.new(id: 'test-id', title: nil, name: nil) }
 
   before do
     allow(helper).to receive_messages(request: double(original_url: 'https://example.com/test'),

@@ -49,7 +49,11 @@ module BetterTogether
       end
 
       def assign_attributes(post)
-        post.assign_attributes(
+        post.assign_attributes(attributes_for(post))
+      end
+
+      def attributes_for(post)
+        {
           title: remote_attributes[:title],
           content: remote_attributes[:content],
           identifier: normalized_identifier(post),
@@ -60,7 +64,7 @@ module BetterTogether
           source_id: preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current
-        )
+        }
       end
 
       def normalized_identifier(post)

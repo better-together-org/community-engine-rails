@@ -96,17 +96,19 @@ module BetterTogether
           person_access_grant: grant,
           recipient_person:,
           source_platform: connection.source_platform,
-          identifier: seed.identifier,
-          seed_type: payload[:type],
-          payload: payload.to_h,
-          source_record_type: seed.seedable_type.presence || payload[:type].to_s.classify.prepend('BetterTogether::'),
-          source_record_id: payload[:id],
-          version: seed.version,
-          source_updated_at: payload[:source_updated_at],
-          metadata: {
-            'lane' => seed.lane,
-            'person_access_grant_id' => grant.id,
-            'recipient_identifier' => origin[:recipient_identifier]
+          seed_attributes: {
+            identifier: seed.identifier,
+            seed_type: payload[:type],
+            payload: payload.to_h,
+            source_record_type: seed.seedable_type.presence || payload[:type].to_s.classify.prepend('BetterTogether::'),
+            source_record_id: payload[:id],
+            version: seed.version,
+            source_updated_at: payload[:source_updated_at],
+            metadata: {
+              'lane' => seed.lane,
+              'person_access_grant_id' => grant.id,
+              'recipient_identifier' => origin[:recipient_identifier]
+            }
           }
         )
 

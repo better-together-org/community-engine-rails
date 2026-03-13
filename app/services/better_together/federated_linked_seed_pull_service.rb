@@ -37,8 +37,14 @@ module BetterTogether
       response = http_get(feed_uri)
       raise "linked seed feed request failed with #{response.code}" unless response.is_a?(Net::HTTPSuccess)
 
-      payload = JSON.parse(response.body)
+      parse_result(JSON.parse(response.body))
+    end
 
+    private
+
+    attr_reader :connection, :recipient_identifier, :cursor, :limit
+
+    def parse_result(payload)
       Result.new(
         connection:,
         recipient_identifier:,
@@ -47,17 +53,17 @@ module BetterTogether
       )
     end
 
-    private
-
-    attr_reader :connection, :recipient_identifier, :cursor, :limit
-
     def feed_uri
       base_uri = URI.parse(connection.source_platform.resolved_host_url)
       base_uri.path = ::BetterTogether::Engine.routes.url_helpers.federation_linked_seeds_path(locale: I18n.default_locale)
+      base_uri.query = feed_params.to_query
+      base_uri
+    end
+
+    def feed_params
       params = { limit:, recipient_identifier: }
       params[:cursor] = cursor if cursor.present?
-      base_uri.query = params.to_query
-      base_uri
+      params
     end
 
     def http_get(uri)

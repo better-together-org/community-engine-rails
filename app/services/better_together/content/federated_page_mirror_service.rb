@@ -49,7 +49,11 @@ module BetterTogether
       end
 
       def assign_attributes(page)
-        page.assign_attributes(
+        page.assign_attributes(attributes_for(page))
+      end
+
+      def attributes_for(page)
+        {
           title: remote_attributes[:title],
           content: remote_attributes[:content],
           identifier: normalized_identifier(page),
@@ -64,7 +68,7 @@ module BetterTogether
           source_id: preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current
-        )
+        }
       end
 
       def normalized_identifier(page)

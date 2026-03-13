@@ -40,34 +40,32 @@ module BetterTogether
       connection = authorized_connection
       return empty_result(connection:) unless connection
 
-      granted_scopes = []
-      denied_scopes = []
-      unsupported_scopes = []
-
-      requested_scopes.each do |scope|
-        rule = SUPPORTED_SCOPE_RULES[scope]
-
-        if rule.nil?
-          unsupported_scopes << scope
-        elsif rule.call(connection)
-          granted_scopes << scope
-        else
-          denied_scopes << scope
-        end
-      end
-
-      Result.new(
-        connection:,
-        requested_scopes:,
-        granted_scopes: granted_scopes.uniq,
-        denied_scopes: denied_scopes.uniq,
-        unsupported_scopes: unsupported_scopes.uniq
-      )
+      scope_buckets = classify_scopes(connection)
+      Result.new(connection:, requested_scopes:, **scope_buckets)
     end
 
     private
 
     attr_reader :source_platform, :target_platform, :requested_scopes
+
+    def classify_scopes(connection)
+      granted = []
+      denied = []
+      unsupported = []
+
+      requested_scopes.each do |scope|
+        rule = SUPPORTED_SCOPE_RULES[scope]
+        if rule.nil?
+          unsupported << scope
+        elsif rule.call(connection)
+          granted << scope
+        else
+          denied << scope
+        end
+      end
+
+      { granted_scopes: granted.uniq, denied_scopes: denied.uniq, unsupported_scopes: unsupported.uniq }
+    end
 
     def authorized_connection
       ::BetterTogether::PlatformConnection.active.find_by(

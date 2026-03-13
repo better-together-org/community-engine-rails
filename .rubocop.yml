@@ -47,6 +47,18 @@ Style/StringLiterals:
   Exclude:
     - 'db/migrate/*'
 
+Style/Documentation:
+  Exclude:
+    - 'db/migrate/*'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'db/migrate/*'
+
 Rails:
   Enabled: false
 Capybara:

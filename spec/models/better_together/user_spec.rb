@@ -2,8 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe User do
+RSpec.describe BetterTogether::User do
     subject(:user) { build(:user) }
     let(:existing_user) { create(:user) }
 
@@ -64,7 +63,7 @@ module BetterTogether
 
             membership = platform.person_platform_memberships.find_by(member: manager.person)
             expect(membership).to be_present
-            expect(%w[platform_steward platform_manager]).to include(membership.role.identifier)
+            expect(membership.role.identifier).to be_in(%w[platform_steward platform_manager])
           end
 
           it 'has manage_platform permission' do
@@ -146,4 +145,3 @@ module BetterTogether
       end
     end
   end
-end

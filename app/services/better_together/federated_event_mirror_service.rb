@@ -49,7 +49,11 @@ module BetterTogether
     end
 
     def assign_attributes(event)
-      event.assign_attributes(
+      event.assign_attributes(attributes_for(event))
+    end
+
+    def attributes_for(event)
+      {
         name: remote_attributes[:name],
         description: remote_attributes[:description],
         identifier: normalized_identifier(event),
@@ -64,7 +68,7 @@ module BetterTogether
         source_id: preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
-      )
+      }
     end
 
     def ensure_source_platform_host(event)

@@ -1437,6 +1437,7 @@ en:
         response_to_your_offer_heading: Response to your Offer
         save_offer: Save Offer
         source_request_heading: Responding to Request
+        target_platform: Target platform
         view_agreement: View Agreement
         view_offer: View Offer
         your_response_heading: Your Response
@@ -1446,11 +1447,13 @@ en:
         edit_request: Edit Request
         empty: No requests found
         index_header: Requests
+        new_connection_request: New Connection Request
         new_request: New Request
         respond_with_offer: Respond with Offer
         response_to_your_request_heading: Response to your Request
         save_request: Save Request
         source_offer_heading: Responding to Offer
+        target_platform: Target platform
         view_agreement: View Agreement
         view_request: View Request
         your_response_heading: Your Response
@@ -2234,6 +2237,33 @@ en:
         privacy_note: We only access the minimum information necessary. You can disconnect
           at any time.
         title: Connected Accounts
+    person_access_grants:
+      index:
+        title: Access Grants
+        description: Manage the private access grants you have shared with others.
+        empty: You have not shared any access grants yet.
+      show:
+        title: Access Grant
+        back: Back to Access Grants
+        revoke: Revoke Access
+    person_linked_seeds:
+      index:
+        title: Linked Seeds
+        description: Private content shared with you through federation access grants.
+        empty: No linked seeds have been shared with you yet.
+      show:
+        title: Linked Seed
+        back: Back to Linked Seeds
+        empty: No content available for this linked seed.
+    person_links:
+      index:
+        title: Person Links
+        description: Manage your cross-platform person links and federation connections.
+        empty: You have no person links yet.
+      show:
+        title: Person Link
+        back: Back to Person Links
+        revoke: Revoke Link
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -3372,6 +3402,7 @@ en:
     region_settlement: Region settlement
     report: Report
     resource_permission: Resource permission
+    agreement: Agreement
     role: Role
     settlement: Settlement
     state: State

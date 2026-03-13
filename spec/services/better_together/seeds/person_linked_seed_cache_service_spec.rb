@@ -10,13 +10,15 @@ RSpec.describe BetterTogether::Seeds::PersonLinkedSeedCacheService do
       person_access_grant: grant,
       recipient_person: grant.grantee_person,
       source_platform: grant.person_link.platform_connection.source_platform,
-      identifier: 'private-seed-1',
-      seed_type: 'post',
-      payload: { 'title' => 'Private Post' },
-      source_record_type: 'BetterTogether::Post',
-      source_record_id: SecureRandom.uuid,
-      version: '1.0.0',
-      metadata: { 'lane' => 'person_linked_private' }
+      seed_attributes: {
+        identifier: 'private-seed-1',
+        seed_type: 'post',
+        payload: { 'title' => 'Private Post' },
+        source_record_type: 'BetterTogether::Post',
+        source_record_id: SecureRandom.uuid,
+        version: '1.0.0',
+        metadata: { 'lane' => 'person_linked_private' }
+      }
     )
 
     expect(result.created).to be(true)
@@ -32,12 +34,14 @@ RSpec.describe BetterTogether::Seeds::PersonLinkedSeedCacheService do
         person_access_grant: grant,
         recipient_person: create(:better_together_person),
         source_platform: grant.person_link.platform_connection.source_platform,
-        identifier: 'private-seed-2',
-        seed_type: 'post',
-        payload: { 'title' => 'Private Post' },
-        source_record_type: 'BetterTogether::Post',
-        source_record_id: SecureRandom.uuid,
-        version: '1.0.0'
+        seed_attributes: {
+          identifier: 'private-seed-2',
+          seed_type: 'post',
+          payload: { 'title' => 'Private Post' },
+          source_record_type: 'BetterTogether::Post',
+          source_record_id: SecureRandom.uuid,
+          version: '1.0.0'
+        }
       )
     end.to raise_error(ArgumentError, 'recipient must match grant grantee')
   end
