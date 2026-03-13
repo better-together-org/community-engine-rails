@@ -17,10 +17,11 @@ module Rack
 
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
+      # Rails 8 / ActiveSupport 8 changed the pool option API.
+      # pool_size/pool_timeout as top-level kwargs were removed; use pool: { size:, timeout: } instead.
       Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
         url: rack_attack_redis,
-        pool_size: 5,
-        pool_timeout: 5
+        pool: { size: 5, timeout: 5 }
       )
     end
 
