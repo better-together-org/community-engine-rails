@@ -57,6 +57,10 @@ RSpec.describe 'BetterTogether::Federation::LinkedSeeds', :no_auth do
     host! source_hostname
   end
 
+  after do
+    source_platform.update_columns(host_url: 'http://www.example.com')
+  end
+
   it 'returns recipient-scoped linked private seeds for an authorized peer' do
     get better_together.federation_linked_seeds_path(locale:),
         params: { recipient_identifier: grant.grantee_person.identifier },

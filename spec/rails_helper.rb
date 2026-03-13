@@ -132,6 +132,7 @@ RSpec.configure do |config|
     # Pre-clear FK-dependent tables to avoid violations when referential integrity cannot be disabled
     begin
       BetterTogether::RoleResourcePermission.delete_all
+      BetterTogether::WizardStepDefinition.delete_all
       BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
       BetterTogether::NavigationItem.where(parent_id: nil).delete_all
     rescue StandardError => e

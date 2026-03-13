@@ -45,6 +45,10 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
     host! source_hostname
   end
 
+  after do
+    source_platform.update_columns(host_url: 'http://www.example.com')
+  end
+
   it 'returns a cursor-paginated content batch for an authorized peer' do
     post = create(:better_together_post, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
 
