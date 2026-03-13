@@ -1,0 +1,23 @@
+<%# locals: (video_block:) -%>
+<%= cache video_block.cache_key_with_version do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: video_block } do %>
+    <% if video_block.video_url.present? %>
+      <figure class="video-block">
+        <div class="ratio ratio-<%= video_block.aspect_ratio.tr('x', 'x') %>">
+          <iframe src="<%= video_block.embed_url %>"
+                  title="<%= video_block.caption.presence || t('better_together.content.blocks.video_block.title', default: 'Video') %>"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+        <% if video_block.caption.present? %>
+          <figcaption class="video-block__caption text-muted small mt-2 text-center">
+            <%= video_block.caption %>
+          </figcaption>
+        <% end %>
+      </figure>
+    <% else %>
+      <p class="text-muted"><%= t('better_together.content.blocks.video_block.missing_url', default: 'No video URL configured.') %></p>
+    <% end %>
+  <% end %>
+<% end %>
