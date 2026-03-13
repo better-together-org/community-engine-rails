@@ -487,12 +487,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # locale is set via before_action *after* route matching. Without this, requests
   # like /fr/à-propos-de-nous slip through and become /en/fr/à-propos-de-nous,
   # causing URI::InvalidURIError when ActionDispatch calls URI.parse on the redirect URL.
-  # The redirect also percent-encodes non-ASCII path characters defensively.
+  # Non-ASCII and URI-invalid ASCII characters (brackets, spaces, backslashes, etc.)
+  # are percent-encoded defensively; malformed paths return 400 rather than 500.
   get '*path',
       to: redirect { |params, _request|
-        path = params[:path].to_s.gsub(/[^\x00-\x7F]/) do |char|
-          char.bytes.map { |byte| format('%%%02X', byte) }.join
-        end
+        path = params[:path].to_s
+                            .gsub(/[^\x00-\x7F]/) { |c| c.bytes.map { |b| format('%%%02X', b) }.join }
+                            .gsub(/[\[\]{}\s\\^`|<>]/) { |c| format('%%%02X', c.ord) }
         "/#{I18n.default_locale}/#{path}"
       },
       constraints: lambda { |req|
