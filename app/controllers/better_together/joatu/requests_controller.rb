@@ -197,18 +197,30 @@ module BetterTogether
 
       def apply_target_prefill(request)
         return unless request.is_a?(::BetterTogether::Joatu::ConnectionRequest)
+        return unless platform_target_params_present?
 
-        target_type = params[:target_type].presence || params.dig(resource_name.to_sym, :target_type).presence
-        target_id = params[:target_id].presence || params.dig(resource_name.to_sym, :target_id).presence
-
-        return unless target_type == 'BetterTogether::Platform' && target_id.present?
-
-        @target = ::BetterTogether::Platform.find_by(id: target_id)
+        @target = ::BetterTogether::Platform.find_by(id: prefill_target_id)
         return unless @target
 
-        request.target ||= @target
-        request.target_type ||= @target.class.to_s
-        request.target_id ||= @target.id
+        assign_target_to_request(request, @target)
+      end
+
+      def platform_target_params_present?
+        prefill_target_type == 'BetterTogether::Platform' && prefill_target_id.present?
+      end
+
+      def prefill_target_type
+        params[:target_type].presence || params.dig(resource_name.to_sym, :target_type).presence
+      end
+
+      def prefill_target_id
+        params[:target_id].presence || params.dig(resource_name.to_sym, :target_id).presence
+      end
+
+      def assign_target_to_request(request, target)
+        request.target ||= target
+        request.target_type ||= target.class.to_s
+        request.target_id ||= target.id
       end
     end
   end

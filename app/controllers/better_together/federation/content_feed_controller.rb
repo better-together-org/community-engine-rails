@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Federation
+    # Serves the federated content feed for authenticated platform connections.
     class ContentFeedController < ::BetterTogether::ApplicationController
       skip_before_action :store_user_location!
       skip_before_action :set_platform_invitation
@@ -10,29 +11,36 @@ module BetterTogether
 
       def show
         return head :unauthorized unless connection
-        return head :forbidden if access_token_record.present? && !access_token_record.includes_scope?('content.feed.read')
+
+        auth_check = authorize_feed_access
+        return auth_check if auth_check
+
+        export = fetch_content_export
+        render json: { seeds: export.seeds, next_cursor: export.next_cursor }
+      end
+
+      private
+
+      def authorize_feed_access
+        if access_token_record.present? && !access_token_record.includes_scope?('content.feed.read')
+          return head :forbidden
+        end
 
         auth_result = ::BetterTogether::FederationScopeAuthorizer.call(
           source_platform: connection.source_platform,
           target_platform: connection.target_platform,
           requested_scopes: ['content.feed.read']
         )
+        head :forbidden unless auth_result.allowed?
+      end
 
-        return head :forbidden unless auth_result.allowed?
-
-        export = ::BetterTogether::Content::FederatedContentExportService.call(
+      def fetch_content_export
+        ::BetterTogether::Content::FederatedContentExportService.call(
           connection:,
           cursor: params[:cursor],
           limit: params[:limit]
         )
-
-        render json: {
-          seeds: export.seeds,
-          next_cursor: export.next_cursor
-        }
       end
-
-      private
 
       def connection
         @connection ||= access_token_record&.platform_connection

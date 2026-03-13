@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Helpers for stubbing OAuth providers and callbacks in specs.
 module OAuthTestHelpers # rubocop:todo Metrics/ModuleLength
   # Generate a mock OAuth auth hash for testing
   # rubocop:todo Metrics/PerceivedComplexity

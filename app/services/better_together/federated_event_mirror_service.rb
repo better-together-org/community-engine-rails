@@ -53,16 +53,21 @@ module BetterTogether
     end
 
     def attributes_for(event)
-      {
-        name: remote_attributes[:name],
-        description: remote_attributes[:description],
-        identifier: normalized_identifier(event),
-        privacy: remote_attributes[:privacy].presence || 'public',
+      common_event_mirror_attributes(event).merge(
         starts_at: remote_attributes[:starts_at],
         ends_at: remote_attributes[:ends_at],
         duration_minutes: remote_attributes[:duration_minutes],
         registration_url: remote_attributes[:registration_url],
-        timezone: normalized_timezone,
+        timezone: normalized_timezone
+      )
+    end
+
+    def common_event_mirror_attributes(record)
+      {
+        name: remote_attributes[:name],
+        description: remote_attributes[:description],
+        identifier: normalized_identifier(record),
+        privacy: remote_attributes[:privacy].presence || 'public',
         creator_id: remote_attributes[:creator_id],
         platform: connection.source_platform,
         source_id: preserve_remote_uuid? ? nil : remote_id,

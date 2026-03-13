@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Ensures essential seed data is loaded before specs that require it.
 module SeedHelper
   # Ensures essential seed data is available for tests
   def self.ensure_seeded!

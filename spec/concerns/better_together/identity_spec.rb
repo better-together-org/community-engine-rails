@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# Spec helpers for BetterTogether.
 module BetterTogether
   describe Identity, type: :model do
     # rubocop:todo RSpec/LeakyConstantDeclaration

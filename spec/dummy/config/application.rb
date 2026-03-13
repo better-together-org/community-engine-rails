@@ -14,7 +14,9 @@ Bundler.require(*Rails.groups)
 require 'turbo-rails'
 require 'better_together'
 
+# Spec helpers for Dummy.
 module Dummy
+  # Dummy Rails application for specs.
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

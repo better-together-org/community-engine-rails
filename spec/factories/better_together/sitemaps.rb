@@ -48,6 +48,7 @@ end
 
 # Helper module for generating test sitemap content
 module BetterTogether
+  # Factory helpers for BetterTogether::Sitemap records.
   module SitemapFactory
     module_function
 

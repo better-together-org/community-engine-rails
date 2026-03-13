@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# FactoryBot factories for BetterTogether models.
 module BetterTogether
   FactoryBot.define do
     sequence(:post_title) { |n| "Sample Post #{n}" }

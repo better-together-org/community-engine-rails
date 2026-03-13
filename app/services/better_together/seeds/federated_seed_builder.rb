@@ -87,51 +87,10 @@ module BetterTogether
 
       def serialized_attributes
         case record
-        when ::BetterTogether::Post then post_attributes
-        when ::BetterTogether::Page then page_attributes
-        when ::BetterTogether::Event then event_attributes
+        when ::BetterTogether::Post then FederatedSeedAttributes.post_attributes(record)
+        when ::BetterTogether::Page then FederatedSeedAttributes.page_attributes(record)
+        when ::BetterTogether::Event then FederatedSeedAttributes.event_attributes(record)
         end
-      end
-
-      def post_attributes
-        {
-          title: record.title,
-          content: record.content&.body&.to_plain_text.to_s,
-          identifier: record.identifier,
-          privacy: record.privacy,
-          published_at: record.published_at,
-          updated_at: record.updated_at
-        }
-      end
-
-      def page_attributes
-        {
-          title: record.title,
-          content: record.content&.body&.to_plain_text.to_s,
-          identifier: record.identifier,
-          privacy: record.privacy,
-          published_at: record.published_at,
-          layout: record.layout,
-          template: record.template,
-          meta_description: record.meta_description,
-          keywords: record.keywords,
-          updated_at: record.updated_at
-        }
-      end
-
-      def event_attributes
-        {
-          name: record.name,
-          description: record.description&.body&.to_plain_text.to_s,
-          identifier: record.identifier,
-          privacy: record.privacy,
-          starts_at: record.starts_at,
-          ends_at: record.ends_at,
-          duration_minutes: record.duration_minutes,
-          registration_url: record.registration_url,
-          timezone: record.timezone,
-          updated_at: record.updated_at
-        }
       end
     end
   end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Access control for person-to-person platform links.
   class PersonLinkPolicy < ApplicationPolicy
     def index?
       user.present? && agent.present?
@@ -14,14 +15,12 @@ module BetterTogether
       user.present? && source_participant?
     end
 
+    # Pundit scope for PersonLink visibility.
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless agent
 
-        scope.where(
-          scope.arel_table[:source_person_id].eq(agent.id)
-          .or(scope.arel_table[:target_person_id].eq(agent.id))
-        )
+        scope.where(source_person_id: agent.id).or(scope.where(target_person_id: agent.id))
       end
     end
 

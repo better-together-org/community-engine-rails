@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# :nodoc:
 module BetterTogether
   RSpec.describe EventAttendancePolicy, 'draft event restrictions' do
     let(:event_creator) { create(:better_together_person) }

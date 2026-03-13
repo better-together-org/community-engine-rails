@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Background job that scans for pending federated sync tasks and dispatches ingest jobs.
   class FederatedSyncScanJob < ApplicationJob
     queue_as :platform_sync
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Manages linked seed records synchronized to the current person.
   class PersonLinkedSeedsController < ApplicationController
     before_action :set_person_linked_seed, only: :show
 

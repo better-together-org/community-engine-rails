@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
+# Test helpers for platform and community invitation specs.
 module InvitationTestHelpers
   # Create a community invitation with the correct STI type
   # Use this instead of create(:better_together_invitation, invitable: community)

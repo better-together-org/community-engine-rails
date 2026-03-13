@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Manages personal access grant records for the current person.
   class PersonAccessGrantsController < ApplicationController
     before_action :set_person_access_grant, only: %i[show update revoke]
 

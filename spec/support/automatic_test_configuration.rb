@@ -17,6 +17,7 @@
 #   - "platform manager", "admin", "manager"
 #   - "authenticated", "logged in", "signed in"
 
+# Automatically applies shared contexts and configuration for spec types.
 module AutomaticTestConfiguration
   extend ActiveSupport::Concern
   include FactoryBot::Syntax::Methods
@@ -44,6 +45,7 @@ module AutomaticTestConfiguration
     'aggregated matches'
   ].freeze
 
+  # Class methods mixed in by AutomaticTestConfiguration.
   module ClassMethods
     # Configure automatic authentication based on describe/context text
     def auto_authenticate_from_description(description)

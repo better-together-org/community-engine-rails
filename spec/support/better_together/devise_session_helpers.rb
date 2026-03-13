@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+# Test helper modules for BetterTogether Devise/Capybara session specs.
 module BetterTogether
+  # Devise session helpers for BetterTogether feature specs.
   module CapybaraFeatureHelpers # rubocop:todo Metrics/ModuleLength
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers

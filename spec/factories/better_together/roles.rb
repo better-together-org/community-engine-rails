@@ -2,6 +2,7 @@
 
 require 'faker'
 
+# FactoryBot factories for BetterTogether models.
 module BetterTogether
   FactoryBot.define do
     factory(

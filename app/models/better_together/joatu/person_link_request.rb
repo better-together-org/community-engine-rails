@@ -11,25 +11,35 @@ module BetterTogether
         source_person = offer.target if offer.target.is_a?(::BetterTogether::Person)
         target_person = target
         connection = resolve_platform_connection_for(source_person, target_person)
+        validate_link_prerequisites!(source_person, target_person, connection)
+        create_person_link!(connection, source_person, target_person)
+      end
 
-        unless source_person && target_person && connection
-          errors.add(:base, 'person link agreements require a source person, target person, and active platform connection')
-          raise ActiveRecord::RecordInvalid, self
-        end
+      private
 
+      def validate_link_prerequisites!(source_person, target_person, connection)
+        return if source_person && target_person && connection
+
+        errors.add(:base, 'person link agreements require a source person, target person, and active platform connection')
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      def create_person_link!(connection, source_person, target_person)
         person_link = ::BetterTogether::PersonLink.find_or_initialize_by(
           platform_connection: connection,
           source_person:,
           target_person:
         )
+        apply_person_link_defaults!(person_link, target_person)
+        person_link.save!
+      end
+
+      def apply_person_link_defaults!(person_link, target_person)
         person_link.status = :active
         person_link.remote_target_identifier ||= target_person.identifier
         person_link.remote_target_name ||= target_person.name
         person_link.verified_at ||= Time.current
-        person_link.save!
       end
-
-      private
 
       def target_person_must_exist
         return if target.is_a?(::BetterTogether::Person)

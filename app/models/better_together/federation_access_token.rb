@@ -2,7 +2,9 @@
 
 require 'digest'
 
+# Manages BetterTogether operations.
 module BetterTogether
+  # Represents a scoped access token for federated platform connections.
   class FederationAccessToken < ApplicationRecord
     belongs_to :platform_connection, class_name: '::BetterTogether::PlatformConnection'
     attr_accessor :token

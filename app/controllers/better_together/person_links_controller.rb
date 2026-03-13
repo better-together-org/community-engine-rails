@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Manages person-to-person platform link records for the current person.
   class PersonLinksController < ApplicationController
     before_action :set_person_link, only: %i[show revoke]
 

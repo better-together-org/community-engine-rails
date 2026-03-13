@@ -2,8 +2,10 @@
 
 require 'rails_helper'
 
+# Test helper classes for BetterTogether::WebhookPublishable concern specs.
 # Define a test class at load time so it is available in all parallel workers
 module BetterTogether
+  # Stub model used to test WebhookPublishable concern.
   class TestPublishableModel < ApplicationRecord # rubocop:disable Lint/ConstantDefinitionInBlock
     self.table_name = 'better_together_communities'
     self.inheritance_column = :_type_disabled # Avoid STI conflicts with Community

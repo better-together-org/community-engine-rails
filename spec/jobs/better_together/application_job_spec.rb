@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# Test job class for ApplicationJob specs.
 class MyJob < BetterTogether::ApplicationJob
   queue_as :urgent
 
@@ -14,6 +15,7 @@ class MyJob < BetterTogether::ApplicationJob
   end
 end
 
+# Stub service used in ApplicationJob spec.
 class MyService
   def self.call(*args); end
 end

@@ -9,13 +9,13 @@ RSpec.describe BetterTogether::Joatu::Agreement do
   let(:request)   { create(:better_together_joatu_request, creator: creator_b) }
 
   describe 'status transitions' do
-    it 'starts pending' do # rubocop:todo RSpec/MultipleExpectations
+    it 'starts pending' do
       agreement = described_class.new(offer:, request:)
       expect(agreement).to be_valid
       expect(agreement.status).to eq('pending')
     end
 
-    it 'prevents changing from accepted to pending' do # rubocop:todo RSpec/MultipleExpectations
+    it 'prevents changing from accepted to pending' do
       agreement = create(:better_together_joatu_agreement, offer:, request:)
       agreement.update!(status: 'accepted')
       agreement.status = 'pending'
@@ -35,9 +35,7 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect { agreement.reject! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    # rubocop:todo RSpec/MultipleExpectations
-    it 'prevents rejecting after accepted or already rejected' do # rubocop:todo RSpec/MultipleExpectations
-      # rubocop:enable RSpec/MultipleExpectations
+    it 'prevents rejecting after accepted or already rejected' do
       agreement = create(:better_together_joatu_agreement, offer:, request:)
       agreement.accept!
       expect { agreement.reject! }.to raise_error(ActiveRecord::RecordInvalid)
@@ -48,15 +46,17 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect { agreement2.reject! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    # rubocop:todo RSpec/MultipleExpectations
-    it 'enforces only one accepted agreement per offer and per request' do # rubocop:todo RSpec/MultipleExpectations
-      # rubocop:enable RSpec/MultipleExpectations
-      offer2   = create(:better_together_joatu_offer, creator: creator_a)
-      request2 = create(:better_together_joatu_request, creator: creator_b)
+    it 'enforces only one accepted agreement per offer and per request' do
+      offer2 = create(:better_together_joatu_offer,
+                      creator: creator_a)
+      request2 = create(:better_together_joatu_request,
+                        creator: creator_b)
 
       ag1 = create(:better_together_joatu_agreement, offer:, request:)
-      ag2 = create(:better_together_joatu_agreement, offer:, request: request2)
-      ag3 = create(:better_together_joatu_agreement, offer: offer2, request:)
+      ag2 = create(:better_together_joatu_agreement, offer:,
+                                                     request: request2)
+      ag3 = create(:better_together_joatu_agreement, offer: offer2,
+                                                     request:)
 
       ag1.accept!
 

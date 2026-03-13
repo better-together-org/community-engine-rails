@@ -167,6 +167,7 @@ module BetterTogether
       permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
     end
 
+    # Pundit scope for event record visibility.
     class Scope < ApplicationPolicy::Scope
       private
 

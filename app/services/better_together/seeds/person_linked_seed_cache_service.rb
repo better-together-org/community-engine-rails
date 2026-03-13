@@ -58,14 +58,28 @@ module BetterTogether
       end
 
       def linked_seed_attributes
+        seed_identity_attributes.merge(seed_content_attributes).merge(seed_sync_attributes)
+      end
+
+      def seed_identity_attributes
         {
           recipient_person:,
           source_platform:,
-          seed_type: seed_attributes.seed_type,
+          seed_type: seed_attributes.seed_type
+        }
+      end
+
+      def seed_content_attributes
+        {
           payload: normalize_payload(seed_attributes.payload),
           source_record_type: seed_attributes.source_record_type,
           source_record_id: seed_attributes.source_record_id.to_s,
-          version: seed_attributes.version,
+          version: seed_attributes.version
+        }
+      end
+
+      def seed_sync_attributes
+        {
           source_updated_at: seed_attributes.source_updated_at,
           last_synced_at: Time.current,
           metadata: seed_attributes.metadata || {}

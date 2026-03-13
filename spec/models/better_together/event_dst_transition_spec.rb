@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# :nodoc:
 module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe 'DST Transition Handling' do
     include ActiveSupport::Testing::TimeHelpers

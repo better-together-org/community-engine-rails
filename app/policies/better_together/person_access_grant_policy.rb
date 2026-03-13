@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Access control for person-to-person access grants.
   class PersonAccessGrantPolicy < ApplicationPolicy
     def index?
       user.present? && agent.present?
@@ -18,14 +19,12 @@ module BetterTogether
       update?
     end
 
+    # Pundit scope for PersonAccessGrant visibility.
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless agent
 
-        scope.where(
-          scope.arel_table[:grantor_person_id].eq(agent.id)
-          .or(scope.arel_table[:grantee_person_id].eq(agent.id))
-        )
+        scope.where(grantor_person_id: agent.id).or(scope.where(grantee_person_id: agent.id))
       end
     end
 

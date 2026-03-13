@@ -46,21 +46,32 @@ module BetterTogether
 
         normalized_type = normalize_content_type(content_or_type)
         return result(false, 'unsupported content type', normalized_type:) unless normalized_type
-
         return result(false, 'connection is not active', normalized_type:) unless connection.active?
 
-        if action == 'mirror'
-          allowed = connection.mirrored_content_enabled? && connection.allows_content_type?(normalized_type)
-          return result(allowed, allowed ? 'allowed' : 'content mirroring not enabled for type', normalized_type:)
-        end
-
-        allowed = connection.publish_back_enabled? && connection.allows_content_type?(normalized_type)
-        result(allowed, allowed ? 'allowed' : 'publish back not enabled for type', normalized_type:)
+        authorize_action(normalized_type)
       end
 
       private
 
       attr_reader :connection, :content_or_type, :action
+
+      def authorize_action(normalized_type)
+        if action == 'mirror'
+          authorize_mirror(normalized_type)
+        else
+          authorize_publish_back(normalized_type)
+        end
+      end
+
+      def authorize_mirror(normalized_type)
+        allowed = connection.mirrored_content_enabled? && connection.allows_content_type?(normalized_type)
+        result(allowed, allowed ? 'allowed' : 'content mirroring not enabled for type', normalized_type:)
+      end
+
+      def authorize_publish_back(normalized_type)
+        allowed = connection.publish_back_enabled? && connection.allows_content_type?(normalized_type)
+        result(allowed, allowed ? 'allowed' : 'publish back not enabled for type', normalized_type:)
+      end
 
       def normalize_content_type(content_or_type)
         key =

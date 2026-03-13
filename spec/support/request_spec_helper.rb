@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Common route helpers included in request specs.
 module RequestSpecHelper
   include Rails.application.routes.url_helpers
   include BetterTogether::Engine.routes.url_helpers

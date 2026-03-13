@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
+# Capybara feature test helpers.
 module BetterTogether
+  # Capybara helpers for BetterTogether feature specs.
   module CapybaraFeatureHelpers
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers

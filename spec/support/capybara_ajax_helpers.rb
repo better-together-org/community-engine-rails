@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Capybara helpers for waiting on AJAX requests in feature specs.
 module CapybaraAjaxHelpers
   # Wait for all pending AJAX requests to complete
   # Note: This assumes Fetch API or other async operations

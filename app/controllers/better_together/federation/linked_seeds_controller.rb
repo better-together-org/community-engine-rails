@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Federation
+    # Serves linked seed payloads for federated platform synchronization.
     class LinkedSeedsController < ::BetterTogether::ApplicationController
       skip_before_action :store_user_location!
       skip_before_action :set_platform_invitation

@@ -20,6 +20,11 @@ plugins:
 # Disable all RSpec cops that affect test quality but not production code
 RSpec/ExampleLength:
   Enabled: false
+RSpec/NestedGroups:
+  # Spec files historically used `module BetterTogether` wrappers that masked effective
+  # nesting depth. After removing those wrappers, the pre-existing nesting is now visible.
+  # Max of 5 reflects the actual project standard without requiring a wholesale spec restructure.
+  Max: 5
 RSpec/MultipleExpectations:
   Enabled: false
 RSpec/MultipleMemoizedHelpers:

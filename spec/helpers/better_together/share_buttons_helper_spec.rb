@@ -3,11 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::ShareButtonsHelper do
-  ShareableDouble = Struct.new(:id, :title, :name, keyword_init: true)
-
-  let(:shareable_page) { ShareableDouble.new(id: 'page-id', title: 'Test Page', name: nil) }
-  let(:shareable_post) { ShareableDouble.new(id: 'post-id', title: 'Test Post', name: nil) }
-  let(:shareable_without_title) { ShareableDouble.new(id: 'test-id', title: nil, name: nil) }
+  let(:shareable_page) { Struct.new(:id, :title, :name, keyword_init: true).new(id: 'page-id', title: 'Test Page', name: nil) }
+  let(:shareable_post) { Struct.new(:id, :title, :name, keyword_init: true).new(id: 'post-id', title: 'Test Post', name: nil) }
+  let(:shareable_without_title) { Struct.new(:id, :title, :name, keyword_init: true).new(id: 'test-id', title: nil, name: nil) }
 
   before do
     allow(helper).to receive_messages(request: double(original_url: 'https://example.com/test'),

@@ -6,6 +6,9 @@ module BetterTogether
     require 'storext'
 
     include ::Storext.model
+    include PlatformConnectionSyncTracking
+    include PlatformConnectionFederationPolicy
+    include PlatformConnectionOauthCredentials
 
     STATUS_VALUES = {
       pending: 'pending',
@@ -96,132 +99,6 @@ module BetterTogether
       nil
     end
 
-    def shared_content_types
-      [].tap do |types|
-        types << 'posts' if share_posts?
-        types << 'pages' if share_pages?
-        types << 'events' if share_events?
-      end
-    end
-
-    def federation_scope_types
-      [].tap do |types|
-        types << 'identity' if allow_identity_scope?
-        types << 'profile_read' if allow_profile_read_scope?
-        types << 'content_read' if allow_content_read_scope?
-        types << 'linked_content_read' if allow_linked_content_read_scope?
-        types << 'content_write' if allow_content_write_scope?
-      end
-    end
-
-    def allows_content_type?(content_type)
-      shared_content_types.include?(normalize_policy_key(content_type))
-    end
-
-    def allows_federation_scope?(scope_type)
-      federation_scope_types.include?(normalize_policy_key(scope_type))
-    end
-
-    def mirrored_content_enabled?
-      content_sharing_policy.in?(%w[mirror_network_feed mirrored_publish_back])
-    end
-
-    def publish_back_enabled?
-      content_sharing_policy == 'mirrored_publish_back' && allows_federation_scope?('content_write')
-    end
-
-    def login_enabled?
-      federation_auth_policy.in?(%w[login_only api_read api_write]) && allows_federation_scope?('identity')
-    end
-
-    def api_read_enabled?
-      federation_auth_policy.in?(%w[api_read api_write]) && allows_federation_scope?('content_read')
-    end
-
-    def linked_content_read_enabled?
-      federation_auth_policy.in?(%w[api_read api_write]) &&
-        allows_federation_scope?('content_read') &&
-        allows_federation_scope?('linked_content_read')
-    end
-
-    def api_write_enabled?
-      federation_auth_policy == 'api_write' && allows_federation_scope?('content_write')
-    end
-
-    def sync_idle?
-      last_sync_status == 'idle'
-    end
-
-    def sync_running?
-      last_sync_status == 'running'
-    end
-
-    def sync_succeeded?
-      last_sync_status == 'succeeded'
-    end
-
-    def sync_failed?
-      last_sync_status == 'failed'
-    end
-
-    def sync_healthy?
-      !sync_failed?
-    end
-
-    def last_sync_started_at_time
-      parse_time_value(last_sync_started_at)
-    end
-
-    def last_synced_at_time
-      parse_time_value(last_synced_at)
-    end
-
-    def last_sync_error_at_time
-      parse_time_value(last_sync_error_at)
-    end
-
-    def mark_sync_started!(cursor: nil, started_at: Time.current)
-      update!(
-        sync_cursor: normalized_cursor(cursor),
-        last_sync_status: 'running',
-        last_sync_started_at: started_at.iso8601,
-        last_sync_error_at: '',
-        last_sync_error_message: ''
-      )
-    end
-
-    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current)
-      update!(
-        sync_cursor: normalized_cursor(cursor),
-        last_sync_status: 'succeeded',
-        last_synced_at: synced_at.iso8601,
-        last_sync_error_at: '',
-        last_sync_error_message: '',
-        last_sync_item_count: item_count.to_i
-      )
-    end
-
-    def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current)
-      update!(
-        sync_cursor: normalized_cursor(cursor),
-        last_sync_status: 'failed',
-        last_sync_error_at: failed_at.iso8601,
-        last_sync_error_message: message.to_s.truncate(500)
-      )
-    end
-
-    def rotate_oauth_client_secret!
-      update!(oauth_client_secret: generate_oauth_client_secret)
-    end
-
-    def oauth_client_secret
-      self[:oauth_client_secret_ciphertext].to_s
-    end
-
-    def oauth_client_secret=(value)
-      self[:oauth_client_secret_ciphertext] = value.to_s
-    end
-
     private
 
     def source_and_target_must_differ
@@ -237,57 +114,6 @@ module BetterTogether
 
       normalize_content_policy_settings!
       normalize_federation_policy_settings!
-    end
-
-    def normalize_content_policy_settings!
-      if content_sharing_policy == 'none'
-        self.share_posts = false
-        self.share_pages = false
-        self.share_events = false
-      end
-
-      self.content_sharing_enabled = content_sharing_policy != 'none'
-    end
-
-    def normalize_federation_policy_settings!
-      if federation_auth_policy == 'none'
-        self.allow_identity_scope = false
-        self.allow_profile_read_scope = false
-        self.allow_content_read_scope = false
-        self.allow_linked_content_read_scope = false
-        self.allow_content_write_scope = false
-      end
-
-      self.federation_auth_enabled = federation_auth_policy != 'none'
-    end
-
-    def normalize_policy_key(value)
-      value.to_s.strip.downcase
-    end
-
-    def ensure_oauth_client_credentials
-      self.oauth_client_id = generate_oauth_client_id if oauth_client_id.blank?
-      self.oauth_client_secret = generate_oauth_client_secret if oauth_client_secret.blank?
-    end
-
-    def generate_oauth_client_id
-      "ce-#{SecureRandom.hex(12)}"
-    end
-
-    def generate_oauth_client_secret
-      SecureRandom.hex(32)
-    end
-
-    def normalized_cursor(value)
-      value.to_s
-    end
-
-    def parse_time_value(value)
-      return if value.blank?
-
-      Time.zone.parse(value)
-    rescue ArgumentError
-      nil
     end
   end
 end

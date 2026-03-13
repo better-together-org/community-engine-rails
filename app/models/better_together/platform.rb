@@ -6,6 +6,10 @@ module BetterTogether
   # Represents the host application and it's peers
   class Platform < ApplicationRecord
     include PlatformHost
+    include PlatformRegistryDefaults
+    include PlatformFederationStatus
+    include PlatformCssBlockManagement
+    include PlatformMembershipDisplay
     include Creatable
     include Identifier
     include Joinable
@@ -116,39 +120,6 @@ module BetterTogether
       primary_platform_domain&.url || host_url
     end
 
-    def local_hosted?
-      !external?
-    end
-
-    def external_peer?
-      external?
-    end
-
-    def community_engine?
-      local_hosted? || software_variant == 'community_engine'
-    end
-
-    def federated?
-      federation_protocol.present?
-    end
-
-    def effective_oauth_issuer_url
-      oauth_issuer_url.presence || (community_engine? ? resolved_host_url : nil)
-    end
-
-    def pending_host_connection_bootstrap?
-      local_hosted? && connection_bootstrap_state == 'pending_host_request'
-    end
-
-    def platform_connections
-      BetterTogether::PlatformConnection.for_platform(self)
-    end
-
-    def connected_platforms
-      outgoing_platform_connections.active.includes(:target_platform).map(&:target_platform) +
-        incoming_platform_connections.active.includes(:source_platform).map(&:source_platform)
-    end
-
     # Return the routing URL for this platform (used by metrics tracking)
     # Returns nil for new records that haven't been persisted yet
     def url
@@ -157,94 +128,12 @@ module BetterTogether
       BetterTogether::Engine.routes.url_helpers.platform_url(self, locale: I18n.locale)
     end
 
-    # rubocop:todo Layout/LineLength
-    # TODO: Updating the css_block contents does not update the platform cache key. Needs platform attribute update before changes take effect.
-    # rubocop:enable Layout/LineLength
-    def css_block
-      @css_block ||= blocks.find_by(type: 'BetterTogether::Content::Css')
-    end
-
-    def css_block?
-      css_block.present?
-    end
-
-    def css_block_attributes=(attrs = {})
-      # Clear memoized css_block to ensure we get the latest state
-      @css_block = nil
-
-      new_attrs = attrs.except(:type).merge(protected: true, privacy: 'public')
-
-      block = blocks.find_by(type: 'BetterTogether::Content::Css')
-      if block
-        # Update the existing block directly and save it
-        block.update!(new_attrs)
-        @css_block = block
-      else
-        # Platform CSS blocks should be protected from deletion
-        new_block = BetterTogether::Content::Css.new(new_attrs)
-        platform_blocks.build(block: new_block)
-        @css_block = new_block
-      end
-    end
-
     def primary_community_extra_attrs
       { host:, protected: }
     end
 
-    # Efficiently load platform memberships with all necessary associations
-    # to prevent N+1 queries in views
-    def memberships_with_associations # rubocop:todo Metrics/MethodLength
-      person_platform_memberships.includes(
-        {
-          member: [
-            :string_translations,
-            :text_translations,
-            { profile_image_attachment: { blob: { variant_records: [], preview_image_attachment: { blob: [] } } } }
-          ]
-        },
-        {
-          role: %i[
-            string_translations
-            text_translations
-          ]
-        }
-      )
-    end
-
     def to_s
       name
-    end
-
-    private
-
-    def apply_platform_registry_defaults
-      self.network_visibility = 'private' if network_visibility.blank?
-      self.connection_bootstrap_state ||= local_hosted? ? 'pending_host_request' : 'pending_review'
-      self.software_variant ||= 'community_engine' if local_hosted?
-      self.federation_protocol ||= 'ce_oauth' if community_engine?
-      self.oauth_issuer_url ||= resolved_host_url if community_engine?
-    end
-
-    def sync_primary_platform_domain!
-      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
-      return if external?
-
-      hostname = platform_hostname_from_host_url
-      return if hostname.blank?
-
-      primary_domain = platform_domains.primary.first_or_initialize
-      primary_domain.hostname = hostname
-      primary_domain.active = true
-      primary_domain.primary = true
-      primary_domain.save! if primary_domain.new_record? || primary_domain.changed?
-    end
-
-    def platform_hostname_from_host_url
-      return if host_url.blank?
-
-      BetterTogether::PlatformDomain.normalize_hostname(URI.parse(host_url).host)
-    rescue URI::InvalidURIError
-      nil
     end
   end
 end

@@ -2,521 +2,519 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
-  RSpec.describe Event do
-    subject(:event) { build(:event) }
+RSpec.describe BetterTogether::Event do
+  subject(:event) { build(:event) }
 
-    describe 'associations' do
-      it { is_expected.to have_one(:location).class_name('Geography::LocatableLocation') }
-      it { is_expected.to accept_nested_attributes_for(:location) }
-      it { is_expected.to have_many(:event_attendances).dependent(:destroy) }
-      it { is_expected.to have_many(:attendees).through(:event_attendances).source(:person) }
-      it { is_expected.to belong_to(:platform).optional }
+  describe 'associations' do
+    it { is_expected.to have_one(:location).class_name('Geography::LocatableLocation') }
+    it { is_expected.to accept_nested_attributes_for(:location) }
+    it { is_expected.to have_many(:event_attendances).dependent(:destroy) }
+    it { is_expected.to have_many(:attendees).through(:event_attendances).source(:person) }
+    it { is_expected.to belong_to(:platform).optional }
+  end
+
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:name) }
+
+    describe 'registration_url validation' do
+      it 'allows blank URLs' do
+        event.registration_url = ''
+        expect(event).to be_valid
+      end
+
+      it 'allows valid http/https URLs' do
+        event.registration_url = 'https://example.org/register'
+        expect(event).to be_valid
+      end
+
+      it 'rejects invalid URLs' do
+        event.registration_url = 'not-a-url'
+        expect(event).not_to be_valid
+      end
     end
 
-    describe 'validations' do
-      it { is_expected.to validate_presence_of(:name) }
+    context 'when ends_at is present' do
+      it 'is valid when ends_at is after starts_at' do
+        event.starts_at = 1.hour.from_now
+        event.ends_at = 2.hours.from_now
+        expect(event).to be_valid
+      end
 
-      describe 'registration_url validation' do
-        it 'allows blank URLs' do
-          event.registration_url = ''
-          expect(event).to be_valid
+      it 'requires ends_at to be after starts_at' do
+        event.starts_at = 2.hours.from_now
+        event.ends_at = 1.hour.from_now
+        expect(event).not_to be_valid
+      end
+    end
+
+    it { is_expected.to validate_uniqueness_of(:source_id).scoped_to(:platform_id).allow_blank }
+  end
+
+  describe 'scopes' do
+    describe '.past' do
+      it 'returns events that have ended' do
+        past_event = create(:event, starts_at: 2.days.ago, ends_at: 1.day.ago)
+        _upcoming_event = create(:event, starts_at: 1.day.from_now)
+        expect(described_class.past).to include(past_event)
+      end
+    end
+
+    describe '.draft' do
+      it 'returns events without starts_at' do
+        draft_event = create(:event, :draft)
+        _scheduled_event = create(:event, :upcoming)
+        expect(described_class.draft).to include(draft_event)
+      end
+    end
+
+    describe '.scheduled' do
+      it 'returns events with starts_at' do
+        scheduled_event = create(:event, :upcoming)
+        _draft_event = create(:event, :draft)
+        expect(described_class.scheduled).to include(scheduled_event)
+      end
+    end
+
+    describe '.upcoming' do
+      it 'returns events starting in the future' do
+        upcoming_event = create(:event, :upcoming)
+        _past_event = create(:event, :past)
+        expect(described_class.upcoming).to include(upcoming_event)
+      end
+    end
+  end
+
+  describe 'callbacks' do
+    let(:draft_event) { build(:event, :draft) }
+
+    describe '#sync_time_duration_relationship' do
+      context 'when starts_at changes' do
+        it 'updates ends_at to maintain duration when duration exists' do
+          event = create(:event, starts_at: 2.hours.from_now, duration_minutes: 120)
+          original_ends_at = event.ends_at
+
+          event.update!(starts_at: 3.hours.from_now)
+
+          expect(event.ends_at).not_to eq(original_ends_at)
+          expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
+          expect(event.duration_minutes).to eq(120)
         end
 
-        it 'allows valid http/https URLs' do
-          event.registration_url = 'https://example.org/register'
-          expect(event).to be_valid
+        it 'calculates and maintains duration when ends_at exists but no duration' do
+          start_time = 2.hours.from_now
+          end_time = start_time + 90.minutes
+          event = create(:event, starts_at: start_time, ends_at: end_time)
+
+          # Event factory sets default duration to 30, then sync recalculates from ends_at
+          # The created event should have duration calculated from the ends_at
+          event.reload
+          expect(event.duration_minutes).to eq(90)
+
+          # Now change starts_at
+          new_start = 4.hours.from_now
+          event.update!(starts_at: new_start)
+
+          # ends_at should maintain the 90-minute duration
+          expect(event.ends_at).to be_within(1.second).of(new_start + 90.minutes)
+          expect(event.duration_minutes).to eq(90)
+        end
+      end
+
+      context 'when ends_at changes' do
+        it 'recalculates duration_minutes' do
+          event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
+          original_duration = event.duration_minutes
+
+          event.update!(ends_at: event.starts_at + 3.hours)
+
+          expect(event.duration_minutes).not_to eq(original_duration)
+          expect(event.duration_minutes).to eq(180)
         end
 
-        it 'rejects invalid URLs' do
-          event.registration_url = 'not-a-url'
+        it 'validates ends_at is after starts_at' do
+          event = build(:event, starts_at: 2.hours.from_now, ends_at: 1.hour.from_now)
+
           expect(event).not_to be_valid
+          expect(event.errors[:ends_at]).to include('must be after the start time')
         end
       end
 
-      context 'when ends_at is present' do
-        it 'is valid when ends_at is after starts_at' do
-          event.starts_at = 1.hour.from_now
-          event.ends_at = 2.hours.from_now
-          expect(event).to be_valid
-        end
+      context 'when duration_minutes changes' do
+        it 'updates ends_at' do
+          event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
+          original_ends_at = event.ends_at
 
-        it 'requires ends_at to be after starts_at' do
-          event.starts_at = 2.hours.from_now
-          event.ends_at = 1.hour.from_now
-          expect(event).not_to be_valid
-        end
-      end
-
-      it { is_expected.to validate_uniqueness_of(:source_id).scoped_to(:platform_id).allow_blank }
-    end
-
-    describe 'scopes' do
-      describe '.past' do
-        it 'returns events that have ended' do
-          past_event = create(:event, starts_at: 2.days.ago, ends_at: 1.day.ago)
-          _upcoming_event = create(:event, starts_at: 1.day.from_now)
-          expect(described_class.past).to include(past_event)
-        end
-      end
-
-      describe '.draft' do
-        it 'returns events without starts_at' do
-          draft_event = create(:event, :draft)
-          _scheduled_event = create(:event, :upcoming)
-          expect(described_class.draft).to include(draft_event)
-        end
-      end
-
-      describe '.scheduled' do
-        it 'returns events with starts_at' do
-          scheduled_event = create(:event, :upcoming)
-          _draft_event = create(:event, :draft)
-          expect(described_class.scheduled).to include(scheduled_event)
-        end
-      end
-
-      describe '.upcoming' do
-        it 'returns events starting in the future' do
-          upcoming_event = create(:event, :upcoming)
-          _past_event = create(:event, :past)
-          expect(described_class.upcoming).to include(upcoming_event)
-        end
-      end
-    end
-
-    describe 'callbacks' do
-      let(:draft_event) { build(:event, :draft) }
-
-      describe '#sync_time_duration_relationship' do
-        context 'when starts_at changes' do
-          it 'updates ends_at to maintain duration when duration exists' do
-            event = create(:event, starts_at: 2.hours.from_now, duration_minutes: 120)
-            original_ends_at = event.ends_at
-
-            event.update!(starts_at: 3.hours.from_now)
-
-            expect(event.ends_at).not_to eq(original_ends_at)
-            expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
-            expect(event.duration_minutes).to eq(120)
-          end
-
-          it 'calculates and maintains duration when ends_at exists but no duration' do
-            start_time = 2.hours.from_now
-            end_time = start_time + 90.minutes
-            event = create(:event, starts_at: start_time, ends_at: end_time)
-
-            # Event factory sets default duration to 30, then sync recalculates from ends_at
-            # The created event should have duration calculated from the ends_at
-            event.reload
-            expect(event.duration_minutes).to eq(90)
-
-            # Now change starts_at
-            new_start = 4.hours.from_now
-            event.update!(starts_at: new_start)
-
-            # ends_at should maintain the 90-minute duration
-            expect(event.ends_at).to be_within(1.second).of(new_start + 90.minutes)
-            expect(event.duration_minutes).to eq(90)
-          end
-        end
-
-        context 'when ends_at changes' do
-          it 'recalculates duration_minutes' do
-            event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
-            original_duration = event.duration_minutes
-
-            event.update!(ends_at: event.starts_at + 3.hours)
-
-            expect(event.duration_minutes).not_to eq(original_duration)
-            expect(event.duration_minutes).to eq(180)
-          end
-
-          it 'validates ends_at is after starts_at' do
-            event = build(:event, starts_at: 2.hours.from_now, ends_at: 1.hour.from_now)
-
-            expect(event).not_to be_valid
-            expect(event.errors[:ends_at]).to include('must be after the start time')
-          end
-        end
-
-        context 'when duration_minutes changes' do
-          it 'updates ends_at' do
-            event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
-            original_ends_at = event.ends_at
-
-            event.update!(duration_minutes: 120)
-
-            expect(event.ends_at).not_to eq(original_ends_at)
-            expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
-          end
-        end
-
-        context 'when ends_at is blank but duration exists' do
-          it 'calculates ends_at from duration' do
-            start_time = 2.hours.from_now
-            event = build(:event, starts_at: start_time, duration_minutes: 90, ends_at: nil)
-            event.save!
-
-            expect(event.ends_at).to be_within(1.second).of(start_time + 90.minutes)
-          end
-        end
-      end
-
-      describe '#schedule_reminder_notifications' do
-        it 'enqueues reminder job when conditions are met' do
-          event = create(:event, :upcoming)
-          create(:event_attendance, event: event)
-
-          expect { event.send(:schedule_reminder_notifications) }.to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
-        end
-
-        it 'schedules reminder job after starts_at update' do
-          event_with_attendees = create(:event, :upcoming, :with_attendees)
-          expect do
-            # Update ends_at to maintain validation, this should trigger both callbacks
-            event_with_attendees.update!(ends_at: event_with_attendees.starts_at + 3.hours)
-          end.to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
-        end
-
-        it 'does not schedule for draft events' do
-          expect { draft_event.save! }.not_to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
-        end
-      end
-
-      describe '#send_update_notifications' do
-        it 'enqueues notification job when conditions are met' do
-          event = create(:event, :upcoming)
-          create(:event_attendance, event: event)
-
-          # Mock significant changes for the test
-          allow(event).to receive(:significant_changes_for_notifications).and_return(['name'])
-
-          expect { event.send(:send_update_notifications) }.to have_enqueued_job(Noticed::EventJob)
-        end
-
-        it 'does not notify when no attendees' do
-          event = create(:event, :upcoming)
-
-          expect { event.send(:send_update_notifications) }.not_to have_enqueued_job(Noticed::EventJob)
-        end
-      end
-
-      describe '#sync_calendar_entry_times' do
-        let(:calendar) { create('better_together/calendar') }
-        let(:event) { create(:event, starts_at: 1.week.from_now, ends_at: 1.week.from_now + 1.hour) }
-        let!(:calendar_entry) do
-          create('better_together/calendar_entry',
-                 calendar: calendar,
-                 event: event,
-                 starts_at: event.starts_at,
-                 ends_at: event.ends_at,
-                 duration_minutes: event.duration_minutes)
-        end
-
-        it 'updates calendar entry times when event starts_at changes' do
-          new_starts_at = 2.weeks.from_now
-          new_ends_at = new_starts_at + 1.hour
-
-          event.update!(starts_at: new_starts_at, ends_at: new_ends_at)
-
-          calendar_entry.reload
-          expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
-          expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
-        end
-
-        it 'updates calendar entry times when event ends_at changes' do
-          new_ends_at = event.starts_at + 2.hours
-
-          event.update!(ends_at: new_ends_at)
-
-          calendar_entry.reload
-          expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
-          # Duration should also update due to sync_time_duration_relationship callback
-          expect(calendar_entry.duration_minutes).to eq(event.duration_minutes)
-        end
-
-        it 'updates calendar entry duration when event duration changes' do
           event.update!(duration_minutes: 120)
 
-          calendar_entry.reload
-          expect(calendar_entry.duration_minutes).to eq(120)
-          # ends_at should be recalculated by sync_time_duration_relationship
-          expect(calendar_entry.ends_at.to_i).to eq((event.starts_at + 120.minutes).to_i)
+          expect(event.ends_at).not_to eq(original_ends_at)
+          expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
         end
+      end
 
-        it 'updates all calendar entries when event belongs to multiple calendars' do
-          second_calendar = create('better_together/calendar')
-          second_entry = create('better_together/calendar_entry',
-                                calendar: second_calendar,
-                                event: event,
-                                starts_at: event.starts_at,
-                                ends_at: event.ends_at)
+      context 'when ends_at is blank but duration exists' do
+        it 'calculates ends_at from duration' do
+          start_time = 2.hours.from_now
+          event = build(:event, starts_at: start_time, duration_minutes: 90, ends_at: nil)
+          event.save!
 
-          new_starts_at = 2.weeks.from_now
-          event.update!(starts_at: new_starts_at, ends_at: new_starts_at + 1.hour)
-
-          calendar_entry.reload
-          second_entry.reload
-
-          expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
-          expect(second_entry.starts_at.to_i).to eq(new_starts_at.to_i)
-        end
-
-        it 'does not update calendar entries when non-temporal fields change' do
-          original_starts_at = calendar_entry.starts_at
-
-          event.update!(name: 'Updated Name')
-
-          calendar_entry.reload
-          expect(calendar_entry.starts_at.to_i).to eq(original_starts_at.to_i)
+          expect(event.ends_at).to be_within(1.second).of(start_time + 90.minutes)
         end
       end
     end
 
-    describe 'instance methods' do
-      let(:draft_event) { build(:event, :draft) }
-      let(:scheduled_event) { build(:event, :upcoming) }
-      let(:upcoming_event) { build(:event, :upcoming) }
-      let(:past_event) { build(:event, :past) }
+    describe '#schedule_reminder_notifications' do
+      it 'enqueues reminder job when conditions are met' do
+        event = create(:event, :upcoming)
+        create(:event_attendance, event: event)
 
-      describe '#draft?' do
-        it 'returns true when starts_at is nil' do
-          expect(draft_event).to be_draft
-        end
+        expect { event.send(:schedule_reminder_notifications) }.to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
+      end
 
-        it 'returns false when starts_at is present' do
-          expect(scheduled_event).not_to be_draft
+      it 'schedules reminder job after starts_at update' do
+        event_with_attendees = create(:event, :upcoming, :with_attendees)
+        expect do
+          # Update ends_at to maintain validation, this should trigger both callbacks
+          event_with_attendees.update!(ends_at: event_with_attendees.starts_at + 3.hours)
+        end.to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
+      end
+
+      it 'does not schedule for draft events' do
+        expect { draft_event.save! }.not_to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
+      end
+    end
+
+    describe '#send_update_notifications' do
+      it 'enqueues notification job when conditions are met' do
+        event = create(:event, :upcoming)
+        create(:event_attendance, event: event)
+
+        # Mock significant changes for the test
+        allow(event).to receive(:significant_changes_for_notifications).and_return(['name'])
+
+        expect { event.send(:send_update_notifications) }.to have_enqueued_job(Noticed::EventJob)
+      end
+
+      it 'does not notify when no attendees' do
+        event = create(:event, :upcoming)
+
+        expect { event.send(:send_update_notifications) }.not_to have_enqueued_job(Noticed::EventJob)
+      end
+    end
+
+    describe '#sync_calendar_entry_times' do
+      let(:calendar) { create('better_together/calendar') }
+      let(:event) { create(:event, starts_at: 1.week.from_now, ends_at: 1.week.from_now + 1.hour) }
+      let!(:calendar_entry) do
+        create('better_together/calendar_entry',
+               calendar: calendar,
+               event: event,
+               starts_at: event.starts_at,
+               ends_at: event.ends_at,
+               duration_minutes: event.duration_minutes)
+      end
+
+      it 'updates calendar entry times when event starts_at changes' do
+        new_starts_at = 2.weeks.from_now
+        new_ends_at = new_starts_at + 1.hour
+
+        event.update!(starts_at: new_starts_at, ends_at: new_ends_at)
+
+        calendar_entry.reload
+        expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+        expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
+      end
+
+      it 'updates calendar entry times when event ends_at changes' do
+        new_ends_at = event.starts_at + 2.hours
+
+        event.update!(ends_at: new_ends_at)
+
+        calendar_entry.reload
+        expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
+        # Duration should also update due to sync_time_duration_relationship callback
+        expect(calendar_entry.duration_minutes).to eq(event.duration_minutes)
+      end
+
+      it 'updates calendar entry duration when event duration changes' do
+        event.update!(duration_minutes: 120)
+
+        calendar_entry.reload
+        expect(calendar_entry.duration_minutes).to eq(120)
+        # ends_at should be recalculated by sync_time_duration_relationship
+        expect(calendar_entry.ends_at.to_i).to eq((event.starts_at + 120.minutes).to_i)
+      end
+
+      it 'updates all calendar entries when event belongs to multiple calendars' do
+        second_calendar = create('better_together/calendar')
+        second_entry = create('better_together/calendar_entry',
+                              calendar: second_calendar,
+                              event: event,
+                              starts_at: event.starts_at,
+                              ends_at: event.ends_at)
+
+        new_starts_at = 2.weeks.from_now
+        event.update!(starts_at: new_starts_at, ends_at: new_starts_at + 1.hour)
+
+        calendar_entry.reload
+        second_entry.reload
+
+        expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+        expect(second_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+      end
+
+      it 'does not update calendar entries when non-temporal fields change' do
+        original_starts_at = calendar_entry.starts_at
+
+        event.update!(name: 'Updated Name')
+
+        calendar_entry.reload
+        expect(calendar_entry.starts_at.to_i).to eq(original_starts_at.to_i)
+      end
+    end
+  end
+
+  describe 'instance methods' do
+    let(:draft_event) { build(:event, :draft) }
+    let(:scheduled_event) { build(:event, :upcoming) }
+    let(:upcoming_event) { build(:event, :upcoming) }
+    let(:past_event) { build(:event, :past) }
+
+    describe '#draft?' do
+      it 'returns true when starts_at is nil' do
+        expect(draft_event).to be_draft
+      end
+
+      it 'returns false when starts_at is present' do
+        expect(scheduled_event).not_to be_draft
+      end
+    end
+
+    describe '#scheduled?' do
+      it 'returns true when starts_at is present' do
+        expect(scheduled_event).to be_scheduled
+      end
+
+      it 'returns false when starts_at is nil' do
+        expect(draft_event).not_to be_scheduled
+      end
+    end
+
+    describe '#upcoming?' do
+      it 'returns true for future events' do
+        expect(upcoming_event).to be_upcoming
+      end
+
+      it 'returns false for past events' do
+        expect(past_event).not_to be_upcoming
+      end
+
+      it 'returns false for draft events' do
+        expect(draft_event).not_to be_upcoming
+      end
+    end
+
+    describe '#past?' do
+      it 'returns true for past events' do
+        expect(past_event).to be_past
+      end
+
+      it 'returns false for upcoming events' do
+        expect(upcoming_event).not_to be_past
+      end
+
+      it 'returns false for draft events' do
+        expect(draft_event).not_to be_past
+      end
+    end
+
+    describe '#duration_in_hours' do
+      context 'when both starts_at and ends_at are present' do
+        let(:timed_event) { build(:event, starts_at: Time.current, ends_at: Time.current + 4.5.hours) }
+
+        it 'calculates duration in hours' do
+          expect(timed_event.duration_in_hours).to be_within(0.01).of(4.5)
         end
       end
 
-      describe '#scheduled?' do
-        it 'returns true when starts_at is present' do
-          expect(scheduled_event).to be_scheduled
-        end
+      context 'when ends_at is not present' do
+        let(:open_ended_event) { build(:event, starts_at: Time.current, ends_at: nil) }
 
-        it 'returns false when starts_at is nil' do
-          expect(draft_event).not_to be_scheduled
-        end
-      end
-
-      describe '#upcoming?' do
-        it 'returns true for future events' do
-          expect(upcoming_event).to be_upcoming
-        end
-
-        it 'returns false for past events' do
-          expect(past_event).not_to be_upcoming
-        end
-
-        it 'returns false for draft events' do
-          expect(draft_event).not_to be_upcoming
-        end
-      end
-
-      describe '#past?' do
-        it 'returns true for past events' do
-          expect(past_event).to be_past
-        end
-
-        it 'returns false for upcoming events' do
-          expect(upcoming_event).not_to be_past
-        end
-
-        it 'returns false for draft events' do
-          expect(draft_event).not_to be_past
-        end
-      end
-
-      describe '#duration_in_hours' do
-        context 'when both starts_at and ends_at are present' do
-          let(:timed_event) { build(:event, starts_at: Time.current, ends_at: Time.current + 4.5.hours) }
-
-          it 'calculates duration in hours' do
-            expect(timed_event.duration_in_hours).to be_within(0.01).of(4.5)
-          end
-        end
-
-        context 'when ends_at is not present' do
-          let(:open_ended_event) { build(:event, starts_at: Time.current, ends_at: nil) }
-
-          it 'returns nil' do
-            expect(open_ended_event.duration_in_hours).to be_nil
-          end
-        end
-      end
-
-      describe '#location?' do
-        it 'returns true when location is present' do
-          event_with_location = build(:event, :with_simple_location)
-          expect(event_with_location.location?).to be true
-        end
-
-        it 'returns false when location is not present' do
-          event_without_location = build(:event)
-          expect(event_without_location.location?).to be false
-        end
-      end
-
-      describe '#requires_reminder_scheduling?' do
-        let(:event_with_attendees) { create(:event, :upcoming, :with_attendees) }
-
-        it 'returns true for upcoming events with attendees' do
-          expect(event_with_attendees.requires_reminder_scheduling?).to be true
-        end
-
-        it 'returns false for draft events' do
-          expect(draft_event.requires_reminder_scheduling?).to be false
-        end
-
-        it 'returns false for events without attendees' do
-          expect(upcoming_event.requires_reminder_scheduling?).to be false
-        end
-      end
-
-      describe '#significant_changes_for_notifications' do
-        let(:event) { create(:event) }
-
-        it 'detects significant attributes in list' do
-          event.name = 'New Name'
-          event.save
-
-          # Call the method during a simulated callback context
-          allow(event).to receive(:saved_changes).and_return({ 'name_en' => ['Old Name', 'New Name'] })
-          expect(event.significant_changes_for_notifications).to include('name_en')
-        end
-
-        it 'excludes non-significant changes' do
-          allow(event).to receive(:saved_changes).and_return({ 'created_at' => [1.hour.ago, Time.current] })
-          expect(event.significant_changes_for_notifications).to be_empty
-        end
-      end
-
-      describe '#host_community' do
-        let(:event) { build(:event) }
-
-        context 'when host community exists', :skip_host_setup do
-          let!(:host_community) { create(:community) }
-
-          before do
-            allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.where(id: host_community.id))
-          end
-
-          it 'returns the host community' do
-            expect(event.host_community).to eq(host_community)
-          end
-
-          it 'caches the host community' do
-            expect(event.host_community).to eq(host_community)
-            event.host_community
-            expect(BetterTogether::Community).to have_received(:host).once
-          end
-        end
-
-        context 'when no host community exists' do
-          before do
-            allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.none)
-          end
-
-          it 'returns nil when no host community exists' do
-            expect(event.host_community).to be_nil
-          end
-        end
-      end
-
-      describe 'event hosts' do
-        it 'defaults its host to its creator' do
-          event.valid? # Trigger validation which runs set_host callback
-          expect(event.event_hosts.map(&:host)).to include(event.creator)
-        end
-      end
-
-      describe 'federation provenance' do
-        let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
-        let(:remote_platform) { create(:better_together_platform) }
-
-        around do |example|
-          previous_platform = Current.platform
-          Current.platform = local_platform
-          example.run
-          Current.platform = previous_platform
-        end
-
-        it 'assigns the current platform by default' do
-          event.valid?
-
-          expect(event.platform).to eq(local_platform)
-        end
-
-        it 'treats a current-platform event as local' do
-          event.valid?
-
-          expect(event).to be_local_to_platform(local_platform)
-          expect(event).not_to be_remote_to_platform(local_platform)
-        end
-
-        it 'treats a sourced event from another platform as mirrored' do
-          mirrored_event = build(
-            :event,
-            platform: remote_platform,
-            source_id: 'remote-event-1'
-          )
-
-          expect(mirrored_event).to be_mirrored
-          expect(mirrored_event).to be_remote_to_platform(local_platform)
-          expect(mirrored_event.source_identifier).to eq('remote-event-1')
-        end
-
-        it 'treats a CE UUID-preserved event as mirrored without a source_id' do
-          mirrored_event = build(
-            :event,
-            id: SecureRandom.uuid,
-            platform: remote_platform,
-            source_id: nil
-          )
-
-          expect(mirrored_event).to be_mirrored
-          expect(mirrored_event).to be_preserved_remote_uuid
-          expect(mirrored_event.source_identifier).to eq(mirrored_event.id)
+        it 'returns nil' do
+          expect(open_ended_event.duration_in_hours).to be_nil
         end
       end
     end
 
-    describe 'delegation' do
-      it 'delegates location_geocoding_string to location' do
-        expect(event).to respond_to(:location_geocoding_string)
+    describe '#location?' do
+      it 'returns true when location is present' do
+        event_with_location = build(:event, :with_simple_location)
+        expect(event_with_location.location?).to be true
       end
 
-      it 'delegates location_display_name to location' do
-        expect(event).to respond_to(:location_display_name)
+      it 'returns false when location is not present' do
+        event_without_location = build(:event)
+        expect(event_without_location.location?).to be false
+      end
+    end
+
+    describe '#requires_reminder_scheduling?' do
+      let(:event_with_attendees) { create(:event, :upcoming, :with_attendees) }
+
+      it 'returns true for upcoming events with attendees' do
+        expect(event_with_attendees.requires_reminder_scheduling?).to be true
       end
 
-      context 'when location is not present' do
-        it 'returns nil for location_display_name' do
-          expect(event.location_display_name).to be_nil
+      it 'returns false for draft events' do
+        expect(draft_event.requires_reminder_scheduling?).to be false
+      end
+
+      it 'returns false for events without attendees' do
+        expect(upcoming_event.requires_reminder_scheduling?).to be false
+      end
+    end
+
+    describe '#significant_changes_for_notifications' do
+      let(:event) { create(:event) }
+
+      it 'detects significant attributes in list' do
+        event.name = 'New Name'
+        event.save
+
+        # Call the method during a simulated callback context
+        allow(event).to receive(:saved_changes).and_return({ 'name_en' => ['Old Name', 'New Name'] })
+        expect(event.significant_changes_for_notifications).to include('name_en')
+      end
+
+      it 'excludes non-significant changes' do
+        allow(event).to receive(:saved_changes).and_return({ 'created_at' => [1.hour.ago, Time.current] })
+        expect(event.significant_changes_for_notifications).to be_empty
+      end
+    end
+
+    describe '#host_community' do
+      let(:event) { build(:event) }
+
+      context 'when host community exists', :skip_host_setup do
+        let!(:host_community) { create(:community) }
+
+        before do
+          allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.where(id: host_community.id))
         end
 
-        it 'returns nil for location_geocoding_string' do
-          expect(event.location_geocoding_string).to be_nil
+        it 'returns the host community' do
+          expect(event.host_community).to eq(host_community)
+        end
+
+        it 'caches the host community' do
+          expect(event.host_community).to eq(host_community)
+          event.host_community
+          expect(BetterTogether::Community).to have_received(:host).once
+        end
+      end
+
+      context 'when no host community exists' do
+        before do
+          allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.none)
+        end
+
+        it 'returns nil when no host community exists' do
+          expect(event.host_community).to be_nil
         end
       end
     end
 
-    describe 'class methods' do
-      describe '.permitted_attributes' do
-        it 'includes standard attributes' do
-          expected_attrs = %i[
-            name description starts_at ends_at registration_url
-          ]
-          expect(described_class.permitted_attributes.flatten).to include(*expected_attrs)
-        end
+    describe 'event hosts' do
+      it 'defaults its host to its creator' do
+        event.valid? # Trigger validation which runs set_host callback
+        expect(event.event_hosts.map(&:host)).to include(event.creator)
+      end
+    end
 
-        it 'includes nested location attributes' do
-          permitted_attrs = described_class.permitted_attributes.flatten
-          location_hash = permitted_attrs.find { |attr| attr.is_a?(Hash) && attr.key?(:location_attributes) }
-          expect(location_hash).to be_present
-          expect(location_hash[:location_attributes]).to include(:creator_id, :name, :locatable_id, :locatable_type)
-        end
+    describe 'federation provenance' do
+      let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
+      let(:remote_platform) { create(:better_together_platform) }
+
+      around do |example|
+        previous_platform = Current.platform
+        Current.platform = local_platform
+        example.run
+        Current.platform = previous_platform
+      end
+
+      it 'assigns the current platform by default' do
+        event.valid?
+
+        expect(event.platform).to eq(local_platform)
+      end
+
+      it 'treats a current-platform event as local' do
+        event.valid?
+
+        expect(event).to be_local_to_platform(local_platform)
+        expect(event).not_to be_remote_to_platform(local_platform)
+      end
+
+      it 'treats a sourced event from another platform as mirrored' do
+        mirrored_event = build(
+          :event,
+          platform: remote_platform,
+          source_id: 'remote-event-1'
+        )
+
+        expect(mirrored_event).to be_mirrored
+        expect(mirrored_event).to be_remote_to_platform(local_platform)
+        expect(mirrored_event.source_identifier).to eq('remote-event-1')
+      end
+
+      it 'treats a CE UUID-preserved event as mirrored without a source_id' do
+        mirrored_event = build(
+          :event,
+          id: SecureRandom.uuid,
+          platform: remote_platform,
+          source_id: nil
+        )
+
+        expect(mirrored_event).to be_mirrored
+        expect(mirrored_event).to be_preserved_remote_uuid
+        expect(mirrored_event.source_identifier).to eq(mirrored_event.id)
+      end
+    end
+  end
+
+  describe 'delegation' do
+    it 'delegates location_geocoding_string to location' do
+      expect(event).to respond_to(:location_geocoding_string)
+    end
+
+    it 'delegates location_display_name to location' do
+      expect(event).to respond_to(:location_display_name)
+    end
+
+    context 'when location is not present' do
+      it 'returns nil for location_display_name' do
+        expect(event.location_display_name).to be_nil
+      end
+
+      it 'returns nil for location_geocoding_string' do
+        expect(event.location_geocoding_string).to be_nil
+      end
+    end
+  end
+
+  describe 'class methods' do
+    describe '.permitted_attributes' do
+      it 'includes standard attributes' do
+        expected_attrs = %i[
+          name description starts_at ends_at registration_url
+        ]
+        expect(described_class.permitted_attributes.flatten).to include(*expected_attrs)
+      end
+
+      it 'includes nested location attributes' do
+        permitted_attrs = described_class.permitted_attributes.flatten
+        location_hash = permitted_attrs.find { |attr| attr.is_a?(Hash) && attr.key?(:location_attributes) }
+        expect(location_hash).to be_present
+        expect(location_hash[:location_attributes]).to include(:creator_id, :name, :locatable_id, :locatable_type)
       end
     end
   end

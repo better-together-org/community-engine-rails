@@ -254,52 +254,32 @@ module BetterTogether
       return url if url.blank?
 
       uri = URI.parse(url.to_s)
-      path = if uri.host.present?
-               uri.path.presence || '/'
-             else
-               normalize_relative_path(url.to_s)
-             end
-      query = uri.query.present? ? "?#{uri.query}" : ''
-      fragment = uri.fragment.present? ? "##{uri.fragment}" : ''
-
-      build_url_for_path(base_url, path) + query + fragment
+      path = extract_canonical_path(uri, url)
+      build_url_for_path(base_url, path) + uri_query_string(uri) + uri_fragment_string(uri)
     rescue URI::InvalidURIError
       build_url_for_path(base_url_with_locale, normalize_relative_path(url.to_s))
+    end
+
+    def uri_query_string(uri)
+      uri.query.present? ? "?#{uri.query}" : ''
+    end
+
+    def uri_fragment_string(uri)
+      uri.fragment.present? ? "##{uri.fragment}" : ''
+    end
+
+    def extract_canonical_path(uri, original_url)
+      if uri.host.present?
+        uri.path.presence || '/'
+      else
+        normalize_relative_path(original_url.to_s)
+      end
     end
 
     def explicit_or_canonical_url(url)
       return url if url.to_s.start_with?('http://', 'https://')
 
       canonicalize_url(url)
-    end
-
-    private
-
-    def current_platform_base_url
-      Current.platform&.resolved_host_url ||
-        current_platform_domain&.url ||
-        ::BetterTogether::Platform.find_by(host: true)&.resolved_host_url ||
-        ::BetterTogether.base_url
-    end
-
-    def build_url_for_path(root_url, path)
-      root = root_url.to_s.chomp('/')
-      normalized_path = normalize_relative_path(path)
-      "#{root}#{normalized_path}"
-    end
-
-    def normalize_relative_path(path)
-      normalized = path.to_s
-      normalized = "/#{normalized}" unless normalized.start_with?('/')
-      normalized
-    end
-
-    def resolved_url_options
-      uri = URI.parse(base_url)
-      options = { host: uri.host }
-      options[:protocol] = uri.scheme if uri.scheme.present?
-      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
-      options
     end
 
     # Most commonly used timezones across different continents and regions
@@ -333,6 +313,35 @@ module BetterTogether
       'Pacific/Auckland',    # New Zealand
       'Africa/Johannesburg'  # South Africa
     ].freeze
+
+    private
+
+    def current_platform_base_url
+      Current.platform&.resolved_host_url ||
+        current_platform_domain&.url ||
+        ::BetterTogether::Platform.find_by(host: true)&.resolved_host_url ||
+        ::BetterTogether.base_url
+    end
+
+    def build_url_for_path(root_url, path)
+      root = root_url.to_s.chomp('/')
+      normalized_path = normalize_relative_path(path)
+      "#{root}#{normalized_path}"
+    end
+
+    def normalize_relative_path(path)
+      normalized = path.to_s
+      normalized = "/#{normalized}" unless normalized.start_with?('/')
+      normalized
+    end
+
+    def resolved_url_options
+      uri = URI.parse(base_url)
+      options = { host: uri.host }
+      options[:protocol] = uri.scheme if uri.scheme.present?
+      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
+      options
+    end
 
     # Returns timezone options sorted by UTC offset (ascending), then alphabetically
     # Display format: "(GMT-05:00) Eastern Time (US & Canada)"

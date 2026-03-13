@@ -20,8 +20,8 @@ module BetterTogether
         super + response_link_permitted_attributes
       end
 
-      def after_agreement_acceptance!(offer:)
-        true
+      def after_agreement_acceptance!(_offer:)
+        nil
       end
     end
   end

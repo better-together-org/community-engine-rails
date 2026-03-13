@@ -33,6 +33,7 @@ WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
 module RSpec
   module Core
     module Formatters
+      # Patched to handle nil durations gracefully (parallel_rspec compatibility).
       module Helpers
         class << self
           alias original_format_seconds format_seconds

@@ -53,17 +53,31 @@ module BetterTogether
       end
 
       def attributes_for(page)
-        {
-          title: remote_attributes[:title],
-          content: remote_attributes[:content],
-          identifier: normalized_identifier(page),
-          privacy: remote_attributes[:privacy].presence || 'public',
-          published_at: remote_attributes[:published_at],
-          creator_id: remote_attributes[:creator_id],
+        common_mirror_attributes(page).merge(
           layout: remote_attributes[:layout],
           template: remote_attributes[:template],
           meta_description: remote_attributes[:meta_description],
-          keywords: remote_attributes[:keywords],
+          keywords: remote_attributes[:keywords]
+        )
+      end
+
+      def common_mirror_attributes(record)
+        core_content_attributes(record).merge(mirror_tracking_attributes)
+      end
+
+      def core_content_attributes(record)
+        {
+          title: remote_attributes[:title],
+          content: remote_attributes[:content],
+          identifier: normalized_identifier(record),
+          privacy: remote_attributes[:privacy].presence || 'public',
+          published_at: remote_attributes[:published_at],
+          creator_id: remote_attributes[:creator_id]
+        }
+      end
+
+      def mirror_tracking_attributes
+        {
           platform: connection.source_platform,
           source_id: preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,

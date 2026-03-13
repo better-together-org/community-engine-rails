@@ -60,7 +60,12 @@ module BetterTogether
           privacy: remote_attributes[:privacy].presence || 'public',
           published_at: remote_attributes[:published_at],
           creator_id: remote_attributes[:creator_id],
-          platform: connection.source_platform,
+          platform: connection.source_platform
+        }.merge(post_sync_attributes)
+      end
+
+      def post_sync_attributes
+        {
           source_id: preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current

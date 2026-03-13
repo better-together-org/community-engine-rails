@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Access control for conversation messages.
   class MessagePolicy < ApplicationPolicy
     def show?
       user.present? && participant?
@@ -19,6 +20,7 @@ module BetterTogether
       user.present? && sender?
     end
 
+    # Pundit scope for Message visibility within conversations.
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless user.present? && agent
