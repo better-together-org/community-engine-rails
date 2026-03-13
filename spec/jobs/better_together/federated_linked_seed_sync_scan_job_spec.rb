@@ -49,8 +49,10 @@ RSpec.describe BetterTogether::FederatedLinkedSeedSyncScanJob do
         described_class.perform_now
       end.to have_enqueued_job(BetterTogether::FederatedLinkedSeedPullJob)
         .with(
-          platform_connection_id: eligible_grant.person_link.platform_connection_id,
-          recipient_person_id: eligible_grant.grantee_person_id
+          hash_including(
+            platform_connection_id: eligible_grant.person_link.platform_connection_id,
+            recipient_person_id: eligible_grant.grantee_person_id
+          )
         )
         .on_queue('platform_sync')
 

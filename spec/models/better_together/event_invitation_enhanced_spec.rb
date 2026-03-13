@@ -149,9 +149,9 @@ RSpec.describe BetterTogether::EventInvitation do
 
       it 'creates event attendance' do
         expect { invitation.after_accept!(invitee_person: invitee_person) }
-          .to change(EventAttendance, :count).by(1)
+          .to change(BetterTogether::EventAttendance, :count).by(1)
 
-        attendance = EventAttendance.last
+        attendance = BetterTogether::EventAttendance.last
         expect(attendance.person).to eq(invitee_person)
         expect(attendance.event).to eq(event)
         expect(attendance.status).to eq('going')

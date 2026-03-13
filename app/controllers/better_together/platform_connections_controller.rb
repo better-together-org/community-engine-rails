@@ -49,10 +49,10 @@ module BetterTogether
 
       if @platform_connection.pending? || @platform_connection.suspended?
         @platform_connection.update!(status: :active)
-        redirect_to better_together_platform_connection_path(@platform_connection),
+        redirect_to better_together.platform_connection_path(@platform_connection),
                     notice: 'Connection approved and set to active.', status: :see_other
       else
-        redirect_to better_together_platform_connection_path(@platform_connection),
+        redirect_to better_together.platform_connection_path(@platform_connection),
                     alert: "Cannot approve a connection with status '#{@platform_connection.status}'.",
                     status: :see_other
       end
@@ -65,10 +65,10 @@ module BetterTogether
 
       if @platform_connection.active?
         @platform_connection.update!(status: :suspended)
-        redirect_to better_together_platform_connection_path(@platform_connection),
+        redirect_to better_together.platform_connection_path(@platform_connection),
                     notice: 'Connection suspended.', status: :see_other
       else
-        redirect_to better_together_platform_connection_path(@platform_connection),
+        redirect_to better_together.platform_connection_path(@platform_connection),
                     alert: "Cannot suspend a connection with status '#{@platform_connection.status}'.",
                     status: :see_other
       end
@@ -80,7 +80,7 @@ module BetterTogether
       authorize @platform_connection, :update?
 
       @platform_connection.rotate_oauth_client_secret!
-      redirect_to better_together_platform_connection_path(@platform_connection),
+      redirect_to better_together.platform_connection_path(@platform_connection),
                   notice: 'OAuth client secret rotated. Update the remote platform configuration.', status: :see_other
     rescue Pundit::NotAuthorizedError
       render_not_found

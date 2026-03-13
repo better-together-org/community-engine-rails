@@ -54,6 +54,8 @@ RSpec.describe BetterTogether::RolePolicy, type: :policy do
   describe '#update?' do
     subject { described_class.new(user, role).update? }
 
+    let(:role) { create(:better_together_role, :platform_role) }
+
     context 'platform manager' do
       let(:user) { manager_user }
 
