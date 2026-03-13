@@ -571,8 +571,28 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
     t.index ["name"], name: "locatable_location_by_name"
   end
 
-# Could not dump table "better_together_geography_maps" because of following StandardError
-#   Unknown type 'geography(Point,4326)' for column 'center'
+  create_table "better_together_geography_maps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "creator_id"
+    t.string "identifier", limit: 100, null: false
+    t.string "locale", limit: 5, default: "en", null: false
+    t.string "privacy", limit: 50, default: "private", null: false
+    t.boolean "protected", default: false, null: false
+    t.geography "center", limit: {srid: 4326, type: "st_point", geographic: true}
+    t.integer "zoom", default: 13, null: false
+    t.geography "viewport", limit: {srid: 4326, type: "st_polygon", geographic: true}
+    t.jsonb "metadata", default: {}, null: false
+    t.string "mappable_type"
+    t.uuid "mappable_id"
+    t.string "type", default: "BetterTogether::Geography::Map", null: false
+    t.index ["creator_id"], name: "by_better_together_geography_maps_creator"
+    t.index ["identifier"], name: "index_better_together_geography_maps_on_identifier", unique: true
+    t.index ["locale"], name: "by_better_together_geography_maps_locale"
+    t.index ["mappable_type", "mappable_id"], name: "index_better_together_geography_maps_on_mappable"
+    t.index ["privacy"], name: "by_better_together_geography_maps_privacy"
+  end
 
 
   create_table "better_together_geography_region_settlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1938,6 +1958,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_geography_geospatial_spaces", "better_together_geography_spaces", column: "space_id"
+  add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_regions", column: "region_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_settlements", column: "settlement_id"
