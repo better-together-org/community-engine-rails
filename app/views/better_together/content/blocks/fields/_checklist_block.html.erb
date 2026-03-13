@@ -1,0 +1,36 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<%- available_checklists = policy_scope(BetterTogether::Checklist).order(:created_at) %>
+<div class="checklist-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[checklist_id]", BetterTogether::Checklist.model_name.human, class: 'form-label' %>
+    <%= select_tag "#{scope}[checklist_id]",
+                   options_for_select(
+                     available_checklists.map { |c| [c.title.to_s, c.id] },
+                     block.checklist_id
+                   ),
+                   include_blank: t('better_together.content.blocks.checklist_block.select_prompt',
+                                    default: '— Select a checklist —'),
+                   class: 'form-select',
+                   data: { controller: 'better_together--slim-select' } %>
+    <% if block.errors[:checklist_id].any? %>
+      <div class="invalid-feedback d-block"><%= block.errors[:checklist_id].join(', ') %></div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <div class="form-check">
+      <%= check_box_tag "#{scope}[show_view_more_link]", 'true', block.show_view_more_link == 'true',
+                        class: 'form-check-input', id: "#{scope}_show_view_more_link" %>
+      <%= label_tag "#{scope}_show_view_more_link",
+                    BetterTogether::Content::Block.human_attribute_name('show_view_more_link', default: 'Show "View checklist" link'),
+                    class: 'form-check-label' %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[view_more_url]", BetterTogether::Content::Block.human_attribute_name('view_more_url', default: '"View checklist" URL'), class: 'form-label' %>
+    <%= url_field_tag "#{scope}[view_more_url]", block.view_more_url, class: 'form-control',
+                      placeholder: 'https://...' %>
+  </div>
+</div>
