@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - compat/rails-*
     paths:
       - Gemfile
       - Gemfile.lock
@@ -14,6 +15,9 @@ permissions:
 
 jobs:
   detect:
+    # Skip automated sync PRs (main → compat/*) — those have head_ref == 'main'
+    # and their results would be misattributed to main's commit status.
+    if: github.head_ref != 'main'
     runs-on: ubuntu-latest
     outputs:
       rails_version: ${{ steps.detect.outputs.rails_version }}
