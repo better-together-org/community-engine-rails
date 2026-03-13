@@ -55,6 +55,7 @@ Style/StringLiterals:
 Style/Documentation:
   Exclude:
     - 'db/migrate/*'
+    - 'spec/**/*'
 
 Metrics/MethodLength:
   Exclude:
