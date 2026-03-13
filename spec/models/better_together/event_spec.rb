@@ -432,7 +432,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       describe 'federation provenance' do
-        let(:local_platform) { create(:better_together_platform, host: true) }
+        let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
         let(:remote_platform) { create(:better_together_platform) }
 
         around do |example|
