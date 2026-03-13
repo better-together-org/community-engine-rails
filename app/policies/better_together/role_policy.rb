@@ -36,15 +36,7 @@ module BetterTogether
       def resolve
         return scope.none unless user.present?
 
-        return scope.positioned if can_manage_any_roles?
-
-        scope.none
-      end
-
-      private
-
-      def can_manage_any_roles?
-        permitted_to?('manage_platform_roles') || permitted_to?('manage_community_roles')
+        scope.positioned
       end
     end
 
