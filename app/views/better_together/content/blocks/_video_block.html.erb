@@ -5,7 +5,11 @@
       <figure class="video-block">
         <div class="ratio ratio-<%= video_block.aspect_ratio %>">
           <iframe src="<%= video_block.embed_url %>"
-                  title="<%= video_block.caption.presence || t('better_together.content.blocks.video_block.title', default: 'Video') %>"></iframe>
+                  title="<%= video_block.caption.presence || t('better_together.content.blocks.video_block.title', default: 'YouTube video player') %>"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen></iframe>
         </div>
         <% if video_block.caption.present? %>
           <figcaption class="video-block__caption text-muted small mt-2 text-center">
