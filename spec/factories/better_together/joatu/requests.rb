@@ -25,5 +25,26 @@ FactoryBot.define do
       category = create(:better_together_joatu_category)
       request.categories << category
     end
+
+    factory 'better_together/joatu/connection_request',
+            class: 'BetterTogether::Joatu::ConnectionRequest',
+            aliases: %i[better_together_joatu_connection_request joatu_connection_request connection_request] do
+      target { association :better_together_platform }
+      type { 'BetterTogether::Joatu::ConnectionRequest' }
+    end
+
+    factory 'better_together/joatu/person_link_request',
+            class: 'BetterTogether::Joatu::PersonLinkRequest',
+            aliases: %i[better_together_joatu_person_link_request joatu_person_link_request person_link_request] do
+      target { association :better_together_person }
+      type { 'BetterTogether::Joatu::PersonLinkRequest' }
+    end
+
+    factory 'better_together/joatu/person_access_grant_request',
+            class: 'BetterTogether::Joatu::PersonAccessGrantRequest',
+            aliases: %i[better_together_joatu_person_access_grant_request joatu_person_access_grant_request person_access_grant_request] do
+      target { association :better_together_person }
+      type { 'BetterTogether::Joatu::PersonAccessGrantRequest' }
+    end
   end
 end

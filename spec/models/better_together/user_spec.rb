@@ -36,17 +36,35 @@ module BetterTogether
           end
         end
 
+        describe ':platform_steward' do
+          subject(:steward) { create(:user, :platform_steward) }
+
+          it 'creates a user with platform steward role' do
+            expect(steward.person).to be_present
+            platform = BetterTogether::Platform.find_by(host: true)
+            expect(platform).to be_present
+
+            membership = platform.person_platform_memberships.find_by(member: steward.person)
+            expect(membership).to be_present
+            expect(membership.role.identifier).to eq('platform_steward')
+          end
+
+          it 'has manage_platform permission' do
+            expect(steward.person.permitted_to?('manage_platform')).to be true
+          end
+        end
+
         describe ':platform_manager' do
           subject(:manager) { create(:user, :platform_manager) }
 
-          it 'creates a user with platform manager role' do
+          it 'creates a user with a platform management role' do
             expect(manager.person).to be_present
             platform = BetterTogether::Platform.find_by(host: true)
             expect(platform).to be_present
 
             membership = platform.person_platform_memberships.find_by(member: manager.person)
             expect(membership).to be_present
-            expect(membership.role.identifier).to eq('platform_manager')
+            expect(%w[platform_steward platform_manager]).to include(membership.role.identifier)
           end
 
           it 'has manage_platform permission' do

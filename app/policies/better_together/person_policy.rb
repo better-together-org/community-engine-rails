@@ -38,8 +38,8 @@ module BetterTogether
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         base_scope = scope.with_translations
 
-        # Platform managers can see all people
-        return base_scope if permitted_to?('manage_platform')
+        # Stewardship and people-directory roles can see all people
+        return base_scope if permitted_to?('list_person')
 
         # Unauthenticated users can only see public profiles
         return base_scope.privacy_public unless agent

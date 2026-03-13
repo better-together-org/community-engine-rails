@@ -5,7 +5,7 @@
 module BetterTogether
   class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      permitted_to?('manage_platform') || (agent.present? && agent.authored_pages.any?)
+      platform_content_manager? || (agent.present? && agent.authored_pages.any?)
     end
 
     def show?
@@ -14,7 +14,7 @@ module BetterTogether
     end
 
     def create?
-      permitted_to?('manage_platform')
+      platform_content_manager?
     end
 
     def new?
@@ -22,7 +22,7 @@ module BetterTogether
     end
 
     def update?
-      permitted_to?('manage_platform') || (agent.present? && record.authors.include?(agent))
+      platform_content_manager? || (agent.present? && record.authors.include?(agent))
     end
 
     def edit?
@@ -30,7 +30,7 @@ module BetterTogether
     end
 
     def destroy?
-      permitted_to?('manage_platform') && !record.protected?
+      platform_content_manager? && !record.protected?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
@@ -41,8 +41,8 @@ module BetterTogether
                       blocks: { background_image_file_attachment: :blob }
                     )
 
-        if permitted_to?('manage_platform')
-          # Managers see all pages
+        if platform_content_manager?
+          # Platform stewards and host-community content managers see all pages
           base.order(:identifier)
         elsif agent.present?
           # Authors see their own pages (private or unpublished) plus published public pages
@@ -68,6 +68,27 @@ module BetterTogether
           base.published
               .privacy_public
         end
+      end
+    end
+
+    private
+
+    def platform_content_manager?
+      permitted_to?('manage_platform_settings') ||
+        permitted_to?('manage_platform') ||
+        permitted_to?('manage_community_content', record.community)
+    end
+
+    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+      private
+
+      def platform_content_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') ||
+          permitted_to?('manage_community_content', host_community)
+      end
+
+      def host_community
+        @host_community ||= BetterTogether::Community.find_by(host: true)
       end
     end
   end

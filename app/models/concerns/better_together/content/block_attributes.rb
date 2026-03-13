@@ -145,7 +145,12 @@ module BetterTogether
         }
 
         if background_image_file.attached?
-          ActiveStorage::Current.url_options = { host: BetterTogether.base_url }
+          host_url = Current.platform&.resolved_host_url || BetterTogether.base_url
+          uri = URI.parse(host_url)
+          ActiveStorage::Current.url_options = {
+            host: uri.host,
+            protocol: uri.scheme
+          }
 
           bg_image_style = [
             # rubocop:todo Layout/LineLength

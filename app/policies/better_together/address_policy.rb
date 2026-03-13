@@ -13,8 +13,8 @@ module BetterTogether
         component_scope = base_scope.where("COALESCE(line1,'') <> '' OR COALESCE(city_name,'') <> '' OR COALESCE(state_province_name,'') <> '' OR COALESCE(postal_code,'') <> '' OR COALESCE(country_name,'') <> ''")
         # rubocop:enable Layout/LineLength
 
-        # Platform managers can see everything
-        return component_scope if permitted_to?('manage_platform')
+        # Platform stewards can see everything
+        return component_scope if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
 
         # Unauthenticated users only see public addresses that have components
         return component_scope.where(privacy: 'public') unless agent

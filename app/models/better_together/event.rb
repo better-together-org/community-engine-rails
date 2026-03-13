@@ -20,6 +20,8 @@ module BetterTogether
 
     attachable_cover_image
 
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
                                  foreign_key: :event_id, inverse_of: :event, dependent: :destroy
     has_many :invitations, -> { includes(:invitee, :inviter) },
@@ -53,8 +55,10 @@ module BetterTogether
       message: '%<value>s is not a valid timezone'
     }
     validates :event_hosts, length: { minimum: 1 }
+    validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
     validate :ends_at_after_starts_at
 
+    before_validation :assign_current_platform_if_available
     before_validation :set_host
     before_validation :set_default_duration
     before_validation :sync_time_duration_relationship
@@ -204,6 +208,29 @@ module BetterTogether
       name
     end
 
+    def mirrored?
+      source_id.present? || platform_id.present?
+    end
+
+    def preserved_remote_uuid?
+      source_id.blank? && platform_id.present?
+    end
+
+    def source_identifier
+      source_id.presence || id
+    end
+
+    def local_to_platform?(local_platform = Current.platform)
+      return true if platform_id.blank?
+      return false unless local_platform
+
+      platform_id == local_platform.id
+    end
+
+    def remote_to_platform?(local_platform = Current.platform)
+      mirrored? && !local_to_platform?(local_platform)
+    end
+
     # Minimal iCalendar representation for export
     def to_ics
       BetterTogether::Ics::Generator.new(self).generate
@@ -287,6 +314,14 @@ module BetterTogether
     end
 
     private
+
+    def assign_current_platform_if_available
+      return unless has_attribute?(:platform_id)
+      return if platform_id.present?
+      return unless Current.platform
+
+      self.platform = Current.platform
+    end
 
     # Set default duration if not set and start time is present
     def set_default_duration

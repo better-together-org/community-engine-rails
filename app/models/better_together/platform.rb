@@ -17,6 +17,11 @@ module BetterTogether
     include TimezoneAttributeAliasing
     include ::Storext.model
 
+    NETWORK_VISIBILITIES = %w[private peer member public].freeze
+    CONNECTION_BOOTSTRAP_STATES = %w[pending_host_request pending_review connected opted_out disabled].freeze
+    FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
+    SOFTWARE_VARIANTS = %w[community_engine generic].freeze
+
     has_community
 
     joinable joinable_type: 'platform',
@@ -36,6 +41,11 @@ module BetterTogether
 
     store_attributes :settings do
       requires_invitation Boolean, default: false
+      software_variant String
+      network_visibility String, default: 'private'
+      connection_bootstrap_state String
+      federation_protocol String
+      oauth_issuer_url String
     end
 
     # Alias the database url column to host_url for clarity
@@ -50,6 +60,15 @@ module BetterTogether
                 message: '%<value>s is not a valid timezone'
               }
     validates :external, inclusion: { in: [true, false] }
+    validates :software_variant, inclusion: { in: SOFTWARE_VARIANTS }, allow_blank: true
+    validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
+    validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
+    validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
+    validates :oauth_issuer_url,
+              format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+              allow_blank: true
+
+    before_validation :apply_platform_registry_defaults
 
     scope :external, -> { where(external: true) }
     scope :internal, -> { where(external: false) }
@@ -62,6 +81,19 @@ module BetterTogether
 
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
+    has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :outgoing_platform_connections,
+             class_name: '::BetterTogether::PlatformConnection',
+             foreign_key: :source_platform_id,
+             dependent: :destroy,
+             inverse_of: :source_platform
+    has_many :incoming_platform_connections,
+             class_name: '::BetterTogether::PlatformConnection',
+             foreign_key: :target_platform_id,
+             dependent: :destroy,
+             inverse_of: :target_platform
+
+    after_commit :sync_primary_platform_domain!, on: %i[create update]
 
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image
@@ -72,6 +104,49 @@ module BetterTogether
 
     def cache_key
       "#{super}/#{css_block&.updated_at&.to_i}"
+    end
+
+    def primary_platform_domain
+      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+
+      platform_domains.primary.active.first
+    end
+
+    def resolved_host_url
+      primary_platform_domain&.url || host_url
+    end
+
+    def local_hosted?
+      !external?
+    end
+
+    def external_peer?
+      external?
+    end
+
+    def community_engine?
+      local_hosted? || software_variant == 'community_engine'
+    end
+
+    def federated?
+      federation_protocol.present?
+    end
+
+    def effective_oauth_issuer_url
+      oauth_issuer_url.presence || (community_engine? ? resolved_host_url : nil)
+    end
+
+    def pending_host_connection_bootstrap?
+      local_hosted? && connection_bootstrap_state == 'pending_host_request'
+    end
+
+    def platform_connections
+      BetterTogether::PlatformConnection.for_platform(self)
+    end
+
+    def connected_platforms
+      outgoing_platform_connections.active.includes(:target_platform).map(&:target_platform) +
+        incoming_platform_connections.active.includes(:source_platform).map(&:source_platform)
     end
 
     # Return the routing URL for this platform (used by metrics tracking)
@@ -138,6 +213,38 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    private
+
+    def apply_platform_registry_defaults
+      self.network_visibility = 'private' if network_visibility.blank?
+      self.connection_bootstrap_state ||= local_hosted? ? 'pending_host_request' : 'pending_review'
+      self.software_variant ||= 'community_engine' if local_hosted?
+      self.federation_protocol ||= 'ce_oauth' if community_engine?
+      self.oauth_issuer_url ||= resolved_host_url if community_engine?
+    end
+
+    def sync_primary_platform_domain!
+      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return if external?
+
+      hostname = platform_hostname_from_host_url
+      return if hostname.blank?
+
+      primary_domain = platform_domains.primary.first_or_initialize
+      primary_domain.hostname = hostname
+      primary_domain.active = true
+      primary_domain.primary = true
+      primary_domain.save! if primary_domain.new_record? || primary_domain.changed?
+    end
+
+    def platform_hostname_from_host_url
+      return if host_url.blank?
+
+      BetterTogether::PlatformDomain.normalize_hostname(URI.parse(host_url).host)
+    rescue URI::InvalidURIError
+      nil
     end
   end
 end

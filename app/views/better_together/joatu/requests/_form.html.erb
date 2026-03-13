@@ -1,13 +1,16 @@
 <%# locals(joatu_request:) %>
 
-<%= form_with(model: joatu_request, class: 'form', id: dom_id(joatu_request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+<%= form_with(model: joatu_request, scope: :joatu_request, class: 'form', id: dom_id(joatu_request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <%= render 'better_together/shared/help_banner',
            id: 'joatu-requests-form',
            i18n_key: 'better_together.joatu.help.requests.form' %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+  <%= form.hidden_field :type if form.object.type.present? %>
 
   <%= form.hidden_field :source_type, value: params[:source_type] if params[:source_type].present? %>
   <%= form.hidden_field :source_id, value: params[:source_id] if params[:source_id].present? %>
+  <%= form.hidden_field :target_type if form.object.target_type.present? %>
+  <%= form.hidden_field :target_id if form.object.target_id.present? %>
 
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
@@ -36,6 +39,20 @@
         <% if @source.respond_to?(:description) && @source.description.present? %>
           <div class="trix-content"><%= sanitize(@source.description.to_s) rescue h(@source.description.to_s) %></div>
         <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if defined?(@target) && @target.present? %>
+    <div class="card mb-3" role="region" aria-label="<%= t('better_together.joatu.requests.target_platform', default: 'Target platform') %>">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('better_together.joatu.requests.target_platform', default: 'Target platform') %></h5>
+        <p class="mb-0">
+          <strong><%= @target.name %></strong>
+          <% if @target.host_url.present? %>
+            <span class="text-muted">(<%= @target.host_url %>)</span>
+          <% end %>
+        </p>
       </div>
     </div>
   <% end %>

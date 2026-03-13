@@ -3,6 +3,9 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
+ENV['ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY'] ||= '0123456789abcdef0123456789abcdef'
+ENV['ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY'] ||= 'abcdef0123456789abcdef0123456789'
+ENV['ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT'] ||= 'salt-for-local-test-runs-0123456789'
 require File.expand_path('dummy/config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?

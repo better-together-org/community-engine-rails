@@ -241,9 +241,9 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
           end
         end
 
-        context 'when user is a platform manager' do
-          let(:manager_user) { create(:better_together_user, :platform_manager) }
-          let(:user) { manager_user }
+        context 'when user is a platform steward' do
+          let(:steward_user) { create(:better_together_user, :platform_steward) }
+          let(:user) { steward_user }
           let(:creator_person) { create(:better_together_person) }
 
           context 'with unpublished pages' do
@@ -252,7 +252,7 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
             end
             let!(:activity) { create_activity_for(unpublished_page) }
 
-            it 'includes the activity (platform managers see all public activities)' do
+            it 'includes the activity (platform stewards see all public activities)' do
               expect(scope).to include(activity)
             end
           end

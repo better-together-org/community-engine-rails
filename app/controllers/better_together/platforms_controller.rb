@@ -57,17 +57,24 @@ module BetterTogether
       render json: formatted_people
     end
 
+    # GET /platforms/new
+    def new
+      @platform = ::BetterTogether::Platform.new(external: true)
+      authorize @platform
+    end
+
     def edit
       authorize @platform
     end
 
     # POST /platforms
     def create # rubocop:todo Metrics/MethodLength
-      @platform = ::BetterTogether::Platform.new(platform_params)
+      @platform = ::BetterTogether::Platform.new(platform_create_params)
       authorize_platform
 
       if @platform.save
-        redirect_to @platform, notice: t('flash.generic.created', resource: t('resources.platform'))
+        redirect_to @platform, notice: t('flash.generic.created', resource: t('resources.platform')),
+                               status: :see_other
       else
         respond_to do |format|
           format.turbo_stream do
@@ -80,6 +87,8 @@ module BetterTogether
           format.html { render :new, status: :unprocessable_content }
         end
       end
+    rescue Pundit::NotAuthorizedError
+      render_not_found
     end
 
     # PATCH/PUT /platforms/1
@@ -115,6 +124,10 @@ module BetterTogether
       @platform = set_resource_instance
     end
 
+    def platform_create_params
+      params.require(:platform).permit(:identifier, :host_url, :time_zone, :external, *locale_attributes)
+    end
+
     def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
         slug host_url time_zone privacy
@@ -147,7 +160,14 @@ module BetterTogether
     end
 
     def settings_attributes
-      %i[requires_invitation]
+      %i[
+        requires_invitation
+        software_variant
+        network_visibility
+        connection_bootstrap_state
+        federation_protocol
+        oauth_issuer_url
+      ]
     end
 
     def resource_class

@@ -1,0 +1,25 @@
+<section class="container py-4">
+  <header class="mb-4">
+    <p class="text-muted mb-2">
+      <%= link_to t('better_together.person_linked_seeds.show.back', default: 'Back to linked seeds'),
+                  person_linked_seeds_path,
+                  class: 'text-decoration-none' %>
+    </p>
+    <h1><%= @payload_data['title'].presence || @person_linked_seed.identifier %></h1>
+    <p class="text-muted mb-0">
+      <%= @person_linked_seed.seed_type.to_s.humanize %>
+      ·
+      <%= @person_linked_seed.source_platform.name %>
+    </p>
+  </header>
+
+  <% if @payload_data['body'].present? %>
+    <article class="prose">
+      <p><%= @payload_data['body'] %></p>
+    </article>
+  <% elsif @payload_data.present? %>
+    <pre><%= JSON.pretty_generate(@payload_data) %></pre>
+  <% else %>
+    <p class="text-muted"><%= t('better_together.person_linked_seeds.show.empty', default: 'This linked seed has no readable payload.') %></p>
+  <% end %>
+</section>

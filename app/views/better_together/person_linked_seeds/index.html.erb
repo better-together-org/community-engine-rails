@@ -1,0 +1,29 @@
+<section class="container py-4">
+  <header class="mb-4">
+    <h1><%= t('better_together.person_linked_seeds.index.title', default: 'Linked Seeds') %></h1>
+    <p class="text-muted mb-0">
+      <%= t('better_together.person_linked_seeds.index.description',
+            default: 'Private linked content shared directly with you through an active person access grant.') %>
+    </p>
+  </header>
+
+  <% if @person_linked_seeds.any? %>
+    <div class="list-group">
+      <% @person_linked_seeds.each do |linked_seed| %>
+        <% payload = linked_seed.payload_data %>
+        <%= link_to person_linked_seed_path(linked_seed), class: 'list-group-item list-group-item-action' do %>
+          <div class="d-flex w-100 justify-content-between align-items-start gap-3">
+            <div>
+              <h2 class="h6 mb-1"><%= payload['title'].presence || linked_seed.identifier %></h2>
+              <p class="mb-1 text-muted"><%= linked_seed.seed_type.to_s.humanize %></p>
+              <small class="text-muted"><%= linked_seed.source_platform.name %></small>
+            </div>
+            <small class="text-muted"><%= l(linked_seed.last_synced_at || linked_seed.created_at, format: :short) %></small>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted"><%= t('better_together.person_linked_seeds.index.empty', default: 'No linked seeds are currently available.') %></p>
+  <% end %>
+</section>

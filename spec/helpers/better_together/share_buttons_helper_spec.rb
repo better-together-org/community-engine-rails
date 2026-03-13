@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'ostruct'
 
 RSpec.describe BetterTogether::ShareButtonsHelper do
-  let(:shareable_page) { create(:better_together_page, title: 'Test Page') }
-  let(:shareable_post) { create(:better_together_post, title: 'Test Post') }
-  let(:shareable_without_title) do
-    instance_double(BetterTogether::Page, id: 'test-id', title: nil, name: nil)
-  end
+  let(:shareable_page) { OpenStruct.new(id: 'page-id', title: 'Test Page', name: nil) }
+  let(:shareable_post) { OpenStruct.new(id: 'post-id', title: 'Test Post', name: nil) }
+  let(:shareable_without_title) { OpenStruct.new(id: 'test-id', title: nil, name: nil) }
 
   before do
     allow(helper).to receive_messages(request: double(original_url: 'https://example.com/test'),
@@ -52,6 +51,14 @@ RSpec.describe BetterTogether::ShareButtonsHelper do
       result = helper.share_buttons(shareable: shareable_page)
       expect(result).to include('data-shareable-type')
       expect(result).to include('data-shareable-id')
+    end
+
+    it 'uses the canonical current url instead of the raw request host' do
+      allow(helper).to receive(:share_button_url).and_return('https://primary.example.test/test')
+
+      result = helper.share_buttons(shareable: shareable_page)
+
+      expect(result).to include('data-url="https://primary.example.test/test"')
     end
 
     it 'accepts custom platforms list' do

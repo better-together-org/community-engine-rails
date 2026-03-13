@@ -9,8 +9,10 @@ module BetterTogether
       private
 
       def filtered_invitations_scope
-        invitable_type_condition(BetterTogether::Event)
-          .where(manageable_events_condition)
+        event_scope = invitable_type_condition(BetterTogether::Event)
+        return event_scope if platform_event_manager?
+
+        event_scope.where(manageable_events_condition)
       end
 
       def manageable_events_condition
@@ -23,6 +25,10 @@ module BetterTogether
           user.person&.id, 'BetterTogether::Person', user.person&.id
         ]
       end
+
+      def platform_event_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
     end
 
     private
@@ -31,8 +37,8 @@ module BetterTogether
       event = record.invitable
       return false unless event.is_a?(BetterTogether::Event)
 
-      # Platform managers may act across events
-      return true if permitted_to?('manage_platform')
+      # Platform stewards may act across events
+      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
 
       ep = BetterTogether::EventPolicy.new(user, event)
       # Event hosts or event creator

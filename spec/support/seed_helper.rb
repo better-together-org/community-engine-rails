@@ -40,6 +40,13 @@ module SeedHelper
     # Create essential roles if they don't exist
     unless BetterTogether::Role.exists?
       BetterTogether::Role.create!(
+        identifier: 'platform_steward',
+        name: 'Platform Steward',
+        resource_type: 'BetterTogether::Platform',
+        lock_version: 0
+      )
+
+      BetterTogether::Role.create!(
         identifier: 'platform_manager',
         name: 'Platform Manager',
         resource_type: 'BetterTogether::Platform',

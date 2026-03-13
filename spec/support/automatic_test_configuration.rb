@@ -10,7 +10,7 @@
 # Usage:
 # - By default, all request/controller/feature tests get host platform setup
 # - Use :skip_host_setup tag to skip host platform configuration
-# - Use :as_platform_manager tag to login as platform manager
+# - Use :as_platform_steward or :as_platform_manager to login as platform steward
 # - Use :as_user tag to login as regular user
 # - Use :authenticated tag to login as default user
 # - Authentication is also inferred from describe/context blocks containing:
@@ -21,7 +21,7 @@ module AutomaticTestConfiguration
   extend ActiveSupport::Concern
   include FactoryBot::Syntax::Methods
 
-  # Keywords that trigger automatic platform manager authentication
+  # Keywords that trigger automatic platform steward authentication
   MANAGER_KEYWORDS = [
     'platform manager',
     'admin',
@@ -50,6 +50,7 @@ module AutomaticTestConfiguration
       description_lower = description.downcase
 
       if MANAGER_KEYWORDS.any? { |keyword| description_lower.include?(keyword) }
+        metadata[:as_platform_steward] = true
         metadata[:as_platform_manager] = true
       elsif USER_KEYWORDS.any? { |keyword| description_lower.include?(keyword) }
         metadata[:as_user] = true
@@ -125,12 +126,12 @@ module AutomaticTestConfiguration
     wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
     wizard.mark_completed
 
-    platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+    platform_steward = BetterTogether::User.find_by(email: 'manager@example.test')
 
-    unless platform_manager
+    unless platform_steward
       begin
         create(
-          :better_together_user, :confirmed, :platform_manager,
+          :better_together_user, :confirmed, :platform_steward,
           email: 'manager@example.test',
           password: 'SecureTest123!@#'
         )
@@ -159,8 +160,9 @@ module AutomaticTestConfiguration
     if ENV['DEBUG_AUTH']
       Rails.logger.debug "[AUTH DEBUG] Setup for: #{full_description}"
       metadata_info = "no_auth=#{example.metadata[:no_auth]}, as_user=#{example.metadata[:as_user]}"
+      platform_steward_info = "as_platform_steward=#{example.metadata[:as_platform_steward]}"
       platform_manager_info = "as_platform_manager=#{example.metadata[:as_platform_manager]}"
-      Rails.logger.debug "[AUTH DEBUG] Metadata: #{metadata_info}, #{platform_manager_info}"
+      Rails.logger.debug "[AUTH DEBUG] Metadata: #{metadata_info}, #{platform_steward_info}, #{platform_manager_info}"
     end
 
     # Skip auto-authentication for Setup Wizard feature specs so the wizard is reachable
@@ -185,8 +187,9 @@ module AutomaticTestConfiguration
     end
 
     # Then check for explicit authentication tags
-    if example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
-      Rails.logger.debug '[AUTH DEBUG] :as_platform_manager tag - authenticating as manager' if ENV['DEBUG_AUTH']
+    if example.metadata[:as_platform_steward] || example.metadata[:platform_steward] ||
+       example.metadata[:as_platform_manager] || example.metadata[:platform_manager]
+      Rails.logger.debug '[AUTH DEBUG] platform steward tag - authenticating as steward' if ENV['DEBUG_AUTH']
       use_auth_method_for_spec_type(example, :manager)
       example.metadata[:already_authenticated] = true
       Thread.current[:__bt_authenticated_description] = full_description
@@ -237,18 +240,18 @@ module AutomaticTestConfiguration
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_steward)
              else
                find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
       sign_in user
     elsif feature_spec_type?(example)
       # Use Capybara navigation for feature specs
-      extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_manager)
+      extend BetterTogether::CapybaraFeatureHelpers unless respond_to?(:capybara_login_as_platform_steward)
       # Ensure the target user exists before attempting a UI login
       if user_type == :manager
-        find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
-        capybara_login_as_platform_manager
+        find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_steward)
+        capybara_login_as_platform_steward
         # NOTE: Removed automatic navigation to conversation form - the helper will handle this
       else
         find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
@@ -257,7 +260,7 @@ module AutomaticTestConfiguration
     else
       # Request specs: choose auth mechanism based on description
       user = if user_type == :manager
-               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+               find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_steward)
              else
                find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
@@ -298,8 +301,8 @@ module AutomaticTestConfiguration
 
   def find_or_create_test_user(email, password, role_type = :user)
     user = BetterTogether::User.find_by(email: email)
-    user ||= if role_type == :platform_manager
-               FactoryBot.create(:better_together_user, :confirmed, :platform_manager, email: email, password: password)
+    user ||= if %i[platform_manager platform_steward].include?(role_type)
+               FactoryBot.create(:better_together_user, :confirmed, :platform_steward, email: email, password: password)
              else
                FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
              end
@@ -396,7 +399,8 @@ RSpec.configure do |config|
       example.example_group.parent_groups.map(&:description)
     ].flatten.compact.join(' ').downcase
 
-    if full_description.include?('creating a new conversation') && example.metadata[:as_platform_manager]
+    if full_description.include?('creating a new conversation') &&
+       (example.metadata[:as_platform_steward] || example.metadata[:as_platform_manager])
       visit new_conversation_path(locale: I18n.default_locale)
     end
   end

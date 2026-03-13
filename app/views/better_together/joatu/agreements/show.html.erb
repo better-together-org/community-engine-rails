@@ -30,6 +30,28 @@
               <%= @joatu_agreement.status %>
             </span>
           </p>
+
+          <% if @joatu_agreement.connection_request? %>
+            <hr>
+            <p class="mb-1"><strong>Source Platform:</strong>
+              <%= link_to @joatu_agreement.offer.target.name, @joatu_agreement.offer.target %>
+            </p>
+            <p class="mb-1"><strong>Target Platform:</strong>
+              <%= link_to @joatu_agreement.request.target.name, @joatu_agreement.request.target %>
+            </p>
+            <% if @joatu_agreement.platform_connection.present? %>
+              <p class="mb-0">
+                <strong>Platform Connection:</strong>
+                <%= link_to "#{@joatu_agreement.platform_connection.source_platform.name} → #{@joatu_agreement.platform_connection.target_platform.name}",
+                            platform_connection_path(@joatu_agreement.platform_connection),
+                            class: 'text-decoration-none' %>
+              </p>
+            <% elsif policy(BetterTogether::PlatformConnection).index? %>
+              <p class="mb-0">
+                <%= link_to 'Open Platform Connections', platform_connections_path, class: 'btn btn-sm btn-outline-primary' %>
+              </p>
+            <% end %>
+          <% end %>
         </div>
       </div>
 
