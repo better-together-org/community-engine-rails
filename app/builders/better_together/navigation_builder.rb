@@ -30,6 +30,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -46,6 +47,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 layout: 'layouts/better_together/full_width_page',
                 page_blocks_attributes: [
                   {
@@ -102,6 +104,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -118,6 +121,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -134,6 +138,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -150,6 +155,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -166,6 +172,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -182,6 +189,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -230,6 +238,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -246,6 +255,7 @@ module BetterTogether
                 published_at: Time.zone.now,
                 privacy: 'public',
                 protected: true,
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
@@ -549,6 +559,28 @@ module BetterTogether
               privacy: 'private',
               visibility_strategy: 'permission',
               permission_identifier: 'manage_platform'
+            },
+            {
+              identifier: 'webhook_endpoints',
+              title_en: 'Webhooks',
+              slug_en: 'webhook_endpoints',
+              position: 10,
+              item_type: 'link',
+              route_name: 'webhook_endpoints_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
+            },
+            {
+              identifier: 'oauth_applications',
+              title_en: 'OAuth Apps',
+              slug_en: 'oauth_applications',
+              position: 11,
+              item_type: 'link',
+              route_name: 'oauth_applications_url',
+              privacy: 'private',
+              visibility_strategy: 'permission',
+              permission_identifier: 'manage_platform'
             }
           ]
 
@@ -632,12 +664,13 @@ module BetterTogether
                 privacy: 'public',
                 protected: true,
                 layout: 'layouts/better_together/full_width_page',
+                show_title: false,
                 page_blocks_attributes: [
                   {
                     block_attributes: {
                       type: 'BetterTogether::Content::Template',
                       template_path: 'better_together/static_pages/community_engine',
-                      css_settings: { container_class: 'container-fluid' }
+                      css_settings: { container_class: '' }
                     }
                   }
                 ]

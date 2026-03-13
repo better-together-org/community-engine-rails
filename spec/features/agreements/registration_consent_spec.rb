@@ -8,19 +8,22 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
   # rubocop:todo RSpec/LetSetup
   let!(:tos_agreement) { BetterTogether::Agreement.find_by!(identifier: 'terms_of_service') }
   # rubocop:enable RSpec/LetSetup
+  let!(:platform) { configure_host_platform }
+  let(:test_email) { unique_email }
+  let(:test_identifier) { unique_identifier('testuser') }
 
   before do
-    configure_host_platform.update!(requires_invitation: false, privacy: 'public')
+    platform.update!(requires_invitation: false, privacy: 'public')
   end
 
   it 'requires accepting agreements during sign up' do
     visit new_user_registration_path(locale: I18n.default_locale)
 
-    fill_in 'user[email]', with: 'test@example.test'
+    fill_in 'user[email]', with: test_email
     fill_in 'user[password]', with: 'SecureTest123!@#'
     fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
-    fill_in 'user[person_attributes][identifier]', with: 'testuser'
+    fill_in 'user[person_attributes][identifier]', with: test_identifier
     fill_in 'user[person_attributes][description]', with: 'Tester'
 
     click_button 'Sign Up'
@@ -29,15 +32,15 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
   end
 
   # rubocop:todo RSpec/MultipleExpectations
-  it 'creates agreement participants when agreements are accepted' do # rubocop:todo RSpec/MultipleExpectations
+  it 'creates agreement participants when agreements are accepted', :aggregate_failures do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     visit new_user_registration_path(locale: I18n.default_locale)
 
-    fill_in 'user[email]', with: 'test@example.test'
+    fill_in 'user[email]', with: test_email
     fill_in 'user[password]', with: 'SecureTest123!@#'
     fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
-    fill_in 'user[person_attributes][identifier]', with: 'testuser'
+    fill_in 'user[person_attributes][identifier]', with: test_identifier
     fill_in 'user[person_attributes][description]', with: 'Tester'
 
     check 'terms_of_service_agreement'
@@ -46,7 +49,7 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
 
     click_button 'Sign Up'
 
-    user = BetterTogether::User.find_by(email: 'test@example.test')
+    user = BetterTogether::User.find_by(email: test_email)
     expect(user).to be_present
     expect(user.person.agreement_participants.count).to eq(3)
   end

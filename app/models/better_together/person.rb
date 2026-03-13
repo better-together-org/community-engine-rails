@@ -57,9 +57,6 @@ module BetterTogether
     has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
     has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
 
-    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
-    has_many :agreements, through: :agreement_participants
-
     has_many :person_platform_integrations, dependent: :destroy
 
     has_many :source_person_links, foreign_key: :source_person_id, dependent: :destroy,
@@ -72,6 +69,15 @@ module BetterTogether
                                              class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantee_person
     has_many :person_linked_seeds, foreign_key: :recipient_person_id, dependent: :destroy,
                                    class_name: 'BetterTogether::PersonLinkedSeed', inverse_of: :recipient_person
+    has_many :webhook_endpoints,
+             class_name: 'BetterTogether::WebhookEndpoint',
+             dependent: :destroy
+
+    has_many :oauth_applications,
+             class_name: 'BetterTogether::OauthApplication',
+             foreign_key: :owner_id,
+             dependent: :destroy,
+             inverse_of: :owner
 
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 

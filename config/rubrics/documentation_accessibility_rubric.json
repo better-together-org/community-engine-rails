@@ -1,0 +1,25 @@
+{
+  "name": "documentation_accessibility_rubric",
+  "version": "1.0",
+  "ui_wcag_target": "WCAG 2.1 AA",
+  "passing_rules": {
+    "minimum_total_score": 12,
+    "minimum_category_score": 2,
+    "block_on_safety_critical_issue": true
+  },
+  "scale": {
+    "0": "missing or materially inaccessible",
+    "1": "partially usable but still confusing or exclusionary",
+    "2": "clear, accessible, and broadly understandable"
+  },
+  "categories": [
+    "plain_language_clarity",
+    "technical_proficiency_inclusiveness",
+    "task_orientation_and_next_steps",
+    "accessible_ui_integration",
+    "error_recovery_and_user_agency",
+    "visual_and_responsive_accessibility",
+    "localization_readiness",
+    "values_and_safety_alignment"
+  ]
+}

@@ -12,6 +12,12 @@ module BetterTogether
       BetterTogether::InvitationRegistry.register(self)
     end
 
+    def self.included_in_models
+      included_module = self
+      Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
+      ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
+    end
+
     # Module-level method for default session duration
     def self.default_invitation_session_duration
       1.hour

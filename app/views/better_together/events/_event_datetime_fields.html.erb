@@ -42,9 +42,15 @@
   <!-- Start Datetime Field -->
   <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
     <%= required_label form, :starts_at, class: 'form-label' %>
-    <%= form.datetime_field :starts_at, 
+    <%# 
+      Using datetime_local_field for timezone-less datetime input.
+      - Browser displays time in user's preferred format (12h/24h based on locale)
+      - We store the value and interpret it in the event's timezone
+      - Value is formatted as local time in the event's timezone
+    %>
+    <%= form.datetime_local_field :starts_at, 
         id: 'event_starts_at',
-        include_seconds: false, 
+        value: event_datetime_field_value(event, :starts_at),
         class: 'form-control',
         'aria-label': t('better_together.events.labels.starts_at'),
         'data-action': 'change->better_together--event-datetime#updateEndTime',
@@ -60,9 +66,9 @@
   <!-- End Datetime Field -->
   <div class="col-12 col-md-6 mb-3 pb-3 border-bottom">
     <%= form.label :ends_at, t('better_together.events.labels.ends_at'), class: 'form-label' %>
-    <%= form.datetime_field :ends_at, 
+    <%= form.datetime_local_field :ends_at, 
         id: 'event_ends_at',
-        include_seconds: false, 
+        value: event_datetime_field_value(event, :ends_at),
         class: 'form-control',
         'aria-label': t('better_together.events.labels.ends_at'),
         'data-action': 'change->better_together--event-datetime#updateDuration',

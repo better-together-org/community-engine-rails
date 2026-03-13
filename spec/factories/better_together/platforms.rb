@@ -9,7 +9,7 @@ FactoryBot.define do
     id { SecureRandom.uuid }
     name { Faker::Company.unique.name }
     description { Faker::Lorem.paragraph }
-    identifier { Faker::Internet.unique.username(specifier: 10..20) }
+    identifier { "platform-#{SecureRandom.hex(10)}" }
     # Ensure uniqueness to avoid validation collisions across parallel specs
     host_url { "http://platform-#{SecureRandom.hex(6)}.test" }
     host { false }

@@ -4,14 +4,22 @@ require 'rails_helper'
 
 # Tests for event recurrence form integration
 RSpec.describe 'Event Recurrence Form', :as_platform_manager do
+  # Freeze time for consistent recurrence calculations
+  before do
+    travel_to(Time.zone.parse('2026-02-15 10:00:00'))
+    login('manager@example.test', 'SecureTest123!@#')
+  end
+
   let(:locale) { I18n.default_locale }
+  let!(:community) { BetterTogether::Community.find_by(host: true) }
+  let!(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
   let(:event_params) do
     {
       name: 'Weekly Meeting',
       slug: 'weekly-meeting',
       description: 'A recurring weekly meeting',
-      starts_at: 1.week.from_now,
-      ends_at: 1.week.from_now + 2.hours,
+      starts_at: Time.zone.parse('2026-02-22 10:00:00'),  # Explicit time
+      ends_at: Time.zone.parse('2026-02-22 12:00:00'),    # Explicit time
       timezone: 'America/New_York',
       privacy: 'public',
       category_ids: [],
@@ -24,16 +32,10 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
       }
     }
   end
-  let(:community) { BetterTogether::Community.find_by(host: true) }
-  let(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
-
-  before do
-    login('manager@example.test', 'SecureTest123!@#')
-  end
 
   # Helper to build IceCube rule YAML for test setup
   def build_test_rule(frequency:, interval: 1, count: nil, until_date: nil) # rubocop:disable Metrics/MethodLength
-    start_time = 1.week.from_now
+    start_time = Time.zone.parse('2026-02-22 10:00:00') # Explicit time
     schedule = IceCube::Schedule.new(start_time)
 
     rule = case frequency
@@ -56,7 +58,7 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
 
   describe 'POST /events with recurrence_attributes' do
     context 'when creating a weekly recurring event' do
-      it 'creates event with recurrence' do
+      it 'creates event with recurrence', :aggregate_failures do
         post better_together.events_path(locale:), params: {
           event: event_params.merge(
             recurrence_attributes: {
@@ -78,8 +80,8 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
     end
 
     context 'when creating a monthly event ending on a date' do
-      it 'creates event with recurrence ending on specific date' do
-        end_date = 6.months.from_now.to_date
+      it 'creates event with recurrence ending on specific date', :aggregate_failures do
+        end_date = Date.parse('2026-08-15') # Explicit date
 
         post better_together.events_path(locale:), params: {
           event: event_params.merge(
@@ -115,10 +117,10 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
     end
 
     context 'when creating a daily event with exception dates' do
-      it 'creates event with exception dates' do
+      it 'creates event with exception dates', :aggregate_failures do
         exception_dates = [
-          1.week.from_now.to_date.to_s,
-          2.weeks.from_now.to_date.to_s
+          '2026-02-22', # Explicit dates
+          '2026-03-01'
         ]
 
         post better_together.events_path(locale:), params: {
@@ -147,7 +149,7 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
       create(:better_together_event,
              name: 'Original Event',
              creator: user.person,
-             starts_at: 1.week.from_now,
+             starts_at: Time.zone.parse('2026-02-22 10:00:00'), # Explicit time
              ends_at: 1.week.from_now + 2.hours)
     end
 

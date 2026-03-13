@@ -1,30 +1,74 @@
 name: "Ruby on Rails CI"
 
-on: { push: { branches: [main, dev] }, pull_request: { branches: [main, dev] } }
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
+  pull_request:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      rails_version: ${{ steps.branch-target.outputs.rails_version }}
+      update_coverage_badge: ${{ steps.branch-target.outputs.update_coverage_badge }}
+    steps:
+      - name: Resolve native Rails lane
+        id: branch-target
+        shell: bash
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            branch="${GITHUB_BASE_REF}"
+          else
+            branch="${GITHUB_REF_NAME}"
+          fi
+
+          case "${branch}" in
+            compat/rails-7.2)
+              rails_version="7.2.2.2"
+              ;;
+            compat/rails-8.1)
+              rails_version="8.1.2"
+              ;;
+            main|dev|compat/rails-8.0)
+              rails_version="8.0.3"
+              ;;
+            *)
+              rails_version="8.0.3"
+              ;;
+          esac
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" && "${branch}" == "main" ]]; then
+            update_coverage_badge="true"
+          else
+            update_coverage_badge="false"
+          fi
+
+          echo "rails_version=${rails_version}" >> "${GITHUB_OUTPUT}"
+          echo "update_coverage_badge=${update_coverage_badge}" >> "${GITHUB_OUTPUT}"
+
   rspec:
+    name: rspec (3.4.4, ${{ needs.prepare.outputs.rails_version }})
+    needs: prepare
     runs-on: ubuntu-latest
     environment: test
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - ruby: '3.4.4'
-            rails: '7.2.2.2'
-            allowed_failure: false   # ✅ required
-          - ruby: '3.4.4'
-            rails: '8.0.3'
-            allowed_failure: false   # ✅ required
-
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
       REDIS_URL: "redis://localhost:6379/0"
-      ES_HOST:  "http://localhost"
+      ES_HOST: "http://localhost"
       ELASTICSEARCH_URL: "http://localhost:9200"
-      RAILS_VERSION: ${{ matrix.rails }}
-      # Parallel test configuration
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
       WORKERS: 4
 
     services:
@@ -35,7 +79,6 @@ jobs:
           POSTGRES_DB: rails_test
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
-          # Increase max_connections for parallel test workers (4 workers + overhead)
           POSTGRES_INITDB_ARGS: "-c max_connections=50"
         options: >-
           --health-cmd "pg_isready -U rails"
@@ -63,51 +106,32 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Ruby & gems
+      - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: "3.4.4"
 
-          # Run the automatic bundle-install only on 7.2.
-          # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
-          # that we’ll reuse in the later manual install.
-          bundler-cache: ${{ matrix.rails == '8.0.3' }}
-
-          # One cache bucket per Rails version so they don’t clobber each other.
-          cache-version: rails-${{ matrix.rails }}
-
-      # Updating Rails can legitimately blow up on the experimental tracks,
-      # so we allow that *step* to error out without failing the job.
-      - name: Update Rails & install gems
-        if: matrix.rails != '8.0.3'
-        id: update
+      - name: Resolve branch-native bundle
+        shell: bash
         run: |
-          # turn off deployment mode
           bundle config set deployment false
-          # conservative upgrade to the target rails version
           bundle update rails --conservative
-          # install missing gems (writes bin/rspec, etc)
           bundle install --jobs 4 --retry 3
-        continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Prepare parallel test databases
-        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          cd spec/dummy && bundle exec rake db:parallel:create db:parallel:prepare
-        continue-on-error: ${{ matrix.allowed_failure }}
+          cd spec/dummy
+          bundle exec rake db:parallel:create db:parallel:prepare
 
       - name: Wait for Elasticsearch
-        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         run: |
           echo "Waiting for Elasticsearch to be healthy..."
           curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
-
       - name: Run RSpec in parallel
-        if: (matrix.rails == '8.0.3') || steps.update.outcome == 'success'
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
@@ -115,47 +139,65 @@ jobs:
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           bundle exec prspec spec
-        continue-on-error: ${{ matrix.allowed_failure }}
 
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
+          name: coverage-report-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             coverage/
 
       - name: Generate coverage badge
-        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
         run: |
           COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
-          COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" $COVERAGE)
-          npx badgen-cli --subject coverage --status ${COVERAGE}% --color $COLOR > coverage.svg
+          COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" "$COVERAGE")
+          npx badgen-cli --subject coverage --status "${COVERAGE}%" --color "$COLOR" > coverage.svg
 
       - name: Commit badge
-        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update coverage badge"
           file_pattern: coverage.svg
 
-  # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:
+    needs: prepare
     runs-on: ubuntu-latest
+    env:
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
-        with: { bundler-cache: true }
+        with:
+          ruby-version: "3.4.4"
+      - name: Resolve branch-native bundle
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
       - run: bundle exec rubocop --parallel
 
   security:
+    needs: prepare
     runs-on: ubuntu-latest
+    env:
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
-        with: { bundler-cache: true }
+        with:
+          ruby-version: "3.4.4"
+      - name: Resolve branch-native bundle
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
       - run: bundle binstubs bundler-audit --force
       - run: bundle exec bundler-audit --update
       - run: bundle exec brakeman -q -w2

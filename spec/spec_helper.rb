@@ -466,6 +466,30 @@ RSpec.configure do |config|
   #   # the seed, which is printed after each run.
   #   #     --seed 1234
   config.order = :random
+
+  # Prevent parallel_rspec marshal errors by removing non-marshalable objects
+  # (e.g., Binding/Proc) from example metadata before it is sent over IPC.
+  config.after do |example|
+    scrub = lambda do |value, seen|
+      return if value.nil?
+      return if seen.include?(value.object_id)
+
+      seen.add(value.object_id)
+
+      case value
+      when Hash
+        value.delete_if do |_, v|
+          v.is_a?(Binding) || v.is_a?(Proc)
+        end
+        value.each_value { |v| scrub.call(v, seen) }
+      when Array
+        value.reject! { |v| v.is_a?(Binding) || v.is_a?(Proc) }
+        value.each { |v| scrub.call(v, seen) }
+      end
+    end
+
+    scrub.call(example.metadata, Set.new)
+  end
   #
   #   # Seed global randomization in this process using the `--seed` CLI option.
   #   # Setting this allows you to use `--seed` to deterministically reproduce

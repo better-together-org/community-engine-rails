@@ -34,17 +34,19 @@ module BetterTogether
       joatu_requests: 'joatu_requests_url',
       metrics_reports: 'metrics_reports_url',
       navigation_areas: 'navigation_areas_url',
+      oauth_applications: 'oauth_applications_url',
       pages: 'pages_url',
       people: 'people_url',
       posts: 'posts_url',
       platforms: 'platforms_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
-      users: 'users_url'
+      users: 'users_url',
+      webhook_endpoints: 'webhook_endpoints_url'
     }
 
     belongs_to :navigation_area, touch: true
-    belongs_to :linkable, polymorphic: true, optional: true, autosave: true
+    belongs_to :linkable, polymorphic: true, optional: true, touch: true
 
     # Association with parent item
     belongs_to :parent,
@@ -75,7 +77,7 @@ module BetterTogether
 
     slugged :title
 
-    validates :title, presence: true, length: { maximum: 255 }
+    validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
               format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
                         message: 'must be a valid URL, "start with #", or be an absolute path' }
@@ -174,7 +176,7 @@ module BetterTogether
     end
 
     def dropdown_with_visible_children?
-      @dropdown_with_visible_children ||= dropdown? and children? && children.to_a.any?(&:visible?)
+      @dropdown_with_visible_children ||= dropdown? && children? && children.to_a.any?(&:visible?)
     end
 
     def item_type
@@ -214,7 +216,9 @@ module BetterTogether
     end
 
     def title=(arg, options = {})
-      linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
+      # Pass locale from options or use current Mobility locale
+      target_locale = options[:locale] || Mobility.locale
+      linkable.public_send :title=, arg, locale: target_locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
       super(arg, **options)
     end
@@ -301,6 +305,10 @@ module BetterTogether
 
     private
 
+    def linkable_provides_title?
+      linkable.present? && linkable.respond_to?(:title)
+    end
+
     def retrieve_route(route)
       # Use `send` to dispatch the correct URL helper
       Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
@@ -327,6 +335,21 @@ module BetterTogether
       return false unless platform
 
       user.permitted_to?(permission_identifier, platform)
+    end
+
+    def saved_change_to_linkable?
+      saved_change_to_linkable_id? || saved_change_to_linkable_type?
+    end
+
+    def touch_navigation_area_on_linkable_change
+      return unless navigation_area
+      return if BetterTogether.skip_navigation_touches
+
+      # Reload to get latest lock_version before touching (prevents StaleObjectError)
+      # Retry once if we still get a stale object error
+      navigation_area.reload.touch
+    rescue ActiveRecord::StaleObjectError
+      navigation_area.reload.touch
     end
   end
 end

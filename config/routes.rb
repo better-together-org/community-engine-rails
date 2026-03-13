@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'sidekiq/web'
+require 'rswag/ui'
+require 'rswag/api'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
@@ -85,6 +87,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
 
           resources :person_community_memberships, only: %i[create destroy]
+
+          # Community-scoped integrations (accessible to community admins)
+          resources :webhook_endpoints,
+                    controller: 'community_webhook_endpoints',
+                    as: :community_webhook_endpoints do
+            member do
+              post :test
+            end
+          end
         end
 
         resources :conversations, only: %i[index new create update show] do
@@ -142,7 +153,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             get :search
           end
         end
-        resources :reports, only: [:create]
+
+        resources :reports, only: %i[index show new create]
+
         resources :platform_connections, only: %i[index show new create edit update] do
           member do
             patch :approve
@@ -238,6 +251,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
                                                              as: :mark_integration_notifications_read
 
+        # Personal OAuth application management (accessible to all authenticated users)
+        scope path: 'settings' do
+          resources :oauth_applications,
+                    controller: 'oauth_applications',
+                    as: :personal_oauth_applications,
+                    path: 'applications'
+        end
+
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do
           post 'translate', to: 'translations#translate', as: :ai_translate
@@ -331,6 +352,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             # People and memberships
             resources :people
             resources :person_community_memberships
+            namespace :safety, path: 'safety' do
+              resources :cases, only: %i[index show update], as: :cases do
+                resources :actions, only: [:create]
+                resources :notes, only: [:create]
+                resources :agreements, only: %i[create update]
+              end
+            end
 
             # Platform list
             resources :platforms, only: %i[index show new create edit update] do
@@ -346,6 +374,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
 
             resources :users
+
+            # Webhook and OAuth application management
+            resources :webhook_endpoints do
+              member do
+                post :test
+              end
+            end
+            resources :oauth_applications
 
             # Geography Routes for WIP Geography Feature
             namespace :geography do
@@ -460,6 +496,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     get 'bt' => 'static_pages#community_engine', as: :community_engine
     get '', to: 'pages#show', defaults: { path: 'home' }, as: :home_page
   end
+
+  # API Authentication routes (JSON-only, no locale requirement)
+  # Placed after localized routes to ensure proper controller resolution
+  draw :api
 
   # Only allow authenticated users to get access
   # to the Sidekiq web interface

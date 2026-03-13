@@ -356,4 +356,73 @@ RSpec.describe BetterTogether::SidebarNavHelper do
       expect(first_result).to eq(second_result)
     end
   end
+
+  describe 'Cache invalidation when linkable changes' do
+    # Enable caching for these tests
+    around do |example|
+      original_store = Rails.cache
+      Rails.cache = ActiveSupport::Cache::MemoryStore.new
+      example.run
+      Rails.cache = original_store
+    end
+
+    let!(:nav_item) do
+      create(:better_together_navigation_item,
+             navigation_area: nav,
+             linkable: parent_page,
+             position: 1)
+    end
+    let(:new_page) { create(:better_together_page, slug: 'new-page', title: 'New Page') }
+
+    it 'uses different cache keys when linkable is updated' do
+      # Render initial cached version with consistent current_page
+      first_render = helper.render_sidebar_nav(nav:, current_page:)
+      first_nav_cache_key = nav.reload.cache_key_with_version
+
+      # Verify initial content is cached
+      expect(first_render).to have_content(parent_page.title)
+
+      # Update the linkable association
+      sleep 0.01 # Ensure timestamp changes
+      nav_item.update!(linkable: new_page)
+
+      # Get new nav cache key - should be different due to touch callback
+      second_nav_cache_key = nav.reload.cache_key_with_version
+      expect(second_nav_cache_key).not_to eq(first_nav_cache_key),
+                                          'Expected nav cache key to change after linkable update'
+
+      # Render again with SAME current_page - should fetch fresh due to nav cache key change
+      second_render = helper.render_sidebar_nav(nav:, current_page:)
+
+      # The rendered content should reflect the updated linkable
+      expect(second_render).to have_content('New Page')
+      expect(second_render).not_to have_content(parent_page.title)
+    end
+
+    it 'invalidates cache when linked page title changes' do
+      # Render initial cached version with consistent current_page
+      first_render = helper.render_sidebar_nav(nav:, current_page:)
+      original_title = parent_page.title
+      expect(first_render).to have_content(original_title)
+
+      # Get the original nav cache key
+      original_nav_cache_key = nav.reload.cache_key_with_version
+
+      # Update the linked page's title (tests page -> nav_item -> nav_area touch chain)
+      sleep 0.01
+      parent_page.reload.update!(title: 'Updated Parent Title')
+
+      # Verify navigation area was touched (via page -> nav_item -> nav_area chain)
+      new_nav_cache_key = nav.reload.cache_key_with_version
+      expect(new_nav_cache_key).not_to eq(original_nav_cache_key),
+                                       'Expected nav cache key to change after page title update'
+
+      # Render again with SAME current_page - should use different cache key and show new title
+      second_render = helper.render_sidebar_nav(nav:, current_page:)
+
+      # Should show the updated title, not the cached one
+      expect(second_render).to have_content('Updated Parent Title')
+      expect(second_render).not_to have_content(original_title)
+    end
+  end
 end

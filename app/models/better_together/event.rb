@@ -34,7 +34,7 @@ module BetterTogether
 
     categorizable(class_name: 'BetterTogether::EventCategory')
 
-    has_many :event_hosts
+    has_many :event_hosts, dependent: :destroy
 
     # belongs_to :address, -> { where(physical: true, primary_flag: true) }
     # accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?

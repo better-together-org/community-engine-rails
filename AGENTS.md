@@ -2,6 +2,14 @@
 
 Instructions for GitHub Copilot and other automated contributors working in this repository.
 
+## Quick Navigation
+
+- **For architectural patterns and coding standards**: See [`.github/copilot-instructions.md`](.github/copilot-instructions.md) 
+- **For technology-specific guidelines**: See [`.github/instructions/`](.github/instructions/) directory
+- **This file**: Command reference, test execution workflows, Docker setup, and debugging practices
+
+> **Note**: This file complements `.github/copilot-instructions.md`. While that file focuses on *what* to build and *how* to structure code, this file focuses on *how* to run, test, and validate your changes.
+
 ## Project
 - Ruby: 3.4.4 (installed via rbenv in setup)
 - Rails: 7.2
@@ -16,8 +24,9 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Dummy App Commands**: Use `bin/dc-run-dummy` for Rails commands that need the dummy app context (e.g., `bin/dc-run-dummy rails console`, `bin/dc-run-dummy rails db:migrate`).
 - Databases:
   - development: `community_engine_development`
-  - test: `community_engine_test`
+  - test: `community_engine_test` (parallel workers use `community_engine_test2`, `community_engine_test3`, `community_engine_test4`)
 - Use `DATABASE_URL` to connect (overrides fallback host in `config/database.yml`).
+- **Parallel Test DB Setup (CRITICAL)**: After any database schema change (new migrations, schema.rb updates, `db:drop`/`db:create`), you **must** run `bin/parallel-setup` to recreate all parallel test databases. Without this, `prspec` will fail with `PG::UndefinedTable` errors because the parallel worker databases are out of sync.
 
 ## Debugging Guidelines
 - **Never use Rails console or runner for debugging** - These commands don't align with our test-driven development approach
@@ -41,12 +50,14 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec prspec spec`) until ALL targeted tests pass individually**
 - **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources (even with parallel execution)
 - **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
+- **After any DB schema change, run `bin/parallel-setup`**: This recreates all parallel test databases (`community_engine_test`, `test2`, `test3`, `test4`). Without this, `prspec` workers will hit `PG::UndefinedTable` errors. Schema changes include: new migrations, `db:drop`/`db:create`, `db:schema:load`, or updates to `spec/dummy/db/schema.rb`.
 - **Test execution workflow**:
   1. Identify failing tests from error report
-  2. Run each failing test individually with `prspec` to reproduce the issue
-  3. Make fixes and verify each test passes in isolation with `prspec`
-  4. Run all previously failing tests together with `prspec` to verify no interactions
-  5. ONLY THEN run the full test suite with `prspec spec` (via `bin/ci`) to verify no regressions
+  2. If database schema has changed, run `bin/parallel-setup` first
+  3. Run each failing test individually with `prspec` to reproduce the issue
+  4. Make fixes and verify each test passes in isolation with `prspec`
+  5. Run all previously failing tests together with `prspec` to verify no interactions
+  6. ONLY THEN run the full test suite with `prspec spec` (via `bin/ci`) to verify no regressions
 
 ### Test Commands
 - **Full Test Suite (USE SPARINGLY):** `bin/dc-run bin/ci`
@@ -68,6 +79,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Lint:** `bin/dc-run bundle exec rubocop`
 - **Security:** `bin/dc-run bundle exec brakeman --quiet --no-pager` and `bin/dc-run bundle exec bundler-audit --update`
 - **Style:** `bin/dc-run bin/codex_style_guard`
+- **Parallel DB Setup:** `bin/parallel-setup` (REQUIRED after any DB schema change — recreates parallel test databases for `prspec`)
 - **I18n:** `bin/dc-run bin/i18n [normalize|check|health|all]` (runs normalize + missing + interpolation checks by default)
 - **Documentation:**
   - **Table of Contents**: [`docs/table_of_contents.md`](docs/table_of_contents.md) - Main documentation index
@@ -846,6 +858,7 @@ Each major system must include:
 
 ## Docker Environment Usage
 - **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
   - Tests: `bin/dc-run bundle exec rspec`
@@ -906,3 +919,48 @@ Time.use_zone(user.time_zone) { formatted_time = event.starts_at.strftime('%I:%M
 - **Request-level handling**: `ApplicationController#set_time_zone` with user → platform → app config → UTC hierarchy
 - **Model validation**: All timezone attributes validated against `TZInfo::Timezone.all_identifiers`
 - **Form helpers**: `iana_time_zone_select` for IANA identifier selection
+
+## See Also
+
+- **[.github/copilot-instructions.md](.github/copilot-instructions.md)** - Core architectural patterns, coding standards, and principles
+- **[.github/instructions/](.github/instructions/)** - Technology-specific guidelines (Hotwire, accessibility, i18n, etc.)
+- **[docs/table_of_contents.md](docs/table_of_contents.md)** - Comprehensive documentation organized by stakeholder
+- **[README.md](README.md)** - Project overview and installation
+- **[docs/development/](docs/development/)** - Development guides and best practices
+
+## Quick Command Reference
+
+For quick reference, here are the most commonly used commands:
+
+```bash
+# Development Setup
+bin/dc build                                    # Build containers
+bin/dc up -d                                    # Start services
+bin/dc-run rails db:prepare                     # Setup database
+bin/parallel-setup                               # Setup parallel test DBs (REQUIRED for prspec)
+
+# After DB Schema Changes (migrations, db:drop, db:create, schema:load)
+bin/parallel-setup                               # MUST run to sync parallel test DBs
+
+# Testing (ALWAYS test specific files first, see §Test Execution Guidelines)
+bin/dc-run bundle exec prspec spec/models/user_spec.rb          # Single file
+bin/dc-run bundle exec prspec spec/models/user_spec.rb:42       # Specific line
+bin/dc-run bin/ci                                                # Full suite (USE SPARINGLY)
+
+# Code Quality
+bin/dc-run bundle exec brakeman --quiet --no-pager             # Security
+bin/dc-run bundle exec rubocop                                  # Style
+bin/dc-run bundle exec rubocop -A                              # Auto-fix
+bin/dc-run bin/codex_style_guard                               # Style guard
+bin/dc-run bin/i18n                                            # I18n check
+
+# Documentation
+bin/render_diagrams                              # Render Mermaid diagrams
+docs/scripts/update_progress.sh                  # Update doc progress
+docs/scripts/validate_documentation_tooling.sh   # Validate docs
+
+# Utility
+bin/dc ps                                        # Check service status
+bin/dc logs -f                                   # View logs
+bin/dc down                                      # Stop services
+```

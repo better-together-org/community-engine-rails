@@ -180,7 +180,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       before do
         # Ensure Platform has the concern included
-        unless BetterTogether::Platform.included_modules.include?(described_class)
+        unless BetterTogether::Platform.include?(described_class)
           BetterTogether::Platform.include(described_class)
         end
       end
@@ -229,7 +229,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       before do
         # Ensure Person has the concern included
-        unless BetterTogether::Person.included_modules.include?(described_class)
+        unless BetterTogether::Person.include?(described_class)
           BetterTogether::Person.include(described_class)
         end
       end

@@ -27,7 +27,7 @@
     <% end %>
   </td>
 </tr>
-<% if item.dropdown? && item.children? %>
+<% if item.children? %>
   <%= render partial: 'better_together/navigation_items/nav_item_children_row',
              locals: { item:, level: (level += 1) } %>
 <% end %>

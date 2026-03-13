@@ -85,6 +85,42 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to allow_value('#').for(:url) }
       it { is_expected.to allow_value('').for(:url) }
 
+      describe 'title validation with linked page' do
+        it 'is valid when title is blank but linkable page has a title' do
+          page = create(:page, title: 'Page Title')
+          nav_item = build(:better_together_navigation_item,
+                           title: nil,
+                           linkable: page)
+
+          expect(nav_item).to be_valid
+        end
+
+        it 'is invalid when title is blank and no linkable is present' do
+          nav_item = build(:better_together_navigation_item, title: nil)
+
+          expect(nav_item).not_to be_valid
+          expect(nav_item.errors[:title]).to include("can't be blank")
+        end
+
+        it 'uses linkable title when nav item title is not set' do
+          page = create(:page, title: 'Linked Page Title')
+          nav_item = build(:better_together_navigation_item,
+                           title: nil,
+                           linkable: page)
+
+          expect(nav_item.title).to eq('Linked Page Title')
+        end
+
+        it 'is valid when both nav item title and linkable are present' do
+          page = create(:page, title: 'Page Title')
+          nav_item = build(:better_together_navigation_item,
+                           title: 'Nav Title',
+                           linkable: page)
+
+          expect(nav_item).to be_valid
+        end
+      end
+
       describe 'visibility_strategy validation' do
         it { is_expected.to validate_inclusion_of(:visibility_strategy).in_array(%w[authenticated permission]) }
       end
@@ -335,6 +371,78 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
           expect(navigation_item.send(:permission_visible?, user, context)).to be false
         end
+      end
+    end
+
+    describe 'Cache invalidation' do
+      let(:navigation_area) { create(:better_together_navigation_area) }
+      let(:original_page) { create(:better_together_page, title: 'Page One') }
+      let(:new_page) { create(:better_together_page, title: 'Page Two') }
+      let!(:nav_item) do
+        create(:better_together_navigation_item,
+               navigation_area:,
+               linkable: original_page)
+      end
+
+      it 'touches navigation_area when linkable association is updated' do
+        # Record the original timestamp
+        original_updated_at = navigation_area.reload.updated_at
+
+        # Wait a moment to ensure timestamp difference
+        sleep 0.01
+
+        # Update the linkable association
+        nav_item.update!(linkable: new_page)
+
+        # Verify navigation_area timestamp was updated
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
+      end
+
+      it 'changes navigation_area cache_key_with_version when linkable is updated' do
+        # Record the original cache key
+        original_cache_key = navigation_area.reload.cache_key_with_version
+
+        # Wait to ensure timestamp difference
+        sleep 0.01
+
+        # Update the linkable association
+        nav_item.update!(linkable: new_page)
+
+        # Verify cache key changed
+        new_cache_key = navigation_area.reload.cache_key_with_version
+        expect(new_cache_key).not_to eq(original_cache_key)
+      end
+
+      it 'touches navigation_area when linkable is set to nil' do
+        original_updated_at = navigation_area.reload.updated_at
+        sleep 0.01
+
+        nav_item.update!(linkable: nil)
+
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
+      end
+
+      it 'touches navigation_area when linkable is initially set' do
+        nav_item_without_linkable = create(:better_together_navigation_item,
+                                           navigation_area:,
+                                           linkable: nil)
+        original_updated_at = navigation_area.reload.updated_at
+        sleep 0.01
+
+        nav_item_without_linkable.update!(linkable: original_page)
+
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
+      end
+
+      it 'touches navigation_area when linked page is updated (via callback)' do
+        original_updated_at = navigation_area.reload.updated_at
+        sleep 0.01
+
+        # Update the linked page - this should trigger touch_navigation_items callback
+        original_page.update!(title: 'Updated via Callback')
+
+        # Navigation area should be touched  via page -> navigation_items -> navigation_area chain
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
       end
     end
   end

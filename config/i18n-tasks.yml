@@ -61,6 +61,55 @@ ignore_missing:
   
 # Ignore specific unused keys  
 ignore_unused:
+  # Rails / framework keys are frequently used implicitly (errors, helpers,
+  # distance_of_time_in_words, number helpers, etc.) and won't always be
+  # discoverable via static scanning.
+  - 'actions.*'
+  - 'date.**'
+  - 'datetime.**'
+  - 'errors.**'
+  - 'helpers.**'
+  - 'number.**'
+  - 'support.**'
+  - 'time.**'
+  - 'activerecord.attributes.**'
+  - 'activerecord.errors.**'
+  - 'activerecord.errors.messages.**'
+  - 'activerecord.errors.models.**'
+  - 'activerecord.models.**'
+
+  # Common app-wide keys that are often referenced dynamically
+  - 'devise.**'
+  - 'doorkeeper.**'
+  - 'flash.**'
+  - 'globals.**'
+  - 'hints.**'
+  - 'host_dashboard.**'
+  - 'meta.**'
+  - 'navbar.**'
+  - 'navigation_item.**'
+  - 'pages.**'
+  - 'person_platform_memberships.**'
+
+  # Legacy/simple keys that may be referenced by gems or dynamic forms
+  - 'accepted_at'
+  - 'accessibility_attributes'
+
+  # BetterTogether engine keys are frequently referenced via relative lookups
+  # and other dynamic patterns that i18n-tasks cannot always detect.
+  - 'better_together.**'
+
+  # Timezone name tables are provided/used dynamically (i18n-timezones, etc.)
+  - 'timezones.**'
+  - 'timezone.**'
+  - 'tzinfo.**'
+
+  # Top-level model name aliases used by some serializers/gems
+  - 'content'
+  - 'conversation'
+  - 'conversation_participants'
+  - 'conversations.**'
+
   # Keys that may be used dynamically
   - 'better_together.invitations.status.*'
   - 'better_together.*.status.*'

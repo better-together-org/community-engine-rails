@@ -39,7 +39,6 @@ RSpec.configure do |config|
       BetterTogether::Community.where(host: true).update_all(host: false) if defined?(BetterTogether::Community)
 
       BetterTogether::Wizard.where(identifier: 'host_setup').destroy_all if defined?(BetterTogether::Wizard)
-      byebug # rubocop:todo Lint/Debugger
     end
   end
 

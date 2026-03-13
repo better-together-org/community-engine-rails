@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable RSpec/NestedGroups
-RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_setup do
+RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :omniauth, :skip_host_setup do
   routes { BetterTogether::Engine.routes }
 
   include Devise::Test::ControllerHelpers
@@ -13,9 +13,9 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
     unless host_platform
       begin
         host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
-          c.name = Faker::Company.unique.name
-          c.description = Faker::Lorem.paragraph
-          c.identifier = Faker::Internet.unique.username(specifier: 10..20)
+          c.name = "Test Community #{SecureRandom.uuid}"
+          c.description = 'Test community for OAuth specs'
+          c.identifier = "test-community-#{SecureRandom.hex(10)}"
           c.privacy = 'public'
           c.protected = true
         end
@@ -25,7 +25,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
           p.description = host_community.description
           p.identifier = host_community.identifier
           p.host_url = 'http://localhost:3000'
-          p.time_zone = Faker::Address.time_zone
+          p.time_zone = 'UTC'
           p.privacy = 'public'
           p.protected = true
           p.community = host_community
@@ -55,8 +55,8 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
 
     host_platform
   end
-  let(:platform) { configure_host_platform }
-  let(:community) { BetterTogether::Community.host.first || platform.community }
+  let!(:platform) { configure_host_platform }
+  let!(:community) { BetterTogether::Community.host.first || platform.community }
   let!(:github_platform) do
     BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |github|
       github.external = true
@@ -78,43 +78,16 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
   end
 
   describe 'GitHub OAuth callback', :no_auth do
+    let(:oauth_email) { unique_email }
+    let(:oauth_uid) { unique_oauth_uid }
+    let(:oauth_nickname) { unique_username }
     let(:github_auth_hash) do
-      OmniAuth::AuthHash.new({
-                               provider: 'github',
-                               uid: '123456',
-                               info: {
-                                 email: 'test@example.com',
-                                 name: 'Test User',
-                                 nickname: 'testuser',
-                                 image: 'https://avatars.githubusercontent.com/u/123456?v=4'
-                               },
-                               credentials: {
-                                 token: 'github_access_token_123',
-                                 secret: 'github_secret_456',
-                                 expires_at: 1.hour.from_now.to_i
-                               },
-                               extra: {
-                                 raw_info: {
-                                   login: 'testuser',
-                                   html_url: 'https://github.com/testuser'
-                                 }
-                               }
-                             })
+      github_oauth_hash(email: oauth_email, uid: oauth_uid, nickname: oauth_nickname)
     end
 
     before do
       # Mock the OmniAuth auth hash
       request.env['omniauth.auth'] = github_auth_hash
-
-      # Clean up any existing integrations to prevent test pollution
-      BetterTogether::PersonPlatformIntegration.where(
-        provider: github_auth_hash['provider'],
-        uid: github_auth_hash['uid']
-      ).delete_all
-
-      # Ensure no automatic user creation interferes with OAuth tests
-      # Delete any users created by automatic test configuration
-      BetterTogether.user_class.where(email: 'user@example.test').delete_all
     end
 
     context 'when user does not exist and PersonPlatformIntegration does not exist' do
@@ -125,27 +98,27 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
            .and change(BetterTogether::PersonPlatformIntegration, :count).by(1)
       end
 
-      it 'creates PersonPlatformIntegration with correct attributes' do
+      it 'creates PersonPlatformIntegration with correct attributes', :aggregate_failures do
         get :github
 
         integration = BetterTogether::PersonPlatformIntegration.last
         expect(integration.provider).to eq('github')
-        expect(integration.uid).to eq('123456')
-        expect(integration.access_token).to eq('github_access_token_123')
-        expect(integration.access_token_secret).to eq('github_secret_456')
-        expect(integration.handle).to eq('testuser')
+        expect(integration.uid).to eq(oauth_uid)
+        expect(integration.access_token).to start_with('github_token_')
+        expect(integration.access_token_secret).to start_with('github_secret_')
+        expect(integration.handle).to eq(oauth_nickname)
         expect(integration.name).to eq('Test User')
-        expect(integration.profile_url).to eq('https://github.com/testuser')
+        expect(integration.profile_url).to start_with('https://github.com/')
       end
 
-      it 'creates user with correct attributes' do
+      it 'creates user with correct attributes', :aggregate_failures do
         get :github
 
         user = BetterTogether.user_class.last
-        expect(user.email).to eq('test@example.com')
+        expect(user.email).to eq(oauth_email)
         expect(user.confirmed_at).to be_present # Should be confirmed due to skip_confirmation!
         expect(user.person.name).to eq('Test User')
-        expect(user.person.handle).to eq('testuser')
+        expect(user.person.handle).to eq(oauth_nickname)
       end
 
       it 'signs in the user and redirects to agreements page' do
@@ -186,36 +159,36 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
     end
 
     context 'when PersonPlatformIntegration already exists' do
-      let!(:existing_user) { create(:user, email: 'test@example.com') }
+      let!(:existing_user) { create(:user, email: oauth_email) }
       let!(:existing_integration) do
         create(:person_platform_integration,
                user: existing_user,
                provider: 'github',
-               uid: '123456',
+               uid: oauth_uid,
                access_token: 'old_token',
                access_token_secret: 'old_secret')
       end
 
-      it 'updates existing PersonPlatformIntegration' do
+      it 'updates existing PersonPlatformIntegration', :aggregate_failures do
         expect do
           get :github
         end.not_to change(BetterTogether::PersonPlatformIntegration, :count)
 
         existing_integration.reload
-        expect(existing_integration.access_token).to eq('github_access_token_123')
-        expect(existing_integration.access_token_secret).to eq('github_secret_456')
-        expect(existing_integration.handle).to eq('testuser')
+        expect(existing_integration.access_token).to start_with('github_token_')
+        expect(existing_integration.access_token_secret).to start_with('github_secret_')
+        expect(existing_integration.handle).to eq(oauth_nickname)
         expect(existing_integration.name).to eq('Test User')
       end
 
-      it 'updates existing PersonPlatformIntegration and redirects' do
+      it 'updates existing PersonPlatformIntegration and redirects', :aggregate_failures do
         get :github
 
         # Integration is updated
         existing_integration.reload
-        expect(existing_integration.access_token).to eq('github_access_token_123')
-        expect(existing_integration.access_token_secret).to eq('github_secret_456')
-        expect(existing_integration.handle).to eq('testuser')
+        expect(existing_integration.access_token).to start_with('github_token_')
+        expect(existing_integration.access_token_secret).to start_with('github_secret_')
+        expect(existing_integration.handle).to eq(oauth_nickname)
         expect(existing_integration.name).to eq('Test User')
 
         # User is redirected (either to agreements or to another appropriate page)
@@ -224,7 +197,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
     end
 
     context 'when user exists with same email but no integration' do
-      let!(:existing_user) { create(:user, email: 'test@example.com') }
+      let!(:existing_user) { create(:user, email: oauth_email) }
 
       it 'does not create a new user' do
         expect do
@@ -332,7 +305,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
           get :github
 
           user = BetterTogether.user_class.last
-          expect(user.email).to eq('test@example.com')
+          expect(user.email).to eq(oauth_email)
           expect(user.confirmed_at).to be_present
           expect(user.person.name).to eq('Test User')
         end
@@ -398,12 +371,12 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
       end
 
       context 'when returning OAuth user signs in' do
-        let!(:existing_user) { create(:user, :confirmed, email: 'test@example.com') }
+        let!(:existing_user) { create(:user, :confirmed, email: oauth_email) }
         let!(:existing_integration) do
           create(:person_platform_integration,
                  user: existing_user,
                  provider: 'github',
-                 uid: '123456')
+                 uid: oauth_uid)
         end
 
         it 'allows OAuth sign-in without invitation (returning user)' do
@@ -456,7 +429,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
         get :github
 
         user = BetterTogether.user_class.last
-        expect(user.email).to eq('test@example.com')
+        expect(user.email).to eq(oauth_email)
         expect(user.confirmed_at).to be_present
       end
     end
@@ -472,7 +445,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :skip_host_se
 
         expect(flash[:alert]).to eq(I18n.t('devise_omniauth_callbacks.failure',
                                            kind: 'Github',
-                                           reason: 'test@example.com is not authorized'))
+                                           reason: "#{oauth_email} is not authorized"))
         expect(response).to redirect_to(controller.new_user_registration_path)
       end
 

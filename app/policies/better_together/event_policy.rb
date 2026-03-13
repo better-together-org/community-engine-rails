@@ -19,6 +19,10 @@ module BetterTogether
       record.starts_at.present? && show?
     end
 
+    def new?
+      create?
+    end
+
     def update?
       creator_or_platform_steward || event_host_member?
     end

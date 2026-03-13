@@ -16,8 +16,10 @@ require 'devise'
 require 'devise-i18n'
 require 'devise/jwt'
 require 'devise_zxcvbn'
+require 'doorkeeper'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
+require 'fast_mcp'
 require 'font-awesome-sass'
 require 'geocoder'
 require 'groupdate'
@@ -47,12 +49,21 @@ require 'stackprof'
 
 module BetterTogether
   # Engine configuration for BetterTogether
-  class Engine < ::Rails::Engine
+  class Engine < ::Rails::Engine # rubocop:disable Metrics/ClassLength
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
     # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
     config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+
+    # Add MCP tools and resources to autoload paths
+    config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/app/tools",
+      "#{root}/app/resources"
+    ]
+    # Add routes directory to paths for draw() method
+    config.paths['config/routes.rb'] = 'config/routes.rb'
+    config.paths.add 'config/routes', glob: '**/*.rb'
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -113,9 +124,9 @@ module BetterTogether
     end
 
     initializer 'better_together.i18n' do |app|
-      app.config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      app.config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es,uk').split(',').map(&:to_sym)
       app.config.i18n.default_locale = ENV.fetch('APP_DEFAULT_LOCALE', :en).to_sym
-      app.config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      app.config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es,uk').split(',').map(&:to_sym)
     end
 
     initializer 'better_together.importmap', before: 'importmap' do |app|

@@ -79,7 +79,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
     end
 
     describe '#render_markdown_file' do
-      let(:file_path) { Rails.root.join('spec/fixtures/files/test_helper.md') }
+      # Use a unique file path for each test run to avoid parallel execution conflicts
+      let(:file_path) { Rails.root.join("spec/fixtures/files/test_helper_#{SecureRandom.hex(8)}.md") }
       let(:file_content) { "# Test File\n\nThis is from a file." }
 
       before do
@@ -108,8 +109,11 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       context 'with relative path' do
+        # Use the unique file_path for relative path test too
+        let(:relative_path) { file_path.relative_path_from(Rails.root).to_s }
+
         it 'resolves relative path from Rails.root' do
-          html = helper.render_markdown_file('spec/fixtures/files/test_helper.md')
+          html = helper.render_markdown_file(relative_path)
 
           expect(html).to include('Test File')
           expect(html).to include('This is from a file')

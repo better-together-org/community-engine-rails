@@ -11,7 +11,9 @@ module BetterTogether
       # @platforms = ::BetterTogether::Platform.all
       # authorize @platforms
       authorize ::BetterTogether::Platform
-      @platforms = policy_scope(::BetterTogether::Platform.with_translations)
+      @platforms = policy_scope(::BetterTogether::Platform.with_translations
+                                                          .with_attached_profile_image
+                                                          .with_attached_cover_image)
     end
 
     # GET /platforms/1

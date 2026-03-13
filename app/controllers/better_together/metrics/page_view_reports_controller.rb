@@ -11,7 +11,8 @@ module BetterTogether
       # GET /metrics/page_view_reports
       def index
         authorize %i[metrics page_view_report], :index?, policy_class: BetterTogether::Metrics::PageViewReportPolicy
-        @page_view_reports = BetterTogether::Metrics::PageViewReport.order(created_at: :desc)
+        @page_view_reports = BetterTogether::Metrics::PageViewReport.with_attached_report_file
+                                                                    .order(created_at: :desc)
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/page_view_reports/index',
                  locals: { page_view_reports: @page_view_reports }, layout: false

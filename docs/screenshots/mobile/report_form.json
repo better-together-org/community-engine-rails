@@ -1,0 +1,11 @@
+{
+  "name": "report_form",
+  "device": "mobile",
+  "url": "http://127.0.0.1:38459/en/reports/new?reportable_id=8199b688-dcac-4fd3-9128-945a77d664bb&reportable_type=BetterTogether%3A%3APerson",
+  "title": "Report a safety concern | Schinner, Langworth and Hintz",
+  "captured_at": "2026-03-09T03:53:31Z",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "safety",
+  "source_spec": "./spec/docs_screenshots/better_together/safety_docs_spec.rb"
+}

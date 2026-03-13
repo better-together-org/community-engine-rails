@@ -6,7 +6,6 @@ module BetterTogether
     include BetterTogether::NotificationReadable
 
     before_action :authenticate_user!
-    before_action :require_person
     before_action :disallow_robots
     before_action :set_conversations, only: %i[index new show]
     before_action :set_conversation, only: %i[show update leave_conversation]
@@ -31,10 +30,10 @@ module BetterTogether
         @conversation = Conversation.new
       end
 
+      authorize @conversation
+
       # Ensure nested message is available for the form (so users can create the first message inline)
       @conversation.messages.build if @conversation.messages.empty?
-
-      authorize @conversation
     end
 
     def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
@@ -218,14 +217,6 @@ module BetterTogether
 
     private
 
-    def require_person
-      return if helpers.current_person
-
-      skip_authorization
-      flash[:alert] = t('better_together.conversations.errors.person_required')
-      redirect_to BetterTogether::Engine.routes.url_helpers.root_path
-    end
-
     def available_participants
       # Delegate to policy to centralize participant permission logic
       ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
@@ -239,6 +230,8 @@ module BetterTogether
     # Ensure participant_ids only include people the agent is allowed to message.
     # If none remain, keep it empty; creator is always added after create.
     def conversation_params_filtered # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      return conversation_params unless helpers.current_person
+
       permitted = ConversationPolicy.new(helpers.current_user, Conversation.new).permitted_participants
       permitted_ids = permitted.pluck(:id)
       # Always allow the current person (creator/participant) to appear in the list
@@ -277,26 +270,34 @@ module BetterTogether
     end
 
     def set_conversation # rubocop:todo Metrics/MethodLength
-      scope = helpers.current_person.conversations.includes(participants: [
-                                                              :string_translations,
-                                                              :contact_detail,
-                                                              { profile_image_attachment: :blob }
-                                                            ])
+      # Ensure current_person exists before accessing conversations
+      return render_not_found unless helpers.current_person
+
+      scope = policy_scope(helpers.current_person.conversations)
+      return unless scope
+
       @conversation = scope.find(params[:id])
       @set_conversation ||= Conversation.includes(participants: [
                                                     :string_translations,
                                                     :contact_detail,
                                                     { profile_image_attachment: :blob }
                                                   ]).find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      render_not_found
     end
 
     def set_conversations
-      @conversations = helpers.current_person.conversations.includes(messages: [:sender],
-                                                                     participants: [
-                                                                       :string_translations,
-                                                                       :contact_detail,
-                                                                       { profile_image_attachment: :blob }
-                                                                     ]).order(updated_at: :desc).distinct(:id)
+      person = helpers.current_person
+      @conversations = if person
+                         person.conversations.includes(messages: [:sender],
+                                                       participants: [
+                                                         :string_translations,
+                                                         :contact_detail,
+                                                         { profile_image_attachment: :blob }
+                                                       ]).order(updated_at: :desc).distinct(:id)
+                       else
+                         BetterTogether::Conversation.none
+                       end
     end
 
     # platform_manager_ids now inferred by policy; kept here only if needed elsewhere

@@ -157,7 +157,7 @@ Prevent specific users from messaging you:
 2. Click "Block User"
 3. Confirm the action
 
-See [Safety and Reporting Tools](safety_reporting.md) for more about blocking.
+See [Blocking and Boundaries](blocking_and_boundaries.md) for more about blocking.
 
 ### Reporting Messages
 
@@ -176,7 +176,7 @@ Report inappropriate messages or conversations:
 3. Provide context
 4. Submit report
 
-See [Safety and Reporting Tools](safety_reporting.md) for the full reporting process.
+See [Reporting Harm and Safety Concerns](reporting_harm_and_safety_concerns.md) for the full reporting process.
 
 ## Notification Management
 
@@ -438,6 +438,8 @@ Potential upcoming messaging features:
 
 - [User Management Guide](user_management_guide.md)
 - [Safety and Reporting Tools](safety_reporting.md)
+- [Blocking and Boundaries](blocking_and_boundaries.md)
+- [Reporting Harm and Safety Concerns](reporting_harm_and_safety_concerns.md)
 - [Community Guidelines](community_guidelines.md)
 - [Privacy Policy](privacy_policy.md)
 - [Event Invitations and RSVP](events_invitations_and_rsvp.md)

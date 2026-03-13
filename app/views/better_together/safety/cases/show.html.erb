@@ -1,0 +1,275 @@
+<% content_for :page_title, t('better_together.safety_cases.show.title') %>
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0"><%= t('better_together.safety_cases.show.title') %></h1>
+    <%= link_to t('better_together.safety_cases.show.back'),
+                safety_cases_path(locale: I18n.locale),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h5 mb-3"><%= t('better_together.safety_cases.show.intake') %></h2>
+          <dl class="row mb-0">
+            <dt class="col-sm-4"><%= t('better_together.safety_cases.attributes.reporter') %></dt>
+            <dd class="col-sm-8"><%= @safety_case.reporter.name %></dd>
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.category') %></dt>
+            <dd class="col-sm-8"><%= safety_enum_label('report_categories', @safety_case.category) %></dd>
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.harm_level') %></dt>
+            <dd class="col-sm-8"><%= safety_enum_label('harm_levels', @safety_case.harm_level) %></dd>
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.requested_outcome') %></dt>
+            <dd class="col-sm-8"><%= safety_enum_label('requested_outcomes', @safety_case.requested_outcome) %></dd>
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.reason') %></dt>
+            <dd class="col-sm-8"><%= simple_format(@safety_case.report.reason) %></dd>
+            <% if @safety_case.report.private_details.present? %>
+              <dt class="col-sm-4"><%= t('better_together.reports.attributes.private_details') %></dt>
+              <dd class="col-sm-8"><%= simple_format(@safety_case.report.private_details) %></dd>
+            <% end %>
+          </dl>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h5 mb-3"><%= t('better_together.safety_cases.show.actions') %></h2>
+          <% if @safety_case.actions.any? %>
+            <div class="list-group mb-4">
+              <% @safety_case.actions.order(created_at: :desc).each do |action| %>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between">
+                    <div class="fw-semibold"><%= safety_enum_label('action_types', action.action_type) %></div>
+                    <span class="badge text-bg-secondary"><%= safety_enum_label('action_statuses', action.status) %></span>
+                  </div>
+                  <div class="small text-muted mb-2"><%= action.actor.name %> · <%= l(action.created_at, format: :long) %></div>
+                  <div><%= simple_format(action.reason) %></div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_with model: [@safety_case, @safety_action], url: safety_case_actions_path(@safety_case, locale: I18n.locale), local: true do |form| %>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <%= form.label :action_type, t('better_together.safety_cases.attributes.action_type'), class: 'form-label' %>
+                <%= form.select :action_type,
+                                safety_enum_options('action_types', BetterTogether::Safety::Action.action_types.keys),
+                                {},
+                                class: 'form-select' %>
+              </div>
+              <div class="col-md-6">
+                <%= form.label :status, t('better_together.safety_cases.attributes.action_status'), class: 'form-label' %>
+                <%= form.select :status,
+                                safety_enum_options('action_statuses', BetterTogether::Safety::Action.statuses.keys),
+                                {},
+                                class: 'form-select' %>
+              </div>
+              <div class="col-12">
+                <%= form.label :reason, t('better_together.safety_cases.attributes.action_reason'), class: 'form-label' %>
+                <%= form.text_area :reason, rows: 3, class: 'form-control' %>
+              </div>
+              <div class="col-12">
+                <%= form.label :details, t('better_together.safety_cases.attributes.action_details'), class: 'form-label' %>
+                <%= form.text_area :details, rows: 3, class: 'form-control' %>
+              </div>
+              <div class="col-md-6">
+                <%= form.label :review_at, t('better_together.safety_cases.attributes.review_at'), class: 'form-label' %>
+                <%= form.datetime_local_field :review_at, class: 'form-control' %>
+              </div>
+              <div class="col-md-6">
+                <%= form.label :expires_at, t('better_together.safety_cases.attributes.expires_at'), class: 'form-label' %>
+                <%= form.datetime_local_field :expires_at, class: 'form-control' %>
+              </div>
+              <div class="col-12">
+                <div class="small fw-semibold mb-2"><%= t('better_together.safety_cases.show.values_review') %></div>
+                <div class="form-check">
+                  <%= form.check_box :love_inclusivity_check, class: 'form-check-input' %>
+                  <%= form.label :love_inclusivity_check,
+                                 t('better_together.safety_cases.attributes.love_inclusivity_check'),
+                                 class: 'form-check-label' %>
+                </div>
+                <div class="form-check">
+                  <%= form.check_box :solidarity_check, class: 'form-check-input' %>
+                  <%= form.label :solidarity_check,
+                                 t('better_together.safety_cases.attributes.solidarity_check'),
+                                 class: 'form-check-label' %>
+                </div>
+                <div class="form-check">
+                  <%= form.check_box :accountability_check, class: 'form-check-input' %>
+                  <%= form.label :accountability_check,
+                                 t('better_together.safety_cases.attributes.accountability_check'),
+                                 class: 'form-check-label' %>
+                </div>
+                <div class="form-check mb-2">
+                  <%= form.check_box :care_check, class: 'form-check-input' %>
+                  <%= form.label :care_check,
+                                 t('better_together.safety_cases.attributes.care_check'),
+                                 class: 'form-check-label' %>
+                </div>
+                <%= form.text_area :values_review_notes,
+                                   rows: 2,
+                                   class: 'form-control',
+                                   placeholder: t('better_together.safety_cases.show.values_review_placeholder') %>
+              </div>
+              <div class="col-12">
+                <%= form.submit t('better_together.safety_cases.show.add_action'),
+                                class: 'btn btn-outline-danger' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h2 class="h5 mb-3"><%= t('better_together.safety_cases.show.notes') %></h2>
+          <% if @safety_case.notes.any? %>
+            <div class="list-group mb-4">
+              <% @safety_case.notes.chronological.each do |note| %>
+                <div class="list-group-item">
+                  <div class="small text-muted mb-1"><%= note.author.name %> · <%= safety_enum_label('note_visibilities', note.visibility) %> · <%= l(note.created_at, format: :long) %></div>
+                  <%= simple_format(note.body) %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_with model: [@safety_case, @safety_note], url: safety_case_notes_path(@safety_case, locale: I18n.locale), local: true do |form| %>
+            <div class="mb-3">
+              <%= form.label :visibility, t('better_together.safety_cases.attributes.note_visibility'), class: 'form-label' %>
+              <%= form.select :visibility,
+                              safety_enum_options('note_visibilities', BetterTogether::Safety::Note.visibilities.keys),
+                              {},
+                              class: 'form-select' %>
+            </div>
+            <div class="mb-3">
+              <%= form.label :body, t('better_together.safety_cases.attributes.note_body'), class: 'form-label' %>
+              <%= form.text_area :body, rows: 4, class: 'form-control' %>
+            </div>
+            <%= form.submit t('better_together.safety_cases.show.add_note'),
+                            class: 'btn btn-outline-primary' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h5 mb-3"><%= t('better_together.safety_cases.show.manage') %></h2>
+          <%= form_with model: @safety_case, url: safety_case_path(@safety_case, locale: I18n.locale), method: :patch, local: true do |form| %>
+            <div class="mb-3">
+              <%= form.label :status, t('better_together.safety_cases.attributes.status'), class: 'form-label' %>
+                <%= form.select :status,
+                              safety_enum_options('case_statuses', BetterTogether::Safety::Case.statuses.keys),
+                              {},
+                              class: 'form-select' %>
+            </div>
+            <div class="mb-3">
+              <%= form.label :lane, t('better_together.safety_cases.attributes.lane'), class: 'form-label' %>
+                <%= form.select :lane,
+                              safety_enum_options('case_lanes', BetterTogether::Safety::Case.lanes.keys),
+                              {},
+                              class: 'form-select' %>
+            </div>
+            <div class="mb-3">
+              <%= form.label :closure_type, t('better_together.safety_cases.attributes.closure_type'), class: 'form-label' %>
+                <%= form.select :closure_type,
+                              safety_enum_options('closure_types', BetterTogether::Safety::Case.closure_types.keys),
+                              { include_blank: true },
+                              class: 'form-select' %>
+            </div>
+            <div class="mb-3">
+              <%= form.label :closure_summary, t('better_together.safety_cases.attributes.closure_summary'), class: 'form-label' %>
+              <%= form.text_area :closure_summary, rows: 4, class: 'form-control' %>
+            </div>
+            <div class="mb-3">
+              <%= form.label :review_at, t('better_together.safety_cases.attributes.review_at'), class: 'form-label' %>
+              <%= form.datetime_local_field :review_at, class: 'form-control' %>
+            </div>
+            <%= form.submit t('better_together.safety_cases.show.update_case'),
+                            class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h2 class="h5 mb-3"><%= t('better_together.safety_cases.show.agreements') %></h2>
+          <% if @safety_case.agreements.any? %>
+            <div class="list-group mb-4">
+              <% @safety_case.agreements.recent_first.each do |agreement| %>
+                <div class="list-group-item">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="fw-semibold"><%= agreement.summary %></div>
+                    <span class="badge text-bg-secondary"><%= safety_enum_label('agreement_statuses', agreement.status) %></span>
+                  </div>
+                  <div class="small text-muted mb-2"><%= agreement.created_by.name %></div>
+                  <div><%= simple_format(agreement.commitments) %></div>
+                  <%= form_with model: [@safety_case, agreement],
+                                url: safety_case_agreement_path(@safety_case, agreement, locale: I18n.locale),
+                                method: :patch,
+                                local: true,
+                                class: 'mt-3' do |form| %>
+                    <div class="row g-2">
+                      <div class="col-md-6">
+                        <%= form.select :status,
+                                        safety_enum_options('agreement_statuses', BetterTogether::Safety::Agreement.statuses.keys),
+                                        {},
+                                        class: 'form-select form-select-sm' %>
+                      </div>
+                      <div class="col-md-6">
+                        <%= form.datetime_local_field :completed_at, class: 'form-control form-control-sm' %>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <%= form.check_box :harmed_party_consented, class: 'form-check-input' %>
+                          <%= form.label :harmed_party_consented, class: 'form-check-label' %>
+                        </div>
+                        <div class="form-check">
+                          <%= form.check_box :responsible_party_consented, class: 'form-check-input' %>
+                          <%= form.label :responsible_party_consented, class: 'form-check-label' %>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <%= form.submit t('better_together.safety_cases.show.update_agreement'),
+                                        class: 'btn btn-sm btn-outline-secondary' %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <%= form_with model: [@safety_case, @safety_agreement], url: safety_case_agreements_path(@safety_case, locale: I18n.locale), local: true do |form| %>
+            <div class="mb-3">
+              <%= form.label :summary, t('better_together.safety_cases.attributes.agreement_summary'), class: 'form-label' %>
+              <%= form.text_field :summary, class: 'form-control' %>
+            </div>
+            <div class="mb-3">
+              <%= form.label :commitments, t('better_together.safety_cases.attributes.commitments'), class: 'form-label' %>
+              <%= form.text_area :commitments, rows: 4, class: 'form-control' %>
+            </div>
+            <div class="form-check mb-2">
+              <%= form.check_box :harmed_party_consented, class: 'form-check-input' %>
+              <%= form.label :harmed_party_consented,
+                             t('better_together.safety_cases.attributes.harmed_party_consented'),
+                             class: 'form-check-label' %>
+            </div>
+            <div class="form-check mb-3">
+              <%= form.check_box :responsible_party_consented, class: 'form-check-input' %>
+              <%= form.label :responsible_party_consented,
+                             t('better_together.safety_cases.attributes.responsible_party_consented'),
+                             class: 'form-check-label' %>
+            </div>
+            <%= form.submit t('better_together.safety_cases.show.add_agreement'),
+                            class: 'btn btn-outline-success' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

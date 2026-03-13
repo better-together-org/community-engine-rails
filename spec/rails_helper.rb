@@ -62,6 +62,8 @@ ESSENTIAL_TABLES = %w[
   better_together_wizards
   better_together_wizard_step_definitions
   better_together_agreements
+  better_together_content_blocks
+  better_together_content_page_blocks
   mobility_string_translations
   mobility_text_translations
   action_text_rich_texts
@@ -94,6 +96,8 @@ RSpec.configure do |config|
 
   config.after do
     OmniAuth.config.mock_auth[:github] = nil
+    # Reset navigation touch flag to prevent test pollution
+    BetterTogether.skip_navigation_touches = false
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
@@ -125,6 +129,7 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
   # config.include RequestSpecHelper, type: :controller
   config.include BetterTogether::CapybaraFeatureHelpers, type: :feature
+  config.include OmniauthTestHelpers, :omniauth
 
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
@@ -144,19 +149,24 @@ RSpec.configure do |config|
 
     # Load essential seed data with explicit clearing for deterministic baseline
     # In parallel execution, handle race conditions gracefully
-    def build_with_retry(times: 3) # rubocop:todo Metrics/MethodLength, Metrics/PerceivedComplexity
+    def build_with_retry(times: 3) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       attempts = 0
       begin
         yield
-      rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+      rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique,
+             ActiveRecord::StaleObjectError => e
         attempts += 1
         is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
                              e.is_a?(ActiveRecord::RecordNotUnique)
+        is_stale_error = e.is_a?(ActiveRecord::StaleObjectError)
         if attempts < times
           # In parallel execution, another worker may have already seeded the data
           # If it's a duplicate key error, just continue - data is already seeded
           if is_duplicate_error
             Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+          elsif is_stale_error
+            Rails.logger.debug "Stale object during parallel seed, retrying: #{e.message}"
+            retry
           else
             retry
           end

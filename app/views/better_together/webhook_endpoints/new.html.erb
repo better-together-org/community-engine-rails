@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= t('globals.new') %> <%= resource_class.model_name.human %>
+<% end %>
+
+<div class="container my-3">
+  <h1 class="mb-4"><%= t('globals.new') %> <%= resource_class.model_name.human %></h1>
+
+  <%= render "form", webhook_endpoint: @webhook_endpoint %>
+</div>
