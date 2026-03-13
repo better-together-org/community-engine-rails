@@ -482,13 +482,22 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
   end
 
-  # Catch all requests without a locale and redirect to the default...
+  # Catch all requests without a locale and redirect to the default locale.
+  # The constraint must check ALL available locales (not just I18n.locale) because
+  # locale is set via before_action *after* route matching. Without this, requests
+  # like /fr/à-propos-de-nous slip through and become /en/fr/à-propos-de-nous,
+  # causing URI::InvalidURIError when ActionDispatch calls URI.parse on the redirect URL.
+  # The redirect also percent-encodes non-ASCII path characters defensively.
   get '*path',
-      to: redirect { |params, _request| "/#{I18n.locale}/#{params[:path]}" },
+      to: redirect { |params, _request|
+        path = params[:path].to_s.gsub(/[^\x00-\x7F]/) do |char|
+          char.bytes.map { |byte| format('%%%02X', byte) }.join
+        end
+        "/#{I18n.default_locale}/#{path}"
+      },
       constraints: lambda { |req|
-        # raise 'error'
-        !req.path.starts_with? "/#{I18n.locale}" and
-          !req.path.starts_with? '/rails'
+        I18n.available_locales.none? { |locale| req.path.start_with?("/#{locale}/") || req.path == "/#{locale}" } and
+          !req.path.start_with?('/rails')
       }
   get '', to: redirect("/#{I18n.default_locale}")
 end
