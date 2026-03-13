@@ -97,7 +97,8 @@ module AutomaticTestConfiguration
           p.name = host_community.name
           p.description = host_community.description
           p.identifier = host_community.identifier
-          p.host_url = "http://#{host_community.identifier}.test"
+          # Use the Rails test default host so redirect URL assertions match www.example.com
+          p.host_url = 'http://www.example.com'
           p.time_zone = Faker::Address.time_zone
           p.privacy = 'public'
           p.protected = true

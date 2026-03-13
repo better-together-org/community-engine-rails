@@ -51,6 +51,9 @@ module BetterTogether
     private
 
     def can_manage_permission_resource_type?
+      # When called with the class (e.g. policy(ResourcePermission).create?), fall back to any-role check
+      return can_manage_any_roles? if record.is_a?(Class)
+
       case record.resource_type
       when 'BetterTogether::Platform'
         permitted_to?('manage_platform_roles')

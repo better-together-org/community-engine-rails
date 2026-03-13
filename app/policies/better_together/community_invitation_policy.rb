@@ -31,6 +31,10 @@ module BetterTogether
       community = record.invitable
       return false unless community.is_a?(BetterTogether::Community)
 
+      # Platform managers may act across communities
+      return true if permitted_to?('manage_platform')
+
+      # Check for specific community-scoped permissions
       permitted_to?('invite_community_members', community) ||
         permitted_to?('manage_community_members', community) ||
         permitted_to?('manage_community_roles', community)

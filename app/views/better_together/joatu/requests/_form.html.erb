@@ -1,6 +1,8 @@
 <%# locals(joatu_request:) %>
 
-<%= form_with(model: joatu_request, scope: :joatu_request, class: 'form', id: dom_id(joatu_request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+<%= form_with(model: joatu_request, scope: :joatu_request,
+              url: joatu_request.persisted? ? joatu_request_path(joatu_request) : joatu_requests_path,
+              class: 'form', id: dom_id(joatu_request, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <%= render 'better_together/shared/help_banner',
            id: 'joatu-requests-form',
            i18n_key: 'better_together.joatu.help.requests.form' %>
