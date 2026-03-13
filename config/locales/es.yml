@@ -1454,6 +1454,7 @@ es:
         source_request_heading: En respuesta a la solicitud
         view_agreement: Ver acuerdo
         view_offer: Ver oferta
+        target_platform: Target platform
         your_response_heading: Tu respuesta
       requests:
         agreement_heading: Acuerdo
@@ -1468,6 +1469,8 @@ es:
         source_offer_heading: En respuesta a la oferta
         view_agreement: Ver acuerdo
         view_request: Ver solicitud
+        new_connection_request: New Connection Request
+        target_platform: Target platform
         your_response_heading: Tu respuesta
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -2275,6 +2278,33 @@ es:
         work: Trabajo
       number: Número
       title: Números de Teléfono
+    person_access_grants:
+      index:
+        title: Access Grants
+        description: Manage the private access grants you have shared with others.
+        empty: You have not shared any access grants yet.
+      show:
+        title: Access Grant
+        back: Back to Access Grants
+        revoke: Revoke Access
+    person_linked_seeds:
+      index:
+        title: Linked Seeds
+        description: Private content shared with you through federation access grants.
+        empty: No linked seeds have been shared with you yet.
+      show:
+        title: Linked Seed
+        back: Back to Linked Seeds
+        empty: No content available for this linked seed.
+    person_links:
+      index:
+        title: Person Links
+        description: Manage your cross-platform person links and federation connections.
+        empty: You have no person links yet.
+      show:
+        title: Person Link
+        back: Back to Person Links
+        revoke: Revoke Link
     platform_invitation:
       acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
         aceptando esta invitación para unirte a <strong>%{platform}</strong>.
@@ -3408,6 +3438,7 @@ es:
   resource_permissions:
     confirm_destroy: Confirmar destrucción
   resources:
+    agreement: Agreement
     block: Bloque
     calendar: Calendar
     checklist: Checklist

@@ -1458,6 +1458,7 @@ fr:
         source_request_heading: Responding to Request
         view_agreement: View Agreement
         view_offer: View Offer
+        target_platform: Target platform
         your_response_heading: Your Response
       requests:
         agreement_heading: Agreement
@@ -1472,6 +1473,8 @@ fr:
         source_offer_heading: Responding to Offer
         view_agreement: View Agreement
         view_request: View Request
+        new_connection_request: New Connection Request
+        target_platform: Target platform
         your_response_heading: Your Response
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -2284,6 +2287,33 @@ fr:
         work: Travail
       number: Numéro
       title: Numéros de téléphone
+    person_access_grants:
+      index:
+        title: Access Grants
+        description: Manage the private access grants you have shared with others.
+        empty: You have not shared any access grants yet.
+      show:
+        title: Access Grant
+        back: Back to Access Grants
+        revoke: Revoke Access
+    person_linked_seeds:
+      index:
+        title: Linked Seeds
+        description: Private content shared with you through federation access grants.
+        empty: No linked seeds have been shared with you yet.
+      show:
+        title: Linked Seed
+        back: Back to Linked Seeds
+        empty: No content available for this linked seed.
+    person_links:
+      index:
+        title: Person Links
+        description: Manage your cross-platform person links and federation connections.
+        empty: You have no person links yet.
+      show:
+        title: Person Link
+        back: Back to Person Links
+        revoke: Revoke Link
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
@@ -3423,6 +3453,7 @@ fr:
   resource_permissions:
     confirm_destroy: Confirmer la destruction
   resources:
+    agreement: Agreement
     block: Bloc
     calendar: Calendar
     checklist: Checklist

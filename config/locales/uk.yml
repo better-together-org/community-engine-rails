@@ -1453,6 +1453,7 @@ uk:
         source_request_heading: Responding to Request
         view_agreement: View Agreement
         view_offer: View Offer
+        target_platform: Target platform
         your_response_heading: Your Response
       requests:
         agreement_heading: Agreement
@@ -1467,6 +1468,8 @@ uk:
         source_offer_heading: Responding to Offer
         view_agreement: View Agreement
         view_request: View Request
+        new_connection_request: New Connection Request
+        target_platform: Target platform
         your_response_heading: Your Response
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -2267,6 +2270,33 @@ uk:
         work: Work
       number: Номер
       title: Номери телефонів
+    person_access_grants:
+      index:
+        title: Access Grants
+        description: Manage the private access grants you have shared with others.
+        empty: You have not shared any access grants yet.
+      show:
+        title: Access Grant
+        back: Back to Access Grants
+        revoke: Revoke Access
+    person_linked_seeds:
+      index:
+        title: Linked Seeds
+        description: Private content shared with you through federation access grants.
+        empty: No linked seeds have been shared with you yet.
+      show:
+        title: Linked Seed
+        back: Back to Linked Seeds
+        empty: No content available for this linked seed.
+    person_links:
+      index:
+        title: Person Links
+        description: Manage your cross-platform person links and federation connections.
+        empty: You have no person links yet.
+      show:
+        title: Person Link
+        back: Back to Person Links
+        revoke: Revoke Link
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.
@@ -3418,6 +3448,7 @@ uk:
   resource_permissions:
     confirm_destroy: Підтвердіть видалення
   resources:
+    agreement: Agreement
     block: Блок
     calendar: Календар
     checklist: Чек-лист
