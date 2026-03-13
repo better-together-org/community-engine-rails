@@ -1,0 +1,49 @@
+<%# locals: (accordion_block:) -%>
+<%
+  items = accordion_block.parsed_accordion_items
+  accordion_id = "accordion-block-#{accordion_block.id || 'preview'}"
+  cache_key = [accordion_block, accordion_block.accordion_items_json, I18n.locale]
+%>
+<%= cache cache_key do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: accordion_block } do %>
+    <div class="accordion-block py-2">
+      <% if accordion_block.heading.present? %>
+        <h2 class="accordion-block__heading mb-4"><%= accordion_block.heading %></h2>
+      <% end %>
+
+      <% if items.any? %>
+        <div class="accordion" id="<%= accordion_id %>">
+          <% items.each_with_index do |item, index| %>
+            <%
+              item_id   = "#{accordion_id}-item-#{index}"
+              collapsed = accordion_block.open_first? && index == 0 ? '' : 'collapsed'
+              expanded  = accordion_block.open_first? && index == 0
+            %>
+            <div class="accordion-item">
+              <h3 class="accordion-header" id="<%= item_id %>-heading">
+                <button class="accordion-button <%= collapsed %>"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#<%= item_id %>-body"
+                        aria-expanded="<%= expanded %>"
+                        aria-controls="<%= item_id %>-body">
+                  <%= item[:question] %>
+                </button>
+              </h3>
+              <div id="<%= item_id %>-body"
+                   class="accordion-collapse collapse <%= 'show' if expanded %>"
+                   aria-labelledby="<%= item_id %>-heading"
+                   data-bs-parent="#<%= accordion_id %>">
+                <div class="accordion-body">
+                  <%= item[:answer] %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-muted"><%= t('better_together.content.blocks.accordion_block.empty', default: 'No items configured.') %></p>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

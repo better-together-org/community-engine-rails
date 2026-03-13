@@ -850,7 +850,37 @@ en:
       add: Add Contact
     content:
       blocks:
+        accordion_block:
+          empty: No items configured.
+          items_json_help: JSON array of objects with "question" and "answer" keys.
         associated_pages: Associated Pages
+        checklist_block:
+          not_found: Checklist not found.
+          select_prompt: "— Select a checklist —"
+        communities_block:
+          empty: No communities to display.
+        events_block:
+          empty: No events to display.
+        navigation_area_block:
+          not_found: Navigation area not found.
+          select_prompt: "— Select a navigation area —"
+        people_block:
+          empty: No people to display.
+        posts_block:
+          empty: No posts to display.
+        resource_block:
+          all_communities: All communities (platform-wide)
+          resource_ids_help: If set, only these records will be displayed, ignoring
+            the community scope and ordering.
+          resource_ids_placeholder: Leave blank to show latest records
+        statistics_block:
+          stats_json_help: JSON array of objects with "label", "value", and optional
+            "icon" (Font Awesome class) keys.
+        video_block:
+          missing_url: No video URL configured.
+          title: YouTube video player
+          url_help: Accepts YouTube, Vimeo, or any direct embed URL.
+        view_more: View all
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)

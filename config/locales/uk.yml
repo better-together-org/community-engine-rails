@@ -844,7 +844,37 @@ uk:
       add: Add Contact
     content:
       blocks:
+        accordion_block:
+          empty: Елементи не налаштовано.
+          items_json_help: Масив JSON об'єктів з ключами "question" та "answer".
         associated_pages: Associated Pages
+        checklist_block:
+          not_found: Контрольний список не знайдено.
+          select_prompt: "— Виберіть контрольний список —"
+        communities_block:
+          empty: Немає спільнот для відображення.
+        events_block:
+          empty: Немає подій для відображення.
+        navigation_area_block:
+          not_found: Область навігації не знайдено.
+          select_prompt: "— Виберіть область навігації —"
+        people_block:
+          empty: Немає людей для відображення.
+        posts_block:
+          empty: Немає публікацій для відображення.
+        resource_block:
+          all_communities: Усі спільноти (на рівні платформи)
+          resource_ids_help: Якщо встановлено, відображатимуться лише ці записи,
+            ігноруючи область спільноти та порядок.
+          resource_ids_placeholder: Залиште порожнім для відображення останніх записів
+        statistics_block:
+          stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
+            "icon" (клас Font Awesome).
+        video_block:
+          missing_url: URL відео не налаштовано.
+          title: Відеопрогравач YouTube
+          url_help: Приймає URL YouTube, Vimeo або будь-який прямий URL вбудовування.
+        view_more: Переглянути все
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
