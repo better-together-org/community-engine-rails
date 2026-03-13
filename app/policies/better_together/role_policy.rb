@@ -52,7 +52,8 @@ module BetterTogether
       when 'BetterTogether::Community'
         permitted_to?('manage_community_roles')
       else
-        false
+        # For other resource types (Person, Metrics, etc.), require any role management permission
+        can_manage_any_roles?
       end
     end
 

@@ -176,29 +176,46 @@ module BetterTogether
         platform_suffix = SecureRandom.hex(4)
         community_suffix = SecureRandom.hex(4)
 
-        ::BetterTogether::Platform.find_by(host: true) || ::BetterTogether::Platform.create!(
-          name: 'Test Platform',
-          url: "http://test-#{platform_suffix}.example.com",
-          privacy: 'public',
-          identifier: "test-platform-#{platform_suffix}",
-          time_zone: 'UTC',
-          host: true,
-          protected: true
-        )
+        # Create the host community first, then associate it with the platform so that
+        # host_platform.community and Community.find_by(host: true) refer to the same record.
+        host_community = ::BetterTogether::Community.find_by(host: true) ||
+                         ::BetterTogether::Community.create!(
+                           name: 'Test Community',
+                           identifier: "test-community-#{community_suffix}",
+                           host: true,
+                           protected: true,
+                           privacy: 'public'
+                         )
 
-        ::BetterTogether::Community.find_by(host: true) || ::BetterTogether::Community.create!(
-          name: 'Test Community',
-          identifier: "test-community-#{community_suffix}",
-          host: true,
-          protected: true,
-          privacy: 'public'
-        )
+        host_platform = ::BetterTogether::Platform.find_by(host: true)
+        if host_platform
+          # Reconcile: ensure the existing platform points to the host community
+          host_platform.update_column(:community_id, host_community.id) unless host_platform.community_id == host_community.id
+        else
+          ::BetterTogether::Platform.create!(
+            name: 'Test Platform',
+            url: "http://test-#{platform_suffix}.example.com",
+            privacy: 'public',
+            identifier: "test-platform-#{platform_suffix}",
+            time_zone: 'UTC',
+            host: true,
+            protected: true,
+            community: host_community
+          )
+        end
 
         # Ensure no users exist before the wizard creates the first one
         ::BetterTogether::User.destroy_all
       end
 
-      # Roles must exist for memberships to be created
+      # Roles must exist for memberships to be created.
+      # The wizard prefers platform_steward (canonical role); platform_manager is the legacy fallback.
+      let!(:platform_steward_role) do
+        ::BetterTogether::Role.find_or_create_by(identifier: 'platform_steward') do |role|
+          role.name = 'Platform Steward'
+          role.resource_type = 'BetterTogether::Platform'
+        end
+      end
       let!(:platform_manager_role) do
         ::BetterTogether::Role.find_or_create_by(identifier: 'platform_manager') do |role|
           role.name = 'Platform Manager'
@@ -247,12 +264,12 @@ module BetterTogether
           expect(user.person.name).to eq('Admin User')
         end
 
-        it 'creates platform membership with platform_manager role' do
+        it 'creates platform membership with platform_steward role' do
           user = User.find_by(email: 'admin@example.com')
           host_platform = ::BetterTogether::Platform.find_by(host: true)
           membership = host_platform.person_platform_memberships.find_by(member: user.person)
           expect(membership).to be_present
-          expect(membership.role).to eq(platform_manager_role)
+          expect(membership.role).to eq(platform_steward_role)
         end
 
         it 'creates community membership with governance role' do
