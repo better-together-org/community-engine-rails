@@ -30,6 +30,17 @@ module BetterTogether
       {}
     end
 
+    # Safe string accessors for remote-supplied payload fields.
+    # Coerces to String before returning to handle unexpected JSON types
+    # (e.g. Array, Hash, nil). Truncates to prevent rendering/memory abuse.
+    def payload_title
+      payload_data['title'].to_s.strip.truncate(255).presence
+    end
+
+    def payload_body
+      payload_data['body'].to_s.strip.truncate(10_000).presence
+    end
+
     def viewable_by?(person)
       return false unless person
       return false unless person_access_grant.active_now?

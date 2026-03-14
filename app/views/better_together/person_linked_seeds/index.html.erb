@@ -9,11 +9,10 @@
   <% if @person_linked_seeds.any? %>
     <div class="list-group">
       <% @person_linked_seeds.each do |linked_seed| %>
-        <% payload = linked_seed.payload_data %>
         <%= link_to person_linked_seed_path(linked_seed), class: 'list-group-item list-group-item-action' do %>
           <div class="d-flex w-100 justify-content-between align-items-start gap-3">
             <div>
-              <h2 class="h6 mb-1"><%= payload['title'].presence || linked_seed.identifier %></h2>
+              <h2 class="h6 mb-1"><%= linked_seed.payload_title || linked_seed.identifier %></h2>
               <p class="mb-1 text-muted"><%= t("better_together.enums.person_linked_seed.seed_type.#{linked_seed.seed_type}", default: linked_seed.seed_type.to_s.humanize) %></p>
               <small class="text-muted"><%= linked_seed.source_platform.name %></small>
             </div>

@@ -5,7 +5,7 @@
                   person_linked_seeds_path,
                   class: 'text-decoration-none' %>
     </p>
-    <h1><%= @payload_data['title'].presence || @person_linked_seed.identifier %></h1>
+    <h1><%= @person_linked_seed.payload_title || @person_linked_seed.identifier %></h1>
     <p class="text-muted mb-0">
       <%= t("better_together.enums.person_linked_seed.seed_type.#{@person_linked_seed.seed_type}", default: @person_linked_seed.seed_type.to_s.humanize) %>
       ·
@@ -13,9 +13,9 @@
     </p>
   </header>
 
-  <% if @payload_data['body'].present? %>
+  <% if @person_linked_seed.payload_body.present? %>
     <article class="prose">
-      <p><%= @payload_data['body'] %></p>
+      <p><%= @person_linked_seed.payload_body %></p>
     </article>
   <% elsif @payload_data.present? %>
     <pre><%= JSON.pretty_generate(@payload_data) %></pre>
