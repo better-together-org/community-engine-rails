@@ -8,7 +8,7 @@ module BetterTogether
     queue_as :platform_sync
 
     def perform(limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
-      eligible_connections.find_each do |connection|
+      eligible_connections.each do |connection|
         ::BetterTogether::FederatedContentPullJob.perform_later(
           platform_connection_id: connection.id,
           cursor: connection.sync_cursor.presence,
