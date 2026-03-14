@@ -89,7 +89,7 @@ If you see content or behavior that violates these guidelines:
 3. **Include evidence** - Screenshots or links if helpful
 4. **Be specific** - Clear reports help moderators respond effectively
 
-See [Safety and Reporting Tools](safety_reporting.md) for detailed reporting instructions.
+See [Reporting Harm and Safety Concerns](reporting_harm_and_safety_concerns.md) for detailed reporting instructions.
 
 ### Moderation Process
 When guidelines are violated, moderators may:
@@ -152,7 +152,7 @@ If you believe a moderation decision was made in error:
 - **Privacy levels** - Set content visibility (public/private)
 - **Community membership** - Choose which communities to join
 
-See [Safety and Reporting Tools](safety_reporting.md) for detailed information.
+See [Safety and Reporting Tools](safety_reporting.md) for the full safety documentation set.
 
 ## Platform Values
 
@@ -205,6 +205,8 @@ We welcome your input on these guidelines:
 
 - [Privacy Policy](privacy_policy.md)
 - [Safety and Reporting Tools](safety_reporting.md)
+- [Blocking and Boundaries](blocking_and_boundaries.md)
+- [Reporting Harm and Safety Concerns](reporting_harm_and_safety_concerns.md)
 - [User Management Guide](user_management_guide.md)
 - [Democratic Principles](../shared/democratic_principles.md)
 - [Privacy Principles](../shared/privacy_principles.md)

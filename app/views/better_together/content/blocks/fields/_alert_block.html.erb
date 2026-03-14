@@ -1,0 +1,38 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="alert-block-fields">
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[alert_level]", BetterTogether::Content::Block.human_attribute_name('alert_level', default: 'Alert Level'), class: 'form-label' %>
+      <%= select_tag "#{scope}[alert_level]",
+                     options_for_select(
+                       BetterTogether::Content::AlertBlock::ALERT_LEVELS.map do |l|
+                         [t("better_together.content.blocks.alert_block.levels.#{l}", default: l.humanize), l]
+                       end,
+                       block.alert_level
+                     ),
+                     class: 'form-select',
+                     data: { controller: 'better_together--slim-select' } %>
+    </div>
+
+    <div class="col mb-3 d-flex align-items-end">
+      <div class="form-check">
+        <%= check_box_tag "#{scope}[dismissible]", 'true', block.dismissible == 'true',
+                          class: 'form-check-input', id: "#{scope}_dismissible" %>
+        <%= label_tag "#{scope}_dismissible",
+                      BetterTogether::Content::Block.human_attribute_name('dismissible', default: 'Dismissible'),
+                      class: 'form-check-label' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[heading]", BetterTogether::Content::Block.human_attribute_name('heading', default: 'Heading (optional)'), class: 'form-label' %>
+    <%= text_field_tag "#{scope}[heading]", block.heading, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[body_text]", BetterTogether::Content::Block.human_attribute_name('body_text', default: 'Message'), class: 'form-label' %>
+    <%= text_area_tag "#{scope}[body_text]", block.body_text, class: 'form-control', rows: 3 %>
+  </div>
+</div>

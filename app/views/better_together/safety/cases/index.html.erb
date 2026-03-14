@@ -1,0 +1,57 @@
+<% content_for :page_title, t('better_together.safety_cases.index.title') %>
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0"><%= t('better_together.safety_cases.index.title') %></h1>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <%= form_with url: safety_cases_path(locale: I18n.locale), method: :get, local: true, class: 'row g-3 align-items-end' do |form| %>
+        <div class="col-md-3">
+          <%= form.label :status, t('better_together.safety_cases.attributes.status'), class: 'form-label' %>
+          <%= form.select :status,
+                          options_for_select(safety_enum_options('case_statuses', BetterTogether::Safety::Case.statuses.keys, include_any: true), params[:status]),
+                          {},
+                          class: 'form-select' %>
+        </div>
+        <div class="col-md-3">
+          <%= form.label :lane, t('better_together.safety_cases.attributes.lane'), class: 'form-label' %>
+          <%= form.select :lane,
+                          options_for_select(safety_enum_options('case_lanes', BetterTogether::Safety::Case.lanes.keys, include_any: true), params[:lane]),
+                          {},
+                          class: 'form-select' %>
+        </div>
+        <div class="col-md-3">
+          <%= form.label :harm_level, t('better_together.reports.attributes.harm_level'), class: 'form-label' %>
+          <%= form.select :harm_level,
+                          options_for_select(safety_enum_options('harm_levels', BetterTogether::Report.harm_levels.keys, include_any: true), params[:harm_level]),
+                          {},
+                          class: 'form-select' %>
+        </div>
+        <div class="col-md-3">
+          <%= form.submit t('better_together.safety_cases.index.filter'),
+                          class: 'btn btn-primary w-100' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="list-group shadow-sm">
+    <% @safety_cases.each do |safety_case| %>
+      <%= link_to safety_case_path(safety_case, locale: I18n.locale),
+                  class: 'list-group-item list-group-item-action' do %>
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="fw-semibold"><%= safety_enum_label('report_categories', safety_case.category) %> / <%= safety_enum_label('case_lanes', safety_case.lane) %></div>
+            <div class="small text-muted"><%= truncate(safety_case.report.reason, length: 120) %></div>
+          </div>
+          <div class="text-end">
+            <div><span class="badge text-bg-dark"><%= safety_enum_label('case_statuses', safety_case.status) %></span></div>
+            <div class="small text-muted mt-1"><%= l(safety_case.created_at, format: :long) %></div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
