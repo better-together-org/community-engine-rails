@@ -1416,6 +1416,7 @@ uk:
         show:
           details: Details
           title: Agreement
+          open_platform_connections: Open Platform Connections
         status: Status
       by: by
       categories:
@@ -1492,6 +1493,8 @@ uk:
         empty: No requests found
         index_header: Requests
         new_request: New Request
+        manage_connections: Manage Connections
+        new_connection_request: New Connection Request
         respond_with_offer: Respond with Offer
         response_to_your_request_heading: Response to your Request
         save_request: Save Request
@@ -2305,6 +2308,8 @@ uk:
         title: Access Grants
         description: Manage the private access grants you have shared with others.
         empty: You have not shared any access grants yet.
+        you_are_sharing: You are sharing
+        shared_with_you: Shared with you
       show:
         title: Access Grant
         back: Back to Access Grants
@@ -2327,6 +2332,29 @@ uk:
         title: Person Link
         back: Back to Person Links
         revoke: Revoke Link
+    platform_connections:
+      index:
+        title: Platform Connections
+        new_connection: New Connection
+        columns:
+          source: Source
+          target: Target
+          status: Status
+          kind: Kind
+          content_policy: Content Policy
+          auth_policy: Auth Policy
+      new:
+        title: New Platform Connection
+        back: Back
+        register_platform_hint: Need to register a remote platform first?
+        register_platform_link: Register External Platform →
+      actions:
+        view: View
+        edit: Edit
+        approve: Approve
+        suspend: Suspend
+        approve_confirm: Approve this connection?
+        suspend_confirm: Suspend this connection?
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.
