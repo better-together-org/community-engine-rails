@@ -1,0 +1,27 @@
+<%# locals: (people_block:) -%>
+<%
+  people = resource_block_collection(
+    people_block,
+    BetterTogether::Person,
+    extra_scope: ->(s) { s.order(created_at: :desc) }
+  )
+  cache_key = [people_block, people_block.community_scope_id,
+               BetterTogether::Person.maximum(:updated_at)&.to_i,
+               BetterTogether::Person.count,
+               I18n.locale]
+%>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: people_block } do %>
+  <%= cache cache_key do %>
+    <div class="people-block-collection row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <%= render(people) || content_tag(:p, t('better_together.content.blocks.people_block.empty',
+                                              default: 'No people to display.')) %>
+    </div>
+
+    <% if people_block.show_view_more? %>
+      <div class="text-center mt-4">
+        <%= link_to t('better_together.content.blocks.view_more', default: 'View all'),
+                    people_block.view_more_url, class: 'btn btn-outline-primary' %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

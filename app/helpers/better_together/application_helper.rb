@@ -67,13 +67,15 @@ module BetterTogether
     end
 
     # Finds the platform marked as host or returns a new default host platform instance.
-    # This method ensures there is always a host platform available, even if not set in the database.
+    # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
+    # check_platform_privacy, SEO helpers, and layout partials on every request).
     def host_platform
-      platform = Current.platform || ::BetterTogether::Platform.find_by(host: true)
-      return platform if platform
-
-      ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: ::BetterTogether.base_url,
-                                     privacy: 'private')
+      @host_platform ||= Current.platform || ::BetterTogether::Platform.find_by(host: true) ||
+                         ::BetterTogether::Platform.new(
+                           name: 'Better Together Community Engine',
+                           url: ::BetterTogether.base_url,
+                           privacy: 'private'
+                         )
     end
 
     # Finds the community marked as host or returns a new default host community instance.
@@ -595,8 +597,7 @@ module BetterTogether
     def platform_timezone_preference
       return @platform_timezone_preference if defined?(@platform_timezone_preference)
 
-      platform = host_platform || BetterTogether::Platform.find_by(host: true)
-      @platform_timezone_preference = platform&.time_zone.presence
+      @platform_timezone_preference = host_platform&.time_zone.presence
     end
   end
 end
