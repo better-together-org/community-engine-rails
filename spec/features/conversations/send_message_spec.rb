@@ -39,7 +39,8 @@ RSpec.describe 'sending a message', :as_platform_manager do
       JS
     end
 
-    xit 'appears in the chat window (SKIPPED: Net::ReadTimeout in parallel CI)' do
+    it 'appears in the chat window' do
+      skip 'Net::ReadTimeout in parallel CI — flaky Capybara JS spec'
       find_button('Send').click
 
       # Wait for the message to appear in the current conversation via Turbo Stream

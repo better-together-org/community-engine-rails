@@ -19,7 +19,8 @@ RSpec.describe 'creating a new conversation', retry: 0 do
       capybara_login_as_platform_manager
     end
 
-    xscenario 'between a platform manager and normal user (SKIPPED: Net::ReadTimeout in parallel CI)', :js do
+    scenario 'between a platform manager and normal user', :js do
+      skip 'Net::ReadTimeout in parallel CI — flaky Capybara JS spec'
       # Ensure user record is visible to application server
       ensure_record_visible(user)
       ensure_record_visible(user.person)
@@ -50,7 +51,8 @@ RSpec.describe 'creating a new conversation', retry: 0 do
       capybara_login_as_user
     end
 
-    xscenario 'can create a conversation with a public person who opted into messages (SKIPPED: Net::ReadTimeout in parallel CI)', :js do
+    scenario 'can create a conversation with a public person who opted into messages', :js do
+      skip 'Net::ReadTimeout in parallel CI — flaky Capybara JS spec'
       target = create(:better_together_user, :confirmed)
       # Ensure target is public and opted-in to receive messages from members
       target.person.reload.update!(privacy: 'public',
