@@ -9,7 +9,7 @@ module BetterTogether
   # is still running, eliminating the race window between scan and pull-job startup.
   class FederatedSyncScanJob < ApplicationJob
     LOCK_KEY = 'bt:federation:scan_lock'
-    LOCK_TTL  = 10.minutes.to_i
+    LOCK_TTL = 10.minutes.to_i
 
     queue_as :platform_sync
 

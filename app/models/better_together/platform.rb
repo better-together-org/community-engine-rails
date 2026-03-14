@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # Represents the host application and it's peers
-  class Platform < ApplicationRecord
+  class Platform < ApplicationRecord # rubocop:disable Metrics/ClassLength
     include PlatformHost
     include PlatformRegistryDefaults
     include PlatformFederationStatus

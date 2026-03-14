@@ -7,7 +7,7 @@ require 'cgi'
 
 module BetterTogether
   # Pulls one content-feed batch from a federated peer platform.
-  class FederatedContentPullService
+  class FederatedContentPullService # rubocop:disable Metrics/ClassLength
     DEFAULT_LIMIT = 50
     DEFAULT_OPEN_TIMEOUT = 5
     DEFAULT_READ_TIMEOUT = 15
@@ -93,21 +93,29 @@ module BetterTogether
       cached = Rails.cache.read(cache_key)
       return cached if cached.present?
 
-      response = http_post_form(token_uri, {
-                                  grant_type: 'client_credentials',
-                                  client_id: connection.oauth_client_id,
-                                  client_secret: connection.oauth_client_secret,
-                                  scope: 'content.feed.read'
-                                })
+      fetch_and_cache_oauth_token(cache_key)
+    end
+
+    def fetch_and_cache_oauth_token(cache_key)
+      response = http_post_form(token_uri, oauth_token_request_params)
       return unless response.is_a?(Net::HTTPSuccess)
 
-      body = JSON.parse(response.body)
+      body  = JSON.parse(response.body)
       token = body.fetch('access_token')
       ttl   = body.fetch('expires_in', 840).to_i # default 14 min (15 min token - 1 min buffer)
       Rails.cache.write(cache_key, token, expires_in: ttl.seconds)
       token
     rescue JSON::ParserError, KeyError
       nil
+    end
+
+    def oauth_token_request_params
+      {
+        grant_type: 'client_credentials',
+        client_id: connection.oauth_client_id,
+        client_secret: connection.oauth_client_secret,
+        scope: 'content.feed.read'
+      }
     end
 
     def token_uri

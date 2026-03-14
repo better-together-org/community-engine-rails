@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Durable directed edge between two platforms in the federated registry.
-  class PlatformConnection < ApplicationRecord
+  class PlatformConnection < ApplicationRecord # rubocop:disable Metrics/ClassLength
     require 'storext'
 
     include ::Storext.model
