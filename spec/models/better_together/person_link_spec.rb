@@ -28,7 +28,7 @@ RSpec.describe BetterTogether::PersonLink do
 
     # AR::Encryption stores ciphertext in the same column — raw DB value is not plaintext
     raw = described_class.connection
-                                    .select_one("SELECT remote_target_identifier FROM better_together_person_links WHERE id='#{person_link.id}'")
+                         .select_one("SELECT remote_target_identifier FROM better_together_person_links WHERE id='#{person_link.id}'")
     expect(raw['remote_target_identifier']).not_to eq('remote-person@example.com')
     # But the model decrypts transparently
     expect(person_link.reload.remote_target_identifier).to eq('remote-person@example.com')
