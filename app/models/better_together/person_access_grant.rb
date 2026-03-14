@@ -31,7 +31,7 @@ module BetterTogether
 
     validates :grantor_person_id, uniqueness: {
       scope: %i[person_link_id grantee_person_id],
-      message: 'already has a grant for this link and grantee'
+      message: ->(_record, _data) { I18n.t('better_together.person_access_grants.errors.duplicate_grant') }
     }
     validate :grantor_must_match_person_link
     validate :grantee_must_match_person_link, if: :grantee_person_id?

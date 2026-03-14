@@ -2276,10 +2276,29 @@ en:
         empty: You have not shared any access grants yet.
         you_are_sharing: You are sharing
         shared_with_you: Shared with you
+      errors:
+        duplicate_grant: already has a grant for this link and grantee
       show:
         title: Access Grant
         back: Back to Access Grants
         revoke: Revoke Access
+        revoke_confirm: Revoke this access grant?
+        grantor: Grantor
+        recipient: Recipient
+        accepted: Accepted
+        pending: Pending
+        expires: Expires
+        no_expiry: No expiry
+        scopes_heading: Scopes
+        allowed: Allowed
+        denied: Denied
+        scope_labels:
+          profile_read: Profile read
+          private_posts: Private posts
+          private_pages: Private pages
+          private_events: Private events
+          private_messages: Private messages
+        manage_grant_heading: Manage Grant
     person_linked_seeds:
       index:
         title: Linked Seeds
@@ -2290,6 +2309,8 @@ en:
         back: Back to Linked Seeds
         empty: No content available for this linked seed.
     person_links:
+      errors:
+        duplicate_link: already has a link for this platform connection and target
       index:
         title: Person Links
         description: Manage your cross-platform person links and federation connections.
@@ -2298,6 +2319,13 @@ en:
         title: Person Link
         back: Back to Person Links
         revoke: Revoke Link
+        revoke_confirm: Revoke this person link and its access grants?
+        source_person: Source person
+        target_person: Target person
+        platform_connection: Platform connection
+        verified: Verified
+        pending: Pending
+        access_grants_heading: Access Grants
     phone_numbers:
       add: Add Phone Number
       label: Label
@@ -2332,6 +2360,59 @@ en:
         suspend: Suspend
         approve_confirm: Approve this connection?
         suspend_confirm: Suspend this connection?
+      show:
+        back: Back
+        edit: Edit
+        approve: Approve
+        approve_confirm: Approve this connection and set it to active?
+        suspend: Suspend
+        suspend_confirm: "Suspend this connection? Federation and sync will pause."
+        status: Status
+        connection_kind: Connection Kind
+        content_sharing: Content Sharing
+        federation_auth: Federation Auth
+        content_sharing_policy: Content Sharing Policy
+        shared_content_types: Shared Content Types
+        federation_auth_policy: Federation Auth Policy
+        federation_scopes: Federation Scopes
+        mirroring: Mirroring
+        publish_back: Publish Back
+        login: Login
+        api_read: API Read
+        api_write: API Write
+        sync_status: Sync Status
+        last_sync_started: Last Sync Started
+        last_sync_completed: Last Sync Completed
+        last_sync_item_count: Last Sync Item Count
+        sync_cursor: Sync Cursor
+        last_sync_error: Last Sync Error
+        enabled: Enabled
+        disabled: Disabled
+        none: None
+        never: Never
+        oauth:
+          title: Federation OAuth Credentials
+          description: "Give these credentials to the operator of %{platform} so they can configure a matching connection on their platform and obtain bearer tokens from this platform's OAuth endpoint."
+          token_endpoint: Token Endpoint (this platform)
+          client_id: Client ID
+          client_secret: Client Secret
+          rotate_secret: Rotate Secret
+          rotate_secret_confirm: Rotate the OAuth client secret? The remote platform will need to be reconfigured.
+          not_set: Not set
+          remote_token_endpoint: Remote Token Endpoint
+          remote_token_endpoint_hint: Configure this on the remote platform to point to their OAuth endpoint.
+      form:
+        source_platform: Source Platform
+        target_platform: Target Platform
+        shared_content_types_legend: Shared Content Types
+        federation_scopes_legend: Federation Scopes
+        back: Back
+        create: Create Connection
+        save: Save Changes
+      flash:
+        approved: Connection approved and set to active.
+        suspended: Connection suspended.
+        secret_rotated: OAuth client secret rotated. Update the remote platform configuration.
     platform_invitation:
       acceptance_html: By registering for a user account below, you are accepting
         this invitation to join <strong>%{platform}</strong>.

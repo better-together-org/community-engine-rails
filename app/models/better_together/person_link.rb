@@ -28,7 +28,7 @@ module BetterTogether
 
     validates :source_person_id, uniqueness: {
       scope: %i[platform_connection_id target_person_id],
-      message: 'already has a link for this platform connection and target'
+      message: ->(_record, _data) { I18n.t('better_together.person_links.errors.duplicate_link') }
     }
     validate :target_or_remote_identifier_present
     validate :source_person_must_belong_to_source_platform

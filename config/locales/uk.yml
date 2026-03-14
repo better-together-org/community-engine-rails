@@ -1495,6 +1495,7 @@ uk:
         new_request: New Request
         manage_connections: Керувати з'єднаннями
         new_connection_request: Новий запит на з'єднання
+        target_platform: Цільова платформа
         respond_with_offer: Відповісти пропозицією
         response_to_your_request_heading: Відповідь на ваш запит
         save_request: Зберегти запит
@@ -2308,10 +2309,29 @@ uk:
         empty: Ви ще не поділилися жодним дозволом доступу.
         you_are_sharing: Ви надаєте доступ
         shared_with_you: Поділились з вами
+      errors:
+        duplicate_grant: вже має дозвіл для цього зв'язку та отримувача
       show:
         title: Дозвіл доступу
         back: Повернутися до дозволів доступу
         revoke: Відкликати доступ
+        revoke_confirm: "Відкликати цей дозвіл доступу?"
+        grantor: Надавач
+        recipient: Отримувач
+        accepted: Прийнято
+        pending: Очікує
+        expires: Дійсний до
+        no_expiry: Без терміну дії
+        scopes_heading: Дозволи
+        allowed: Дозволено
+        denied: Заборонено
+        scope_labels:
+          profile_read: Читання профілю
+          private_posts: Приватні публікації
+          private_pages: Приватні сторінки
+          private_events: Приватні події
+          private_messages: Приватні повідомлення
+        manage_grant_heading: Управління дозволом
     person_linked_seeds:
       index:
         title: Пов'язані зерна
@@ -2322,6 +2342,8 @@ uk:
         back: Повернутися до пов'язаних зерен
         empty: Для цього пов'язаного зерна немає доступного вмісту.
     person_links:
+      errors:
+        duplicate_link: "вже має зв'язок для цього з'єднання платформи та цільової особи"
       index:
         title: Зв'язки осіб
         description: Керуйте своїми міжплатформеними зв'язками осіб та з'єднаннями федерації.
@@ -2330,6 +2352,13 @@ uk:
         title: Зв'язок особи
         back: Повернутися до зв'язків осіб
         revoke: Відкликати зв'язок
+        revoke_confirm: "Відкликати цей зв'язок особи та її дозволи доступу?"
+        source_person: Вихідна особа
+        target_person: Цільова особа
+        platform_connection: З'єднання платформи
+        verified: Підтверджено
+        pending: Очікує
+        access_grants_heading: Дозволи доступу
     platform_connections:
       index:
         title: З'єднання платформ
@@ -2351,8 +2380,61 @@ uk:
         edit: Редагувати
         approve: Затвердити
         suspend: Призупинити
-        approve_confirm: Затвердити це з'єднання?
-        suspend_confirm: Призупинити це з'єднання?
+        approve_confirm: "Затвердити це з'єднання?"
+        suspend_confirm: "Призупинити це з'єднання?"
+      show:
+        back: Назад
+        edit: Редагувати
+        approve: Затвердити
+        approve_confirm: "Затвердити це з'єднання і зробити його активним?"
+        suspend: Призупинити
+        suspend_confirm: "Призупинити це з'єднання? Федерація та синхронізація будуть призупинені."
+        status: Статус
+        connection_kind: Тип з'єднання
+        content_sharing: Обмін вмістом
+        federation_auth: Автентифікація федерації
+        content_sharing_policy: Політика обміну вмістом
+        shared_content_types: Типи спільного вмісту
+        federation_auth_policy: Політика автентифікації федерації
+        federation_scopes: Обсяги федерації
+        mirroring: Дзеркалювання
+        publish_back: Зворотна публікація
+        login: Вхід
+        api_read: API читання
+        api_write: API запис
+        sync_status: Статус синхронізації
+        last_sync_started: Остання синхронізація розпочата
+        last_sync_completed: Остання синхронізація завершена
+        last_sync_item_count: Елементів в останній синхронізації
+        sync_cursor: Курсор синхронізації
+        last_sync_error: Остання помилка синхронізації
+        enabled: Увімкнено
+        disabled: Вимкнено
+        none: Немає
+        never: Ніколи
+        oauth:
+          title: Облікові дані OAuth федерації
+          description: "Передайте ці облікові дані оператору %{platform}, щоб вони могли налаштувати відповідне з'єднання на своїй платформі та отримувати токени від OAuth-точки доступу цієї платформи."
+          token_endpoint: Точка доступу токена (ця платформа)
+          client_id: Ідентифікатор клієнта
+          client_secret: Секрет клієнта
+          rotate_secret: Оновити секрет
+          rotate_secret_confirm: "Оновити OAuth-секрет клієнта? Потрібно буде перенастроїти віддалену платформу."
+          not_set: Не налаштовано
+          remote_token_endpoint: Віддалена точка доступу токена
+          remote_token_endpoint_hint: Налаштуйте це на віддаленій платформі, вказавши на їхню OAuth-точку доступу.
+      form:
+        source_platform: Вихідна платформа
+        target_platform: Цільова платформа
+        shared_content_types_legend: Типи спільного вмісту
+        federation_scopes_legend: Обсяги федерації
+        back: Назад
+        create: Створити з'єднання
+        save: Зберегти зміни
+      flash:
+        approved: "З'єднання затверджено та активовано."
+        suspended: "З'єднання призупинено."
+        secret_rotated: "OAuth-секрет клієнта оновлено. Оновіть конфігурацію віддаленої платформи."
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.

@@ -1496,6 +1496,7 @@ es:
         new_request: Nueva solicitud
         manage_connections: Gestionar conexiones
         new_connection_request: Nueva solicitud de conexión
+        target_platform: Plataforma de destino
         respond_with_offer: Responder con oferta
         response_to_your_request_heading: Respuesta a tu solicitud
         save_request: Guardar solicitud
@@ -2316,10 +2317,29 @@ es:
         empty: Aún no has compartido ningún permiso de acceso.
         you_are_sharing: Estás compartiendo
         shared_with_you: Compartido contigo
+      errors:
+        duplicate_grant: ya tiene un permiso para este vínculo y destinatario
       show:
         title: Permiso de acceso
         back: Volver a permisos de acceso
         revoke: Revocar acceso
+        revoke_confirm: "¿Revocar este permiso de acceso?"
+        grantor: Otorgante
+        recipient: Destinatario
+        accepted: Aceptado
+        pending: Pendiente
+        expires: Vence
+        no_expiry: Sin vencimiento
+        scopes_heading: Ámbitos
+        allowed: Permitido
+        denied: Denegado
+        scope_labels:
+          profile_read: Leer perfil
+          private_posts: Publicaciones privadas
+          private_pages: Páginas privadas
+          private_events: Eventos privados
+          private_messages: Mensajes privados
+        manage_grant_heading: Gestionar permiso
     person_linked_seeds:
       index:
         title: Semillas vinculadas
@@ -2330,6 +2350,8 @@ es:
         back: Volver a semillas vinculadas
         empty: No hay contenido disponible para esta semilla vinculada.
     person_links:
+      errors:
+        duplicate_link: ya tiene un vínculo para esta conexión de plataforma y persona de destino
       index:
         title: Vínculos de personas
         description: Gestiona tus vínculos de personas entre plataformas y conexiones de federación.
@@ -2338,6 +2360,13 @@ es:
         title: Vínculo de persona
         back: Volver a vínculos de personas
         revoke: Revocar vínculo
+        revoke_confirm: "¿Revocar este vínculo de persona y sus permisos de acceso?"
+        source_person: Persona de origen
+        target_person: Persona de destino
+        platform_connection: Conexión de plataforma
+        verified: Verificado
+        pending: Pendiente
+        access_grants_heading: Permisos de acceso
     platform_connections:
       index:
         title: Conexiones de plataforma
@@ -2359,8 +2388,61 @@ es:
         edit: Editar
         approve: Aprobar
         suspend: Suspender
-        approve_confirm: ¿Aprobar esta conexión?
-        suspend_confirm: ¿Suspender esta conexión?
+        approve_confirm: "¿Aprobar esta conexión?"
+        suspend_confirm: "¿Suspender esta conexión?"
+      show:
+        back: Volver
+        edit: Editar
+        approve: Aprobar
+        approve_confirm: "¿Aprobar esta conexión y activarla?"
+        suspend: Suspender
+        suspend_confirm: "¿Suspender esta conexión? La federación y la sincronización se pausarán."
+        status: Estado
+        connection_kind: Tipo de conexión
+        content_sharing: Compartición de contenido
+        federation_auth: Autenticación de federación
+        content_sharing_policy: Política de compartición de contenido
+        shared_content_types: Tipos de contenido compartidos
+        federation_auth_policy: Política de autenticación de federación
+        federation_scopes: Ámbitos de federación
+        mirroring: Espejo
+        publish_back: Publicar de vuelta
+        login: Inicio de sesión
+        api_read: Lectura API
+        api_write: Escritura API
+        sync_status: Estado de sincronización
+        last_sync_started: Última sincronización iniciada
+        last_sync_completed: Última sincronización completada
+        last_sync_item_count: Elementos en la última sincronización
+        sync_cursor: Cursor de sincronización
+        last_sync_error: Último error de sincronización
+        enabled: Habilitado
+        disabled: Deshabilitado
+        none: Ninguno
+        never: Nunca
+        oauth:
+          title: Credenciales OAuth de federación
+          description: "Proporciona estas credenciales al operador de %{platform} para que pueda configurar una conexión correspondiente en su plataforma y obtener tokens del endpoint OAuth de esta plataforma."
+          token_endpoint: Endpoint de token (esta plataforma)
+          client_id: ID de cliente
+          client_secret: Secreto de cliente
+          rotate_secret: Rotar secreto
+          rotate_secret_confirm: "¿Rotar el secreto OAuth del cliente? Habrá que reconfigurar la plataforma remota."
+          not_set: No configurado
+          remote_token_endpoint: Endpoint de token remoto
+          remote_token_endpoint_hint: Configura esto en la plataforma remota apuntando a su endpoint OAuth.
+      form:
+        source_platform: Plataforma de origen
+        target_platform: Plataforma de destino
+        shared_content_types_legend: Tipos de contenido compartidos
+        federation_scopes_legend: Ámbitos de federación
+        back: Volver
+        create: Crear conexión
+        save: Guardar cambios
+      flash:
+        approved: Conexión aprobada y activada.
+        suspended: Conexión suspendida.
+        secret_rotated: Secreto OAuth del cliente rotado. Actualiza la configuración de la plataforma remota.
     platform_invitation:
       acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
         aceptando esta invitación para unirte a <strong>%{platform}</strong>.

@@ -1500,6 +1500,7 @@ fr:
         new_request: Nouvelle demande
         manage_connections: Gérer les connexions
         new_connection_request: Nouvelle demande de connexion
+        target_platform: Plateforme cible
         respond_with_offer: Répondre avec une offre
         response_to_your_request_heading: Réponse à votre demande
         save_request: Enregistrer la demande
@@ -2325,10 +2326,29 @@ fr:
         empty: Vous n'avez encore partagé aucune autorisation d'accès.
         you_are_sharing: Vous partagez
         shared_with_you: Partagé avec vous
+      errors:
+        duplicate_grant: "a déjà une autorisation pour ce lien et ce destinataire"
       show:
         title: Autorisation d'accès
         back: Retour aux autorisations d'accès
         revoke: Révoquer l'accès
+        revoke_confirm: "Révoquer cette autorisation d'accès ?"
+        grantor: Émetteur
+        recipient: Destinataire
+        accepted: Acceptée
+        pending: En attente
+        expires: Expire
+        no_expiry: Sans expiration
+        scopes_heading: Portées
+        allowed: Autorisé
+        denied: Refusé
+        scope_labels:
+          profile_read: Lire le profil
+          private_posts: Publications privées
+          private_pages: Pages privées
+          private_events: Événements privés
+          private_messages: Messages privés
+        manage_grant_heading: Gérer l'autorisation
     person_linked_seeds:
       index:
         title: Graines liées
@@ -2339,6 +2359,8 @@ fr:
         back: Retour aux graines liées
         empty: Aucun contenu disponible pour cette graine liée.
     person_links:
+      errors:
+        duplicate_link: "a déjà un lien pour cette connexion de plateforme et cette personne cible"
       index:
         title: Liens de personnes
         description: Gérez vos liens de personnes entre plateformes et vos connexions de fédération.
@@ -2347,6 +2369,13 @@ fr:
         title: Lien de personne
         back: Retour aux liens de personnes
         revoke: Révoquer le lien
+        revoke_confirm: "Révoquer ce lien de personne et ses autorisations d'accès ?"
+        source_person: Personne source
+        target_person: Personne cible
+        platform_connection: Connexion de plateforme
+        verified: Vérifié
+        pending: En attente
+        access_grants_heading: Autorisations d'accès
     platform_connections:
       index:
         title: Connexions de plateforme
@@ -2368,8 +2397,61 @@ fr:
         edit: Modifier
         approve: Approuver
         suspend: Suspendre
-        approve_confirm: Approuver cette connexion ?
-        suspend_confirm: Suspendre cette connexion ?
+        approve_confirm: "Approuver cette connexion ?"
+        suspend_confirm: "Suspendre cette connexion ?"
+      show:
+        back: Retour
+        edit: Modifier
+        approve: Approuver
+        approve_confirm: "Approuver cette connexion et l'activer ?"
+        suspend: Suspendre
+        suspend_confirm: "Suspendre cette connexion ? La fédération et la synchronisation seront mises en pause."
+        status: Statut
+        connection_kind: Type de connexion
+        content_sharing: Partage de contenu
+        federation_auth: Authentification de fédération
+        content_sharing_policy: Politique de partage de contenu
+        shared_content_types: Types de contenu partagés
+        federation_auth_policy: Politique d'authentification de fédération
+        federation_scopes: Portées de fédération
+        mirroring: Miroir
+        publish_back: Republier
+        login: Connexion
+        api_read: Lecture API
+        api_write: Écriture API
+        sync_status: État de synchronisation
+        last_sync_started: Dernière synchronisation démarrée
+        last_sync_completed: Dernière synchronisation terminée
+        last_sync_item_count: Éléments lors de la dernière synchronisation
+        sync_cursor: Curseur de synchronisation
+        last_sync_error: Dernière erreur de synchronisation
+        enabled: Activé
+        disabled: Désactivé
+        none: Aucun
+        never: Jamais
+        oauth:
+          title: Identifiants OAuth de fédération
+          description: "Transmettez ces identifiants à l'opérateur de %{platform} afin qu'il puisse configurer une connexion correspondante sur sa plateforme et obtenir des jetons depuis l'endpoint OAuth de cette plateforme."
+          token_endpoint: Endpoint de jeton (cette plateforme)
+          client_id: Identifiant client
+          client_secret: Secret client
+          rotate_secret: Renouveler le secret
+          rotate_secret_confirm: "Renouveler le secret OAuth du client ? La plateforme distante devra être reconfigurée."
+          not_set: Non configuré
+          remote_token_endpoint: Endpoint de jeton distant
+          remote_token_endpoint_hint: Configurez ceci sur la plateforme distante en pointant vers leur endpoint OAuth.
+      form:
+        source_platform: Plateforme source
+        target_platform: Plateforme cible
+        shared_content_types_legend: Types de contenu partagés
+        federation_scopes_legend: Portées de fédération
+        back: Retour
+        create: Créer la connexion
+        save: Enregistrer les modifications
+      flash:
+        approved: Connexion approuvée et activée.
+        suspended: Connexion suspendue.
+        secret_rotated: "Secret OAuth du client renouvelé. Mettez à jour la configuration de la plateforme distante."
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.

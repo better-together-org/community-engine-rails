@@ -1,35 +1,35 @@
 <section class="container py-4">
   <header class="mb-4">
     <p class="text-muted mb-2">
-      <%= link_to t('better_together.person_links.show.back', default: 'Back to linked people'),
+      <%= link_to t('better_together.person_links.show.back'),
                   person_links_path,
                   class: 'text-decoration-none' %>
     </p>
-    <h1><%= t('better_together.person_links.show.title', default: 'Person Link') %></h1>
+    <h1><%= t('better_together.person_links.show.title') %></h1>
     <p class="text-muted mb-0"><%= @person_link.status.humanize %></p>
   </header>
 
   <dl class="row mb-4">
-    <dt class="col-sm-3">Source person</dt>
+    <dt class="col-sm-3"><%= t('better_together.person_links.show.source_person') %></dt>
     <dd class="col-sm-9"><%= @person_link.source_person.name %></dd>
 
-    <dt class="col-sm-3">Target person</dt>
+    <dt class="col-sm-3"><%= t('better_together.person_links.show.target_person') %></dt>
     <dd class="col-sm-9"><%= @person_link.target_person&.name || @person_link.remote_target_name || @person_link.remote_target_identifier %></dd>
 
-    <dt class="col-sm-3">Platform connection</dt>
+    <dt class="col-sm-3"><%= t('better_together.person_links.show.platform_connection') %></dt>
     <dd class="col-sm-9">
       <%= @person_link.platform_connection.source_platform.name %>
       →
       <%= @person_link.platform_connection.target_platform.name %>
     </dd>
 
-    <dt class="col-sm-3">Verified</dt>
-    <dd class="col-sm-9"><%= @person_link.verified_at ? l(@person_link.verified_at, format: :short) : 'Pending' %></dd>
+    <dt class="col-sm-3"><%= t('better_together.person_links.show.verified') %></dt>
+    <dd class="col-sm-9"><%= @person_link.verified_at ? l(@person_link.verified_at, format: :short) : t('better_together.person_links.show.pending') %></dd>
   </dl>
 
   <% if @person_access_grants.any? %>
     <section class="mb-4">
-      <h2 class="h5">Access Grants</h2>
+      <h2 class="h5"><%= t('better_together.person_links.show.access_grants_heading') %></h2>
       <ul>
         <% @person_access_grants.each do |grant| %>
           <li>
@@ -45,11 +45,11 @@
 
   <% if @person_link.source_person == current_person && !@person_link.revoked? %>
     <section>
-      <%= button_to t('better_together.person_links.show.revoke', default: 'Revoke link'),
+      <%= button_to t('better_together.person_links.show.revoke'),
                     revoke_person_link_path(@person_link),
                     method: :post,
                     class: 'btn btn-outline-danger',
-                    form: { data: { turbo_confirm: 'Revoke this person link and its access grants?' } } %>
+                    form: { data: { turbo_confirm: t('better_together.person_links.show.revoke_confirm') } } %>
     </section>
   <% end %>
 </section>
