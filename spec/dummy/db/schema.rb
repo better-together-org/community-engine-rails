@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_14_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -492,6 +492,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
   end
 
   create_table "better_together_federation_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
     t.uuid "platform_connection_id", null: false
     t.text "token_ciphertext"
     t.string "token_digest", null: false
@@ -503,6 +504,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
     t.datetime "updated_at", null: false
     t.index ["platform_connection_id"], name: "index_bt_federation_access_tokens_on_platform_connection_id"
     t.index ["token_digest"], name: "index_bt_federation_access_tokens_on_token_digest", unique: true
+    t.index ["expires_at"], name: "index_bt_federation_access_tokens_on_expires_at"
+    t.index ["revoked_at"], name: "index_bt_federation_access_tokens_on_revoked_at"
   end
 
   create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1147,6 +1150,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
   end
 
   create_table "better_together_person_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
     t.uuid "person_link_id", null: false
     t.uuid "grantor_person_id", null: false
     t.uuid "grantee_person_id"
@@ -1165,6 +1169,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
     t.index ["person_link_id", "grantor_person_id", "grantee_person_id"], name: "index_bt_person_access_grants_on_link_and_people", unique: true
     t.index ["person_link_id"], name: "index_better_together_person_access_grants_on_person_link_id"
     t.index ["status"], name: "index_better_together_person_access_grants_on_status"
+    t.index ["expires_at"], name: "index_bt_person_access_grants_on_expires_at"
+    t.index ["revoked_at"], name: "index_bt_person_access_grants_on_revoked_at"
   end
 
   create_table "better_together_person_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1211,6 +1217,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
   end
 
   create_table "better_together_person_linked_seeds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
     t.uuid "person_access_grant_id", null: false
     t.uuid "recipient_person_id", null: false
     t.uuid "source_platform_id", null: false
@@ -1235,6 +1242,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
   end
 
   create_table "better_together_person_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
     t.uuid "platform_connection_id", null: false
     t.uuid "source_person_id", null: false
     t.uuid "target_person_id"
@@ -1251,6 +1259,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
     t.index ["source_person_id"], name: "index_better_together_person_links_on_source_person_id"
     t.index ["status"], name: "index_better_together_person_links_on_status"
     t.index ["target_person_id"], name: "index_better_together_person_links_on_target_person_id"
+    t.index ["revoked_at"], name: "index_bt_person_links_on_revoked_at"
   end
 
   create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1322,6 +1331,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
   end
 
   create_table "better_together_platform_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
     t.uuid "source_platform_id", null: false
     t.uuid "target_platform_id", null: false
     t.string "status", default: "pending", null: false
@@ -1332,7 +1342,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "oauth_client_id"
-    t.text "oauth_client_secret_ciphertext"
+    t.text "oauth_client_secret"
     t.index ["connection_kind"], name: "index_better_together_platform_connections_on_connection_kind"
     t.index ["oauth_client_id"], name: "index_bt_platform_connections_on_oauth_client_id", unique: true
     t.index ["source_platform_id", "target_platform_id"], name: "index_bt_platform_connections_on_source_and_target", unique: true
@@ -1342,6 +1352,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_13_154319) do
   end
 
   create_table "better_together_platform_domains", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
     t.uuid "platform_id", null: false
     t.string "hostname", null: false
     t.boolean "primary", default: false, null: false
