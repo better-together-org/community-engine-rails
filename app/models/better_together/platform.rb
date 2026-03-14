@@ -56,8 +56,8 @@ module BetterTogether
     alias_attribute :host_url, :url
 
     validates :host_url, presence: true, uniqueness: true,
-                         format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
-                         safe_federation_url: true
+                         format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
+    validate :host_url_ssrf_safe
     validates :time_zone,
               presence: true,
               inclusion: {
@@ -71,8 +71,8 @@ module BetterTogether
     validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
     validates :oauth_issuer_url,
               format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
-              safe_federation_url: true,
               allow_blank: true
+    validate :oauth_issuer_url_ssrf_safe
 
     before_validation :apply_platform_registry_defaults
 
@@ -136,6 +136,22 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    private
+
+    def host_url_ssrf_safe
+      BetterTogether::SafeFederationUrlValidator
+        .new(attributes: [:host_url])
+        .validate_each(self, :host_url, host_url)
+    end
+
+    def oauth_issuer_url_ssrf_safe
+      return if oauth_issuer_url.blank?
+
+      BetterTogether::SafeFederationUrlValidator
+        .new(attributes: [:oauth_issuer_url])
+        .validate_each(self, :oauth_issuer_url, oauth_issuer_url)
     end
   end
 end

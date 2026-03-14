@@ -34,7 +34,7 @@ RSpec.describe BetterTogether::PersonLink do
     expect(person_link.reload.remote_target_identifier).to eq('remote-person@example.com')
   end
 
-
+  it 'can represent a remote target with an identifier instead of a local person' do
     person_link = build(
       :better_together_person_link,
       target_person: nil,
