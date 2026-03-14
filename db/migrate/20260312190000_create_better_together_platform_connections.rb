@@ -2,7 +2,7 @@
 
 class CreateBetterTogetherPlatformConnections < ActiveRecord::Migration[7.2]
   def change
-    create_table :better_together_platform_connections, id: :uuid, default: -> { 'gen_random_uuid()' } do |t|
+    create_bt_table :platform_connections do |t|
       t.references :source_platform, null: false, type: :uuid,
                                      foreign_key: { to_table: :better_together_platforms }
       t.references :target_platform, null: false, type: :uuid,
@@ -12,8 +12,6 @@ class CreateBetterTogetherPlatformConnections < ActiveRecord::Migration[7.2]
       t.boolean :content_sharing_enabled, null: false, default: false
       t.boolean :federation_auth_enabled, null: false, default: false
       t.jsonb :settings, null: false, default: {}
-
-      t.timestamps
     end
 
     add_index :better_together_platform_connections, %i[source_platform_id target_platform_id],

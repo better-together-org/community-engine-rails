@@ -18,7 +18,23 @@ RSpec.describe BetterTogether::PersonLink do
     expect(person_link.errors[:source_person]).to include('must belong to the source platform')
   end
 
-  it 'can represent a remote target with an identifier instead of a local person' do
+  it 'encrypts remote_target_identifier and remote_target_name at rest' do
+    person_link = create(
+      :better_together_person_link,
+      target_person: nil,
+      remote_target_identifier: 'remote-person@example.com',
+      remote_target_name: 'Remote Person'
+    )
+
+    # AR::Encryption stores ciphertext in the same column — raw DB value is not plaintext
+    raw = BetterTogether::PersonLink.connection
+                                    .select_one("SELECT remote_target_identifier FROM better_together_person_links WHERE id='#{person_link.id}'")
+    expect(raw['remote_target_identifier']).not_to eq('remote-person@example.com')
+    # But the model decrypts transparently
+    expect(person_link.reload.remote_target_identifier).to eq('remote-person@example.com')
+  end
+
+
     person_link = build(
       :better_together_person_link,
       target_person: nil,

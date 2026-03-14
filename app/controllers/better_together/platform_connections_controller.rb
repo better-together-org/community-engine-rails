@@ -22,6 +22,7 @@ module BetterTogether
       authorize @platform_connection
 
       if @platform_connection.save
+        # codeql[rb/url-redirection] - redirect targets a named route built from a model instance, not user-supplied input
         redirect_to better_together.platform_connection_path(@platform_connection),
                     notice: t('flash.generic.created', resource: ::BetterTogether::PlatformConnection.model_name.human),
                     status: :see_other
@@ -36,6 +37,7 @@ module BetterTogether
 
     def update
       if resource_instance.update(platform_connection_params)
+        # codeql[rb/url-redirection] - redirect targets a named route built from a model instance, not user-supplied input
         redirect_to better_together.platform_connection_path(resource_instance),
                     notice: t('flash.generic.updated', resource: ::BetterTogether::PlatformConnection.model_name.human),
                     status: :see_other
@@ -49,9 +51,11 @@ module BetterTogether
 
       if @platform_connection.pending? || @platform_connection.suspended?
         @platform_connection.update!(status: :active)
+        # codeql[rb/url-redirection] - redirect targets a named route built from a model instance, not user-supplied input
         redirect_to better_together.platform_connection_path(@platform_connection),
                     notice: t('better_together.platform_connections.flash.approved'), status: :see_other
       else
+        # codeql[rb/url-redirection] - redirect targets a named route built from a model instance, not user-supplied input
         redirect_to better_together.platform_connection_path(@platform_connection),
                     alert: t('better_together.platform_connections.flash.cannot_approve',
                              status: t("better_together.enums.platform_connection.status.#{@platform_connection.status}")),
@@ -66,9 +70,11 @@ module BetterTogether
 
       if @platform_connection.active?
         @platform_connection.update!(status: :suspended)
+        # codeql[rb/url-redirection] - redirect targets a named route built from a model instance, not user-supplied input
         redirect_to better_together.platform_connection_path(@platform_connection),
                     notice: t('better_together.platform_connections.flash.suspended'), status: :see_other
       else
+        # codeql[rb/url-redirection] - redirect targets a named route built from a model instance, not user-supplied input
         redirect_to better_together.platform_connection_path(@platform_connection),
                     alert: t('better_together.platform_connections.flash.cannot_suspend',
                              status: t("better_together.enums.platform_connection.status.#{@platform_connection.status}")),
@@ -79,9 +85,10 @@ module BetterTogether
     end
 
     def rotate_secret
-      authorize @platform_connection, :update?
+      authorize @platform_connection, :rotate_secret?
 
       @platform_connection.rotate_oauth_client_secret!
+      # codeql[rb/url-redirection] - redirect targets a named route built from a model instance, not user-supplied input
       redirect_to better_together.platform_connection_path(@platform_connection),
                   notice: t('better_together.platform_connections.flash.secret_rotated'), status: :see_other
     rescue Pundit::NotAuthorizedError

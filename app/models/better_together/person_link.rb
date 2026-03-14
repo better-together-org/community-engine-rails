@@ -19,6 +19,11 @@ module BetterTogether
 
     has_many :person_access_grants, class_name: '::BetterTogether::PersonAccessGrant', dependent: :destroy
 
+    # Encrypt PII fields that may contain email addresses or platform handles
+    # belonging to people on remote federated platforms.
+    encrypts :remote_target_identifier
+    encrypts :remote_target_name
+
     store_attributes :settings do
       reciprocal Boolean, default: false
       link_origin String, default: 'joatu'

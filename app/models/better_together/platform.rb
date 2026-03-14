@@ -56,7 +56,8 @@ module BetterTogether
     alias_attribute :host_url, :url
 
     validates :host_url, presence: true, uniqueness: true,
-                         format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
+                         format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+                         safe_federation_url: true
     validates :time_zone,
               presence: true,
               inclusion: {
@@ -70,6 +71,7 @@ module BetterTogether
     validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
     validates :oauth_issuer_url,
               format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+              safe_federation_url: true,
               allow_blank: true
 
     before_validation :apply_platform_registry_defaults

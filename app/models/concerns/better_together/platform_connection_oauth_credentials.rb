@@ -14,10 +14,14 @@ module BetterTogether
     end
 
     # Verify a provided secret against the stored encrypted value in constant time.
+    # SHA256 digests are compared (not raw values) so secure_compare always receives
+    # equal-length strings, avoiding the ArgumentError it raises on length mismatch.
     def authenticate_oauth_secret(candidate)
       return false if oauth_client_secret.blank? || candidate.blank?
 
-      ActiveSupport::SecurityUtils.secure_compare(oauth_client_secret.to_s, candidate.to_s)
+      stored   = Digest::SHA256.hexdigest(oauth_client_secret.to_s)
+      provided = Digest::SHA256.hexdigest(candidate.to_s)
+      ActiveSupport::SecurityUtils.secure_compare(stored, provided)
     end
 
     # Rotate the client secret.  Returns self.

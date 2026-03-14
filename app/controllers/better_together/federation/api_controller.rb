@@ -7,6 +7,11 @@ module BetterTogether
     # browser (non-JSON) requests only — matching the pattern used by Api::ApplicationController.
     # These endpoints are authenticated via OAuth client_id/client_secret, not session cookies.
     class ApiController < ::BetterTogether::ApplicationController
+      # M2M federation endpoints authenticate via OAuth client_id/client_secret.
+      # CSRF protection is intentionally scoped to non-JSON requests only — matching the
+      # pattern in Api::ApplicationController. JSON requests carry credentials in the
+      # request body, not browser cookies, so CSRF is not a threat vector here.
+      # codeql[rb/csrf-protection-disabled]
       protect_from_forgery with: :exception, unless: -> { request.format.json? }
 
       skip_before_action :store_user_location!

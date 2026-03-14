@@ -15,7 +15,10 @@ module BetterTogether
     before_validation :ensure_token_values, on: :create
 
     scope :active, lambda {
-      where(revoked_at: nil).where(arel_table[:expires_at].gt(Time.current))
+      joins(:platform_connection)
+        .where(revoked_at: nil)
+        .where(arel_table[:expires_at].gt(Time.current))
+        .where(better_together_platform_connections: { status: 'active' })
     }
 
     def self.find_active_by_plaintext(value)

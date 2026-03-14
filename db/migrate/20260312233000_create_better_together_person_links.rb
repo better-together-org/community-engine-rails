@@ -2,7 +2,7 @@
 
 class CreateBetterTogetherPersonLinks < ActiveRecord::Migration[7.2]
   def change
-    create_table :better_together_person_links, id: :uuid, default: -> { 'gen_random_uuid()' } do |t|
+    create_bt_table :person_links do |t|
       t.references :platform_connection, null: false, type: :uuid,
                                          foreign_key: { to_table: :better_together_platform_connections }
       t.references :source_person, null: false, type: :uuid,
@@ -15,8 +15,6 @@ class CreateBetterTogetherPersonLinks < ActiveRecord::Migration[7.2]
       t.datetime :verified_at
       t.datetime :revoked_at
       t.jsonb :settings, null: false, default: {}
-
-      t.timestamps
     end
 
     add_index :better_together_person_links,

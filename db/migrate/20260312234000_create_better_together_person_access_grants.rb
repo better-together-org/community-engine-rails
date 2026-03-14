@@ -2,7 +2,7 @@
 
 class CreateBetterTogetherPersonAccessGrants < ActiveRecord::Migration[7.2]
   def change
-    create_table :better_together_person_access_grants, id: :uuid, default: -> { 'gen_random_uuid()' } do |t|
+    create_bt_table :person_access_grants do |t|
       t.references :person_link, null: false, type: :uuid,
                                  foreign_key: { to_table: :better_together_person_links }
       t.references :grantor_person, null: false, type: :uuid,
@@ -16,8 +16,6 @@ class CreateBetterTogetherPersonAccessGrants < ActiveRecord::Migration[7.2]
       t.datetime :revoked_at
       t.datetime :expires_at
       t.jsonb :settings, null: false, default: {}
-
-      t.timestamps
     end
 
     add_index :better_together_person_access_grants,

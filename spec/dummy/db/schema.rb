@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_15_000001) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1154,8 +1154,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_15_000001) do
     t.uuid "grantor_person_id", null: false
     t.uuid "grantee_person_id"
     t.string "status", default: "pending", null: false
-    t.string "remote_grantee_identifier"
-    t.string "remote_grantee_name"
+    t.text "remote_grantee_identifier"
+    t.text "remote_grantee_name"
     t.datetime "accepted_at"
     t.datetime "revoked_at"
     t.datetime "expires_at"
@@ -1246,8 +1246,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_15_000001) do
     t.uuid "source_person_id", null: false
     t.uuid "target_person_id"
     t.string "status", default: "pending", null: false
-    t.string "remote_target_identifier"
-    t.string "remote_target_name"
+    t.text "remote_target_identifier"
+    t.text "remote_target_name"
     t.datetime "verified_at"
     t.datetime "revoked_at"
     t.jsonb "settings", default: {}, null: false

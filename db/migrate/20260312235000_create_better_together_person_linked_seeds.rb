@@ -2,7 +2,7 @@
 
 class CreateBetterTogetherPersonLinkedSeeds < ActiveRecord::Migration[7.2]
   def change
-    create_table :better_together_person_linked_seeds, id: :uuid, default: -> { 'gen_random_uuid()' } do |t|
+    create_bt_table :person_linked_seeds do |t|
       t.references :person_access_grant, null: false, type: :uuid,
                                          foreign_key: { to_table: :better_together_person_access_grants }
       t.references :recipient_person, null: false, type: :uuid,
@@ -19,8 +19,6 @@ class CreateBetterTogetherPersonLinkedSeeds < ActiveRecord::Migration[7.2]
       t.datetime :source_updated_at
       t.datetime :last_synced_at
       t.jsonb :metadata, null: false, default: {}
-
-      t.timestamps
     end
 
     add_index :better_together_person_linked_seeds,

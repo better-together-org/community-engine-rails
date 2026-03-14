@@ -18,6 +18,11 @@ module BetterTogether
     belongs_to :grantor_person, class_name: '::BetterTogether::Person'
     belongs_to :grantee_person, class_name: '::BetterTogether::Person', optional: true
 
+    # Encrypt PII fields that may contain email addresses or platform handles
+    # belonging to people on remote federated platforms.
+    encrypts :remote_grantee_identifier
+    encrypts :remote_grantee_name
+
     store_attributes :settings do
       allow_profile_read Boolean, default: true
       allow_private_posts Boolean, default: false

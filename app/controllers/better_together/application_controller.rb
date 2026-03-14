@@ -12,8 +12,7 @@ module BetterTogether
 
     layout :determine_layout
 
-    before_action :set_current_platform_context
-    after_action :reset_current_platform_context
+    around_action :with_current_platform_context
     before_action :check_platform_setup
     before_action :set_locale
     around_action :set_time_zone
@@ -137,6 +136,13 @@ module BetterTogether
     # (Joatu-specific notification helpers are defined in BetterTogether::Joatu::Controller)
 
     private
+
+    def with_current_platform_context
+      set_current_platform_context
+      yield
+    ensure
+      reset_current_platform_context
+    end
 
     def set_current_platform_context
       Current.platform_domain = BetterTogether::PlatformDomain.resolve(request.host)
