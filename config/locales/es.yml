@@ -2187,6 +2187,12 @@ es:
         back: Volver a semillas vinculadas
         empty: No hay contenido disponible para esta semilla vinculada.
         title: Semilla vinculada
+    validators:
+      safe_federation_url:
+        credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
+        insecure_scheme: debe usar http o https
+        invalid_url: no es una URL válida
+        private_ip: no debe apuntar a una dirección IP privada o reservada
     person_links:
       errors:
         duplicate_link: ya tiene un vínculo para esta conexión de plataforma y persona

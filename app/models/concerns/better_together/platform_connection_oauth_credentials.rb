@@ -24,9 +24,13 @@ module BetterTogether
       ActiveSupport::SecurityUtils.secure_compare(stored, provided)
     end
 
-    # Rotate the client secret.  Returns self.
+    # Rotate the client secret.  Clears the outbound token cache so the next
+    # pull immediately exchanges new credentials with the remote platform.
+    # Returns self.
     def rotate_oauth_client_secret!
       update!(oauth_client_secret: generate_oauth_client_secret)
+      Rails.cache.delete("bt:fed_token:#{oauth_client_id}")
+      self
     end
 
     private

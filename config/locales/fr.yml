@@ -2197,6 +2197,12 @@ fr:
         back: Retour aux graines liées
         empty: Aucun contenu disponible pour cette graine liée.
         title: Graine liée
+    validators:
+      safe_federation_url:
+        credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
+        insecure_scheme: doit utiliser http ou https
+        invalid_url: n'est pas une URL valide
+        private_ip: ne doit pas pointer vers une adresse IP privée ou réservée
     person_links:
       errors:
         duplicate_link: a déjà un lien pour cette connexion de plateforme et cette

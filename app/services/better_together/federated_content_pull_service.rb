@@ -87,6 +87,12 @@ module BetterTogether
     def oauth_access_token
       return if connection.oauth_client_id.blank? || connection.oauth_client_secret.blank?
 
+      # Reuse cached token for the remainder of its TTL (tokens are valid 15 min).
+      # Cache key is scoped to the client_id so credential rotation invalidates it.
+      cache_key = "bt:fed_token:#{connection.oauth_client_id}"
+      cached = Rails.cache.read(cache_key)
+      return cached if cached.present?
+
       response = http_post_form(token_uri, {
                                   grant_type: 'client_credentials',
                                   client_id: connection.oauth_client_id,
@@ -95,7 +101,11 @@ module BetterTogether
                                 })
       return unless response.is_a?(Net::HTTPSuccess)
 
-      JSON.parse(response.body).fetch('access_token')
+      body = JSON.parse(response.body)
+      token = body.fetch('access_token')
+      ttl   = body.fetch('expires_in', 840).to_i # default 14 min (15 min token - 1 min buffer)
+      Rails.cache.write(cache_key, token, expires_in: ttl.seconds)
+      token
     rescue JSON::ParserError, KeyError
       nil
     end
