@@ -42,8 +42,11 @@ RSpec.describe 'BetterTogether::PersonAccessGrants', :no_auth do
       get better_together.person_access_grant_path(grant, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Access Grant')
-      expect(response.body).to include('Private posts: Allowed')
+      expect(response.body).to include(I18n.t('better_together.person_access_grants.show.title'))
+      expect(response.body).to include(
+        I18n.t('better_together.person_access_grants.show.scope_labels.private_posts')
+      )
+      expect(response.body).to include(I18n.t('better_together.person_access_grants.show.allowed'))
     end
 
     it 'hides the grant from unrelated users' do
