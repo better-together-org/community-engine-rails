@@ -3,6 +3,7 @@
 module BetterTogether
   module Seeds
     # Exports recipient-scoped private seeds for an active person access grant.
+    # rubocop:disable Metrics/ClassLength
     class LinkedSeedExportService
       DEFAULT_LIMIT = 50
 
@@ -53,33 +54,46 @@ module BetterTogether
       attr_reader :connection, :recipient_identifier, :cursor, :limit
 
       def active_access_grant
-        ::BetterTogether::PersonAccessGrant.current_active
-                                           .for_connection(connection)
-                                           .find do |grant|
-                                             grant.remote_grantee_identifier.to_s == recipient_identifier ||
-                                               grant.grantee_person&.identifier.to_s == recipient_identifier
-        end
+        base_scope = ::BetterTogether::PersonAccessGrant.current_active.for_connection(connection)
+        base_scope.find_by(remote_grantee_identifier: recipient_identifier) ||
+          base_scope.joins(:grantee_person)
+                    .find_by(better_together_people: { identifier: recipient_identifier })
       end
 
       def exportable_records_for(grant)
         records = []
-        records.concat(private_posts_for(grant)) if grant.allow_private_posts?
-        records.concat(private_pages_for(grant)) if grant.allow_private_pages?
-        records.concat(private_events_for(grant)) if grant.allow_private_events?
+        # Bound each type to MAX_EXPORT_PER_TYPE to avoid unbounded memory load;
+        # full-dataset export is a future streaming/background-job concern.
+        max = [limit * 10, 500].min
+        records.concat(private_posts_for(grant, max)) if grant.allow_private_posts?
+        records.concat(private_pages_for(grant, max)) if grant.allow_private_pages?
+        records.concat(private_events_for(grant, max)) if grant.allow_private_events?
 
         records.sort_by(&:updated_at).reverse
       end
 
-      def private_posts_for(grant)
-        ::BetterTogether::Post.with_creator(grant.grantor_person).privacy_private.to_a
+      def private_posts_for(grant, max)
+        ::BetterTogether::Post.with_creator(grant.grantor_person)
+                              .privacy_private
+                              .order(updated_at: :desc)
+                              .limit(max)
+                              .to_a
       end
 
-      def private_pages_for(grant)
-        ::BetterTogether::Page.with_creator(grant.grantor_person).privacy_private.to_a
+      def private_pages_for(grant, max)
+        ::BetterTogether::Page.with_creator(grant.grantor_person)
+                              .privacy_private
+                              .order(updated_at: :desc)
+                              .limit(max)
+                              .to_a
       end
 
-      def private_events_for(grant)
-        ::BetterTogether::Event.with_creator(grant.grantor_person).privacy_private.to_a
+      def private_events_for(grant, max)
+        ::BetterTogether::Event.with_creator(grant.grantor_person)
+                               .privacy_private
+                               .order(updated_at: :desc)
+                               .limit(max)
+                               .to_a
       end
 
       def build_seed(record, grant)
@@ -121,5 +135,6 @@ module BetterTogether
         [batch, next_cursor]
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

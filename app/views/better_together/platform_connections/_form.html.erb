@@ -31,30 +31,36 @@
     <div class="mb-3">
       <%= form.label :connection_kind, class: 'form-label' %>
       <%= form.select :connection_kind,
-                      BetterTogether::PlatformConnection::CONNECTION_KINDS.values.map { |v| [v.humanize, v] },
+                      BetterTogether::PlatformConnection::CONNECTION_KINDS.keys.map { |k|
+                        [t("better_together.enums.platform_connection.connection_kind.#{k}"), k.to_s]
+                      },
                       {},
                       class: 'form-select' %>
     </div>
   <% else %>
     <div class="mb-3">
-      <label class="form-label"><%= t('better_together.platform_connections.form.source_platform') %></label>
-      <input class="form-control" value="<%= platform_connection.source_platform.name %>" readonly>
+      <label class="form-label" for="platform_connection_source_platform"><%= t('better_together.platform_connections.form.source_platform') %></label>
+      <input id="platform_connection_source_platform" class="form-control" value="<%= platform_connection.source_platform.name %>" readonly>
     </div>
 
     <div class="mb-3">
-      <label class="form-label"><%= t('better_together.platform_connections.form.target_platform') %></label>
-      <input class="form-control" value="<%= platform_connection.target_platform.name %>" readonly>
+      <label class="form-label" for="platform_connection_target_platform"><%= t('better_together.platform_connections.form.target_platform') %></label>
+      <input id="platform_connection_target_platform" class="form-control" value="<%= platform_connection.target_platform.name %>" readonly>
     </div>
 
     <div class="row">
       <div class="col-md-6 mb-3">
         <%= form.label :status, class: 'form-label' %>
-        <%= form.select :status, BetterTogether::PlatformConnection::STATUS_VALUES.values.map { |value| [value.humanize, value] }, {}, class: 'form-select' %>
+        <%= form.select :status, BetterTogether::PlatformConnection::STATUS_VALUES.keys.map { |k|
+                          [t("better_together.enums.platform_connection.status.#{k}"), k.to_s]
+                        }, {}, class: 'form-select' %>
       </div>
 
       <div class="col-md-6 mb-3">
         <%= form.label :connection_kind, class: 'form-label' %>
-        <%= form.select :connection_kind, BetterTogether::PlatformConnection::CONNECTION_KINDS.values.map { |value| [value.humanize, value] }, {}, class: 'form-select' %>
+        <%= form.select :connection_kind, BetterTogether::PlatformConnection::CONNECTION_KINDS.keys.map { |k|
+                          [t("better_together.enums.platform_connection.connection_kind.#{k}"), k.to_s]
+                        }, {}, class: 'form-select' %>
       </div>
     </div>
 
@@ -62,7 +68,9 @@
       <div class="col-md-6 mb-3">
         <%= form.label :content_sharing_policy, class: 'form-label' %>
         <%= form.select :content_sharing_policy,
-                        BetterTogether::PlatformConnection::CONTENT_SHARING_POLICIES.values.map { |value| [value.humanize, value] },
+                        BetterTogether::PlatformConnection::CONTENT_SHARING_POLICIES.keys.map { |k|
+                          [t("better_together.enums.platform_connection.content_sharing_policy.#{k}"), k.to_s]
+                        },
                         {},
                         class: 'form-select' %>
       </div>
@@ -70,7 +78,9 @@
       <div class="col-md-6 mb-3">
         <%= form.label :federation_auth_policy, class: 'form-label' %>
         <%= form.select :federation_auth_policy,
-                        BetterTogether::PlatformConnection::FEDERATION_AUTH_POLICIES.values.map { |value| [value.humanize, value] },
+                        BetterTogether::PlatformConnection::FEDERATION_AUTH_POLICIES.keys.map { |k|
+                          [t("better_together.enums.platform_connection.federation_auth_policy.#{k}"), k.to_s]
+                        },
                         {},
                         class: 'form-select' %>
       </div>

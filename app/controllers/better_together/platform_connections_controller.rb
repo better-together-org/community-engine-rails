@@ -23,7 +23,7 @@ module BetterTogether
 
       if @platform_connection.save
         redirect_to better_together.platform_connection_path(@platform_connection),
-                    notice: t('flash.generic.created', resource: 'Platform connection'),
+                    notice: t('flash.generic.created', resource: ::BetterTogether::PlatformConnection.model_name.human),
                     status: :see_other
       else
         render :new, status: :unprocessable_content
@@ -37,7 +37,7 @@ module BetterTogether
     def update
       if resource_instance.update(platform_connection_params)
         redirect_to better_together.platform_connection_path(resource_instance),
-                    notice: t('flash.generic.updated', resource: 'Platform connection'),
+                    notice: t('flash.generic.updated', resource: ::BetterTogether::PlatformConnection.model_name.human),
                     status: :see_other
       else
         render :edit, status: :unprocessable_content
@@ -53,7 +53,8 @@ module BetterTogether
                     notice: t('better_together.platform_connections.flash.approved'), status: :see_other
       else
         redirect_to better_together.platform_connection_path(@platform_connection),
-                    alert: "Cannot approve a connection with status '#{@platform_connection.status}'.",
+                    alert: t('better_together.platform_connections.flash.cannot_approve',
+                             status: t("better_together.enums.platform_connection.status.#{@platform_connection.status}")),
                     status: :see_other
       end
     rescue Pundit::NotAuthorizedError
@@ -69,7 +70,8 @@ module BetterTogether
                     notice: t('better_together.platform_connections.flash.suspended'), status: :see_other
       else
         redirect_to better_together.platform_connection_path(@platform_connection),
-                    alert: "Cannot suspend a connection with status '#{@platform_connection.status}'.",
+                    alert: t('better_together.platform_connections.flash.cannot_suspend',
+                             status: t("better_together.enums.platform_connection.status.#{@platform_connection.status}")),
                     status: :see_other
       end
     rescue Pundit::NotAuthorizedError

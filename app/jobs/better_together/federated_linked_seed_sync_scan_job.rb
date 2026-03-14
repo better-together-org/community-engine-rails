@@ -9,9 +9,6 @@ module BetterTogether
 
     def perform
       eligible_grants.each do |grant|
-        next unless grant.active_now?
-        next unless grant.grantee_person_id.present?
-
         ::BetterTogether::FederatedLinkedSeedPullJob.perform_later(
           platform_connection_id: grant.person_link.platform_connection_id,
           recipient_person_id: grant.grantee_person_id,
@@ -27,6 +24,7 @@ module BetterTogether
       ::BetterTogether::PersonAccessGrant.current_active
                                          .joins(person_link: :platform_connection)
                                          .includes(:grantee_person, person_link: :platform_connection)
+                                         .where.not(grantee_person_id: nil)
                                          .where(
                                            better_together_platform_connections: {
                                              status: ::BetterTogether::PlatformConnection::STATUS_VALUES[:active]
@@ -44,6 +42,10 @@ module BetterTogether
                                          .where(
                                            "better_together_platform_connections.settings->>'allow_linked_content_read_scope' " \
                                            "= 'true'"
+                                         )
+                                         .where(
+                                           "better_together_platform_connections.settings->>'last_sync_status' != ?",
+                                           'running'
                                          )
     end
   end

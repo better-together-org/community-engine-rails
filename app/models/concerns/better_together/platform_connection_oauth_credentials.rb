@@ -5,16 +5,12 @@ module BetterTogether
   module PlatformConnectionOauthCredentials
     extend ActiveSupport::Concern
 
+    included do
+      encrypts :oauth_client_secret
+    end
+
     def rotate_oauth_client_secret!
       update!(oauth_client_secret: generate_oauth_client_secret)
-    end
-
-    def oauth_client_secret
-      self[:oauth_client_secret_ciphertext].to_s
-    end
-
-    def oauth_client_secret=(value)
-      self[:oauth_client_secret_ciphertext] = value.to_s
     end
 
     private

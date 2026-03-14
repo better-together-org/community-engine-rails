@@ -1,9 +1,8 @@
 <section class="container py-4">
   <header class="mb-4">
-    <h1><%= t('better_together.person_access_grants.index.title', default: 'Access Grants') %></h1>
+    <h1><%= t('better_together.person_access_grants.index.title') %></h1>
     <p class="text-muted mb-0">
-      <%= t('better_together.person_access_grants.index.description',
-            default: 'Review linked private sharing grants where you are the grantor or recipient.') %>
+      <%= t('better_together.person_access_grants.index.description') %>
     </p>
   </header>
 
@@ -17,7 +16,7 @@
               <p class="mb-1 text-muted">
                 <%= grant.grantor_person == current_person ? t('better_together.person_access_grants.index.you_are_sharing') : t('better_together.person_access_grants.index.shared_with_you') %>
               </p>
-              <small class="text-muted"><%= grant.status.humanize %></small>
+              <small class="text-muted"><%= t("better_together.enums.person_access_grant.status.#{grant.status}") %></small>
             </div>
             <small class="text-muted"><%= l(grant.updated_at, format: :short) %></small>
           </div>
@@ -25,6 +24,6 @@
       <% end %>
     </div>
   <% else %>
-    <p class="text-muted"><%= t('better_together.person_access_grants.index.empty', default: 'No access grants are currently available.') %></p>
+    <p class="text-muted"><%= t('better_together.person_access_grants.index.empty') %></p>
   <% end %>
 </section>

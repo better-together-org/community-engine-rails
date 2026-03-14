@@ -6,7 +6,7 @@
                   class: 'text-decoration-none' %>
     </p>
     <h1><%= t('better_together.person_access_grants.show.title') %></h1>
-    <p class="text-muted mb-0"><%= @person_access_grant.status.humanize %></p>
+    <p class="text-muted mb-0"><%= t("better_together.enums.person_access_grant.status.#{@person_access_grant.status}") %></p>
   </header>
 
   <dl class="row mb-4">
@@ -65,7 +65,7 @@
           <%= form.label :expires_at, class: 'form-label' %>
           <%= form.datetime_local_field :expires_at, class: 'form-control' %>
         </div>
-        <%= form.submit t('helpers.submit.update', model: 'Access grant'), class: 'btn btn-primary' %>
+        <%= form.submit t('helpers.submit.update', model: ::BetterTogether::PersonAccessGrant.model_name.human), class: 'btn btn-primary' %>
       <% end %>
     </section>
 

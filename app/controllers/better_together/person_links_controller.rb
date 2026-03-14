@@ -15,7 +15,9 @@ module BetterTogether
 
     def show
       authorize @person_link
-      @person_access_grants = @person_link.person_access_grants.order(updated_at: :desc, created_at: :desc)
+      @person_access_grants = @person_link.person_access_grants
+                                          .includes(:grantee_person)
+                                          .order(updated_at: :desc, created_at: :desc)
     end
 
     def revoke

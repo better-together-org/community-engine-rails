@@ -4,7 +4,7 @@ class AddOauthCredentialsToBetterTogetherPlatformConnections < ActiveRecord::Mig
   def change
     change_table :better_together_platform_connections, bulk: true do |t|
       t.string :oauth_client_id
-      t.text :oauth_client_secret_ciphertext
+      t.text :oauth_client_secret
     end
 
     add_index :better_together_platform_connections,

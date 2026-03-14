@@ -1,23 +1,29 @@
 <tr id="<%= dom_id(platform_connection) %>">
   <td><%= link_to platform_connection.source_platform.name, platform_connection.source_platform %></td>
   <td><%= link_to platform_connection.target_platform.name, platform_connection.target_platform %></td>
-  <td><span class="badge text-bg-secondary"><%= platform_connection.status.humanize %></span></td>
-  <td><%= platform_connection.connection_kind.humanize %></td>
-  <td><%= platform_connection.content_sharing_policy.humanize %></td>
-  <td><%= platform_connection.federation_auth_policy.humanize %></td>
+  <td><span class="badge text-bg-secondary"><%= t("better_together.enums.platform_connection.status.#{platform_connection.status}") %></span></td>
+  <td><%= t("better_together.enums.platform_connection.connection_kind.#{platform_connection.connection_kind}") %></td>
+  <td><%= t("better_together.enums.platform_connection.content_sharing_policy.#{platform_connection.content_sharing_policy}") %></td>
+  <td><%= t("better_together.enums.platform_connection.federation_auth_policy.#{platform_connection.federation_auth_policy}") %></td>
   <td class="text-end">
-    <%= link_to t('better_together.platform_connections.actions.view'), better_together.platform_connection_path(platform_connection), class: 'btn btn-sm btn-outline-primary' %>
-    <%= link_to t('better_together.platform_connections.actions.edit'), better_together.edit_platform_connection_path(platform_connection), class: 'btn btn-sm btn-outline-secondary' %>
+    <%= link_to t('better_together.platform_connections.actions.view'), better_together.platform_connection_path(platform_connection),
+                class: 'btn btn-sm btn-outline-primary',
+                aria: { label: t('better_together.platform_connections.actions.view_aria', source: platform_connection.source_platform.name, target: platform_connection.target_platform.name) } %>
+    <%= link_to t('better_together.platform_connections.actions.edit'), better_together.edit_platform_connection_path(platform_connection),
+                class: 'btn btn-sm btn-outline-secondary',
+                aria: { label: t('better_together.platform_connections.actions.edit_aria', source: platform_connection.source_platform.name, target: platform_connection.target_platform.name) } %>
     <% if policy(platform_connection).approve? && (platform_connection.pending? || platform_connection.suspended?) %>
       <%= button_to t('better_together.platform_connections.actions.approve'),
                     better_together.approve_platform_connection_path(platform_connection),
                     method: :patch, class: 'btn btn-sm btn-success',
+                    aria: { label: t('better_together.platform_connections.actions.approve_aria', source: platform_connection.source_platform.name, target: platform_connection.target_platform.name) },
                     data: { turbo_confirm: t('better_together.platform_connections.actions.approve_confirm') } %>
     <% end %>
     <% if policy(platform_connection).suspend? && platform_connection.active? %>
       <%= button_to t('better_together.platform_connections.actions.suspend'),
                     better_together.suspend_platform_connection_path(platform_connection),
                     method: :patch, class: 'btn btn-sm btn-warning',
+                    aria: { label: t('better_together.platform_connections.actions.suspend_aria', source: platform_connection.source_platform.name, target: platform_connection.target_platform.name) },
                     data: { turbo_confirm: t('better_together.platform_connections.actions.suspend_confirm') } %>
     <% end %>
   </td>

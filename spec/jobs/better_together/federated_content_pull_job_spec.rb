@@ -11,6 +11,16 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
 
   describe '#perform' do
     let(:connection) { create(:better_together_platform_connection, :active) }
+    let(:ingest_result) do
+      BetterTogether::Content::FederatedContentIngestService::Result.new(
+        connection:,
+        processed_count: 1,
+        imported_seeds: [],
+        imported_records: [],
+        unsupported_seeds: [],
+        planting: nil
+      )
+    end
     let(:pull_result) do
       BetterTogether::FederatedContentPullService::Result.new(
         connection:,
@@ -20,13 +30,17 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
       )
     end
 
-    it 'pulls a batch and enqueues ingest' do
+    it 'pulls a batch, ingests inline, and enqueues the next page' do
       allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(pull_result)
+      allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(ingest_result)
+
+      expect(BetterTogether::Content::FederatedContentIngestService)
+        .to receive(:call).with(connection:, seeds: pull_result.seeds)
 
       expect do
         described_class.perform_now(platform_connection_id: connection.id, cursor: 'cursor-4')
-      end.to have_enqueued_job(BetterTogether::FederatedContentIngestJob)
-        .with(platform_connection_id: connection.id, seeds: pull_result.seeds, sync_cursor: 'cursor-5')
+      end.to have_enqueued_job(described_class)
+        .with(platform_connection_id: connection.id, cursor: 'cursor-5', limit: anything)
         .on_queue('platform_sync')
     end
 

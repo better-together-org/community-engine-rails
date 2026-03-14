@@ -9,6 +9,7 @@ module BetterTogether
     scope :primary, -> { where(primary: true) }
 
     before_validation :normalize_hostname!
+    after_commit :bust_resolve_cache
     validate :single_primary_domain, if: :primary?
     validate :primary_domain_must_be_active, if: :primary?
 
@@ -17,7 +18,10 @@ module BetterTogether
     validates :primary, inclusion: { in: [true, false] }
 
     def self.resolve(hostname)
-      active.find_by(hostname: normalize_hostname(hostname))
+      normalized = normalize_hostname(hostname)
+      Rails.cache.fetch("bt:platform_domain:#{normalized}", expires_in: 5.minutes) do
+        active.find_by(hostname: normalized)
+      end
     end
 
     def self.normalize_hostname(hostname)
@@ -45,6 +49,11 @@ module BetterTogether
       return if active?
 
       errors.add(:active, 'must be true for a primary domain')
+    end
+
+    def bust_resolve_cache
+      Rails.cache.delete("bt:platform_domain:#{hostname}")
+      Rails.cache.delete("bt:platform_domain:#{hostname_before_last_save}") if hostname_before_last_save.present?
     end
   end
 end
