@@ -39,7 +39,10 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
         .with(platform_connection_id: eligible_connection.id, cursor: nil, limit: 25)
         .on_queue('platform_sync')
 
-      expect(enqueued_jobs.map { |job| job[:job] }).not_to include(ineligible_connection.class)
+      enqueued_connection_ids = enqueued_jobs
+                                  .select { |job| job[:job] == BetterTogether::FederatedContentPullJob }
+                                  .map { |job| job[:args].first&.dig('platform_connection_id') }
+      expect(enqueued_connection_ids).not_to include(ineligible_connection.id)
     end
   end
 end

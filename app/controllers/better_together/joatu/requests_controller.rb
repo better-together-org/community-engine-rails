@@ -166,7 +166,7 @@ module BetterTogether
       def resource_params
         rp = super
         rp[:creator_id] ||= helpers.current_person&.id
-        rp[:type] ||= requested_request_type if requested_request_type.present?
+        rp[:type] ||= requested_request_type if requested_resource_class.present?
         rp
       end
 

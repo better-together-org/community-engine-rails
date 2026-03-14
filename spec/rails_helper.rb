@@ -138,9 +138,12 @@ RSpec.configure do |config|
     # that new FK chains (ActiveStorage, etc.) never require manual pre-clear ordering.
     # session_replication_role=replica suppresses FK and trigger checks in PostgreSQL.
     conn = ActiveRecord::Base.connection
-    conn.execute('SET session_replication_role = replica')
-    DatabaseCleaner.clean_with(:deletion)
-    conn.execute('SET session_replication_role = DEFAULT')
+    begin
+      conn.execute('SET session_replication_role = replica')
+      DatabaseCleaner.clean_with(:deletion)
+    ensure
+      conn.execute('SET session_replication_role = DEFAULT')
+    end
 
     # Load essential seed data with explicit clearing for deterministic baseline
     # In parallel execution, handle race conditions gracefully

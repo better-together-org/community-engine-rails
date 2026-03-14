@@ -1,17 +1,17 @@
 <%= render layout: 'layouts/better_together/host_nav' do %>
   <% content_for :page_title do %>
-    New Platform Connection
+    <%= t('better_together.platform_connections.new.title') %>
   <% end %>
 
   <div class="container my-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h1>New Platform Connection</h1>
-      <%= link_to 'Back', better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
+      <h1><%= t('better_together.platform_connections.new.title') %></h1>
+      <%= link_to t('better_together.platform_connections.new.back'), better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
     </div>
 
     <p class="text-muted small mb-3">
-      Need to register a remote platform first?
-      <%= link_to 'Register External Platform →', better_together.new_platform_path %>
+      <%= t('better_together.platform_connections.new.register_platform_hint') %>
+      <%= link_to t('better_together.platform_connections.new.register_platform_link'), better_together.new_platform_path %>
     </p>
 
     <%= render 'form', platform_connection: @platform_connection %>

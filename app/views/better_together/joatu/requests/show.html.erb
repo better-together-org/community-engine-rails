@@ -27,7 +27,7 @@
       <%= link_to @joatu_request.target.name, @joatu_request.target %>
       <% if policy(BetterTogether::PlatformConnection).index? %>
         <span class="ms-2">
-          <%= link_to 'Manage Connections', platform_connections_path, class: 'btn btn-sm btn-outline-primary' %>
+          <%= link_to t('better_together.joatu.requests.manage_connections'), platform_connections_path, class: 'btn btn-sm btn-outline-primary' %>
         </span>
       <% end %>
     </div>

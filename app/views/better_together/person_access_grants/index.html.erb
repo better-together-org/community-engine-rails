@@ -15,7 +15,7 @@
             <div>
               <h2 class="h6 mb-1"><%= grant.person_link.remote_target_name.presence || grant.grantee_person&.name || grant.remote_grantee_name || grant.id %></h2>
               <p class="mb-1 text-muted">
-                <%= grant.grantor_person == current_person ? 'You are sharing' : 'Shared with you' %>
+                <%= grant.grantor_person == current_person ? t('better_together.person_access_grants.index.you_are_sharing') : t('better_together.person_access_grants.index.shared_with_you') %>
               </p>
               <small class="text-muted"><%= grant.status.humanize %></small>
             </div>

@@ -8,7 +8,8 @@ module BetterTogether
     def index
       authorize ::BetterTogether::PersonLink
       @person_links = policy_scope(::BetterTogether::PersonLink)
-                      .includes(:source_person, :target_person, :platform_connection)
+                      .includes(:source_person, :target_person,
+                                platform_connection: %i[source_platform target_platform])
                       .order(updated_at: :desc, created_at: :desc)
     end
 
