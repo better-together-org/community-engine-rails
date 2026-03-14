@@ -78,6 +78,11 @@ RSpec.describe BetterTogether::RolePolicy, type: :policy do
   describe '#destroy? unprotected role' do
     subject { described_class.new(user, role).destroy? }
 
+    # Use a platform-scoped role so the policy checks manage_platform_roles, which
+    # platform_manager holds. The default factory uses RESOURCE_CLASSES.sample which
+    # can pick community, making the test seed-dependent.
+    let(:role) { create(:better_together_role, :platform_role) }
+
     context 'platform manager' do
       let(:user) { manager_user }
 

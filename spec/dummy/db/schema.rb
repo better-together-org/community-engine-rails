@@ -1341,7 +1341,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_15_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "oauth_client_id"
-    t.text "oauth_client_secret_ciphertext"
+    t.text "oauth_client_secret"
     t.index ["connection_kind"], name: "index_better_together_platform_connections_on_connection_kind"
     t.index ["oauth_client_id"], name: "index_bt_platform_connections_on_oauth_client_id", unique: true
     t.index ["source_platform_id", "target_platform_id"], name: "index_bt_platform_connections_on_source_and_target", unique: true

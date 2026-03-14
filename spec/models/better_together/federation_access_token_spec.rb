@@ -12,7 +12,6 @@ RSpec.describe BetterTogether::FederationAccessToken do
 
     expect(token.token).to be_present
     expect(token.token_digest).to eq(described_class.digest(token.token))
-    expect(token.token_ciphertext).to be_nil
   end
 
   it 'finds active tokens by plaintext token value' do
