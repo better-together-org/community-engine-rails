@@ -1326,7 +1326,7 @@ uk:
         recent_offers: Recent Offers
         view_all_offers: View all
       recent_requests_card:
-        new_request: New Request
+        new_request: Новий запит
         no_requests: No recent requests
         recent_requests: Recent Requests
         view_all_requests: View all
@@ -1416,7 +1416,7 @@ uk:
         show:
           details: Details
           title: Agreement
-          open_platform_connections: Open Platform Connections
+          open_platform_connections: Відкрити з'єднання платформ
         status: Status
       by: by
       categories:
@@ -1472,7 +1472,7 @@ uk:
         offers: Offers
         requests: Requests
       offers:
-        agreement_heading: Agreement
+        agreement_heading: Угода
         agreement_with: Agreement with
         back_to_offers: Back to Offers
         edit_offer: Edit Offer
@@ -1482,27 +1482,25 @@ uk:
         response_to_your_offer_heading: Response to your Offer
         save_offer: Save Offer
         source_request_heading: Responding to Request
-        view_agreement: View Agreement
+        view_agreement: Переглянути угоду
         view_offer: View Offer
-        target_platform: Target platform
-        your_response_heading: Your Response
+        target_platform: Цільова платформа
+        your_response_heading: Ваша відповідь
       requests:
         agreement_heading: Agreement
-        back_to_requests: Back to Requests
-        edit_request: Edit Request
-        empty: No requests found
-        index_header: Requests
+        back_to_requests: Повернутися до запитів
+        edit_request: Редагувати запит
+        empty: Запитів не знайдено
+        index_header: Запити
         new_request: New Request
-        manage_connections: Manage Connections
-        new_connection_request: New Connection Request
-        respond_with_offer: Respond with Offer
-        response_to_your_request_heading: Response to your Request
-        save_request: Save Request
-        source_offer_heading: Responding to Offer
+        manage_connections: Керувати з'єднаннями
+        new_connection_request: Новий запит на з'єднання
+        respond_with_offer: Відповісти пропозицією
+        response_to_your_request_heading: Відповідь на ваш запит
+        save_request: Зберегти запит
+        source_offer_heading: Відповідь на пропозицію
         view_agreement: View Agreement
-        view_request: View Request
-        new_connection_request: New Connection Request
-        target_platform: Target platform
+        view_request: Переглянути запит
         your_response_heading: Your Response
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -1514,7 +1512,7 @@ uk:
           order_by: Order by
           per_page: Per page
           search-term: Search term
-          status: Status
+          status: Статус
           submit: Search
         newest: Newest
         oldest: Oldest
@@ -1659,7 +1657,7 @@ uk:
           platform: Платформа
           search_queries: Пошуки
           shares: Поширення
-          source: Source
+          source: Джерело
           term: Термін
           total_users: Total Users
           url: URL
@@ -1773,7 +1771,7 @@ uk:
         new_report: New Report
         no_reports: No reports have been generated yet.
         title: User Account Reports
-        view: View
+        view: Переглянути
       new:
         file_format: File Format
         file_format_help: Select the format for the exported report file.
@@ -2305,56 +2303,56 @@ uk:
       title: Номери телефонів
     person_access_grants:
       index:
-        title: Access Grants
-        description: Manage the private access grants you have shared with others.
-        empty: You have not shared any access grants yet.
-        you_are_sharing: You are sharing
-        shared_with_you: Shared with you
+        title: Дозволи доступу
+        description: Керуйте приватними дозволами доступу, якими ви поділилися з іншими.
+        empty: Ви ще не поділилися жодним дозволом доступу.
+        you_are_sharing: Ви надаєте доступ
+        shared_with_you: Поділились з вами
       show:
-        title: Access Grant
-        back: Back to Access Grants
-        revoke: Revoke Access
+        title: Дозвіл доступу
+        back: Повернутися до дозволів доступу
+        revoke: Відкликати доступ
     person_linked_seeds:
       index:
-        title: Linked Seeds
-        description: Private content shared with you through federation access grants.
-        empty: No linked seeds have been shared with you yet.
+        title: Пов'язані зерна
+        description: Приватний вміст, яким поділилися з вами через дозволи федерації.
+        empty: З вами ще не поділилися жодними пов'язаними зернами.
       show:
-        title: Linked Seed
-        back: Back to Linked Seeds
-        empty: No content available for this linked seed.
+        title: Пов'язане зерно
+        back: Повернутися до пов'язаних зерен
+        empty: Для цього пов'язаного зерна немає доступного вмісту.
     person_links:
       index:
-        title: Person Links
-        description: Manage your cross-platform person links and federation connections.
-        empty: You have no person links yet.
+        title: Зв'язки осіб
+        description: Керуйте своїми міжплатформеними зв'язками осіб та з'єднаннями федерації.
+        empty: У вас ще немає зв'язків осіб.
       show:
-        title: Person Link
-        back: Back to Person Links
-        revoke: Revoke Link
+        title: Зв'язок особи
+        back: Повернутися до зв'язків осіб
+        revoke: Відкликати зв'язок
     platform_connections:
       index:
-        title: Platform Connections
-        new_connection: New Connection
+        title: З'єднання платформ
+        new_connection: Нове з'єднання
         columns:
-          source: Source
-          target: Target
-          status: Status
-          kind: Kind
-          content_policy: Content Policy
-          auth_policy: Auth Policy
+          source: Джерело
+          target: Ціль
+          status: Статус
+          kind: Тип
+          content_policy: Політика вмісту
+          auth_policy: Політика автентифікації
       new:
-        title: New Platform Connection
-        back: Back
-        register_platform_hint: Need to register a remote platform first?
-        register_platform_link: Register External Platform →
+        title: Нове з'єднання платформи
+        back: Назад
+        register_platform_hint: Потрібно спочатку зареєструвати віддалену платформу?
+        register_platform_link: Зареєструвати зовнішню платформу →
       actions:
-        view: View
-        edit: Edit
-        approve: Approve
-        suspend: Suspend
-        approve_confirm: Approve this connection?
-        suspend_confirm: Suspend this connection?
+        view: Переглянути
+        edit: Редагувати
+        approve: Затвердити
+        suspend: Призупинити
+        approve_confirm: Затвердити це з'єднання?
+        suspend_confirm: Призупинити це з'єднання?
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.

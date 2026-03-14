@@ -1418,7 +1418,7 @@ es:
         show:
           details: Detalles
           title: Acuerdo
-          open_platform_connections: Open Platform Connections
+          open_platform_connections: Abrir conexiones de plataforma
         status: Estado
       by: por
       categories:
@@ -1485,7 +1485,7 @@ es:
         source_request_heading: En respuesta a la solicitud
         view_agreement: Ver acuerdo
         view_offer: Ver oferta
-        target_platform: Target platform
+        target_platform: Plataforma destino
         your_response_heading: Tu respuesta
       requests:
         agreement_heading: Acuerdo
@@ -1494,16 +1494,14 @@ es:
         empty: No se encontraron solicitudes
         index_header: Solicitudes
         new_request: Nueva solicitud
-        manage_connections: Manage Connections
-        new_connection_request: New Connection Request
+        manage_connections: Gestionar conexiones
+        new_connection_request: Nueva solicitud de conexión
         respond_with_offer: Responder con oferta
         response_to_your_request_heading: Respuesta a tu solicitud
         save_request: Guardar solicitud
         source_offer_heading: En respuesta a la oferta
         view_agreement: Ver acuerdo
         view_request: Ver solicitud
-        new_connection_request: New Connection Request
-        target_platform: Target platform
         your_response_heading: Tu respuesta
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -1666,7 +1664,7 @@ es:
           platform: Plataforma
           search_queries: Búsquedas
           shares: Compartidos
-          source: Source
+          source: Origen
           term: Término
           total_users: Total Users
           url: URL
@@ -1780,7 +1778,7 @@ es:
         new_report: New Report
         no_reports: No reports have been generated yet.
         title: User Account Reports
-        view: View
+        view: Ver
       new:
         file_format: File Format
         file_format_help: Select the format for the exported report file.
@@ -2313,56 +2311,56 @@ es:
       title: Números de Teléfono
     person_access_grants:
       index:
-        title: Access Grants
-        description: Manage the private access grants you have shared with others.
-        empty: You have not shared any access grants yet.
-        you_are_sharing: You are sharing
-        shared_with_you: Shared with you
+        title: Permisos de acceso
+        description: Gestiona los permisos de acceso privado que has compartido con otros.
+        empty: Aún no has compartido ningún permiso de acceso.
+        you_are_sharing: Estás compartiendo
+        shared_with_you: Compartido contigo
       show:
-        title: Access Grant
-        back: Back to Access Grants
-        revoke: Revoke Access
+        title: Permiso de acceso
+        back: Volver a permisos de acceso
+        revoke: Revocar acceso
     person_linked_seeds:
       index:
-        title: Linked Seeds
-        description: Private content shared with you through federation access grants.
-        empty: No linked seeds have been shared with you yet.
+        title: Semillas vinculadas
+        description: Contenido privado compartido contigo a través de permisos de acceso de federación.
+        empty: Aún no se han compartido semillas vinculadas contigo.
       show:
-        title: Linked Seed
-        back: Back to Linked Seeds
-        empty: No content available for this linked seed.
+        title: Semilla vinculada
+        back: Volver a semillas vinculadas
+        empty: No hay contenido disponible para esta semilla vinculada.
     person_links:
       index:
-        title: Person Links
-        description: Manage your cross-platform person links and federation connections.
-        empty: You have no person links yet.
+        title: Vínculos de personas
+        description: Gestiona tus vínculos de personas entre plataformas y conexiones de federación.
+        empty: Aún no tienes vínculos de personas.
       show:
-        title: Person Link
-        back: Back to Person Links
-        revoke: Revoke Link
+        title: Vínculo de persona
+        back: Volver a vínculos de personas
+        revoke: Revocar vínculo
     platform_connections:
       index:
-        title: Platform Connections
-        new_connection: New Connection
+        title: Conexiones de plataforma
+        new_connection: Nueva conexión
         columns:
-          source: Source
-          target: Target
-          status: Status
-          kind: Kind
-          content_policy: Content Policy
-          auth_policy: Auth Policy
+          source: Origen
+          target: Destino
+          status: Estado
+          kind: Tipo
+          content_policy: Política de contenido
+          auth_policy: Política de autenticación
       new:
-        title: New Platform Connection
-        back: Back
-        register_platform_hint: Need to register a remote platform first?
-        register_platform_link: Register External Platform →
+        title: Nueva conexión de plataforma
+        back: Volver
+        register_platform_hint: ¿Necesitas registrar primero una plataforma remota?
+        register_platform_link: Registrar plataforma externa →
       actions:
-        view: View
-        edit: Edit
-        approve: Approve
-        suspend: Suspend
-        approve_confirm: Approve this connection?
-        suspend_confirm: Suspend this connection?
+        view: Ver
+        edit: Editar
+        approve: Aprobar
+        suspend: Suspender
+        approve_confirm: ¿Aprobar esta conexión?
+        suspend_confirm: ¿Suspender esta conexión?
     platform_invitation:
       acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
         aceptando esta invitación para unirte a <strong>%{platform}</strong>.

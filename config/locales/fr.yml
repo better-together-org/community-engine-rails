@@ -1421,7 +1421,7 @@ fr:
         show:
           details: Détails
           title: Agreement
-          open_platform_connections: Open Platform Connections
+          open_platform_connections: Ouvrir les connexions de plateforme
         status: Statut
       by: by
       categories:
@@ -1477,7 +1477,7 @@ fr:
         offers: Offres
         requests: Demandes
       offers:
-        agreement_heading: Agreement
+        agreement_heading: Contrat
         agreement_with: Agreement with
         back_to_offers: Back to Offers
         edit_offer: Edit Offer
@@ -1487,27 +1487,25 @@ fr:
         response_to_your_offer_heading: Response to your Offer
         save_offer: Save Offer
         source_request_heading: Responding to Request
-        view_agreement: View Agreement
+        view_agreement: Voir le contrat
         view_offer: View Offer
-        target_platform: Target platform
-        your_response_heading: Your Response
+        target_platform: Plateforme cible
+        your_response_heading: Votre réponse
       requests:
         agreement_heading: Agreement
-        back_to_requests: Back to Requests
-        edit_request: Edit Request
-        empty: No requests found
-        index_header: Requests
-        new_request: New Request
-        manage_connections: Manage Connections
-        new_connection_request: New Connection Request
-        respond_with_offer: Respond with Offer
-        response_to_your_request_heading: Response to your Request
-        save_request: Save Request
-        source_offer_heading: Responding to Offer
+        back_to_requests: Retour aux demandes
+        edit_request: Modifier la demande
+        empty: Aucune demande trouvée
+        index_header: Demandes
+        new_request: Nouvelle demande
+        manage_connections: Gérer les connexions
+        new_connection_request: Nouvelle demande de connexion
+        respond_with_offer: Répondre avec une offre
+        response_to_your_request_heading: Réponse à votre demande
+        save_request: Enregistrer la demande
+        source_offer_heading: En réponse à l'offre
         view_agreement: View Agreement
-        view_request: View Request
-        new_connection_request: New Connection Request
-        target_platform: Target platform
+        view_request: Voir la demande
         your_response_heading: Your Response
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -1786,7 +1784,7 @@ fr:
         new_report: New Report
         no_reports: No reports have been generated yet.
         title: User Account Reports
-        view: View
+        view: Voir
       new:
         file_format: File Format
         file_format_help: Select the format for the exported report file.
@@ -2322,56 +2320,56 @@ fr:
       title: Numéros de téléphone
     person_access_grants:
       index:
-        title: Access Grants
-        description: Manage the private access grants you have shared with others.
-        empty: You have not shared any access grants yet.
-        you_are_sharing: You are sharing
-        shared_with_you: Shared with you
+        title: Autorisations d'accès
+        description: Gérez les autorisations d'accès privées que vous avez partagées avec d'autres.
+        empty: Vous n'avez encore partagé aucune autorisation d'accès.
+        you_are_sharing: Vous partagez
+        shared_with_you: Partagé avec vous
       show:
-        title: Access Grant
-        back: Back to Access Grants
-        revoke: Revoke Access
+        title: Autorisation d'accès
+        back: Retour aux autorisations d'accès
+        revoke: Révoquer l'accès
     person_linked_seeds:
       index:
-        title: Linked Seeds
-        description: Private content shared with you through federation access grants.
-        empty: No linked seeds have been shared with you yet.
+        title: Graines liées
+        description: Contenu privé partagé avec vous via des autorisations d'accès fédérées.
+        empty: Aucune graine liée n'a encore été partagée avec vous.
       show:
-        title: Linked Seed
-        back: Back to Linked Seeds
-        empty: No content available for this linked seed.
+        title: Graine liée
+        back: Retour aux graines liées
+        empty: Aucun contenu disponible pour cette graine liée.
     person_links:
       index:
-        title: Person Links
-        description: Manage your cross-platform person links and federation connections.
-        empty: You have no person links yet.
+        title: Liens de personnes
+        description: Gérez vos liens de personnes entre plateformes et vos connexions de fédération.
+        empty: Vous n'avez pas encore de liens de personnes.
       show:
-        title: Person Link
-        back: Back to Person Links
-        revoke: Revoke Link
+        title: Lien de personne
+        back: Retour aux liens de personnes
+        revoke: Révoquer le lien
     platform_connections:
       index:
-        title: Platform Connections
-        new_connection: New Connection
+        title: Connexions de plateforme
+        new_connection: Nouvelle connexion
         columns:
           source: Source
-          target: Target
-          status: Status
-          kind: Kind
-          content_policy: Content Policy
-          auth_policy: Auth Policy
+          target: Cible
+          status: Statut
+          kind: Type
+          content_policy: Politique de contenu
+          auth_policy: Politique d'authentification
       new:
-        title: New Platform Connection
-        back: Back
-        register_platform_hint: Need to register a remote platform first?
-        register_platform_link: Register External Platform →
+        title: Nouvelle connexion de plateforme
+        back: Retour
+        register_platform_hint: Vous devez d'abord enregistrer une plateforme distante ?
+        register_platform_link: Enregistrer une plateforme externe →
       actions:
-        view: View
-        edit: Edit
-        approve: Approve
-        suspend: Suspend
-        approve_confirm: Approve this connection?
-        suspend_confirm: Suspend this connection?
+        view: Voir
+        edit: Modifier
+        approve: Approuver
+        suspend: Suspendre
+        approve_confirm: Approuver cette connexion ?
+        suspend_confirm: Suspendre cette connexion ?
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
