@@ -5,7 +5,7 @@ module BetterTogether
     # OAuth 2.0 client_credentials token endpoint for machine-to-machine federation auth.
     # Inherits from Federation::ApiController (ActionController::API) so CSRF protection
     # is never included — requests are authenticated via client_id/client_secret only.
-    class OauthTokensController < ::BetterTogether::Federation::ApiController # rubocop:disable Metrics/ClassLength
+    class OauthTokensController < ::BetterTogether::Federation::ApiController
       def create # rubocop:disable Metrics/MethodLength
         return render_oauth_error('unsupported_grant_type', status: :bad_request) unless grant_type == 'client_credentials'
 
@@ -37,20 +37,14 @@ module BetterTogether
         params[:scope].to_s
       end
 
-      def authorized_connection # rubocop:disable Metrics/AbcSize
+      def authorized_connection
         return if Current.platform.blank?
 
         candidate = ::BetterTogether::PlatformConnection.active.find_by(
           source_platform: Current.platform,
           oauth_client_id: params[:client_id].to_s
         )
-        return if candidate.nil? || candidate.oauth_client_secret.blank? || params[:client_secret].blank?
-
-        # Compare SHA256 digests to guarantee equal-length inputs to secure_compare,
-        # preventing ArgumentError on length mismatch while preserving timing-safe comparison.
-        candidate_digest = Digest::SHA256.hexdigest(candidate.oauth_client_secret)
-        provided_digest  = Digest::SHA256.hexdigest(params[:client_secret].to_s)
-        return unless ActiveSupport::SecurityUtils.secure_compare(candidate_digest, provided_digest)
+        return unless candidate&.authenticate_oauth_secret(params[:client_secret].to_s)
 
         candidate
       end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_14_000001) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_15_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -494,7 +494,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_14_000001) do
   create_table "better_together_federation_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.uuid "platform_connection_id", null: false
-    t.text "token_ciphertext"
     t.string "token_digest", null: false
     t.text "scopes", default: "", null: false
     t.datetime "expires_at", null: false
@@ -1342,7 +1341,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_14_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "oauth_client_id"
-    t.text "oauth_client_secret"
+    t.text "oauth_client_secret_ciphertext"
     t.index ["connection_kind"], name: "index_better_together_platform_connections_on_connection_kind"
     t.index ["oauth_client_id"], name: "index_bt_platform_connections_on_oauth_client_id", unique: true
     t.index ["source_platform_id", "target_platform_id"], name: "index_bt_platform_connections_on_source_and_target", unique: true
