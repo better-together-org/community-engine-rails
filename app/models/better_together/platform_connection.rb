@@ -88,15 +88,15 @@ module BetterTogether
       where(source_platform: platform).or(where(target_platform: platform))
     }
     scope :content_read_capable, lambda {
-      where("settings->>'federation_auth_policy' IN (?)", %w[api_read api_write])
-        .where("(settings->>'allow_content_read_scope')::boolean = true")
+      where("better_together_platform_connections.settings->>'federation_auth_policy' IN (?)", %w[api_read api_write])
+        .where("(better_together_platform_connections.settings->>'allow_content_read_scope')::boolean = true")
     }
     scope :linked_content_read_capable, lambda {
       content_read_capable
-        .where("(settings->>'allow_linked_content_read_scope')::boolean = true")
+        .where("(better_together_platform_connections.settings->>'allow_linked_content_read_scope')::boolean = true")
     }
     scope :not_syncing, lambda {
-      where("settings->>'last_sync_status' != ? OR settings->>'last_sync_status' IS NULL", 'running')
+      where("better_together_platform_connections.settings->>'last_sync_status' != ? OR better_together_platform_connections.settings->>'last_sync_status' IS NULL", 'running')
     }
 
     def involves?(platform)

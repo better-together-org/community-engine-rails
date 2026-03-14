@@ -11,7 +11,7 @@ RSpec.describe BetterTogether::SafeFederationUrlValidator do # rubocop:disable M
 
       attr_accessor :host_url
 
-      validates :host_url, safe_federation_url: true
+      validates_with BetterTogether::SafeFederationUrlValidator, attributes: [:host_url]
     end.new
   end
 
