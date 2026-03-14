@@ -62,9 +62,9 @@ module BetterTogether
 
       def exportable_records_for(grant)
         records = []
-        # Bound each type to MAX_EXPORT_PER_TYPE to avoid unbounded memory load;
-        # full-dataset export is a future streaming/background-job concern.
-        max = [limit * 10, 500].min
+        # Load only as many records as needed: offset + page size.
+        # This bounds memory per request regardless of page depth.
+        max = [normalized_cursor + limit, 500].min
         records.concat(private_posts_for(grant, max)) if grant.allow_private_posts?
         records.concat(private_pages_for(grant, max)) if grant.allow_private_pages?
         records.concat(private_events_for(grant, max)) if grant.allow_private_events?

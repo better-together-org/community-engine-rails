@@ -20,11 +20,13 @@ module BetterTogether
     private
 
     def eligible_connections
-      # Exclude connections already syncing in SQL to prevent duplicates;
-      # policy methods are Ruby-only (multi-field JSONB logic) so filter in-process.
       ::BetterTogether::PlatformConnection.active
                                           .where("settings->>'last_sync_status' != ?", 'running')
-                                          .select { |c| c.mirrored_content_enabled? && c.api_read_enabled? }
+                                          .where("settings->>'content_sharing_policy' IN (?)",
+                                                 %w[mirror_network_feed mirrored_publish_back])
+                                          .where("settings->>'federation_auth_policy' IN (?)",
+                                                 %w[api_read api_write])
+                                          .where("(settings->>'allow_content_read_scope')::boolean = true")
     end
   end
 end

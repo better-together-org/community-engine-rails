@@ -56,37 +56,45 @@ module BetterTogether
 
       def eligible_records
         records = []
-        records.concat(exportable_posts) if connection.allows_content_type?('posts')
-        records.concat(exportable_pages) if connection.allows_content_type?('pages')
-        records.concat(exportable_events) if connection.allows_content_type?('events')
-        records.select { |record| after_cursor?(record) }
+        records.concat(exportable_posts.to_a) if connection.allows_content_type?('posts')
+        records.concat(exportable_pages.to_a) if connection.allows_content_type?('pages')
+        records.concat(exportable_events.to_a) if connection.allows_content_type?('events')
+        records
       end
 
       def exportable_posts
-        ::BetterTogether::Post.where(platform: connection.source_platform, privacy: 'public')
-                              .where(source_id: nil)
-                              .where.not(published_at: nil)
-                              .where('published_at <= ?', Time.current)
+        apply_cursor(
+          ::BetterTogether::Post.where(platform: connection.source_platform, privacy: 'public')
+                                .where(source_id: nil)
+                                .where.not(published_at: nil)
+                                .where('published_at <= ?', Time.current)
+        ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
       def exportable_pages
-        ::BetterTogether::Page.where(platform: connection.source_platform, privacy: 'public')
-                              .where(source_id: nil)
-                              .where.not(published_at: nil)
-                              .where('published_at <= ?', Time.current)
+        apply_cursor(
+          ::BetterTogether::Page.where(platform: connection.source_platform, privacy: 'public')
+                                .where(source_id: nil)
+                                .where.not(published_at: nil)
+                                .where('published_at <= ?', Time.current)
+        ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
       def exportable_events
-        ::BetterTogether::Event.where(platform: connection.source_platform, privacy: 'public')
-                               .where(source_id: nil)
-                               .where.not(starts_at: nil)
+        apply_cursor(
+          ::BetterTogether::Event.where(platform: connection.source_platform, privacy: 'public')
+                                 .where(source_id: nil)
+                                 .where.not(starts_at: nil)
+        ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
-      def after_cursor?(record)
-        return true unless cursor
+      def apply_cursor(query)
+        return query unless cursor
 
-        record.updated_at > cursor[:updated_at] ||
-          (record.updated_at == cursor[:updated_at] && record.id > cursor[:id])
+        query.where(
+          'updated_at > ? OR (updated_at = ? AND id > ?)',
+          cursor[:updated_at], cursor[:updated_at], cursor[:id]
+        )
       end
 
       def next_cursor

@@ -30,7 +30,7 @@ module BetterTogether
 
       def connection
         @connection ||= begin
-          token = ::BetterTogether::FederationAccessToken.find_active_by_plaintext(bearer_token)
+          token = access_token
           if token.present? && token.platform_connection.source_platform == Current.platform
             token.touch_last_used!
             token.platform_connection
@@ -39,7 +39,7 @@ module BetterTogether
       end
 
       def linked_content_token_authorized?
-        token = ::BetterTogether::FederationAccessToken.find_active_by_plaintext(bearer_token)
+        token = access_token
         return false unless token&.includes_scope?('linked_content.read')
 
         auth_result = ::BetterTogether::FederationScopeAuthorizer.call(
@@ -48,6 +48,10 @@ module BetterTogether
           requested_scopes: ['linked_content.read']
         )
         auth_result.allowed?
+      end
+
+      def access_token
+        @access_token ||= ::BetterTogether::FederationAccessToken.find_active_by_plaintext(bearer_token)
       end
 
       def bearer_token
