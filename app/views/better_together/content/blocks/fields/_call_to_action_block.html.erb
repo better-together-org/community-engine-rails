@@ -1,0 +1,53 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="call-to-action-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[layout]", BetterTogether::Content::Block.human_attribute_name('layout', default: 'Layout'), class: 'form-label' %>
+    <%= select_tag "#{scope}[layout]",
+                   options_for_select(
+                     BetterTogether::Content::CallToActionBlock::LAYOUTS.map do |l|
+                       [t("better_together.content.blocks.call_to_action_block.layouts.#{l}", default: l.humanize), l]
+                     end,
+                     block.layout
+                   ),
+                   class: 'form-select',
+                   data: { controller: 'better_together--slim-select' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[heading]", BetterTogether::Content::Block.human_attribute_name('heading', default: 'Heading'), class: 'form-label' %>
+    <%= text_field_tag "#{scope}[heading]", block.heading, class: 'form-control', placeholder: 'Join our community' %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[subheading]", BetterTogether::Content::Block.human_attribute_name('subheading', default: 'Subheading'), class: 'form-label' %>
+    <%= text_field_tag "#{scope}[subheading]", block.subheading, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[body_text]", BetterTogether::Content::Block.human_attribute_name('body_text', default: 'Body Text'), class: 'form-label' %>
+    <%= text_area_tag "#{scope}[body_text]", block.body_text, class: 'form-control', rows: 3 %>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[primary_button_label]", BetterTogether::Content::Block.human_attribute_name('primary_button_label', default: 'Primary Button Label'), class: 'form-label' %>
+      <%= text_field_tag "#{scope}[primary_button_label]", block.primary_button_label, class: 'form-control', placeholder: 'Get started' %>
+    </div>
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[primary_button_url]", BetterTogether::Content::Block.human_attribute_name('primary_button_url', default: 'Primary Button URL'), class: 'form-label' %>
+      <%= url_field_tag "#{scope}[primary_button_url]", block.primary_button_url, class: 'form-control', placeholder: 'https://...' %>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[secondary_button_label]", BetterTogether::Content::Block.human_attribute_name('secondary_button_label', default: 'Secondary Button Label'), class: 'form-label' %>
+      <%= text_field_tag "#{scope}[secondary_button_label]", block.secondary_button_label, class: 'form-control', placeholder: 'Learn more' %>
+    </div>
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[secondary_button_url]", BetterTogether::Content::Block.human_attribute_name('secondary_button_url', default: 'Secondary Button URL'), class: 'form-label' %>
+      <%= url_field_tag "#{scope}[secondary_button_url]", block.secondary_button_url, class: 'form-control', placeholder: 'https://...' %>
+    </div>
+  </div>
+</div>
