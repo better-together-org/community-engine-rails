@@ -380,6 +380,11 @@ else
 end
 
 RSpec.configure do |config|
+  # Quarantined specs are excluded from normal CI runs — they are tracked for
+  # fixing but must not block the main suite. Run them explicitly with:
+  #   bundle exec rspec --tag quarantine
+  config.filter_run_excluding :quarantine
+
   # show retry status in spec process
   config.verbose_retry = true
   # show exception that triggers a retry if verbose_retry is set to true

@@ -74,6 +74,7 @@ module BetterTogether
 
       def private_posts_for(grant, max)
         ::BetterTogether::Post.with_creator(grant.grantor_person)
+                              .where(platform_id: connection.source_platform_id)
                               .privacy_private
                               .order(updated_at: :desc)
                               .limit(max)
@@ -82,6 +83,7 @@ module BetterTogether
 
       def private_pages_for(grant, max)
         ::BetterTogether::Page.with_creator(grant.grantor_person)
+                              .where(platform_id: connection.source_platform_id)
                               .privacy_private
                               .order(updated_at: :desc)
                               .limit(max)
@@ -90,6 +92,7 @@ module BetterTogether
 
       def private_events_for(grant, max)
         ::BetterTogether::Event.with_creator(grant.grantor_person)
+                               .where(platform_id: connection.source_platform_id)
                                .privacy_private
                                .order(updated_at: :desc)
                                .limit(max)

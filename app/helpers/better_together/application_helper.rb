@@ -270,11 +270,11 @@ module BetterTogether
       uri.fragment.present? ? "##{uri.fragment}" : ''
     end
 
-    def extract_canonical_path(uri, original_url)
+    def extract_canonical_path(uri, _original_url)
       if uri.host.present?
         uri.path.presence || '/'
       else
-        normalize_relative_path(original_url.to_s)
+        normalize_relative_path(uri.path.presence || '/')
       end
     end
 
