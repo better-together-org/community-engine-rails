@@ -58,14 +58,34 @@
       </dl>
     </div>
 
-    <% if @membership_request.status_open? && policy(@membership_request).destroy? %>
+    <% if @membership_request.status_open? %>
       <div class="card-footer d-flex gap-2">
-        <%= link_to t('globals.delete', default: 'Delete'),
-                    platform_membership_request_path(@platform, @membership_request),
-                    data: { turbo_method: :delete,
-                            turbo_confirm: t('better_together.membership_requests.confirm_delete',
-                                            default: 'Remove this membership request?') },
-                    class: 'btn btn-outline-danger btn-sm' %>
+        <% if policy(@membership_request).approve? %>
+          <%= link_to t('better_together.membership_requests.actions.approve', default: 'Approve'),
+                      approve_platform_membership_request_path(@platform, @membership_request),
+                      data: { turbo_method: :post,
+                              turbo_confirm: t('better_together.membership_requests.confirm_approve',
+                                              default: 'Approve this membership request?') },
+                      class: 'btn btn-success btn-sm' %>
+        <% end %>
+
+        <% if policy(@membership_request).decline? %>
+          <%= link_to t('better_together.membership_requests.actions.decline', default: 'Decline'),
+                      decline_platform_membership_request_path(@platform, @membership_request),
+                      data: { turbo_method: :post,
+                              turbo_confirm: t('better_together.membership_requests.confirm_decline',
+                                              default: 'Decline this membership request?') },
+                      class: 'btn btn-outline-warning btn-sm' %>
+        <% end %>
+
+        <% if policy(@membership_request).destroy? %>
+          <%= link_to t('globals.delete', default: 'Delete'),
+                      platform_membership_request_path(@platform, @membership_request),
+                      data: { turbo_method: :delete,
+                              turbo_confirm: t('better_together.membership_requests.confirm_delete',
+                                              default: 'Remove this membership request?') },
+                      class: 'btn btn-outline-danger btn-sm' %>
+        <% end %>
       </div>
     <% end %>
   </div>

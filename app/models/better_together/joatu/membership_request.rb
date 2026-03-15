@@ -39,6 +39,30 @@ module BetterTogether
         end
       end
 
+      # Approve the request.  Triggers the appropriate downstream action depending on
+      # whether the requester has an account (create membership directly) or not
+      # (send them a CommunityInvitation so they can register and join).
+      #
+      # @param approver [BetterTogether::Person] the person performing the approval
+      # @raise [ActiveRecord::RecordInvalid] if the request cannot be saved
+      def approve!(approver: nil)
+        # Build a minimal stub so after_agreement_acceptance! has something to work with
+        # when it needs the approver (used as invitation sender for unauthenticated path).
+        stub_offer = OpenStruct.new(creator: approver) # rubocop:disable Style/OpenStructUse
+
+        ::ActiveRecord::Base.transaction do
+          after_agreement_acceptance!(offer: stub_offer)
+          update!(status: 'fulfilled')
+        end
+      end
+
+      # Decline the request.
+      #
+      # @raise [ActiveRecord::RecordInvalid] if the status update fails
+      def decline!
+        update!(status: 'closed')
+      end
+
       # True when the request was submitted without an account (public form)
       def unauthenticated?
         creator_id.nil?

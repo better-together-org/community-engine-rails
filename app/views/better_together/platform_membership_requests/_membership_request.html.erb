@@ -19,25 +19,10 @@
     <% end %>
   </td>
   <td><%= membership_request.referral_source.presence || '—' %></td>
-  <td>
-    <span class="badge bg-<%= membership_request_status_badge(membership_request.status) %>">
-      <%= membership_request.status %>
-    </span>
-  </td>
+  <td><%= render 'status_badge', membership_request: %></td>
   <td><%= time_ago_in_words(membership_request.created_at) %> <%= t('globals.ago', default: 'ago') %></td>
   <td class="text-end">
-    <div class="d-inline-flex gap-1">
-      <%= link_to t('globals.view', default: 'View'),
-                  platform_membership_request_path(@platform, membership_request),
-                  class: 'btn btn-outline-secondary btn-sm' %>
-      <% if policy(membership_request).destroy? && membership_request.status_open? %>
-        <%= link_to t('globals.delete', default: 'Delete'),
-                    platform_membership_request_path(@platform, membership_request),
-                    data: { turbo_method: :delete,
-                            turbo_confirm: t('better_together.membership_requests.confirm_delete',
-                                            default: 'Remove this membership request?') },
-                    class: 'btn btn-outline-danger btn-sm' %>
-      <% end %>
-    </div>
+    <%= render 'row_actions', membership_request: %>
   </td>
 </tr>
+

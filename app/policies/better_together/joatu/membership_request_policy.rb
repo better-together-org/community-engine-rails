@@ -31,6 +31,20 @@ module BetterTogether
         permitted_to?('manage_platform') || community_manager?
       end
 
+      # Platform managers and community managers may approve open requests.
+      def approve?
+        return false unless record.status_open?
+
+        permitted_to?('manage_platform') || community_manager?
+      end
+
+      # Platform managers and community managers may decline open requests.
+      def decline?
+        return false unless record.status_open?
+
+        permitted_to?('manage_platform') || community_manager?
+      end
+
       class Scope < RequestPolicy::Scope # rubocop:todo Style/Documentation
         def resolve
           return scope.where(type: 'BetterTogether::Joatu::MembershipRequest') if permitted_to?('manage_platform')
@@ -39,10 +53,35 @@ module BetterTogether
           # creator so JSONAPI can render the newly created record back to them.
           return scope.where(type: 'BetterTogether::Joatu::MembershipRequest', creator_id: nil) unless user.present?
 
+          # Community managers can see requests targeting their communities.
+          managed_community_ids = managed_community_ids_for(agent)
+          if managed_community_ids.any?
+            return scope.where(
+              type: 'BetterTogether::Joatu::MembershipRequest'
+            ).where(
+              'creator_id = ? OR (target_type = ? AND target_id IN (?))',
+              agent.id,
+              'BetterTogether::Community',
+              managed_community_ids
+            )
+          end
+
           scope.where(
             type: 'BetterTogether::Joatu::MembershipRequest',
             creator_id: agent&.id
           )
+        end
+
+        private
+
+        def managed_community_ids_for(person)
+          return [] unless person.present?
+
+          ::BetterTogether::PersonCommunityMembership
+            .joins(:role)
+            .where(member_id: person.id)
+            .where(better_together_roles: { identifier: %w[community_manager community_administrator] })
+            .pluck(:joinable_id)
         end
       end
 
@@ -52,8 +91,8 @@ module BetterTogether
         return false unless user.present? && record.target.is_a?(::BetterTogether::Community)
 
         record.target.person_community_memberships
-              .where(member: agent)
               .joins(:role)
+              .where(member_id: agent&.id)
               .where(better_together_roles: { identifier: %w[community_manager community_administrator] })
               .exists?
       end
