@@ -27,3 +27,9 @@
   class: "BetterTogether::FederatedLinkedSeedSyncScanJob"
   queue: "platform_sync"
   description: "Scan active linked private grants and enqueue recipient-scoped linked seed pulls"
+
+"better_together:federation_access_token_purge_daily":
+  cron: "0 1 * * *" # daily at 01:00 UTC
+  class: "BetterTogether::FederationAccessTokenPurgeJob"
+  queue: "maintenance"
+  description: "Purge revoked and expired federation access tokens to prevent unbounded table growth"
