@@ -145,4 +145,41 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.last_synced_at_time).to be_present
     end
   end
+
+  describe 'oauth credentials encryption' do
+    it 'stores oauth_client_secret encrypted at rest' do
+      connection = create(:better_together_platform_connection)
+      plaintext_secret = connection.oauth_client_secret
+
+      raw = described_class.connection
+                           .select_one("SELECT oauth_client_secret FROM better_together_platform_connections WHERE id='#{connection.id}'")
+
+      # AR::Encryption stores JSON ciphertext in the same column — never plaintext
+      expect(raw['oauth_client_secret']).not_to eq(plaintext_secret)
+      expect(raw['oauth_client_secret']).to match(/\A\{.*"p"/)
+
+      # Model decrypts transparently
+      expect(connection.reload.oauth_client_secret).to eq(plaintext_secret)
+    end
+
+    it 'authenticates a correct secret and rejects an incorrect one' do
+      connection = create(:better_together_platform_connection)
+      good = connection.oauth_client_secret
+
+      expect(connection.authenticate_oauth_secret(good)).to be true
+      expect(connection.authenticate_oauth_secret('wrong-secret')).to be false
+    end
+
+    it 'rotates the client secret' do
+      connection = create(:better_together_platform_connection)
+      old_id     = connection.oauth_client_id
+      old_secret = connection.oauth_client_secret
+
+      connection.rotate_oauth_client_secret!
+
+      expect(connection.reload.oauth_client_id).to eq(old_id)
+      expect(connection.oauth_client_secret).not_to eq(old_secret)
+      expect(connection.authenticate_oauth_secret(old_secret)).to be false
+    end
+  end
 end

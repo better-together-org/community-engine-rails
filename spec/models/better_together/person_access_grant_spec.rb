@@ -45,4 +45,18 @@ RSpec.describe BetterTogether::PersonAccessGrant do
     expect(grant.active_now?).to be(false)
     expect(described_class.current_active).not_to include(grant)
   end
+
+  it 'encrypts remote_grantee_identifier and remote_grantee_name at rest' do
+    grant = create(
+      :better_together_person_access_grant,
+      grantee_person: nil,
+      remote_grantee_identifier: 'remote-grantee@example.com',
+      remote_grantee_name: 'Remote Grantee'
+    )
+
+    raw = described_class.connection
+                         .select_one("SELECT remote_grantee_identifier FROM better_together_person_access_grants WHERE id='#{grant.id}'")
+    expect(raw['remote_grantee_identifier']).not_to eq('remote-grantee@example.com')
+    expect(grant.reload.remote_grantee_identifier).to eq('remote-grantee@example.com')
+  end
 end
