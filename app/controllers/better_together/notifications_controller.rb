@@ -19,7 +19,7 @@ module BetterTogether
       unread_count = helpers.platform_notifications.unread.size
       total_count = helpers.platform_notifications.size
 
-      platform_id = ::BetterTogether::Current.platform&.id
+      platform_id = ::Current.platform&.id
 
       # Total count ensures cache invalidation when notifications are deleted
       cache_key = "notifications_dropdown/#{platform_id}/#{helpers.current_person.id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"

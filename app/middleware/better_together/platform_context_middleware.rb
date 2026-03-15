@@ -26,12 +26,12 @@ module BetterTogether
       domain   = BetterTogether::PlatformDomain.resolve(hostname)
       platform = domain&.platform || BetterTogether::Platform.find_by(host: true)
 
-      BetterTogether::Current.platform_domain = domain
-      BetterTogether::Current.platform        = platform
+      ::Current.platform_domain = domain
+      ::Current.platform        = platform
 
       @app.call(env)
     ensure
-      BetterTogether::Current.reset
+      ::Current.reset
     end
   end
 end

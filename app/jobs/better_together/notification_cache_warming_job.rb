@@ -23,11 +23,11 @@ module BetterTogether
     # generated during render match the keys used by the live request stack.
     def with_platform_context(platform_id)
       if platform_id.present?
-        BetterTogether::Current.platform = BetterTogether::Platform.find_by(id: platform_id)
+        ::Current.platform = BetterTogether::Platform.find_by(id: platform_id)
       end
       yield
     ensure
-      BetterTogether::Current.reset
+      ::Current.reset
     end
 
     def warm_notification_fragments(notification)

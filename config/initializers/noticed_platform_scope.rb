@@ -25,7 +25,7 @@ Rails.application.config.after_initialize do
       return if platform_id.present?
 
       self.platform_id =
-        BetterTogether::Current.platform&.id ||
+        Current.platform&.id ||
         platform_id_from_event_record
     end
 

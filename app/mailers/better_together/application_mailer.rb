@@ -24,7 +24,7 @@ module BetterTogether
     #   2. Current.platform set by Rack middleware (web/API requests)
     #   3. Global BetterTogether.base_url env fallback (background jobs with no request context)
     def default_url_options
-      host = @platform&.url || BetterTogether::Current.platform&.url || BetterTogether.base_url
+      host = @platform&.url || ::Current.platform&.url || BetterTogether.base_url
       options = super.merge(locale:, host:)
       ActiveStorage::Current.url_options = options
       options
@@ -37,7 +37,7 @@ module BetterTogether
     def set_locale_and_time_zone(&) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       # Use Current.platform (set by middleware for web/API requests) with
       # fallback to host platform for background job mailer sends.
-      platform = BetterTogether::Current.platform ||
+      platform = ::Current.platform ||
                  BetterTogether::Platform.find_by(host: true)
 
       self.time_zone ||= time_zone || platform&.time_zone || Rails.application.config.time_zone
