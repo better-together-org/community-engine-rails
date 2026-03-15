@@ -9,6 +9,8 @@ default: &default
     - es_indexing
     - geocoding
     - notifications
+    - webhooks
+    - low_priority
 
 development:
   <<: *default
