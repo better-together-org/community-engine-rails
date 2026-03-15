@@ -1532,11 +1532,13 @@ fr:
       actions:
         approve: Approve
         decline: Decline
+      captcha_failed: La vérification du captcha a échoué. Veuillez réessayer.
       confirm_approve: Approve this membership request and invite the applicant to join?
       confirm_decline: Decline this membership request?
       confirm_delete: Remove this membership request?
       fields:
         description: Message
+        description_hint: Veuillez nous parler un peu de vous et de la raison pour laquelle vous souhaitez nous rejoindre.
         motivation: Motivation / Message
         referral_source: How did you hear about us?
         requestor_email: Your email address
@@ -1566,6 +1568,8 @@ fr:
       success:
         heading: Request Received
         body: 'Thank you! We''ve received your membership request and will be in touch soon.'
+    resources:
+      membership_request: Demande d'adhésion
     joatu_mailer:
       agreement_created:
         greeting: Bonjour %{recipient_name},
@@ -3201,6 +3205,7 @@ fr:
     are_you_sure: Êtes-vous sûr ?
     back: Retour
     back_to_list: Retour à la liste
+    back_to_home: Retour à l'accueil
     cancel: Annuler
     clear: Effacer
     clear_filter: Effacer le filtre
@@ -3225,6 +3230,7 @@ fr:
     no_description: Pas de description
     no_image: Pas d'image
     no_invitee: Pas d'invité
+    not_found: Non trouvé.
     none: Aucun
     not_sent: Non envoyé
     pagination:
@@ -3242,6 +3248,8 @@ fr:
     sent: Envoyé
     show: Afficher
     status: Statut
+    submit: Soumettre
+    submitted_at: Soumis
     tabs:
       about: À propos
       attendees: Participants
@@ -3251,6 +3259,7 @@ fr:
       members: Membres
     to: À
     'true': Oui
+    unknown: Inconnu
     undo_clear: Annuler l'effacement
     update: Mettre à jour
     url: URL
@@ -3501,6 +3510,7 @@ fr:
     invitation: Invitation
     invitation_email: E-mail d'invitation
     member: Membre
+    membership_request: Demande d'adhésion
     navigation_area: Zone de navigation
     page: Page
     person: Personne

@@ -1528,11 +1528,13 @@ es:
       actions:
         approve: Approve
         decline: Decline
+      captcha_failed: La verificación del captcha falló. Por favor, inténtelo de nuevo.
       confirm_approve: Approve this membership request and invite the applicant to join?
       confirm_decline: Decline this membership request?
       confirm_delete: Remove this membership request?
       fields:
         description: Message
+        description_hint: Por favor, cuéntenos un poco sobre usted y por qué le gustaría unirse.
         motivation: Motivation / Message
         referral_source: How did you hear about us?
         requestor_email: Your email address
@@ -1562,6 +1564,8 @@ es:
       success:
         heading: Request Received
         body: 'Thank you! We''ve received your membership request and will be in touch soon.'
+    resources:
+      membership_request: Solicitud de membresía
     joatu_mailer:
       agreement_created:
         greeting: Hola %{recipient_name},
@@ -3184,6 +3188,7 @@ es:
     are_you_sure: "¿Estás seguro?"
     back: Atrás
     back_to_list: Volver a la lista
+    back_to_home: Volver al inicio
     cancel: Cancelar
     clear: Borrar
     clear_filter: Limpiar filtro
@@ -3208,6 +3213,7 @@ es:
     no_description: Sin descripción
     no_image: Sin imagen
     no_invitee: Sin invitado
+    not_found: No encontrado.
     none: Ninguno
     not_sent: No enviado
     pagination:
@@ -3225,6 +3231,8 @@ es:
     sent: Enviado
     show: Mostrar
     status: Estado
+    submit: Enviar
+    submitted_at: Enviado
     tabs:
       about: Acerca de
       attendees: Asistentes
@@ -3234,6 +3242,7 @@ es:
       members: Miembros
     to: Para
     'true': Sí
+    unknown: Desconocido
     undo_clear: Deshacer el borrado
     update: Actualizar
     url: Url
@@ -3486,6 +3495,7 @@ es:
     invitation: Invitación
     invitation_email: Correo de invitación
     member: Miembro
+    membership_request: Solicitud de membresía
     navigation_area: Área de navegación
     page: Página
     person: Persona

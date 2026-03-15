@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 module BetterTogether
-  module Joatu
+  module Joatu # rubocop:todo Metrics/ModuleLength
     RSpec.describe MembershipRequest do
       describe 'Factory' do
         context 'unauthenticated (no creator)' do
