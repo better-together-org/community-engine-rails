@@ -5,19 +5,11 @@ require 'rails_helper'
 RSpec.describe BetterTogether::SafeFederationUrlValidator do # rubocop:disable Metrics/BlockLength, RSpec/SpecFilePathFormat
   subject(:validator) { described_class.new(attributes: [:host_url]) }
 
-  let(:record) do
-    Class.new do
-      include ActiveModel::Validations
-
-      attr_accessor :host_url
-
-      validates_with BetterTogether::SafeFederationUrlValidator, attributes: [:host_url]
-    end.new
-  end
-
+  # Test validate_each directly — avoids the ActiveModel::Validations requirement
+  # that the host class be named (anonymous Class.new raises "Class name cannot be blank").
   def errors_for_url(url)
-    record.host_url = url
-    record.validate
+    record = BetterTogether::Platform.new
+    validator.validate_each(record, :host_url, url)
     record.errors[:host_url]
   end
 

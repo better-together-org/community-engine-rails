@@ -35,6 +35,7 @@
   <div class="mb-3">
     <%= form.label :host_url, class: "form-label" %>
     <%= form.text_field :host_url, class: "form-control", disabled: platform.protected %>
+    <p class="form-text text-muted"><%= t('better_together.platforms.form.host_url_hint', default: 'The canonical public URL of this platform (e.g. https://example.com). Used to identify the platform in federation and generate OAuth endpoint URLs. Must be HTTPS for production.') %></p>
   </div>
 
   <div class="mb-3">

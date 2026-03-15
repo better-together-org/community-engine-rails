@@ -2258,9 +2258,14 @@ en:
         suspended: Connection suspended.
       form:
         back: Back
+        connection_kind_hint: 'Member: this platform hosts members of the other. Peer: equal partnership between independent platforms.'
+        content_sharing_policy_hint: 'Controls how public content is mirrored. "Mirror network feed" syncs all public content; "Selective" syncs only explicitly shared types.'
         create: Create Connection
+        federation_auth_policy_hint: 'api_read allows the remote platform to pull public content. api_write additionally allows it to publish content here. login_only restricts to user authentication only.'
+        federation_scopes_hint: 'Scopes determine what data the remote platform may request in OAuth tokens. Only enable scopes matching your agreed data-sharing terms.'
         federation_scopes_legend: Federation Scopes
         save: Save Changes
+        shared_content_types_hint: 'Select which content types to include when syncing with this connection.'
         shared_content_types_legend: Shared Content Types
         source_platform: Source Platform
         target_platform: Target Platform

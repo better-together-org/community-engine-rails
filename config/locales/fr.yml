@@ -2304,9 +2304,14 @@ fr:
         suspended: Connexion suspendue.
       form:
         back: Retour
+        connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre. Pair : partenariat égal entre plateformes indépendantes.'
+        content_sharing_policy_hint: 'Contrôle comment le contenu public est synchronisé. « Miroir réseau » synchronise tout le contenu public ; « Sélectif » ne synchronise que les types explicitement partagés.'
         create: Créer la connexion
+        federation_auth_policy_hint: 'api_read permet à la plateforme distante de récupérer le contenu public. api_write lui permet en plus de publier ici. login_only restreint à l''authentification uniquement.'
+        federation_scopes_hint: 'Les portées déterminent quelles données la plateforme distante peut demander dans les jetons OAuth. N''activez que les portées correspondant à vos termes de partage convenus.'
         federation_scopes_legend: Portées de fédération
         save: Enregistrer les modifications
+        shared_content_types_hint: 'Sélectionnez les types de contenu à inclure lors de la synchronisation avec cette connexion.'
         shared_content_types_legend: Types de contenu partagés
         source_platform: Plateforme source
         target_platform: Plateforme cible

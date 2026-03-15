@@ -36,6 +36,7 @@
                       },
                       {},
                       class: 'form-select' %>
+      <p class="form-text text-muted"><%= t('better_together.platform_connections.form.connection_kind_hint') %></p>
     </div>
   <% else %>
     <div class="mb-3">
@@ -61,6 +62,7 @@
         <%= form.select :connection_kind, BetterTogether::PlatformConnection::CONNECTION_KINDS.keys.map { |k|
                           [t("better_together.enums.platform_connection.connection_kind.#{k}"), k.to_s]
                         }, {}, class: 'form-select' %>
+        <p class="form-text text-muted"><%= t('better_together.platform_connections.form.connection_kind_hint') %></p>
       </div>
     </div>
 
@@ -73,6 +75,7 @@
                         },
                         {},
                         class: 'form-select' %>
+        <p class="form-text text-muted"><%= t('better_together.platform_connections.form.content_sharing_policy_hint') %></p>
       </div>
 
       <div class="col-md-6 mb-3">
@@ -83,6 +86,7 @@
                         },
                         {},
                         class: 'form-select' %>
+        <p class="form-text text-muted"><%= t('better_together.platform_connections.form.federation_auth_policy_hint') %></p>
       </div>
     </div>
 
@@ -102,6 +106,7 @@
             <%= form.check_box :share_events, class: 'form-check-input' %>
             <%= form.label :share_events, class: 'form-check-label' %>
           </div>
+          <p class="form-text text-muted mt-1"><%= t('better_together.platform_connections.form.shared_content_types_hint') %></p>
         </fieldset>
       </div>
 
@@ -128,6 +133,7 @@
             <%= form.check_box :allow_content_write_scope, class: 'form-check-input' %>
             <%= form.label :allow_content_write_scope, class: 'form-check-label' %>
           </div>
+          <p class="form-text text-muted mt-1"><%= t('better_together.platform_connections.form.federation_scopes_hint') %></p>
         </fieldset>
       </div>
     </div>
