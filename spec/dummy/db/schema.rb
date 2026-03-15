@@ -808,6 +808,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_121000) do
     t.uuid "target_id"
     t.string "urgency", default: "normal", null: false
     t.uuid "address_id"
+    t.string "type", default: "BetterTogether::Joatu::Request", null: false
     t.string "requestor_name"
     t.string "requestor_email"
     t.string "referral_source"
