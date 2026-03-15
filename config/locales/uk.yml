@@ -1588,6 +1588,8 @@ uk:
         request: Request
       you: You
     joatu_mailer:
+      new_match:
+        subject: 'Нова відповідність Joatu'
       agreement_created:
         greeting: Hello %{recipient_name},
         message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".

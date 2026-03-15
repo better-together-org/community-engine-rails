@@ -1574,6 +1574,8 @@ en:
         request: Request
       you: You
     joatu_mailer:
+      new_match:
+        subject: 'New Joatu match'
       agreement_created:
         greeting: Hello %{recipient_name},
         message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
