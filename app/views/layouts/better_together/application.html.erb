@@ -23,6 +23,9 @@
       <%= tag.meta 'http-equiv': 'Expires', content: '0' %>
     <% end %>
     <%= csrf_meta_tags %>
+    <% if current_user&.person %>
+      <%= tag.meta name: "current-person-id", content: current_user.person.id %>
+    <% end %>
     <%= csp_meta_tag %>
     <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
     
@@ -73,6 +76,13 @@
 
       <!-- Custom Mobile Bar from Host App -->
       <%= content_for?(:custom_mobile_bar) ? yield(:custom_mobile_bar) : render('layouts/better_together/mobile_bar') %>
+
+      <!-- E2E session initialiser (conversation-enabled users only) -->
+      <% if current_user&.person %>
+        <div data-controller="better-together--e2e-session"
+             data-better-together--e2e-session-person-id-value="<%= current_user.person.id %>"
+             hidden></div>
+      <% end %>
 
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>

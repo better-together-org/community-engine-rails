@@ -30,6 +30,49 @@ module BetterTogether
         def update
           super
         end
+
+        # GET /api/v1/conversations/:id/participant_prekey_bundles
+        # Returns prekey bundles for all participants in a conversation.
+        # Gated to conversation members only.
+        def participant_prekey_bundles
+          conversation = BetterTogether::Conversation.find(params[:id])
+
+          unless conversation.participants.exists?(current_user&.person&.id)
+            return render json: { error: 'Not found' }, status: :not_found
+          end
+
+          bundles = conversation.participants.map do |person|
+            next nil unless person.identity_key_public.present?
+
+            one_time_prekey = consume_one_time_prekey_for(person)
+            {
+              person_id:       person.id,
+              registration_id: person.registration_id,
+              identity_key:    person.identity_key_public,
+              signed_prekey: {
+                id:         person.signed_prekey_id,
+                public_key: person.signed_prekey_public,
+                signature:  person.signed_prekey_sig
+              },
+              one_time_prekey: one_time_prekey ? {
+                id:         one_time_prekey.key_id,
+                public_key: one_time_prekey.public_key
+              } : nil
+            }
+          end.compact
+
+          render json: { data: bundles }
+        end
+
+        private
+
+        def consume_one_time_prekey_for(person)
+          BetterTogether::OneTimePrekey.transaction do
+            prekey = person.one_time_prekeys.unconsumed.lock.first
+            prekey&.update!(consumed: true)
+            prekey
+          end
+        end
       end
     end
   end
