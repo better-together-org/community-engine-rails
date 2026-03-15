@@ -96,7 +96,9 @@ module BetterTogether
         .where("(better_together_platform_connections.settings->>'allow_linked_content_read_scope')::boolean = true")
     }
     scope :not_syncing, lambda {
-      where("better_together_platform_connections.settings->>'last_sync_status' != ? OR better_together_platform_connections.settings->>'last_sync_status' IS NULL", 'running')
+      tbl = quoted_table_name
+      where("#{tbl}.settings->>'last_sync_status' != ? OR #{tbl}.settings->>'last_sync_status' IS NULL",
+            'running')
     }
 
     def involves?(platform)
