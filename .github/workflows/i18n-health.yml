@@ -12,6 +12,9 @@ on:
       - fix/**
       - chore/**
   pull_request:
+    branches:
+      - main
+      - dev
 
 jobs:
   prepare:
