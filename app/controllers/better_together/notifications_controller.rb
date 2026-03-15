@@ -19,9 +19,16 @@ module BetterTogether
       unread_count = helpers.current_person.notifications.unread.size
       total_count = helpers.current_person.notifications.size
 
-      # Create cache key based on max updated_at, unread count, AND total count
+      # Include platform ID so multi-tenant deployments get separate dropdown caches
+      # per platform. Without this, two platforms on the same instance share a cache
+      # entry for the same person. NOTE: the notification *queries* above are not yet
+      # platform-scoped (noticed_notifications has no platform_id column); that requires
+      # a follow-up join through noticed_events.record → platform. The key isolation
+      # here prevents serving the wrong platform's cached HTML.
+      platform_id = ::BetterTogether::Current.platform&.id
+
       # Total count ensures cache invalidation when notifications are deleted
-      cache_key = "notifications_dropdown/#{helpers.current_person.id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"
+      cache_key = "notifications_dropdown/#{platform_id}/#{helpers.current_person.id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"
 
       cached_content = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
         # Only fetch detailed data when cache misses
