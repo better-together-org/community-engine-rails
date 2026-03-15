@@ -37,11 +37,11 @@ module BetterTogether
     def set_locale_and_time_zone(&) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       # Use Current.platform (set by middleware for web/API requests) with
       # fallback to host platform for background job mailer sends.
-      platform = ::Current.platform ||
-                 BetterTogether::Platform.find_by(host: true)
+      # Set @platform ivar so mailer templates can reference it (e.g. @platform.name).
+      @platform ||= ::Current.platform || BetterTogether::Platform.find_by(host: true)
 
-      self.time_zone ||= time_zone || platform&.time_zone || Rails.application.config.time_zone
-      self.locale ||= locale || I18n.locale || platform&.locale || I18n.default_locale
+      self.time_zone ||= time_zone || @platform&.time_zone || Rails.application.config.time_zone
+      self.locale ||= locale || I18n.locale || @platform&.locale || I18n.default_locale
 
       # Set time zone and locale either from platform or passed in by child mailers
       Time.use_zone(time_zone) do

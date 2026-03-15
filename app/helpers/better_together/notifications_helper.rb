@@ -26,8 +26,6 @@ module BetterTogether
       platform_notifications.joins(:event).order(created_at: :desc).limit(5)
     end
 
-    private
-
     # Returns the notification scope for the current person restricted to the
     # current platform. When platform_id is nil (no column match) OR when
     # Current.platform is nil (host-only instance), returns all notifications

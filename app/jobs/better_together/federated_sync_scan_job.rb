@@ -55,7 +55,7 @@ module BetterTogether
     private_constant :RELEASE_LOCK_SCRIPT
 
     def release_lock_if_owner
-      Sidekiq.redis { |r| r.eval(RELEASE_LOCK_SCRIPT, keys: [LOCK_KEY], argv: [job_id]) }
+      Sidekiq.redis { |r| r.call('EVAL', RELEASE_LOCK_SCRIPT, 1, LOCK_KEY, job_id) }
     end
   end
 end
