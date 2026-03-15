@@ -1891,6 +1891,44 @@ fr:
         offer: Offer
         request: Request
       you: You
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      confirm_approve: Approve this membership request and invite the applicant to join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        approve_failed: Could not approve the membership request.
+        declined: Membership request declined.
+        decline_failed: Could not decline the membership request.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: 'Membership request from %{requestor}'
+      new:
+        heading: Request Membership
+        intro: 'Fill in the form below to request membership. We''ll be in touch!'
+      show:
+        title: Membership Request
+      success:
+        heading: Request Received
+        body: 'Thank you! We''ve received your membership request and will be in touch soon.'
     joatu_mailer:
       agreement_created:
         greeting: Bonjour %{recipient_name},
