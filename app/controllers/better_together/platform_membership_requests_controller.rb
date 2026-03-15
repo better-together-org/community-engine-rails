@@ -5,7 +5,7 @@ module BetterTogether
   # Nested under Platform so admins manage requests for communities on their platform.
   class PlatformMembershipRequestsController < ApplicationController
     before_action :set_platform
-    before_action :set_membership_request, only: %i[show destroy]
+    before_action :set_membership_request, only: %i[show destroy approve decline]
     after_action :verify_authorized
 
     # GET /platforms/:platform_id/membership_requests
@@ -55,6 +55,59 @@ module BetterTogether
       end
     end
 
+    # POST /platforms/:platform_id/membership_requests/:id/approve
+    def approve # rubocop:todo Metrics/MethodLength
+      authorize @membership_request
+
+      approver = helpers.current_person
+      @membership_request.approve!(approver:)
+
+      notice_key = @membership_request.unauthenticated? ? 'approved' : 'approved_direct'
+      flash.now[:notice] = t("better_together.membership_requests.flash.#{notice_key}",
+                              default: 'Membership request approved.')
+      respond_to do |format|
+        format.html { redirect_to platform_membership_requests_path(@platform), notice: flash.now[:notice] }
+        format.turbo_stream { render_status_update_turbo_stream }
+      end
+    rescue StandardError => e
+      flash.now[:alert] = t('better_together.membership_requests.flash.approve_failed',
+                             default: 'Could not approve the membership request.')
+      Rails.logger.error "MembershipRequest#approve! failed: #{e.message}"
+      respond_to do |format|
+        format.html { redirect_to platform_membership_request_path(@platform, @membership_request), alert: flash.now[:alert] }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace('flash_messages',
+                                                    partial: 'layouts/better_together/flash_messages',
+                                                    locals: { flash: })
+        end
+      end
+    end
+
+    # POST /platforms/:platform_id/membership_requests/:id/decline
+    def decline # rubocop:todo Metrics/MethodLength
+      authorize @membership_request
+
+      @membership_request.decline!
+      flash.now[:notice] = t('better_together.membership_requests.flash.declined',
+                              default: 'Membership request declined.')
+      respond_to do |format|
+        format.html { redirect_to platform_membership_requests_path(@platform), notice: flash.now[:notice] }
+        format.turbo_stream { render_status_update_turbo_stream }
+      end
+    rescue StandardError => e
+      flash.now[:alert] = t('better_together.membership_requests.flash.decline_failed',
+                             default: 'Could not decline the membership request.')
+      Rails.logger.error "MembershipRequest#decline! failed: #{e.message}"
+      respond_to do |format|
+        format.html { redirect_to platform_membership_request_path(@platform, @membership_request), alert: flash.now[:alert] }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace('flash_messages',
+                                                    partial: 'layouts/better_together/flash_messages',
+                                                    locals: { flash: })
+        end
+      end
+    end
+
     private
 
     def set_platform
@@ -82,6 +135,24 @@ module BetterTogether
 
       # Default to open requests
       collection.where(status: 'open')
+    end
+
+    def render_status_update_turbo_stream
+      render turbo_stream: [
+        turbo_stream.replace(
+          helpers.dom_id(@membership_request, :status),
+          partial: 'better_together/platform_membership_requests/status_badge',
+          locals: { membership_request: @membership_request }
+        ),
+        turbo_stream.replace(
+          helpers.dom_id(@membership_request, :actions),
+          partial: 'better_together/platform_membership_requests/row_actions',
+          locals: { membership_request: @membership_request }
+        ),
+        turbo_stream.replace('flash_messages',
+                             partial: 'layouts/better_together/flash_messages',
+                             locals: { flash: })
+      ]
     end
   end
 end
