@@ -1,0 +1,43 @@
+<%# app/views/better_together/platform_membership_requests/_membership_request.html.erb %>
+<%# locals: (membership_request:) -%>
+
+<tr id="<%= dom_id(membership_request) %>" class="membership-request">
+  <td><%= membership_request.requestor_name.presence || membership_request.creator&.name || t('globals.unknown', default: 'Unknown') %></td>
+  <td>
+    <% email = membership_request.requestor_email.presence || membership_request.creator&.email %>
+    <% if email %>
+      <%= mail_to email, email, class: 'text-decoration-none' %>
+    <% else %>
+      <span class="text-muted">—</span>
+    <% end %>
+  </td>
+  <td>
+    <% if membership_request.target.present? %>
+      <%= link_to membership_request.target.name, membership_request.target, class: 'text-decoration-none' %>
+    <% else %>
+      <span class="text-muted">—</span>
+    <% end %>
+  </td>
+  <td><%= membership_request.referral_source.presence || '—' %></td>
+  <td>
+    <span class="badge bg-<%= membership_request_status_badge(membership_request.status) %>">
+      <%= membership_request.status %>
+    </span>
+  </td>
+  <td><%= time_ago_in_words(membership_request.created_at) %> <%= t('globals.ago', default: 'ago') %></td>
+  <td class="text-end">
+    <div class="d-inline-flex gap-1">
+      <%= link_to t('globals.view', default: 'View'),
+                  platform_membership_request_path(@platform, membership_request),
+                  class: 'btn btn-outline-secondary btn-sm' %>
+      <% if policy(membership_request).destroy? && membership_request.status_open? %>
+        <%= link_to t('globals.delete', default: 'Delete'),
+                    platform_membership_request_path(@platform, membership_request),
+                    data: { turbo_method: :delete,
+                            turbo_confirm: t('better_together.membership_requests.confirm_delete',
+                                            default: 'Remove this membership request?') },
+                    class: 'btn btn-outline-danger btn-sm' %>
+      <% end %>
+    </div>
+  </td>
+</tr>

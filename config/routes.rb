@@ -267,6 +267,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               put :resend
             end
           end
+          resources :membership_requests, only: %i[index show destroy],
+                                          controller: 'platform_membership_requests'
         end
 
         resources :person_seeds, only: %i[index show destroy], path: 'my/seeds' do
