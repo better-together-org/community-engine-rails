@@ -1,7 +1,8 @@
-// community-engine.umd.js — stub placeholder
-// Replace with the built artifact from @better-together/community-engine-js dist/.
-// Build: cd community-engine-js && npm run build
-// Copy: cp dist/community-engine.umd.js ../community-engine-rails/vendor/javascript/
+// community-engine.umd.js
+// Managed by: rake ce_js:install  /  bin/update_ce_js
+// Version: see config/community_engine_js_version
+// DO NOT edit manually — this file is overwritten on every ce_js:install run.
+// To update: bin/update_ce_js NEW_VERSION
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
