@@ -2292,6 +2292,8 @@ fr:
         suspend_confirm: Suspendre cette connexion ?
         view: Voir
         view_aria: 'Voir la connexion : %{source} ↔ %{target}'
+      edit:
+        title: Modifier la connexion de plateforme
       flash:
         approved: Connexion approuvée et activée.
         cannot_approve: Impossible d'approuver une connexion avec le statut '%{status}'.

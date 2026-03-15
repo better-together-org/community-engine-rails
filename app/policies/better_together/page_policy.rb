@@ -69,17 +69,7 @@ module BetterTogether
               .privacy_public
         end
       end
-    end
 
-    private
-
-    def platform_content_manager?
-      permitted_to?('manage_platform_settings') ||
-        permitted_to?('manage_platform') ||
-        permitted_to?('manage_community_content', record.community)
-    end
-
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       private
 
       def platform_content_manager?
@@ -90,6 +80,14 @@ module BetterTogether
       def host_community
         @host_community ||= BetterTogether::Community.find_by(host: true)
       end
+    end
+
+    private
+
+    def platform_content_manager?
+      permitted_to?('manage_platform_settings') ||
+        permitted_to?('manage_platform') ||
+        permitted_to?('manage_community_content', record.community)
     end
   end
 end

@@ -2247,6 +2247,8 @@ en:
         suspend_confirm: Suspend this connection?
         view: View
         view_aria: 'View connection: %{source} ↔ %{target}'
+      edit:
+        title: Edit Platform Connection
       flash:
         approved: Connection approved and set to active.
         cannot_approve: Cannot approve a connection with status '%{status}'.

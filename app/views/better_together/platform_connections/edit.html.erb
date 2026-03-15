@@ -1,10 +1,10 @@
 <%= render layout: 'layouts/better_together/host_nav' do %>
   <% content_for :page_title do %>
-    Edit Platform Connection
+    <%= t('better_together.platform_connections.edit.title') %>
   <% end %>
 
   <div class="container my-3">
-    <h1>Edit Platform Connection</h1>
+    <h1><%= t('better_together.platform_connections.edit.title') %></h1>
     <%= render 'form', platform_connection: @platform_connection %>
   </div>
 <% end %>
