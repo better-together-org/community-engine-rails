@@ -2405,6 +2405,8 @@ es:
         expired: Vencido
         pending: Pendiente
     platforms:
+      form:
+        host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com). Se usa para identificarla en la federación y generar las URLs del endpoint OAuth. Debe ser HTTPS en producción.
       show:
         new_invitation: Nueva invitación
     posts:

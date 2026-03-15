@@ -2394,6 +2394,8 @@ uk:
         expired: Закінчився термін
         pending: Очікує
     platforms:
+      form:
+        host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com). Використовується для її ідентифікації у федерації та генерації URL-адрес OAuth-ендпоінту. Для production має бути HTTPS.
       show:
         new_invitation: Нове запрошення
     posts:

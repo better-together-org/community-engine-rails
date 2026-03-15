@@ -2417,6 +2417,8 @@ fr:
         expired: Expiré
         pending: En attente
     platforms:
+      form:
+        host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com). Utilisée pour l'identifier dans la fédération et générer les URLs du point de terminaison OAuth. Doit être HTTPS en production.
       show:
         new_invitation: Nouvelle invitation
     posts:

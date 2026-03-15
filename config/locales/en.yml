@@ -2367,6 +2367,8 @@ en:
         expired: Expired
         pending: Pending
     platforms:
+      form:
+        host_url_hint: The canonical public URL of this platform (e.g. https://example.com). Used to identify the platform in federation and generate OAuth endpoint URLs. Must be HTTPS for production.
       show:
         new_invitation: New invitation
     posts:
