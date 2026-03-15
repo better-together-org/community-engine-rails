@@ -3,12 +3,9 @@
 module BetterTogether
   module Federation
     # Serves the federated content feed for authenticated platform connections.
-    class ContentFeedController < ::BetterTogether::ApplicationController
-      skip_before_action :store_user_location!
-      skip_before_action :set_platform_invitation
-      skip_before_action :check_platform_privacy
-      skip_before_action :check_platform_setup
-
+    # Inherits from Federation::ApiController to share CSRF configuration and
+    # before_action skips — avoids duplicating the skip list here.
+    class ContentFeedController < ::BetterTogether::Federation::ApiController
       def show
         return head :unauthorized unless connection
 

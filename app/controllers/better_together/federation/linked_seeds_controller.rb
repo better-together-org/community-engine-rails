@@ -3,12 +3,9 @@
 module BetterTogether
   module Federation
     # Serves linked seed payloads for federated platform synchronization.
-    class LinkedSeedsController < ::BetterTogether::ApplicationController
-      skip_before_action :store_user_location!
-      skip_before_action :set_platform_invitation
-      skip_before_action :check_platform_privacy
-      skip_before_action :check_platform_setup
-
+    # Inherits from Federation::ApiController to share CSRF configuration and
+    # before_action skips — avoids duplicating the skip list here.
+    class LinkedSeedsController < ::BetterTogether::Federation::ApiController
       def index
         return head :unauthorized unless connection
         return head :forbidden unless linked_content_token_authorized?

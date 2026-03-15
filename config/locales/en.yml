@@ -1458,6 +1458,9 @@ en:
         show:
           details: Details
           open_platform_connections: Open Platform Connections
+          platform_connection: Platform Connection
+          source_platform: Source Platform
+          target_platform: Target Platform
           title: Agreement
         status: Status
       by: by
@@ -2158,12 +2161,6 @@ en:
         back: Back to Linked Seeds
         empty: No content available for this linked seed.
         title: Linked Seed
-    validators:
-      safe_federation_url:
-        credentials_in_url: must not include credentials (user:password@)
-        insecure_scheme: must use http or https
-        invalid_url: is not a valid URL
-        private_ip: must not point to a private or reserved IP address
     person_links:
       errors:
         duplicate_link: already has a link for this platform connection and target
@@ -2258,14 +2255,22 @@ en:
         suspended: Connection suspended.
       form:
         back: Back
-        connection_kind_hint: 'Member: this platform hosts members of the other. Peer: equal partnership between independent platforms.'
-        content_sharing_policy_hint: 'Controls how public content is mirrored. "Mirror network feed" syncs all public content; "Selective" syncs only explicitly shared types.'
+        connection_kind_hint: 'Member: this platform hosts members of the other. Peer:
+          equal partnership between independent platforms.'
+        content_sharing_policy_hint: Controls how public content is mirrored. "Mirror
+          network feed" syncs all public content; "Selective" syncs only explicitly
+          shared types.
         create: Create Connection
-        federation_auth_policy_hint: 'api_read allows the remote platform to pull public content. api_write additionally allows it to publish content here. login_only restricts to user authentication only.'
-        federation_scopes_hint: 'Scopes determine what data the remote platform may request in OAuth tokens. Only enable scopes matching your agreed data-sharing terms.'
+        federation_auth_policy_hint: api_read allows the remote platform to pull public
+          content. api_write additionally allows it to publish content here. login_only
+          restricts to user authentication only.
+        federation_scopes_hint: Scopes determine what data the remote platform may
+          request in OAuth tokens. Only enable scopes matching your agreed data-sharing
+          terms.
         federation_scopes_legend: Federation Scopes
         save: Save Changes
-        shared_content_types_hint: 'Select which content types to include when syncing with this connection.'
+        shared_content_types_hint: Select which content types to include when syncing
+          with this connection.
         shared_content_types_legend: Shared Content Types
         source_platform: Source Platform
         target_platform: Target Platform
@@ -2368,7 +2373,18 @@ en:
         pending: Pending
     platforms:
       form:
-        host_url_hint: The canonical public URL of this platform (e.g. https://example.com). Used to identify the platform in federation and generate OAuth endpoint URLs. Must be HTTPS for production.
+        host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
+          Used to identify the platform in federation and generate OAuth endpoint
+          URLs. Must be HTTPS for production.
+      new:
+        back: Back
+        host_url_hint: The root URL of the external platform instance.
+        identifier_hint: A unique slug identifier for this platform (letters, numbers,
+          hyphens).
+        intro: Register a remote Community Engine (or compatible) instance so it can
+          be selected when creating a Platform Connection.
+        submit: Register External Platform
+        title: Register External Platform
       show:
         new_invitation: New invitation
     posts:
@@ -2716,6 +2732,12 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+    validators:
+      safe_federation_url:
+        credentials_in_url: must not include credentials (user:password@)
+        insecure_scheme: must use http or https
+        invalid_url: is not a valid URL
+        private_ip: must not point to a private or reserved IP address
     view_switcher:
       button_label: "%{view} view"
       change_view: Change view type

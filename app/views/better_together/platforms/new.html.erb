@@ -1,17 +1,16 @@
 <%= render layout: 'layouts/better_together/host_nav' do %>
   <% content_for :page_title do %>
-    Register External Platform
+    <%= t('better_together.platforms.new.title') %>
   <% end %>
 
   <div class="container my-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h1>Register External Platform</h1>
-      <%= link_to 'Back', better_together.platforms_path, class: 'btn btn-outline-secondary' %>
+      <h1><%= t('better_together.platforms.new.title') %></h1>
+      <%= link_to t('better_together.platforms.new.back'), better_together.platforms_path, class: 'btn btn-outline-secondary' %>
     </div>
 
     <p class="text-muted mb-4">
-      Register a remote Community Engine (or compatible) instance so it can be selected
-      when creating a Platform Connection.
+      <%= t('better_together.platforms.new.intro') %>
     </p>
 
     <div id="form_errors"></div>
@@ -27,13 +26,13 @@
       <div class="mb-3">
         <%= form.label :identifier, class: 'form-label' %>
         <%= form.text_field :identifier, class: 'form-control', placeholder: 'e.g. peer-platform' %>
-        <div class="form-text">A unique slug identifier for this platform (letters, numbers, hyphens).</div>
+        <div class="form-text"><%= t('better_together.platforms.new.identifier_hint') %></div>
       </div>
 
       <div class="mb-3">
         <%= form.label :host_url, 'URL', class: 'form-label' %>
         <%= form.url_field :host_url, class: 'form-control', placeholder: 'https://example.com' %>
-        <div class="form-text">The root URL of the external platform instance.</div>
+        <div class="form-text"><%= t('better_together.platforms.new.host_url_hint') %></div>
       </div>
 
       <div class="mb-3">
@@ -42,7 +41,7 @@
       </div>
 
       <div class="mb-3">
-        <%= form.submit 'Register External Platform', class: 'btn btn-primary' %>
+        <%= form.submit t('better_together.platforms.new.submit'), class: 'btn btn-primary' %>
       </div>
     <% end %>
   </div>

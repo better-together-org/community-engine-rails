@@ -3,8 +3,9 @@
 module BetterTogether
   module Federation
     # OAuth 2.0 client_credentials token endpoint for machine-to-machine federation auth.
-    # Inherits from Federation::ApiController (ActionController::API) so CSRF protection
-    # is never included — requests are authenticated via client_id/client_secret only.
+    # Inherits from Federation::ApiController (BetterTogether::ApplicationController with
+    # CSRF scoped to non-JSON requests) — M2M requests carry credentials in the body,
+    # not session cookies, so CSRF is not a threat vector here.
     class OauthTokensController < ::BetterTogether::Federation::ApiController
       def create # rubocop:disable Metrics/MethodLength
         return render_oauth_error('unsupported_grant_type', status: :bad_request) unless grant_type == 'client_credentials'

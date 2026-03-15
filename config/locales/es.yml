@@ -1474,6 +1474,9 @@ es:
         show:
           details: Detalles
           open_platform_connections: Abrir conexiones de plataforma
+          platform_connection: Conexión de plataforma
+          source_platform: Plataforma de origen
+          target_platform: Plataforma de destino
           title: Acuerdo
         status: Estado
       by: por
@@ -2187,12 +2190,6 @@ es:
         back: Volver a semillas vinculadas
         empty: No hay contenido disponible para esta semilla vinculada.
         title: Semilla vinculada
-    validators:
-      safe_federation_url:
-        credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
-        insecure_scheme: debe usar http o https
-        invalid_url: no es una URL válida
-        private_ip: no debe apuntar a una dirección IP privada o reservada
     person_links:
       errors:
         duplicate_link: ya tiene un vínculo para esta conexión de plataforma y persona
@@ -2293,14 +2290,22 @@ es:
         suspended: Conexión suspendida.
       form:
         back: Volver
-        connection_kind_hint: 'Miembro: esta plataforma aloja miembros de la otra. Par: asociación igualitaria entre plataformas independientes.'
-        content_sharing_policy_hint: 'Controla cómo se sincroniza el contenido público. "Espejo de red" sincroniza todo el contenido público; "Selectivo" sincroniza solo los tipos compartidos explícitamente.'
+        connection_kind_hint: 'Miembro: esta plataforma aloja miembros de la otra.
+          Par: asociación igualitaria entre plataformas independientes.'
+        content_sharing_policy_hint: Controla cómo se sincroniza el contenido público.
+          "Espejo de red" sincroniza todo el contenido público; "Selectivo" sincroniza
+          solo los tipos compartidos explícitamente.
         create: Crear conexión
-        federation_auth_policy_hint: 'api_read permite a la plataforma remota obtener contenido público. api_write también le permite publicar aquí. login_only restringe a solo autenticación de usuarios.'
-        federation_scopes_hint: 'Los ámbitos determinan qué datos puede solicitar la plataforma remota en los tokens OAuth. Solo habilite los ámbitos que coincidan con sus términos de intercambio de datos acordados.'
+        federation_auth_policy_hint: api_read permite a la plataforma remota obtener
+          contenido público. api_write también le permite publicar aquí. login_only
+          restringe a solo autenticación de usuarios.
+        federation_scopes_hint: Los ámbitos determinan qué datos puede solicitar la
+          plataforma remota en los tokens OAuth. Solo habilite los ámbitos que coincidan
+          con sus términos de intercambio de datos acordados.
         federation_scopes_legend: Ámbitos de federación
         save: Guardar cambios
-        shared_content_types_hint: 'Seleccione qué tipos de contenido incluir al sincronizar con esta conexión.'
+        shared_content_types_hint: Seleccione qué tipos de contenido incluir al sincronizar
+          con esta conexión.
         shared_content_types_legend: Tipos de contenido compartidos
         source_platform: Plataforma de origen
         target_platform: Plataforma de destino
@@ -2406,7 +2411,17 @@ es:
         pending: Pendiente
     platforms:
       form:
-        host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com). Se usa para identificarla en la federación y generar las URLs del endpoint OAuth. Debe ser HTTPS en producción.
+        host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
+          Se usa para identificarla en la federación y generar las URLs del endpoint
+          OAuth. Debe ser HTTPS en producción.
+      new:
+        back: Atrás
+        host_url_hint: La URL raíz de la instancia de plataforma externa.
+        identifier_hint: Un identificador único (letras, números, guiones).
+        intro: Registre una instancia remota de Community Engine (o compatible) para
+          poder seleccionarla al crear una Conexión de Plataforma.
+        submit: Registrar plataforma externa
+        title: Registrar plataforma externa
       show:
         new_invitation: Nueva invitación
     posts:
@@ -2761,6 +2776,12 @@ es:
         translation_failed: 'La traducción falló: %{message}'
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
+    validators:
+      safe_federation_url:
+        credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
+        insecure_scheme: debe usar http o https
+        invalid_url: no es una URL válida
+        private_ip: no debe apuntar a una dirección IP privada o reservada
     view_switcher:
       button_label: Vista %{view}
       change_view: Cambiar tipo de vista

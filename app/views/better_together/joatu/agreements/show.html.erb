@@ -33,15 +33,15 @@
 
           <% if @joatu_agreement.connection_request? %>
             <hr>
-            <p class="mb-1"><strong>Source Platform:</strong>
+            <p class="mb-1"><strong><%= t('better_together.joatu.agreements.show.source_platform') %>:</strong>
               <%= link_to @joatu_agreement.offer.target.name, @joatu_agreement.offer.target %>
             </p>
-            <p class="mb-1"><strong>Target Platform:</strong>
+            <p class="mb-1"><strong><%= t('better_together.joatu.agreements.show.target_platform') %>:</strong>
               <%= link_to @joatu_agreement.request.target.name, @joatu_agreement.request.target %>
             </p>
             <% if @joatu_agreement.platform_connection.present? %>
               <p class="mb-0">
-                <strong>Platform Connection:</strong>
+                <strong><%= t('better_together.joatu.agreements.show.platform_connection') %>:</strong>
                 <%= link_to "#{@joatu_agreement.platform_connection.source_platform.name} → #{@joatu_agreement.platform_connection.target_platform.name}",
                             platform_connection_path(@joatu_agreement.platform_connection),
                             class: 'text-decoration-none' %>

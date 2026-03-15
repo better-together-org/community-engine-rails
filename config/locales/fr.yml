@@ -1478,6 +1478,9 @@ fr:
         show:
           details: Détails
           open_platform_connections: Ouvrir les connexions de plateforme
+          platform_connection: Connexion de plateforme
+          source_platform: Plateforme source
+          target_platform: Plateforme cible
           title: Agreement
         status: Statut
       by: by
@@ -2197,12 +2200,6 @@ fr:
         back: Retour aux graines liées
         empty: Aucun contenu disponible pour cette graine liée.
         title: Graine liée
-    validators:
-      safe_federation_url:
-        credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
-        insecure_scheme: doit utiliser http ou https
-        invalid_url: n'est pas une URL valide
-        private_ip: ne doit pas pointer vers une adresse IP privée ou réservée
     person_links:
       errors:
         duplicate_link: a déjà un lien pour cette connexion de plateforme et cette
@@ -2304,14 +2301,22 @@ fr:
         suspended: Connexion suspendue.
       form:
         back: Retour
-        connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre. Pair : partenariat égal entre plateformes indépendantes.'
-        content_sharing_policy_hint: 'Contrôle comment le contenu public est synchronisé. « Miroir réseau » synchronise tout le contenu public ; « Sélectif » ne synchronise que les types explicitement partagés.'
+        connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre.
+          Pair : partenariat égal entre plateformes indépendantes.'
+        content_sharing_policy_hint: Contrôle comment le contenu public est synchronisé.
+          « Miroir réseau » synchronise tout le contenu public ; « Sélectif » ne synchronise
+          que les types explicitement partagés.
         create: Créer la connexion
-        federation_auth_policy_hint: 'api_read permet à la plateforme distante de récupérer le contenu public. api_write lui permet en plus de publier ici. login_only restreint à l''authentification uniquement.'
-        federation_scopes_hint: 'Les portées déterminent quelles données la plateforme distante peut demander dans les jetons OAuth. N''activez que les portées correspondant à vos termes de partage convenus.'
+        federation_auth_policy_hint: api_read permet à la plateforme distante de récupérer
+          le contenu public. api_write lui permet en plus de publier ici. login_only
+          restreint à l'authentification uniquement.
+        federation_scopes_hint: Les portées déterminent quelles données la plateforme
+          distante peut demander dans les jetons OAuth. N'activez que les portées
+          correspondant à vos termes de partage convenus.
         federation_scopes_legend: Portées de fédération
         save: Enregistrer les modifications
-        shared_content_types_hint: 'Sélectionnez les types de contenu à inclure lors de la synchronisation avec cette connexion.'
+        shared_content_types_hint: Sélectionnez les types de contenu à inclure lors
+          de la synchronisation avec cette connexion.
         shared_content_types_legend: Types de contenu partagés
         source_platform: Plateforme source
         target_platform: Plateforme cible
@@ -2418,7 +2423,17 @@ fr:
         pending: En attente
     platforms:
       form:
-        host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com). Utilisée pour l'identifier dans la fédération et générer les URLs du point de terminaison OAuth. Doit être HTTPS en production.
+        host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
+          Utilisée pour l'identifier dans la fédération et générer les URLs du point
+          de terminaison OAuth. Doit être HTTPS en production.
+      new:
+        back: Retour
+        host_url_hint: L'URL racine de l'instance de plateforme externe.
+        identifier_hint: Un identifiant unique (lettres, chiffres, tirets).
+        intro: Enregistrez une instance distante de Community Engine (ou compatible)
+          pour la sélectionner lors de la création d'une Connexion de plateforme.
+        submit: Enregistrer la plateforme externe
+        title: Enregistrer la plateforme externe
       show:
         new_invitation: Nouvelle invitation
     posts:
@@ -2772,6 +2787,12 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+    validators:
+      safe_federation_url:
+        credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
+        insecure_scheme: doit utiliser http ou https
+        invalid_url: n'est pas une URL valide
+        private_ip: ne doit pas pointer vers une adresse IP privée ou réservée
     view_switcher:
       button_label: Vue %{view}
       change_view: Changer le type de vue
