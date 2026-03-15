@@ -1,9 +1,9 @@
-<%# app/views/better_together/platform_membership_requests/show.html.erb %>
+<%# app/views/better_together/membership_requests/show.html.erb %>
 
 <div class="container py-4" style="max-width: 800px;">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <%= link_to "<i class=\"fas fa-arrow-left\"></i> #{t('globals.back', default: 'Back')}".html_safe,
-                platform_membership_requests_path(@platform),
+                community_membership_requests_path(@community),
                 class: 'btn btn-outline-secondary btn-sm' %>
 
     <span class="badge fs-6 bg-<%= membership_request_status_badge(@membership_request.status) %>">
@@ -62,7 +62,7 @@
       <div class="card-footer d-flex gap-2">
         <% if policy(@membership_request).approve? %>
           <%= link_to t('better_together.membership_requests.actions.approve', default: 'Approve'),
-                      approve_platform_membership_request_path(@platform, @membership_request),
+                      approve_community_membership_request_path(@community, @membership_request),
                       data: { turbo_method: :post,
                               turbo_confirm: t('better_together.membership_requests.confirm_approve',
                                               default: 'Approve this membership request?') },
@@ -71,7 +71,7 @@
 
         <% if policy(@membership_request).decline? %>
           <%= link_to t('better_together.membership_requests.actions.decline', default: 'Decline'),
-                      decline_platform_membership_request_path(@platform, @membership_request),
+                      decline_community_membership_request_path(@community, @membership_request),
                       data: { turbo_method: :post,
                               turbo_confirm: t('better_together.membership_requests.confirm_decline',
                                               default: 'Decline this membership request?') },
@@ -80,7 +80,7 @@
 
         <% if policy(@membership_request).destroy? %>
           <%= link_to t('globals.delete', default: 'Delete'),
-                      platform_membership_request_path(@platform, @membership_request),
+                      community_membership_request_path(@community, @membership_request),
                       data: { turbo_method: :delete,
                               turbo_confirm: t('better_together.membership_requests.confirm_delete',
                                               default: 'Remove this membership request?') },

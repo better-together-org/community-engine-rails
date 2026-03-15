@@ -20,9 +20,9 @@ module BetterTogether
           resource
         end
 
-        # ActionText returns an ActionText::RichText object; serialize to plain string.
+        # ActionText returns an ActionText::RichText object; serialize as plain text for JSON consumers.
         def description
-          @model.description.to_s
+          @model.description.to_plain_text
         end
 
         def description=(value)
@@ -30,8 +30,7 @@ module BetterTogether
         end
 
         def self.creatable_fields(_context)
-          %i[requestor_name requestor_email referral_source target_type target_id
-             name description status urgency]
+          %i[requestor_name requestor_email referral_source target_type target_id description]
         end
 
         def self.updatable_fields(_context)

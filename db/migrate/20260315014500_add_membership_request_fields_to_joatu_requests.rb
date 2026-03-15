@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddMembershipRequestFieldsToJoatuRequests < ActiveRecord::Migration[7.2]
+class AddMembershipRequestFieldsToJoatuRequests < ActiveRecord::Migration[7.1]
   def change
     add_column :better_together_joatu_requests, :requestor_name, :string
     add_column :better_together_joatu_requests, :requestor_email, :string

@@ -50,9 +50,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Public community viewing - must be BEFORE authenticated routes
       resources :communities, only: %i[index]
       resources :communities, only: %i[show], path: 'c', as: 'community' do
-        # Public membership request submission — no authentication required
-        resources :membership_requests, only: %i[new create],
-                                        controller: 'membership_requests'
+        resources :membership_requests,
+                  controller: 'membership_requests' do
+          member do
+            post :approve
+            post :decline
+          end
+        end
       end
 
       devise_scope :user do
@@ -225,13 +229,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
-            end
-          end
-          resources :membership_requests, only: %i[index show destroy],
-                                          controller: 'platform_membership_requests' do
-            member do
-              post :approve
-              post :decline
             end
           end
         end

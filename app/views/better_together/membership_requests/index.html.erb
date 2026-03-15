@@ -1,4 +1,4 @@
-<%# app/views/better_together/platform_membership_requests/index.html.erb %>
+<%# app/views/better_together/membership_requests/index.html.erb %>
 
 <%= turbo_frame_tag "membership_requests_content" do %>
   <div class="container-fluid py-4">
@@ -10,16 +10,16 @@
       <%# Status filter tabs %>
       <div class="btn-group" role="group">
         <%= link_to t('better_together.membership_requests.filter.open', default: 'Open'),
-                    platform_membership_requests_path(@platform, status: 'open'),
-                    class: "btn btn-sm #{ params[:status].blank? || params[:status] == 'open' ? 'btn-primary' : 'btn-outline-primary' }" %>
+                    community_membership_requests_path(@community, status: 'open'),
+                    class: "btn btn-sm #{ !params.key?(:status) || params[:status] == 'open' ? 'btn-primary' : 'btn-outline-primary' }" %>
         <%= link_to t('better_together.membership_requests.filter.all', default: 'All'),
-                    platform_membership_requests_path(@platform, status: ''),
-                    class: "btn btn-sm #{ params[:status] == '' ? 'btn-primary' : 'btn-outline-primary' }" %>
+                    community_membership_requests_path(@community, status: 'all'),
+                    class: "btn btn-sm #{ params[:status] == 'all' ? 'btn-primary' : 'btn-outline-primary' }" %>
         <%= link_to t('better_together.membership_requests.filter.fulfilled', default: 'Fulfilled'),
-                    platform_membership_requests_path(@platform, status: 'fulfilled'),
+                    community_membership_requests_path(@community, status: 'fulfilled'),
                     class: "btn btn-sm #{ params[:status] == 'fulfilled' ? 'btn-primary' : 'btn-outline-primary' }" %>
         <%= link_to t('better_together.membership_requests.filter.closed', default: 'Declined'),
-                    platform_membership_requests_path(@platform, status: 'closed'),
+                    community_membership_requests_path(@community, status: 'closed'),
                     class: "btn btn-sm #{ params[:status] == 'closed' ? 'btn-primary' : 'btn-outline-primary' }" %>
       </div>
     </div>

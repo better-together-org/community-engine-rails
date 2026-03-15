@@ -4,10 +4,10 @@ module BetterTogether
   # View helpers for membership request display
   module MembershipRequestsHelper
     STATUS_BADGE_MAP = {
-      'open'      => 'primary',
-      'matched'   => 'info',
+      'open' => 'primary',
+      'matched' => 'info',
       'fulfilled' => 'success',
-      'closed'    => 'secondary'
+      'closed' => 'secondary'
     }.freeze
 
     def membership_request_status_badge(status)

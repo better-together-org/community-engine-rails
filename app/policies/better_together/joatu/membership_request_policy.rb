@@ -13,7 +13,7 @@ module BetterTogether
       alias new? create?
 
       def show?
-        return true if record.creator_id == agent&.id
+        return true if user.present? && agent.present? && record.creator_id == agent.id
 
         permitted_to?('manage_platform') || community_manager?
       end
@@ -47,32 +47,27 @@ module BetterTogether
 
       class Scope < RequestPolicy::Scope # rubocop:todo Style/Documentation
         def resolve
-          return scope.where(type: 'BetterTogether::Joatu::MembershipRequest') if permitted_to?('manage_platform')
+          membership_request_scope = scope.where(type: 'BetterTogether::Joatu::MembershipRequest')
+          return membership_request_scope if permitted_to?('manage_platform')
+          return membership_request_scope.where(creator_id: nil) unless user.present?
 
-          # Unauthenticated submitters have no user session; return records with no
-          # creator so JSONAPI can render the newly created record back to them.
-          return scope.where(type: 'BetterTogether::Joatu::MembershipRequest', creator_id: nil) unless user.present?
-
-          # Community managers can see requests targeting their communities.
-          managed_community_ids = managed_community_ids_for(agent)
-          if managed_community_ids.any?
-            return scope.where(
-              type: 'BetterTogether::Joatu::MembershipRequest'
-            ).where(
-              'creator_id = ? OR (target_type = ? AND target_id IN (?))',
-              agent.id,
-              'BetterTogether::Community',
-              managed_community_ids
-            )
-          end
-
-          scope.where(
-            type: 'BetterTogether::Joatu::MembershipRequest',
-            creator_id: agent&.id
-          )
+          community_manager_scope(membership_request_scope) ||
+            membership_request_scope.where(creator_id: agent&.id)
         end
 
         private
+
+        def community_manager_scope(base)
+          managed_ids = managed_community_ids_for(agent)
+          return nil unless managed_ids.any?
+
+          base.where(
+            'creator_id = ? OR (target_type = ? AND target_id IN (?))',
+            agent.id,
+            'BetterTogether::Community',
+            managed_ids
+          )
+        end
 
         def managed_community_ids_for(person)
           return [] unless person.present?

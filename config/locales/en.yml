@@ -1538,6 +1538,7 @@ en:
       index:
         empty: No membership requests at this time.
         title: Membership Requests
+      name: 'Membership request from %{requestor}'
       new:
         heading: Request Membership
         intro: 'Fill in the form below to request membership. We''ll be in touch!'

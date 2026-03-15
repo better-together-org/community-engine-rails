@@ -73,7 +73,7 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
       before { post url, params: invalid_payload, headers: jsonapi_headers }
 
       it 'returns 422 unprocessable entity' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -97,7 +97,7 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
       before { post url, params: bad_email_payload, headers: jsonapi_headers }
 
       it 'returns 422 unprocessable entity' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -122,7 +122,7 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
       before { post url, params: platform_payload, headers: jsonapi_headers }
 
       it 'returns 422 unprocessable entity' do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

@@ -69,7 +69,7 @@ module BetterTogether
       describe '#after_agreement_acceptance!' do
         let(:community) { create(:better_together_community) }
         let(:approver) { create(:better_together_person) }
-        let(:offer) { instance_double('BetterTogether::Joatu::Offer', creator: approver) }
+        let(:offer) { instance_double(BetterTogether::Joatu::Offer, creator: approver) }
         let(:community_role) do
           BetterTogether::Role.find_by(identifier: 'community_member') ||
             create(:better_together_role,
@@ -99,6 +99,7 @@ module BetterTogether
 
         context 'authenticated path (with creator)' do
           let(:person) { create(:better_together_person) }
+
           subject(:mr) do
             create(:better_together_joatu_membership_request, :with_creator,
                    creator: person, target: community)
