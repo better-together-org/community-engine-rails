@@ -59,7 +59,8 @@ module BetterTogether
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
       "#{root}/app/tools",
-      "#{root}/app/resources"
+      "#{root}/app/resources",
+      "#{root}/app/middleware"
     ]
     # Add routes directory to paths for draw() method
     config.paths['config/routes.rb'] = 'config/routes.rb'
@@ -96,6 +97,13 @@ module BetterTogether
 
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
+    end
+
+    # Insert PlatformContextMiddleware early in the stack so Current.platform
+    # is resolved for all requests — web, JSONAPI, and MCP — before any
+    # controller action runs.
+    initializer 'better_together.platform_context_middleware' do |app|
+      app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
     initializer 'better_together.action_mailer' do |app|
