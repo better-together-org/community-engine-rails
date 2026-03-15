@@ -223,6 +223,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               put :resend
             end
           end
+          resources :membership_requests, only: %i[index show destroy],
+                                          controller: 'platform_membership_requests'
         end
 
         get 'settings', to: 'settings#index'

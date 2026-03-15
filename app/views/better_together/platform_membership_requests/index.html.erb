@@ -1,0 +1,57 @@
+<%# app/views/better_together/platform_membership_requests/index.html.erb %>
+
+<%= turbo_frame_tag "membership_requests_content" do %>
+  <div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h3 mb-0">
+        <%= t('better_together.membership_requests.index.title', default: 'Membership Requests') %>
+      </h1>
+
+      <%# Status filter tabs %>
+      <div class="btn-group" role="group">
+        <%= link_to t('better_together.membership_requests.filter.open', default: 'Open'),
+                    platform_membership_requests_path(@platform, status: 'open'),
+                    class: "btn btn-sm #{ params[:status].blank? || params[:status] == 'open' ? 'btn-primary' : 'btn-outline-primary' }" %>
+        <%= link_to t('better_together.membership_requests.filter.all', default: 'All'),
+                    platform_membership_requests_path(@platform, status: ''),
+                    class: "btn btn-sm #{ params[:status] == '' ? 'btn-primary' : 'btn-outline-primary' }" %>
+        <%= link_to t('better_together.membership_requests.filter.fulfilled', default: 'Fulfilled'),
+                    platform_membership_requests_path(@platform, status: 'fulfilled'),
+                    class: "btn btn-sm #{ params[:status] == 'fulfilled' ? 'btn-primary' : 'btn-outline-primary' }" %>
+        <%= link_to t('better_together.membership_requests.filter.closed', default: 'Declined'),
+                    platform_membership_requests_path(@platform, status: 'closed'),
+                    class: "btn btn-sm #{ params[:status] == 'closed' ? 'btn-primary' : 'btn-outline-primary' }" %>
+      </div>
+    </div>
+
+    <% if @membership_requests.empty? %>
+      <div class="alert alert-info">
+        <%= t('better_together.membership_requests.index.empty',
+              default: 'No membership requests at this time.') %>
+      </div>
+    <% else %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.membership_requests.fields.requestor_name', default: 'Name') %></th>
+              <th scope="col"><%= t('better_together.membership_requests.fields.requestor_email', default: 'Email') %></th>
+              <th scope="col"><%= t('better_together.membership_requests.fields.target', default: 'Community') %></th>
+              <th scope="col"><%= t('better_together.membership_requests.fields.referral_source', default: 'Referral') %></th>
+              <th scope="col"><%= t('better_together.membership_requests.fields.status', default: 'Status') %></th>
+              <th scope="col"><%= t('globals.submitted_at', default: 'Submitted') %></th>
+              <th scope="col" class="text-end"><%= t('globals.actions', default: 'Actions') %></th>
+            </tr>
+          </thead>
+          <tbody id="membership_requests_table_body">
+            <%= render partial: 'membership_request',
+                       collection: @membership_requests,
+                       as: :membership_request %>
+          </tbody>
+        </table>
+      </div>
+
+      <%= paginate @membership_requests %>
+    <% end %>
+  </div>
+<% end %>
