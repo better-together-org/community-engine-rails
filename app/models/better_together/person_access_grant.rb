@@ -37,7 +37,11 @@ module BetterTogether
     validates :grantor_person_id, uniqueness: {
       scope: %i[person_link_id grantee_person_id],
       message: ->(_record, _data) { I18n.t('better_together.person_access_grants.errors.duplicate_grant') }
-    }
+    }, if: :grantee_person_id?
+    validates :remote_grantee_identifier, uniqueness: {
+      scope: %i[person_link_id grantor_person_id],
+      message: ->(_record, _data) { I18n.t('better_together.person_access_grants.errors.duplicate_grant') }
+    }, if: -> { grantee_person_id.nil? && remote_grantee_identifier.present? }
     validate :grantor_must_match_person_link
     validate :grantee_must_match_person_link, if: :grantee_person_id?
     validate :grantee_or_remote_identifier_present

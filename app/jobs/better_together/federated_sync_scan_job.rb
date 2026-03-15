@@ -26,7 +26,9 @@ module BetterTogether
           )
         end
       ensure
-        Sidekiq.redis { |r| r.del(LOCK_KEY) }
+        # Only release the lock if we still own it — avoids releasing a lock acquired
+        # by a later job when our own lock naturally expired during a long run.
+        release_lock_if_owner
       end
     end
 
@@ -38,6 +40,22 @@ module BetterTogether
                                           .not_syncing
                                           .where("settings->>'content_sharing_policy' IN (?)",
                                                  %w[mirror_network_feed mirrored_publish_back])
+    end
+
+    # Atomically release the Redis lock only if this job still owns it.
+    # Uses a Lua script so the check-and-delete is a single atomic operation,
+    # preventing a TOCTOU race between reading the owner and deleting the key.
+    RELEASE_LOCK_SCRIPT = <<~LUA
+      if redis.call("get", KEYS[1]) == ARGV[1] then
+        return redis.call("del", KEYS[1])
+      else
+        return 0
+      end
+    LUA
+    private_constant :RELEASE_LOCK_SCRIPT
+
+    def release_lock_if_owner
+      Sidekiq.redis { |r| r.eval(RELEASE_LOCK_SCRIPT, keys: [LOCK_KEY], argv: [job_id]) }
     end
   end
 end

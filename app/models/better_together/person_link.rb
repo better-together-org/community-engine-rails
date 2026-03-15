@@ -34,7 +34,11 @@ module BetterTogether
     validates :source_person_id, uniqueness: {
       scope: %i[platform_connection_id target_person_id],
       message: ->(_record, _data) { I18n.t('better_together.person_links.errors.duplicate_link') }
-    }
+    }, if: :target_person_id?
+    validates :remote_target_identifier, uniqueness: {
+      scope: %i[platform_connection_id source_person_id],
+      message: ->(_record, _data) { I18n.t('better_together.person_links.errors.duplicate_link') }
+    }, if: -> { target_person_id.nil? && remote_target_identifier.present? }
     validate :target_or_remote_identifier_present
     validate :source_person_must_belong_to_source_platform
     validate :target_person_must_belong_to_target_platform, if: :target_person_id?
