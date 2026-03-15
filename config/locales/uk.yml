@@ -1588,8 +1588,6 @@ uk:
         request: Request
       you: You
     joatu_mailer:
-      new_match:
-        subject: 'Нова відповідність Joatu'
       agreement_created:
         greeting: Hello %{recipient_name},
         message_intro: An agreement has been created between "%{offer_name}" and "%{request_name}".
@@ -1600,6 +1598,8 @@ uk:
           Best regards,<br />
           The %{platform} Team
         subject: A new agreement was created
+      new_match:
+        subject: Нова відповідність Joatu
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...

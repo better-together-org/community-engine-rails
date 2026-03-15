@@ -1874,7 +1874,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
     t.datetime "seen_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "platform_id"
     t.index ["event_id"], name: "index_noticed_notifications_on_event_id"
+    t.index ["platform_id"], name: "index_noticed_notifications_on_platform_id"
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
@@ -2078,6 +2080,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
   add_foreign_key "better_together_wizard_steps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "wizard_step_definition_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id"
+  add_foreign_key "noticed_notifications", "better_together_platforms", column: "platform_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
 end

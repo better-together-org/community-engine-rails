@@ -103,6 +103,7 @@ module BetterTogether
     # is resolved for all requests — web, JSONAPI, and MCP — before any
     # controller action runs.
     initializer 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/platform_context_middleware').to_s
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 

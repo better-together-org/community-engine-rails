@@ -9,22 +9,16 @@ module BetterTogether
     before_action :disallow_robots
 
     def index
-      @notifications = helpers.current_person.notifications.includes(event: :record).order(created_at: :desc)
-      @unread_count = helpers.current_person.notifications.unread.size
+      @notifications = helpers.platform_notifications.includes(event: :record).order(created_at: :desc)
+      @unread_count = helpers.platform_notifications.unread.size
     end
 
     def dropdown # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Get basic info needed for cache key (minimal queries)
-      max_updated_at = helpers.current_person.notifications.maximum(:updated_at)
-      unread_count = helpers.current_person.notifications.unread.size
-      total_count = helpers.current_person.notifications.size
+      max_updated_at = helpers.platform_notifications.maximum(:updated_at)
+      unread_count = helpers.platform_notifications.unread.size
+      total_count = helpers.platform_notifications.size
 
-      # Include platform ID so multi-tenant deployments get separate dropdown caches
-      # per platform. Without this, two platforms on the same instance share a cache
-      # entry for the same person. NOTE: the notification *queries* above are not yet
-      # platform-scoped (noticed_notifications has no platform_id column); that requires
-      # a follow-up join through noticed_events.record → platform. The key isolation
-      # here prevents serving the wrong platform's cached HTML.
       platform_id = ::BetterTogether::Current.platform&.id
 
       # Total count ensures cache invalidation when notifications are deleted

@@ -1589,8 +1589,6 @@ es:
         request: Request
       you: You
     joatu_mailer:
-      new_match:
-        subject: 'Nueva coincidencia de Joatu'
       agreement_created:
         greeting: Hola %{recipient_name},
         message_intro: Se ha creado un acuerdo entre "%{offer_name}" y "%{request_name}".
@@ -1601,6 +1599,8 @@ es:
           Saludos cordiales,<br />
           El equipo de %{platform}
         subject: Se ha creado un nuevo acuerdo
+      new_match:
+        subject: Nueva coincidencia de Joatu
     labelable:
       custom-label-placeholder: Tu etiqueta personalizada
     loading: Cargando...

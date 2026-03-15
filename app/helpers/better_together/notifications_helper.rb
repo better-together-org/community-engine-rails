@@ -19,11 +19,25 @@ module BetterTogether
     def unread_notification_count
       return unless current_person
 
-      current_person.notifications.unread.size
+      platform_notifications.unread.size
     end
 
     def recent_notifications
-      current_person.notifications.joins(:event).order(created_at: :desc).limit(5)
+      platform_notifications.joins(:event).order(created_at: :desc).limit(5)
+    end
+
+    private
+
+    # Returns the notification scope for the current person restricted to the
+    # current platform. When platform_id is nil (no column match) OR when
+    # Current.platform is nil (host-only instance), returns all notifications
+    # so nothing is silently hidden.
+    def platform_notifications
+      scope = current_person.notifications
+      platform_id = Current.platform&.id
+      return scope if platform_id.blank?
+
+      scope.where(platform_id: [platform_id, nil])
     end
 
     # Fragment cache key for notification types
