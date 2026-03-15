@@ -30,6 +30,7 @@ module BetterTogether
     member joinable_type: 'community', member_type: 'person', dependent: :destroy
 
     has_many :conversation_participants, dependent: :destroy
+    has_many :one_time_prekeys, dependent: :destroy, class_name: 'BetterTogether::OneTimePrekey'
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
 
