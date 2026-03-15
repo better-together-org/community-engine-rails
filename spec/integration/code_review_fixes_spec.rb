@@ -499,11 +499,15 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
       end
 
       it 'uses sanitize_like in SearchPostsTool LIKE patterns' do
-        source = File.read(
+        posts_source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_posts_tool.rb')
         )
-        expect(source).not_to match(/%#\{query\}%/)
-        expect(source).to include('sanitize_like')
+        shared_source = File.read(
+          Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'application_tool.rb')
+        )
+        expect(posts_source).not_to match(/%#\{query\}%/)
+        # sanitize_like lives in the shared AREL helper in ApplicationTool
+        expect(shared_source).to include('sanitize_like')
       end
     end
 

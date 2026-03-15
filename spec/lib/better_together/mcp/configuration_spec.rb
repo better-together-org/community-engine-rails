@@ -11,7 +11,7 @@ RSpec.describe BetterTogether::Mcp, type: :model do # rubocop:disable RSpec/Spec
       end
 
       it 'mounts MCP routes' do
-        pending 'MCP routes not yet mounted'
+        skip 'MCP routes not yet mounted'
         expect(Rails.application.routes.recognize_path('/mcp/messages', method: :post)).to include(controller: 'mcp/messages')
       end
     end

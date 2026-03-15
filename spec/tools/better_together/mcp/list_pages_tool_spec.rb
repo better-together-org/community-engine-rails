@@ -56,6 +56,36 @@ RSpec.describe BetterTogether::Mcp::ListPagesTool, type: :model do
       expect(result.length).to be <= 2
     end
 
+    describe 'topic_slug filtering' do
+      let!(:employment_category) { create(:category, identifier: 'employment') }
+      let!(:tagged_page) { create(:better_together_page, :published_public) }
+      let!(:other_page)  { create(:better_together_page, :published_public) }
+
+      before do
+        BetterTogether::Categorization.create!(
+          category: employment_category,
+          categorizable: tagged_page
+        )
+      end
+
+      it 'returns only pages tagged with the given topic identifier' do
+        tool = described_class.new
+        result = JSON.parse(tool.call(topic_slug: 'employment'))
+
+        ids = result.map { |p| p['id'] }
+        expect(ids).to include(tagged_page.id)
+        expect(ids).not_to include(other_page.id)
+      end
+
+      it 'returns all pages when topic_slug is not provided' do
+        tool = described_class.new
+        result = JSON.parse(tool.call)
+
+        ids = result.map { |p| p['id'] }
+        expect(ids).to include(tagged_page.id, other_page.id)
+      end
+    end
+
     context 'when not authenticated' do
       before { stub_mcp_request_for(described_class, user: nil) }
 

@@ -1,0 +1,34 @@
+<% content_for :page_title, t('better_together.reports.index.title') %>
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0"><%= t('better_together.reports.index.title') %></h1>
+    <%= link_to t('better_together.reports.index.new'),
+                new_report_path(locale: I18n.locale),
+                class: 'btn btn-outline-danger' %>
+  </div>
+
+  <% if @reports.any? %>
+    <div class="list-group shadow-sm">
+      <% @reports.each do |report| %>
+        <%= link_to report_path(report, locale: I18n.locale),
+                    class: 'list-group-item list-group-item-action' do %>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-semibold"><%= safety_enum_label('report_categories', report.category) %></div>
+              <div class="small text-muted"><%= truncate(report.reason, length: 110) %></div>
+            </div>
+            <div class="text-end">
+              <span class="badge text-bg-secondary"><%= safety_enum_label('reporter_visible_statuses', report.safety_case&.reporter_visible_status || report.case_status) %></span>
+              <div class="small text-muted mt-1"><%= l(report.created_at, format: :long) %></div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-light border">
+      <%= t('better_together.reports.index.empty') %>
+    </div>
+  <% end %>
+</div>

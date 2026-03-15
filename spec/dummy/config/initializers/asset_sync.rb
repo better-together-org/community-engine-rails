@@ -30,8 +30,11 @@ if defined?(AssetSync)
     config.include_manifest = true
     # config.remote_file_list_cache_file_path = './.asset_sync_remote_file_list_cache.json'
     # config.remote_file_list_remote_path = '/remote/asset_sync_remote_file.json'
-    # config.fail_silently = true
     config.log_silently = true
     config.concurrent_uploads = true
+
+    # When S3 credentials are absent (e.g. staging with disk storage, or asset
+    # precompile during a Docker build), skip the sync instead of aborting.
+    config.fail_silently = true unless config.fog_directory.present? && config.aws_access_key_id.present?
   end
 end

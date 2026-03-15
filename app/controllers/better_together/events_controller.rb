@@ -184,7 +184,7 @@ module BetterTogether
       invitation_token = params[:invitation_token] || session[:event_invitation_token]
       self.current_invitation_token = invitation_token
 
-      super
+      super.includes(:categories)
     end
 
     # Override the parent's authorize_resource method to include invitation token context
