@@ -35,6 +35,10 @@ module BetterTogether
     end
 
     class_methods do
+      def global_searchable?
+        true
+      end
+
       def default_elasticsearch_index # rubocop:todo Metrics/MethodLength
         {
           number_of_shards: 1,
@@ -60,7 +64,10 @@ module BetterTogether
 
     def self.included_in_models
       Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
-      ActiveRecord::Base.descendants.select { |model| model.include?(BetterTogether::Searchable) }
+      ActiveRecord::Base.descendants.select do |model|
+        model.included_modules.include?(BetterTogether::Searchable) &&
+          (!model.respond_to?(:global_searchable?) || model.global_searchable?)
+      end
     end
 
     private

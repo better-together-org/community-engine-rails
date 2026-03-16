@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
-  module Ics
+module BetterTogether # :nodoc:
+  module Ics # :nodoc:
     RSpec.describe Generator do
       include ActiveSupport::Testing::TimeHelpers
 

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:disable Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe CallForInterest do
     describe 'factory' do
       it 'creates a valid call for interest' do

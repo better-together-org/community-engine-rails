@@ -27,6 +27,7 @@ RSpec.describe 'layouts/better_together/turbo_native' do
       request: double(original_url: 'http://test.host/current')
     )
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
+    allow(view).to receive(:base_url).and_return('http://test.host')
   end
 
   it 'renders canonical and hreflang links by default' do

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module SeedHelper
+# Ensures essential seed data is loaded before specs that require it.
+module SeedHelper # :nodoc:
   # Ensures essential seed data is available for tests
   def self.ensure_seeded!
     return if @seeded && essential_data_exists?
@@ -39,6 +40,13 @@ module SeedHelper
 
     # Create essential roles if they don't exist
     unless BetterTogether::Role.exists?
+      BetterTogether::Role.create!(
+        identifier: 'platform_steward',
+        name: 'Platform Steward',
+        resource_type: 'BetterTogether::Platform',
+        lock_version: 0
+      )
+
       BetterTogether::Role.create!(
         identifier: 'platform_manager',
         name: 'Platform Manager',

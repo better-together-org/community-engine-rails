@@ -15,7 +15,7 @@ module BetterTogether
       def update?
         return false unless user.present?
 
-        permitted_to?('manage_platform') || record.creator_id == agent&.id
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || record.creator_id == agent&.id
       end
       alias edit? update?
 
@@ -25,8 +25,8 @@ module BetterTogether
         # Prevent destroy if there are any agreements for this offer — applies to everyone
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
-        # Platform managers or the creator may destroy when there are no agreements
-        permitted_to?('manage_platform') || record.creator_id == agent&.id
+        # Platform stewards or the creator may destroy when there are no agreements
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || record.creator_id == agent&.id
       end
 
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
@@ -35,8 +35,8 @@ module BetterTogether
           # For now, allow authenticated users to see all offers.
           return scope.none unless user.present?
 
-          # Platform managers see everything
-          return scope.all if permitted_to?('manage_platform')
+          # Platform stewards see everything
+          return scope.all if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
 
           agent_id = agent&.id
 

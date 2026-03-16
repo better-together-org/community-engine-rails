@@ -20,6 +20,8 @@ module BetterTogether
 
     categorizable
 
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+
     translates :title, type: :string
     alias name title
     translates :content, backend: :action_text
@@ -33,12 +35,38 @@ module BetterTogether
 
     validates :content,
               presence: true
+    validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+
+    before_validation :assign_current_platform_if_available
 
     # Automatically grant the post creator an authorship record
     after_create :add_creator_as_author
 
     def to_s
       title
+    end
+
+    def mirrored?
+      source_id.present? || platform_id.present?
+    end
+
+    def preserved_remote_uuid?
+      source_id.blank? && platform_id.present?
+    end
+
+    def source_identifier
+      source_id.presence || id
+    end
+
+    def local_to_platform?(local_platform = Current.platform)
+      return true if platform_id.blank?
+      return false unless local_platform
+
+      platform_id == local_platform.id
+    end
+
+    def remote_to_platform?(local_platform = Current.platform)
+      mirrored? && !local_to_platform?(local_platform)
     end
 
     configure_attachment_cleanup
@@ -59,6 +87,14 @@ module BetterTogether
       return unless respond_to?(:creator_id) && creator_id.present?
 
       authorships.find_or_create_by(author_id: creator_id)
+    end
+
+    def assign_current_platform_if_available
+      return unless has_attribute?(:platform_id)
+      return if platform_id.present?
+      return unless Current.platform
+
+      self.platform = Current.platform
     end
   end
 end

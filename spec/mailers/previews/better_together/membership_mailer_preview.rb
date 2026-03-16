@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterTogether
+module BetterTogether # :nodoc:
   # Preview at /rails/mailers/better_together/membership_mailer
   class MembershipMailerPreview < ActionMailer::Preview # rubocop:todo Metrics/ClassLength
     include FactoryBot::Syntax::Methods

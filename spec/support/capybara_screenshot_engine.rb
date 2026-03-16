@@ -4,10 +4,10 @@ require 'capybara'
 require 'fileutils'
 require 'json'
 
-module BetterTogether
+module BetterTogether # :nodoc:
   # Captures deterministic desktop and mobile screenshots for documentation specs.
   # rubocop:disable Metrics/ModuleLength
-  module CapybaraScreenshotEngine
+  module CapybaraScreenshotEngine # :nodoc:
     extend self
 
     SCREENSHOT_ROOT = BetterTogether::Engine.root.join('docs', 'screenshots').freeze

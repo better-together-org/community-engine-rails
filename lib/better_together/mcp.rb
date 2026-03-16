@@ -5,7 +5,11 @@ module BetterTogether # rubocop:disable Style/Documentation
   # so this file must define BetterTogether::Mcp as the explicit namespace.
   module Mcp # rubocop:disable Style/Documentation
   end
+end
 
+require 'better_together/mcp/pundit_context'
+
+module BetterTogether # rubocop:disable Style/Documentation
   # MCP Server instance accessor
   # @return [FastMcp::Server] The MCP server instance
   def self.mcp_server

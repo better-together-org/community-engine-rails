@@ -48,6 +48,26 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
           locale: locale.to_s
         )
       end
+
+      it 'filters private linked seed models out of the global search set' do
+        allow(BetterTogether::Searchable).to receive(:included_in_models).and_return([
+                                                                                       BetterTogether::Post,
+                                                                                       BetterTogether::PersonLinkedSeed
+                                                                                     ])
+
+        expect(Elasticsearch::Model).to receive(:search) do |_query, models|
+          expect(models).to contain_exactly(BetterTogether::Post)
+
+          double(
+            records: double(to_a: []),
+            response: { 'suggest' => { 'suggestions' => [] } }
+          )
+        end
+
+        get better_together.search_path(locale:), params: { q: 'test query' }
+
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     context 'when query parameter is blank' do

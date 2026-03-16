@@ -12,7 +12,7 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe Metrics::SharesHelper do
     it 'exists' do
       expect(described_class).to be # rubocop:todo RSpec/Be

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module BetterTogether
+# FactoryBot factories for BetterTogether models.
+module BetterTogether # :nodoc:
   FactoryBot.define do
     sequence(:post_title) { |n| "Sample Post #{n}" }
     sequence(:post_identifier) { |n| "sample-post-#{n}" }

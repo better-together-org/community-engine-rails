@@ -130,12 +130,13 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
         expect(platform_manager_token).to be_present
         expect(platform_manager_user.permitted_to?('manage_platform')).to be(true)
 
-        platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        expect(platform_manager_role).to be_present
+        platform_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                        BetterTogether::Role.find_by(identifier: 'platform_manager')
+        expect(platform_role).to be_present
         expect(
           BetterTogether::PersonPlatformMembership.exists?(
             member: platform_manager_user.person,
-            role: platform_manager_role
+            role: platform_role
           )
         ).to be(true)
 

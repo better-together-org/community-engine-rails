@@ -20,7 +20,7 @@ module BetterTogether
              .joins(person_community_memberships: { role: { role_resource_permissions: :resource_permission } })
              .where(
                better_together_person_community_memberships: { member_id: agent.id },
-               better_together_resource_permissions: { identifier: 'invite_community_members' }
+               better_together_resource_permissions: { identifier: %w[invite_community_members manage_community_members manage_community_roles] }
              )
       end
     end
@@ -34,8 +34,10 @@ module BetterTogether
       # Platform managers may act across communities
       return true if permitted_to?('manage_platform')
 
-      # Check for specific invite_community_members permission on this community
-      permitted_to?('invite_community_members', community)
+      # Check for specific community-scoped permissions
+      permitted_to?('invite_community_members', community) ||
+        permitted_to?('manage_community_members', community) ||
+        permitted_to?('manage_community_roles', community)
     end
   end
 end

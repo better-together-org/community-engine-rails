@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe Event do
     subject(:event) { build(:event) }
 
@@ -11,6 +11,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to accept_nested_attributes_for(:location) }
       it { is_expected.to have_many(:event_attendances).dependent(:destroy) }
       it { is_expected.to have_many(:attendees).through(:event_attendances).source(:person) }
+      it { is_expected.to belong_to(:platform).optional }
     end
 
     describe 'validations' do
@@ -46,6 +47,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           expect(event).not_to be_valid
         end
       end
+
+      it { is_expected.to validate_uniqueness_of(:source_id).scoped_to(:platform_id).allow_blank }
     end
 
     describe 'scopes' do
@@ -426,6 +429,56 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           event.valid? # Trigger validation which runs set_host callback
           expect(event.event_hosts.map(&:host)).to include(event.creator)
         end
+      end
+    end
+
+    describe 'federation provenance' do
+      let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
+      let(:remote_platform) { create(:better_together_platform) }
+
+      around do |example|
+        previous_platform = Current.platform
+        Current.platform = local_platform
+        example.run
+        Current.platform = previous_platform
+      end
+
+      it 'assigns the current platform by default' do
+        event.valid?
+
+        expect(event.platform).to eq(local_platform)
+      end
+
+      it 'treats a current-platform event as local' do
+        event.valid?
+
+        expect(event).to be_local_to_platform(local_platform)
+        expect(event).not_to be_remote_to_platform(local_platform)
+      end
+
+      it 'treats a sourced event from another platform as mirrored' do
+        mirrored_event = build(
+          :event,
+          platform: remote_platform,
+          source_id: 'remote-event-1'
+        )
+
+        expect(mirrored_event).to be_mirrored
+        expect(mirrored_event).to be_remote_to_platform(local_platform)
+        expect(mirrored_event.source_identifier).to eq('remote-event-1')
+      end
+
+      it 'treats a CE UUID-preserved event as mirrored without a source_id' do
+        mirrored_event = build(
+          :event,
+          id: SecureRandom.uuid,
+          platform: remote_platform,
+          source_id: nil
+        )
+
+        expect(mirrored_event).to be_mirrored
+        expect(mirrored_event).to be_preserved_remote_uuid
+        expect(mirrored_event.source_identifier).to eq(mirrored_event.id)
       end
     end
 

@@ -13,15 +13,15 @@ module BetterTogether
     end
 
     def create?
-      permitted_to?('manage_platform')
+      platform_checklist_manager?
     end
 
     def update?
-      permitted_to?('manage_platform') || (agent.present? && record.creator == agent)
+      platform_checklist_manager? || (agent.present? && record.creator == agent)
     end
 
     def destroy?
-      permitted_to?('manage_platform') && !record.protected?
+      platform_checklist_manager? && !record.protected?
     end
 
     def completion_status?
@@ -37,7 +37,7 @@ module BetterTogether
         if scope.ancestors.include?(BetterTogether::Privacy)
           query = table[:privacy].eq('public')
 
-          if permitted_to?('manage_platform')
+          if platform_checklist_manager?
             query = query.or(table[:privacy].eq('private'))
           elsif agent
             if scope.ancestors.include?(BetterTogether::Joinable) && scope.membership_class.present?
@@ -59,6 +59,18 @@ module BetterTogether
 
         result
       end
+
+      private
+
+      def platform_checklist_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
+    end
+
+    private
+
+    def platform_checklist_manager?
+      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
     end
   end
 end
