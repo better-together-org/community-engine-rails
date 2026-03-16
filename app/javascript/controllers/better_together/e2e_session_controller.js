@@ -27,7 +27,8 @@ import {
   getAllPreKeys,
   getAllSignedPreKeys,
   exportKeyBackup,
-  importKeyBackup
+  importKeyBackup,
+  clearV1SessionCache
 } from "community_engine_js"
 
 export default class extends Controller {
@@ -37,17 +38,37 @@ export default class extends Controller {
   }
 
   // In-memory wrapping key for silent re-backups during the session.
-  // Set when the user enters their passphrase; cleared on page unload (never persisted).
+  // Set when the user enters their passphrase; cleared on disconnect/unload (never persisted).
   #sessionPassphrase = null
+
+  // Bound beforeunload handler so it can be removed on disconnect.
+  #boundClearCache = null
+
+  // Minimum passphrase length for key backup (V7 defence-in-depth).
+  static MIN_PASSPHRASE_LENGTH = 12
 
   async connect() {
     if (!this.personIdValue) return
+
+    // V11 fix: clear v1 in-memory key cache on page unload so legacy session
+    // keys do not live in the JS heap after the user navigates away or signs out.
+    this.#boundClearCache = () => clearV1SessionCache()
+    window.addEventListener('beforeunload', this.#boundClearCache)
 
     try {
       await this.ensureKeysReady()
     } catch (err) {
       console.error('[E2E] Key setup error:', err)
     }
+  }
+
+  disconnect() {
+    clearV1SessionCache()
+    if (this.#boundClearCache) {
+      window.removeEventListener('beforeunload', this.#boundClearCache)
+      this.#boundClearCache = null
+    }
+    this.#sessionPassphrase = null
   }
 
   async ensureKeysReady() {
@@ -181,17 +202,29 @@ export default class extends Controller {
   // ── UI prompts (override in subclass or replace with a modal library) ─────────
 
   async #promptPassphraseForBackup() {
-    // TODO: replace with a proper modal — window.prompt is synchronous and blocks.
+    // TODO: replace with a proper modal — window.prompt is synchronous and blocks
+    // and exposes the passphrase to autocomplete history.
+    const min = this.constructor.MIN_PASSPHRASE_LENGTH
     const msg = [
       'Set a backup passphrase for your encryption keys.',
       '',
       'This passphrase encrypts your keys so they can be restored on other devices.',
       'If you forget it, encrypted messages will be permanently inaccessible.',
       '',
+      `Passphrase must be at least ${min} characters.`,
       'Leave blank to skip backup (not recommended).'
     ].join('\n')
-    const passphrase = window.prompt(msg)  // eslint-disable-line no-alert
-    return passphrase?.trim() || null
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const raw = window.prompt(msg)  // eslint-disable-line no-alert
+      if (raw === null || raw.trim() === '') return null  // user cancelled or skipped
+      const trimmed = raw.trim()
+      if (trimmed.length >= min) return trimmed
+      window.alert(  // eslint-disable-line no-alert
+        `Passphrase must be at least ${min} characters. Please try again.`
+      )
+    }
   }
 
   async #promptPassphraseForRestore() {

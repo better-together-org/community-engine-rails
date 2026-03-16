@@ -36,6 +36,12 @@ export default class extends Controller {
     }
   }
 
+  // V7 fix: clear plaintext from DOM when the controller disconnects so
+  // decrypted message content does not linger for the page lifetime.
+  disconnect() {
+    this.element.textContent = ''
+  }
+
   async #decrypt(payload) {
     if (payload.type === 'signal_v1') {
       return decryptMessage(this.senderPersonIdValue, payload.envelope)
