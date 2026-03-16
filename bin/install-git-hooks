@@ -10,7 +10,7 @@
 set -euo pipefail
 
 HOOK_DIR="$(git rev-parse --show-toplevel)/bin/git-hooks"
-GIT_HOOK_DIR="$(git rev-parse --git-dir)/hooks"
+GIT_HOOK_DIR="$(git rev-parse --git-common-dir)/hooks"
 
 for hook in "$HOOK_DIR"/*; do
   hook_name=$(basename "$hook")
