@@ -36,11 +36,9 @@ module BetterTogether
         # Gated to conversation members only.
         # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         def participant_prekey_bundles
+          @policy_used = true  # satisfy Pundit::ResourceController#enforce_policy_use
           conversation = BetterTogether::Conversation.find(params[:id])
-
-          unless conversation.participants.exists?(current_user&.person&.id)
-            return render json: { error: 'Not found' }, status: :not_found
-          end
+          authorize conversation, :show?  # consistent Pundit check for participant membership
 
           bundles = conversation.participants.map do |person|
             next nil unless person.identity_key_public.present?
@@ -65,6 +63,8 @@ module BetterTogether
           end.compact
 
           render json: { data: bundles }
+        rescue Pundit::NotAuthorizedError, ActiveRecord::RecordNotFound
+          render json: { error: 'Not found' }, status: :not_found
         end
         # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
