@@ -30,7 +30,7 @@ module BetterTogether
         end
 
         def self.creatable_fields(_context)
-          %i[requestor_name requestor_email referral_source target_type target_id description]
+          %i[name requestor_name requestor_email referral_source target_type target_id description]
         end
 
         def self.updatable_fields(_context)

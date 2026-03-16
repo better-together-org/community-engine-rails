@@ -17,9 +17,9 @@ RSpec.describe BetterTogether::Mcp::PunditIntegration do
     context 'with HTTP headers from fast-mcp' do
       let(:headers) do
         {
-          'HTTP_HOST' => 'localhost',
-          'HTTP_USER_AGENT' => 'test-agent',
-          'HTTP_COOKIE' => '_session_id=abc123'
+          'host' => 'localhost',
+          'user-agent' => 'test-agent',
+          'cookie' => '_session_id=abc123'
         }
       end
       let(:tool) { tool_class.new(headers: headers) }
