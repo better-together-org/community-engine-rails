@@ -24,9 +24,10 @@ import {
 export default class extends Controller {
   static targets = ["content", "status"]
   static values = {
-    conversationId: String,
-    personId:       String,
-    baseUrl:        { type: String, default: '' }
+    conversationId:    String,
+    personId:         String,
+    baseUrl:          { type: String, default: '' },
+    senderKeyVersion: { type: Number, default: -1 }   // -1 = not yet initialised
   }
 
   // Participant bundles fetched on connect, keyed by personId
@@ -44,6 +45,16 @@ export default class extends Controller {
       console.error('[E2E Form] Session setup error:', err)
       this.#setStatus('error')
     }
+  }
+
+  // Called by Stimulus whenever the senderKeyVersion data attribute changes.
+  // A version change means a participant was added or removed. Reset key state
+  // so the next group message distributes a fresh sender key to the current
+  // participant set only — removing the departed member's decrypt access.
+  senderKeyVersionValueChanged(newVersion, oldVersion) {
+    if (oldVersion === undefined) return  // initial connect — not a membership event
+    this.#senderKeysReady = false
+    this.#setupSessions()  // re-fetches participant bundles reflecting new membership
   }
 
   disconnect() {

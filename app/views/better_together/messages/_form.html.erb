@@ -1,25 +1,28 @@
 <!-- app/views/messages/_form.html.erb -->
-<%= form_with(model: [conversation, message], local: false,
-    html: {
-      id: "new_message",
-      data: {
-        controller: "better_together--message-form better-together--e2e-message-form",
-        "better-together--e2e-message-form-conversation-id-value": conversation.id,
-        "better-together--e2e-message-form-person-id-value":       current_user&.person&.id
-      }
-    }) do |form| %>
-  <div class="message-box d-flex flex-column">
-    <%= form.rich_text_area :content, class: 'form-control', rows: 1,
-        placeholder: t('better_together.messages.form.placeholder'),
-        required: true,
-        "data-better_together--message-form-target": "content",
-        "data-better-together--e2e-message-form-target": "content" %>
-    <div class="d-flex align-items-center mt-2">
-      <small class="text-muted me-auto"
-        data-better-together--e2e-message-form-target="status"></small>
-      <button class="btn btn-primary ms-2" type="submit">
-        <%= t('better_together.messages.form.send') %> <i class="fas fa-paper-plane"></i>
-      </button>
+<div id="e2e_message_form_<%= conversation.id %>">
+  <%= form_with(model: [conversation, message], local: false,
+      html: {
+        id: "new_message",
+        data: {
+          controller: "better_together--message-form better-together--e2e-message-form",
+          "better-together--e2e-message-form-conversation-id-value": conversation.id,
+          "better-together--e2e-message-form-person-id-value":       current_user&.person&.id,
+          "better-together--e2e-message-form-sender-key-version-value": conversation.sender_key_version
+        }
+      }) do |form| %>
+    <div class="message-box d-flex flex-column">
+      <%= form.rich_text_area :content, class: 'form-control', rows: 1,
+          placeholder: t('better_together.messages.form.placeholder'),
+          required: true,
+          "data-better_together--message-form-target": "content",
+          "data-better-together--e2e-message-form-target": "content" %>
+      <div class="d-flex align-items-center mt-2">
+        <small class="text-muted me-auto"
+          data-better-together--e2e-message-form-target="status"></small>
+        <button class="btn btn-primary ms-2" type="submit">
+          <%= t('better_together.messages.form.send') %> <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>
