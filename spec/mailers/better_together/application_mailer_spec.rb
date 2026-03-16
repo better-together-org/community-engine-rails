@@ -13,18 +13,19 @@ RSpec.describe BetterTogether::ApplicationMailer do
 
   # Test set_locale_and_time_zone and @platform ivar behaviour via AuthorshipMailer,
   # a concrete subclass that renders a template using @platform.name.
+  #
+  # NOTE: `def` methods defined inside `describe` blocks conflict with
+  # ActionMailer::TestHelper's RSpec class-level method registry, raising
+  # WrongScopeError when called from within `it` blocks. Use `let` instead.
   describe '#set_locale_and_time_zone' do
     let(:page)      { create(:better_together_page, title: 'Platform Test Page') }
     let(:recipient) { create(:better_together_person) }
-
-    # Renamed to avoid conflict with ActionMailer's internal `build_mail` method,
-    # which causes RSpec::Core::ExampleGroup::WrongScopeError when called from within examples.
-    def create_test_mail(action: 'added', actor_name: nil)
+    let(:test_mail) do
       BetterTogether::AuthorshipMailer.with(
         page: page,
         recipient: recipient,
-        action: action,
-        actor_name: actor_name
+        action: 'added',
+        actor_name: nil
       ).authorship_changed_notification
     end
 
@@ -32,16 +33,16 @@ RSpec.describe BetterTogether::ApplicationMailer do
       before { configure_host_platform }
 
       it 'sets @platform from find_by(host: true) so templates render without error' do
-        expect { create_test_mail.body.encoded }.not_to raise_error
+        expect { test_mail.body.encoded }.not_to raise_error
       end
 
       it 'includes the host platform name in the rendered body' do
         host_platform = BetterTogether::Platform.find_by(host: true)
-        expect(create_test_mail.body.encoded).to include(host_platform.name)
+        expect(test_mail.body.encoded).to include(host_platform.name)
       end
 
       it 'sets the locale from the platform' do
-        expect { create_test_mail }.not_to raise_error
+        expect { test_mail }.not_to raise_error
       end
     end
 
@@ -55,7 +56,7 @@ RSpec.describe BetterTogether::ApplicationMailer do
       end
 
       it 'prefers Current.platform over the host platform fallback' do
-        expect(create_test_mail.body.encoded).to include(current_platform.name)
+        expect(test_mail.body.encoded).to include(current_platform.name)
       end
     end
 
@@ -81,7 +82,7 @@ RSpec.describe BetterTogether::ApplicationMailer do
         allow(Current).to receive(:platform).and_return(nil)
         # This is the correct fail-loud behaviour: a misconfigured deployment
         # (no host platform seeded) must not silently send broken emails.
-        expect { create_test_mail.body.encoded }.to raise_error(NoMethodError)
+        expect { test_mail.body.encoded }.to raise_error(NoMethodError)
       end
     end
   end
