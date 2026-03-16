@@ -25,7 +25,7 @@ module BetterTogether
           scope: issued.scope
         }
       rescue ArgumentError => e
-        render_oauth_error('invalid_scope', description: e.message, status: :forbidden)
+        render_oauth_error('invalid_scope', description: e.message, status: :bad_request)
       end
 
       private

@@ -21,7 +21,7 @@ module BetterTogether
 
       if @person_access_grant.update(person_access_grant_params)
         redirect_to person_access_grant_path(@person_access_grant),
-                    notice: t('flash.generic.updated', resource: t('resources.agreement', default: 'access grant')),
+                    notice: t('flash.generic.updated', resource: t('resources.person_access_grant', default: 'access grant')),
                     status: :see_other
       else
         render :show, status: :unprocessable_content
@@ -34,7 +34,7 @@ module BetterTogether
       @person_access_grant.revoke!
 
       redirect_to person_access_grant_path(@person_access_grant),
-                  notice: t('flash.generic.updated', resource: t('resources.agreement', default: 'access grant')),
+                  notice: t('flash.generic.updated', resource: t('resources.person_access_grant', default: 'access grant')),
                   status: :see_other
     end
 

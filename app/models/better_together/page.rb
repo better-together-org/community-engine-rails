@@ -160,7 +160,7 @@ module BetterTogether
     end
 
     def preserved_remote_uuid?
-      source_id.blank? && platform_id.present?
+      source_id.present?
     end
 
     def source_identifier

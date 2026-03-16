@@ -22,7 +22,7 @@ module BetterTogether
       platform_id = ::Current.platform&.id
 
       # Total count ensures cache invalidation when notifications are deleted
-      cache_key = "notifications_dropdown/#{platform_id}/#{helpers.current_person.id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"
+      cache_key = "notifications_dropdown/#{helpers.current_person.id}/#{platform_id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"
 
       cached_content = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
         # Only fetch detailed data when cache misses

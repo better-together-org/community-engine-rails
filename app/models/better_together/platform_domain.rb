@@ -29,7 +29,11 @@ module BetterTogether
     end
 
     def url
-      scheme = URI.parse(platform.host_url).scheme.presence || 'https'
+      scheme = begin
+        URI.parse(platform.host_url.to_s).scheme.presence
+      rescue URI::InvalidURIError
+        nil
+      end || 'https'
       "#{scheme}://#{hostname}"
     end
 

@@ -26,7 +26,7 @@ module BetterTogether
       @person_link.revoke!
 
       redirect_to person_link_path(@person_link),
-                  notice: t('flash.generic.updated', resource: t('resources.agreement', default: 'person link')),
+                  notice: t('flash.generic.updated', resource: t('resources.person_link', default: 'person link')),
                   status: :see_other
     end
 

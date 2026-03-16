@@ -3648,7 +3648,8 @@ en:
     navigation_area: Navigation area
     page: Page
     person: Person
-    person_platform_membership: Person platform membership
+    person_access_grant: Person access grant
+    person_link: Person link
     platform: Platform
     profile: Profile
     region: Region

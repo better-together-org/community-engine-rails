@@ -27,8 +27,9 @@ module BetterTogether
     end
 
     # Returns the notification scope for the current person restricted to the
-    # current platform. When platform_id is nil (no column match) OR when
-    # Current.platform is nil (host-only instance), returns all notifications
+    # Scopes notifications to those belonging to the current platform (or
+    # unscoped when no platform is active). When Current.platform is nil
+    # (host-only instance with no platform context), returns all notifications
     # so nothing is silently hidden.
     def platform_notifications
       scope = current_person.notifications

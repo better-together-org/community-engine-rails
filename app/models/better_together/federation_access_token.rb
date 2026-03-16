@@ -44,6 +44,8 @@ module BetterTogether
     end
 
     def touch_last_used!
+      return if last_used_at.present? && last_used_at > 1.minute.ago
+
       update_column(:last_used_at, Time.current)
     end
 

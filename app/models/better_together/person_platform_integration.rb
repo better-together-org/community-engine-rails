@@ -207,9 +207,10 @@ module BetterTogether
     # Clear notification dropdown cache when integration is destroyed
     # This ensures deleted notifications are immediately reflected in the UI
     def clear_notification_caches
-      # Clear dropdown caches for this person across all platforms (pattern includes
-      # platform_id as prefix since notifications_dropdown/#{platform_id}/#{person_id}/...)
-      Rails.cache.delete_matched("notifications_dropdown/*/#{person.id}/*")
+      # Clear dropdown caches for this person across all platforms.
+      # Key format: notifications_dropdown/#{person_id}/#{platform_id}/... — person-first
+      # so the prefix is exact (no leading wildcard).
+      Rails.cache.delete_matched("notifications_dropdown/#{person.id}/*")
     end
   end
 end
