@@ -2,7 +2,9 @@
 
 <div class="container py-4" style="max-width: 800px;">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <%= link_to "<i class=\"fas fa-arrow-left\"></i> #{t('globals.back', default: 'Back')}".html_safe,
+    <%= link_to safe_join([tag.i('', class: 'fas fa-arrow-left', aria: { hidden: 'true' }),
+                           ' ',
+                           t('globals.back', default: 'Back')]),
                 community_membership_requests_path(@community),
                 class: 'btn btn-outline-secondary btn-sm' %>
 

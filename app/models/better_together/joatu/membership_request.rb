@@ -101,15 +101,16 @@ module BetterTogether
         approving_person = offer&.creator
         locale = I18n.locale.to_s
 
-        ::BetterTogether::CommunityInvitation.create!(
+        ::BetterTogether::CommunityInvitation.find_or_create_by!(
           invitable: target,
-          inviter: approving_person,
-          invitee_email: requestor_email,
-          role: default_community_role,
-          locale: locale,
-          status: 'pending',
-          valid_from: Time.current
-        )
+          invitee_email: requestor_email
+        ) do |invitation|
+          invitation.inviter = approving_person
+          invitation.role = default_community_role
+          invitation.locale = locale
+          invitation.status = 'pending'
+          invitation.valid_from = Time.current
+        end
       end
 
       def create_community_membership!

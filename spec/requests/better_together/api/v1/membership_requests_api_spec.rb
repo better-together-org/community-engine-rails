@@ -17,7 +17,6 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
           requestor_name: 'Alice Example',
           requestor_email: 'alice@example.test',
           referral_source: 'a friend',
-          name: 'Membership request from Alice Example',
           description: 'I would love to join the community and contribute.',
           target_type: 'BetterTogether::Community',
           target_id: community.id
@@ -59,7 +58,6 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
             type: 'membership_requests',
             attributes: {
               requestor_name: 'Bob Example',
-              name: 'Membership request from Bob',
               description: 'I would like to join.',
               target_type: 'BetterTogether::Community',
               target_id: community.id
@@ -83,7 +81,6 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
             attributes: {
               requestor_name: 'Carol Example',
               requestor_email: 'not-valid',
-              name: 'Membership request from Carol',
               description: 'Please let me join.',
               target_type: 'BetterTogether::Community',
               target_id: community.id
@@ -108,7 +105,6 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
             attributes: {
               requestor_name: 'Dave Example',
               requestor_email: 'dave@example.test',
-              name: 'Membership request from Dave',
               description: 'Requesting platform membership.',
               target_type: 'BetterTogether::Platform',
               target_id: platform.id
@@ -133,7 +129,6 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
           data: {
             type: 'membership_requests',
             attributes: {
-              name: 'Membership request',
               description: 'I am an existing user requesting community membership.',
               target_type: 'BetterTogether::Community',
               target_id: community.id

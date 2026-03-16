@@ -49,7 +49,7 @@ module BetterTogether
         def resolve
           membership_request_scope = scope.where(type: 'BetterTogether::Joatu::MembershipRequest')
           return membership_request_scope if permitted_to?('manage_platform')
-          return membership_request_scope.where(creator_id: nil) unless user.present?
+          return scope.none unless user.present?
 
           community_manager_scope(membership_request_scope) ||
             membership_request_scope.where(creator_id: agent&.id)

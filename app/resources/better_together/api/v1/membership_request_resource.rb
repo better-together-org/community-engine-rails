@@ -14,9 +14,16 @@ module BetterTogether
         # Assign creator from the JWT-authenticated user before attribute
         # assignment and before validation run, so unauthenticated? returns the
         # correct answer when the request email validation fires.
+        # Name is auto-generated server-side so callers don't need to supply it.
         def self.create(context)
           resource = super
-          resource._model.creator = context[:current_user]&.person
+          model = resource._model
+          model.creator = context[:current_user]&.person
+          model.name ||= I18n.t(
+            'better_together.membership_requests.name',
+            requestor: model.requestor_name,
+            default: "Membership request from #{model.requestor_name}"
+          )
           resource
         end
 
@@ -30,7 +37,7 @@ module BetterTogether
         end
 
         def self.creatable_fields(_context)
-          %i[name requestor_name requestor_email referral_source target_type target_id description]
+          %i[requestor_name requestor_email referral_source target_type target_id description]
         end
 
         def self.updatable_fields(_context)

@@ -232,8 +232,8 @@ module BetterTogether
     def handle_captcha_validation_failure(resource)
       resource.errors.add(
         :base,
-        I18n.t('better_together.registrations.captcha_validation_failed',
-               default: 'Security verification failed. Please try again.')
+        I18n.t('better_together.membership_requests.captcha_failed',
+               default: 'Captcha verification failed. Please try again.')
       )
     end
   end

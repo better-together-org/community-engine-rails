@@ -52,12 +52,16 @@
                      t('better_together.membership_requests.fields.description', default: 'Message'),
                      class: 'form-label' %>
       <%= form.text_area :description,
-                         class: 'form-control',
-                         rows: 4 %>
+                         class: "form-control #{'is-invalid' if membership_request.errors[:description].any?}",
+                         rows: 4,
+                         required: true %>
       <div class="form-text">
         <%= t('better_together.membership_requests.fields.description_hint',
               default: 'Tell us a bit about yourself and why you would like to join.') %>
       </div>
+      <% membership_request.errors[:description].each do |msg| %>
+        <div class="invalid-feedback"><%= msg %></div>
+      <% end %>
     </div>
 
     <%= form.submit t('globals.submit', default: 'Submit'), class: 'btn btn-primary' %>
