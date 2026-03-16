@@ -20,17 +20,17 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
 
   let(:identity_key)     { Base64.strict_encode64('fake-identity-pub-32bytes--pad!') }
   let(:signed_pub_key)   { Base64.strict_encode64('fake-signed-pub-32bytes---pad!!') }
-  let(:signature)        { Base64.strict_encode64('fake-sig-64bytes-' + ('x' * 47)) }
+  let(:signature)        { Base64.strict_encode64("fake-sig-64bytes-#{'x' * 47}") }
   let(:otk_pub_key)      { Base64.strict_encode64('fake-otk-pub-32bytes------pad!') }
 
   let(:valid_register_params) do
     {
       registration_id: 12_345,
-      identity_key:    identity_key,
+      identity_key: identity_key,
       signed_prekey: {
-        id:         1,
+        id: 1,
         public_key: signed_pub_key,
-        signature:  signature
+        signature: signature
       },
       one_time_prekeys: [{ id: 1, public_key: otk_pub_key }]
     }
@@ -65,13 +65,13 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
     end
 
     context 'when a backup has been stored' do
-      let(:blob) { Base64.strict_encode64('encrypted-blob-data' + ('x' * 32)) }
+      let(:blob) { Base64.strict_encode64("encrypted-blob-data#{'x' * 32}") }
       let(:salt) { Base64.strict_encode64('salt-16-bytes!!!') }
 
       before do
         person.update!(
-          key_backup_blob:       blob,
-          key_backup_salt:       salt,
+          key_backup_blob: blob,
+          key_backup_salt: salt,
           key_backup_updated_at: Time.current
         )
       end
@@ -117,7 +117,7 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
 
   describe 'PUT /api/v1/people/:person_id/key_backup' do
     let(:url)  { "/api/v1/people/#{person.id}/key_backup" }
-    let(:blob) { Base64.strict_encode64('encrypted-blob-' + ('x' * 40)) }
+    let(:blob) { Base64.strict_encode64("encrypted-blob-#{'x' * 40}") }
     let(:salt) { Base64.strict_encode64('random-salt-16b!') }
 
     context 'with valid blob and salt' do
@@ -151,26 +151,26 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
     context 'when blob is missing' do
       it 'returns unprocessable_entity' do
         put url, params: { salt: salt }.to_json, headers: auth_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
     context 'when salt is missing' do
       it 'returns unprocessable_entity' do
         put url, params: { blob: blob }.to_json, headers: auth_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
     context 'when blob is not valid base64' do
       it 'returns unprocessable_entity' do
         put url, params: { blob: 'not valid base64!!!', salt: salt }.to_json, headers: auth_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
     context 'when overwriting an existing backup' do
-      let(:new_blob) { Base64.strict_encode64('newer-encrypted-blob-' + ('x' * 35)) }
+      let(:new_blob) { Base64.strict_encode64("newer-encrypted-blob-#{'x' * 35}") }
 
       before do
         person.update!(key_backup_blob: blob, key_backup_salt: salt, key_backup_updated_at: 1.hour.ago)
@@ -271,7 +271,7 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
         put url,
             params: valid_register_params.except(:identity_key).to_json,
             headers: auth_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

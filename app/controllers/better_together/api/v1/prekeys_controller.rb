@@ -15,11 +15,12 @@ module BetterTogether
       #   PUT /api/v1/people/:person_id/register_prekeys      — own person only
       #   GET /api/v1/people/:person_id/key_backup            — fetch encrypted backup blob (own person only)
       #   PUT /api/v1/people/:person_id/key_backup            — store encrypted backup blob (own person only)
+      # rubocop:disable Metrics/ClassLength
       class PrekeysController < BetterTogether::Api::ApplicationController
         skip_before_action :verify_authenticity_token, raise: false
         # Authorization is handled by authorize_own_person! rather than Pundit policies.
         # Skip both standard Pundit and pundit-resources enforcement hooks.
-        skip_after_action :verify_authorized,   raise: false
+        skip_after_action :verify_authorized, raise: false
         skip_after_action :verify_policy_scoped, raise: false
         skip_after_action :enforce_policy_use,   raise: false
 
@@ -30,6 +31,7 @@ module BetterTogether
         # Returns the prekey bundle for any person (public key material).
         # One-time prekeys are marked consumed when returned, unless the requester
         # already has a session (idempotent for repeated calls from the same requester).
+        # rubocop:disable Metrics/MethodLength
         def prekey_bundle
           unless @person.identity_key_public.present?
             return render json: { error: 'Person has not registered prekeys' }, status: :not_found
@@ -37,32 +39,34 @@ module BetterTogether
 
           one_time_prekey = consume_one_time_prekey
           bundle = {
-            registration_id:  @person.registration_id,
-            identity_key:     @person.identity_key_public,
+            registration_id: @person.registration_id,
+            identity_key: @person.identity_key_public,
             signed_prekey: {
-              id:         @person.signed_prekey_id,
+              id: @person.signed_prekey_id,
               public_key: @person.signed_prekey_public,
-              signature:  @person.signed_prekey_sig
+              signature: @person.signed_prekey_sig
             },
-            one_time_prekey:  one_time_prekey ? { id: one_time_prekey.key_id, public_key: one_time_prekey.public_key } : nil
+            one_time_prekey: one_time_prekey ? { id: one_time_prekey.key_id, public_key: one_time_prekey.public_key } : nil
           }
 
           render json: { data: bundle }
         end
+        # rubocop:enable Metrics/MethodLength
 
         # PUT /api/v1/people/:person_id/register_prekeys
         # Uploads identity key, signed prekey, and a batch of one-time prekeys.
         # Replaces the signed prekey and appends new one-time prekeys.
+        # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         def register_prekeys
           return render json: { error: 'Missing required fields' }, status: :unprocessable_entity unless valid_registration?
 
           ActiveRecord::Base.transaction do
             @person.update!(
-              registration_id:      registration_params[:registration_id],
-              identity_key_public:  registration_params[:identity_key],
-              signed_prekey_id:     registration_params.dig(:signed_prekey, :id),
+              registration_id: registration_params[:registration_id],
+              identity_key_public: registration_params[:identity_key],
+              signed_prekey_id: registration_params.dig(:signed_prekey, :id),
               signed_prekey_public: registration_params.dig(:signed_prekey, :public_key),
-              signed_prekey_sig:    registration_params.dig(:signed_prekey, :signature)
+              signed_prekey_sig: registration_params.dig(:signed_prekey, :signature)
             )
 
             if registration_params[:one_time_prekeys].present?
@@ -82,6 +86,7 @@ module BetterTogether
 
           render json: { status: 'ok', prekey_count: @person.one_time_prekeys.unconsumed.count }
         end
+        # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
         # GET /api/v1/people/:person_id/key_backup
         # Returns the encrypted key backup blob for the authenticated person.
@@ -93,8 +98,8 @@ module BetterTogether
 
           render json: {
             data: {
-              blob:       @person.key_backup_blob,
-              salt:       @person.key_backup_salt,
+              blob: @person.key_backup_blob,
+              salt: @person.key_backup_salt,
               updated_at: @person.key_backup_updated_at
             }
           }
@@ -112,8 +117,8 @@ module BetterTogether
           end
 
           @person.update!(
-            key_backup_blob:       blob,
-            key_backup_salt:       salt,
+            key_backup_blob: blob,
+            key_backup_salt: salt,
             key_backup_updated_at: Time.current
           )
 
@@ -152,6 +157,7 @@ module BetterTogether
           )
         end
 
+        # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
         def valid_registration?
           rp = registration_params
           rp[:registration_id].present? &&
@@ -163,9 +169,11 @@ module BetterTogether
             valid_base64?(rp.dig(:signed_prekey, :public_key)) &&
             valid_base64?(rp.dig(:signed_prekey, :signature))
         end
+        # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
         def valid_base64?(str)
           return false unless str.is_a?(String)
+
           Base64.strict_decode64(str)
           true
         rescue ArgumentError
@@ -182,6 +190,7 @@ module BetterTogether
           # Future: trigger an in-app notification to the user
         end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
