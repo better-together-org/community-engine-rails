@@ -23,6 +23,8 @@ require 'json'
 require 'zlib'
 require 'rubygems/package'
 require 'uri'
+require 'openssl'
+require 'base64'
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 # Top-level private methods so they are callable from within Rake task blocks.
@@ -45,59 +47,86 @@ def ce_js_resolve_version(arg_version)
   File.read(version_file).strip
 end
 
+def ce_js_tarball_url_from_metadata(metadata, version)
+  url = metadata.dig('versions', version, 'dist', 'tarball')
+  return url if url
+
+  known = metadata['versions']&.keys || []
+  available = known.last(5).join(', ')
+  raise "Version #{version} not found in registry. Recent versions: #{available.empty? ? 'none' : available}"
+end
+
 def ce_js_fetch_tarball_url(version)
-  token = ENV['FORGEJO_NPM_TOKEN']
-  # Forgejo npm registry uses %2F for scoped package names in the URL path
+  token = ENV.fetch('FORGEJO_NPM_TOKEN', nil)
   encoded_name = CE_JS_PACKAGE_NAME.gsub('/', '%2F').gsub('@', '%40')
   uri = URI("#{CE_JS_REGISTRY_BASE}/#{encoded_name}")
-
   response = ce_js_http_get(uri, token)
-
   unless response.is_a?(Net::HTTPSuccess)
     raise "Registry metadata fetch failed (#{response.code}): #{response.body.slice(0, 200)}"
   end
 
-  metadata = JSON.parse(response.body)
-  url = metadata.dig('versions', version, 'dist', 'tarball')
-
-  unless url
-    available = metadata['versions']&.keys&.last(5)&.join(', ')
-    raise "Version #{version} not found in registry. Recent versions: #{available || 'none'}"
-  end
-
-  url
+  ce_js_tarball_url_from_metadata(JSON.parse(response.body), version)
 end
 
-def ce_js_extract_umd(tarball_url)
-  token = ENV['FORGEJO_NPM_TOKEN']
-  uri = URI(tarball_url)
-
-  response = ce_js_http_get(uri, token)
-  unless response.is_a?(Net::HTTPSuccess)
-    raise "Tarball download failed (#{response.code})"
-  end
-
+def ce_js_read_umd_from_tar(response)
   gz = Zlib::GzipReader.new(StringIO.new(response.body.b))
   Gem::Package::TarReader.new(gz) do |tar|
     tar.each do |entry|
       return entry.read if entry.file? && entry.full_name == CE_JS_UMD_TAR_PATH
     end
   end
+  nil
+end
 
-  raise "#{CE_JS_UMD_TAR_PATH} not found in tarball. " \
-        "Check that the package builds dist/community-engine.umd.js."
+def ce_js_extract_umd(tarball_url)
+  token = ENV.fetch('FORGEJO_NPM_TOKEN', nil)
+  response = ce_js_http_get(URI(tarball_url), token)
+  raise "Tarball download failed (#{response.code})" unless response.is_a?(Net::HTTPSuccess)
+
+  ce_js_read_umd_from_tar(response) ||
+    raise("#{CE_JS_UMD_TAR_PATH} not found in tarball. " \
+          'Check that the package builds dist/community-engine.umd.js.')
 end
 
 def ce_js_http_get(uri, token = nil)
   use_ssl = uri.scheme == 'https'
   Net::HTTP.start(uri.host, uri.port, use_ssl: use_ssl,
-                  read_timeout: 30, open_timeout: 10) do |http|
+                                      read_timeout: 30, open_timeout: 10) do |http|
     req = Net::HTTP::Get.new(uri)
     req['Authorization'] = "Bearer #{token}" if token
     req['Accept']        = 'application/json'
-    req['User-Agent']    = "community-engine-rails/ce_js_rake_task"
+    req['User-Agent']    = 'community-engine-rails/ce_js_rake_task'
     http.request(req)
   end
+end
+
+def ce_js_write_sri(umd_content, rails_root)
+  sri = "sha384-#{Base64.strict_encode64(OpenSSL::Digest::SHA384.digest(umd_content))}"
+  importmap_path = File.join(rails_root, 'config/importmap.rb')
+  updated = File.read(importmap_path).gsub(
+    /^(pin 'community_engine_js'[^,\n]*)(?:,\s*integrity:\s*'sha\d+-[^']*')?/,
+    "\\1, integrity: '#{sri}'"
+  )
+  File.write(importmap_path, updated)
+  puts "  ✓ SRI: #{sri}"
+  puts '  ✓ Updated config/importmap.rb'
+end
+
+def ce_js_print_version
+  version_file = File.join(ce_js_rails_root, CE_JS_VERSION_FILE)
+  msg = File.exist?(version_file) ? File.read(version_file).strip : '(unknown — config/community_engine_js_version not found)'
+  puts msg
+end
+
+def ce_js_run_install(version, rails_root)
+  puts "  Installing @better-together/community-engine-js@#{version} …"
+  tarball_url = ce_js_fetch_tarball_url(version)
+  puts "  Tarball: #{tarball_url}"
+  umd_content = ce_js_extract_umd(tarball_url)
+  dest = File.join(rails_root, CE_JS_VENDOR_DEST)
+  File.write(dest, umd_content)
+  puts "  ✓ Written #{umd_content.bytesize} bytes → #{CE_JS_VENDOR_DEST}"
+  ce_js_write_sri(umd_content, rails_root)
 end
 
 # ── Tasks ──────────────────────────────────────────────────────────────────────
@@ -115,19 +144,7 @@ namespace :ce_js do
     Set FORGEJO_NPM_TOKEN env var for authenticated registry access.
   DESC
   task :install, [:version] do |_, args|
-    version = ce_js_resolve_version(args[:version])
-    rails_root = ce_js_rails_root
-
-    puts "  Installing @better-together/community-engine-js@#{version} …"
-
-    tarball_url = ce_js_fetch_tarball_url(version)
-    puts "  Tarball: #{tarball_url}"
-
-    umd_content = ce_js_extract_umd(tarball_url)
-    dest = File.join(rails_root, CE_JS_VENDOR_DEST)
-    File.write(dest, umd_content)
-
-    puts "  ✓ Written #{umd_content.bytesize} bytes → #{CE_JS_VENDOR_DEST}"
+    ce_js_run_install(ce_js_resolve_version(args[:version]), ce_js_rails_root)
   end
 
   desc 'Update @better-together/community-engine-js to VERSION and record in config/community_engine_js_version.'
@@ -144,11 +161,6 @@ namespace :ce_js do
 
   desc 'Print the currently installed community-engine-js version.'
   task :version do
-    version_file = File.join(ce_js_rails_root, CE_JS_VERSION_FILE)
-    if File.exist?(version_file)
-      puts File.read(version_file).strip
-    else
-      puts '(unknown — config/community_engine_js_version not found)'
-    end
+    ce_js_print_version
   end
 end
