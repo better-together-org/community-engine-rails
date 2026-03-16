@@ -3634,7 +3634,6 @@ en:
   resource_permissions:
     confirm_destroy: Confirm destroy
   resources:
-    agreement: Agreement
     block: Block
     calendar: Calendar
     checklist: Checklist
@@ -3650,6 +3649,7 @@ en:
     person: Person
     person_access_grant: Person access grant
     person_link: Person link
+    person_platform_membership: Person platform membership
     platform: Platform
     profile: Profile
     region: Region

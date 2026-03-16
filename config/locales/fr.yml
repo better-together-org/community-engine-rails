@@ -3715,7 +3715,6 @@ fr:
   resource_permissions:
     confirm_destroy: Confirmer la destruction
   resources:
-    agreement: Agreement
     block: Bloc
     calendar: Calendar
     checklist: Checklist
@@ -3729,6 +3728,8 @@ fr:
     navigation_area: Zone de navigation
     page: Page
     person: Personne
+    person_access_grant: Octroi d'accès de la personne
+    person_link: Lien de la personne
     person_platform_membership: Adhésion à la plateforme de la personne
     platform: Plateforme
     profile: Profil

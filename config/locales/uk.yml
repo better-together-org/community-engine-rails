@@ -3706,7 +3706,6 @@ uk:
   resource_permissions:
     confirm_destroy: Підтвердіть видалення
   resources:
-    agreement: Agreement
     block: Блок
     calendar: Календар
     checklist: Чек-лист
@@ -3720,6 +3719,8 @@ uk:
     navigation_area: Область навігації
     page: Сторінка
     person: Особа
+    person_access_grant: Дозвіл доступу особи
+    person_link: Посилання особи
     person_platform_membership: Членство особи на платформі
     platform: Платформа
     profile: Профіль
