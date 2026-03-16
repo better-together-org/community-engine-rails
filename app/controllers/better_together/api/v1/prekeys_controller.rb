@@ -13,11 +13,18 @@ module BetterTogether
       # Endpoints:
       #   GET /api/v1/people/:person_id/prekey_bundle         — public key bundle, rate-limited
       #   PUT /api/v1/people/:person_id/register_prekeys      — own person only
+      #   GET /api/v1/people/:person_id/key_backup            — fetch encrypted backup blob (own person only)
+      #   PUT /api/v1/people/:person_id/key_backup            — store encrypted backup blob (own person only)
       class PrekeysController < BetterTogether::Api::ApplicationController
         skip_before_action :verify_authenticity_token, raise: false
+        # Authorization is handled by authorize_own_person! rather than Pundit policies.
+        # Skip both standard Pundit and pundit-resources enforcement hooks.
+        skip_after_action :verify_authorized,   raise: false
+        skip_after_action :verify_policy_scoped, raise: false
+        skip_after_action :enforce_policy_use,   raise: false
 
         before_action :set_person
-        before_action :authorize_own_person!, only: :register_prekeys
+        before_action :authorize_own_person!, only: %i[register_prekeys key_backup save_key_backup]
 
         # GET /api/v1/people/:person_id/prekey_bundle
         # Returns the prekey bundle for any person (public key material).
@@ -76,10 +83,47 @@ module BetterTogether
           render json: { status: 'ok', prekey_count: @person.one_time_prekeys.unconsumed.count }
         end
 
+        # GET /api/v1/people/:person_id/key_backup
+        # Returns the encrypted key backup blob for the authenticated person.
+        # The blob is opaque to the server — only the client can decrypt it.
+        def key_backup
+          unless @person.key_backup_blob.present?
+            return render json: { error: 'No key backup found' }, status: :not_found
+          end
+
+          render json: {
+            data: {
+              blob:       @person.key_backup_blob,
+              salt:       @person.key_backup_salt,
+              updated_at: @person.key_backup_updated_at
+            }
+          }
+        end
+
+        # PUT /api/v1/people/:person_id/key_backup
+        # Stores an encrypted key backup blob. The server treats blob + salt as opaque strings.
+        def save_key_backup
+          blob = params[:blob]
+          salt = params[:salt]
+
+          unless blob.present? && salt.present? && valid_base64?(blob) && valid_base64?(salt)
+            return render json: { error: 'blob and salt must be non-empty base64 strings' },
+                          status: :unprocessable_entity
+          end
+
+          @person.update!(
+            key_backup_blob:       blob,
+            key_backup_salt:       salt,
+            key_backup_updated_at: Time.current
+          )
+
+          render json: { status: 'ok', updated_at: @person.key_backup_updated_at }
+        end
+
         private
 
         def set_person
-          @person = BetterTogether::Person.find(params[:person_id])
+          @person = BetterTogether::Person.find(params[:id])
         rescue ActiveRecord::RecordNotFound
           render json: { error: 'Person not found' }, status: :not_found
         end
