@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'cgi'
 
 RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
   include AutomaticTestConfiguration
@@ -22,7 +23,7 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Platform Connections')
-      expect(response.body).to include(platform_connection.source_platform.name)
+      expect(response.body).to include(CGI.escapeHTML(platform_connection.source_platform.name))
     end
 
     it 'shows New Connection button to network admins' do

@@ -61,7 +61,7 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
 
     it 'renders show for a permission' do
       permission = create(:better_together_resource_permission)
-      get better_together.resource_permission_path(locale:, id: permission.reload.slug)
+      get better_together.resource_permission_path(locale:, id: permission.slug)
       expect(response).to have_http_status(:ok)
     end
 
