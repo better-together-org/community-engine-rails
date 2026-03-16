@@ -41,7 +41,10 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
 
       pull_jobs = enqueued_jobs.select { |job| job[:job] == BetterTogether::FederatedContentPullJob }
       enqueued_connection_ids = pull_jobs.map { |job| job[:args].first&.dig('platform_connection_id') }
+      # Positive: exactly one job, for the eligible connection
       expect(enqueued_connection_ids).to contain_exactly(eligible_connection.id)
+      # Negative: ineligible connection must not have been enqueued
+      expect(enqueued_connection_ids).not_to include(ineligible_connection.id)
     end
   end
 end

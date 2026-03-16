@@ -72,6 +72,8 @@ module BetterTogether
 
       private
 
+      # Scope-level check uses host_community because there is no specific record in scope context.
+      # Compare with PagePolicy#platform_content_manager? (below) which checks record.community.
       def platform_content_manager?
         permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') ||
           permitted_to?('manage_community_content', host_community)
@@ -84,6 +86,9 @@ module BetterTogether
 
     private
 
+    # Record-level check: uses the page's own community so that community-content-managers
+    # of that specific community can edit/destroy the page. This intentionally differs from
+    # Scope#platform_content_manager? which falls back to the host community for list queries.
     def platform_content_manager?
       permitted_to?('manage_platform_settings') ||
         permitted_to?('manage_platform') ||
