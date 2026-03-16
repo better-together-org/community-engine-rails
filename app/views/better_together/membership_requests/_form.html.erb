@@ -1,0 +1,65 @@
+<%# app/views/better_together/membership_requests/_form.html.erb %>
+<%# locals: (membership_request:, community:) -%>
+
+<%= turbo_frame_tag 'membership_request_form' do %>
+  <%= form_with(
+        model: membership_request,
+        url: community_membership_requests_path(community),
+        class: 'form',
+        id: dom_id(membership_request, 'form')
+      ) do |form| %>
+
+    <%= render 'layouts/better_together/errors', object: membership_request %>
+
+    <div class="mb-3">
+      <%= form.label :requestor_name,
+                     t('better_together.membership_requests.fields.requestor_name', default: 'Your name'),
+                     class: 'form-label' %>
+      <%= form.text_field :requestor_name,
+                          class: "form-control #{'is-invalid' if membership_request.errors[:requestor_name].any?}",
+                          required: true,
+                          autocomplete: 'name' %>
+      <% membership_request.errors[:requestor_name].each do |msg| %>
+        <div class="invalid-feedback"><%= msg %></div>
+      <% end %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :requestor_email,
+                     t('better_together.membership_requests.fields.requestor_email', default: 'Your email address'),
+                     class: 'form-label' %>
+      <%= form.email_field :requestor_email,
+                           class: "form-control #{'is-invalid' if membership_request.errors[:requestor_email].any?}",
+                           required: true,
+                           autocomplete: 'email' %>
+      <% membership_request.errors[:requestor_email].each do |msg| %>
+        <div class="invalid-feedback"><%= msg %></div>
+      <% end %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :referral_source,
+                     t('better_together.membership_requests.fields.referral_source',
+                       default: 'How did you hear about us?'),
+                     class: 'form-label' %>
+      <%= form.text_field :referral_source,
+                          class: 'form-control',
+                          autocomplete: 'off' %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :description,
+                     t('better_together.membership_requests.fields.description', default: 'Message'),
+                     class: 'form-label' %>
+      <%= form.text_area :description,
+                         class: 'form-control',
+                         rows: 4 %>
+      <div class="form-text">
+        <%= t('better_together.membership_requests.fields.description_hint',
+              default: 'Tell us a bit about yourself and why you would like to join.') %>
+      </div>
+    </div>
+
+    <%= form.submit t('globals.submit', default: 'Submit'), class: 'btn btn-primary' %>
+  <% end %>
+<% end %>

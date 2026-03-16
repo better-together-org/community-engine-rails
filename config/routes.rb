@@ -49,7 +49,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # Public community viewing - must be BEFORE authenticated routes
       resources :communities, only: %i[index]
-      resources :communities, only: %i[show], path: 'c', as: 'community'
+      resources :communities, only: %i[show], path: 'c', as: 'community' do
+        resources :membership_requests,
+                  controller: 'membership_requests' do
+          member do
+            post :approve
+            post :decline
+          end
+        end
+      end
 
       devise_scope :user do
         unauthenticated :user do

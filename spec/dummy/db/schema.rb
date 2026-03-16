@@ -808,9 +808,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_09_121000) do
     t.uuid "target_id"
     t.string "urgency", default: "normal", null: false
     t.uuid "address_id"
+    t.string "type", default: "BetterTogether::Joatu::Request", null: false
+    t.string "requestor_name"
+    t.string "requestor_email"
+    t.string "referral_source"
     t.index ["address_id"], name: "index_better_together_joatu_requests_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_requests_creator"
+    t.index ["requestor_email"], name: "index_bt_joatu_requests_on_requestor_email"
     t.index ["target_type", "target_id"], name: "bt_joatu_requests_on_target"
+    t.index ["type"], name: "index_better_together_joatu_requests_on_type"
   end
 
   create_table "better_together_joatu_response_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

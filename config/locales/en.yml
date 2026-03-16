@@ -1509,6 +1509,48 @@ en:
         offer: Offer
         request: Request
       you: You
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: Captcha verification failed. Please try again.
+      confirm_approve: Approve this membership request and invite the applicant to join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Please tell us a bit about yourself and why you'd like to join.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        approve_failed: Could not approve the membership request.
+        declined: Membership request declined.
+        decline_failed: Could not decline the membership request.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: 'Membership request from %{requestor}'
+      new:
+        heading: Request Membership
+        intro: 'Fill in the form below to request membership. We''ll be in touch!'
+      show:
+        title: Membership Request
+      success:
+        heading: Request Received
+        body: 'Thank you! We''ve received your membership request and will be in touch soon.'
+    resources:
+      membership_request: Membership request
     joatu_mailer:
       agreement_created:
         greeting: Hello %{recipient_name},
@@ -3098,6 +3140,7 @@ en:
     are_you_sure: Are you sure
     back: Back
     back_to_list: Back to list
+    back_to_home: Back to home
     cancel: Cancel
     clear: Clear
     clear_filter: Clear filter
@@ -3122,6 +3165,7 @@ en:
     no_description: No description
     no_image: No Image
     no_invitee: No invitee
+    not_found: Not found.
     none: None
     not_sent: Not sent
     pagination:
@@ -3137,7 +3181,9 @@ en:
     save: Save
     sent: Sent
     show: Show
+    submit: Submit
     status: Status
+    submitted_at: Submitted
     tabs:
       about: About
       attendees: Attendees
@@ -3147,6 +3193,7 @@ en:
       members: Members
     to: To
     'true': true
+    unknown: Unknown
     undo_clear: Undo Clear
     update: Update
     url: Url
@@ -3392,6 +3439,7 @@ en:
     invitation: Invitation
     invitation_email: Invitation email
     member: Member
+    membership_request: Membership request
     navigation_area: Navigation area
     page: Page
     person: Person
