@@ -26,11 +26,11 @@ RSpec.describe 'BetterTogether::Api::V1::Conversations E2E', :no_auth do
   let(:valid_register_params) do
     {
       registration_id: 12_345,
-      identity_key:    identity_key,
+      identity_key: identity_key,
       signed_prekey: {
-        id:         1,
+        id: 1,
         public_key: signed_pub_key,
-        signature:  signature
+        signature: signature
       },
       one_time_prekeys: [{ id: 1, public_key: otk_pub_key }]
     }
@@ -38,13 +38,19 @@ RSpec.describe 'BetterTogether::Api::V1::Conversations E2E', :no_auth do
 
   # ── Helpers ────────────────────────────────────────────────────────────────
 
+  # Sequential integer counter — Person uses UUID PKs so target_person.id is not usable
+  # as a registration_id (integer column). Each call within an example gets a unique integer;
+  # database transactions roll back between examples so values are safe to reuse.
+  def next_registration_id
+    @_reg_id_seq ||= 10_000
+    @_reg_id_seq += 1
+  end
+
   def register_prekeys_for(target_person, as_user: user)
     hdrs = api_auth_headers(as_user,
                             token: api_sign_in_and_get_token(as_user),
                             content_type: 'application/json')
-    # Use target_person's numeric id as registration_id to avoid unique constraint violations
-    # when registering prekeys for multiple people in the same test run.
-    params = valid_register_params.merge(registration_id: target_person.id)
+    params = valid_register_params.merge(registration_id: next_registration_id)
     put "/api/v1/people/#{target_person.id}/register_prekeys",
         params: params.to_json,
         headers: hdrs
@@ -90,13 +96,13 @@ RSpec.describe 'BetterTogether::Api::V1::Conversations E2E', :no_auth do
       end
 
       it 'returns a bundle for each registered participant' do
-        json   = JSON.parse(response.body)
+        json = JSON.parse(response.body)
         bundles = json['data']
         expect(bundles.length).to eq(2)
       end
 
       it 'each bundle includes person_id' do
-        json     = JSON.parse(response.body)
+        json = JSON.parse(response.body)
         person_ids = json['data'].map { |b| b['person_id'] }
         expect(person_ids).to include(person.id, other_person.id)
       end
@@ -165,7 +171,7 @@ RSpec.describe 'BetterTogether::Api::V1::Conversations E2E', :no_auth do
 
     context 'when conversation does not exist' do
       it 'returns 404' do
-        get "/api/v1/conversations/nonexistent-id/participant_prekey_bundles",
+        get '/api/v1/conversations/nonexistent-id/participant_prekey_bundles',
             headers: auth_headers
         expect(response).to have_http_status(:not_found)
       end

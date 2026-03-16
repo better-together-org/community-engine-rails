@@ -36,9 +36,9 @@ module BetterTogether
         # Gated to conversation members only.
         # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         def participant_prekey_bundles
-          @policy_used = true  # satisfy Pundit::ResourceController#enforce_policy_use
+          @policy_used = true # satisfy Pundit::ResourceController#enforce_policy_use
           conversation = BetterTogether::Conversation.find(params[:id])
-          authorize conversation, :show?  # consistent Pundit check for participant membership
+          authorize conversation, :show? # consistent Pundit check for participant membership
 
           bundles = conversation.participants.map do |person|
             next nil unless person.identity_key_public.present?

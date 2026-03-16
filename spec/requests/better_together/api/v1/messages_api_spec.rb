@@ -80,11 +80,11 @@ RSpec.describe 'BetterTogether::Api::V1::Messages', :no_auth do
     let!(:e2e_message) do
       create(:better_together_message,
              conversation: conversation,
-             sender:       person,
-             content:      'AES-GCM ciphertext payload',
+             sender: person,
+             content: 'AES-GCM ciphertext payload',
              e2e_encrypted: true,
-             e2e_version:   2,
-             e2e_protocol:  'dr_v2')
+             e2e_version: 2,
+             e2e_protocol: 'dr_v2')
     end
 
     describe 'model behavior' do
@@ -95,8 +95,8 @@ RSpec.describe 'BetterTogether::Api::V1::Messages', :no_auth do
       it 'e2e? returns false for a non-encrypted message' do
         plain = create(:better_together_message,
                        conversation: conversation,
-                       sender:       person,
-                       content:      'plain message')
+                       sender: person,
+                       content: 'plain message')
         expect(plain.e2e?).to be false
       end
 
