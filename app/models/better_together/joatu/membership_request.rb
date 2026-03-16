@@ -16,6 +16,7 @@ module BetterTogether
       CATEGORY_NAME = 'Membership Requests'
 
       before_validation :assign_membership_request_category
+      before_validation :generate_name_from_requestor
 
       validates :target_type, inclusion: { in: ['BetterTogether::Community'] }
       validate :target_community_must_exist
@@ -77,6 +78,16 @@ module BetterTogether
       # Find (or lazily create) the canonical Membership Requests category.
       # CategoryBuilder seeds it; this fallback avoids hard failures in test/dev
       # environments where seeds may not have been run.
+      def generate_name_from_requestor
+        return if name.present?
+
+        self.name = I18n.t(
+          'better_together.membership_requests.name',
+          requestor: requestor_name,
+          default: "Membership request from #{requestor_name}"
+        )
+      end
+
       def assign_membership_request_category
         return if categories.any? { |c| c.name == CATEGORY_NAME }
 

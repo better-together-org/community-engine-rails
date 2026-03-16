@@ -11,20 +11,22 @@ module BetterTogether
         attributes :requestor_name, :requestor_email, :referral_source,
                    :target_type, :target_id, :description
 
-        # Assign creator from the JWT-authenticated user before attribute
-        # assignment and before validation run, so unauthenticated? returns the
-        # correct answer when the request email validation fires.
-        # Name is auto-generated server-side so callers don't need to supply it.
+        # Assign creator from the JWT-authenticated user before attribute assignment.
+        # Name is auto-generated server-side via the model's before_validation callback.
         def self.create(context)
           resource = super
-          model = resource._model
-          model.creator = context[:current_user]&.person
-          model.name ||= I18n.t(
-            'better_together.membership_requests.name',
-            requestor: model.requestor_name,
-            default: "Membership request from #{model.requestor_name}"
-          )
+          resource._model.creator = context[:current_user]&.person
           resource
+        end
+
+        # Bypass pundit scope for unauthenticated requests so the post-create
+        # response can locate the newly created record. All read/destroy actions
+        # require authentication (via authenticate_api_user!), so unauthenticated
+        # callers can only ever reach the :create action.
+        def self.records(options = {})
+          return _model_class.all if options.dig(:context, :current_user).nil?
+
+          super
         end
 
         # ActionText returns an ActionText::RichText object; serialize as plain text for JSON consumers.
