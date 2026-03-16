@@ -51,7 +51,7 @@ RSpec.describe BetterTogether::ApplicationMailer do
       end
 
       around do |example|
-        ::Current.set(platform: current_platform) { example.run }
+        Current.set(platform: current_platform) { example.run }
       end
 
       it 'prefers Current.platform over the host platform fallback' do
@@ -78,7 +78,7 @@ RSpec.describe BetterTogether::ApplicationMailer do
         # Stub both resolution paths so this test is DB-state-independent.
         # better_together_platforms is ESSENTIAL_TABLES and persists across workers.
         allow(BetterTogether::Platform).to receive(:find_by).with(host: true).and_return(nil)
-        allow(::Current).to receive(:platform).and_return(nil)
+        allow(Current).to receive(:platform).and_return(nil)
         # This is the correct fail-loud behaviour: a misconfigured deployment
         # (no host platform seeded) must not silently send broken emails.
         expect { create_test_mail.body.encoded }.to raise_error(NoMethodError)
