@@ -83,9 +83,10 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
 
     context 'with captcha hook' do
       it 'renders 422 when captcha fails' do
-        allow_next_instance_of(BetterTogether::MembershipRequestsController) do |controller|
-          allow(controller).to receive(:validate_captcha_if_enabled?).and_return(false)
-        end
+        # allow_next_instance_of is a GitLab extension; standard rspec-mocks
+        # requires allow_any_instance_of for request-spec controller stubs.
+        allow_any_instance_of(BetterTogether::MembershipRequestsController) # rubocop:disable RSpec/AnyInstance
+          .to receive(:validate_captcha_if_enabled?).and_return(false)
         post base_path, params: valid_params
         expect(response).to have_http_status(:unprocessable_content)
       end
