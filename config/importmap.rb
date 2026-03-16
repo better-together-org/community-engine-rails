@@ -49,4 +49,4 @@ pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es
 # Application entry point
 pin 'application', preload: true
 
-pin "community_engine_js", to: "community-engine.umd.js"
+pin 'community_engine_js', to: 'community-engine.umd.js'

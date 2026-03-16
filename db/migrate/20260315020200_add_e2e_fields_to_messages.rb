@@ -6,7 +6,7 @@
 class AddE2eFieldsToMessages < ActiveRecord::Migration[7.2]
   def change
     add_column :better_together_messages, :e2e_encrypted, :boolean, default: false, null: false,
-               comment: 'True when message content is E2E encrypted by the client'
+                                                                    comment: 'True when message content is E2E encrypted by the client'
     add_column :better_together_messages, :e2e_version,   :integer,
                comment: 'E2E protocol version (1 = initial)'
     add_column :better_together_messages, :e2e_protocol,  :string,

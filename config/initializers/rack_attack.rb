@@ -22,7 +22,7 @@ module Rack
       # ArgumentError. Setting pool: false skips ConnectionPool entirely and uses
       # a single direct Redis connection (sufficient for Rack::Attack throttling).
       Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-        url:  rack_attack_redis,
+        url: rack_attack_redis,
         pool: false
       )
     end

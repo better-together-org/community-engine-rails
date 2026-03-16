@@ -34,6 +34,7 @@ module BetterTogether
         # GET /api/v1/conversations/:id/participant_prekey_bundles
         # Returns prekey bundles for all participants in a conversation.
         # Gated to conversation members only.
+        # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         def participant_prekey_bundles
           conversation = BetterTogether::Conversation.find(params[:id])
 
@@ -46,23 +47,26 @@ module BetterTogether
 
             one_time_prekey = consume_one_time_prekey_for(person)
             {
-              person_id:       person.id,
+              person_id: person.id,
               registration_id: person.registration_id,
-              identity_key:    person.identity_key_public,
+              identity_key: person.identity_key_public,
               signed_prekey: {
-                id:         person.signed_prekey_id,
+                id: person.signed_prekey_id,
                 public_key: person.signed_prekey_public,
-                signature:  person.signed_prekey_sig
+                signature: person.signed_prekey_sig
               },
-              one_time_prekey: one_time_prekey ? {
-                id:         one_time_prekey.key_id,
-                public_key: one_time_prekey.public_key
-              } : nil
+              one_time_prekey: if one_time_prekey
+                                 {
+                                   id: one_time_prekey.key_id,
+                                   public_key: one_time_prekey.public_key
+                                 }
+                               end
             }
           end.compact
 
           render json: { data: bundles }
         end
+        # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
         private
 
