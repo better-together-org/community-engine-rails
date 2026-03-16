@@ -3,11 +3,7 @@ name: "Ruby on Rails CI"
 on:
   push:
     branches:
-      - main
-      - dev
-      - compat/rails-7.2
-      - compat/rails-8.0
-      - compat/rails-8.1
+      - '**'
   pull_request:
     branches:
       - main
