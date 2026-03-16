@@ -19,8 +19,6 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
           referral_source: 'a friend',
           name: 'Membership request from Alice Example',
           description: 'I would love to join the community and contribute.',
-          status: 'open',
-          urgency: 'normal',
           target_type: 'BetterTogether::Community',
           target_id: community.id
         }
@@ -138,9 +136,7 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
               name: 'Membership request',
               description: 'I am an existing user requesting community membership.',
               target_type: 'BetterTogether::Community',
-              target_id: community.id,
-              status: 'open',
-              urgency: 'normal'
+              target_id: community.id
             }
           }
         }.to_json
