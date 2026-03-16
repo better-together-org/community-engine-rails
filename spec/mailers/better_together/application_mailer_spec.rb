@@ -48,7 +48,8 @@ RSpec.describe BetterTogether::ApplicationMailer do
 
     context 'when Current.platform is set (web/API request context)' do
       let(:current_platform) do
-        create(:better_together_platform, name: 'Request Platform', time_zone: 'America/Toronto', locale: 'en')
+        # Platform has no locale column — do not pass locale: here
+        create(:better_together_platform, name: 'Request Platform', time_zone: 'America/Toronto')
       end
 
       around do |example|
@@ -82,7 +83,8 @@ RSpec.describe BetterTogether::ApplicationMailer do
         allow(Current).to receive(:platform).and_return(nil)
         # This is the correct fail-loud behaviour: a misconfigured deployment
         # (no host platform seeded) must not silently send broken emails.
-        expect { test_mail.body.encoded }.to raise_error(NoMethodError)
+        # Rails wraps template errors in ActionView::Template::Error.
+        expect { test_mail.body.encoded }.to raise_error(ActionView::Template::Error, /undefined method.*name/)
       end
     end
   end
