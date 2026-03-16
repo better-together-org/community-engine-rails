@@ -83,8 +83,9 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
 
     context 'with captcha hook' do
       it 'renders 422 when captcha fails' do
-        allow_any_instance_of(BetterTogether::MembershipRequestsController) # rubocop:disable RSpec/AnyInstance
-          .to receive(:validate_captcha_if_enabled?).and_return(false)
+        allow_next_instance_of(BetterTogether::MembershipRequestsController) do |controller|
+          allow(controller).to receive(:validate_captcha_if_enabled?).and_return(false)
+        end
         post base_path, params: valid_params
         expect(response).to have_http_status(:unprocessable_content)
       end
