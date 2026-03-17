@@ -418,6 +418,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
     t.datetime "updated_at", null: false
     t.string "title", null: false
     t.uuid "creator_id", null: false
+    t.integer "sender_key_version", default: 0, null: false
     t.index ["creator_id"], name: "index_better_together_conversations_on_creator_id"
   end
 
