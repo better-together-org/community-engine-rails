@@ -1,4 +1,8 @@
 <!-- app/views/messages/_form.html.erb -->
+<%# When rendered from an ActionCable broadcast, current_user_person_id is passed
+    explicitly as nil (no request context → no Warden). Normal request renders omit
+    the local and fall back to current_user. %>
+<% form_person_id = local_assigns.fetch(:current_user_person_id) { current_user&.person&.id } %>
 <div id="e2e_message_form_<%= conversation.id %>">
   <%= form_with(model: [conversation, message], local: false,
       html: {
@@ -6,7 +10,7 @@
         data: {
           controller: "better_together--message-form better-together--e2e-message-form",
           "better-together--e2e-message-form-conversation-id-value": conversation.id,
-          "better-together--e2e-message-form-person-id-value":       current_user&.person&.id,
+          "better-together--e2e-message-form-person-id-value":       form_person_id,
           "better-together--e2e-message-form-sender-key-version-value": conversation.sender_key_version,
           "better-together--e2e-message-form-status-active-label-value":  t('better_together.e2e.form.status_active'),
           "better-together--e2e-message-form-status-waiting-label-value": t('better_together.e2e.form.status_waiting'),

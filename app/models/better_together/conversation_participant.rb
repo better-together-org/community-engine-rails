@@ -36,7 +36,8 @@ module BetterTogether
         partial: 'better_together/messages/form',
         locals: {
           conversation: conversation.reload,
-          message: conversation.messages.build
+          message: conversation.messages.build,
+          current_user_person_id: nil # no request context in broadcast
         }
       )
     end
