@@ -162,6 +162,14 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.reload.oauth_client_secret).to eq(plaintext_secret)
     end
 
+    it 'stores a BCrypt digest for inbound verification' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.oauth_client_secret_digest).to be_present
+      # BCrypt digest format: $2a$12$...
+      expect(connection.oauth_client_secret_digest).to match(/\A\$2[aby]\$/)
+    end
+
     it 'authenticates a correct secret and rejects an incorrect one' do
       connection = create(:better_together_platform_connection)
       good = connection.oauth_client_secret
@@ -170,16 +178,38 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.authenticate_oauth_secret('wrong-secret')).to be false
     end
 
-    it 'rotates the client secret' do
+    it 'authenticates via BCrypt digest when digest is present' do
+      connection = create(:better_together_platform_connection)
+      good = connection.oauth_client_secret
+
+      # Verify it takes the BCrypt path (digest present)
+      expect(connection.oauth_client_secret_digest).to be_present
+      expect(connection.authenticate_oauth_secret(good)).to be true
+      expect(connection.authenticate_oauth_secret('bad')).to be false
+    end
+
+    it 'falls back to SHA-256 comparison when digest is absent' do
+      connection = create(:better_together_platform_connection)
+      good = connection.oauth_client_secret
+      connection.update_column(:oauth_client_secret_digest, nil)
+
+      expect(connection.authenticate_oauth_secret(good)).to be true
+      expect(connection.authenticate_oauth_secret('bad')).to be false
+    end
+
+    it 'rotates the client secret and updates the BCrypt digest' do
       connection = create(:better_together_platform_connection)
       old_id     = connection.oauth_client_id
       old_secret = connection.oauth_client_secret
 
       connection.rotate_oauth_client_secret!
+      connection.reload
 
-      expect(connection.reload.oauth_client_id).to eq(old_id)
+      expect(connection.oauth_client_id).to eq(old_id)
       expect(connection.oauth_client_secret).not_to eq(old_secret)
+      expect(connection.oauth_client_secret_digest).to be_present
       expect(connection.authenticate_oauth_secret(old_secret)).to be false
+      expect(connection.authenticate_oauth_secret(connection.oauth_client_secret)).to be true
     end
   end
 end
