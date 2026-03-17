@@ -1025,6 +1025,11 @@ uk:
         denied: Відхилено
         granted: Надано
         unknown: Невідомо
+    e2e:
+      modal:
+        cancel: Скасувати
+        ok: OK
+        title: Безпечний обмін повідомленнями
     email_addresses:
       add: Додати адресу електронної пошти
       email: Електронна пошта

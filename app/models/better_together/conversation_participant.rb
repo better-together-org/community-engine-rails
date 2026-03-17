@@ -12,10 +12,18 @@ module BetterTogether
     belongs_to :conversation
     belongs_to :person
 
-    after_create_commit  :bump_sender_key_version
-    after_destroy_commit :bump_sender_key_version
+    after_create_commit  :bump_sender_key_version_on_create
+    after_destroy_commit :bump_sender_key_version_on_destroy
 
     private
+
+    def bump_sender_key_version_on_create
+      bump_sender_key_version
+    end
+
+    def bump_sender_key_version_on_destroy
+      bump_sender_key_version
+    end
 
     def bump_sender_key_version
       conversation.increment!(:sender_key_version)

@@ -1035,6 +1035,11 @@ es:
         denied: Denegado
         granted: Concedido
         unknown: Desconocido
+    e2e:
+      modal:
+        cancel: Cancelar
+        ok: Aceptar
+        title: Mensajería segura
     email_addresses:
       add: Agregar Dirección de Correo Electrónico
       email: Correo Electrónico

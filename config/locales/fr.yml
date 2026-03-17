@@ -1040,6 +1040,11 @@ fr:
         denied: Refusé
         granted: Accordé
         unknown: Inconnu
+    e2e:
+      modal:
+        cancel: Annuler
+        ok: OK
+        title: Messagerie sécurisée
     email_addresses:
       add: Ajouter une adresse e-mail
       email: E-mail

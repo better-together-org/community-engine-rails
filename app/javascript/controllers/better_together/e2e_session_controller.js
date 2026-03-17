@@ -199,49 +199,44 @@ export default class extends Controller {
     }
   }
 
-  // ── UI prompts (override in subclass or replace with a modal library) ─────────
+  // ── UI prompts (Bootstrap modal via e2e:request-passphrase / e2e:request-confirm events) ──
 
   async #promptPassphraseForBackup() {
-    // TODO: replace with a proper modal — window.prompt is synchronous and blocks
-    // and exposes the passphrase to autocomplete history.
     const min = this.constructor.MIN_PASSPHRASE_LENGTH
-    const msg = [
-      'Set a backup passphrase for your encryption keys.',
-      '',
-      'This passphrase encrypts your keys so they can be restored on other devices.',
-      'If you forget it, encrypted messages will be permanently inaccessible.',
-      '',
-      `Passphrase must be at least ${min} characters.`,
-      'Leave blank to skip backup (not recommended).'
-    ].join('\n')
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const raw = window.prompt(msg)  // eslint-disable-line no-alert
-      if (raw === null || raw.trim() === '') return null  // user cancelled or skipped
-      const trimmed = raw.trim()
-      if (trimmed.length >= min) return trimmed
-      window.alert(  // eslint-disable-line no-alert
-        `Passphrase must be at least ${min} characters. Please try again.`
-      )
-    }
+    return new Promise(resolve => {
+      document.dispatchEvent(new CustomEvent('e2e:request-passphrase', {
+        detail: {
+          message:   `Set a backup passphrase (min ${min} chars). Leave blank to skip.`,
+          showInput: true,
+          minLength: min,
+          resolve
+        }
+      }))
+    })
   }
 
   async #promptPassphraseForRestore() {
-    const msg = [
-      'Encrypted key backup found for your account.',
-      'Enter your backup passphrase to restore your encryption keys.',
-      '',
-      'Leave blank to skip (a fresh identity will be generated instead).'
-    ].join('\n')
-    const passphrase = window.prompt(msg)  // eslint-disable-line no-alert
-    return passphrase?.trim() || null
+    return new Promise(resolve => {
+      document.dispatchEvent(new CustomEvent('e2e:request-passphrase', {
+        detail: {
+          message:   'Encrypted key backup found. Enter your passphrase to restore, or leave blank to generate a fresh identity.',
+          showInput: true,
+          minLength: 0,
+          resolve
+        }
+      }))
+    })
   }
 
   async #confirmFreshIdentity() {
-    return window.confirm(  // eslint-disable-line no-alert
-      'Backup restore failed (wrong passphrase or corrupt backup).\n\n' +
-      'Generate a fresh identity instead? Old encrypted messages will remain inaccessible.'
-    )
+    return new Promise(resolve => {
+      document.dispatchEvent(new CustomEvent('e2e:request-confirm', {
+        detail: {
+          message:   'Restore failed. Generate a fresh identity? Old encrypted messages will remain inaccessible.',
+          showInput: false,
+          resolve:   v => resolve(v !== null)
+        }
+      }))
+    })
   }
 }

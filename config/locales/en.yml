@@ -1029,6 +1029,11 @@ en:
         denied: Denied
         granted: Granted
         unknown: Unknown
+    e2e:
+      modal:
+        cancel: Cancel
+        ok: OK
+        title: Secure Messaging
     email_addresses:
       add: Add Email Address
       email: Email

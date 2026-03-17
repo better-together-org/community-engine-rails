@@ -243,8 +243,8 @@ module BetterTogether
           requester_key   = "prekey_bundle:req:#{current_user.id}:#{window_key}"
           target_key      = "prekey_bundle:tgt:#{@person.id}:#{window_key}"
 
-          requester_count = Rails.cache.increment(requester_key, 1, expires_in: 1.hour)
-          target_count    = Rails.cache.increment(target_key,    1, expires_in: 1.hour)
+          requester_count = Rails.cache.increment(requester_key, 1, expires_in: 1.hour).to_i
+          target_count    = Rails.cache.increment(target_key,    1, expires_in: 1.hour).to_i
 
           if requester_count > requester_limit
             Rails.logger.warn(

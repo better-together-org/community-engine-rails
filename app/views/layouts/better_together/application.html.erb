@@ -84,6 +84,9 @@
              hidden></div>
       <% end %>
 
+      <!-- E2E passphrase modal (Bootstrap-based, replaces window.prompt) -->
+      <%= render 'better_together/e2e/passphrase_modal' %>
+
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
     </div>

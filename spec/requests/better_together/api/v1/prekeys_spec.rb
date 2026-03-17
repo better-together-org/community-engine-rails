@@ -170,11 +170,16 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
     end
 
     context 'when overwriting an existing backup' do
-      let(:new_blob) { Base64.strict_encode64("newer-encrypted-blob-#{'x' * 35}") }
+      let(:new_blob)          { Base64.strict_encode64("newer-encrypted-blob-#{'x' * 35}") }
+      let!(:existing_updated_at) do
+        person.update!(key_backup_blob: blob, key_backup_salt: salt, key_backup_updated_at: 1.hour.ago)
+        person.reload.key_backup_updated_at.iso8601(3)
+      end
 
       before do
-        person.update!(key_backup_blob: blob, key_backup_salt: salt, key_backup_updated_at: 1.hour.ago)
-        put url, params: { blob: new_blob, salt: salt }.to_json, headers: auth_headers
+        put url,
+            params: { blob: new_blob, salt: salt, previous_updated_at: existing_updated_at }.to_json,
+            headers: auth_headers
       end
 
       it 'returns 200' do
@@ -205,6 +210,27 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
       it 'does not modify the person record' do
         put url, params: { blob: blob, salt: salt }.to_json, headers: other_headers
         expect(person.reload.key_backup_blob).to be_nil
+      end
+    end
+
+    context 'with previous_updated_at (optimistic lock)' do
+      it 'returns 200 when previous_updated_at matches current key_backup_updated_at' do
+        # first write to establish a timestamp
+        put url, params: { blob:, salt: }.to_json, headers: auth_headers
+        updated_at = JSON.parse(response.body)['updated_at']
+
+        put url, params: { blob:, salt:, previous_updated_at: updated_at }.to_json,
+                 headers: auth_headers
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns 409 when previous_updated_at is stale' do
+        put url, params: { blob:, salt: }.to_json, headers: auth_headers
+
+        put url,
+            params: { blob:, salt:, previous_updated_at: '2000-01-01T00:00:00Z' }.to_json,
+            headers: auth_headers
+        expect(response).to have_http_status(:conflict)
       end
     end
   end
