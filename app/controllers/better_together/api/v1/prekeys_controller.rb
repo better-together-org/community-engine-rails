@@ -10,11 +10,11 @@ module BetterTogether
       # Inherits from BetterTogether::Api::ApplicationController to get Devise JWT +
       # Doorkeeper OAuth2 auth. Custom action names bypass JSONAPI dispatch entirely.
       #
-      # Endpoints:
-      #   GET /api/v1/people/:person_id/prekey_bundle         — public key bundle, rate-limited
-      #   PUT /api/v1/people/:person_id/register_prekeys      — own person only
-      #   GET /api/v1/people/:person_id/key_backup            — fetch encrypted backup blob (own person only)
-      #   PUT /api/v1/people/:person_id/key_backup            — store encrypted backup blob (own person only)
+      # Endpoints (member routes under resources :people — param is :id):
+      #   GET /api/v1/people/:id/prekey_bundle         — public key bundle, rate-limited
+      #   PUT /api/v1/people/:id/register_prekeys      — own person only
+      #   GET /api/v1/people/:id/key_backup            — fetch encrypted backup blob (own person only)
+      #   PUT /api/v1/people/:id/key_backup            — store encrypted backup blob (own person only)
       # rubocop:disable Metrics/ClassLength
       class PrekeysController < BetterTogether::Api::ApplicationController
         skip_before_action :verify_authenticity_token, raise: false

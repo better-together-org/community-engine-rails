@@ -34,6 +34,8 @@ export default class extends Controller {
   #participantBundles = {}
   // Whether sender keys have been distributed for this conversation
   #senderKeysReady = false
+  // Guard flag: true while we are submitting the encrypted form to prevent re-entry
+  #submitting = false
 
   async connect() {
     if (!this.conversationIdValue || !this.personIdValue) return
@@ -94,6 +96,8 @@ export default class extends Controller {
 
   async #handleSubmit(event) {
     if (!this.hasContentTarget) return
+    // Re-entry guard: skip encryption on the submit we fire ourselves after encoding
+    if (this.#submitting) return
     const participants = Object.keys(this.#participantBundles)
     if (participants.length === 0) return  // No sessions: send unencrypted
 
@@ -134,18 +138,22 @@ export default class extends Controller {
         }
       }
 
-      // Inject the encrypted payload into the form as a hidden field
-      this.#setHiddenField('message[e2e_payload]', JSON.stringify(payload))
+      // Store the ciphertext JSON in the Trix content field (persisted via ActionText :content).
+      // The server stores this opaque blob; only the recipient's browser can decrypt it.
+      this.#setContentField(JSON.stringify(payload))
       this.#setHiddenField('message[e2e_encrypted]', 'true')
       this.#setHiddenField('message[e2e_protocol]', payload.type)
-      // Clear the visible content field so only the ciphertext is stored
-      this.#clearContentField()
 
+      // Submit the form once, bypassing this handler via the re-entry guard.
+      this.#submitting = true
       this.element.requestSubmit()
     } catch (err) {
       console.error('[E2E Form] Encryption error:', err)
       // Fall through to unencrypted send rather than silently failing
+      this.#submitting = true
       this.element.requestSubmit()
+    } finally {
+      this.#submitting = false
     }
   }
 
@@ -172,11 +180,14 @@ export default class extends Controller {
     field.value = value
   }
 
-  #clearContentField() {
-    // Remove content from the Trix editor so ActionText doesn't store plaintext.
-    // The e2e_payload hidden field carries the ciphertext.
+  #setContentField(text) {
+    // Write the ciphertext JSON into the Trix editor so ActionText persists it
+    // as the :content body. The server stores the opaque blob; only the recipient
+    // can decrypt it. We use loadHTML with a plain-text node so Trix doesn't
+    // interpret the JSON as markup.
     if (this.hasContentTarget && this.contentTarget.editor) {
-      this.contentTarget.editor.loadHTML('')
+      const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      this.contentTarget.editor.loadHTML(`<div>${escaped}</div>`)
     }
   }
 }

@@ -2,11 +2,11 @@
 
 require 'rails_helper'
 
-# Covers:
-#   GET  /api/v1/people/:person_id/prekey_bundle         — existing endpoint
-#   PUT  /api/v1/people/:person_id/register_prekeys      — existing endpoint
-#   GET  /api/v1/people/:person_id/key_backup            — new: fetch encrypted backup blob
-#   PUT  /api/v1/people/:person_id/key_backup            — new: store encrypted backup blob
+# Covers (member routes under resources :people — param is :id):
+#   GET  /api/v1/people/:id/prekey_bundle         — existing endpoint
+#   PUT  /api/v1/people/:id/register_prekeys      — existing endpoint
+#   GET  /api/v1/people/:id/key_backup            — new: fetch encrypted backup blob
+#   PUT  /api/v1/people/:id/key_backup            — new: store encrypted backup blob
 
 RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
   let(:user)         { create(:better_together_user, :confirmed) }

@@ -17,7 +17,7 @@
 			<% if message.e2e? %>
 				<div class="message-bubble p-3 rounded e2e-message"
 					data-controller="better-together--e2e-message-decrypt"
-					data-better-together--e2e-message-decrypt-ciphertext-payload-value="<%= message.content.to_plain_text.html_safe %>"
+					data-better-together--e2e-message-decrypt-ciphertext-payload-value="<%= html_escape(message.content.to_plain_text) %>"
 					data-better-together--e2e-message-decrypt-sender-person-id-value="<%= message.sender_id %>"
 					data-better-together--e2e-message-decrypt-conversation-id-value="<%= message.conversation_id %>">
 					🔒 Decrypting…
