@@ -14,14 +14,23 @@ module Rack
     # ActiveSupport::Cache::Store
 
     rack_attack_redis = ENV.fetch('RACK_ATTACK_REDIS_URL', nil)
+    rack_attack_pool_size = ENV.fetch('RACK_ATTACK_REDIS_POOL_SIZE', 5).to_i
+    rack_attack_pool_timeout = ENV.fetch('RACK_ATTACK_REDIS_POOL_TIMEOUT', 5).to_f
 
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
-      # Rails 8 / ActiveSupport 8 changed the pool option API.
-      # pool_size/pool_timeout as top-level kwargs were removed; use pool: { size:, timeout: } instead.
+      # ActiveSupport 8.0.3 still initializes ConnectionPool with a positional Hash,
+      # which breaks with connection_pool 3.x keyword-only initialization.
+      rack_attack_redis_pool = ConnectionPool.new(
+        size: rack_attack_pool_size,
+        timeout: rack_attack_pool_timeout
+      ) do
+        Redis.new(url: rack_attack_redis)
+      end
+
       Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-        url: rack_attack_redis,
-        pool: { size: 5, timeout: 5 }
+        redis: rack_attack_redis_pool,
+        pool: false
       )
     end
 

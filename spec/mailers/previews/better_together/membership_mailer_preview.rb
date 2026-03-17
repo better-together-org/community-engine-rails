@@ -105,7 +105,7 @@ module BetterTogether # :nodoc:
       )
       ensure_role_permissions(role, 'BetterTogether::Platform')
 
-      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+      recipient_struct = Struct.new(:email, :locale, :time_zone)
       recipient = recipient_struct.new(
         email: 'former.member@example.com',
         locale: I18n.default_locale,
@@ -130,7 +130,7 @@ module BetterTogether # :nodoc:
       )
       ensure_role_permissions(role, 'BetterTogether::Community')
 
-      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+      recipient_struct = Struct.new(:email, :locale, :time_zone)
       recipient = recipient_struct.new(
         email: 'former.member@example.com',
         locale: I18n.default_locale,

@@ -9,16 +9,16 @@ on:
       - compat/rails-7.2
       - compat/rails-8.0
       - compat/rails-8.1
+      - feat/**
+      - fix/**
+      - chore/**
   pull_request:
-    branches:
-      - main
-      - dev
-      - compat/rails-7.2
-      - compat/rails-8.0
-      - compat/rails-8.1
 
 jobs:
   prepare:
+    # Skip automated compat sync PRs (main → compat/*) whose head_ref == 'main'.
+    # All downstream jobs (rspec, rubocop, security) cascade-skip via needs: prepare.
+    if: github.head_ref != 'main'
     runs-on: ubuntu-latest
     outputs:
       rails_version: ${{ steps.branch-target.outputs.rails_version }}
