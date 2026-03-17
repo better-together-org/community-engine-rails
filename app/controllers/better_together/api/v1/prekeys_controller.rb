@@ -17,7 +17,6 @@ module BetterTogether
       #   PUT /api/v1/people/:id/key_backup            — store encrypted backup blob (own person only)
       # rubocop:disable Metrics/ClassLength
       class PrekeysController < BetterTogether::Api::ApplicationController
-        skip_before_action :verify_authenticity_token, raise: false
         # Authorization is handled by authorize_own_person! rather than Pundit policies.
         # Skip both standard Pundit and pundit-resources enforcement hooks.
         skip_after_action :verify_authorized, raise: false
