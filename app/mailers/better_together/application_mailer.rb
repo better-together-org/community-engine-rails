@@ -24,8 +24,8 @@ module BetterTogether
     #   2. Current.platform set by Rack middleware (web/API requests)
     #   3. Global BetterTogether.base_url env fallback (background jobs with no request context)
     def default_url_options
-      host = @platform&.url || ::Current.platform&.url || BetterTogether.base_url
-      options = super.merge(locale:, host:)
+      raw = @platform&.url || ::Current.platform&.url || BetterTogether.base_url
+      options = super.merge(locale:, **resolve_url_options(raw.to_s))
       ActiveStorage::Current.url_options = options
       options
     end
@@ -50,5 +50,23 @@ module BetterTogether
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/PerceivedComplexity
+
+    # Parse a raw URL string and return Rails url_options components (host:, protocol:, port:).
+    # Handles full URLs (https://example.com/path) — Rails expects host: to be hostname-only.
+    # rubocop:disable Metrics/AbcSize
+    def resolve_url_options(raw_url)
+      uri = URI.parse(raw_url.to_s)
+      opts = { host: uri.host.presence || raw_url.to_s }
+      opts[:protocol] = uri.scheme if uri.scheme.present?
+      opts[:port] = uri.port if uri.port && !default_port?(uri.scheme, uri.port)
+      opts
+    rescue URI::InvalidURIError
+      { host: raw_url.to_s }
+    end
+    # rubocop:enable Metrics/AbcSize
+
+    def default_port?(scheme, port)
+      (scheme == 'https' && port == 443) || (scheme == 'http' && port == 80)
+    end
   end
 end

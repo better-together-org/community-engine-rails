@@ -29,6 +29,14 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
       ]
     end
 
+    it 'raises ArgumentError when seeds exceed MAX_SEEDS_PER_JOB' do
+      oversized_seeds = Array.new(described_class::MAX_SEEDS_PER_JOB + 1) { seeds.first }
+
+      expect do
+        described_class.perform_now(platform_connection_id: connection.id, seeds: oversized_seeds)
+      end.to raise_error(ArgumentError, /seeds payload too large/)
+    end
+
     it 'delegates to the federated content ingest service' do
       allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(
         BetterTogether::Content::FederatedContentIngestService::Result.new(

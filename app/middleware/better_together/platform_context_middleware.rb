@@ -24,7 +24,7 @@ module BetterTogether
     def call(env)
       hostname = ActionDispatch::Request.new(env).host
       domain   = BetterTogether::PlatformDomain.resolve(hostname)
-      platform = domain&.platform || BetterTogether::Platform.find_by(host: true)
+      platform = domain&.platform || cached_host_platform
 
       ::Current.platform_domain = domain
       ::Current.platform        = platform
@@ -32,6 +32,14 @@ module BetterTogether
       @app.call(env)
     ensure
       ::Current.reset
+    end
+
+    private
+
+    def cached_host_platform
+      Rails.cache.fetch('better_together/host_platform', expires_in: 5.minutes) do
+        BetterTogether::Platform.find_by(host: true)
+      end
     end
   end
 end

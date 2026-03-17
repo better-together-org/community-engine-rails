@@ -12,11 +12,11 @@ module BetterTogether
       self.locale = @person.locale
       self.time_zone = @person.time_zone
 
-      host = platform&.url || BetterTogether.base_url
+      raw_url = platform&.url || BetterTogether.base_url
       @integration_url = better_together.settings_url(
         locale: @person.locale,
-        host:,
-        anchor: 'integrations'
+        anchor: 'integrations',
+        **resolve_url_options(raw_url.to_s)
       )
 
       mail(

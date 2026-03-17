@@ -540,6 +540,14 @@ fr:
           attributes:
             event_hosts:
               too_short: Les événements doivent avoir au moins un hôte
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: les accords de lien de personne nécessitent
+                une personne source, une personne cible et une connexion de plateforme
+                active
+            target:
+              must_be_person: doit être une personne
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -553,6 +561,12 @@ fr:
               inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
             uid:
               taken: a déjà été lié à un autre compte
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: doit être vrai pour un domaine principal
+            primary:
+              already_taken_for_platform: a déjà été pris pour cette plateforme
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi

@@ -46,13 +46,13 @@ module BetterTogether
     def single_primary_domain
       return unless self.class.where(platform_id: platform_id, primary: true).where.not(id: id).exists?
 
-      errors.add(:primary, 'has already been taken for this platform')
+      errors.add(:primary, :already_taken_for_platform)
     end
 
     def primary_domain_must_be_active
       return if active?
 
-      errors.add(:active, 'must be true for a primary domain')
+      errors.add(:active, :must_be_true_for_primary)
     end
 
     def bust_resolve_cache

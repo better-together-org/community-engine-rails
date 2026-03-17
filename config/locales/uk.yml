@@ -538,12 +538,25 @@ uk:
           attributes:
             event_hosts:
               too_short: Події повинні мати принаймні одного господаря
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: угоди про зв'язок особи вимагають вихідної
+                особи, цільової особи та активного підключення платформи
+            target:
+              must_be_person: повинна бути особою
         better_together/person_platform_integration:
           attributes:
             provider:
               inclusion: "%{value} не є підтримуваним постачальником OAuth"
             uid:
               taken: вже пов'язано з іншим обліковим записом
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: повинно бути правдою для основного домену
+            primary:
+              already_taken_for_platform: вже зайнятий для цієї платформи
     models:
       action_text/encrypted_rich_text: зашифрований багатий текст
       action_text/rich_text: багатий текст

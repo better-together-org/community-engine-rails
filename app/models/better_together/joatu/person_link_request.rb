@@ -20,7 +20,7 @@ module BetterTogether
       def validate_link_prerequisites!(source_person, target_person, connection)
         return if source_person && target_person && connection
 
-        errors.add(:base, 'person link agreements require a source person, target person, and active platform connection')
+        errors.add(:base, :missing_link_prerequisites)
         raise ActiveRecord::RecordInvalid, self
       end
 
@@ -44,7 +44,7 @@ module BetterTogether
       def target_person_must_exist
         return if target.is_a?(::BetterTogether::Person)
 
-        errors.add(:target, 'must be a person')
+        errors.add(:target, :must_be_person)
       end
 
       def resolve_platform_connection_for(source_person, target_person)
