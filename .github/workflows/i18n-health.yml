@@ -5,7 +5,16 @@ on:
     branches:
       - main
       - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
   pull_request:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
 
 jobs:
   prepare:

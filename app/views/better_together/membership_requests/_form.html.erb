@@ -55,6 +55,7 @@
           rich-text formatting adds no value and increases attack surface. Action Text
           coerces the plain string on save; to_plain_text serialises cleanly for the API. %>
       <%= form.text_area :description,
+                         value: membership_request.description&.to_plain_text.to_s,
                          class: "form-control #{'is-invalid' if membership_request.errors[:description].any?}",
                          rows: 4,
                          required: true %>
