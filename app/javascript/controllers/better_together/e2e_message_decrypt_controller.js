@@ -50,8 +50,9 @@ export default class extends Controller {
     if (payload.type === 'sender_keys_v1') {
       // If this message also carries a SenderKey distribution, process it first
       if (payload.distributionMessages) {
+        // CE JS library produces { personId, envelope } — not recipientPersonId
         const myDistribution = payload.distributionMessages.find(
-          m => String(m.recipientPersonId) === String(this.#myPersonId())
+          m => String(m.personId) === String(this.#myPersonId())
         )
         if (myDistribution) {
           // The distribution message itself was Signal-encrypted for us

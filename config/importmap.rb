@@ -49,4 +49,9 @@ pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es
 # Application entry point
 pin 'application', preload: true
 
-pin 'community_engine_js', to: 'community-engine.umd.js', integrity: 'sha384-nBGUV8c8f2uCS8r5d2F/RyIN//oOr/E7f6hcZ3JpaHUCti6zhdNZagRbyZgv7duj'
+# The UMD bundle populates globalThis.CommunityEngine when loaded.
+# It must be pinned under a distinct name so it loads and runs before the shim.
+pin 'community_engine_js_umd', to: 'community-engine.umd.js',
+                               integrity: 'sha384-nBGUV8c8f2uCS8r5d2F/RyIN//oOr/E7f6hcZ3JpaHUCti6zhdNZagRbyZgv7duj'
+# The shim re-exports named symbols from the UMD global as ESM named exports.
+pin 'community_engine_js', to: 'community_engine_js_shim.js'

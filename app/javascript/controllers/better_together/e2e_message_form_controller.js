@@ -36,10 +36,12 @@ export default class extends Controller {
   #senderKeysReady = false
   // Guard flag: true while we are submitting the encrypted form to prevent re-entry
   #submitting = false
+  // Stable bound reference so addEventListener/removeEventListener receive the same instance
+  #boundHandleSubmit = this.#handleSubmit.bind(this)
 
   async connect() {
     if (!this.conversationIdValue || !this.personIdValue) return
-    this.element.addEventListener('submit', this.#handleSubmit.bind(this))
+    this.element.addEventListener('submit', this.#boundHandleSubmit)
 
     try {
       await this.#setupSessions()
@@ -60,10 +62,12 @@ export default class extends Controller {
   }
 
   disconnect() {
-    this.element.removeEventListener('submit', this.#handleSubmit.bind(this))
+    this.element.removeEventListener('submit', this.#boundHandleSubmit)
   }
 
   async #setupSessions() {
+    // Clear stale bundles before re-fetching so departed members are not retained
+    this.#participantBundles = {}
     const bundles = await fetchParticipantBundles(
       this.conversationIdValue,
       { baseUrl: this.baseUrlValue }

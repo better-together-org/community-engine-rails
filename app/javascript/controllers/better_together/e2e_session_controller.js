@@ -47,6 +47,12 @@ export default class extends Controller {
   // Minimum passphrase length for key backup (V7 defence-in-depth).
   static MIN_PASSPHRASE_LENGTH = 12
 
+  // Read the Devise JWT from the meta tag injected by the layout.
+  // The token authorises /api/v1/people/:id/key_backup calls.
+  #authToken() {
+    return document.querySelector('meta[name="current-user-token"]')?.content ?? ''
+  }
+
   async connect() {
     if (!this.personIdValue) return
 
@@ -154,7 +160,8 @@ export default class extends Controller {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+          'Authorization': `Bearer ${this.#authToken()}`
         },
         credentials: 'same-origin',
         body: JSON.stringify({ blob, salt })
@@ -171,7 +178,11 @@ export default class extends Controller {
   async #fetchBackup() {
     const res = await fetch(
       `${this.baseUrlValue}/api/v1/people/${this.personIdValue}/key_backup`,
-      { method: 'GET', credentials: 'same-origin' }
+      {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'Authorization': `Bearer ${this.#authToken()}` }
+      }
     )
     if (res.status === 404) return null
     if (!res.ok) return null

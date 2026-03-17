@@ -25,6 +25,8 @@
     <%= csrf_meta_tags %>
     <% if current_user&.person %>
       <%= tag.meta name: "current-person-id", content: current_user.person.id %>
+      <%# Short-lived JWT for in-browser API calls (e.g. E2E key backup). Never log or expose this value. %>
+      <%= tag.meta name: "current-user-token", content: current_user_api_token %>
     <% end %>
     <%= csp_meta_tag %>
     <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>

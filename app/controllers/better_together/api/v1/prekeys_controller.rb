@@ -71,14 +71,17 @@ module BetterTogether
             )
 
             if registration_params[:one_time_prekeys].present?
-              registration_params[:one_time_prekeys].each do |prekey|
-                # Upsert by (person_id, key_id) — safe to call multiple times
-                BetterTogether::OneTimePrekey.find_or_create_by!(
+              registration_params[:one_time_prekeys].each do |prekey_data|
+                # find_or_initialize_by + assign_attributes + save! makes the upsert
+                # fully idempotent: re-registering the same key_id updates the public_key
+                # rather than silently keeping stale key material (find_or_create_by! only
+                # sets attributes in the block on create, not on find).
+                otk = BetterTogether::OneTimePrekey.find_or_initialize_by(
                   person: @person,
-                  key_id: prekey[:id]
-                ) do |otk|
-                  otk.public_key = prekey[:public_key]
-                end
+                  key_id: prekey_data[:id]
+                )
+                otk.assign_attributes(public_key: prekey_data[:public_key])
+                otk.save!
               end
             end
           end
@@ -169,7 +172,10 @@ module BetterTogether
         def set_person
           @person = BetterTogether::Person.find(params[:id])
         rescue ActiveRecord::RecordNotFound
-          render json: { error: 'Person not found' }, status: :not_found
+          # render + return halts the before_action chain.
+          # Without the explicit return, Ruby would continue executing after the rescue block
+          # with @person = nil, causing 500s or incorrect 403s in subsequent before_actions.
+          render json: { error: 'Person not found' }, status: :not_found and return
         end
 
         def authorize_own_person!

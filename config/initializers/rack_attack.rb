@@ -17,13 +17,13 @@ module Rack
 
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
-      # pool: false — activesupport 8.0.3 calls ConnectionPool.new(hash) with a
-      # positional arg but connection_pool 3.x requires keyword args, causing an
-      # ArgumentError. Setting pool: false skips ConnectionPool entirely and uses
-      # a single direct Redis connection (sufficient for Rack::Attack throttling).
+      # Use a properly-sized connection pool rather than pool: false (which forces a
+      # single direct connection and causes thread contention under concurrent load).
+      pool_size = ENV.fetch('RAILS_MAX_THREADS', 5).to_i
       Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
         url: rack_attack_redis,
-        pool: false
+        pool_size: pool_size,
+        pool_timeout: 5
       )
     end
 

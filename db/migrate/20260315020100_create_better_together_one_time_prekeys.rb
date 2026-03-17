@@ -5,9 +5,9 @@
 class CreateBetterTogetherOneTimePrekeys < ActiveRecord::Migration[7.2]
   def change
     create_bt_table :one_time_prekeys do |t|
-      t.references :person, null: false, type: :uuid,
-                            foreign_key: { to_table: :better_together_people },
-                            comment: 'Person who owns this prekey'
+      # bt_references follows the repo convention: UUID FK to the namespaced table
+      # with the correct index name. Do not use t.references here.
+      t.bt_references :person, index: { name: 'bt_one_time_prekeys_by_person' }
       t.integer :key_id,     null: false,             comment: 'Signal prekey ID (scoped to person)'
       t.text    :public_key, null: false,             comment: 'Prekey public key (base64)'
       t.boolean :consumed,   default: false, null: false, comment: 'True after this key has been served once'
