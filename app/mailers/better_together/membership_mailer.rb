@@ -92,8 +92,13 @@ module BetterTogether
     def process_recipient
       return unless @recipient.is_a?(Hash)
 
+      recipient_hash = @recipient.transform_keys(&:to_sym)
       recipient_struct = Struct.new(:email, :locale, :time_zone)
-      @recipient = recipient_struct.new(@recipient)
+      @recipient = recipient_struct.new(
+        recipient_hash[:email],
+        recipient_hash[:locale],
+        recipient_hash[:time_zone]
+      )
     end
 
     def invalid_recipient?
