@@ -8,14 +8,15 @@ RSpec.describe BetterTogether::FederationConnectionProvisioningService do
   let(:target_platform) { create(:better_together_platform) }
 
   describe '.call' do
-    context 'with default policies' do
-      it 'creates a pending connection' do
+    context 'with default mode (:request)' do
+      it 'creates a pending connection awaiting approval' do
         result = described_class.call(
           source_platform:,
           target_platform:
         )
 
         expect(result).to be_success
+        expect(result.mode).to eq(:request)
         expect(result.connection).to be_persisted
         expect(result.connection.status).to eq('pending')
         expect(result.connection.source_platform).to eq(source_platform)
@@ -41,16 +42,17 @@ RSpec.describe BetterTogether::FederationConnectionProvisioningService do
       end
     end
 
-    context 'when activate: true' do
-      it 'sets the connection status to active' do
+    context 'when mode: :auto_accept' do
+      it 'sets the connection status to active immediately' do
         result = described_class.call(
           source_platform:,
           target_platform:,
-          activate: true,
+          mode: :auto_accept,
           enqueue_sync: false
         )
 
         expect(result).to be_success
+        expect(result.mode).to eq(:auto_accept)
         expect(result.connection.status).to eq('active')
       end
 
@@ -60,9 +62,17 @@ RSpec.describe BetterTogether::FederationConnectionProvisioningService do
         described_class.call(
           source_platform:,
           target_platform:,
-          activate: true,
+          mode: :auto_accept,
           enqueue_sync: true
         )
+      end
+    end
+
+    context 'with an invalid mode' do
+      it 'raises ArgumentError' do
+        expect do
+          described_class.call(source_platform:, target_platform:, mode: :invalid)
+        end.to raise_error(ArgumentError, /mode must be one of/)
       end
     end
 
