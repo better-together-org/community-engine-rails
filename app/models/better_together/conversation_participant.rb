@@ -38,7 +38,7 @@ module BetterTogether
         partial: 'better_together/messages/form',
         locals: {
           conversation: reloaded,
-          message: reloaded.messages.build,
+          message: BetterTogether::Message.new(conversation: reloaded),
           current_user_person_id: nil, # no Warden in broadcast renderer
           form_action_url: message_form_url(reloaded) # pre-computed; renderer lacks engine routes
         }
