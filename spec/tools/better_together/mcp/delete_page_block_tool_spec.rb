@@ -35,6 +35,7 @@ RSpec.describe BetterTogether::Mcp::DeletePageBlockTool, type: :model do
           expect(result['block_id']).to eq(block.id)
           expect(result['block_destroyed']).to be(false)
         end.to change(BetterTogether::Content::PageBlock, :count).by(-1)
+          .and change(BetterTogether::Content::Block, :count).by(0)
 
         expect(BetterTogether::Content::Block.find_by(id: block.id)).to be_present
       end
@@ -50,7 +51,7 @@ RSpec.describe BetterTogether::Mcp::DeletePageBlockTool, type: :model do
           expect(result['block_id']).to eq(block.id)
           expect(result['block_destroyed']).to be(true)
         end.to change(BetterTogether::Content::PageBlock, :count).by(-1)
-                                                                 .and change(BetterTogether::Content::Block, :count).by(-1)
+          .and change(BetterTogether::Content::Block, :count).by(-1)
       end
 
       it 'keeps the block when it is still attached elsewhere' do
@@ -65,6 +66,7 @@ RSpec.describe BetterTogether::Mcp::DeletePageBlockTool, type: :model do
           expect(result['error']).to include('Detached from this page only.')
           expect(result['block_id']).to eq(block.id)
         end.to change(BetterTogether::Content::PageBlock, :count).by(-1)
+          .and change(BetterTogether::Content::Block, :count).by(0)
 
         expect(BetterTogether::Content::Block.find_by(id: block.id)).to be_present
       end
