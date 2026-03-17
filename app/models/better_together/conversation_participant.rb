@@ -27,7 +27,10 @@ module BetterTogether
 
     def bump_sender_key_version
       conversation.increment!(:sender_key_version)
-      Turbo::StreamsChannel.broadcast_replace_later_to(
+      # broadcast_replace_to (synchronous) avoids ActiveJob serialization of the
+      # unsaved Message object; broadcast_replace_later_to would raise
+      # ActiveJob::SerializationError because Message.new has no id.
+      Turbo::StreamsChannel.broadcast_replace_to(
         conversation,
         target: "e2e_message_form_#{conversation.id}",
         partial: 'better_together/messages/form',

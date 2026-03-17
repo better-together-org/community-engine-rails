@@ -49,7 +49,9 @@ module BetterTogether
       return nil unless user_signed_in? && current_user
 
       Warden::JWTAuth::UserEncoder.new.call(current_user, :api_user, nil).first
-    rescue StandardError
+    rescue Devise::MissingWarden, StandardError
+      # Devise::MissingWarden is raised in view specs where the Warden
+      # middleware is not present in the stack.
       nil
     end
 
