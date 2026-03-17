@@ -21,6 +21,76 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
     end
   end
 
+  # Verify RBAC tags are correctly applied to every concrete tool class.
+  # Tags drive the 3-tier filter in config/initializers/fast_mcp.rb:
+  #   :public        → visible to guests
+  #   :authenticated → visible to signed-in users (hidden from guests)
+  #   :admin         → visible only to users with manage_platform permission
+  describe 'tool RBAC tag classification' do
+    let(:all_tools) { described_class.descendants }
+
+    before { Rails.application.eager_load! }
+
+    it 'every concrete tool declares exactly one RBAC tag' do
+      all_tools.each do |tool_class|
+        tags = tool_class.tags
+        rbac_tags = tags & %i[public authenticated admin]
+        expect(rbac_tags.length).to eq(1),
+                                    "#{tool_class.name} must declare exactly one of :public/:authenticated/:admin, got: #{tags.inspect}"
+      end
+    end
+
+    describe ':admin tools (require manage_platform permission)' do
+      subject(:admin_tools) { all_tools.select { |t| t.tags.include?(:admin) } }
+
+      it 'includes GetMetricsSummaryTool' do
+        expect(admin_tools).to include(BetterTogether::Mcp::GetMetricsSummaryTool)
+      end
+    end
+
+    describe ':authenticated tools (require signed-in user)' do
+      subject(:auth_tools) { all_tools.select { |t| t.tags.include?(:authenticated) } }
+
+      it 'includes all write tools' do
+        expect(auth_tools).to include(
+          BetterTogether::Mcp::CreatePostTool,
+          BetterTogether::Mcp::CreateEventTool,
+          BetterTogether::Mcp::SendMessageTool
+        )
+      end
+
+      it 'includes user-scoped read tools' do
+        expect(auth_tools).to include(
+          BetterTogether::Mcp::ListConversationsTool,
+          BetterTogether::Mcp::ListInvitationsTool,
+          BetterTogether::Mcp::ListNotificationsTool,
+          BetterTogether::Mcp::ListUploadsTool
+        )
+      end
+    end
+
+    describe ':public tools (accessible to guests)' do
+      subject(:public_tools) { all_tools.select { |t| t.tags.include?(:public) } }
+
+      it 'includes public read/search tools' do
+        expect(public_tools).to include(
+          BetterTogether::Mcp::ListCommunitiesTool,
+          BetterTogether::Mcp::ListEventsTool,
+          BetterTogether::Mcp::GetEventDetailTool,
+          BetterTogether::Mcp::GetPostTool,
+          BetterTogether::Mcp::SearchPostsTool,
+          BetterTogether::Mcp::SearchGeographyTool,
+          BetterTogether::Mcp::SearchPeopleTool,
+          BetterTogether::Mcp::ListPagesTool,
+          BetterTogether::Mcp::SearchPagesTool,
+          BetterTogether::Mcp::ListOffersTool,
+          BetterTogether::Mcp::ListRequestsTool,
+          BetterTogether::Mcp::ManageNavigationTool
+        )
+      end
+    end
+  end
+
   describe '#pundit_user' do
     let(:user) { create(:user) }
     let(:tool_class) do

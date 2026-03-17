@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'MCP Timezone Integration', type: :model do
+  def current_zone_abbreviation(time_zone_name)
+    ActiveSupport::TimeZone[time_zone_name].tzinfo.current_period.abbreviation.to_s
+  end
+
   describe 'ApplicationTool timezone handling' do
     let(:tool_class) do
       Class.new(BetterTogether::Mcp::ApplicationTool) do
@@ -28,7 +32,7 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
       tool = tool_class.new
       result = tool.call
 
-      expect(result).to eq('PST')
+      expect(result).to eq(current_zone_abbreviation('America/Los_Angeles'))
     end
 
     context 'with different user timezone' do
@@ -56,7 +60,7 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
         tool = tool_class.new
         result = tool.call
 
-        expect(result).to eq('EST')
+        expect(result).to eq(current_zone_abbreviation('America/New_York'))
       end
     end
   end

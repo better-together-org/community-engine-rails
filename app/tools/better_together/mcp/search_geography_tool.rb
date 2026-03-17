@@ -6,6 +6,7 @@ module BetterTogether
     # Searches across continents, countries, states, regions, and settlements
     class SearchGeographyTool < ApplicationTool
       description 'Search geography locations by name across all location types'
+      tags :public
 
       arguments do
         required(:query)

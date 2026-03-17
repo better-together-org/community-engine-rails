@@ -56,7 +56,16 @@ module BetterTogether
       def self.extract_user_from_doorkeeper(request)
         return nil unless defined?(Doorkeeper)
 
-        token = Doorkeeper::OAuth::Token.authenticate(request, :from_bearer_authorization)
+        # FastMCP passes a Rack::Request which lacks the #authorization helper
+        # that ActionDispatch::Request provides. Wrap it so Doorkeeper can read
+        # the Authorization header via the standard Rack env key.
+        doorkeeper_request = if request.respond_to?(:authorization)
+                               request
+                             else
+                               ActionDispatch::Request.new(request.env)
+                             end
+
+        token = Doorkeeper::OAuth::Token.authenticate(doorkeeper_request, :from_bearer_authorization)
         return nil unless token&.accessible? && token.acceptable?('mcp_access')
 
         BetterTogether::User.find_by(id: token.resource_owner_id)

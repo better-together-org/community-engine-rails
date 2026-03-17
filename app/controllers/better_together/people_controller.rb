@@ -132,6 +132,30 @@ module BetterTogether
 
     def set_person
       @person = set_resource_instance
+      preload_person_profile_associations
+    end
+
+    # Preload all associations accessed in the profile view to prevent N+1 queries.
+    # person_platform_memberships and person_community_memberships each have their joinable
+    # (Platform/Community), role, and attachments resolved in the view.
+    def preload_person_profile_associations # rubocop:disable Metrics/MethodLength
+      return unless @person
+
+      ActiveRecord::Associations::Preloader.new(
+        records: [@person],
+        associations: {
+          person_platform_memberships: {
+            joinable: [:string_translations, { profile_image_attachment: :blob }],
+            role: [:string_translations]
+          },
+          person_community_memberships: {
+            joinable: [:string_translations, { profile_image_attachment: :blob }],
+            role: [:string_translations]
+          },
+          agreement_participants: {},
+          contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts]
+        }
+      ).call
     end
 
     def set_resource_instance

@@ -24,10 +24,17 @@ module BetterTogether
       # Hide pages that don't exist or aren't viewable to the current user as 404s
       render_not_found and return if @page.nil?
 
-      # Preload content blocks with their associations for better performance
-      @content_blocks = @page.content_blocks.includes(
+      # Preload content blocks with their associations for better performance.
+      # Do NOT include :string_translations here — block STI collections may
+      # contain Content::Template records that have no string_translations
+      # association, causing AssociationNotFoundError in Rails 8 (branch.rb:85).
+      # Instead, use preload_block_string_translations to selectively preload
+      # only on block types that define the association.
+      content_blocks = @page.content_blocks.includes(
         background_image_file_attachment: :blob
-      )
+      ).load
+      preload_block_string_translations(content_blocks)
+      @content_blocks = content_blocks
       @layout = 'layouts/better_together/page'
       @layout = @page.layout if @page.layout.present?
     end
@@ -205,7 +212,9 @@ module BetterTogether
     end
 
     def preload_page_associations(page)
-      resource_class.includes(page_includes).find(page.id)
+      loaded_page = resource_class.includes(page_includes).find(page.id)
+      preload_block_string_translations(loaded_page.page_blocks.map(&:block))
+      loaded_page
     end
 
     def page_includes
@@ -250,6 +259,16 @@ module BetterTogether
         *BetterTogether::Content::Block.storext_keys,
         *BetterTogether::Content::Block.extra_permitted_attributes
       ]
+    end
+
+    # Preloads string_translations only on block types that define the association,
+    # avoiding AssociationNotFoundError on STI subclasses (e.g. Content::Template)
+    # that do not have any Mobility string-translated attributes.
+    def preload_block_string_translations(blocks)
+      translatable = blocks.select { |b| b.class.reflect_on_association(:string_translations) }
+      return if translatable.empty?
+
+      ActiveRecord::Associations::Preloader.new(records: translatable, associations: :string_translations).call
     end
   end
 end

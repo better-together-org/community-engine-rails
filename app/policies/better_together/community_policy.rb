@@ -27,6 +27,10 @@ module BetterTogether
       user.present? && (permitted_to?('manage_platform') || permitted_to?('update_community', record))
     end
 
+    def manage_integrations?
+      update?
+    end
+
     def create_events?
       update? &&
         BetterTogether::EventPolicy.new(user, BetterTogether::Event.new).create?

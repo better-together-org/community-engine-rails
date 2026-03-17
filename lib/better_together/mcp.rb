@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module BetterTogether # rubocop:disable Style/Documentation
+  # MCP namespace — required by Zeitwerk: lib/better_together/mcp/ directory exists,
+  # so this file must define BetterTogether::Mcp as the explicit namespace.
+  module Mcp # rubocop:disable Style/Documentation
+  end
+
   # MCP Server instance accessor
   # @return [FastMcp::Server] The MCP server instance
   def self.mcp_server

@@ -87,6 +87,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
 
           resources :person_community_memberships, only: %i[create destroy]
+
+          # Community-scoped integrations (accessible to community admins)
+          resources :webhook_endpoints,
+                    controller: 'community_webhook_endpoints',
+                    as: :community_webhook_endpoints do
+            member do
+              post :test
+            end
+          end
         end
 
         resources :conversations, only: %i[index new create update show] do
@@ -144,7 +153,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             get :search
           end
         end
-        resources :reports, only: [:create]
+        resources :reports, only: %i[index show new create]
 
         namespace :joatu, path: 'exchange' do
           # Exchange hub landing page
@@ -220,6 +229,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
                                                              as: :mark_integration_notifications_read
+
+        # Personal OAuth application management (accessible to all authenticated users)
+        scope path: 'settings' do
+          resources :oauth_applications,
+                    controller: 'oauth_applications',
+                    as: :personal_oauth_applications,
+                    path: 'applications'
+        end
 
         # Only logged-in users have access to the AI translation feature for now. Needs code adjustments, too.
         scope path: :translations do
@@ -314,6 +331,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             # People and memberships
             resources :people
             resources :person_community_memberships
+            namespace :safety, path: 'safety' do
+              resources :cases, only: %i[index show update], as: :cases do
+                resources :actions, only: [:create]
+                resources :notes, only: [:create]
+                resources :agreements, only: %i[create update]
+              end
+            end
 
             # Platform list
             resources :platforms, only: %i[index show edit update] do
@@ -458,13 +482,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
   end
 
-  # Catch all requests without a locale and redirect to the default...
+  # Catch all requests without a locale and redirect to the default locale.
+  # The constraint must check ALL available locales (not just I18n.locale) because
+  # locale is set via before_action *after* route matching. Without this, requests
+  # like /fr/à-propos-de-nous slip through and become /en/fr/à-propos-de-nous,
+  # causing URI::InvalidURIError when ActionDispatch calls URI.parse on the redirect URL.
+  # Non-ASCII and URI-invalid ASCII characters (brackets, spaces, backslashes, etc.)
+  # are percent-encoded defensively; malformed paths return 400 rather than 500.
   get '*path',
-      to: redirect { |params, _request| "/#{I18n.locale}/#{params[:path]}" },
+      to: redirect { |params, _request|
+        path = params[:path].to_s
+                            .gsub(/[^\x00-\x7F]/) { |c| c.bytes.map { |b| format('%%%02X', b) }.join }
+                            .gsub(/[\[\]{}\s\\^`|<>]/) { |c| format('%%%02X', c.ord) }
+        "/#{I18n.default_locale}/#{path}"
+      },
       constraints: lambda { |req|
-        # raise 'error'
-        !req.path.starts_with? "/#{I18n.locale}" and
-          !req.path.starts_with? '/rails'
+        I18n.available_locales.none? { |locale| req.path.start_with?("/#{locale}/") || req.path == "/#{locale}" } and
+          !req.path.start_with?('/rails')
       }
   get '', to: redirect("/#{I18n.default_locale}")
 end

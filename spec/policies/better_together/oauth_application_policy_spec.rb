@@ -13,8 +13,8 @@ RSpec.describe BetterTogether::OauthApplicationPolicy do
       expect(described_class.new(platform_manager_user, BetterTogether::OauthApplication).index?).to be true
     end
 
-    it 'denies regular users' do
-      expect(described_class.new(regular_user, BetterTogether::OauthApplication).index?).to be false
+    it 'allows regular users with a person' do
+      expect(described_class.new(regular_user, BetterTogether::OauthApplication).index?).to be true
     end
 
     it 'denies unauthenticated users' do
@@ -45,8 +45,8 @@ RSpec.describe BetterTogether::OauthApplicationPolicy do
       expect(described_class.new(platform_manager_user, BetterTogether::OauthApplication).create?).to be true
     end
 
-    it 'denies regular users' do
-      expect(described_class.new(regular_user, BetterTogether::OauthApplication).create?).to be false
+    it 'allows regular users with a person' do
+      expect(described_class.new(regular_user, BetterTogether::OauthApplication).create?).to be true
     end
 
     it 'denies unauthenticated users' do

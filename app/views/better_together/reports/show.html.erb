@@ -1,0 +1,52 @@
+<% content_for :page_title, t('better_together.reports.show.title') %>
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0"><%= t('better_together.reports.show.title') %></h1>
+    <%= link_to t('better_together.reports.show.back'),
+                reports_path(locale: I18n.locale),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <dl class="row mb-0">
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.category') %></dt>
+            <dd class="col-sm-8"><%= safety_enum_label('report_categories', @report.category) %></dd>
+
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.harm_level') %></dt>
+            <dd class="col-sm-8"><%= safety_enum_label('harm_levels', @report.harm_level) %></dd>
+
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.requested_outcome') %></dt>
+            <dd class="col-sm-8"><%= safety_enum_label('requested_outcomes', @report.requested_outcome) %></dd>
+
+            <dt class="col-sm-4"><%= t('better_together.reports.attributes.reason') %></dt>
+            <dd class="col-sm-8"><%= simple_format(@report.reason) %></dd>
+
+            <% if @report.private_details.present? %>
+              <dt class="col-sm-4"><%= t('better_together.reports.attributes.private_details') %></dt>
+              <dd class="col-sm-8"><%= simple_format(@report.private_details) %></dd>
+            <% end %>
+          </dl>
+        </div>
+        <div class="col-lg-4">
+          <div class="border rounded p-3 bg-light">
+            <div class="small text-muted mb-1"><%= t('better_together.reports.show.status') %></div>
+            <div class="fw-semibold mb-3"><%= safety_enum_label('reporter_visible_statuses', @report.safety_case&.reporter_visible_status || 'submitted') %></div>
+
+            <% if @report.safety_case&.closure_summary.present? %>
+              <div class="small text-muted mb-1"><%= t('better_together.reports.show.summary') %></div>
+              <div><%= simple_format(@report.safety_case.closure_summary) %></div>
+            <% else %>
+              <div class="small text-muted">
+                <%= t('better_together.reports.show.pending_copy') %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,6 +6,7 @@ module BetterTogether
     # Returns full post content including excerpt and metadata
     class GetPostTool < ApplicationTool
       description 'Get a specific published post by ID, respecting privacy settings and blocks'
+      tags :public
 
       arguments do
         required(:post_id)
