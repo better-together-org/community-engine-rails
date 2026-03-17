@@ -61,6 +61,18 @@ module BetterTogether
         def register_prekeys
           return render json: { error: 'Missing required fields' }, status: :unprocessable_entity unless valid_registration?
 
+          # Validate ALL one-time prekey public keys before entering the transaction.
+          # A `return` inside a transaction block does not trigger a rollback, so checking
+          # inline would allow @person.update! (and any already-saved OTKs) to commit even
+          # when a later prekey fails validation, leaving a partially-updated key set on 422.
+          if registration_params[:one_time_prekeys].present?
+            bad_key = registration_params[:one_time_prekeys].find { |pk| !valid_base64?(pk[:public_key]) }
+            if bad_key
+              return render json: { error: 'Invalid one-time prekey public_key (must be base64)' },
+                            status: :unprocessable_entity
+            end
+          end
+
           ActiveRecord::Base.transaction do
             @person.update!(
               registration_id: registration_params[:registration_id],
@@ -72,11 +84,6 @@ module BetterTogether
 
             if registration_params[:one_time_prekeys].present?
               registration_params[:one_time_prekeys].each do |prekey_data|
-                unless valid_base64?(prekey_data[:public_key])
-                  return render json: { error: 'Invalid one-time prekey public_key (must be base64)' },
-                                status: :unprocessable_entity
-                end
-
                 # find_or_initialize_by + assign_attributes + save! makes the upsert
                 # fully idempotent: re-registering the same key_id updates the public_key
                 # rather than silently keeping stale key material (find_or_create_by! only

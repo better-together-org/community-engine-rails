@@ -1061,6 +1061,8 @@ fr:
         passphrase_restore_message: Sauvegarde de clés chiffrées trouvée. Entrez votre
           phrase de passe pour restaurer, ou laissez vide pour générer une nouvelle
           identité.
+        server_error_message: Impossible de joindre le serveur de sauvegarde de clés.
+          Veuillez recharger la page et réessayer.
     email_addresses:
       add: Ajouter une adresse e-mail
       email: E-mail

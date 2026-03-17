@@ -37,7 +37,8 @@ export default class extends Controller {
     baseUrl:                     { type: String, default: '' },
     passphraseBackupMessage:     { type: String, default: 'Set a backup passphrase (min 12 chars). Leave blank to skip.' },
     passphraseRestoreMessage:    { type: String, default: 'Encrypted key backup found. Enter your passphrase to restore, or leave blank to generate a fresh identity.' },
-    confirmFreshIdentityMessage: { type: String, default: 'Restore failed. Generate a fresh identity? Old encrypted messages will remain inaccessible.' }
+    confirmFreshIdentityMessage: { type: String, default: 'Restore failed. Generate a fresh identity? Old encrypted messages will remain inaccessible.' },
+    serverErrorMessage:          { type: String, default: 'Could not reach the key backup server. Please reload and try again.' }
   }
 
   // In-memory wrapping key for silent re-backups during the session.
@@ -95,7 +96,7 @@ export default class extends Controller {
         // Notify the user via the passphrase modal (dismiss-only — no input required).
         document.dispatchEvent(new CustomEvent('e2e:request-confirm', {
           detail: {
-            message: 'Could not reach the key backup server. Please reload and try again.',
+            message: this.serverErrorMessageValue,
             showInput: false,
             resolve: () => {}
           }

@@ -1056,6 +1056,8 @@ es:
         passphrase_restore_message: Se encontró una copia de seguridad de claves cifradas.
           Introduce tu frase de contraseña para restaurar, o déjala en blanco para
           generar una nueva identidad.
+        server_error_message: No se pudo conectar con el servidor de respaldo de claves.
+          Por favor, recarga la página e inténtalo de nuevo.
     email_addresses:
       add: Agregar Dirección de Correo Electrónico
       email: Correo Electrónico

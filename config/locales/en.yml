@@ -1049,6 +1049,8 @@ en:
           to skip.
         passphrase_restore_message: Encrypted key backup found. Enter your passphrase
           to restore, or leave blank to generate a fresh identity.
+        server_error_message: Could not reach the key backup server. Please reload
+          and try again.
     email_addresses:
       add: Add Email Address
       email: Email
