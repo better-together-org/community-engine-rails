@@ -35,6 +35,21 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
         block_ids = json['data'].map { |b| b['id'] }
         expect(block_ids).to include(block.id)
       end
+
+      it 'filters by page_id when provided' do
+        page = create(:better_together_page, :published_public)
+        attached_block = create(:content_markdown, :simple, privacy: 'public')
+        unattached_block = create(:content_markdown, :simple, privacy: 'public')
+        create(:better_together_content_page_block, page: page, block: attached_block, position: 0)
+
+        get url, params: { filter: { page_id: page.id } }, headers: manager_headers
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        block_ids = json['data'].map { |b| b['id'] }
+        expect(block_ids).to include(attached_block.id)
+        expect(block_ids).not_to include(unattached_block.id)
+      end
     end
 
     context 'when not authenticated' do
