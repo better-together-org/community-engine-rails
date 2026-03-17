@@ -35,6 +35,8 @@ x-app-shared: &app-shared
     ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://host.docker.internal:9200}
     REDIS_URL: ${REDIS_URL:-redis://host.docker.internal:6380}
     RACK_ATTACK_REDIS_URL: ${RACK_ATTACK_REDIS_URL:-redis://host.docker.internal:6381}
+    RACK_ATTACK_REDIS_POOL_SIZE: ${RACK_ATTACK_REDIS_POOL_SIZE:-5}
+    RACK_ATTACK_REDIS_POOL_TIMEOUT: ${RACK_ATTACK_REDIS_POOL_TIMEOUT:-5}
   depends_on:
     - db
     - redis
