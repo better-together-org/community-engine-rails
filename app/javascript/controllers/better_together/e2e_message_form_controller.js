@@ -39,6 +39,12 @@ export default class extends Controller {
   // Stable bound reference so addEventListener/removeEventListener receive the same instance
   #boundHandleSubmit = this.#handleSubmit.bind(this)
 
+  // Read the Devise JWT from the meta tag injected by the layout.
+  // The token authorises /api/v1/* calls.
+  #authToken() {
+    return document.querySelector('meta[name="current-user-token"]')?.content ?? ''
+  }
+
   async connect() {
     if (!this.conversationIdValue || !this.personIdValue) return
     this.element.addEventListener('submit', this.#boundHandleSubmit)
@@ -70,7 +76,7 @@ export default class extends Controller {
     this.#participantBundles = {}
     const bundles = await fetchParticipantBundles(
       this.conversationIdValue,
-      { baseUrl: this.baseUrlValue }
+      { baseUrl: this.baseUrlValue, authToken: this.#authToken() }
     )
 
     const others = bundles.filter(b => String(b.person_id) !== String(this.personIdValue))

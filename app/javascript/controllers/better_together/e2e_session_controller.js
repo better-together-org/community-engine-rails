@@ -94,10 +94,10 @@ export default class extends Controller {
     }
 
     // Keys exist locally. Ensure the server also has them.
-    const serverBundle = await fetchPrekeyBundle(this.personIdValue, { baseUrl: this.baseUrlValue })
+    const serverBundle = await fetchPrekeyBundle(this.personIdValue, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
     if (!serverBundle) {
       const bundle = await generateIdentity()
-      await registerPrekeys(this.personIdValue, bundle, { baseUrl: this.baseUrlValue })
+      await registerPrekeys(this.personIdValue, bundle, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
       console.info('[E2E] Re-registered identity keys with server.')
     }
   }
@@ -106,7 +106,7 @@ export default class extends Controller {
 
   async #generateAndRegister() {
     const bundle = await generateIdentity()
-    await registerPrekeys(this.personIdValue, bundle, { baseUrl: this.baseUrlValue })
+    await registerPrekeys(this.personIdValue, bundle, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
     console.info('[E2E] Identity keys generated and registered.')
 
     const passphrase = await this.#promptPassphraseForBackup()
@@ -138,7 +138,7 @@ export default class extends Controller {
       // Re-register public keys with server from restored state (prekey API expects public material).
       const restoredBundle = await this.#buildRegistrationBundle()
       if (restoredBundle) {
-        await registerPrekeys(this.personIdValue, restoredBundle, { baseUrl: this.baseUrlValue })
+        await registerPrekeys(this.personIdValue, restoredBundle, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
         console.info('[E2E] Re-registered restored keys with server.')
       }
     } catch (err) {
