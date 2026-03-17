@@ -1,10 +1,13 @@
 <!-- app/views/messages/_form.html.erb -->
-<%# When rendered from an ActionCable broadcast, current_user_person_id is passed
-    explicitly as nil (no request context → no Warden). Normal request renders omit
-    the local and fall back to current_user. %>
+<%# When rendered from an ActionCable broadcast:
+    - current_user_person_id is passed as nil (no Warden in renderer context)
+    - form_action_url is pre-computed via engine routes (renderer lacks engine route helpers,
+      so polymorphic routing on [conversation, message] would raise NoMethodError)
+    Normal request renders omit both locals and fall back to the live helpers. %>
 <% form_person_id = local_assigns.fetch(:current_user_person_id) { current_user&.person&.id } %>
+<% form_url = local_assigns.key?(:form_action_url) ? local_assigns[:form_action_url] : [conversation, message] %>
 <div id="e2e_message_form_<%= conversation.id %>">
-  <%= form_with(model: [conversation, message], local: false,
+  <%= form_with(model: message, url: form_url, local: false,
       html: {
         id: "new_message",
         data: {
