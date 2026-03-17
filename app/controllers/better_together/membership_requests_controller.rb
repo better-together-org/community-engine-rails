@@ -51,10 +51,7 @@ module BetterTogether
         membership_request_params.merge(
           target: @community,
           status: 'open',
-          urgency: 'normal',
-          name: t('better_together.membership_requests.name',
-                  requestor: membership_request_params[:requestor_name],
-                  default: "Membership request from #{membership_request_params[:requestor_name]}")
+          urgency: 'normal'
         )
       )
       @membership_request.creator = helpers.current_person if helpers.current_person.present?
@@ -62,7 +59,16 @@ module BetterTogether
 
       unless validate_captcha_if_enabled?
         handle_captcha_validation_failure(@membership_request)
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              'membership_request_form',
+              partial: 'better_together/membership_requests/form',
+              locals: { membership_request: @membership_request, community: @community }
+            ), status: :unprocessable_entity
+          end
+        end
         return
       end
 
@@ -138,7 +144,7 @@ module BetterTogether
     rescue StandardError => e
       flash.now[:alert] = t('better_together.membership_requests.flash.approve_failed',
                             default: 'Could not approve the membership request.')
-      Rails.logger.error "MembershipRequest#approve! failed: #{e.message}"
+      Rails.logger.error "MembershipRequest#approve! failed [#{e.class.name}] request_id=#{@membership_request.id}"
       respond_to do |format|
         format.html { redirect_to community_membership_request_path(@community, @membership_request) }
         format.turbo_stream do
@@ -162,7 +168,7 @@ module BetterTogether
     rescue StandardError => e
       flash.now[:alert] = t('better_together.membership_requests.flash.decline_failed',
                             default: 'Could not decline the membership request.')
-      Rails.logger.error "MembershipRequest#decline! failed: #{e.message}"
+      Rails.logger.error "MembershipRequest#decline! failed [#{e.class.name}] request_id=#{@membership_request.id}"
       respond_to do |format|
         format.html { redirect_to community_membership_request_path(@community, @membership_request) }
         format.turbo_stream do

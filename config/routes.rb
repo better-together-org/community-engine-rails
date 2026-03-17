@@ -51,7 +51,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :communities, only: %i[index]
       resources :communities, only: %i[show], path: 'c', as: 'community' do
         resources :membership_requests,
-                  controller: 'membership_requests' do
+                  controller: 'membership_requests',
+                  only: %i[index show new create destroy] do
           member do
             post :approve
             post :decline

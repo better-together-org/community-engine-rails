@@ -15,6 +15,10 @@ module BetterTogether
     class MembershipRequest < Request
       CATEGORY_NAME = 'Membership Requests'
 
+      # Minimal stand-in for an Offer used during approval when no real offer exists.
+      # Provides just enough interface for after_agreement_acceptance! (needs #creator).
+      ApprovalOffer = Struct.new(:creator, keyword_init: true)
+
       before_validation :assign_membership_request_category
       before_validation :generate_name_from_requestor
 
@@ -49,7 +53,7 @@ module BetterTogether
       def approve!(approver: nil)
         # Build a minimal stub so after_agreement_acceptance! has something to work with
         # when it needs the approver (used as invitation sender for unauthenticated path).
-        stub_offer = OpenStruct.new(creator: approver) # rubocop:disable Style/OpenStructUse
+        stub_offer = ApprovalOffer.new(creator: approver)
 
         ::ActiveRecord::Base.transaction do
           after_agreement_acceptance!(offer: stub_offer)
@@ -81,15 +85,18 @@ module BetterTogether
       def generate_name_from_requestor
         return if name.present?
 
+        # Use requestor_name for unauthenticated; fall back to creator's name for
+        # authenticated submissions where requestor_name may not be supplied.
+        display_name = requestor_name.presence || creator&.name.presence || requestor_email
         self.name = I18n.t(
           'better_together.membership_requests.name',
-          requestor: requestor_name,
-          default: "Membership request from #{requestor_name}"
+          requestor: display_name,
+          default: "Membership request from #{display_name}"
         )
       end
 
       def assign_membership_request_category
-        return if categories.any? { |c| c.name == CATEGORY_NAME }
+        return if categories.map(&:identifier).include?(CATEGORY_NAME.parameterize)
 
         category = ::BetterTogether::Joatu::Category
                    .find_by(identifier: CATEGORY_NAME.parameterize)

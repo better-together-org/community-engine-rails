@@ -61,11 +61,6 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 
-  # Configure Active Record Encryption for test environment using fixed deterministic keys
-  config.active_record.encryption.primary_key = 'test-primary-key-32-chars-00000000'
-  config.active_record.encryption.deterministic_key = 'test-deterministic-key-32-chars-0'
-  config.active_record.encryption.key_derivation_salt = 'test-key-derivation-salt-32chars0'
-
   # Disable Rack::Attack throttling in tests to prevent false 503 errors
   config.middleware.delete Rack::Attack
 

@@ -31,7 +31,7 @@ module BetterTogether
 
         # ActionText returns an ActionText::RichText object; serialize as plain text for JSON consumers.
         def description
-          @model.description.to_plain_text
+          @model.description&.to_plain_text.to_s
         end
 
         def description=(value)

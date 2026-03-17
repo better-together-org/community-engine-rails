@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-TABLE = :better_together_joatu_requests
-
 class AddMembershipRequestFieldsToJoatuRequests < ActiveRecord::Migration[7.1] # :nodoc:
+  TABLE = :better_together_joatu_requests
+  private_constant :TABLE
   def up
     add_columns
     add_indexes

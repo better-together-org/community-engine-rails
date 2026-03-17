@@ -51,6 +51,9 @@
       <%= form.label :description,
                      t('better_together.membership_requests.fields.description', default: 'Message'),
                      class: 'form-label' %>
+      <%# Plain text_area is intentional: description is a public submission field where
+          rich-text formatting adds no value and increases attack surface. Action Text
+          coerces the plain string on save; to_plain_text serialises cleanly for the API. %>
       <%= form.text_area :description,
                          class: "form-control #{'is-invalid' if membership_request.errors[:description].any?}",
                          rows: 4,

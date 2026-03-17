@@ -31,22 +31,28 @@ module BetterTogether
       end
 
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+        MEMBERSHIP_REQUEST_TYPE = 'BetterTogether::Joatu::MembershipRequest'
+
         # rubocop:todo Metrics/MethodLength
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           return scope.none unless user.present?
 
+          # MembershipRequests are governed by MembershipRequestPolicy::Scope.
+          # Exclude them here so they never leak through base Request queries.
+          base = scope.where.not(type: MEMBERSHIP_REQUEST_TYPE)
+
           # Platform managers see everything
-          return scope.all if permitted_to?('manage_platform')
+          return base.all if permitted_to?('manage_platform')
 
           agent_id = agent&.id
 
           # Requests that are not responses to another resource (no response_link where response is this request)
           # rubocop:todo Layout/LineLength
-          not_responses = scope.left_joins(:response_links_as_response).where(better_together_joatu_response_links: { id: nil })
+          not_responses = base.left_joins(:response_links_as_response).where(better_together_joatu_response_links: { id: nil })
           # rubocop:enable Layout/LineLength
 
           # Requests owned by the agent
-          owned = scope.where(creator_id: agent_id)
+          owned = base.where(creator_id: agent_id)
 
           # Requests that are responses to an Offer owned by the agent
           rl = BetterTogether::Joatu::ResponseLink.arel_table
@@ -62,10 +68,10 @@ module BetterTogether
 
           join_sources = requests.join(rl, Arel::Nodes::InnerJoin).on(join_on_rl).join(offers, Arel::Nodes::InnerJoin).on(join_on_offers).join_sources
 
-          response_to_my_offer = scope.joins(join_sources).where(offers[:creator_id].eq(agent_id))
+          response_to_my_offer = base.joins(join_sources).where(offers[:creator_id].eq(agent_id))
 
           # rubocop:todo Layout/LineLength
-          scope.where(id: not_responses.select(:id)).or(scope.where(id: owned.select(:id))).or(scope.where(id: response_to_my_offer.select(:id)))
+          base.where(id: not_responses.select(:id)).or(base.where(id: owned.select(:id))).or(base.where(id: response_to_my_offer.select(:id)))
           # rubocop:enable Layout/LineLength
         end
         # rubocop:enable Metrics/MethodLength

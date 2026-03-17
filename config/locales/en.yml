@@ -861,26 +861,6 @@ en:
           empty: No communities to display.
         events_block:
           empty: No events to display.
-        navigation_area_block:
-          not_found: Navigation area not found.
-          select_prompt: "— Select a navigation area —"
-        people_block:
-          empty: No people to display.
-        posts_block:
-          empty: No posts to display.
-        resource_block:
-          all_communities: All communities (platform-wide)
-          resource_ids_help: If set, only these records will be displayed, ignoring
-            the community scope and ordering.
-          resource_ids_placeholder: Leave blank to show latest records
-        statistics_block:
-          stats_json_help: JSON array of objects with "label", "value", and optional
-            "icon" (Font Awesome class) keys.
-        video_block:
-          missing_url: No video URL configured.
-          title: YouTube video player
-          url_help: Accepts YouTube, Vimeo, or any direct embed URL.
-        view_more: View all
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -906,9 +886,29 @@ en:
               (e.g., privacy.en.md, privacy.es.md, privacy.fr.md) and falls back to
               the base file if not found.
             preview_placeholder: Preview will appear here...
+        navigation_area_block:
+          not_found: Navigation area not found.
+          select_prompt: "— Select a navigation area —"
+        people_block:
+          empty: No people to display.
+        posts_block:
+          empty: No posts to display.
+        resource_block:
+          all_communities: All communities (platform-wide)
+          resource_ids_help: If set, only these records will be displayed, ignoring
+            the community scope and ordering.
+          resource_ids_placeholder: Leave blank to show latest records
+        statistics_block:
+          stats_json_help: JSON array of objects with "label", "value", and optional
+            "icon" (Font Awesome class) keys.
         template:
           default: Default template
           host_community_contact_details: Host community contact details
+        video_block:
+          missing_url: No video URL configured.
+          title: YouTube video player
+          url_help: Accepts YouTube, Vimeo, or any direct embed URL.
+        view_more: View all
       mermaid_diagram:
         help:
           auto_height: When enabled, the diagram height adjusts automatically to fit
@@ -1432,15 +1432,20 @@ en:
         screenshot_alt: Help screenshot
         show_again: Show help again
       hub:
+        create_agreement: Create Agreement
         empty_agreements: No agreements yet.
         empty_offers: No offers yet.
         empty_requests: No requests yet.
+        matches_offer: 'Matches offer:'
+        matches_request: 'Matches request:'
+        membership_requests: Membership Requests
         my_agreements: My Agreements
         my_offers: My Offers
         my_requests: My Requests
+        none: No matches found right now.
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
-        title: Exchange Hub
+        title: Potential Matches
         view_all_agreements: View all agreements
         view_all_offers: View all offers
         view_all_requests: View all requests
@@ -1509,48 +1514,6 @@ en:
         offer: Offer
         request: Request
       you: You
-    membership_requests:
-      actions:
-        approve: Approve
-        decline: Decline
-      captcha_failed: Captcha verification failed. Please try again.
-      confirm_approve: Approve this membership request and invite the applicant to join?
-      confirm_decline: Decline this membership request?
-      confirm_delete: Remove this membership request?
-      fields:
-        description: Message
-        description_hint: Please tell us a bit about yourself and why you'd like to join.
-        motivation: Motivation / Message
-        referral_source: How did you hear about us?
-        requestor_email: Your email address
-        requestor_name: Your name
-        status: Status
-        target: Community
-      filter:
-        all: All
-        closed: Declined
-        fulfilled: Fulfilled
-        open: Open
-      flash:
-        approved: Membership request approved. An invitation has been sent.
-        approved_direct: Membership request approved. The member has been added.
-        approve_failed: Could not approve the membership request.
-        declined: Membership request declined.
-        decline_failed: Could not decline the membership request.
-      index:
-        empty: No membership requests at this time.
-        title: Membership Requests
-      name: 'Membership request from %{requestor}'
-      new:
-        heading: Request Membership
-        intro: 'Fill in the form below to request membership. We''ll be in touch!'
-      show:
-        title: Membership Request
-      success:
-        heading: Request Received
-        body: 'Thank you! We''ve received your membership request and will be in touch soon.'
-    resources:
-      membership_request: Membership request
     joatu_mailer:
       agreement_created:
         greeting: Hello %{recipient_name},
@@ -1606,6 +1569,49 @@ en:
         signature_text: Best regards, The %{joinable_name} Team
         subject: Your %{joinable_type} membership has been updated for %{joinable_name}
         view_joinable: View %{joinable_type}
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: Captcha verification failed. Please try again.
+      confirm_approve: Approve this membership request and invite the applicant to
+        join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Please tell us a bit about yourself and why you'd like to
+          join.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approve_failed: Could not approve the membership request.
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        decline_failed: Could not decline the membership request.
+        declined: Membership request declined.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: Membership request from %{requestor}
+      new:
+        heading: Request Membership
+        intro: Fill in the form below to request membership. We'll be in touch!
+      show:
+        title: Membership Request
+      success:
+        body: Thank you! We've received your membership request and will be in touch
+          soon.
+        heading: Request Received
     messages:
       form:
         placeholder: Type your message...
@@ -2063,167 +2069,6 @@ en:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
-    reports:
-      actions:
-        report: Report
-      attributes:
-        category: Category
-        harm_level: Harm level
-        requested_outcome: Requested outcome
-        reason: Short summary
-        private_details: Private details for the safety team
-      errors:
-        already_reported_by_you: has already been reported by you
-      index:
-        empty: You have not submitted any safety reports yet.
-        new: New report
-        title: My safety reports
-      new:
-        category_help: Choose the option that best matches the harm or concern you are reporting.
-        consent_to_contact: You may contact me about this report
-        consent_to_restorative_process: You may consider restorative options if appropriate
-        error_summary: Please correct the following issues.
-        harm_level_help: Tell us how urgent or harmful this feels so the safety team can triage it appropriately.
-        intro: Use this form to ask for safety support, boundary support, accountability, or urgent protection.
-        preferences_help: Tell us whether we may contact you, whether you want restorative options considered, and whether retaliation risk is part of this report.
-        preferences_title: Safety preferences
-        private_details_help: Add any context, patterns, dates, or evidence that should stay with the safety review team.
-        reason_help: Tell us what happened in a short summary. Focus on the main concern first.
-        requested_outcome_help: Choose what kind of support you want from the safety team. You can ask for support even if you are unsure.
-        retaliation_risk: I am worried about retaliation or escalation
-        submit: Submit report
-        title: Report a safety concern
-        urgent_help: Contact local emergency services first. This form is for community and platform follow-up, not emergency dispatch.
-        urgent_title: "If you are in immediate danger:"
-      notices:
-        created: Report was successfully submitted.
-      show:
-        back: Back to reports
-        pending_copy: This case is still in progress. A moderator may follow up based on your consent settings.
-        status: Current status
-        summary: Case summary
-        title: Safety report
-    safety:
-      action_statuses:
-        active: Active
-        cancelled: Cancelled
-        completed: Completed
-      action_types:
-        contact_restriction: Contact restriction
-        content_hidden: Content hidden
-        content_removed: Content removed
-        event_restriction: Event restriction
-        messaging_restriction: Messaging restriction
-        restorative_referral: Restorative referral
-        temporary_suspension: Temporary suspension
-        watch_flag: Watch flag
-      agreement_statuses:
-        active: Active
-        breached: Breached
-        completed: Completed
-        proposed: Proposed
-        withdrawn: Withdrawn
-      case_lanes:
-        administrative: Administrative
-        immediate_safety: Immediate safety
-        restorative: Restorative
-      case_statuses:
-        closed_no_action: Closed with no action
-        needs_reporter_followup: Needs reporter follow-up
-        protective_action_in_effect: Protective action in effect
-        resolved: Resolved
-        restorative_in_progress: Restorative process in progress
-        submitted: Submitted
-        triaged: Triaged
-      closure_types:
-        no_action: No action
-        protective_action: Protective action
-        restorative_agreement: Restorative agreement
-        unsupported: Unsupported
-        voluntary_resolution: Voluntary resolution
-      harm_levels:
-        high: High
-        low: Low
-        medium: Medium
-        urgent: Urgent
-      note_visibilities:
-        internal_only: Internal only
-        participant_visible: Participant visible
-      report_categories:
-        boundary_violation: Boundary violation
-        discrimination: Discrimination
-        fraud: Fraud
-        harassment: Harassment
-        hate_speech: Hate speech
-        impersonation: Impersonation
-        misinformation: Misinformation
-        other: Other
-        privacy_violation: Privacy violation
-        spam_or_scam: Spam or scam
-      reporter_visible_statuses:
-        closed_no_action: Closed with no action
-        needs_reporter_followup: Needs more information from you
-        protective_action_in_effect: Protective action in effect
-        resolved: Resolved
-        restorative_in_progress: Restorative process in progress
-        submitted: Submitted
-        triaged: Under review
-        under_review: Under review
-      requested_outcomes:
-        boundary_support: Boundary support
-        community_accountability: Community accountability
-        content_review: Content review
-        mediated_conversation: Mediated conversation
-        other: Other
-        temporary_protection: Temporary protection
-      shared:
-        any: Any
-    safety_cases:
-      attributes:
-        accountability_check: Accountability and stewardship check
-        action_details: Action details
-        action_reason: Reason for action
-        action_status: Action status
-        action_type: Action type
-        agreement_summary: Agreement summary
-        care_check: Care and resilience check
-        closure_summary: Closure summary
-        closure_type: Closure type
-        commitments: Commitments
-        expires_at: Expires at
-        harmed_party_consented: Harmed party consented
-        lane: Lane
-        love_inclusivity_check: Love and inclusivity check
-        note_body: Note
-        note_visibility: Note visibility
-        reporter: Reporter
-        responsible_party_consented: Responsible party consented
-        review_at: Review at
-        solidarity_check: Cooperation and solidarity check
-        status: Case status
-      index:
-        filter: Filter
-        title: Safety cases
-      notices:
-        updated: Safety case was updated.
-      show:
-        actions: Protective and accountability actions
-        add_action: Record action
-        add_agreement: Create agreement
-        add_note: Add note
-        agreements: Restorative agreements
-        back: Back to queue
-        intake: Report intake
-        manage: Case management
-        notes: Internal notes
-        title: Safety case
-        update_agreement: Update agreement
-        update_case: Update case
-        values_review: Values review
-        values_review_placeholder: Explain the values review for this action
-    safety_notes:
-      notices:
-        created: Case note added.
     person_block:
       cannot_block_manager: cannot be a platform manager
       cannot_block_self: cannot block yourself
@@ -2388,6 +2233,55 @@ en:
         email.
       invitation_required: An invitation code is required to register on this platform
     remove: Remove
+    reports:
+      actions:
+        report: Report
+      attributes:
+        category: Category
+        harm_level: Harm level
+        private_details: Private details for the safety team
+        reason: Short summary
+        requested_outcome: Requested outcome
+      errors:
+        already_reported_by_you: has already been reported by you
+      index:
+        empty: You have not submitted any safety reports yet.
+        new: New report
+        title: My safety reports
+      new:
+        category_help: Choose the option that best matches the harm or concern you
+          are reporting.
+        consent_to_contact: You may contact me about this report
+        consent_to_restorative_process: You may consider restorative options if appropriate
+        error_summary: Please correct the following issues.
+        harm_level_help: Tell us how urgent or harmful this feels so the safety team
+          can triage it appropriately.
+        intro: Use this form to ask for safety support, boundary support, accountability,
+          or urgent protection.
+        preferences_help: Tell us whether we may contact you, whether you want restorative
+          options considered, and whether retaliation risk is part of this report.
+        preferences_title: Safety preferences
+        private_details_help: Add any context, patterns, dates, or evidence that should
+          stay with the safety review team.
+        reason_help: Tell us what happened in a short summary. Focus on the main concern
+          first.
+        requested_outcome_help: Choose what kind of support you want from the safety
+          team. You can ask for support even if you are unsure.
+        retaliation_risk: I am worried about retaliation or escalation
+        submit: Submit report
+        title: Report a safety concern
+        urgent_help: Contact local emergency services first. This form is for community
+          and platform follow-up, not emergency dispatch.
+        urgent_title: 'If you are in immediate danger:'
+      notices:
+        created: Report was successfully submitted.
+      show:
+        back: Back to reports
+        pending_copy: This case is still in progress. A moderator may follow up based
+          on your consent settings.
+        status: Current status
+        summary: Case summary
+        title: Safety report
     resource_permissions:
       actions:
         create: Create
@@ -2408,6 +2302,8 @@ en:
         label: Roles
         more: and %{count} more
         none: No roles assigned
+    resources:
+      membership_request: Membership request
     roles:
       index:
         new_role: New role
@@ -2419,6 +2315,127 @@ en:
       protection_status:
         protected: Protected
         unprotected: Unprotected
+    safety:
+      action_statuses:
+        active: Active
+        cancelled: Cancelled
+        completed: Completed
+      action_types:
+        contact_restriction: Contact restriction
+        content_hidden: Content hidden
+        content_removed: Content removed
+        event_restriction: Event restriction
+        messaging_restriction: Messaging restriction
+        restorative_referral: Restorative referral
+        temporary_suspension: Temporary suspension
+        watch_flag: Watch flag
+      agreement_statuses:
+        active: Active
+        breached: Breached
+        completed: Completed
+        proposed: Proposed
+        withdrawn: Withdrawn
+      case_lanes:
+        administrative: Administrative
+        immediate_safety: Immediate safety
+        restorative: Restorative
+      case_statuses:
+        closed_no_action: Closed with no action
+        needs_reporter_followup: Needs reporter follow-up
+        protective_action_in_effect: Protective action in effect
+        resolved: Resolved
+        restorative_in_progress: Restorative process in progress
+        submitted: Submitted
+        triaged: Triaged
+      closure_types:
+        no_action: No action
+        protective_action: Protective action
+        restorative_agreement: Restorative agreement
+        unsupported: Unsupported
+        voluntary_resolution: Voluntary resolution
+      harm_levels:
+        high: High
+        low: Low
+        medium: Medium
+        urgent: Urgent
+      note_visibilities:
+        internal_only: Internal only
+        participant_visible: Participant visible
+      report_categories:
+        boundary_violation: Boundary violation
+        discrimination: Discrimination
+        fraud: Fraud
+        harassment: Harassment
+        hate_speech: Hate speech
+        impersonation: Impersonation
+        misinformation: Misinformation
+        other: Other
+        privacy_violation: Privacy violation
+        spam_or_scam: Spam or scam
+      reporter_visible_statuses:
+        closed_no_action: Closed with no action
+        needs_reporter_followup: Needs more information from you
+        protective_action_in_effect: Protective action in effect
+        resolved: Resolved
+        restorative_in_progress: Restorative process in progress
+        submitted: Submitted
+        triaged: Under review
+        under_review: Under review
+      requested_outcomes:
+        boundary_support: Boundary support
+        community_accountability: Community accountability
+        content_review: Content review
+        mediated_conversation: Mediated conversation
+        other: Other
+        temporary_protection: Temporary protection
+      shared:
+        any: Any
+    safety_cases:
+      attributes:
+        accountability_check: Accountability and stewardship check
+        action_details: Action details
+        action_reason: Reason for action
+        action_status: Action status
+        action_type: Action type
+        agreement_summary: Agreement summary
+        care_check: Care and resilience check
+        closure_summary: Closure summary
+        closure_type: Closure type
+        commitments: Commitments
+        expires_at: Expires at
+        harmed_party_consented: Harmed party consented
+        lane: Lane
+        love_inclusivity_check: Love and inclusivity check
+        note_body: Note
+        note_visibility: Note visibility
+        reporter: Reporter
+        responsible_party_consented: Responsible party consented
+        review_at: Review at
+        solidarity_check: Cooperation and solidarity check
+        status: Case status
+      index:
+        filter: Filter
+        title: Safety cases
+      notices:
+        updated: Safety case was updated.
+      show:
+        actions: Protective and accountability actions
+        add_action: Record action
+        add_agreement: Create agreement
+        add_note: Add note
+        agreements: Restorative agreements
+        back: Back to queue
+        intake: Report intake
+        manage: Case management
+        notes: Internal notes
+        title: Safety case
+        update_agreement: Update agreement
+        update_case: Update case
+        values_review: Values review
+        values_review_placeholder: Explain the values review for this action
+    safety_notes:
+      notices:
+        created: Case note added.
     search:
       all: All
       page_title: Search Results for "%{query}"
@@ -3139,8 +3156,8 @@ en:
     all: All
     are_you_sure: Are you sure
     back: Back
-    back_to_list: Back to list
     back_to_home: Back to home
+    back_to_list: Back to list
     cancel: Cancel
     clear: Clear
     clear_filter: Clear filter
@@ -3165,8 +3182,8 @@ en:
     no_description: No description
     no_image: No Image
     no_invitee: No invitee
-    not_found: Not found.
     none: None
+    not_found: Not found.
     not_sent: Not sent
     pagination:
       of: of
@@ -3181,8 +3198,8 @@ en:
     save: Save
     sent: Sent
     show: Show
-    submit: Submit
     status: Status
+    submit: Submit
     submitted_at: Submitted
     tabs:
       about: About
@@ -3193,8 +3210,8 @@ en:
       members: Members
     to: To
     'true': true
-    unknown: Unknown
     undo_clear: Undo Clear
+    unknown: Unknown
     update: Update
     url: Url
     view: View
@@ -3439,7 +3456,6 @@ en:
     invitation: Invitation
     invitation_email: Invitation email
     member: Member
-    membership_request: Membership request
     navigation_area: Navigation area
     page: Page
     person: Person
