@@ -32,6 +32,7 @@ module BetterTogether
       @app.call(env)
     ensure
       ::Current.reset
+      ActiveStorage::Current.reset if defined?(ActiveStorage::Current)
     end
 
     private

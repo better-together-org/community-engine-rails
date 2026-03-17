@@ -57,7 +57,7 @@ module BetterTogether
     def recipient_must_match_access_grant
       return if person_access_grant.blank? || recipient_person_id == person_access_grant.grantee_person_id
 
-      errors.add(:recipient_person, 'must match the access grant grantee person')
+      errors.add(:recipient_person, :must_match_grantee)
     end
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddFederationProvenanceToBetterTogetherEvents < ActiveRecord::Migration[7.1]
+class AddFederationProvenanceToBetterTogetherEvents < ActiveRecord::Migration[7.2]
   def change
     change_table :better_together_events, bulk: true do |t|
       t.references :platform, type: :uuid, foreign_key: { to_table: :better_together_platforms }

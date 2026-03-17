@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddOauthCredentialsToBetterTogetherPlatformConnections < ActiveRecord::Migration[7.1]
+class AddOauthCredentialsToBetterTogetherPlatformConnections < ActiveRecord::Migration[7.2]
   def change
     change_table :better_together_platform_connections, bulk: true do |t|
       t.string :oauth_client_id

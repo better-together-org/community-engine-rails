@@ -12,7 +12,7 @@ module BetterTogether
         target_platform = target
 
         unless source_platform && target_platform
-          errors.add(:base, 'connection agreements require both source and target platforms')
+          errors.add(:base, :missing_platforms_for_connection_agreement)
           raise ActiveRecord::RecordInvalid, self
         end
 

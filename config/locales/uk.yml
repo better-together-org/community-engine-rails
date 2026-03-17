@@ -538,6 +538,11 @@ uk:
           attributes:
             event_hosts:
               too_short: Події повинні мати принаймні одного господаря
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: угоди про підключення вимагають
+                як вихідної, так і цільової платформ
         better_together/joatu/person_link_request:
           attributes:
             base:
@@ -545,6 +550,10 @@ uk:
                 особи, цільової особи та активного підключення платформи
             target:
               must_be_person: повинна бути особою
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: має збігатися з особою-отримувачем гранту доступу
         better_together/person_platform_integration:
           attributes:
             provider:

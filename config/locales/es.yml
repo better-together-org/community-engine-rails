@@ -538,6 +538,11 @@ es:
           attributes:
             event_hosts:
               too_short: Los eventos deben tener al menos un anfitrión
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: los acuerdos de conexión
+                requieren plataformas de origen y destino
         better_together/joatu/person_link_request:
           attributes:
             base:
@@ -553,6 +558,11 @@ es:
                 pública
             visibility_strategy:
               inclusion: debe ser autenticado o permiso
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: debe coincidir con la persona beneficiaria de la
+                concesión de acceso
         better_together/person_platform_integration:
           attributes:
             provider:

@@ -540,6 +540,11 @@ fr:
           attributes:
             event_hosts:
               too_short: Les événements doivent avoir au moins un hôte
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: les accords de connexion
+                nécessitent des plateformes source et cible
         better_together/joatu/person_link_request:
           attributes:
             base:
@@ -555,6 +560,11 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: doit correspondre à la personne bénéficiaire de
+                l'autorisation d'accès
         better_together/person_platform_integration:
           attributes:
             provider:

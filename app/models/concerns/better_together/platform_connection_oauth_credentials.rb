@@ -11,6 +11,7 @@ module BetterTogether
 
     included do
       encrypts :oauth_client_secret
+      before_validation :ensure_oauth_client_credentials
     end
 
     # Verify a provided secret against the stored encrypted value in constant time.

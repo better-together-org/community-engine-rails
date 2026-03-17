@@ -18,7 +18,7 @@ module BetterTogether
       return unless acquired
 
       begin
-        eligible_connections.each do |connection|
+        eligible_connections.limit(limit).each do |connection|
           ::BetterTogether::FederatedContentPullJob.perform_later(
             platform_connection_id: connection.id,
             cursor: connection.sync_cursor.presence,

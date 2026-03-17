@@ -538,6 +538,11 @@ en:
           attributes:
             event_hosts:
               too_short: Events must have at least one host
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: connection agreements require
+                both source and target platforms
         better_together/joatu/person_link_request:
           attributes:
             base:
@@ -551,6 +556,10 @@ en:
               cannot_be_used_with_public_privacy: cannot be used with public privacy
             visibility_strategy:
               inclusion: must be either authenticated or permission
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: must match the access grant grantee person
         better_together/person_platform_integration:
           attributes:
             provider:

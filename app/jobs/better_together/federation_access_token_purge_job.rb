@@ -3,7 +3,7 @@
 module BetterTogether
   # Purges expired and revoked federation access tokens from the database.
   # Tokens accumulate with every OAuth exchange — this job keeps the table
-  # from growing unboundedly.  Designed to run periodically (e.g. every hour).
+  # from growing unboundedly.  Designed to run daily (see sidekiq_scheduler.yml).
   #
   # Only removes tokens that have been expired/revoked for at least 1 hour
   # to give in-flight requests a grace window.
