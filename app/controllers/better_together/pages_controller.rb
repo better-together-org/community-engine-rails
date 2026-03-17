@@ -245,10 +245,12 @@ module BetterTogether
 
     def page_blocks_permitted_attributes
       [
-        page_blocks_attributes: [
-          :id, :position, :_destroy,
-          { block_attributes: block_permitted_attributes }
-        ]
+        {
+          page_blocks_attributes: [
+            :id, :position, :_destroy,
+            { block_attributes: block_permitted_attributes }
+          ]
+        }
       ]
     end
 
