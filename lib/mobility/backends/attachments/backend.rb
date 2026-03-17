@@ -142,8 +142,9 @@ module Mobility
                          raise ArgumentError, "Unsupported attachable type: #{attachable.class}"
                        end
 
-                       file = File.open(attachable.to_path, 'rb')
-                       ActiveStorage::Blob.create_and_upload!(io: file, filename: File.basename(attachable.to_path))
+                       File.open(attachable.to_path, 'rb') do |file|
+                         ActiveStorage::Blob.create_and_upload!(io: file, filename: File.basename(attachable.to_path))
+                       end
 
                      end
 
