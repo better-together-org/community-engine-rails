@@ -267,6 +267,19 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
         expect(json.dig('data', 'signed_prekey', 'public_key')).to eq(signed_pub_key)
       end
     end
+
+    context 'rate limiting' do
+      it 'returns 429 after exceeding the per-requester limit' do
+        limit = ENV.fetch('PREKEY_BUNDLE_REQUESTER_LIMIT', '20').to_i
+        # Stub Rails.cache.increment so the requester counter exceeds the limit.
+        # The controller calls increment for both the requester key and target key;
+        # return limit+1 for every call so the requester check trips first.
+        allow(Rails.cache).to receive(:increment).and_return(limit + 1)
+
+        get url, headers: auth_headers
+        expect(response).to have_http_status(:too_many_requests)
+      end
+    end
   end
 
   # ── PUT /register_prekeys ──────────────────────────────────────────────────

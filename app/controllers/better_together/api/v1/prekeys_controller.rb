@@ -17,6 +17,7 @@ module BetterTogether
       #   PUT /api/v1/people/:id/key_backup            — store encrypted backup blob (own person only)
       # rubocop:disable Metrics/ClassLength
       class PrekeysController < BetterTogether::Api::ApplicationController
+        MAX_KEY_BACKUP_BLOB_BYTES = 512 * 1024 # 512 KB
         # Authorization is handled by authorize_own_person! rather than Pundit policies.
         # Skip both standard Pundit and pundit-resources enforcement hooks.
         skip_after_action :verify_authorized, raise: false
@@ -121,6 +122,11 @@ module BetterTogether
         # GET /key_backup response.
         # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
         def save_key_backup
+          if params[:blob].to_s.bytesize > MAX_KEY_BACKUP_BLOB_BYTES
+            return render json: { error: 'Backup blob exceeds maximum allowed size (512 KB)' },
+                          status: :unprocessable_entity
+          end
+
           blob = params[:blob]
           salt = params[:salt]
 

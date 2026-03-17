@@ -61,10 +61,16 @@ export default class extends Controller {
   // A version change means a participant was added or removed. Reset key state
   // so the next group message distributes a fresh sender key to the current
   // participant set only — removing the departed member's decrypt access.
-  senderKeyVersionValueChanged(newVersion, oldVersion) {
+  async senderKeyVersionValueChanged(newVersion, oldVersion) {
     if (oldVersion === undefined) return  // initial connect — not a membership event
     this.#senderKeysReady = false
-    this.#setupSessions()  // re-fetches participant bundles reflecting new membership
+    try {
+      await this.#setupSessions()
+    } catch (err) {
+      console.error('[E2E Form] Failed to re-setup sessions after membership change:', err)
+      // Leave #participantBundles empty — next submit will trigger a re-fetch or
+      // prompt the user for unencrypted send via the error handler.
+    }
   }
 
   disconnect() {
@@ -159,7 +165,19 @@ export default class extends Controller {
       this.element.requestSubmit()
     } catch (err) {
       console.error('[E2E Form] Encryption error:', err)
-      // Fall through to unencrypted send rather than silently failing
+      const confirmed = await new Promise(resolve => {
+        document.dispatchEvent(new CustomEvent('e2e:request-confirm', {
+          detail: {
+            message: 'Encryption failed. Send this message unencrypted instead? The recipient will be able to read it.',
+            showInput: false,
+            resolve: v => resolve(v !== null)
+          }
+        }))
+      })
+      if (!confirmed) {
+        this.#submitting = false
+        return
+      }
       this.#submitting = true
       this.element.requestSubmit()
     } finally {

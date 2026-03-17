@@ -82,7 +82,23 @@ export default class extends Controller {
 
     if (!alreadyLocal) {
       // No local keys — check if the server has a backup to restore from.
-      const backup = await this.#fetchBackup()
+      let backup
+      try {
+        backup = await this.#fetchBackup()
+      } catch (err) {
+        // Transient server error — do NOT silently generate fresh identity
+        // (that would cause permanent key loss on the user's existing sessions)
+        console.error('[E2E Session] Could not fetch key backup:', err)
+        // Notify the user via the passphrase modal (dismiss-only — no input required).
+        document.dispatchEvent(new CustomEvent('e2e:request-confirm', {
+          detail: {
+            message: 'Could not reach the key backup server. Please reload and try again.',
+            showInput: false,
+            resolve: () => {}
+          }
+        }))
+        return  // halt — do not proceed to fresh identity generation
+      }
 
       if (backup) {
         await this.#restoreFromBackup(backup)
@@ -184,8 +200,10 @@ export default class extends Controller {
         headers: { 'Authorization': `Bearer ${this.#authToken()}` }
       }
     )
-    if (res.status === 404) return null
-    if (!res.ok) return null
+    if (res.status === 404) return null          // no backup — normal first-device flow
+    if (!res.ok) {
+      throw new Error(`Key backup fetch failed: ${res.status}`)
+    }
     const json = await res.json()
     return json.data  // { blob, salt, updated_at }
   }
