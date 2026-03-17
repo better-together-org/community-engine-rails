@@ -494,7 +494,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
 
   create_table "better_together_federation_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "platform_connection_id", null: false
-    t.text "token_ciphertext"
     t.string "token_digest", null: false
     t.text "scopes", default: "", null: false
     t.datetime "expires_at", null: false
