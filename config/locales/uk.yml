@@ -1874,48 +1874,6 @@ uk:
         offer: Offer
         request: Request
       you: You
-    membership_requests:
-      actions:
-        approve: Approve
-        decline: Decline
-      captcha_failed: Перевірка каптчі не вдалася. Будь ласка, спробуйте ще раз.
-      confirm_approve: Approve this membership request and invite the applicant to join?
-      confirm_decline: Decline this membership request?
-      confirm_delete: Remove this membership request?
-      fields:
-        description: Message
-        description_hint: Будь ласка, розкажіть нам трохи про себе і чому ви хочете приєднатися.
-        motivation: Motivation / Message
-        referral_source: How did you hear about us?
-        requestor_email: Your email address
-        requestor_name: Your name
-        status: Status
-        target: Community
-      filter:
-        all: All
-        closed: Declined
-        fulfilled: Fulfilled
-        open: Open
-      flash:
-        approved: Membership request approved. An invitation has been sent.
-        approved_direct: Membership request approved. The member has been added.
-        approve_failed: Could not approve the membership request.
-        declined: Membership request declined.
-        decline_failed: Could not decline the membership request.
-      index:
-        empty: No membership requests at this time.
-        title: Membership Requests
-      name: 'Membership request from %{requestor}'
-      new:
-        heading: Request Membership
-        intro: 'Fill in the form below to request membership. We''ll be in touch!'
-      show:
-        title: Membership Request
-      success:
-        heading: Request Received
-        body: 'Thank you! We''ve received your membership request and will be in touch soon.'
-    resources:
-      membership_request: Запит на членство
     joatu_mailer:
       agreement_created:
         greeting: Hello %{recipient_name},
@@ -4023,7 +3981,6 @@ uk:
     back: Назад
     back_to_home: Повернутися на головну
     back_to_list: Назад до списку
-    back_to_home: Повернутися на головну
     cancel: Скасувати
     clear: Очистити
     clear_filter: Очистити фільтр
@@ -4048,7 +4005,6 @@ uk:
     no_description: Немає опису
     no_image: Немає зображення
     no_invitee: Немає запрошеного
-    not_found: Не знайдено.
     none: Немає
     not_found: Не знайдено.
     not_sent: Не відправлено
@@ -4077,7 +4033,6 @@ uk:
       members: Учасники
     to: До
     'true': так
-    unknown: Невідомо
     undo_clear: Скасувати очищення
     unknown: Невідомо
     update: Оновити
@@ -4352,7 +4307,6 @@ uk:
     invitation: Запрошення
     invitation_email: Електронна пошта запрошення
     member: Учасник
-    membership_request: Запит на членство
     navigation_area: Область навігації
     page: Сторінка
     person: Особа

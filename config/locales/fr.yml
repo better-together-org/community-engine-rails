@@ -1891,48 +1891,6 @@ fr:
         offer: Offer
         request: Request
       you: You
-    membership_requests:
-      actions:
-        approve: Approve
-        decline: Decline
-      captcha_failed: La vérification du captcha a échoué. Veuillez réessayer.
-      confirm_approve: Approve this membership request and invite the applicant to join?
-      confirm_decline: Decline this membership request?
-      confirm_delete: Remove this membership request?
-      fields:
-        description: Message
-        description_hint: Veuillez nous parler un peu de vous et de la raison pour laquelle vous souhaitez nous rejoindre.
-        motivation: Motivation / Message
-        referral_source: How did you hear about us?
-        requestor_email: Your email address
-        requestor_name: Your name
-        status: Status
-        target: Community
-      filter:
-        all: All
-        closed: Declined
-        fulfilled: Fulfilled
-        open: Open
-      flash:
-        approved: Membership request approved. An invitation has been sent.
-        approved_direct: Membership request approved. The member has been added.
-        approve_failed: Could not approve the membership request.
-        declined: Membership request declined.
-        decline_failed: Could not decline the membership request.
-      index:
-        empty: No membership requests at this time.
-        title: Membership Requests
-      name: 'Membership request from %{requestor}'
-      new:
-        heading: Request Membership
-        intro: 'Fill in the form below to request membership. We''ll be in touch!'
-      show:
-        title: Membership Request
-      success:
-        heading: Request Received
-        body: 'Thank you! We''ve received your membership request and will be in touch soon.'
-    resources:
-      membership_request: Demande d'adhésion
     joatu_mailer:
       agreement_created:
         greeting: Bonjour %{recipient_name},
@@ -4054,7 +4012,6 @@ fr:
     back: Retour
     back_to_home: Retour à l'accueil
     back_to_list: Retour à la liste
-    back_to_home: Retour à l'accueil
     cancel: Annuler
     clear: Effacer
     clear_filter: Effacer le filtre
@@ -4079,7 +4036,6 @@ fr:
     no_description: Pas de description
     no_image: Pas d'image
     no_invitee: Pas d'invité
-    not_found: Non trouvé.
     none: Aucun
     not_found: Non trouvé.
     not_sent: Non envoyé
@@ -4109,7 +4065,6 @@ fr:
       members: Membres
     to: À
     'true': Oui
-    unknown: Inconnu
     undo_clear: Annuler l'effacement
     unknown: Inconnu
     update: Mettre à jour
@@ -4385,7 +4340,6 @@ fr:
     invitation: Invitation
     invitation_email: E-mail d'invitation
     member: Membre
-    membership_request: Demande d'adhésion
     navigation_area: Zone de navigation
     page: Page
     person: Personne
