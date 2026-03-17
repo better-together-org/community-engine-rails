@@ -9,7 +9,7 @@ RSpec.describe 'Communities API', :no_auth, type: :request do # rubocop:disable 
   path '/api/v1/communities' do
     get 'List communities' do
       tags 'Communities'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'List communities accessible to the current user. Authentication required.'
 
@@ -33,7 +33,7 @@ RSpec.describe 'Communities API', :no_auth, type: :request do # rubocop:disable 
 
     post 'Create a community' do
       tags 'Communities'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
       description 'Create a new community. Requires create_community permission.'
@@ -97,7 +97,7 @@ RSpec.describe 'Communities API', :no_auth, type: :request do # rubocop:disable 
 
     get 'Get a community' do
       tags 'Communities'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'Retrieve a community by ID.'
 
@@ -116,7 +116,7 @@ RSpec.describe 'Communities API', :no_auth, type: :request do # rubocop:disable 
 
     patch 'Update a community' do
       tags 'Communities'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
       description 'Update a community. Requires manage_community permission.'
@@ -149,7 +149,7 @@ RSpec.describe 'Communities API', :no_auth, type: :request do # rubocop:disable 
 
     delete 'Delete a community' do
       tags 'Communities'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'Delete a community. Requires delete_community permission. Protected communities cannot be deleted.'
 
