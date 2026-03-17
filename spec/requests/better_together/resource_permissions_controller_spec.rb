@@ -60,7 +60,7 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
     end
 
     it 'renders show for a permission' do
-      permission = create(:better_together_resource_permission)
+      permission = create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform')
       get better_together.resource_permission_path(locale:, id: permission.slug)
       expect(response).to have_http_status(:ok)
     end

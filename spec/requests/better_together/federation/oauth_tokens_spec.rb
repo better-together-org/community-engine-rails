@@ -82,7 +82,7 @@ RSpec.describe 'BetterTogether::Federation::OauthTokens', :no_auth do
            scope: 'linked_content.read'
          }
 
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to have_http_status(:bad_request)
     expect(JSON.parse(response.body)).to include('error' => 'invalid_scope')
   end
 end

@@ -5,6 +5,7 @@ module BetterTogether
   class SearchController < ApplicationController
     def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       searchable_models = BetterTogether::Searchable.included_in_models
+                                                    .select { |m| !m.respond_to?(:global_searchable?) || m.global_searchable? }
       @query = params[:q]
       search_results = []
       suggestions = []

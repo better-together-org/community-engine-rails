@@ -87,7 +87,7 @@ module BetterTogether # :nodoc:
 
       describe 'federation provenance' do
         let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
-        let(:remote_platform) { create(:better_together_platform) }
+        let(:remote_platform) { create(:better_together_platform, :external) }
 
         around do |example|
           previous_platform = Current.platform

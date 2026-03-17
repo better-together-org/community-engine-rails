@@ -209,11 +209,11 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || platform_id.present?
+      source_id.present? || platform&.external?
     end
 
     def preserved_remote_uuid?
-      source_id.present?
+      source_id.blank? && platform&.external?
     end
 
     def source_identifier
