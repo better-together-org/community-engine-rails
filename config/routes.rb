@@ -519,8 +519,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   get '*path',
       to: redirect { |params, _request|
         path = params[:path].to_s
-               .gsub(/[^\x00-\x7F]/) { |c| c.bytes.map { |b| format('%%%02X', b) }.join }
-               .gsub(/[\[\]{}\s\\^`|<>]/) { |c| format('%%%02X', c.ord) }
+                            .gsub(/[^\x00-\x7F]/) { |c| c.bytes.map { |b| format('%%%02X', b) }.join }
+                            .gsub(/[\[\]{}\s\\^`|<>]/) { |c| format('%%%02X', c.ord) }
         "/#{I18n.default_locale}/#{path}"
       },
       constraints: lambda { |req|

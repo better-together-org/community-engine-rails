@@ -92,7 +92,7 @@ module BetterTogether
     def process_recipient
       return unless @recipient.is_a?(Hash)
 
-      recipient_struct = Struct.new(:email, :locale, :time_zone)
+      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
       @recipient = recipient_struct.new(@recipient)
     end
 
