@@ -4,9 +4,9 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::ConversationParticipant do
   # Stub Turbo broadcasts globally: the after_create_commit / after_destroy_commit callbacks
-  # on ConversationParticipant call broadcast_replace_later_to, which tries to render a partial
+  # on ConversationParticipant call broadcast_replace_to, which tries to render a partial
   # that may not be available in the test environment.
-  before { allow(Turbo::StreamsChannel).to receive(:broadcast_replace_later_to) }
+  before { allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to) }
 
   describe 'factory' do
     it 'creates a valid conversation participant' do
@@ -84,7 +84,7 @@ RSpec.describe BetterTogether::ConversationParticipant do
 
       it 'broadcasts a Turbo Stream replace to e2e_message_form_<id>' do
         create(:conversation_participant, conversation: conversation, person: new_person)
-        expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_later_to).with(
+        expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
           anything,
           hash_including(target: "e2e_message_form_#{conversation.id}")
         ).at_least(:once)
@@ -106,7 +106,7 @@ RSpec.describe BetterTogether::ConversationParticipant do
 
       it 'broadcasts a Turbo Stream replace to e2e_message_form_<id>' do
         participant.destroy!
-        expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_later_to).with(
+        expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
           anything,
           hash_including(target: "e2e_message_form_#{conversation.id}")
         ).at_least(:once)

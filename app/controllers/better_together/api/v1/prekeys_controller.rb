@@ -31,8 +31,7 @@ module BetterTogether
 
         # GET /api/v1/people/:person_id/prekey_bundle
         # Returns the prekey bundle for any person (public key material).
-        # One-time prekeys are marked consumed when returned, unless the requester
-        # already has a session (idempotent for repeated calls from the same requester).
+        # One-time prekeys are always marked consumed when returned.
         # rubocop:disable Metrics/MethodLength
         def prekey_bundle
           unless @person.identity_key_public.present?
@@ -73,6 +72,11 @@ module BetterTogether
 
             if registration_params[:one_time_prekeys].present?
               registration_params[:one_time_prekeys].each do |prekey_data|
+                unless valid_base64?(prekey_data[:public_key])
+                  return render json: { error: 'Invalid one-time prekey public_key (must be base64)' },
+                                status: :unprocessable_entity
+                end
+
                 # find_or_initialize_by + assign_attributes + save! makes the upsert
                 # fully idempotent: re-registering the same key_id updates the public_key
                 # rather than silently keeping stale key material (find_or_create_by! only

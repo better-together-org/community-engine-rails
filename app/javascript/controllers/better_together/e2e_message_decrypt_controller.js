@@ -18,13 +18,15 @@ export default class extends Controller {
   static values = {
     ciphertextPayload: String,
     senderPersonId:    String,
-    conversationId:    String
+    conversationId:    String,
+    decryptingText:    { type: String, default: '🔒 Decrypting…' },
+    errorText:         { type: String, default: '[Could not decrypt message]' }
   }
 
   async connect() {
     if (!this.ciphertextPayloadValue) return
 
-    this.element.textContent = '🔒 Decrypting…'
+    this.element.textContent = this.decryptingTextValue
 
     try {
       const payload = JSON.parse(this.ciphertextPayloadValue)
@@ -32,7 +34,7 @@ export default class extends Controller {
       this.element.textContent = plaintext
     } catch (err) {
       console.warn('[E2E Decrypt] Failed:', err)
-      this.element.textContent = '[Could not decrypt message]'
+      this.element.textContent = this.errorTextValue
     }
   }
 
@@ -58,10 +60,10 @@ export default class extends Controller {
           // The distribution message itself was Signal-encrypted for us
           const distributionJson = await decryptMessage(this.senderPersonIdValue, myDistribution.envelope)
           const distributionData = JSON.parse(distributionJson)
-          await processSenderKeyDistribution(this.senderPersonIdValue, distributionData.distribution)
+          await processSenderKeyDistribution(this.senderPersonIdValue, distributionData)
         }
       }
-      return decryptGroupMessage(this.senderPersonIdValue, payload.envelope.body)
+      return decryptGroupMessage(this.senderPersonIdValue, payload.envelope)
     }
 
     throw new Error(`Unknown E2E payload type: ${payload.type}`)

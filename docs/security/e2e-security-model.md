@@ -80,7 +80,7 @@ The following claims are **NOT** accurate and must not be made:
 | V6 — Backup silently replaced | ✅ Fixed: previous_updated_at optimistic lock |
 | V7 — Keys extractable in IndexedDB | ⚠️ Platform limitation — mitigated, not eliminable |
 | V8 — Group replay | ✅ Fixed: sequenceNumber + high-water mark |
-| V9 — Predictable distributionId | ✅ Fixed: crypto.randomUUID() |
-| V10 — Zero HKDF salt | ✅ Fixed: protocol constant |
+| V9 — Predictable distributionId | ⚠️ Pending bundle update: vendored UMD uses a deterministic UUID pattern (`ne(conversationId)`), not `crypto.randomUUID()` |
+| V10 — Zero HKDF salt | ⚠️ Pending bundle update: vendored UMD still uses `new Uint8Array(32)` (all-zeros) as the HKDF salt |
 | V11 — v1 cache unbounded | ✅ Fixed: clearV1SessionCache() on sign-out/unload |
 | V12 — toBase64 stack overflow | ✅ Fixed: chunked encoding |

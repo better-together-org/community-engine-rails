@@ -22,8 +22,7 @@ module Rack
       pool_size = ENV.fetch('RAILS_MAX_THREADS', 5).to_i
       Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
         url: rack_attack_redis,
-        pool_size: pool_size,
-        pool_timeout: 5
+        pool: { size: pool_size, timeout: 5 }
       )
     end
 

@@ -1030,10 +1030,25 @@ en:
         granted: Granted
         unknown: Unknown
     e2e:
+      form:
+        status_active: "E2E active 🔒"
+        status_error: E2E unavailable
+        status_waiting: Waiting for participant keys…
+      message:
+        decrypt_error: "[Could not decrypt message]"
+        decrypting: "🔒 Decrypting…"
       modal:
         cancel: Cancel
         ok: OK
+        passphrase_label: Passphrase
         title: Secure Messaging
+      session:
+        confirm_fresh_identity_message: Restore failed. Generate a fresh identity?
+          Old encrypted messages will remain inaccessible.
+        passphrase_backup_message: Set a backup passphrase (min 12 chars). Leave blank
+          to skip.
+        passphrase_restore_message: Encrypted key backup found. Enter your passphrase
+          to restore, or leave blank to generate a fresh identity.
     email_addresses:
       add: Add Email Address
       email: Email

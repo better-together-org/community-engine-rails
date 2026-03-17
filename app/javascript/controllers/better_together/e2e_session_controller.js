@@ -33,8 +33,11 @@ import {
 
 export default class extends Controller {
   static values = {
-    personId: String,
-    baseUrl:  { type: String, default: '' }
+    personId:                    String,
+    baseUrl:                     { type: String, default: '' },
+    passphraseBackupMessage:     { type: String, default: 'Set a backup passphrase (min 12 chars). Leave blank to skip.' },
+    passphraseRestoreMessage:    { type: String, default: 'Encrypted key backup found. Enter your passphrase to restore, or leave blank to generate a fresh identity.' },
+    confirmFreshIdentityMessage: { type: String, default: 'Restore failed. Generate a fresh identity? Old encrypted messages will remain inaccessible.' }
   }
 
   // In-memory wrapping key for silent re-backups during the session.
@@ -112,9 +115,13 @@ export default class extends Controller {
     // Keys exist locally. Ensure the server also has them.
     const serverBundle = await fetchPrekeyBundle(this.personIdValue, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
     if (!serverBundle) {
-      const bundle = await generateIdentity()
-      await registerPrekeys(this.personIdValue, bundle, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
-      console.info('[E2E] Re-registered identity keys with server.')
+      // Server lost our keys (e.g. after data wipe) — re-register existing local keys.
+      // Generating a fresh identity would orphan all previously encrypted messages.
+      const existingBundle = await this.#buildRegistrationBundle()
+      if (existingBundle) {
+        await registerPrekeys(this.personIdValue, existingBundle, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
+        console.info('[E2E] Re-registered existing keys with server.')
+      }
     }
   }
 
@@ -235,7 +242,7 @@ export default class extends Controller {
     return new Promise(resolve => {
       document.dispatchEvent(new CustomEvent('e2e:request-passphrase', {
         detail: {
-          message:   `Set a backup passphrase (min ${min} chars). Leave blank to skip.`,
+          message:   this.passphraseBackupMessageValue,
           showInput: true,
           minLength: min,
           resolve
@@ -248,7 +255,7 @@ export default class extends Controller {
     return new Promise(resolve => {
       document.dispatchEvent(new CustomEvent('e2e:request-passphrase', {
         detail: {
-          message:   'Encrypted key backup found. Enter your passphrase to restore, or leave blank to generate a fresh identity.',
+          message:   this.passphraseRestoreMessageValue,
           showInput: true,
           minLength: 0,
           resolve
@@ -261,7 +268,7 @@ export default class extends Controller {
     return new Promise(resolve => {
       document.dispatchEvent(new CustomEvent('e2e:request-confirm', {
         detail: {
-          message:   'Restore failed. Generate a fresh identity? Old encrypted messages will remain inaccessible.',
+          message:   this.confirmFreshIdentityMessageValue,
           showInput: false,
           resolve:   v => resolve(v !== null)
         }

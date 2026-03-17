@@ -83,6 +83,9 @@
       <% if current_user&.person %>
         <div data-controller="better-together--e2e-session"
              data-better-together--e2e-session-person-id-value="<%= current_user.person.id %>"
+             data-better-together--e2e-session-passphrase-backup-message-value="<%= t('better_together.e2e.session.passphrase_backup_message') %>"
+             data-better-together--e2e-session-passphrase-restore-message-value="<%= t('better_together.e2e.session.passphrase_restore_message') %>"
+             data-better-together--e2e-session-confirm-fresh-identity-message-value="<%= t('better_together.e2e.session.confirm_fresh_identity_message') %>"
              hidden></div>
       <% end %>
 

@@ -27,7 +27,10 @@ export default class extends Controller {
     conversationId:    String,
     personId:         String,
     baseUrl:          { type: String, default: '' },
-    senderKeyVersion: { type: Number, default: -1 }   // -1 = not yet initialised
+    senderKeyVersion: { type: Number, default: -1 },   // -1 = not yet initialised
+    statusActiveLabel:  { type: String, default: 'E2E active 🔒' },
+    statusWaitingLabel: { type: String, default: 'Waiting for participant keys…' },
+    statusErrorLabel:   { type: String, default: 'E2E unavailable' }
   }
 
   // Participant bundles fetched on connect, keyed by personId
@@ -188,10 +191,10 @@ export default class extends Controller {
   #setStatus(state) {
     if (!this.hasStatusTarget) return
     const labels = {
-      active:          'E2E active 🔒',
-      waiting:         'Waiting for participant keys…',
+      active:            this.statusActiveLabelValue,
+      waiting:           this.statusWaitingLabelValue,
       'no-participants': '',
-      error:           'E2E unavailable'
+      error:             this.statusErrorLabelValue
     }
     this.statusTarget.textContent = labels[state] ?? ''
     this.statusTarget.dataset.state = state

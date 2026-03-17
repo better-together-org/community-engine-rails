@@ -25,6 +25,7 @@ require 'rubygems/package'
 require 'uri'
 require 'openssl'
 require 'base64'
+require 'stringio'
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 # Top-level private methods so they are callable from within Rake task blocks.
@@ -104,7 +105,7 @@ def ce_js_write_sri(umd_content, rails_root)
   sri = "sha384-#{Base64.strict_encode64(OpenSSL::Digest::SHA384.digest(umd_content))}"
   importmap_path = File.join(rails_root, 'config/importmap.rb')
   updated = File.read(importmap_path).gsub(
-    /^(pin 'community_engine_js'[^,\n]*)(?:,\s*integrity:\s*'sha\d+-[^']*')?/,
+    /^(pin 'community_engine_js_umd'[^,\n]*)(?:,\s*integrity:\s*'sha\d+-[^']*')?/,
     "\\1, integrity: '#{sri}'"
   )
   File.write(importmap_path, updated)

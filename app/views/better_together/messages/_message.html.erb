@@ -19,8 +19,10 @@
 					data-controller="better-together--e2e-message-decrypt"
 					data-better-together--e2e-message-decrypt-ciphertext-payload-value="<%= html_escape(message.content.to_plain_text) %>"
 					data-better-together--e2e-message-decrypt-sender-person-id-value="<%= message.sender_id %>"
-					data-better-together--e2e-message-decrypt-conversation-id-value="<%= message.conversation_id %>">
-					🔒 Decrypting…
+					data-better-together--e2e-message-decrypt-conversation-id-value="<%= message.conversation_id %>"
+					data-better-together--e2e-message-decrypt-decrypting-text-value="<%= t('better_together.e2e.message.decrypting') %>"
+					data-better-together--e2e-message-decrypt-error-text-value="<%= t('better_together.e2e.message.decrypt_error') %>">
+					<%= t('better_together.e2e.message.decrypting') %>
 				</div>
 			<% else %>
 				<div class="message-bubble p-3 rounded" data-controller="better-together--message_visibility"
