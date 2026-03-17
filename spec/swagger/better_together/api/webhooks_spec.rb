@@ -10,7 +10,7 @@ RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
   path '/api/v1/webhook_endpoints' do
     get 'List webhook endpoints' do
       tags 'Webhooks'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description "List the current user's registered webhook endpoints."
 
@@ -23,7 +23,7 @@ RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
 
     post 'Create a webhook endpoint' do
       tags 'Webhooks'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
       description 'Register a new webhook endpoint to receive event notifications.'
@@ -86,7 +86,7 @@ RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
 
     get 'Get a webhook endpoint' do
       tags 'Webhooks'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
 
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -98,7 +98,7 @@ RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
 
     patch 'Update a webhook endpoint' do
       tags 'Webhooks'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
 
@@ -133,7 +133,7 @@ RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
 
     delete 'Delete a webhook endpoint' do
       tags 'Webhooks'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
 
       parameter name: :Authorization, in: :header, type: :string, required: true
 
@@ -151,7 +151,7 @@ RSpec.describe 'Webhook Endpoints API', :no_auth, type: :request do
 
     post 'Send a test webhook delivery' do
       tags 'Webhooks'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/json'
       description 'Trigger a test delivery to verify the webhook endpoint is reachable.'
 

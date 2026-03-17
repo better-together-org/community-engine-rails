@@ -143,7 +143,7 @@ module BetterTogether
       end
 
       def configure_permitted_parameters
-        devise_parameter_sanitizer.permit(:sign_up, keys: [person_attributes: %i[identifier name description]])
+        devise_parameter_sanitizer.permit(:sign_up, keys: [{ person_attributes: %i[identifier name description] }])
       end
 
       def set_required_agreements

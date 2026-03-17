@@ -9,7 +9,7 @@ RSpec.describe 'Events API', :no_auth, type: :request do # rubocop:disable RSpec
   path '/api/v1/events' do
     get 'List events' do
       tags 'Events'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'List events accessible to the authenticated user.'
 
@@ -29,7 +29,7 @@ RSpec.describe 'Events API', :no_auth, type: :request do # rubocop:disable RSpec
 
     post 'Create an event' do
       tags 'Events'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
 
@@ -87,7 +87,7 @@ RSpec.describe 'Events API', :no_auth, type: :request do # rubocop:disable RSpec
 
     get 'Get an event' do
       tags 'Events'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
 
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -104,7 +104,7 @@ RSpec.describe 'Events API', :no_auth, type: :request do # rubocop:disable RSpec
 
     patch 'Update an event' do
       tags 'Events'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
 
@@ -135,7 +135,7 @@ RSpec.describe 'Events API', :no_auth, type: :request do # rubocop:disable RSpec
 
     delete 'Delete an event' do
       tags 'Events'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
 
       parameter name: :Authorization, in: :header, type: :string, required: true
 
