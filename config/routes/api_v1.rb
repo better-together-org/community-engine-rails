@@ -46,6 +46,9 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Pages
   jsonapi_resources :pages
 
+  # Content Blocks (all STI types — filter by page_id or type)
+  jsonapi_resources :blocks
+
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
   jsonapi_resources :navigation_items
