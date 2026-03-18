@@ -1,0 +1,58 @@
+# Dockerfile.staging — CE gem staging image for bts-0 Docker staging stack
+# Serves spec/dummy via Puma. Does NOT precompile assets to S3.
+# Built by: docker build -t better-together/community-engine-rails:staging \
+#             --build-arg GIT_COMMIT=$(git rev-parse HEAD) -f Dockerfile.staging .
+# Managed by: scripts/ce_staging_provision.py
+
+ARG RUBY_VERSION=3.4.4
+FROM ruby:${RUBY_VERSION}
+
+ARG GIT_COMMIT=unknown
+LABEL git_commit=${GIT_COMMIT}
+
+# System dependencies
+RUN apt-get update -qq \
+  && apt-get install -y --no-install-recommends \
+    build-essential \
+    postgresql-client \
+    libpq-dev \
+    nodejs \
+    libssl-dev \
+    apt-transport-https \
+    ca-certificates \
+    libvips42 \
+    curl \
+    git \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /community-engine
+
+# Bundler version matching production
+RUN gem uninstall bundler --all --ignore-dependencies 2>/dev/null; \
+    gem install bundler:2.4.13
+
+# Install gems first (cache layer)
+COPY Gemfile Gemfile.lock better_together.gemspec ./
+COPY lib/better_together/version.rb lib/better_together/version.rb
+RUN mkdir -p lib/better_together && \
+    bundle config set --local deployment 'false' && \
+    bundle config set --local without 'production' && \
+    bundle install --jobs 4 --retry 3
+
+# Copy full source
+COPY . .
+
+# Write revision file for staging health checks
+RUN echo "${GIT_COMMIT}" > /bt/REVISION 2>/dev/null || \
+    (mkdir -p /bt && echo "${GIT_COMMIT}" > /bt/REVISION)
+
+# Staging runs spec/dummy app on PORT 3001
+ENV RAILS_ENV=development \
+    PORT=3001 \
+    RAILS_LOG_TO_STDOUT=true \
+    RAILS_SERVE_STATIC_FILES=true
+
+EXPOSE 3001
+
+# Entrypoint: run migrations then start puma from spec/dummy
+CMD ["bash", "-c", "cd spec/dummy && bundle exec rails db:migrate && rm -f tmp/pids/server.pid && bundle exec puma -C config/puma.rb -p 3001"]
