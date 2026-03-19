@@ -157,6 +157,14 @@ jobs:
           path: tmp/rspec_results*.json
           if-no-files-found: warn
 
+      - name: Upload Rails test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rails-test-log-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          path: spec/dummy/log/test.log
+          if-no-files-found: warn
+
       - name: Generate coverage badge
         if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
