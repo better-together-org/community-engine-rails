@@ -18,11 +18,16 @@ module BetterTogether
       #
       # Position on a page is managed via the PageBlock join — use the page_blocks endpoint
       # or the page update endpoint (page_blocks_attributes) for ordering.
+      # rubocop:disable Metrics/ClassLength
       class BlockResource < ::BetterTogether::Api::ApplicationResource
         model_name '::BetterTogether::Content::Block'
 
         # ── Core identity ────────────────────────────────────────────────────────
-        attributes :type, :identifier, :privacy, :visible, :protected
+        # :type is a JSONAPI reserved keyword — expose STI discriminator as :block_type instead
+        attribute :block_type do
+          @model.type
+        end
+        attributes :identifier, :privacy, :visible, :protected
 
         # Computed label describing the block type (demodulized underscored)
         attribute :block_name do
@@ -82,7 +87,10 @@ module BetterTogether
         has_one :creator, class_name: 'Person'
 
         # ── Filters ──────────────────────────────────────────────────────────────
-        filter :type
+        filter :block_type, apply: lambda { |records, value, _options|
+          classes = Array(value).map { |v| resolve_block_class(v) }.compact
+          classes.any? ? records.where(type: classes) : records
+        }
         filter :privacy
         filter :identifier
 
@@ -96,7 +104,7 @@ module BetterTogether
         # ── Field permissions ─────────────────────────────────────────────────────
         def self.creatable_fields(_context) # rubocop:disable Metrics/MethodLength
           %i[
-            type identifier privacy visible
+            block_type identifier privacy visible
             heading accordion_items_json open_first
             alert_level body_text dismissible
             subheading primary_button_label primary_button_url
@@ -121,9 +129,30 @@ module BetterTogether
         end
 
         def self.updatable_fields(context)
-          creatable_fields(context) - %i[type]
+          creatable_fields(context) - %i[block_type]
+        end
+
+        # Map :block_type from request attributes to model STI type column
+        def _assign_attributes(resource_params)
+          if (block_type = resource_params.delete(:block_type))
+            @model.type = self.class.resolve_block_class(block_type)
+          end
+          super
+        end
+
+        # Resolve a short or full block type name to its full Rails STI class name.
+        # Accepts: "Markdown", "Content::Markdown", "BetterTogether::Content::Markdown"
+        def self.resolve_block_class(value)
+          return value if value.nil?
+
+          name = value.to_s
+          return name if name.start_with?('BetterTogether::')
+
+          name = "Content::#{name}" unless name.start_with?('Content::')
+          "BetterTogether::#{name}"
         end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end

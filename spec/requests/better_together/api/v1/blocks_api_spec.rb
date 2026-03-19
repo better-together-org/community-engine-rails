@@ -57,14 +57,14 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
         expect(response).to have_http_status(:ok)
       end
 
-      it 'returns the block type' do
+      it 'returns the block type as block-type attribute' do
         json = JSON.parse(response.body)
         expect(json['data']['attributes']['block-type']).to eq('BetterTogether::Content::Markdown')
       end
 
-      it 'returns the translations virtual attribute' do
+      it 'includes locale-suffixed attributes' do
         json = JSON.parse(response.body)
-        expect(json['data']['attributes']).to have_key('translations')
+        expect(json['data']['attributes']).to have_key('markdown-source-en')
       end
     end
   end
@@ -77,11 +77,9 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
         data: {
           type: 'blocks',
           attributes: {
-            block_type: 'Markdown',
+            block_type: 'BetterTogether::Content::Markdown',
             privacy: 'public',
-            translations: {
-              en: { markdown_source: '# Hello\n\nWelcome to the page.' }
-            }
+            markdown_source_en: '# Hello\n\nWelcome to the page.'
           }
         }
       }.to_json
@@ -120,9 +118,7 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
           id: block.id,
           attributes: {
             privacy: 'public',
-            translations: {
-              en: { markdown_source: '# Updated content' }
-            }
+            markdown_source_en: '# Updated content'
           }
         }
       }.to_json
