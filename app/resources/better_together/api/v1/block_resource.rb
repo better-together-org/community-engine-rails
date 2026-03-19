@@ -34,23 +34,31 @@ module BetterTogether
           @model.block_name
         end
 
-        # ── Storext content_data attrs (all STI subtypes, flat) ──────────────────
-        # These delegate via method_missing on the model — Storext sets them.
-        attributes :heading, :accordion_items_json, :open_first,
-                   :alert_level, :body_text, :dismissible,
-                   :subheading, :primary_button_label, :primary_button_url,
-                   :secondary_button_label, :secondary_button_url, :layout,
-                   :quote_text, :attribution_name, :attribution_title, :attribution_organization,
-                   :stats_json, :columns,
-                   :video_url, :caption, :aspect_ratio,
-                   :display_style, :item_limit, :show_view_more_link, :view_more_url,
-                   :community_scope_id, :resource_ids,
-                   :event_scope, :posts_scope,
-                   :checklist_id, :navigation_area_id,
-                   :template_path,
-                   :diagram_source, :theme, :auto_height,
-                   :markdown_file_path, :auto_sync_from_file,
-                   :html_content, :cta_url
+        # ── Storext content_data attrs (all STI subtypes, guarded) ──────────────
+        # Each subtype only defines the Storext attrs it uses. Calling an attr that
+        # a given subtype doesn't define raises NoMethodError. Use respond_to? guards
+        # so that serializing any block type returns nil for attrs it doesn't own.
+        def self.safe_attribute(*names) # rubocop:disable Metrics/MethodLength
+          names.each do |name|
+            attribute(name) { @model.respond_to?(name) ? @model.public_send(name) : nil }
+          end
+        end
+
+        safe_attribute :heading, :accordion_items_json, :open_first,
+                       :alert_level, :body_text, :dismissible,
+                       :subheading, :primary_button_label, :primary_button_url,
+                       :secondary_button_label, :secondary_button_url, :layout,
+                       :quote_text, :attribution_name, :attribution_title, :attribution_organization,
+                       :stats_json, :columns,
+                       :video_url, :caption, :aspect_ratio,
+                       :display_style, :item_limit, :show_view_more_link, :view_more_url,
+                       :community_scope_id, :resource_ids,
+                       :event_scope, :posts_scope,
+                       :checklist_id, :navigation_area_id,
+                       :template_path,
+                       :diagram_source, :theme, :auto_height,
+                       :markdown_file_path, :auto_sync_from_file,
+                       :html_content, :cta_url
 
         # ── Translatable attrs (Mobility — via locale suffix accessors) ──────────
         # Exposed as locale-suffixed attributes, e.g. markdown_source_en
@@ -132,10 +140,16 @@ module BetterTogether
           creatable_fields(context) - %i[block_type]
         end
 
-        # Map :block_type from request attributes to model STI type column
+        # Map :block_type from request attributes to model STI type column.
+        # For new records, re-instantiate @model as the correct STI subclass so
+        # that subtype-specific Storext and Mobility accessors are available.
         def _assign_attributes(resource_params)
           if (block_type = resource_params.delete(:block_type))
-            @model.type = self.class.resolve_block_class(block_type)
+            klass = self.class.resolve_block_class(block_type).constantize
+            if @model.new_record? && !@model.is_a?(klass)
+              @model = klass.new
+            end
+            @model.type = klass.name
           end
           super
         end
