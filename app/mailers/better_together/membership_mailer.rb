@@ -93,7 +93,11 @@ module BetterTogether
       return unless @recipient.is_a?(Hash)
 
       recipient_struct = Struct.new(:email, :locale, :time_zone)
-      @recipient = recipient_struct.new(@recipient)
+      @recipient = recipient_struct.new(
+        @recipient[:email] || @recipient['email'],
+        @recipient[:locale] || @recipient['locale'],
+        @recipient[:time_zone] || @recipient['time_zone']
+      )
     end
 
     def invalid_recipient?
