@@ -145,7 +145,12 @@ module BetterTogether
         # that subtype-specific Storext and Mobility accessors are available.
         def _assign_attributes(resource_params)
           if (block_type = resource_params.delete(:block_type))
-            klass = self.class.resolve_block_class(block_type).constantize
+            class_name = self.class.resolve_block_class(block_type)
+            klass = class_name&.safe_constantize
+            unless klass && klass < ::BetterTogether::Content::Block
+              raise JSONAPI::Exceptions::InvalidFieldValue.new(:block_type, block_type)
+            end
+
             if @model.new_record? && !@model.is_a?(klass)
               @model = klass.new
             end

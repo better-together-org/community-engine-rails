@@ -56,31 +56,34 @@ types or auditing existing ones.
 - [ ] Enum labels (e.g. `alert_block.levels.info`, `call_to_action_block.layouts.centered`)
 - [ ] All 4 locales: `en`, `fr`, `es`, `uk`
 
-### 7. JSON:API resource (`app/resources/better_together/api/v1/<block_name>_resource.rb`)  ❌ MISSING
+### 7. JSON:API resource (`app/resources/better_together/api/v1/<block_name>_resource.rb`)  ✅ ADDED (PR #1373)
 
-- [ ] Inherits from `BetterTogether::Api::ApplicationResource`
-- [ ] `model_name '::BetterTogether::Content::<TypeName>'`
-- [ ] `attributes` for all readable attrs (incl. `type`, `block_name`)
-- [ ] `translatable_attribute` for all translatable attrs
-- [ ] `creatable_fields` / `updatable_fields` excluding read-only attrs
-- [ ] Association to `PageBlock` (for attaching to pages)
+- [x] `BlockResource` — inherits from `ApplicationResource`, covers all STI types polymorphically
+- [x] `model_name '::BetterTogether::Content::Block'`
+- [x] `block_type` discriminator attribute (STI `type` aliased to avoid Rails reserved-word conflict)
+- [x] Locale-suffixed translatable attributes (`markdown_source_en` etc.) with `respond_to?` guards
+- [x] `creatable_fields` / `updatable_fields` excluding read-only attrs
+- [x] `safe_attribute` class helper for Storext attrs
+- [x] `PageBlockResource` — join model resource (position, page, block relationships)
+- [x] `_remove` override on `PageBlockResource` uses `delete` to avoid cascade to block
 
-### 8. JSON:API controller and routes ❌ MISSING
+### 8. JSON:API controller and routes ✅ ADDED (PR #1373)
 
-- [ ] Controller at `app/controllers/better_together/api/v1/blocks_controller.rb`
+- [x] Controller at `app/controllers/better_together/api/v1/blocks_controller.rb`
   - Polymorphic — works for all block types via STI; uses `BlockResource`
-  - Actions: `index` (filter by page_id, type), `show`, `create`, `update`, `destroy`
-  - `authenticate_user_from_token!` (OAuth Bearer) or `authenticate_user!`
-  - Pundit: `authorize_resource` using `Content::BlockPolicy`
-- [ ] Route at `resources :blocks` under `namespace :api / namespace :v1`
+  - Actions: `index` (filter by page_id, block_type), `show`, `create`, `update`, `destroy`
+  - OAuth Bearer auth via `authenticate_jwt!`
+  - Pundit: `Content::BlockPolicy` via `Pundit::Resource`
+- [x] `PageBlocksController` at `app/controllers/better_together/api/v1/page_blocks_controller.rb`
+- [x] Routes: `jsonapi_resources :blocks` and `jsonapi_resources :page_blocks` under `api/v1`
 
-### 9. MCP tools ❌ MISSING
+### 9. MCP tools ✅ ADDED (PR #1373 / #1376)
 
-- [ ] `list_page_blocks_tool.rb` — list all blocks on a page by page ID or slug
-- [ ] `get_block_tool.rb` — get a single block with all attrs by ID
-- [ ] `create_page_block_tool.rb` — create a block on a page (type + attrs + position)
-- [ ] `update_block_tool.rb` — update a block's attrs (sparse)
-- [ ] `delete_page_block_tool.rb` — remove a block from a page (destroys PageBlock join; optionally destroys block)
+- [x] `list_page_blocks_tool.rb` — list all blocks on a page by page ID or slug
+- [x] `get_block_tool.rb` — get a single block with all attrs by ID
+- [x] `create_page_block_tool.rb` — create a block on a page (type + attrs + position)
+- [x] `update_block_tool.rb` — update a block's attrs (sparse)
+- [x] `delete_page_block_tool.rb` — detach block from page (uses `delete` not `destroy` to avoid cascade); optionally destroys block
 
 ### 10. Pundit policy
 

@@ -77,9 +77,13 @@ module BetterTogether
       end
 
       def resolve_block_class(block_type)
-        klass = block_type.safe_constantize
-        return nil unless klass
-        return nil unless klass < BetterTogether::Content::Block
+        # Normalize to the BetterTogether::Content namespace to prevent arbitrary
+        # constant loading from user-supplied input.
+        name = block_type.to_s
+                         .delete_prefix('BetterTogether::Content::')
+                         .delete_prefix('Content::')
+        klass = "BetterTogether::Content::#{name}".safe_constantize
+        return nil unless klass && klass < ::BetterTogether::Content::Block
 
         klass
       end
@@ -108,7 +112,8 @@ module BetterTogether
             return JSON.generate({ error: 'Block validation failed', details: block.errors.full_messages })
           end
 
-          pos = position || ((page.page_blocks.maximum(:position) || 0) + 1)
+          max = page.page_blocks.maximum(:position)
+          pos = position || (max ? max + 1 : 0)
           page_block = BetterTogether::Content::PageBlock.create!(
             page: page,
             block: block,

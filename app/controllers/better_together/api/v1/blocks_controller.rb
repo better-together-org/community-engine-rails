@@ -10,9 +10,9 @@ module BetterTogether
       #
       # Common filters:
       #   GET /api/v1/blocks?filter[page_id]=<uuid>   — all blocks on a page
-      #   GET /api/v1/blocks?filter[type]=BetterTogether::Content::AccordionBlock
-      #   GET /api/v1/blocks/:id
-      #   POST /api/v1/blocks         — body: { data: { type: "blocks", attributes: { type: "...", ... } } }
+      #   GET /api/v1/blocks?filter[block_type]=BetterTogether::Content::AccordionBlock
+      #
+      #   POST /api/v1/blocks         — body: { data: { type: "blocks", attributes: { block_type: "...", ... } } }
       #   PATCH /api/v1/blocks/:id
       #   DELETE /api/v1/blocks/:id
       #

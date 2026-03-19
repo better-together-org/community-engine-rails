@@ -6,7 +6,7 @@ module BetterTogether
     # Returns block type, ID, identifier, and key content attrs in positional order.
     class ListPageBlocksTool < ApplicationTool
       description 'List content blocks attached to a page, in display order'
-      tags :public
+      tags :authenticated
 
       arguments do
         required(:page_id)

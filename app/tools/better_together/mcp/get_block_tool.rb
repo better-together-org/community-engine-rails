@@ -7,7 +7,7 @@ module BetterTogether
     # and the pages the block is attached to.
     class GetBlockTool < ApplicationTool
       description 'Get a content block by ID with full attributes and attached pages'
-      tags :public
+      tags :authenticated
 
       SUPPORTED_LOCALES = %w[en fr es uk].freeze
 

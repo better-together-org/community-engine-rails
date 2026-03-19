@@ -18,6 +18,14 @@ module BetterTogether
 
         filter :page_id
 
+        # Override destroy to use SQL delete rather than ActiveRecord destroy,
+        # avoiding the belongs_to :block, dependent: :destroy cascade.
+        # Destroying the underlying block is handled via BlockResource directly.
+        def _remove
+          _model.delete
+          :no_content
+        end
+
         def self.creatable_fields(_context)
           %i[position page block]
         end

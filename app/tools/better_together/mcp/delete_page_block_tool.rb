@@ -47,8 +47,11 @@ module BetterTogether
         page_id = page_block.page_id
         block_id = block.id
         block_type = block.type
+        block_destroyed = false
 
-        page_block.destroy!
+        # Use delete (not destroy) to avoid the belongs_to :block, dependent: :destroy cascade.
+        # This detaches the page_block without touching the block record.
+        page_block.delete
 
         if destroy_block
           other_pages = block.pages.count
