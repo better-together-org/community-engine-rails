@@ -13,14 +13,6 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
 
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
-  # Temporary: print raw response body on unexpected 500s so the full server-side
-  # backtrace appears in CI stdout (bypasses RSpec inspect truncation).
-  after do |_example|
-    next unless defined?(response) && response.status == 500
-
-    puts "\n[BLOCK_500_BODY_START]\n#{response.body}\n[BLOCK_500_BODY_END]\n"
-  end
-
   describe 'GET /api/v1/blocks' do
     let(:url) { '/api/v1/blocks' }
     let!(:block) { create(:content_markdown, :simple, privacy: 'public') }

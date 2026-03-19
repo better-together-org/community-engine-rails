@@ -33,7 +33,9 @@ module BetterTogether
 
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
-          scope.includes(:page, :block).order('position ASC').all
+          scope.includes(:page, :block).order(
+            BetterTogether::Content::PageBlock.arel_table[:position].asc
+          ).all
         end
       end
     end
