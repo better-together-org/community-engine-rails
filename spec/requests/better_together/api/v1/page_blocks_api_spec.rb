@@ -39,7 +39,7 @@ RSpec.describe 'BetterTogether::Api::V1::PageBlocks', :no_auth do
           attributes: { position: 0 },
           relationships: {
             page: { data: { type: 'pages', id: page.id } },
-            block: { data: { type: 'content_blocks', id: block.id } }
+            block: { data: { type: 'blocks', id: block.id } }
           }
         }
       }.to_json

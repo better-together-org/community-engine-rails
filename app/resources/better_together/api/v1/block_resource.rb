@@ -78,6 +78,7 @@ module BetterTogether
 
         # ── Associations ─────────────────────────────────────────────────────────
         has_many :pages
+        has_many :page_blocks, class_name: 'PageBlock'
         has_one :creator, class_name: 'Person'
 
         # ── Filters ──────────────────────────────────────────────────────────────

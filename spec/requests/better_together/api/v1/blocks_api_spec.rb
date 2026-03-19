@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::Api::V1::ContentBlocks', :no_auth do
+RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
   let(:manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:manager_token) { api_sign_in_and_get_token(manager_user) }
   let(:manager_headers) { api_auth_headers(manager_user, token: manager_token) }
@@ -13,8 +13,8 @@ RSpec.describe 'BetterTogether::Api::V1::ContentBlocks', :no_auth do
 
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
-  describe 'GET /api/v1/content_blocks' do
-    let(:url) { '/api/v1/content_blocks' }
+  describe 'GET /api/v1/blocks' do
+    let(:url) { '/api/v1/blocks' }
     let!(:block) { create(:content_markdown, :simple, privacy: 'public') }
 
     context 'when authenticated as platform manager' do
@@ -46,9 +46,9 @@ RSpec.describe 'BetterTogether::Api::V1::ContentBlocks', :no_auth do
     end
   end
 
-  describe 'GET /api/v1/content_blocks/:id' do
+  describe 'GET /api/v1/blocks/:id' do
     let(:block) { create(:content_markdown, :simple, privacy: 'public') }
-    let(:url) { "/api/v1/content_blocks/#{block.id}" }
+    let(:url) { "/api/v1/blocks/#{block.id}" }
 
     context 'when authenticated as platform manager' do
       before { get url, headers: manager_headers }
@@ -69,13 +69,13 @@ RSpec.describe 'BetterTogether::Api::V1::ContentBlocks', :no_auth do
     end
   end
 
-  describe 'POST /api/v1/content_blocks' do
-    let(:url) { '/api/v1/content_blocks' }
+  describe 'POST /api/v1/blocks' do
+    let(:url) { '/api/v1/blocks' }
 
     let(:payload) do
       {
         data: {
-          type: 'content_blocks',
+          type: 'blocks',
           attributes: {
             block_type: 'Markdown',
             privacy: 'public',
@@ -109,14 +109,14 @@ RSpec.describe 'BetterTogether::Api::V1::ContentBlocks', :no_auth do
     end
   end
 
-  describe 'PATCH /api/v1/content_blocks/:id' do
+  describe 'PATCH /api/v1/blocks/:id' do
     let(:block) { create(:content_markdown, :simple, privacy: 'public') }
-    let(:url) { "/api/v1/content_blocks/#{block.id}" }
+    let(:url) { "/api/v1/blocks/#{block.id}" }
 
     let(:payload) do
       {
         data: {
-          type: 'content_blocks',
+          type: 'blocks',
           id: block.id,
           attributes: {
             privacy: 'public',
@@ -145,9 +145,9 @@ RSpec.describe 'BetterTogether::Api::V1::ContentBlocks', :no_auth do
     end
   end
 
-  describe 'DELETE /api/v1/content_blocks/:id' do
+  describe 'DELETE /api/v1/blocks/:id' do
     let(:block) { create(:content_markdown, :simple) }
-    let(:url) { "/api/v1/content_blocks/#{block.id}" }
+    let(:url) { "/api/v1/blocks/#{block.id}" }
 
     context 'when authenticated as platform manager' do
       before { delete url, headers: manager_headers }

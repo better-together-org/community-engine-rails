@@ -14,7 +14,7 @@ module BetterTogether
         attribute :position
 
         has_one :page
-        has_one :block, class_name: 'ContentBlock'
+        has_one :block, class_name: 'Block'
 
         filter :page_id
 

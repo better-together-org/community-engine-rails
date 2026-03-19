@@ -20,7 +20,7 @@ module BetterTogether
         has_one :community
         has_one :creator, class_name: 'Person'
         has_many :page_blocks, class_name: 'PageBlock'
-        has_many :blocks, class_name: 'ContentBlock'
+        has_many :blocks, class_name: 'Block'
 
         # Filters
         filter :privacy
