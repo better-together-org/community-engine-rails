@@ -350,6 +350,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   put :resend
                 end
               end
+              resources :storage_configurations, except: %i[show] do
+                member do
+                  put :activate
+                end
+              end
             end
 
             resources :users

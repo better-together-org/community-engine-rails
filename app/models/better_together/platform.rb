@@ -63,6 +63,15 @@ module BetterTogether
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
 
+    has_many :storage_configurations,
+             class_name: 'BetterTogether::StorageConfiguration',
+             dependent: :destroy
+
+    belongs_to :active_storage_configuration,
+               class_name: 'BetterTogether::StorageConfiguration',
+               foreign_key: :storage_configuration_id,
+               optional: true
+
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image
 
