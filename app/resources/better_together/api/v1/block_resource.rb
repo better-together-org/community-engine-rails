@@ -89,7 +89,7 @@ module BetterTogether
         %w[en fr es uk].each do |locale|
           %i[markdown_source heading cta_text content attribution alt_text caption diagram_source].each do |base|
             full = :"#{base}_#{locale}"
-            define_method(full)       { @model.respond_to?(full)        ? @model.public_send(full)        : nil }
+            define_method(full) { @model.respond_to?(full) ? @model.public_send(full) : nil }
             define_method(:"#{full}=") { |v| @model.public_send(:"#{full}=", v) if @model.respond_to?(:"#{full}=") }
             attribute full
           end
