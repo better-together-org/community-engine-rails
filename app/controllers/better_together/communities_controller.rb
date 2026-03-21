@@ -124,7 +124,7 @@ module BetterTogether
       %i[
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
-        .concat(resource_class.extra_permitted_attributes)
+       .concat(resource_class.extra_permitted_attributes)
     end
 
     def resource_class
