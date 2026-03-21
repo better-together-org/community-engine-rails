@@ -2,6 +2,7 @@
 
 module Rack
   # Sets default Rack::Attack configuration
+  # rubocop:disable Metrics/ClassLength
   class Attack
     ### Configure Cache ###
 
@@ -13,11 +14,23 @@ module Rack
     # ActiveSupport::Cache::Store
 
     rack_attack_redis = ENV.fetch('RACK_ATTACK_REDIS_URL', nil)
+    rack_attack_pool_size = ENV.fetch('RACK_ATTACK_REDIS_POOL_SIZE', 5).to_i
+    rack_attack_pool_timeout = ENV.fetch('RACK_ATTACK_REDIS_POOL_TIMEOUT', 5).to_f
 
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
+      # ActiveSupport 8.0.3 still initializes ConnectionPool with a positional Hash,
+      # which breaks with connection_pool 3.x keyword-only initialization.
+      rack_attack_redis_pool = ConnectionPool.new(
+        size: rack_attack_pool_size,
+        timeout: rack_attack_pool_timeout
+      ) do
+        Redis.new(url: rack_attack_redis)
+      end
+
       Rack::Attack.cache.store = ActiveSupport::Cache::RedisCacheStore.new(
-        url: rack_attack_redis
+        redis: rack_attack_redis_pool,
+        pool: false
       )
     end
 
@@ -132,20 +145,65 @@ module Rack
       req.path.end_with?('.php')
     end
 
-    # Block suspicious requests for '/etc/password' or wordpress specific paths.
-    # After 3 blocked requests in 10 minutes, block all requests from that IP for 5 minutes.
-    blocklist('fail2ban pentesters') do |req|
-      # `filter` returns truthy value if request fails, or if it's from a previously banned IP
-      # so the request is blocked
-      Rack::Attack::Fail2Ban.filter("pentesters-#{req.ip}", maxretry: 3, findtime: 10.minutes, bantime: 5.minutes) do
-        # The count for the IP is incremented if the return value is truthy
-        CGI.unescape(req.query_string) =~ %r{/etc/passwd} ||
+    # Block WordPress and common CMS probe paths.
+    # After 3 hits in 10 minutes, block the IP for 5 minutes.
+    blocklist('fail2ban/pentesters') do |req|
+      Rack::Attack::Fail2Ban.filter("pentesters-#{req.ip}", maxretry: 3, findtime: 10.minutes,
+                                                            bantime: 5.minutes) do
+        CGI.unescape(req.query_string).include?('/etc/passwd') ||
           req.path.include?('/etc/passwd') ||
           req.path.include?('wp-admin') ||
           req.path.include?('wp-content') ||
           req.path.include?('wp-files') ||
           req.path.include?('wp-login') ||
-          req.path.include?('.php')
+          req.path.end_with?('.php')
+      end
+    end
+
+    ### Fail2Ban for Scanner/Bot Probes ###
+
+    # Block URL template placeholders used by SEO crawlers and vulnerability scanners
+    # (e.g. /en/shop/[category]/*, /fr/blog/[year]/[month]/[slug]).
+    # These are never valid app paths. After 2 hits in 5 minutes, block for 30 minutes.
+    blocklist('fail2ban/url-template-probes') do |req|
+      Rack::Attack::Fail2Ban.filter("url-template-#{req.ip}", maxretry: 2, findtime: 5.minutes,
+                                                              bantime: 30.minutes) do
+        req.path.match?(/[\[\]*]/)
+      end
+    end
+
+    # Block path traversal attacks (/../, /..\ etc.). Block immediately for 1 hour.
+    blocklist('fail2ban/path-traversal') do |req|
+      Rack::Attack::Fail2Ban.filter("path-traversal-#{req.ip}", maxretry: 1, findtime: 10.minutes,
+                                                                bantime: 1.hour) do
+        req.path.include?('..') || CGI.unescape(req.path).include?('..')
+      end
+    end
+
+    # Block header/URL injection probes (paths with embedded protocol strings).
+    # Block immediately for 1 hour.
+    blocklist('fail2ban/url-injection') do |req|
+      Rack::Attack::Fail2Ban.filter("url-injection-#{req.ip}", maxretry: 1, findtime: 10.minutes,
+                                                               bantime: 1.hour) do
+        req.path.match?(/\s+https?:/i)
+      end
+    end
+
+    # Block common vulnerability scanner paths (env leaks, git config, shell probes, etc.)
+    # After 3 hits in 10 minutes, block for 1 hour.
+    SCANNER_PATH_PATTERNS = %r{
+      /\.env|/\.git/|/\.aws/|/\.ssh/|
+      /etc/shadow|/proc/self|
+      /var/log/|
+      /phpinfo|/xmlrpc\.php|
+      /actuator|
+      /cgi-bin/
+    }xi
+
+    blocklist('fail2ban/vuln-scanner-paths') do |req|
+      Rack::Attack::Fail2Ban.filter("vuln-scanner-#{req.ip}", maxretry: 3, findtime: 10.minutes,
+                                                              bantime: 1.hour) do
+        req.path.match?(SCANNER_PATH_PATTERNS)
       end
     end
 
@@ -169,4 +227,5 @@ module Rack
       [503, {}, ['Blocked']]
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
