@@ -23,9 +23,11 @@ module BetterTogether
       class_methods do
         def extra_permitted_attributes
           super + [
-            building_connections_attributes: ::BetterTogether::Infrastructure::BuildingConnection.permitted_attributes(
-              id: true, destroy: true
-            )
+            {
+              building_connections_attributes: ::BetterTogether::Infrastructure::BuildingConnection.permitted_attributes(
+                id: true, destroy: true
+              )
+            }
           ]
         end
       end

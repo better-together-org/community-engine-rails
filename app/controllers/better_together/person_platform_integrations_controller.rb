@@ -92,8 +92,8 @@ module BetterTogether
                 partial: 'better_together/person_platform_integrations/integrations_list',
                 locals: {
                   person_platform_integrations: policy_scope(BetterTogether::PersonPlatformIntegration)
-                                                  .includes(:platform)
-                                                  .order(created_at: :desc)
+                                                .includes(:platform)
+                                                .order(created_at: :desc)
                 }
               )
             ]
