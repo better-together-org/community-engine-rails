@@ -23,24 +23,26 @@ module BetterTogether
         model_name '::BetterTogether::Content::Block'
 
         # ── Core identity ────────────────────────────────────────────────────────
-        # :type is a JSONAPI reserved keyword — expose STI discriminator as :block_type instead
-        attribute :block_type do
-          @model.type
-        end
+        # :type is a JSONAPI reserved keyword — expose STI discriminator as :block_type instead.
+        # jsonapi-resources 0.10.x does not support block-style computed attributes;
+        # use delegate: :type to map the model's STI column to the :block_type attribute key.
+        attribute :block_type, delegate: :type
         attributes :identifier, :privacy, :visible, :protected
 
-        # Computed label describing the block type (demodulized underscored)
-        attribute :block_name do
-          @model.block_name
-        end
+        # Computed label describing the block type (demodulized underscored).
+        # block_name is a real instance method on Content::Block so delegation works.
+        attribute :block_name, delegate: :block_name
 
         # ── Storext content_data attrs (all STI subtypes, guarded) ──────────────
-        # Each subtype only defines the Storext attrs it uses. Calling an attr that
-        # a given subtype doesn't define raises NoMethodError. Use respond_to? guards
-        # so that serializing any block type returns nil for attrs it doesn't own.
+        # jsonapi-resources 0.10.x ignores block arguments to `attribute`, so we
+        # must pre-define the instance method with a respond_to? guard before calling
+        # `attribute` — the `unless method_defined?(attr)` check inside `attribute`
+        # will then leave our guard intact.
         def self.safe_attribute(*names)
           names.each do |name|
-            attribute(name) { @model.respond_to?(name) ? @model.public_send(name) : nil }
+            define_method(name) { @model.respond_to?(name) ? @model.public_send(name) : nil }
+            define_method("#{name}=") { |v| @model.public_send("#{name}=", v) if @model.respond_to?("#{name}=") }
+            attribute(name)
           end
         end
 
@@ -61,31 +63,13 @@ module BetterTogether
                        :html_content, :cta_url
 
         # ── Translatable attrs (Mobility — via locale suffix accessors) ──────────
-        # Exposed as locale-suffixed attributes, e.g. markdown_source_en
+        # Same pattern: pre-define instance method with respond_to? guard before
+        # calling `attribute` so jsonapi-resources uses our guard, not model delegation.
         %w[en fr es uk].each do |locale|
-          attribute :"markdown_source_#{locale}" do
-            @model.respond_to?(:"markdown_source_#{locale}") ? @model.send(:"markdown_source_#{locale}") : nil
-          end
-          attribute :"heading_#{locale}" do
-            @model.respond_to?(:"heading_#{locale}") ? @model.send(:"heading_#{locale}") : nil
-          end
-          attribute :"cta_text_#{locale}" do
-            @model.respond_to?(:"cta_text_#{locale}") ? @model.send(:"cta_text_#{locale}") : nil
-          end
-          attribute :"content_#{locale}" do
-            @model.respond_to?(:"content_#{locale}") ? @model.send(:"content_#{locale}") : nil
-          end
-          attribute :"attribution_#{locale}" do
-            @model.respond_to?(:"attribution_#{locale}") ? @model.send(:"attribution_#{locale}") : nil
-          end
-          attribute :"alt_text_#{locale}" do
-            @model.respond_to?(:"alt_text_#{locale}") ? @model.send(:"alt_text_#{locale}") : nil
-          end
-          attribute :"caption_#{locale}" do
-            @model.respond_to?(:"caption_#{locale}") ? @model.send(:"caption_#{locale}") : nil
-          end
-          attribute :"diagram_source_#{locale}" do
-            @model.respond_to?(:"diagram_source_#{locale}") ? @model.send(:"diagram_source_#{locale}") : nil
+          %i[markdown_source heading cta_text content attribution alt_text caption diagram_source].each do |base|
+            full = :"#{base}_#{locale}"
+            define_method(full) { @model.respond_to?(full) ? @model.public_send(full) : nil }
+            attribute full
           end
         end
 
