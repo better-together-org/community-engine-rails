@@ -9,11 +9,13 @@ module BetterTogether
       end
 
       def configured?
-        ENV['ELASTICSEARCH_URL'].present? || ENV['ES_HOST'].present? || ENV['ES_PORT'].present?
+        client.present?
+      rescue StandardError
+        false
       end
 
       def available?
-        configured? && client.present?
+        configured? && client.ping
       rescue StandardError
         false
       end

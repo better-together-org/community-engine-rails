@@ -16,7 +16,29 @@ RSpec.describe BetterTogether::Search::ElasticsearchBackend do
     allow(ENV).to receive(:[]).with('ES_HOST').and_return(nil)
     allow(ENV).to receive(:[]).with('ES_PORT').and_return(nil)
     allow(Elasticsearch::Model).to receive(:client).and_return(client)
-    allow(client).to receive(:indices).and_return(indices)
+    allow(client).to receive_messages(indices:, ping: true)
+  end
+
+  describe '#configured?' do
+    it 'treats the initializer-provided client as configured without env vars' do
+      allow(ENV).to receive(:[]).with('ELASTICSEARCH_URL').and_return(nil)
+      allow(ENV).to receive(:[]).with('ES_HOST').and_return(nil)
+      allow(ENV).to receive(:[]).with('ES_PORT').and_return(nil)
+
+      expect(backend.configured?).to be(true)
+    end
+  end
+
+  describe '#available?' do
+    it 'returns true when the client responds to ping' do
+      expect(backend.available?).to be(true)
+    end
+
+    it 'returns false when the client is unreachable' do
+      allow(client).to receive(:ping).and_raise(Faraday::ConnectionFailed.new('unreachable'))
+
+      expect(backend.available?).to be(false)
+    end
   end
 
   describe '#ensure_index' do
