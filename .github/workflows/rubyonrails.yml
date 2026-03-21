@@ -201,3 +201,72 @@ jobs:
       - run: bundle binstubs bundler-audit --force
       - run: bundle exec bundler-audit --update
       - run: bundle exec brakeman -q -w2
+
+  # ── Rails 8.1 informational lane ─────────────────────────────────────────────
+  # Results do NOT block merge; they are surfaced for compatibility tracking.
+  rspec-rails81-preview:
+    name: "rspec-core (3.4.4, 8.1.x informational)"
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: test
+    continue-on-error: true
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
+      ES_HOST: "http://localhost"
+      ELASTICSEARCH_URL: "http://localhost:9200"
+      WORKERS: 4
+
+    services:
+      postgres:
+        image: postgis/postgis:latest
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+          POSTGRES_INITDB_ARGS: "-c max_connections=50"
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      elasticsearch:
+        image: elasticsearch:7.17.23
+        ports: ["9200:9200"]
+        env:
+          node.name: elasticsearch
+          cluster.name: better-together-es
+          discovery.seed_hosts: elasticsearch
+          discovery.type: single-node
+          bootstrap.memory_lock: "true"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.4"
+          bundler-cache: false
+
+      - name: Resolve Rails 8.1 preview bundle
+        env:
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+        run: |
+          bundle config set deployment false
+          rm -f spec/dummy/tmp/pids/server.pid
+          bin/ci-rails-preview

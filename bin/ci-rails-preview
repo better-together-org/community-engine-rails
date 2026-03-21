@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+export RAILS_ENV="${RAILS_ENV:-test}"
+export NODE_ENV="${NODE_ENV:-test}"
+export DISABLE_SPRING=1
+export BUNDLE_GEMFILE="${PROJECT_ROOT}/${BUNDLE_GEMFILE:-Gemfile}"
+
+PREVIEW_LOG="${PREVIEW_LOG:-tmp/rails_preview_bundle.log}"
+mkdir -p "$(dirname "${PREVIEW_LOG}")"
+
+if bundle lock --update rails --conservative --lockfile=gemfiles/rails_8_1.gemfile.lock >"${PREVIEW_LOG}" 2>&1; then
+  bundle install --jobs 4 --retry 3 >>"${PREVIEW_LOG}" 2>&1
+  pushd spec/dummy >/dev/null
+  bundle exec rake db:parallel:create db:parallel:prepare >>"${PREVIEW_LOG}" 2>&1
+  popd >/dev/null
+  bundle exec prspec spec \
+    -n "${WORKERS:-4}" \
+    --exclude-pattern "spec/features/**/*_spec.rb,spec/system/**/*_spec.rb,spec/docs_screenshots/**/*_spec.rb"
+else
+  cat "${PREVIEW_LOG}" >&2
+
+  if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+    {
+      echo "## Rails 8.1 Preview Blocked"
+      echo
+      echo "The Rails 8.1 preview lane failed during dependency resolution."
+      echo
+      echo '```text'
+      sed -n '1,120p' "${PREVIEW_LOG}"
+      echo '```'
+    } >>"${GITHUB_STEP_SUMMARY}"
+  fi
+
+  exit 1
+fi

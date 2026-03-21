@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+export RAILS_ENV="${RAILS_ENV:-test}"
+export NODE_ENV="${NODE_ENV:-test}"
+export DISABLE_SPRING=1
+export WORKERS="${WORKERS:-4}"
+export BUNDLE_GEMFILE="${PROJECT_ROOT}/${BUNDLE_GEMFILE:-Gemfile}"
+
+pushd spec/dummy >/dev/null
+bundle exec rake db:parallel:create db:parallel:prepare
+popd >/dev/null
+
+bundle exec prspec spec \
+  -n "${WORKERS}" \
+  --exclude-pattern "spec/features/**/*_spec.rb,spec/system/**/*_spec.rb,spec/docs_screenshots/**/*_spec.rb"
