@@ -23,7 +23,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 7.2'
 
 # Pundit for authorization, custom fork for Better Together
-gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources'
+gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources', branch: 'fix/rails-8-1-upper-bound-20260320'
 
 # Core Rails gem
 gem 'rack-protection'
@@ -36,7 +36,6 @@ gem 'rswag'
 
 # Sidekiq for background processing
 gem 'sidekiq', '~> 8.1.1'
-
 gem 'connection_pool', '~> 3.0.2'
 
 # Error and performance monitoring with Sentry
@@ -48,7 +47,7 @@ gem 'stackprof'
 gem 'sitemap_generator'
 
 # Storext for easier json attributes, custom fork for Better Together
-gem 'storext', github: 'better-together-org/storext'
+gem 'storext', github: 'better-together-org/storext', branch: 'fix/rails-8-1-upper-bound-20260320'
 
 # Uglifier for JavaScript compression
 gem 'uglifier', '>= 1.3.0'
