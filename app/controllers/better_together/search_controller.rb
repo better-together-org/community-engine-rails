@@ -5,33 +5,45 @@ module BetterTogether
   class SearchController < ApplicationController
     def search
       @query = params[:q]
-      search_results = BetterTogether::Search::SearchResult.new(
+      search_results = perform_search
+
+      track_search_query(search_results) if @query.present?
+      assign_search_results(search_results)
+    end
+
+    private
+
+    def perform_search
+      return idle_search_result unless @query.present?
+
+      search_results = BetterTogether::Search.backend.search(@query)
+      log_search_error(search_results)
+      search_results
+    end
+
+    def idle_search_result
+      BetterTogether::Search::SearchResult.new(
         records: [],
         suggestions: [],
         status: :idle,
         backend: BetterTogether::Search.backend.backend_key
       )
+    end
 
-      if @query.present?
-        search_results = BetterTogether::Search.backend.search(@query)
-        log_search_error(search_results)
+    def track_search_query(search_results)
+      BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
+        @query,
+        search_results.records.length,
+        I18n.locale.to_s
+      )
+    end
 
-        # Track search query even if Elasticsearch fails
-        BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
-          @query,
-          search_results.records.length,
-          I18n.locale.to_s
-        )
-      end
-
-      # Use Kaminari for pagination
+    def assign_search_results(search_results)
       @results = Kaminari.paginate_array(search_results.records).page(params[:page]).per(10)
       @suggestions = search_results.suggestions
       @search_backend = search_results.backend
       @search_status = search_results.status
     end
-
-    private
 
     def log_search_error(search_results)
       return unless search_results.status == :unreachable

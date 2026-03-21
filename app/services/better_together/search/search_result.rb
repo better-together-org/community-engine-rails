@@ -8,8 +8,7 @@ module BetterTogether
       :suggestions,
       :status,
       :backend,
-      :error,
-      keyword_init: true
+      :error
     )
   end
 end

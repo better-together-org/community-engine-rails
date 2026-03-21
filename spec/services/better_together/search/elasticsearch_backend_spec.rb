@@ -7,8 +7,8 @@ RSpec.describe BetterTogether::Search::ElasticsearchBackend do
 
   let(:model_class) { class_double(BetterTogether::Page, create_elastic_index!: true, elastic_import: true) }
   let(:entry) { instance_double(BetterTogether::Search::Registry::Entry, model_class:, index_name: 'better_together-pages') }
-  let(:client) { double('client') }
-  let(:indices) { double('indices') }
+  let(:client) { instance_double(Elasticsearch::Client) }
+  let(:indices) { instance_double(Elasticsearch::API::Indices::IndicesClient) }
 
   before do
     allow(ENV).to receive(:[]).and_call_original

@@ -6,12 +6,7 @@ module BetterTogether
     module_function
 
     def backend
-      @backend ||= case backend_key
-                   when 'elasticsearch'
-                     BetterTogether::Search::ElasticsearchBackend.new
-                   else
-                     BetterTogether::Search::ElasticsearchBackend.new
-                   end
+      @backend ||= backend_class.new
     end
 
     def backend_key
@@ -20,6 +15,10 @@ module BetterTogether
 
     def reset_backend!
       @backend = nil
+    end
+
+    def backend_class
+      BetterTogether::Search::ElasticsearchBackend
     end
   end
 end

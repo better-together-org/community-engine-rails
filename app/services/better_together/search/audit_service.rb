@@ -4,86 +4,8 @@ module BetterTogether
   module Search
     # Produces a normalized audit of DB-to-search-index parity and backend health.
     class AuditService
-      # Per-index audit details.
-      EntryResult = Struct.new(
-        :model_name,
-        :index_name,
-        :db_count,
-        :document_count,
-        :drift_count,
-        :status,
-        :index_exists,
-        :primary_shards,
-        :replica_shards,
-        :store_size_bytes,
-        keyword_init: true
-      ) do
-        def store_size_human
-          return '0 Bytes' if store_size_bytes.to_i.zero?
-
-          ActiveSupport::NumberHelper.number_to_human_size(store_size_bytes)
-        end
-
-        def as_json(*)
-          {
-            model_name:,
-            index_name:,
-            db_count:,
-            document_count:,
-            drift_count:,
-            status:,
-            index_exists:,
-            primary_shards:,
-            replica_shards:,
-            store_size_bytes:,
-            store_size_human:
-          }
-        end
-      end
-
-      # Overall backend audit result.
-      Result = Struct.new(
-        :backend,
-        :configured,
-        :available,
-        :status,
-        :generated_at,
-        :entries,
-        :unmanaged_model_names,
-        keyword_init: true
-      ) do
-        def total_db_count
-          entries.sum(&:db_count)
-        end
-
-        def total_document_count
-          entries.sum(&:document_count)
-        end
-
-        def total_drift_count
-          entries.sum(&:drift_count)
-        end
-
-        def healthy?
-          status == :ok && total_drift_count.zero? && entries.all? { |entry| entry.status == :healthy }
-        end
-
-        def as_json(*)
-          {
-            backend:,
-            configured:,
-            available:,
-            status:,
-            generated_at: generated_at.iso8601,
-            unmanaged_model_names:,
-            total_db_count:,
-            total_document_count:,
-            total_drift_count:,
-            healthy: healthy?,
-            entries: entries.map(&:as_json)
-          }
-        end
-      end
+      EntryResult = BetterTogether::Search::AuditEntryResult
+      Result = BetterTogether::Search::AuditResult
 
       def initialize(backend: BetterTogether::Search.backend)
         @backend = backend
@@ -96,7 +18,7 @@ module BetterTogether
           available: @backend.available?,
           status: overall_status,
           generated_at: Time.current,
-          entries: build_entries,
+          entry_results: build_entries,
           unmanaged_model_names: BetterTogether::Search::Registry.unmanaged_searchable_models.map(&:name).sort
         )
       end
@@ -111,46 +33,16 @@ module BetterTogether
       end
 
       def build_entries
-        BetterTogether::Search::Registry.entries.map do |entry|
-          build_entry(entry)
-        end
+        BetterTogether::Search::Registry.entries.map { |entry| build_entry(entry) }
       end
 
       def build_entry(entry)
         exists = @backend.index_exists?(entry)
-        stats = @backend.index_stats(entry)
-        total_stats = stats.fetch('total', {})
-        store_stats = total_stats.fetch('store', {})
-
-        db_count = entry.db_count
-        document_count = exists ? @backend.document_count(entry) : 0
-        drift_count = (db_count - document_count).abs
-
-        EntryResult.new(
-          model_name: entry.model_name,
-          index_name: entry.index_name,
-          db_count:,
-          document_count:,
-          drift_count:,
-          status: entry_status(exists:, drift_count:),
-          index_exists: exists,
-          primary_shards: stats.fetch('primaries', {}).fetch('docs', {}).fetch('count', nil),
-          replica_shards: total_stats.fetch('docs', {}).fetch('count', nil),
-          store_size_bytes: store_stats.fetch('size_in_bytes', 0)
-        )
+        entry_stats = stats(entry)
+        entry_document_count = document_count(entry, exists)
+        EntryResult.new(**entry_attributes(entry, exists, entry_stats, entry_document_count))
       rescue StandardError
-        EntryResult.new(
-          model_name: entry.model_name,
-          index_name: entry.index_name,
-          db_count: entry.db_count,
-          document_count: 0,
-          drift_count: entry.db_count,
-          status: fallback_entry_status,
-          index_exists: false,
-          primary_shards: nil,
-          replica_shards: nil,
-          store_size_bytes: 0
-        )
+        fallback_entry(entry)
       end
 
       def entry_status(exists:, drift_count:)
@@ -166,6 +58,50 @@ module BetterTogether
         return :disabled unless @backend.configured?
 
         :unreachable
+      end
+
+      def fallback_entry(entry)
+        EntryResult.new(
+          model_name: entry.model_name,
+          index_name: entry.index_name,
+          db_count: entry.db_count,
+          document_count: 0,
+          drift_count: entry.db_count,
+          status: fallback_entry_status,
+          index_exists: false,
+          primary_shards: nil,
+          replica_shards: nil,
+          store_size_bytes: 0
+        )
+      end
+
+      def entry_attributes(entry, exists, entry_stats, entry_document_count)
+        entry_drift_count = drift_count(entry.db_count, entry_document_count)
+
+        {
+          model_name: entry.model_name,
+          index_name: entry.index_name,
+          db_count: entry.db_count,
+          document_count: entry_document_count,
+          drift_count: entry_drift_count,
+          status: entry_status(exists:, drift_count: entry_drift_count),
+          index_exists: exists,
+          primary_shards: entry_stats.dig('primaries', 'docs', 'count'),
+          replica_shards: entry_stats.dig('total', 'docs', 'count'),
+          store_size_bytes: entry_stats.dig('total', 'store', 'size_in_bytes') || 0
+        }
+      end
+
+      def stats(entry)
+        @backend.index_stats(entry)
+      end
+
+      def document_count(entry, exists)
+        exists ? @backend.document_count(entry) : 0
+      end
+
+      def drift_count(db_count, document_count)
+        (db_count - document_count).abs
       end
     end
   end

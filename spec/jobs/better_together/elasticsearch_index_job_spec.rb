@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::ElasticsearchIndexJob, type: :job do
+RSpec.describe BetterTogether::ElasticsearchIndexJob do
   let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend) }
   let(:record) { create(:better_together_page) }
 
@@ -23,7 +23,7 @@ RSpec.describe BetterTogether::ElasticsearchIndexJob, type: :job do
   end
 
   it 'ignores records without elasticsearch support' do
-    plain_record = double('plain-record')
+    plain_record = instance_double(String)
 
     expect(backend).not_to receive(:index_record)
 

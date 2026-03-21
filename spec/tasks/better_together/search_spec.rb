@@ -9,6 +9,13 @@ RSpec.describe 'better_together:search rake tasks', type: :task do
     Rake.application = Rake::Application.new
     load BetterTogether::Engine.root.join('lib/tasks/search.rake')
     Rake::Task.define_task(:environment)
+    allow(BetterTogether::Search).to receive(:backend).and_return(backend)
+    allow(BetterTogether::Search::Registry).to receive_messages(
+      entries: [page_entry, post_entry],
+      unmanaged_searchable_models: []
+    )
+    allow(BetterTogether::Page).to receive(:count).and_return(2)
+    allow(BetterTogether::Post).to receive(:count).and_return(1)
   end
 
   after do
@@ -18,14 +25,6 @@ RSpec.describe 'better_together:search rake tasks', type: :task do
   let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
   let(:page_entry) { BetterTogether::Search::Registry::Entry.new(model_name: 'BetterTogether::Page', global_search: true) }
   let(:post_entry) { BetterTogether::Search::Registry::Entry.new(model_name: 'BetterTogether::Post', global_search: true) }
-
-  before do
-    allow(BetterTogether::Search).to receive(:backend).and_return(backend)
-    allow(BetterTogether::Search::Registry).to receive(:entries).and_return([page_entry, post_entry])
-    allow(BetterTogether::Search::Registry).to receive(:unmanaged_searchable_models).and_return([])
-    allow(BetterTogether::Page).to receive(:count).and_return(2)
-    allow(BetterTogether::Post).to receive(:count).and_return(1)
-  end
 
   it 'reindexes all registry entries' do
     task = Rake::Task['better_together:search:reindex_all']
@@ -48,13 +47,15 @@ RSpec.describe 'better_together:search rake tasks', type: :task do
       available: true,
       status: :ok,
       generated_at: Time.current,
-      entries: [],
+      entry_results: [],
       unmanaged_model_names: []
     )
-    allow(BetterTogether::Search::AuditService).to receive(:new).and_return(instance_double(
-      BetterTogether::Search::AuditService,
-      call: audit
-    ))
+    allow(BetterTogether::Search::AuditService).to receive(:new).and_return(
+      instance_double(
+        BetterTogether::Search::AuditService,
+        call: audit
+      )
+    )
     ENV['FORMAT'] = 'json'
 
     expect { task.invoke }.to output(include('"backend": "elasticsearch"')).to_stdout

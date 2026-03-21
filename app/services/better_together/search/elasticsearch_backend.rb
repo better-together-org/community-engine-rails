@@ -4,8 +4,6 @@ module BetterTogether
   module Search
     # Elasticsearch-backed search operations.
     class ElasticsearchBackend < BaseBackend
-      SEARCH_TIMEOUT_ERROR = 'backend_unreachable'
-
       def backend_key
         :elasticsearch
       end
@@ -23,25 +21,9 @@ module BetterTogether
       def search(query)
         return empty_result(status: :disabled) unless configured?
 
-        response = Elasticsearch::Model.search(build_query(query), Registry.global_search_models)
-        suggestions = (response.response.dig('suggest', 'suggestions') || []).flat_map do |entry|
-          entry.fetch('options', []).map { |option| option['text'] }
-        end
-
-        SearchResult.new(
-          records: response.records.to_a,
-          suggestions:,
-          status: :ok,
-          backend: backend_key
-        )
+        search_result(build_response(query))
       rescue StandardError => e
-        SearchResult.new(
-          records: [],
-          suggestions: [],
-          status: :unreachable,
-          backend: backend_key,
-          error: "#{e.class}: #{e.message}"
-        )
+        unreachable_result(e)
       end
 
       def create_index(entry)
@@ -117,34 +99,31 @@ module BetterTogether
         Elasticsearch::Model.client
       end
 
-      def empty_result(status:)
-        SearchResult.new(records: [], suggestions: [], status:, backend: backend_key)
+      def build_response(query)
+        Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.global_search_models)
       end
 
-      def build_query(query)
-        {
-          query: {
-            bool: {
-              must: [
-                {
-                  multi_match: {
-                    query: query,
-                    type: 'best_fields'
-                  }
-                }
-              ]
-            }
-          },
-          suggest: {
-            text: query,
-            suggestions: {
-              term: {
-                field: 'name',
-                suggest_mode: 'always'
-              }
-            }
-          }
-        }
+      def search_result(response)
+        SearchResult.new(
+          records: response.records.to_a,
+          suggestions: ElasticsearchQuery.suggestions(response),
+          status: :ok,
+          backend: backend_key
+        )
+      end
+
+      def unreachable_result(error)
+        SearchResult.new(
+          records: [],
+          suggestions: [],
+          status: :unreachable,
+          backend: backend_key,
+          error: "#{error.class}: #{error.message}"
+        )
+      end
+
+      def empty_result(status:)
+        SearchResult.new(records: [], suggestions: [], status:, backend: backend_key)
       end
     end
   end

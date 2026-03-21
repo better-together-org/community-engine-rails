@@ -228,7 +228,7 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         status: :ok,
         generated_at: Time.current,
         unmanaged_model_names: [],
-        entries: [
+        entry_results: [
           BetterTogether::Search::AuditService::EntryResult.new(
             model_name: 'BetterTogether::Page',
             index_name: 'better_together-pages',
@@ -255,10 +255,12 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
           )
         ]
       )
-      allow(BetterTogether::Search::AuditService).to receive(:new).and_return(instance_double(
-        BetterTogether::Search::AuditService,
-        call: audit
-      ))
+      allow(BetterTogether::Search::AuditService).to receive(:new).and_return(
+        instance_double(
+          BetterTogether::Search::AuditService,
+          call: audit
+        )
+      )
 
       get "#{base_path}/search_health_data", headers: { 'Accept' => 'application/json' }
 

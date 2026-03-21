@@ -5,10 +5,12 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Search::Registry do
   describe '.entries' do
     it 'defines the current indexed model inventory explicitly' do
-      expect(described_class.entries.map(&:model_name)).to eq([
-        'BetterTogether::Page',
-        'BetterTogether::Post'
-      ])
+      expect(described_class.entries.map(&:model_name)).to eq(
+        [
+          'BetterTogether::Page',
+          'BetterTogether::Post'
+        ]
+      )
     end
   end
 

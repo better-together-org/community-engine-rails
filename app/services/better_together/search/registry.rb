@@ -5,7 +5,7 @@ module BetterTogether
     # Source of truth for models that are fully wired for backend indexing/search.
     module Registry
       # Metadata for a searchable model.
-      Entry = Struct.new(:model_name, :global_search, keyword_init: true) do
+      Entry = Struct.new(:model_name, :global_search) do
         def model_class
           model_name.constantize
         end

@@ -30,8 +30,10 @@ RSpec.describe BetterTogether::Search::AuditService do
       }
     )
 
-    allow(BetterTogether::Search::Registry).to receive(:entries).and_return([page_entry, post_entry])
-    allow(BetterTogether::Search::Registry).to receive(:unmanaged_searchable_models).and_return([])
+    allow(BetterTogether::Search::Registry).to receive_messages(
+      entries: [page_entry, post_entry],
+      unmanaged_searchable_models: []
+    )
   end
 
   it 'reports per-model drift and totals' do
@@ -53,8 +55,7 @@ RSpec.describe BetterTogether::Search::AuditService do
 
   context 'when the backend is disabled' do
     before do
-      allow(backend).to receive(:configured?).and_return(false)
-      allow(backend).to receive(:available?).and_return(false)
+      allow(backend).to receive_messages(configured?: false, available?: false)
     end
 
     it 'reports a disabled status' do
