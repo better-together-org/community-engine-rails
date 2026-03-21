@@ -22,8 +22,7 @@ module BetterTogether
         :requested_type,
         :normalized_type,
         :allowed,
-        :reason,
-        keyword_init: true
+        :reason
       ) do
         def allowed?
           allowed

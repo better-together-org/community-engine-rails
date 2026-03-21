@@ -9,8 +9,7 @@ module BetterTogether
       :access_token_record,
       :access_token,
       :scope,
-      :expires_in,
-      keyword_init: true
+      :expires_in
     )
 
     def self.call(connection:, requested_scopes:, expires_in: DEFAULT_EXPIRES_IN)

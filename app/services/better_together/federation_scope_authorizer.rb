@@ -18,8 +18,7 @@ module BetterTogether
       :requested_scopes,
       :granted_scopes,
       :denied_scopes,
-      :unsupported_scopes,
-      keyword_init: true
+      :unsupported_scopes
     ) do
       def allowed?
         denied_scopes.empty? && unsupported_scopes.empty?

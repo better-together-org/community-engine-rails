@@ -15,8 +15,7 @@ module BetterTogether
       :connection,
       :recipient_identifier,
       :seeds,
-      :next_cursor,
-      keyword_init: true
+      :next_cursor
     )
 
     def self.call(connection:, recipient_identifier:, cursor: nil, limit: DEFAULT_LIMIT)

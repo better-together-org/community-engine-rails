@@ -4,14 +4,13 @@ module BetterTogether
   module Seeds
     # Caches recipient-scoped private seed payloads behind an active person access grant.
     class PersonLinkedSeedCacheService
-      Result = Struct.new(:linked_seed, :created, keyword_init: true)
+      Result = Struct.new(:linked_seed, :created)
 
       # Holds seed-specific attributes separately from grant/person context.
       SeedAttributes = Struct.new(
         :identifier, :seed_type, :payload,
         :source_record_type, :source_record_id, :version,
-        :source_updated_at, :metadata,
-        keyword_init: true
+        :source_updated_at, :metadata
       ) do
         def self.from_hash(hash)
           new(**hash.slice(*members.map(&:to_s).map(&:to_sym)))

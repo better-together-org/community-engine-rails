@@ -10,8 +10,7 @@ module BetterTogether
       Result = Struct.new(
         :connection,
         :seeds,
-        :next_cursor,
-        keyword_init: true
+        :next_cursor
       ) do
         def items
           seeds

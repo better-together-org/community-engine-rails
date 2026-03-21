@@ -11,8 +11,7 @@ module BetterTogether
         :connection,
         :person_access_grant,
         :seeds,
-        :next_cursor,
-        keyword_init: true
+        :next_cursor
       )
 
       TYPE_SCOPE_MAP = {

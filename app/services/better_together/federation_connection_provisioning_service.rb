@@ -51,8 +51,7 @@ module BetterTogether
     Result = Struct.new(
       :connection,
       :mode,
-      :errors,
-      keyword_init: true
+      :errors
     ) do
       def success?
         errors.blank?

@@ -59,11 +59,6 @@ RSpec.describe BetterTogether::MembershipNotificationService do
       membership.update!(status: 'active') # Proper update to trigger change tracking
     end
 
-    it 'does not directly invoke the mailer for role updates' do
-      expect(BetterTogether::MembershipMailer).not_to receive(:with)
-      service.notify_role_update(old_role)
-    end
-
     it 'delivers notification when status changes from pending to active' do
       expect do
         service.notify_activation

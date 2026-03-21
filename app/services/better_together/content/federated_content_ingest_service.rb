@@ -10,8 +10,7 @@ module BetterTogether
         :imported_seeds,
         :imported_records,
         :unsupported_seeds,
-        :planting,
-        keyword_init: true
+        :planting
       )
 
       def self.call(connection:, seeds: nil, items: nil)

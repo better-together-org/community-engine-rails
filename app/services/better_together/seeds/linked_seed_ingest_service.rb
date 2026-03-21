@@ -11,8 +11,7 @@ module BetterTogether
         :imported_seeds,
         :linked_seeds,
         :unsupported_seeds,
-        :planting,
-        keyword_init: true
+        :planting
       )
 
       TYPE_SCOPE_MAP = {

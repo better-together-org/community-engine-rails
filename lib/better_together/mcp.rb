@@ -9,7 +9,7 @@ end
 
 require 'better_together/mcp/pundit_context'
 
-module BetterTogether # rubocop:disable Style/Documentation
+module BetterTogether # rubocop:disable Style/Documentation, Style/OneClassPerFile
   # MCP Server instance accessor
   # @return [FastMcp::Server] The MCP server instance
   def self.mcp_server

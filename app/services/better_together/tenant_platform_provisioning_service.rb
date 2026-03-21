@@ -30,8 +30,7 @@ module BetterTogether
       :community,
       :domain,
       :admin_user,
-      :errors,
-      keyword_init: true
+      :errors
     ) do
       def success?
         errors.blank?
