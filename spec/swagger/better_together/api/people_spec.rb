@@ -10,7 +10,7 @@ RSpec.describe 'People API', :no_auth, type: :request do
   path '/api/v1/people/me' do
     get 'Get current user profile' do
       tags 'People'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description "Retrieve the authenticated user's person profile."
 
@@ -48,7 +48,7 @@ RSpec.describe 'People API', :no_auth, type: :request do
   path '/api/v1/people' do
     get 'List people' do
       tags 'People'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'List people. Returns public profiles for all, own profile always included.'
 
@@ -70,7 +70,7 @@ RSpec.describe 'People API', :no_auth, type: :request do
 
     get 'Get a person' do
       tags 'People'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'Get a person by ID. Respects privacy settings.'
 
@@ -95,7 +95,7 @@ RSpec.describe 'Roles API (read-only)', :no_auth, type: :request do
   path '/api/v1/roles' do
     get 'List all roles' do
       tags 'Roles'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'List all platform roles.'
 
@@ -115,7 +115,7 @@ RSpec.describe 'Roles API (read-only)', :no_auth, type: :request do
 
     get 'Get a role' do
       tags 'Roles'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
 
       parameter name: :Authorization, in: :header, type: :string, required: true
