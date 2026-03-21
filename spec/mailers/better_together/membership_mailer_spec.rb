@@ -93,7 +93,7 @@ module BetterTogether # :nodoc:
 
     describe '#removed' do
       let(:recipient_data) do
-        recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+        recipient_struct = Struct.new(:email, :locale, :time_zone)
         recipient_struct.new(
           email: 'member@example.com',
           locale: I18n.default_locale,
