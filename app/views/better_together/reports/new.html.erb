@@ -1,0 +1,172 @@
+<% content_for :page_title, t('better_together.reports.new.title') %>
+
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h1 class="h3 mb-3"><%= t('better_together.reports.new.title') %></h1>
+          <p class="text-muted">
+            <%= t('better_together.reports.new.intro') %>
+          </p>
+          <div class="alert alert-warning" role="note">
+            <strong><%= t('better_together.reports.new.urgent_title') %></strong>
+            <%= t('better_together.reports.new.urgent_help') %>
+          </div>
+
+          <% if @report.errors.any? %>
+            <div class="alert alert-danger" role="alert" aria-labelledby="report-errors-title">
+              <h2 id="report-errors-title" class="h6 mb-2">
+                <%= t('better_together.reports.new.error_summary') %>
+              </h2>
+              <ul class="mb-0">
+                <% @report.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%= form_with model: @report, url: reports_path(locale: I18n.locale), local: true do |form| %>
+            <%= form.hidden_field :reportable_id %>
+            <%= form.hidden_field :reportable_type %>
+
+            <div class="mb-3">
+              <%= form.label :category,
+                             t('better_together.reports.attributes.category'),
+                             for: 'report_category',
+                             id: 'report_category_label',
+                             class: 'form-label' %>
+              <p id="report_category_help" class="form-text">
+                <%= t('better_together.reports.new.category_help') %>
+              </p>
+              <%= form.select :category,
+                              safety_enum_options('report_categories', BetterTogether::Report.categories.keys),
+                              {},
+                              id: 'report_category',
+                              class: 'form-select',
+                              aria: { describedby: 'report_category_help', labelledby: 'report_category_label' } %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :harm_level,
+                             t('better_together.reports.attributes.harm_level'),
+                             for: 'report_harm_level',
+                             id: 'report_harm_level_label',
+                             class: 'form-label' %>
+              <p id="report_harm_level_help" class="form-text">
+                <%= t('better_together.reports.new.harm_level_help') %>
+              </p>
+              <%= form.select :harm_level,
+                              safety_enum_options('harm_levels', BetterTogether::Report.harm_levels.keys),
+                              {},
+                              id: 'report_harm_level',
+                              class: 'form-select',
+                              aria: { describedby: 'report_harm_level_help', labelledby: 'report_harm_level_label' } %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :requested_outcome,
+                             t('better_together.reports.attributes.requested_outcome'),
+                             for: 'report_requested_outcome',
+                             id: 'report_requested_outcome_label',
+                             class: 'form-label' %>
+              <p id="report_requested_outcome_help" class="form-text">
+                <%= t('better_together.reports.new.requested_outcome_help') %>
+              </p>
+              <%= form.select :requested_outcome,
+                              safety_enum_options('requested_outcomes', BetterTogether::Report.requested_outcomes.keys),
+                              {},
+                              id: 'report_requested_outcome',
+                              class: 'form-select',
+                              aria: { describedby: 'report_requested_outcome_help', labelledby: 'report_requested_outcome_label' } %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :reason,
+                             t('better_together.reports.attributes.reason'),
+                             for: 'report_reason',
+                             id: 'report_reason_label',
+                             class: 'form-label' %>
+              <p id="report_reason_help" class="form-text">
+                <%= t('better_together.reports.new.reason_help') %>
+              </p>
+              <%= form.text_area :reason,
+                                 rows: 4,
+                                 id: 'report_reason',
+                                 class: 'form-control',
+                                 aria: { describedby: 'report_reason_help', labelledby: 'report_reason_label' } %>
+            </div>
+
+            <div class="mb-3">
+              <%= form.label :private_details,
+                             t('better_together.reports.attributes.private_details'),
+                             for: 'report_private_details',
+                             id: 'report_private_details_label',
+                             class: 'form-label' %>
+              <p id="report_private_details_help" class="form-text">
+                <%= t('better_together.reports.new.private_details_help') %>
+              </p>
+              <%= form.text_area :private_details,
+                                 rows: 5,
+                                 id: 'report_private_details',
+                                 class: 'form-control',
+                                 aria: { describedby: 'report_private_details_help', labelledby: 'report_private_details_label' } %>
+            </div>
+
+            <fieldset class="mb-4" aria-describedby="report_safety_preferences_help">
+              <legend class="h6"><%= t('better_together.reports.new.preferences_title') %></legend>
+              <p id="report_safety_preferences_help" class="form-text mb-2">
+                <%= t('better_together.reports.new.preferences_help') %>
+              </p>
+
+              <div class="form-check mb-2">
+                <%= form.check_box :consent_to_contact,
+                                   id: 'report_consent_to_contact',
+                                   class: 'form-check-input',
+                                   aria: { labelledby: 'report_consent_to_contact_label' } %>
+                <%= form.label :consent_to_contact,
+                               t('better_together.reports.new.consent_to_contact'),
+                               for: 'report_consent_to_contact',
+                               id: 'report_consent_to_contact_label',
+                               class: 'form-check-label' %>
+              </div>
+
+              <div class="form-check mb-2">
+                <%= form.check_box :consent_to_restorative_process,
+                                   id: 'report_consent_to_restorative_process',
+                                   class: 'form-check-input',
+                                   aria: { labelledby: 'report_consent_to_restorative_process_label' } %>
+                <%= form.label :consent_to_restorative_process,
+                               t('better_together.reports.new.consent_to_restorative_process'),
+                               for: 'report_consent_to_restorative_process',
+                               id: 'report_consent_to_restorative_process_label',
+                               class: 'form-check-label' %>
+              </div>
+
+              <div class="form-check">
+                <%= form.check_box :retaliation_risk,
+                                   id: 'report_retaliation_risk',
+                                   class: 'form-check-input',
+                                   aria: { labelledby: 'report_retaliation_risk_label' } %>
+                <%= form.label :retaliation_risk,
+                               t('better_together.reports.new.retaliation_risk'),
+                               for: 'report_retaliation_risk',
+                               id: 'report_retaliation_risk_label',
+                               class: 'form-check-label' %>
+              </div>
+            </fieldset>
+
+            <div class="d-flex gap-2">
+              <%= form.submit t('better_together.reports.new.submit'),
+                              class: 'btn btn-danger' %>
+              <%= link_to t('globals.cancel'),
+                          reports_path(locale: I18n.locale),
+                          class: 'btn btn-outline-secondary' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
