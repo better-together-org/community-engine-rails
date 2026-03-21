@@ -170,6 +170,30 @@ module BetterTogether
         end
       end
       # rubocop:enable Metrics/ClassLength
+
+      # JSONAPI-Resources STI aliases — must live in the same file as BlockResource
+      # so Zeitwerk loads them together.  Any new Content::Block STI subtype must
+      # be added here.
+      AccordionBlockResource      = BlockResource
+      AlertBlockResource          = BlockResource
+      CallToActionBlockResource   = BlockResource
+      ChecklistBlockResource      = BlockResource
+      CommunitiesBlockResource    = BlockResource
+      CssResource                 = BlockResource
+      EventsBlockResource         = BlockResource
+      HeroResource                = BlockResource
+      HtmlResource                = BlockResource
+      ImageResource               = BlockResource
+      MarkdownResource            = BlockResource
+      MermaidDiagramResource      = BlockResource
+      NavigationAreaBlockResource = BlockResource
+      PeopleBlockResource         = BlockResource
+      PostsBlockResource          = BlockResource
+      QuoteBlockResource          = BlockResource
+      RichTextResource            = BlockResource
+      StatisticsBlockResource     = BlockResource
+      TemplateResource            = BlockResource
+      VideoBlockResource          = BlockResource
     end
   end
 end

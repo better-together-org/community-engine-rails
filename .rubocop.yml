@@ -11,6 +11,7 @@ AllCops:
     - 'db/schema.rb'
     - 'vendor/**/*'
     - 'spec/integration/**/*'  # rswag specs - never run rubocop on these
+    - 'rubocop/**/*'           # custom cop source — not subject to self-inspection
   NewCops: enable
   TargetRubyVersion: 3.4
 plugins:
