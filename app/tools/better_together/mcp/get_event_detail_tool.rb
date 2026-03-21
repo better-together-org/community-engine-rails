@@ -6,6 +6,7 @@ module BetterTogether
     # Includes attendee count, hosts, and full description
     class GetEventDetailTool < ApplicationTool
       description 'Get detailed information about a specific event by ID'
+      tags :public
 
       arguments do
         required(:event_id)

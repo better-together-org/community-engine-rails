@@ -10,6 +10,9 @@ module McpTestHelpers
     warden = instance_double(Warden::Proxy, user: user)
     request = instance_double(Rack::Request, env: { 'warden' => warden })
     allow(request).to receive(:respond_to?).with(:env).and_return(true)
+    # from_request_or_doorkeeper checks respond_to?(:authorization) to decide whether to
+    # wrap the request with ActionDispatch::Request. Rack::Request lacks this helper.
+    allow(request).to receive(:respond_to?).with(:authorization).and_return(false)
     request
   end
 

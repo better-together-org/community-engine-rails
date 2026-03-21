@@ -20,13 +20,17 @@ module BetterTogether
       def initialize(uri, retries: DEFAULT_RETRIES,
                      open_timeout: DEFAULT_OPEN_TIMEOUT,
                      read_timeout: DEFAULT_READ_TIMEOUT)
-        @uri = URI.parse(uri)
+        @uri = URI.parse(URI::RFC2396_Parser.new.escape(uri))
         @retries = retries
         @open_timeout = open_timeout
         @read_timeout = read_timeout
+      rescue URI::InvalidURIError => e
+        @invalid_uri_error = e
       end
 
       def call
+        return CheckResult.new(false, nil, @invalid_uri_error) if @invalid_uri_error
+
         attempts = 0
         begin
           attempts += 1

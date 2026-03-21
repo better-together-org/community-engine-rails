@@ -105,6 +105,10 @@ module BetterTogether
         BetterTogether::Content::Block
       end
 
+      def resource_collection
+        super.with_translations
+      end
+
       def authorize_preview
         authorize(resource_class, :preview_markdown?)
       end

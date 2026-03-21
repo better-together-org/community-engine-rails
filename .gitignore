@@ -56,3 +56,6 @@ spec/dummy/storage/*
 
 .env.prod
 spec/dummy/config/master.key
+
+# Prevent accidental commits of test log output files
+*.log

@@ -345,8 +345,12 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
       ['DELETE', %r{^#{path_prefix}/api/auth/sign-out$}]
     ]
     jwt.expiration_time = 1.hour.to_i
+    # devise_for :users inside namespace :api generates the :api_user Devise mapping,
+    # so tokens dispatched from /api/auth/sign-in carry scp: "api_user".
+    # Both scopes are listed so JWT auth works regardless of route_scope_path.
     jwt.request_formats = {
-      user: [nil, :json, :jsonapi]
+      user: [nil, :json, :jsonapi],
+      api_user: [nil, :json, :jsonapi]
     }
   end
 end

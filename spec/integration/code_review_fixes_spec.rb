@@ -410,7 +410,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
       it 'falls back to Doorkeeper token when Warden has no user' do
         user = create(:user)
         warden = instance_double(Warden::Proxy, user: nil)
-        request = instance_double(Rack::Request, env: { 'warden' => warden })
+        request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
         doorkeeper_token = double(
           'BetterTogether::OauthAccessToken',
@@ -419,7 +419,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
           resource_owner_id: user.id
         )
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
-          .with(request, :from_bearer_authorization)
+          .with(anything, :from_bearer_authorization)
           .and_return(doorkeeper_token)
 
         context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
@@ -429,10 +429,10 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
 
       it 'returns guest context when neither Warden nor Doorkeeper authenticate' do
         warden = instance_double(Warden::Proxy, user: nil)
-        request = instance_double(Rack::Request, env: { 'warden' => warden })
+        request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
-          .with(request, :from_bearer_authorization)
+          .with(anything, :from_bearer_authorization)
           .and_return(nil)
 
         context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
@@ -442,7 +442,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
       it 'rejects Doorkeeper token without mcp_access scope' do
         user = create(:user)
         warden = instance_double(Warden::Proxy, user: nil)
-        request = instance_double(Rack::Request, env: { 'warden' => warden })
+        request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
         doorkeeper_token = double(
           'BetterTogether::OauthAccessToken',
@@ -451,7 +451,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
           resource_owner_id: user.id
         )
         allow(Doorkeeper::OAuth::Token).to receive(:authenticate)
-          .with(request, :from_bearer_authorization)
+          .with(anything, :from_bearer_authorization)
           .and_return(doorkeeper_token)
 
         context = BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
@@ -499,11 +499,15 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
       end
 
       it 'uses sanitize_like in SearchPostsTool LIKE patterns' do
-        source = File.read(
+        posts_source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_posts_tool.rb')
         )
-        expect(source).not_to match(/%#\{query\}%/)
-        expect(source).to include('sanitize_like')
+        shared_source = File.read(
+          Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'application_tool.rb')
+        )
+        expect(posts_source).not_to match(/%#\{query\}%/)
+        # sanitize_like lives in the shared AREL helper in ApplicationTool
+        expect(shared_source).to include('sanitize_like')
       end
     end
 

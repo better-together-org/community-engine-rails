@@ -6,6 +6,7 @@ module BetterTogether
     # Requires manage_platform permission
     class GetMetricsSummaryTool < ApplicationTool
       description 'Get aggregated platform metrics summary including page views, top pages, and locale breakdown'
+      tags :admin
 
       arguments do
         optional(:from_date)

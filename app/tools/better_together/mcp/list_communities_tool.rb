@@ -6,6 +6,7 @@ module BetterTogether
     # Respects Pundit authorization and Privacy concern settings
     class ListCommunitiesTool < ApplicationTool
       description 'List communities accessible to the current user, respecting privacy settings and permissions'
+      tags :public
 
       arguments do
         optional(:privacy_filter)

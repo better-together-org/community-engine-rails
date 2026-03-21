@@ -2025,9 +2025,170 @@ fr:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    reports:
+      actions:
+        report: Signaler
+      attributes:
+        category: Catégorie
+        harm_level: Niveau de préjudice
+        requested_outcome: Résultat demandé
+        reason: Résumé court
+        private_details: Détails privés pour l'équipe de sécurité
+      errors:
+        already_reported_by_you: a déjà été signalé par vous
+      index:
+        empty: Vous n'avez pas encore envoyé de signalement de sécurité.
+        new: Nouveau signalement
+        title: Mes signalements de sécurité
+      new:
+        category_help: Choisissez l'option qui correspond le mieux au préjudice ou à la préoccupation que vous signalez.
+        consent_to_contact: Vous pouvez me contacter à propos de ce signalement
+        consent_to_restorative_process: Vous pouvez envisager des options restauratives si cela est approprié
+        error_summary: Veuillez corriger les problèmes suivants.
+        harm_level_help: Indiquez à quel point la situation vous semble urgente ou grave afin que l'équipe de sécurité puisse la traiter correctement.
+        intro: Utilisez ce formulaire pour demander un soutien en matière de sécurité, de limites, de responsabilisation ou de protection urgente.
+        preferences_help: Indiquez si nous pouvons vous contacter, si vous souhaitez que des options restauratives soient envisagées et si un risque de représailles fait partie de ce signalement.
+        preferences_title: Préférences de sécurité
+        private_details_help: Ajoutez tout contexte, schéma, date ou élément de preuve qui doit rester au sein de l'équipe de sécurité.
+        reason_help: Décrivez brièvement ce qui s'est passé. Commencez par le point principal.
+        requested_outcome_help: Choisissez le type de soutien que vous souhaitez de la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si vous hésitez.
+        retaliation_risk: Je crains des représailles ou une escalade
+        submit: Envoyer le signalement
+        title: Signaler un problème de sécurité
+        urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire sert au suivi communautaire et à la plateforme, pas à l'intervention d'urgence.
+        urgent_title: "Si vous êtes en danger immédiat :"
+      notices:
+        created: Le signalement a bien été envoyé.
+      show:
+        back: Retour aux signalements
+        pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter selon vos préférences de consentement.
+        status: Statut actuel
+        summary: Résumé du dossier
+        title: Signalement de sécurité
+    safety:
+      action_statuses:
+        active: Active
+        cancelled: Annulée
+        completed: Terminée
+      action_types:
+        contact_restriction: Restriction de contact
+        content_hidden: Contenu masqué
+        content_removed: Contenu retiré
+        event_restriction: Restriction d'événement
+        messaging_restriction: Restriction de messagerie
+        restorative_referral: Orientation restaurative
+        temporary_suspension: Suspension temporaire
+        watch_flag: Marqueur de surveillance
+      agreement_statuses:
+        active: Active
+        breached: Non respecté
+        completed: Terminé
+        proposed: Proposé
+        withdrawn: Retiré
+      case_lanes:
+        administrative: Administrative
+        immediate_safety: Sécurité immédiate
+        restorative: Restaurative
+      case_statuses:
+        closed_no_action: Clôturé sans action
+        needs_reporter_followup: Suivi nécessaire avec la personne déclarante
+        protective_action_in_effect: Mesure de protection en cours
+        resolved: Résolu
+        restorative_in_progress: Processus restauratif en cours
+        submitted: Soumis
+        triaged: Trié
+      closure_types:
+        no_action: Aucune action
+        protective_action: Mesure de protection
+        restorative_agreement: Accord restauratif
+        unsupported: Non pris en charge
+        voluntary_resolution: Résolution volontaire
+      harm_levels:
+        high: Élevé
+        low: Faible
+        medium: Moyen
+        urgent: Urgent
+      note_visibilities:
+        internal_only: Interne uniquement
+        participant_visible: Visible aux participantes et participants
+      report_categories:
+        boundary_violation: Violation de limites
+        discrimination: Discrimination
+        fraud: Fraude
+        harassment: Harcèlement
+        hate_speech: Discours haineux
+        impersonation: Usurpation d'identité
+        misinformation: Désinformation
+        other: Autre
+        privacy_violation: Violation de la vie privée
+        spam_or_scam: Pourriel ou arnaque
+      reporter_visible_statuses:
+        closed_no_action: Clôturé sans action
+        needs_reporter_followup: Plus d'informations de votre part sont nécessaires
+        protective_action_in_effect: Mesure de protection en cours
+        resolved: Résolu
+        restorative_in_progress: Processus restauratif en cours
+        submitted: Soumis
+        triaged: En cours d'examen
+        under_review: En cours d'examen
+      requested_outcomes:
+        boundary_support: Soutien pour établir des limites
+        community_accountability: Responsabilisation communautaire
+        content_review: Examen du contenu
+        mediated_conversation: Conversation accompagnée
+        other: Autre
+        temporary_protection: Protection temporaire
+      shared:
+        any: Tout
+    safety_cases:
+      attributes:
+        accountability_check: Vérification de responsabilité et de gestion
+        action_details: Détails de la mesure
+        action_reason: Raison de la mesure
+        action_status: Statut de la mesure
+        action_type: Type de mesure
+        agreement_summary: Résumé de l'accord
+        care_check: Vérification de soin et de résilience
+        closure_summary: Résumé de clôture
+        closure_type: Type de clôture
+        commitments: Engagements
+        expires_at: Expire le
+        harmed_party_consented: La personne affectée a consenti
+        lane: Volet
+        love_inclusivity_check: Vérification d'amour et d'inclusivité
+        note_body: Note
+        note_visibility: Visibilité de la note
+        reporter: Personne déclarante
+        responsible_party_consented: La personne mise en cause a consenti
+        review_at: Révision le
+        solidarity_check: Vérification de coopération et de solidarité
+        status: Statut du dossier
+      index:
+        filter: Filtrer
+        title: Dossiers de sécurité
+      notices:
+        updated: Le dossier de sécurité a été mis à jour.
+      show:
+        actions: Mesures de protection et de responsabilisation
+        add_action: Enregistrer la mesure
+        add_agreement: Créer un accord
+        add_note: Ajouter une note
+        agreements: Accords restauratifs
+        back: Retour à la file
+        intake: Réception du signalement
+        manage: Gestion du dossier
+        notes: Notes internes
+        title: Dossier de sécurité
+        update_agreement: Mettre à jour l'accord
+        update_case: Mettre à jour le dossier
+        values_review: Examen des valeurs
+        values_review_placeholder: Expliquez l'examen des valeurs pour cette mesure
+    safety_notes:
+      notices:
+        created: Une note a été ajoutée au dossier.
     person_block:
-      cannot_block_manager: ne puede ser un administrador de la plataforma
-      cannot_block_self: no puedes bloquearte a ti mismo
+      cannot_block_manager: ne peut pas être un gestionnaire de plateforme
+      cannot_block_self: ne peut pas vous bloquer vous-même
     person_blocks:
       index:
         actions: Actions
@@ -2036,7 +2197,7 @@ fr:
         blocked_count:
           one: 1 personne bloquée
           other: "%{count} personnes bloquées"
-          zero: Aucun personne bloquée
+          zero: Aucune personne bloquée
         blocked_on: Bloqué le %{date}
         no_blocked_people: Vous n'avez encore bloqué personne.
         no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
@@ -2057,13 +2218,13 @@ fr:
         submit: Bloquer la personne
         title: Bloquer une personne
       notices:
-        already_blocked: Cette personne est déjà bloqué.
-        blocked: La personne a été bloqué avec succès.
-        not_found: personne non trouvé.
+        already_blocked: Cette personne est déjà bloquée.
+        blocked: La personne a été bloquée avec succès.
+        not_found: Personne introuvable.
         platform_manager_error: Les administrateurs de plateforme ne peuvent pas être
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
-        unblocked: La personne a été débloqué avec succès.
+        unblocked: La personne a été débloquée avec succès.
     person_platform_integration_mailer:
       integration_created:
         body_html: Une nouvelle intégration de compte %{provider} a été connectée
@@ -2243,6 +2404,28 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        developer:
+          apps:
+            client_id_label: ID Client
+            description: Applications que vous avez enregistrées pour utiliser l'API
+              Better Together.
+            edit_aria: Modifier %{name}
+            new_aria: Enregistrer une nouvelle application OAuth
+            new_btn: Nouvelle Application
+            none: Vous n'avez pas encore enregistré d'applications OAuth.
+            title: Vos Applications OAuth
+            view_aria: Voir %{name}
+          tokens:
+            col_app: Application
+            col_created: Émis
+            col_expires: Expire
+            col_scopes: Portées
+            description: Tokens d'accès API actifs émis sur votre compte.
+            no_app: Token personnel
+            no_expiry: Jamais
+            none: Aucun token d'accès actif.
+            table_aria: Tokens d'accès actifs
+            title: Tokens d'Accès API
         device_permissions:
           description: Gérez les autorisations du navigateur pour la localisation,
             les notifications, la caméra et le microphone.
@@ -2272,6 +2455,7 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
           personal: Personnel

@@ -6,6 +6,7 @@ module BetterTogether
     # Respects Joatu exchange policies and response link visibility
     class ListOffersTool < ApplicationTool
       description 'List open Joatu offers (things people are willing to provide)'
+      tags :public
 
       arguments do
         optional(:status)
