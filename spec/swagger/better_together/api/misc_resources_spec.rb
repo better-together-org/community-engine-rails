@@ -10,7 +10,7 @@ RSpec.describe 'Notifications API', :no_auth, type: :request do
   path '/api/v1/notifications' do
     get 'List notifications' do
       tags 'Notifications'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description "List the current user's notifications."
 
@@ -27,7 +27,7 @@ RSpec.describe 'Notifications API', :no_auth, type: :request do
   path '/api/v1/notifications/mark_all_read' do
     post 'Mark all notifications as read' do
       tags 'Notifications'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/json'
       description 'Mark all unread notifications as read for the current user.'
 
@@ -47,7 +47,7 @@ RSpec.describe 'Invitations API', :no_auth, type: :request do
   path '/api/v1/invitations' do
     get 'List invitations' do
       tags 'Invitations'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description "List the current user's community invitations."
 
@@ -60,7 +60,7 @@ RSpec.describe 'Invitations API', :no_auth, type: :request do
 
     post 'Create an invitation' do
       tags 'Invitations'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
       description 'Invite someone to a community. Requires manage_community permission.'
@@ -117,7 +117,7 @@ RSpec.describe 'Pages API', :no_auth, type: :request do
   path '/api/v1/pages' do
     get 'List pages' do
       tags 'Pages'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'List published pages.'
 
@@ -137,7 +137,7 @@ RSpec.describe 'Pages API', :no_auth, type: :request do
 
     get 'Get a page' do
       tags 'Pages'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
 
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -156,7 +156,7 @@ RSpec.describe 'Metrics API', :no_auth, type: :request do
   path '/api/v1/metrics/summary' do
     get 'Get platform metrics summary' do
       tags 'Metrics'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/json'
       description 'Get aggregated platform metrics. Requires manage_platform permission.'
 
