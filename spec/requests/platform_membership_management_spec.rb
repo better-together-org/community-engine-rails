@@ -67,7 +67,9 @@ RSpec.describe 'Platform membership management', :as_platform_manager do
       expect(membership.reload.role).to eq(new_role)
     end
 
-    it 'sends an update email notification when role changes' do
+    it 'creates a membership updated notification when role changes' do
+      Noticed::Notification.destroy_all
+
       expect do
         put platform_person_platform_membership_path(platform, membership, locale: I18n.locale),
             params: { person_platform_membership: { role_id: new_role.id } },
@@ -75,15 +77,12 @@ RSpec.describe 'Platform membership management', :as_platform_manager do
               'Accept' => 'text/vnd.turbo-stream.html',
               'Turbo-Frame' => "member_card_person_platform_membership_#{membership.id.tr('-', '_')}"
             }
-      end.to have_enqueued_mail(BetterTogether::MembershipMailer, :updated)
+      end.to change(Noticed::Notification, :count).by(1)
 
-      # Verify the mailer was enqueued with expected parameters
-      enqueued_job = enqueued_jobs.last
-      expect(enqueued_job['job_class']).to eq('ActionMailer::MailDeliveryJob')
-
-      job_params = enqueued_job['arguments'][3]['params']
-      expect(job_params).to include('recipient', 'joinable', 'old_role', 'new_role', 'member_name')
-      expect(job_params['recipient']).to include('email', 'locale', 'time_zone')
+      notification = Noticed::Notification.last
+      expect(notification.recipient).to eq(member)
+      expect(notification.event.type).to eq('BetterTogether::MembershipUpdatedNotifier')
+      expect(notification.event.record).to eq(membership.reload)
     end
   end
 end
