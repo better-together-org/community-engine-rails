@@ -116,6 +116,20 @@ RSpec.describe BetterTogether::PersonPlatformMembership do
       end.to have_enqueued_mail(BetterTogether::MembershipMailer, :updated)
     end
 
+    it 'creates a membership updated notification when role is updated' do
+      Noticed::Notification.destroy_all
+      initial_count = Noticed::Notification.count
+
+      membership.update!(role: new_role)
+
+      expect(Noticed::Notification.count).to be > initial_count
+
+      notification_types = Noticed::Notification.where(recipient: membership.member)
+                                                .joins(:event)
+                                                .pluck('noticed_events.type')
+      expect(notification_types).to include('BetterTogether::MembershipUpdatedNotifier')
+    end
+
     it 'does not send an email when other attributes are updated' do
       expect do
         membership.update!(updated_at: 1.day.from_now)
