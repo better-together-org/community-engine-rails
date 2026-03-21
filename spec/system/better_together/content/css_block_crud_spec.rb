@@ -68,7 +68,7 @@ RSpec.describe 'Content::Css block CRUD', :as_platform_manager, :js do
         id: css_block.id
       )
 
-      fill_in 'block[content_en]', with: '.updated { color: green; }'
+      fill_in 'block[content_en]', with: '.updated { color: green; }', fill_options: { clear: :backspace }
       click_button 'Save Changes'
 
       expect(page).to have_current_path(%r{/host/content/blocks/#{css_block.id}$}, wait: 10)
