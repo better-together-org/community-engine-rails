@@ -61,7 +61,7 @@ RSpec.describe 'Authentication', :no_auth, type: :request do # rubocop:disable R
   path '/api/auth/sign-out' do
     delete 'Sign out (revoke JWT token)' do
       tags 'Authentication'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/json'
       description 'Sign out and invalidate the current JWT token.'
       parameter name: :Authorization, in: :header, type: :string, required: true,

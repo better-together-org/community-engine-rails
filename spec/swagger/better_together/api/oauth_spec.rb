@@ -10,7 +10,7 @@ RSpec.describe 'OAuth Applications API', :no_auth, type: :request do
   path '/api/oauth_applications' do
     get 'List OAuth applications' do
       tags 'OAuth'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/json'
       description "List the current user's registered OAuth applications."
 
@@ -43,7 +43,7 @@ RSpec.describe 'OAuth Applications API', :no_auth, type: :request do
 
     post 'Create an OAuth application' do
       tags 'OAuth'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/json'
       produces 'application/json'
       description 'Register a new OAuth application for API access.'
@@ -88,7 +88,7 @@ RSpec.describe 'OAuth Applications API', :no_auth, type: :request do
 
     get 'Get an OAuth application' do
       tags 'OAuth'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/json'
 
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -105,7 +105,7 @@ RSpec.describe 'OAuth Applications API', :no_auth, type: :request do
 
     delete 'Delete an OAuth application' do
       tags 'OAuth'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       description 'Delete an OAuth application. Only the owner can delete their app.'
 
       parameter name: :Authorization, in: :header, type: :string, required: true
