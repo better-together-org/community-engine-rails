@@ -13,6 +13,31 @@ echo "🏗️  Better Together - Documentation Tooling Validation"
 echo "================================================="
 echo ""
 
+required_docs=(
+  "$DOCS_DIR/development/accessibility_testing.md"
+  "$DOCS_DIR/development/screenshot_and_documentation_tooling_assessment.md"
+  "$DOCS_DIR/shared/documentation_accessibility_rubric.md"
+  "$PROJECT_ROOT/config/rubrics/documentation_accessibility_rubric.json"
+)
+
+safety_docs=(
+  "$DOCS_DIR/end_users/safety_reporting.md"
+  "$DOCS_DIR/end_users/blocking_and_boundaries.md"
+  "$DOCS_DIR/end_users/reporting_harm_and_safety_concerns.md"
+  "$DOCS_DIR/end_users/after_you_report.md"
+  "$DOCS_DIR/end_users/privacy_and_safety_preferences.md"
+  "$DOCS_DIR/end_users/emergency_and_urgent_situations.md"
+)
+
+plain_text_docs=(
+  "${safety_docs[@]}"
+  "$DOCS_DIR/end_users/README.md"
+  "$DOCS_DIR/end_users/user_management_guide.md"
+  "$DOCS_DIR/end_users/welcome.md"
+  "$DOCS_DIR/development/README.md"
+  "$DOCS_DIR/table_of_contents.md"
+)
+
 # Test 1: Diagram Rendering System
 echo "📊 Testing Diagram Rendering System..."
 echo "  Source location: docs/diagrams/source/"
@@ -120,6 +145,114 @@ else
     echo "  ❌ Stakeholder migration script not found"
 fi
 
+# Test 7: Accessibility and screenshot documentation
+echo ""
+echo "♿ Testing accessibility and screenshot documentation..."
+missing_required=0
+
+for doc in "${required_docs[@]}"; do
+    display_path="${doc#$PROJECT_ROOT/}"
+    if [ -f "$doc" ]; then
+        echo "  ✅ Found $display_path"
+    else
+        echo "  ❌ Missing $display_path"
+        missing_required=$((missing_required + 1))
+    fi
+done
+
+if [ -f "$PROJECT_ROOT/spec/support/capybara_screenshot_engine.rb" ]; then
+    echo "  ✅ Screenshot engine helper exists"
+else
+    echo "  ❌ Screenshot engine helper missing"
+    missing_required=$((missing_required + 1))
+fi
+
+if [ -x "$PROJECT_ROOT/bin/docs_screenshots" ]; then
+    echo "  ✅ Screenshot runner exists"
+else
+    echo "  ❌ Screenshot runner missing or not executable"
+    missing_required=$((missing_required + 1))
+fi
+
+if [ $missing_required -ne 0 ]; then
+    echo "  ❌ Accessibility/screenshot documentation validation failed"
+    exit 1
+fi
+
+# Test 8: Safety documentation screenshot references and index coverage
+echo ""
+echo "🛡️  Testing end-user safety documentation coverage..."
+safety_missing=0
+
+for doc in "${safety_docs[@]}"; do
+    display_path="${doc#$PROJECT_ROOT/}"
+    if [ -f "$doc" ]; then
+        echo "  ✅ Found $display_path"
+    else
+        echo "  ❌ Missing $display_path"
+        safety_missing=$((safety_missing + 1))
+    fi
+done
+
+if ! grep -q "Safety and Reporting Tools" "$DOCS_DIR/end_users/README.md"; then
+    echo "  ❌ docs/end_users/README.md is missing the safety section link"
+    safety_missing=$((safety_missing + 1))
+else
+    echo "  ✅ End-user index links to the safety section"
+fi
+
+if ! grep -q "end_users/safety_reporting.md" "$DOCS_DIR/table_of_contents.md"; then
+    echo "  ❌ docs/table_of_contents.md is missing the safety overview entry"
+    safety_missing=$((safety_missing + 1))
+else
+    echo "  ✅ Table of contents includes the safety overview"
+fi
+
+for doc in "${safety_docs[@]}"; do
+    while IFS= read -r screenshot_path; do
+        [ -n "$screenshot_path" ] || continue
+        resolved_path="$(cd "$(dirname "$doc")" && realpath -m "$screenshot_path")"
+        if [ -f "$resolved_path" ]; then
+            echo "  ✅ Screenshot reference ok: ${resolved_path#$PROJECT_ROOT/}"
+        else
+            echo "  ❌ Missing screenshot referenced by ${doc#$PROJECT_ROOT/}: $screenshot_path"
+            safety_missing=$((safety_missing + 1))
+        fi
+    done < <(grep -oE '\.\./screenshots/[A-Za-z0-9_./-]+\.(png|gif)' "$doc" || true)
+done
+
+if [ $safety_missing -ne 0 ]; then
+    echo "  ❌ Safety documentation validation failed"
+    exit 1
+fi
+
+# Test 9: Plain-text style checks for touched user/developer docs
+echo ""
+echo "✍️  Testing documentation style constraints..."
+style_issues=0
+
+for doc in "${plain_text_docs[@]}"; do
+    display_path="${doc#$PROJECT_ROOT/}"
+    if grep -nP '[\x{1F300}-\x{1FAFF}]' "$doc" >/dev/null 2>&1; then
+        echo "  ❌ Emoji found in $display_path"
+        style_issues=$((style_issues + 1))
+    else
+        echo "  ✅ No emoji in $display_path"
+    fi
+
+    if grep -n '—' "$doc" >/dev/null 2>&1; then
+        echo "  ❌ Em dash found in $display_path"
+        style_issues=$((style_issues + 1))
+    else
+        echo "  ✅ No em dash in $display_path"
+    fi
+done
+
+if [ $style_issues -ne 0 ]; then
+    echo "  ❌ Documentation style validation failed"
+    exit 1
+fi
+
 # Summary
 echo ""
 echo "📋 Validation Summary"
@@ -130,6 +263,9 @@ echo "• SVG Exports: $svg_count"
 echo "• Render Script: ✅ Working"
 echo "• GitHub Workflow: ✅ Updated"
 echo "• Stakeholder Migration: ✅ Ready"
+echo "• Accessibility Docs & Rubric: ✅ Ready"
+echo "• Safety Docs & Screenshots: ✅ Ready"
+echo "• Plain-Text Style Rules: ✅ Ready"
 
 echo ""
 echo "✅ Documentation tooling validation complete!"

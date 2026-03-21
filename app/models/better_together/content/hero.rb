@@ -6,9 +6,6 @@ module BetterTogether
     class Hero < Block
       include Translatable
 
-      has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
-      has_many :pages, through: :page_blocks
-
       translates :heading, :cta_text, type: :string
       translates :content, backend: :action_text
 

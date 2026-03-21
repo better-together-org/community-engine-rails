@@ -1,0 +1,29 @@
+<%# locals: (posts_block:) -%>
+<%
+  order_scope = if posts_block.posts_scope == 'published'
+                  ->(s) { s.where.not(published_at: nil).order(published_at: :desc) }
+                else
+                  ->(s) { s.order(created_at: :desc) }
+                end
+
+  posts = resource_block_collection(posts_block, BetterTogether::Post, extra_scope: order_scope)
+  cache_key = [posts_block, posts_block.community_scope_id, posts_block.posts_scope,
+               BetterTogether::Post.maximum(:updated_at)&.to_i,
+               BetterTogether::Post.count,
+               I18n.locale]
+%>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: posts_block } do %>
+  <%= cache cache_key do %>
+    <div class="posts-block-collection row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <%= render(posts) || content_tag(:p, t('better_together.content.blocks.posts_block.empty',
+                                            default: 'No posts to display.')) %>
+    </div>
+
+    <% if posts_block.show_view_more? %>
+      <div class="text-center mt-4">
+        <%= link_to t('better_together.content.blocks.view_more', default: 'View all'),
+                    posts_block.view_more_url, class: 'btn btn-outline-primary' %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
