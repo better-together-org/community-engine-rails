@@ -72,11 +72,28 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.updated.previous_permissions_heading'))
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.updated.new_permissions_heading'))
       end
+
+      context 'when recipient data uses string keys' do
+        let(:recipient_data) do
+          {
+            'email' => updated_membership.member.email,
+            'locale' => I18n.default_locale,
+            'time_zone' => Time.zone
+          }
+        end
+
+        it 'renders successfully' do
+          expect(mail.subject).to eq(I18n.t('better_together.membership_mailer.updated.subject',
+                                            joinable_name: updated_membership.joinable.name,
+                                            joinable_type: updated_membership.joinable.model_name.human))
+          expect(mail.to).to eq([updated_membership.member.email])
+        end
+      end
     end
 
     describe '#removed' do
       let(:recipient_data) do
-        recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+        recipient_struct = Struct.new(:email, :locale, :time_zone)
         recipient_struct.new(
           email: 'member@example.com',
           locale: I18n.default_locale,
