@@ -4,35 +4,13 @@ require 'rails_helper'
 
 RSpec.describe 'Real Elasticsearch search matching', type: :integration do
   let(:backend_url) { ENV.fetch('ELASTICSEARCH_URL', 'http://host.docker.internal:9200') }
+  let(:page_index_name) { "better_together-pages-search-spec-#{SecureRandom.hex(6)}" }
+  let(:post_index_name) { "better_together-posts-search-spec-#{SecureRandom.hex(6)}" }
   let(:markdown_token) { 'alpha-markdown-orbit-1001' }
   let(:rich_text_token) { 'beta-richtext-ember-1002' }
   let(:post_title_token) { 'gamma-posttitle-lantern-1003' }
   let(:post_content_token) { 'delta-postcontent-river-1004' }
   let(:shared_token) { 'shared-harbor-signal-1005' }
-
-  around do |example|
-    original_elasticsearch_url = ENV['ELASTICSEARCH_URL']
-    original_enable_tests = ENV['ENABLE_ELASTICSEARCH_TESTS']
-    allowed_hosts = ['elasticsearch:9200', 'host.docker.internal:9200']
-
-    ENV['ELASTICSEARCH_URL'] = backend_url
-    ENV['ENABLE_ELASTICSEARCH_TESTS'] = 'true'
-    WebMock.disable_net_connect!(allow_localhost: true, allow: allowed_hosts)
-    BetterTogether::Search.reset_backend!
-
-    unless BetterTogether::Search.backend.available?
-      skip "Elasticsearch is unavailable at #{backend_url}"
-    end
-
-    recreate_search_indices
-    example.run
-  ensure
-    recreate_search_indices if BetterTogether::Search.backend.available?
-    WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
-    ENV['ELASTICSEARCH_URL'] = original_elasticsearch_url
-    ENV['ENABLE_ELASTICSEARCH_TESTS'] = original_enable_tests
-    BetterTogether::Search.reset_backend!
-  end
 
   let!(:markdown_page) do
     create(
@@ -91,8 +69,43 @@ RSpec.describe 'Real Elasticsearch search matching', type: :integration do
     )
   end
 
+  around do |example|
+    original_elasticsearch_url = ENV.fetch('ELASTICSEARCH_URL', nil)
+    original_enable_tests = ENV.fetch('ENABLE_ELASTICSEARCH_TESTS', nil)
+    original_page_index_name = BetterTogether::Page.__elasticsearch__.index_name
+    original_post_index_name = BetterTogether::Post.__elasticsearch__.index_name
+
+    ENV['ELASTICSEARCH_URL'] = backend_url
+    ENV['ENABLE_ELASTICSEARCH_TESTS'] = 'true'
+    BetterTogether::Page.__elasticsearch__.index_name = page_index_name
+    BetterTogether::Post.__elasticsearch__.index_name = post_index_name
+    WebMock.disable_net_connect!(allow_localhost: true, allow: allowed_elasticsearch_request?)
+    BetterTogether::Search.reset_backend!
+
+    unless BetterTogether::Search.backend.available?
+      skip "Elasticsearch is unavailable at #{backend_url}"
+    end
+
+    recreate_search_indices
+    example.run
+  ensure
+    recreate_search_indices if BetterTogether::Search.backend.available?
+    WebMock.disable_net_connect!(allow_localhost: true, allow: allowed_elasticsearch_request?)
+    ENV['ELASTICSEARCH_URL'] = original_elasticsearch_url
+    ENV['ENABLE_ELASTICSEARCH_TESTS'] = original_enable_tests
+    BetterTogether::Page.__elasticsearch__.index_name = original_page_index_name
+    BetterTogether::Post.__elasticsearch__.index_name = original_post_index_name
+    BetterTogether::Search.reset_backend!
+  end
+
   before do
     reindex_registry!
+  end
+
+  def allowed_elasticsearch_request?
+    lambda do |uri|
+      [['elasticsearch', 9200], ['host.docker.internal', 9200]].include?([uri.host, uri.port])
+    end
   end
 
   it 'matches a page only by markdown block content' do
