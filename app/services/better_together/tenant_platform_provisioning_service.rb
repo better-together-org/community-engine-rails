@@ -50,8 +50,18 @@ module BetterTogether
       @admin     = admin
     end
 
-    def call
-      ActiveRecord::Base.transaction { build_result! }
+    def call # rubocop:disable Metrics/AbcSize
+      result = nil
+      ActiveRecord::Base.transaction { result = build_result! }
+      # after_commit has now fired (sync_primary_platform_domain!); reload to pick up the domain
+      result.platform&.reload
+      Result.new(
+        platform: result.platform,
+        community: result.platform&.primary_community,
+        domain: result.platform&.primary_platform_domain,
+        admin_user: result.admin_user,
+        errors: []
+      )
     rescue ActiveRecord::RecordInvalid => e
       failure_result(e.record.errors.full_messages)
     rescue StandardError => e

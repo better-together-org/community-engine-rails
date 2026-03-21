@@ -53,10 +53,10 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
         person = result.admin_user.person
         expect(person.person_platform_memberships.joins(:role)
           .where(roles: { identifier: 'platform_steward' })
-          .where(platform: result.platform)).to exist
+          .where(joinable: result.platform)).to exist
         expect(person.person_community_memberships.joins(:role)
           .where(roles: { identifier: 'community_governance_council' })
-          .where(community: result.community)).to exist
+          .where(joinable: result.community)).to exist
       end
     end
 
