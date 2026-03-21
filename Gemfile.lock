@@ -212,7 +212,7 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     base64 (0.3.0)
-    bcrypt (3.1.21)
+    bcrypt (3.1.22)
     benchmark (0.5.0)
     better_errors (2.10.1)
       erubi (>= 1.0.0)
@@ -973,7 +973,7 @@ DEPENDENCIES
   axe-core-capybara
   axe-core-rspec
   axe-core-selenium
-  bcrypt (~> 3.1.21)
+  bcrypt (~> 3.1.22)
   better_errors
   better_together!
   binding_of_caller
