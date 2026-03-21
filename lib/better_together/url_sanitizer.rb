@@ -22,7 +22,7 @@ module BetterTogether
   module UrlSanitizer
     # Characters in the 7-bit ASCII range that are illegal or ambiguous in a URI path.
     # Sourced from RFC 3986 §3.3 and the URI::Parser regexp.
-    URI_UNSAFE_ASCII = /[\[\]{}\s\\^`|<>]/.freeze
+    URI_UNSAFE_ASCII = /[\[\]{}\s\\^`|<>]/
 
     # Encode all bytes of non-ASCII characters in +path+ using percent-notation,
     # then encode any remaining URI-unsafe ASCII delimiters.
