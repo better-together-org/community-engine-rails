@@ -3,6 +3,8 @@
 module BetterTogether
   # Sends email notifications when a membership is created
   class MembershipMailer < ApplicationMailer # rubocop:todo Metrics/ClassLength
+    RecipientData = Struct.new(:email, :locale, :time_zone)
+
     include BetterTogether::RolesHelper
 
     helper BetterTogether::RolesHelper
@@ -92,8 +94,11 @@ module BetterTogether
     def process_recipient
       return unless @recipient.is_a?(Hash)
 
-      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
-      @recipient = recipient_struct.new(@recipient)
+      @recipient = RecipientData.new(
+        @recipient[:email] || @recipient['email'],
+        @recipient[:locale] || @recipient['locale'],
+        @recipient[:time_zone] || @recipient['time_zone']
+      )
     end
 
     def invalid_recipient?

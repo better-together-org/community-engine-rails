@@ -111,6 +111,12 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.
 
+## Repository Write Boundary (CRITICAL)
+- Only create, edit, move, or delete files within the current repository root.
+- Never write project artifacts to `/tmp` (or any system-wide temp directory) as part of coding tasks.
+- Use repository-scoped temporary paths instead (for example `tmp/` inside the repo, which remains repository-local).
+- If a command or script defaults to `/tmp`, override it to a repository path before running.
+
 ## String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries.
 - **Follow existing pattern**: Use full English words as enum values (current average: ~7 characters).

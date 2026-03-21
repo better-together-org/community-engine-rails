@@ -98,10 +98,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect(notification.event.type).to eq('BetterTogether::MembershipUpdatedNotifier')
       end
 
-      it 'sends email notification when email is present' do
-        expect(BetterTogether::MembershipMailer).to receive(:with).and_call_original
-        expect_any_instance_of(ActionMailer::MessageDelivery).to receive(:deliver_later) # rubocop:todo RSpec/AnyInstance
-
+      it 'does not directly invoke the mailer for role updates' do
+        expect(BetterTogether::MembershipMailer).not_to receive(:with)
         service.notify_role_update(old_role)
       end
 

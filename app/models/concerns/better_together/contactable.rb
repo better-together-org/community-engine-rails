@@ -27,8 +27,10 @@ module BetterTogether
     class_methods do
       def extra_permitted_attributes
         super + [
-          contact_detail_attributes: BetterTogether::ContactDetail.permitted_attributes(id: true, destroy: true),
-          contacts_attributes: BetterTogether::ContactDetail.permitted_attributes(id: true, destroy: true)
+          {
+            contact_detail_attributes: BetterTogether::ContactDetail.permitted_attributes(id: true, destroy: true),
+            contacts_attributes: BetterTogether::ContactDetail.permitted_attributes(id: true, destroy: true)
+          }
         ]
       end
     end
