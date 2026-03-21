@@ -39,6 +39,13 @@
             <% end %>
           <% end %>
         <% end %>
+          <% if current_user.present? && current_person != @person %>
+            <%= link_to new_report_path(locale: I18n.locale, reportable_type: @person.class.name, reportable_id: @person.id),
+                        class: 'btn btn-outline-danger btn-sm me-2',
+                        'aria-label' => t('better_together.reports.new.title', default: 'Report a safety concern') do %>
+              <i class="fas fa-flag"></i> <%= t('better_together.reports.actions.report', default: 'Report') %>
+            <% end %>
+          <% end %>
       </div>
     </div>
   </div>

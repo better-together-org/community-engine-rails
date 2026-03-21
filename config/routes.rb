@@ -153,7 +153,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             get :search
           end
         end
-        resources :reports, only: [:create]
+        resources :reports, only: %i[index show new create]
 
         namespace :joatu, path: 'exchange' do
           # Exchange hub landing page
@@ -331,6 +331,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             # People and memberships
             resources :people
             resources :person_community_memberships
+            namespace :safety, path: 'safety' do
+              resources :cases, only: %i[index show update], as: :cases do
+                resources :actions, only: [:create]
+                resources :notes, only: [:create]
+                resources :agreements, only: %i[create update]
+              end
+            end
 
             # Platform list
             resources :platforms, only: %i[index show edit update] do

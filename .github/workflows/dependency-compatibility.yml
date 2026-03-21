@@ -1,0 +1,123 @@
+name: Dependency Compatibility Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
+    paths:
+      - Gemfile
+      - Gemfile.lock
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      rails_version: ${{ steps.detect.outputs.rails_version }}
+      run_validation: ${{ steps.detect.outputs.run_validation }}
+      changed_dependencies: ${{ steps.detect.outputs.changed_dependencies }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect targeted dependency PRs
+        id: detect
+        shell: bash
+        run: |
+          case "${GITHUB_BASE_REF}" in
+            compat/rails-7.2)
+              rails_version="7.2.2.2"
+              ;;
+            compat/rails-8.1)
+              rails_version="8.1.2"
+              ;;
+            main|dev|compat/rails-8.0)
+              rails_version="8.0.3"
+              ;;
+            *)
+              rails_version="8.0.3"
+              ;;
+          esac
+
+          diff_output="$(git diff --unified=0 "${{ github.event.pull_request.base.sha }}" "${{ github.sha }}" -- Gemfile Gemfile.lock)"
+
+          changed_dependencies=()
+          if grep -Eq "^[+-].*(gem ['\"]sidekiq['\"]|[[:space:]]sidekiq \\()" <<< "${diff_output}"; then
+            changed_dependencies+=("sidekiq")
+          fi
+
+          if grep -Eq "^[+-].*(gem ['\"]connection_pool['\"]|[[:space:]]connection_pool \\()" <<< "${diff_output}"; then
+            changed_dependencies+=("connection_pool")
+          fi
+
+          if ((${#changed_dependencies[@]})); then
+            run_validation="true"
+            changed_csv="$(IFS=,; echo "${changed_dependencies[*]}")"
+          else
+            run_validation="false"
+            changed_csv=""
+          fi
+
+          echo "rails_version=${rails_version}" >> "${GITHUB_OUTPUT}"
+          echo "run_validation=${run_validation}" >> "${GITHUB_OUTPUT}"
+          echo "changed_dependencies=${changed_csv}" >> "${GITHUB_OUTPUT}"
+
+  validate:
+    name: sidekiq/connection_pool compatibility
+    needs: detect
+    if: ${{ needs.detect.outputs.run_validation == 'true' }}
+    runs-on: ubuntu-latest
+    env:
+      REDIS_URL: "redis://localhost:6379/0"
+      RAILS_VERSION: ${{ needs.detect.outputs.rails_version }}
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.4"
+
+      - name: Resolve bundle for native Rails lane
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
+
+      - name: Validate Sidekiq Redis pool compatibility
+        shell: bash
+        run: |
+          bundle exec ruby <<'RUBY'
+          require "sidekiq"
+
+          pool = Sidekiq::RedisConnection.create(url: ENV.fetch("REDIS_URL"))
+          response = pool.with { |conn| conn.call("PING") }
+
+          abort("Unexpected Redis response: #{response.inspect}") unless response == "PONG"
+
+          puts "Validated #{ENV.fetch("RAILS_VERSION")} with #{ENV.fetch("REDIS_URL")} via #{pool.class.name}"
+          RUBY
+
+      - name: Summarize validation scope
+        run: |
+          echo "Validated dependencies: ${{ needs.detect.outputs.changed_dependencies }}"
+          echo "Native Rails lane: ${{ needs.detect.outputs.rails_version }}"
