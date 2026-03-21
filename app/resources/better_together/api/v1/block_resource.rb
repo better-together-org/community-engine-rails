@@ -24,8 +24,28 @@ module BetterTogether
 
         # ── Core identity ────────────────────────────────────────────────────────
         # :type is a JSONAPI reserved keyword — expose STI discriminator as :block_type instead.
-        # jsonapi-resources 0.10.x does not support block-style computed attributes;
-        # use delegate: :type to map the model's STI column to the :block_type attribute key.
+        #
+        # block_type= is pre-defined before attribute() so JSONAPI-Resources'
+        # `unless method_defined?` guard preserves our STI-switching setter.
+        # On create, the payload sends block_type first; our setter re-instantiates
+        # @model as the correct STI subclass so subsequent attribute setters
+        # (e.g. markdown_source_en=) find their Mobility/Storext methods.
+        define_method(:block_type=) do |value|
+          return unless value
+
+          class_name = self.class.resolve_block_class(value)
+          klass      = class_name&.safe_constantize
+          unless klass && klass < ::BetterTogether::Content::Block
+            raise JSONAPI::Exceptions::InvalidFieldValue.new(:block_type, value)
+          end
+
+          if @model.new_record? && !@model.is_a?(klass)
+            @model = klass.new
+          else
+            @model.type = klass.name
+          end
+        end
+
         attribute :block_type, delegate: :type
         attributes :identifier, :privacy, :visible, :protected
 
@@ -63,12 +83,14 @@ module BetterTogether
                        :html_content, :cta_url
 
         # ── Translatable attrs (Mobility — via locale suffix accessors) ──────────
-        # Same pattern: pre-define instance method with respond_to? guard before
-        # calling `attribute` so jsonapi-resources uses our guard, not model delegation.
+        # Pre-define both getter AND setter with respond_to? guards before calling
+        # attribute() — JSONAPI-Resources 0.10.x checks `unless method_defined?` for
+        # both, so our guards are preserved and unguarded delegation is never installed.
         %w[en fr es uk].each do |locale|
           %i[markdown_source heading cta_text content attribution alt_text caption diagram_source].each do |base|
             full = :"#{base}_#{locale}"
-            define_method(full) { @model.respond_to?(full) ? @model.public_send(full) : nil }
+            define_method(full)       { @model.respond_to?(full)        ? @model.public_send(full)        : nil }
+            define_method(:"#{full}=") { |v| @model.public_send(:"#{full}=", v) if @model.respond_to?(:"#{full}=") }
             attribute full
           end
         end
@@ -122,23 +144,6 @@ module BetterTogether
 
         def self.updatable_fields(context)
           creatable_fields(context) - %i[block_type]
-        end
-
-        # Map :block_type from request attributes to model STI type column.
-        # For new records, re-instantiate @model as the correct STI subclass so
-        # that subtype-specific Storext and Mobility accessors are available.
-        def _assign_attributes(resource_params)
-          if (block_type = resource_params.delete(:block_type))
-            class_name = self.class.resolve_block_class(block_type)
-            klass = class_name&.safe_constantize
-            unless klass && klass < ::BetterTogether::Content::Block
-              raise JSONAPI::Exceptions::InvalidFieldValue.new(:block_type, block_type)
-            end
-
-            @model = klass.new if @model.new_record? && !@model.is_a?(klass)
-            @model.type = klass.name
-          end
-          super
         end
 
         # Resolve a short or full block type name to its full Rails STI class name.

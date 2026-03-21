@@ -22,7 +22,7 @@ RSpec.describe 'Content::Css block CRUD', :as_platform_manager, :js do
 
   before do
     configure_host_platform
-    # :as_platform_manager tag logs in automatically via automatic_test_configuration
+    capybara_login_as_platform_manager
   end
 
   describe 'create a CssBlock with > 255 chars and verify no truncation' do
@@ -55,9 +55,10 @@ RSpec.describe 'Content::Css block CRUD', :as_platform_manager, :js do
   end
 
   describe 'edit a CssBlock' do
+    let(:edit_identifier) { "edit-test-#{SecureRandom.hex(4)}" }
     let!(:css_block) do
       create(:better_together_content_css,
-             identifier: 'edit-test-block',
+             identifier: edit_identifier,
              content_text: '.original { color: blue; }')
     end
 
@@ -78,7 +79,6 @@ RSpec.describe 'Content::Css block CRUD', :as_platform_manager, :js do
   describe 'delete a CssBlock' do
     let!(:css_block) do
       create(:better_together_content_css,
-             identifier: 'delete-test-block',
              content_text: '.to-be-deleted { display: none; }')
     end
 
