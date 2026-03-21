@@ -6,6 +6,7 @@ module BetterTogether
     # Supports scope filtering (upcoming, past, ongoing, draft) and privacy filtering
     class ListEventsTool < ApplicationTool
       description 'List events accessible to the current user, with optional scope and privacy filters'
+      tags :public
 
       arguments do
         optional(:scope)

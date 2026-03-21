@@ -6,6 +6,7 @@ module BetterTogether
     # Scoped to conversations where the user is a participant
     class ListConversationsTool < ApplicationTool
       description 'List conversations the current user participates in'
+      tags :authenticated
 
       arguments do
         optional(:limit)

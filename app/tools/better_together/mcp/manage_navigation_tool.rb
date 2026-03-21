@@ -6,6 +6,7 @@ module BetterTogether
     # Returns navigation areas with their items for building menus
     class ManageNavigationTool < ApplicationTool
       description 'List navigation areas and their items for menu structure'
+      tags :public
 
       arguments do
         optional(:area_id)

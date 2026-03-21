@@ -6,8 +6,18 @@ module BetterTogether
       # Controller for managing OAuth applications via the API
       # Allows users to register and manage applications that access the API
       class ApplicationsController < BetterTogether::ApplicationController
-        before_action :authenticate_user!
+        # Use api_user scope — this controller lives under /api/ where devise_for :users
+        # inside namespace :api creates the :api_user Devise/Warden scope.
+        before_action :authenticate_api_user!
         before_action :set_application, only: %i[show update destroy]
+
+        private
+
+        def current_user
+          current_api_user
+        end
+
+        public
 
         # GET /api/oauth_applications
         def index

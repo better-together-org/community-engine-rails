@@ -6,6 +6,7 @@ module BetterTogether
     # Requires authentication and conversation participation
     class SendMessageTool < ApplicationTool
       description 'Send a message to an existing conversation'
+      tags :authenticated
 
       arguments do
         required(:conversation_id).filled(:string).description('UUID of the conversation')

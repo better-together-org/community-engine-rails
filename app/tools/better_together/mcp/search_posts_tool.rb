@@ -8,7 +8,8 @@ module BetterTogether
     # - Posts from blocked users
     # - Unpublished posts
     class SearchPostsTool < ApplicationTool
-      description 'Search published posts accessible to the current user, respecting privacy settings and blocks'
+      description 'Search published posts accessible to the current user by title or content, respecting privacy settings and blocks'
+      tags :public
 
       arguments do
         required(:query)
@@ -43,12 +44,7 @@ module BetterTogether
       def search_accessible_posts(query, limit)
         policy_scope(BetterTogether::Post)
           .i18n
-          .joins(:string_translations)
-          .where(
-            'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
-            "%#{sanitize_like(query)}%",
-            %w[title]
-          )
+          .where(translatable_content_search_condition(BetterTogether::Post, query))
           .order(published_at: :desc)
           .limit([limit, 100].min)
       end

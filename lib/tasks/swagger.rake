@@ -9,10 +9,10 @@ namespace :swagger do # rubocop:todo Metrics/BlockLength
     puts "Generating Swagger documentation for environment: #{Rails.env}"
     puts "Base URL: #{base_url}"
 
-    # Shell out to rspec directly with the correct flags to avoid --dry-run
-    # Use only integration specs which have the rswag 'path' DSL
-    spec_pattern = 'spec/integration/**/api/**/*_spec.rb'
-    sh "bundle exec rspec --pattern '#{spec_pattern}' --format Rswag::Specs::SwaggerFormatter --order defined"
+    # Use swagger specs which have the rswag 'path' DSL
+    # --dry-run generates YAML from spec structure without executing HTTP tests
+    spec_pattern = 'spec/swagger/**/api/**/*_spec.rb'
+    sh "bundle exec rspec --pattern '#{spec_pattern}' --format Rswag::Specs::SwaggerFormatter --dry-run --order defined"
 
     puts '✓ Swagger documentation generated at swagger/v1/swagger.yaml'
     puts "  Server URL: #{base_url}"

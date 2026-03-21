@@ -96,6 +96,36 @@ RSpec.configure do |config|
               }
             },
             required: %w[id email created_at]
+          },
+          JsonapiAttributes: {
+            type: :object,
+            description: 'Resource attributes (varies by resource type)',
+            additionalProperties: true
+          },
+          JsonapiResource: {
+            type: :object,
+            description: 'JSON:API resource object',
+            properties: {
+              id: { type: :string, format: :uuid },
+              type: { type: :string },
+              attributes: { '$ref' => '#/components/schemas/JsonapiAttributes' },
+              relationships: { type: :object, additionalProperties: true },
+              links: { type: :object, additionalProperties: true }
+            },
+            required: %w[id type]
+          },
+          JsonapiCollection: {
+            type: :object,
+            description: 'JSON:API collection response',
+            properties: {
+              data: {
+                type: :array,
+                items: { '$ref' => '#/components/schemas/JsonapiResource' }
+              },
+              meta: { type: :object, additionalProperties: true },
+              links: { type: :object, additionalProperties: true }
+            },
+            required: %w[data]
           }
         }
       }

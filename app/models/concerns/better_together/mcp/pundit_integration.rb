@@ -27,7 +27,7 @@ module BetterTogether
       # Memoized to avoid repeated lookups during a single tool/resource call.
       # @return [BetterTogether::Mcp::PunditContext] Context with current user
       def mcp_pundit_context
-        @mcp_pundit_context ||= BetterTogether::Mcp::PunditContext.from_request(request)
+        @mcp_pundit_context ||= BetterTogether::Mcp::PunditContext.from_request_or_doorkeeper(request)
       end
 
       # Override Pundit's pundit_user to return our MCP-specific PunditContext.
@@ -51,11 +51,30 @@ module BetterTogether
         mcp_pundit_context.agent
       end
 
-      # Override request to make it available from FastMcp context
-      # FastMcp provides this through the tool/resource execution context
-      # @return [Rack::Request] The HTTP request
+      # Override request to make it available from FastMcp context.
+      # FastMcp::Tool provides @headers (the HTTP_* env hash) but has no #request method,
+      # so calling super raises NoMethodError. Reconstruct an ActionDispatch::Request from
+      # @headers so Warden/Devise can resolve the current user from the session cookie.
+      #
+      # FastMcp transforms HTTP_* Rack env keys to lowercase-hyphenated headers before
+      # passing them to tools (e.g. HTTP_AUTHORIZATION → "authorization"). We convert
+      # them back to Rack format (HTTP_AUTHORIZATION) so ActionDispatch::Request can read
+      # them correctly — in particular for Doorkeeper Bearer token authentication.
+      #
+      # @return [ActionDispatch::Request] The HTTP request built from tool headers
       def request
-        @request || super
+        return @request if @request
+
+        rack_headers = (@headers || {}).transform_keys do |k|
+          "HTTP_#{k.upcase.tr('-', '_')}"
+        end
+        env = rack_headers.merge(
+          'rack.input' => StringIO.new,
+          'REQUEST_METHOD' => 'GET',
+          'SERVER_NAME' => 'localhost',
+          'SERVER_PORT' => '443'
+        )
+        @request = ActionDispatch::Request.new(env)
       end
     end
   end

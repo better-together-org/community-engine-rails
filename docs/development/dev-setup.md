@@ -28,3 +28,5 @@
 - Avoid using Rails console for debugging; prefer writing or refining tests.
 - Keep Docker running; database and Elasticsearch services are provided by the compose environment.
 - Use `bin/dc-run-dummy` for commands that must run in the dummy app context.
+- Worktrees reuse the shared Docker Postgres, Redis, and Elasticsearch containers through published host ports.
+- Each worktree gets its own database suffix automatically via `CE_WORKTREE_DB_SUFFIX`, so test and development databases stay isolated while the shared infra stays reusable.

@@ -83,7 +83,7 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Linkable association changes' do
     it 'invalidates sidebar cache when navigation item linkable is updated', :accessibility do
-      pending 'Sidebar nav not rendering in feature test environment - investigating test setup'
+      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
 
       # Visit a page that displays the sidebar navigation
       visit better_together.page_path(current_page, locale: I18n.default_locale)
@@ -115,7 +115,7 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Multiple updates' do
     it 'consistently invalidates cache across multiple changes' do
-      pending 'Sidebar nav not rendering in feature test environment - investigating test setup'
+      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
 
       # Visit a page that displays the sidebar navigation
       visit better_together.page_path(current_page, locale: I18n.default_locale)
@@ -152,7 +152,7 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Cache key behavior' do
     it 'generates different cache keys for different current pages' do
-      pending 'Sidebar nav not rendering in feature test environment - investigating test setup'
+      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
 
       # Create another page to serve as a different current_page (with unique slug)
       other_page = create(:better_together_page,
