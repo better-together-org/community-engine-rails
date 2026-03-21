@@ -212,7 +212,7 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     base64 (0.3.0)
-    bcrypt (3.1.21)
+    bcrypt (3.1.22)
     benchmark (0.5.0)
     better_errors (2.10.1)
       erubi (>= 1.0.0)
@@ -283,10 +283,10 @@ GEM
     declarative (0.0.20)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
-    devise (4.9.4)
+    devise (5.0.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0)
+      railties (>= 7.0)
       responders
       warden (~> 1.2.3)
     devise-i18n (1.15.0)
@@ -948,7 +948,7 @@ GEM
       actionview (>= 8.0.0)
       bindex (>= 0.4.0)
       railties (>= 8.0.0)
-    webmock (3.26.1)
+    webmock (3.26.2)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -973,7 +973,7 @@ DEPENDENCIES
   axe-core-capybara
   axe-core-rspec
   axe-core-selenium
-  bcrypt (~> 3.1.21)
+  bcrypt (~> 3.1.22)
   better_errors
   better_together!
   binding_of_caller

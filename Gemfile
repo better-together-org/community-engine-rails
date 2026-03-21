@@ -11,7 +11,7 @@ gem 'asset_sync'
 gem 'aws-sdk-s3', require: false
 
 # bcrypt for secure password handling
-gem 'bcrypt', '~> 3.1.21'
+gem 'bcrypt', '~> 3.1.22'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
@@ -34,8 +34,8 @@ gem 'redis', '~> 5.4'
 
 gem 'rswag'
 
-# Sidekiq for background processing
-gem 'sidekiq', '~> 8.1.1'
+# Sidekiq 8.1 requires Rack >= 3.2, which is incompatible with the 7.2 CI lane.
+gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.0.3').start_with?('7.2.') ? '~> 7.3.9' : '~> 8.1.1'
 # Pin connection_pool to avoid breaking changes in 3.x
 gem 'connection_pool', '~> 3.0.2'
 
