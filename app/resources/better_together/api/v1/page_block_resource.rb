@@ -21,9 +21,11 @@ module BetterTogether
         # Override destroy to use SQL delete rather than ActiveRecord destroy,
         # avoiding the belongs_to :block, dependent: :destroy cascade.
         # Destroying the underlying block is handled via BlockResource directly.
+        # Must return :completed — JSONAPI-Resources 0.10 maps :completed → 204,
+        # anything else → 202. (See jsonapi/processor.rb destroy operation.)
         def _remove
           _model.delete
-          :no_content
+          :completed
         end
 
         def self.creatable_fields(_context)

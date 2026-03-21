@@ -77,7 +77,7 @@ module BetterTogether
 
       private
 
-      def block_params
+      def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
           :type, :media, :identifier, :markdown_source_type,
           *resource_class.localized_block_attributes,

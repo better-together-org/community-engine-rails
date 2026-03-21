@@ -16,7 +16,7 @@ module BetterTogether
 
       # @param page_id [String] Page UUID or slug
       # @return [String] JSON array of block objects
-      def call(page_id:)
+      def call(page_id:) # rubocop:todo Metrics/MethodLength
         with_timezone_scope do
           page = find_page(page_id)
           return JSON.generate({ error: "Page not found: #{page_id}" }) unless page
@@ -38,7 +38,7 @@ module BetterTogether
 
       private
 
-      def find_page(page_id)
+      def find_page(page_id) # rubocop:todo Metrics/MethodLength
         scope = policy_scope(BetterTogether::Page)
         page = scope.find_by(id: page_id)
         page ||= scope.joins(:string_translations)
@@ -52,7 +52,7 @@ module BetterTogether
         page
       end
 
-      def serialize_page_block(page_block)
+      def serialize_page_block(page_block) # rubocop:todo Metrics/MethodLength
         block = page_block.block
         {
           page_block_id: page_block.id,

@@ -16,7 +16,10 @@ RSpec.describe 'BetterTogether::Api::V1::PageBlocks', :no_auth do
 
   describe 'GET /api/v1/page_blocks' do
     let!(:page_block) { create(:page_content_block, page: page, block: block) }
-    let(:url) { '/api/v1/page_blocks' }
+    # Filter by page_id to isolate this test from accumulated seed data.
+    # better_together_content_page_blocks is in ESSENTIAL_TABLES so it is never
+    # cleaned between tests; querying without a filter would return seed page_blocks too.
+    let(:url) { "/api/v1/page_blocks?filter[page_id]=#{page.id}" }
 
     context 'when authenticated as platform manager' do
       before { get url, headers: manager_headers }

@@ -33,6 +33,8 @@ module BetterTogether
 
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
+          return scope.none unless user.present? && user.permitted_to?('manage_platform')
+
           scope.includes(:page, :block).order(
             BetterTogether::Content::PageBlock.arel_table[:position].asc
           ).all

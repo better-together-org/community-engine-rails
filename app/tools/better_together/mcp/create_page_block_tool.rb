@@ -9,7 +9,7 @@ module BetterTogether
     #
     # The block is appended to the page at the next available position unless
     # `position` is specified.
-    class CreatePageBlockTool < ApplicationTool
+    class CreatePageBlockTool < ApplicationTool # rubocop:todo Metrics/ClassLength
       description 'Create a content block and attach it to a page at the given position'
       tags :authenticated
 
@@ -37,7 +37,7 @@ module BetterTogether
       end
 
       # @return [String] JSON with created block + page_block details
-      def call(page_id:, block_type:, identifier: nil, privacy: 'public', position: nil, attrs: {}) # rubocop:disable Metrics/ParameterLists
+      def call(page_id:, block_type:, identifier: nil, privacy: 'public', position: nil, attrs: {}) # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
         return auth_required_response unless current_user
 
         with_timezone_scope do

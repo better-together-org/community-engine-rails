@@ -157,4 +157,32 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
       end
     end
   end
+
+  describe 'Content::Css / Content::Html truncation regression' do
+    # Regression: before the type:text migration, content was stored in
+    # mobility_string_translations (varchar 255), silently truncating any CSS
+    # or HTML longer than 255 characters. This spec asserts round-trip fidelity.
+    let(:long_css) { ".a { color: red; }\n" * 20 } # > 255 chars
+    let(:long_html) { "<div class='x'>#{('hello ' * 50).strip}</div>" } # > 255 chars
+
+    it 'persists and returns Content::Css body > 255 chars without truncation' do
+      css_block = create(:better_together_content_css, content_text: long_css)
+      get "/api/v1/blocks/#{css_block.id}", headers: manager_headers
+
+      expect(response).to have_http_status(:ok)
+      returned_content = JSON.parse(response.body).dig('data', 'attributes', 'content_en')
+      expect(returned_content.length).to be > 255
+      expect(returned_content).to eq(long_css)
+    end
+
+    it 'persists and returns Content::Html body > 255 chars without truncation' do
+      html_block = create(:content_html, content: long_html)
+      get "/api/v1/blocks/#{html_block.id}", headers: manager_headers
+
+      expect(response).to have_http_status(:ok)
+      returned_content = JSON.parse(response.body).dig('data', 'attributes', 'content_en')
+      expect(returned_content.length).to be > 255
+      expect(returned_content).to eq(long_html)
+    end
+  end
 end

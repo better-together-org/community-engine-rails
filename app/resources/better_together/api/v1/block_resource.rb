@@ -38,7 +38,7 @@ module BetterTogether
         # Each subtype only defines the Storext attrs it uses. Calling an attr that
         # a given subtype doesn't define raises NoMethodError. Use respond_to? guards
         # so that serializing any block type returns nil for attrs it doesn't own.
-        def self.safe_attribute(*names) # rubocop:disable Metrics/MethodLength
+        def self.safe_attribute(*names)
           names.each do |name|
             attribute(name) { @model.respond_to?(name) ? @model.public_send(name) : nil }
           end
@@ -151,9 +151,7 @@ module BetterTogether
               raise JSONAPI::Exceptions::InvalidFieldValue.new(:block_type, block_type)
             end
 
-            if @model.new_record? && !@model.is_a?(klass)
-              @model = klass.new
-            end
+            @model = klass.new if @model.new_record? && !@model.is_a?(klass)
             @model.type = klass.name
           end
           super
