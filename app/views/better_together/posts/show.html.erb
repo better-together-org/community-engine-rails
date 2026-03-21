@@ -84,6 +84,12 @@
                          destroy_path: policy(@post).destroy? ? post_path(@post) : nil,
                          destroy_confirm: t('globals.confirm_delete'),
                          destroy_aria_label: t('better_together.posts.delete', default: 'Delete Record') %>
+              <% if current_user.present? && current_person != @post.creator %>
+                <%= link_to new_report_path(locale: I18n.locale, reportable_type: @post.class.name, reportable_id: @post.id),
+                            class: 'btn btn-outline-danger btn-sm ms-2' do %>
+                  <i class="fas fa-flag"></i> <%= t('better_together.reports.actions.report', default: 'Report') %>
+                <% end %>
+              <% end %>
              </div>
            </header>
 
