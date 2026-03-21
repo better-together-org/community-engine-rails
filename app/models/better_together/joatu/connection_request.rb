@@ -34,7 +34,7 @@ module BetterTogether
       def target_platform_must_exist
         return if target.is_a?(::BetterTogether::Platform)
 
-        errors.add(:target, 'must be a platform')
+        errors.add(:target, :must_be_platform)
       end
     end
   end

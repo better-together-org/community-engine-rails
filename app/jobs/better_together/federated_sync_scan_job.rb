@@ -13,16 +13,17 @@ module BetterTogether
 
     queue_as :platform_sync
 
-    def perform(limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
+    def perform(connection_limit: nil, pull_limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
       acquired = Sidekiq.redis { |r| r.set(LOCK_KEY, job_id, nx: true, ex: LOCK_TTL) }
       return unless acquired
 
       begin
-        eligible_connections.limit(limit).each do |connection|
+        connections = connection_limit ? eligible_connections.limit(connection_limit) : eligible_connections
+        connections.find_each do |connection|
           ::BetterTogether::FederatedContentPullJob.perform_later(
             platform_connection_id: connection.id,
             cursor: connection.sync_cursor.presence,
-            limit:
+            limit: pull_limit
           )
         end
       ensure

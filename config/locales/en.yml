@@ -543,6 +543,8 @@ en:
             base:
               missing_platforms_for_connection_agreement: connection agreements require
                 both source and target platforms
+            target:
+              must_be_platform: must be a platform
         better_together/joatu/person_link_request:
           attributes:
             base:
@@ -2405,8 +2407,11 @@ en:
       new:
         back: Back
         host_url_hint: The root URL of the external platform instance.
+        host_url_label: URL
+        host_url_placeholder: 'https://example.com'
         identifier_hint: A unique slug identifier for this platform (letters, numbers,
           hyphens).
+        identifier_placeholder: e.g. peer-platform
         intro: Register a remote Community Engine (or compatible) instance so it can
           be selected when creating a Platform Connection.
         submit: Register External Platform

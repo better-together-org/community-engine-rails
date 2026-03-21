@@ -543,6 +543,8 @@ uk:
             base:
               missing_platforms_for_connection_agreement: угоди про підключення вимагають
                 як вихідної, так і цільової платформ
+            target:
+              must_be_platform: має бути платформою
         better_together/joatu/person_link_request:
           attributes:
             base:
@@ -2432,7 +2434,10 @@ uk:
       new:
         back: Назад
         host_url_hint: Кореневий URL зовнішньої платформи.
+        host_url_label: URL
+        host_url_placeholder: 'https://example.com'
         identifier_hint: Унікальний ідентифікатор-слаг (літери, цифри, дефіси).
+        identifier_placeholder: напр. peer-platform
         intro: Зареєструйте віддалений екземпляр Community Engine (або сумісний) для
           вибору при створенні підключення платформи.
         submit: Зареєструвати зовнішню платформу

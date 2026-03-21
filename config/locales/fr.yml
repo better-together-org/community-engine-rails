@@ -545,6 +545,8 @@ fr:
             base:
               missing_platforms_for_connection_agreement: les accords de connexion
                 nécessitent des plateformes source et cible
+            target:
+              must_be_platform: doit être une plateforme
         better_together/joatu/person_link_request:
           attributes:
             base:
@@ -2457,7 +2459,10 @@ fr:
       new:
         back: Retour
         host_url_hint: L'URL racine de l'instance de plateforme externe.
+        host_url_label: URL
+        host_url_placeholder: 'https://example.com'
         identifier_hint: Un identifiant unique (lettres, chiffres, tirets).
+        identifier_placeholder: ex. plateforme-pair
         intro: Enregistrez une instance distante de Community Engine (ou compatible)
           pour la sélectionner lors de la création d'une Connexion de plateforme.
         submit: Enregistrer la plateforme externe

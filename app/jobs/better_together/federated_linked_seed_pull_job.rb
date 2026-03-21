@@ -39,7 +39,7 @@ module BetterTogether
     def persist_cursor(person_access_grant_id:, next_cursor:)
       return if person_access_grant_id.blank?
 
-      grant = ::BetterTogether::PersonAccessGrant.find_by(id: person_access_grant_id)
+      grant = ::BetterTogether::PersonAccessGrant.current_active.find_by(id: person_access_grant_id)
       grant&.update_columns(sync_cursor: next_cursor.presence)
     end
   end
