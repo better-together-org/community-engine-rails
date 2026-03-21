@@ -219,6 +219,58 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     end
   end
 
+  describe 'GET /search_health_data' do
+    it 'returns drift by indexed model' do
+      audit = BetterTogether::Search::AuditService::Result.new(
+        backend: :elasticsearch,
+        configured: true,
+        available: true,
+        status: :ok,
+        generated_at: Time.current,
+        unmanaged_model_names: [],
+        entries: [
+          BetterTogether::Search::AuditService::EntryResult.new(
+            model_name: 'BetterTogether::Page',
+            index_name: 'better_together-pages',
+            db_count: 2,
+            document_count: 2,
+            drift_count: 0,
+            status: :healthy,
+            index_exists: true,
+            primary_shards: nil,
+            replica_shards: nil,
+            store_size_bytes: 0
+          ),
+          BetterTogether::Search::AuditService::EntryResult.new(
+            model_name: 'BetterTogether::Post',
+            index_name: 'better_together-posts',
+            db_count: 3,
+            document_count: 2,
+            drift_count: 1,
+            status: :drifted,
+            index_exists: true,
+            primary_shards: nil,
+            replica_shards: nil,
+            store_size_bytes: 0
+          )
+        ]
+      )
+      allow(BetterTogether::Search::AuditService).to receive(:new).and_return(instance_double(
+        BetterTogether::Search::AuditService,
+        call: audit
+      ))
+
+      get "#{base_path}/search_health_data", headers: { 'Accept' => 'application/json' }
+
+      expect(response).to have_http_status(:success)
+      json = JSON.parse(response.body)
+      expect(json['labels']).to eq(%w[Page Post])
+      expect(json['values']).to eq([0, 1])
+      expect(json['backend']).to eq('elasticsearch')
+      expect(json['status']).to eq('ok')
+    end
+  end
+
   describe 'GET /failures_daily_data' do
     let!(:failure) { create(:content_link, valid_link: false, last_checked_at: 5.days.ago) }
 

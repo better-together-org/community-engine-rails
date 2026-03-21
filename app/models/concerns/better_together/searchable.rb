@@ -16,25 +16,37 @@ module BetterTogether
       after_commit :enqueue_delete_document, on: [:destroy], unless: -> { Rails.env.test? }
 
       def self.create_elastic_index!
-        __elasticsearch__.create_index! unless Rails.env.test?
+        __elasticsearch__.create_index! if elasticsearch_runtime_enabled?
       end
 
       def self.delete_elastic_index!
-        __elasticsearch__.delete_index! unless Rails.env.test?
+        __elasticsearch__.delete_index! if elasticsearch_runtime_enabled?
       end
 
       def self.refresh_elastic_index!
-        __elasticsearch__.refresh_index! unless Rails.env.test?
+        __elasticsearch__.refresh_index! if elasticsearch_runtime_enabled?
       end
 
       # Need to create another way to access elasticsearch import.
       # class.import is using by activerecord-import, I think
       def self.elastic_import(args = {})
-        __elasticsearch__.import(args) unless Rails.env.test?
+        __elasticsearch__.import(args) if elasticsearch_runtime_enabled?
       end
     end
 
     class_methods do
+      def elasticsearch_runtime_enabled?
+        !Rails.env.test? || ENV['ENABLE_ELASTICSEARCH_TESTS'] == 'true'
+      end
+
+      def indexed_models
+        BetterTogether::Search::Registry.models
+      end
+
+      def unmanaged_models
+        included_in_models - indexed_models
+      end
+
       def default_elasticsearch_index # rubocop:todo Metrics/MethodLength
         {
           number_of_shards: 1,
