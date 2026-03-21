@@ -1,0 +1,20 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<%- available_nav_areas = policy_scope(BetterTogether::NavigationArea).order(:name) %>
+<div class="navigation-area-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[navigation_area_id]", BetterTogether::NavigationArea.model_name.human, class: 'form-label' %>
+    <%= select_tag "#{scope}[navigation_area_id]",
+                   options_for_select(
+                     available_nav_areas.map { |n| [n.name.to_s, n.id] },
+                     block.navigation_area_id
+                   ),
+                   include_blank: t('better_together.content.blocks.navigation_area_block.select_prompt',
+                                    default: '— Select a navigation area —'),
+                   class: 'form-select',
+                   data: { controller: 'better_together--slim-select' } %>
+    <% if block.errors[:navigation_area_id].any? %>
+      <div class="invalid-feedback d-block"><%= block.errors[:navigation_area_id].join(', ') %></div>
+    <% end %>
+  </div>
+</div>

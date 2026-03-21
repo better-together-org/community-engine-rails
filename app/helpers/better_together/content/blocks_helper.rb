@@ -65,6 +65,51 @@ module BetterTogether
           [I18n.t(key, default: path.tr('/', ' ').tr('_', ' ').titleize), path]
         end
       end
+
+      # Returns a privacy-scoped, optionally community-scoped, limited collection
+      # of records for a resource collection block.
+      #
+      # @param block [BetterTogether::Content::Block] the resource block instance
+      # @param resource_class [Class] the ActiveRecord class to query
+      # @param extra_scope [Proc, nil] optional lambda applied to the scope after
+      #   policy_scope and community scoping, before limit (e.g., ordering)
+      # @return [ActiveRecord::Relation]
+      def resource_block_collection(block, resource_class, extra_scope: nil)
+        ids = block.parsed_resource_ids
+
+        scope = if ids.any?
+                  resource_class.where(id: ids)
+                else
+                  policy_scope(resource_class)
+                end
+
+        scope = apply_community_scope(scope, resource_class, block.scoped_community) if block.scoped_community.present?
+
+        scope = extra_scope.call(scope) if extra_scope.present?
+        scope.limit(block.item_limit)
+      end
+
+      private
+
+      # Applies a community join/filter appropriate for the given resource_class.
+      def apply_community_scope(scope, resource_class, community) # rubocop:disable Metrics/MethodLength
+        case resource_class.name
+        when 'BetterTogether::Event'
+          scope.joins(:event_hosts).where(better_together_event_hosts: { host_id: community.id,
+                                                                         host_type: community.class.name })
+        when 'BetterTogether::Post'
+          scope.joins(:authorships)
+               .where(better_together_authorships: { author_id: community.id,
+                                                     author_type: community.class.name })
+        when 'BetterTogether::Person'
+          scope.joins(:person_community_memberships)
+               .where(better_together_person_community_memberships: { community_id: community.id })
+        when 'BetterTogether::Community'
+          scope.where(id: community.id)
+        else
+          scope
+        end
+      end
     end
   end
 end

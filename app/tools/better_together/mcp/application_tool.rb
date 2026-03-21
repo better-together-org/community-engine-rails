@@ -103,10 +103,7 @@ module BetterTogether
       end
     end
   end
-end
 
-# Rails-friendly alias
-module BetterTogether
   module ActionTool
     Base = BetterTogether::Mcp::ApplicationTool
   end

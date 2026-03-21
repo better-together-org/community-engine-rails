@@ -9,7 +9,7 @@ RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/
   path '/api/v1/posts' do
     get 'List posts' do
       tags 'Posts'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'List posts accessible to the current user, filtered by privacy and published status.'
 
@@ -30,7 +30,7 @@ RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/
 
     post 'Create a post' do
       tags 'Posts'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
       description 'Create a new post. Requires authentication.'
@@ -81,7 +81,7 @@ RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/
 
     get 'Get a post' do
       tags 'Posts'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       produces 'application/vnd.api+json'
       description 'Get a post by ID. Public published posts are accessible to all authenticated users.'
 
@@ -99,7 +99,7 @@ RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/
 
     patch 'Update a post' do
       tags 'Posts'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       consumes 'application/vnd.api+json'
       produces 'application/vnd.api+json'
 
@@ -129,7 +129,7 @@ RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/
 
     delete 'Delete a post' do
       tags 'Posts'
-      security [bearer_auth: []]
+      security [{ bearer_auth: [] }]
       description 'Delete a post. Requires ownership or manage_platform permission.'
 
       parameter name: :Authorization, in: :header, type: :string, required: true
