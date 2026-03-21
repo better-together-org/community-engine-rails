@@ -856,7 +856,37 @@ fr:
       add: Ajouter un contact
     content:
       blocks:
+        accordion_block:
+          empty: Aucun élément configuré.
+          items_json_help: Tableau JSON d'objets avec les clés « question » et « answer ».
         associated_pages: Pages associées
+        checklist_block:
+          not_found: Liste de vérification introuvable.
+          select_prompt: "— Sélectionner une liste de vérification —"
+        communities_block:
+          empty: Aucune communauté à afficher.
+        events_block:
+          empty: Aucun événement à afficher.
+        navigation_area_block:
+          not_found: Zone de navigation introuvable.
+          select_prompt: "— Sélectionner une zone de navigation —"
+        people_block:
+          empty: Aucune personne à afficher.
+        posts_block:
+          empty: Aucune publication à afficher.
+        resource_block:
+          all_communities: Toutes les communautés (à l'échelle de la plateforme)
+          resource_ids_help: Si défini, seuls ces enregistrements seront affichés,
+            en ignorant la portée de la communauté et l'ordre.
+          resource_ids_placeholder: Laisser vide pour afficher les derniers enregistrements
+        statistics_block:
+          stats_json_help: Tableau JSON d'objets avec les clés « label », « value »
+            et « icon » optionnel (classe Font Awesome).
+        video_block:
+          missing_url: Aucune URL de vidéo configurée.
+          title: Lecteur vidéo YouTube
+          url_help: Accepte les URL YouTube, Vimeo ou tout URL d'intégration direct.
+        view_more: Voir tout
         markdown:
           fields:
             auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la

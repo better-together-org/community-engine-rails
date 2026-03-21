@@ -482,7 +482,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
   end
 
-  # Catch all requests without a locale and redirect to the default...
+  # Catch all requests without a locale and redirect to the default locale.
+  # The constraint must check ALL available locales (not just I18n.locale) because
+  # locale is set via before_action *after* route matching. Without this, requests
+  # like /fr/à-propos-de-nous slip through and become /en/fr/à-propos-de-nous,
+  # causing URI::InvalidURIError when ActionDispatch calls URI.parse on the redirect URL.
+  # Non-ASCII and URI-invalid ASCII characters (brackets, spaces, backslashes, etc.)
+  # are percent-encoded defensively; malformed paths return 400 rather than 500.
   get '*path',
       to: redirect { |params, _request|
         path = params[:path].to_s

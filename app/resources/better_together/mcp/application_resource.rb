@@ -49,10 +49,7 @@ module BetterTogether
       end
     end
   end
-end
 
-# Rails-friendly alias
-module BetterTogether
   module ActionResource
     Base = BetterTogether::Mcp::ApplicationResource
   end

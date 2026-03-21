@@ -80,6 +80,7 @@ bin/dc-run bin/i18n                                         # I18n validation
 - **Always add policy/authorization checks** on links/buttons to controller actions.
 - **i18n & Mobility**: every user-facing string must be translatable; include missing keys.
 - Provide translations for all available locales (e.g., en, es, fr, uk) when adding new strings.
+- **Repository write boundary**: write only inside the active repository; never write project artifacts to `/tmp` (use repository-local `tmp/` paths instead).
 
 ## Technology Stack
 
