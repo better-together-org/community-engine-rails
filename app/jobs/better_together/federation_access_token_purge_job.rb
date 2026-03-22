@@ -15,11 +15,11 @@ module BetterTogether
     def perform
       stale_cutoff = GRACE_PERIOD.ago
 
+      tbl = BetterTogether::FederationAccessToken.arel_table
       deleted_count = BetterTogether::FederationAccessToken
                       .where(
-                        'expires_at < ? OR (revoked_at IS NOT NULL AND revoked_at < ?)',
-                        stale_cutoff,
-                        stale_cutoff
+                        tbl[:expires_at].lt(stale_cutoff)
+                          .or(tbl[:revoked_at].not_eq(nil).and(tbl[:revoked_at].lt(stale_cutoff)))
                       )
                       .delete_all
 

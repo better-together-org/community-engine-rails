@@ -3,15 +3,15 @@ name: "Ruby on Rails CI"
 on:
   workflow_dispatch:
   push:
+    # Only run on long-lived integration branches. Feature/fix/chore branches
+    # are covered by pull_request events, so listing them here would fire CI
+    # twice for every push to an open PR.
     branches:
       - main
       - dev
       - compat/rails-7.2
       - compat/rails-8.0
       - compat/rails-8.1
-      - feat/**
-      - fix/**
-      - chore/**
   pull_request:
 
 jobs:

@@ -48,7 +48,6 @@ module BetterTogether
         included_in_models - indexed_models
       end
 
-    class_methods do
       def global_searchable?
         true
       end

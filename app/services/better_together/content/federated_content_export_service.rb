@@ -66,7 +66,7 @@ module BetterTogether
           ::BetterTogether::Post.where(platform: connection.source_platform, privacy: 'public')
                                 .where(source_id: nil)
                                 .where.not(published_at: nil)
-                                .where('published_at <= ?', Time.current)
+                                .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
@@ -75,7 +75,7 @@ module BetterTogether
           ::BetterTogether::Page.where(platform: connection.source_platform, privacy: 'public')
                                 .where(source_id: nil)
                                 .where.not(published_at: nil)
-                                .where('published_at <= ?', Time.current)
+                                .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
@@ -90,10 +90,12 @@ module BetterTogether
       def apply_cursor(query)
         return query unless cursor
 
+        # rubocop:disable BetterTogether/NoRawSqlInQueries -- keyset pagination requires a compound OR across (updated_at, id); no Arel equivalent without N+1 risk
         query.where(
-          'updated_at > ? OR (updated_at = ? AND id > ?)',
+          Arel.sql('updated_at > ? OR (updated_at = ? AND id > ?)'),
           cursor[:updated_at], cursor[:updated_at], cursor[:id]
         )
+        # rubocop:enable BetterTogether/NoRawSqlInQueries
       end
 
       def next_cursor

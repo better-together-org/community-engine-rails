@@ -88,17 +88,22 @@ module BetterTogether
       where(source_platform: platform).or(where(target_platform: platform))
     }
     scope :content_read_capable, lambda {
-      where("better_together_platform_connections.settings->>'federation_auth_policy' IN (?)", %w[api_read api_write])
-        .where("(better_together_platform_connections.settings->>'allow_content_read_scope')::boolean = true")
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
+      where(Arel.sql("better_together_platform_connections.settings->>'federation_auth_policy' IN ('api_read', 'api_write')"))
+        .where(Arel.sql("(better_together_platform_connections.settings->>'allow_content_read_scope')::boolean = true"))
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
     scope :linked_content_read_capable, lambda {
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
       content_read_capable
-        .where("(better_together_platform_connections.settings->>'allow_linked_content_read_scope')::boolean = true")
+        .where(Arel.sql("(better_together_platform_connections.settings->>'allow_linked_content_read_scope')::boolean = true"))
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
     scope :not_syncing, lambda {
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
       tbl = quoted_table_name
-      where("#{tbl}.settings->>'last_sync_status' != ? OR #{tbl}.settings->>'last_sync_status' IS NULL",
-            'running')
+      where(Arel.sql("#{tbl}.settings->>'last_sync_status' != 'running' OR #{tbl}.settings->>'last_sync_status' IS NULL"))
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
 
     def involves?(platform)
