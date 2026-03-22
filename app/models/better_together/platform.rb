@@ -163,5 +163,4 @@ module BetterTogether
         .validate_each(self, :oauth_issuer_url, oauth_issuer_url)
     end
   end
-  # rubocop:enable Metrics/ClassLength
 end
