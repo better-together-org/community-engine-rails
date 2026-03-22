@@ -1,0 +1,150 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= @platform_connection.source_platform.name %> → <%= @platform_connection.target_platform.name %>
+  <% end %>
+
+  <% enabled_text  = t('better_together.platform_connections.show.enabled') %>
+  <% disabled_text = t('better_together.platform_connections.show.disabled') %>
+  <% none_text     = t('better_together.platform_connections.show.none') %>
+  <% never_text    = t('better_together.platform_connections.show.never') %>
+
+  <div class="container my-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1><%= @platform_connection.source_platform.name %> → <%= @platform_connection.target_platform.name %></h1>
+      <div class="btn-group">
+        <%= link_to t('better_together.platform_connections.show.back'),
+                    better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
+        <%= link_to t('better_together.platform_connections.show.edit'),
+                    better_together.edit_platform_connection_path(@platform_connection), class: 'btn btn-primary' %>
+        <% if policy(@platform_connection).approve? && (@platform_connection.pending? || @platform_connection.suspended?) %>
+          <%= button_to t('better_together.platform_connections.show.approve'),
+                        better_together.approve_platform_connection_path(@platform_connection),
+                        method: :patch, class: 'btn btn-success',
+                        data: { turbo_confirm: t('better_together.platform_connections.show.approve_confirm') } %>
+        <% end %>
+        <% if policy(@platform_connection).suspend? && @platform_connection.active? %>
+          <%= button_to t('better_together.platform_connections.show.suspend'),
+                        better_together.suspend_platform_connection_path(@platform_connection),
+                        method: :patch, class: 'btn btn-warning',
+                        data: { turbo_confirm: t('better_together.platform_connections.show.suspend_confirm') } %>
+        <% end %>
+      </div>
+    </div>
+
+    <dl class="row">
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.status') %></dt>
+      <dd class="col-sm-9"><%= t("better_together.enums.platform_connection.status.#{@platform_connection.status}") %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.connection_kind') %></dt>
+      <dd class="col-sm-9"><%= t("better_together.enums.platform_connection.connection_kind.#{@platform_connection.connection_kind}") %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.content_sharing') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.content_sharing_enabled? ? enabled_text : disabled_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.federation_auth') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.federation_auth_enabled? ? enabled_text : disabled_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.content_sharing_policy') %></dt>
+      <dd class="col-sm-9"><%= t("better_together.enums.platform_connection.content_sharing_policy.#{@platform_connection.content_sharing_policy}") %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.shared_content_types') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.shared_content_types.map { |t_key|
+        t("better_together.enums.platform_connection.shared_content_types.#{t_key}")
+      }.presence&.join(', ') || none_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.federation_auth_policy') %></dt>
+      <dd class="col-sm-9"><%= t("better_together.enums.platform_connection.federation_auth_policy.#{@platform_connection.federation_auth_policy}") %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.federation_scopes') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.federation_scope_types.map { |t_key|
+        t("better_together.enums.platform_connection.federation_scope_types.#{t_key}")
+      }.presence&.join(', ') || none_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.mirroring') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.mirrored_content_enabled? ? enabled_text : disabled_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.publish_back') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.publish_back_enabled? ? enabled_text : disabled_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.login') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.login_enabled? ? enabled_text : disabled_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.api_read') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.api_read_enabled? ? enabled_text : disabled_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.api_write') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.api_write_enabled? ? enabled_text : disabled_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.sync_status') %></dt>
+      <dd class="col-sm-9"><%= t("better_together.enums.platform_connection.sync_status.#{@platform_connection.last_sync_status}") %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.last_sync_started') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.last_sync_started_at_time&.iso8601 || never_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.last_sync_completed') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.last_synced_at_time&.iso8601 || never_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.last_sync_item_count') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.last_sync_item_count %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.sync_cursor') %></dt>
+      <dd class="col-sm-9"><%= @platform_connection.sync_cursor.presence || none_text %></dd>
+
+      <dt class="col-sm-3"><%= t('better_together.platform_connections.show.last_sync_error') %></dt>
+      <dd class="col-sm-9">
+        <% if @platform_connection.last_sync_error_message.present? %>
+          <div><%= @platform_connection.last_sync_error_message %></div>
+          <small class="text-muted"><%= @platform_connection.last_sync_error_at_time&.iso8601 %></small>
+        <% else %>
+          <%= none_text %>
+        <% end %>
+      </dd>
+    </dl>
+
+    <% if policy(@platform_connection).update? %>
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0"><%= t('better_together.platform_connections.show.oauth.title') %></h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small mb-3">
+            <%= t('better_together.platform_connections.show.oauth.description',
+                  platform: @platform_connection.target_platform.name) %>
+          </p>
+          <dl class="row mb-2">
+            <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.token_endpoint') %></dt>
+            <dd class="col-sm-9">
+              <code><%= @platform_connection.source_platform.resolved_host_url %><%= better_together.federation_oauth_token_path(locale: nil) %></code>
+            </dd>
+
+            <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.client_id') %></dt>
+            <dd class="col-sm-9">
+              <code><%= @platform_connection.oauth_client_id %></code>
+            </dd>
+
+            <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.client_secret') %></dt>
+            <dd class="col-sm-9">
+              <% if @platform_connection.oauth_client_secret.present? %>
+                <span class="text-muted font-monospace" data-credential-reveal>
+                  &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
+                </span>
+                <%= button_to t('better_together.platform_connections.show.oauth.rotate_secret'),
+                              better_together.rotate_secret_platform_connection_path(@platform_connection),
+                              method: :patch, class: 'btn btn-sm btn-outline-danger ms-2',
+                              data: { turbo_confirm: t('better_together.platform_connections.show.oauth.rotate_secret_confirm') } %>
+              <% else %>
+                <span class="text-danger"><%= t('better_together.platform_connections.show.oauth.not_set') %></span>
+              <% end %>
+            </dd>
+
+            <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.remote_token_endpoint') %></dt>
+            <dd class="col-sm-9">
+              <code><%= @platform_connection.target_platform.resolved_host_url %>/en/federation/oauth/token</code>
+              <small class="text-muted d-block"><%= t('better_together.platform_connections.show.oauth.remote_token_endpoint_hint') %></small>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

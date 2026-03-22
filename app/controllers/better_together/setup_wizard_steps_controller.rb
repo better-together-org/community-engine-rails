@@ -78,9 +78,12 @@ module BetterTogether
           user = ::BetterTogether::User.new(user_params)
 
           if user.save!
+            # Prefer the canonical stewardship role, but allow fallback while
+            # transitional legacy seeds are still present.
             helpers.host_platform.person_platform_memberships.create!(
               member: user.person,
-              role: ::BetterTogether::Role.find_by(identifier: 'platform_manager')
+              role: ::BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                    ::BetterTogether::Role.find_by(identifier: 'platform_manager')
             )
 
             # TODO: This should be moved into a separate method somewhere

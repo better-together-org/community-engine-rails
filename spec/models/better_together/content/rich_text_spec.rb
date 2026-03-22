@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Content # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
+  module Content # :nodoc:
     RSpec.describe RichText do
       describe 'Factory' do
         it 'has a valid factory' do

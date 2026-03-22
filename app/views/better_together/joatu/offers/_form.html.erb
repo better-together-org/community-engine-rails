@@ -1,8 +1,12 @@
-<%= form_with(model: joatu_offer, class: 'form', id: dom_id(joatu_offer, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+<%= form_with(model: joatu_offer, scope: :joatu_offer, class: 'form', id: dom_id(joatu_offer, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <%= render 'better_together/shared/help_banner',
            id: 'joatu-offers-form',
            i18n_key: 'better_together.joatu.help.offers.form' %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object&.creator_id %>
+  <%= form.hidden_field :target_type if form.object.target_type.present? %>
+  <%= form.hidden_field :target_id if form.object.target_id.present? %>
+  <%= form.hidden_field :source_type, value: params[:source_type] if params[:source_type].present? %>
+  <%= form.hidden_field :source_id, value: params[:source_id] if params[:source_id].present? %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
@@ -16,6 +20,20 @@
           <%= link_to t('better_together.joatu.offers.view_offer', default: 'View Offer'), joatu_offer, class: 'btn btn-info' %>
         </div>
       <% end %>
+    </div>
+  <% end %>
+
+  <% if defined?(@target) && @target.present? %>
+    <div class="card mb-3" role="region" aria-label="<%= t('better_together.joatu.offers.target_platform', default: 'Target platform') %>">
+      <div class="card-body">
+        <h5 class="card-title"><%= t('better_together.joatu.offers.target_platform', default: 'Target platform') %></h5>
+        <p class="mb-0">
+          <strong><%= @target.name %></strong>
+          <% if @target.host_url.present? %>
+            <span class="text-muted">(<%= @target.host_url %>)</span>
+          <% end %>
+        </p>
+      </div>
     </div>
   <% end %>
 

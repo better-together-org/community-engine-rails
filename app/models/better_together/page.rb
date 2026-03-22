@@ -17,12 +17,15 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
+    include Seedable
     include TrackedActivity
     include ::Storext.model
 
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     before_validation :sync_name_and_title
+    before_validation :assign_current_platform_if_available
     before_validation :assign_host_community
 
     categorizable
@@ -75,6 +78,8 @@ module BetterTogether
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
+    validates :platform_id, presence: true
+    validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
     # Automatically grant the page creator an authorship record
     after_create :add_creator_as_author
@@ -152,6 +157,29 @@ module BetterTogether
       "#{::BetterTogether.base_url_with_locale}/#{slug}"
     end
 
+    def mirrored?
+      source_id.present? || platform&.external?
+    end
+
+    def preserved_remote_uuid?
+      source_id.blank? && platform&.external?
+    end
+
+    def source_identifier
+      source_id.presence || id
+    end
+
+    def local_to_platform?(local_platform = Current.platform)
+      return true if platform_id.blank?
+      return false unless local_platform
+
+      platform_id == local_platform.id
+    end
+
+    def remote_to_platform?(local_platform = Current.platform)
+      mirrored? && !local_to_platform?(local_platform)
+    end
+
     private
 
     def refresh_sitemap
@@ -163,6 +191,16 @@ module BetterTogether
     def sync_name_and_title
       self.name = title if respond_to?(:name) && name.blank? && title.present?
       self.title = name if title.blank? && name.present?
+    end
+
+    def assign_current_platform_if_available
+      return unless has_attribute?(:platform_id)
+      return if platform_id.present?
+
+      resolved = Current.platform ||
+                 BetterTogether::Platform.find_by(host: true) ||
+                 BetterTogether::Platform.first
+      self.platform = resolved if resolved
     end
 
     def assign_host_community

@@ -2,9 +2,11 @@
 
 require 'rails_helper'
 
-module BetterTogether
+# :nodoc:
+module BetterTogether # :nodoc:
   # rubocop:disable Metrics/ModuleLength
-  module Sanitizers
+  # :nodoc:
+  module Sanitizers # :nodoc:
     RSpec.describe ExternalLinkIconSanitizer do
       let(:sanitizer) { described_class.new }
       let(:host) { 'example.com' }

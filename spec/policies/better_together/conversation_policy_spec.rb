@@ -7,8 +7,8 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
 
   let!(:host_platform) { configure_host_platform }
 
-  let!(:manager_user) { create(:user, :confirmed, :platform_manager, password: 'SecureTest123!@#') }
-  let!(:manager_person) { manager_user.person }
+  let!(:steward_user) { create(:user, :confirmed, :platform_steward, password: 'SecureTest123!@#') }
+  let!(:steward_person) { steward_user.person }
 
   let!(:opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true })
@@ -17,22 +17,22 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
   let!(:non_opted_person) { create(:better_together_person) }
 
   describe '#permitted_participants' do
-    context 'when agent is a platform manager' do
+    context 'when agent is a platform steward' do
       it 'includes all people' do
-        policy = described_class.new(manager_user, BetterTogether::Conversation.new)
+        policy = described_class.new(steward_user, BetterTogether::Conversation.new)
         ids = policy.permitted_participants.pluck(:id)
-        expect(ids).to include(manager_person.id, opted_in_person.id, non_opted_person.id)
+        expect(ids).to include(steward_person.id, opted_in_person.id, non_opted_person.id)
       end
     end
 
     context 'when agent is a regular member' do
       let!(:regular_user) { create(:user, :confirmed, password: 'SecureTest123!@#') }
 
-      it 'includes platform managers and opted-in members, but not non-opted members' do
+      it 'includes platform stewards and opted-in members, but not non-opted members' do
         # rubocop:enable RSpec/MultipleExpectations
         policy = described_class.new(regular_user, BetterTogether::Conversation.new)
         people = policy.permitted_participants
-        expect(people).to include(manager_person, opted_in_person)
+        expect(people).to include(steward_person, opted_in_person)
         expect(people).not_to include(non_opted_person)
       end
     end

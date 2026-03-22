@@ -540,6 +540,21 @@ fr:
           attributes:
             event_hosts:
               too_short: Les événements doivent avoir au moins un hôte
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: les accords de connexion
+                nécessitent des plateformes source et cible
+            target:
+              must_be_platform: doit être une plateforme
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: les accords de lien de personne nécessitent
+                une personne source, une personne cible et une connexion de plateforme
+                active
+            target:
+              must_be_person: doit être une personne
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -547,12 +562,23 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: doit correspondre à la personne bénéficiaire de
+                l'autorisation d'accès
         better_together/person_platform_integration:
           attributes:
             provider:
               inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
             uid:
               taken: a déjà été lié à un autre compte
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: doit être vrai pour un domaine principal
+            primary:
+              already_taken_for_platform: a déjà été pris pour cette plateforme
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -601,10 +627,15 @@ fr:
       better_together/oauth_application: Application OAuth
       better_together/page: Page
       better_together/person: Personne
+      better_together/person_access_grant: Autorisation d'accès personnel
       better_together/person_community_membership: Adhésion à la communauté
+      better_together/person_link: Lien de personne
+      better_together/person_linked_seed: Graine liée
       better_together/person_platform_integration: Intégration OAuth
       better_together/person_platform_membership: Adhésion à la plateforme
       better_together/platform: Plateforme
+      better_together/platform_connection: Connexion de plateforme
+      better_together/platform_domain: Domaine de plateforme
       better_together/platform_invitation: Invitation à la Plateforme
       better_together/post: Publication
       better_together/resource_permission: Autorisation des Ressources
@@ -1050,6 +1081,57 @@ fr:
         school: École
         work: Travail
       title: Adresses e-mail
+    enums:
+      person_access_grant:
+        status:
+          active: Actif
+          expired: Expiré
+          pending: En attente
+          revoked: Révoqué
+      person_link:
+        status:
+          active: Actif
+          pending: En attente
+          revoked: Révoqué
+      person_linked_seed:
+        seed_type:
+          event: Événement
+          page: Page
+          post: Publication
+      platform_connection:
+        connection_kind:
+          member: Membre
+          peer: Pair
+        content_sharing_policy:
+          mirror_network_feed: Miroir du fil réseau
+          mirrored_publish_back: Miroir et republication
+          none: Aucune
+          selective: Sélectif
+        federation_auth_policy:
+          api_read: Lecture API uniquement
+          api_write: Lecture et écriture API
+          login_only: Connexion seulement
+          none: Aucune
+        federation_scope_types:
+          content_read: Lecture du contenu
+          content_write: Écriture du contenu
+          identity: Identité
+          linked_content_read: Lecture du contenu lié
+          profile_read: Lecture du profil
+        shared_content_types:
+          events: Événements
+          pages: Pages
+          posts: Publications
+        status:
+          active: Actif
+          blocked: Bloqué
+          pending: En attente
+          suspended: Suspendu
+        sync_status:
+          failed: Échoué
+          idle: Inactif
+          running: En cours
+          succeeded: Réussi
     event_invitations:
       index:
         invite_member: Invite member
@@ -1421,6 +1503,10 @@ fr:
         request_creator: Créateur de la demande
         show:
           details: Détails
+          open_platform_connections: Ouvrir les connexions de plateforme
+          platform_connection: Connexion de plateforme
+          source_platform: Plateforme source
+          target_platform: Plateforme cible
           title: Agreement
         status: Statut
       by: by
@@ -1482,7 +1568,7 @@ fr:
         offers: Offres
         requests: Demandes
       offers:
-        agreement_heading: Agreement
+        agreement_heading: Contrat
         agreement_with: Agreement with
         back_to_offers: Back to Offers
         edit_offer: Edit Offer
@@ -1492,22 +1578,26 @@ fr:
         response_to_your_offer_heading: Response to your Offer
         save_offer: Save Offer
         source_request_heading: Responding to Request
-        view_agreement: View Agreement
+        target_platform: Plateforme cible
+        view_agreement: Voir le contrat
         view_offer: View Offer
-        your_response_heading: Your Response
+        your_response_heading: Votre réponse
       requests:
         agreement_heading: Agreement
-        back_to_requests: Back to Requests
-        edit_request: Edit Request
-        empty: No requests found
-        index_header: Requests
-        new_request: New Request
-        respond_with_offer: Respond with Offer
-        response_to_your_request_heading: Response to your Request
-        save_request: Save Request
-        source_offer_heading: Responding to Offer
+        back_to_requests: Retour aux demandes
+        edit_request: Modifier la demande
+        empty: Aucune demande trouvée
+        index_header: Demandes
+        manage_connections: Gérer les connexions
+        new_connection_request: Nouvelle demande de connexion
+        new_request: Nouvelle demande
+        respond_with_offer: Répondre avec une offre
+        response_to_your_request_heading: Réponse à votre demande
+        save_request: Enregistrer la demande
+        source_offer_heading: En réponse à l'offre
+        target_platform: Plateforme cible
         view_agreement: View Agreement
-        view_request: View Request
+        view_request: Voir la demande
         your_response_heading: Your Response
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -1545,6 +1635,8 @@ fr:
           Cordialement,<br />
           L'équipe de %{platform}
         subject: Un nouvel accord a été créé
+      new_match:
+        subject: Nouvelle correspondance Joatu
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
@@ -1846,7 +1938,7 @@ fr:
         new_report: New Report
         no_reports: No reports have been generated yet.
         title: User Account Reports
-        view: View
+        view: Voir
       new:
         file_format: File Format
         file_format_help: Select the format for the exported report file.
@@ -2121,6 +2213,37 @@ fr:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_access_grants:
+      errors:
+        duplicate_grant: a déjà une autorisation pour ce lien et ce destinataire
+      index:
+        description: Gérez les autorisations d'accès privées que vous avez partagées
+          avec d'autres.
+        empty: Vous n'avez encore partagé aucune autorisation d'accès.
+        shared_with_you: Partagé avec vous
+        title: Autorisations d'accès
+        you_are_sharing: Vous partagez
+      show:
+        accepted: Acceptée
+        allowed: Autorisé
+        back: Retour aux autorisations d'accès
+        denied: Refusé
+        expires: Expire
+        grantor: Émetteur
+        manage_grant_heading: Gérer l'autorisation
+        no_expiry: Sans expiration
+        pending: En attente
+        recipient: Destinataire
+        revoke: Révoquer l'accès
+        revoke_confirm: Révoquer cette autorisation d'accès ?
+        scope_labels:
+          private_events: Événements privés
+          private_messages: Messages privés
+          private_pages: Pages privées
+          private_posts: Publications privées
+          profile_read: Lire le profil
+        scopes_heading: Portées
+        title: Autorisation d'accès
     person_block:
       cannot_block_manager: ne peut pas être un gestionnaire de plateforme
       cannot_block_self: ne peut pas vous bloquer vous-même
@@ -2160,6 +2283,37 @@ fr:
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
         unblocked: La personne a été débloquée avec succès.
+    person_linked_seeds:
+      index:
+        description: Contenu privé partagé avec vous via des autorisations d'accès
+          fédérées.
+        empty: Aucune graine liée n'a encore été partagée avec vous.
+        title: Graines liées
+      show:
+        back: Retour aux graines liées
+        empty: Aucun contenu disponible pour cette graine liée.
+        title: Graine liée
+    person_links:
+      errors:
+        duplicate_link: a déjà un lien pour cette connexion de plateforme et cette
+          personne cible
+      index:
+        description: Gérez vos liens de personnes entre plateformes et vos connexions
+          de fédération.
+        empty: Vous n'avez pas encore de liens de personnes.
+        title: Liens de personnes
+      show:
+        access_grants_heading: Autorisations d'accès
+        back: Retour aux liens de personnes
+        pending: En attente
+        platform_connection: Connexion de plateforme
+        revoke: Révoquer le lien
+        revoke_confirm: Révoquer ce lien de personne et ses autorisations d'accès
+          ?
+        source_person: Personne source
+        target_person: Personne cible
+        title: Lien de personne
+        verified: Vérifié
     person_platform_integration_mailer:
       integration_created:
         body_html: Une nouvelle intégration de compte %{provider} a été connectée
@@ -2219,6 +2373,109 @@ fr:
         work: Travail
       number: Numéro
       title: Numéros de téléphone
+    platform_connections:
+      actions:
+        approve: Approuver
+        approve_aria: 'Approuver la connexion : %{source} ↔ %{target}'
+        approve_confirm: Approuver cette connexion ?
+        edit: Modifier
+        edit_aria: 'Modifier la connexion : %{source} ↔ %{target}'
+        suspend: Suspendre
+        suspend_aria: 'Suspendre la connexion : %{source} ↔ %{target}'
+        suspend_confirm: Suspendre cette connexion ?
+        view: Voir
+        view_aria: 'Voir la connexion : %{source} ↔ %{target}'
+      edit:
+        title: Modifier la connexion de plateforme
+      flash:
+        approved: Connexion approuvée et activée.
+        cannot_approve: Impossible d'approuver une connexion avec le statut '%{status}'.
+        cannot_suspend: Impossible de suspendre une connexion avec le statut '%{status}'.
+        secret_rotated: Secret OAuth du client renouvelé. Mettez à jour la configuration
+          de la plateforme distante.
+        suspended: Connexion suspendue.
+      form:
+        back: Retour
+        connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre.
+          Pair : partenariat égal entre plateformes indépendantes.'
+        content_sharing_policy_hint: Contrôle comment le contenu public est synchronisé.
+          « Miroir réseau » synchronise tout le contenu public ; « Sélectif » ne synchronise
+          que les types explicitement partagés.
+        create: Créer la connexion
+        federation_auth_policy_hint: api_read permet à la plateforme distante de récupérer
+          le contenu public. api_write lui permet en plus de publier ici. login_only
+          restreint à l'authentification uniquement.
+        federation_scopes_hint: Les portées déterminent quelles données la plateforme
+          distante peut demander dans les jetons OAuth. N'activez que les portées
+          correspondant à vos termes de partage convenus.
+        federation_scopes_legend: Portées de fédération
+        save: Enregistrer les modifications
+        shared_content_types_hint: Sélectionnez les types de contenu à inclure lors
+          de la synchronisation avec cette connexion.
+        shared_content_types_legend: Types de contenu partagés
+        source_platform: Plateforme source
+        target_platform: Plateforme cible
+      index:
+        columns:
+          auth_policy: Politique d'authentification
+          content_policy: Politique de contenu
+          kind: Type
+          source: Source
+          status: Statut
+          target: Cible
+        new_connection: Nouvelle connexion
+        title: Connexions de plateforme
+      new:
+        back: Retour
+        register_platform_hint: Vous devez d'abord enregistrer une plateforme distante ?
+        register_platform_link: Enregistrer une plateforme externe →
+        title: Nouvelle connexion de plateforme
+      show:
+        api_read: Lecture API
+        api_write: Écriture API
+        approve: Approuver
+        approve_confirm: Approuver cette connexion et l'activer ?
+        back: Retour
+        connection_kind: Type de connexion
+        content_sharing: Partage de contenu
+        content_sharing_policy: Politique de partage de contenu
+        disabled: Désactivé
+        edit: Modifier
+        enabled: Activé
+        federation_auth: Authentification de fédération
+        federation_auth_policy: Politique d'authentification de fédération
+        federation_scopes: Portées de fédération
+        last_sync_completed: Dernière synchronisation terminée
+        last_sync_error: Dernière erreur de synchronisation
+        last_sync_item_count: Éléments lors de la dernière synchronisation
+        last_sync_started: Dernière synchronisation démarrée
+        login: Connexion
+        mirroring: Miroir
+        never: Jamais
+        none: Aucun
+        oauth:
+          client_id: Identifiant client
+          client_secret: Secret client
+          description: Transmettez ces identifiants à l'opérateur de %{platform} afin
+            qu'il puisse configurer une connexion correspondante sur sa plateforme
+            et obtenir des jetons depuis l'endpoint OAuth de cette plateforme.
+          not_set: Non configuré
+          remote_token_endpoint: Endpoint de jeton distant
+          remote_token_endpoint_hint: Configurez ceci sur la plateforme distante en
+            pointant vers leur endpoint OAuth.
+          rotate_secret: Renouveler le secret
+          rotate_secret_confirm: Renouveler le secret OAuth du client ? La plateforme
+            distante devra être reconfigurée.
+          title: Identifiants OAuth de fédération
+          token_endpoint: Endpoint de jeton (cette plateforme)
+        publish_back: Republier
+        shared_content_types: Types de contenu partagés
+        status: Statut
+        suspend: Suspendre
+        suspend_confirm: Suspendre cette connexion ? La fédération et la synchronisation
+          seront mises en pause.
+        sync_cursor: Curseur de synchronisation
+        sync_status: État de synchronisation
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
@@ -2260,6 +2517,21 @@ fr:
         expired: Expiré
         pending: En attente
     platforms:
+      form:
+        host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
+          Utilisée pour l'identifier dans la fédération et générer les URLs du point
+          de terminaison OAuth. Doit être HTTPS en production.
+      new:
+        back: Retour
+        host_url_hint: L'URL racine de l'instance de plateforme externe.
+        host_url_label: URL
+        host_url_placeholder: https://example.com
+        identifier_hint: Un identifiant unique (lettres, chiffres, tirets).
+        identifier_placeholder: ex. plateforme-pair
+        intro: Enregistrez une instance distante de Community Engine (ou compatible)
+          pour la sélectionner lors de la création d'une Connexion de plateforme.
+        submit: Enregistrer la plateforme externe
+        title: Enregistrer la plateforme externe
       show:
         new_invitation: Nouvelle invitation
     posts:
@@ -2615,6 +2887,12 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+    validators:
+      safe_federation_url:
+        credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
+        insecure_scheme: doit utiliser http ou https
+        invalid_url: n'est pas une URL valide
+        private_ip: ne doit pas pointer vers une adresse IP privée ou réservée
     view_switcher:
       button_label: Vue %{view}
       change_view: Changer le type de vue
@@ -3551,6 +3829,8 @@ fr:
     navigation_area: Zone de navigation
     page: Page
     person: Personne
+    person_access_grant: Octroi d'accès de la personne
+    person_link: Lien de la personne
     person_platform_membership: Adhésion à la plateforme de la personne
     platform: Plateforme
     profile: Profil

@@ -2,8 +2,10 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Metrics
+# :nodoc:
+module BetterTogether # :nodoc:
+  # :nodoc:
+  module Metrics # :nodoc:
     RSpec.describe UserAccountReportsController, :as_platform_manager do
       describe 'GET /metrics/user_account_reports' do
         let!(:first_report) { create(:user_account_report, :with_data) }

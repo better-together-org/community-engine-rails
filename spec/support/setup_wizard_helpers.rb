@@ -12,7 +12,8 @@ RSpec.shared_context 'skip_host_setup', :skip_host_setup do
   # metadata-only context; AutomaticTestConfiguration will check for :skip_host_setup
 end
 
-module SetupWizardSpecHelpers
+# Helpers for setup wizard specs.
+module SetupWizardSpecHelpers # :nodoc:
   # Mark the current example to skip host platform setup.
   # Useful in examples that need to simulate a fresh install / wizard flow.
   def skip_host_setup!

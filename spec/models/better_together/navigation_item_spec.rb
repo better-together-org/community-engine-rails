@@ -58,7 +58,7 @@ end
 
 # spec/models/better_together/navigation_item_spec.rb
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe NavigationItem do
     subject(:navigation_item) { build(:better_together_navigation_item) }
     let!(:existing_navigation_item) { create(:better_together_navigation_item) }

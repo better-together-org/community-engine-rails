@@ -24,6 +24,7 @@ module BetterTogether
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       resource_instance(resource_params)
       authorize_resource
+      return if performed?
 
       respond_to do |format|
         if @resource.save

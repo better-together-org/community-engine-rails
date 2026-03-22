@@ -12,7 +12,7 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe Metrics::ReportsHelper do
     it 'includes search health tab styles' do
       expect(helper.metrics_tab_styles).to include(:searchhealth)

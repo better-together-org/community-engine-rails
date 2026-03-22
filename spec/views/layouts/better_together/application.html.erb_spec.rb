@@ -28,6 +28,7 @@ RSpec.describe 'layouts/better_together/application' do
     allow(view).to receive(:render).with('layouts/better_together/footer').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/mobile_bar').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/custom_body_javascript').and_return('')
+    allow(view).to receive(:base_url).and_return('http://test.host')
   end
 
   it 'renders canonical and hreflang links by default' do
