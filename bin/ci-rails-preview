@@ -6,7 +6,7 @@ PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export RAILS_ENV="${RAILS_ENV:-test}"
 export NODE_ENV="${NODE_ENV:-test}"
 export DISABLE_SPRING=1
-export BUNDLE_GEMFILE="${PROJECT_ROOT}/${BUNDLE_GEMFILE:-Gemfile}"
+export BUNDLE_GEMFILE="${PROJECT_ROOT}/gemfiles/rails_8_1.gemfile"
 
 PREVIEW_LOG="${PREVIEW_LOG:-tmp/rails_preview_bundle.log}"
 mkdir -p "$(dirname "${PREVIEW_LOG}")"
