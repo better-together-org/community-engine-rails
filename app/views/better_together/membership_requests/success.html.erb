@@ -1,0 +1,26 @@
+<%# app/views/better_together/membership_requests/success.html.erb %>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="text-center py-4">
+        <div class="mb-3">
+          <span class="display-4" aria-hidden="true">✅</span>
+          <span class="visually-hidden">
+            <%= t('better_together.membership_requests.success.heading', default: 'Request Received') %>
+          </span>
+        </div>
+        <h2>
+          <%= t('better_together.membership_requests.success.heading', default: 'Request Received') %>
+        </h2>
+        <p class="text-muted">
+          <%= t('better_together.membership_requests.success.body',
+                default: "Thank you! We've received your membership request and will be in touch soon.") %>
+        </p>
+        <%= link_to t('globals.back_to_home', default: 'Back to home'),
+                    root_path,
+                    class: 'btn btn-outline-secondary mt-2' %>
+      </div>
+    </div>
+  </div>
+</div>

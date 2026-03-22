@@ -3,6 +3,9 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
+ENV['ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY'] ||= '0123456789abcdef0123456789abcdef'
+ENV['ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY'] ||= 'abcdef0123456789abcdef0123456789'
+ENV['ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT'] ||= 'salt-for-local-test-runs-0123456789'
 require File.expand_path('dummy/config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
@@ -40,7 +43,7 @@ Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| requi
 begin
   ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
-rescue ActiveRecord::PendingMigrationError => e
+rescue ActiveRecord::PendingMigrationError
   exit 1
 end
 
@@ -131,17 +134,16 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
 
-    # Pre-clear FK-dependent tables to avoid violations when referential integrity cannot be disabled
+    # Full clean to start fresh. Disable FK constraint triggers for the initial clean so
+    # that new FK chains (ActiveStorage, etc.) never require manual pre-clear ordering.
+    # session_replication_role=replica suppresses FK and trigger checks in PostgreSQL.
+    conn = ActiveRecord::Base.connection
     begin
-      BetterTogether::RoleResourcePermission.delete_all
-      BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
-      BetterTogether::NavigationItem.where(parent_id: nil).delete_all
-    rescue StandardError => e
-      Rails.logger.debug "Pre-clean step skipped or failed: #{e.message}"
+      conn.execute('SET session_replication_role = replica')
+      DatabaseCleaner.clean_with(:deletion)
+    ensure
+      conn.execute('SET session_replication_role = DEFAULT')
     end
-
-    # Full clean to start fresh using deletions to avoid deadlocks with Postgres TRUNCATE
-    DatabaseCleaner.clean_with(:deletion)
 
     # Load essential seed data with explicit clearing for deterministic baseline
     # In parallel execution, handle race conditions gracefully
@@ -150,16 +152,20 @@ RSpec.configure do |config|
       begin
         yield
       rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique,
-             ActiveRecord::StaleObjectError => e
+             ActiveRecord::StaleObjectError, ActiveRecord::InvalidForeignKey => e
         attempts += 1
         is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
                              e.is_a?(ActiveRecord::RecordNotUnique)
         is_stale_error = e.is_a?(ActiveRecord::StaleObjectError)
+        is_foreign_key_error = e.is_a?(ActiveRecord::InvalidForeignKey)
         if attempts < times
           # In parallel execution, another worker may have already seeded the data
           # If it's a duplicate key error, just continue - data is already seeded
           if is_duplicate_error
             Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+          elsif is_foreign_key_error
+            Rails.logger.debug "Transient FK issue during parallel seed, retrying: #{e.message}"
+            retry
           elsif is_stale_error
             Rails.logger.debug "Stale object during parallel seed, retrying: #{e.message}"
             retry

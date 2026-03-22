@@ -34,7 +34,8 @@ RSpec.describe 'Invitation Resend UI', :as_platform_manager, :js do
 
       # Should show the special "Resend to Declined" button
       within("##{dom_id(declined_invitation)}") do
-        expect(page).to have_button(I18n.t('better_together.invitations.resend_declined', default: 'Resend to Declined'))
+        expect(page).to have_button(I18n.t('better_together.invitations.resend_declined',
+                                           default: 'Resend to Declined'))
         expect(page).to have_css('.btn-outline-warning')
       end
     end

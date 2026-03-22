@@ -5,8 +5,22 @@ module BetterTogether
     # Access control for Joatu::Request
     class RequestPolicy < ApplicationPolicy
       def index? = user.present?
-      def show?  = user.present?
-      def create? = user.present?
+
+      def show?
+        return false unless user.present?
+
+        return can_view_network_request? if connection_request?
+
+        true
+      end
+
+      def create?
+        return false unless user.present?
+
+        return can_manage_network_connections? if connection_request?
+
+        true
+      end
       alias new? create?
 
       # Permission helper for the "respond with offer" flow (creating an Offer from a Request)
@@ -15,7 +29,9 @@ module BetterTogether
       def update?
         return false unless user.present?
 
-        permitted_to?('manage_platform') || record.creator_id == agent&.id
+        return can_manage_network_connections? if connection_request?
+
+        can_manage_joatu? || record.creator_id == agent&.id
       end
       alias edit? update?
       alias matches? update?
@@ -26,27 +42,36 @@ module BetterTogether
         # Prevent destroy if there are any agreements for this request — applies to everyone
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
-        # Platform managers or the creator may destroy when there are no agreements
-        permitted_to?('manage_platform') || record.creator_id == agent&.id
+        return can_manage_network_connections? if connection_request?
+
+        can_manage_joatu? || record.creator_id == agent&.id
       end
 
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+        MEMBERSHIP_REQUEST_TYPE = 'BetterTogether::Joatu::MembershipRequest'
+
         # rubocop:todo Metrics/MethodLength
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           return scope.none unless user.present?
 
+          # MembershipRequests are governed by MembershipRequestPolicy::Scope.
+          # Exclude them here so they never leak through base Request queries.
+          base = scope.where.not(type: MEMBERSHIP_REQUEST_TYPE)
+
           # Platform managers see everything
-          return scope.all if permitted_to?('manage_platform')
+          return base.all if permitted_to?('manage_platform')
+          return scope.all if can_manage_joatu?
+          return scope.all if can_manage_network_connections? && connection_request_scope?
 
           agent_id = agent&.id
 
           # Requests that are not responses to another resource (no response_link where response is this request)
           # rubocop:todo Layout/LineLength
-          not_responses = scope.left_joins(:response_links_as_response).where(better_together_joatu_response_links: { id: nil })
+          not_responses = base.left_joins(:response_links_as_response).where(better_together_joatu_response_links: { id: nil })
           # rubocop:enable Layout/LineLength
 
           # Requests owned by the agent
-          owned = scope.where(creator_id: agent_id)
+          owned = base.where(creator_id: agent_id)
 
           # Requests that are responses to an Offer owned by the agent
           rl = BetterTogether::Joatu::ResponseLink.arel_table
@@ -62,13 +87,45 @@ module BetterTogether
 
           join_sources = requests.join(rl, Arel::Nodes::InnerJoin).on(join_on_rl).join(offers, Arel::Nodes::InnerJoin).on(join_on_offers).join_sources
 
-          response_to_my_offer = scope.joins(join_sources).where(offers[:creator_id].eq(agent_id))
+          response_to_my_offer = base.joins(join_sources).where(offers[:creator_id].eq(agent_id))
 
           # rubocop:todo Layout/LineLength
-          scope.where(id: not_responses.select(:id)).or(scope.where(id: owned.select(:id))).or(scope.where(id: response_to_my_offer.select(:id)))
+          base.where(id: not_responses.select(:id)).or(base.where(id: owned.select(:id))).or(base.where(id: response_to_my_offer.select(:id)))
           # rubocop:enable Layout/LineLength
         end
         # rubocop:enable Metrics/MethodLength
+
+        private
+
+        def can_manage_joatu?
+          permitted_to?('manage_joatu')
+        end
+
+        def can_manage_network_connections?
+          permitted_to?('manage_network_connections')
+        end
+
+        def connection_request_scope?
+          scope <= BetterTogether::Joatu::ConnectionRequest
+        end
+      end
+
+      private
+
+      def connection_request?
+        record.is_a?(BetterTogether::Joatu::ConnectionRequest)
+      end
+
+      def can_manage_joatu?
+        permitted_to?('manage_joatu')
+      end
+
+      def can_manage_network_connections?
+        permitted_to?('manage_network_connections')
+      end
+
+      def can_view_network_request?
+        can_manage_network_connections? || record.creator_id == agent&.id
       end
     end
   end

@@ -19,6 +19,8 @@ module BetterTogether
         # Relationships
         has_one :community
         has_one :creator, class_name: 'Person'
+        has_many :page_blocks, class_name: 'PageBlock'
+        has_many :blocks, class_name: 'Block'
 
         # Filters
         filter :privacy
@@ -38,7 +40,7 @@ module BetterTogether
         end
 
         def self.updatable_fields(_context)
-          %i[title content privacy layout show_title]
+          %i[title content privacy layout show_title published_at]
         end
       end
     end

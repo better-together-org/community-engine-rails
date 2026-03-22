@@ -3,22 +3,28 @@
 module BetterTogether
   class CategoryPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
     def create?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
     def update?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
     def show?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
     class Scope < ApplicationPolicy::Scope
+    end
+
+    private
+
+    def platform_taxonomy_manager?
+      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
     end
   end
 end

@@ -8,10 +8,13 @@ on:
       - compat/rails-7.2
       - compat/rails-8.0
       - compat/rails-8.1
-      - feat/**
-      - fix/**
-      - chore/**
   pull_request:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
 
 jobs:
   prepare:

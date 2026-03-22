@@ -16,6 +16,14 @@ FactoryBot.define do
 
     association :creator, factory: :person
 
+    before(:create) do |event|
+      unless event.platform_id.present?
+        event.platform = Current.platform ||
+                         BetterTogether::Platform.find_by(host: true) ||
+                         create(:better_together_platform)
+      end
+    end
+
     trait :with_simple_location do
       after(:build) do |event|
         event.location = build(:locatable_location, :simple, locatable: event)

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe Metrics::TrackSearchQueryJob do
     subject(:perform_job) { described_class.perform_now('foo', 2, 'en') }
 

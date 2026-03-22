@@ -5,10 +5,10 @@ require 'rails_helper'
 # Testing CommunityInvitationPolicy as a concrete implementation of InvitationPolicy
 # InvitationPolicy is an abstract base class with template methods
 # rubocop:disable RSpec/NestedGroups, RSpec/SpecFilePathFormat
-RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_manager do
+RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_steward do
   subject(:policy) { described_class.new(user, invitation) }
 
-  let(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#') }
+  let(:user) { find_or_create_test_user('steward@example.test', 'SecureTest123!@#', :platform_steward) }
   let(:community) { create(:better_together_community) }
   let(:invitation) { create(:better_together_community_invitation, invitable: community) }
 
@@ -16,7 +16,8 @@ RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_manager d
     # Grant the user community management permissions via PersonCommunityMembership
     next unless user.present? # Skip setup for nil user tests
 
-    coordinator_role = BetterTogether::Role.find_by(identifier: 'community_coordinator')
+    coordinator_role = BetterTogether::Role.find_by(identifier: 'community_organizer') ||
+                       BetterTogether::Role.find_by(identifier: 'community_coordinator')
     BetterTogether::PersonCommunityMembership.create!(
       joinable: community,
       member: user.person,
