@@ -83,8 +83,9 @@ module BetterTogether
     private
 
     def set_platform
-      # Routes use platform.to_param which returns the slug, not the UUID.
-      @platform = Platform.find_by!(slug: params[:platform_id])
+      # Routes use platform.to_param which returns the slug (a Mobility-translated
+      # attribute). Use the i18n scope so Mobility queries the translation table.
+      @platform = Platform.i18n.find_by!(slug: params[:platform_id])
     end
 
     def set_storage_configuration
