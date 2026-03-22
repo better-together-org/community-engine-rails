@@ -16,6 +16,15 @@ FactoryBot.define do
 
     association :creator, factory: :person
 
+    # Assign platform on build so Shoulda matchers (which call save(validate: false)
+    # and skip before_validation callbacks) don't hit the NOT NULL DB constraint.
+    before(:build) do |event|
+      unless event.platform_id.present?
+        event.platform = Current.platform ||
+                         BetterTogether::Platform.find_by(host: true)
+      end
+    end
+
     before(:create) do |event|
       unless event.platform_id.present?
         event.platform = Current.platform ||

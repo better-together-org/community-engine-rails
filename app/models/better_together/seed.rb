@@ -377,11 +377,14 @@ module BetterTogether
     # Attach the exported YAML as an Active Storage file
     # -------------------------------------------------------------
     def attach_yaml_file
-      # Guard against infinite recursion: Active Storage's attach touches the
-      # parent record, which would re-fire after_update_commit :attach_yaml_file.
-      return if @attaching_yaml_file
+      # Guard against infinite recursion: Active Storage's `belongs_to :record,
+      # touch: true` fires after_update_commit on a *different Ruby instance* of
+      # this record, so an instance-variable guard (@attaching_yaml_file) fails.
+      # A thread-local keyed by record id is process-safe and instance-safe.
+      key = :"attach_yaml_file_#{id}"
+      return if Thread.current[key]
 
-      @attaching_yaml_file = true
+      Thread.current[key] = true
       yml_data = export_yaml
       yaml_file.attach(
         io: StringIO.new(yml_data),
@@ -389,7 +392,7 @@ module BetterTogether
         content_type: 'text/yaml'
       )
     ensure
-      @attaching_yaml_file = nil
+      Thread.current[key] = nil
     end
   end
 end

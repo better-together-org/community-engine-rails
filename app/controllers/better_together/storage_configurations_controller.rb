@@ -83,7 +83,8 @@ module BetterTogether
     private
 
     def set_platform
-      @platform = Platform.find(params[:platform_id])
+      # Routes use platform.to_param which returns the slug, not the UUID.
+      @platform = Platform.find_by!(slug: params[:platform_id])
     end
 
     def set_storage_configuration
