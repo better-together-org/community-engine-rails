@@ -60,18 +60,11 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
 
       it 'filters private linked seed models out of the global search set' do
-        # Filtering now happens inside Searchable.included_in_models (not the controller).
-        # PersonLinkedSeed.global_searchable? returns false, so it is excluded by that method.
-        allow(BetterTogether::Searchable).to receive(:included_in_models).and_call_original
-
-        expect(Elasticsearch::Model).to receive(:search) do |_query, models|
-          expect(models).not_to include(BetterTogether::PersonLinkedSeed)
-
-          double(
-            records: double(to_a: []),
-            response: { 'suggest' => { 'suggestions' => [] } }
-          )
-        end
+        # PersonLinkedSeed.global_searchable? returns false so Registry excludes it from
+        # global_search_models. The registry_spec covers this at unit level; here we confirm
+        # the search endpoint still returns 200 and the Registry reflects the exclusion.
+        expect(BetterTogether::Search::Registry.global_search_models)
+          .not_to include(BetterTogether::PersonLinkedSeed)
 
         get better_together.search_path(locale:), params: { q: 'test query' }
 
