@@ -16,9 +16,9 @@ if bundle lock --update rails --conservative --lockfile=gemfiles/rails_8_1.gemfi
   pushd spec/dummy >/dev/null
   bundle exec rake db:parallel:create db:parallel:prepare >>"${PREVIEW_LOG}" 2>&1
   popd >/dev/null
-  bundle exec prspec spec \
-    -n "${WORKERS:-4}" \
-    --exclude-pattern "spec/features/**/*_spec.rb,spec/system/**/*_spec.rb,spec/docs_screenshots/**/*_spec.rb"
+  bundle exec prspec \
+    --exclude-pattern "spec/features/**/*_spec.rb,spec/system/**/*_spec.rb,spec/docs_screenshots/**/*_spec.rb" \
+    spec
 else
   cat "${PREVIEW_LOG}" >&2
 
