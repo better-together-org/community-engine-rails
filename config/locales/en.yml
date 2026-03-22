@@ -2560,6 +2560,14 @@ en:
         service_type_label: Service type
         table_aria: Storage configurations
         title: Storage Configurations
+        subtitle: "Storage backends for %{platform_name}"
+        back_to_platform: Back to Platform
+      new:
+        title: New Storage Configuration
+        subtitle: "Add a storage backend for %{platform_name}"
+      edit:
+        title: "Edit %{name}"
+        subtitle: "Storage backend for %{platform_name}"
     webhook_endpoints:
       actions_aria: Webhook actions
       active_help: Enable or disable webhook delivery for this endpoint.

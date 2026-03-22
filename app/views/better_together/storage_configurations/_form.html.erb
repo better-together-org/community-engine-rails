@@ -21,7 +21,7 @@
     <%= form.label :service_type, t('activerecord.attributes.better_together/storage_configuration.service_type', default: 'Storage type'),
                    class: 'form-label' %>
     <%= form.select :service_type,
-                    StorageConfiguration.service_type_options,
+                    ::BetterTogether::StorageConfiguration.service_type_options,
                     { include_blank: false },
                     class: 'form-select',
                     required: true,
@@ -86,7 +86,7 @@
   </div>
 
   <div class="d-flex gap-2 mt-3">
-    <%= form.submit storage_configuration.persisted? ? t('helpers.submit.update', model: StorageConfiguration.model_name.human) : t('helpers.submit.create', model: StorageConfiguration.model_name.human),
+    <%= form.submit storage_configuration.persisted? ? t('helpers.submit.update', model: ::BetterTogether::StorageConfiguration.model_name.human) : t('helpers.submit.create', model: ::BetterTogether::StorageConfiguration.model_name.human),
                     class: 'btn btn-primary' %>
     <%= link_to t('better_together.storage_configurations.cancel', default: 'Cancel'),
                 platform_storage_configurations_path(@platform),

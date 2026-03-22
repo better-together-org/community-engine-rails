@@ -44,7 +44,7 @@ module BetterTogether
     def update
       authorize @storage_configuration
 
-      if @storage_configuration.update(storage_configuration_params)
+      if @storage_configuration.update(update_params)
         redirect_to platform_storage_configurations_path(@platform),
                     notice: t('better_together.storage_configurations.updated')
       else
@@ -70,9 +70,20 @@ module BetterTogether
     # PUT /host/platforms/:platform_id/storage_configurations/:id/activate
     # Sets this configuration as the platform's primary/active storage.
     def activate
-      authorize @storage_configuration, :update?
+      authorize @storage_configuration, :activate?
 
       @platform.update!(storage_configuration_id: @storage_configuration.id)
+
+      # Rebind Active Storage in this process immediately so new uploads use the
+      # updated config without waiting for a restart. Other processes pick it up
+      # on their next restart (or after touching tmp/restart.txt for Puma).
+      resolver = StorageResolver.new(@platform.reload)
+      service_name = resolver.service_name
+      service_config = resolver.to_active_storage_config
+      service = ActiveStorage::Service.build(service_name, configurator: nil, **service_config)
+      ActiveStorage::Blob.service = service
+      ActiveStorage::Blob.services[service_name.to_s] = service
+
       redirect_to platform_storage_configurations_path(@platform),
                   notice: t('better_together.storage_configurations.activated',
                             name: @storage_configuration.name)
@@ -92,6 +103,15 @@ module BetterTogether
       params.require(:storage_configuration).permit(
         :name, :service_type, :endpoint, :bucket, :region, :access_key_id, :secret_access_key
       )
+    end
+
+    # On update, strip blank credential fields so existing encrypted values are preserved.
+    # The form hints tell users "leave blank to keep the existing value".
+    def update_params
+      p = storage_configuration_params
+      p.delete(:access_key_id) if p[:access_key_id].blank?
+      p.delete(:secret_access_key) if p[:secret_access_key].blank?
+      p
     end
   end
 end

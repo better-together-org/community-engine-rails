@@ -52,28 +52,35 @@ module BetterTogether
 
     # Returns the options hash suitable for configuring an Active Storage service
     def to_active_storage_config
-      case service_type
-      when 'local'
-        { service: 'Disk', root: Rails.root.join('storage').to_s }
-      when 'amazon', 's3_compatible'
-        config = {
-          service: 'S3',
-          access_key_id:,
-          secret_access_key:,
-          region: region.presence || 'us-east-1',
-          bucket:
-        }
-        if endpoint.present?
-          config[:endpoint] = endpoint
-          config[:force_path_style] = true
-        end
-        config
-      end
+      local? ? local_storage_config : s3_storage_config
     end
 
-    # Returns a symbol usable as a key in storage.yml / Active Storage registry
+    # Returns a stable string key for the Active Storage service registry.
+    # Keyed on the config record ID so swapping configs never silently redirects
+    # existing blobs to a different backend.
     def storage_key
-      "platform_#{platform_id}"
+      "storage_config_#{id}"
+    end
+
+    private
+
+    def local_storage_config
+      { service: 'Disk', root: Rails.root.join('storage').to_s }
+    end
+
+    def s3_storage_config
+      config = {
+        service: 'S3',
+        access_key_id:,
+        secret_access_key:,
+        region: region.presence || 'us-east-1',
+        bucket:
+      }
+      if endpoint.present?
+        config[:endpoint] = endpoint
+        config[:force_path_style] = true
+      end
+      config
     end
   end
 end

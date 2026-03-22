@@ -8,7 +8,7 @@
       <h1><%= t('.title', default: 'Storage Configurations') %></h1>
       <p class="text-muted mb-0"><%= t('.subtitle', platform_name: @platform.name, default: "Storage backends for #{@platform.name}") %></p>
     </div>
-    <% if policy(StorageConfiguration).create? %>
+    <% if policy(::BetterTogether::StorageConfiguration).create? %>
       <%= link_to new_platform_storage_configuration_path(@platform), class: 'btn btn-primary' do %>
         <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn', default: 'Add Storage') %>
       <% end %>
@@ -91,7 +91,7 @@
                                   activate_platform_storage_configuration_path(@platform, config),
                                   method: :put,
                                   class: 'btn btn-outline-success btn-sm',
-                                  data: { confirm: t('.activate_confirm', default: 'Set this as the active storage configuration?') } %>
+                                  data: { turbo_confirm: t('.activate_confirm', default: 'Set this as the active storage configuration?') } %>
                   <% end %>
                   <%= link_to t('.edit_btn', default: 'Edit'),
                               edit_platform_storage_configuration_path(@platform, config),
@@ -101,7 +101,7 @@
                                   platform_storage_configuration_path(@platform, config),
                                   method: :delete,
                                   class: 'btn btn-outline-danger btn-sm',
-                                  data: { confirm: t('.delete_confirm', default: 'Delete this storage configuration?') } %>
+                                  data: { turbo_confirm: t('.delete_confirm', default: 'Delete this storage configuration?') } %>
                   <% end %>
                 </div>
               </td>

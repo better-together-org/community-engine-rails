@@ -10,13 +10,11 @@ module BetterTogether
   #
   # Usage:
   #   resolver = BetterTogether::StorageResolver.new(platform)
-  #   resolver.service_name    # => :local | :amazon | :platform_<uuid>
+  #   resolver.service_name    # => :local | :amazon | :storage_config_<uuid>
   #   resolver.active_config   # => StorageConfiguration or nil
   #   resolver.env_based?      # => true if falling back to env vars
   #   resolver.to_active_storage_config  # => hash suitable for ActiveStorage registration
   class StorageResolver
-    ENV_SERVICE = ENV.fetch('ACTIVE_STORAGE_SERVICE', 'local').freeze
-
     SUPPORTED_ENV_SERVICES = %w[local amazon s3_compatible].freeze
 
     def initialize(platform = nil)
@@ -39,7 +37,7 @@ module BetterTogether
     def service_name
       return active_config.storage_key.to_sym if active_config.present?
 
-      ENV_SERVICE.to_sym
+      env_service_name.to_sym
     end
 
     # Returns a configuration hash compatible with ActiveStorage::Service.build.
@@ -64,50 +62,67 @@ module BetterTogether
 
     # Summarises the effective configuration (without secrets) for display in admin UI.
     def summary
-      if active_config.present?
-        {
-          source: :platform_config,
-          config_id: active_config.id,
-          name: active_config.name,
-          service_type: active_config.service_type,
-          endpoint: active_config.endpoint,
-          bucket: active_config.bucket,
-          region: active_config.region
-        }
-      else
-        {
-          source: :env,
-          service_type: ENV_SERVICE,
-          endpoint: ENV.fetch('S3_ENDPOINT', nil),
-          bucket: ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil)),
-          region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1'))
-        }
-      end
+      active_config.present? ? platform_config_summary : env_summary
     end
 
     private
 
-    def env_storage_config
-      case ENV_SERVICE
-      when 'local'
-        { service: 'Disk', root: Rails.root.join('storage').to_s }
-      when 'amazon', 's3_compatible'
-        config = {
-          service: 'S3',
-          access_key_id: ENV.fetch('AWS_ACCESS_KEY_ID', nil),
-          secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY', nil),
-          region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1')),
-          bucket: ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil))
-        }
-        endpoint = ENV.fetch('S3_ENDPOINT', nil)
-        if endpoint.present?
-          config[:endpoint] = endpoint
-          config[:force_path_style] = true
-        end
-        config
-      else
-        { service: 'Disk', root: Rails.root.join('storage').to_s }
+    def env_service_name
+      value = ENV.fetch('ACTIVE_STORAGE_SERVICE', 'local')
+      unless SUPPORTED_ENV_SERVICES.include?(value)
+        Rails.logger.warn(
+          "[BetterTogether::StorageResolver] Unknown ACTIVE_STORAGE_SERVICE='#{value}'; " \
+          "falling back to 'local'. Supported: #{SUPPORTED_ENV_SERVICES.join(', ')}"
+        )
+        return 'local'
       end
+      value
+    end
+
+    def platform_config_summary
+      {
+        source: :platform_config,
+        config_id: active_config.id,
+        name: active_config.name,
+        service_type: active_config.service_type,
+        endpoint: active_config.endpoint,
+        bucket: active_config.bucket,
+        region: active_config.region
+      }
+    end
+
+    def env_summary
+      {
+        source: :env,
+        service_type: env_service_name,
+        endpoint: ENV.fetch('S3_ENDPOINT', nil),
+        bucket: ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil)),
+        region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1'))
+      }
+    end
+
+    def env_storage_config
+      env_service_name == 'local' ? local_disk_config : s3_env_config
+    end
+
+    def local_disk_config
+      { service: 'Disk', root: Rails.root.join('storage').to_s }
+    end
+
+    def s3_env_config
+      config = {
+        service: 'S3',
+        access_key_id: ENV.fetch('AWS_ACCESS_KEY_ID', nil),
+        secret_access_key: ENV.fetch('AWS_SECRET_ACCESS_KEY', nil),
+        region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1')),
+        bucket: ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil))
+      }
+      endpoint = ENV.fetch('S3_ENDPOINT', nil)
+      if endpoint.present?
+        config[:endpoint] = endpoint
+        config[:force_path_style] = true
+      end
+      config
     end
   end
 end

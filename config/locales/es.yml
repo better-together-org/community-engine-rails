@@ -366,6 +366,14 @@ es:
         text_translations: Traducciones de texto
         time_zone: Huso horario
         url: URL
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
       better_together/platform_invitation:
         accepted_at: Aceptado en
         community_role: :activerecord.models.community_role
@@ -2539,6 +2547,63 @@ es:
         card: Tarjetas
         list: Lista
         table: Tabla
+    storage:
+      service_types:
+        amazon: Amazon S3
+        local: Local disk
+        s3_compatible: S3-compatible (Garage / self-hosted)
+    storage_configurations:
+      access_key_hint: Leave blank to keep the existing value when editing.
+      access_key_placeholder: AKIAIOSFODNN7EXAMPLE
+      activated: "'%{name}' is now the active storage configuration."
+      cancel: Cancel
+      cannot_destroy_active: Cannot delete the currently active storage configuration. Activate another first.
+      created: Storage configuration was successfully created.
+      destroyed: Storage configuration was successfully deleted.
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: 'e.g., Primary S3, Local Dev, Garage bts-5'
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
+      index:
+        activate_btn: Set active
+        activate_confirm: Set this as the active storage configuration?
+        active_badge: Active
+        active_config_label: 'Active Configuration:'
+        back_to_platform: Back to Platform
+        bucket_label: Bucket
+        delete_btn: Delete
+        delete_confirm: Delete this storage configuration?
+        edit_btn: Edit
+        effective_storage_heading: Currently Effective Storage
+        endpoint_label: Endpoint
+        env_badge: ENV
+        env_config_label: 'Source:'
+        env_fallback: Environment variables (no platform override set)
+        header_actions: Actions
+        header_bucket: Bucket / Root
+        header_endpoint: Endpoint
+        header_name: Name
+        header_status: Status
+        header_type: Type
+        in_use: In use
+        new_btn: Add Storage
+        no_configs: No storage configurations defined. Environment variables are used by default.
+        not_active: Not active
+        platform_override_badge: Platform Override
+        service_type_label: Service type
+        subtitle: "Storage backends for %{platform_name}"
+        table_aria: Storage configurations
+        title: Storage Configurations
+      new:
+        subtitle: "Add a storage backend for %{platform_name}"
+        title: New Storage Configuration
+      edit:
+        subtitle: "Storage backend for %{platform_name}"
+        title: "Edit %{name}"
     webhook_endpoints:
       actions_aria: Acciones del webhook
       active_help: Habilitar o deshabilitar la entrega de webhooks para este punto

@@ -38,7 +38,7 @@ module BetterTogether
       end
 
       context 'when the record is privacy_public?' do
-        let(:record) { instance_double('BetterTogether::Upload', privacy_public?: true) }
+        let(:record) { instance_double(BetterTogether::Upload, privacy_public?: true) }
 
         it 'returns true' do
           expect(controller.send(:publicly_accessible?, record)).to be true
@@ -46,7 +46,7 @@ module BetterTogether
       end
 
       context 'when the record is not privacy_public?' do
-        let(:record) { instance_double('BetterTogether::Upload', privacy_public?: false) }
+        let(:record) { instance_double(BetterTogether::Upload, privacy_public?: false) }
 
         it 'returns false' do
           expect(controller.send(:publicly_accessible?, record)).to be false
@@ -56,12 +56,12 @@ module BetterTogether
 
     describe '#enforce_download_policy!' do
       let(:user) { build_stubbed(:better_together_person) }
-      let(:record) { instance_double('BetterTogether::Upload') }
+      let(:record) { instance_double(BetterTogether::Upload) }
 
       before { controller.current_user = user }
 
       context 'when the policy has no download? method' do
-        let(:policy) { instance_double('BetterTogether::ApplicationPolicy') }
+        let(:policy) { instance_double(BetterTogether::ApplicationPolicy) }
 
         before do
           allow(Pundit).to receive(:policy).with(user, record).and_return(policy)
@@ -75,7 +75,7 @@ module BetterTogether
       end
 
       context 'when download? returns true' do
-        let(:policy) { instance_double('BetterTogether::UploadPolicy', download?: true) }
+        let(:policy) { instance_double(BetterTogether::UploadPolicy, download?: true) }
 
         before do
           allow(Pundit).to receive(:policy).with(user, record).and_return(policy)
@@ -89,7 +89,7 @@ module BetterTogether
       end
 
       context 'when download? returns false' do
-        let(:policy) { instance_double('BetterTogether::UploadPolicy', download?: false) }
+        let(:policy) { instance_double(BetterTogether::UploadPolicy, download?: false) }
 
         before do
           allow(Pundit).to receive(:policy).with(user, record).and_return(policy)
