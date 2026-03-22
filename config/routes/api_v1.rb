@@ -24,6 +24,23 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Conversations
   jsonapi_resources :conversations, only: %i[index show create update]
 
+  # E2E encryption: prekey management + encrypted key backup
+  resources :people, only: [] do
+    member do
+      get  :prekey_bundle,    to: 'prekeys#prekey_bundle'
+      put  :register_prekeys, to: 'prekeys#register_prekeys'
+      get  :key_backup,       to: 'prekeys#key_backup'
+      put  :key_backup,       to: 'prekeys#save_key_backup'
+    end
+  end
+
+  # E2E encryption: conversation-scoped participant prekey bundles
+  resources :conversations, only: [] do
+    member do
+      get :participant_prekey_bundles, to: 'conversations#participant_prekey_bundles'
+    end
+  end
+
   # Messages (create-only for sending, index/show for reading)
   jsonapi_resources :messages, only: %i[index show create]
 

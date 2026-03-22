@@ -11,6 +11,9 @@ module BetterTogether
         # Standard attributes
         attribute :content_plain_text
 
+        # E2E encryption metadata (server stores ciphertext; cannot decrypt)
+        attributes :e2e_encrypted, :e2e_version, :e2e_protocol
+
         # Relationships
         has_one :sender, class_name: 'Person'
         has_one :conversation

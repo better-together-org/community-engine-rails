@@ -32,6 +32,7 @@ Rails.application.configure do
   config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
   config.content_security_policy_nonce_directives = %w[script-src]
 
-  # Report-Only mode initially — switch to enforcing once validated in staging
-  config.content_security_policy_report_only = true
+  # Enforcing mode — blocks policy violations (required for V7 XSS defence).
+  # Previously report-only; switched to enforcing before staging merge.
+  config.content_security_policy_report_only = false
 end

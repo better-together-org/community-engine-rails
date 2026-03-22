@@ -14,9 +14,21 @@
 					<%= l(message.created_at, format: :short) %>
 				</small>
 			</div>
-			<div class="message-bubble p-3 rounded" data-controller="better-together--message_visibility"
-				data-message-id="<%= message.id %>" data-read-status="<%= read_status %>">
-				<%= message.content %>
-			</div>
+			<% if message.e2e? %>
+				<div class="message-bubble p-3 rounded e2e-message"
+					data-controller="better-together--e2e-message-decrypt"
+					data-better-together--e2e-message-decrypt-ciphertext-payload-value="<%= html_escape(message.content.to_plain_text) %>"
+					data-better-together--e2e-message-decrypt-sender-person-id-value="<%= message.sender_id %>"
+					data-better-together--e2e-message-decrypt-conversation-id-value="<%= message.conversation_id %>"
+					data-better-together--e2e-message-decrypt-decrypting-text-value="<%= t('better_together.e2e.message.decrypting') %>"
+					data-better-together--e2e-message-decrypt-error-text-value="<%= t('better_together.e2e.message.decrypt_error') %>">
+					<%= t('better_together.e2e.message.decrypting') %>
+				</div>
+			<% else %>
+				<div class="message-bubble p-3 rounded" data-controller="better-together--message_visibility"
+					data-message-id="<%= message.id %>" data-read-status="<%= read_status %>">
+					<%= message.content %>
+				</div>
+			<% end %>
 		</div>
 	</div>

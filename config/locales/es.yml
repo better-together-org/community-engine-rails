@@ -1066,6 +1066,29 @@ es:
         denied: Denegado
         granted: Concedido
         unknown: Desconocido
+    e2e:
+      form:
+        status_active: "E2E activo 🔒"
+        status_error: E2E no disponible
+        status_waiting: Esperando las claves del participante…
+      message:
+        decrypt_error: "[No se pudo descifrar el mensaje]"
+        decrypting: "🔒 Descifrando…"
+      modal:
+        cancel: Cancelar
+        ok: Aceptar
+        passphrase_label: Frase de contraseña
+        title: Mensajería segura
+      session:
+        confirm_fresh_identity_message: Error al restaurar. ¿Generar una nueva identidad?
+          Los mensajes cifrados anteriores seguirán siendo inaccesibles.
+        passphrase_backup_message: Establece una frase de contraseña de respaldo (mín.
+          12 caracteres). Deja en blanco para omitir.
+        passphrase_restore_message: Se encontró una copia de seguridad de claves cifradas.
+          Introduce tu frase de contraseña para restaurar, o déjala en blanco para
+          generar una nueva identidad.
+        server_error_message: No se pudo conectar con el servidor de respaldo de claves.
+          Por favor, recarga la página e inténtalo de nuevo.
     email_addresses:
       add: Agregar Dirección de Correo Electrónico
       email: Correo Electrónico

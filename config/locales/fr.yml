@@ -1071,6 +1071,29 @@ fr:
         denied: Refusé
         granted: Accordé
         unknown: Inconnu
+    e2e:
+      form:
+        status_active: "E2E actif 🔒"
+        status_error: E2E indisponible
+        status_waiting: En attente des clés du participant…
+      message:
+        decrypt_error: "[Impossible de déchiffrer le message]"
+        decrypting: "🔒 Déchiffrement…"
+      modal:
+        cancel: Annuler
+        ok: OK
+        passphrase_label: Phrase de passe
+        title: Messagerie sécurisée
+      session:
+        confirm_fresh_identity_message: Échec de la restauration. Générer une nouvelle
+          identité ? Les anciens messages chiffrés resteront inaccessibles.
+        passphrase_backup_message: Définissez une phrase de passe de sauvegarde (min.
+          12 caractères). Laissez vide pour ignorer.
+        passphrase_restore_message: Sauvegarde de clés chiffrées trouvée. Entrez votre
+          phrase de passe pour restaurer, ou laissez vide pour générer une nouvelle
+          identité.
+        server_error_message: Impossible de joindre le serveur de sauvegarde de clés.
+          Veuillez recharger la page et réessayer.
     email_addresses:
       add: Ajouter une adresse e-mail
       email: E-mail
