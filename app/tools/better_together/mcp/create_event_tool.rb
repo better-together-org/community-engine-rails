@@ -46,7 +46,7 @@ module BetterTogether
         JSON.generate({ error: 'Authentication required' })
       end
 
-      def build_event(params) # rubocop:disable Metrics/MethodLength
+      def build_event(params)
         BetterTogether::Event.new(
           name: params[:name],
           description: params[:description],

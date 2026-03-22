@@ -1,17 +1,24 @@
 name: "Ruby on Rails CI"
 
 on:
+  workflow_dispatch:
   push:
+    # Only run on long-lived integration branches. Feature/fix/chore branches
+    # are covered by pull_request events, so listing them here would fire CI
+    # twice for every push to an open PR.
     branches:
       - main
       - dev
       - compat/rails-7.2
       - compat/rails-8.0
       - compat/rails-8.1
-      - feat/**
-      - fix/**
-      - chore/**
   pull_request:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
 
 jobs:
   prepare:
@@ -138,7 +145,8 @@ jobs:
           GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec prspec spec
+          mkdir -p tmp
+          bundle exec prspec spec --format json --out tmp/rspec_results.json
 
       - name: Upload coverage report
         if: always()
@@ -147,6 +155,22 @@ jobs:
           name: coverage-report-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             coverage/
+
+      - name: Upload RSpec JSON results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rspec-results-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          path: tmp/rspec_results*.json
+          if-no-files-found: warn
+
+      - name: Upload Rails test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rails-test-log-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          path: spec/dummy/log/test.log
+          if-no-files-found: warn
 
       - name: Generate coverage badge
         if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}

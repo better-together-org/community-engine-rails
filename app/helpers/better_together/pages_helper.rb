@@ -18,6 +18,7 @@ module BetterTogether
     def base_cache_elements(pages)
       [
         'pages-index',
+        host_platform&.id,
         pages.maximum(:updated_at),
         pages.current_page,
         pages.total_pages,

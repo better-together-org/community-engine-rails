@@ -9,13 +9,18 @@ module BetterTogether
       def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         person = helpers.current_person
 
-        # Personalized sections
-        # rubocop:todo Layout/LineLength
-        @my_offers = person ? BetterTogether::Joatu::Offer.where(creator_id: person.id).order(updated_at: :desc).limit(10) : BetterTogether::Joatu::Offer.none
-        # rubocop:enable Layout/LineLength
-        # rubocop:todo Layout/LineLength
-        @my_requests = person ? BetterTogether::Joatu::Request.where(creator_id: person.id).order(updated_at: :desc).limit(10) : BetterTogether::Joatu::Request.none
-        # rubocop:enable Layout/LineLength
+        # Personalized sections — use policy_scope so visibility rules are enforced.
+        # RequestPolicy::Scope excludes MembershipRequests; they are surfaced separately.
+        scoped_requests = policy_scope(BetterTogether::Joatu::Request)
+        scoped_offers   = policy_scope(BetterTogether::Joatu::Offer)
+
+        @my_offers    = scoped_offers.where(creator_id: person&.id).order(updated_at: :desc).limit(10)
+        @my_requests  = scoped_requests.where(creator_id: person&.id).order(updated_at: :desc).limit(10)
+
+        # Membership requests visible to this user (own submissions + manager view)
+        @membership_requests = policy_scope(BetterTogether::Joatu::MembershipRequest)
+                               .order(created_at: :desc)
+                               .limit(10)
 
         # Agreements where current person is creator of either side
         if person
@@ -29,13 +34,9 @@ module BetterTogether
           @my_agreements = BetterTogether::Joatu::Agreement.none
         end
 
-        # Recent activity from others
-        @recent_offers = BetterTogether::Joatu::Offer.order(created_at: :desc)
-                                                     .where.not(creator_id: person&.id)
-                                                     .limit(10)
-        @recent_requests = BetterTogether::Joatu::Request.order(created_at: :desc)
-                                                         .where.not(creator_id: person&.id)
-                                                         .limit(10)
+        # Recent activity from others (scoped — no unfiltered raw queries)
+        @recent_offers   = scoped_offers.where.not(creator_id: person&.id).order(created_at: :desc).limit(10)
+        @recent_requests = scoped_requests.where.not(creator_id: person&.id).order(created_at: :desc).limit(10)
 
         # Lightweight suggestions (limit queries)
         @suggested_request_matches = []

@@ -8,22 +8,28 @@ module BetterTogether
     end
 
     def show?
-      record.privacy_public? || permitted_to?('manage_platform')
+      record.privacy_public? || platform_cfi_manager?
     end
 
     def create?
-      permitted_to?('manage_platform')
+      platform_cfi_manager?
     end
 
     def update?
-      permitted_to?('manage_platform')
+      platform_cfi_manager?
     end
 
     def destroy?
-      permitted_to?('manage_platform')
+      platform_cfi_manager?
     end
 
     class Scope < ApplicationPolicy::Scope
+    end
+
+    private
+
+    def platform_cfi_manager?
+      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
     end
   end
 end

@@ -31,7 +31,7 @@
 # @example Multiple checks
 #   expect_mail_html_contents(mail, event.name, person.name, location.name)
 #
-module MailerHtmlHelpers
+module MailerHtmlHelpers # :nodoc:
   # Parse mailer HTML body and cache for reuse
   #
   # @param mail [Mail::Message] The mail object

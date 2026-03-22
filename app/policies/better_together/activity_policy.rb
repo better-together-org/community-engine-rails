@@ -23,8 +23,8 @@ module BetterTogether
         query = table[:privacy].eq('public')
         results = results.where(query)
 
-        # Platform managers see all public activities regardless of trackable state
-        return results if permitted_to?('manage_platform')
+        # Platform stewards see all public activities regardless of trackable state
+        return results if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
 
         # Filter by trackable visibility at instance level using each trackable's visibility API
         # Note: To prevent memory issues with large datasets, callers should paginate or limit results

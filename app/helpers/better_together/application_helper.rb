@@ -9,12 +9,12 @@ module BetterTogether
 
     # Returns the base URL configured for BetterTogether.
     def base_url
-      ::BetterTogether.base_url
+      current_platform_base_url
     end
 
     # Returns the base URL configured for BetterTogether.
     def base_url_with_locale
-      ::BetterTogether.base_url_with_locale
+      build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
     # Returns the base path configured for BetterTogether.
@@ -56,7 +56,7 @@ module BetterTogether
     end
 
     def default_url_options
-      super.merge(locale: I18n.locale)
+      super.merge(resolved_url_options).merge(locale: I18n.locale)
     end
 
     def permitted_to?(permission_identifier)
@@ -84,15 +84,19 @@ module BetterTogether
     # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
     # check_platform_privacy, SEO helpers, and layout partials on every request).
     def host_platform
-      @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine',
-                                                        url: base_url, privacy: 'private')
+      @host_platform ||= Current.platform || ::BetterTogether::Platform.find_by(host: true) ||
+                         ::BetterTogether::Platform.new(
+                           name: 'Better Together Community Engine',
+                           url: ::BetterTogether.base_url,
+                           privacy: 'private'
+                         )
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      # rubocop:todo Layout/LineLength
-      @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
+      @host_community ||= host_platform.community ||
+                          # rubocop:todo Layout/LineLength
+                          ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
                           # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
@@ -163,7 +167,7 @@ module BetterTogether
                          t('og.default_description', platform_name: host_platform.name)
                        end
 
-      og_url = content_for?(:og_url) ? content_for(:og_url) : request.original_url
+      og_url = content_for?(:og_url) ? canonicalize_url(content_for(:og_url)) : canonical_current_url
 
       og_image = content_for?(:og_image) ? content_for(:og_image) : host_community_logo_url
 
@@ -186,15 +190,10 @@ module BetterTogether
     # the host and locale are ensured by prefixing with `base_url_with_locale`.
     def canonical_link_tag
       canonical_url = if content_for?(:canonical_url)
-                        content_for(:canonical_url)
+                        explicit_or_canonical_url(content_for(:canonical_url))
                       else
-                        request.original_url
+                        canonical_current_url
                       end
-
-      unless canonical_url.starts_with?('http://', 'https://')
-        path = canonical_url.sub(%r{^/#{I18n.locale}}, '')
-        canonical_url = "#{base_url_with_locale}#{path}"
-      end
 
       tag.link(rel: 'canonical', href: canonical_url)
     end
@@ -222,9 +221,9 @@ module BetterTogether
     def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
         if args.any? && args.first.is_a?(Hash)
-          args = [args.first.merge(ApplicationController.default_url_options)]
+          args = [args.first.merge(default_url_options)]
         else
-          args << ApplicationController.default_url_options
+          args << default_url_options
         end
         BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
       elsif main_app_url_helper?(method)
@@ -255,6 +254,48 @@ module BetterTogether
       else
         false
       end
+    end
+
+    def current_platform_domain
+      Current.platform_domain ||
+        Current.platform&.primary_platform_domain ||
+        ::BetterTogether::Platform.find_by(host: true)&.primary_platform_domain
+    end
+
+    def canonical_current_url
+      canonicalize_url(request.original_url)
+    end
+
+    def canonicalize_url(url)
+      return url if url.blank?
+
+      uri = URI.parse(url.to_s)
+      path = extract_canonical_path(uri, url)
+      build_url_for_path(base_url, path) + uri_query_string(uri) + uri_fragment_string(uri)
+    rescue URI::InvalidURIError
+      build_url_for_path(base_url_with_locale, normalize_relative_path(url.to_s))
+    end
+
+    def uri_query_string(uri)
+      uri.query.present? ? "?#{uri.query}" : ''
+    end
+
+    def uri_fragment_string(uri)
+      uri.fragment.present? ? "##{uri.fragment}" : ''
+    end
+
+    def extract_canonical_path(uri, _original_url)
+      if uri.host.present?
+        uri.path.presence || '/'
+      else
+        normalize_relative_path(uri.path.presence || '/')
+      end
+    end
+
+    def explicit_or_canonical_url(url)
+      return url if url.to_s.start_with?('http://', 'https://')
+
+      canonicalize_url(url)
     end
 
     # Most commonly used timezones across different continents and regions
@@ -457,6 +498,33 @@ module BetterTogether
     end
 
     private
+
+    def current_platform_base_url
+      Current.platform&.resolved_host_url ||
+        current_platform_domain&.url ||
+        ::BetterTogether::Platform.find_by(host: true)&.resolved_host_url ||
+        ::BetterTogether.base_url
+    end
+
+    def build_url_for_path(root_url, path)
+      root = root_url.to_s.chomp('/')
+      normalized_path = normalize_relative_path(path)
+      "#{root}#{normalized_path}"
+    end
+
+    def normalize_relative_path(path)
+      normalized = path.to_s
+      normalized = "/#{normalized}" unless normalized.start_with?('/')
+      normalized
+    end
+
+    def resolved_url_options
+      uri = URI.parse(base_url)
+      options = { host: uri.host }
+      options[:protocol] = uri.scheme if uri.scheme.present?
+      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
+      options
+    end
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def main_app_url_helper?(method)

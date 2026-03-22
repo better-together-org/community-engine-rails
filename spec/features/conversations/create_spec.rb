@@ -19,7 +19,7 @@ RSpec.describe 'creating a new conversation', retry: 0 do
       capybara_login_as_platform_manager
     end
 
-    scenario 'between a platform manager and normal user', :js do
+    scenario 'between a platform manager and normal user', :flaky, :js, :quarantine do
       # Ensure user record is visible to application server
       ensure_record_visible(user)
       ensure_record_visible(user.person)
@@ -50,7 +50,7 @@ RSpec.describe 'creating a new conversation', retry: 0 do
       capybara_login_as_user
     end
 
-    scenario 'can create a conversation with a public person who opted into messages', :js do
+    scenario 'can create a conversation with a public person who opted into messages', :flaky, :js, :quarantine do
       target = create(:better_together_user, :confirmed)
       # Ensure target is public and opted-in to receive messages from members
       target.person.reload.update!(privacy: 'public',

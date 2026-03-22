@@ -3,66 +3,52 @@
 module BetterTogether
   # Handles dispatching search queries to elasticsearch and displaying the results
   class SearchController < ApplicationController
-    def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      searchable_models = BetterTogether::Searchable.included_in_models
+    def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       @query = params[:q]
-      search_results = []
-      suggestions = []
+      search_results = perform_search
 
-      if @query.present?
-        begin
-          response = Elasticsearch::Model.search(build_search_query(@query), searchable_models)
-
-          search_results = response.records.to_a
-
-          suggest_source = response.response.dig('suggest', 'suggestions') || []
-          suggestions = suggest_source.flat_map { |s| s.fetch('options', []).map { |o| o['text'] } }
-        rescue StandardError => e
-          Rails.logger.warn("Search error: #{e.class}: #{e.message}")
-          # Fall back to empty results so the page still renders
-          search_results = []
-          suggestions = []
-        end
-
-        # Track search query even if Elasticsearch fails
-        BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
-          @query,
-          search_results.length,
-          I18n.locale.to_s
-        )
-      end
-
-      # Use Kaminari for pagination
-      @results = Kaminari.paginate_array(search_results).page(params[:page]).per(10)
-      @suggestions = suggestions
+      track_search_query(search_results) if @query.present?
+      assign_search_results(search_results)
     end
 
     private
 
-    def build_search_query(query) # rubocop:todo Metrics/MethodLength
-      {
-        query: {
-          bool: {
-            must: [
-              {
-                multi_match: {
-                  query: query,
-                  type: 'best_fields'
-                }
-              }
-            ]
-          }
-        },
-        suggest: {
-          text: query,
-          suggestions: {
-            term: {
-              field: 'name',
-              suggest_mode: 'always'
-            }
-          }
-        }
-      }
+    def perform_search
+      return idle_search_result unless @query.present?
+
+      search_results = BetterTogether::Search.backend.search(@query)
+      log_search_error(search_results)
+      search_results
+    end
+
+    def idle_search_result
+      BetterTogether::Search::SearchResult.new(
+        records: [],
+        suggestions: [],
+        status: :idle,
+        backend: BetterTogether::Search.backend.backend_key
+      )
+    end
+
+    def track_search_query(search_results)
+      BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
+        @query,
+        search_results.records.length,
+        I18n.locale.to_s
+      )
+    end
+
+    def assign_search_results(search_results)
+      @results = Kaminari.paginate_array(search_results.records).page(params[:page]).per(10)
+      @suggestions = search_results.suggestions
+      @search_backend = search_results.backend
+      @search_status = search_results.status
+    end
+
+    def log_search_error(search_results)
+      return unless search_results.status == :unreachable
+
+      Rails.logger.warn("Search error: #{search_results.error}")
     end
   end
 end

@@ -145,6 +145,11 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         throttle_names = Rack::Attack.throttles.keys
         expect(throttle_names).to include('oauth/token/ip')
       end
+
+      it 'has per-client_id throttle rule for federation OAuth token endpoint' do
+        throttle_names = Rack::Attack.throttles.keys
+        expect(throttle_names).to include('oauth/token/client_id')
+      end
     end
 
     describe '2.2 — Token introspection restricted' do
@@ -412,8 +417,8 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = double(
-          'BetterTogether::OauthAccessToken',
+        doorkeeper_token = instance_double(
+          BetterTogether::OauthAccessToken,
           accessible?: true,
           acceptable?: true,
           resource_owner_id: user.id
@@ -444,8 +449,8 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = double(
-          'BetterTogether::OauthAccessToken',
+        doorkeeper_token = instance_double(
+          BetterTogether::OauthAccessToken,
           accessible?: true,
           acceptable?: false,
           resource_owner_id: user.id

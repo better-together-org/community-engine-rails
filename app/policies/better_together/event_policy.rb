@@ -9,7 +9,7 @@ module BetterTogether
 
     def show?
       (record.privacy_public? && record.starts_at.present?) ||
-        creator_or_manager ||
+        creator_or_platform_steward ||
         event_host_member? ||
         invitation? ||
         valid_invitation_token?
@@ -24,20 +24,20 @@ module BetterTogether
     end
 
     def update?
-      creator_or_manager || event_host_member?
+      creator_or_platform_steward || event_host_member?
     end
 
     def create?
-      permitted_to?('manage_platform') || event_host_member?
+      platform_event_manager? || event_host_member?
     end
 
     def available_hosts?
       # Users who can create or edit events can view available hosts
-      user.present? && (permitted_to?('manage_platform') || agent.valid_event_host_ids.any?)
+      user.present? && (platform_event_manager? || agent.valid_event_host_ids.any?)
     end
 
     def destroy?
-      creator_or_manager || event_host_member?
+      creator_or_platform_steward || event_host_member?
     end
 
     # RSVP policy methods
@@ -85,7 +85,7 @@ module BetterTogether
         # Only list events that are public and where the current person is a member or a creator
         query = events_table[:privacy].eq('public')
 
-        if permitted_to?('manage_platform')
+        if platform_event_manager?
           query = query.or(events_table[:privacy].eq('private'))
         elsif agent
           query = query.or(
@@ -137,8 +137,8 @@ module BetterTogether
       # rubocop:enable Metrics/MethodLength
     end
 
-    def creator_or_manager
-      user.present? && (record.creator == agent || permitted_to?('manage_platform'))
+    def creator_or_platform_steward
+      user.present? && (record.creator == agent || platform_event_manager?)
     end
 
     def invitation?
@@ -161,6 +161,19 @@ module BetterTogether
       )
 
       invitation.present? && invitation.status_pending?
+    end
+
+    def platform_event_manager?
+      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+    end
+
+    # Pundit scope for event record visibility.
+    class Scope < ApplicationPolicy::Scope
+      private
+
+      def platform_event_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
     end
   end
 end

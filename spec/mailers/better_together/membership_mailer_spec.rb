@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe MembershipMailer do
     let(:role) { create(:better_together_role, :community_role, name: 'Community Coordinator') }
     let(:permissions) do
@@ -71,6 +71,40 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect_mail_html_contents(mail, old_role.name, new_role.name)
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.updated.previous_permissions_heading'))
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.updated.new_permissions_heading'))
+      end
+
+      context 'when recipient data uses string keys' do
+        let(:recipient_data) do
+          {
+            'email' => updated_membership.member.email,
+            'locale' => I18n.default_locale,
+            'time_zone' => Time.zone
+          }
+        end
+
+        it 'renders successfully' do
+          expect(mail.subject).to eq(I18n.t('better_together.membership_mailer.updated.subject',
+                                            joinable_name: updated_membership.joinable.name,
+                                            joinable_type: updated_membership.joinable.model_name.human))
+          expect(mail.to).to eq([updated_membership.member.email])
+        end
+      end
+
+      context 'when recipient locale is nil' do
+        let(:recipient_data) do
+          {
+            email: updated_membership.member.email,
+            locale: nil,
+            time_zone: Time.zone
+          }
+        end
+
+        it 'renders successfully without passing a nil locale into routes' do
+          expect(mail.subject).to eq(I18n.t('better_together.membership_mailer.updated.subject',
+                                            joinable_name: updated_membership.joinable.name,
+                                            joinable_type: updated_membership.joinable.model_name.human))
+          expect(mail.to).to eq([updated_membership.member.email])
+        end
       end
     end
 

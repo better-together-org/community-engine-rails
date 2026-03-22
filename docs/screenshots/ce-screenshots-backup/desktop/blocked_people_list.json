@@ -1,0 +1,11 @@
+{
+  "name": "blocked_people_list",
+  "device": "desktop",
+  "url": "http://127.0.0.1:38459/en/blocks",
+  "title": "Blocked People | Schinner, Langworth and Hintz",
+  "captured_at": "2026-03-09T03:53:36Z",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "safety",
+  "source_spec": "./spec/docs_screenshots/better_together/safety_docs_spec.rb"
+}
