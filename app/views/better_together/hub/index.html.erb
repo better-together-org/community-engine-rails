@@ -21,11 +21,11 @@
 
     <!-- Recent offers/requests -->
     <div class="col-md-6">
-      <% cache([I18n.locale, 'hub/recent_offers', BetterTogether::Joatu::Offer.maximum(:updated_at)]) do %>
+      <% cache([I18n.locale, host_platform&.id, 'hub/recent_offers', BetterTogether::Joatu::Offer.maximum(:updated_at)]) do %>
         <%= render 'better_together/hub/recent_offers_card', offers: @recent_offers %>
       <% end %>
 
-      <% cache([I18n.locale, 'hub/recent_requests', BetterTogether::Joatu::Request.maximum(:updated_at)]) do %>
+      <% cache([I18n.locale, host_platform&.id, 'hub/recent_requests', BetterTogether::Joatu::Request.maximum(:updated_at)]) do %>
         <%= render 'better_together/hub/recent_requests_card', requests: @recent_requests %>
       <% end %>
     </div>

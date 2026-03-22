@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe RecurringSchedulable do
     include ActiveSupport::Testing::TimeHelpers
 
@@ -129,7 +129,8 @@ module BetterTogether
 
         new_event = Event.create!(event_params.merge(
                                     starts_at: 1.week.from_now,
-                                    identifier: SecureRandom.uuid
+                                    identifier: SecureRandom.uuid,
+                                    platform: event.platform
                                   ))
 
         expect(new_event.recurrence).to be_present

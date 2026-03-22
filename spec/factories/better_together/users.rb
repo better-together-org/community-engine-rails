@@ -24,24 +24,69 @@ FactoryBot.define do
       password { Devise.friendly_token[0, 20] }
     end
 
-    trait :platform_manager do
+    trait :platform_steward do
       after(:create) do |user|
-        # Ensure there's a host platform with a valid community for the manager
         host_platform = BetterTogether::Platform.find_by(host: true) ||
                         create(:better_together_platform, :host, community: user.person.community)
 
-        # Find the platform_manager role from RBAC data seeded in before(:suite)
-        # Note: AccessControlBuilder.seed_data is already called once per test suite
-        # in spec/rails_helper.rb:166, so we don't need to call it here
-        platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
 
-        # Assign platform manager role to the user
-        if platform_manager_role
-          host_platform.person_platform_memberships.create!(
-            member: user.person,
-            role: platform_manager_role
-          )
+        unless platform_steward_role
+          BetterTogether::AccessControlBuilder.seed_data
+          platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                                  BetterTogether::Role.find_by(identifier: 'platform_manager')
         end
+
+        next unless platform_steward_role
+
+        host_platform.person_platform_memberships.find_or_create_by!(
+          member: user.person,
+          role: platform_steward_role
+        )
+      end
+    end
+
+    trait :platform_manager do
+      # Transitional alias: legacy specs should resolve to the canonical
+      # platform-steward role when it exists.
+      after(:create) do |user|
+        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+        host_platform = BetterTogether::Platform.find_by(host: true) ||
+                        create(:better_together_platform, :host, community: user.person.community)
+
+        unless platform_steward_role
+          BetterTogether::AccessControlBuilder.seed_data
+          platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+        end
+
+        role = platform_steward_role || BetterTogether::Role.find_by(identifier: 'platform_manager')
+        next unless role
+
+        host_platform.person_platform_memberships.find_or_create_by!(
+          member: user.person,
+          role: role
+        )
+      end
+    end
+
+    trait :network_admin do
+      after(:create) do |user|
+        host_platform = BetterTogether::Platform.find_by(host: true) ||
+                        create(:better_together_platform, :host, community: user.person.community)
+
+        network_admin_role = BetterTogether::Role.find_by(identifier: 'network_admin')
+
+        unless network_admin_role
+          BetterTogether::AccessControlBuilder.seed_data
+          network_admin_role = BetterTogether::Role.find_by(identifier: 'network_admin')
+        end
+
+        next unless network_admin_role
+
+        host_platform.person_platform_memberships.find_or_create_by!(
+          member: user.person,
+          role: network_admin_role
+        )
       end
     end
 

@@ -5,7 +5,7 @@ require 'rails_helper'
 # Explicitly load the concern since it may not be autoloaded in test environment
 require Rails.root.join('..', '..', 'app', 'models', 'concerns', 'better_together', 'timezone_attribute_aliasing')
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe TimezoneAttributeAliasing do
     # Create a test model with 'timezone' attribute
     let(:timezone_model_class) do

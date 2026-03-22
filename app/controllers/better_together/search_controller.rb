@@ -3,7 +3,7 @@
 module BetterTogether
   # Handles dispatching search queries to elasticsearch and displaying the results
   class SearchController < ApplicationController
-    def search
+    def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       @query = params[:q]
       search_results = perform_search
 

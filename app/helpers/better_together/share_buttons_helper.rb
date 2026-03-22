@@ -6,7 +6,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
-      url = request.original_url
+      url = share_button_url
       title = if shareable.respond_to? :title
                 shareable&.title
               elsif shareable.respond_to? :name
@@ -40,7 +40,7 @@ module BetterTogether
                       title:,
                       image:,
                       share_tracking_url:,
-                      shareable_type:,
+                      shareable_type: shareable_type.to_s,
                       shareable_id:
                     },
                     # rubocop:todo Layout/LineLength
@@ -58,6 +58,14 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     private
+
+    def share_button_url
+      if respond_to?(:canonical_current_url, true)
+        send(:canonical_current_url)
+      else
+        request.original_url
+      end
+    end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def share_button_content(platform) # rubocop:todo Metrics/MethodLength

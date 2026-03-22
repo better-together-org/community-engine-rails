@@ -2,19 +2,20 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_manager do
+RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_steward do
   subject(:policy) { described_class.new(user, invitation) }
 
   let(:community) { create(:better_together_community) }
-  let(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#') }
+  let(:user) { find_or_create_test_user('steward@example.test', 'SecureTest123!@#', :platform_steward) }
   let(:invitation) { create(:better_together_invitation, invitable: community) }
 
   before do
     # Grant the user community management permissions via PersonCommunityMembership
-    # Only apply to the default manager user, not test users without permissions
-    next unless user.respond_to?(:person) && user.email&.include?('manager@example.test')
+    # Only apply to the default steward user, not test users without permissions
+    next unless user.respond_to?(:person) && user.email&.include?('steward@example.test')
 
-    coordinator_role = BetterTogether::Role.find_by(identifier: 'community_coordinator')
+    coordinator_role = BetterTogether::Role.find_by(identifier: 'community_organizer') ||
+                       BetterTogether::Role.find_by(identifier: 'community_coordinator')
     BetterTogether::PersonCommunityMembership.create!(
       joinable: community,
       member: user.person,

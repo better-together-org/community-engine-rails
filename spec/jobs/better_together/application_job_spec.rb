@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# Test job class for ApplicationJob specs.
 class MyJob < BetterTogether::ApplicationJob
   queue_as :urgent
 

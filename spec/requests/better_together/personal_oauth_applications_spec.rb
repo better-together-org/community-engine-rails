@@ -154,21 +154,18 @@ RSpec.describe 'Personal OAuth Applications (/settings/applications)' do
       end
 
       it 'cannot show another user\'s app (RecordNotFound from scoped collection)' do
-        expect do
-          get better_together.personal_oauth_application_path(locale:, id: other_app.id)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        get better_together.personal_oauth_application_path(locale:, id: other_app.id)
+        expect(response).to have_http_status(:not_found)
       end
 
       it 'cannot edit another user\'s app' do
-        expect do
-          get better_together.edit_personal_oauth_application_path(locale:, id: other_app.id)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        get better_together.edit_personal_oauth_application_path(locale:, id: other_app.id)
+        expect(response).to have_http_status(:not_found)
       end
 
       it 'cannot delete another user\'s app' do
-        expect do
-          delete better_together.personal_oauth_application_path(locale:, id: other_app.id)
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        delete better_together.personal_oauth_application_path(locale:, id: other_app.id)
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

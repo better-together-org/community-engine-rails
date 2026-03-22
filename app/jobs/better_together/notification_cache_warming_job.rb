@@ -5,15 +5,30 @@ module BetterTogether
   class NotificationCacheWarmingJob < ApplicationJob
     queue_as :low_priority
 
-    def perform(notification_ids)
+    # @param notification_ids [Array<String>] IDs of notifications to warm
+    # @param platform_id [String, nil] platform context for cache key resolution
+    def perform(notification_ids, platform_id: nil)
       notifications = Noticed::Notification.where(id: notification_ids).includes(event: :record)
 
-      notifications.find_each do |notification|
-        warm_notification_fragments(notification) if should_warm_cache?(notification)
+      with_platform_context(platform_id) do
+        notifications.find_each do |notification|
+          warm_notification_fragments(notification) if should_warm_cache?(notification)
+        end
       end
     end
 
     private
+
+    # Set Current.platform for the duration of the block so that cache keys
+    # generated during render match the keys used by the live request stack.
+    def with_platform_context(platform_id)
+      if platform_id.present?
+        ::Current.platform = BetterTogether::Platform.find_by(id: platform_id)
+      end
+      yield
+    ensure
+      ::Current.reset
+    end
 
     def warm_notification_fragments(notification)
       # Generate cache keys without actually rendering to check existence

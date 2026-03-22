@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe NavigationBuilder, type: :builder do
     before do
       # Clean up existing navigation data before each test

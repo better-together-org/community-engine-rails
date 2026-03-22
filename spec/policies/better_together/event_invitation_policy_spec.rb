@@ -2,18 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::EventInvitationPolicy, :as_platform_manager do
+RSpec.describe BetterTogether::EventInvitationPolicy, :as_platform_steward do
   subject(:policy) { described_class.new(user, invitation) }
 
   let(:community) { create(:better_together_community) }
   let(:event) { create(:better_together_event) }
-  let(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:user) { find_or_create_test_user('steward@example.test', 'SecureTest123!@#', :platform_steward) }
   let(:invitation) { create(:better_together_invitation, invitable: event) }
 
   before do
     # Make the user an organizer of the event by adding them as an event host
-    # Only apply to the default manager user, not test users without permissions
-    next unless user.present? && user.respond_to?(:email) && user.email&.include?('manager@example.test')
+    # Only apply to the default steward user, not test users without permissions
+    next unless user.present? && user.respond_to?(:email) && user.email&.include?('steward@example.test')
 
     BetterTogether::EventHost.create!(
       event: event,

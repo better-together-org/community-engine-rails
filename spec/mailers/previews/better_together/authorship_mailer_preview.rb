@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterTogether
+module BetterTogether # :nodoc:
   # Preview at /rails/mailers/better_together/authorship_mailer
   class AuthorshipMailerPreview < ActionMailer::Preview
     include FactoryBot::Syntax::Methods

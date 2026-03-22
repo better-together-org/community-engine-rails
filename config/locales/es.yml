@@ -546,6 +546,21 @@ es:
           attributes:
             event_hosts:
               too_short: Los eventos deben tener al menos un anfitrión
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: los acuerdos de conexión
+                requieren plataformas de origen y destino
+            target:
+              must_be_platform: debe ser una plataforma
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: los acuerdos de enlace de personas requieren
+                una persona de origen, una persona de destino y una conexión de plataforma
+                activa
+            target:
+              must_be_person: debe ser una persona
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -553,12 +568,23 @@ es:
                 pública
             visibility_strategy:
               inclusion: debe ser autenticado o permiso
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: debe coincidir con la persona beneficiaria de la
+                concesión de acceso
         better_together/person_platform_integration:
           attributes:
             provider:
               inclusion: "%{value} no es un proveedor OAuth compatible"
             uid:
               taken: ya ha sido vinculado a otra cuenta
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: debe ser verdadero para un dominio primario
+            primary:
+              already_taken_for_platform: ya ha sido utilizado para esta plataforma
     models:
       action_text/encrypted_rich_text: Texto Enriquecido Cifrado
       action_text/rich_text: Texto Enriquecido
@@ -607,10 +633,15 @@ es:
       better_together/oauth_application: Aplicación OAuth
       better_together/page: Página
       better_together/person: Persona
+      better_together/person_access_grant: Permiso de acceso personal
       better_together/person_community_membership: Pertenencia a la comunidad
+      better_together/person_link: Enlace de persona
+      better_together/person_linked_seed: Semilla vinculada
       better_together/person_platform_integration: Integración OAuth
       better_together/person_platform_membership: Membresía de plataforma
       better_together/platform: Plataforma
+      better_together/platform_connection: Conexión de plataforma
+      better_together/platform_domain: Dominio de plataforma
       better_together/platform_invitation: Invitación a plataforma
       better_together/post: Publicación
       better_together/resource_permission: Permiso de recursos
@@ -1054,6 +1085,57 @@ es:
         school: Escuela
         work: Trabajo
       title: Direcciones de Correo Electrónico
+    enums:
+      person_access_grant:
+        status:
+          active: Activo
+          expired: Expirado
+          pending: Pendiente
+          revoked: Revocado
+      person_link:
+        status:
+          active: Activo
+          pending: Pendiente
+          revoked: Revocado
+      person_linked_seed:
+        seed_type:
+          event: Evento
+          page: Página
+          post: Publicación
+      platform_connection:
+        connection_kind:
+          member: Miembro
+          peer: Par
+        content_sharing_policy:
+          mirror_network_feed: Espejo del feed de red
+          mirrored_publish_back: Espejo y publicar de vuelta
+          none: Ninguno
+          selective: Selectivo
+        federation_auth_policy:
+          api_read: Solo lectura API
+          api_write: Lectura y escritura API
+          login_only: Solo inicio de sesión
+          none: Ninguno
+        federation_scope_types:
+          content_read: Lectura de contenido
+          content_write: Escritura de contenido
+          identity: Identidad
+          linked_content_read: Lectura de contenido vinculado
+          profile_read: Lectura de perfil
+        shared_content_types:
+          events: Eventos
+          pages: Páginas
+          posts: Publicaciones
+        status:
+          active: Activo
+          blocked: Bloqueado
+          pending: Pendiente
+          suspended: Suspendido
+        sync_status:
+          failed: Fallido
+          idle: Inactivo
+          running: En ejecución
+          succeeded: Completado
     event_invitations:
       index:
         invite_member: Invite member
@@ -1426,6 +1508,10 @@ es:
         request_creator: Creador de la solicitud
         show:
           details: Detalles
+          open_platform_connections: Abrir conexiones de plataforma
+          platform_connection: Conexión de plataforma
+          source_platform: Plataforma de origen
+          target_platform: Plataforma de destino
           title: Acuerdo
         status: Estado
       by: por
@@ -1491,6 +1577,7 @@ es:
         response_to_your_offer_heading: Respuesta a tu oferta
         save_offer: Guardar oferta
         source_request_heading: En respuesta a la solicitud
+        target_platform: Plataforma destino
         view_agreement: Ver acuerdo
         view_offer: Ver oferta
         your_response_heading: Tu respuesta
@@ -1500,11 +1587,14 @@ es:
         edit_request: Editar solicitud
         empty: No se encontraron solicitudes
         index_header: Solicitudes
+        manage_connections: Gestionar conexiones
+        new_connection_request: Nueva solicitud de conexión
         new_request: Nueva solicitud
         respond_with_offer: Responder con oferta
         response_to_your_request_heading: Respuesta a tu solicitud
         save_request: Guardar solicitud
         source_offer_heading: En respuesta a la oferta
+        target_platform: Plataforma de destino
         view_agreement: Ver acuerdo
         view_request: Ver solicitud
         your_response_heading: Tu respuesta
@@ -1544,6 +1634,8 @@ es:
           Saludos cordiales,<br />
           El equipo de %{platform}
         subject: Se ha creado un nuevo acuerdo
+      new_match:
+        subject: Nueva coincidencia de Joatu
     labelable:
       custom-label-placeholder: Tu etiqueta personalizada
     loading: Cargando...
@@ -1669,7 +1761,7 @@ es:
           platform: Plataforma
           search_queries: Búsquedas
           shares: Compartidos
-          source: Source
+          source: Origen
           term: Término
           total_users: Total Users
           url: URL
@@ -1800,7 +1892,7 @@ es:
         new_report: New Report
         no_reports: No reports have been generated yet.
         title: User Account Reports
-        view: View
+        view: Ver
       new:
         file_format: File Format
         file_format_help: Select the format for the exported report file.
@@ -2073,6 +2165,37 @@ es:
         device-permissions: Permisos del dispositivo
         images: Imágenes
         preferences: Preferences
+    person_access_grants:
+      errors:
+        duplicate_grant: ya tiene un permiso para este vínculo y destinatario
+      index:
+        description: Gestiona los permisos de acceso privado que has compartido con
+          otros.
+        empty: Aún no has compartido ningún permiso de acceso.
+        shared_with_you: Compartido contigo
+        title: Permisos de acceso
+        you_are_sharing: Estás compartiendo
+      show:
+        accepted: Aceptado
+        allowed: Permitido
+        back: Volver a permisos de acceso
+        denied: Denegado
+        expires: Vence
+        grantor: Otorgante
+        manage_grant_heading: Gestionar permiso
+        no_expiry: Sin vencimiento
+        pending: Pendiente
+        recipient: Destinatario
+        revoke: Revocar acceso
+        revoke_confirm: "¿Revocar este permiso de acceso?"
+        scope_labels:
+          private_events: Eventos privados
+          private_messages: Mensajes privados
+          private_pages: Páginas privadas
+          private_posts: Publicaciones privadas
+          profile_read: Leer perfil
+        scopes_heading: Ámbitos
+        title: Permiso de acceso
     person_block:
       cannot_block_manager: no puede ser un administrador de la plataforma
       cannot_block_self: no puedes bloquearte a ti mismo
@@ -2111,6 +2234,36 @@ es:
         platform_manager_error: Los administradores de plataforma no pueden ser bloqueados.
         self_block_error: No puedes bloquearte a ti mismo.
         unblocked: La persona fue desbloqueada correctamente.
+    person_linked_seeds:
+      index:
+        description: Contenido privado compartido contigo a través de permisos de
+          acceso de federación.
+        empty: Aún no se han compartido semillas vinculadas contigo.
+        title: Semillas vinculadas
+      show:
+        back: Volver a semillas vinculadas
+        empty: No hay contenido disponible para esta semilla vinculada.
+        title: Semilla vinculada
+    person_links:
+      errors:
+        duplicate_link: ya tiene un vínculo para esta conexión de plataforma y persona
+          de destino
+      index:
+        description: Gestiona tus vínculos de personas entre plataformas y conexiones
+          de federación.
+        empty: Aún no tienes vínculos de personas.
+        title: Vínculos de personas
+      show:
+        access_grants_heading: Permisos de acceso
+        back: Volver a vínculos de personas
+        pending: Pendiente
+        platform_connection: Conexión de plataforma
+        revoke: Revocar vínculo
+        revoke_confirm: "¿Revocar este vínculo de persona y sus permisos de acceso?"
+        source_person: Persona de origen
+        target_person: Persona de destino
+        title: Vínculo de persona
+        verified: Verificado
     person_platform_integration_mailer:
       integration_created:
         body_html: Una nueva integración de cuenta %{provider} fue conectada a tu
@@ -2170,6 +2323,109 @@ es:
         work: Trabajo
       number: Número
       title: Números de Teléfono
+    platform_connections:
+      actions:
+        approve: Aprobar
+        approve_aria: 'Aprobar conexión: %{source} ↔ %{target}'
+        approve_confirm: "¿Aprobar esta conexión?"
+        edit: Editar
+        edit_aria: 'Editar conexión: %{source} ↔ %{target}'
+        suspend: Suspender
+        suspend_aria: 'Suspender conexión: %{source} ↔ %{target}'
+        suspend_confirm: "¿Suspender esta conexión?"
+        view: Ver
+        view_aria: 'Ver conexión: %{source} ↔ %{target}'
+      edit:
+        title: Editar conexión de plataforma
+      flash:
+        approved: Conexión aprobada y activada.
+        cannot_approve: No se puede aprobar una conexión con estado '%{status}'.
+        cannot_suspend: No se puede suspender una conexión con estado '%{status}'.
+        secret_rotated: Secreto OAuth del cliente rotado. Actualiza la configuración
+          de la plataforma remota.
+        suspended: Conexión suspendida.
+      form:
+        back: Volver
+        connection_kind_hint: 'Miembro: esta plataforma aloja miembros de la otra.
+          Par: asociación igualitaria entre plataformas independientes.'
+        content_sharing_policy_hint: Controla cómo se sincroniza el contenido público.
+          "Espejo de red" sincroniza todo el contenido público; "Selectivo" sincroniza
+          solo los tipos compartidos explícitamente.
+        create: Crear conexión
+        federation_auth_policy_hint: api_read permite a la plataforma remota obtener
+          contenido público. api_write también le permite publicar aquí. login_only
+          restringe a solo autenticación de usuarios.
+        federation_scopes_hint: Los ámbitos determinan qué datos puede solicitar la
+          plataforma remota en los tokens OAuth. Solo habilite los ámbitos que coincidan
+          con sus términos de intercambio de datos acordados.
+        federation_scopes_legend: Ámbitos de federación
+        save: Guardar cambios
+        shared_content_types_hint: Seleccione qué tipos de contenido incluir al sincronizar
+          con esta conexión.
+        shared_content_types_legend: Tipos de contenido compartidos
+        source_platform: Plataforma de origen
+        target_platform: Plataforma de destino
+      index:
+        columns:
+          auth_policy: Política de autenticación
+          content_policy: Política de contenido
+          kind: Tipo
+          source: Origen
+          status: Estado
+          target: Destino
+        new_connection: Nueva conexión
+        title: Conexiones de plataforma
+      new:
+        back: Volver
+        register_platform_hint: "¿Necesitas registrar primero una plataforma remota?"
+        register_platform_link: Registrar plataforma externa →
+        title: Nueva conexión de plataforma
+      show:
+        api_read: Lectura API
+        api_write: Escritura API
+        approve: Aprobar
+        approve_confirm: "¿Aprobar esta conexión y activarla?"
+        back: Volver
+        connection_kind: Tipo de conexión
+        content_sharing: Compartición de contenido
+        content_sharing_policy: Política de compartición de contenido
+        disabled: Deshabilitado
+        edit: Editar
+        enabled: Habilitado
+        federation_auth: Autenticación de federación
+        federation_auth_policy: Política de autenticación de federación
+        federation_scopes: Ámbitos de federación
+        last_sync_completed: Última sincronización completada
+        last_sync_error: Último error de sincronización
+        last_sync_item_count: Elementos en la última sincronización
+        last_sync_started: Última sincronización iniciada
+        login: Inicio de sesión
+        mirroring: Espejo
+        never: Nunca
+        none: Ninguno
+        oauth:
+          client_id: ID de cliente
+          client_secret: Secreto de cliente
+          description: Proporciona estas credenciales al operador de %{platform} para
+            que pueda configurar una conexión correspondiente en su plataforma y obtener
+            tokens del endpoint OAuth de esta plataforma.
+          not_set: No configurado
+          remote_token_endpoint: Endpoint de token remoto
+          remote_token_endpoint_hint: Configura esto en la plataforma remota apuntando
+            a su endpoint OAuth.
+          rotate_secret: Rotar secreto
+          rotate_secret_confirm: "¿Rotar el secreto OAuth del cliente? Habrá que reconfigurar
+            la plataforma remota."
+          title: Credenciales OAuth de federación
+          token_endpoint: Endpoint de token (esta plataforma)
+        publish_back: Publicar de vuelta
+        shared_content_types: Tipos de contenido compartidos
+        status: Estado
+        suspend: Suspender
+        suspend_confirm: "¿Suspender esta conexión? La federación y la sincronización
+          se pausarán."
+        sync_cursor: Cursor de sincronización
+        sync_status: Estado de sincronización
     platform_invitation:
       acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
         aceptando esta invitación para unirte a <strong>%{platform}</strong>.
@@ -2210,6 +2466,21 @@ es:
         expired: Vencido
         pending: Pendiente
     platforms:
+      form:
+        host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
+          Se usa para identificarla en la federación y generar las URLs del endpoint
+          OAuth. Debe ser HTTPS en producción.
+      new:
+        back: Atrás
+        host_url_hint: La URL raíz de la instancia de plataforma externa.
+        host_url_label: URL
+        host_url_placeholder: https://example.com
+        identifier_hint: Un identificador único (letras, números, guiones).
+        identifier_placeholder: p. ej. plataforma-par
+        intro: Registre una instancia remota de Community Engine (o compatible) para
+          poder seleccionarla al crear una Conexión de Plataforma.
+        submit: Registrar plataforma externa
+        title: Registrar plataforma externa
       show:
         new_invitation: Nueva invitación
     posts:
@@ -2564,6 +2835,12 @@ es:
         translation_failed: 'La traducción falló: %{message}'
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
+    validators:
+      safe_federation_url:
+        credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
+        insecure_scheme: debe usar http o https
+        invalid_url: no es una URL válida
+        private_ip: no debe apuntar a una dirección IP privada o reservada
     view_switcher:
       button_label: Vista %{view}
       change_view: Cambiar tipo de vista
@@ -3545,6 +3822,8 @@ es:
     navigation_area: Área de navegación
     page: Página
     person: Persona
+    person_access_grant: Concesión de acceso de persona
+    person_link: Enlace de persona
     person_platform_membership: Membresía de plataforma de persona
     platform: Plataforma
     profile: Perfil

@@ -4,9 +4,12 @@ require 'storext'
 
 module BetterTogether
   # Represents the host application and it's peers
-  # rubocop:disable Metrics/ClassLength
-  class Platform < ApplicationRecord
+  class Platform < ApplicationRecord # rubocop:disable Metrics/ClassLength
     include PlatformHost
+    include PlatformRegistryDefaults
+    include PlatformFederationStatus
+    include PlatformCssBlockManagement
+    include PlatformMembershipDisplay
     include Creatable
     include Identifier
     include Joinable
@@ -17,6 +20,11 @@ module BetterTogether
     include Protected
     include TimezoneAttributeAliasing
     include ::Storext.model
+
+    NETWORK_VISIBILITIES = %w[private peer member public].freeze
+    CONNECTION_BOOTSTRAP_STATES = %w[pending_host_request pending_review connected opted_out disabled].freeze
+    FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
+    SOFTWARE_VARIANTS = %w[community_engine generic].freeze
 
     has_community
 
@@ -37,6 +45,11 @@ module BetterTogether
 
     store_attributes :settings do
       requires_invitation Boolean, default: false
+      software_variant String
+      network_visibility String, default: 'private'
+      connection_bootstrap_state String
+      federation_protocol String
+      oauth_issuer_url String
     end
 
     # Alias the database url column to host_url for clarity
@@ -44,6 +57,7 @@ module BetterTogether
 
     validates :host_url, presence: true, uniqueness: true,
                          format: URI::DEFAULT_PARSER.make_regexp(%w[http https])
+    validate :host_url_ssrf_safe
     validates :time_zone,
               presence: true,
               inclusion: {
@@ -51,6 +65,16 @@ module BetterTogether
                 message: '%<value>s is not a valid timezone'
               }
     validates :external, inclusion: { in: [true, false] }
+    validates :software_variant, inclusion: { in: SOFTWARE_VARIANTS }, allow_blank: true
+    validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
+    validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
+    validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
+    validates :oauth_issuer_url,
+              format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+              allow_blank: true
+    validate :oauth_issuer_url_ssrf_safe
+
+    before_validation :apply_platform_registry_defaults
 
     scope :external, -> { where(external: true) }
     scope :internal, -> { where(external: false) }
@@ -63,6 +87,19 @@ module BetterTogether
 
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
+    has_many :platform_domains, class_name: '::BetterTogether::PlatformDomain', dependent: :destroy
+    has_many :outgoing_platform_connections,
+             class_name: '::BetterTogether::PlatformConnection',
+             foreign_key: :source_platform_id,
+             dependent: :destroy,
+             inverse_of: :source_platform
+    has_many :incoming_platform_connections,
+             class_name: '::BetterTogether::PlatformConnection',
+             foreign_key: :target_platform_id,
+             dependent: :destroy,
+             inverse_of: :target_platform
+
+    after_commit :sync_primary_platform_domain!, on: %i[create update]
 
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',
@@ -84,6 +121,16 @@ module BetterTogether
       "#{super}/#{css_block&.updated_at&.to_i}"
     end
 
+    def primary_platform_domain
+      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+
+      platform_domains.primary.active.first
+    end
+
+    def resolved_host_url
+      primary_platform_domain&.url || host_url
+    end
+
     # Return the routing URL for this platform (used by metrics tracking)
     # Returns nil for new records that haven't been persisted yet
     def url
@@ -92,62 +139,28 @@ module BetterTogether
       BetterTogether::Engine.routes.url_helpers.platform_url(self, locale: I18n.locale)
     end
 
-    # rubocop:todo Layout/LineLength
-    # TODO: Updating the css_block contents does not update the platform cache key. Needs platform attribute update before changes take effect.
-    # rubocop:enable Layout/LineLength
-    def css_block
-      @css_block ||= blocks.find_by(type: 'BetterTogether::Content::Css')
-    end
-
-    def css_block?
-      css_block.present?
-    end
-
-    def css_block_attributes=(attrs = {})
-      # Clear memoized css_block to ensure we get the latest state
-      @css_block = nil
-
-      new_attrs = attrs.except(:type).merge(protected: true, privacy: 'public')
-
-      block = blocks.find_by(type: 'BetterTogether::Content::Css')
-      if block
-        # Update the existing block directly and save it
-        block.update!(new_attrs)
-        @css_block = block
-      else
-        # Platform CSS blocks should be protected from deletion
-        new_block = BetterTogether::Content::Css.new(new_attrs)
-        platform_blocks.build(block: new_block)
-        @css_block = new_block
-      end
-    end
-
     def primary_community_extra_attrs
       { host:, protected: }
     end
 
-    # Efficiently load platform memberships with all necessary associations
-    # to prevent N+1 queries in views
-    def memberships_with_associations # rubocop:todo Metrics/MethodLength
-      person_platform_memberships.includes(
-        {
-          member: [
-            :string_translations,
-            :text_translations,
-            { profile_image_attachment: { blob: { variant_records: [], preview_image_attachment: { blob: [] } } } }
-          ]
-        },
-        {
-          role: %i[
-            string_translations
-            text_translations
-          ]
-        }
-      )
-    end
-
     def to_s
       name
+    end
+
+    private
+
+    def host_url_ssrf_safe
+      BetterTogether::SafeFederationUrlValidator
+        .new(attributes: [:host_url])
+        .validate_each(self, :host_url, host_url)
+    end
+
+    def oauth_issuer_url_ssrf_safe
+      return if oauth_issuer_url.blank?
+
+      BetterTogether::SafeFederationUrlValidator
+        .new(attributes: [:oauth_issuer_url])
+        .validate_each(self, :oauth_issuer_url, oauth_issuer_url)
     end
   end
   # rubocop:enable Metrics/ClassLength

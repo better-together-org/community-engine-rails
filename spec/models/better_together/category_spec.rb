@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe Category do
     describe 'factory' do
       it 'creates a valid category' do

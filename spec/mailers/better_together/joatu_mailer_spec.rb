@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe JoatuMailer do
     describe 'new_match' do
       let(:host_platform) { BetterTogether::Platform.find_by(host: true) }

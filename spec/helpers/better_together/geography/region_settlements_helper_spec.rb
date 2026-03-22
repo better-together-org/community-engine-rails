@@ -12,7 +12,7 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe ::BetterTogether::Geography::RegionSettlementsHelper do
     it 'exists' do
       expect(described_class).to be # rubocop:todo RSpec/Be
