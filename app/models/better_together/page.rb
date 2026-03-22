@@ -17,12 +17,15 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
+    include Seedable
     include TrackedActivity
     include ::Storext.model
 
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     before_validation :sync_name_and_title
+    before_validation :assign_current_platform_if_available
     before_validation :assign_host_community
 
     categorizable
@@ -59,9 +62,6 @@ module BetterTogether
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
     belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
 
-    # Inverse of NavigationItem polymorphic association - allows touch: true to work
-    has_many :navigation_items, as: :linkable, class_name: 'BetterTogether::NavigationItem', dependent: :nullify
-
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
     translates :title, type: :string
@@ -78,6 +78,8 @@ module BetterTogether
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
+    validates :platform_id, presence: true
+    validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
     # Automatically grant the page creator an authorship record
     after_create :add_creator_as_author
@@ -108,8 +110,8 @@ module BetterTogether
     def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
       json = as_json(
         only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
-          a.starts_with?('title' || a.starts_with?('slug'))
+        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
+          attribute.start_with?('title', 'slug')
         end],
         include: {
           markdown_blocks: {
@@ -155,6 +157,29 @@ module BetterTogether
       "#{::BetterTogether.base_url_with_locale}/#{slug}"
     end
 
+    def mirrored?
+      source_id.present? || platform&.external?
+    end
+
+    def preserved_remote_uuid?
+      source_id.blank? && platform&.external?
+    end
+
+    def source_identifier
+      source_id.presence || id
+    end
+
+    def local_to_platform?(local_platform = Current.platform)
+      return true if platform_id.blank?
+      return false unless local_platform
+
+      platform_id == local_platform.id
+    end
+
+    def remote_to_platform?(local_platform = Current.platform)
+      mirrored? && !local_to_platform?(local_platform)
+    end
+
     private
 
     def refresh_sitemap
@@ -166,6 +191,16 @@ module BetterTogether
     def sync_name_and_title
       self.name = title if respond_to?(:name) && name.blank? && title.present?
       self.title = name if title.blank? && name.present?
+    end
+
+    def assign_current_platform_if_available
+      return unless has_attribute?(:platform_id)
+      return if platform_id.present?
+
+      resolved = Current.platform ||
+                 BetterTogether::Platform.find_by(host: true) ||
+                 BetterTogether::Platform.first
+      self.platform = resolved if resolved
     end
 
     def assign_host_community

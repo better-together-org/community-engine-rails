@@ -86,6 +86,15 @@ module BetterTogether
         def self.updatable_fields(context)
           creatable_fields(context)
         end
+
+        # Only expose email when the requesting user's person is available in context
+        def fetchable_fields
+          fields = super
+          unless context[:current_person].present?
+            fields -= [:email]
+          end
+          fields
+        end
       end
     end
   end

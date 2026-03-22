@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::ChecklistPolicy, type: :policy do
-  let(:manager_user) { create(:better_together_user, :platform_manager) }
+  let(:steward_user) { create(:better_together_user, :platform_steward) }
   let(:creator_person) { create(:better_together_person) }
   let(:creator_user) { create(:better_together_user, person: creator_person) }
   let(:normal_user) { create(:better_together_user) }
@@ -14,8 +14,8 @@ RSpec.describe BetterTogether::ChecklistPolicy, type: :policy do
     subject { described_class.new(user, BetterTogether::Checklist).create? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let(:user) { manager_user }
+    context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -34,8 +34,8 @@ RSpec.describe BetterTogether::ChecklistPolicy, type: :policy do
     subject { described_class.new(user, checklist).update? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let(:user) { manager_user }
+    context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end
@@ -62,8 +62,8 @@ RSpec.describe BetterTogether::ChecklistPolicy, type: :policy do
     subject { described_class.new(user, checklist).destroy? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let(:user) { manager_user }
+    context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { steward_user }
 
       it { is_expected.to be true }
     end

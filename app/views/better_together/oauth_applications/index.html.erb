@@ -1,0 +1,41 @@
+<% content_for :page_title do %>
+  <%= t('.title', default: 'OAuth Applications') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= t('.title', default: 'OAuth Applications') %></h1>
+    <% if policy(resource_class).create? %>
+      <%= link_to new_oauth_application_path, class: 'btn btn-primary', 'aria-label' => t('.new_btn_aria', default: 'Create new OAuth application') do %>
+        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn_text', default: 'New Application') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if resource_collection.any? %>
+    <div class="table-responsive">
+      <table class="table table-hover" aria-label="<%= t('.table_aria', default: 'OAuth applications list') %>">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('.header_name', default: 'Name') %></th>
+            <th scope="col"><%= t('.header_client_id', default: 'Client ID') %></th>
+            <th scope="col"><%= t('.header_scopes', default: 'Scopes') %></th>
+            <th scope="col"><%= t('.header_confidential', default: 'Type') %></th>
+            <th scope="col"><%= t('.header_created', default: 'Created') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('.header_actions', default: 'Actions') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'better_together/oauth_applications/oauth_application',
+                     collection: resource_collection,
+                     as: :oauth_application %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info" role="status">
+      <i class="fas fa-info-circle" aria-hidden="true"></i>
+      <%= t('.no_applications', default: 'No OAuth applications have been registered yet.') %>
+    </div>
+  <% end %>
+</div>

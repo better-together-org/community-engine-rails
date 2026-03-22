@@ -51,17 +51,17 @@ RSpec.describe BetterTogether::CommunityPolicy do
       end
     end
 
-    context 'when user is a platform manager' do
-      # Platform manager setup will happen automatically with automatic configuration
-      let(:user) { BetterTogether::User.find_by(email: 'manager@example.test') }
+    context 'when user is a platform steward' do
+      let(:user) { BetterTogether::User.find_by(email: 'steward@example.test') }
 
       before do
         # Ensure the test platform manager is set up
         configure_host_platform
 
         platform = BetterTogether::Platform.first
-        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        manager = find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+        role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+               BetterTogether::Role.find_by(identifier: 'platform_manager')
+        manager = find_or_create_test_user('steward@example.test', 'SecureTest123!@#', :platform_steward)
 
         if platform && role && manager.person
           BetterTogether::PersonPlatformMembership.find_or_create_by!(

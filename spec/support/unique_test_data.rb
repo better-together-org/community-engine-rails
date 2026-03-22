@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Provides unique test data generators to prevent conflicts in parallel test execution
-module UniqueTestData
+module UniqueTestData # :nodoc:
   # Generate a unique email address for testing
   # @return [String] unique email in format "test-{uuid}@example.com"
   def unique_email

@@ -10,7 +10,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
 
   let(:author_person) { create(:better_together_person) }
   let(:author_user)   { create(:better_together_user, person: author_person) }
-  let(:manager_user)  { create(:better_together_user, :platform_manager) }
+  let(:steward_user)  { create(:better_together_user, :platform_steward) }
   let(:normal_user)   { create(:better_together_user) }
 
   before do
@@ -41,9 +41,9 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     context 'for private or unpublished pages' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       # rubocop:todo RSpec/MultipleMemoizedHelpers
       # rubocop:todo RSpec/NestedGroups
-      context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
+      context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
         # rubocop:enable RSpec/NestedGroups
-        let(:user) { manager_user }
+        let(:user) { steward_user }
         let(:page) { private_unpublished }
 
         it { is_expected.to be true }
@@ -79,8 +79,8 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     subject { described_class.new(user, page).update? }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let(:user) { manager_user }
+    context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { steward_user }
       let(:page) { public_unpublished }
 
       it { is_expected.to be true }
@@ -110,8 +110,8 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     subject { described_class::Scope.new(user, BetterTogether::Page).resolve }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
-    context 'manager' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-      let(:user) { manager_user }
+    context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { steward_user }
 
       it 'includes all pages' do
         expect(subject).to match_array BetterTogether::Page.all # rubocop:todo RSpec/NamedSubject

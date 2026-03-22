@@ -11,11 +11,14 @@ module BetterTogether
     class ApplicationController < ::JSONAPI::ResourceController
       include Pundit::Authorization
       include Pundit::ResourceController
+      include BetterTogether::Api::OauthAuthorization
 
       protect_from_forgery with: :exception, unless: -> { request.format.json? || request.format == Mime[:jsonapi] }
 
       # Ensure authentication by default (controllers can skip if needed)
-      before_action :authenticate_user!
+      # Support both Devise JWT (scp: api_user) and Doorkeeper OAuth2 tokens.
+      # devise_for :users inside namespace :api creates the :api_user Warden scope.
+      before_action :authenticate_api_user!, unless: :oauth2_authenticated?
 
       # Override JSONAPI's handle_exceptions to convert Pundit errors to 404
       def handle_exceptions(exception)
@@ -36,10 +39,39 @@ module BetterTogether
 
       private
 
+      # Check if the current request is authenticated via OAuth2 token
+      # @return [Boolean]
+      def oauth2_authenticated?
+        doorkeeper_token.present?
+      rescue StandardError
+        false
+      end
+
+      # Override current_user to support both Devise and Doorkeeper authentication.
+      # Devise JWT uses the :api_user scope (from namespace :api + devise_for :users),
+      # so fall back to current_api_user when no Doorkeeper token is present.
+      def current_user # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        if oauth2_authenticated? && doorkeeper_token.resource_owner_id.present?
+          @current_user ||= BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
+        elsif oauth2_authenticated?
+          # client_credentials flow: resolve user from application owner (Person)
+          @current_user ||= doorkeeper_token.application&.owner&.user
+        else
+          current_api_user
+        end
+      end
+
       # Pundit needs this method to get the current user for policy initialization
       # This method is called by Pundit to determine who to pass as the first argument to policies
       def pundit_user
         current_user
+      end
+
+      # Provide current person in JSONAPI context for resources that scope by participant
+      # Resources can access this via options[:context][:current_person]
+      # Merges with Pundit::ResourceController's context (current_user, policy_used)
+      def context
+        super.merge(current_person: current_user&.person)
       end
 
       # Check if this is a Devise controller (auth endpoints)

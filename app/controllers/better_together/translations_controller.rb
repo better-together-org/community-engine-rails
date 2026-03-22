@@ -1,11 +1,52 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class TranslationsController < ApplicationController # rubocop:todo Style/Documentation
-    def translate
+  # Handles AI-powered translation requests via the TranslationBot (OpenAI).
+  #
+  # Security rationale (audit finding H4):
+  #   The translate action forwards user-supplied content directly to the OpenAI API.
+  #   Without input validation an authenticated user could:
+  #     1. Send megabytes of text, causing unbounded API cost and slow responses.
+  #     2. Pass arbitrary strings as locale parameters, which are interpolated into
+  #        the AI prompt — creating a prompt-injection vector.
+  #   The guards below mitigate these risks at the controller level before any
+  #   content reaches the TranslationBot or the external API.
+  class TranslationsController < ApplicationController
+    # Maximum content size allowed for translation (50 KB).
+    # This limits OpenAI token consumption and prevents abuse.
+    MAX_CONTENT_SIZE = 50.kilobytes
+
+    def translate # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       content = params[:content]
       source_locale = params[:source_locale]
       target_locale = params[:target_locale]
+
+      # Guard: reject blank content early to avoid a wasted API call.
+      if content.blank?
+        return render json: { error: t('better_together.translations.errors.content_blank') },
+                      status: :unprocessable_content
+      end
+
+      # Guard: cap payload size to prevent excessive OpenAI token usage / cost.
+      if content.bytesize > MAX_CONTENT_SIZE
+        return render json: {
+          error: t('better_together.translations.errors.content_too_long')
+        }, status: :unprocessable_content
+      end
+
+      # Guard: locale values are interpolated into the AI prompt, so they must
+      # come from the application's configured locale list — not arbitrary user input.
+      available = I18n.available_locales.map(&:to_s)
+      unless available.include?(target_locale.to_s)
+        return render json: { error: t('better_together.translations.errors.invalid_target_locale') },
+                      status: :unprocessable_content
+      end
+
+      unless available.include?(source_locale.to_s)
+        return render json: { error: t('better_together.translations.errors.invalid_source_locale') },
+                      status: :unprocessable_content
+      end
+
       initiator = helpers.current_person
 
       # Initialize the TranslationBot
@@ -18,7 +59,8 @@ module BetterTogether
       # Return the translated content as JSON
       render json: { translation: translated_content }
     rescue StandardError => e
-      render json: { error: "Translation failed: #{e.message}" }, status: :unprocessable_content
+      render json: { error: t('better_together.translations.errors.translation_failed', message: e.message) },
+             status: :unprocessable_content
     end
   end
 end

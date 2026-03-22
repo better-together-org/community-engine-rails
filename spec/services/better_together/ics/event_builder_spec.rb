@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Ics # rubocop:disable Metrics/ModuleLength
+module BetterTogether # :nodoc:
+  module Ics # :nodoc:
     RSpec.describe EventBuilder do
       let(:person) { create(:person) }
       let(:event) do

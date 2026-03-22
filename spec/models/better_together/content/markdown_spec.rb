@@ -322,11 +322,13 @@ RSpec.describe BetterTogether::Content::Markdown do
   end
 
   describe 'integration with Page model' do
+    let(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform) }
     let(:page) do
       BetterTogether::Page.create!(
         title: 'Markdown Test Page',
         slug: 'markdown-test',
         privacy: 'public',
+        platform: platform,
         page_blocks_attributes: [
           {
             block_attributes: {

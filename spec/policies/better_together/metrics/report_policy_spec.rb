@@ -16,7 +16,8 @@ RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
   describe '#index?' do
     context 'when user is analytics viewer' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
@@ -29,9 +30,10 @@ RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
       end
     end
 
-    context 'when user is platform manager' do
+    context 'when user is platform steward' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+        role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+               BetterTogether::Role.find_by(identifier: 'platform_manager')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
@@ -62,7 +64,8 @@ RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
   describe '#show?' do
     context 'when user is analytics viewer' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
@@ -85,7 +88,8 @@ RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
   describe '#create?' do
     context 'when user has create_metrics_reports permission' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
@@ -108,7 +112,8 @@ RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
   describe '#download?' do
     context 'when user has download_metrics_reports permission' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,

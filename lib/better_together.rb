@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'better_together/version'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
+require 'better_together/mcp'
 
 # Convenience setters and getters for the engine
 module BetterTogether
@@ -14,6 +16,18 @@ module BetterTogether
   # Thread-safe flag to skip navigation touch callbacks during bulk operations
   thread_mattr_accessor :skip_navigation_touches
   self.skip_navigation_touches = false
+
+  # Host app extension: proc evaluated inside `namespace :v1 do` in the engine routes.
+  # Usage in host app initializer:
+  #   BetterTogether.api_v1_routes_extension = proc do
+  #     jsonapi_resources :wayfinders
+  #   end
+  mattr_accessor :api_v1_routes_extension
+
+  # Additional OpenAPI/Swagger endpoints to register in the rswag UI.
+  # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
+  mattr_accessor :swagger_additional_endpoints
+  self.swagger_additional_endpoints = []
 
   class << self
     def base_path

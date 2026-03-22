@@ -1,47 +1,56 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Access control for address records.
   class AddressPolicy < ContactDetailPolicy
-    # Inherits from ContactDetailPolicy
+    # Pundit scope for filtering visible Address records.
+    class Scope < ContactDetailPolicy::Scope
+      COMPONENT_CONDITION = <<~SQL
+        COALESCE(line1,'') <> '' OR COALESCE(city_name,'') <> '' OR
+        COALESCE(state_province_name,'') <> '' OR COALESCE(postal_code,'') <> '' OR
+        COALESCE(country_name,'') <> ''
+      SQL
 
-    class Scope < ContactDetailPolicy::Scope # rubocop:todo Style/Documentation
-      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def resolve
         base_scope = scope.includes(:contact_detail)
+        component_scope = base_scope.where(COMPONENT_CONDITION)
 
-        # Build a scope that filters out addresses with no meaningful address components
-        # rubocop:todo Layout/LineLength
-        component_scope = base_scope.where("COALESCE(line1,'') <> '' OR COALESCE(city_name,'') <> '' OR COALESCE(state_province_name,'') <> '' OR COALESCE(postal_code,'') <> '' OR COALESCE(country_name,'') <> ''")
-        # rubocop:enable Layout/LineLength
-
-        # Platform managers can see everything
-        return component_scope if permitted_to?('manage_platform')
-
-        # Unauthenticated users only see public addresses that have components
+        return component_scope if platform_manager?
         return component_scope.where(privacy: 'public') unless agent
 
-        visible_ids = []
+        base_scope.where(id: visible_address_ids(component_scope).uniq)
+      end
 
-        # Public addresses (with components)
-        visible_ids.concat(component_scope.where(privacy: 'public').pluck(:id))
+      private
 
-        # Addresses for the user's person (via contact_detail) that have components
-        if agent
-          person_cd_ids = BetterTogether::ContactDetail.where(contactable: agent).pluck(:id)
-          visible_ids.concat(component_scope.where(contact_detail_id: person_cd_ids).pluck(:id)) if person_cd_ids.any?
+      def platform_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
 
-          # Addresses for communities the user is a member of
-          community_ids = agent.person_community_memberships.pluck(:joinable_id)
-          if community_ids.any?
-            community_cd_ids = BetterTogether::ContactDetail
-                               .where(contactable_type: 'BetterTogether::Community', contactable_id: community_ids)
-                               .pluck(:id)
-            if community_cd_ids.any?
-              visible_ids.concat(component_scope.where(contact_detail_id: community_cd_ids).pluck(:id))
-            end
-          end
-        end
+      def visible_address_ids(component_scope)
+        ids = component_scope.where(privacy: 'public').pluck(:id)
+        ids.concat(person_address_ids(component_scope))
+        ids.concat(community_address_ids(component_scope))
+        ids
+      end
 
-        base_scope.where(id: visible_ids.uniq)
+      def person_address_ids(component_scope)
+        person_cd_ids = BetterTogether::ContactDetail.where(contactable: agent).pluck(:id)
+        return [] if person_cd_ids.empty?
+
+        component_scope.where(contact_detail_id: person_cd_ids).pluck(:id)
+      end
+
+      def community_address_ids(component_scope)
+        community_ids = agent.person_community_memberships.pluck(:joinable_id)
+        return [] if community_ids.empty?
+
+        community_cd_ids = BetterTogether::ContactDetail
+                           .where(contactable_type: 'BetterTogether::Community', contactable_id: community_ids)
+                           .pluck(:id)
+        return [] if community_cd_ids.empty?
+
+        component_scope.where(contact_detail_id: community_cd_ids).pluck(:id)
       end
     end
   end

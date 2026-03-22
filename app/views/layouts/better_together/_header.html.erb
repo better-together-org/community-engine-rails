@@ -6,7 +6,9 @@
     <ul id="primary-nav" class="navbar-nav text-center ms-auto flex-row align-items-center gap-2 gap-md-3">
       <!-- Social Media Accounts (visible on large screens) -->
       <div id="social-media-icons">
-        <%= render_host_community_social_media_accounts %>
+        <% cache nav_fragment_cache_key('header_social_media') do %>
+          <%= render_host_community_social_media_accounts %>
+        <% end %>
       </div>
 
       <%= yield :editor_status if content_for? :editor_status %>
@@ -17,7 +19,7 @@
 
       <% if user_signed_in? %>
         <!-- User Auth Nav Item -->
-        <% cache_key = ['user_nav', current_identity&.cache_key_with_version, platform_host_nav_area&.cache_key_with_version].compact %>
+        <% cache_key = nav_fragment_cache_key('user_nav', nav_areas: [platform_host_nav_area]) %>
         <%= cache cache_key do %>
           <%= render 'layouts/better_together/user_nav' %>
         <% end %>
@@ -37,7 +39,9 @@
   <nav id="header-nav" class="navbar navbar-expand-lg navbar-dark pt-0 bt-underline-nav">
     <div class="collapse justify-content-center navbar-collapse align-content-center" id="headerNav">
       <!-- Right-aligned nav items -->
-      <%= render_platform_header_nav_items %>
+      <%= cache nav_fragment_cache_key('platform_header_nav', nav_areas: [platform_header_nav_area]) do %>
+        <%= render_platform_header_nav_items %>
+      <% end %>
     </div>
   </nav>
 

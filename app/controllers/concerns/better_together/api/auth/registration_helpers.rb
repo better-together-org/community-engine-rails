@@ -10,9 +10,9 @@ module BetterTogether
         protected
 
         def sign_up_params
-          user_params = params[:user] || params.dig(:registration, :user) || {}
-          user_params = user_params.to_unsafe_h if user_params.is_a?(ActionController::Parameters)
-          ActionController::Parameters.new(user_params).permit(
+          user_params = params[:user] || params.dig(:registration, :user) || ActionController::Parameters.new
+          user_params = ActionController::Parameters.new(user_params) unless user_params.is_a?(ActionController::Parameters)
+          user_params.permit(
             :email,
             :password,
             :password_confirmation,
@@ -30,12 +30,13 @@ module BetterTogether
 
         def person_params
           user_params = params[:user] || params.dig(:registration, :user)
-          return {} unless user_params && user_params[:person_attributes]
+          return {} unless user_params
 
-          user_params = user_params.to_unsafe_h if user_params.is_a?(ActionController::Parameters)
-          ActionController::Parameters.new(user_params)
-                                      .require(:person_attributes)
-                                      .permit(%i[identifier name description])
+          user_params = ActionController::Parameters.new(user_params) unless user_params.is_a?(ActionController::Parameters)
+          return {} unless user_params[:person_attributes]
+
+          user_params.require(:person_attributes)
+                     .permit(%i[identifier name description])
         rescue ActionController::ParameterMissing => e
           Rails.logger.error "Missing person parameters: #{e.message}"
           {}

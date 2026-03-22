@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-module BetterTogether
-  module ConversationHelpers
+# Test helper modules for BetterTogether conversation specs.
+module BetterTogether # :nodoc:
+  # Test helpers for conversation-related specs.
+  module ConversationHelpers # :nodoc:
     include Rails.application.routes.url_helpers
     include BetterTogether::Engine.routes.url_helpers
 
@@ -103,6 +105,7 @@ module BetterTogether
 
       # Wait for successful submission - form uses turbo: false, so full page redirect on success
       # Should redirect to the newly created conversation show page
+      # The successful redirect confirms the conversation was created and committed to database
       expect(page).to have_current_path(%r{/[a-z]{2}/conversations/.+}, wait: 10)
 
       # Additional wait to ensure conversation is fully persisted in database

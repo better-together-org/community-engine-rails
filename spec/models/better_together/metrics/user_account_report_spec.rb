@@ -2,9 +2,11 @@
 
 require 'rails_helper'
 
-module BetterTogether
+# :nodoc:
+module BetterTogether # :nodoc:
   # rubocop:disable Metrics/ModuleLength
-  module Metrics
+  # :nodoc:
+  module Metrics # :nodoc:
     RSpec.describe UserAccountReport do
       describe 'associations' do
         it { is_expected.to have_one_attached(:report_file) }

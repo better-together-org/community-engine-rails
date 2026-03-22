@@ -1,0 +1,19 @@
+<%# locals: (alert_block:) -%>
+<%= cache alert_block.cache_key_with_version do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: alert_block } do %>
+    <div class="alert alert-<%= alert_block.alert_level %><%= ' alert-dismissible fade show' if alert_block.dismissible? %>"
+         role="alert"
+         <%= 'data-bs-dismiss-on-read=true' if alert_block.dismissible? %>>
+      <% if alert_block.heading.present? %>
+        <h4 class="alert-heading"><%= alert_block.heading %></h4>
+      <% end %>
+      <% if alert_block.body_text.present? %>
+        <p class="mb-0"><%= alert_block.body_text %></p>
+      <% end %>
+      <% if alert_block.dismissible? %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                aria-label="<%= t('helpers.close', default: 'Close') %>"></button>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

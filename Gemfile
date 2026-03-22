@@ -11,7 +11,7 @@ gem 'asset_sync'
 gem 'aws-sdk-s3', require: false
 
 # bcrypt for secure password handling
-gem 'bcrypt', '~> 3.1.21'
+gem 'bcrypt', '~> 3.1.22'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
@@ -23,7 +23,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 7.2'
 
 # Pundit for authorization, custom fork for Better Together
-gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources'
+gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources', branch: 'fix/rails-8-1-upper-bound-20260320'
 
 # Core Rails gem
 gem 'rack-protection'
@@ -34,10 +34,10 @@ gem 'redis', '~> 5.4'
 
 gem 'rswag'
 
-# Sidekiq for background processing
-gem 'sidekiq', '~> 8.0.10'
+# Sidekiq 8.1 requires Rack >= 3.2, which is incompatible with the 7.2 CI lane.
+gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.0.3').start_with?('7.2.') ? '~> 7.3.9' : '~> 8.1.1'
 # Pin connection_pool to avoid breaking changes in 3.x
-gem 'connection_pool', '~> 2.5.5'
+gem 'connection_pool', '~> 3.0.2'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -48,7 +48,7 @@ gem 'stackprof'
 gem 'sitemap_generator'
 
 # Storext for easier json attributes, custom fork for Better Together
-gem 'storext', github: 'better-together-org/storext'
+gem 'storext', github: 'better-together-org/storext', branch: 'fix/rails-8-1-upper-bound-20260320'
 
 # Uglifier for JavaScript compression
 gem 'uglifier', '>= 1.3.0'

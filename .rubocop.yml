@@ -1,5 +1,8 @@
 inherit_from: .rubocop_todo.yml
 
+require:
+  - ./rubocop/cop/better_together/no_raw_sql_in_queries
+
 AllCops:
   Exclude:
     - 'bin/*'
@@ -7,7 +10,9 @@ AllCops:
     - 'spec/dummy/db/schema.rb'
     - 'db/schema.rb'
     - 'vendor/**/*'
+    - 'tmp/**/*'               # CI compat copies and build artifacts
     - 'spec/integration/**/*'  # rswag specs - never run rubocop on these
+    - 'rubocop/**/*'           # custom cop source — not subject to self-inspection
   NewCops: enable
   TargetRubyVersion: 3.4
 plugins:
@@ -20,6 +25,11 @@ plugins:
 # Disable all RSpec cops that affect test quality but not production code
 RSpec/ExampleLength:
   Enabled: false
+RSpec/NestedGroups:
+  # Spec files historically used `module BetterTogether` wrappers that masked effective
+  # nesting depth. After removing those wrappers, the pre-existing nesting is now visible.
+  # Max of 5 reflects the actual project standard without requiring a wholesale spec restructure.
+  Max: 5
 RSpec/MultipleExpectations:
   Enabled: false
 RSpec/MultipleMemoizedHelpers:
@@ -47,9 +57,53 @@ Style/StringLiterals:
   Exclude:
     - 'db/migrate/*'
 
+Style/Documentation:
+  Exclude:
+    - 'db/migrate/*'
+    - 'spec/**/*'
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*'
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'spec/support/**/*'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'db/migrate/*'
+
 Rails:
   Enabled: false
 Capybara:
   Enabled: false
 FactoryBot:
   Enabled: false
+
+# Enforce I18n usage in user-facing text across Ruby files
+# Pre-existing violations in the files listed below are known tech debt.
+Rails/I18nLocaleTexts:
+  Enabled: true
+  Exclude:
+    - 'app/controllers/better_together/joatu/offers_controller.rb'
+    - 'app/controllers/better_together/joatu/requests_controller.rb'
+    - 'app/controllers/better_together/joatu/response_links_controller.rb'
+    - 'app/controllers/better_together/navigation_items_controller.rb'
+    - 'app/controllers/better_together/omniauth_callbacks_controller.rb'
+    - 'app/controllers/better_together/people_controller.rb'
+    - 'app/controllers/better_together/person_platform_integrations_controller.rb'
+    - 'app/controllers/better_together/users_controller.rb'
+    - 'app/mailers/better_together/joatu_mailer.rb'
+    - 'app/models/better_together/call_for_interest.rb'
+    - 'app/models/better_together/content/image.rb'
+    - 'app/models/better_together/event.rb'
+    - 'app/models/better_together/joatu/agreement.rb'
+    - 'app/models/better_together/navigation_item.rb'
+    - 'app/models/better_together/platform.rb'
+    - 'app/models/better_together/social_media_account.rb'
+    - 'app/models/concerns/better_together/attachments/images.rb'
+    - 'app/models/concerns/better_together/content/block_attributes.rb'
+    - 'app/models/concerns/better_together/content/resource_block_attributes.rb'
+

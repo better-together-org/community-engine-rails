@@ -63,3 +63,5 @@ rspec_output.txt
 rspec_result.json
 *.bak
 spec/dummy/config/credentials/test.yml
+# Prevent accidental commits of test log output files
+*.log

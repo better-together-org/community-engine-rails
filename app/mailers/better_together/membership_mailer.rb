@@ -3,6 +3,8 @@
 module BetterTogether
   # Sends email notifications when a membership is created
   class MembershipMailer < ApplicationMailer # rubocop:todo Metrics/ClassLength
+    RecipientData = Struct.new(:email, :locale, :time_zone)
+
     include BetterTogether::RolesHelper
 
     helper BetterTogether::RolesHelper
@@ -92,8 +94,13 @@ module BetterTogether
     def process_recipient
       return unless @recipient.is_a?(Hash)
 
-      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
-      @recipient = recipient_struct.new(@recipient)
+      recipient_hash = @recipient.transform_keys(&:to_sym)
+      recipient_struct = Struct.new(:email, :locale, :time_zone)
+      @recipient = recipient_struct.new(
+        recipient_hash[:email],
+        recipient_hash[:locale],
+        recipient_hash[:time_zone]
+      )
     end
 
     def invalid_recipient?
@@ -133,13 +140,15 @@ module BetterTogether
     def joinable_url(joinable, locale:)
       return unless joinable&.persisted?
 
+      route_options = { locale: locale.presence || I18n.default_locale }
+
       case joinable
       when BetterTogether::Platform
-        BetterTogether::Engine.routes.url_helpers.platform_url(joinable, locale: locale)
+        BetterTogether::Engine.routes.url_helpers.platform_url(id: joinable, **route_options)
       when BetterTogether::Community
-        BetterTogether::Engine.routes.url_helpers.community_url(joinable, locale: locale)
+        BetterTogether::Engine.routes.url_helpers.community_url(id: joinable, **route_options)
       else
-        BetterTogether::Engine.routes.url_helpers.polymorphic_url(joinable, locale: locale)
+        BetterTogether::Engine.routes.url_helpers.polymorphic_url(joinable, **route_options)
       end
     end
   end

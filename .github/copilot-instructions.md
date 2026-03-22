@@ -38,6 +38,7 @@ This repository uses a comprehensive system of instruction files:
 bin/dc build                    # Build Docker containers
 bin/dc up -d                    # Start services (Postgres, Redis, Elasticsearch)
 bin/dc-run rails db:prepare     # Setup/migrate database
+bin/parallel-setup              # Setup parallel test DBs (REQUIRED for prspec)
 ```
 
 **Testing:**
@@ -83,6 +84,7 @@ bin/dc-run bin/i18n                                         # I18n validation
 - **Always add policy/authorization checks** on links/buttons to controller actions.
 - **i18n & Mobility**: every user-facing string must be translatable; include missing keys.
 - Provide translations for all available locales (e.g., en, es, fr, uk) when adding new strings.
+- **Repository write boundary**: write only inside the active repository; never write project artifacts to `/tmp` (use repository-local `tmp/` paths instead).
 
 ## Technology Stack
 
@@ -322,6 +324,7 @@ All form inputs MUST use one of these accessible label patterns:
 
 ### Docker Environment Usage
 - **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
   - Tests (targeted): `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
@@ -734,6 +737,7 @@ expect_mail_html_contents(mail, event.name, person.name)  # Multiple checks
 # Solution: Ensure Docker services are running
 bin/dc up -d
 bin/dc-run rails db:prepare
+bin/parallel-setup              # If running tests with prspec
 ```
 
 **Problem: `bin/dc-run` command not found**
@@ -752,11 +756,18 @@ bin/dc ps  # Should show elasticsearch running
 
 **Problem: Test database schema out of sync**
 ```bash
-# Solution: Reset test database
+# Solution: Reset test database and parallel test databases
 bin/dc-run rails db:test:prepare
+bin/parallel-setup              # REQUIRED: recreates parallel DBs for prspec
 # Or reset both dev and test:
 bin/dc-run rails db:drop db:create db:migrate
-bin/dc-run rails db:test:prepare
+bin/parallel-setup              # MUST run after any schema change
+```
+
+**Problem: `PG::UndefinedTable` errors when running prspec**
+```bash
+# Solution: Parallel test databases are out of sync with schema
+bin/parallel-setup              # Recreates community_engine_test, test2, test3, test4
 ```
 
 ### Testing Issues
