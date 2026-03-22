@@ -2,7 +2,7 @@ import consumer from "channels/consumer";
 import { createDebug } from "better_together/debugger";
 
 // Create debug instance for this channel
-const debug = createDebug('UserAccountReportsChannel', { debug: true });
+const debug = createDebug('UserAccountReportsChannel');
 
 consumer.subscriptions.create("BetterTogether::Metrics::UserAccountReportsChannel", {
   connected() {

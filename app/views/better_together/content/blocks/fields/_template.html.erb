@@ -2,5 +2,5 @@
 <%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
 <div class="template-fields">
   <%= required_label block, :template_path %>
-  <%= select_tag "#{scope}[template_path]", options_for_select(block.class::available_templates.map { |path| [ I18n.t(path.tr('/', '.')), path] }, block.template_path), { class: 'form-select', data: { controller: 'better_together--slim-select' } } %>
+  <%= select_tag "#{scope}[template_path]", options_for_select(template_options_for(block), block.template_path), { class: 'form-select', data: { controller: 'better_together--slim-select' } } %>
 </div>

@@ -7,10 +7,11 @@ module BetterTogether
     def create?
       return false unless user.present?
 
-      # Check specific permissions for the invitable resource
-      return true if allowed_on_invitable?
+      # Platform managers may create any invitation regardless of invitable type
+      return true if permitted_to?('manage_platform')
 
-      permitted_to?('manage_platform')
+      # Delegate to the concrete invitable-specific check
+      allowed_on_invitable?
     end
 
     def destroy?

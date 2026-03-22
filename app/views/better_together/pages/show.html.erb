@@ -62,6 +62,14 @@
       <% cache ['page-hero', @page.id, @page.hero_block&.updated_at, I18n.locale] do %>
         <%= render @page.hero_block if @page.hero_block %>
       <% end %>
+      <% unless @page.hero_block %>
+        <% if @page.show_title %>
+          <% title_wrapper_classes = @page.layout&.include?('full_width') ? 'my-4' : 'container my-4' %>
+          <div class="<%= title_wrapper_classes %>">
+            <h1 class="page-title"><%= @page.title %></h1>
+          </div>
+        <% end %>
+      <% end %>
       <% if @page.sidebar_nav.present? %>
         <%= render layout: 'better_together/pages/sidebar_layout', locals: { nav: @page.sidebar_nav, current_page: @page } do %>
           <%= yield :page_content %>

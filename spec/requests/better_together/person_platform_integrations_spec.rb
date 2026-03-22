@@ -8,21 +8,25 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
 
   # Create external OAuth platforms for testing
   let!(:github_platform) do
-    create(:better_together_platform,
-           :external,
-           identifier: 'github',
-           name: 'GitHub',
-           url: 'https://github.com',
-           privacy: 'public')
+    BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |platform|
+      platform.external = true
+      platform.host = false
+      platform.name = 'GitHub'
+      platform.url = 'https://github.com'
+      platform.privacy = 'public'
+      platform.time_zone = 'UTC'
+    end
   end
 
   let!(:facebook_platform) do
-    create(:better_together_platform,
-           :external,
-           identifier: 'facebook',
-           name: 'Facebook',
-           url: 'https://facebook.com',
-           privacy: 'public')
+    BetterTogether::Platform.find_or_create_by!(identifier: 'facebook') do |platform|
+      platform.external = true
+      platform.host = false
+      platform.name = 'Facebook'
+      platform.url = 'https://facebook.com'
+      platform.privacy = 'public'
+      platform.time_zone = 'UTC'
+    end
   end
 
   let(:valid_attributes) do

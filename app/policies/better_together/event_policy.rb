@@ -19,12 +19,21 @@ module BetterTogether
       record.starts_at.present? && show?
     end
 
+    def new?
+      create?
+    end
+
     def update?
       creator_or_manager || event_host_member?
     end
 
     def create?
       permitted_to?('manage_platform') || event_host_member?
+    end
+
+    def available_hosts?
+      # Users who can create or edit events can view available hosts
+      user.present? && (permitted_to?('manage_platform') || agent.valid_event_host_ids.any?)
     end
 
     def destroy?

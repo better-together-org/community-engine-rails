@@ -3,9 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
-  let(:alpha) { create(:better_together_page, title: 'Alpha Page', slug: 'alpha-page') }
-  let(:beta) { create(:better_together_page, title: 'Beta Page', slug: 'beta-page') }
-  let(:gamma) { create(:better_together_page, title: 'Gamma Page', slug: 'gamma-page') }
+  # Use identifier prefixes that sort early alphabetically to ensure pages appear on first page
+  let(:alpha) { create(:better_together_page, title: 'Alpha Page', slug: 'aaa-alpha-page', identifier: 'aaa-alpha-page', protected: false) }
+  let(:beta) { create(:better_together_page, title: 'Beta Page', slug: 'aaa-beta-page', identifier: 'aaa-beta-page', protected: false) }
+  let(:gamma) { create(:better_together_page, title: 'Gamma Page', slug: 'aaa-gamma-page', identifier: 'aaa-gamma-page', protected: false) }
 
   before do
     alpha
@@ -76,6 +77,27 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
 
         follow_redirect!
         expect_html_content(I18n.t('flash.generic.created', resource: I18n.t('resources.page')))
+      end
+    end
+
+    context 'with valid parameters and turbo_stream format' do
+      it 'redirects to the edit page' do
+        post better_together.pages_path, params: valid_params, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+        created_page = BetterTogether::Page.last
+        expect(response).to redirect_to(edit_page_path(created_page))
+      end
+
+      it 'sets a flash notice' do
+        post better_together.pages_path, params: valid_params, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+        expect(flash[:notice]).to eq(I18n.t('flash.generic.created', resource: I18n.t('resources.page')))
+      end
+
+      it 'returns see_other status for turbo compatibility' do
+        post better_together.pages_path, params: valid_params, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+        expect(response).to have_http_status(:see_other)
       end
     end
 

@@ -2,6 +2,40 @@
 
 <%= t('better_together.metrics.mailer.link_checker_report.body', date: @report.created_at.strftime('%Y-%m-%d')) %>
 
+<% grouped_links = @report.broken_links_grouped_by_type %>
+<% if grouped_links.any? %>
+
+====================================
+<%= t('better_together.metrics.mailer.link_checker_report.summary_header').upcase %>
+====================================
+
+<%= t('better_together.metrics.mailer.link_checker_report.total_count', count: @report.total_broken_links) %>
+
+<% grouped_links.each do |record_type, links| %>
+
+--- <%= record_type.upcase %> (<%= links.size %> <%= 'link'.pluralize(links.size) %>) ---
+
+<% links.first(5).each_with_index do |link, index| %>
+<%= index + 1 %>. <%= link['record_identifier'] || link[:record_identifier] %>
+   Field: <%= link['field_name'] || link[:field_name] %>
+   Broken URL: <%= link['url'] || link[:url] %>
+   Status: <%= link['status_code'] || link[:status_code] %>
+   <% edit_url = link['edit_url'] || link[:edit_url] %>
+   <% if edit_url.present? %>
+   Edit: <%= edit_url %>
+   <% else %>
+   Edit: <%= t('better_together.metrics.mailer.link_checker_report.actions.manual_edit') %>
+   <% end %>
+
+<% end %>
+<% if links.size > 5 %>
+<%= t('better_together.metrics.mailer.link_checker_report.showing_partial', shown: 5, total: links.size, type: record_type) %>
+<%= t('better_together.metrics.mailer.link_checker_report.see_csv') %>
+
+<% end %>
+<% end %>
+<% end %>
+
 <%= t('better_together.metrics.mailer.link_checker_report.report_file', filename: @report.report_file.filename.to_s) if @report&.report_file&.attached? %>
 
 <%= t('better_together.metrics.mailer.link_checker_report.signature') %>,

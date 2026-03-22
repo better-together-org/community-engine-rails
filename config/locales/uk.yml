@@ -267,6 +267,11 @@ uk:
         recipient: :activerecord.models.recipient
         recipient_type: Тип одержувача
         seen_at: Переглянуто о
+      better_together/oauth_application:
+        confidential: Конфіденційний
+        name: Назва
+        redirect_uri: URI перенаправлення
+        scopes: Області доступу
       better_together/page:
         blocks: Блоки
         identifier: Ідентифікатор
@@ -287,6 +292,7 @@ uk:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Переклади багатого тексту
+        show_title: Показати Заголовок
         slug: Слаг
         slugs: Слаги
         string_translations: Переклади рядків
@@ -430,6 +436,13 @@ uk:
         string_translations: Переклади рядків
         unconfirmed_email: Непідтверджена електронна пошта
         unlock_token: Токен розблокування
+      better_together/webhook_endpoint:
+        active: Активний
+        description: Опис
+        events: Події
+        name: Назва
+        oauth_application: Додаток OAuth
+        url: URL
       better_together/wizard:
         current_completions: Поточні завершення
         first_completed_at: Вперше завершено о
@@ -514,11 +527,17 @@ uk:
         seen_at: Seen at
     errors:
       messages:
+        file_not_found: файл не існує
+        invalid_file_type: має бути файл markdown (.md або .markdown)
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Події повинні мати принаймні одного господаря
         better_together/person_platform_integration:
           attributes:
             provider:
@@ -541,6 +560,8 @@ uk:
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/image: Зображення
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Діаграма Mermaid
       better_together/content/page_block: Блок сторінки
       better_together/content/rich_text: Багатий текст
       better_together/content/template: Файл шаблону
@@ -568,6 +589,7 @@ uk:
       better_together/navigation_item: Елемент навігації
       better_together/new_message_notifier: Сповіщувач Нових Повідомлень
       better_together/new_message_notifier/notification: Сповіщувач Нових Повідомлень/Сповіщення
+      better_together/oauth_application: Додаток OAuth
       better_together/page: Сторінка
       better_together/person: Особа
       better_together/person_community_membership: Членство особи в спільноті
@@ -580,6 +602,7 @@ uk:
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
       better_together/user: Користувач
+      better_together/webhook_endpoint: Кінцева точка вебхука
       better_together/wizard: Майстер
       better_together/wizard_step: Крок майстра
       better_together/wizard_step_definition: Визначення кроку майстра
@@ -822,6 +845,74 @@ uk:
     content:
       blocks:
         associated_pages: Associated Pages
+        markdown:
+          fields:
+            auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
+            file_path: Шлях до Файлу Markdown
+            file_path_placeholder: docs/README.md або /абсолютний/шлях/до/файлу.md
+            markdown_source: Джерело Markdown
+            preview: Попередній Перегляд
+            reference_file: Посилання на Файл Markdown
+            refresh_preview: Оновити Попередній Перегляд
+            write_inline: Писати Markdown Вбудовано
+          help:
+            auto_sync: Коли позначено, контент завжди завантажується з файлу. Коли
+              не позначено, вміст файлу імпортується в базу даних і може редагуватися
+              окремо.
+            available_translations: 'Доступні переклади:'
+            file_path: Шлях до файлу markdown. Може бути відносним до Rails.root (наприклад,
+              docs/README.md) або абсолютним (наприклад, /шлях/до/файлу.md). Файл
+              повинен мати розширення .md або .markdown.
+            inline_content: Пишіть свій markdown контент безпосередньо. Підтримує
+              markdown у стилі GitHub, включаючи таблиці, блоки коду тощо. Контент
+              можна перекладати для кожної мови.
+            localized_files: Система автоматично шукає версії для конкретної мови
+              (наприклад, privacy.en.md, privacy.es.md, privacy.fr.md) і повертається
+              до базового файлу, якщо не знайдено.
+            preview_placeholder: Попередній перегляд з'явиться тут...
+        template:
+          default: Типовий шаблон
+          host_community_contact_details: Контактні дані спільноти-хоста
+      mermaid_diagram:
+        help:
+          auto_height: Якщо увімкнено, висота діаграми автоматично підлаштовується
+            під вміст. Якщо вимкнено, використовується фіксована висота.
+          caption: Необов'язковий підпис, який відображається під діаграмою
+          diagram_file_path: Шлях до файлу .mmd із визначенням діаграми Mermaid. Може
+            бути відносним до Rails.root (наприклад, docs/diagrams/source/example.mmd)
+            або абсолютним.
+          diagram_source: 'Напишіть синтаксис діаграми Mermaid безпосередньо. Підтримує
+            всі типи діаграм Mermaid: блок-схеми, діаграми послідовностей, класи,
+            стани та інші.'
+          theme: 'Візуальна тема діаграми. Варіанти: Default (стандартні кольори),
+            Dark (темний режим), Forest (зелені тони), Neutral (мінімалістична сіра
+            гама).'
+        javascript_required: Для перегляду інтерактивних діаграм потрібен JavaScript.
+          Будь ласка, увімкніть JavaScript або перегляньте версію зі статичним зображенням.
+        no_content: Немає доступного вмісту діаграми
+        no_preview: Додайте джерело діаграми або шлях до файлу, щоб побачити попередній
+          перегляд
+        preview_title: Попередній перегляд діаграми
+        tabs:
+          file: Завантажити з файлу
+          source: Написати діаграму
+        themes:
+          dark: Темна
+          default: Типова
+          forest: Лісова
+          neutral: Нейтральна
+      static_pages:
+        accessibility: Доступність
+        better_together: Що таке Better Together?
+        code_contributor_agreement: Угода про внесок коду
+        code_of_conduct: Кодекс поведінки
+        community_engine: Community Engine
+        content_contributor_agreement: Угода про внесок контенту
+        cookie_consent: Політика cookies
+        faq: Часті запитання
+        privacy: Політика конфіденційності
+        subprocessors: Субпроцесори
+        terms_of_service: Умови використання
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}
@@ -859,6 +950,9 @@ uk:
       errors:
         no_permitted_participants: Ви можете додавати лише менеджерів платформи або
           учасників, які дали згоду на отримання повідомлень.
+        not_found: Розмову, яку ви шукаєте, не знайдено або у вас немає дозволу на
+          перегляд.
+        person_required: Ви повинні мати профіль, щоб створювати розмови.
       form:
         add_participants: Додати учасників
         create_conversation: Створити розмову
@@ -1001,26 +1095,58 @@ uk:
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
+      date_and_time: Дата та Час
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Дозвіл на створення відхилено
-        description: Опис
+        description: Надайте деталі про те, чого учасники можуть очікувати на цій
+          події
         duration_minutes: Скільки часу триватиме подія. Змінюється автоматично при
           зміні часу початку або закінчення.
-        ends_at: Закінчується о
-        location: Місце
-        location_name: Назва місця
-        name: Назва
+        ends_at: Коли подія завершується. Оновлюється автоматично при зміні тривалості.
+        location: Де учасники зустрінуться для цієї події
+        location_name: Назва місця проведення або місця зустрічі
+        name: Чіткий, описовий заголовок для вашої події
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
-        slug: Слаг
-        starts_at: Починається о
+        slug: Дружній до URL ідентифікатор для цієї події
+        starts_at: Коли починається подія. Весь час вказано в часовому поясі, вибраному
+          вище.
+        timezone: Часовий пояс, де відбудеться ця подія
       hosted_by: Організатор
+      hosts:
+        add_host: Додати Господаря
+        can_edit_event: Може редагувати деталі події
+        cancel: Скасувати
+        cancel_add_host: Скасувати додавання господаря
+        cannot_remove_last: Не можна видалити останнього господаря. Будь ласка, спочатку
+          додайте іншого господаря.
+        cannot_remove_last_host: Не можна видалити останнього господаря. Будь ласка,
+          спочатку додайте іншого господаря.
+        description: Господарі події можуть редагувати всі деталі події та керувати
+          іншими господарями. Події повинні мати принаймні одного господаря.
+        error_loading: Помилка завантаження господарів
+        host_label: Господар
+        host_removed: Господаря видалено
+        host_type: Тип Господаря
+        loading: Завантаження...
+        member_count:
+          few: "%{count} учасники"
+          many: "%{count} учасників"
+          one: "%{count} учасник"
+          other: "%{count} учасників"
+        new_host: Новий господар
+        remove_host: Видалити %{host}
+        remove_host_short: Видалити
+        select_host: Виберіть Господаря
+        select_placeholder: Виберіть господаря
+        type_label: Тип
       ics:
+        reminders:
+          1_hour: 'Нагадування: %{event_name} починається через 1 годину'
+          24_hours: 'Нагадування: %{event_name} починається через 24 години'
+          at_start: "%{event_name} починається зараз"
         view_details_url: URL деталей перегляду
-      in: має бути в %{count}
-      inclusion: не включено до списку
-      invalid: недійсний
       labels:
         duration_minutes: Тривалість
         ends_at: Закінчується о
@@ -1031,8 +1157,10 @@ uk:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
         starts_at: Починається о
+        timezone: Часовий Пояс Події
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      location: Місце
       location_types:
         address: Адреса
         building: Будівля
@@ -1059,6 +1187,35 @@ uk:
       prompts:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
+      recurrence:
+        end_types:
+          after_count: Після повторень
+          never: Ніколи
+          on_date: На дату
+        hints:
+          count: Кількість разів, коли ця подія має повторюватися
+          end_type: Як має закінчитися повторення
+          ends_on: Остання дата, коли відбудеться ця подія
+          exception_dates: Дати, коли ця подія НЕ повинна відбуватися (через кому,
+            формат РРРР-ММ-ДД)
+          frequency: Як часто повторюється ця подія
+          interval: Повторювати кожні N періодів (наприклад, кожні 2 тижні)
+          preview_placeholder: Виберіть параметри повторення, щоб побачити майбутні
+            дати
+          weekdays: Дні тижня, коли відбувається ця подія
+        labels:
+          count: Кількість повторень
+          end_type: Закінчується
+          ends_on: Дата закінчення
+          exception_dates: Винятки
+          frequency: Повторюється
+          interval: Повторювати кожні
+          preview: Майбутні повторення
+          weekdays: Повторювати в
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Не повторюється
       register: Зареєструватися
       relationship:
         calendar: Подія календаря
@@ -1077,7 +1234,9 @@ uk:
       save_event: Зберегти подію
       tabs:
         details: Деталі
+        hosts: Господарі
         images: Зображення
+        recurrence: Повторення
         time-and-place: Час і місце
       taken: вже зайнято
       time:
@@ -1425,11 +1584,26 @@ uk:
           title: Фільтр дати та часу
       mailer:
         link_checker_report:
-          body: Додається звіт перевірки посилань за %{date}.
+          actions:
+            edit: Редагувати →
+            manual_edit: Потрібне ручне редагування
+          body: Додається тижневий звіт перевірки посилань за %{date}.
           greeting: Привіт,
           report_file: 'Файл звіту: %{filename}'
+          see_csv: Див. додатковий CSV для повного списку.
+          showing_partial: Показано %{shown} з %{total} записів %{type} зі зламаними
+            посиланнями.
           signature: З повагою
-          subject: 'Звіт перевірки посилань: %{date}'
+          subject: 'Тижневий звіт перевірки посилань: %{count} зламаних посилань -
+            %{date}'
+          summary_header: Зламані посилання за типом запису
+          table_headers:
+            action: Дія
+            broken_url: Зламане посилання
+            field: Поле
+            record: Запис
+            status: Статус
+          total_count: 'Всього зламаних посилань: %{count}'
       reports:
         actions:
           chart_toolbar: Дії графіка
@@ -1712,6 +1886,66 @@ uk:
         message: Нову інтеграцію %{provider} підключено %{created_at}
         title: Підключено нову інтеграцію %{provider}
       time_ago: "%{time} ago"
+    oauth:
+      applications:
+        create:
+          success: Додаток OAuth '%{name}' успішно створено. Тепер ви можете використовувати
+            облікові дані клієнта для автентифікації запитів API.
+        destroy:
+          success: Додаток OAuth '%{name}' видалено. Усі пов'язані токени доступу
+            відкликано.
+        set_application:
+          not_found: Додаток OAuth, який ви шукаєте, не знайдено. Можливо, його видалено
+            або у вас немає дозволу на доступ до нього.
+        update:
+          success: Додаток OAuth '%{name}' успішно оновлено.
+    oauth_applications:
+      actions_aria: Дії додатка
+      back_to_list: Назад до додатків
+      confidential: Конфіденційний
+      confidential_help: Конфіденційні клієнти можуть безпечно зберігати свої облікові
+        дані (серверні додатки). Публічні клієнти не можуть (SPA, мобільні додатки).
+      credentials: Облікові дані
+      default_scopes: Області доступу за замовчуванням
+      delete_aria: Видалити додаток OAuth
+      details: Деталі додатка
+      edit_aria: Редагувати додаток OAuth
+      field_client_id: ID клієнта
+      field_created: Створено
+      field_owner: Власник
+      field_redirect_uri: URI перенаправлення
+      field_scopes: Області доступу
+      field_secret: Секрет клієнта
+      field_trusted: Довірений
+      field_type: Тип
+      index:
+        header_actions: Дії
+        header_client_id: ID клієнта
+        header_confidential: Тип
+        header_created: Створено
+        header_name: Назва
+        header_scopes: Області доступу
+        new_btn_aria: Створити новий додаток OAuth
+        new_btn_text: Новий додаток
+        no_applications: Жодного додатка OAuth ще не зареєстровано.
+        table_aria: Список додатків OAuth
+        title: Додатки OAuth
+      name_help: Описова назва для цього додатка OAuth.
+      name_placeholder: напр., Мій додаток інтеграції
+      no_redirect: Не налаштовано
+      no_scopes: За замовчуванням
+      no_secret_public: Не застосовується (публічний клієнт)
+      public_type: Публічний
+      redirect_help: Один URI перенаправлення на рядок. Для потоків машина-до-машини
+        (client_credentials) використовуйте urn:ietf:wg:oauth:2.0:oob
+      save: Зберегти додаток
+      scopes_help: Виберіть дозволи, які повинен мати цей додаток.
+      secret_aria: Значення секрету клієнта
+      title: Додатки OAuth
+      toggle_secret: Перемкнути видимість секрету
+      trusted_no: Ні
+      trusted_yes: Так
+      view: Переглянути додаток
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"
@@ -1773,45 +2007,205 @@ uk:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    reports:
+      actions:
+        report: Поскаржитися
+      attributes:
+        category: Категорія
+        harm_level: Рівень шкоди
+        requested_outcome: Бажаний результат
+        reason: Короткий опис
+        private_details: Приватні деталі для команди безпеки
+      errors:
+        already_reported_by_you: вже було повідомлено вами
+      index:
+        empty: Ви ще не надсилали жодних звітів про безпеку.
+        new: Новий звіт
+        title: Мої звіти про безпеку
+      new:
+        category_help: Виберіть варіант, який найкраще відповідає шкоді або проблемі, про яку ви повідомляєте.
+        consent_to_contact: Ви можете зв'язатися зі мною щодо цього звіту
+        consent_to_restorative_process: Ви можете розглянути відновні варіанти, якщо це доречно
+        error_summary: Будь ласка, виправте такі проблеми.
+        harm_level_help: Повідомте, наскільки терміновою або серйозною здається ситуація, щоб команда безпеки могла правильно визначити пріоритет.
+        intro: Використовуйте цю форму, щоб попросити про підтримку з безпеки, підтримку меж, відповідальність або терміновий захист.
+        preferences_help: Повідомте, чи можемо ми з вами зв'язатися, чи хочете ви, щоб розглядалися відновні варіанти, і чи є у цьому звіті ризик помсти.
+        preferences_title: Параметри безпеки
+        private_details_help: Додайте будь-який контекст, повторювану поведінку, дати або докази, які мають залишитися в команди безпеки.
+        reason_help: Коротко опишіть, що сталося. Спочатку зосередьтеся на головному.
+        requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
+        retaliation_risk: Я хвилююся щодо помсти або ескалації
+        submit: Надіслати звіт
+        title: Повідомити про проблему безпеки
+        urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця форма призначена для подальшого супроводу спільнотою та платформою, а не для екстреного реагування.
+        urgent_title: "Якщо ви перебуваєте в безпосередній небезпеці:"
+      notices:
+        created: Звіт успішно надіслано.
+      show:
+        back: Назад до звітів
+        pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з вами залежно від ваших параметрів згоди.
+        status: Поточний статус
+        summary: Підсумок справи
+        title: Звіт про безпеку
+    safety:
+      action_statuses:
+        active: Активна
+        cancelled: Скасована
+        completed: Завершена
+      action_types:
+        contact_restriction: Обмеження контакту
+        content_hidden: Контент приховано
+        content_removed: Контент видалено
+        event_restriction: Обмеження подій
+        messaging_restriction: Обмеження повідомлень
+        restorative_referral: Направлення до відновного процесу
+        temporary_suspension: Тимчасове призупинення
+        watch_flag: Позначка спостереження
+      agreement_statuses:
+        active: Активна
+        breached: Порушена
+        completed: Завершена
+        proposed: Запропонована
+        withdrawn: Відкликана
+      case_lanes:
+        administrative: Адміністративна
+        immediate_safety: Негайна безпека
+        restorative: Відновна
+      case_statuses:
+        closed_no_action: Закрито без дій
+        needs_reporter_followup: Потрібен додатковий зв'язок з тим, хто повідомив
+        protective_action_in_effect: Захисний захід діє
+        resolved: Вирішено
+        restorative_in_progress: Відновний процес триває
+        submitted: Подано
+        triaged: Первинно розглянуто
+      closure_types:
+        no_action: Без дій
+        protective_action: Захисний захід
+        restorative_agreement: Відновна угода
+        unsupported: Не підтримується
+        voluntary_resolution: Добровільне вирішення
+      harm_levels:
+        high: Високий
+        low: Низький
+        medium: Середній
+        urgent: Терміновий
+      note_visibilities:
+        internal_only: Лише внутрішньо
+        participant_visible: Видимо для учасників
+      report_categories:
+        boundary_violation: Порушення меж
+        discrimination: Дискримінація
+        fraud: Шахрайство
+        harassment: Домагання
+        hate_speech: Мова ненависті
+        impersonation: Видавання себе за іншу особу
+        misinformation: Дезінформація
+        other: Інше
+        privacy_violation: Порушення приватності
+        spam_or_scam: Спам або шахрайство
+      reporter_visible_statuses:
+        closed_no_action: Закрито без дій
+        needs_reporter_followup: Потрібно більше інформації від вас
+        protective_action_in_effect: Захисний захід діє
+        resolved: Вирішено
+        restorative_in_progress: Відновний процес триває
+        submitted: Подано
+        triaged: На розгляді
+        under_review: На розгляді
+      requested_outcomes:
+        boundary_support: Підтримка у встановленні меж
+        community_accountability: Спільнотна відповідальність
+        content_review: Перегляд контенту
+        mediated_conversation: Посередницька розмова
+        other: Інше
+        temporary_protection: Тимчасовий захист
+      shared:
+        any: Будь-який
+    safety_cases:
+      attributes:
+        accountability_check: Перевірка підзвітності та відповідального ставлення
+        action_details: Деталі заходу
+        action_reason: Причина заходу
+        action_status: Статус заходу
+        action_type: Тип заходу
+        agreement_summary: Підсумок угоди
+        care_check: Перевірка турботи та стійкості
+        closure_summary: Підсумок закриття
+        closure_type: Тип закриття
+        commitments: Зобов'язання
+        expires_at: Діє до
+        harmed_party_consented: Постраждала сторона надала згоду
+        lane: Напрям
+        love_inclusivity_check: Перевірка любові та інклюзивності
+        note_body: Нотатка
+        note_visibility: Видимість нотатки
+        reporter: Людина, яка повідомила
+        responsible_party_consented: Відповідальна сторона надала згоду
+        review_at: Переглянути
+        solidarity_check: Перевірка співпраці та солідарності
+        status: Статус справи
+      index:
+        filter: Фільтрувати
+        title: Справи безпеки
+      notices:
+        updated: Справу безпеки оновлено.
+      show:
+        actions: Захисні та відповідальні заходи
+        add_action: Зафіксувати захід
+        add_agreement: Створити угоду
+        add_note: Додати нотатку
+        agreements: Відновні угоди
+        back: Назад до черги
+        intake: Прийом звіту
+        manage: Керування справою
+        notes: Внутрішні нотатки
+        title: Справа безпеки
+        update_agreement: Оновити угоду
+        update_case: Оновити справу
+        values_review: Огляд цінностей
+        values_review_placeholder: Поясніть оцінку цінностей для цього заходу
+    safety_notes:
+      notices:
+        created: До справи додано нотатку.
     person_block:
-      cannot_block_manager: no puede ser un administrador de la plataforma
-      cannot_block_self: no puedes bloquearte a ti mismo
+      cannot_block_manager: не може бути менеджером платформи
+      cannot_block_self: не можете заблокувати себе
     person_blocks:
       index:
-        actions: Actions
-        block_person: Block Person
-        blocked_at: Blocked
+        actions: Дії
+        block_person: Заблокувати людину
+        blocked_at: Заблоковано
         blocked_count:
           few: Заблоковано %{count} особи
           many: Заблоковано %{count} осіб
           one: Заблоковано 1 особу
           other: Заблоковано %{count} осіб
           zero: Нікого не заблоковано
-        blocked_on: Blocked on %{date}
-        no_blocked_people: You haven't blocked anyone yet.
-        no_blocked_people_description: When you block someone, they won't be able
-          to interact with you.
-        search: Search
-        search_placeholder: Search blocked people...
-        title: Blocked People
-        unblock: Unblock
-        unblock_confirmation: Are you sure you want to unblock this person?
+        blocked_on: Заблоковано %{date}
+        no_blocked_people: Ви ще нікого не заблокували.
+        no_blocked_people_description: Коли ви блокуєте людину, вона не зможе взаємодіяти з вами.
+        search: Пошук
+        search_placeholder: Шукати заблокованих людей...
+        title: Заблоковані люди
+        unblock: Розблокувати
+        unblock_confirmation: Ви впевнені, що хочете розблокувати цю людину?
       new:
-        back_to_list: Back to Blocked People
-        blocked_person_help: Select a person you want to block from the search results.
-        blocked_person_label: Person to Block
-        blocked_person_placeholder: Search for a person to block...
-        blocked_person_prompt: Select a person to block
-        cancel: Cancel
-        submit: Block Person
-        title: Block Person
+        back_to_list: Назад до списку заблокованих
+        blocked_person_help: Виберіть людину, яку ви хочете заблокувати, з результатів пошуку.
+        blocked_person_label: Людина для блокування
+        blocked_person_placeholder: Шукати людину для блокування...
+        blocked_person_prompt: Виберіть людину для блокування
+        cancel: Скасувати
+        submit: Заблокувати людину
+        title: Заблокувати людину
       notices:
-        already_blocked: This person is already blocked.
-        blocked: Person has been blocked successfully.
-        not_found: Person not found.
-        platform_manager_error: Platform managers cannot be blocked.
-        self_block_error: You cannot block yourself.
-        unblocked: Person has been unblocked successfully.
+        already_blocked: Цю людину вже заблоковано.
+        blocked: Людину успішно заблоковано.
+        not_found: Людину не знайдено.
+        platform_manager_error: Менеджерів платформи не можна блокувати.
+        self_block_error: Ви не можете заблокувати себе.
+        unblocked: Людину успішно розблоковано.
     person_platform_integration_mailer:
       integration_created:
         body_html: Нову інтеграцію облікового запису %{provider} підключено до вашого
@@ -1940,6 +2334,9 @@ uk:
     registrations:
       captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
         знову.
+      invalid_invitation: Недійсний або прострочений код запрошення. Будь ласка, перевірте
+        свій електронний лист із запрошенням.
+      invitation_required: Для реєстрації на цій платформі потрібен код запрошення
     remove: Видалити
     resource_permissions:
       actions:
@@ -1986,6 +2383,28 @@ uk:
           description: Керуйте користувачами, яких ви заблокували від взаємодії з
             вами.
           title: Заблоковані люди
+        developer:
+          apps:
+            client_id_label: ID клієнта
+            description: Програми, які ви зареєстрували для використання API Better
+              Together.
+            edit_aria: Редагувати %{name}
+            new_aria: Зареєструвати новий OAuth-додаток
+            new_btn: Новий додаток
+            none: Ви ще не зареєстрували жодного OAuth-додатку.
+            title: Ваші OAuth-додатки
+            view_aria: Переглянути %{name}
+          tokens:
+            col_app: Додаток
+            col_created: Видано
+            col_expires: Закінчується
+            col_scopes: Дозволи
+            description: Активні токени доступу до API, видані вашому акаунту.
+            no_app: Особистий токен
+            no_expiry: Ніколи
+            none: Немає активних токенів доступу.
+            table_aria: Активні токени доступу
+            title: Токени доступу API
         device_permissions:
           description: Керуйте дозволами браузера для місцезнаходження, сповіщень,
             камери та мікрофона.
@@ -2014,6 +2433,7 @@ uk:
         tabs:
           account: Обліковий запис
           blocked_people: Заблоковані люди
+          developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
           personal: Особисті
@@ -2039,6 +2459,8 @@ uk:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      privacy_level: 'Конфіденційність: %{privacy}'
+      privacy_tooltip: Цей вміст %{privacy}
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -2052,6 +2474,16 @@ uk:
       platform: Платформа
       title: Акаунти соціальних мереж
       url: URL-адреса
+    translations:
+      errors:
+        content_blank: Вміст не може бути порожнім
+        content_too_long: Вміст занадто довгий для перекладу. Будь ласка, обмежте
+          текст приблизно до 8 000 слів (~50 000 символів) і спробуйте знову.
+        invalid_source_locale: Недійсна мова джерела
+        invalid_target_locale: Недійсна мова перекладу
+        translation_failed: 'Переклад не вдався: %{message}'
+        translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
+          знову.
     view_switcher:
       button_label: Перегляд %{view}
       change_view: Змінити тип перегляду
@@ -2064,6 +2496,63 @@ uk:
         card: Картки
         list: Список
         table: Таблиця
+    webhook_endpoints:
+      actions_aria: Дії вебхука
+      active_help: Увімкнути або вимкнути доставку вебхуків для цієї кінцевої точки.
+      all_events: Всі події
+      back_to_list: Назад до вебхуків
+      delete_aria: Видалити кінцеву точку вебхука
+      deliveries_aria: Історія доставок вебхуків
+      delivery_attempts: Спроби
+      delivery_event: Подія
+      delivery_response: Відповідь
+      delivery_status: Статус
+      delivery_time: Час
+      description_placeholder: Необов'язковий опис призначення цього вебхука.
+      details: Деталі кінцевої точки
+      edit_aria: Редагувати кінцеву точку вебхука
+      events_help: Список назв подій через кому. Залиште порожнім, щоб отримувати
+        всі події. Формат ресурс.дія (напр., community.created, person.updated).
+      field_created: Створено
+      field_description: Опис
+      field_events: Події
+      field_oauth_app: Додаток OAuth
+      field_secret: Секрет підпису
+      field_status: Статус
+      field_url: URL
+      index:
+        header_actions: Дії
+        header_deliveries: Доставки
+        header_events: Події
+        header_name: Назва
+        header_status: Статус
+        header_url: URL
+        new_btn_aria: Створити нову кінцеву точку вебхука
+        new_btn_text: Новий вебхук
+        no_webhooks: Кінцеві точки вебхуків ще не налаштовані.
+        table_aria: Список кінцевих точок вебхуків
+        title: Кінцеві точки вебхуків
+      name_help: Зручна назва для ідентифікації цієї кінцевої точки вебхука.
+      name_placeholder: напр., Мій вебхук інтеграції
+      no_deliveries: Доставок ще немає. Скористайтеся кнопкою «Надіслати тест» для
+        перевірки вашої кінцевої точки.
+      no_oauth_app: "— Немає —"
+      oauth_help: За бажанням прив'яжіть цей вебхук до додатка OAuth.
+      recent_deliveries: Нещодавні доставки
+      save: Зберегти вебхук
+      secret_aria: Значення секрету підпису
+      secret_note: Використовуйте цей секрет для перевірки підписів вебхука. Він був
+        згенерований при створенні кінцевої точки і не може бути змінений.
+      send_test: Надіслати тест
+      status_active: Активний
+      status_inactive: Неактивний
+      test:
+        test_queued: Тестову доставку вебхука поставлено в чергу.
+      test_confirm: Надіслати тестовий вебхук?
+      title: Кінцеві точки вебхуків
+      toggle_secret: Перемкнути видимість секрету
+      url_help: HTTPS URL, на який будуть доставлятися навантаження вебхука.
+      view: Переглянути вебхук
     website_links:
       add: Додати посилання на веб-сайт
       labels:
@@ -2109,6 +2598,7 @@ uk:
               help: Ваш унікальний ідентифікатор (без пробілів). Це з'явиться в URL
                 вашого профілю та згадках.
               label: Ім'я користувача
+              profile_url: URL-адреса вашого профілю
             name:
               help: Використовуйте своє справжнє ім'я або ім'я, за яким ви хочете,
                 щоб вас впізнавала ваша спільнота.
@@ -2170,7 +2660,6 @@ uk:
             основа, де всі зможуть збиратися та співпрацювати.
           progress:
             step: Крок 1 з 2
-  block: :activerecord.models.block
   community:
     create_failed: Створення не вдалося
     created: Створено
@@ -2496,6 +2985,9 @@ uk:
     unlocks:
       new:
         resend_unlock_instructions: Повторно надіслати інструкції розблокування
+        template:
+          default: Типовий шаблон
+          host_community_contact_details: Контактні дані спільноти-хоста
       send_instructions: Ви отримаєте електронний лист з інструкціями щодо розблокування
         вашого облікового запису через кілька хвилин.
       send_paranoid_instructions: Якщо ваш обліковий запис існує, ви отримаєте електронний
@@ -2505,6 +2997,9 @@ uk:
   devise_omniauth_callbacks:
     failure: Виникла проблема з входом через %{kind}. %{reason}
     success: Успішно автентифіковано з облікового запису %{kind}.
+  doorkeeper:
+    errors:
+      unauthorized: Не авторизовано. Потрібен дійсний токен доступу.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2527,6 +3022,7 @@ uk:
       in: має бути в %{count}
       inclusion: не включено до списку
       invalid: неправильний
+      invalid_url: не є дійсною URL-адресою
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       model_invalid: 'Перевірка не вдалася: %{errors}'
@@ -2596,7 +3092,6 @@ uk:
       one_uncompleted: Дозволено тільки один незавершений крок на людину.
       step_limit: Кількість завершень для цього кроку досягла максимального ліміту
         завершень майстра.
-  event: :activerecord.models.event
   flash:
     checklist_item:
       update_failed: Не вдалося оновити елемент чек-листа.

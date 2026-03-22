@@ -743,9 +743,9 @@ journey
 ## Additional Resources
 
 ### User Documentation
-- 📖 [Event User Guide](../../users/events_user_guide.md) - Comprehensive guide for organizers and attendees
-- 🎯 [Best Practices](../../users/events_user_guide.md#best-practices) - Tips for successful event management
-- 🔧 [Troubleshooting](../../users/events_user_guide.md#troubleshooting-common-issues) - Common issues and solutions
+- 📖 [Event User Guide](../../end_users/events_invitations_and_rsvp.md) - Comprehensive guide for organizers and attendees
+- 🎯 [Best Practices](../../end_users/events_invitations_and_rsvp.md#best-practices) - Tips for successful event management
+- 🔧 [Troubleshooting](../../end_users/events_invitations_and_rsvp.md#troubleshooting) - Common issues and solutions
 
 ### All Event System Diagrams
 - 📊 [Events Schema ERD](../../diagrams/source/events_schema_erd.mmd) - Database relationships

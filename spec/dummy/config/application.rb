@@ -27,11 +27,18 @@ module Dummy
     # Use the latest cache format and remove deprecated Active Storage setting
     config.active_support.cache_format_version = 7.1
 
+    # Opt in to Rails 8.1 behavior: preserve timezone when converting to Time
+    config.active_support.to_time_preserves_timezone = :zone
+
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
       g.fixture_replacement :factory_bot, dir: 'spec/factories'
       g.test_framework :rspec
     end
+
+    # Opt-in to Rails 8.1 to_time behavior: preserve receiver timezone
+    # See deprecation: `to_time` will always preserve receiver timezone
+    config.active_support.to_time_preserves_timezone = :zone
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]

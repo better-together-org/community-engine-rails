@@ -11,6 +11,12 @@ module BetterTogether
       user.present? && (can_view_calendar? || permitted_to?('manage_platform'))
     end
 
+    def feed?
+      # Feed access is controlled by the controller's token validation
+      # or standard show permissions for authenticated users
+      show?
+    end
+
     def update?
       user.present? && (record.creator == agent || permitted_to?('manage_platform'))
     end

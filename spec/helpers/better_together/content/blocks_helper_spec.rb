@@ -156,5 +156,52 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect(result).to match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
       end
     end
+
+    describe '#mermaid_controller_attributes' do
+      let(:markdown_with_mermaid) do
+        create(:content_markdown,
+               markdown_source: "# Test\n\n```mermaid\ngraph TD\n  A-->B\n```")
+      end
+
+      let(:markdown_without_mermaid) do
+        create(:content_markdown,
+               markdown_source: "# Test\n\nNo diagrams here")
+      end
+
+      context 'when markdown contains mermaid diagrams' do
+        it 'returns data attributes with controller' do
+          result = helper.mermaid_controller_attributes(markdown_with_mermaid)
+          expect(result).to eq({ data: { controller: 'better-together--mermaid' } })
+        end
+
+        it 'returns a hash with data key' do
+          result = helper.mermaid_controller_attributes(markdown_with_mermaid)
+          expect(result).to have_key(:data)
+        end
+
+        it 'sets correct controller name' do
+          result = helper.mermaid_controller_attributes(markdown_with_mermaid)
+          expect(result[:data][:controller]).to eq('better-together--mermaid')
+        end
+      end
+
+      context 'when markdown does not contain mermaid diagrams' do
+        it 'returns empty hash' do
+          result = helper.mermaid_controller_attributes(markdown_without_mermaid)
+          expect(result).to eq({})
+        end
+      end
+
+      context 'when markdown content has minimal non-mermaid text' do
+        let(:markdown_minimal) do
+          create(:content_markdown, :simple)
+        end
+
+        it 'returns empty hash' do
+          result = helper.mermaid_controller_attributes(markdown_minimal)
+          expect(result).to eq({})
+        end
+      end
+    end
   end
 end

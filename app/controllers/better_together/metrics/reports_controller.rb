@@ -25,6 +25,7 @@ module BetterTogether
 
       before_action :authorize_metrics_access
       before_action :set_min_dates, only: :index
+      before_action :set_metrics_data, only: :index
 
       # Main dashboard view - loads initial state with default date range
       def index; end
@@ -148,15 +149,15 @@ module BetterTogether
       def user_confirmation_rate_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         users_scope = filter_by_datetime(BetterTogether::User, :created_at)
 
-        created_by_day = users_scope.group_by_day(:created_at).count
-
         days = (@start_date.to_date..@end_date.to_date).to_a
         confirmation_rates = days.map do |day|
-          created_count = created_by_day.fetch(day, 0)
+          day_range = day.beginning_of_day..day.end_of_day
+          created_count = users_scope.where(created_at: day_range).count
+
           if created_count.zero?
             0
           else
-            confirmed_count = users_scope.where(created_at: day.beginning_of_day..day.end_of_day)
+            confirmed_count = users_scope.where(created_at: day_range)
                                          .where.not(confirmed_at: nil)
                                          .count
             ((confirmed_count.to_f / created_count) * 100).round(2)
@@ -327,6 +328,24 @@ module BetterTogether
         render json: { labels: data.keys.map(&:to_s), values: data.values }
       end
 
+      # Helper method to generate consistent colors for platforms
+      def platform_color(platform, border: false)
+        random_color_for_platform(platform, border: border)
+      end
+
+      def random_color_for_platform(platform, border: false)
+        opacity = border ? '1' : '0.5'
+        colors = {
+          'facebook' => "rgba(59, 89, 152, #{opacity})",
+          'bluesky' => "rgba(29, 161, 242, #{opacity})",
+          'linkedin' => "rgba(0, 123, 182, #{opacity})",
+          'pinterest' => "rgba(189, 8, 28, #{opacity})",
+          'reddit' => "rgba(255, 69, 0, #{opacity})",
+          'whatsapp' => "rgba(37, 211, 102, #{opacity})"
+        }
+        colors[platform] || "rgba(75, 192, 192, #{opacity})"
+      end
+
       private
 
       def authorize_metrics_access
@@ -348,19 +367,47 @@ module BetterTogether
       end
       # rubocop:enable Metrics/AbcSize
 
-      # Helper method to generate consistent colors for platforms
-      def platform_color(platform, border: false)
-        opacity = border ? '1' : '0.5'
-        colors = {
-          'facebook' => "rgba(59, 89, 152, #{opacity})",
-          'bluesky' => "rgba(29, 161, 242, #{opacity})",
-          'linkedin' => "rgba(0, 123, 182, #{opacity})",
-          'pinterest' => "rgba(189, 8, 28, #{opacity})",
-          'reddit' => "rgba(255, 69, 0, #{opacity})",
-          'whatsapp' => "rgba(37, 211, 102, #{opacity})"
+      # Set metrics data for index action
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def set_metrics_data
+        # Page views
+        @page_views_by_url = BetterTogether::Metrics::PageView.group(:page_url).count
+        @page_views_daily = BetterTogether::Metrics::PageView.group_by_day(:viewed_at).count
+
+        # Link clicks
+        @link_clicks_by_url = BetterTogether::Metrics::LinkClick.group(:url).count
+        @link_clicks_daily = BetterTogether::Metrics::LinkClick.group_by_day(:clicked_at).count
+        @internal_vs_external = BetterTogether::Metrics::LinkClick.group(:internal).count
+        @link_clicks_by_page = BetterTogether::Metrics::LinkClick.group(:page_url).count
+
+        # Downloads
+        @downloads_by_file = BetterTogether::Metrics::Download.group(:file_name).count
+
+        # Shares
+        @shares_by_platform = BetterTogether::Metrics::Share.group(:platform).count
+        @shares_by_url_and_platform = BetterTogether::Metrics::Share.group(:url, :platform).count
+
+        # Prepare shares data for Chart.js
+        urls = @shares_by_url_and_platform.keys.map(&:first).uniq
+        platforms = @shares_by_url_and_platform.keys.map(&:last).uniq
+
+        @shares_data = {
+          labels: urls,
+          datasets: platforms.map do |platform|
+            {
+              label: platform.titleize,
+              backgroundColor: platform_color(platform),
+              data: urls.map { |url| @shares_by_url_and_platform[[url, platform]] || 0 }
+            }
+          end
         }
-        colors[platform] || "rgba(75, 192, 192, #{opacity})"
+
+        # Links
+        @links_by_host = BetterTogether::Content::Link.group(:host).count
+        @invalid_by_host = BetterTogether::Content::Link.where(valid_link: false).group(:host).count
+        @failures_daily = BetterTogether::Content::Link.where(valid_link: false).group_by_day(:last_checked_at).count
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       # Calculate average results for search queries
       def calculate_average_results(scope, queries)

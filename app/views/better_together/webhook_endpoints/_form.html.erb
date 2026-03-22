@@ -1,0 +1,135 @@
+<%= form_with(model: webhook_endpoint,
+                class: 'form',
+                id: dom_id(webhook_endpoint, 'form'),
+                data: { controller: "better-together--form-validation" }) do |form| %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label', default: 'Form actions') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.webhook_endpoints.back_to_list', default: 'Back to Webhooks'),
+                    webhook_endpoints_path,
+                    class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.webhook_endpoints.save', default: 'Save Webhook'),
+                        class: 'btn btn-primary' %>
+      </div>
+      <% if webhook_endpoint.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.webhook_endpoints.view', default: 'View Webhook'),
+                      webhook_endpoint,
+                      class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <div id="form_errors">
+    <%= render 'layouts/better_together/errors', object: webhook_endpoint %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :name, t('activerecord.attributes.better_together/webhook_endpoint.name', default: 'Name'),
+                   class: 'form-label' %>
+    <%= form.text_field :name,
+                        class: 'form-control',
+                        required: true,
+                        placeholder: t('better_together.webhook_endpoints.name_placeholder', default: 'e.g., My Integration Webhook'),
+                        'aria-describedby' => 'webhook-name-help' %>
+    <div id="webhook-name-help" class="form-text">
+      <%= t('better_together.webhook_endpoints.name_help', default: 'A friendly name to identify this webhook endpoint.') %>
+    </div>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :url, t('activerecord.attributes.better_together/webhook_endpoint.url', default: 'URL'),
+                   class: 'form-label' %>
+    <%= form.url_field :url,
+                       class: 'form-control',
+                       required: true,
+                       placeholder: 'https://example.com/webhooks/receive',
+                       'aria-describedby' => 'webhook-url-help' %>
+    <div id="webhook-url-help" class="form-text">
+      <%= t('better_together.webhook_endpoints.url_help', default: 'The HTTPS URL where webhook payloads will be delivered.') %>
+    </div>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :description, t('activerecord.attributes.better_together/webhook_endpoint.description', default: 'Description'),
+                   class: 'form-label' %>
+    <%= form.text_area :description,
+                       class: 'form-control',
+                       rows: 3,
+                       placeholder: t('better_together.webhook_endpoints.description_placeholder', default: 'Optional description of this webhook\'s purpose.') %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :events, t('activerecord.attributes.better_together/webhook_endpoint.events', default: 'Events'),
+                   class: 'form-label' %>
+    <%= form.text_field :events,
+                        class: 'form-control',
+                        value: webhook_endpoint.events&.join(', '),
+                        placeholder: 'community.created, person.updated',
+                        'aria-describedby' => 'webhook-events-help' %>
+    <div id="webhook-events-help" class="form-text">
+      <%= t('better_together.webhook_endpoints.events_help', default: 'Comma-separated list of event names to subscribe to. Leave blank to receive all events. Format: resource.action (e.g., community.created, person.updated).') %>
+    </div>
+  </div>
+
+  <% if defined?(@oauth_applications) && @oauth_applications.any? %>
+    <div class="form-group mb-3">
+      <%= form.label :oauth_application_id, t('activerecord.attributes.better_together/webhook_endpoint.oauth_application', default: 'OAuth Application'),
+                     class: 'form-label' %>
+      <%= form.select :oauth_application_id,
+                      options_from_collection_for_select(@oauth_applications, :id, :name, webhook_endpoint.oauth_application_id),
+                      { include_blank: t('better_together.webhook_endpoints.no_oauth_app', default: '— None —') },
+                      class: 'form-select',
+                      'aria-describedby' => 'webhook-oauth-help' %>
+      <div id="webhook-oauth-help" class="form-text">
+        <%= t('better_together.webhook_endpoints.oauth_help', default: 'Optionally link this webhook to an OAuth application.') %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-check form-switch mb-3">
+    <%= form.check_box :active,
+                       class: 'form-check-input',
+                       role: 'switch',
+                       id: 'webhook_active' %>
+    <%= form.label :active,
+                   t('activerecord.attributes.better_together/webhook_endpoint.active', default: 'Active'),
+                   class: 'form-check-label',
+                   for: 'webhook_active' %>
+    <div class="form-text">
+      <%= t('better_together.webhook_endpoints.active_help', default: 'Enable or disable webhook delivery for this endpoint.') %>
+    </div>
+  </div>
+
+  <% if webhook_endpoint.persisted? %>
+    <div class="card bg-light mb-3">
+      <div class="card-body">
+        <h3 class="card-title h6"><%= t('better_together.webhook_endpoints.field_secret', default: 'Signing Secret') %></h3>
+        <p class="card-text small text-muted">
+          <%= t('better_together.webhook_endpoints.secret_note', default: 'Use this secret to verify webhook signatures. It was generated when the endpoint was created and cannot be changed.') %>
+        </p>
+        <div class="input-group input-group-sm" style="max-width: 450px;"
+             data-controller="better-together--secret-toggle">
+          <input type="password"
+                 value="<%= webhook_endpoint.secret %>"
+                 class="form-control form-control-sm font-monospace"
+                 readonly
+                 aria-label="<%= t('better_together.webhook_endpoints.secret_aria', default: 'Signing secret value') %>"
+                 data-better-together--secret-toggle-target="field">
+          <button class="btn btn-outline-secondary" type="button"
+                  data-action="better-together--secret-toggle#toggle"
+                  aria-label="<%= t('better_together.webhook_endpoints.toggle_secret', default: 'Toggle secret visibility') %>">
+            <i class="fas fa-eye" aria-hidden="true" data-better-together--secret-toggle-target="icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+<% end %>

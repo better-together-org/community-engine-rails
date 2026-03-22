@@ -12,6 +12,7 @@ FactoryBot.define do
     ends_at { 1.week.from_now + 2.hours }
     registration_url { Faker::Internet.url }
     privacy { 'public' }
+    timezone { 'America/New_York' }
 
     association :creator, factory: :person
 

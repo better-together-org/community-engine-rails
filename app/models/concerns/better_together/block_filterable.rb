@@ -10,7 +10,10 @@ module BetterTogether
         next all unless person
 
         blocked_ids = person.blocked_people.select(:id)
-        joins(:authorships).where.not(better_together_authorships: { author_id: blocked_ids }).distinct
+        blocked_authorships = BetterTogether::Authorship
+                              .where(author_id: blocked_ids, authorable_type: base_class.name)
+                              .select(:authorable_id)
+        where.not(id: blocked_authorships)
       }
     end
   end

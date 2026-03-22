@@ -11,7 +11,8 @@ module BetterTogether
                    class_name: joinable_class,
                    autosave: true
         belongs_to :member,
-                   class_name: member_class
+                   class_name: member_class,
+                   touch: true
         belongs_to :role,
                    -> { where(resource_type: joinable_class) }
 

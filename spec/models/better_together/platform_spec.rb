@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Platform do
+RSpec.describe BetterTogether::Platform, :skip_host_setup do
   it 'has a valid factory' do
     platform = build(:better_together_platform)
     expect(platform).to be_valid
@@ -10,11 +10,8 @@ RSpec.describe BetterTogether::Platform do
 
   describe 'Factory traits' do
     describe ':host' do
-      subject(:host_platform) { create(:better_together_platform, :host) }
-
-      before do
-        # Destroy any existing host platform for this test
-        described_class.where(host: true).destroy_all
+      subject(:host_platform) do
+        described_class.find_by(host: true) || create(:better_together_platform, :host)
       end
 
       it 'creates a host platform' do

@@ -87,14 +87,21 @@ RSpec.describe 'BetterTogether::Metrics::Reports User Account Chart Endpoints', 
   describe 'GET /user_confirmation_rate_data' do
     context 'with mixed confirmation rates' do
       it 'returns daily confirmation rate percentages' do
+        # Use specific times in the application timezone to ensure consistent grouping
+        time_20_days_ago = 20.days.ago.to_date.in_time_zone.middle_of_day
+        time_10_days_ago = 10.days.ago.to_date.in_time_zone.middle_of_day
+
+        # Clear any users created by test setup that might interfere with date calculations
+        BetterTogether::User.where('DATE(created_at) IN (?)', [time_20_days_ago.to_date, time_10_days_ago.to_date]).delete_all
+
         # Day 1: 2 created, 1 confirmed = 50%
-        create(:user, created_at: 20.days.ago, confirmed_at: 20.days.ago)
-        create(:user, created_at: 20.days.ago, confirmed_at: nil)
+        create(:user, created_at: time_20_days_ago, confirmed_at: time_20_days_ago)
+        create(:user, created_at: time_20_days_ago, confirmed_at: nil)
 
         # Day 2: 3 created, 3 confirmed = 100%
-        create(:user, created_at: 10.days.ago, confirmed_at: 10.days.ago)
-        create(:user, created_at: 10.days.ago, confirmed_at: 10.days.ago)
-        create(:user, created_at: 10.days.ago, confirmed_at: 10.days.ago)
+        create(:user, created_at: time_10_days_ago, confirmed_at: time_10_days_ago)
+        create(:user, created_at: time_10_days_ago, confirmed_at: time_10_days_ago)
+        create(:user, created_at: time_10_days_ago, confirmed_at: time_10_days_ago)
 
         get "#{base_path}/user_confirmation_rate_data", headers: { 'Accept' => 'application/json' }
 
@@ -107,8 +114,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports User Account Chart Endpoints', 
         expect(json['values'].length).to eq(31)
 
         # Find the days with activity
-        day_20_ago_index = json['labels'].index(20.days.ago.to_date.to_s)
-        day_10_ago_index = json['labels'].index(10.days.ago.to_date.to_s)
+        day_20_ago_index = json['labels'].index(time_20_days_ago.to_date.to_s)
+        day_10_ago_index = json['labels'].index(time_10_days_ago.to_date.to_s)
 
         expect(json['values'][day_20_ago_index]).to eq(50.0)
         expect(json['values'][day_10_ago_index]).to eq(100.0)

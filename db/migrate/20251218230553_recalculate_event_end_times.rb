@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Recalculates and sets ends_at for events that have starts_at and duration_minutes but no ends_at
-class RecalculateEventEndTimes < ActiveRecord::Migration[8.0]
+class RecalculateEventEndTimes < ActiveRecord::Migration[7.2]
   def up
     puts "Recalculating event end times for events with duration but no end time..."
 

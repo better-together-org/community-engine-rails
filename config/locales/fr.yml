@@ -267,6 +267,11 @@ fr:
         recipient: :activerecord.models.recipient
         recipient_type: Type de destinataire
         seen_at: Vu à
+      better_together/oauth_application:
+        confidential: Confidentiel
+        name: Nom
+        redirect_uri: URI de redirection
+        scopes: Portées
       better_together/page:
         blocks: Blocs
         identifier: Identifiant
@@ -287,6 +292,7 @@ fr:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Traductions de texte enrichi
+        show_title: Afficher le Titre
         slug: Identifiant URL
         slugs: Identifiants URL
         string_translations: Traductions de chaînes
@@ -430,6 +436,13 @@ fr:
         string_translations: Traductions de chaînes
         unconfirmed_email: E-mail non confirmé
         unlock_token: Jeton de déverrouillage
+      better_together/webhook_endpoint:
+        active: Actif
+        description: Description
+        events: Événements
+        name: Nom
+        oauth_application: Application OAuth
+        url: URL
       better_together/wizard:
         current_completions: Achèvements actuels
         first_completed_at: Premier achèvement à
@@ -514,6 +527,8 @@ fr:
         seen_at: Vu à
     errors:
       messages:
+        file_not_found: le fichier n'existe pas
+        invalid_file_type: doit être un fichier markdown (.md ou .markdown)
         record_invalid: 'La validation a échoué : %{errors}'
         restrict_dependent_destroy:
           has_many: Vous ne pouvez pas supprimer l'enregistrement parce que les %{record}
@@ -521,6 +536,10 @@ fr:
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Les événements doivent avoir au moins un hôte
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -550,6 +569,8 @@ fr:
       better_together/content/hero: Héros
       better_together/content/html: HTML
       better_together/content/image: Image
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Diagramme Mermaid
       better_together/content/page_block: Blocage de Pages
       better_together/content/rich_text: Texte Enrichi
       better_together/content/template: Fichier de Modèle
@@ -577,6 +598,7 @@ fr:
       better_together/navigation_item: Élément de Navigation
       better_together/new_message_notifier: Notificateur de Nouveau Message
       better_together/new_message_notifier/notification: Notification
+      better_together/oauth_application: Application OAuth
       better_together/page: Page
       better_together/person: Personne
       better_together/person_community_membership: Adhésion à la communauté
@@ -589,6 +611,7 @@ fr:
       better_together/role: Rôle
       better_together/role_resource_permission: Autorisation des Ressources de Rôle
       better_together/user: Utilisateur
+      better_together/webhook_endpoint: Point de terminaison webhook
       better_together/wizard: Assistant
       better_together/wizard_step: Étape du Magicien
       better_together/wizard_step_definition: Définition des Étapes de l'Assistant
@@ -834,6 +857,74 @@ fr:
     content:
       blocks:
         associated_pages: Pages associées
+        markdown:
+          fields:
+            auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
+              base de données)
+            file_path: Chemin du Fichier Markdown
+            file_path_placeholder: docs/README.md ou /chemin/absolu/vers/fichier.md
+            markdown_source: Source Markdown
+            preview: Aperçu
+            reference_file: Référencer un Fichier Markdown
+            refresh_preview: Actualiser l'Aperçu
+            write_inline: Écrire du Markdown en Ligne
+          help:
+            auto_sync: Lorsque coché, le contenu est toujours chargé depuis le fichier.
+              Lorsque décoché, le contenu du fichier est importé dans la base de données
+              et peut être modifié séparément.
+            available_translations: 'Traductions disponibles :'
+            file_path: Chemin vers un fichier markdown. Peut être relatif à Rails.root
+              (par ex., docs/README.md) ou absolu (par ex., /chemin/vers/fichier.md).
+              Le fichier doit avoir une extension .md ou .markdown.
+            inline_content: Écrivez votre contenu markdown directement. Prend en charge
+              le markdown de type GitHub, y compris les tableaux, les blocs de code
+              et plus encore. Le contenu est traduisible pour chaque langue.
+            localized_files: Le système recherche automatiquement les versions spécifiques
+              à la langue (par ex., privacy.en.md, privacy.es.md, privacy.fr.md) et
+              revient au fichier de base s'il n'est pas trouvé.
+            preview_placeholder: L'aperçu apparaîtra ici...
+        template:
+          default: Modèle par défaut
+          host_community_contact_details: Coordonnées de la communauté hôte
+      mermaid_diagram:
+        help:
+          auto_height: Lorsque activé, la hauteur du diagramme s'ajuste automatiquement
+            pour s'adapter au contenu. Lorsque désactivé, une hauteur fixe est utilisée.
+          caption: Légende optionnelle à afficher sous le diagramme
+          diagram_file_path: 'Chemin vers un fichier .mmd contenant la définition
+            du diagramme Mermaid. Peut être relatif à Rails.root (ex.: docs/diagrams/source/example.mmd)
+            ou absolu.'
+          diagram_source: 'Écrivez directement votre syntaxe de diagramme Mermaid.
+            Prend en charge tous les types de diagrammes Mermaid : organigrammes,
+            séquences, classes, états, etc.'
+          theme: 'Thème visuel du diagramme. Options : Par défaut (couleurs standard),
+            Sombre (mode sombre), Forêt (tons verts), Neutre (gris minimal).'
+        javascript_required: JavaScript est requis pour afficher les diagrammes interactifs.
+          Veuillez activer JavaScript ou consulter la version image statique.
+        no_content: Aucun contenu de diagramme disponible
+        no_preview: Ajoutez une source de diagramme ou un chemin de fichier pour voir
+          un aperçu
+        preview_title: Aperçu du diagramme
+        tabs:
+          file: Charger depuis un fichier
+          source: Écrire le diagramme
+        themes:
+          dark: Sombre
+          default: Par défaut
+          forest: Forêt
+          neutral: Neutre
+      static_pages:
+        accessibility: Accessibilité
+        better_together: Qu'est-ce que Better Together ?
+        code_contributor_agreement: Accord de contributeur de code
+        code_of_conduct: Code de conduite
+        community_engine: Community Engine
+        content_contributor_agreement: Accord de contributeur de contenu
+        cookie_consent: Politique de cookies
+        faq: FAQ
+        privacy: Politique de confidentialité
+        subprocessors: Sous-traitants
+        terms_of_service: Conditions d'utilisation
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}
@@ -872,6 +963,9 @@ fr:
       errors:
         no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de
           plateforme ou des membres ayant choisi de recevoir des messages.
+        not_found: La conversation que vous recherchez est introuvable ou vous n'avez
+          pas la permission de la voir.
+        person_required: Vous devez avoir un profil pour créer des conversations.
       form:
         add_participants: Ajouter des participants
         create_conversation: Créer une conversation
@@ -1011,26 +1105,58 @@ fr:
       add_to_calendar: Ajouter au calendrier (.ics)
       attendees: Participants
       back_to_events: Voir les événements
+      date_and_time: Date et Heure
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
         create_permission_denied: Permission de création refusée
-        description: Description
+        description: Fournissez des détails sur ce à quoi les participants peuvent
+          s'attendre lors de cet événement
         duration_minutes: Combien de temps l'événement durera-t-il ? Cela sera automatiquement
           synchronisé avec l'heure de fin.
-        ends_at: Se termine à
-        location: Lieu
-        location_name: Nom du lieu
-        name: Nom
+        ends_at: Quand l'événement se termine. Se met à jour automatiquement lorsque
+          la durée change.
+        location: Où les participants se rencontreront pour cet événement
+        location_name: Nom du lieu ou point de rencontre
+        name: Un titre clair et descriptif pour votre événement
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
-        slug: Identifiant URL
-        starts_at: Débute à
+        slug: Identifiant convivial pour l'URL de cet événement
+        starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
+          horaire sélectionné ci-dessus.
+        timezone: Le fuseau horaire où cet événement aura lieu
       hosted_by: Organisé par
+      hosts:
+        add_host: Ajouter un Hôte
+        can_edit_event: Peut modifier les détails de l'événement
+        cancel: Annuler
+        cancel_add_host: Annuler l'ajout d'hôte
+        cannot_remove_last: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        cannot_remove_last_host: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        description: Les hôtes de l'événement peuvent modifier tous les détails de
+          l'événement et gérer d'autres hôtes. Les événements doivent avoir au moins
+          un hôte.
+        error_loading: Erreur lors du chargement des hôtes
+        host_label: Hôte
+        host_removed: Hôte retiré
+        host_type: Type d'Hôte
+        loading: Chargement...
+        member_count:
+          one: "%{count} membre"
+          other: "%{count} membres"
+        new_host: Nouvel hôte
+        remove_host: Retirer %{host}
+        remove_host_short: Retirer
+        select_host: Sélectionner un Hôte
+        select_placeholder: Sélectionner un hôte
+        type_label: Type
       ics:
+        reminders:
+          1_hour: 'Rappel : %{event_name} commence dans 1 heure'
+          24_hours: 'Rappel : %{event_name} commence dans 24 heures'
+          at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
-      in: doit être dans %{count}
-      inclusion: n'est pas inclus(e) dans la liste
-      invalid: n'est pas valide
       labels:
         duration_minutes: Durée
         ends_at: Se termine à
@@ -1041,8 +1167,10 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
         starts_at: Débute à
+        timezone: Fuseau Horaire de l'Événement
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      location: Lieu
       location_types:
         address: Adresse
         building: Bâtiment
@@ -1068,6 +1196,35 @@ fr:
       prompts:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
+      recurrence:
+        end_types:
+          after_count: Après occurrences
+          never: Jamais
+          on_date: À la date
+        hints:
+          count: Nombre de fois que cet événement doit se répéter
+          end_type: Comment la récurrence doit se terminer
+          ends_on: La dernière date à laquelle cet événement aura lieu
+          exception_dates: Dates auxquelles cet événement NE doit PAS avoir lieu (séparées
+            par des virgules, format AAAA-MM-JJ)
+          frequency: Fréquence de répétition de cet événement
+          interval: Répéter tous les N périodes (par exemple, toutes les 2 semaines)
+          preview_placeholder: Sélectionnez les options de récurrence pour voir les
+            dates à venir
+          weekdays: Jours de la semaine où cet événement a lieu
+        labels:
+          count: Nombre d'occurrences
+          end_type: Se termine
+          ends_on: Date de fin
+          exception_dates: Dates d'exception
+          frequency: Se répète
+          interval: Répéter tous les
+          preview: Prochaines occurrences
+          weekdays: Répéter le
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Ne se répète pas
       register: S'inscrire
       relationship:
         calendar: Événement du calendrier
@@ -1087,7 +1244,9 @@ fr:
       save_event: Enregistrer l'événement
       tabs:
         details: Détails
+        hosts: Hôtes
         images: Images
+        recurrence: Récurrence
         time-and-place: Date et lieu
       taken: est déjà utilisé(e)
       time:
@@ -1437,12 +1596,27 @@ fr:
           title: Filtre de Date et Heure
       mailer:
         link_checker_report:
-          body: Vous trouverez en pièce jointe le rapport de vérification des liens
-            pour %{date}.
+          actions:
+            edit: Modifier →
+            manual_edit: Modification manuelle requise
+          body: Vous trouverez en pièce jointe le rapport hebdomadaire de vérification
+            des liens pour %{date}.
           greeting: Bonjour,
           report_file: 'Fichier du rapport : %{filename}'
+          see_csv: Consultez le CSV joint pour la liste complète.
+          showing_partial: Affichage de %{shown} sur %{total} enregistrements de %{type}
+            avec des liens brisés.
           signature: Cordialement
-          subject: 'Rapport de Vérification des Liens : %{date}'
+          subject: 'Rapport Hebdomadaire de Vérification des Liens : %{count} liens
+            brisés - %{date}'
+          summary_header: Liens brisés par type d'enregistrement
+          table_headers:
+            action: Action
+            broken_url: URL brisée
+            field: Champ
+            record: Enregistrement
+            status: Statut
+          total_count: 'Total de liens brisés: %{count}'
       reports:
         actions:
           chart_toolbar: Actions du graphique
@@ -1726,6 +1900,68 @@ fr:
         message: Nouvelle intégration %{provider} connectée le %{created_at}
         title: Nouvelle intégration %{provider} connectée
       time_ago: il y a %{time}
+    oauth:
+      applications:
+        create:
+          success: L'application OAuth '%{name}' a été créée avec succès. Vous pouvez
+            maintenant utiliser les identifiants client pour authentifier les requêtes
+            API.
+        destroy:
+          success: L'application OAuth '%{name}' a été supprimée. Tous les jetons
+            d'accès associés ont été révoqués.
+        set_application:
+          not_found: L'application OAuth que vous recherchez est introuvable. Elle
+            a peut-être été supprimée ou vous n'avez pas la permission d'y accéder.
+        update:
+          success: L'application OAuth '%{name}' a été mise à jour avec succès.
+    oauth_applications:
+      actions_aria: Actions de l'application
+      back_to_list: Retour aux applications
+      confidential: Confidentiel
+      confidential_help: Les clients confidentiels peuvent stocker leurs identifiants
+        de manière sécurisée (applications côté serveur). Les clients publics ne le
+        peuvent pas (SPAs, applications mobiles).
+      credentials: Identifiants
+      default_scopes: Portées par défaut
+      delete_aria: Supprimer l'application OAuth
+      details: Détails de l'application
+      edit_aria: Modifier l'application OAuth
+      field_client_id: ID du client
+      field_created: Créé
+      field_owner: Propriétaire
+      field_redirect_uri: URI de redirection
+      field_scopes: Portées
+      field_secret: Secret du client
+      field_trusted: De confiance
+      field_type: Type
+      index:
+        header_actions: Actions
+        header_client_id: ID du client
+        header_confidential: Type
+        header_created: Créé
+        header_name: Nom
+        header_scopes: Portées
+        new_btn_aria: Créer une nouvelle application OAuth
+        new_btn_text: Nouvelle application
+        no_applications: Aucune application OAuth n'a été enregistrée.
+        table_aria: Liste des applications OAuth
+        title: Applications OAuth
+      name_help: Un nom descriptif pour cette application OAuth.
+      name_placeholder: ex., Mon application d'intégration
+      no_redirect: Non configuré
+      no_scopes: Par défaut
+      no_secret_public: Non applicable (client public)
+      public_type: Public
+      redirect_help: Une URI de redirection par ligne. Pour les flux machine-à-machine
+        (client_credentials), utilisez urn:ietf:wg:oauth:2.0:oob
+      save: Enregistrer l'application
+      scopes_help: Sélectionnez les permissions que cette application devrait avoir.
+      secret_aria: Valeur du secret du client
+      title: Applications OAuth
+      toggle_secret: Basculer la visibilité du secret
+      trusted_no: Non
+      trusted_yes: Oui
+      view: Voir l'application
     page_authorship_notifier:
       added: Vous avez été ajouté comme auteur sur %{page_title}
       added_by: "%{actor_name} vous a ajouté comme auteur sur %{page_title}"
@@ -1789,9 +2025,170 @@ fr:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    reports:
+      actions:
+        report: Signaler
+      attributes:
+        category: Catégorie
+        harm_level: Niveau de préjudice
+        requested_outcome: Résultat demandé
+        reason: Résumé court
+        private_details: Détails privés pour l'équipe de sécurité
+      errors:
+        already_reported_by_you: a déjà été signalé par vous
+      index:
+        empty: Vous n'avez pas encore envoyé de signalement de sécurité.
+        new: Nouveau signalement
+        title: Mes signalements de sécurité
+      new:
+        category_help: Choisissez l'option qui correspond le mieux au préjudice ou à la préoccupation que vous signalez.
+        consent_to_contact: Vous pouvez me contacter à propos de ce signalement
+        consent_to_restorative_process: Vous pouvez envisager des options restauratives si cela est approprié
+        error_summary: Veuillez corriger les problèmes suivants.
+        harm_level_help: Indiquez à quel point la situation vous semble urgente ou grave afin que l'équipe de sécurité puisse la traiter correctement.
+        intro: Utilisez ce formulaire pour demander un soutien en matière de sécurité, de limites, de responsabilisation ou de protection urgente.
+        preferences_help: Indiquez si nous pouvons vous contacter, si vous souhaitez que des options restauratives soient envisagées et si un risque de représailles fait partie de ce signalement.
+        preferences_title: Préférences de sécurité
+        private_details_help: Ajoutez tout contexte, schéma, date ou élément de preuve qui doit rester au sein de l'équipe de sécurité.
+        reason_help: Décrivez brièvement ce qui s'est passé. Commencez par le point principal.
+        requested_outcome_help: Choisissez le type de soutien que vous souhaitez de la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si vous hésitez.
+        retaliation_risk: Je crains des représailles ou une escalade
+        submit: Envoyer le signalement
+        title: Signaler un problème de sécurité
+        urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire sert au suivi communautaire et à la plateforme, pas à l'intervention d'urgence.
+        urgent_title: "Si vous êtes en danger immédiat :"
+      notices:
+        created: Le signalement a bien été envoyé.
+      show:
+        back: Retour aux signalements
+        pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter selon vos préférences de consentement.
+        status: Statut actuel
+        summary: Résumé du dossier
+        title: Signalement de sécurité
+    safety:
+      action_statuses:
+        active: Active
+        cancelled: Annulée
+        completed: Terminée
+      action_types:
+        contact_restriction: Restriction de contact
+        content_hidden: Contenu masqué
+        content_removed: Contenu retiré
+        event_restriction: Restriction d'événement
+        messaging_restriction: Restriction de messagerie
+        restorative_referral: Orientation restaurative
+        temporary_suspension: Suspension temporaire
+        watch_flag: Marqueur de surveillance
+      agreement_statuses:
+        active: Active
+        breached: Non respecté
+        completed: Terminé
+        proposed: Proposé
+        withdrawn: Retiré
+      case_lanes:
+        administrative: Administrative
+        immediate_safety: Sécurité immédiate
+        restorative: Restaurative
+      case_statuses:
+        closed_no_action: Clôturé sans action
+        needs_reporter_followup: Suivi nécessaire avec la personne déclarante
+        protective_action_in_effect: Mesure de protection en cours
+        resolved: Résolu
+        restorative_in_progress: Processus restauratif en cours
+        submitted: Soumis
+        triaged: Trié
+      closure_types:
+        no_action: Aucune action
+        protective_action: Mesure de protection
+        restorative_agreement: Accord restauratif
+        unsupported: Non pris en charge
+        voluntary_resolution: Résolution volontaire
+      harm_levels:
+        high: Élevé
+        low: Faible
+        medium: Moyen
+        urgent: Urgent
+      note_visibilities:
+        internal_only: Interne uniquement
+        participant_visible: Visible aux participantes et participants
+      report_categories:
+        boundary_violation: Violation de limites
+        discrimination: Discrimination
+        fraud: Fraude
+        harassment: Harcèlement
+        hate_speech: Discours haineux
+        impersonation: Usurpation d'identité
+        misinformation: Désinformation
+        other: Autre
+        privacy_violation: Violation de la vie privée
+        spam_or_scam: Pourriel ou arnaque
+      reporter_visible_statuses:
+        closed_no_action: Clôturé sans action
+        needs_reporter_followup: Plus d'informations de votre part sont nécessaires
+        protective_action_in_effect: Mesure de protection en cours
+        resolved: Résolu
+        restorative_in_progress: Processus restauratif en cours
+        submitted: Soumis
+        triaged: En cours d'examen
+        under_review: En cours d'examen
+      requested_outcomes:
+        boundary_support: Soutien pour établir des limites
+        community_accountability: Responsabilisation communautaire
+        content_review: Examen du contenu
+        mediated_conversation: Conversation accompagnée
+        other: Autre
+        temporary_protection: Protection temporaire
+      shared:
+        any: Tout
+    safety_cases:
+      attributes:
+        accountability_check: Vérification de responsabilité et de gestion
+        action_details: Détails de la mesure
+        action_reason: Raison de la mesure
+        action_status: Statut de la mesure
+        action_type: Type de mesure
+        agreement_summary: Résumé de l'accord
+        care_check: Vérification de soin et de résilience
+        closure_summary: Résumé de clôture
+        closure_type: Type de clôture
+        commitments: Engagements
+        expires_at: Expire le
+        harmed_party_consented: La personne affectée a consenti
+        lane: Volet
+        love_inclusivity_check: Vérification d'amour et d'inclusivité
+        note_body: Note
+        note_visibility: Visibilité de la note
+        reporter: Personne déclarante
+        responsible_party_consented: La personne mise en cause a consenti
+        review_at: Révision le
+        solidarity_check: Vérification de coopération et de solidarité
+        status: Statut du dossier
+      index:
+        filter: Filtrer
+        title: Dossiers de sécurité
+      notices:
+        updated: Le dossier de sécurité a été mis à jour.
+      show:
+        actions: Mesures de protection et de responsabilisation
+        add_action: Enregistrer la mesure
+        add_agreement: Créer un accord
+        add_note: Ajouter une note
+        agreements: Accords restauratifs
+        back: Retour à la file
+        intake: Réception du signalement
+        manage: Gestion du dossier
+        notes: Notes internes
+        title: Dossier de sécurité
+        update_agreement: Mettre à jour l'accord
+        update_case: Mettre à jour le dossier
+        values_review: Examen des valeurs
+        values_review_placeholder: Expliquez l'examen des valeurs pour cette mesure
+    safety_notes:
+      notices:
+        created: Une note a été ajoutée au dossier.
     person_block:
-      cannot_block_manager: ne puede ser un administrador de la plataforma
-      cannot_block_self: no puedes bloquearte a ti mismo
+      cannot_block_manager: ne peut pas être un gestionnaire de plateforme
+      cannot_block_self: ne peut pas vous bloquer vous-même
     person_blocks:
       index:
         actions: Actions
@@ -1800,7 +2197,7 @@ fr:
         blocked_count:
           one: 1 personne bloquée
           other: "%{count} personnes bloquées"
-          zero: Aucun personne bloquée
+          zero: Aucune personne bloquée
         blocked_on: Bloqué le %{date}
         no_blocked_people: Vous n'avez encore bloqué personne.
         no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
@@ -1821,13 +2218,13 @@ fr:
         submit: Bloquer la personne
         title: Bloquer une personne
       notices:
-        already_blocked: Cette personne est déjà bloqué.
-        blocked: La personne a été bloqué avec succès.
-        not_found: personne non trouvé.
+        already_blocked: Cette personne est déjà bloquée.
+        blocked: La personne a été bloquée avec succès.
+        not_found: Personne introuvable.
         platform_manager_error: Les administrateurs de plateforme ne peuvent pas être
           bloqués.
         self_block_error: Vous ne pouvez pas vous bloquer vous-même.
-        unblocked: La personne a été débloqué avec succès.
+        unblocked: La personne a été débloquée avec succès.
     person_platform_integration_mailer:
       integration_created:
         body_html: Une nouvelle intégration de compte %{provider} a été connectée
@@ -1957,6 +2354,10 @@ fr:
         roles: Rôles
     registrations:
       captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
+      invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
+        votre courriel d'invitation.
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
+        plateforme
     remove: Supprimer
     resource_permissions:
       actions:
@@ -2003,6 +2404,28 @@ fr:
           description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
             pas avec vous.
           title: Personnes Bloquées
+        developer:
+          apps:
+            client_id_label: ID Client
+            description: Applications que vous avez enregistrées pour utiliser l'API
+              Better Together.
+            edit_aria: Modifier %{name}
+            new_aria: Enregistrer une nouvelle application OAuth
+            new_btn: Nouvelle Application
+            none: Vous n'avez pas encore enregistré d'applications OAuth.
+            title: Vos Applications OAuth
+            view_aria: Voir %{name}
+          tokens:
+            col_app: Application
+            col_created: Émis
+            col_expires: Expire
+            col_scopes: Portées
+            description: Tokens d'accès API actifs émis sur votre compte.
+            no_app: Token personnel
+            no_expiry: Jamais
+            none: Aucun token d'accès actif.
+            table_aria: Tokens d'accès actifs
+            title: Tokens d'Accès API
         device_permissions:
           description: Gérez les autorisations du navigateur pour la localisation,
             les notifications, la caméra et le microphone.
@@ -2032,6 +2455,7 @@ fr:
         tabs:
           account: Compte
           blocked_people: Personnes Bloquées
+          developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
           personal: Personnel
@@ -2057,6 +2481,8 @@ fr:
       share: Partager
       whatsapp: Partager sur WhatsApp
     shared:
+      privacy_level: 'Confidentialité: %{privacy}'
+      privacy_tooltip: Ce contenu est %{privacy}
       translated_field_hints:
         description: Description courte (au moins une langue doit être remplie)
         description_html: Description enrichie (mise en forme possible); au moins
@@ -2070,6 +2496,15 @@ fr:
       platform: Plateforme
       title: Comptes de réseaux sociaux
       url: URL
+    translations:
+      errors:
+        content_blank: Le contenu ne peut pas être vide
+        content_too_long: Le contenu est trop long pour être traduit. Veuillez limiter
+          votre texte à environ 8 000 mots (~50 000 caractères) et réessayer.
+        invalid_source_locale: Langue source non valide
+        invalid_target_locale: Langue cible non valide
+        translation_failed: 'La traduction a échoué : %{message}'
+        translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
     view_switcher:
       button_label: Vue %{view}
       change_view: Changer le type de vue
@@ -2082,6 +2517,66 @@ fr:
         card: Cartes
         list: Liste
         table: Tableau
+    webhook_endpoints:
+      actions_aria: Actions du webhook
+      active_help: Activer ou désactiver la livraison de webhooks pour ce point de
+        terminaison.
+      all_events: Tous les événements
+      back_to_list: Retour aux webhooks
+      delete_aria: Supprimer le point de terminaison webhook
+      deliveries_aria: Historique des livraisons de webhooks
+      delivery_attempts: Tentatives
+      delivery_event: Événement
+      delivery_response: Réponse
+      delivery_status: Statut
+      delivery_time: Heure
+      description_placeholder: Description facultative de la finalité de ce webhook.
+      details: Détails du point de terminaison
+      edit_aria: Modifier le point de terminaison webhook
+      events_help: Liste de noms d'événements séparés par des virgules. Laissez vide
+        pour recevoir tous les événements. Format ressource.action (ex., community.created,
+        person.updated).
+      field_created: Créé
+      field_description: Description
+      field_events: Événements
+      field_oauth_app: Application OAuth
+      field_secret: Secret de signature
+      field_status: Statut
+      field_url: URL
+      index:
+        header_actions: Actions
+        header_deliveries: Livraisons
+        header_events: Événements
+        header_name: Nom
+        header_status: Statut
+        header_url: URL
+        new_btn_aria: Créer un nouveau point de terminaison webhook
+        new_btn_text: Nouveau webhook
+        no_webhooks: Aucun point de terminaison webhook n'a été configuré.
+        table_aria: Liste des points de terminaison de webhooks
+        title: Points de terminaison de webhooks
+      name_help: Un nom convivial pour identifier ce point de terminaison webhook.
+      name_placeholder: ex., Mon webhook d'intégration
+      no_deliveries: Pas encore de livraisons. Utilisez le bouton « Envoyer un test
+        » pour vérifier votre point de terminaison.
+      no_oauth_app: "— Aucune —"
+      oauth_help: Liez optionnellement ce webhook à une application OAuth.
+      recent_deliveries: Livraisons récentes
+      save: Enregistrer le webhook
+      secret_aria: Valeur du secret de signature
+      secret_note: Utilisez ce secret pour vérifier les signatures du webhook. Il
+        a été généré lors de la création du point de terminaison et ne peut pas être
+        modifié.
+      send_test: Envoyer un test
+      status_active: Actif
+      status_inactive: Inactif
+      test:
+        test_queued: La livraison de test du webhook a été mise en file d'attente.
+      test_confirm: Envoyer un webhook de test ?
+      title: Points de terminaison de webhooks
+      toggle_secret: Basculer la visibilité du secret
+      url_help: L'URL HTTPS où les charges utiles du webhook seront livrées.
+      view: Voir le webhook
     website_links:
       add: Ajouter un lien de site web
       labels:
@@ -2129,6 +2624,7 @@ fr:
               help: Votre identifiant unique (sans espaces). Cela apparaîtra dans
                 l'URL de votre profil et les mentions.
               label: Nom d'utilisateur
+              profile_url: URL de votre profil
             name:
               help: Utilisez votre vrai nom ou le nom que vous souhaitez que votre
                 communauté vous reconnaisse.
@@ -2198,7 +2694,6 @@ fr:
             vous aurez une base où tout le monde pourra se rassembler et collaborer.
           progress:
             step: Étape 1 sur 2
-  block: :activerecord.models.block
   community:
     create_failed: Échec de la création
     created: Créé
@@ -2503,6 +2998,9 @@ fr:
     unlocks:
       new:
         resend_unlock_instructions: Renvoyer les instructions de déblocage
+        template:
+          default: Modèle par défaut
+          host_community_contact_details: Coordonnées de la communauté hôte
       send_instructions: Vous allez recevoir sous quelques minutes un email comportant
         des instructions pour déverrouiller votre compte.
       send_paranoid_instructions: Si votre email existe sur notre base de données,
@@ -2512,6 +3010,9 @@ fr:
   devise_omniauth_callbacks:
     failure: Il y a eu un problème lors de votre connexion via %{kind}. %{reason}
     success: Authentification réussie depuis le compte %{kind}.
+  doorkeeper:
+    errors:
+      unauthorized: Non autorisé. Un jeton d'accès valide est requis.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2534,6 +3035,7 @@ fr:
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
+      invalid_url: n'est pas une URL valide
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       model_invalid: 'Validation échouée : %{errors}'
@@ -2594,7 +3096,6 @@ fr:
       one_uncompleted: Une seule étape non terminée par personne est autorisée.
       step_limit: Le nombre de validations pour cette étape a atteint la limite de
         l'assistant.
-  event: :activerecord.models.event
   flash:
     checklist_item:
       update_failed: Échec de la mise à jour de l'élément de la liste.

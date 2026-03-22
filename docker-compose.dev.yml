@@ -1,0 +1,16 @@
+# Local developer overrides for docker-compose.yml
+#
+# This file is automatically layered in by ./bin/dc when a local .env file exists.
+# It allows developers to keep personal secrets/config in .env without enabling
+# .env globally in the base docker-compose.yml.
+
+services:
+  app:
+    env_file:
+      - './.env'
+      - './.env.dev'
+
+  sidekiq:
+    env_file:
+      - './.env'
+      - './.env.dev'

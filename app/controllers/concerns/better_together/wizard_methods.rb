@@ -27,9 +27,15 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/MethodLength
-    def find_or_create_wizard_step # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      # Identify the next uncompleted step definition
-      step_definition = wizard.wizard_step_definitions.ordered.detect do |sd|
+    def find_or_create_wizard_step(force_next: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # If wizard_step_definition_id is in params (from route defaults), use that specific step
+      # But NOT when force_next is true (e.g., after completing a step)
+      if wizard_step_definition_identifier.present? && !force_next
+        step_definition = wizard.wizard_step_definitions.find_by(identifier: wizard_step_definition_identifier)
+      end
+
+      # Otherwise, identify the next uncompleted step definition
+      step_definition ||= wizard.wizard_step_definitions.ordered.detect do |sd|
         !wizard.wizard_steps.exists?(identifier: sd.identifier, completed: true)
       end
 
@@ -72,7 +78,7 @@ module BetterTogether
     end
 
     def wizard_next_step_info
-      wizard_step = find_or_create_wizard_step
+      wizard_step = find_or_create_wizard_step(force_next: true)
       # byebug
 
       if wizard_step.nil?

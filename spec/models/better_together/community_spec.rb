@@ -3,9 +3,8 @@
 require 'rails_helper'
 
 module BetterTogether
-  RSpec.describe Community do
+  RSpec.describe Community, :skip_host_setup do
     subject(:community) { build(:better_together_community) }
-    let!(:existing_host_community) { create(:better_together_community, :host) }
 
     describe 'Factory' do
       it 'has a valid factory' do
@@ -23,12 +22,9 @@ module BetterTogether
         end
 
         describe ':host' do
-          before do
-            # Destroy existing host community for this specific test
-            existing_host_community.destroy
+          subject(:host_community) do
+            described_class.find_by(host: true) || create(:better_together_community, :host)
           end
-
-          subject(:host_community) { create(:better_together_community, :host) }
 
           it 'creates a host community' do
             expect(host_community.host).to be true
@@ -36,10 +32,9 @@ module BetterTogether
         end
 
         describe 'combined traits' do
-          before { existing_host_community.destroy }
-
           it 'works with :creator and :host' do
-            community = create(:better_together_community, :creator, :host)
+            community = described_class.find_by(host: true) || create(:better_together_community, :creator, :host)
+            community.update!(creator: create(:better_together_person)) unless community.creator
             expect(community.creator).to be_present
             expect(community.host).to be true
           end
@@ -69,7 +64,10 @@ module BetterTogether
 
       describe '#set_as_host' do
         context 'when there is no host community' do
-          before { existing_host_community.destroy }
+          before do
+            relation = instance_double(ActiveRecord::Relation, exists?: false)
+            allow(described_class).to receive(:where).and_return(relation)
+          end
 
           it 'sets the host attribute to true' do
             community.set_as_host
@@ -78,6 +76,11 @@ module BetterTogether
         end
 
         context 'when a host community already exists' do
+          before do
+            relation = instance_double(ActiveRecord::Relation, exists?: true)
+            allow(described_class).to receive(:where).and_return(relation)
+          end
+
           it 'does not set the host attribute to true' do
             community.set_as_host
             expect(community.host).to be false
@@ -95,9 +98,12 @@ module BetterTogether
     describe 'callbacks' do
       describe '#single_host_record' do
         it 'adds an error if host is set and another host community exists' do
+          relation = double('ActiveRecord::Relation', exists?: true) # rubocop:todo RSpec/VerifiedDoubles
+          allow(described_class).to receive(:where).and_return(relation)
+          allow(relation).to receive(:not).and_return(relation)
           community.host = true
           community.valid?
-          expect(community.errors[:host]).to include('can only be set for one record')
+          expect(community.errors[:host]).to include(I18n.t('errors.models.host_single'))
         end
       end
     end

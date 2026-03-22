@@ -54,8 +54,8 @@ Mobility.configure do |config|
 
     # Dirty
     #
-    # Uncomment this line to include and enable globally:
-    # dirty
+    # Enable dirty tracking for translated attributes
+    dirty
     #
     # Or uncomment this line to include but disable by default, and only enable
     # per model by passing +dirty: true+ to +translates+.

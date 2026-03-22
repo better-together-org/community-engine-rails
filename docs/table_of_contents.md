@@ -2,188 +2,198 @@
 
 Welcome to the comprehensive documentation for the Better Together Community Engine. This documentation is organized by stakeholder groups to help you quickly find relevant information.
 
-## 📋 Quick Navigation
+## Quick Navigation
 
-### 🏠 **Main Entry Points**
-- [📖 Main README](README.md) - Project overview and getting started
-- [📋 This Table of Contents](table_of_contents.md) - Complete documentation index
-- [🤝 Contributing Guide](../CONTRIBUTING.md) - How to contribute
-- [🌟 Code of Conduct](../CODE_OF_CONDUCT.md) - Community expectations
+### **Main Entry Points**
+- [Main README](README.md) - Project overview and getting started
+- [This Table of Contents](table_of_contents.md) - Complete documentation index
+- [Contributing Guide](../CONTRIBUTING.md) - How to contribute
+- [Code of Conduct](../CODE_OF_CONDUCT.md) - Community expectations
 
-### 👥 **Stakeholder Documentation**
+### **Stakeholder Documentation**
 
-#### 👤 **End Users** - [`end_users/`](end_users/)
+#### **End Users** - [`end_users/`](end_users/)
 *Community members using the platform*
-- [📝 README](end_users/README.md) - User documentation overview
-- [🗺️ User Guide](end_users/guide.md) - How to use the platform
-- [👋 Welcome Guide](end_users/welcome.md) - Getting started for new users
-- [🤝 Exchange Process](end_users/exchange_process.md) - How to participate in exchanges
-- [📅 Event Invitations & RSVP](end_users/events_invitations_and_rsvp.md) - Responding to invitations and managing attendance
+- [README](end_users/README.md) - User documentation overview
+- [User Guide](end_users/guide.md) - How to use the platform
+- [Welcome Guide](end_users/welcome.md) - Getting started for new users
+- [Exchange Process](end_users/exchange_process.md) - How to participate in exchanges
+- [Event Invitations & RSVP](end_users/events_invitations_and_rsvp.md) - Responding to invitations and managing attendance
+- [Safety and Reporting Tools](end_users/safety_reporting.md) - Main safety guide
+- [Blocking and Boundaries](end_users/blocking_and_boundaries.md) - User blocking and boundaries guide
+- [Reporting Harm and Safety Concerns](end_users/reporting_harm_and_safety_concerns.md) - Reporting guide
+- [After You Report](end_users/after_you_report.md) - What happens after submission
+- [Privacy and Safety Preferences](end_users/privacy_and_safety_preferences.md) - Privacy and safety choices
+- [Emergency and Urgent Situations](end_users/emergency_and_urgent_situations.md) - Emergency boundary guidance
 
-#### 🌟 **Community Organizers** - [`community_organizers/`](community_organizers/)
+#### **Community Organizers** - [`community_organizers/`](community_organizers/)
 *People managing and growing communities*
-- [📝 README](community_organizers/README.md) - Community organizer resources
-- [👥 Community Management](community_organizers/community_management.md) - Tools and best practices
-- [✉️ Event Invitations Management](community_organizers/event_invitations_management.md) - Invite members/emails and manage delivery
+- [README](community_organizers/README.md) - Community organizer resources
+- [Community Management](community_organizers/community_management.md) - Tools and best practices
+- [Event Invitations Management](community_organizers/event_invitations_management.md) - Invite members/emails and manage delivery
 
-#### 🎛️ **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
+#### **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
 *Multi-tenant administrators and platform operators*
-- [📝 README](platform_organizers/README.md) - Platform administration guide
-- [🖥️ Host Management](platform_organizers/host_management.md) - Managing platform instances
-- [📊 Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
-- [🐙 GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
+- [README](platform_organizers/README.md) - Platform administration guide
+- [Host Management](platform_organizers/host_management.md) - Managing platform instances
+- [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
+- [GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
 
-#### 👩‍💻 **Developers** - [`developers/`](developers/)
+#### **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
-- [📝 README](developers/README.md) - Developer documentation overview
+- [README](developers/README.md) - Developer documentation overview
 
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
-- [👤 Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
-- [⚡ Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
-- [👥 Community Social System](developers/systems/community_social_system.md) - Social features
-- [📄 Content Management](developers/systems/content_management.md) - Content creation and management
-- [💬 Conversations Messaging System](developers/systems/conversations_messaging_system.md) - Real-time messaging
-- [💬 Conversations README](developers/systems/README_conversations.md) - Messaging system overview
-- [📅 Events System](developers/systems/events_system.md) - Event management
-- [✉️ Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
-- [🗺️ Geography System](developers/systems/geography_system.md) - Location and mapping
-- [🌍 I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
-- [📊 Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
-- [🧭 Navigation System](developers/systems/navigation_system.md) - Site navigation
-- [🔔 Notifications System](developers/systems/notifications_system.md) - Notification delivery
-- [🔒 Security Protection System](developers/systems/security_protection_system.md) - Security measures
+- [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
+- [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
+- [Community Social System](developers/systems/community_social_system.md) - Social features
+- [Content Management](developers/systems/content_management.md) - Content creation and management
+- [Conversations Messaging System](developers/systems/conversations_messaging_system.md) - Real-time messaging
+- [Conversations README](developers/systems/README_conversations.md) - Messaging system overview
+- [Events System](developers/systems/events_system.md) - Event management
+- [Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
+- [Geography System](developers/systems/geography_system.md) - Location and mapping
+- [I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
+- [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
+- [Navigation System](developers/systems/navigation_system.md) - Site navigation
+- [Notifications System](developers/systems/notifications_system.md) - Notification delivery
+- [Security Protection System](developers/systems/security_protection_system.md) - Security measures
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
-- [🏗️ Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture
-- [🔗 Polymorphic and STI](developers/architecture/polymorphic_and_sti.md) - Database design patterns
-- [🔐 RBAC Overview](developers/architecture/rbac_overview.md) - Role-based access control
+- [Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture
+- [Polymorphic and STI](developers/architecture/polymorphic_and_sti.md) - Database design patterns
+- [RBAC Overview](developers/architecture/rbac_overview.md) - Role-based access control
 
 ##### **Development Resources** - [`developers/development/`](developers/development/)
-- [🧪 Automatic Test Configuration](developers/development/automatic_test_configuration.md) - Automated test setup and authentication
-- [📊 Diagram Rendering](developers/development/diagram_rendering.md) - Documentation diagram system
-- [🌍 I18n TODO](developers/development/i18n_todo.md) - Internationalization tasks
+- [Automatic Test Configuration](developers/development/automatic_test_configuration.md) - Automated test setup and authentication
+- [Diagram Rendering](developers/development/diagram_rendering.md) - Documentation diagram system
+- [I18n TODO](developers/development/i18n_todo.md) - Internationalization tasks
 
 ##### **API Integrations** - [`developers/`](developers/)
-- [🐙 GitHub API Integration](developers/github_api_integration.md) - OAuth-based GitHub API access with Octokit
+- [GitHub API Integration](developers/github_api_integration.md) - OAuth-based GitHub API access with Octokit
 
-#### 🛠️ **Support Staff** - [`support_staff/`](support_staff/)
+#### **Support Staff** - [`support_staff/`](support_staff/)
 *Customer support and troubleshooting resources*
-- [📝 README](support_staff/README.md) - Support documentation overview
+- [README](support_staff/README.md) - Support documentation overview
 
-#### 🛡️ **Content Moderators** - [`content_moderators/`](content_moderators/)
+#### **Content Moderators** - [`content_moderators/`](content_moderators/)
 *Content moderation tools and guidelines*
-- [📝 README](content_moderators/README.md) - Content moderation guide
+- [README](content_moderators/README.md) - Content moderation guide
 
-#### ⚖️ **Legal Compliance** - [`legal_compliance/`](legal_compliance/)
+#### **Legal Compliance** - [`legal_compliance/`](legal_compliance/)
 *Legal, privacy, and compliance documentation*
-- [📝 README](legal_compliance/README.md) - Legal compliance overview
+- [README](legal_compliance/README.md) - Legal compliance overview
 
-### 🔧 **Specialized Documentation**
+### **Specialized Documentation**
 
-#### 🤝 **Shared Resources** - [`shared/`](shared/)
+#### **Shared Resources** - [`shared/`](shared/)
 *Cross-cutting documentation relevant to multiple stakeholder groups*
-- [📝 README](shared/README.md) - Shared resources overview
-- [🏛️ Democratic By Design](shared/democratic_by_design.md) - Platform governance principles
-- [🏛️ Democratic Principles](shared/democratic_principles.md) - Community governance
-- [🔐 Roles and Permissions](shared/roles_and_permissions.md) - Access control system
-- [🛡️ Escalation Matrix](shared/escalation_matrix.md) - Issue resolution procedures
-- [🔒 Privacy Principles](shared/privacy_principles.md) - Privacy policy and practices
-- [🗺️ Sitemap Generation System](shared/sitemap_generation_system.md) - Multi-locale XML sitemap generation
+- [README](shared/README.md) - Shared resources overview
+- [Democratic By Design](shared/democratic_by_design.md) - Platform governance principles
+- [Democratic Principles](shared/democratic_principles.md) - Community governance
+- [Roles and Permissions](shared/roles_and_permissions.md) - Access control system
+- [Escalation Matrix](shared/escalation_matrix.md) - Issue resolution procedures
+- [Privacy Principles](shared/privacy_principles.md) - Privacy policy and practices
+- [Documentation Accessibility Rubric](shared/documentation_accessibility_rubric.md) - Standards for user docs, inline help, and hints
+- [Sitemap Generation System](shared/sitemap_generation_system.md) - Multi-locale XML sitemap generation
 
-#### 📋 **Implementation** - [`implementation/`](implementation/)
+#### **Implementation** - [`implementation/`](implementation/)
 *Project management, planning, and templates*
-- [📝 README](implementation/README.md) - Implementation resources overview
+- [README](implementation/README.md) - Implementation resources overview
 
 ##### **Current Plans** - [`implementation/current_plans/`](implementation/current_plans/)
-- [✅ Community Social System Acceptance Criteria](implementation/current_plans/community_social_system_acceptance_criteria.md)
-- [📋 Community Social System Implementation Plan](implementation/current_plans/community_social_system_implementation_plan.md)
-- [✅ Sitemap Generator Fixes Implementation Plan](implementation/current_plans/sitemap_generator_fixes_implementation_plan.md)
+- [Community Social System Acceptance Criteria](implementation/current_plans/community_social_system_acceptance_criteria.md)
+- [Community Social System Implementation Plan](implementation/current_plans/community_social_system_implementation_plan.md)
+- [Sitemap Generator Fixes Implementation Plan](implementation/current_plans/sitemap_generator_fixes_implementation_plan.md)
 
 ##### **Completed Work** - [`implementation/completed_work/`](implementation/completed_work/)
-- [✅ Sitemap Multi-Locale Implementation Summary](implementation/completed_work/sitemap_multi_locale_implementation_summary.md)
+- [Sitemap Multi-Locale Implementation Summary](implementation/completed_work/sitemap_multi_locale_implementation_summary.md)
 
 ##### **Templates** - [`implementation/templates/`](implementation/templates/)
-- [📋 Implementation Plan Template](implementation/templates/implementation_plan_template.md) - Standard planning template
-- [📖 System Documentation Template](implementation/templates/system_documentation_template.md) - Documentation standards
-- [🧪 TDD Acceptance Criteria Template](implementation/templates/tdd_acceptance_criteria_template.md) - Testing templates
+- [Implementation Plan Template](implementation/templates/implementation_plan_template.md) - Standard planning template
+- [System Documentation Template](implementation/templates/system_documentation_template.md) - Documentation standards
+- [TDD Acceptance Criteria Template](implementation/templates/tdd_acceptance_criteria_template.md) - Testing templates
 
-#### 📊 **Visual Documentation** - [`diagrams/`](diagrams/)
+#### **Visual Documentation** - [`diagrams/`](diagrams/)
 *Mermaid diagrams and visual system documentation*
-- [📝 README](diagrams/README.md) - Diagram system overview
+- [README](diagrams/README.md) - Diagram system overview
 
 ##### **Diagram Sources** - [`diagrams/source/`](diagrams/source/)
 *Mermaid (.mmd) source files*
-- [👤 Accounts Flow](diagrams/source/accounts_flow.mmd)
-- [🤝 Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
+- [Accounts Flow](diagrams/source/accounts_flow.mmd)
+- [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
 - [⚡ Caching Performance Flow](diagrams/source/caching_performance_flow.mmd)
-- [👥 Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
-- [📄 Content Flow](diagrams/source/content_flow.mmd)
-- [💬 Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
-- [📊 Documentation System Flow](diagrams/source/documentation_system_flow.mmd)
-- [📅 Events Flow](diagrams/source/events_flow.mmd)
-- [🤝 Exchange Flow](diagrams/source/exchange_flow.mmd)
-- [🗺️ Geography System Flow](diagrams/source/geography_system_flow.mmd)
-- [🌍 I18n Mobility Localization Flow](diagrams/source/i18n_mobility_localization_flow.mmd)
-- [📊 Metrics Flow](diagrams/source/metrics_flow.mmd)
-- [🧭 Navigation Flow](diagrams/source/navigation_flow.mmd)
-- [🔔 Notifications Flow](diagrams/source/notifications_flow.mmd)
-- [🔐 Role Based Access Control Flow](diagrams/source/role_based_access_control_flow.mmd)
-- [🔒 Security Protection Flow](diagrams/source/security_protection_flow.mmd)
-- [🗺️ Sitemap Generation Flow](diagrams/source/sitemap_generation_flow.mmd)
+- [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
+- [Content Flow](diagrams/source/content_flow.mmd)
+- [Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
+- [Documentation System Flow](diagrams/source/documentation_system_flow.mmd)
+- [Events Flow](diagrams/source/events_flow.mmd)
+- [Exchange Flow](diagrams/source/exchange_flow.mmd)
+- [Geography System Flow](diagrams/source/geography_system_flow.mmd)
+- [I18n Mobility Localization Flow](diagrams/source/i18n_mobility_localization_flow.mmd)
+- [Metrics Flow](diagrams/source/metrics_flow.mmd)
+- [Navigation Flow](diagrams/source/navigation_flow.mmd)
+- [Notifications Flow](diagrams/source/notifications_flow.mmd)
+- [Role Based Access Control Flow](diagrams/source/role_based_access_control_flow.mmd)
+- [Security Protection Flow](diagrams/source/security_protection_flow.mmd)
+- [Sitemap Generation Flow](diagrams/source/sitemap_generation_flow.mmd)
 
 ##### **Conceptual Diagrams** - [`diagrams/source/`](diagrams/source/)
-- [🏛️ Democratic by Design Map](diagrams/source/democratic_by_design_map.mmd)
-- [🏗️ Models and Concerns Diagram](diagrams/source/models_and_concerns_diagram.mmd)
+- [Democratic by Design Map](diagrams/source/democratic_by_design_map.mmd)
+- [Models and Concerns Diagram](diagrams/source/models_and_concerns_diagram.mmd)
 
 ##### **Exported Diagrams**
 - **PNG Exports**: [`diagrams/exports/png/`](diagrams/exports/png/) - High-resolution PNG files
 - **SVG Exports**: [`diagrams/exports/svg/`](diagrams/exports/svg/) - Vector graphics files
 
-#### 🎨 **UI Documentation** - [`ui/`](ui/)
+#### **UI Documentation** - [`ui/`](ui/)
 *User interface and design documentation*
-- [🎗️ Help Banners](ui/help-banners.md) - UI help system
-- [🧭 Navigation Sidebar Guide](ui/navigation_sidebar_guide.md) - Navigation design
-- [🛠️ Resource Toolbar](ui/resource_toolbar.md) - Toolbar documentation
+- [Help Banners](ui/help-banners.md) - UI help system
+- [Navigation Sidebar Guide](ui/navigation_sidebar_guide.md) - Navigation design
+- [Resource Toolbar](ui/resource_toolbar.md) - Toolbar documentation
 
-#### 🏭 **Production** - [`production/`](production/)
+#### **Production** - [`production/`](production/)
 *Deployment and production environment documentation*
-- [🚀 Deployment (Dokku)](production/deployment-dokku.md) - Production deployment guide
+- [Deployment (Dokku)](production/deployment-dokku.md) - Production deployment guide
 - [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
-- [🥧 Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
+- [Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
 
-#### 🔧 **Scripts** - [`scripts/`](scripts/)
+#### **Scripts** - [`scripts/`](scripts/)
 *Documentation maintenance and automation scripts*
-- [🏗️ Create Stakeholder Structure](scripts/create_stakeholder_structure.sh) - Documentation reorganization
-- [📊 Migrate Diagrams](scripts/migrate_diagrams_to_new_structure.sh) - Diagram migration utility
+- [Create Stakeholder Structure](scripts/create_stakeholder_structure.sh) - Documentation reorganization
+- [Migrate Diagrams](scripts/migrate_diagrams_to_new_structure.sh) - Diagram migration utility
 - [✅ Validate Documentation Tooling](scripts/validate_documentation_tooling.sh) - Validation suite
-- [📈 Update Progress](scripts/update_progress.sh) - Progress tracking utility
+- [Update Progress](scripts/update_progress.sh) - Progress tracking utility
 
-### 📁 **Legacy and Reference**
+### **Development and Reference**
 
-#### 🏗️ **Development Environment** - [`development/`](development/)
+#### **Development** - [`development/`](development/)
 *Development setup and configuration*
-- [🛠️ Development Setup](development/dev-setup.md) - Local development guide
+- [README](development/README.md) - Development resources overview
+- [Development Setup](development/dev-setup.md) - Local development guide
+- [♿ Accessibility Testing](development/accessibility_testing.md) - Browser accessibility and screenshot testing guidance
+- [Screenshot And Documentation Tooling Assessment](development/screenshot_and_documentation_tooling_assessment.md) - CE and management-tool tooling assessment
 
-#### 🤝 **Joatu Exchange System** - [`joatu/`](joatu/)
+#### **Joatu Exchange System** - [`joatu/`](joatu/)
 *Specialized exchange/marketplace functionality*
-- [📝 README](joatu/README.md) - Joatu system overview
-- [🤝 Agreements](joatu/agreements.md) - Exchange agreements
-- [📂 Categories](joatu/categories.md) - Item categorization
-- [🔔 Matching and Notifications](joatu/matching-and-notifications.md) - Matching system
-- [🎁 Offers](joatu/offers.md) - Offer management
-- [🙏 Requests](joatu/requests.md) - Request management
+- [README](joatu/README.md) - Joatu system overview
+- [Agreements](joatu/agreements.md) - Exchange agreements
+- [Categories](joatu/categories.md) - Item categorization
+- [Matching and Notifications](joatu/matching-and-notifications.md) - Matching system
+- [Offers](joatu/offers.md) - Offer management
+- [Requests](joatu/requests.md) - Request management
 
-#### 📊 **Meta Documentation** - [`meta/`](meta/)
+#### **Meta Documentation** - [`meta/`](meta/)
 *Documentation about documentation - project management and organization*
-- [📝 README](meta/README.md) - Meta documentation overview
-- [📊 Documentation Assessment](meta/documentation_assessment.md) - Documentation quality metrics
-- [📋 Documentation Inventory](meta/documentation_inventory.md) - Complete file inventory
-- [🏗️ Documentation Restructure Plan](meta/documentation_restructure_plan.md) - Reorganization planning
-- [👥 Stakeholder Documentation Structure](meta/stakeholder_documentation_structure.md) - Organizational design
+- [README](meta/README.md) - Meta documentation overview
+- [Documentation Assessment](meta/documentation_assessment.md) - Documentation quality metrics
+- [Documentation Inventory](meta/documentation_inventory.md) - Complete file inventory
+- [Documentation Restructure Plan](meta/documentation_restructure_plan.md) - Reorganization planning
+- [Stakeholder Documentation Structure](meta/stakeholder_documentation_structure.md) - Organizational design
 
 ---
 
-## 📊 Documentation Statistics
+## Documentation Statistics
 
 - **Total Documentation Files**: 55+ markdown files
 - **Stakeholder Groups**: 7 primary categories
@@ -192,7 +202,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - **Implementation Resources**: Templates, plans, and current work
 - **Specialized Sections**: UI, Production, Scripts, Reference, Meta
 
-## 🔄 Maintenance
+## Maintenance
 
 This table of contents is automatically maintained. When adding new documentation or diagrams:
 

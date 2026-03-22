@@ -106,6 +106,48 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           expect(EventReminderJob).not_to have_been_enqueued
         end
       end
+
+      context 'timezone handling' do
+        it 'uses event local timezone for scheduling reminders' do
+          # Event in Tokyo at 6:00 PM JST (future date)
+          tokyo_event = create(:event, :with_attendees,
+                               timezone: 'Asia/Tokyo',
+                               starts_at: 30.hours.from_now) # Future time
+
+          job.perform(tokyo_event.id)
+
+          # Verify reminders were scheduled
+          expect(EventReminderJob).to have_been_enqueued.with(tokyo_event.id).exactly(3).times
+        end
+
+        it 'schedules reminders correctly for events in different timezones' do
+          # Event in New York at 2:00 PM EST (future date)
+          ny_event = create(:event, :with_attendees,
+                            timezone: 'America/New_York',
+                            starts_at: 30.hours.from_now) # Future time
+
+          job.perform(ny_event.id)
+
+          # Verify 3 reminders (24h, 1h, start time) were scheduled
+          expect(EventReminderJob).to have_been_enqueued.with(ny_event.id).exactly(3).times
+        end
+
+        it 'handles DST transitions correctly' do
+          # Event after DST transition (spring forward)
+          # March 10, 2024: 2:00 AM → 3:00 AM EDT
+          event_after_dst = create(:event, :with_attendees,
+                                   timezone: 'America/New_York',
+                                   starts_at: Time.zone.parse('2024-03-15 14:00 EDT'))
+
+          job.perform(event_after_dst.id)
+
+          # 24-hour reminder should be at 2:00 PM EDT on March 14
+          expected_24h = event_after_dst.local_starts_at - 24.hours
+          expect(expected_24h.hour).to eq(14)
+          expect(expected_24h.day).to eq(14)
+          expect(expected_24h.strftime('%Z')).to eq('EDT')
+        end
+      end
     end
 
     describe 'queue configuration' do

@@ -27,9 +27,11 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       it 'includes role and permission summary content' do
-        first_permission_label = permissions.first.identifier.to_s.tr('_', ' ').humanize
+        # Get permissions in the same order they'll appear in the email (first 6)
+        displayed_permissions = role.resource_permissions.order(:resource_type, :position, :identifier).first(6)
+        first_permission_label = displayed_permissions.first.identifier.to_s.tr('_', ' ').humanize
 
-        expect(mail.body.encoded).to include(role.name)
+        expect_mail_html_content(mail, role.name)
         expect(mail.body.encoded).to include(first_permission_label)
         expect(mail.body.encoded).to include(
           I18n.t('better_together.membership_mailer.created.permissions_summary_more', count: 2)
@@ -66,8 +68,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       end
 
       it 'includes old and new role information' do
-        expect(mail.body.encoded).to include(old_role.name)
-        expect(mail.body.encoded).to include(new_role.name)
+        expect_mail_html_contents(mail, old_role.name, new_role.name)
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.updated.previous_permissions_heading'))
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.updated.new_permissions_heading'))
       end
@@ -100,7 +101,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
       it 'includes role and removal information' do
         expect(mail.body.encoded).to include('John Doe')
-        expect(mail.body.encoded).to include(role.name)
+        expect_mail_html_content(mail, role.name)
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.removed.removed_permissions_heading'))
         expect(mail.body.encoded).to include(I18n.t('better_together.membership_mailer.removed.footer_message'))
       end

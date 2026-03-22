@@ -20,7 +20,7 @@ RSpec.describe BetterTogether::PersonBlockPolicy do
     end
 
     it 'denies when blocked is a platform manager' do
-      host_platform = create(:better_together_platform, :host, privacy: 'public')
+      host_platform = BetterTogether::Platform.find_by(host: true)
       manager_user = create(:better_together_user, :confirmed)
       platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
       BetterTogether::PersonPlatformMembership.create!(

@@ -7,6 +7,7 @@ AllCops:
     - 'spec/dummy/db/schema.rb'
     - 'db/schema.rb'
     - 'vendor/**/*'
+    - 'spec/integration/**/*'  # rswag specs - never run rubocop on these
   NewCops: enable
   TargetRubyVersion: 3.4
 plugins:
@@ -29,6 +30,18 @@ RSpec/MessageSpies:
   Enabled: false
 RSpec/LetSetup:
   Enabled: false
+RSpec/EmptyExampleGroup:
+  Enabled: false
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/integration/**/*'
+    - 'spec/features/**/*'
+    - 'spec/requests/**/*'
+    - 'spec/system/**/*'
+    - 'spec/views/**/*'
+RSpec/VariableName:
+  Exclude:
+    - 'spec/integration/**/*'  # rswag uses capitalized HTTP header names
 
 Style/StringLiterals:
   Exclude:

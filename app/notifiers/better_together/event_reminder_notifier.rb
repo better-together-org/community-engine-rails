@@ -16,7 +16,7 @@ module BetterTogether
     validates :record, presence: true
     required_param :reminder_type
 
-    def event
+    def target_event
       record
     end
 
@@ -25,16 +25,16 @@ module BetterTogether
     end
 
     def identifier
-      event.id
+      target_event.id
     end
 
     def url
-      ::BetterTogether::Engine.routes.url_helpers.event_url(event, locale: I18n.locale)
+      ::BetterTogether::Engine.routes.url_helpers.event_url(target_event, locale: I18n.locale)
     end
 
     def title
       I18n.t('better_together.notifications.event_reminder.title',
-             event_name: event.name,
+             event_name: target_event.name,
              default: 'Reminder: %<event_name>s')
     end
 
@@ -61,7 +61,7 @@ module BetterTogether
 
     def email_params(_notification)
       {
-        event: event,
+        event: target_event,
         person: recipient,
         reminder_type: reminder_type
       }
@@ -71,41 +71,43 @@ module BetterTogether
 
     def body_24_hours
       I18n.t('better_together.notifications.event_reminder.body_24h',
-             event_name: event.name,
+             event_name: target_event.name,
              starts_at: formatted_start_time,
              default: '%<event_name>s starts tomorrow at %<starts_at>s')
     end
 
     def body_1_hour
       I18n.t('better_together.notifications.event_reminder.body_1h',
-             event_name: event.name,
+             event_name: target_event.name,
              starts_at: formatted_start_time,
              default: '%<event_name>s starts in 1 hour at %<starts_at>s')
     end
 
     def body_generic
       I18n.t('better_together.notifications.event_reminder.body_generic',
-             event_name: event.name,
+             event_name: target_event.name,
              starts_at: formatted_start_time,
              default: 'Reminder: %<event_name>s starts at %<starts_at>s')
     end
 
     def formatted_start_time
-      I18n.l(event.starts_at, format: :long)
+      I18n.l(target_event.starts_at, format: :long)
     end
 
     notification_methods do
-      delegate :event, to: :event
-      delegate :url, to: :event
-      delegate :identifier, to: :event
-      delegate :reminder_type, to: :event
+      delegate :event, to: :target_event
+      delegate :url, to: :target_event
+      delegate :identifier, to: :target_event
+      delegate :reminder_type, to: :target_event
 
       def send_email_notification?
         recipient.email.present? && recipient.notify_by_email && should_send_email?
       end
 
       def should_notify?
-        event.present? && event.starts_at.present? &&
+        target_event.present? &&
+          target_event.starts_at.present? &&
+          target_event.starts_at > 15.minutes.ago &&
           (!recipient.respond_to?(:notification_preferences) ||
            recipient.notification_preferences.fetch('event_reminders', true))
       end
@@ -113,7 +115,7 @@ module BetterTogether
       def should_send_email?
         # Check for unread notifications for the recipient for the record's event
         unread_notifications = recipient.notifications.where(
-          event_id: BetterTogether::EventReminderNotifier.where(params: { event_id: event.id }).select(:id),
+          event_id: BetterTogether::EventReminderNotifier.where(params: { event_id: target_event.id }).select(:id),
           read_at: nil
         ).order(created_at: :desc)
 

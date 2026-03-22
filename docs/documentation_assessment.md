@@ -1,22 +1,22 @@
 # Better Together Community Engine - Documentation Assessment & Progress Tracker
 
-**Last Updated:** August 27, 2025
-**Assessment Date:** August 21, 2025  
+**Last Updated:** January 12, 2026
+**Assessment Date:** January 12, 2026  
 **Schema Analysis Version:** 2025_08_21_121500
 
 ---
 
 ## Executive Summary
 
-The Better Together Community Engine consists of **75 database tables** organized into **15 major system domains**. Our current documentation coverage stands at **47% complete** with **7 systems fully documented** and **2 systems partially documented**.
+The Better Together Community Engine consists of **75 database tables** organized into **15 major system domains**. Our current documentation coverage stands at **67% complete** with **10 systems fully documented** and **2 systems partially documented**.
 
 ### Current Status Overview
-- **✅ Fully Documented Systems:** 7/15 (47%)
+- **✅ Fully Documented Systems:** 10/15 (67%)
 - **🔄 Partially Documented Systems:** 2/15 (13%) 
-- **📋 Pending Documentation Systems:** 6/15 (40%)
-- **Total Tables Covered:** 50/75 (67%)
-- **Documentation Files Created:** 14 (7 systems × 2 files each)
-- **Process Flow Diagrams:** 7 complete sets (Mermaid + PNG + SVG)
+- **📋 Pending Documentation Systems:** 3/15 (20%)
+- **Total Tables Covered:** 52/75 (69%)
+- **Documentation Files Created:** 27 (10 systems + 3 utilities)
+- **Process Flow Diagrams:** 9 complete sets (Mermaid + PNG + SVG)
 
 ---
 
@@ -33,6 +33,9 @@ The Better Together Community Engine consists of **75 database tables** organize
 | **Joatu Exchange System** | 🔥 HIGH | 4 | 🔄 Partial | Models exist | ❌ Pending | 25% |
 | **Community & Social System** | 🔥 HIGH | 8 | ✅ Complete | `developers/systems/community_social_system.md` | ✅ Complete | 100% |
 | **Content Management System** | 🔥 HIGH | 9 | ✅ Complete | `developers/systems/content_management.md` | ✅ Complete | 100% |
+| **Documentation Builder** | 🔥 HIGH | 2 | ✅ Complete | `developers/systems/documentation_builder_system.md` | ✅ Complete | 100% |
+| **Markdown Content Management** | 🔥 HIGH | 0* | ✅ Complete | `developers/systems/markdown_content_management_system.md` | ✅ Complete | 100% |
+| **SafeClassResolver Utility** | 🔥 HIGH | 0* | ✅ Complete | `reference/safe_class_resolver.md` | N/A | 100% |
 | **Communication System** | 🔥 HIGH | 5 | 📋 Pending | ❌ Needed | ❌ Needed | 0% |
 | **Contact Management** | 🟡 MEDIUM | 6 | 📋 Pending | ❌ Needed | ❌ Needed | 0% |
 | **Analytics & Metrics** | 🟡 MEDIUM | 7 | 📋 Pending | ❌ Needed | ❌ Needed | 0% |
@@ -149,6 +152,78 @@ The Better Together Community Engine consists of **75 database tables** organize
 - Search performance optimization
 - Background job processing patterns
 - Cache invalidation strategies
+
+---
+
+### ✅ **DocumentationBuilder System**
+**Completion Date:** January 2026 (PR #1149 - Retrospective Documentation)  
+**Documentation Size:** 2,400+ lines (implementation plan + acceptance criteria + system docs)  
+**Tables Covered:** 2 (navigation_areas, pages - indirect usage)
+
+**Files Created:**
+- `docs/implementation/documentation_builder_plan.md` (600+ lines implementation plan)
+- `docs/implementation/documentation_builder_acceptance_criteria.md` (400+ lines acceptance criteria)
+- `docs/developers/systems/documentation_builder_system.md` (800+ lines system documentation)
+- `docs/diagrams/source/documentation_builder_flow.mmd` (Mermaid source)
+- `docs/diagrams/exports/png/documentation_builder_flow.png` (high-res 4800x3600 diagram)
+- `docs/diagrams/exports/svg/documentation_builder_flow.svg` (vector diagram)
+
+**Key Features Documented:**
+- Automated documentation site generation from docs/ directory
+- Recursive file scanning with directory structure preservation
+- Navigation area and navigation item creation
+- Page generation with markdown content blocks
+- Protected content flags for infrastructure pages
+- Idempotent rebuild capability
+- Slug generation and preservation
+- **Test Coverage:** 235 lines of comprehensive builder specs
+
+---
+
+### ✅ **Markdown Content Management System**
+**Completion Date:** January 2026 (PR #1149 - Retrospective Documentation)  
+**Documentation Size:** 3,200+ lines (implementation plan + acceptance criteria + system docs)  
+**Tables Covered:** 0* (uses existing content_blocks table via STI)
+
+**Files Created:**
+- `docs/implementation/markdown_content_management_plan.md` (900+ lines implementation plan)
+- `docs/implementation/markdown_content_management_acceptance_criteria.md` (1,100+ lines acceptance criteria)
+- `docs/developers/systems/markdown_content_management_system.md` (1,200+ lines system documentation)
+- `docs/diagrams/source/markdown_content_flow.mmd` (Mermaid source)
+- `docs/diagrams/exports/png/markdown_content_flow.png` (high-res 4800x3600 diagram)
+- `docs/diagrams/exports/svg/markdown_content_flow.svg` (vector diagram)
+
+**Key Features Documented:**
+- Dual-source content model (inline database + file-based)
+- Locale-aware markdown file loading (.en.md, .fr.md patterns)
+- GitHub-flavored markdown rendering with Redcarpet
+- MarkdownRendererService with security features
+- Live preview via Stimulus controller with debouncing
+- Auto-sync and manual import workflows
+- Platform manager authorization with protected content
+- Plain-text rendering for Elasticsearch indexing
+- **Test Coverage:** 386+ lines of model/policy/service tests
+
+---
+
+### ✅ **SafeClassResolver Security Utility**
+**Completion Date:** January 2026 (PR #1149 - Retrospective Documentation)  
+**Documentation Size:** 1,000+ lines (comprehensive reference documentation)  
+**Tables Covered:** 0* (security utility, no database tables)
+
+**Files Created:**
+- `docs/reference/safe_class_resolver.md` (1,000+ lines reference documentation)
+
+**Key Features Documented:**
+- Unsafe reflection prevention (Brakeman compliance)
+- Allow-list based class resolution
+- Dual implementation (lib/ module + app/services/ module)
+- Real-world integration patterns (7+ usage locations)
+- Security best practices and migration guide
+- Code injection prevention patterns
+- Allow-list composition strategies
+- **Test Coverage:** 225 lines of comprehensive security tests
+- **Integration Points:** Categorizable, RolesHelper, WizardStepsController, TrackShareJob
 
 ---
 

@@ -1,0 +1,151 @@
+<%# frozen_string_literal: true %>
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+
+<% inline_radio_id = "#{temp_id}_markdown_source_inline" %>
+<% file_radio_id = "#{temp_id}_markdown_source_file" %>
+<% inline_selected = block.markdown_file_path.blank? %>
+
+<div class="markdown-fields"
+  data-controller="better-together--markdown-block better-together--dependent-fields"
+  data-better-together--markdown-block-preview-url-value="/<%= I18n.locale %>/<%= BetterTogether.route_scope_path %>/content/blocks/preview_markdown">
+  <!-- Radio buttons to choose between source or file -->
+  <div class="mb-3">
+    <%= label_tag nil, t('better_together.content.blocks.markdown.fields.markdown_source'), class: 'form-label' %>
+    <div class="form-check">
+      <%= radio_button_tag "#{scope}[markdown_source_type]", 'inline', inline_selected,
+          class: 'form-check-input', 
+          id: inline_radio_id,
+          data: { 
+            action: 'change->better-together--markdown-block#handleSourceTypeChange',
+            'better-together--markdown-block-target': 'sourceTypeRadio',
+            'better-together--dependent-fields-target': 'controlField'
+          } %>
+      <%= label_tag inline_radio_id, t('better_together.content.blocks.markdown.fields.write_inline'), class: 'form-check-label' %>
+    </div>
+    <div class="form-check">
+      <%= radio_button_tag "#{scope}[markdown_source_type]", 'file', block.markdown_file_path.present?, 
+          class: 'form-check-input', 
+          id: file_radio_id,
+          data: { 
+            action: 'change->better-together--markdown-block#handleSourceTypeChange',
+            'better-together--markdown-block-target': 'sourceTypeRadio',
+            'better-together--dependent-fields-target': 'controlField'
+          } %>
+      <%= label_tag file_radio_id, t('better_together.content.blocks.markdown.fields.reference_file'), class: 'form-check-label' %>
+    </div>
+  </div>
+
+  <!-- Inline markdown source textarea with locale support -->
+  <div class="mb-3 markdown-inline-field <%= 'hidden-field' unless inline_selected %>"
+       data-better-together--markdown-block-target="inlineField"
+       data-better-together--dependent-fields-target="dependentField"
+       data-dependent-fields-control="<%= inline_radio_id %>"
+       data-show-if-control_<%= inline_radio_id %>="inline">
+    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field',
+               locals: { 
+                 model: block, 
+                 scope: scope, 
+                 temp_id: temp_id, 
+                 attribute: 'markdown_source',
+                 input_options: {
+                   data: {
+                     action: 'input->better-together--markdown-block#refreshPreview',
+                     'better-together--markdown-block-target': 'sourceTextarea'
+                   }
+                 }
+               } %>
+    
+    <small class="form-text text-muted mt-2">
+      <%= t('better_together.content.blocks.markdown.help.inline_content') %>
+    </small>
+  </div>
+
+  <!-- File path field -->
+  <div class="mb-3 markdown-file-field <%= 'hidden-field' if inline_selected %>"
+       data-better-together--markdown-block-target="fileField"
+       data-better-together--dependent-fields-target="dependentField"
+       data-dependent-fields-control="<%= file_radio_id %>"
+       data-show-if-control_<%= file_radio_id %>="file">
+    <%= label_tag "#{scope}[markdown_file_path]", t('better_together.content.blocks.markdown.fields.file_path'), class: 'form-label' %>
+    <%= text_field_tag "#{scope}[markdown_file_path]", 
+        block.markdown_file_path, 
+        class: "form-control font-monospace#{' is-invalid' if block.errors[:markdown_file_path].any?}", 
+        placeholder: t('better_together.content.blocks.markdown.fields.file_path_placeholder'),
+      data: { 'better-together--markdown-block-target': 'filePathInput', action: 'input->better-together--markdown-block#refreshPreview' },
+        disabled: inline_selected %>
+    
+    <% if block.errors[:markdown_file_path].any? %>
+      <div class="invalid-feedback">
+        <%= block.errors[:markdown_file_path].join(", ") %>
+      </div>
+    <% end %>
+    
+    <small class="form-text text-muted mt-2">
+      <%= t('better_together.content.blocks.markdown.help.file_path') %>
+      <br>
+      <strong><%= t('better_together.content.blocks.markdown.help.localized_files') %></strong>
+    </small>
+    
+    <!-- Auto-sync from file option -->
+    <div class="form-check mt-3">
+      <%= check_box_tag "#{scope}[auto_sync_from_file]",
+          '1',
+          block.auto_sync_from_file,
+          class: 'form-check-input',
+          id: "#{temp_id}_auto_sync",
+          disabled: inline_selected %>
+      <%= label_tag "#{temp_id}_auto_sync",
+          t('better_together.content.blocks.markdown.fields.auto_sync'),
+          class: 'form-check-label' %>
+      <small class="form-text text-muted d-block">
+        <%= t('better_together.content.blocks.markdown.help.auto_sync') %>
+      </small>
+    </div>
+    
+    <!-- Available translations indicator -->
+    <% if block.markdown_file_path.present? %>
+      <div class="alert alert-info mt-3 mb-0">
+        <strong><i class="fa fa-info-circle"></i> <%= t('better_together.content.blocks.markdown.help.available_translations') %></strong>
+        <% 
+          base_path = block.markdown_file_path.sub(/\.(md|markdown)$/i, '')
+          I18n.available_locales.each do |locale|
+            locale_file = "#{base_path}.#{locale}.md"
+            # Try to resolve the file path
+            file_path = if Pathname.new(locale_file).absolute?
+                         Pathname.new(locale_file)
+                       else
+                         Rails.root.join(locale_file)
+                       end
+            file_exists = File.exist?(file_path)
+        %>
+          <span class="badge <%= file_exists ? 'bg-success' : 'bg-secondary' %> me-1">
+            <%= locale.upcase %> <%= file_exists ? '✓' : '✗' %>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Preview area -->
+  <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <%= label_tag nil, t('better_together.content.blocks.markdown.fields.preview'), class: 'form-label mb-0' %>
+      <button type="button" 
+              class="btn btn-sm btn-outline-secondary"
+              data-action="click->better-together--markdown-block#refreshPreview">
+        <i class="fa fa-refresh"></i> <%= t('better_together.content.blocks.markdown.fields.refresh_preview') %>
+      </button>
+    </div>
+    <div class="border rounded p-3 bg-light markdown-content" 
+         data-better-together--markdown-block-target="preview"
+         style="min-height: 200px;">
+      <% if block.content.present? %>
+        <%= block.rendered_html %>
+      <% else %>
+        <p class="text-muted mb-0">
+          <em><%= t('better_together.content.blocks.markdown.help.preview_placeholder') %></em>
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>

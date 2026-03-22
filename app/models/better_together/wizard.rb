@@ -34,8 +34,10 @@ module BetterTogether
       return if current_completions == max_completions
 
       self.current_completions += 1
-      self.last_completed_at = DateTime.now
-      self.first_completed_at ||= DateTime.now
+      self.last_completed_at = Time.now
+      self.first_completed_at = Time.now if first_completed_at.nil?
+
+
       save
     end
 

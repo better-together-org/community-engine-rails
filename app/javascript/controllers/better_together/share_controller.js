@@ -15,8 +15,13 @@ export default class extends Controller {
     const shareUrl = this.constructShareUrl(platform, url, title, image)
     if (!shareUrl) return
 
-    // Open the share window
-    window.open(shareUrl, '_blank', 'width=600,height=400')
+    // For email, use location.href to avoid opening extra tabs
+    if (platform === 'email') {
+      window.location.href = shareUrl
+    } else {
+      // Open the share window for social platforms
+      window.open(shareUrl, '_blank', 'width=600,height=400')
+    }
 
     // Track the share internally via AJAX
     this.trackShare(platform, url, shareTrackingUrl, shareableType, shareableId)
@@ -33,6 +38,8 @@ export default class extends Controller {
     const encodedImage = encodeURIComponent(image)
 
     switch (platform) {
+      case 'email':
+        return `mailto:?subject=${encodedTitle}&body=${encodedTitle}%20${encodedUrl}`;
       case 'facebook':
         return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
       case 'bluesky':

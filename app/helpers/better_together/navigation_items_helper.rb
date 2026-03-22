@@ -1,8 +1,27 @@
 # frozen_string_literal: true
 
+require 'digest'
+
 module BetterTogether
   # rubocop:todo Metrics/ModuleLength
   module NavigationItemsHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
+    NAV_TREE_PRELOADS = [
+      :string_translations,
+      { linkable: [:string_translations] },
+      {
+        children: [
+          :string_translations,
+          { linkable: [:string_translations] },
+          {
+            children: [
+              :string_translations,
+              { linkable: [:string_translations] }
+            ]
+          }
+        ]
+      }
+    ].freeze
+
     def better_together_nav_area
   # rubocop:todo Layout/IndentationWidth
   @better_together_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'better-together')
@@ -11,26 +30,29 @@ module BetterTogether
 
     # Retrieves navigation items for the BetterTogether header navigation.
     def better_together_nav_items
-      # Preload navigation items and their translations in a single query
-      Mobility.with_locale(current_locale) do
-        @better_together_nav_items ||= @better_together_nav_area.top_level_nav_items_includes_children || []
-      end
+      visible_nav_items_for(better_together_nav_area)
     end
 
     def render_better_together_nav_items
       return unless better_together_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(better_together_nav_area)) do
-        render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items
+        render_navigation_items_list(
+          navigation_items: better_together_nav_items,
+          navigation_area: better_together_nav_area
+        )
       end
     end
 
     def cache_key_for_nav_area(nav)
+      context_key = nav_visibility_context_key
+      return default_nav_cache_key(nav) if context_key.blank?
+
       [
         'nav_area_items',
         nav.cache_key_with_version, # Ensure cache expires when nav updates
-        current_user&.cache_key_with_version
-      ].compact # removes nil values for unauthenticated users
+        context_key
+      ]
     end
 
     def dropdown_id(navigation_item)
@@ -53,8 +75,10 @@ module BetterTogether
 
     def nav_link_classes(navigation_item, path: nil)
       classes = dom_class(navigation_item, navigation_item.slug)
-      classes += ' nav-link'
+      classes += ' nav-link text-center'
       classes += ' dropdown-toggle' if navigation_item.children?
+      # Don't add 'active' class here - it's request-dependent and breaks caching
+      # The active state is handled client-side via Stimulus or via data attribute
       classes += ' active' if nav_link_active?(navigation_item, path:)
       classes
     end
@@ -65,21 +89,17 @@ module BetterTogether
 
     # Retrieves navigation items for the admin area in the platform header.
     def platform_host_nav_items
-      return [] unless platform_host_nav_area
-
-      # Preload navigation items and their translations in a single query
-      Mobility.with_locale(current_locale) do
-        @platform_host_nav_items ||= platform_host_nav_area.top_level_nav_items_includes_children || []
-      end
+      visible_nav_items_for(platform_host_nav_area)
     end
 
     def render_platform_host_nav_items
       return unless platform_host_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_host_nav_area)) do
-        render 'better_together/navigation_items/navigation_items',
-               navigation_items: platform_host_nav_items,
-               navigation_area: platform_host_nav_area
+        render_navigation_items_list(
+          navigation_items: platform_host_nav_items,
+          navigation_area: platform_host_nav_area
+        )
       end
     end
 
@@ -89,15 +109,29 @@ module BetterTogether
       platform_host_nav_items.any? { |item| navigation_item_visible_for?(item, platform: host_platform) }
     end
 
+    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def navigation_item_visible_for?(navigation_item, platform: host_platform)
-      return true if navigation_item.visible_to?(current_user, platform: platform)
+      return false unless navigation_item
 
-      navigation_item.dropdown? &&
-        navigation_item.children.any? { |child| child.visible_to?(current_user, platform: platform) }
+      @navigation_item_visibility_cache ||= {}
+      cache_key = [navigation_item.id, platform&.id, current_user&.id]
+      return @navigation_item_visibility_cache[cache_key] if @navigation_item_visibility_cache.key?(cache_key)
+
+      visible = navigation_item.visible_to?(current_user, platform:) ||
+                (navigation_item.dropdown? &&
+                  navigation_item.children.any? { |child| navigation_item_visible_for?(child, platform:) })
+
+      @navigation_item_visibility_cache[cache_key] = visible
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def navigation_item_children_for(navigation_item, platform: host_platform)
-      navigation_item.children.select { |child| child.visible_to?(current_user, platform: platform) }
+      @navigation_item_children_cache ||= {}
+      cache_key = [navigation_item.id, platform&.id, current_user&.id]
+      return @navigation_item_children_cache[cache_key] if @navigation_item_children_cache.key?(cache_key)
+
+      visible_children = navigation_item.children.select { |child| navigation_item_visible_for?(child, platform:) }
+      @navigation_item_children_cache[cache_key] = visible_children
     end
 
     def platform_host_nav_children
@@ -132,19 +166,17 @@ module BetterTogether
 
     # Retrieves navigation items for the platform footer.
     def platform_footer_nav_items
-      # Preload navigation items and their translations in a single query
-      Mobility.with_locale(current_locale) do
-        @platform_footer_nav_items ||= platform_footer_nav_area&.top_level_nav_items_includes_children || []
-      end
+      visible_nav_items_for(platform_footer_nav_area)
     end
 
     def render_platform_footer_nav_items
       return unless platform_footer_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_footer_nav_area)) do
-        render 'better_together/navigation_items/navigation_items',
-               navigation_items: platform_footer_nav_items,
-               navigation_area: platform_footer_nav_area
+        render_navigation_items_list(
+          navigation_items: platform_footer_nav_items,
+          navigation_area: platform_footer_nav_area
+        )
       end
     end
 
@@ -154,10 +186,7 @@ module BetterTogether
 
     # Retrieves navigation items for the platform header.
     def platform_header_nav_items
-      # Preload navigation items and their translations in a single query
-      Mobility.with_locale(current_locale) do
-        @platform_header_nav_items ||= platform_header_nav_area.top_level_nav_items_includes_children || []
-      end
+      visible_nav_items_for(platform_header_nav_area)
     end
 
     # Retrieves navigation items for the mailer header.
@@ -173,10 +202,24 @@ module BetterTogether
       return unless platform_header_nav_area
 
       Rails.cache.fetch(cache_key_for_nav_area(platform_header_nav_area)) do
-        render 'better_together/navigation_items/navigation_items',
-               navigation_items: platform_header_nav_items,
-               navigation_area: platform_header_nav_area
+        render_navigation_items_list(
+          navigation_items: platform_header_nav_items,
+          navigation_area: platform_header_nav_area
+        )
       end
+    end
+
+    def nav_fragment_cache_key(fragment_name, nav_areas: [])
+      nav_area_keys = Array(nav_areas).compact.map(&:cache_key_with_version).sort
+      [
+        'layout_fragment',
+        fragment_name,
+        "locale:#{current_locale}",
+        "platform:#{host_platform&.cache_key_with_version || 'none'}",
+        "community:#{host_community&.cache_key_with_version || 'none'}",
+        "areas:#{Digest::SHA256.hexdigest(nav_area_keys.join('|'))}",
+        "visibility:#{nav_visibility_context_key}"
+      ]
     end
 
     def route_names_for_select(nav_item = nil)
@@ -186,6 +229,45 @@ module BetterTogether
         end,
         nav_item&.route_name
       )
+    end
+
+    # Renders a navigation items list with optional navigation area styling
+    # @param navigation_items [Array<NavigationItem>] The navigation items to render
+    # @param navigation_area [NavigationArea, nil] Optional navigation area for DOM classes/IDs
+    # @param justify [String] Bootstrap justify class (default: 'center')
+    # @param base_class [String] Base navbar class (default: 'navbar-nav')
+    # @param flex_direction_class [String] Responsive flex direction (default: 'flex-lg-row')
+    # @param flex_wrap_class [String] Flex wrapping behavior (default: 'flex-wrap')
+    # @param gap_class [String] Default gap spacing (default: 'gap-2')
+    # @param gap_md_class [String] Medium breakpoint gap spacing (default: 'gap-md-3')
+    # @return [String] HTML ul element with navigation items
+    # rubocop:disable Metrics/ParameterLists
+    def render_navigation_items_list(
+      navigation_items:,
+      navigation_area: nil,
+      justify: 'center',
+      base_class: 'navbar-nav',
+      flex_direction_class: 'flex-lg-row',
+      flex_wrap_class: 'flex-wrap',
+      gap_class: 'gap-2',
+      gap_md_class: 'gap-md-3'
+    )
+      # rubocop:enable Metrics/ParameterLists
+      nav_class = [
+        base_class,
+        flex_direction_class,
+        flex_wrap_class,
+        gap_class,
+        gap_md_class,
+        "justify-content-#{justify}"
+      ].compact.join(' ')
+      nav_class += " #{dom_class(navigation_area, :nav_items)}" if navigation_area
+      nav_id = navigation_area ? dom_id(navigation_area, :nav_items) : nil
+
+      content_tag :ul, class: nav_class, id: nav_id do
+        render partial: 'better_together/navigation_items/navigation_item',
+               collection: navigation_items, as: :navigation_item
+      end
     end
 
     protected
@@ -244,6 +326,128 @@ module BetterTogether
       current_page?(url)
     rescue StandardError
       false
+    end
+
+    private
+
+    def visible_nav_items_for(nav_area)
+      return [] unless nav_area
+
+      cache = visible_navigation_items_cache
+      key = visible_nav_items_cache_key(nav_area)
+      return cache[key] if cache.key?(key)
+
+      cache[key] = load_nav_items_for(nav_area).select { |item| navigation_item_visible_for?(item, platform: host_platform) }
+    end
+
+    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    def nav_visibility_context_key
+      build_nav_visibility_context_key
+    end
+
+    # rubocop:todo Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    def build_nav_visibility_context_key
+      context_parts = [
+        "locale:#{current_locale}",
+        "platform:#{host_platform&.cache_key_with_version || 'none'}",
+        "auth:#{current_user ? 'user' : 'guest'}",
+        "user:#{current_user&.cache_key_with_version || 'none'}",
+        "permissions:#{nav_permission_cache_stamp}",
+        "path:#{request&.path.to_s.hash}"
+      ]
+
+      return nil if context_parts.any?(&:blank?)
+
+      Digest::SHA256.hexdigest(context_parts.join('|'))
+    rescue StandardError
+      nil
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+
+    def nav_permission_cache_stamp
+      context_key = current_user&.cache_key_with_version || 'guest'
+      @nav_permission_cache_stamp_cache ||= {}
+      return @nav_permission_cache_stamp_cache[context_key] if @nav_permission_cache_stamp_cache.key?(context_key)
+
+      @nav_permission_cache_stamp_cache[context_key] =
+        if current_user.nil?
+          'guest'
+        else
+          segments = [context_key]
+          segments.concat(membership_cache_segments)
+          segments.concat(role_cache_segments)
+          Digest::SHA256.hexdigest(segments.compact.join('|'))
+        end
+    end
+
+    # rubocop:todo Metrics/AbcSize
+    def membership_cache_segments
+      context_key = current_user&.cache_key_with_version || 'guest'
+      @membership_cache_segments_cache ||= {}
+      return @membership_cache_segments_cache[context_key] if @membership_cache_segments_cache.key?(context_key)
+
+      @membership_cache_segments_cache[context_key] = membership_segments_for_user
+    end
+    # rubocop:enable Metrics/AbcSize
+
+    def role_cache_segments
+      context_key = current_user&.cache_key_with_version || 'guest'
+      @role_cache_segments_cache ||= {}
+      return @role_cache_segments_cache[context_key] if @role_cache_segments_cache.key?(context_key)
+
+      @role_cache_segments_cache[context_key] = begin
+        if current_user.respond_to?(:roles)
+          roles_scope = current_user.roles
+          max_updated_at = roles_scope.maximum(:updated_at).to_i
+          ["roles:#{roles_scope.count}:#{max_updated_at}"]
+        else
+          []
+        end
+      rescue StandardError
+        []
+      end
+    end
+
+    def default_nav_cache_key(nav)
+      [
+        'nav_area_items',
+        nav.cache_key_with_version,
+        current_user&.cache_key_with_version,
+        request.path.hash
+      ].compact
+    end
+
+    def visible_navigation_items_cache
+      @visible_navigation_items_cache ||= {}
+    end
+
+    def visible_nav_items_cache_key(nav_area)
+      [nav_area.id, nav_area.cache_key_with_version, nav_visibility_context_key]
+    end
+
+    def load_nav_items_for(nav_area)
+      Mobility.with_locale(current_locale) do
+        relation = nav_area.top_level_nav_items_includes_children
+        relation = relation.includes(NAV_TREE_PRELOADS) if relation.respond_to?(:includes)
+        relation.to_a
+      end
+    end
+
+    def membership_segments_for_user
+      return [] unless current_user.class.respond_to?(:joinable_membership_classes)
+
+      current_user.class.joinable_membership_classes.filter_map do |membership_class_name|
+        membership_segment_for(membership_class_name)
+      end
+    end
+
+    def membership_segment_for(membership_class_name)
+      membership_class = membership_class_name.to_s.safe_constantize
+      return nil unless membership_class&.column_names&.include?('member_id')
+
+      scope = membership_class.where(member_id: current_user.id)
+      max_updated_at = scope.maximum(:updated_at).to_i
+      "#{membership_class_name}:#{scope.count}:#{max_updated_at}"
     end
   end
   # rubocop:enable Metrics/ModuleLength

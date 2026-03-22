@@ -11,12 +11,39 @@ RSpec.describe BetterTogether::DeviseUser do
     platform # Ensure platform is created
   end
 
-  def configure_host_platform
+  def configure_host_platform # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     host_platform = BetterTogether::Platform.find_by(host: true)
-    if host_platform
-      host_platform.update!(privacy: 'public')
-    else
-      host_platform = FactoryBot.create(:better_together_platform, :host, privacy: 'public')
+    unless host_platform
+      begin
+        host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
+          c.name = Faker::Company.unique.name
+          c.description = Faker::Lorem.paragraph
+          c.identifier = Faker::Internet.unique.username(specifier: 10..20)
+          c.privacy = 'public'
+          c.protected = true
+        end
+
+        host_platform = BetterTogether::Platform.find_or_create_by!(host: true) do |p|
+          p.name = host_community.name
+          p.description = host_community.description
+          p.identifier = host_community.identifier
+          p.host_url = "http://#{host_community.identifier}.test"
+          p.time_zone = Faker::Address.time_zone
+          p.privacy = 'public'
+          p.protected = true
+          p.community = host_community
+        end
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+        if e.message.include?('Community host can only be set for one record') ||
+           e.message.include?('Platform host can only be set for one record') ||
+           e.message.include?('duplicate key')
+          sleep(0.1)
+          host_platform = BetterTogether::Platform.find_by(host: true)
+          raise e unless host_platform
+        else
+          raise e
+        end
+      end
     end
 
     wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
@@ -24,7 +51,6 @@ RSpec.describe BetterTogether::DeviseUser do
 
     host_platform
   end
-
   describe '.from_omniauth' do
     let(:github_auth_hash) do
       OmniAuth::AuthHash.new({

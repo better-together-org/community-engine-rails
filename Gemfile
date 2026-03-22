@@ -20,7 +20,7 @@ gem 'fog-aws'
 # Database adapter for PostgreSQL
 gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
-gem 'puma', '~> 7.1'
+gem 'puma', '~> 7.2'
 
 # Pundit for authorization, custom fork for Better Together
 gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources'
@@ -35,7 +35,9 @@ gem 'redis', '~> 5.4'
 gem 'rswag'
 
 # Sidekiq for background processing
-gem 'sidekiq', '~> 8.0.10'
+gem 'sidekiq', '~> 8.1.1'
+# Pin connection_pool to avoid breaking changes in 3.x
+gem 'connection_pool', '~> 3.0.2'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
@@ -52,10 +54,6 @@ gem 'storext', github: 'better-together-org/storext'
 gem 'uglifier', '>= 1.3.0'
 
 group :development, :test do
-  # Better errors for enhanced error pages
-  gem 'better_errors'
-  # Binding of caller provides pry console at breakpoints
-  gem 'binding_of_caller'
   # Debugger tool
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   # Faker for generating fake data
@@ -75,6 +73,10 @@ group :development, :test do
 end
 
 group :development do
+  # Better errors for enhanced error pages (excluded from test to prevent marshal errors with parallel_rspec)
+  gem 'better_errors'
+  # Binding of caller provides pry console at breakpoints (excluded from test to prevent marshal errors)
+  gem 'binding_of_caller'
   # Brakeman for static analysis security vulnerability scanning
   gem 'brakeman', require: false
   # Bundler audit for checking gem vulnerabilities
@@ -84,7 +86,7 @@ group :development do
 
   gem 'easy_translate'
   # Listen for file system changes
-  gem 'listen', '>= 3.0.5', '< 3.10'
+  gem 'listen', '>= 3.0.5', '< 3.11'
   # Rack mini profiler for performance profiling
   gem 'rack-mini-profiler'
   # Readline implementation for Ruby
@@ -100,6 +102,10 @@ group :development do
 end
 
 group :test do
+  # axe-core for accessibility testing
+  gem 'axe-core-capybara'
+  gem 'axe-core-rspec'
+  gem 'axe-core-selenium'
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'

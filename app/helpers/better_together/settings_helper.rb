@@ -110,12 +110,44 @@ module BetterTogether
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def render_time_zone_field(field_value, base_attrs, _field_options)
-      default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
-      time_zone_select('person', 'time_zone', nil,
-                       { default: ActiveSupport::TimeZone[default_tz] },
-                       base_attrs.merge(class: 'form-select'))
+      default_tz = field_value || ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
+
+      # Get grouped timezone options (priority + continents)
+      grouped_options = iana_timezone_options_with_priority
+
+      # Build SlimSelect data attributes
+      slim_select_data = {
+        controller: 'better-together--slim-select',
+        'better-together--slim-select-config-value': {
+          search: true,
+          searchPlaceholder: 'Search timezones...',
+          searchHighlight: true,
+          closeOnSelect: true,
+          showSearch: true,
+          searchingText: 'Searching...',
+          searchText: 'No results',
+          placeholderText: 'Select a timezone'
+        }.to_json
+      }
+
+      # Merge base_attrs data with SlimSelect data
+      merged_data = (base_attrs[:data] || {}).merge(slim_select_data)
+
+      # Build complete HTML options
+      html_options = base_attrs.merge(
+        class: 'form-select',
+        data: merged_data
+      )
+
+      select_tag(
+        base_attrs[:name],
+        grouped_options_for_select(grouped_options, default_tz),
+        html_options
+      )
     end
+    # rubocop:enable Metrics/MethodLength
 
     def render_toggle_field(field_name, field_value, base_attrs)
       content_tag(:div, class: 'form-check form-switch') do

@@ -1,0 +1,71 @@
+flowchart TD
+    Start([User Accesses Markdown Content]) --> CheckSource{Source Type?}
+    
+    CheckSource -->|Inline Source| LoadInline[Load from source attribute<br/>via Mobility translations]
+    CheckSource -->|File-Based| CheckSync{Auto-sync<br/>enabled?}
+    
+    CheckSync -->|Yes| LoadFile[Load from file system]
+    CheckSync -->|No| CheckBlank{Source<br/>blank?}
+    
+    CheckBlank -->|Yes| LoadFile
+    CheckBlank -->|No| LoadInline
+    
+    LoadFile --> ResolveLocale[Resolve locale-specific path<br/>guide.locale.md]
+    ResolveLocale --> CheckLocaleFile{Locale file<br/>exists?}
+    
+    CheckLocaleFile -->|Yes| ReadLocaleFile[Read locale-specific file]
+    CheckLocaleFile -->|No| CheckBaseFile{Base file<br/>exists?}
+    
+    CheckBaseFile -->|Yes| ReadBaseFile[Read base file]
+    CheckBaseFile -->|No| ReturnNil[Return nil<br/>validation error]
+    
+    ReadLocaleFile --> ContentLoaded[Content Loaded]
+    ReadBaseFile --> ContentLoaded
+    LoadInline --> ContentLoaded
+    
+    ContentLoaded --> RenderCheck{Render to<br/>HTML?}
+    
+    RenderCheck -->|Yes| RenderHTML[MarkdownRendererService<br/>render_html]
+    RenderCheck -->|Plain Text| RenderPlain[MarkdownRendererService<br/>render_plain_text]
+    
+    RenderHTML --> ApplyGFM[Apply GitHub-flavored<br/>markdown extensions]
+    ApplyGFM --> LinkProcessing[Process links<br/>External: target=_blank<br/>Internal: no target]
+    LinkProcessing --> ReturnHTML[Return HTML output]
+    
+    RenderPlain --> StripHTML[Strip HTML tags<br/>for search indexing]
+    StripHTML --> ReturnPlain[Return plain text]
+    
+    ReturnNil --> End([Error State])
+    ReturnHTML --> End
+    ReturnPlain --> End
+    
+    subgraph "Import from File"
+        ImportStart([User clicks Import]) --> AuthCheck{Platform<br/>manager?}
+        AuthCheck -->|No| DenyImport[Deny: Unauthorized]
+        AuthCheck -->|Yes| CheckPath{source_file_path<br/>present?}
+        CheckPath -->|No| DenyImport
+        CheckPath -->|Yes| ImportLoad[Load content from file]
+        ImportLoad --> UpdateSource[Update source attribute]
+        UpdateSource --> ImportSuccess[Import Success]
+    end
+    
+    subgraph "Live Preview"
+        PreviewStart([User types in editor]) --> Debounce[Wait 300ms<br/>debounce timer]
+        Debounce --> AjaxRequest[AJAX POST to preview endpoint]
+        AjaxRequest --> PreviewAuth{Platform<br/>manager?}
+        PreviewAuth -->|No| DenyPreview[Deny: Unauthorized]
+        PreviewAuth -->|Yes| RenderPreview[Render markdown to HTML]
+        RenderPreview --> UpdatePanel[Update preview panel]
+    end
+    
+    style Start fill:#90EE90
+    style End fill:#90EE90
+    style ImportSuccess fill:#90EE90
+    style UpdatePanel fill:#90EE90
+    style DenyImport fill:#FFB6C1
+    style DenyPreview fill:#FFB6C1
+    style ReturnNil fill:#FFB6C1
+    style RenderHTML fill:#87CEEB
+    style RenderPlain fill:#87CEEB
+    style LoadFile fill:#FFE4B5
+    style LoadInline fill:#FFE4B5

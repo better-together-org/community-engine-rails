@@ -28,7 +28,9 @@ module BetterTogether
           protected: true,
           item_type: 'link',
           url: '',
-          linkable: page
+          linkable: page,
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
         )
       end
     end

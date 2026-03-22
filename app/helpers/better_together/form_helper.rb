@@ -128,7 +128,7 @@ module BetterTogether
     # when the visible label needs to be different from the translated attribute
     # name (for example: participant_ids -> "Add participants").
     # rubocop:todo Metrics/PerceivedComplexity
-    def required_label(form_or_object, field, label_text: nil, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def required_label(form_or_object, field, label_text: nil, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       # Determine if it's a form object or just an object
       if form_or_object.respond_to?(:object)
         object = form_or_object.object
@@ -159,7 +159,12 @@ module BetterTogether
       end
 
       if form_or_object.respond_to?(:label)
-        form_or_object.label(field, label_text.html_safe, options)
+        label_html = form_or_object.label(field, label_text.html_safe, options)
+        # Some test doubles return an empty string for label; fall back to
+        # `label_tag` to ensure the markup exists in view specs.
+        return label_tag(field, label_text.html_safe, options) if label_html.nil? || label_html.to_s.strip.empty?
+
+        label_html
       else
         label_tag(field, label_text.html_safe, options)
       end

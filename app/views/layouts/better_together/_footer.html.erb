@@ -11,9 +11,13 @@
       </button>
 
       <div class="collapse navbar-collapse" id="footerNavbarNavDropdown">
-        <%= render_platform_footer_nav_items %>
+        <%= cache nav_fragment_cache_key('platform_footer_nav', nav_areas: [platform_footer_nav_area]) do %>
+          <%= render_platform_footer_nav_items %>
+        <% end %>
       </div>
+      <%= cache nav_fragment_cache_key('better_together_footer_nav', nav_areas: [better_together_nav_area]) do %>
         <%= render_better_together_nav_items %>
+      <% end %>
     </div>
   </nav>
   <nav id="footer-platform-nav" class="navbar navbar-expand-lg">
@@ -28,7 +32,7 @@
           <!-- ... other nav items ... -->
 
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
+            <a class="nav-link" href="#back-to-top"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
           </li>
         </ul>
       </div>

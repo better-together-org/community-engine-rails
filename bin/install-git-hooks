@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Install project git hooks by symlinking from .git/hooks/ to bin/git-hooks/
+set -euo pipefail
+
+HOOK_DIR="$(git rev-parse --show-toplevel)/bin/git-hooks"
+GIT_HOOK_DIR="$(git rev-parse --git-dir)/hooks"
+
+for hook in "$HOOK_DIR"/*; do
+  hook_name=$(basename "$hook")
+  target="$GIT_HOOK_DIR/$hook_name"
+
+  if [ -e "$target" ] && [ ! -L "$target" ]; then
+    echo "⚠  $hook_name: existing non-symlink hook found, skipping (back it up manually)"
+    continue
+  fi
+
+  ln -sf "$hook" "$target"
+  echo "✓  Installed $hook_name → $target"
+done

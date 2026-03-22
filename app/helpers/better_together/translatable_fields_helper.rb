@@ -4,7 +4,52 @@ module BetterTogether
   # Helpers for rendering and interacting with translatable form fields.
   # These helpers build UI elements for locale tabs, translation dropdowns
   # and translation indicators used across the admin forms.
-  module TranslatableFieldsHelper
+  module TranslatableFieldsHelper # rubocop:disable Metrics/ModuleLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
+    def translatable_text_field_config(model:, scope:, temp_id:, attribute:, rows:, help_text:, input_options: {})
+      resolved_temp_id = temp_id_for(model, temp_id:)
+      input_options ||= {}
+
+      default_action = 'input->better_together--translation#updateTranslationStatus'
+      incoming_action = input_options.dig(:data, :action)
+      combined_action = [default_action, incoming_action].compact.join(' ')
+
+      data_attributes = {
+        action: combined_action,
+        'better-together-translation-target': 'input'
+      }
+      data_attributes.merge!(input_options[:data].except(:action)) if input_options[:data].is_a?(Hash)
+
+      base_class = ['form-control', input_options[:class]].compact.join(' ')
+      base_options = {
+        rows: input_options.key?(:rows) ? input_options[:rows] : rows,
+        data: data_attributes
+      }.merge(input_options.except(:data, :class, :rows))
+
+      {
+        model: model,
+        scope: scope,
+        temp_id: resolved_temp_id,
+        attribute: attribute,
+        help_text: help_text,
+        base_options: base_options,
+        base_class: base_class,
+        data_attributes: data_attributes
+      }
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/ParameterLists
+
+    def translatable_text_field_options(config, locale_attribute)
+      options = config[:base_options].deep_dup
+      options[:id] = "#{dom_id(config[:model])}-#{locale_attribute}"
+      options[:data] = config[:data_attributes].deep_dup
+      options[:class] = [
+        config[:base_class],
+        ('is-invalid' if config[:model].errors[locale_attribute].any?)
+      ].compact.join(' ')
+      options
+    end
+
     # Helper to render a translation tab button
     def translation_tab_button(attribute:, locale:, temp_id:, model:) # rubocop:todo Metrics/MethodLength
       locale_attribute = "#{attribute}_#{locale}"

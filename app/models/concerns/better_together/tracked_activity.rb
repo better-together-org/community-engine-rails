@@ -30,7 +30,7 @@ module BetterTogether
     class_methods do
       def included_in_models
         Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
-        ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(BetterTogether::TrackedActivity) }
+        ActiveRecord::Base.descendants.select { |model| model.include?(BetterTogether::TrackedActivity) }
       end
     end
   end

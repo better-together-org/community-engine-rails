@@ -163,6 +163,11 @@
   }
 }
 
+#headerNav .navbar-nav,
+#app-footer .navbar-nav {
+  align-items: center;
+}
+
 .rbac-nav {
   .nav-link {
     padding: 0.35rem 0.35rem;

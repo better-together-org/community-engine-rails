@@ -12,6 +12,50 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
       BetterTogether::NavigationBuilder.build(clear: true)
     end
 
+    desc 'Reset navigation areas only (preserves pages)'
+    task reset_navigation: :environment do
+      BetterTogether::NavigationBuilder.reset_navigation_areas
+    end
+
+    desc 'Reset specific navigation area (usage: rake better_together:generate:reset_navigation_area[platform-header])'
+    task :reset_navigation_area, [:slug] => :environment do |_t, args|
+      if args[:slug].blank?
+        puts 'Error: Please provide a navigation area slug'
+        puts 'Available slugs: platform-header, platform-host, better-together, platform-footer'
+        puts 'Usage: rake better_together:generate:reset_navigation_area[platform-header]'
+        exit 1
+      end
+
+      BetterTogether::NavigationBuilder.reset_navigation_area(args[:slug])
+    end
+
+    desc 'List all navigation areas and items'
+    task list_navigation: :environment do
+      puts "\nNavigation Areas:"
+      puts '=' * 80
+
+      BetterTogether::NavigationArea.i18n.order(:slug).each do |area|
+        puts "\nArea: #{area.name}"
+        puts "  Slug: #{area.slug}"
+        puts "  Visible: #{area.visible}"
+        puts "  Protected: #{area.protected}"
+        puts "  Items: #{area.navigation_items.count}"
+
+        next unless area.navigation_items.any?
+
+        puts '  Navigation Items:'
+        area.navigation_items.where(parent_id: nil).order(:position).each do |item|
+          puts "    - #{item.title} (#{item.item_type})"
+          next unless item.children.any?
+
+          item.children.order(:position).each do |child|
+            puts "      └─ #{child.title} (#{child.item_type})"
+          end
+        end
+      end
+      puts "\n#{'=' * 80}"
+    end
+
     desc 'Generate setup wizard and step definitions'
     task setup_wizard: :environment do
       BetterTogether::SetupWizardBuilder.build(clear: true)

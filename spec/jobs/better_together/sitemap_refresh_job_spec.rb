@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::SitemapRefreshJob do
-  let(:host_platform) { create(:platform, :host) }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
 
   before do
     # Stub search engine ping to prevent actual HTTP requests

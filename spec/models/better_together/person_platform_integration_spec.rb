@@ -13,7 +13,16 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
   describe 'validations' do
     let(:user) { create(:user) }
     let(:person) { user.person }
-    let(:github_platform) { create(:better_together_platform, :external, identifier: 'github') }
+    let(:github_platform) do
+      BetterTogether::Platform.find_or_create_by!(identifier: 'github') do |platform|
+        platform.external = true
+        platform.host = false
+        platform.name = 'GitHub'
+        platform.url = 'https://github.com'
+        platform.privacy = 'public'
+        platform.time_zone = 'UTC'
+      end
+    end
 
     describe 'provider validation' do
       it 'validates presence of provider' do
@@ -52,7 +61,14 @@ RSpec.describe BetterTogether::PersonPlatformIntegration do
       end
 
       it 'allows same uid for different providers' do
-        facebook_platform = create(:better_together_platform, :external, identifier: 'facebook')
+        facebook_platform = BetterTogether::Platform.find_or_create_by!(identifier: 'facebook') do |platform|
+          platform.external = true
+          platform.host = false
+          platform.name = 'Facebook'
+          platform.url = 'https://facebook.com'
+          platform.privacy = 'public'
+          platform.time_zone = 'UTC'
+        end
         create(:person_platform_integration, provider: 'github', uid: '123456', platform: github_platform)
         facebook_integration = build(:person_platform_integration, provider: 'facebook', uid: '123456', platform: facebook_platform)
 

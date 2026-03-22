@@ -294,7 +294,7 @@ RSpec.describe 'Settings Preferences Management', :as_user do
       new_person = create(:better_together_person)
 
       expect(new_person.locale).to eq(I18n.default_locale.to_s)
-      expect(new_person.time_zone).to eq(ENV.fetch('APP_TIME_ZONE', 'Newfoundland'))
+      expect(new_person.time_zone).to eq(ENV.fetch('APP_TIME_ZONE', 'America/St_Johns'))
       expect(new_person.notify_by_email).to be(true)
       expect(new_person.show_conversation_details).to be(false)
       expect(new_person.receive_messages_from_members).to be(false)

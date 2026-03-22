@@ -77,10 +77,11 @@ RSpec.feature 'Event edit preserves data', :as_user do
 
       within form do
         # Scope the button lookup to the form to avoid other buttons on the page
+        # Use match: :first to handle multiple Save Event buttons (top and bottom of form)
         if has_button?('Save Event')
-          click_button 'Save Event'
+          click_button 'Save Event', match: :first
         elsif has_button?(I18n.t('helpers.submit.update', model: 'Event', default: 'Update Event'))
-          click_button I18n.t('helpers.submit.update', model: 'Event', default: 'Update Event')
+          click_button I18n.t('helpers.submit.update', model: 'Event', default: 'Update Event'), match: :first
         else
           # Fallback to any submit input inside the form
           find("input[type='submit']", match: :first).click

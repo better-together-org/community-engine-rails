@@ -20,7 +20,7 @@ if defined?(Sidekiq) && Sidekiq.server?
   engine_schedule_file = BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml')
   if engine_schedule_file.exist?
     begin
-      engine_schedule = YAML.safe_load(engine_schedule_file.read) || {}
+      engine_schedule = YAML.load(engine_schedule_file.read) || {}
       merged_schedule.merge!(engine_schedule)
       Rails.logger.info "Loaded Community Engine Sidekiq Scheduler from #{engine_schedule_file}"
     rescue StandardError => e
@@ -32,7 +32,7 @@ if defined?(Sidekiq) && Sidekiq.server?
   host_schedule_file = Rails.root.join('config', 'sidekiq_scheduler.yml')
   if host_schedule_file.exist?
     begin
-      host_schedule = YAML.safe_load(host_schedule_file.read) || {}
+      host_schedule = YAML.load(host_schedule_file.read) || {}
       merged_schedule.merge!(host_schedule)
       Rails.logger.info "Loaded host app Sidekiq Scheduler from #{host_schedule_file}"
     rescue StandardError => e

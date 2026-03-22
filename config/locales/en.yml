@@ -267,6 +267,11 @@ en:
         recipient: :activerecord.models.recipient
         recipient_type: Recipient type
         seen_at: Seen at
+      better_together/oauth_application:
+        confidential: Confidential
+        name: Name
+        redirect_uri: Redirect URI
+        scopes: Scopes
       better_together/page:
         blocks: Blocks
         identifier: Identifier
@@ -287,6 +292,7 @@ en:
         rich_text_content_es: :activerecord.models.rich_text_content_es
         rich_text_content_fr: :activerecord.models.rich_text_content_fr
         rich_text_translations: Rich text translations
+        show_title: Show Title
         slug: Slug
         slugs: Slugs
         string_translations: String translations
@@ -430,6 +436,13 @@ en:
         string_translations: String translations
         unconfirmed_email: Unconfirmed email
         unlock_token: Unlock token
+      better_together/webhook_endpoint:
+        active: Active
+        description: Description
+        events: Events
+        name: Name
+        oauth_application: OAuth Application
+        url: URL
       better_together/wizard:
         current_completions: Current completions
         first_completed_at: First completed at
@@ -514,11 +527,17 @@ en:
         seen_at: Seen at
     errors:
       messages:
+        file_not_found: file does not exist
+        invalid_file_type: must be a markdown file (.md or .markdown)
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Events must have at least one host
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -547,6 +566,8 @@ en:
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/image: Image
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Mermaid Diagram
       better_together/content/page_block: Page Block
       better_together/content/rich_text: Rich Text
       better_together/content/template: Template File
@@ -574,6 +595,7 @@ en:
       better_together/navigation_item: Navigation Item
       better_together/new_message_notifier: New Message Notifier
       better_together/new_message_notifier/notification: New Message Notifier Notification
+      better_together/oauth_application: OAuth Application
       better_together/page: Page
       better_together/person: Person
       better_together/person_community_membership: Person Community Membership
@@ -586,6 +608,7 @@ en:
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
       better_together/user: User
+      better_together/webhook_endpoint: Webhook Endpoint
       better_together/wizard: Wizard
       better_together/wizard_step: Wizard Step
       better_together/wizard_step_definition: Wizard Step Definition
@@ -718,7 +741,7 @@ en:
       tabs:
         details: Details
         images: Images
-        time-and-place: Time-and-place
+        time-and-place: Time & Place
       view_call_for_interest: View call for interest
     categories:
       back_to_categories: Back to Categories
@@ -828,6 +851,72 @@ en:
     content:
       blocks:
         associated_pages: Associated Pages
+        markdown:
+          fields:
+            auto_sync: Always load from file (ignore database content)
+            file_path: Markdown File Path
+            file_path_placeholder: docs/README.md or /absolute/path/to/file.md
+            markdown_source: Markdown Source
+            preview: Preview
+            reference_file: Reference a Markdown File
+            refresh_preview: Refresh Preview
+            write_inline: Write Markdown Inline
+          help:
+            auto_sync: When checked, content is always loaded from the file. When
+              unchecked, file content is imported into the database and can be edited
+              separately.
+            available_translations: 'Available translations:'
+            file_path: Path to a markdown file. Can be relative to Rails.root (e.g.,
+              docs/README.md) or absolute (e.g., /path/to/file.md). File must have
+              a .md or .markdown extension.
+            inline_content: Write your markdown content directly. Supports GitHub-flavored
+              markdown including tables, code blocks, and more. Content is translatable
+              for each locale.
+            localized_files: The system automatically looks for locale-specific versions
+              (e.g., privacy.en.md, privacy.es.md, privacy.fr.md) and falls back to
+              the base file if not found.
+            preview_placeholder: Preview will appear here...
+        template:
+          default: Default template
+          host_community_contact_details: Host community contact details
+      mermaid_diagram:
+        help:
+          auto_height: When enabled, the diagram height adjusts automatically to fit
+            the content. When disabled, uses a fixed height.
+          caption: Optional caption to display below the diagram
+          diagram_file_path: Path to a .mmd file containing the Mermaid diagram definition.
+            Can be relative to Rails.root (e.g., docs/diagrams/source/example.mmd)
+            or absolute.
+          diagram_source: 'Write your Mermaid diagram syntax directly. Supports all
+            Mermaid diagram types: flowcharts, sequence diagrams, class diagrams,
+            state diagrams, and more.'
+          theme: 'Visual theme for the diagram. Options: Default (standard colors),
+            Dark (dark mode), Forest (green tones), Neutral (minimal grayscale).'
+        javascript_required: JavaScript is required to view interactive diagrams.
+          Please enable JavaScript or view the static image version.
+        no_content: No diagram content available
+        no_preview: Add diagram source or file path to see a preview
+        preview_title: Diagram Preview
+        tabs:
+          file: Load from File
+          source: Write Diagram
+        themes:
+          dark: Dark
+          default: Default
+          forest: Forest
+          neutral: Neutral
+      static_pages:
+        accessibility: Accessibility
+        better_together: What is Better Together?
+        code_contributor_agreement: Code Contributor Agreement
+        code_of_conduct: Code of Conduct
+        community_engine: Community Engine
+        content_contributor_agreement: Content Contributor Agreement
+        cookie_consent: Cookie Policy
+        faq: FAQ
+        privacy: Privacy Policy
+        subprocessors: Subprocessors
+        terms_of_service: Terms of Service
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -865,6 +954,9 @@ en:
       errors:
         no_permitted_participants: You can only add platform managers or members who
           have opted in to receive messages.
+        not_found: The conversation you're looking for could not be found or you don't
+          have permission to view it.
+        person_required: You must have a profile to create conversations.
       form:
         add_participants: Add participants
         create_conversation: Create conversation
@@ -1003,26 +1095,53 @@ en:
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
+      date_and_time: Date & Time
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
-        description: Description
+        description: Provide details about what attendees can expect at this event
         duration_minutes: How long the event will last. Changes automatically when
           start or end time changes.
-        ends_at: Ends at
-        location: Location
-        location_name: Location name
-        name: Name
+        ends_at: When the event concludes. Updates automatically when duration changes.
+        location: Where attendees will meet for this event
+        location_name: Name of the venue or meeting place
+        name: A clear, descriptive title for your event
         select_address: Select address
         select_building: Select building
-        slug: Slug
-        starts_at: Starts at
+        slug: URL-friendly identifier for this event
+        starts_at: When the event begins. All times are in the timezone selected above.
+        timezone: The timezone where this event will take place
       hosted_by: Hosted By
+      hosts:
+        add_host: Add Host
+        can_edit_event: Can edit event details
+        cancel: Cancel
+        cancel_add_host: Cancel adding host
+        cannot_remove_last: Cannot remove the last host. Please add another host first.
+        cannot_remove_last_host: Cannot remove the last host. Please add another host
+          first.
+        description: Event hosts can edit all event details and manage other hosts.
+          Events must have at least one host.
+        error_loading: Error loading hosts
+        host_label: Host
+        host_removed: Host removed
+        host_type: Host Type
+        loading: Loading...
+        member_count:
+          one: "%{count} member"
+          other: "%{count} members"
+        new_host: New Host
+        remove_host: Remove %{host}
+        remove_host_short: Remove
+        select_host: Select Host
+        select_placeholder: Select a host
+        type_label: Type
       ics:
+        reminders:
+          1_hour: 'Reminder: %{event_name} starts in 1 hour'
+          24_hours: 'Reminder: %{event_name} starts in 24 hours'
+          at_start: "%{event_name} is starting now"
         view_details_url: View details url
-      in: must be in %{count}
-      inclusion: is not included in the list
-      invalid: is not valid
       labels:
         duration_minutes: Duration
         ends_at: Ends at
@@ -1033,8 +1152,10 @@ en:
         select_address: Select address
         select_building: Select building
         starts_at: Starts at
+        timezone: Event Timezone
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      location: Location
       location_types:
         address: Address
         building: Building
@@ -1059,6 +1180,34 @@ en:
       prompts:
         select_address: Select address
         select_building: Select building
+      recurrence:
+        end_types:
+          after_count: After occurrences
+          never: Never
+          on_date: On date
+        hints:
+          count: Number of times this event should repeat
+          end_type: How the recurrence should end
+          ends_on: The last date this event will occur
+          exception_dates: Dates when this event should NOT occur (comma-separated,
+            YYYY-MM-DD format)
+          frequency: How often this event repeats
+          interval: Repeat every N periods (e.g., every 2 weeks)
+          preview_placeholder: Select recurrence options to see upcoming dates
+          weekdays: Days of the week when this event occurs
+        labels:
+          count: Number of occurrences
+          end_type: Ends
+          ends_on: End date
+          exception_dates: Exception dates
+          frequency: Repeats
+          interval: Repeat every
+          preview: Upcoming occurrences
+          weekdays: Repeat on
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Does not repeat
       register: Register
       relationship:
         calendar: Calendar event
@@ -1077,8 +1226,10 @@ en:
       save_event: Save Event
       tabs:
         details: Details
+        hosts: Hosts
         images: Images
-        time-and-place: Time-and-place
+        recurrence: Recurrence
+        time-and-place: Time & Place
       taken: ya está en uso
       time:
         hour: hour
@@ -1419,11 +1570,25 @@ en:
           title: Date & Time Filter
       mailer:
         link_checker_report:
-          body: Attached is the Link Checker report for %{date}.
+          actions:
+            edit: Edit →
+            manual_edit: Manual edit required
+          body: Attached is the weekly Link Checker report for %{date}.
           greeting: Hello,
           report_file: 'Report file: %{filename}'
+          see_csv: See attached CSV for complete list.
+          showing_partial: Showing %{shown} of %{total} %{type} records with broken
+            links.
           signature: Regards
-          subject: 'Link Checker Report: %{date}'
+          subject: 'Weekly Link Checker Report: %{count} broken links - %{date}'
+          summary_header: Broken Links by Record Type
+          table_headers:
+            action: Action
+            broken_url: Broken URL
+            field: Field
+            record: Record
+            status: Status
+          total_count: 'Total broken links: %{count}'
       reports:
         actions:
           chart_toolbar: Chart actions
@@ -1705,6 +1870,66 @@ en:
         message: New %{provider} integration connected on %{created_at}
         title: New %{provider} integration connected
       time_ago: "%{time} ago"
+    oauth:
+      applications:
+        create:
+          success: OAuth application '%{name}' was successfully created. You can now
+            use the client credentials to authenticate API requests.
+        destroy:
+          success: OAuth application '%{name}' has been deleted. All associated access
+            tokens have been revoked.
+        set_application:
+          not_found: The OAuth application you're looking for could not be found.
+            It may have been deleted or you don't have permission to access it.
+        update:
+          success: OAuth application '%{name}' has been updated successfully.
+    oauth_applications:
+      actions_aria: Application actions
+      back_to_list: Back to Applications
+      confidential: Confidential
+      confidential_help: Confidential clients can securely store their credentials
+        (server-side apps). Public clients cannot (SPAs, mobile apps).
+      credentials: Credentials
+      default_scopes: Default scopes
+      delete_aria: Delete OAuth application
+      details: Application Details
+      edit_aria: Edit OAuth application
+      field_client_id: Client ID
+      field_created: Created
+      field_owner: Owner
+      field_redirect_uri: Redirect URI
+      field_scopes: Scopes
+      field_secret: Client Secret
+      field_trusted: Trusted
+      field_type: Type
+      index:
+        header_actions: Actions
+        header_client_id: Client ID
+        header_confidential: Type
+        header_created: Created
+        header_name: Name
+        header_scopes: Scopes
+        new_btn_aria: Create new OAuth application
+        new_btn_text: New Application
+        no_applications: No OAuth applications have been registered yet.
+        table_aria: OAuth applications list
+        title: OAuth Applications
+      name_help: A descriptive name for this OAuth application.
+      name_placeholder: e.g., My Integration App
+      no_redirect: Not configured
+      no_scopes: Default
+      no_secret_public: Not applicable (public client)
+      public_type: Public
+      redirect_help: One redirect URI per line. For machine-to-machine (client_credentials)
+        flows, use urn:ietf:wg:oauth:2.0:oob
+      save: Save Application
+      scopes_help: Select the permissions this application should have.
+      secret_aria: Client secret value
+      title: OAuth Applications
+      toggle_secret: Toggle secret visibility
+      trusted_no: 'No'
+      trusted_yes: 'Yes'
+      view: View Application
     page_authorship_notifier:
       added: You were added as an author on %{page_title}
       added_by: "%{actor_name} added you as an author on %{page_title}"
@@ -1766,9 +1991,170 @@ en:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    reports:
+      actions:
+        report: Report
+      attributes:
+        category: Category
+        harm_level: Harm level
+        requested_outcome: Requested outcome
+        reason: Short summary
+        private_details: Private details for the safety team
+      errors:
+        already_reported_by_you: has already been reported by you
+      index:
+        empty: You have not submitted any safety reports yet.
+        new: New report
+        title: My safety reports
+      new:
+        category_help: Choose the option that best matches the harm or concern you are reporting.
+        consent_to_contact: You may contact me about this report
+        consent_to_restorative_process: You may consider restorative options if appropriate
+        error_summary: Please correct the following issues.
+        harm_level_help: Tell us how urgent or harmful this feels so the safety team can triage it appropriately.
+        intro: Use this form to ask for safety support, boundary support, accountability, or urgent protection.
+        preferences_help: Tell us whether we may contact you, whether you want restorative options considered, and whether retaliation risk is part of this report.
+        preferences_title: Safety preferences
+        private_details_help: Add any context, patterns, dates, or evidence that should stay with the safety review team.
+        reason_help: Tell us what happened in a short summary. Focus on the main concern first.
+        requested_outcome_help: Choose what kind of support you want from the safety team. You can ask for support even if you are unsure.
+        retaliation_risk: I am worried about retaliation or escalation
+        submit: Submit report
+        title: Report a safety concern
+        urgent_help: Contact local emergency services first. This form is for community and platform follow-up, not emergency dispatch.
+        urgent_title: "If you are in immediate danger:"
+      notices:
+        created: Report was successfully submitted.
+      show:
+        back: Back to reports
+        pending_copy: This case is still in progress. A moderator may follow up based on your consent settings.
+        status: Current status
+        summary: Case summary
+        title: Safety report
+    safety:
+      action_statuses:
+        active: Active
+        cancelled: Cancelled
+        completed: Completed
+      action_types:
+        contact_restriction: Contact restriction
+        content_hidden: Content hidden
+        content_removed: Content removed
+        event_restriction: Event restriction
+        messaging_restriction: Messaging restriction
+        restorative_referral: Restorative referral
+        temporary_suspension: Temporary suspension
+        watch_flag: Watch flag
+      agreement_statuses:
+        active: Active
+        breached: Breached
+        completed: Completed
+        proposed: Proposed
+        withdrawn: Withdrawn
+      case_lanes:
+        administrative: Administrative
+        immediate_safety: Immediate safety
+        restorative: Restorative
+      case_statuses:
+        closed_no_action: Closed with no action
+        needs_reporter_followup: Needs reporter follow-up
+        protective_action_in_effect: Protective action in effect
+        resolved: Resolved
+        restorative_in_progress: Restorative process in progress
+        submitted: Submitted
+        triaged: Triaged
+      closure_types:
+        no_action: No action
+        protective_action: Protective action
+        restorative_agreement: Restorative agreement
+        unsupported: Unsupported
+        voluntary_resolution: Voluntary resolution
+      harm_levels:
+        high: High
+        low: Low
+        medium: Medium
+        urgent: Urgent
+      note_visibilities:
+        internal_only: Internal only
+        participant_visible: Participant visible
+      report_categories:
+        boundary_violation: Boundary violation
+        discrimination: Discrimination
+        fraud: Fraud
+        harassment: Harassment
+        hate_speech: Hate speech
+        impersonation: Impersonation
+        misinformation: Misinformation
+        other: Other
+        privacy_violation: Privacy violation
+        spam_or_scam: Spam or scam
+      reporter_visible_statuses:
+        closed_no_action: Closed with no action
+        needs_reporter_followup: Needs more information from you
+        protective_action_in_effect: Protective action in effect
+        resolved: Resolved
+        restorative_in_progress: Restorative process in progress
+        submitted: Submitted
+        triaged: Under review
+        under_review: Under review
+      requested_outcomes:
+        boundary_support: Boundary support
+        community_accountability: Community accountability
+        content_review: Content review
+        mediated_conversation: Mediated conversation
+        other: Other
+        temporary_protection: Temporary protection
+      shared:
+        any: Any
+    safety_cases:
+      attributes:
+        accountability_check: Accountability and stewardship check
+        action_details: Action details
+        action_reason: Reason for action
+        action_status: Action status
+        action_type: Action type
+        agreement_summary: Agreement summary
+        care_check: Care and resilience check
+        closure_summary: Closure summary
+        closure_type: Closure type
+        commitments: Commitments
+        expires_at: Expires at
+        harmed_party_consented: Harmed party consented
+        lane: Lane
+        love_inclusivity_check: Love and inclusivity check
+        note_body: Note
+        note_visibility: Note visibility
+        reporter: Reporter
+        responsible_party_consented: Responsible party consented
+        review_at: Review at
+        solidarity_check: Cooperation and solidarity check
+        status: Case status
+      index:
+        filter: Filter
+        title: Safety cases
+      notices:
+        updated: Safety case was updated.
+      show:
+        actions: Protective and accountability actions
+        add_action: Record action
+        add_agreement: Create agreement
+        add_note: Add note
+        agreements: Restorative agreements
+        back: Back to queue
+        intake: Report intake
+        manage: Case management
+        notes: Internal notes
+        title: Safety case
+        update_agreement: Update agreement
+        update_case: Update case
+        values_review: Values review
+        values_review_placeholder: Explain the values review for this action
+    safety_notes:
+      notices:
+        created: Case note added.
     person_block:
-      cannot_block_manager: no puede ser un administrador de la plataforma
-      cannot_block_self: no puedes bloquearte a ti mismo
+      cannot_block_manager: cannot be a platform manager
+      cannot_block_self: cannot block yourself
     person_blocks:
       index:
         actions: Actions
@@ -1926,6 +2312,9 @@ en:
         roles: Roles
     registrations:
       captcha_validation_failed: Security verification failed. Please try again.
+      invalid_invitation: Invalid or expired invitation code. Please check your invitation
+        email.
+      invitation_required: An invitation code is required to register on this platform
     remove: Remove
     resource_permissions:
       actions:
@@ -1971,6 +2360,28 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        developer:
+          apps:
+            client_id_label: Client ID
+            description: Applications you have registered to use the Better Together
+              API.
+            edit_aria: Edit %{name}
+            new_aria: Register a new OAuth application
+            new_btn: New Application
+            none: You have not registered any OAuth applications yet.
+            title: Your OAuth Applications
+            view_aria: View %{name}
+          tokens:
+            col_app: Application
+            col_created: Issued
+            col_expires: Expires
+            col_scopes: Scopes
+            description: Active API access tokens issued to your account.
+            no_app: Personal token
+            no_expiry: Never
+            none: No active access tokens.
+            table_aria: Active access tokens
+            title: Active API Tokens
         device_permissions:
           description: Manage browser permissions for location, notifications, camera,
             and microphone.
@@ -2002,6 +2413,7 @@ en:
         tabs:
           account: Account
           blocked_people: Blocked People
+          developer: Developer
           device_permissions: Device Permissions
           integrations: Integrations
           my_data: My Data
@@ -2028,6 +2440,8 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      privacy_level: 'Privacy: %{privacy}'
+      privacy_tooltip: This content is %{privacy}
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -2041,6 +2455,15 @@ en:
       platform: Platform
       title: Social Media Accounts
       url: Url
+    translations:
+      errors:
+        content_blank: Content cannot be blank
+        content_too_long: Content is too long to translate. Please limit your text
+          to approximately 8,000 words (~50,000 characters) and try again.
+        invalid_source_locale: Invalid source locale
+        invalid_target_locale: Invalid target locale
+        translation_failed: 'Translation failed: %{message}'
+        translation_request_failed: Translation request failed. Please try again.
     view_switcher:
       button_label: "%{view} view"
       change_view: Change view type
@@ -2053,6 +2476,63 @@ en:
         card: Card
         list: List
         table: Table
+    webhook_endpoints:
+      actions_aria: Webhook actions
+      active_help: Enable or disable webhook delivery for this endpoint.
+      all_events: All events
+      back_to_list: Back to Webhooks
+      delete_aria: Delete webhook endpoint
+      deliveries_aria: Webhook delivery history
+      delivery_attempts: Attempts
+      delivery_event: Event
+      delivery_response: Response
+      delivery_status: Status
+      delivery_time: Time
+      description_placeholder: Optional description of this webhook's purpose.
+      details: Endpoint Details
+      edit_aria: Edit webhook endpoint
+      events_help: Comma-separated list of event names to subscribe to. Leave blank
+        to receive all events. Format resource.action (e.g., community.created, person.updated).
+      field_created: Created
+      field_description: Description
+      field_events: Events
+      field_oauth_app: OAuth Application
+      field_secret: Signing Secret
+      field_status: Status
+      field_url: URL
+      index:
+        header_actions: Actions
+        header_deliveries: Deliveries
+        header_events: Events
+        header_name: Name
+        header_status: Status
+        header_url: URL
+        new_btn_aria: Create new webhook endpoint
+        new_btn_text: New Webhook
+        no_webhooks: No webhook endpoints have been configured yet.
+        table_aria: Webhook endpoints list
+        title: Webhook Endpoints
+      name_help: A friendly name to identify this webhook endpoint.
+      name_placeholder: e.g., My Integration Webhook
+      no_deliveries: No deliveries yet. Use the "Send Test" button to verify your
+        endpoint.
+      no_oauth_app: "— None —"
+      oauth_help: Optionally link this webhook to an OAuth application.
+      recent_deliveries: Recent Deliveries
+      save: Save Webhook
+      secret_aria: Signing secret value
+      secret_note: Use this secret to verify webhook signatures. It was generated
+        when the endpoint was created and cannot be changed.
+      send_test: Send Test
+      status_active: Active
+      status_inactive: Inactive
+      test:
+        test_queued: Test webhook delivery has been queued.
+      test_confirm: Send a test webhook?
+      title: Webhook Endpoints
+      toggle_secret: Toggle secret visibility
+      url_help: The HTTPS URL where webhook payloads will be delivered.
+      view: View Webhook
     website_links:
       add: Add Website Link
       labels:
@@ -2099,6 +2579,7 @@ en:
               help: Your unique handle (no spaces). This will appear in your profile
                 URL and mentions.
               label: Username
+              profile_url: Your profile URL
             name:
               help: Use your real name or the name you want your community to recognize
                 you by.
@@ -2161,7 +2642,6 @@ en:
             have a home base where everyone can gather and collaborate.
           progress:
             step: Step 1 of 2
-  block: :activerecord.models.block
   community:
     create_failed: Create failed
     created: Created
@@ -2459,6 +2939,9 @@ en:
     unlocks:
       new:
         resend_unlock_instructions: Resend unlock instructions
+        template:
+          default: Default template
+          host_community_contact_details: Host community contact details
       send_instructions: You will receive an email with instructions for how to unlock
         your account in a few minutes.
       send_paranoid_instructions: If your account exists, you will receive an email
@@ -2467,6 +2950,10 @@ en:
   devise_omniauth_callbacks:
     failure: There was a problem signing you in through %{kind}. %{reason}
     success: Successfully authenticated from %{kind} account.
+  doorkeeper:
+    errors:
+      unauthorized: You are not authorized to manage OAuth applications. Platform
+        manager access is required.
   errors:
     format: "%{attribute} %{message}"
     internal_server_error:
@@ -2489,6 +2976,7 @@ en:
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
+      invalid_url: is not a valid URL
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
       model_invalid: 'Validation failed: %{errors}'
@@ -2547,7 +3035,6 @@ en:
       one_uncompleted: Only one uncompleted step per person is allowed.
       step_limit: Number of completions for this step has reached the wizard's max
         completions limit.
-  event: :activerecord.models.event
   flash:
     checklist_item:
       update_failed: Failed to update checklist item.

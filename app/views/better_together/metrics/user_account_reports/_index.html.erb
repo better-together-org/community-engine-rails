@@ -10,8 +10,6 @@
   <turbo-frame id="new_user_account_report"></turbo-frame>
 
   <!-- Reports content (table or empty state) -->
-  <div id="user_account_reports_content" class="mt-3">
-    <%= render partial: 'better_together/metrics/user_account_reports/reports_content',
-               locals: { user_account_reports: user_account_reports } %>
-  </div>
+  <%= render partial: 'better_together/metrics/user_account_reports/reports_content',
+             locals: { user_account_reports: user_account_reports } %>
 </turbo-frame>

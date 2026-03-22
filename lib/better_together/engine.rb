@@ -16,18 +16,23 @@ require 'devise'
 require 'devise-i18n'
 require 'devise/jwt'
 require 'devise_zxcvbn'
+require 'doorkeeper'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
+require 'fast_mcp'
 require 'font-awesome-sass'
 require 'geocoder'
 require 'groupdate'
 require 'humanize_boolean'
 require 'i18n-timezones'
+require 'icalendar'
+require 'ice_cube'
 require 'importmap-rails'
 require 'kaminari'
 require 'noticed'
 require 'premailer/rails'
 require 'rack/attack'
+require 'redcarpet'
 require 'omniauth/rails_csrf_protection'
 require 'omniauth-github'
 require 'reform/rails'
@@ -44,12 +49,21 @@ require 'stackprof'
 
 module BetterTogether
   # Engine configuration for BetterTogether
-  class Engine < ::Rails::Engine
+  class Engine < ::Rails::Engine # rubocop:disable Metrics/ClassLength
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
     # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
     config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+
+    # Add MCP tools and resources to autoload paths
+    config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/app/tools",
+      "#{root}/app/resources"
+    ]
+    # Add routes directory to paths for draw() method
+    config.paths['config/routes.rb'] = 'config/routes.rb'
+    config.paths.add 'config/routes', glob: '**/*.rb'
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -78,7 +92,7 @@ module BetterTogether
         config.default_url_options =
           default_url_options
 
-    config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+    config.time_zone = ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
 
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
@@ -110,9 +124,9 @@ module BetterTogether
     end
 
     initializer 'better_together.i18n' do |app|
-      app.config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      app.config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es,uk').split(',').map(&:to_sym)
       app.config.i18n.default_locale = ENV.fetch('APP_DEFAULT_LOCALE', :en).to_sym
-      app.config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      app.config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es,uk').split(',').map(&:to_sym)
     end
 
     initializer 'better_together.importmap', before: 'importmap' do |app|
@@ -147,6 +161,22 @@ module BetterTogether
 
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
+    end
+
+    # MCP (Model Context Protocol) configuration
+    initializer 'better_together.mcp', after: :load_config_initializers do |app|
+      # Set default MCP configuration
+      mcp_config = ActiveSupport::OrderedOptions.new
+      mcp_config.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development?).to_s == 'true'
+      mcp_config.path_prefix = ENV.fetch('MCP_PATH_PREFIX', '/mcp')
+      mcp_config.auth_token = ENV.fetch('MCP_AUTH_TOKEN', nil)
+      mcp_config.authenticate = mcp_config.auth_token.present? || Rails.env.production?
+      mcp_config.excerpt_length = ENV.fetch('MCP_EXCERPT_LENGTH', 200).to_i
+
+      app.config.mcp = mcp_config
+
+      # Auto-load MCP support files
+      require 'better_together/mcp/pundit_context'
     end
 
     rake_tasks do

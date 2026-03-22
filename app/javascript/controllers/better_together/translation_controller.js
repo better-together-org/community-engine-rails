@@ -3,6 +3,9 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["aiTranslate", "input", "tab", "tabButton", "tabContent", "trix"];
 
+  // Must match TranslationsController::MAX_CONTENT_SIZE (50 KB)
+  static MAX_CONTENT_BYTES = 50 * 1024;
+
   connect() {
     this.element.setAttribute("novalidate", true); // Disable default HTML5 validation
 
@@ -87,6 +90,14 @@ export default class extends Controller {
       return;
     }
 
+    // Client-side size guard: reject content over the server limit before sending the request.
+    // This provides immediate feedback instead of waiting for a 422 from the API.
+    const contentBytes = new Blob([content]).size;
+    if (contentBytes > this.constructor.MAX_CONTENT_BYTES) {
+      alert(this.getTranslation('content_too_long'));
+      return;
+    }
+
   // Find the closest dropdown-toggle button, then locate the language icon within it
   const dropdownButton = event.target.closest('.input-group').querySelector('.dropdown-toggle');
   const languageIcon = dropdownButton.querySelector('.fa-language');
@@ -107,13 +118,15 @@ export default class extends Controller {
       .then(data => {
         if (data.translation) {
           setContent(targetContainer, data.translation);
-          // Optional: Update UI indicators if you have them
-          // this.setTranslationIndicator(targetContainer.closest(".tab-pane").querySelector(".nav-link.tab-button"), true);
         } else if (data.error) {
           console.error("Translation error:", data.error);
+          alert(data.error);
         }
       })
-      .catch(error => console.error("Error:", error)).finally(() => {
+      .catch(error => {
+        console.error("Error:", error);
+        alert(this.getTranslation('translation_request_failed'));
+      }).finally(() => {
         // Remove the spin class after request completes
         languageIcon.classList.remove('spin-horizontal');
       });
@@ -227,5 +240,23 @@ export default class extends Controller {
         contentPane.classList.remove("show", "active");
       }
     });
+  }
+
+  // Returns a translated string from data attributes, falling back to English defaults.
+  // Follows the Stimulus I18n pattern: Rails views pass translations as data attributes
+  // on the controller element (e.g., data-better-together--translation-content-too-long-text).
+  getTranslation(key) {
+    const fallbacks = {
+      'content_too_long': 'Content is too long to translate. Please limit your text to approximately 8,000 words (~50,000 characters) and try again.',
+      'translation_request_failed': 'Translation request failed. Please try again.'
+    }
+
+    // Convert snake_case key to the dataset format with hyphens
+    // e.g., 'content_too_long' -> 'betterTogether-TranslationContentTooLongText'
+    const words = key.split('_')
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    const dataKey = `betterTogether-Translation${capitalizedWords.join('')}Text`
+
+    return this.element.dataset[dataKey] || fallbacks[key] || key
   }
 }

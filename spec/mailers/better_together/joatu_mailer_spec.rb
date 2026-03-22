@@ -6,7 +6,7 @@ require 'rails_helper'
 module BetterTogether
   RSpec.describe JoatuMailer do
     describe 'new_match' do
-      let!(:host_platform) { create(:platform, :host) }
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
       let(:recipient_user) { create(:user) }
       let(:offer_user) { create(:user) }
       let(:request_user) { create(:user) }
@@ -22,7 +22,7 @@ module BetterTogether
     end
 
     describe 'agreement_created' do
-      let!(:host_platform) { create(:platform, :host) }
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
       let(:offer_user) { create(:user) }
       let(:request_user) { create(:user) }
       let(:offer) { create(:joatu_offer, creator: offer_user.person) }
@@ -41,8 +41,8 @@ module BetterTogether
       end
 
       it 'renders the body' do # rubocop:todo RSpec/MultipleExpectations
-        expect(mail.body.encoded).to include(offer.name)
-        expect(mail.body.encoded).to include(request.name)
+        expect_mail_html_content(mail, offer.name)
+        expect_mail_html_content(mail, request.name)
       end
 
       # rubocop:todo RSpec/MultipleExpectations
@@ -50,10 +50,7 @@ module BetterTogether
         # rubocop:enable RSpec/MultipleExpectations
         expect { mail.deliver_now }
           .to change { ActionMailer::Base.deliveries.count }.by(1)
-        expect(mail.body.encoded).to have_content("Hello #{recipient.name}")
-        expect(mail.body.encoded).to have_content(
-          "An agreement has been created between \"#{offer.name}\" and \"#{request.name}\""
-        )
+        expect_mail_html_contents(mail, recipient.name, offer.name, request.name)
       end
 
       it 'sends the agreement created email to the recipient' do # rubocop:todo RSpec/MultipleExpectations
