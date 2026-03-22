@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe MembershipMailer do
     let(:role) { create(:better_together_role, :community_role, name: 'Community Coordinator') }
     let(:permissions) do

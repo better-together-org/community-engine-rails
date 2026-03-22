@@ -92,7 +92,9 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     task.invoke
 
     analytics_role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+    canonical_analytics_role = BetterTogether::Role.find_by(identifier: 'analytics_viewer')
     expect(analytics_role).to be_present
+    expect(canonical_analytics_role).to be_present
 
     view_permission = BetterTogether::ResourcePermission.find_by(identifier: 'view_metrics_dashboard')
     create_permission = BetterTogether::ResourcePermission.find_by(identifier: 'create_metrics_reports')
@@ -103,8 +105,15 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(download_permission).to be_present
 
     platform_manager = BetterTogether::Role.find_by(identifier: 'platform_manager')
+    platform_steward = BetterTogether::Role.find_by(identifier: 'platform_steward')
     expect(platform_manager).to be_present
+    expect(platform_steward).to be_present
     expect(platform_manager.resource_permissions.map(&:identifier)).to include(
+      'view_metrics_dashboard',
+      'create_metrics_reports',
+      'download_metrics_reports'
+    )
+    expect(platform_steward.resource_permissions.map(&:identifier)).to include(
       'view_metrics_dashboard',
       'create_metrics_reports',
       'download_metrics_reports'

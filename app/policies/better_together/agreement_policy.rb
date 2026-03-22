@@ -4,7 +4,7 @@ module BetterTogether
   # Access control for agreements
   class AgreementPolicy < ApplicationPolicy
     def index?
-      permitted_to? :manage_platform
+      agreement_manager?
     end
 
     def show?
@@ -12,11 +12,11 @@ module BetterTogether
     end
 
     def update?
-      permitted_to? :manage_platform
+      agreement_manager?
     end
 
     def create?
-      permitted_to? :manage_platform
+      agreement_manager?
     end
 
     # Filtering and sorting for agreements according to permissions and context
@@ -24,6 +24,12 @@ module BetterTogether
       def resolve
         scope.order(created_at: :desc)
       end
+    end
+
+    private
+
+    def agreement_manager?
+      permitted_to?(:manage_platform_settings) || permitted_to?(:manage_platform)
     end
   end
 end

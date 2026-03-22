@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Content
+module BetterTogether # :nodoc:
+  module Content # :nodoc:
     RSpec.describe Html do
       describe 'Factory' do
         it 'has a valid factory' do

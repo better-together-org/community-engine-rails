@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present?
+      platform_navigation_manager?
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present?
+      platform_navigation_manager?
     end
 
     def edit?
@@ -29,7 +29,13 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected?
+      platform_navigation_manager? && !record.protected?
+    end
+
+    private
+
+    def platform_navigation_manager?
+      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
     end
   end
 end

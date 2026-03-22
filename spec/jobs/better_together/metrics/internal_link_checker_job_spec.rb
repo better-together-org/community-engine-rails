@@ -3,17 +3,15 @@
 require 'rails_helper'
 require 'webmock/rspec'
 
-module BetterTogether
-  RSpec.describe Metrics::InternalLinkCheckerJob do
-    let(:link) { create(:content_link, url: 'https://example.com/', valid_link: false) }
+RSpec.describe BetterTogether::Metrics::InternalLinkCheckerJob do
+  let(:link) { create(:content_link, url: 'https://example.com/', valid_link: false) }
 
-    it 'updates link status on success' do
-      stub_request(:head, 'https://example.com/').to_return(status: 200)
+  it 'updates link status on success' do
+    stub_request(:head, 'https://example.com/').to_return(status: 200)
 
-      described_class.new.perform(link.id)
+    described_class.new.perform(link.id)
 
-      link.reload
-      expect([link.valid_link, link.latest_status_code]).to eq([true, '200'])
-    end
+    link.reload
+    expect([link.valid_link, link.latest_status_code]).to eq([true, '200'])
   end
 end

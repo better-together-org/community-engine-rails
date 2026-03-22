@@ -97,7 +97,7 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       context 'when platform has existing CSS block' do # rubocop:todo RSpec/NestedGroups
         let(:existing_css_block) do
           create(:better_together_content_css,
-                 identifier: 'existing-platform-css',
+                 identifier: "existing-platform-css-#{SecureRandom.hex(4)}",
                  content_text: '.old-class { color: red; }',
                  protected: true)
         end
