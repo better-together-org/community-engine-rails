@@ -27,7 +27,11 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
   # GET #index
   # ----------------------------------------------------------------
   describe 'GET #index' do
-    before { creator_seed; seedable_seed; other_seed }
+    before do
+      creator_seed
+      seedable_seed
+      other_seed
+    end
 
     it 'returns http success' do
       get :index, params: { locale: locale }

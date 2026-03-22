@@ -102,14 +102,14 @@ RSpec.describe BetterTogether::PersonSeedPolicy do
   # Scope
   # ----------------------------------------------------------------
   describe 'Scope#resolve' do
+    subject(:resolved) { described_class::Scope.new(user, BetterTogether::Seed).resolve }
+
     before do
       creator_seed
       seedable_seed
       other_seed
       unowned_seed
     end
-
-    subject(:resolved) { described_class::Scope.new(user, BetterTogether::Seed).resolve }
 
     it 'includes seeds where creator_id matches agent' do
       expect(resolved).to include(creator_seed)

@@ -37,7 +37,6 @@ module BetterTogether
       self.last_completed_at = Time.now
       self.first_completed_at = Time.now if first_completed_at.nil?
 
-
       save
     end
 

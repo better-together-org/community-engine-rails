@@ -19,13 +19,16 @@ module BetterTogether
       owns_seed?
     end
 
+    # Resolves seeds owned by or seeded from the authenticated agent.
     class Scope < ApplicationPolicy::Scope
-      def resolve
+      def resolve # rubocop:todo Metrics/AbcSize
         return scope.none unless agent
 
+        t = scope.arel_table
         scope.where(
-          'creator_id = :pid OR (seedable_type = :stype AND seedable_id = :pid)',
-          pid: agent.id, stype: agent.class.name
+          t[:creator_id].eq(agent.id).or(
+            t[:seedable_type].eq(agent.class.name).and(t[:seedable_id].eq(agent.id))
+          )
         ).latest_first
       end
     end

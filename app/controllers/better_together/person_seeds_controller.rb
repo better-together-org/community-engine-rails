@@ -18,7 +18,7 @@ module BetterTogether
     end
 
     # POST /my/seeds/export
-    def export
+    def export # rubocop:todo Metrics/AbcSize
       authorize Seed, policy_class: PersonSeedPolicy
 
       person = current_user.person
@@ -26,7 +26,7 @@ module BetterTogether
       # calling .export_as_seed on nil is impossible even if policy changes
       return redirect_to person_seeds_path, alert: t('person_seeds.export_unavailable') unless person
 
-      if Seed.where(creator_id: person.id).where('created_at > ?', 1.hour.ago).exists?
+      if Seed.where(creator_id: person.id).where(created_at: 1.hour.ago..).exists?
         return redirect_to person_seeds_path, alert: t('person_seeds.export_too_soon')
       end
 
