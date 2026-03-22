@@ -10,6 +10,12 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
   let(:other_user) { create(:better_together_user, :confirmed) }
   let(:other_person) { other_user.person }
   let(:membership) { build_stubbed(:better_together_person_community_membership, member: person) }
+  let(:community) { membership.joinable }
+
+  before do
+    allow(person).to receive(:permitted_to?).and_return(false)
+    allow(other_person).to receive(:permitted_to?).and_return(false)
+  end
 
   describe '#index?' do
     it 'allows users who can update community' do
@@ -62,76 +68,64 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
   end
 
   describe '#create?' do
-    it 'allows users who can update community' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+    it 'allows users who can manage community members' do
+      allow(person).to receive(:permitted_to?).with('manage_community_members', community).and_return(true)
       expect(policy.create?).to be true
     end
 
-    it 'allows platform managers' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+    it 'allows users who can manage community roles' do
+      allow(person).to receive(:permitted_to?).with('manage_community_roles', community).and_return(true)
       expect(policy.create?).to be true
     end
 
     it 'denies users without permissions' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
       expect(policy.create?).to be false
     end
   end
 
-  describe '#update?' do
-    it 'allows users who can update community' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
-      expect(policy.update?).to be true
+  describe '#edit?' do
+    it 'allows users who can manage community members' do
+      allow(person).to receive(:permitted_to?).with('manage_community_members', community).and_return(true)
+      expect(policy.edit?).to be true
     end
 
-    it 'allows platform managers' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
-      expect(policy.update?).to be true
+    it 'allows users who can manage community roles' do
+      allow(person).to receive(:permitted_to?).with('manage_community_roles', community).and_return(true)
+      expect(policy.edit?).to be true
     end
 
     it 'denies users without permissions' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
-      expect(policy.update?).to be false
+      expect(policy.edit?).to be false
     end
   end
 
   describe '#destroy?' do
     it 'denies destroying own membership even with permissions' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_community_members', community).and_return(true)
       expect(policy.destroy?).to be false
     end
 
-    it 'allows destroying another membership as platform manager' do
+    it 'allows destroying another membership as community member manager' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       policy = described_class.new(user, other_membership)
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
-      allow(other_person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_community_members', other_membership.joinable).and_return(true)
+      allow(other_person).to receive(:permitted_to?).with('manage_community_roles', other_membership.joinable).and_return(false)
       expect(policy.destroy?).to be true
     end
 
-    it 'allows destroying another membership with update_community permission' do
+    it 'allows destroying another membership as community role manager' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       policy = described_class.new(user, other_membership)
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
-      allow(other_person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_community_roles', other_membership.joinable).and_return(true)
+      allow(other_person).to receive(:permitted_to?).with('manage_community_roles', other_membership.joinable).and_return(false)
       expect(policy.destroy?).to be true
     end
 
-    it 'denies destroying platform manager membership' do
+    it 'denies destroying community role manager membership' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       policy = described_class.new(user, other_membership)
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
-      allow(other_person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_community_members', other_membership.joinable).and_return(true)
+      allow(other_person).to receive(:permitted_to?).with('manage_community_roles', other_membership.joinable).and_return(true)
       expect(policy.destroy?).to be false
     end
   end

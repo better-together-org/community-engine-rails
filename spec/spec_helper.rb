@@ -2,6 +2,8 @@
 
 require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
+require 'simplecov'
+require 'coveralls'
 require 'rspec/rebound'
 require 'webmock/rspec'
 require 'parallel_rspec'
