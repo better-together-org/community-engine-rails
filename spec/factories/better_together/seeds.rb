@@ -31,5 +31,24 @@ FactoryBot.define do
         }
       }
     end
+
+    # Seed owned by a specific person via creator_id.
+    # Usage: create(:better_together_seed, :created_by_person, creator: some_person)
+    trait :created_by_person do
+      transient do
+        creator { create(:better_together_person) }
+      end
+      creator_id { creator.id }
+    end
+
+    # Seed representing a personal data export (seedable = a Person).
+    # Usage: create(:better_together_seed, :owned_as_seedable, person: some_person)
+    trait :owned_as_seedable do
+      transient do
+        person { create(:better_together_person) }
+      end
+      seedable_type { 'BetterTogether::Person' }
+      seedable_id { person.id }
+    end
   end
 end

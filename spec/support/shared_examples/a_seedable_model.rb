@@ -32,6 +32,21 @@ RSpec.shared_examples 'a seedable model' do
         root_key = seed_hash.keys.first
         expect(seed_hash[root_key]).to have_key(:record)
       end
+
+      it 'creates a persisted Seed record' do
+        expect { record.export_as_seed }.to change(BetterTogether::Seed, :count).by(1)
+      end
+
+      it 'leaves creator_id nil when not provided' do
+        record.export_as_seed
+        expect(BetterTogether::Seed.last.creator_id).to be_nil
+      end
+
+      it 'sets creator_id on the Seed record when provided' do
+        creator = create(:better_together_person)
+        record.export_as_seed(creator_id: creator.id)
+        expect(BetterTogether::Seed.last.creator_id).to eq(creator.id)
+      end
     end
 
     describe '#export_as_seed_yaml' do

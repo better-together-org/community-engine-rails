@@ -208,6 +208,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :person_seeds, only: %i[index show destroy], path: 'my/seeds' do
+          collection { post :export }
+        end
+
         get 'settings', to: 'settings#index'
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',

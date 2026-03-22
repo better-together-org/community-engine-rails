@@ -47,7 +47,8 @@ module BetterTogether
     def export_as_seed( # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       root_key: BetterTogether::Seed::DEFAULT_ROOT_KEY,
       version: '1.0',
-      seed_description: "Seed data for #{self.class.name} record"
+      seed_description: "Seed data for #{self.class.name} record",
+      creator_id: nil
     )
       seed_hash = {
         root_key => {
@@ -76,6 +77,7 @@ module BetterTogether
         identifier: "#{self.class.name.demodulize.underscore}-#{id}-#{SecureRandom.hex(4)}",
         version: version,
         created_by: 'SystemExport',
+        creator_id: creator_id,
         seeded_at: Time.now,
         seedable_type: self.class.name,
         seedable_id: id,

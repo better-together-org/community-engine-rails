@@ -1996,11 +1996,15 @@ en:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
           title: Privacy Settings
+        my_data:
+          description: View, download, or delete your personal data exports.
+          title: My Data
         tabs:
           account: Account
           blocked_people: Blocked People
           device_permissions: Device Permissions
           integrations: Integrations
+          my_data: My Data
           personal: Personal
           platform: Platform
           preferences: Preferences
@@ -2892,6 +2896,18 @@ en:
     user: User
   roles:
     confirm_destroy: Confirm destroy
+  person_seeds:
+    confirm_destroy: Delete this data export? This cannot be undone.
+    export_failed: Your data export could not be completed. Please try again.
+    export_queued: Your data export has been requested. A download link will appear below once it is ready.
+    export_too_soon: You requested an export recently. Please wait before requesting another.
+    export_unavailable: Your account does not have a person profile to export.
+    index:
+      empty: You have no data exports yet.
+      exporting: Requesting…
+      new_export: Request Data Export
+      new_export_hint: Generate a portable export of your personal data.
+      title: My Data
   seeds:
     actions:
       destroy: Destroy seed
