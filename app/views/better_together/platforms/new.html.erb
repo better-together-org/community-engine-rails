@@ -25,13 +25,13 @@
 
       <div class="mb-3">
         <%= form.label :identifier, class: 'form-label' %>
-        <%= form.text_field :identifier, class: 'form-control', placeholder: 'e.g. peer-platform' %>
+        <%= form.text_field :identifier, class: 'form-control', placeholder: t('better_together.platforms.new.identifier_placeholder') %>
         <div class="form-text"><%= t('better_together.platforms.new.identifier_hint') %></div>
       </div>
 
       <div class="mb-3">
-        <%= form.label :host_url, 'URL', class: 'form-label' %>
-        <%= form.url_field :host_url, class: 'form-control', placeholder: 'https://example.com' %>
+        <%= form.label :host_url, t('better_together.platforms.new.host_url_label'), class: 'form-label' %>
+        <%= form.url_field :host_url, class: 'form-control', placeholder: t('better_together.platforms.new.host_url_placeholder') %>
         <div class="form-text"><%= t('better_together.platforms.new.host_url_hint') %></div>
       </div>
 

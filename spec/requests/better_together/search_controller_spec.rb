@@ -50,13 +50,12 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
 
       it 'filters private linked seed models out of the global search set' do
-        allow(BetterTogether::Searchable).to receive(:included_in_models).and_return([
-                                                                                       BetterTogether::Post,
-                                                                                       BetterTogether::PersonLinkedSeed
-                                                                                     ])
+        # Filtering now happens inside Searchable.included_in_models (not the controller).
+        # PersonLinkedSeed.global_searchable? returns false, so it is excluded by that method.
+        allow(BetterTogether::Searchable).to receive(:included_in_models).and_call_original
 
         expect(Elasticsearch::Model).to receive(:search) do |_query, models|
-          expect(models).to contain_exactly(BetterTogether::Post)
+          expect(models).not_to include(BetterTogether::PersonLinkedSeed)
 
           double(
             records: double(to_a: []),

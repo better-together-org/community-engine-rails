@@ -34,7 +34,7 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
 
     it 'enqueues pull jobs only for sync-eligible active connections' do
       expect do
-        described_class.perform_now(limit: 25)
+        described_class.perform_now(pull_limit: 25)
       end.to have_enqueued_job(BetterTogether::FederatedContentPullJob)
         .with(platform_connection_id: eligible_connection.id, cursor: nil, limit: 25)
         .on_queue('platform_sync')

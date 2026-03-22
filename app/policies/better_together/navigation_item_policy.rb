@@ -37,9 +37,9 @@ module BetterTogether
         if platform_navigation_manager?
           scope.all
         elsif user.present?
-          scope.where(visibility_strategy: %w[public authenticated])
+          scope.where(visibility_strategy: %w[public authenticated]).top_level.positioned.includes(:children)
         else
-          scope.where(visibility_strategy: 'public')
+          scope.visible.top_level.positioned.includes(:children).where(visibility_strategy: 'public')
         end
       end
 

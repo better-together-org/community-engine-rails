@@ -17,6 +17,7 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
+    include Seedable
     include TrackedActivity
     include ::Storext.model
 

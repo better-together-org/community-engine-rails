@@ -38,7 +38,7 @@ module BetterTogether
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         base_scope = scope.with_translations
 
-        # Stewardship and people-directory roles can see all people
+        # Users with the people-directory permission can see all people
         return base_scope if permitted_to?('list_person')
 
         # Unauthenticated users can only see public profiles

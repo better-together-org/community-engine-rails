@@ -5,7 +5,6 @@ module BetterTogether
   class ApplicationRecord < ActiveRecord::Base
     self.abstract_class = true
     include BetterTogetherId
-    include Seedable
 
     def self.extra_permitted_attributes
       []

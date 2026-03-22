@@ -15,8 +15,15 @@ class AddOauthClientSecretDigestToBetterTogetherPlatformConnections < ActiveReco
     add_column :better_together_platform_connections,
                :oauth_client_secret_digest, :string
 
-    # Backfill: generate BCrypt digests for all existing platform connections
-    # that already have a secret stored.
+    require 'bcrypt'
+
+    # Backfill: generate BCrypt digests for all existing platform connections.
+    # We use the real application model here (not an anonymous migration model)
+    # because oauth_client_secret is AR-encrypted (AES-256-GCM). A bare AR
+    # class without `encrypts :oauth_client_secret` would read the raw
+    # ciphertext from the column and hash that instead of the plaintext,
+    # making every existing connection fail inbound OAuth authentication.
+    # The real model decrypts transparently, giving us the plaintext to hash.
     BetterTogether::PlatformConnection.find_each do |conn|
       next if conn.oauth_client_secret.blank?
 
