@@ -1936,6 +1936,22 @@ fr:
           search_queries: Recherches
           shares: Partages
           users: Users
+        search_health:
+          backend: Backend
+          db_count: Nombre BD
+          db_documents: Documents BD
+          drift: Écart
+          drift_visualization: Visualisation de l'écart
+          generated_at: Généré le
+          index_count: Nombre dans l'index
+          index_documents: Documents indexés
+          index_name: Index
+          indices: Indices
+          model: Modèle
+          status_label: Statut
+          store_size: Taille du stockage
+          total_drift: Écart total
+          unmanaged_models: Modèles recherchables non gérés
         title: Rapports de Métriques
         unknown_type: Inconnu
       shares:
