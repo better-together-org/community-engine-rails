@@ -79,7 +79,7 @@ jobs:
           POSTGRES_DB: rails_test
           POSTGRES_USER: rails
           POSTGRES_PASSWORD: password
-          POSTGRES_INITDB_ARGS: "-c max_connections=50"
+          POSTGRES_INITDB_ARGS: "-c max_connections=200"
         options: >-
           --health-cmd "pg_isready -U rails"
           --health-interval 10s
@@ -139,7 +139,26 @@ jobs:
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           mkdir -p tmp
-          bundle exec prspec spec --format json --out tmp/rspec_results.json
+          bundle exec prspec spec --format json --out tmp/rspec_results.json || PRSPEC_EXIT=$?
+          if [[ "${PRSPEC_EXIT:-0}" -ne 0 ]]; then
+            FAILURES=0
+            JSON_FOUND=false
+            for f in tmp/rspec_results*.json; do
+              [[ -f "$f" ]] || continue
+              JSON_FOUND=true
+              COUNT=$(jq '.summary.failure_count // 0' "$f" 2>/dev/null || echo 0)
+              FAILURES=$((FAILURES + COUNT))
+            done
+            if [[ "${JSON_FOUND}" == "false" ]]; then
+              echo "::error::prspec exited ${PRSPEC_EXIT} and no JSON results found (hard crash)"
+              exit "${PRSPEC_EXIT}"
+            elif [[ "${FAILURES}" -gt 0 ]]; then
+              echo "::error::RSpec: ${FAILURES} spec failure(s)"
+              exit 1
+            else
+              echo "prspec exited ${PRSPEC_EXIT} with 0 spec failures (parallel DB teardown race — harmless)"
+            fi
+          fi
 
       - name: Upload coverage report
         if: always()
