@@ -9,19 +9,20 @@ module BetterTogether
     before_action :disallow_robots
 
     def index
-      @notifications = helpers.current_person.notifications.includes(event: :record).order(created_at: :desc)
-      @unread_count = helpers.current_person.notifications.unread.size
+      @notifications = helpers.platform_notifications.includes(event: :record).order(created_at: :desc)
+      @unread_count = helpers.platform_notifications.unread.size
     end
 
     def dropdown # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # Get basic info needed for cache key (minimal queries)
-      max_updated_at = helpers.current_person.notifications.maximum(:updated_at)
-      unread_count = helpers.current_person.notifications.unread.size
-      total_count = helpers.current_person.notifications.size
+      max_updated_at = helpers.platform_notifications.maximum(:updated_at)
+      unread_count = helpers.platform_notifications.unread.size
+      total_count = helpers.platform_notifications.size
 
-      # Create cache key based on max updated_at, unread count, AND total count
+      platform_id = ::Current.platform&.id
+
       # Total count ensures cache invalidation when notifications are deleted
-      cache_key = "notifications_dropdown/#{helpers.current_person.id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"
+      cache_key = "notifications_dropdown/#{helpers.current_person.id}/#{platform_id}/#{max_updated_at&.to_i}/#{unread_count}/#{total_count}"
 
       cached_content = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
         # Only fetch detailed data when cache misses

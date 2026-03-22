@@ -58,6 +58,18 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
           locale: locale.to_s
         )
       end
+
+      it 'filters private linked seed models out of the global search set' do
+        # PersonLinkedSeed.global_searchable? returns false so Registry excludes it from
+        # global_search_models. The registry_spec covers this at unit level; here we confirm
+        # the search endpoint still returns 200 and the Registry reflects the exclusion.
+        expect(BetterTogether::Search::Registry.global_search_models)
+          .not_to include(BetterTogether::PersonLinkedSeed)
+
+        get better_together.search_path(locale:), params: { q: 'test query' }
+
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     context 'when query parameter is blank' do

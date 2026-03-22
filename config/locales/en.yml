@@ -538,18 +538,42 @@ en:
           attributes:
             event_hosts:
               too_short: Events must have at least one host
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: connection agreements require
+                both source and target platforms
+            target:
+              must_be_platform: must be a platform
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: person link agreements require a source
+                person, target person, and active platform connection
+            target:
+              must_be_person: must be a person
         better_together/navigation_item:
           attributes:
             permission_identifier:
               cannot_be_used_with_public_privacy: cannot be used with public privacy
             visibility_strategy:
               inclusion: must be either authenticated or permission
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: must match the access grant grantee person
         better_together/person_platform_integration:
           attributes:
             provider:
               inclusion: "%{value} is not a supported OAuth provider"
             uid:
               taken: has already been linked to another account
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: must be true for a primary domain
+            primary:
+              already_taken_for_platform: has already been taken for this platform
     models:
       action_text/encrypted_rich_text: Encrypted Rich Text
       action_text/rich_text: Rich Text
@@ -598,10 +622,15 @@ en:
       better_together/oauth_application: OAuth Application
       better_together/page: Page
       better_together/person: Person
+      better_together/person_access_grant: Person Access Grant
       better_together/person_community_membership: Person Community Membership
+      better_together/person_link: Person Link
+      better_together/person_linked_seed: Person Linked Seed
       better_together/person_platform_integration: OAuth Integration
       better_together/person_platform_membership: Person Platform Membership
       better_together/platform: Platform
+      better_together/platform_connection: Platform Connection
+      better_together/platform_domain: Platform Domain
       better_together/platform_invitation: Platform Invitation
       better_together/post: Post
       better_together/resource_permission: Resource Permission
@@ -1039,6 +1068,57 @@ en:
         school: School
         work: Work
       title: Email Addresses
+    enums:
+      person_access_grant:
+        status:
+          active: Active
+          expired: Expired
+          pending: Pending
+          revoked: Revoked
+      person_link:
+        status:
+          active: Active
+          pending: Pending
+          revoked: Revoked
+      person_linked_seed:
+        seed_type:
+          event: Event
+          page: Page
+          post: Post
+      platform_connection:
+        connection_kind:
+          member: Member
+          peer: Peer
+        content_sharing_policy:
+          mirror_network_feed: Mirror network feed
+          mirrored_publish_back: Mirrored and publish back
+          none: None
+          selective: Selective
+        federation_auth_policy:
+          api_read: API read
+          api_write: API read and write
+          login_only: Login only
+          none: None
+        federation_scope_types:
+          content_read: Content read
+          content_write: Content write
+          identity: Identity
+          linked_content_read: Linked content read
+          profile_read: Profile read
+        shared_content_types:
+          events: Events
+          pages: Pages
+          posts: Posts
+        status:
+          active: Active
+          blocked: Blocked
+          pending: Pending
+          suspended: Suspended
+        sync_status:
+          failed: Failed
+          idle: Idle
+          running: Running
+          succeeded: Succeeded
     event_invitations:
       index:
         invite_member: Invite member
@@ -1401,6 +1481,10 @@ en:
         request_creator: Request Creator
         show:
           details: Details
+          open_platform_connections: Open Platform Connections
+          platform_connection: Platform Connection
+          source_platform: Source Platform
+          target_platform: Target Platform
           title: Agreement
         status: Status
       by: by
@@ -1467,6 +1551,7 @@ en:
         response_to_your_offer_heading: Response to your Offer
         save_offer: Save Offer
         source_request_heading: Responding to Request
+        target_platform: Target platform
         view_agreement: View Agreement
         view_offer: View Offer
         your_response_heading: Your Response
@@ -1476,11 +1561,14 @@ en:
         edit_request: Edit Request
         empty: No requests found
         index_header: Requests
+        manage_connections: Manage Connections
+        new_connection_request: New Connection Request
         new_request: New Request
         respond_with_offer: Respond with Offer
         response_to_your_request_heading: Response to your Request
         save_request: Save Request
         source_offer_heading: Responding to Offer
+        target_platform: Target platform
         view_agreement: View Agreement
         view_request: View Request
         your_response_heading: Your Response
@@ -1520,6 +1608,8 @@ en:
           Best regards,<br />
           The %{platform} Team
         subject: A new agreement was created
+      new_match:
+        subject: New Joatu match
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
@@ -2038,6 +2128,36 @@ en:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_access_grants:
+      errors:
+        duplicate_grant: already has a grant for this link and grantee
+      index:
+        description: Manage the private access grants you have shared with others.
+        empty: You have not shared any access grants yet.
+        shared_with_you: Shared with you
+        title: Access Grants
+        you_are_sharing: You are sharing
+      show:
+        accepted: Accepted
+        allowed: Allowed
+        back: Back to Access Grants
+        denied: Denied
+        expires: Expires
+        grantor: Grantor
+        manage_grant_heading: Manage Grant
+        no_expiry: No expiry
+        pending: Pending
+        recipient: Recipient
+        revoke: Revoke Access
+        revoke_confirm: Revoke this access grant?
+        scope_labels:
+          private_events: Private events
+          private_messages: Private messages
+          private_pages: Private pages
+          private_posts: Private posts
+          profile_read: Profile read
+        scopes_heading: Scopes
+        title: Access Grant
     person_block:
       cannot_block_manager: cannot be a platform manager
       cannot_block_self: cannot block yourself
@@ -2075,6 +2195,33 @@ en:
         platform_manager_error: Platform managers cannot be blocked.
         self_block_error: You cannot block yourself.
         unblocked: Person has been unblocked successfully.
+    person_linked_seeds:
+      index:
+        description: Private content shared with you through federation access grants.
+        empty: No linked seeds have been shared with you yet.
+        title: Linked Seeds
+      show:
+        back: Back to Linked Seeds
+        empty: No content available for this linked seed.
+        title: Linked Seed
+    person_links:
+      errors:
+        duplicate_link: already has a link for this platform connection and target
+      index:
+        description: Manage your cross-platform person links and federation connections.
+        empty: You have no person links yet.
+        title: Person Links
+      show:
+        access_grants_heading: Access Grants
+        back: Back to Person Links
+        pending: Pending
+        platform_connection: Platform connection
+        revoke: Revoke Link
+        revoke_confirm: Revoke this person link and its access grants?
+        source_person: Source person
+        target_person: Target person
+        title: Person Link
+        verified: Verified
     person_platform_integration_mailer:
       integration_created:
         body_html: A new %{provider} account integration was connected to your account
@@ -2131,6 +2278,107 @@ en:
         work: Work
       number: Number
       title: Phone Numbers
+    platform_connections:
+      actions:
+        approve: Approve
+        approve_aria: 'Approve connection: %{source} ↔ %{target}'
+        approve_confirm: Approve this connection?
+        edit: Edit
+        edit_aria: 'Edit connection: %{source} ↔ %{target}'
+        suspend: Suspend
+        suspend_aria: 'Suspend connection: %{source} ↔ %{target}'
+        suspend_confirm: Suspend this connection?
+        view: View
+        view_aria: 'View connection: %{source} ↔ %{target}'
+      edit:
+        title: Edit Platform Connection
+      flash:
+        approved: Connection approved and set to active.
+        cannot_approve: Cannot approve a connection with status '%{status}'.
+        cannot_suspend: Cannot suspend a connection with status '%{status}'.
+        secret_rotated: OAuth client secret rotated. Update the remote platform configuration.
+        suspended: Connection suspended.
+      form:
+        back: Back
+        connection_kind_hint: 'Member: this platform hosts members of the other. Peer:
+          equal partnership between independent platforms.'
+        content_sharing_policy_hint: Controls how public content is mirrored. "Mirror
+          network feed" syncs all public content; "Selective" syncs only explicitly
+          shared types.
+        create: Create Connection
+        federation_auth_policy_hint: api_read allows the remote platform to pull public
+          content. api_write additionally allows it to publish content here. login_only
+          restricts to user authentication only.
+        federation_scopes_hint: Scopes determine what data the remote platform may
+          request in OAuth tokens. Only enable scopes matching your agreed data-sharing
+          terms.
+        federation_scopes_legend: Federation Scopes
+        save: Save Changes
+        shared_content_types_hint: Select which content types to include when syncing
+          with this connection.
+        shared_content_types_legend: Shared Content Types
+        source_platform: Source Platform
+        target_platform: Target Platform
+      index:
+        columns:
+          auth_policy: Auth Policy
+          content_policy: Content Policy
+          kind: Kind
+          source: Source
+          status: Status
+          target: Target
+        new_connection: New Connection
+        title: Platform Connections
+      new:
+        back: Back
+        register_platform_hint: Need to register a remote platform first?
+        register_platform_link: Register External Platform →
+        title: New Platform Connection
+      show:
+        api_read: API Read
+        api_write: API Write
+        approve: Approve
+        approve_confirm: Approve this connection and set it to active?
+        back: Back
+        connection_kind: Connection Kind
+        content_sharing: Content Sharing
+        content_sharing_policy: Content Sharing Policy
+        disabled: Disabled
+        edit: Edit
+        enabled: Enabled
+        federation_auth: Federation Auth
+        federation_auth_policy: Federation Auth Policy
+        federation_scopes: Federation Scopes
+        last_sync_completed: Last Sync Completed
+        last_sync_error: Last Sync Error
+        last_sync_item_count: Last Sync Item Count
+        last_sync_started: Last Sync Started
+        login: Login
+        mirroring: Mirroring
+        never: Never
+        none: None
+        oauth:
+          client_id: Client ID
+          client_secret: Client Secret
+          description: Give these credentials to the operator of %{platform} so they
+            can configure a matching connection on their platform and obtain bearer
+            tokens from this platform's OAuth endpoint.
+          not_set: Not set
+          remote_token_endpoint: Remote Token Endpoint
+          remote_token_endpoint_hint: Configure this on the remote platform to point
+            to their OAuth endpoint.
+          rotate_secret: Rotate Secret
+          rotate_secret_confirm: Rotate the OAuth client secret? The remote platform
+            will need to be reconfigured.
+          title: Federation OAuth Credentials
+          token_endpoint: Token Endpoint (this platform)
+        publish_back: Publish Back
+        shared_content_types: Shared Content Types
+        status: Status
+        suspend: Suspend
+        suspend_confirm: Suspend this connection? Federation and sync will pause.
+        sync_cursor: Sync Cursor
+        sync_status: Sync Status
     platform_invitation:
       acceptance_html: By registering for a user account below, you are accepting
         this invitation to join <strong>%{platform}</strong>.
@@ -2169,6 +2417,22 @@ en:
         expired: Expired
         pending: Pending
     platforms:
+      form:
+        host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
+          Used to identify the platform in federation and generate OAuth endpoint
+          URLs. Must be HTTPS for production.
+      new:
+        back: Back
+        host_url_hint: The root URL of the external platform instance.
+        host_url_label: URL
+        host_url_placeholder: https://example.com
+        identifier_hint: A unique slug identifier for this platform (letters, numbers,
+          hyphens).
+        identifier_placeholder: e.g. peer-platform
+        intro: Register a remote Community Engine (or compatible) instance so it can
+          be selected when creating a Platform Connection.
+        submit: Register External Platform
+        title: Register External Platform
       show:
         new_invitation: New invitation
     posts:
@@ -2516,6 +2780,12 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+    validators:
+      safe_federation_url:
+        credentials_in_url: must not include credentials (user:password@)
+        insecure_scheme: must use http or https
+        invalid_url: is not a valid URL
+        private_ip: must not point to a private or reserved IP address
     view_switcher:
       button_label: "%{view} view"
       change_view: Change view type
@@ -3421,6 +3691,8 @@ en:
     navigation_area: Navigation area
     page: Page
     person: Person
+    person_access_grant: Person access grant
+    person_link: Person link
     person_platform_membership: Person platform membership
     platform: Platform
     profile: Profile

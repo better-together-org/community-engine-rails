@@ -122,6 +122,13 @@ module Rack
       req.ip if req.path.include?('/oauth/token') && req.post?
     end
 
+    # Throttle federation OAuth token endpoint by client_id (10 per minute per client).
+    # Complements the IP-based throttle — prevents a single compromised or abusive
+    # federation client from exhausting the token endpoint even across multiple IPs.
+    throttle('oauth/token/client_id', limit: 10, period: 1.minute) do |req|
+      req.params['client_id'].presence if req.path.include?('/oauth/token') && req.post?
+    end
+
     # Throttle POST requests to /users/sign-in by email param
     #
     # Key: "rack::attack:#{Time.now.to_i/:period}:logins/email:#{normalized_email}"

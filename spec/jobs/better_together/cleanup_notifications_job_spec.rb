@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe CleanupNotificationsJob do
     describe '#perform' do
       it 'removes notifications and events for the specified record' do

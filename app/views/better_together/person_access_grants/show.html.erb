@@ -1,0 +1,82 @@
+<section class="container py-4">
+  <header class="mb-4">
+    <p class="text-muted mb-2">
+      <%= link_to t('better_together.person_access_grants.show.back'),
+                  person_access_grants_path,
+                  class: 'text-decoration-none' %>
+    </p>
+    <h1><%= t('better_together.person_access_grants.show.title') %></h1>
+    <p class="text-muted mb-0"><%= t("better_together.enums.person_access_grant.status.#{@person_access_grant.status}") %></p>
+  </header>
+
+  <dl class="row mb-4">
+    <dt class="col-sm-3"><%= t('better_together.person_access_grants.show.grantor') %></dt>
+    <dd class="col-sm-9"><%= @person_access_grant.grantor_person.name %></dd>
+
+    <dt class="col-sm-3"><%= t('better_together.person_access_grants.show.recipient') %></dt>
+    <dd class="col-sm-9"><%= @person_access_grant.grantee_person&.name || @person_access_grant.remote_grantee_name || @person_access_grant.remote_grantee_identifier %></dd>
+
+    <dt class="col-sm-3"><%= t('better_together.person_access_grants.show.accepted') %></dt>
+    <dd class="col-sm-9"><%= @person_access_grant.accepted_at ? l(@person_access_grant.accepted_at, format: :short) : t('better_together.person_access_grants.show.pending') %></dd>
+
+    <dt class="col-sm-3"><%= t('better_together.person_access_grants.show.expires') %></dt>
+    <dd class="col-sm-9"><%= @person_access_grant.expires_at ? l(@person_access_grant.expires_at, format: :short) : t('better_together.person_access_grants.show.no_expiry') %></dd>
+  </dl>
+
+  <section class="mb-4">
+    <h2 class="h5"><%= t('better_together.person_access_grants.show.scopes_heading') %></h2>
+    <ul>
+      <% %i[profile_read private_posts private_pages private_events private_messages].each do |scope| %>
+        <li>
+          <%= t("better_together.person_access_grants.show.scope_labels.#{scope}") %>:
+          <%= @person_access_grant.public_send(:"allow_#{scope}?") ?
+              t('better_together.person_access_grants.show.allowed') :
+              t('better_together.person_access_grants.show.denied') %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <% if @person_access_grant.grantor_person == current_person %>
+    <section class="mb-4">
+      <h2 class="h5"><%= t('better_together.person_access_grants.show.manage_grant_heading') %></h2>
+      <%= form_with model: @person_access_grant, local: true do |form| %>
+        <div class="form-check">
+          <%= form.check_box :allow_profile_read, class: 'form-check-input' %>
+          <%= form.label :allow_profile_read, class: 'form-check-label' %>
+        </div>
+        <div class="form-check">
+          <%= form.check_box :allow_private_posts, class: 'form-check-input' %>
+          <%= form.label :allow_private_posts, class: 'form-check-label' %>
+        </div>
+        <div class="form-check">
+          <%= form.check_box :allow_private_pages, class: 'form-check-input' %>
+          <%= form.label :allow_private_pages, class: 'form-check-label' %>
+        </div>
+        <div class="form-check">
+          <%= form.check_box :allow_private_events, class: 'form-check-input' %>
+          <%= form.label :allow_private_events, class: 'form-check-label' %>
+        </div>
+        <div class="form-check mb-3">
+          <%= form.check_box :allow_private_messages, class: 'form-check-input' %>
+          <%= form.label :allow_private_messages, class: 'form-check-label' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :expires_at, class: 'form-label' %>
+          <%= form.datetime_local_field :expires_at, class: 'form-control' %>
+        </div>
+        <%= form.submit t('helpers.submit.update', model: ::BetterTogether::PersonAccessGrant.model_name.human), class: 'btn btn-primary' %>
+      <% end %>
+    </section>
+
+    <% unless @person_access_grant.revoked? %>
+      <section>
+        <%= button_to t('better_together.person_access_grants.show.revoke'),
+                      revoke_person_access_grant_path(@person_access_grant),
+                      method: :post,
+                      class: 'btn btn-outline-danger',
+                      form: { data: { turbo_confirm: t('better_together.person_access_grants.show.revoke_confirm') } } %>
+      </section>
+    <% end %>
+  <% end %>
+</section>

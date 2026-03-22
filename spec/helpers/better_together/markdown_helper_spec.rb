@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe MarkdownHelper do
     describe '#render_markdown' do
       context 'with basic markdown' do

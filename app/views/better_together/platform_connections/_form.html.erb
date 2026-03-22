@@ -1,0 +1,153 @@
+<%= form_with(model: platform_connection, class: 'form') do |form| %>
+  <% if platform_connection.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% platform_connection.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if platform_connection.new_record? %>
+    <div class="mb-3">
+      <%= form.label :source_platform_id, t('better_together.platform_connections.form.source_platform'), class: 'form-label' %>
+      <%= form.collection_select :source_platform_id,
+                                 ::BetterTogether::Platform.order(:identifier),
+                                 :id, :name,
+                                 { prompt: '— select —' },
+                                 class: 'form-select' %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :target_platform_id, t('better_together.platform_connections.form.target_platform'), class: 'form-label' %>
+      <%= form.collection_select :target_platform_id,
+                                 ::BetterTogether::Platform.order(:identifier),
+                                 :id, :name,
+                                 { prompt: '— select —' },
+                                 class: 'form-select' %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :connection_kind, class: 'form-label' %>
+      <%= form.select :connection_kind,
+                      BetterTogether::PlatformConnection::CONNECTION_KINDS.keys.map { |k|
+                        [t("better_together.enums.platform_connection.connection_kind.#{k}"), k.to_s]
+                      },
+                      {},
+                      class: 'form-select' %>
+      <p class="form-text text-muted"><%= t('better_together.platform_connections.form.connection_kind_hint') %></p>
+    </div>
+  <% else %>
+    <div class="mb-3">
+      <label class="form-label" for="platform_connection_source_platform"><%= t('better_together.platform_connections.form.source_platform') %></label>
+      <input id="platform_connection_source_platform" class="form-control" value="<%= platform_connection.source_platform.name %>" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="platform_connection_target_platform"><%= t('better_together.platform_connections.form.target_platform') %></label>
+      <input id="platform_connection_target_platform" class="form-control" value="<%= platform_connection.target_platform.name %>" readonly>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= form.label :status, class: 'form-label' %>
+        <%= form.select :status, BetterTogether::PlatformConnection::STATUS_VALUES.keys.map { |k|
+                          [t("better_together.enums.platform_connection.status.#{k}"), k.to_s]
+                        }, {}, class: 'form-select' %>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <%= form.label :connection_kind, class: 'form-label' %>
+        <%= form.select :connection_kind, BetterTogether::PlatformConnection::CONNECTION_KINDS.keys.map { |k|
+                          [t("better_together.enums.platform_connection.connection_kind.#{k}"), k.to_s]
+                        }, {}, class: 'form-select' %>
+        <p class="form-text text-muted"><%= t('better_together.platform_connections.form.connection_kind_hint') %></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= form.label :content_sharing_policy, class: 'form-label' %>
+        <%= form.select :content_sharing_policy,
+                        BetterTogether::PlatformConnection::CONTENT_SHARING_POLICIES.keys.map { |k|
+                          [t("better_together.enums.platform_connection.content_sharing_policy.#{k}"), k.to_s]
+                        },
+                        {},
+                        class: 'form-select' %>
+        <p class="form-text text-muted"><%= t('better_together.platform_connections.form.content_sharing_policy_hint') %></p>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <%= form.label :federation_auth_policy, class: 'form-label' %>
+        <%= form.select :federation_auth_policy,
+                        BetterTogether::PlatformConnection::FEDERATION_AUTH_POLICIES.keys.map { |k|
+                          [t("better_together.enums.platform_connection.federation_auth_policy.#{k}"), k.to_s]
+                        },
+                        {},
+                        class: 'form-select' %>
+        <p class="form-text text-muted"><%= t('better_together.platform_connections.form.federation_auth_policy_hint') %></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <fieldset class="mb-3">
+          <legend class="fs-6"><%= t('better_together.platform_connections.form.shared_content_types_legend') %></legend>
+          <div class="form-check">
+            <%= form.check_box :share_posts, class: 'form-check-input' %>
+            <%= form.label :share_posts, class: 'form-check-label' %>
+          </div>
+          <div class="form-check">
+            <%= form.check_box :share_pages, class: 'form-check-input' %>
+            <%= form.label :share_pages, class: 'form-check-label' %>
+          </div>
+          <div class="form-check">
+            <%= form.check_box :share_events, class: 'form-check-input' %>
+            <%= form.label :share_events, class: 'form-check-label' %>
+          </div>
+          <p class="form-text text-muted mt-1"><%= t('better_together.platform_connections.form.shared_content_types_hint') %></p>
+        </fieldset>
+      </div>
+
+      <div class="col-md-6">
+        <fieldset class="mb-3">
+          <legend class="fs-6"><%= t('better_together.platform_connections.form.federation_scopes_legend') %></legend>
+          <div class="form-check">
+            <%= form.check_box :allow_identity_scope, class: 'form-check-input' %>
+            <%= form.label :allow_identity_scope, class: 'form-check-label' %>
+          </div>
+          <div class="form-check">
+            <%= form.check_box :allow_profile_read_scope, class: 'form-check-input' %>
+            <%= form.label :allow_profile_read_scope, class: 'form-check-label' %>
+          </div>
+          <div class="form-check">
+            <%= form.check_box :allow_content_read_scope, class: 'form-check-input' %>
+            <%= form.label :allow_content_read_scope, class: 'form-check-label' %>
+          </div>
+          <div class="form-check">
+            <%= form.check_box :allow_linked_content_read_scope, class: 'form-check-input' %>
+            <%= form.label :allow_linked_content_read_scope, class: 'form-check-label' %>
+          </div>
+          <div class="form-check">
+            <%= form.check_box :allow_content_write_scope, class: 'form-check-input' %>
+            <%= form.label :allow_content_write_scope, class: 'form-check-label' %>
+          </div>
+          <p class="form-text text-muted mt-1"><%= t('better_together.platform_connections.form.federation_scopes_hint') %></p>
+        </fieldset>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="btn-group">
+    <% if platform_connection.new_record? %>
+      <%= link_to t('better_together.platform_connections.form.back'),
+                  better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
+      <%= form.submit t('better_together.platform_connections.form.create'), class: 'btn btn-primary' %>
+    <% else %>
+      <%= link_to t('better_together.platform_connections.form.back'),
+                  better_together.platform_connection_path(platform_connection), class: 'btn btn-outline-secondary' %>
+      <%= form.submit t('better_together.platform_connections.form.save'), class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+<% end %>
