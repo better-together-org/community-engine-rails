@@ -140,13 +140,15 @@ module BetterTogether
     def joinable_url(joinable, locale:)
       return unless joinable&.persisted?
 
+      route_options = { locale: locale.presence || I18n.default_locale }
+
       case joinable
       when BetterTogether::Platform
-        BetterTogether::Engine.routes.url_helpers.platform_url(joinable, locale: locale)
+        BetterTogether::Engine.routes.url_helpers.platform_url(id: joinable, **route_options)
       when BetterTogether::Community
-        BetterTogether::Engine.routes.url_helpers.community_url(joinable, locale: locale)
+        BetterTogether::Engine.routes.url_helpers.community_url(id: joinable, **route_options)
       else
-        BetterTogether::Engine.routes.url_helpers.polymorphic_url(joinable, locale: locale)
+        BetterTogether::Engine.routes.url_helpers.polymorphic_url(joinable, **route_options)
       end
     end
   end

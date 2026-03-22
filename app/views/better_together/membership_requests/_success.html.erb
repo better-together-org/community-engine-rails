@@ -3,7 +3,10 @@
 
 <div id="membership_request_form" class="py-4 text-center">
   <div class="mb-3">
-    <span class="display-4">✅</span>
+    <span class="display-4" aria-hidden="true">✅</span>
+    <span class="visually-hidden">
+      <%= t('better_together.membership_requests.success.heading', default: 'Request Received') %>
+    </span>
   </div>
   <h2>
     <%= t('better_together.membership_requests.success.heading', default: 'Request Received') %>

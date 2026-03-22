@@ -79,9 +79,7 @@ module BetterTogether
         errors.delete(:creator) if unauthenticated?
       end
 
-      # Find (or lazily create) the canonical Membership Requests category.
-      # CategoryBuilder seeds it; this fallback avoids hard failures in test/dev
-      # environments where seeds may not have been run.
+      # Generate a stable display name when the requester did not provide one.
       def generate_name_from_requestor
         return if name.present?
 
@@ -98,6 +96,9 @@ module BetterTogether
       def assign_membership_request_category
         return if categories.map(&:identifier).include?(CATEGORY_NAME.parameterize)
 
+        # Find (or lazily create) the canonical Membership Requests category.
+        # CategoryBuilder seeds it; this fallback avoids hard failures in test/dev
+        # environments where seeds may not have been run.
         category = ::BetterTogether::Joatu::Category
                    .find_by(identifier: CATEGORY_NAME.parameterize)
                    .presence ||

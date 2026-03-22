@@ -89,6 +89,23 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           expect(mail.to).to eq([updated_membership.member.email])
         end
       end
+
+      context 'when recipient locale is nil' do
+        let(:recipient_data) do
+          {
+            email: updated_membership.member.email,
+            locale: nil,
+            time_zone: Time.zone
+          }
+        end
+
+        it 'renders successfully without passing a nil locale into routes' do
+          expect(mail.subject).to eq(I18n.t('better_together.membership_mailer.updated.subject',
+                                            joinable_name: updated_membership.joinable.name,
+                                            joinable_type: updated_membership.joinable.model_name.human))
+          expect(mail.to).to eq([updated_membership.member.email])
+        end
+      end
     end
 
     describe '#removed' do

@@ -83,16 +83,11 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
 
     context 'with captcha hook' do
       it 'renders 422 when captcha fails' do
-        # allow_any_instance_of is required here: in request specs Rails uses the
-        # real controller class instance created by the middleware stack, so there
-        # is no way to stub an instance method without allow_any_instance_of.
-        # allow_next_instance_of is a GitLab-specific extension not available in
-        # standard rspec-mocks.  The leak risk is bounded to this single example
-        # via the standard RSpec `and_return` stub lifecycle.
-        allow_any_instance_of(BetterTogether::MembershipRequestsController) # rubocop:disable RSpec/AnyInstance
-          .to receive(:validate_captcha_if_enabled?).and_return(false)
+        BetterTogether::MembershipRequestsController.captcha_validation_proc = -> { false }
         post base_path, params: valid_params
         expect(response).to have_http_status(:unprocessable_content)
+      ensure
+        BetterTogether::MembershipRequestsController.captcha_validation_proc = nil
       end
     end
   end
