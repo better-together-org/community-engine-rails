@@ -33,8 +33,7 @@ RSpec.describe 'layouts/better_together/application' do
                                     sitemap_path: '/sitemap.xml')
     allow(view).to receive(:render)
       .with('better_together/e2e/passphrase_modal').and_return('')
-    allow(view).to receive(:current_user).and_return(nil)
-    allow(view).to receive(:base_url).and_return('http://test.host')
+    allow(view).to receive_messages(current_user: nil, base_url: 'http://test.host')
   end
 
   it 'renders canonical and hreflang links by default' do
