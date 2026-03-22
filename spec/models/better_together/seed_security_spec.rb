@@ -235,7 +235,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features' do # rubocop:todo RSpec
       it 'rejects malformed seed data' do
         malformed_data = { 'wrong_structure' => 'invalid' }
         expect { described_class.plant_with_validation(malformed_data) }
-          .to raise_error(RuntimeError, /Invalid data format in seed.*missing root key/)
+          .to raise_error(ArgumentError, /Invalid data format in seed.*missing root key/)
       end
 
       it 'handles validation errors gracefully' do
@@ -243,7 +243,7 @@ RSpec.describe BetterTogether::Seed, 'Security Features' do # rubocop:todo RSpec
         # Remove required field to trigger validation error
         invalid_data['better_together']['seed'].delete('identifier')
         expect { described_class.plant_with_validation(invalid_data) }
-          .to raise_error(RuntimeError, /Invalid data format.*missing required field.*identifier/)
+          .to raise_error(ArgumentError, /Invalid data format.*missing required field.*identifier/)
       end
     end
   end

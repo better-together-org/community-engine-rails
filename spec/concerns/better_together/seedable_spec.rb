@@ -12,13 +12,15 @@ module BetterTogether
     # rubocop:enable RSpec/LeakyConstantDeclaration
 
     before(:all) do # rubocop:todo RSpec/BeforeAfterAll
-      create_table(:better_together_test_seedable_classes) do |t|
+      ActiveRecord::Base.connection.create_table(:better_together_test_seedable_classes, force: true) do |t|
         t.string :name
+        t.timestamps null: false
       end
+      TestSeedableClass.reset_column_information
     end
 
     after(:all) do # rubocop:todo RSpec/BeforeAfterAll
-      drop_table(:better_together_test_seedable_classes)
+      ActiveRecord::Base.connection.drop_table(:better_together_test_seedable_classes, if_exists: true)
     end
 
     describe TestSeedableClass, type: :model do
