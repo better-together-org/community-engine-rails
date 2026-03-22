@@ -1,14 +1,28 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :page_title do %>
+  <%= t('seeds.index.title') %>
+<% end %>
 
-<h1>Seeds</h1>
+<div class="container-fluid my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= t('seeds.index.title') %></h1>
+    <% if policy(BetterTogether::Seed).create? %>
+      <%= link_to new_seed_path, class: 'btn btn-primary', 'aria-label' => t('seeds.index.new_seed') do %>
+        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('seeds.index.new_seed') %>
+      <% end %>
+    <% end %>
+  </div>
 
-<div id="seeds">
-  <% @seeds.each do |seed| %>
-    <%= render seed %>
-    <p>
-      <%= link_to "Show this seed", seed %>
-    </p>
+  <% if @seeds.none? %>
+    <div class="alert alert-info" role="alert">
+      <%= t('seeds.index.empty') %>
+    </div>
+  <% else %>
+    <%= paginate @seeds %>
+
+    <div id="seeds">
+      <%= render partial: 'seed', collection: @seeds, as: :seed %>
+    </div>
+
+    <%= paginate @seeds %>
   <% end %>
 </div>
-
-<%= link_to "New seed", new_seed_path %>

@@ -303,6 +303,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               end
             end
 
+            # Seed data management
+            resources :seeds
+
             # People and memberships
             resources :people
             resources :person_community_memberships

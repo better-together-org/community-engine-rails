@@ -2878,6 +2878,7 @@ en:
     navigation_area: Navigation area
     page: Page
     person: Person
+    seed: Seed
     person_platform_membership: Person platform membership
     platform: Platform
     profile: Profile
@@ -2891,6 +2892,30 @@ en:
     user: User
   roles:
     confirm_destroy: Confirm destroy
+  seeds:
+    actions:
+      destroy: Destroy seed
+      edit: Edit seed
+      show: Show seed
+    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+    edit:
+      title: "Editing: %{identifier}"
+    form:
+      identifier_placeholder: e.g. host-setup-wizard-v1
+      json_hint: Must be valid JSON.
+    index:
+      empty: No seeds found.
+      new_seed: New seed
+      title: Seeds
+    new:
+      title: New Seed
+    seeded_by: "Seeded by %{created_by}"
+    show:
+      download_yaml: Download YAML
+      origin: Origin
+      payload: Payload
+      plantings: Planting History
+      yaml_export: YAML Export
   search:
     button: Search
     placeholder: Search...
