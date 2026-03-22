@@ -8,7 +8,7 @@ export NODE_ENV="${NODE_ENV:-test}"
 export DISABLE_SPRING=1
 export BUNDLE_GEMFILE="${PROJECT_ROOT}/gemfiles/rails_8_1.gemfile"
 
-PREVIEW_LOG="${PREVIEW_LOG:-tmp/rails_preview_bundle.log}"
+PREVIEW_LOG="${PREVIEW_LOG:-${PROJECT_ROOT}/tmp/rails_preview_bundle.log}"
 mkdir -p "$(dirname "${PREVIEW_LOG}")"
 
 if bundle lock --update rails --conservative --lockfile=gemfiles/rails_8_1.gemfile.lock >"${PREVIEW_LOG}" 2>&1; then
