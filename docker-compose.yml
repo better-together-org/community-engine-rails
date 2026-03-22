@@ -67,12 +67,14 @@ services:
 
   elasticsearch:
     container_name: community-engine-elasticsearch
-    image: elasticsearch:7.17.23
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.3
     environment:
       - node.name=elasticsearch
       - cluster.name=community-engine-es
       - discovery.seed_hosts=elasticsearch
       - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
