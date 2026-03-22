@@ -5,7 +5,14 @@ require 'rails_helper'
 # Create the test table before defining TestSeedableClass so that
 # ActiveRecord column introspection (triggered at class-definition time
 # in Rails 7+) does not raise PG::UndefinedTable.
-ActiveRecord::Base.connection.create_table(:better_together_test_seedable_classes, force: :cascade) do |t|
+# Use if_not_exists: true so parallel workers don't fight over drop+recreate.
+# The table is intentionally left in the DB after the suite runs — it is
+# harmless and dropping it here would cause a race when multiple workers load
+# this file simultaneously.
+ActiveRecord::Base.connection.create_table(
+  :better_together_test_seedable_classes,
+  if_not_exists: true
+) do |t|
   t.string :name
   t.timestamps null: false
 end
@@ -18,10 +25,6 @@ module BetterTogether
       include Seedable
     end
     # rubocop:enable RSpec/LeakyConstantDeclaration
-
-    after(:all) do # rubocop:todo RSpec/BeforeAfterAll
-      ActiveRecord::Base.connection.drop_table(:better_together_test_seedable_classes, if_exists: true)
-    end
 
     describe TestSeedableClass, type: :model do
       FactoryBot.define do

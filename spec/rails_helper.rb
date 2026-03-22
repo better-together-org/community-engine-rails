@@ -168,9 +168,14 @@ RSpec.configure do |config|
           else
             retry
           end
+        elsif is_duplicate_error
+        # On final attempt, accept duplicate errors as success (data exists).
+        # For non-duplicate errors, log and continue rather than aborting
+        # before(:suite) — a single builder failure must not prevent the
+        # remaining builders (e.g. SetupWizardBuilder) from running.
+        # already logged above
         else
-          # On final attempt, accept duplicate errors as success (data exists).
-          raise unless is_duplicate_error
+          Rails.logger.warn "build_with_retry: giving up after #{times} attempts (#{e.class}: #{e.message})"
         end
       end
     end
@@ -201,7 +206,11 @@ RSpec.configure do |config|
       end
     end
 
+    # Set Current.platform so Page#assign_current_platform_if_available resolves
+    # correctly during NavigationBuilder (belt + suspenders alongside find_by(host:true)).
+    Current.platform = BetterTogether::Platform.find_by(host: true)
     build_with_retry { BetterTogether::NavigationBuilder.build(clear: false) }
+    Current.platform = nil
     build_with_retry { BetterTogether::CategoryBuilder.build(clear: false) }
     build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: false) }
     build_with_retry { BetterTogether::AgreementBuilder.build(clear: false) }

@@ -45,10 +45,11 @@ RSpec.describe BetterTogether::SeedPlanting do
         expect(planting).to be_valid, "#{status} should be valid with completed_at"
       end
 
-      # Test that enum raises error for invalid status
-      expect do
-        build(:better_together_seed_planting, creator: person, status: 'invalid_status')
-      end.to raise_error(ArgumentError, "'invalid_status' is not a valid status")
+      # With validate: true (Rails 7.1+), invalid enum values are caught at
+      # validation time rather than raising ArgumentError on assignment.
+      planting = build(:better_together_seed_planting, creator: person, status: 'invalid_status')
+      expect(planting).not_to be_valid
+      expect(planting.errors[:status]).to be_present
     end
   end
 

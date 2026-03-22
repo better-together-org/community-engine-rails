@@ -377,12 +377,19 @@ module BetterTogether
     # Attach the exported YAML as an Active Storage file
     # -------------------------------------------------------------
     def attach_yaml_file
+      # Guard against infinite recursion: Active Storage's attach touches the
+      # parent record, which would re-fire after_update_commit :attach_yaml_file.
+      return if @attaching_yaml_file
+
+      @attaching_yaml_file = true
       yml_data = export_yaml
       yaml_file.attach(
         io: StringIO.new(yml_data),
         filename: versioned_file_name,
         content_type: 'text/yaml'
       )
+    ensure
+      @attaching_yaml_file = nil
     end
   end
 end
