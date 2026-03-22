@@ -31,9 +31,10 @@ module BetterTogether
     def create
       @seed = Seed.new(seed_params)
       authorize @seed
+      apply_json_parse_errors
 
-      if @seed.save
-        redirect_to seed_path(@seed), notice: t('flash.generic.created', resource: t('resources.seed'))
+      if @seed.errors.none? && @seed.save
+        redirect_to seeds_path, notice: t('flash.generic.created', resource: t('resources.seed'))
       else
         render :new, status: :unprocessable_entity
       end
@@ -42,10 +43,12 @@ module BetterTogether
     # PATCH/PUT /host/seeds/1
     def update
       authorize @seed
+      update_params = seed_params
+      apply_json_parse_errors
 
-      if @seed.update(seed_params)
-        redirect_to seed_path(@seed), notice: t('flash.generic.updated', resource: t('resources.seed')),
-                                      status: :see_other
+      if @seed.errors.none? && @seed.update(update_params)
+        redirect_to seeds_path, notice: t('flash.generic.updated', resource: t('resources.seed')),
+                                status: :see_other
       else
         render :edit, status: :unprocessable_entity
       end
@@ -81,7 +84,17 @@ module BetterTogether
 
       JSON.parse(raw)
     rescue JSON::ParserError
+      @json_parse_errors ||= {}
+      @json_parse_errors[key] = :invalid_json
       nil
+    end
+
+    # Surface any JSON parse failures as model errors so the form re-renders
+    # with a validation message instead of silently dropping the submitted value.
+    def apply_json_parse_errors
+      @json_parse_errors&.each_key do |col|
+        @seed.errors.add(col, :invalid, message: t('seeds.errors.invalid_json'))
+      end
     end
   end
 end

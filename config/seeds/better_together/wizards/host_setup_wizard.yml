@@ -1,7 +1,7 @@
 better_together:
   version: "1.0"
   seed:
-    type: "wizard"
+    type: "BetterTogether::Seed"
     identifier: "host_setup"
     created_by: "Better Together Solutions"
     created_at: "2025-03-04T12:00:00Z"

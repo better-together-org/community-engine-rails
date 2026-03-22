@@ -413,6 +413,14 @@ en:
         lock_version: Lock version
         resource_permission: :activerecord.models.resource_permission
         role: :activerecord.models.role
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
       better_together/user:
         confirmation_sent_at: Confirmation sent at
         confirmation_token: Confirmation token
@@ -443,14 +451,6 @@ en:
         name: Name
         oauth_application: OAuth Application
         url: URL
-      better_together/storage_configuration:
-        access_key_id: Access Key ID
-        bucket: Bucket name
-        endpoint: Endpoint URL
-        name: Name
-        region: Region
-        secret_access_key: Secret Access Key
-        service_type: Storage type
       better_together/wizard:
         current_completions: Current completions
         first_completed_at: First completed at
@@ -644,9 +644,9 @@ en:
       better_together/resource_permission: Resource Permission
       better_together/role: Role
       better_together/role_resource_permission: Role Resource Permission
+      better_together/storage_configuration: Storage Configuration
       better_together/user: User
       better_together/webhook_endpoint: Webhook Endpoint
-      better_together/storage_configuration: Storage Configuration
       better_together/wizard: Wizard
       better_together/wizard_step: Wizard Step
       better_together/wizard_step_definition: Wizard Step Definition
@@ -1875,19 +1875,6 @@ en:
           medium_results: Medium
           no_results: No results
           result_quality: Avg results per search
-        tabs:
-          charts: Charts
-          charts_and_reports: Charts & Reports
-          downloads: Downloads
-          link_checker: Link Checker
-          link_clicks: Link Clicks
-          metrics_types: Metrics types
-          page_views: Page Views
-          reports: Reports
-          search_health: Search Health
-          search_queries: Search queries
-          shares: Shares
-          users: Users
         search_health:
           backend: Backend
           db_count: DB Count
@@ -1904,6 +1891,19 @@ en:
           store_size: Store Size
           total_drift: Total Drift
           unmanaged_models: Unmanaged searchable models
+        tabs:
+          charts: Charts
+          charts_and_reports: Charts & Reports
+          downloads: Downloads
+          link_checker: Link Checker
+          link_clicks: Link Clicks
+          metrics_types: Metrics types
+          page_views: Page Views
+          reports: Reports
+          search_health: Search Health
+          search_queries: Search queries
+          shares: Shares
+          users: Users
         title: Metrics Reports
         unknown_type: Unknown
       shares:
@@ -2790,6 +2790,9 @@ en:
         integrations:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
+        my_data:
+          description: View, download, or delete your personal data exports.
+          title: My Data
         navigation_aria_label: Settings navigation
         personal:
           coming_soon: Personal settings are coming soon.
@@ -2808,9 +2811,6 @@ en:
           coming_soon: Privacy settings are coming soon.
           description: Control your privacy and data sharing preferences.
           title: Privacy Settings
-        my_data:
-          description: View, download, or delete your personal data exports.
-          title: My Data
         tabs:
           account: Account
           blocked_people: Blocked People
@@ -2856,6 +2856,67 @@ en:
       platform: Platform
       title: Social Media Accounts
       url: Url
+    storage:
+      service_types:
+        amazon: Amazon S3
+        local: Local disk
+        s3_compatible: S3-compatible (Garage / self-hosted)
+    storage_configurations:
+      access_key_hint: Leave blank to keep the existing value when editing.
+      access_key_placeholder: AKIAIOSFODNN7EXAMPLE
+      activated: "'%{name}' is now the active storage configuration."
+      cancel: Cancel
+      cannot_destroy_active: Cannot delete the currently active storage configuration.
+        Activate another first.
+      created: Storage configuration was successfully created.
+      destroyed: Storage configuration was successfully deleted.
+      edit:
+        subtitle: Storage backend for %{platform_name}
+        title: Edit %{name}
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
+        for Amazon S3. Path-style access is enabled automatically when an endpoint
+        is set.
+      index:
+        activate_btn: Set active
+        activate_confirm: Set this as the active storage configuration?
+        active_badge: Active
+        active_config_label: 'Active Configuration:'
+        back_to_platform: Back to Platform
+        bucket_label: Bucket
+        delete_btn: Delete
+        delete_confirm: Delete this storage configuration?
+        edit_btn: Edit
+        effective_storage_heading: Currently Effective Storage
+        endpoint_label: Endpoint
+        env_badge: ENV
+        env_config_label: 'Source:'
+        env_fallback: Environment variables (no platform override set)
+        header_actions: Actions
+        header_bucket: Bucket / Root
+        header_endpoint: Endpoint
+        header_name: Name
+        header_status: Status
+        header_type: Type
+        in_use: In use
+        new_btn: Add Storage
+        no_configs: No storage configurations defined. Environment variables are used
+          by default.
+        not_active: Not active
+        platform_override_badge: Platform Override
+        service_type_label: Service type
+        subtitle: Storage backends for %{platform_name}
+        table_aria: Storage configurations
+        title: Storage Configurations
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      new:
+        subtitle: Add a storage backend for %{platform_name}
+        title: New Storage Configuration
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
     translations:
       errors:
         content_blank: Content cannot be blank
@@ -2883,63 +2944,6 @@ en:
         card: Card
         list: List
         table: Table
-    storage:
-      service_types:
-        amazon: Amazon S3
-        local: Local disk
-        s3_compatible: S3-compatible (Garage / self-hosted)
-    storage_configurations:
-      access_key_hint: Leave blank to keep the existing value when editing.
-      access_key_placeholder: AKIAIOSFODNN7EXAMPLE
-      activated: "'%{name}' is now the active storage configuration."
-      cancel: Cancel
-      cannot_destroy_active: Cannot delete the currently active storage configuration. Activate another first.
-      created: Storage configuration was successfully created.
-      destroyed: Storage configuration was successfully deleted.
-      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.
-      name_hint: A human-readable label for this storage backend.
-      name_placeholder: 'e.g., Primary S3, Local Dev, Garage bts-5'
-      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
-      s3_credentials_heading: S3 Credentials
-      secret_key_hint: Leave blank to keep the existing value when editing.
-      secret_key_placeholder: "••••••••"
-      updated: Storage configuration was successfully updated.
-      index:
-        activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
-        active_badge: Active
-        active_config_label: 'Active Configuration:'
-        bucket_label: Bucket
-        delete_btn: Delete
-        delete_confirm: Delete this storage configuration?
-        edit_btn: Edit
-        effective_storage_heading: Currently Effective Storage
-        endpoint_label: Endpoint
-        env_badge: ENV
-        env_config_label: 'Source:'
-        env_fallback: Environment variables (no platform override set)
-        header_actions: Actions
-        header_bucket: Bucket / Root
-        header_endpoint: Endpoint
-        header_name: Name
-        header_status: Status
-        header_type: Type
-        in_use: In use
-        new_btn: Add Storage
-        no_configs: No storage configurations defined. Environment variables are used by default.
-        not_active: Not active
-        platform_override_badge: Platform Override
-        service_type_label: Service type
-        table_aria: Storage configurations
-        title: Storage Configurations
-        subtitle: "Storage backends for %{platform_name}"
-        back_to_platform: Back to Platform
-      new:
-        title: New Storage Configuration
-        subtitle: "Add a storage backend for %{platform_name}"
-      edit:
-        title: "Edit %{name}"
-        subtitle: "Storage backend for %{platform_name}"
     webhook_endpoints:
       actions_aria: Webhook actions
       active_help: Enable or disable webhook delivery for this endpoint.
@@ -3805,6 +3809,20 @@ en:
       title: Add Platform Member
     show:
       title: Platform Membership Details
+  person_seeds:
+    confirm_destroy: Delete this data export? This cannot be undone.
+    export_failed: Your data export could not be completed. Please try again.
+    export_queued: Your data export has been requested. A download link will appear
+      below once it is ready.
+    export_too_soon: You requested an export recently. Please wait before requesting
+      another.
+    export_unavailable: Your account does not have a person profile to export.
+    index:
+      empty: You have no data exports yet.
+      exporting: Requesting…
+      new_export: Request Data Export
+      new_export_hint: Generate a portable export of your personal data.
+      title: My Data
   platform_invitations:
     confirm_delete: Confirm delete
   platforms:
@@ -3840,7 +3858,6 @@ en:
     person: Person
     person_access_grant: Person access grant
     person_link: Person link
-    seed: Seed
     person_platform_membership: Person platform membership
     platform: Platform
     profile: Profile
@@ -3849,23 +3866,15 @@ en:
     report: Report
     resource_permission: Resource permission
     role: Role
+    seed: Seed
     settlement: Settlement
     state: State
     user: User
   roles:
     confirm_destroy: Confirm destroy
-  person_seeds:
-    confirm_destroy: Delete this data export? This cannot be undone.
-    export_failed: Your data export could not be completed. Please try again.
-    export_queued: Your data export has been requested. A download link will appear below once it is ready.
-    export_too_soon: You requested an export recently. Please wait before requesting another.
-    export_unavailable: Your account does not have a person profile to export.
-    index:
-      empty: You have no data exports yet.
-      exporting: Requesting…
-      new_export: Request Data Export
-      new_export_hint: Generate a portable export of your personal data.
-      title: My Data
+  search:
+    button: Search
+    placeholder: Search...
   seeds:
     actions:
       destroy: Destroy seed
@@ -3873,7 +3882,9 @@ en:
       show: Show seed
     confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
     edit:
-      title: "Editing: %{identifier}"
+      title: 'Editing: %{identifier}'
+    errors:
+      invalid_json: must be valid JSON
     form:
       identifier_placeholder: e.g. host-setup-wizard-v1
       json_hint: Must be valid JSON.
@@ -3883,16 +3894,13 @@ en:
       title: Seeds
     new:
       title: New Seed
-    seeded_by: "Seeded by %{created_by}"
+    seeded_by: Seeded by %{created_by}
     show:
       download_yaml: Download YAML
       origin: Origin
       payload: Payload
       plantings: Planting History
       yaml_export: YAML Export
-  search:
-    button: Search
-    placeholder: Search...
   shared:
     by: by
     links:

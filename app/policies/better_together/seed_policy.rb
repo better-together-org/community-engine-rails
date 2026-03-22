@@ -26,6 +26,10 @@ module BetterTogether
       update?
     end
 
+    def download?
+      show?
+    end
+
     def destroy?
       permitted_to?('manage_platform')
     end

@@ -277,6 +277,7 @@ module BetterTogether
     def self.update_seed_planting_success(seed_planting, result)
       return unless seed_planting
 
+      seed_planting.update!(seed_id: result.id) if result.respond_to?(:id) && result.id.present?
       seed_planting.mark_completed!(
         result.is_a?(Hash) ? result : { status: 'completed' }
       )
