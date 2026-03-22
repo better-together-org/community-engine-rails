@@ -1,4 +1,7 @@
 // ESM shim — wraps the UMD global so Stimulus controllers can use named imports.
+// Side-effect import: loads the UMD bundle so globalThis.CommunityEngine is populated
+// before any of the lazy getters below are invoked.
+import 'community_engine_js_umd'
 // Getters are lazy: resolved when the function is *called*, not when the module loads,
 // so the UMD bundle is guaranteed to have run by then.
 //
