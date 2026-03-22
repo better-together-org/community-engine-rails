@@ -17,7 +17,7 @@ module BetterTogether
 
       # Minimal stand-in for an Offer used during approval when no real offer exists.
       # Provides just enough interface for after_agreement_acceptance! (needs #creator).
-      ApprovalOffer = Struct.new(:creator, keyword_init: true)
+      ApprovalOffer = Struct.new(:creator)
 
       before_validation :assign_membership_request_category
       before_validation :generate_name_from_requestor
