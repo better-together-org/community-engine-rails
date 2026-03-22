@@ -73,16 +73,7 @@ module BetterTogether
       authorize @storage_configuration, :activate?
 
       @platform.update!(storage_configuration_id: @storage_configuration.id)
-
-      # Rebind Active Storage in this process immediately so new uploads use the
-      # updated config without waiting for a restart. Other processes pick it up
-      # on their next restart (or after touching tmp/restart.txt for Puma).
-      resolver = StorageResolver.new(@platform.reload)
-      service_name = resolver.service_name
-      service_config = resolver.to_active_storage_config
-      service = ActiveStorage::Service.build(service_name, configurator: nil, **service_config)
-      ActiveStorage::Blob.service = service
-      ActiveStorage::Blob.services[service_name.to_s] = service
+      rebind_active_storage_service(@platform.reload)
 
       redirect_to platform_storage_configurations_path(@platform),
                   notice: t('better_together.storage_configurations.activated',
@@ -112,6 +103,18 @@ module BetterTogether
       p.delete(:access_key_id) if p[:access_key_id].blank?
       p.delete(:secret_access_key) if p[:secret_access_key].blank?
       p
+    end
+
+    # Rebinds the Active Storage service in this process immediately after activation
+    # so new uploads use the updated config without waiting for a restart.
+    # Other processes pick it up on their next restart (e.g. touch tmp/restart.txt).
+    def rebind_active_storage_service(platform)
+      resolver = StorageResolver.new(platform)
+      service_name = resolver.service_name
+      service = ActiveStorage::Service.build(service_name, configurator: nil,
+                                                           **resolver.to_active_storage_config)
+      ActiveStorage::Blob.service = service
+      ActiveStorage::Blob.services[service_name.to_s] = service
     end
   end
 end

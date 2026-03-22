@@ -611,6 +611,7 @@ uk:
       better_together/role_resource_permission: Дозвіл ролі ресурсу
       better_together/user: Користувач
       better_together/webhook_endpoint: Кінцева точка вебхука
+      better_together/storage_configuration: Конфігурація сховища
       better_together/wizard: Майстер
       better_together/wizard_step: Крок майстра
       better_together/wizard_step_definition: Визначення кроку майстра

@@ -618,6 +618,7 @@ es:
       better_together/role_resource_permission: Permiso de recursos de rol
       better_together/user: Usuario
       better_together/webhook_endpoint: Punto de conexión de webhook
+      better_together/storage_configuration: Configuración de almacenamiento
       better_together/wizard: Mago
       better_together/wizard_step: Paso del asistente
       better_together/wizard_step_definition: Definición de pasos del asistente

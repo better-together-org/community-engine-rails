@@ -251,12 +251,9 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
     let!(:config) { create(:better_together_storage_configuration, platform:, name: 'Primary Store') }
 
     before do
-      # Stub out Active Storage service construction so activate doesn't need a
-      # real S3 endpoint or disk path available during specs.
-      fake_service = instance_double(ActiveStorage::Service::DiskService)
-      allow(ActiveStorage::Service).to receive(:build).and_return(fake_service)
-      allow(ActiveStorage::Blob).to receive(:service=)
-      allow(ActiveStorage::Blob).to receive(:services).and_return({})
+      # Stub the private rebind helper so activate doesn't need a live AS backend.
+      allow_any_instance_of(BetterTogether::StorageConfigurationsController) # rubocop:disable RSpec/AnyInstance
+        .to receive(:rebind_active_storage_service)
     end
 
     it 'sets the configuration as the platform active storage and redirects' do

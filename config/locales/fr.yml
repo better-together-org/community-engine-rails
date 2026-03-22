@@ -620,6 +620,7 @@ fr:
       better_together/role_resource_permission: Autorisation des Ressources de Rôle
       better_together/user: Utilisateur
       better_together/webhook_endpoint: Point de terminaison webhook
+      better_together/storage_configuration: Configuration de stockage
       better_together/wizard: Assistant
       better_together/wizard_step: Étape du Magicien
       better_together/wizard_step_definition: Définition des Étapes de l'Assistant
