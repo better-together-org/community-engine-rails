@@ -1538,24 +1538,29 @@ fr:
         screenshot_alt: Help screenshot
         show_again: Afficher l'aide à nouveau
       hub:
+        create_agreement: Créer un accord
         empty_agreements: Aucun accord pour le moment.
         empty_offers: Aucune offre pour le moment.
         empty_requests: Aucune demande pour le moment.
+        matches_offer: 'Correspond à l''offre :'
+        matches_request: 'Correspond à la demande :'
+        membership_requests: Demandes d'adhésion
         my_agreements: Mes accords
         my_offers: Mes offres
         my_requests: Mes demandes
+        none: Aucune correspondance trouvée pour l'instant.
         sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
         suggested: Correspondances suggérées
-        title: Hub d'échange
+        title: Correspondances potentielles
         view_all_agreements: Voir tous les accords
         view_all_offers: Voir toutes les offres
         view_all_requests: Voir toutes les demandes
       matches:
-        create_agreement: Create Agreement
-        matches_offer: 'Matches offer:'
-        matches_request: 'Matches request:'
-        none: No matches found right now.
-        title: Potential Matches
+        create_agreement: Créer un accord
+        matches_offer: 'Correspond à l''offre :'
+        matches_request: 'Correspond à la demande :'
+        none: Aucune correspondance trouvée pour l'instant.
+        title: Correspondances potentielles
       nav:
         agreements: Accords
         hub: Hub
@@ -1683,6 +1688,49 @@ fr:
         signature_text: Cordialement, L'équipe de %{joinable_name}
         subject: Votre adhésion %{joinable_type} a été mise à jour pour %{joinable_name}
         view_joinable: Voir %{joinable_type}
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: La vérification du captcha a échoué. Veuillez réessayer.
+      confirm_approve: Approve this membership request and invite the applicant to
+        join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Veuillez nous parler un peu de vous et de la raison pour
+          laquelle vous souhaitez nous rejoindre.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approve_failed: Could not approve the membership request.
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        decline_failed: Could not decline the membership request.
+        declined: Membership request declined.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: Membership request from %{requestor}
+      new:
+        heading: Request Membership
+        intro: Fill in the form below to request membership. We'll be in touch!
+      show:
+        title: Membership Request
+      success:
+        body: Thank you! We've received your membership request and will be in touch
+          soon.
+        heading: Request Received
     messages:
       form:
         placeholder: Tapez votre message...
@@ -2590,6 +2638,8 @@ fr:
         label: Rôles
         more: et %{count} de plus
         none: Aucun rôle attribué
+    resources:
+      membership_request: Demande d'adhésion
     roles:
       index:
         new_role: Nouveau rôle
@@ -3470,6 +3520,7 @@ fr:
     all: Tous
     are_you_sure: Êtes-vous sûr ?
     back: Retour
+    back_to_home: Retour à l'accueil
     back_to_list: Retour à la liste
     cancel: Annuler
     clear: Effacer
@@ -3496,6 +3547,7 @@ fr:
     no_image: Pas d'image
     no_invitee: Pas d'invité
     none: Aucun
+    not_found: Non trouvé.
     not_sent: Non envoyé
     pagination:
       of: de
@@ -3512,6 +3564,8 @@ fr:
     sent: Envoyé
     show: Afficher
     status: Statut
+    submit: Soumettre
+    submitted_at: Soumis
     tabs:
       about: À propos
       attendees: Participants
@@ -3522,6 +3576,7 @@ fr:
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement
+    unknown: Inconnu
     update: Mettre à jour
     url: URL
     view: Voir

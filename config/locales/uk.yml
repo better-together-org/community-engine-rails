@@ -1530,15 +1530,20 @@ uk:
         screenshot_alt: Help screenshot
         show_again: Show help again
       hub:
+        create_agreement: Create Agreement
         empty_agreements: No agreements yet.
         empty_offers: No offers yet.
         empty_requests: No requests yet.
+        matches_offer: 'Matches offer:'
+        matches_request: 'Matches request:'
+        membership_requests: Запити на членство
         my_agreements: My Agreements
         my_offers: My Offers
         my_requests: My Requests
+        none: No matches found right now.
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
-        title: Exchange Hub
+        title: Potential Matches
         view_all_agreements: View all agreements
         view_all_offers: View all offers
         view_all_requests: View all requests
@@ -1668,6 +1673,49 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: Перевірка каптчі не вдалася. Будь ласка, спробуйте ще раз.
+      confirm_approve: Approve this membership request and invite the applicant to
+        join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Будь ласка, розкажіть нам трохи про себе і чому ви хочете
+          приєднатися.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approve_failed: Could not approve the membership request.
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        decline_failed: Could not decline the membership request.
+        declined: Membership request declined.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: Membership request from %{requestor}
+      new:
+        heading: Request Membership
+        intro: Fill in the form below to request membership. We'll be in touch!
+      show:
+        title: Membership Request
+      success:
+        body: Thank you! We've received your membership request and will be in touch
+          soon.
+        heading: Request Received
     messages:
       form:
         placeholder: Type your message...
@@ -2563,6 +2611,8 @@ uk:
         label: Ролі
         more: і ще %{count}
         none: Ролі не призначено
+    resources:
+      membership_request: Запит на членство
     roles:
       index:
         new_role: Нова роль
@@ -3460,6 +3510,7 @@ uk:
     all: Все
     are_you_sure: Ви впевнені
     back: Назад
+    back_to_home: Повернутися на головну
     back_to_list: Назад до списку
     cancel: Скасувати
     clear: Очистити
@@ -3486,6 +3537,7 @@ uk:
     no_image: Немає зображення
     no_invitee: Немає запрошеного
     none: Немає
+    not_found: Не знайдено.
     not_sent: Не відправлено
     pagination:
       of: з
@@ -3501,6 +3553,8 @@ uk:
     sent: Відправлено
     show: Показати
     status: Статус
+    submit: Надіслати
+    submitted_at: Надіслано
     tabs:
       about: Про
       attendees: Учасники
@@ -3511,6 +3565,7 @@ uk:
     to: До
     'true': так
     undo_clear: Скасувати очищення
+    unknown: Невідомо
     update: Оновити
     url: URL
     view: Переглянути

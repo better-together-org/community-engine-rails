@@ -152,16 +152,20 @@ RSpec.configure do |config|
       begin
         yield
       rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique,
-             ActiveRecord::StaleObjectError => e
+             ActiveRecord::StaleObjectError, ActiveRecord::InvalidForeignKey => e
         attempts += 1
         is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
                              e.is_a?(ActiveRecord::RecordNotUnique)
         is_stale_error = e.is_a?(ActiveRecord::StaleObjectError)
+        is_foreign_key_error = e.is_a?(ActiveRecord::InvalidForeignKey)
         if attempts < times
           # In parallel execution, another worker may have already seeded the data
           # If it's a duplicate key error, just continue - data is already seeded
           if is_duplicate_error
             Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+          elsif is_foreign_key_error
+            Rails.logger.debug "Transient FK issue during parallel seed, retrying: #{e.message}"
+            retry
           elsif is_stale_error
             Rails.logger.debug "Stale object during parallel seed, retrying: #{e.message}"
             retry

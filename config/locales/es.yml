@@ -1533,15 +1533,20 @@ es:
         screenshot_alt: Help screenshot
         show_again: Mostrar la ayuda de nuevo
       hub:
+        create_agreement: Crear acuerdo
         empty_agreements: Aún no hay acuerdos.
         empty_offers: Aún no hay ofertas.
         empty_requests: Aún no hay solicitudes.
+        matches_offer: 'Coincide con la oferta:'
+        matches_request: 'Coincide con la solicitud:'
+        membership_requests: Solicitudes de membresía
         my_agreements: Mis acuerdos
         my_offers: Mis ofertas
         my_requests: Mis solicitudes
+        none: No se encontraron coincidencias por ahora.
         sign_in_hint: Inicia sesión para ver tus ofertas, solicitudes y acuerdos.
         suggested: Sugerencias
-        title: Centro de intercambio
+        title: Coincidencias potenciales
         view_all_agreements: Ver todos los acuerdos
         view_all_offers: Ver todas las ofertas
         view_all_requests: Ver todas las solicitudes
@@ -1677,6 +1682,49 @@ es:
         signature_text: Saludos cordiales, El equipo de %{joinable_name}
         subject: Tu membresía de %{joinable_type} ha sido actualizada en %{joinable_name}
         view_joinable: Ver %{joinable_type}
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: La verificación del captcha falló. Por favor, inténtelo de nuevo.
+      confirm_approve: Approve this membership request and invite the applicant to
+        join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Por favor, cuéntenos un poco sobre usted y por qué le gustaría
+          unirse.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approve_failed: Could not approve the membership request.
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        decline_failed: Could not decline the membership request.
+        declined: Membership request declined.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: Membership request from %{requestor}
+      new:
+        heading: Request Membership
+        intro: Fill in the form below to request membership. We'll be in touch!
+      show:
+        title: Membership Request
+      success:
+        body: Thank you! We've received your membership request and will be in touch
+          soon.
+        heading: Request Received
     messages:
       form:
         placeholder: Escribe tu mensaje...
@@ -2578,6 +2626,8 @@ es:
         label: Roles
         more: y %{count} más
         none: No hay roles asignados
+    resources:
+      membership_request: Solicitud de membresía
     roles:
       index:
         new_role: Nuevo rol
@@ -3450,6 +3500,7 @@ es:
     all: Todo
     are_you_sure: "¿Estás seguro?"
     back: Atrás
+    back_to_home: Volver al inicio
     back_to_list: Volver a la lista
     cancel: Cancelar
     clear: Borrar
@@ -3476,6 +3527,7 @@ es:
     no_image: Sin imagen
     no_invitee: Sin invitado
     none: Ninguno
+    not_found: No encontrado.
     not_sent: No enviado
     pagination:
       of: de
@@ -3492,6 +3544,8 @@ es:
     sent: Enviado
     show: Mostrar
     status: Estado
+    submit: Enviar
+    submitted_at: Enviado
     tabs:
       about: Acerca de
       attendees: Asistentes
@@ -3502,6 +3556,7 @@ es:
     to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
+    unknown: Desconocido
     update: Actualizar
     url: Url
     view: Ver

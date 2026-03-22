@@ -71,6 +71,9 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
 
+  # Membership requests — create is public (unauthenticated); read/manage require auth
+  jsonapi_resources :membership_requests, only: %i[index show create destroy]
+
   # Webhook management (outbound subscriptions)
   jsonapi_resources :webhook_endpoints
   post 'webhook_endpoints/:id/test', to: 'webhook_endpoints#test'
