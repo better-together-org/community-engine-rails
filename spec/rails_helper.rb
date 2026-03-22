@@ -180,6 +180,31 @@ RSpec.configure do |config|
     end
 
     build_with_retry { BetterTogether::AccessControlBuilder.build(clear: true) }
+
+    # NavigationBuilder creates Pages that validate platform_id: presence: true.
+    # The Page model's before_validation callback resolves the platform via
+    # Current.platform, Platform.find_by(host: true), or Platform.first — all of
+    # which return nil after DatabaseCleaner wipes the DB. Seed a minimal host
+    # community + platform before NavigationBuilder so that callback never starves.
+    build_with_retry do
+      host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
+        c.name       = 'Test Host Community'
+        c.identifier = 'test-host-community'
+        c.privacy    = 'public'
+        c.protected  = true
+      end
+
+      BetterTogether::Platform.find_or_create_by!(host: true) do |p|
+        p.name       = host_community.name
+        p.identifier = host_community.identifier
+        p.host_url   = 'http://www.example.com'
+        p.time_zone  = 'UTC'
+        p.privacy    = 'public'
+        p.protected  = true
+        p.community  = host_community
+      end
+    end
+
     build_with_retry { BetterTogether::NavigationBuilder.build(clear: true) }
     build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
     build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
