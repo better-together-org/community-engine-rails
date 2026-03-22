@@ -1,0 +1,158 @@
+flowchart TD
+
+  %% Conversation Creation Flow
+  subgraph CONV_CREATE[Conversation Creation]
+    C1[User initiates conversation] --> C2[Select participants]
+    C2 --> C3{Platform manager?}
+    C3 -->|Yes| C4[Can message anyone]
+    C3 -->|No| C5[Limited to platform managers]
+    C4 --> C6[Create conversation]
+    C5 --> C6
+    C6 --> C7[Add creator as participant]
+  C7 --> C7R[Attempt to add participant]
+  C7R -->|StaleObjectError| C7RR[Reload person and retry once]
+  C7R -->|Success| C8[Conversation created]
+  C7RR -->|Success| C8
+  end
+
+  %% Message Flow
+  subgraph MSG_FLOW[Message Creation & Delivery]
+    M1[User sends message] --> M2[Validate conversation access]
+    M2 --> M3[Create encrypted message]
+    M3 --> M4[Set sender to current person]
+    M4 --> M5[Save message with rich text content]
+    M5 --> M6[Touch conversation timestamp]
+    
+    %% Real-time broadcasting
+    M6 --> RT1[Broadcast via Action Cable]
+    RT1 --> RT2[ConversationsChannel stream]
+    RT2 --> RT3[Real-time DOM update]
+    RT3 --> RT4[Auto-scroll to new message]
+    RT4 --> RT5[Mark sender's message styling]
+  end
+
+  %% Notification System
+  subgraph NOTIFY[Notification System]
+    N1[Message created] --> N2[NewMessageNotifier triggered]
+    N2 --> N3[Get conversation participants]
+    N3 --> N4[Exclude sender from recipients]
+    N4 --> N5[Deliver notifications]
+    
+    %% Real-time notifications
+    N5 --> N6[Action Cable delivery]
+    N6 --> N7[NotificationsChannel stream]
+    N7 --> N8[Browser/desktop notification]
+    N8 --> N9[Flash message display]
+    N9 --> N10[Update unread count badge]
+    
+    %% Email notifications
+    N5 --> E1[Email delivery check]
+    E1 --> E2{User allows email?}
+    E2 -->|No| E_SKIP[Skip email]
+    E2 -->|Yes| E3[Check deduplication]
+    E3 --> E4{First unread in conversation?}
+    E4 -->|No| E_SKIP
+    E4 -->|Yes| E5[Schedule email 15min delay]
+    E5 --> E6[ConversationMailer delivery]
+    E6 --> E7[Localized email content]
+  end
+
+  %% Conversation Viewing
+  subgraph VIEW[Conversation Viewing]
+    V1[User opens conversation] --> V2[Load conversation with messages]
+    V2 --> V3[Check participant membership]
+    V3 --> V4{Authorized access?}
+    V4 -->|No| V_AUTH[Access denied]
+    V4 -->|Yes| V5[Display conversation content]
+    V5 --> V6[Mark notifications as read]
+    V6 --> V7[Update unread count]
+    V7 --> V8[Real-time message subscription]
+    V8 --> V9[Enable message composer]
+  end
+
+  %% Read Status Management
+  subgraph READ[Read Status Management]
+    R1[View conversation with messages] --> R2[mark_notifications_read_for_event_records]
+    R2 --> R3[Find unread NewMessageNotifier events]
+    R3 --> R4[Filter by message IDs in conversation]
+    R4 --> R5[Update read_at timestamp]
+    R5 --> R6[Broadcast unread count update]
+  end
+
+  %% Participant Management
+  subgraph PARTICIPANTS[Participant Management]
+    P1[Update conversation participants] --> P2[Validate new participants]
+    P2 --> P3{Platform restrictions?}
+    P3 -->|Yes| P4[Filter to allowed participants]
+    P3 -->|No| P5[Accept all participants]
+    P4 --> P6[Update participant list]
+    P5 --> P6
+    P6 --> P7[Save conversation changes]
+    P7 --> P8[Notify participants of changes]
+    
+    %% Leave conversation
+    P9[User leaves conversation] --> P10[Remove ConversationParticipant]
+    P10 --> P11{Last participant?}
+    P11 -->|Yes| P_ERROR[Cannot leave - validation error]
+    P11 -->|No| P12[Remove user from conversation]
+    P12 --> P13[Redirect to conversations list]
+  end
+
+  %% Authorization Flow
+  subgraph AUTH[Authorization & Policy]
+    A1[Controller action] --> A2[Pundit policy check]
+    A2 --> A3{Conversation policy}
+    A3 --> A4{show?}
+    A4 -->|User is participant| A_ALLOW[Allow access]
+    A4 -->|Platform manager| A_ALLOW
+    A4 -->|Otherwise| A_DENY[Deny access]
+    
+    A3 --> A5{update?}
+    A5 -->|Creator or participant| A_ALLOW
+    A5 -->|Otherwise| A_DENY
+    
+    A3 --> A6{leave_conversation?}
+    A6 -->|Participant & not last| A_ALLOW
+    A6 -->|Otherwise| A_DENY
+  end
+
+  %% Email Deduplication Logic
+  subgraph EMAIL_DEDUPE[Email Deduplication]
+    ED1[NewMessageNotifier email check] --> ED2[Find unread notifications]
+    ED2 --> ED3[Filter by conversation_id]
+    ED3 --> ED4[Order by created_at desc]
+    ED4 --> ED5{Any unread notifications?}
+    ED5 -->|No| ED_NO[Don't send email]
+    ED5 -->|Yes| ED6[Check if current message is latest]
+    ED6 --> ED7{Message is last unread?}
+    ED7 -->|Yes| ED_SEND[Send email]
+    ED7 -->|No| ED_NO
+  end
+
+  %% Real-time UI Updates
+  subgraph UI_UPDATES[Real-time UI Updates]
+    UI1[Turbo Stream response] --> UI2[Replace message form]
+    UI2 --> UI3[Append new message]
+    UI3 --> UI4[Remove empty state]
+    UI4 --> UI5[Update conversation list]
+    UI5 --> UI6[Scroll to new message]
+    UI6 --> UI7[Apply sender styling]
+  end
+
+  %% Connection Flow
+  C8 --> MSG_FLOW
+  M5 --> NOTIFY
+  VIEW --> READ
+  V9 --> MSG_FLOW
+  N2 --> EMAIL_DEDUPE
+  MSG_FLOW --> UI_UPDATES
+  
+  %% Authorization connections  
+  CONV_CREATE --> AUTH
+  MSG_FLOW --> AUTH
+  VIEW --> AUTH
+  PARTICIPANTS --> AUTH
+  
+  %% Notification connections
+  P8 --> NOTIFY
+  R6 --> UI_UPDATES

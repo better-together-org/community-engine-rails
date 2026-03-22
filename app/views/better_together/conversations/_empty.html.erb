@@ -1,4 +1,5 @@
+<%# locals: (conversation: BetterTogether::Conversation.new) %>
 
-<div class="text-center">
-  No messages yet. Why not start the converstion?
+<div id="<%= dom_id(conversation, :empty) %>" class="text-center">
+  <%= t('.no_messages') %>
 </div>

@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant U as Unauthenticated User
+  participant EC as EventsController
+  participant P as EventPolicy/Scope
+  participant DB as DB
+
+  U->>EC: GET /:locale/bt/events/:id?invitation_token=TOKEN
+  Note right of EC: check_platform_privacy override
+  EC->>DB: Find Event by slug
+  EC->>DB: Find EventInvitation by token
+  alt invitation present & pending & not expired
+    EC->>EC: store token + locale in session
+    EC->>P: authorize show? (valid_invitation_token?)
+    P-->>EC: permitted
+    EC-->>U: render event show
+  else invalid/expired token
+    EC-->>U: redirect to sign-in
+  end
+

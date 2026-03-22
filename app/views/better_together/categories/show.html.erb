@@ -1,10 +1,29 @@
-<p style="color: green"><%= notice %></p>
 
-<%= render @category %>
+<% content_for :page_title do %>
+  <%= @category %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
 
-<div>
-  <%= link_to "Edit this category", edit_category_path(@category) %> |
-  <%= link_to "Back to categories", categories_path %>
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0"><%= @category %></h1>
+    <div class="btn-group" role="group">
+      <% if policy(resource_class).index? %>
+        <%= link_to t('better_together.categories.back_to_categories', default: 'Back to Categories'), categories_path, class: 'btn btn-outline-secondary btn-sm' %>
+      <% end %>
+      <% if policy(@resource).edit? %>
+        <%= link_to t('globals.edit', default: 'Edit'), edit_category_path(@resource), class: 'btn btn-primary btn-sm' %>
+      <% end %>
+    </div>
+  </div>
 
-  <%= button_to "Destroy this category", @category, method: :delete %>
+  <%= render partial: 'better_together/categories/category', object: @category %>
+
+  <div class="mt-3">
+    <%= render 'shared/resource_toolbar',
+               edit_path: policy(@resource).edit? ? edit_category_path(@resource) : nil,
+               edit_aria_label: 'Edit Category',
+               destroy_path: policy(@resource).destroy? ? category_path(@resource) : nil,
+               destroy_confirm: t('globals.confirm_delete'),
+               destroy_aria_label: 'Delete Record' %>
+  </div>
 </div>

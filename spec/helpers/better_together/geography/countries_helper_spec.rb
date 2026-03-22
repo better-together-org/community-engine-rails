@@ -12,8 +12,10 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
-  RSpec.describe ::BetterTogether::Geography::CountriesHelper, type: :helper do
-    pending "add some examples to (or delete) #{__FILE__}"
+module BetterTogether # :nodoc:
+  RSpec.describe ::BetterTogether::Geography::CountriesHelper do
+    it 'exists' do
+      expect(described_class).to be # rubocop:todo RSpec/Be
+    end
   end
 end

@@ -1,0 +1,4 @@
+<%= turbo_stream.replace 'flash_messages', partial: 'layouts/better_together/flash_messages', locals: { flash: } %>
+<%= turbo_stream.update 'event_invitations_table' do %>
+  <%= render 'invitations_table' %>
+<% end %>

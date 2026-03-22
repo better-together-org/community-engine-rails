@@ -6,34 +6,68 @@ require 'active_storage/engine'
 require 'active_storage_svg_sanitizer'
 require 'active_storage_validations'
 require 'activerecord-import'
+require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
+require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
+require 'better_together/storage_resolver'
+require 'better_together/url_sanitizer'
+require 'better_together/rails_8_1_jsonapi_resources_compat'
 require 'bootstrap'
 require 'dartsass-sprockets'
 require 'devise'
 require 'devise-i18n'
 require 'devise/jwt'
+require 'devise_zxcvbn'
+require 'doorkeeper'
 require 'elasticsearch/model'
 require 'elasticsearch/rails'
+require 'fast_mcp'
 require 'font-awesome-sass'
+require 'geocoder'
 require 'groupdate'
+require 'humanize_boolean'
 require 'i18n-timezones'
+require 'icalendar'
+require 'ice_cube'
 require 'importmap-rails'
+require 'kaminari'
 require 'noticed'
 require 'premailer/rails'
+require 'rack/attack'
+require 'redcarpet'
+require 'omniauth/rails_csrf_protection'
+require 'omniauth-github'
 require 'reform/rails'
+require 'ruby/openai'
+require 'sidekiq-scheduler'
+require 'simple_calendar'
 require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
 require 'turbo-rails'
+require 'rack-mini-profiler'
+require 'memory_profiler'
+require 'stackprof'
 
 module BetterTogether
   # Engine configuration for BetterTogether
-  class Engine < ::Rails::Engine
+  class Engine < ::Rails::Engine # rubocop:disable Metrics/ClassLength
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    config.autoload_paths += Dir["#{config.root}/lib/better_together/**/"]
+    # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
+    config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+
+    # Add MCP tools and resources to autoload paths
+    config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/app/tools",
+      "#{root}/app/resources",
+      "#{root}/app/middleware"
+    ]
+    # Add routes directory to paths for draw() method
+    config.paths['config/routes.rb'] = 'config/routes.rb'
+    config.paths.add 'config/routes', glob: '**/*.rb'
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -47,6 +81,7 @@ module BetterTogether
       require_dependency 'friendly_id/mobility'
       require_dependency 'jsonapi-resources'
       require_dependency 'importmap-rails'
+      require_dependency 'public_activity'
       require_dependency 'pundit'
       require_dependency 'rack/cors'
     end
@@ -61,17 +96,26 @@ module BetterTogether
         config.default_url_options =
           default_url_options
 
-    config.time_zone = ENV.fetch('APP_TIME_ZONE', 'Newfoundland')
+    config.time_zone = ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
 
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
     end
 
+    # Insert PlatformContextMiddleware early in the stack so Current.platform
+    # is resolved for all requests — web, JSONAPI, and MCP — before any
+    # controller action runs.
+    initializer 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/platform_context_middleware').to_s
+      app.middleware.use BetterTogether::PlatformContextMiddleware
+    end
+
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true
-        app.config.action_mailer.preview_paths = app.config.action_mailer.preview_paths +
-                                                 [BetterTogether::Engine.root.join('spec/mailers/previews')]
+        app.config.action_mailer.preview_paths =
+          app.config.action_mailer.preview_paths.to_a +
+          [BetterTogether::Engine.root.join('spec/mailers/previews')]
       else
         app.config.action_mailer.show_previews = false
       end
@@ -80,24 +124,30 @@ module BetterTogether
     # Add engine manifest to precompile assets in production
     initializer 'better_together.assets' do |app|
       # Ensure we are not modifying frozen arrays
-      app.config.assets.precompile += %w[better_together_manifest.js]
-      app.config.assets.paths = [root.join('app', 'assets', 'images'),
-                                 root.join('app', 'javascript'),
-                                 root.join('vendor', 'stylesheets'),
-                                 root.join('vendor', 'javascripts')] + app.config.assets.paths.to_a
+      app.config.assets.precompile =
+        app.config.assets.precompile.to_a + %w[better_together_manifest.js]
+      app.config.assets.paths =
+        app.config.assets.paths.to_a +
+        [root.join('app', 'assets', 'images'),
+         root.join('app', 'javascript'),
+         root.join('vendor', 'javascript'),
+         root.join('vendor', 'stylesheets'),
+         root.join('vendor', 'javascripts')]
     end
 
     initializer 'better_together.i18n' do |app|
-      app.config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      app.config.i18n.available_locales = ENV.fetch('APP_AVAILABLE_LOCALES', 'en,fr,es,uk').split(',').map(&:to_sym)
       app.config.i18n.default_locale = ENV.fetch('APP_DEFAULT_LOCALE', :en).to_sym
-      app.config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es').split(',').map(&:to_sym)
+      app.config.i18n.fallbacks = ENV.fetch('APP_FALLBACK_LOCALES', 'en,fr,es,uk').split(',').map(&:to_sym)
     end
 
     initializer 'better_together.importmap', before: 'importmap' do |app|
       # Ensure we are not modifying frozen arrays
-      app.config.importmap.paths = [Engine.root.join('config/importmap.rb')] + app.config.importmap.paths.to_a
-      app.config.importmap.cache_sweepers = [root.join('app/assets/javascripts'),
-                                             root.join('app/javascript')] + app.config.importmap.cache_sweepers.to_a
+      app.config.importmap.paths =
+        app.config.importmap.paths.to_a + [Engine.root.join('config/importmap.rb')]
+      app.config.importmap.cache_sweepers =
+        app.config.importmap.cache_sweepers.to_a +
+        [root.join('app/assets/javascripts'), root.join('app/javascript')]
     end
 
     initializer 'better_together.importmap.pins', after: 'importmap' do |app|
@@ -109,7 +159,7 @@ module BetterTogether
       else
         Rails.logger.warn "Importmap not initialized. Unable to pin 'better_together/application'."
       end
-    end     
+    end
 
     # Add custom logging
     initializer 'better_together.logging', before: :initialize_logger do |app|
@@ -121,8 +171,23 @@ module BetterTogether
       ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
     end
 
+    initializer 'better_together.mcp_defaults' do |app|
+      unless app.config.respond_to?(:mcp)
+        app.config.mcp = ActiveSupport::OrderedOptions.new
+        app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
+      end
+    end
+
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
+    end
+
+    initializer 'better_together.append_migrations' do |app|
+      next if app.root.to_s.start_with?(root.to_s)
+
+      config.paths['db/migrate'].expanded.each do |expanded_path|
+        app.config.paths['db/migrate'] << expanded_path unless app.config.paths['db/migrate'].include?(expanded_path)
+      end
     end
 
     rake_tasks do

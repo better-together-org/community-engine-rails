@@ -1,0 +1,24 @@
+
+<%# locals: (form: nil) %>
+
+<div class="contacts mb-4" data-controller="better_together--dynamic-fields">
+  <h3><%= t('better_together.contactable.contacts') %></h3>
+
+  <div id="<%= dom_id(form.object, :contacts) %>" class="mb-3 border-top" data-better_together--dynamic-fields-target="container">
+    <%= form.fields_for :contacts do |contact_form| %>
+      <%= render 'better_together/contact_details/contact_fields', form: contact_form %>
+    <% end %>
+  </div>
+
+  <!-- Hidden template -->
+  <template data-better_together--dynamic-fields-target="template">
+    <%# Build a new ContactDetail instance %>
+    <%= form.fields_for :contacts, form.object.contacts.build, child_index: 'NEW_RECORD' do |contact_form| %>
+      <%= render 'better_together/contact_details/contact_fields', form: contact_form %>
+    <% end %>
+  </template>
+
+  <%= link_to '#add-contact', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->better_together--dynamic-fields#add' } do %>
+    <i class="fas fa-plus"></i> <%= t('better_together.contacts.add') %>
+  <% end %>
+</div>

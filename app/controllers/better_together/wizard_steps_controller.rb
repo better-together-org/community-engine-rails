@@ -6,6 +6,12 @@ module BetterTogether
   class WizardStepsController < ApplicationController
     include ::BetterTogether::WizardMethods
 
+    # Explicit allow-list of form classes usable by the setup wizard
+    WIZARD_FORM_CLASSES = %w[
+      BetterTogether::HostPlatformDetailsForm
+      BetterTogether::HostPlatformAdminForm
+    ].freeze
+
     def show
       # Logic to display the step using the template path
       render wizard_step_definition.template
@@ -18,10 +24,16 @@ module BetterTogether
 
     private
 
-    def form(model: nil, model_class: nil, form_class: nil)
+    def form(model: nil, model_class: nil, form_class: nil) # rubocop:todo Metrics/MethodLength
       return @form if @form.present?
 
-      form_class = wizard_step_definition.form_class.constantize if wizard_step_definition.form_class.present?
+      if wizard_step_definition.form_class.present?
+        form_class = BetterTogether::SafeClassResolver.resolve!(
+          wizard_step_definition.form_class,
+          allowed: WIZARD_FORM_CLASSES,
+          error_class: Pundit::NotAuthorizedError
+        )
+      end
       model_class ||= form_class::MODEL_CLASS
 
       model ||= model_class.new

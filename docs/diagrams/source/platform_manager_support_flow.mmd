@@ -1,0 +1,37 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 160, "rankSpacing": 120}}}%%
+graph TD
+  subgraph "Platform Manager - User Support"
+    SUP1[Support Request Received] --> SUP2[Categorize Issue]
+    SUP2 --> SUP3{Issue Type?}
+    SUP3 -->|Authentication| SUP4[Check Account Status]
+    SUP3 -->|Profile| SUP5[Review Profile Data]
+    SUP3 -->|Community Access| SUP6[Check Memberships]
+    SUP3 -->|Technical| SUP7[System Diagnostics]
+    SUP4 --> SUP8[Password Reset Tools]
+    SUP4 --> SUP9[Email Verification]
+    SUP4 --> SUP10[Account Unlock]
+    SUP5 --> SUP11[Edit Profile Access]
+    SUP5 --> SUP12[Privacy Settings]
+    SUP5 --> SUP13[Username Changes]
+    SUP6 --> SUP14[Role Assignment]
+    SUP6 --> SUP15[Community Membership]
+    SUP6 --> SUP16[Permission Updates]
+    SUP7 --> SUP17[Error Log Analysis]
+    SUP7 --> SUP18[System Health Check]
+    SUP7 --> SUP19[Escalate to Tech Team]
+    SUP8 --> SUP20[Implement Solution]
+    SUP9 --> SUP20
+    SUP10 --> SUP20
+    SUP11 --> SUP20
+    SUP12 --> SUP20
+    SUP13 --> SUP20
+    SUP14 --> SUP20
+    SUP15 --> SUP20
+    SUP16 --> SUP20
+    SUP17 --> SUP20
+    SUP18 --> SUP20
+    SUP20 --> SUP21[Test Resolution]
+    SUP21 --> SUP22[Notify User]
+    SUP22 --> SUP23[Document Solution]
+    SUP23 --> SUP24[Close Support Ticket]
+  end

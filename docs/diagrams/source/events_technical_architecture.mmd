@@ -1,0 +1,151 @@
+graph TB
+    %% User Interface Layer
+    subgraph "Frontend Layer"
+        UI[Event UI Components]
+        FORM[Event Forms]
+        LIST[Event Listings]
+        DETAIL[Event Detail Pages]
+        STIM[Stimulus Controllers]
+    end
+    
+    %% Controller Layer
+    subgraph "Controller Layer"
+        EC[EventsController]
+        EAC[EventAttendancesController]
+        IC[ICS Export Controller]
+    end
+    
+    %% Model Layer
+    subgraph "Core Models"
+        EVENT[Event Model]
+        EA[EventAttendance]
+        EH[EventHost]
+        CAL[Calendar]
+        CE[CalendarEntry]
+    end
+    
+    %% Location System
+    subgraph "Location System"
+        LL[LocatableLocation]
+        ADDR[Address]
+        BLDG[Building]
+        GEO[Geocoding Service]
+    end
+    
+    %% Notification System
+    subgraph "Notification System"
+        ERN[EventReminderNotifier]
+        EUN[EventUpdateNotifier]
+        ERJ[EventReminderJob]
+        ERS[EventReminderSchedulerJob]
+        EM[EventMailer]
+    end
+    
+    %% Background Processing
+    subgraph "Background Jobs"
+        SIDEKIQ[Sidekiq Queue]
+        GJ[GeocodingJob]
+        NJ[NotificationJob]
+    end
+    
+    %% External Services
+    subgraph "External Services"
+        GEOCODE_API[Geocoding API]
+        EMAIL_SVC[Email Service]
+        CABLE[Action Cable]
+    end
+    
+    %% Database Layer
+    subgraph "Database"
+        DB[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+    end
+    
+    %% Connections - UI to Controllers
+    UI --> EC
+    FORM --> EC
+    LIST --> EC
+    DETAIL --> EC
+    DETAIL --> EAC
+    DETAIL --> IC
+    
+    %% Controller to Model connections
+    EC --> EVENT
+    EC --> EH
+    EAC --> EA
+    EC --> LL
+    
+    %% Model relationships
+    EVENT --> EA
+    EVENT --> EH
+    EVENT --> CE
+    EVENT --> LL
+    CE --> CAL
+    LL --> ADDR
+    LL --> BLDG
+    
+    %% Location processing
+    LL --> GJ
+    GJ --> GEOCODE_API
+    ADDR --> GEO
+    BLDG --> GEO
+    
+    %% Notification flow
+    EVENT --> ERS
+    ERS --> ERJ
+    ERJ --> ERN
+    EVENT --> EUN
+    ERN --> EM
+    EUN --> EM
+    ERN --> CABLE
+    EUN --> CABLE
+    
+    %% Background processing
+    ERJ --> SIDEKIQ
+    ERS --> SIDEKIQ
+    GJ --> SIDEKIQ
+    ERN --> NJ
+    EUN --> NJ
+    NJ --> SIDEKIQ
+    
+    %% External service connections
+    EM --> EMAIL_SVC
+    CABLE --> UI
+    GEO --> GEOCODE_API
+    
+    %% Data persistence
+    EVENT --> DB
+    EA --> DB
+    EH --> DB
+    LL --> DB
+    ADDR --> DB
+    BLDG --> DB
+    CAL --> DB
+    CE --> DB
+    
+    %% Cache layer
+    SIDEKIQ --> REDIS
+    CABLE --> REDIS
+    
+    %% Stimulus interactions
+    STIM --> FORM
+    STIM -.-> EC
+    
+    %% Styling
+    classDef ui fill:#e3f2fd
+    classDef controller fill:#f3e5f5
+    classDef model fill:#e8f5e8
+    classDef location fill:#fff3e0
+    classDef notification fill:#ffebee
+    classDef job fill:#f9fbe7
+    classDef external fill:#fafafa
+    classDef data fill:#e1f5fe
+    
+    class UI,FORM,LIST,DETAIL,STIM ui
+    class EC,EAC,IC controller
+    class EVENT,EA,EH,CAL,CE model
+    class LL,ADDR,BLDG,GEO location
+    class ERN,EUN,ERJ,ERS,EM notification
+    class SIDEKIQ,GJ,NJ job
+    class GEOCODE_API,EMAIL_SVC,CABLE external
+    class DB,REDIS data

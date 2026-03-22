@@ -4,52 +4,46 @@
 
 <div class="container-fluid mb-3 px-0">
 
-  <div class="profile-header position-relative mb-4">
+  <div class="profile-header position-relative">
     <!-- Cover Image Section -->
     <div class="cover-image-container">
-      <% if @resource.cover_image.attached? %>
-        <%= image_tag @resource.cover_image_variant(2400, 600).url, class: "cover-image rounded-top", alt: "Cover Image" %>
-      <% else %>
-        <%= image_tag image_url('default_profile_cover.jpg'), class: "cover-image rounded-top", alt: "Default Cover Image" %>
-      <% end %>
+      <%= cover_image_tag(@resource) %>
     </div>
 
-    <!-- Profile Information Section -->
-    <div class="profile-info-container container mt-n5">
-      <div class="row align-items-end">
-        <div class="col-auto">
-          <div class="profile-image-wrapper">
-            <% if @resource.profile_image.attached? %>
-              <%= image_tag @resource.profile_image_variant(300).url, class: 'profile-image rounded-circle', alt: 'Profile Image' %>
-            <% else %>
-              <%= image_tag image_url('default_profile_image_community.jpg'), class: 'profile-image rounded-circle', alt: 'Default Community Image' %>
-            <% end %>
-          </div>
-        </div>
-        <div class="col">
-          <h1 class="profile-name mt-3"><%= @resource.name %></h1>
-          <!-- Display the slug prefixed with @ -->
-          <p class="profile-username">@<%= @resource.slug %></p>
-        </div>
-        <div class="col-auto">
-          <% if policy(@resource).edit? %>
-            <%= link_to edit_community_path(@resource), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => 'Edit Partner' do %>
-              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-            <% end %>
-          <% end %>
-          <% if policy(@resource).destroy? %>
-            <%= link_to community_path(@resource), data: { turbo_method: :delete, turbo_confirm: t('partners.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Partner' do %>
-              <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
-            <% end %>
-          <% end %>
-        </div>
+    <div class="profile-image-wrapper">
+      <%= profile_image_tag(@resource) %>
+    </div>
+  </div>
+
+  <!-- Profile Information Section -->
+  <div class="profile-info-container container">
+    <div class="row align-items-end">
+      <div class="col-auto">
+      </div>
+      <div class="col">
+        <h1 class="profile-name mt-3"><%= @resource.name %></h1>
+        <!-- Display the slug prefixed with @ -->
+        <p class="profile-username">@<%= @resource.slug %></p>
+        <%= privacy_badge(@resource) %>
+      </div>
+      <div class="col-auto">
+        <%= render 'shared/resource_toolbar',
+                   edit_path: policy(@resource).edit? ? edit_community_path(@resource) : nil,
+                   edit_aria_label: 'Edit Partner',
+                   destroy_path: policy(@resource).destroy? ? community_path(@resource) : nil,
+                   destroy_confirm: t('partners.confirm_delete'),
+                   destroy_aria_label: 'Delete Partner' %>
       </div>
     </div>
   </div>
 
-  <div class="container">
+  <div class="container mt-4">
     <!-- Membership section -->
     <hr aria-hidden="true">
+
+    <% if @current_invitation %>
+      <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
+    <% end %>
 
     <!-- Community tabbed section with members -->
     <section class="card tabbed-section">
@@ -58,26 +52,22 @@
         <%# Initialize the active tab state with accessible attributes %>
         <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
-          <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
+          <% if policy(@resource).view_members? %>
+            <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
+          <% end %>
+          <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'events', aria_selected: 'true', tabindex: '0' %>
         <% end %>
       </div>
 
       <%# Accordion content with accessible attributes and flexbox layout %>
       <div class="card-body" id="communitySections" role="tabpanel">
         <!-- Person About Section -->
-        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#platformTabs">
+        <section id="about" class="row collapse show" aria-labelledby="about-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <div class="col-md-12">
-            <!-- Name Section -->
-            <h2 class="card-title text-center mb-3">
-              <%= @resource.name %>
-            </h2>
-            
-            <!-- Divider Line -->
-            <hr class="my-4">
 
             <!-- Description Section -->
             <p class="card-text text-muted">
-              <%= @resource.description.presence || 'No description available.' %>
+              <%= @resource.description_html.presence || @resource.description.presence || 'No description available.' %>
             </p>
 
             <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
@@ -85,17 +75,42 @@
             <%= share_buttons(shareable: @resource) if @resource.privacy_public? %>
           </div>
         </section>
-        
-        <div id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+
+        <% if policy(@resource).view_members? %>
+          <div id="members" class="collapse" aria-labelledby="members-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+            <%= render 'better_together/shared/invitation_panel',
+              invitable: @community,
+              invitation_class: BetterTogether::CommunityInvitation,
+              invitation_path: better_together.community_invitations_path(community_id: @community.slug),
+              available_people_path: better_together.available_people_community_invitations_path(@community.slug, format: :json),
+              panel_title_key: 'better_together.invitations.community_panel.title',
+              additional_fields: {
+                role_id: {
+                  label: t('better_together.invitations.select_role', default: 'Role'),
+                  helper_method: 'role_select_field',
+                  resource_type: 'BetterTogether::Community'
+                }
+              } %>
+
+          <% sample_invitation = BetterTogether::CommunityInvitation.new(invitable: @community, inviter: current_person) %>
+          <% if policy(sample_invitation).create? %>
+            <%= render 'better_together/shared/invitations_table',
+                invitations: @invitations,
+                title: t('better_together.invitations.title', default: 'Invitations'),
+                tbody_id: 'community_invitations_table_body',
+                resend_path_proc: ->(invitation) { better_together.resend_community_invitation_path(@community, invitation) },
+                destroy_path_proc: ->(invitation) { better_together.community_invitation_path(@community, invitation) } %>
+          <% end %>
+
           <% if policy(BetterTogether::PersonCommunityMembership).create? %>
             <!-- Add Member Button -->
-            <div class="mb-3" data-controller="new-person-community-membership">
+            <div class="mb-3" data-controller="better_together--new-person-community-membership">
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
                 <i class="fas fa-user-plus"></i> <%= t('globals.add_member') %>
               </button>
 
               <!-- Add Member Modal -->
-              <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-new-person-community-membership-target="modal" data-action="turbo:submit-end->new-person-community-membership#handleSuccess">
+              <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" data-better_together--new-person-community-membership-target="modal" data-action="turbo:submit-end->better_together--new-person-community-membership#handleSuccess">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -104,18 +119,18 @@
                     </div>
                     <div class="modal-body">
                       <!-- Your form or other modal content here -->
-                      <%= form_with model: [ @resource, ::BetterTogether::PersonCommunityMembership.new ], url: community_person_community_memberships_path(@resource), data: { turbo_frame: "modal_form" }, local: true do |form| %>
+                      <%= form_with model: [ @resource, ::BetterTogether::PersonCommunityMembership.new ], url: community_person_community_memberships_path(@resource.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
                         <!-- Rendering error messages here -->
                         <%= turbo_frame_tag 'form_errors' %>
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.where.not(id: @resource.person_community_memberships.select(:member_id)), :id, :name, { prompt: "Select a person" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).where.not(id: @resource.person_community_memberships.pluck(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
                           <%= form.label :role_id, "Select Role *", class: "form-label" %>
-                          <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: "BetterTogether::Community"), :id, :name, { prompt: "Select a role" }, { class: "form-select", required: true } %>
+                          <%= form.collection_select :role_id, ::BetterTogether::Role.includes(:string_translations).where(resource_type: @resource.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
                           <%= form.submit "Add", class: "btn btn-primary" %>
@@ -127,9 +142,50 @@
               </div>
             </div>
           <% end %>
-          <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-            <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
+            <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
+            </div>
           </div>
+        <% end %>
+
+        <div id="events" class="collapse" aria-labelledby="events-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+          <% if policy(@resource).create_events? %>
+            <%= link_to t('.create_event', default: 'Create an Event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary mb-3' %>
+          <% end %>
+          
+          <% if policy(@resource).create_events? && @draft_events.any? %>
+            <h3>Draft</h3>
+            <div id="draft_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@draft_events) %>
+            </div>
+          <% end %>
+          
+          <% if @upcoming_events.any? %>
+            <h3><%= t('better_together.people.calendar.upcoming_events') %></h3>
+            <div id="upcoming_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@upcoming_events) %>
+            </div>
+          <% end %>
+          
+          <% if @ongoing_events.any? %>
+            <h3><%= t('better_together.people.calendar.ongoing_events') %></h3>
+            <div id="ongoing_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@ongoing_events) %>
+            </div>
+          <% end %>
+          
+          <% if @past_events.any? %>
+            <h3><%= t('better_together.people.calendar.recent_events') %></h3>
+            <div id="past_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render(@past_events) %>
+            </div>
+          <% end %>
+          
+          <% if @upcoming_events.empty? && @ongoing_events.empty? && @past_events.empty? %>
+            <div class="mt-3">
+              <%= render('better_together/events/none') %>
+            </div>
+          <% end %>
         </div>
       </div>
     </section>

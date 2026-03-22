@@ -1,0 +1,21 @@
+
+<%# locals: (form:) %>
+<div class="building-connections-fields nested-fields border-top py-3 my-3 row align-items-end" data-new-record="<%= form.object.new_record? %>">
+  <%= form.hidden_field :_destroy %>
+  <div class="mb-4 d-flex justify-content-between">
+    <h4 class="mb-0"><%= BetterTogether::Infrastructure::Building.model_name.human %></h4>
+    <%= link_to '#remove-building-connection', class: 'btn btn-outline-danger btn-sm', data: { action: 'click->better_together--dynamic-fields#remove' } do %>
+      <i class="fas fa-minus"></i> <%= t('better_together.remove') %>
+    <% end %>
+  </div>
+
+  <div class="col-12">
+    <%= render partial: 'better_together/shared/fields/primary_flag', locals: { form:, primary_flag_scope: form.object.connection_id } %>
+  </div>
+  <div class="col-md-12">
+    <%= form.fields_for(:building) do |building_form| %>
+      <!-- Building -->
+      <%= render partial: 'better_together/infrastructure/buildings/fields', locals: { form: building_form } %>
+    <% end %>
+  </div>
+</div>

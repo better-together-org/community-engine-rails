@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-# config/initializers/elasticsearch.rb
+require BetterTogether::Engine.root.join('app/services/better_together/elasticsearch_client_options')
+
 Elasticsearch::Model.client = Elasticsearch::Client.new(
-  port: ENV.fetch('ES_PORT', 9200),
-  host: ENV.fetch('ES_HOST', 'http://elasticsearch'),
-  url: ENV.fetch('ELASTICSEARCH_URL', 'http://elasticsearch:9201')
+  **BetterTogether::ElasticsearchClientOptions.build
 )

@@ -1,0 +1,21 @@
+<%# locals: (requests:) %>
+<div class="card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0"><%= t('.recent_requests', default: 'Recent Requests') %></h5>
+    <div class="d-flex gap-2 align-items-center">
+      <% if policy(BetterTogether::Joatu::Request).create? %>
+        <%= link_to t('.new_request', default: 'New Request'), joatu_new_request_path, class: 'btn btn-sm btn-primary' rescue link_to(t('.new_request', default: 'New Request'), new_joatu_request_path, class: 'btn btn-sm btn-primary') %>
+      <% end %>
+      <%= link_to t('.view_all_requests', default: 'View all'), joatu_requests_path, class: 'small text-decoration-none' %>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if requests.present? %>
+      <div class="list-group list-group-flush">
+        <%= render partial: 'better_together/joatu/requests/request_list_item', collection: requests, as: :request_list_item, locals: { show_categories: true } %>
+      </div>
+    <% else %>
+      <p class="text-muted mb-0"><%= t('.no_requests', default: 'No recent requests') %></p>
+    <% end %>
+  </div>
+</div>

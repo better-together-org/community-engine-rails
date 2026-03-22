@@ -1,0 +1,10 @@
+<!-- app/views/better_together/joatu/agreement_status_notifier/notifications/_notification.html.erb -->
+<%= render layout: 'better_together/notifications/notification',
+           locals: { notification: notification,
+                     notification_title: "Agreement #{notification.agreement.status}",
+                     notification_url: notification.agreement } do %>
+  <p class="mb-1">
+    Agreement between <%= notification.agreement.offer.name %> and
+    <%= notification.agreement.request.name %> was <%= notification.agreement.status %>
+  </p>
+<% end %>

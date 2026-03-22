@@ -1,0 +1,23 @@
+<% 
+  icon_class = case provider.to_s.downcase
+  when "github"
+    "fa-brands fa-github"
+  when "google", "google_oauth2"
+    "fa-brands fa-google"
+  when "facebook"
+    "fa-brands fa-facebook"
+  when "twitter", "x"
+    "fa-brands fa-x-twitter"
+  when "linkedin"
+    "fa-brands fa-linkedin"
+  when "microsoft", "microsoft_office365"
+    "fa-brands fa-microsoft"
+  else
+    "fa-solid fa-plug"
+  end
+%>
+
+<div class="d-flex align-items-center justify-content-center bg-light rounded-circle" 
+     style="width: 48px; height: 48px;">
+  <i class="<%= icon_class %> fa-2x" aria-hidden="true"></i>
+</div>

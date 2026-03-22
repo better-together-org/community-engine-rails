@@ -1,0 +1,42 @@
+<%# locals: (chart_name:) %>
+<div class="btn-group btn-group-sm" role="group" aria-label="<%= t('better_together.metrics.reports.actions.chart_toolbar') %>">
+  <div class="btn-group" role="group">
+    <button type="button"
+            class="btn btn-outline-secondary dropdown-toggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            aria-label="<%= t('better_together.metrics.reports.actions.export') %>">
+      <i class="fas fa-file-export me-1" aria-hidden="true"></i>
+      <%= t('better_together.metrics.reports.actions.export') %>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li>
+        <button type="button"
+                class="dropdown-item"
+                data-chart-name="<%= chart_name %>"
+                data-action="better_together--metrics-charts#exportPng">
+          <i class="fas fa-file-image me-2" aria-hidden="true"></i>
+          <%= t('better_together.metrics.reports.export.png') %>
+        </button>
+      </li>
+      <li>
+        <button type="button"
+                class="dropdown-item"
+                data-chart-name="<%= chart_name %>"
+                data-action="better_together--metrics-charts#exportCsv">
+          <i class="fas fa-file-csv me-2" aria-hidden="true"></i>
+          <%= t('better_together.metrics.reports.export.csv') %>
+        </button>
+      </li>
+      <li>
+        <button type="button"
+                class="dropdown-item"
+                data-chart-name="<%= chart_name %>"
+                data-action="better_together--metrics-charts#exportJpg">
+          <i class="fas fa-file-image me-2" aria-hidden="true"></i>
+          <%= t('better_together.metrics.reports.export.jpg') %>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

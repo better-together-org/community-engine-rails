@@ -2,7 +2,7 @@
 # When pushed to dokku via git, it detects this Dockerfile and automatically chooses Docker build
 
 # Stage 1: Build environment
-FROM ruby:3.2.2 AS builder
+FROM ruby:3.4.4 AS builder
 
 # Define build-time variables
 ARG AWS_ACCESS_KEY_ID
@@ -56,7 +56,7 @@ RUN bundle exec rake app:assets:precompile
 RUN bundle exec rake app:assets:sync
 
 # Stage 2: Runtime environment
-FROM ruby:3.2.2
+FROM ruby:3.4.4
 
 # Install runtime dependencies
 RUN apt-get update -qq \

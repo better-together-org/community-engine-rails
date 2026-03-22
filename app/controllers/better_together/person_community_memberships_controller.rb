@@ -8,25 +8,27 @@ module BetterTogether
 
     # POST /communities/:community_id/person_community_memberships
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @person_community_membership = @community.person_community_memberships.new(person_community_membership_params)
+      @person_community_membership = @community.person_community_memberships.new(
+        person_community_membership_params.merge(status: 'active')
+      )
       authorize @person_community_membership
 
       respond_to do |format|
         if @person_community_membership.save
-          flash[:notice] = 'Member was successfully added.'
+          flash[:notice] = t('flash.generic.created', resource: t('resources.member'))
           format.html { redirect_to @community, notice: flash[:notice] }
           format.turbo_stream do
             render turbo_stream: [
               turbo_stream.append('members_list',
                                   # rubocop:todo Layout/LineLength
-                                  partial: 'better_together/person_community_memberships/person_community_membership_member', locals: { person_community_membership: @person_community_membership }),
+                                  partial: 'better_together/person_community_memberships/person_community_membership_member', locals: { membership: @person_community_membership }),
               # rubocop:enable Layout/LineLength
               turbo_stream.replace('flash_messages', partial: 'layouts/better_together/flash_messages',
                                                      locals: { flash: })
             ]
           end
         else
-          flash.now[:alert] = 'Error adding member.'
+          flash.now[:alert] = t('flash.generic.error_create', resource: t('resources.member'))
           format.html { redirect_to @community, alert: @person_community_membership.errors.full_messages.to_sentence }
           format.turbo_stream do
             render turbo_stream: [
@@ -44,7 +46,7 @@ module BetterTogether
       authorize @person_community_membership
 
       if @person_community_membership.destroy
-        flash.now[:notice] = 'Member was successfully removed.'
+        flash.now[:notice] = t('flash.generic.removed', resource: t('resources.member'))
         respond_to do |format|
           format.html { redirect_to @community }
           format.turbo_stream do
@@ -56,7 +58,7 @@ module BetterTogether
           end
         end
       else
-        flash.now[:error] = 'Failed to remove member.'
+        flash.now[:error] = t('flash.generic.error_remove', resource: t('resources.member'))
         respond_to do |format|
           format.html { redirect_to @community, alert: flash.now[:error] }
           format.turbo_stream do
@@ -72,7 +74,7 @@ module BetterTogether
     private
 
     def set_community
-      @community = ::BetterTogether::Community.friendly.find(params[:community_id])
+      @community = ::BetterTogether::Community.find(params[:community_id])
     end
 
     def set_person_community_membership

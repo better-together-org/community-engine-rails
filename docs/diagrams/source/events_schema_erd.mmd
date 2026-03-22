@@ -1,0 +1,69 @@
+erDiagram
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_EVENT_ATTENDANCES : has
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_EVENT_HOSTS : has
+  BETTER_TOGETHER_EVENTS ||--o{ BETTER_TOGETHER_CALENDAR_ENTRIES : appears_in
+  BETTER_TOGETHER_CALENDARS ||--o{ BETTER_TOGETHER_CALENDAR_ENTRIES : has
+
+  %% Polymorphic host relationship (host_type: Person/Community/...)
+  BETTER_TOGETHER_EVENT_HOSTS }o..|| HOSTS : polymorphic
+
+  BETTER_TOGETHER_EVENTS {
+    uuid id PK
+    string type
+    uuid creator_id FK
+    string identifier
+    string privacy
+    datetime starts_at
+    datetime ends_at
+    decimal duration_minutes
+    string registration_url
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_EVENT_ATTENDANCES {
+    uuid id PK
+    uuid event_id FK
+    uuid person_id FK
+    string status
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_EVENT_HOSTS {
+    uuid id PK
+    uuid event_id FK
+    uuid host_id
+    string host_type
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CALENDARS {
+    uuid id PK
+    uuid community_id FK
+    uuid creator_id FK
+    string identifier
+    string locale
+    string privacy
+    boolean protected
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  BETTER_TOGETHER_CALENDAR_ENTRIES {
+    uuid id PK
+    uuid calendar_id FK
+    uuid event_id FK
+    datetime starts_at
+    datetime ends_at
+    decimal duration_minutes
+    integer lock_version
+    datetime created_at
+    datetime updated_at
+  }
+

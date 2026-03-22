@@ -1,14 +1,3190 @@
 ---
 fr:
+  accepted_at: Accepté à
+  accessibility_attributes: Attributs d'accessibilité
+  actions:
+    back: Retour
+    back_to_platform: Retour à la plateforme
+    destroy: Supprimer
+    edit: Modifier
+    send_invitation: Envoyer une invitation
+    show: Afficher
   activerecord:
+    attributes:
+      action_text/encrypted_rich_text:
+        body: Corps
+        embeds_attachments: Intègre des pièces jointes
+        embeds_blobs: Intègre des blobs
+        locale: Langue
+        name: Nom
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      action_text/rich_text:
+        body: Corps
+        embeds_attachments: Intègre des pièces jointes
+        embeds_blobs: Intègre des blobs
+        locale: Langue
+        name: Nom
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      active_storage/attachment:
+        blob: :activerecord.models.blob
+        name: Nom
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      active_storage/blob:
+        attachments: Pièces jointes
+        byte_size: Taille en octets
+        checksum: Somme de contrôle
+        content_type: Type de contenu
+        filename: Nom du fichier
+        key: Clé
+        metadata: Métadonnées
+        preview_image_attachment: :activerecord.models.preview_image_attachment
+        preview_image_blob: :activerecord.models.preview_image_blob
+        service_name: Nom du service
+        variant_records: Enregistrements de variantes
+      active_storage/variant_record:
+        blob: :activerecord.models.blob
+        image_attachment: :activerecord.models.image_attachment
+        image_blob: :activerecord.models.image_blob
+        variation_digest: Digest de variation
+      application_notifier:
+        notifications: Notifications
+        params: Paramètres
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      application_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Lu à
+        recipient: :activerecord.models.recipient
+        recipient_type: Type de destinataire
+        seen_at: Vu à
+      better_together/community:
+        creator: :activerecord.models.creator
+        host: Hôte
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        person_community_memberships: Adhésions communautaires de personnes
+        person_members: Membres de la communauté
+        person_roles: Rôles des personnes
+        privacy: Confidentialité
+        protected: Protégé
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+      better_together/content/block:
+        accessibility_attributes: Attributs d'accessibilité
+        content_settings: Paramètres de contenu
+        css_settings: Paramètres CSS
+        data_attributes: Attributs de données
+        html_attributes: Attributs HTML
+        identifier: Identifiant
+        layout_settings: Paramètres de mise en page
+        lock_version: Version de verrouillage
+        media_settings: Paramètres multimédias
+        page_blocks: Blocs de pages
+        pages: Pages
+      better_together/content/image:
+        accessibility_attributes: Attributs d'accessibilité
+        content_settings: Paramètres de contenu
+        css_settings: Paramètres CSS
+        data_attributes: Attributs de données
+        html_attributes: Attributs HTML
+        identifier: Identifiant
+        layout_settings: Paramètres de mise en page
+        lock_version: Version de verrouillage
+        media_attachment: :activerecord.models.media_attachment
+        media_blob: :activerecord.models.media_blob
+        media_settings: Paramètres multimédias
+        page_blocks: Blocs de pages
+        pages: Pages
+        string_translations: Traductions de chaînes
+      better_together/content/page_block:
+        block: :activerecord.models.block
+        lock_version: Version de verrouillage
+        page: :activerecord.models.page
+        position: Position
+      better_together/content/rich_text:
+        accessibility_attributes: Attributs d'accessibilité
+        content_settings: Paramètres de contenu
+        css_settings: Paramètres CSS
+        data_attributes: Attributs de données
+        html_attributes: Attributs HTML
+        identifier: Identifiant
+        layout_settings: Paramètres de mise en page
+        lock_version: Version de verrouillage
+        media_settings: Paramètres multimédias
+        page_blocks: Blocs de pages
+        pages: Pages
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Traductions de texte enrichi
+      better_together/conversation:
+        conversation_participants: Participants à la conversation
+        creator: :activerecord.models.creator
+        lock_version: Version de verrouillage
+        messages: Messages
+        participants: Participants
+        title: Titre de la conversation
+      better_together/conversation_participant:
+        conversation: :activerecord.models.conversation
+        lock_version: Version de verrouillage
+        person: :activerecord.models.person
+      better_together/geography/continent:
+        community: :activerecord.models.community
+        countries: Pays
+        country_continents: Pays continents
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        protected: Protégé
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+      better_together/geography/country:
+        community: :activerecord.models.community
+        continents: Continents
+        country_continents: Pays continents
+        identifier: Identifiant
+        iso_code: Code ISO
+        lock_version: Version de verrouillage
+        protected: Protégé
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        states: États
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+      better_together/geography/country_continent:
+        continent: :activerecord.models.continent
+        country: :activerecord.models.country
+        lock_version: Version de verrouillage
+      better_together/geography/region:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        protected: Protégé
+        region_settlements: Implantations régionales
+        settlements: Implantations
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        state: :activerecord.models.state
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+      better_together/geography/region_settlement:
+        lock_version: Version de verrouillage
+        protected: Protégé
+        region: :activerecord.models.region
+        settlement: :activerecord.models.settlement
+      better_together/geography/settlement:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        protected: Protégé
+        region_settlements: Implantations régionales
+        regions: Régions
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        state: :activerecord.models.state
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+      better_together/geography/state:
+        community: :activerecord.models.community
+        country: :activerecord.models.country
+        identifier: Identifiant
+        iso_code: Code ISO
+        lock_version: Version de verrouillage
+        protected: Protégé
+        regions: Régions
+        settlements: Implantations
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+      better_together/identification:
+        active: Actif
+        agent: :activerecord.models.agent
+        agent_type: Type d'agent
+        identity: :activerecord.models.identity
+        identity_type: Type d'identité
+        lock_version: Version de verrouillage
+      better_together/jwt_denylist:
+        exp: Exp
+        jti: Jti
+        lock_version: Version de verrouillage
+      better_together/message:
+        content: Contenu
+        conversation: :activerecord.models.conversation
+        lock_version: Version de verrouillage
+        sender: :activerecord.models.sender
+      better_together/navigation_area:
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        name: Nom
+        navigable: :activerecord.models.navigable
+        navigable_type: Type de navigation
+        navigation_items: Éléments de navigation
+        protected: Protégé
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        style: Style
+        visible: Visible
+      better_together/navigation_item:
+        children: Enfants
+        icon: Icône
+        identifier: Identifiant
+        item_type: Type d'élément
+        linkable: :activerecord.models.linkable
+        linkable_type: Type de lien
+        lock_version: Version de verrouillage
+        navigation_area: :activerecord.models.navigation_area
+        parent: :activerecord.models.parent
+        permission_identifier: Identifiant de Permission
+        position: Position
+        privacy: Confidentialité
+        protected: Protégé
+        route_name: Nom de la route
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        url: URL
+        visibility_strategy: Stratégie de Visibilité
+        visible: Visible
+      better_together/new_message_notifier:
+        notifications: Notifications
+        params: Paramètres
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      better_together/new_message_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Lu à
+        recipient: :activerecord.models.recipient
+        recipient_type: Type de destinataire
+        seen_at: Vu à
+      better_together/oauth_application:
+        confidential: Confidentiel
+        name: Nom
+        redirect_uri: URI de redirection
+        scopes: Portées
+      better_together/page:
+        blocks: Blocs
+        identifier: Identifiant
+        image_blocks: Blocs d'images
+        keywords: Mots-clés
+        language: Langue
+        layout: Mise en page
+        lock_version: Version de verrouillage
+        meta_description: Meta description
+        page_blocks: Blocs de pages
+        privacy: Confidentialité
+        protected: Protégé
+        published: Publié
+        published_at: Publié à
+        rich_text_blocks: Blocs de texte enrichi
+        rich_text_content: :activerecord.models.rich_text_content
+        rich_text_content_en: :activerecord.models.rich_text_content_en
+        rich_text_content_es: :activerecord.models.rich_text_content_es
+        rich_text_content_fr: :activerecord.models.rich_text_content_fr
+        rich_text_translations: Traductions de texte enrichi
+        show_title: Afficher le Titre
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        template: Modèle
+      better_together/page_authorship_notifier:
+        notifications: Notifications
+        params: Paramètres
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      better_together/page_authorship_notifier/notification:
+        event: :activerecord.models.event
+        read_at: Lu à
+        recipient: :activerecord.models.recipient
+        recipient_type: Type de destinataire
+        seen_at: Vu à
+      better_together/person:
+        authorships: Auteurs
+        community: :activerecord.models.community
+        community_roles: Rôles communautaires
+        conversation_participants: Participants à la conversation
+        conversations: Conversations
+        created_conversations: Conversations créées
+        description: Description
+        identifications: Identifications
+        identifier: Identifiant
+        locale: Langue
+        lock_version: Version de verrouillage
+        member_communities: Communautés membres
+        member_platforms: Plateformes membres
+        name: Nom
+        notification_mentions: Mentions de notification
+        notifications: Notifications
+        notify_by_email: Recevoir des notifications par e-mail
+        person_community_memberships: Adhésions communautaires de personnes
+        person_platform_memberships: Adhésions aux plateformes de personnes
+        platform_roles: Rôles de plateforme
+        preferences: Préférences
+        receive_messages_from_members: Autoriser les messages des membres de la communauté
+        show_conversation_details: Afficher les détails de la conversation
+        slug: Nom d'utilisateur
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+        user: :activerecord.models.user
+        user_identification: :activerecord.models.user_identification
+      better_together/person_community_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Version de verrouillage
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/person_platform_membership:
+        joinable: :activerecord.models.joinable
+        lock_version: Version de verrouillage
+        member: :activerecord.models.member
+        role: :activerecord.models.role
+      better_together/platform:
+        community: :activerecord.models.community
+        host: Hôte
+        identifier: Identifiant
+        invitations: Invitations
+        lock_version: Version de verrouillage
+        person_members: Membres de la plateforme
+        person_platform_memberships: Adhésions aux plateformes de personnes
+        person_roles: Rôles des personnes
+        privacy: Confidentialité
+        protected: Protégé
+        settings: Paramètres
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+        time_zone: Fuseau horaire
+        url: URL
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
+      better_together/platform_invitation:
+        accepted_at: Accepté à
+        community_role: :activerecord.models.community_role
+        created_at: Créé à
+        invitable: :activerecord.models.invitable
+        invitee: :activerecord.models.invitee
+        invitee_email: E-mail de l'invité
+        inviter: :activerecord.models.inviter
+        last_sent: Dernier envoi
+        locale: Langue
+        lock_version: Version de verrouillage
+        platform_role: :activerecord.models.platform_role
+        session_duration_mins: Durée de session (mins)
+        status: Statut
+        token: Jeton
+        type: Type
+        valid_from: Valide à partir de
+        valid_until: Valide jusqu'à
+      better_together/resource_permission:
+        action: Action
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        position: Position
+        protected: Protégé
+        resource_type: Type de ressource
+        role_resource_permissions: Permissions des ressources de rôle
+        roles: Rôles
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        target: Cible
+      better_together/role:
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        position: Position
+        protected: Protégé
+        resource_permissions: Permissions des ressources
+        resource_type: Type de ressource
+        role_resource_permissions: Permissions des ressources de rôle
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        text_translations: Traductions de texte
+      better_together/role_resource_permission:
+        lock_version: Version de verrouillage
+        resource_permission: :activerecord.models.resource_permission
+        role: :activerecord.models.role
+      better_together/user:
+        confirmation_sent_at: Confirmation envoyée à
+        confirmation_token: Jeton de confirmation
+        confirmed_at: Confirmé à
+        current_sign_in_at: Connexion actuelle à
+        current_sign_in_ip: IP de connexion actuelle
+        email: E-mail
+        encrypted_password: Mot de passe crypté
+        failed_attempts: Tentatives échouées
+        last_sign_in_at: Dernière connexion à
+        last_sign_in_ip: IP de dernière connexion
+        lock_version: Version de verrouillage
+        locked_at: Verrouillé à
+        password: Mot de passe
+        person: :activerecord.models.person
+        person_identification: :activerecord.models.person_identification
+        remember_created_at: Souvenir créé à
+        reset_password_sent_at: Réinitialisation du mot de passe envoyée à
+        reset_password_token: Jeton de réinitialisation du mot de passe
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        unconfirmed_email: E-mail non confirmé
+        unlock_token: Jeton de déverrouillage
+      better_together/webhook_endpoint:
+        active: Actif
+        description: Description
+        events: Événements
+        name: Nom
+        oauth_application: Application OAuth
+        url: URL
+      better_together/wizard:
+        current_completions: Achèvements actuels
+        first_completed_at: Premier achèvement à
+        identifier: Identifiant
+        last_completed_at: Dernier achèvement à
+        lock_version: Version de verrouillage
+        max_completions: Achèvements maximum
+        protected: Protégé
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        string_translations: Traductions de chaînes
+        success_message: Message de succès
+        success_path: Chemin de succès
+        text_translations: Traductions de texte
+        wizard_step_definitions: Définitions des étapes de l'assistant
+        wizard_steps: Étapes de l'assistant
+      better_together/wizard_step:
+        completed: Complété
+        creator: :activerecord.models.creator
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        step_number: Numéro de l'étape
+        wizard: :activerecord.models.wizard
+        wizard_step_definition: :activerecord.models.wizard_step_definition
+      better_together/wizard_step_definition:
+        form_class: Classe de formulaire
+        identifier: Identifiant
+        lock_version: Version de verrouillage
+        message: Message
+        protected: Protégé
+        slug: Identifiant URL
+        slugs: Identifiants URL
+        step_number: Numéro de l'étape
+        string_translations: Traductions de chaînes
+        template: Modèle
+        text_translations: Traductions de texte
+        wizard: :activerecord.models.wizard
+        wizard_steps: Étapes de l'assistant
+      friendly_id/slug:
+        locale: Langue
+        lock_version: Version de verrouillage
+        scope: Portée
+        slug: Identifiant URL
+        sluggable: :activerecord.models.sluggable
+        sluggable_type: Type d'identifiant URL
+      mobility/backends/action_text/plain_text_translation:
+        body: Corps
+        locale: Langue
+        name: Nom
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      mobility/backends/action_text/rich_text_translation:
+        body: Corps
+        embeds_attachments: Intègre des pièces jointes
+        embeds_blobs: Intègre des blobs
+        locale: Langue
+        name: Nom
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      mobility/backends/active_record/key_value/string_translation:
+        key: Clé
+        locale: Langue
+        translatable: :activerecord.models.translatable
+        translatable_type: Type de traduction
+        value: Valeur
+      mobility/backends/active_record/key_value/text_translation:
+        key: Clé
+        locale: Langue
+        translatable: :activerecord.models.translatable
+        translatable_type: Type de traduction
+        value: Valeur
+      noticed/event:
+        notifications: Notifications
+        params: Paramètres
+        record: :activerecord.models.record
+        record_type: Type d'enregistrement
+      noticed/notification:
+        event: :activerecord.models.event
+        read_at: Lu à
+        recipient: :activerecord.models.recipient
+        recipient_type: Type de destinataire
+        seen_at: Vu à
     errors:
       messages:
+        file_not_found: le fichier n'existe pas
+        invalid_file_type: doit être un fichier markdown (.md ou .markdown)
         record_invalid: 'La validation a échoué : %{errors}'
         restrict_dependent_destroy:
           has_many: Vous ne pouvez pas supprimer l'enregistrement parce que les %{record}
             dépendants existent
           has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
             dépendant(e) existe
+      models:
+        better_together/event:
+          attributes:
+            event_hosts:
+              too_short: Les événements doivent avoir au moins un hôte
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: les accords de connexion
+                nécessitent des plateformes source et cible
+            target:
+              must_be_platform: doit être une plateforme
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: les accords de lien de personne nécessitent
+                une personne source, une personne cible et une connexion de plateforme
+                active
+            target:
+              must_be_person: doit être une personne
+        better_together/navigation_item:
+          attributes:
+            permission_identifier:
+              cannot_be_used_with_public_privacy: ne peut pas être utilisé avec la
+                confidentialité publique
+            visibility_strategy:
+              inclusion: doit être authentifié ou permission
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: doit correspondre à la personne bénéficiaire de
+                l'autorisation d'accès
+        better_together/person_platform_integration:
+          attributes:
+            provider:
+              inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
+            uid:
+              taken: a déjà été lié à un autre compte
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: doit être vrai pour un domaine principal
+            primary:
+              already_taken_for_platform: a déjà été pris pour cette plateforme
+    models:
+      action_text/encrypted_rich_text: texte enrichi crypté
+      action_text/rich_text: texte enrichi
+      active_storage/attachment: pièce jointe actif
+      active_storage/blob: blob
+      active_storage/variant_record: Enregistrement de stockage/variante actif
+      application_notifier: Notificateur de candidature
+      application_notifier/notification: notification de candidature
+      better_together/category: Catégorie
+      better_together/checklist: Liste de Contrôle
+      better_together/community: Communauté
+      better_together/content/block: Bloc
+      better_together/content/css: CSS Personnalisé
+      better_together/content/hero: Héros
+      better_together/content/html: HTML
+      better_together/content/image: Image
+      better_together/content/markdown: Markdown
+      better_together/content/mermaid_diagram: Diagramme Mermaid
+      better_together/content/page_block: Blocage de Pages
+      better_together/content/rich_text: Texte Enrichi
+      better_together/content/template: Fichier de Modèle
+      better_together/conversation: Conversation
+      better_together/conversation_participant: Participant à la Conversation
+      better_together/event: Événement
+      better_together/event_category: Catégorie d'Événement
+      better_together/geography/continent: Continent
+      better_together/geography/country: Pays
+      better_together/geography/country_continent: Pays Continent
+      better_together/geography/region: Région
+      better_together/geography/region_settlement: Implantation Régionale
+      better_together/geography/settlement: Habitat
+      better_together/geography/state: État
+      better_together/guest_access: Accès Invité
+      better_together/identification: Identification
+      better_together/infrastructure/building: Bâtiment
+      better_together/joatu/agreement: Accord
+      better_together/joatu/category: Catégorie d'offres et de demandes
+      better_together/joatu/offer: Offre
+      better_together/joatu/request: Demande
+      better_together/jwt_denylist: Liste Refusée JWT
+      better_together/message: Message
+      better_together/navigation_area: Zone de Navigation
+      better_together/navigation_item: Élément de Navigation
+      better_together/new_message_notifier: Notificateur de Nouveau Message
+      better_together/new_message_notifier/notification: Notification
+      better_together/oauth_application: Application OAuth
+      better_together/page: Page
+      better_together/person: Personne
+      better_together/person_access_grant: Autorisation d'accès personnel
+      better_together/person_community_membership: Adhésion à la communauté
+      better_together/person_link: Lien de personne
+      better_together/person_linked_seed: Graine liée
+      better_together/person_platform_integration: Intégration OAuth
+      better_together/person_platform_membership: Adhésion à la plateforme
+      better_together/platform: Plateforme
+      better_together/platform_connection: Connexion de plateforme
+      better_together/platform_domain: Domaine de plateforme
+      better_together/platform_invitation: Invitation à la Plateforme
+      better_together/post: Publication
+      better_together/resource_permission: Autorisation des Ressources
+      better_together/role: Rôle
+      better_together/role_resource_permission: Autorisation des Ressources de Rôle
+      better_together/user: Utilisateur
+      better_together/webhook_endpoint: Point de terminaison webhook
+      better_together/storage_configuration: Configuration de stockage
+      better_together/wizard: Assistant
+      better_together/wizard_step: Étape du Magicien
+      better_together/wizard_step_definition: Définition des Étapes de l'Assistant
+      friendly_id/slug: Identifiant Amical
+      mobility/backends/action_text/plain_text_translation: Traduction de Texte Brut
+      mobility/backends/action_text/rich_text_translation: Traduction de Texte Enrichi
+      mobility/backends/active_record/key_value/string_translation: Traduction de
+        Chaîne
+      mobility/backends/active_record/key_value/text_translation: Traduction de Texte
+      noticed/event: Événement
+      noticed/notification: Notification
+  attributes:
+    privacy_list:
+      community: Communauté
+      private: Privé
+      public: Public
+  better_together:
+    addresses:
+      add: Ajouter une adresse
+      address: Adresse
+      city_name: Ville
+      country_name: Pays
+      label: Libellé
+      labels:
+        billing: Facturation
+        home: Domicile
+        mailing: Adresse postale
+        main: Principal
+        other: Autre
+        physical: Physique
+        shipping: Expédition
+        work: Travail
+      line1: Adresse (ligne 1)
+      line2: Adresse (ligne 2)
+      physical: Physique
+      postal: Postale
+      postal_code: Code postal
+      state_province_name: État/Province
+      title: Adresses
+    agreement_terms:
+      add: Ajouter
+      title: Conditions de l'accord
+    agreements:
+      create:
+        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
+        successfully_accepted: Merci d'avoir accepté les accords requis.
+      form:
+        page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
+          des conditions de l'accord.
+        page_label: Page liée (optionnel)
+      no_terms: Aucune condition définie.
+      notice:
+        body: Veuillez lire l'accord complet avant de l'accepter.
+        close: Fermer
+        title: Afficher l'accord requis
+      participant:
+        pending: en attente
+      show:
+        title: Accord
+      status:
+        acceptance_required: Vous devez accepter tous les accords requis pour continuer.
+        accepted: Accepté
+        all_accepted: Tous les accords requis ont été acceptés.
+        description_html: "<p>Avant de continuer, vous devez examiner et accepter
+          les accords requis ci-dessous.</p><p>Cliquez sur « Voir l'Accord » pour
+          lire chaque document, puis cochez la case pour accepter.</p>"
+        i_accept: J'accepte cet accord
+        must_view_to_accept: Vous devez consulter l'accord complet avant de pouvoir
+          l'accepter.
+        not_accepted: Non Accepté
+        submit: Accepter Tous les Accords Requis
+        successfully_accepted: Merci d'avoir accepté les accords requis.
+        title: Accords Requis
+        view_agreement: Voir l'Accord
+      terms: Conditions
+      view: Voir
+    agreements_status:
+      create:
+        acceptance_required: Veuillez examiner et accepter tous les accords requis
+          pour continuer.
+        successfully_accepted: Merci ! Vous avez accepté avec succès tous les accords
+          requis.
+      index:
+        accepted: Accepté
+        all_accepted: Tous les accords requis ont été acceptés.
+        description_html: <p>Avant de continuer, vous devez examiner et accepter les
+          accords requis ci-dessous.</p><p>Cliquez sur "Voir l'accord" pour lire chaque
+          document, puis cochez la case pour accepter.</p>
+        i_accept: J'ai lu et j'accepte cet accord
+        must_view_to_accept: Vous devez voir l'accord complet avant de pouvoir l'accepter
+        not_accepted: Requis
+        submit: Accepter les accords et continuer
+        title: Examiner les accords requis
+        view_agreement: Voir l'accord
+    application:
+      name: Better Together
+    authorship_mailer:
+      authorship_changed_notification:
+        greeting: Bonjour %{recipient_name},
+        intro_added: Vous avez été ajouté(e) comme auteur(e) de la page %{page}.
+        intro_added_by: "%{actor_name} vous a ajouté(e) comme auteur(e) de la page
+          %{page}."
+        intro_removed: Vous avez été retiré(e) comme auteur(e) de la page %{page}.
+        intro_removed_by: "%{actor_name} vous a retiré(e) comme auteur(e) de la page
+          %{page}."
+        signature_html: "— L'équipe %{platform}"
+        subject_added: Vous avez été ajouté(e) comme auteur(e) sur %{page}
+        subject_added_by: "%{actor_name} vous a ajouté comme auteur(e) sur %{page}"
+        subject_removed: Votre autorat a été retiré de %{page}
+        subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
+        view_page: Voir la page
+        view_page_link: Cliquez ici pour voir la page
+    buildings:
+      add: Ajouter
+      title: Bâtiments
+    calendars:
+      default_description: Default calendar for %<community_name>s
+      personal_calendar_name: Calendrier Personnel de %{name}
+    calls_for_interest:
+      back_to_calls_for_interest: Retour aux appels à intérêt
+      hints:
+        description: Description
+        ends_at: Se termine à
+        name: Nom
+        slug: Identifiant URL
+        starts_at: Débute à
+      labels:
+        ends_at: Se termine à
+        privacy: Confidentialité
+        starts_at: Débute à
+      none-yet: Aucun pour l'instant
+      save_call_for_interest: Enregistrer l'appel d'intérêt
+      tabs:
+        details: Détails
+        images: Images
+        time-and-place: Date et lieu
+      view_call_for_interest: Voir l'appel d'intérêt
+    categories:
+      back_to_categories: Retour aux catégories
+      index:
+        new_btn_text: Nouvelle catégorie
+      save_category: Enregistrer la catégorie
+      view_category: Voir la catégorie
+    checklist_item:
+      update_failed: Échec de la mise à jour de l'élément de la liste.
+      updated: Élément de la liste mis à jour.
+    checklist_items:
+      created: Élément créé
+      description: Description
+      edit_title: Modifier l'élément de la liste
+      form_hint: Fournissez un libellé court et des détails optionnels. Utilisez la
+        confidentialité pour contrôler qui voit cet élément.
+      hint_description: Détails ou instructions optionnels pour cet élément. Prend
+        en charge le formatage de texte enrichi.
+      hint_label: Titre court pour l'élément de la liste (requis).
+      hint_parent: 'Optionnel : imbriquez cet élément sous un autre. La profondeur
+        maximale d''imbrication est de 2.'
+      hint_privacy: 'Choisissez qui peut voir cet élément : Public ou Privé.'
+      label: Libellé
+      move_down: Déplacer vers le bas
+      move_up: Déplacer vers le haut
+      new_title: Nouvel élément de la liste
+      parent: Élément parent (optionnel)
+      reorder: Réordonner l'élément
+      sign_in_to_toggle: Connectez-vous pour marquer cet élément comme complété
+      untitled: Élément sans titre
+    checklists:
+      edit:
+        title: Modifier la liste de contrôle
+      index:
+        new: Nouvelle liste de contrôle
+        title: Listes de contrôle
+      new:
+        title: Nouvelle liste de contrôle
+      show:
+        completed_message: Liste de contrôle complète
+        items_title: Éléments
+        no_items: Aucun élément à afficher
+    communities:
+      index:
+        new_btn_text: Nouvelle communauté
+      new:
+        title: Nouvelle communauté
+      none-yet: Aucune communauté pour l'instant
+      show:
+        create_event: Créer un événement
+      tabs:
+        buildings: Bâtiments
+        contact_details: Détails de contact
+        details: Détails
+        images: Images
+    community_invitations_mailer:
+      invite:
+        about: À propos
+        community_details: Détails de la Communauté
+        community_name: Communauté
+        greeting: Bonjour !
+        invited_by_html: Vous avez été invité par <strong>%{inviter_name}</strong>.
+        invited_html: Vous avez été invité à rejoindre la communauté <strong>%{community_name}</strong>.
+        need_account_html: Vous devrez créer un compte pour accepter cette invitation
+          et rejoindre la communauté.
+        review_invitation: Examiner l'Invitation
+        subject: Vous êtes invité à rejoindre %{community_name}
+        your_role: Votre Rôle
+      invite_by_email: Invite by Email
+      invite_person: Invite Member
+      invitee: Invitee
+      invitee_email: Email
+      invitee_type: Invitee Type
+      login_to_respond: Please log in to respond to your invitation.
+      no_invitations: No invitations found
+      no_role: No role
+      pending: Pending Invitations
+      register_to_respond: Please register to respond to your invitation.
+      resend_declined: Resend to Declined
+      review: Invitation
+      role: Role
+      search_people: Search for people...
+      select_person: Select Person
+      select_role: Role
+      send_invite: Send Invitation
+      status:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
+      title: Invitations
+      type:
+        email: Email
+        person: Member
+    contact_details:
+      contact_information: Informations de contact
+      title: Détails de contact
+    contactable:
+      addresses: Adresses
+      contact: Contact
+      contacts: Contacts
+      email_addresses: Adresses e-mail
+      phone_numbers: Numéros de téléphone
+      social_media_accounts: Comptes de réseaux sociaux
+      website_links: Liens de site web
+    contacts:
+      add: Ajouter un contact
+    content:
+      blocks:
+        accordion_block:
+          empty: Aucun élément configuré.
+          items_json_help: Tableau JSON d'objets avec les clés « question » et « answer
+            ».
+        associated_pages: Pages associées
+        checklist_block:
+          not_found: Liste de vérification introuvable.
+          select_prompt: "— Sélectionner une liste de vérification —"
+        communities_block:
+          empty: Aucune communauté à afficher.
+        events_block:
+          empty: Aucun événement à afficher.
+        markdown:
+          fields:
+            auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
+              base de données)
+            file_path: Chemin du Fichier Markdown
+            file_path_placeholder: docs/README.md ou /chemin/absolu/vers/fichier.md
+            markdown_source: Source Markdown
+            preview: Aperçu
+            reference_file: Référencer un Fichier Markdown
+            refresh_preview: Actualiser l'Aperçu
+            write_inline: Écrire du Markdown en Ligne
+          help:
+            auto_sync: Lorsque coché, le contenu est toujours chargé depuis le fichier.
+              Lorsque décoché, le contenu du fichier est importé dans la base de données
+              et peut être modifié séparément.
+            available_translations: 'Traductions disponibles :'
+            file_path: Chemin vers un fichier markdown. Peut être relatif à Rails.root
+              (par ex., docs/README.md) ou absolu (par ex., /chemin/vers/fichier.md).
+              Le fichier doit avoir une extension .md ou .markdown.
+            inline_content: Écrivez votre contenu markdown directement. Prend en charge
+              le markdown de type GitHub, y compris les tableaux, les blocs de code
+              et plus encore. Le contenu est traduisible pour chaque langue.
+            localized_files: Le système recherche automatiquement les versions spécifiques
+              à la langue (par ex., privacy.en.md, privacy.es.md, privacy.fr.md) et
+              revient au fichier de base s'il n'est pas trouvé.
+            preview_placeholder: L'aperçu apparaîtra ici...
+        navigation_area_block:
+          not_found: Zone de navigation introuvable.
+          select_prompt: "— Sélectionner une zone de navigation —"
+        people_block:
+          empty: Aucune personne à afficher.
+        posts_block:
+          empty: Aucune publication à afficher.
+        resource_block:
+          all_communities: Toutes les communautés (à l'échelle de la plateforme)
+          resource_ids_help: Si défini, seuls ces enregistrements seront affichés,
+            en ignorant la portée de la communauté et l'ordre.
+          resource_ids_placeholder: Laisser vide pour afficher les derniers enregistrements
+        statistics_block:
+          stats_json_help: Tableau JSON d'objets avec les clés « label », « value
+            » et « icon » optionnel (classe Font Awesome).
+        template:
+          default: Modèle par défaut
+          host_community_contact_details: Coordonnées de la communauté hôte
+        video_block:
+          missing_url: Aucune URL de vidéo configurée.
+          title: Lecteur vidéo YouTube
+          url_help: Accepte les URL YouTube, Vimeo ou tout URL d'intégration direct.
+        view_more: Voir tout
+      mermaid_diagram:
+        help:
+          auto_height: Lorsque activé, la hauteur du diagramme s'ajuste automatiquement
+            pour s'adapter au contenu. Lorsque désactivé, une hauteur fixe est utilisée.
+          caption: Légende optionnelle à afficher sous le diagramme
+          diagram_file_path: 'Chemin vers un fichier .mmd contenant la définition
+            du diagramme Mermaid. Peut être relatif à Rails.root (ex.: docs/diagrams/source/example.mmd)
+            ou absolu.'
+          diagram_source: 'Écrivez directement votre syntaxe de diagramme Mermaid.
+            Prend en charge tous les types de diagrammes Mermaid : organigrammes,
+            séquences, classes, états, etc.'
+          theme: 'Thème visuel du diagramme. Options : Par défaut (couleurs standard),
+            Sombre (mode sombre), Forêt (tons verts), Neutre (gris minimal).'
+        javascript_required: JavaScript est requis pour afficher les diagrammes interactifs.
+          Veuillez activer JavaScript ou consulter la version image statique.
+        no_content: Aucun contenu de diagramme disponible
+        no_preview: Ajoutez une source de diagramme ou un chemin de fichier pour voir
+          un aperçu
+        preview_title: Aperçu du diagramme
+        tabs:
+          file: Charger depuis un fichier
+          source: Écrire le diagramme
+        themes:
+          dark: Sombre
+          default: Par défaut
+          forest: Forêt
+          neutral: Neutre
+      static_pages:
+        accessibility: Accessibilité
+        better_together: Qu'est-ce que Better Together ?
+        code_contributor_agreement: Accord de contributeur de code
+        code_of_conduct: Code de conduite
+        community_engine: Community Engine
+        content_contributor_agreement: Accord de contributeur de contenu
+        cookie_consent: Politique de cookies
+        faq: FAQ
+        privacy: Politique de confidentialité
+        subprocessors: Sous-traitants
+        terms_of_service: Conditions d'utilisation
+    conversation_mailer:
+      new_message_notification:
+        from_address: Nouveau message via %{from_address}
+        from_address_with_sender: "%{sender_name} via %{from_address}"
+        greeting: Bonjour %{recipient_name},
+        message_intro: Vous avez un message non lu
+        message_intro_with_sender: Vous avez un message non lu de %{sender_name}
+        signature: Signature
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe %{platform}
+        subject: Votre conversation contient un message non lu
+        subject_with_title: "[%{conversation}] contient un message non lu"
+        view_conversation: 'Vous pouvez voir et répondre à ce message en cliquant
+          sur le lien ci-dessous :'
+        view_conversation_link: Aller à la conversation
+    conversations:
+      communicator:
+        active_conversations: Conversations actives
+        add_participants: Ajouter des participants
+        conversations: Conversations
+        create_conversation: Créer une conversation
+        last_message: Dernier message
+        new: Nouveau
+        new_conversation: Nouvelle conversation
+      conversation:
+        last_message: Dernier message
+        left: Vous avez quitté la conversation %{conversation}
+      conversation_content:
+        edit_conversation: Modifier la conversation
+        leave_conversation: Quitter la conversation
+        options_tooltip: Options de la conversation
+      empty:
+        no_messages: Aucun message pour l'instant. Pourquoi ne pas commencer la conversation
+          ?
+      errors:
+        no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de
+          plateforme ou des membres ayant choisi de recevoir des messages.
+        not_found: La conversation que vous recherchez est introuvable ou vous n'avez
+          pas la permission de la voir.
+        person_required: Vous devez avoir un profil pour créer des conversations.
+      form:
+        add_participants: Ajouter des participants
+        create_conversation: Créer une conversation
+        first_message: Premier message
+        first_message_hint: Rédigez le message d'ouverture de la conversation
+        participants_hint: Sélectionnez une ou plusieurs personnes à inclure dans
+          la conversation
+        title_hint: Optionnel. Un court titre descriptif peut aider les participants
+          à retrouver cette conversation plus tard
+      index:
+        conversations: Conversations
+        new: Nouveau
+      layout_with_sidebar:
+        active_conversations: Conversations actives
+        add_participants: Ajouter des participants
+        conversations: Conversations
+        create_conversation: Créer une conversation
+        last_message: Dernier message
+        new: Nouveau
+        new_conversation: Nouvelle conversation
+      list:
+        add_participants: Ajouter des participants
+        conversations: Conversations
+        create_conversation: Créer une conversation
+        new: Nouveau
+        new_conversation: Nouvelle conversation
+      new:
+        add_participants: Ajouter des participants
+        create_conversation: Créer une conversation
+        new_conversation: Nouvelle conversation
+      sidebar:
+        conversations: Conversations
+        new: Nouveau
+    default_member_name: Membre
+    device_permissions:
+      location:
+        denied: Refusé
+        enabled: Activé
+        unsupported: Non pris en charge
+      status:
+        denied: Refusé
+        granted: Accordé
+        unknown: Inconnu
+    e2e:
+      form:
+        status_active: "E2E actif 🔒"
+        status_error: E2E indisponible
+        status_waiting: En attente des clés du participant…
+      message:
+        decrypt_error: "[Impossible de déchiffrer le message]"
+        decrypting: "🔒 Déchiffrement…"
+      modal:
+        cancel: Annuler
+        ok: OK
+        passphrase_label: Phrase de passe
+        title: Messagerie sécurisée
+      session:
+        confirm_fresh_identity_message: Échec de la restauration. Générer une nouvelle
+          identité ? Les anciens messages chiffrés resteront inaccessibles.
+        passphrase_backup_message: Définissez une phrase de passe de sauvegarde (min.
+          12 caractères). Laissez vide pour ignorer.
+        passphrase_restore_message: Sauvegarde de clés chiffrées trouvée. Entrez votre
+          phrase de passe pour restaurer, ou laissez vide pour générer une nouvelle
+          identité.
+        server_error_message: Impossible de joindre le serveur de sauvegarde de clés.
+          Veuillez recharger la page et réessayer.
+    email_addresses:
+      add: Ajouter une adresse e-mail
+      email: E-mail
+      label: Libellé
+      labels:
+        other: Autre
+        personal: Personnel
+        school: École
+        work: Travail
+      title: Adresses e-mail
+    enums:
+      person_access_grant:
+        status:
+          active: Actif
+          expired: Expiré
+          pending: En attente
+          revoked: Révoqué
+      person_link:
+        status:
+          active: Actif
+          pending: En attente
+          revoked: Révoqué
+      person_linked_seed:
+        seed_type:
+          event: Événement
+          page: Page
+          post: Publication
+      platform_connection:
+        connection_kind:
+          member: Membre
+          peer: Pair
+        content_sharing_policy:
+          mirror_network_feed: Miroir du fil réseau
+          mirrored_publish_back: Miroir et republication
+          none: Aucune
+          selective: Sélectif
+        federation_auth_policy:
+          api_read: Lecture API uniquement
+          api_write: Lecture et écriture API
+          login_only: Connexion seulement
+          none: Aucune
+        federation_scope_types:
+          content_read: Lecture du contenu
+          content_write: Écriture du contenu
+          identity: Identité
+          linked_content_read: Lecture du contenu lié
+          profile_read: Lecture du profil
+        shared_content_types:
+          events: Événements
+          pages: Pages
+          posts: Publications
+        status:
+          active: Actif
+          blocked: Bloqué
+          pending: En attente
+          suspended: Suspendu
+        sync_status:
+          failed: Échoué
+          idle: Inactif
+          running: En cours
+          succeeded: Réussi
+    event_invitations:
+      index:
+        invite_member: Invite member
+        pending_invitations: Pending invitations
+        title: Title
+      invitations_table:
+        actions: Actions
+        delete: Delete
+        delete_confirm: Delete confirm
+        delete_tooltip: Delete tooltip
+        email: Email
+        invited_by: Invited by
+        no_invitations: No invitations
+        no_invitations_description: No invitations description
+        resend: Resend
+        resend_confirm: Resend confirm
+        resend_tooltip: Resend tooltip
+        send_first_invitation: Send first invitation
+        sent_at: Sent at
+        status: Status
+      new:
+        email_validation_error: Email validation error
+        message_help: Message help
+        message_placeholder: Message placeholder
+        title: Title
+    event_invitations_mailer:
+      invite:
+        event_details: Détails de l'Événement
+        greeting: Bonjour,
+        invited_by_html: Vous avez été invité par <strong>%{inviter_name}</strong>.
+        invited_html: Vous avez été invité à l'événement <strong>%{event_name}</strong>.
+        need_account_html: Vous devrez créer un compte pour accepter cette invitation
+          et rejoindre l'événement.
+        review_invitation: Voir l'invitation
+        subject: Vous êtes invité à un événement
+        when: Quand
+        where: Où
+    event_mailer:
+      event_reminder:
+        description: Description
+        duration: Durée
+        ends_at: Se termine à
+        greeting: Bonjour %{recipient_name},
+        hours:
+          one: "%{count} heure"
+          other: "%{count} heures"
+        location: Lieu
+        register_link: Inscription ou RSVP
+        reminder_message: Ceci est un rappel concernant l'événement à venir "%{event_name}".
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe %{platform}
+        subject: 'Rappel : %{event_name}'
+        time_tbd: Heure à déterminer
+        view_event_link_html: 'Voir les détails de l''événement : %{link}'
+        when: Quand
+      event_update:
+        changes_made: Modifications apportées
+        current_details: Détails actuels
+        description: Description
+        duration: Durée
+        ends_at: Se termine à
+        greeting: Bonjour %{recipient_name},
+        hours:
+          one: "%{count} heure"
+          other: "%{count} heures"
+        location: Lieu
+        register_link: Inscription ou RSVP
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe %{platform}
+        subject: 'Événement mis à jour : %{event_name}'
+        time_tbd: Heure à déterminer
+        update_message_plural: L'événement "%{event_name}" a été mis à jour avec plusieurs
+          changements.
+        update_message_singular: L'événement "%{event_name}" a été mis à jour.
+        view_event_link_html: 'Voir les détails de l''événement : %{link}'
+        when: Quand
+    events:
+      actions:
+        create_new_address: Créer une nouvelle adresse
+        create_new_building: Créer un nouveau bâtiment
+        create_new_short: Nouveau
+      add_to_calendar: Ajouter au calendrier (.ics)
+      attendees: Participants
+      back_to_events: Voir les événements
+      date_and_time: Date et Heure
+      greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      hints:
+        create_permission_denied: Permission de création refusée
+        description: Fournissez des détails sur ce à quoi les participants peuvent
+          s'attendre lors de cet événement
+        duration_minutes: Combien de temps l'événement durera-t-il ? Cela sera automatiquement
+          synchronisé avec l'heure de fin.
+        ends_at: Quand l'événement se termine. Se met à jour automatiquement lorsque
+          la durée change.
+        location: Où les participants se rencontreront pour cet événement
+        location_name: Nom du lieu ou point de rencontre
+        name: Un titre clair et descriptif pour votre événement
+        select_address: Sélectionner une adresse
+        select_building: Sélectionner un bâtiment
+        slug: Identifiant convivial pour l'URL de cet événement
+        starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
+          horaire sélectionné ci-dessus.
+        timezone: Le fuseau horaire où cet événement aura lieu
+      hosted_by: Organisé par
+      hosts:
+        add_host: Ajouter un Hôte
+        can_edit_event: Peut modifier les détails de l'événement
+        cancel: Annuler
+        cancel_add_host: Annuler l'ajout d'hôte
+        cannot_remove_last: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        cannot_remove_last_host: Impossible de retirer le dernier hôte. Veuillez d'abord
+          ajouter un autre hôte.
+        description: Les hôtes de l'événement peuvent modifier tous les détails de
+          l'événement et gérer d'autres hôtes. Les événements doivent avoir au moins
+          un hôte.
+        error_loading: Erreur lors du chargement des hôtes
+        host_label: Hôte
+        host_removed: Hôte retiré
+        host_type: Type d'Hôte
+        loading: Chargement...
+        member_count:
+          one: "%{count} membre"
+          other: "%{count} membres"
+        new_host: Nouvel hôte
+        remove_host: Retirer %{host}
+        remove_host_short: Retirer
+        select_host: Sélectionner un Hôte
+        select_placeholder: Sélectionner un hôte
+        type_label: Type
+      ics:
+        reminders:
+          1_hour: 'Rappel : %{event_name} commence dans 1 heure'
+          24_hours: 'Rappel : %{event_name} commence dans 24 heures'
+          at_start: "%{event_name} commence maintenant"
+        view_details_url: Voir l'URL des détails
+      labels:
+        duration_minutes: Durée
+        ends_at: Se termine à
+        location: Lieu
+        location_name: Nom du lieu
+        location_type: Type de lieu
+        privacy: Confidentialité
+        select_address: Sélectionner une adresse
+        select_building: Sélectionner un bâtiment
+        starts_at: Débute à
+        timezone: Fuseau Horaire de l'Événement
+      less_than: doit être inférieur à %{count}
+      less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      location: Lieu
+      location_types:
+        address: Adresse
+        building: Bâtiment
+        simple: Simple
+      login_required: Veuillez vous connecter pour gérer les confirmations de présence.
+      model_invalid: 'La validation a échoué : %{errors}'
+      no_attendees: Aucun participant pour l'instant
+      no_description_available: Aucune description disponible.
+      none-yet: Aucun pour l'instant
+      not_a_number: n'est pas un nombre
+      not_an_integer: doit être un entier
+      not_found: n’a pas été trouvé(e)
+      not_locked: n’était pas verrouillé(e)
+      not_saved:
+        one: 'Une erreur est survenue lors de l''enregistrement de %{resource} :'
+        other: 'Des %{count} erreurs sont survenues lors de l''enregistrement de %{resource}
+          :'
+      odd: doit être impair
+      other_than: doit être différent de %{count}
+      placeholders:
+        location_name: Nom du lieu
+      present: doit être vide
+      prompts:
+        select_address: Sélectionner une adresse
+        select_building: Sélectionner un bâtiment
+      recurrence:
+        end_types:
+          after_count: Après occurrences
+          never: Jamais
+          on_date: À la date
+        hints:
+          count: Nombre de fois que cet événement doit se répéter
+          end_type: Comment la récurrence doit se terminer
+          ends_on: La dernière date à laquelle cet événement aura lieu
+          exception_dates: Dates auxquelles cet événement NE doit PAS avoir lieu (séparées
+            par des virgules, format AAAA-MM-JJ)
+          frequency: Fréquence de répétition de cet événement
+          interval: Répéter tous les N périodes (par exemple, toutes les 2 semaines)
+          preview_placeholder: Sélectionnez les options de récurrence pour voir les
+            dates à venir
+          weekdays: Jours de la semaine où cet événement a lieu
+        labels:
+          count: Nombre d'occurrences
+          end_type: Se termine
+          ends_on: Date de fin
+          exception_dates: Dates d'exception
+          frequency: Se répète
+          interval: Répéter tous les
+          preview: Prochaines occurrences
+          weekdays: Répéter le
+        placeholders:
+          exception_dates: 2025-01-15, 2025-02-20
+        prompts:
+          select_frequency: Ne se répète pas
+      register: S'inscrire
+      relationship:
+        calendar: Événement du calendrier
+        created: Créé par vous
+        going: Vous y allez
+        interested: Vous êtes intéressé(e)
+      required: doit exister
+      rsvp_cancel: Annuler RSVP
+      rsvp_cancelled: RSVP annulé
+      rsvp_counts: 'Allant : %{going} · Intéressé : %{interested}'
+      rsvp_going: Participe
+      rsvp_interested: Intéressé
+      rsvp_not_available: RSVP n'est pas disponible pour cet événement.
+      rsvp_saved: RSVP enregistré
+      rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera
+        programmé.
+      save_event: Enregistrer l'événement
+      tabs:
+        details: Détails
+        hosts: Hôtes
+        images: Images
+        recurrence: Récurrence
+        time-and-place: Date et lieu
+      taken: est déjà utilisé(e)
+      time:
+        hour: heure
+        hours: heures
+        minutes: minutes
+      too_long:
+        one: est trop long (%{count} caractère maximum)
+        other: est trop long (%{count} caractères maximum)
+      too_short:
+        one: est trop court (%{count} caractère minimum)
+        other: est trop court (%{count} caractères minimum)
+      units:
+        minutes: minutes
+      view_event: Voir l'événement
+      wrong_length:
+        one: ne fait pas la longueur correcte (%{count} caractère)
+        other: ne fait pas la longueur correcte (%{count} caractères)
+    geography:
+      locatable_location:
+        errors:
+          no_location_source: Must specify either a name or location
+      regions:
+        index:
+          title: Titre
+      settlements:
+        index:
+          title: Titre
+    global:
+      add: Ajouter
+    host_nav:
+      label: Navigation de l’hôte
+      toggle: Navigation de l’hôte
+    hub:
+      activities:
+        back_to_hub: Retour au hub
+        page_title: Toutes les activités
+      index:
+        activity: Activité
+        announcements: Annonces
+        new_members: Nouveaux membres
+        page_title: Hub communautaire
+        platform_updates: Mises à jour de la plateforme
+        recommended_communities: Communautés recommandées
+        trending_topics: Sujets tendance
+        upcoming_events: Événements à venir
+        view_all_activity: Voir tout
+      recent_offers_card:
+        new_offer: Nouvelle offre
+        no_offers: Aucune offre récente
+        recent_offers: Offres récentes
+        view_all_offers: Voir tout
+      recent_requests_card:
+        new_request: Nouvelle demande
+        no_requests: Aucune demande récente
+        recent_requests: Demandes récentes
+        view_all_requests: Voir tout
+      suggested_matches_card:
+        for_your_latest_offer: Pour votre dernière offre
+        for_your_latest_request: Pour votre dernière demande
+        no_suggestions: Aucune suggestion pour le moment — créez une offre ou une
+          demande pour voir des correspondances.
+        suggested_matches: Correspondances suggérées
+    infrastructure:
+      locations: Emplacements
+    invitations:
+      accept: Accepter
+      already_accepted: This invitation has already been accepted.
+      already_declined: This invitation has already been declined.
+      community_name: 'Community:'
+      confirm_remove: Êtes-vous sûr de vouloir supprimer cette invitation ?
+      confirm_resend_declined: Cette personne a précédemment refusé cette invitation.
+        Êtes-vous sûr de vouloir l'envoyer à nouveau ?
+      decline: Refuser
+      event_invitations:
+        index:
+          invite_member: Inviter un Membre
+          pending_invitations: Invitations en Attente
+          title: Invitations à l'Événement
+        invitations_table:
+          actions: Actions
+          delete: Supprimer
+          delete_confirm: Êtes-vous sûr de vouloir supprimer cette invitation ?
+          delete_tooltip: Supprimer l'invitation
+          email: E-mail
+          invited_by: Invité Par
+          no_invitations: Aucune invitation trouvée
+          no_invitations_description: Personne n'a encore été invité.
+          resend: Renvoyer
+          resend_confirm: Êtes-vous sûr de vouloir renvoyer cette invitation ?
+          resend_tooltip: Renvoyer l'e-mail d'invitation
+          send_first_invitation: Envoyez votre première invitation
+          sent_at: Envoyé Le
+          status: Statut
+        new:
+          email_validation_error: Veuillez entrer une adresse e-mail valide
+          message_help: Message personnel facultatif à inclure avec l'invitation
+          message_placeholder: Ajoutez un message personnel (facultatif)...
+          title: Inviter à l'Événement
+      event_name: 'Événement :'
+      event_panel:
+        title: Inviter des personnes
+      external_user: Utilisateur externe
+      invite_by_email: Inviter par e-mail
+      invite_person: Inviter un membre
+      invitee: Invité(e)
+      invitee_email: E-mail
+      invitee_type: Type d'invité
+      login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
+      no_invitations: Aucune invitation trouvée
+      no_role: Aucun rôle
+      pending: Invitations en attente
+      register_to_respond: Veuillez vous inscrire pour répondre à votre invitation.
+      resend_declined: Renvoyer aux refusés
+      review: Invitation
+      role: Rôle
+      search_people: Rechercher des personnes...
+      select_person: Sélectionner une personne
+      select_role: Rôle
+      send_invite: Envoyer l'invitation
+      status:
+        accepted: Accepté
+        declined: Refusé
+        pending: En attente
+      title: Invitations
+      type:
+        email: E-mail
+        person: Membre
+    joatu:
+      agreements:
+        accept: Accepter
+        create:
+          success: Succès
+        index:
+          title: Accords
+        offer: Offre
+        offer_creator: Créateur de l'offre
+        participants: Participants
+        reject: Rejeter
+        request: Demande
+        request_creator: Créateur de la demande
+        show:
+          details: Détails
+          open_platform_connections: Ouvrir les connexions de plateforme
+          platform_connection: Connexion de plateforme
+          source_platform: Plateforme source
+          target_platform: Plateforme cible
+          title: Agreement
+        status: Statut
+      by: by
+      categories:
+        index:
+          new_btn_text: Nouvelle catégorie
+      help:
+        agreements:
+          index: Les accords relient une offre et une demande. Utilisez cette liste
+            pour consulter ou gérer vos accords.
+          show: Cette page relie une offre et une demande. Si vous êtes impliqué,
+            vous pouvez accepter ou refuser pour confirmer.
+        hide: Masquer cette aide
+        offers:
+          form: Dites ce que vous pouvez offrir. Un titre clair et quelques détails
+            aident beaucoup. Choisissez une ou plusieurs catégories pour être trouvé.
+          index: Parcourez les offres. Utilisez la recherche et les filtres pour trouver
+            ce dont vous avez besoin. Cliquez pour voir les détails.
+          show: Ceci est une offre. Si elle vous convient, vous pouvez démarrer une
+            conversation ou créer un accord depuis une demande correspondante.
+        requests:
+          form: Dites ce dont vous avez besoin. Un titre clair et quelques détails
+            aident les autres à comprendre. Choisissez une ou plusieurs catégories
+            pour être trouvé.
+          index: Parcourez les demandes. Utilisez la recherche et les filtres pour
+            trouver comment aider. Cliquez pour voir les détails.
+          show: Ceci est une demande. Si elle correspond à votre offre, vous pouvez
+            démarrer une conversation ou créer un accord depuis une offre correspondante.
+        screenshot_alt: Help screenshot
+        show_again: Afficher l'aide à nouveau
+      hub:
+        create_agreement: Créer un accord
+        empty_agreements: Aucun accord pour le moment.
+        empty_offers: Aucune offre pour le moment.
+        empty_requests: Aucune demande pour le moment.
+        matches_offer: 'Correspond à l''offre :'
+        matches_request: 'Correspond à la demande :'
+        membership_requests: Demandes d'adhésion
+        my_agreements: Mes accords
+        my_offers: Mes offres
+        my_requests: Mes demandes
+        none: Aucune correspondance trouvée pour l'instant.
+        sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
+        suggested: Correspondances suggérées
+        title: Correspondances potentielles
+        view_all_agreements: Voir tous les accords
+        view_all_offers: Voir toutes les offres
+        view_all_requests: Voir toutes les demandes
+      matches:
+        create_agreement: Créer un accord
+        matches_offer: 'Correspond à l''offre :'
+        matches_request: 'Correspond à la demande :'
+        none: Aucune correspondance trouvée pour l'instant.
+        title: Correspondances potentielles
+      nav:
+        agreements: Accords
+        hub: Hub
+        manage_categories: Gérer les catégories
+        offers: Offres
+        requests: Demandes
+      offers:
+        agreement_heading: Contrat
+        agreement_with: Agreement with
+        back_to_offers: Back to Offers
+        edit_offer: Edit Offer
+        empty: No offers found
+        index_header: Offers
+        new_offer: New Offer
+        response_to_your_offer_heading: Response to your Offer
+        save_offer: Save Offer
+        source_request_heading: Responding to Request
+        target_platform: Plateforme cible
+        view_agreement: Voir le contrat
+        view_offer: View Offer
+        your_response_heading: Votre réponse
+      requests:
+        agreement_heading: Agreement
+        back_to_requests: Retour aux demandes
+        edit_request: Modifier la demande
+        empty: Aucune demande trouvée
+        index_header: Demandes
+        manage_connections: Gérer les connexions
+        new_connection_request: Nouvelle demande de connexion
+        new_request: Nouvelle demande
+        respond_with_offer: Répondre avec une offre
+        response_to_your_request_heading: Réponse à votre demande
+        save_request: Enregistrer la demande
+        source_offer_heading: En réponse à l'offre
+        target_platform: Plateforme cible
+        view_agreement: View Agreement
+        view_request: Voir la demande
+        your_response_heading: Your Response
+      respond_with_request: Respond with Request
+      response_to_your: Response to your %{type}
+      responses:
+        in_response_to: En réponse à
+      search:
+        labels:
+          filter_by_type: Filtrer par catégorie
+          order_by: Trier par
+          per_page: Par page
+          search-term: Terme de recherche
+          status: Statut
+          submit: Rechercher
+        newest: Plus récent
+        oldest: Plus ancien
+        placeholders:
+          search: Rechercher par titre ou description
+        title: Rechercher
+      status:
+        any: Tous
+        closed: Fermé
+        open: Ouvert
+      type:
+        offer: Offer
+        request: Request
+      you: You
+    joatu_mailer:
+      agreement_created:
+        greeting: Bonjour %{recipient_name},
+        message_intro: Un accord a été créé entre "%{offer_name}" et "%{request_name}".
+        signature: |-
+          Cordialement,
+          L'équipe de %{platform}
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{platform}
+        subject: Un nouvel accord a été créé
+      new_match:
+        subject: Nouvelle correspondance Joatu
+    labelable:
+      custom-label-placeholder: Votre étiquette personnalisée
+    loading: Chargement...
+    mailer:
+      footer:
+        no_reply: Ceci est un message automatisé. Veuillez ne pas répondre à cet e-mail.
+    membership_mailer:
+      created:
+        greeting: Bonjour %{name},
+        message: Vous avez été ajouté en tant que %{role_name} dans le %{joinable_type}
+          "%{joinable_name}".
+        permissions_summary_heading: 'Vos permissions incluent :'
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucun droit n'est attribué à ce rôle pour le moment.
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} pour %{joinable_name}
+        view_joinable: Voir %{joinable_type}
+      removed:
+        footer_message: Si vous pensez que cela a été fait par erreur, veuillez contacter
+          les administrateurs de la plateforme.
+        greeting: Bonjour %{name},
+        message: Votre adhésion en tant que %{role_name} dans le %{joinable_type}
+          "%{joinable_name}" a été supprimée.
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucune permission n'était attribuée à ce rôle.
+        removed_permissions_heading: 'Vous n''avez plus accès à :'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} a été supprimée de %{joinable_name}
+        view_joinable: Voir %{joinable_type}
+        view_joinable_note: 'Vous pouvez toujours voir le %{joinable_type} en tant
+          qu''invité à :'
+      updated:
+        greeting: Bonjour %{name},
+        message: Votre rôle dans le %{joinable_type} "%{joinable_name}" a été modifié
+          de %{old_role_name} à %{new_role_name}.
+        new_permissions_heading: 'Vos nouvelles permissions incluent :'
+        permissions_summary_more: Et %{count} permissions supplémentaires.
+        permissions_summary_none: Aucune permission n'est attribuée à ce rôle.
+        previous_permissions_heading: 'Vos précédentes permissions incluaient :'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{joinable_name}
+        signature_text: Cordialement, L'équipe de %{joinable_name}
+        subject: Votre adhésion %{joinable_type} a été mise à jour pour %{joinable_name}
+        view_joinable: Voir %{joinable_type}
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: La vérification du captcha a échoué. Veuillez réessayer.
+      confirm_approve: Approve this membership request and invite the applicant to
+        join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Veuillez nous parler un peu de vous et de la raison pour
+          laquelle vous souhaitez nous rejoindre.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approve_failed: Could not approve the membership request.
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        decline_failed: Could not decline the membership request.
+        declined: Membership request declined.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: Membership request from %{requestor}
+      new:
+        heading: Request Membership
+        intro: Fill in the form below to request membership. We'll be in touch!
+      show:
+        title: Membership Request
+      success:
+        body: Thank you! We've received your membership request and will be in touch
+          soon.
+        heading: Request Received
+    messages:
+      form:
+        placeholder: Tapez votre message...
+        send: Envoyer
+    metrics:
+      errors:
+        date_range_too_large: La plage de dates ne peut pas dépasser 1 an
+        invalid_date_range: La date de début doit être antérieure à la date de fin
+      filters:
+        additional:
+          actions: Actions de Filtre
+          all_days: Tous les Jours
+          all_hours: Toutes les Heures
+          all_locales: Toutes les Langues
+          all_types: Tous les Types de Contenu
+          apply: Appliquer les Filtres
+          communities: Communautés
+          content_type: Type de Contenu
+          day_of_week: Jour de la Semaine
+          hour_of_day: Heure du Jour
+          locale: Langue
+          pages: Pages
+          people: Personnes
+          reset: Réinitialiser les Filtres
+          title: Filtres Supplémentaires
+        datetime:
+          actions: Actions de Filtre
+          apply: Appliquer le Filtre
+          end_date: Date de Fin
+          end_date_help: Sélectionnez la fin de la plage de dates
+          reset: Réinitialiser aux Paramètres par Défaut (30 Derniers Jours)
+          start_date: Date de Début
+          start_date_help: Sélectionnez le début de la plage de dates
+          title: Filtre de Date et Heure
+      mailer:
+        link_checker_report:
+          actions:
+            edit: Modifier →
+            manual_edit: Modification manuelle requise
+          body: Vous trouverez en pièce jointe le rapport hebdomadaire de vérification
+            des liens pour %{date}.
+          greeting: Bonjour,
+          report_file: 'Fichier du rapport : %{filename}'
+          see_csv: Consultez le CSV joint pour la liste complète.
+          showing_partial: Affichage de %{shown} sur %{total} enregistrements de %{type}
+            avec des liens brisés.
+          signature: Cordialement
+          subject: 'Rapport Hebdomadaire de Vérification des Liens : %{count} liens
+            brisés - %{date}'
+          summary_header: Liens brisés par type d'enregistrement
+          table_headers:
+            action: Action
+            broken_url: URL brisée
+            field: Champ
+            record: Enregistrement
+            status: Statut
+          total_count: 'Total de liens brisés: %{count}'
+      reports:
+        actions:
+          chart_toolbar: Actions du graphique
+          export: Exporter
+        axis_labels:
+          accounts: Accounts
+          confirmations: Rate (%)
+          date: Date
+          downloads: Téléchargements
+          file: Fichier
+          host: Hôte
+          invalid_links: Liens invalides
+          link_clicks: Clics sur les liens
+          links: Liens
+          page: Page
+          page_views: Vues de page
+          platform: Plateforme
+          search_queries: Recherches
+          shares: Partages
+          source: Source
+          term: Terme
+          total_users: Total Users
+          url: URL
+        charts:
+          accounts_confirmed: Accounts Confirmed
+          accounts_created: Accounts Created
+          confirmation_rate_label: Confirmation Rate (%)
+          confirmation_rate_title: Email Confirmation Rate Trend
+          cumulative_growth: Cumulative User Growth
+          cumulative_growth_label: Total Users
+          cumulative_growth_title: Cumulative User Growth
+          daily_accounts_label: Accounts
+          daily_accounts_title: Daily Account Creation & Confirmation
+          daily_link_clicks: Clics sur les Liens Quotidiens
+          daily_page_views: Vues de Page Quotidiennes
+          daily_search_queries: Recherches quotidiennes
+          downloads_by_file: Téléchargements par Fichier
+          invalid_links_by_host: Liens Invalides par Hôte
+          invalid_links_over_time: Liens Invalides au Fil du Temps
+          invitation: Invitation
+          link_clicks_by_url: Clics sur les Liens par URL
+          links_by_host: Liens par Hôte
+          oauth: OAuth/Social
+          open_registration: Open Registration
+          page_views_by_page: Vues de Page par Page
+          registration_sources: Registration Sources
+          registration_sources_label: Users by Source
+          registration_sources_title: Registration Sources
+          search_queries_by_term: Principales recherches
+          shares_by_platform: Partages par Plateforme
+          shares_per_url_per_platform: Partages par URL par Plateforme
+          user_accounts_overview: Daily Account Creation & Confirmation
+          user_confirmations: Email Confirmation Rate Trend
+        coming_soon: Coming soon
+        csv_headers:
+          cumulative_growth: Total Users
+          daily_link_clicks: Date
+          daily_page_views: Date
+          daily_search_queries: Recherches quotidiennes
+          downloads_by_file: Fichier
+          invalid_links_by_host: Hôte
+          invalid_links_over_time: Date
+          link_clicks_by_url: URL
+          links_by_host: Hôte
+          page_views_by_page: Page
+          registration_sources: Registration Sources
+          search_queries_by_term: Recherches par terme
+          shares_by_platform: Plateforme
+          shares_per_url_per_platform: URL
+          user_accounts_created: User Accounts
+          user_confirmations: Confirmation Rate
+        export:
+          chart: Exporter le graphique
+          csv: CSV
+          csv_label: Exporter le graphique en CSV
+          jpg: JPG
+          jpg_label: Exporter le graphique en JPG
+          png: PNG
+          png_label: Exporter le graphique en PNG
+        heading: Rapports de Métriques
+        legends:
+          excellent_results: Excellent
+          high_results: Élevé
+          low_results: Faible
+          medium_results: Moyen
+          no_results: Aucun résultat
+          result_quality: Moyenne des résultats par recherche
+        tabs:
+          charts: Graphiques
+          charts_and_reports: Graphiques et rapports
+          downloads: Téléchargements
+          link_checker: Vérificateur de Liens
+          link_clicks: Clics sur les Liens
+          metrics_types: Types de métriques
+          page_views: Vues de Page
+          reports: Rapports
+          search_health: Santé de la recherche
+          search_queries: Recherches
+          shares: Partages
+          users: Users
+        search_health:
+          backend: Backend
+          db_count: Nombre BD
+          db_documents: Documents BD
+          drift: Écart
+          drift_visualization: Visualisation de l'écart
+          generated_at: Généré le
+          index_count: Nombre dans l'index
+          index_documents: Documents indexés
+          index_name: Index
+          indices: Indices
+          model: Modèle
+          status_label: Statut
+          store_size: Taille du stockage
+          total_drift: Écart total
+          unmanaged_models: Modèles recherchables non gérés
+        title: Rapports de Métriques
+        unknown_type: Inconnu
+      shares:
+        invalid_parameters: Paramètres non valides pour le suivi du partage.
+      shares_controller:
+        error_tracking: 'Erreur lors du suivi du partage :'
+        failed_tracking: Impossible de suivre le partage.
+        ga_not_initialized: Google Analytics n'est pas initialisé.
+        unsupported_platform: 'Plateforme non supportée : %{platform}'
+      user_account_reports_controller:
+        create:
+          success: User account report has been generated successfully.
+        destroy:
+          destroyed: Report was successfully deleted.
+        download:
+          file_not_ready: The report file is not ready yet. Please wait a moment and
+            try again.
+    metrics/user_account_reports:
+      index:
+        accounts_confirmed: Confirmed
+        accounts_created: Created
+        actions: Actions
+        confirm_delete: Are you sure you want to delete this report?
+        confirmation_rate: Confirmation Rate
+        create_first_report: Create your first report
+        created_at: Created At
+        date_range: Date Range
+        delete: Delete
+        download: Download
+        generating: Generating...
+        last_30_days: Last 30 days
+        new_report: New Report
+        no_reports: No reports have been generated yet.
+        title: User Account Reports
+        view: Voir
+      new:
+        file_format: File Format
+        file_format_help: Select the format for the exported report file.
+        filters: Filters
+        from_date: From Date
+        from_date_help: Leave blank to start 30 days ago.
+        generate_report: Generate Report
+        info_message: This report will analyze user account creation and confirmation
+          statistics for the selected date range. The report will be generated in
+          the background and will be available for download when complete.
+        title: New User Account Report
+        to_date: To Date
+        to_date_help: Leave blank to use today.
+      show:
+        accounts_confirmed: Accounts Confirmed
+        accounts_created: Accounts Created
+        confirmation_rate: Confirmation Rate
+        daily_confirmation_rate: Daily Confirmation Rate
+        daily_stats: Daily Account Activity
+        date: Date
+        days_in_range: Days in Range
+        download: Download Report
+        registration_sources: Registration Sources
+        showing_recent: Showing most recent %{count} days
+        source: Source
+        source_invitation: Invitation
+        source_oauth: OAuth / Social Login
+        source_open_registration: Open Registration
+        summary: Summary
+        title: User Account Report
+        total_accounts_confirmed: Total Accounts Confirmed
+        total_accounts_created: Total Accounts Created
+    mobile_bar:
+      conversations: Conversations
+      navigation: Navigation
+      profile: Profil
+    models:
+      address_missing_type: La dirección debe ser física, postal o ambas.
+      ends_at_before_starts_at: debe ser después de la hora de inicio
+      host_single: solo se puede establecer para un registro
+      protected_destroy: Este registro está protegido y no se puede eliminar.
+    navigation_areas:
+      edit:
+        title: Modifier la zone de navigation
+      index:
+        items: Éléments
+        new_navigation_area: Nouvelle zone de navigation
+      new:
+        title: Nouvelle zone de navigation
+      show:
+        new_navigation_item: Nouvel élément de navigation
+    navigation_items:
+      edit:
+        title: 'Modifier l''élément de navigation : %{title}'
+      form:
+        dynamic_route: Route dynamique
+        enter_nav_item_title: Saisissez le titre de l'élément de navigation.
+        link_to_page: Lien vers la page
+        parent_item: Élément parent
+        permission_identifier: Identifiant de permission
+        permission_identifier_hint: Requis lorsque la visibilité est basée sur une
+          permission.
+        visibility_strategy: Stratégie de visibilité
+        visibility_strategy_hint: Détermine qui peut voir cet élément lorsque la confidentialité
+          est privée.
+      index:
+        new_navigation_item: Nouvel élément de navigation
+        title: Éléments de navigation pour %{name}
+      new:
+        title: Nouvel élément de navigation pour %{name}
+      route_names:
+        calendars: Calendriers
+        calls_for_interest: Appels à intérêt
+        communities: Communautés
+        content_blocks: Blocs de contenu
+        events: Événements
+        geography_continents: Continents
+        geography_countries: Pays
+        geography_maps: Cartes
+        geography_regions: Régions
+        geography_settlements: Implantations
+        geography_states: États
+        host_dashboard: Tableau de bord de l'hôte
+        joatu_offers: Offres
+        joatu_requests: Requêtes
+        metrics_reports: Rapports de métriques
+        navigation_areas: Zones de navigation
+        pages: Pages
+        people: Personnes
+        platforms: Plateformes
+        resource_permissions: Permissions des ressources
+        roles: Rôles
+        users: Utilisateurs
+      visibility_strategies:
+        authenticated: Utilisateurs connectés
+        permission: Utilisateurs avec permission
+    new_message_notifier:
+      from_html: 'De : %{sender}'
+      new_message: Nouveau message
+    not_found:
+      description: The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
+      title: 404 - Page Not Found
+    notifications:
+      event_invitation:
+        body: Invitation to %{event_name}
+        title: You have been invited to an event
+      event_reminder:
+        body_1h: "%{event_name} starts in 1 hour at %{starts_at}"
+        body_24h: "%{event_name} starts tomorrow at %{starts_at}"
+        body_generic: 'Reminder: %{event_name} starts at %{starts_at}'
+        title: 'Reminder: %{event_name}'
+      event_update:
+        body: "%{event_name} has been updated: %{changes}"
+        title: 'Event updated: %{event_name}'
+      index:
+        no_notifications: Vous n'avez aucune notification.
+        notifications: Notifications
+      joatu:
+        agreement_created:
+          content: Un accord entre "%{offer}" et "%{request}" a été créé.
+          title: Accord créé
+      mark_all_as_read: Tout marquer comme lu
+      mark_as_read: Marquer comme lu
+      membership_created:
+        body: Vous avez été ajouté en tant que %{role_name} dans %{joinable_name}
+        default_role_name: membre
+        removed_membership: This membership is no longer available.
+        title: 'Nouvelle adhésion : %{role_name} dans %{joinable_name}'
+        title_fallback: Membership notification
+      membership_removed:
+        body: Your %{role_name} membership in %{joinable_name} has been removed
+        title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_updated:
+        body: Your role has been changed from %{old_role_name} to %{new_role_name}
+          in %{joinable_name}
+        role_change_detail: Your role was changed from %{old_role_name} to %{new_role_name}
+        title: 'Membership updated: %{old_role_name} → %{new_role_name} in %{joinable_name}'
+        unknown_role: unknown
+      new: Nouveau
+      new_message:
+        content: "%{content}"
+        title: "%{sender}: %{conversation}"
+      no_notifications: Aucune notification
+      person_platform_integration_created:
+        body: Une nouvelle intégration de compte %{provider} a été connectée le %{created_at}
+        message: Nouvelle intégration %{provider} connectée le %{created_at}
+        title: Nouvelle intégration %{provider} connectée
+      time_ago: il y a %{time}
+    oauth:
+      applications:
+        create:
+          success: L'application OAuth '%{name}' a été créée avec succès. Vous pouvez
+            maintenant utiliser les identifiants client pour authentifier les requêtes
+            API.
+        destroy:
+          success: L'application OAuth '%{name}' a été supprimée. Tous les jetons
+            d'accès associés ont été révoqués.
+        set_application:
+          not_found: L'application OAuth que vous recherchez est introuvable. Elle
+            a peut-être été supprimée ou vous n'avez pas la permission d'y accéder.
+        update:
+          success: L'application OAuth '%{name}' a été mise à jour avec succès.
+    oauth_applications:
+      actions_aria: Actions de l'application
+      back_to_list: Retour aux applications
+      confidential: Confidentiel
+      confidential_help: Les clients confidentiels peuvent stocker leurs identifiants
+        de manière sécurisée (applications côté serveur). Les clients publics ne le
+        peuvent pas (SPAs, applications mobiles).
+      credentials: Identifiants
+      default_scopes: Portées par défaut
+      delete_aria: Supprimer l'application OAuth
+      details: Détails de l'application
+      edit_aria: Modifier l'application OAuth
+      field_client_id: ID du client
+      field_created: Créé
+      field_owner: Propriétaire
+      field_redirect_uri: URI de redirection
+      field_scopes: Portées
+      field_secret: Secret du client
+      field_trusted: De confiance
+      field_type: Type
+      index:
+        header_actions: Actions
+        header_client_id: ID du client
+        header_confidential: Type
+        header_created: Créé
+        header_name: Nom
+        header_scopes: Portées
+        new_btn_aria: Créer une nouvelle application OAuth
+        new_btn_text: Nouvelle application
+        no_applications: Aucune application OAuth n'a été enregistrée.
+        table_aria: Liste des applications OAuth
+        title: Applications OAuth
+      name_help: Un nom descriptif pour cette application OAuth.
+      name_placeholder: ex., Mon application d'intégration
+      no_redirect: Non configuré
+      no_scopes: Par défaut
+      no_secret_public: Non applicable (client public)
+      public_type: Public
+      redirect_help: Une URI de redirection par ligne. Pour les flux machine-à-machine
+        (client_credentials), utilisez urn:ietf:wg:oauth:2.0:oob
+      save: Enregistrer l'application
+      scopes_help: Sélectionnez les permissions que cette application devrait avoir.
+      secret_aria: Valeur du secret du client
+      title: Applications OAuth
+      toggle_secret: Basculer la visibilité du secret
+      trusted_no: Non
+      trusted_yes: Oui
+      view: Voir l'application
+    page_authorship_notifier:
+      added: Vous avez été ajouté comme auteur sur %{page_title}
+      added_by: "%{actor_name} vous a ajouté comme auteur sur %{page_title}"
+      removed: Vous avez été retiré comme auteur sur %{page_title}
+      removed_by: "%{actor_name} a retiré votre autorat sur %{page_title}"
+    pages:
+      form:
+        create_page_before_adding_content: Créez une page avant d'ajouter du contenu
+      index:
+        clear_filter: Effacer le filtre
+        clear_filters: Effacer les filtres
+        filter: Filtrer
+        new_page: Nouvelle page
+        search_by_slug: Rechercher par slug...
+        search_by_title: Rechercher par titre...
+    people:
+      allow_messages_from_members: Autoriser les messages des membres de la plateforme
+      calendar:
+        attended: J'ai participé
+        in_progress: En Cours
+        no_events: Aucun événement dans le calendrier
+        no_events_description: Les événements apparaîtront ici lorsque vous confirmerez
+          votre participation comme "J'y vais" aux événements.
+        no_past_events: Aucun événement passé auquel vous avez assisté.
+        no_upcoming_events: Aucun événement à venir.
+        ongoing_events: Événements En Cours
+        recent_events: Événements Récents
+        title: Calendrier Personnel
+        upcoming_events: Événements à Venir
+      device_permissions:
+        camera: Caméra
+        location: Localisation
+        microphone: Microphone
+        notifications: Notifications
+        permissions_group_label: Groupe de permissions
+      index:
+        new_person: Nouvelle personne
+      notification_preferences: Préférences de notification des messages
+      preferences:
+        language:
+          title: Langue
+        messaging:
+          description: Contrôlez qui peut vous envoyer des messages sur la plateforme.
+          privacy_note: Seuls les gestionnaires de plateforme peuvent vous envoyer
+            des messages lorsque cette option est désactivée. Activez pour permettre
+            à tout membre de la communauté de vous contacter.
+          title: Messagerie
+        no_form_context: Les préférences ne peuvent pas être affichées sans contexte
+          de formulaire.
+        notifications:
+          description: Gérez comment vous recevez les notifications concernant les
+            conversations et les messages.
+          title: Notifications
+        time_zone:
+          title: Fuseau Horaire
+      submit:
+        save: Enregistrer
+      tabs:
+        contact_details: Détails de contact
+        details: Détails
+        device-permissions: Device-permissions
+        images: Images
+        preferences: Preferences
+    person_access_grants:
+      errors:
+        duplicate_grant: a déjà une autorisation pour ce lien et ce destinataire
+      index:
+        description: Gérez les autorisations d'accès privées que vous avez partagées
+          avec d'autres.
+        empty: Vous n'avez encore partagé aucune autorisation d'accès.
+        shared_with_you: Partagé avec vous
+        title: Autorisations d'accès
+        you_are_sharing: Vous partagez
+      show:
+        accepted: Acceptée
+        allowed: Autorisé
+        back: Retour aux autorisations d'accès
+        denied: Refusé
+        expires: Expire
+        grantor: Émetteur
+        manage_grant_heading: Gérer l'autorisation
+        no_expiry: Sans expiration
+        pending: En attente
+        recipient: Destinataire
+        revoke: Révoquer l'accès
+        revoke_confirm: Révoquer cette autorisation d'accès ?
+        scope_labels:
+          private_events: Événements privés
+          private_messages: Messages privés
+          private_pages: Pages privées
+          private_posts: Publications privées
+          profile_read: Lire le profil
+        scopes_heading: Portées
+        title: Autorisation d'accès
+    person_block:
+      cannot_block_manager: ne peut pas être un gestionnaire de plateforme
+      cannot_block_self: ne peut pas vous bloquer vous-même
+    person_blocks:
+      index:
+        actions: Actions
+        block_person: Bloquer une personne
+        blocked_at: Bloqué
+        blocked_count:
+          one: 1 personne bloquée
+          other: "%{count} personnes bloquées"
+          zero: Aucune personne bloquée
+        blocked_on: Bloqué le %{date}
+        no_blocked_people: Vous n'avez encore bloqué personne.
+        no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
+          plus interagir avec vous.
+        search: Rechercher
+        search_placeholder: Rechercher des personnes bloquées...
+        title: Personnes Bloquées
+        unblock: Débloquer
+        unblock_confirmation: Êtes-vous sûr de vouloir débloquer cette personne?
+      new:
+        back_to_list: Retour aux Personnes Bloquées
+        blocked_person_help: Sélectionnez une personne que vous souhaitez bloquer
+          dans les résultats de recherche.
+        blocked_person_label: Personne à Bloquer
+        blocked_person_placeholder: Rechercher une personne à bloquer...
+        blocked_person_prompt: Sélectionnez une personne à bloquer
+        cancel: Annuler
+        submit: Bloquer la personne
+        title: Bloquer une personne
+      notices:
+        already_blocked: Cette personne est déjà bloquée.
+        blocked: La personne a été bloquée avec succès.
+        not_found: Personne introuvable.
+        platform_manager_error: Les administrateurs de plateforme ne peuvent pas être
+          bloqués.
+        self_block_error: Vous ne pouvez pas vous bloquer vous-même.
+        unblocked: La personne a été débloquée avec succès.
+    person_linked_seeds:
+      index:
+        description: Contenu privé partagé avec vous via des autorisations d'accès
+          fédérées.
+        empty: Aucune graine liée n'a encore été partagée avec vous.
+        title: Graines liées
+      show:
+        back: Retour aux graines liées
+        empty: Aucun contenu disponible pour cette graine liée.
+        title: Graine liée
+    person_links:
+      errors:
+        duplicate_link: a déjà un lien pour cette connexion de plateforme et cette
+          personne cible
+      index:
+        description: Gérez vos liens de personnes entre plateformes et vos connexions
+          de fédération.
+        empty: Vous n'avez pas encore de liens de personnes.
+        title: Liens de personnes
+      show:
+        access_grants_heading: Autorisations d'accès
+        back: Retour aux liens de personnes
+        pending: En attente
+        platform_connection: Connexion de plateforme
+        revoke: Révoquer le lien
+        revoke_confirm: Révoquer ce lien de personne et ses autorisations d'accès
+          ?
+        source_person: Personne source
+        target_person: Personne cible
+        title: Lien de personne
+        verified: Vérifié
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Une nouvelle intégration de compte %{provider} a été connectée
+          à votre compte le %{created_at}. Vous pouvez consulter les détails sur %{integration_url}.
+        connected_at: Connecté le
+        greeting: Bonjour %{name} !
+        integration_details: Détails de l'intégration
+        not_available: Non disponible
+        profile_url: URL du profil
+        provider: Fournisseur
+        review_button: Consulter l'intégration
+        review_link_html: 'Consulter cette intégration : %{url}'
+        security_notice_html: Si vous n'avez pas autorisé cette intégration, veuillez
+          la déconnecter immédiatement et contacter le support. Quelqu'un pourrait
+          avoir un accès non autorisé à votre compte.
+        security_notice_title: Avis de sécurité
+        subject: Nouvelle intégration %{provider} connectée à votre compte
+        thanks: Merci
+    person_platform_integrations:
+      create:
+        already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
+          d'abord le déconnecter si vous souhaitez connecter un compte différent.
+        email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
+          %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
+          vous connecter avec le bon compte.'
+        failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
+        success: Compte %{provider} connecté avec succès.
+      destroy:
+        cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
+          car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
+          de mot de passe. Veuillez définir un mot de passe d'abord dans les paramètres
+          de votre compte, ou connectez un autre fournisseur OAuth avant de déconnecter
+          celui-ci.
+        error: Échec de la déconnexion de l'intégration.
+        success: Intégration déconnectée avec succès.
+      index:
+        all_providers_connected: Vous avez connecté tous les fournisseurs OAuth disponibles.
+        confirm_disconnect: Êtes-vous sûr de vouloir déconnecter votre compte %{provider}
+          ?
+        connect_github: Connecter GitHub
+        connect_new: Connecter un Nouveau Compte
+        connect_provider: Connecter %{provider}
+        connected_at: Connecté il y a %{time}
+        disconnect: Déconnecter
+        no_integrations: Vous n'avez encore connecté aucun compte externe.
+        privacy_note: Nous n'accédons qu'aux informations minimales nécessaires. Vous
+          pouvez vous déconnecter à tout moment.
+        title: Comptes Connectés
+    phone_numbers:
+      add: Ajouter un numéro de téléphone
+      label: Libellé
+      labels:
+        fax: Fax
+        home: Maison
+        mobile: Mobile
+        other: Autre
+        work: Travail
+      number: Numéro
+      title: Numéros de téléphone
+    platform_connections:
+      actions:
+        approve: Approuver
+        approve_aria: 'Approuver la connexion : %{source} ↔ %{target}'
+        approve_confirm: Approuver cette connexion ?
+        edit: Modifier
+        edit_aria: 'Modifier la connexion : %{source} ↔ %{target}'
+        suspend: Suspendre
+        suspend_aria: 'Suspendre la connexion : %{source} ↔ %{target}'
+        suspend_confirm: Suspendre cette connexion ?
+        view: Voir
+        view_aria: 'Voir la connexion : %{source} ↔ %{target}'
+      edit:
+        title: Modifier la connexion de plateforme
+      flash:
+        approved: Connexion approuvée et activée.
+        cannot_approve: Impossible d'approuver une connexion avec le statut '%{status}'.
+        cannot_suspend: Impossible de suspendre une connexion avec le statut '%{status}'.
+        secret_rotated: Secret OAuth du client renouvelé. Mettez à jour la configuration
+          de la plateforme distante.
+        suspended: Connexion suspendue.
+      form:
+        back: Retour
+        connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre.
+          Pair : partenariat égal entre plateformes indépendantes.'
+        content_sharing_policy_hint: Contrôle comment le contenu public est synchronisé.
+          « Miroir réseau » synchronise tout le contenu public ; « Sélectif » ne synchronise
+          que les types explicitement partagés.
+        create: Créer la connexion
+        federation_auth_policy_hint: api_read permet à la plateforme distante de récupérer
+          le contenu public. api_write lui permet en plus de publier ici. login_only
+          restreint à l'authentification uniquement.
+        federation_scopes_hint: Les portées déterminent quelles données la plateforme
+          distante peut demander dans les jetons OAuth. N'activez que les portées
+          correspondant à vos termes de partage convenus.
+        federation_scopes_legend: Portées de fédération
+        save: Enregistrer les modifications
+        shared_content_types_hint: Sélectionnez les types de contenu à inclure lors
+          de la synchronisation avec cette connexion.
+        shared_content_types_legend: Types de contenu partagés
+        source_platform: Plateforme source
+        target_platform: Plateforme cible
+      index:
+        columns:
+          auth_policy: Politique d'authentification
+          content_policy: Politique de contenu
+          kind: Type
+          source: Source
+          status: Statut
+          target: Cible
+        new_connection: Nouvelle connexion
+        title: Connexions de plateforme
+      new:
+        back: Retour
+        register_platform_hint: Vous devez d'abord enregistrer une plateforme distante ?
+        register_platform_link: Enregistrer une plateforme externe →
+        title: Nouvelle connexion de plateforme
+      show:
+        api_read: Lecture API
+        api_write: Écriture API
+        approve: Approuver
+        approve_confirm: Approuver cette connexion et l'activer ?
+        back: Retour
+        connection_kind: Type de connexion
+        content_sharing: Partage de contenu
+        content_sharing_policy: Politique de partage de contenu
+        disabled: Désactivé
+        edit: Modifier
+        enabled: Activé
+        federation_auth: Authentification de fédération
+        federation_auth_policy: Politique d'authentification de fédération
+        federation_scopes: Portées de fédération
+        last_sync_completed: Dernière synchronisation terminée
+        last_sync_error: Dernière erreur de synchronisation
+        last_sync_item_count: Éléments lors de la dernière synchronisation
+        last_sync_started: Dernière synchronisation démarrée
+        login: Connexion
+        mirroring: Miroir
+        never: Jamais
+        none: Aucun
+        oauth:
+          client_id: Identifiant client
+          client_secret: Secret client
+          description: Transmettez ces identifiants à l'opérateur de %{platform} afin
+            qu'il puisse configurer une connexion correspondante sur sa plateforme
+            et obtenir des jetons depuis l'endpoint OAuth de cette plateforme.
+          not_set: Non configuré
+          remote_token_endpoint: Endpoint de jeton distant
+          remote_token_endpoint_hint: Configurez ceci sur la plateforme distante en
+            pointant vers leur endpoint OAuth.
+          rotate_secret: Renouveler le secret
+          rotate_secret_confirm: Renouveler le secret OAuth du client ? La plateforme
+            distante devra être reconfigurée.
+          title: Identifiants OAuth de fédération
+          token_endpoint: Endpoint de jeton (cette plateforme)
+        publish_back: Republier
+        shared_content_types: Types de contenu partagés
+        status: Statut
+        suspend: Suspendre
+        suspend_confirm: Suspendre cette connexion ? La fédération et la synchronisation
+          seront mises en pause.
+        sync_cursor: Curseur de synchronisation
+        sync_status: État de synchronisation
+    platform_invitation:
+      acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
+        acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
+      community_role_html: Vous avez reçu le rôle de <strong>%{role}</strong> dans
+        la communauté <strong>%{platform}</strong>.
+      greeting-placeholder: Ravi de vous avoir rencontré récemment. Voici l'invitation
+        que je vous avais promis d'envoyer !
+      hints:
+        type: Sélectionnez le type d'invitation.
+      platform_role_html: Vous avez reçu le rôle de <strong>%{role}</strong> dans
+        la plateforme <strong>%{platform}</strong>.
+      title: Vous êtes invité à rejoindre %{platform}
+    platform_invitation_mailer:
+      invite:
+        community_role: 'Rôle de communauté: %{role}'
+        greeting: Bonjour %{recipient_name},
+        ignore: Si vous ne vous attendiez pas à cette invitation, veuillez ignorer
+          cet e-mail.
+        invitation_code: Code d'Invitation %{invitation_code}
+        link_text: Accepter l'invitation
+        message: 'Vous avez été invité à rejoindre %{platform} sur notre plateforme.
+          Pour accepter l''invitation, veuillez cliquer sur le lien ci-dessous :'
+        platform_role: 'Rôle de plateforme: %{role}'
+        role_assignment: 'Les rôles suivants vous seront attribués:'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{platform}
+        subject: Vous êtes invité à rejoindre %{platform} !
+        valid_from: Cette invitation est valable à partir du %{valid_from}.
+        valid_period: Cette invitation est valable du %{valid_from} au %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Créer une nouvelle invitation
+      filter_by_status: Filtrer par statut
+      invitations: Invitations
+      new_invitation: Nouvelle invitation
+      search_by_email: Rechercher par email
+      status:
+        accepted: Accepté
+        expired: Expiré
+        pending: En attente
+    platforms:
+      form:
+        host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
+          Utilisée pour l'identifier dans la fédération et générer les URLs du point
+          de terminaison OAuth. Doit être HTTPS en production.
+      new:
+        back: Retour
+        host_url_hint: L'URL racine de l'instance de plateforme externe.
+        host_url_label: URL
+        host_url_placeholder: https://example.com
+        identifier_hint: Un identifiant unique (lettres, chiffres, tirets).
+        identifier_placeholder: ex. plateforme-pair
+        intro: Enregistrez une instance distante de Community Engine (ou compatible)
+          pour la sélectionner lors de la création d'une Connexion de plateforme.
+        submit: Enregistrer la plateforme externe
+        title: Enregistrer la plateforme externe
+      show:
+        new_invitation: Nouvelle invitation
+    posts:
+      authors: Auteurs
+      back_to_posts: Retour aux publications
+      create_post: Créer la première publication
+      created_on: Créé %{date}
+      created_on_short: Créé
+      delete: Supprimer l'enregistrement
+      edit: Modifier la publication
+      edit_post: Modifier la publication
+      index:
+        new_btn_text: Nouvelle publication
+      labels:
+        privacy: Confidentialité
+      new_post: Nouvelle publication
+      none_body: Il n'y a pas de publications à afficher pour le moment.
+      none_title: Pas encore de publications
+      published_on: Publié %{date}
+      save_post: Enregistrer la publication
+      updated_on_short: Mis à jour
+      view_post: Voir la publication
+    primary: Principal
+    rbac:
+      nav:
+        resource_permissions: Autorisations de ressources
+        roles: Rôles
+    registrations:
+      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
+      invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
+        votre courriel d'invitation.
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
+        plateforme
+    remove: Supprimer
+    reports:
+      actions:
+        report: Signaler
+      attributes:
+        category: Catégorie
+        harm_level: Niveau de préjudice
+        private_details: Détails privés pour l'équipe de sécurité
+        reason: Résumé court
+        requested_outcome: Résultat demandé
+      errors:
+        already_reported_by_you: a déjà été signalé par vous
+      index:
+        empty: Vous n'avez pas encore envoyé de signalement de sécurité.
+        new: Nouveau signalement
+        title: Mes signalements de sécurité
+      new:
+        category_help: Choisissez l'option qui correspond le mieux au préjudice ou
+          à la préoccupation que vous signalez.
+        consent_to_contact: Vous pouvez me contacter à propos de ce signalement
+        consent_to_restorative_process: Vous pouvez envisager des options restauratives
+          si cela est approprié
+        error_summary: Veuillez corriger les problèmes suivants.
+        harm_level_help: Indiquez à quel point la situation vous semble urgente ou
+          grave afin que l'équipe de sécurité puisse la traiter correctement.
+        intro: Utilisez ce formulaire pour demander un soutien en matière de sécurité,
+          de limites, de responsabilisation ou de protection urgente.
+        preferences_help: Indiquez si nous pouvons vous contacter, si vous souhaitez
+          que des options restauratives soient envisagées et si un risque de représailles
+          fait partie de ce signalement.
+        preferences_title: Préférences de sécurité
+        private_details_help: Ajoutez tout contexte, schéma, date ou élément de preuve
+          qui doit rester au sein de l'équipe de sécurité.
+        reason_help: Décrivez brièvement ce qui s'est passé. Commencez par le point
+          principal.
+        requested_outcome_help: Choisissez le type de soutien que vous souhaitez de
+          la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si
+          vous hésitez.
+        retaliation_risk: Je crains des représailles ou une escalade
+        submit: Envoyer le signalement
+        title: Signaler un problème de sécurité
+        urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire
+          sert au suivi communautaire et à la plateforme, pas à l'intervention d'urgence.
+        urgent_title: 'Si vous êtes en danger immédiat :'
+      notices:
+        created: Le signalement a bien été envoyé.
+      show:
+        back: Retour aux signalements
+        pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter
+          selon vos préférences de consentement.
+        status: Statut actuel
+        summary: Résumé du dossier
+        title: Signalement de sécurité
+    resource_permissions:
+      actions:
+        create: Créer
+        delete: Supprimer
+        download: Télécharger
+        list: Liste
+        manage: Gérer
+        read: Lire
+        update: Mettre à jour
+        view: Voir
+      index:
+        new_resource_permission: Nouvelle permission de ressource
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
+      roles:
+        count: "%{count} au total"
+        label: Rôles
+        more: et %{count} de plus
+        none: Aucun rôle attribué
+    resources:
+      membership_request: Demande d'adhésion
+    roles:
+      index:
+        new_role: Nouveau rôle
+      permissions:
+        count: "%{count} au total"
+        label: Autorisations
+        more: et %{count} de plus
+        none: Aucune autorisation attribuée
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
+    safety:
+      action_statuses:
+        active: Active
+        cancelled: Annulée
+        completed: Terminée
+      action_types:
+        contact_restriction: Restriction de contact
+        content_hidden: Contenu masqué
+        content_removed: Contenu retiré
+        event_restriction: Restriction d'événement
+        messaging_restriction: Restriction de messagerie
+        restorative_referral: Orientation restaurative
+        temporary_suspension: Suspension temporaire
+        watch_flag: Marqueur de surveillance
+      agreement_statuses:
+        active: Active
+        breached: Non respecté
+        completed: Terminé
+        proposed: Proposé
+        withdrawn: Retiré
+      case_lanes:
+        administrative: Administrative
+        immediate_safety: Sécurité immédiate
+        restorative: Restaurative
+      case_statuses:
+        closed_no_action: Clôturé sans action
+        needs_reporter_followup: Suivi nécessaire avec la personne déclarante
+        protective_action_in_effect: Mesure de protection en cours
+        resolved: Résolu
+        restorative_in_progress: Processus restauratif en cours
+        submitted: Soumis
+        triaged: Trié
+      closure_types:
+        no_action: Aucune action
+        protective_action: Mesure de protection
+        restorative_agreement: Accord restauratif
+        unsupported: Non pris en charge
+        voluntary_resolution: Résolution volontaire
+      harm_levels:
+        high: Élevé
+        low: Faible
+        medium: Moyen
+        urgent: Urgent
+      note_visibilities:
+        internal_only: Interne uniquement
+        participant_visible: Visible aux participantes et participants
+      report_categories:
+        boundary_violation: Violation de limites
+        discrimination: Discrimination
+        fraud: Fraude
+        harassment: Harcèlement
+        hate_speech: Discours haineux
+        impersonation: Usurpation d'identité
+        misinformation: Désinformation
+        other: Autre
+        privacy_violation: Violation de la vie privée
+        spam_or_scam: Pourriel ou arnaque
+      reporter_visible_statuses:
+        closed_no_action: Clôturé sans action
+        needs_reporter_followup: Plus d'informations de votre part sont nécessaires
+        protective_action_in_effect: Mesure de protection en cours
+        resolved: Résolu
+        restorative_in_progress: Processus restauratif en cours
+        submitted: Soumis
+        triaged: En cours d'examen
+        under_review: En cours d'examen
+      requested_outcomes:
+        boundary_support: Soutien pour établir des limites
+        community_accountability: Responsabilisation communautaire
+        content_review: Examen du contenu
+        mediated_conversation: Conversation accompagnée
+        other: Autre
+        temporary_protection: Protection temporaire
+      shared:
+        any: Tout
+    safety_cases:
+      attributes:
+        accountability_check: Vérification de responsabilité et de gestion
+        action_details: Détails de la mesure
+        action_reason: Raison de la mesure
+        action_status: Statut de la mesure
+        action_type: Type de mesure
+        agreement_summary: Résumé de l'accord
+        care_check: Vérification de soin et de résilience
+        closure_summary: Résumé de clôture
+        closure_type: Type de clôture
+        commitments: Engagements
+        expires_at: Expire le
+        harmed_party_consented: La personne affectée a consenti
+        lane: Volet
+        love_inclusivity_check: Vérification d'amour et d'inclusivité
+        note_body: Note
+        note_visibility: Visibilité de la note
+        reporter: Personne déclarante
+        responsible_party_consented: La personne mise en cause a consenti
+        review_at: Révision le
+        solidarity_check: Vérification de coopération et de solidarité
+        status: Statut du dossier
+      index:
+        filter: Filtrer
+        title: Dossiers de sécurité
+      notices:
+        updated: Le dossier de sécurité a été mis à jour.
+      show:
+        actions: Mesures de protection et de responsabilisation
+        add_action: Enregistrer la mesure
+        add_agreement: Créer un accord
+        add_note: Ajouter une note
+        agreements: Accords restauratifs
+        back: Retour à la file
+        intake: Réception du signalement
+        manage: Gestion du dossier
+        notes: Notes internes
+        title: Dossier de sécurité
+        update_agreement: Mettre à jour l'accord
+        update_case: Mettre à jour le dossier
+        values_review: Examen des valeurs
+        values_review_placeholder: Expliquez l'examen des valeurs pour cette mesure
+    safety_notes:
+      notices:
+        created: Une note a été ajoutée au dossier.
+    search:
+      all: All
+      page_title: Search Results for "%{query}"
+    select: Sélectionner
+    settings:
+      index:
+        account:
+          coming_soon: Les paramètres de compte arrivent bientôt.
+          description: Mettez à jour vos identifiants de compte et paramètres de sécurité.
+          title: Paramètres de Compte
+        blocked_people:
+          description: Gérez les utilisateurs que vous avez bloqués pour qu'ils n'interagissent
+            pas avec vous.
+          title: Personnes Bloquées
+        developer:
+          apps:
+            client_id_label: ID Client
+            description: Applications que vous avez enregistrées pour utiliser l'API
+              Better Together.
+            edit_aria: Modifier %{name}
+            new_aria: Enregistrer une nouvelle application OAuth
+            new_btn: Nouvelle Application
+            none: Vous n'avez pas encore enregistré d'applications OAuth.
+            title: Vos Applications OAuth
+            view_aria: Voir %{name}
+          tokens:
+            col_app: Application
+            col_created: Émis
+            col_expires: Expire
+            col_scopes: Portées
+            description: Tokens d'accès API actifs émis sur votre compte.
+            no_app: Token personnel
+            no_expiry: Jamais
+            none: Aucun token d'accès actif.
+            table_aria: Tokens d'accès actifs
+            title: Tokens d'Accès API
+        device_permissions:
+          description: Gérez les autorisations du navigateur pour la localisation,
+            les notifications, la caméra et le microphone.
+          title: Autorisations de l'Appareil
+        integrations:
+          description: Connectez et gérez vos comptes de plateformes externes.
+          title: Comptes Connectés
+        navigation_aria_label: Navigation des paramètres
+        personal:
+          coming_soon: Les paramètres personnels arrivent bientôt.
+          description: Gérez vos informations personnelles et préférences.
+          title: Paramètres Personnels
+        platform:
+          coming_soon: Les paramètres de plateforme arrivent bientôt.
+          description: Configurez les paramètres et préférences de la plateforme.
+          title: Paramètres de Plateforme
+        preferences:
+          description: Gérez votre langue, fuseau horaire et préférences de notification.
+          save: Enregistrer les modifications
+          saved: Préférence enregistrée avec succès.
+          title: Préférences
+        privacy:
+          coming_soon: Les paramètres de confidentialité arrivent bientôt.
+          description: Contrôlez vos préférences de confidentialité et partage de
+            données.
+          title: Paramètres de Confidentialité
+        tabs:
+          account: Compte
+          blocked_people: Personnes Bloquées
+          developer: Développeur
+          device_permissions: Autorisations de l'Appareil
+          integrations: Intégrations
+          personal: Personnel
+          platform: Plateforme
+          preferences: Préférences
+          privacy: Confidentialité
+        title: Paramètres
+    setup_wizard_steps:
+      create_admin:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+      create_host_platform:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+    share_buttons:
+      aria_label: Partager sur %{platform}
+      bluesky: Partager sur Bluesky
+      default_title: Découvrez ceci !
+      facebook: Partager sur Facebook
+      linkedin: Partager sur LinkedIn
+      pinterest: Épingler
+      reddit: Partager sur Reddit
+      share: Partager
+      whatsapp: Partager sur WhatsApp
+    shared:
+      privacy_level: 'Confidentialité: %{privacy}'
+      privacy_tooltip: Ce contenu est %{privacy}
+      translated_field_hints:
+        description: Description courte (au moins une langue doit être remplie)
+        description_html: Description enrichie (mise en forme possible); au moins
+          une langue doit être remplie)
+        name: Entrez un nom (au moins une langue doit être remplie)
+        slug: Identifiant URL-friendly (unique entre les langues)
+      unpublished: Non publié
+    social_media_accounts:
+      add: Ajouter un compte de réseaux sociaux
+      handle: Pseudonyme
+      platform: Plateforme
+      title: Comptes de réseaux sociaux
+      url: URL
+    translations:
+      errors:
+        content_blank: Le contenu ne peut pas être vide
+        content_too_long: Le contenu est trop long pour être traduit. Veuillez limiter
+          votre texte à environ 8 000 mots (~50 000 caractères) et réessayer.
+        invalid_source_locale: Langue source non valide
+        invalid_target_locale: Langue cible non valide
+        translation_failed: 'La traduction a échoué : %{message}'
+        translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+    validators:
+      safe_federation_url:
+        credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
+        insecure_scheme: doit utiliser http ou https
+        invalid_url: n'est pas une URL valide
+        private_ip: ne doit pas pointer vers une adresse IP privée ou réservée
+    view_switcher:
+      button_label: Vue %{view}
+      change_view: Changer le type de vue
+      flash:
+        updated: Type de vue mis à jour.
+      label: Options d’affichage
+      switch_to: Passer en vue %{view}
+      types:
+        calendar: Calendrier
+        card: Cartes
+        list: Liste
+        table: Tableau
+    storage:
+      service_types:
+        amazon: Amazon S3
+        local: Local disk
+        s3_compatible: S3-compatible (Garage / self-hosted)
+    storage_configurations:
+      access_key_hint: Leave blank to keep the existing value when editing.
+      access_key_placeholder: AKIAIOSFODNN7EXAMPLE
+      activated: "'%{name}' is now the active storage configuration."
+      cancel: Cancel
+      cannot_destroy_active: Cannot delete the currently active storage configuration. Activate another first.
+      created: Storage configuration was successfully created.
+      destroyed: Storage configuration was successfully deleted.
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: 'e.g., Primary S3, Local Dev, Garage bts-5'
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
+      index:
+        activate_btn: Set active
+        activate_confirm: Set this as the active storage configuration?
+        active_badge: Active
+        active_config_label: 'Active Configuration:'
+        back_to_platform: Back to Platform
+        bucket_label: Bucket
+        delete_btn: Delete
+        delete_confirm: Delete this storage configuration?
+        edit_btn: Edit
+        effective_storage_heading: Currently Effective Storage
+        endpoint_label: Endpoint
+        env_badge: ENV
+        env_config_label: 'Source:'
+        env_fallback: Environment variables (no platform override set)
+        header_actions: Actions
+        header_bucket: Bucket / Root
+        header_endpoint: Endpoint
+        header_name: Name
+        header_status: Status
+        header_type: Type
+        in_use: In use
+        new_btn: Add Storage
+        no_configs: No storage configurations defined. Environment variables are used by default.
+        not_active: Not active
+        platform_override_badge: Platform Override
+        service_type_label: Service type
+        subtitle: "Storage backends for %{platform_name}"
+        table_aria: Storage configurations
+        title: Storage Configurations
+      new:
+        subtitle: "Add a storage backend for %{platform_name}"
+        title: New Storage Configuration
+      edit:
+        subtitle: "Storage backend for %{platform_name}"
+        title: "Edit %{name}"
+    webhook_endpoints:
+      actions_aria: Actions du webhook
+      active_help: Activer ou désactiver la livraison de webhooks pour ce point de
+        terminaison.
+      all_events: Tous les événements
+      back_to_list: Retour aux webhooks
+      delete_aria: Supprimer le point de terminaison webhook
+      deliveries_aria: Historique des livraisons de webhooks
+      delivery_attempts: Tentatives
+      delivery_event: Événement
+      delivery_response: Réponse
+      delivery_status: Statut
+      delivery_time: Heure
+      description_placeholder: Description facultative de la finalité de ce webhook.
+      details: Détails du point de terminaison
+      edit_aria: Modifier le point de terminaison webhook
+      events_help: Liste de noms d'événements séparés par des virgules. Laissez vide
+        pour recevoir tous les événements. Format ressource.action (ex., community.created,
+        person.updated).
+      field_created: Créé
+      field_description: Description
+      field_events: Événements
+      field_oauth_app: Application OAuth
+      field_secret: Secret de signature
+      field_status: Statut
+      field_url: URL
+      index:
+        header_actions: Actions
+        header_deliveries: Livraisons
+        header_events: Événements
+        header_name: Nom
+        header_status: Statut
+        header_url: URL
+        new_btn_aria: Créer un nouveau point de terminaison webhook
+        new_btn_text: Nouveau webhook
+        no_webhooks: Aucun point de terminaison webhook n'a été configuré.
+        table_aria: Liste des points de terminaison de webhooks
+        title: Points de terminaison de webhooks
+      name_help: Un nom convivial pour identifier ce point de terminaison webhook.
+      name_placeholder: ex., Mon webhook d'intégration
+      no_deliveries: Pas encore de livraisons. Utilisez le bouton « Envoyer un test
+        » pour vérifier votre point de terminaison.
+      no_oauth_app: "— Aucune —"
+      oauth_help: Liez optionnellement ce webhook à une application OAuth.
+      recent_deliveries: Livraisons récentes
+      save: Enregistrer le webhook
+      secret_aria: Valeur du secret de signature
+      secret_note: Utilisez ce secret pour vérifier les signatures du webhook. Il
+        a été généré lors de la création du point de terminaison et ne peut pas être
+        modifié.
+      send_test: Envoyer un test
+      status_active: Actif
+      status_inactive: Inactif
+      test:
+        test_queued: La livraison de test du webhook a été mise en file d'attente.
+      test_confirm: Envoyer un webhook de test ?
+      title: Points de terminaison de webhooks
+      toggle_secret: Basculer la visibilité du secret
+      url_help: L'URL HTTPS où les charges utiles du webhook seront livrées.
+      view: Voir le webhook
+    website_links:
+      add: Ajouter un lien de site web
+      labels:
+        about_us: À propos de nous
+        blog: Blog
+        careers: Carrières
+        community_page: Page de la communauté
+        company_website: Site web de l'entreprise
+        contact_us: Contactez-nous
+        documentation: Documentation
+        donations: Dons
+        events: Événements
+        faq: FAQ
+        forum: Forum
+        newsletter: Lettre d'information
+        other: Autre
+        personal_website: Site web personnel
+        portfolio: Portfolio
+        privacy_policy: Politique de confidentialité
+        product_page: Page du produit
+        resume: CV
+        services: Services
+        support: Support
+        terms_of_service: Conditions d'utilisation
+      title: Liens de site web
+    wizard_step_definitions:
+      host_setup:
+        admin_creation:
+          buttons:
+            submit: Terminer la configuration
+          errors:
+            header: "%{count} erreur a empêché la création de ce compte :"
+            header_plural: "%{count} erreurs ont empêché la création de ce compte
+              :"
+          fields:
+            description:
+              help: Présentez-vous à la communauté. Pourquoi lancez-vous cette plateforme
+                ? Quelle est votre vision ?
+              label: Biographie courte
+            email:
+              help: Ce sera votre identifiant principal et la façon dont la plateforme
+                vous contactera.
+              label: Adresse e-mail
+            identifier:
+              help: Votre identifiant unique (sans espaces). Cela apparaîtra dans
+                l'URL de votre profil et les mentions.
+              label: Nom d'utilisateur
+              profile_url: URL de votre profil
+            name:
+              help: Utilisez votre vrai nom ou le nom que vous souhaitez que votre
+                communauté vous reconnaisse.
+              label: Nom complet
+            password:
+              help: Votre mot de passe doit contenir au moins %{min_length} caractères.
+                Utilisez un mélange de lettres majuscules et minuscules, de chiffres
+                et de symboles pour plus de sécurité.
+              label: Mot de passe
+            password_confirmation:
+              label: Confirmer le mot de passe
+          hero:
+            subtitle: Il s'agit du premier compte sur votre plateforme et vous donne
+              un contrôle total pour gérer les paramètres, le contenu et les membres.
+              Il est important de choisir des identifiants sécurisés et de créer un
+              profil clair et accueillant.
+            title: Créez votre compte de gestionnaire de plateforme
+          intro: Configurons votre compte de Gestionnaire de Plateforme. Ce sera votre
+            connexion personnelle et votre profil public en tant que premier gestionnaire
+            de la communauté.
+          profile_section:
+            help: Ces détails seront visibles par les autres membres de la plateforme.
+              Vous pourrez les modifier plus tard.
+            title: Votre profil public
+          progress:
+            step: Étape 2 sur 2
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+        platform_details:
+          buttons:
+            next: Étape suivante
+          errors:
+            header: "%{count} erreur a empêché l'enregistrement de cette plateforme
+              :"
+            header_plural: "%{count} erreurs ont empêché l'enregistrement de cette
+              plateforme :"
+          fields:
+            description:
+              help: Cela aide les visiteurs à comprendre de quoi il s'agit dans votre
+                communauté.
+              label: Comment décririez-vous votre espace communautaire ?
+              placeholder: Un endroit où les voisins et les amis se soutiennent mutuellement.
+            name:
+              help: Ce nom apparaîtra en haut de votre plateforme et accueillera tous
+                ceux qui arrivent.
+              label: Comment devrions-nous appeler votre plateforme ?
+              placeholder: 'Exemple : La salle communautaire'
+            privacy:
+              help: Choisissez si votre espace est ouvert au public ou sur invitation
+                uniquement.
+              label: Qui peut visiter votre espace ?
+            time_zone:
+              help: Cela aide à maintenir les événements et les notifications synchronisés
+                pour tout le monde.
+              label: Quel fuseau horaire devrions-nous utiliser ?
+            url:
+              help: Ce sera l'adresse web de votre plateforme — sa porte d'entrée
+                sur internet.
+              label: Où peut-on vous trouver en ligne ?
+              placeholder: https://votreplateforme.com
+          hero:
+            subtitle: Créons un lieu accueillant pour que votre communauté se connecte,
+              partage et prospère.
+            title: Bienvenue dans votre espace communautaire
+          intro: Une communauté solide commence par une base solide. Commençons par
+            remplir quelques détails sur votre plateforme. Avant que vous ne le sachiez,
+            vous aurez une base où tout le monde pourra se rassembler et collaborer.
+          progress:
+            step: Étape 1 sur 2
+  community:
+    create_failed: Échec de la création
+    created: Créé
+    update_failed: Échec de la mise à jour
+    updated: Mis à jour
+  confirmations:
+    destroy: Êtes-vous sûr de vouloir supprimer cette %{resource} ?
+  content: Contenu
+  conversation: :activerecord.models.conversation
+  conversation_participants: Participants à la conversation
+  conversations:
+    errors:
+      no_permitted_participants: Vous ne pouvez ajouter que des gestionnaires de plateforme
+        ou des membres ayant choisi de recevoir des messages.
   date:
     abbr_day_names:
     - dim
@@ -20,8 +3196,8 @@ fr:
     - sam
     abbr_month_names:
     -
-    - jan.
-    - fév.
+    - janv.
+    - févr.
     - mars
     - avr.
     - mai
@@ -89,19 +3265,19 @@ fr:
         one: plus d'un an
         other: plus de %{count} ans
       x_days:
-        one: "%{count} jour"
+        one: un jour
         other: "%{count} jours"
       x_minutes:
-        one: "%{count} minute"
+        one: une minute
         other: "%{count} minutes"
       x_months:
-        one: "%{count} mois"
+        one: un mois
         other: "%{count} mois"
       x_seconds:
-        one: "%{count} seconde"
+        one: une seconde
         other: "%{count} secondes"
       x_years:
-        one: "%{count} an"
+        one: un an
         other: "%{count} ans"
     prompts:
       day: Jour
@@ -110,82 +3286,523 @@ fr:
       month: Mois
       second: Seconde
       year: Année
+  devise:
+    confirmations:
+      confirmed: Votre compte a bien été confirmé.
+      new:
+        email:
+          label: Courriel
+        resend_confirmation_instructions: Renvoyer les instructions de confirmation
+      send_instructions: Vous allez recevoir sous quelques minutes un email comportant
+        des instructions pour confirmer votre compte.
+      send_paranoid_instructions: Si votre email existe sur notre base de données,
+        vous recevrez sous quelques minutes un message avec des instructions pour
+        confirmer votre compte.
+    failure:
+      already_authenticated: Vous êtes déjà connecté(e).
+      inactive: Votre compte n’est pas encore activé.
+      invalid: "%{authentication_keys} ou mot de passe incorrect."
+      last_attempt: Il vous reste une chance avant que votre compte soit bloqué.
+      locked: Votre compte est verrouillé.
+      not_found_in_database: "%{authentication_keys} ou mot de passe incorrect."
+      timeout: Votre session est expirée, veuillez vous reconnecter pour continuer.
+      unauthenticated: Vous devez vous connecter ou vous enregistrer pour continuer.
+      unconfirmed: Vous devez confirmer votre compte par email.
+    mailer:
+      confirmation_instructions:
+        action: Confirmer mon email
+        greeting: Bienvenue %{recipient} !
+        instruction: 'Vous pouvez confirmer votre email grâce au lien ci-dessous :'
+        subject: Instructions de confirmation
+      email_changed:
+        greeting: Bonjour %{recipient} !
+        message: Nous vous contactons pour vous informer que votre email a été changé
+          en %{email}.
+        message_unconfirmed: Nous vous contactons pour vous informer que votre email
+          est en train d'être changé par %{email}.
+        subject: Email modifié
+      password_change:
+        greeting: Bonjour %{recipient} !
+        message: Nous vous contactons pour vous notifier que votre mot de passe a
+          été modifié.
+        subject: Mot de passe modifié
+      reset_password_instructions:
+        action: Changer mon mot de passe
+        greeting: Bonjour %{recipient} !
+        instruction: 'Quelqu''un a demandé un lien pour changer votre mot de passe,
+          le voici :'
+        instruction_2: Si vous n'avez pas émis cette demande, merci d'ignorer cet
+          email.
+        instruction_3: Votre mot de passe ne changera pas tant que vous n'aurez pas
+          cliqué sur ce lien et renseigné un nouveau mot de passe.
+        subject: Instructions pour changer le mot de passe
+      unlock_instructions:
+        action: Débloquer mon compte
+        greeting: Bonjour %{recipient} !
+        instruction: 'Suivez ce lien pour débloquer votre compte :'
+        message: Votre compte a été bloqué suite à un nombre d'essais de connexions
+          manquées trop important.
+        subject: Instructions pour déverrouiller le compte
+    omniauth_callbacks:
+      failure: 'Nous ne pouvons pas vous authentifier depuis %{kind} pour la raison
+        suivante : ''%{reason}''.'
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
+        plateforme. Veuillez saisir votre code d'invitation ou contacter un organisateur
+        de la plateforme pour obtenir l'accès.
+      success: Autorisé par votre compte %{kind}.
+    passwords:
+      edit:
+        change_my_password: Changer mon mot de passe
+        change_your_password: Changer votre mot de passe
+        confirm_new_password: Confirmez votre nouveau mot de passe
+        new_password: Nouveau mot de passe
+      new:
+        email:
+          help: Entrez votre courriel pour recevoir les instructions de réinitialisation.
+          label: Courriel
+        forgot_your_password: Mot de passe oublié ?
+        send_me_reset_password_instructions: Envoyez-moi les instructions de réinitialisation
+          du mot de passe
+      no_token: Vous ne pouvez pas accéder à cette page si vous n’y accédez pas depuis
+        un email de réinitialisation de mot de passe. Si vous venez en effet d’un
+        tel email, vérifiez que vous avez copié l’adresse URL en entier.
+      send_instructions: Vous allez recevoir sous quelques minutes un email vous indiquant
+        comment réinitialiser votre mot de passe.
+      send_paranoid_instructions: Si votre email existe dans notre base de données,
+        vous recevrez un lien vous permettant de récupérer votre mot de passe.
+      updated: Votre mot de passe a bien été modifié. Vous êtes maintenant connecté(e).
+      updated_not_active: Votre mot de passe a bien été modifié.
+    registrations:
+      destroyed: Au revoir ! Votre compte a bien été supprimé. Nous espérons vous
+        revoir bientôt.
+      edit:
+        are_you_sure: Êtes-vous sûr ?
+        cancel_my_account: Supprimer mon compte
+        currently_waiting_confirmation_for_email: 'Confirmation en attente pour: %{email}'
+        edit_again: Modifier les Détails du Compte
+        leave_blank_if_you_don_t_want_to_change_it: laissez ce champ vide pour le
+          laisser inchangé
+        title: Éditer %{resource}
+        unhappy: Pas content ?
+        update: Modifier
+        we_need_your_current_password_to_confirm_your_changes: nous avons besoin de
+          votre mot de passe actuel pour valider ces modifications
+      new:
+        agreements:
+          privacy_policy: J'accepte la Politique de Confidentialité
+          terms_of_service: J'accepte les Conditions d'Utilisation
+        agreements_must_accept: Vous devez accepter les Conditions d'Utilisation et
+          la Politique de Confidentialité pour continuer.
+        agreements_required: Vous devez accepter la Politique de Confidentialité et
+          les Conditions d'Utilisation
+        captcha_validation_failed: La vérification de sécurité a échoué. Veuillez
+          compléter la vérification de sécurité et réessayer.
+        code_of_conduct:
+          label: J'accepte le Code de Conduite
+        email:
+          help: Veuillez entrer une adresse email valide.
+          label: Email
+        invitation_code: Code d'Invitation
+        invitation_code_help_html: La plateforme <strong>%{platform}</strong> nécessite
+          une invitation avant que vous puissiez vous inscrire. Si vous avez été invité,
+          veuillez entrer votre code d'invitation dans le champ ci-dessous pour accéder
+          au formulaire d'inscription.
+        invitation_required: Invitation Requise
+        password:
+          help: Utilisez un mot de passe fort pour la sécurité de votre compte.
+          label: Mot de Passe
+        password_confirmation:
+          help: Veuillez confirmer votre mot de passe.
+          label: Confirmation du Mot de Passe
+        person:
+          description: Description
+          description_hint: Fournissez une brève description de vous-même pour aider
+            les autres à mieux vous connaître.
+          identifier: Nom d'Utilisateur
+          identifier_hint_html: Votre identifiant est un nom d'utilisateur unique
+            qui identifie votre profil sur le site <strong>%{platform}.</strong>
+          name: Nom
+          name_hint: Veuillez fournir votre nom complet.
+        privacy_policy:
+          label: J'accepte la Politique de Confidentialité
+        profile_details: Détails du Profil
+        sign_up: Inscription
+        submit: Soumettre
+        terms_of_service:
+          label: J'accepte les Conditions d'Utilisation
+        view: Voir
+      signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
+      signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
+        pas pu vous connecter car votre compte n’a pas encore été activé.
+      signed_up_but_locked: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
+        pas pu vous connecter car votre compte est verrouillé.
+      signed_up_but_unconfirmed: Un message avec un lien de confirmation vous a été
+        envoyé par mail. Veuillez suivre ce lien pour activer votre compte.
+      update_needs_confirmation: Vous avez bien modifié votre compte, mais nous devons
+        vérifier votre nouvelle adresse email. Veuillez consulter vos emails et cliquer
+        sur le lien de confirmation pour confirmer votre nouvelle adresse.
+      updated: Votre compte a bien été modifié.
+      updated_but_not_signed_in: Votre compte a été mis à jour avec succès. Vous devez
+        vous reconnecter car votre mot de passe a été modifié.
+    sessions:
+      already_signed_out: Déconnecté(e).
+      new:
+        email:
+          help: Entrez votre courriel pour vous connecter.
+          label: Courriel
+        password:
+          help: Entrez votre mot de passe pour vous connecter.
+          label: Mot de Passe
+          toggle: Révéler/Masquer le mot de passe
+        remember_me: Se souvenir de moi
+        sign_in: Se Connecter
+      signed_in: Connecté(e).
+      signed_out: Déconnecté(e).
+    shared:
+      links:
+        back: Retour
+        didn_t_receive_confirmation_instructions: Vous n'avez pas reçu l'email de
+          confirmation?
+        didn_t_receive_unlock_instructions: Vous n'avez pas reçu l'email de déblocage?
+        forgot_your_password: Mot de passe oublié?
+        sign_in: Connexion
+        sign_in_with_provider: Connexion avec %{provider}
+        sign_up: Inscription
+        unlock_account: Didn't receive unlock instructions?
+      minimum_password_length:
+        one: "(%{count} caractère au moins)"
+        other: "(%{count} caractères au moins)"
+    unlocks:
+      new:
+        resend_unlock_instructions: Renvoyer les instructions de déblocage
+        template:
+          default: Modèle par défaut
+          host_community_contact_details: Coordonnées de la communauté hôte
+      send_instructions: Vous allez recevoir sous quelques minutes un email comportant
+        des instructions pour déverrouiller votre compte.
+      send_paranoid_instructions: Si votre email existe sur notre base de données,
+        vous recevrez sous quelques minutes un message avec des instructions pour
+        déverrouiller votre compte.
+      unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
+  devise_omniauth_callbacks:
+    failure: Il y a eu un problème lors de votre connexion via %{kind}. %{reason}
+    success: Authentification réussie depuis le compte %{kind}.
+  doorkeeper:
+    errors:
+      unauthorized: Non autorisé. Un jeton d'accès valide est requis.
   errors:
     format: "%{attribute} %{message}"
+    internal_server_error:
+      description: Nous sommes désolés, une erreur s'est produite de notre côté.
+      title: 500 - Erreur interne du serveur
     messages:
       accepted: doit être accepté(e)
+      already_confirmed: a déjà été confirmé(e)
       blank: doit être rempli(e)
       confirmation: ne concorde pas avec %{attribute}
+      confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
+        demander un(e) autre
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
       exclusion: n'est pas disponible
+      expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
+      invalid_url: n'est pas une URL valide
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       model_invalid: 'Validation échouée : %{errors}'
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
-      not_saved: Not saved
+      not_found: n’a pas été trouvé(e)
+      not_locked: n’était pas verrouillé(e)
+      not_saved:
+        one: 'une erreur a empêché ce (cet ou cette) %{resource} d’être enregistré(e) :'
+        other: "%{count} erreurs ont empêché ce (cet ou cette) %{resource} d’être
+          enregistré(e) :"
       odd: doit être impair
       other_than: doit être différent de %{count}
       present: doit être vide
       required: doit exister
       taken: est déjà utilisé(e)
       too_long:
-        one: est trop long (pas plus d'un caractère)
+        one: est trop long (pas plus de %{count} caractère)
         other: est trop long (pas plus de %{count} caractères)
       too_short:
-        one: est trop court (au moins un caractère)
+        one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)
+      weak_password: n'est pas assez fort. Considérez ajouter un nombre, des symboles
+        ou plus de lettres pour le renforcer. Évitez d'utiliser le mot 'mot de passe',
+        votre date de naissance ou d'autres mots de passe communs faciles à deviner.
       wrong_length:
-        one: ne fait pas la bonne longueur (doit comporter un seul caractère)
+        one: ne fait pas la bonne longueur (doit comporter %{count} caractère)
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
+    models:
+      address_missing_type: L'adresse doit être physique, postale ou les deux.
+      better_together/navigation_item:
+        attributes:
+          permission_identifier:
+            cannot_be_used_with_public_privacy: ne peut pas être utilisé avec une
+              confidentialité publique
+          visibility_strategy:
+            inclusion: doit être authentifié ou permission
+      ends_at_before_starts_at: doit être après l'heure de début
+      host_single: ne peut être défini que pour un seul enregistrement
+      person_checklist_item:
+        directional_incomplete: Directional incomplete
+      protected_destroy: Cet enregistrement est protégé et ne peut pas être supprimé.
+    not_found:
+      description: La page que vous recherchez a peut-être été supprimée, changée
+        ou est temporairement indisponible.
+      title: 404 - Page non trouvée
+    person_block:
+      cannot_block_manager: ne peut pas être un gestionnaire de plateforme
+      cannot_block_self: ne peut pas vous bloquer vous-même
     template:
       body: 'Veuillez vérifier les champs suivants : '
       header:
         one: 'Impossible d''enregistrer ce(tte) %{model} : %{count} erreur'
         other: 'Impossible d''enregistrer ce(tte) %{model} : %{count} erreurs'
+    wizard:
+      max_completions: Nombre maximal de validations atteint pour cet assistant et
+        cette étape.
+      one_uncompleted: Une seule étape non terminée par personne est autorisée.
+      step_limit: Le nombre de validations pour cette étape a atteint la limite de
+        l'assistant.
+  flash:
+    checklist_item:
+      update_failed: Échec de la mise à jour de l'élément de la liste.
+      updated: Élément de la liste mis à jour.
+    generic:
+      created: "%{resource} a été créé avec succès."
+      deleted: Supprimé
+      destroyed: "%{resource} a été supprimé avec succès."
+      error_create: Erreur lors de la création de %{resource}.
+      error_remove: Échec de la suppression de %{resource}.
+      queued: "%{resource} a été mis en file d'attente pour l'envoi."
+      removed: "%{resource} a été supprimé avec succès."
+      unauthorized: Non autorisé
+      updated: "%{resource} a été mis à jour avec succès."
+    joatu:
+      agreement:
+        accepted: Accord accepté
+        rejected: Accord rejeté
+      response_links:
+        offer_created: Offre créée en réponse à la demande.
+        request_created: Demande créée en réponse à l'offre.
+    person_block:
+      blocked: La personne a été bloquée avec succès.
+      unblocked: La personne a été débloquée avec succès.
+  forms:
+    select_option: Sélectionner une option
   globals:
-    back_to_list: Back to list
-    delete: Delete
-    edit: Edit
+    accepted: Accepté
+    actions: Actions
+    add_block: Ajouter un bloc
+    add_child_item: Ajouter un élément enfant
+    add_member: Ajouter un membre
+    ago: il y a
+    all: Tous
+    are_you_sure: Êtes-vous sûr ?
+    back: Retour
+    back_to_home: Retour à l'accueil
+    back_to_list: Retour à la liste
+    cancel: Annuler
+    clear: Effacer
+    clear_filter: Effacer le filtre
+    confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
+    create: Créer
+    declined: Refusé
+    delete: Supprimer
+    destroy: Détruire
+    draft: Brouillon
+    edit: Modifier
+    email: Email
+    'false': Non
     forms:
-      save: Save
-    'no': 'No'
-    view: View
-    'yes': 'Yes'
-    clear: "Effacer"
-    undo_clear: "Annuler l'effacement"
-    no_image: "Pas d'image"
+      save: Enregistrer
+    from: De
+    hidden: Caché
+    loading: Chargement...
+    locale: Locale
+    message: Message
+    new: Nouveau
+    'no': Non
+    no_description: Pas de description
+    no_image: Pas d'image
+    no_invitee: Pas d'invité
+    none: Aucun
+    not_found: Non trouvé.
+    not_sent: Non envoyé
+    pagination:
+      of: de
+      showing: Affichage
+      to: à
+    pending: En attente
+    platform_not_public: La plateforme est actuellement privée. Veuillez vous connecter
+      pour accéder.
+    published: Publié
+    remove: Supprimer
+    resend: Renvoyer
+    resource_types: Types de ressources
+    save: Enregistrer
+    sent: Envoyé
+    show: Afficher
+    status: Statut
+    submit: Soumettre
+    submitted_at: Soumis
+    tabs:
+      about: À propos
+      attendees: Participants
+      contact: Contact
+      events: Événements
+      invitations: Invitations
+      members: Membres
+    to: À
+    'true': Oui
+    undo_clear: Annuler l'effacement
+    unknown: Inconnu
+    update: Mettre à jour
+    url: URL
+    view: Voir
+    visible: Visible
+    'yes': Oui
   helpers:
+    close: Fermer
+    errors:
+      heading: Titre
+      prohibited: Interdit
     hint:
+      call_for_interest:
+        cover_image: Cover image
+      community:
+        cover_image: Image de couverture
+        logo: Logo
+        profile_image: Image de profil
+      event:
+        cover_image: Cover image
+      images:
+        cover_image: Cover image
       person:
-        name: "Entrez le nom complet de la personne."
-        description: "Fournissez une brève description ou biographie."
-        slug: "Un identifiant compatible avec les URL, généralement généré automatiquement."
-        profile_image: "Téléchargez une image de profil pour la personne."
-        cover_image: "Téléchargez une image de couverture à afficher en haut du profil."
+        allow_messages_from_members: Choisir de recevoir des messages provenant de
+          personnes autres que les gestionnaires de la plateforme.
+        cover_image: Téléchargez une image de couverture à afficher en haut du profil.
+        description: Fournissez une brève description ou biographie.
+        locale: Sélectionnez la langue préférée pour la personne.
+        name: Entrez le nom complet de la personne.
+        notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message
+          non lu.
+        profile_image: Téléchargez une image de profil pour la personne.
+        show_conversation_details: Afficher le titre de la conversation et le nom
+          de l'expediteur dans les notifications.
+        slug: Un identifiant compatible avec les URL, généralement généré automatiquement.
+        time_zone: Sélectionnez votre fuseau horaire préféré pour l'affichage des
+          dates et heures.
+      required_info: Ce champ est obligatoire
+    label:
+      person:
+        cover_image: Image de couverture
+        description: Description
+        name: Nom
+        profile_image: Image de profil
+        slug: Identifiant URL
+    language_select:
+      prompt: Sélectionnez une langue
+    required_info: Ce champ est obligatoire
     select:
       prompt: Veuillez sélectionner
     submit:
       create: Créer un(e) %{model}
       submit: Enregistrer ce(tte) %{model}
       update: Modifier ce(tte) %{model}
+    toolbar:
+      aria_label: Editor Toolbar
+  hints:
+    authors:
+      select_multiple: Select one or more authors
+    categories:
+      select_multiple: Select multiple
+    datetime_field: Choisissez une date et une heure pour ce champ.
+    language_select: Sélectionnez une langue pour ce champ.
+    privacy_field: Définissez le niveau de confidentialité pour ce champ.
+    required_field: Ce champ est obligatoire.
+    resource:
+      type: Type
+    type_select_field: Sélectionnez le type pour ce champ.
   host_dashboard:
+    index:
+      better_together: Mieux ensemble
+      content: Contenu
+      content_block_types: Types de blocs de contenu
+      engagement: Engagement
+      events: Événements
+      exchange: Échange
+      geography: Géographie
+      geography_mapping: Cartographie géographique
+      infrastructure: Infrastructure
+      page_title: Tableau de bord de l'hôte
+      title: Tableau de bord de l'hôte
     resource_card:
-      total_resources: "Total des ressources"
-      none_yet: "Aucun pour l'instant"
-      new_resource: "Nouveau %{resource}"
-      view_all: "Voir tout"
+      new_resource: Nouveau %{resource}
+      none_yet: Aucun pour l'instant
+      total_resources: Total des ressources
+      view_all: Voir tout
+  invitations:
+    calculating: Calcul en cours
+  locale_name: Français
   locales:
     en: English
     es: Español
     fr: Français
+    uk: Українська
+  meta:
+    default_description: Bienvenue sur %{platform_name}
+    page:
+      description_fallback: Lire %{title} sur %{platform_name}
+  metrics:
+    search_queries:
+      invalid_parameters: Paramètres invalides pour le suivi de recherche.
+    shares:
+      invalid_parameters: Paramètres invalides
+  navbar:
+    accept_invitation: Accepter l'invitation
+    conversations: Conversations
+    host_mgmt_tooltip: Gestion de l'hôte
+    locale_switcher_tooltip: Changer de langue
+    log_out: Se déconnecter
+    my_profile: Mon profil
+    notifications_tooltip: Notifications
+    search_tooltip: Rechercher
+    settings: Paramètres
+    sign_in: Se connecter
+    toggle_navigation: Basculer la navigation
+    user_nav_tooltip: Menu du compte
+  navigation:
+    header:
+      community_hub: Community Hub
+      events: Events
+      exchange_hub: Exchange Hub
+      posts: Articles
+  navigation_item:
+    form_hints:
+      permission_identifier: La permission requise pour voir cet élément (uniquement
+        pour la visibilité basée sur les permissions)
+      privacy: Choisissez qui peut voir cet élément de navigation (public ou privé)
+      visibility_strategy: Comment déterminer si les utilisateurs peuvent voir cet
+        élément
+    update_failed: Échec de la mise à jour
+    updated: Mis à jour
+    visibility_strategies:
+      authenticated: Utilisateurs Authentifiés
+      permission: Basé sur les Permissions
+    visibility_strategy_descriptions:
+      authenticated: Afficher pour tous les utilisateurs authentifiés (connectés)
+      permission: Afficher uniquement aux utilisateurs avec une permission spécifique
+  'no': Non
   number:
     currency:
       format:
@@ -237,16 +3854,97 @@ fr:
     precision:
       format:
         delimiter: ''
+  og:
+    default_description: Bienvenue sur %{platform_name}
+    default_title: "%{platform_name}"
+    page:
+      description_fallback: Lire %{title} sur %{platform_name}
+      title: "%{title} | %{platform_name}"
+  pages:
+    confirm_destroy: Confirmer la destruction
+    index:
+      clear_filter: Effacer le filtre
+      clear_filters: Effacer les filtres
+      filter: Filtrer
+      search_by_title: Rechercher par titre...
+  partners:
+    confirm_delete: Confirmer la suppression
+  people:
+    confirm_delete: Confirmer la suppression
+  person_platform_memberships:
+    confirm_delete: Êtes-vous sûr de vouloir supprimer ce membre de la plateforme
+      ?
+    edit:
+      title: Modifier l'adhésion à la plateforme
+    form:
+      role: Rôle de la plateforme
+    index:
+      new_membership: Ajouter un nouveau membre
+      title: 'Membres de la plateforme : %{platform}'
+    new:
+      title: Ajouter un membre de plateforme
+    show:
+      title: Détails d'adhésion à la plateforme
+  platform_invitations:
+    confirm_delete: Confirmer la suppression
+  platforms:
+    actions:
+      host_dashboard: Tableau de Bord Hôte
+    confirm_delete: Confirmer la suppression
   pundit:
     errors:
-      index: "Vous n'êtes pas autorisé à consulter la liste des %{resource}."
-      show: "Vous n'êtes pas autorisé à consulter ce %{resource}."
-      update: "Vous n'êtes pas autorisé à mettre à jour ce %{resource}."
-      destroy: "Vous n'êtes pas autorisé à supprimer ce %{resource}."
-      edit: "Vous n'êtes pas autorisé à modifier ce %{resource}."
-      new: "Vous n'êtes pas autorisé à créer un nouveau %{resource}."
-      create: "Vous n'êtes pas autorisé à créer ce %{resource}."
-      default: "Vous n'êtes pas autorisé à effectuer cette action sur ce %{resource}."
+      create: Vous n'êtes pas autorisé à créer ce %{resource}.
+      default: Vous n'êtes pas autorisé à effectuer cette action sur ce %{resource}.
+      destroy: Vous n'êtes pas autorisé à supprimer ce %{resource}.
+      edit: Vous n'êtes pas autorisé à modifier ce %{resource}.
+      index: Vous n'êtes pas autorisé à consulter la liste des %{resource}.
+      leave_conversation: You are the final conversation participant and cannot leave
+      new: Vous n'êtes pas autorisé à créer un nouveau %{resource}.
+      show: Vous n'êtes pas autorisé à consulter ce %{resource}.
+      update: Vous n'êtes pas autorisé à mettre à jour ce %{resource}.
+  resource_permissions:
+    confirm_destroy: Confirmer la destruction
+  resources:
+    block: Bloc
+    calendar: Calendar
+    checklist: Checklist
+    community: Communauté
+    continent: Continent
+    country: Pays
+    download_failed: Échec du téléchargement
+    invitation: Invitation
+    invitation_email: E-mail d'invitation
+    member: Membre
+    navigation_area: Zone de navigation
+    page: Page
+    person: Personne
+    person_access_grant: Octroi d'accès de la personne
+    person_link: Lien de la personne
+    person_platform_membership: Adhésion à la plateforme de la personne
+    platform: Plateforme
+    profile: Profil
+    region: Région
+    region_settlement: Region settlement
+    report: Rapport
+    resource_permission: Permission de ressource
+    role: Rôle
+    settlement: Agglomération
+    state: État
+    user: Utilisateur
+  roles:
+    confirm_destroy: Confirmer la destruction
+  search:
+    button: Rechercher
+    placeholder: Rechercher...
+  shared:
+    by: par
+    links:
+      back: Back
+  simple_calendar:
+    next: Suivant
+    previous: Précédent
+    today: Aujourd'hui
+    week: Semaine
   support:
     array:
       last_word_connector: " et "
@@ -256,7 +3954,82 @@ fr:
     am: am
     formats:
       dashboard_resource: "%d %b %Y %i:%M"
+      date_picker: Sélecteur de date
+      datetime_picker: Sélecteur de date et heure
       default: "%d %B %Y %Hh %Mmin %Ss"
+      event: "%B %d, %Y @ %-I:%M %p"
+      event_date_time: "%-d %b, %Hh%M"
+      event_date_time_with_year: "%d %b %Y, %Hh%M"
       long: "%A %d %B %Y %Hh%M"
       short: "%d %b %Hh%M"
+      time_only: "%Hh%M"
+      time_only_with_year: "%Hh%M %Y"
     pm: pm
+  views:
+    buttons:
+      back: Retour
+      create_report: Créer un rapport
+      download: Télécharger
+      go_home: Aller à l'accueil
+      new: Nouveau %{resource}
+      view_page: Voir la page
+    empty_states:
+      user_account_reports:
+        description: Create your first report to track user account creation and confirmation
+          statistics.
+        title: No Reports Yet
+    headers:
+      link_checker_reports: Rapports du vérificateur de liens
+      link_click_reports: Rapports de clics sur les liens
+      new_link_checker_report: Nouveau rapport du vérificateur de liens
+      new_link_click_report: Nouveau rapport de clics sur les liens
+      new_page_view_report: Nouveau rapport de vues de page
+      new_user_account_report: New User Account Report
+      page_view_reports: Rapports de vues de page
+      user_account_reports: User Account Reports
+    labels:
+      accounts_confirmed: Accounts Confirmed
+      accounts_created: Accounts Created
+      actions: Actions
+      all: Tous
+      confirmation_rate: Confirmation Rate
+      count: Count
+      created_at: Créé le
+      creator: Creator
+      daily_confirmation_rate: Daily Confirmation Rate
+      daily_stats: Daily Statistics
+      date: Date
+      date_range: Date Range
+      days_in_range: Days in Range
+      external: Externe
+      file_format: Format de fichier
+      filters: Filtres
+      from_date: Date de début
+      generating: Generating...
+      id: ID
+      internal: Interne
+      internal_filter: Filtre interne
+      no_file: Aucun fichier
+      pageable_type_filter: Filtre de type
+      percentage: Percentage
+      please_correct: 'Veuillez corriger les erreurs suivantes :'
+      protected: Protégé
+      registration_sources: Registration Sources
+      sort_by_total_clicks: Trier par clics totaux
+      sort_by_total_views: Trier par vues totales
+      source: Source
+      summary: Summary
+      to_date: Date de fin
+      total_accounts_confirmed: Total Accounts Confirmed
+      total_accounts_created: Total Accounts Created
+      unknown: Unknown
+    pagination:
+      aria_label: Navigation de pagination
+      current: "(actuel)"
+      first: Premier
+      last: Dernier
+      next: Suivant
+      previous: Précédent
+      showing_entries: Affichage de %{from} à %{to} sur %{total} entrées
+      truncate: "…"
+  'yes': Oui

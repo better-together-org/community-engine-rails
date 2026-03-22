@@ -1,4 +1,6 @@
-class AddPrimaryFlagToContactTypes < ActiveRecord::Migration[7.1]
+# frozen_string_literal: true
+
+class AddPrimaryFlagToContactTypes < ActiveRecord::Migration[7.1] # rubocop:todo Style/Documentation
   def change
     change_table :better_together_phone_numbers do |t|
       t.bt_primary_flag(parent_key: :contact_detail_id)

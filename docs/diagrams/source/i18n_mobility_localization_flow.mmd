@@ -1,0 +1,134 @@
+flowchart TD
+    %% I18n/Mobility Localization System Process Flow
+    %% Better Together Community Engine Rails
+
+    START[User Interaction] --> LOCALE_DET{Locale Detection}
+    
+    %% Locale Detection and Setting
+    LOCALE_DET --> URL_PARAM[URL Parameter /:locale]
+    LOCALE_DET --> BROWSER_LANG[Browser Language Header]
+    LOCALE_DET --> DEFAULT_LOCALE[Default Locale: :en]
+    
+    URL_PARAM --> SET_LOCALE[Set I18n.locale]
+    BROWSER_LANG --> SET_LOCALE
+    DEFAULT_LOCALE --> SET_LOCALE
+    
+    SET_LOCALE --> ROUTE_SCOPE[Route Scope Processing]
+    ROUTE_SCOPE --> CONTROLLER_ACTION[Controller Action]
+    
+    %% Translation Key Resolution
+    CONTROLLER_ACTION --> KEY_LOOKUP{Translation Key Lookup}
+    KEY_LOOKUP --> STATIC_TRANS[Static Translation]
+    KEY_LOOKUP --> MODEL_TRANS[Model Translation - Mobility Attributes]
+    
+    %% Static Translation Flow
+    STATIC_TRANS --> YAML_LOOKUP[YAML File Lookup - config/locales/]
+    YAML_LOOKUP --> KEY_FOUND{Key Found?}
+    KEY_FOUND -->|Yes| FALLBACK_CHECK[Check Fallbacks]
+    KEY_FOUND -->|No| MISSING_KEY[Missing Translation]
+    
+    FALLBACK_CHECK --> RETURN_TRANS[Return Translation]
+    MISSING_KEY --> I18N_FALLBACK[I18n Fallback Chain]
+    I18N_FALLBACK --> RETURN_TRANS
+    
+    %% Model Translation Flow (Mobility)
+    MODEL_TRANS --> MOBILITY_BACKEND{Mobility Backend}
+    
+    %% Key-Value Backend (String/Text)
+    MOBILITY_BACKEND --> KV_BACKEND[Key-Value Backend - string_translations - text_translations]
+    KV_BACKEND --> KV_QUERY[Query Translation Table]
+    KV_QUERY --> KV_FOUND{Translation Found?}
+    KV_FOUND -->|Yes| KV_RETURN[Return Translation Value]
+    KV_FOUND -->|No| KV_FALLBACK[Mobility Fallback]
+    
+    %% Action Text Backend (Rich Text)
+    MOBILITY_BACKEND --> AT_BACKEND[Action Text Backend - rich_text_translations]
+    AT_BACKEND --> AT_QUERY[Query RichText Table]
+    AT_QUERY --> AT_FOUND{RichText Found?}
+    AT_FOUND -->|Yes| AT_RETURN[Return ActionText::Content]
+    AT_FOUND -->|No| AT_FALLBACK[Mobility Fallback]
+    
+    %% Fallback Processing
+    KV_FALLBACK --> FALLBACK_CHAIN[Fallback Chain Processing]
+    AT_FALLBACK --> FALLBACK_CHAIN
+    
+    FALLBACK_CHAIN --> CHECK_EN{Check :en Locale}
+    CHECK_EN -->|Found| FALLBACK_RETURN[Return Fallback Value]
+    CHECK_EN -->|Not Found| BLANK_VALUE[Return Blank/Nil]
+    
+    %% Content Creation/Editing Flow
+    subgraph EDITING [Content Creation & Editing]
+        FORM_RENDER[Render Translation Form]
+        FORM_RENDER --> TAB_UI[Tabbed UI per Locale]
+        TAB_UI --> LOCALE_FIELDS[Locale-specific Fields - attribute_en, attribute_es, attribute_fr]
+        
+        LOCALE_FIELDS --> FIELD_TYPES{Field Type}
+        FIELD_TYPES --> STRING_FIELD[String Field]
+        FIELD_TYPES --> TEXT_FIELD[Text Area Field]
+        FIELD_TYPES --> RICH_TEXT_FIELD[Rich Text Editor - Trix]
+        
+        STRING_FIELD --> VALIDATION[Form Validation]
+        TEXT_FIELD --> VALIDATION
+        RICH_TEXT_FIELD --> VALIDATION
+        
+        VALIDATION --> SAVE_TRANS[Save Translations]
+        SAVE_TRANS --> MOBILITY_STORE{Mobility Storage}
+        
+        MOBILITY_STORE --> STORE_KV[Store in Key-Value Tables - Mobility::Backends::ActiveRecord::KeyValue]
+        MOBILITY_STORE --> STORE_AT[Store in ActionText Tables - Mobility::Backends::ActionText]
+    end
+    
+    %% AI Translation Flow
+    subgraph AI_TRANS [AI Translation System]
+        AI_TRIGGER[AI Translate Button Click]
+        AI_TRIGGER --> AI_REQUEST[AJAX Request to TranslationsController]
+        AI_REQUEST --> TRANSLATION_BOT[TranslationBot.translate]
+        
+        TRANSLATION_BOT --> EXTRACT_CONTENT[Extract & Process Content - Handle Trix Attachments]
+        EXTRACT_CONTENT --> OPENAI_API[OpenAI API Call]
+        OPENAI_API --> PROCESS_RESPONSE[Process Translation Response]
+        PROCESS_RESPONSE --> RESTORE_ATTACHMENTS[Restore Trix Attachments]
+        RESTORE_ATTACHMENTS --> AI_RESULT[Return Translated Content]
+        
+        AI_RESULT --> UPDATE_FIELD[Update Target Locale Field]
+        UPDATE_FIELD --> SAVE_TRANS
+    end
+    
+    %% Bulk Translation Tasks
+    subgraph BULK_TRANS [Bulk Translation Tasks]
+        RAKE_TASK[Rake Task - ai_translations:from_en]
+        RAKE_TASK --> BATCH_PROCESS[Batch Process Models]
+        BATCH_PROCESS --> CHECK_EXISTING{Translation Exists?}
+        CHECK_EXISTING -->|No| BULK_TRANSLATE[AI Translate Attribute]
+        CHECK_EXISTING -->|Yes| SKIP_TRANS[Skip Translation]
+        
+        BULK_TRANSLATE --> BULK_SAVE[Save Translation]
+        SKIP_TRANS --> NEXT_RECORD[Next Record]
+        BULK_SAVE --> NEXT_RECORD
+    end
+    
+    %% Frontend Display Flow
+    KV_RETURN --> DISPLAY_CONTENT[Display Translated Content]
+    AT_RETURN --> DISPLAY_CONTENT
+    FALLBACK_RETURN --> DISPLAY_CONTENT
+    RETURN_TRANS --> DISPLAY_CONTENT
+    
+    DISPLAY_CONTENT --> LOCALE_SWITCHER[Locale Switcher UI]
+    LOCALE_SWITCHER --> SWITCH_LOCALE{User Switches Locale}
+    SWITCH_LOCALE -->|Yes| SET_LOCALE
+    SWITCH_LOCALE -->|No| END_FLOW[End]
+    
+    %% Styling and Visual Indicators
+    classDef startEnd fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef process fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef decision fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef storage fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef ai fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef editing fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    
+    class START,END_FLOW startEnd
+    class SET_LOCALE,ROUTE_SCOPE,CONTROLLER_ACTION,YAML_LOOKUP,KV_QUERY,AT_QUERY,DISPLAY_CONTENT process
+    class LOCALE_DET,KEY_LOOKUP,KEY_FOUND,MOBILITY_BACKEND,KV_FOUND,AT_FOUND,CHECK_EN,SWITCH_LOCALE decision
+    class KV_BACKEND,AT_BACKEND,STORE_KV,STORE_AT storage
+    class AI_TRIGGER,AI_REQUEST,TRANSLATION_BOT,OPENAI_API ai
+    class FORM_RENDER,TAB_UI,VALIDATION editing

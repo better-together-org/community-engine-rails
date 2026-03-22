@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 # Specs in this file have access to a helper object that includes
@@ -10,8 +12,10 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
-  RSpec.describe Metrics::LinkClicksHelper, type: :helper do
-    pending "add some examples to (or delete) #{__FILE__}"
+module BetterTogether # :nodoc:
+  RSpec.describe Metrics::LinkClicksHelper do
+    it 'exists' do
+      expect(described_class).to be # rubocop:todo RSpec/Be
+    end
   end
 end

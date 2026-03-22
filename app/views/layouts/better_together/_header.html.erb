@@ -1,74 +1,55 @@
 <!-- Navbar -->
-<nav id="main-nav" class="navbar navbar-expand-lg shadow-sm">
-  <div class="container">
-   <%= render 'layouts/better_together/navbar_brand' %>
+<div id="main-nav" class="container-fluid shadow-sm" data-controller="better_together--nav-height">
+  <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark pb-0 justify-content-center">
+    <%= render 'layouts/better_together/navbar_brand' %>
 
-    <!-- Social Media Accounts (visible on large screens) -->
-    <div class="ms-auto me-3">
-      <%= render_host_community_social_media_accounts %>
-    </div>
-
-    <!-- Toggler for mobile view -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <!-- Right-aligned nav items -->
-      <ul class="navbar-nav ms-auto text-center">
-        <!-- ... other nav items ... -->
-
-        <% if platform_header_nav_items.any? %>
-          <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_header_nav_items %>
+    <ul id="primary-nav" class="navbar-nav text-center ms-auto flex-row align-items-center gap-2 gap-md-3">
+      <!-- Social Media Accounts (visible on large screens) -->
+      <div id="social-media-icons">
+        <% cache nav_fragment_cache_key('header_social_media') do %>
+          <%= render_host_community_social_media_accounts %>
         <% end %>
+      </div>
 
-        <% if user_signed_in? && permitted_to?('manage_platform') && platform_host_nav_items.any? %>
-          <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_host_nav_items %>
-        <% end %>
+      <%= yield :editor_status if content_for? :editor_status %>
 
-        <!-- Search Icon -->
-        <li class="nav-item">
-          <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-expanded="false" aria-controls="navbarSearch">
-            <i class="fas fa-search"></i>
-          </a>
-        </li>
+      <%= render 'layouts/better_together/search' %>
+      <%= render 'layouts/better_together/notifications' if user_signed_in? %>
+      <%= render 'layouts/better_together/locale_switcher' %>
 
+      <% if user_signed_in? %>
         <!-- User Auth Nav Item -->
-        <% if user_signed_in? %>
-          <li class="nav-item">
-            <a class="nav-link position-relative" href="<%= notifications_path %>">
-              <i class="fa fa-bell"></i>
-              <%= unread_notification_count %>
-            </a>
-          </li>
-          <!-- If user is signed in, show avatar and name -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="<%= person_my_profile_path(person_id: current_person.slug) %>" id="userNavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <%# image_tag(current_user.avatar.url, size: "30x30", class: "rounded-circle") %> <%= current_identity.name %>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="userNavbarDropdownMenuLink">
-              <!-- <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> Settings</a></li> -->
-              <li><%= link_to 'My Profile', person_my_profile_path(person_id: current_person.slug), class: "dropdown-item" %></li>
-              <li><%= link_to 'Conversations', conversations_path, class: "dropdown-item" %></li>
-              <li><%= link_to 'Log Out', destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item" %></li>
-            </ul>
-          </li>
-        <% else %>
-          <!-- If user is not signed in, show 'Sign In' -->
-          <li class="nav-item">
-            <%= link_to 'Sign In', new_user_session_path, class: "nav-link" %>
-          </li>
+        <% cache_key = nav_fragment_cache_key('user_nav', nav_areas: [platform_host_nav_area]) %>
+        <%= cache cache_key do %>
+          <%= render 'layouts/better_together/user_nav' %>
         <% end %>
+      <% else %>
+        <%= render 'layouts/better_together/sign_in' %>
+      <% end %>
+    </ul>
 
-        <%= render 'layouts/better_together/locale_switcher' %>
-      </ul>
+    <% if platform_header_nav_area %>
+      <!-- Toggler for mobile view -->
+      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#headerNav" aria-controls="headerNav" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    <% end %>
+  </nav>
+
+  <nav id="header-nav" class="navbar navbar-expand-lg navbar-dark pt-0 bt-underline-nav">
+    <div class="collapse justify-content-center navbar-collapse align-content-center" id="headerNav">
+      <!-- Right-aligned nav items -->
+      <%= cache nav_fragment_cache_key('platform_header_nav', nav_areas: [platform_header_nav_area]) do %>
+        <%= render_platform_header_nav_items %>
+      <% end %>
+    </div>
+  </nav>
+
+  <!-- Hidden Search Form below navbar -->
+  <div class="collapse <%= 'show w-100 position-static' if current_page?(search_path) %>" id="navbarSearch" data-controller="better_together--search-focus">
+    <div class="container my-3">
+      <%= render 'better_together/shared/search_bar' %>
     </div>
   </div>
-</nav>
 
-<!-- Hidden Search Form below navbar -->
-<div class="collapse <%= 'show' if current_page?(search_path) %>" id="navbarSearch">
-  <div class="container mt-3">
-    <%= render 'better_together/shared/search_bar' %>
-  </div>
 </div>

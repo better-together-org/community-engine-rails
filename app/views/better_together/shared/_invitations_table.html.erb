@@ -1,0 +1,30 @@
+<% unless invitations.nil? %>
+  <hr/>
+  <h6 class="mb-2"><%= local_assigns[:title] || t('better_together.invitations.title', default: 'Invitations') %></h6>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th><%= t('better_together.invitations.invitee', default: 'Invitee') %></th>
+          <th><%= t('better_together.invitations.invitee_type', default: 'Invitee Type') %></th>
+          <th><%= t('better_together.invitations.role', default: 'Role') %></th>
+          <th><%= t('globals.status', default: 'Status') %></th>
+          <th><%= t('globals.sent', default: 'Sent') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="<%= local_assigns[:tbody_id] || 'invitations_table_body' %>">
+        <% if invitations.any? %>
+          <%= render partial: 'better_together/shared/invitation_row',
+                     collection: invitations,
+                     locals: {
+                       resend_path_proc: local_assigns[:resend_path_proc],
+                       destroy_path_proc: local_assigns[:destroy_path_proc]
+                     } %>
+        <% else %>
+          <%= render 'better_together/shared/no_invitations' %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

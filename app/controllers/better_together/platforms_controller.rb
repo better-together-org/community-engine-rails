@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation
-    before_action :set_platform, only: %i[show edit update destroy]
-    before_action :authorize_platform, only: %i[show edit update destroy]
+  class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    before_action :set_platform, only: %i[show edit update destroy available_people]
+    before_action :authorize_platform, only: %i[show edit update destroy available_people]
     after_action :verify_authorized, except: :index
 
     # GET /platforms
@@ -11,44 +11,104 @@ module BetterTogether
       # @platforms = ::BetterTogether::Platform.all
       # authorize @platforms
       authorize ::BetterTogether::Platform
-      @platforms = policy_scope(::BetterTogether::Platform.with_translations)
+      @platforms = policy_scope(::BetterTogether::Platform.with_translations
+                                                          .with_attached_profile_image
+                                                          .with_attached_cover_image)
     end
 
     # GET /platforms/1
     def show
       authorize @platform
+      # Preload memberships with policy scope applied to prevent N+1 queries in view
+      # Include comprehensive associations for members and roles to eliminate N+1 queries
+      @platform_memberships = policy_scope(@platform.memberships_with_associations)
+    end
+
+    # GET /platforms/:id/available_people
+    def available_people # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize @platform
+
+      # Exclude people who are already members
+      excluded_ids = @platform.person_platform_memberships.pluck(:member_id)
+      people = ::BetterTogether::Person
+               .joins(:user)
+               .where.not(id: excluded_ids)
+               .where.not(better_together_users: { email: nil })
+               .where.not(better_together_users: { confirmed_at: nil })
+               .i18n
+
+      # Apply search filter if present
+      if params[:search].present?
+        search_term = params[:search].strip
+        people = people.joins(:string_translations)
+                       .where(
+                         'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
+                         "%#{search_term}%",
+                         %w[name]
+                       )
+                       .limit(20)
+      else
+        # When no search term, show first 5 results for initial load
+        people = people.limit(5)
+      end
+
+      formatted_people = people.map do |person|
+        { value: person.id, text: person.select_option_title }
+      end
+
+      render json: formatted_people
     end
 
     # GET /platforms/new
     def new
-      @platform = ::BetterTogether::Platform.new
-      authorize_platform
+      @platform = ::BetterTogether::Platform.new(external: true)
+      authorize @platform
     end
 
-    # GET /platforms/1/edit
     def edit
       authorize @platform
     end
 
     # POST /platforms
-    def create
-      @platform = ::BetterTogether::Platform.new(platform_params)
+    def create # rubocop:todo Metrics/MethodLength
+      @platform = ::BetterTogether::Platform.new(platform_create_params)
       authorize_platform
 
       if @platform.save
-        redirect_to @platform, notice: 'Platform was successfully created.'
+        redirect_to @platform, notice: t('flash.generic.created', resource: t('resources.platform')),
+                               status: :see_other
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @platform }
+            )
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
+    rescue Pundit::NotAuthorizedError
+      render_not_found
     end
 
     # PATCH/PUT /platforms/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @platform
       if @platform.update(platform_params)
-        redirect_to @platform, notice: 'Platform was successfully updated.', status: :see_other
+        redirect_to @platform, notice: t('flash.generic.updated', resource: t('resources.platform')), status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @platform }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_content }
+        end
       end
     end
 
@@ -56,7 +116,8 @@ module BetterTogether
     def destroy
       authorize @platform
       @platform.destroy
-      redirect_to platforms_url, notice: 'Platform was successfully destroyed.', status: :see_other
+      redirect_to platforms_url, notice: t('flash.generic.destroyed', resource: t('resources.platform')),
+                                 status: :see_other
     end
 
     private
@@ -65,11 +126,24 @@ module BetterTogether
       @platform = set_resource_instance
     end
 
-    def platform_params
+    def platform_create_params
+      params.require(:platform).permit(:identifier, :host_url, :time_zone, :external, *locale_attributes)
+    end
+
+    def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
-        slug url time_zone privacy
+        slug host_url time_zone privacy
       ]
-      params.require(:platform).permit(permitted_attributes, *settings_attributes, *locale_attributes)
+      css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
+        BetterTogether::Content::Css.extra_permitted_attributes +
+        BetterTogether::Content::Css.localized_attribute_list }]
+
+      params.require(:platform).permit(
+        permitted_attributes,
+        *settings_attributes,
+        *locale_attributes,
+        *css_block_attrs
+      )
     end
 
     # Adds a policy check for the platform
@@ -88,15 +162,62 @@ module BetterTogether
     end
 
     def settings_attributes
-      %i[requires_invitation]
+      %i[
+        requires_invitation
+        software_variant
+        network_visibility
+        connection_bootstrap_state
+        federation_protocol
+        oauth_issuer_url
+      ]
     end
 
     def resource_class
       ::BetterTogether::Platform
     end
 
-    def resource_collection
-      resource_class.includes(:invitations, { person_platform_memberships: %i[member role] })
+    def resource_collection # rubocop:todo Metrics/MethodLength
+      # Comprehensive eager loading to prevent N+1 queries across all platform associations
+      resource_class.includes(
+        # Platform's own translations and attachments
+        :string_translations,
+        :text_translations,
+        cover_image_attachment: { blob: :variant_records },
+        profile_image_attachment: { blob: :variant_records },
+
+        # Community association with its own attachments
+        community: [
+          :string_translations,
+          :text_translations,
+          { profile_image_attachment: { blob: :variant_records } },
+          { cover_image_attachment: { blob: :variant_records } }
+        ],
+
+        # Content blocks
+        platform_blocks: {
+          block: %i[
+            string_translations
+            text_translations
+          ]
+        },
+
+        # Person platform memberships with all necessary nested associations
+        person_platform_memberships: [
+          {
+            member: [
+              :string_translations,
+              :text_translations,
+              { profile_image_attachment: { blob: :variant_records } }
+            ]
+          },
+          {
+            role: %i[
+              string_translations
+              text_translations
+            ]
+          }
+        ]
+      )
     end
   end
 end

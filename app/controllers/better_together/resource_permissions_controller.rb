@@ -9,6 +9,15 @@ module BetterTogether
     def index
       authorize resource_class
       @resource_permissions = policy_scope(resource_class.with_translations)
+                              .includes(:roles)
+                              .order(:resource_type, :action, :position, :identifier)
+      @resource_permissions_by_resource_type = @resource_permissions.group_by(&:resource_type)
+      @rbac_nav_counts = {
+        resource_permissions: @resource_permissions.size,
+        roles: ::BetterTogether::Role.count
+      }
+      @available_view_types = %w[card table]
+      @view_type = view_preference('resource_permissions_index', default: 'card', allowed: @available_view_types)
     end
 
     # GET /resource_permissions/1
@@ -28,26 +37,46 @@ module BetterTogether
     end
 
     # POST /resource_permissions
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @resource_permission = resource_class.new(resource_permission_params)
       authorize @resource_permission
 
       if @resource_permission.save
-        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully created.'
+        redirect_to @resource_permission, only_path: true,
+                                          notice: t('flash.generic.created', resource: t('resources.resource_permission')) # rubocop:disable Layout/LineLength
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @resource_permission }
+            )
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
     # PATCH/PUT /resource_permissions/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @resource_permission
 
       if @resource_permission.update(resource_permission_params)
-        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.',
+        redirect_to @resource_permission, only_path: true,
+                                          notice: t('flash.generic.updated', resource: t('resources.resource_permission')), # rubocop:disable Layout/LineLength
                                           status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @resource_permission }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_content }
+        end
       end
     end
 
@@ -55,8 +84,9 @@ module BetterTogether
     def destroy
       authorize @resource_permission
       @resource_permission.destroy
-      redirect_to resource_permissions_url, notice: 'Resource permission was successfully destroyed.',
-                                            status: :see_other
+      redirect_to resource_permissions_url,
+                  notice: t('flash.generic.destroyed', resource: t('resources.resource_permission')),
+                  status: :see_other
     end
 
     private

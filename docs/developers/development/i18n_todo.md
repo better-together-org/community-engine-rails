@@ -1,0 +1,52 @@
+# I18n Audit TODO\n\nThe following lines likely contain hard-coded user-facing strings and should be replaced with I18n translations (t('...')).\n
+- app/controllers/better_together/navigation_areas_controller.rb:53:        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully created.'
+- app/controllers/better_together/navigation_areas_controller.rb:72:        redirect_to @navigation_area, only_path: true, notice: 'Navigation area was successfully updated.'
+- app/controllers/better_together/navigation_areas_controller.rb:90:      redirect_to navigation_areas_url, notice: 'Navigation area was successfully destroyed.'
+- app/controllers/better_together/resource_permissions_controller.rb:36:        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully created.'
+- app/controllers/better_together/resource_permissions_controller.rb:56:        redirect_to @resource_permission, only_path: true, notice: 'Resource permission was successfully updated.',
+- app/controllers/better_together/resource_permissions_controller.rb:76:      redirect_to resource_permissions_url, notice: 'Resource permission was successfully destroyed.',
+- app/controllers/better_together/platforms_controller.rb:44:        redirect_to @platform, notice: 'Platform was successfully created.'
+- app/controllers/better_together/platforms_controller.rb:63:        redirect_to @platform, notice: 'Platform was successfully updated.', status: :see_other
+- app/controllers/better_together/platforms_controller.rb:82:      redirect_to platforms_url, notice: 'Platform was successfully destroyed.', status: :see_other
+- app/controllers/better_together/geography/continents_controller.rb:29:          redirect_to @geography_continent, notice: 'Continent was successfully created.'
+- app/controllers/better_together/geography/continents_controller.rb:47:          redirect_to @geography_continent, notice: 'Continent was successfully updated.', status: :see_other
+- app/controllers/better_together/geography/continents_controller.rb:65:        redirect_to geography_continents_url, notice: 'Continent was successfully destroyed.', status: :see_other
+- app/controllers/better_together/geography/countries_controller.rb:36:          redirect_to @geography_country, notice: 'Country was successfully created.', status: :see_other
+- app/controllers/better_together/geography/countries_controller.rb:54:          redirect_to @geography_country, notice: 'Country was successfully updated.', status: :see_other
+- app/controllers/better_together/geography/countries_controller.rb:72:        redirect_to geography_countries_url, notice: 'Country was successfully destroyed.', status: :see_other
+- app/controllers/better_together/geography/settlements_controller.rb:36:          redirect_to @geography_settlement, notice: 'Settlement was successfully created.'
+- app/controllers/better_together/geography/settlements_controller.rb:54:          redirect_to @geography_settlement, notice: 'Settlement was successfully updated.', status: :see_other
+- app/controllers/better_together/geography/settlements_controller.rb:72:        redirect_to geography_settlements_url, notice: 'Settlement was successfully destroyed.', status: :see_other
+- app/controllers/better_together/person_blocks_controller.rb:18:        redirect_to blocks_path, notice: 'Person was successfully blocked.'
+- app/controllers/better_together/person_blocks_controller.rb:27:      redirect_to blocks_path, notice: 'Person was successfully unblocked.'
+- app/controllers/better_together/geography/region_settlements_controller.rb:29:          redirect_to @geography_region_settlement, notice: 'Region settlement was successfully created.'
+- app/controllers/better_together/geography/region_settlements_controller.rb:47:          redirect_to @geography_region_settlement, notice: 'Region settlement was successfully updated.',
+- app/controllers/better_together/geography/region_settlements_controller.rb:66:        redirect_to geography_region_settlements_url, notice: 'Region settlement was successfully destroyed.',
+- app/controllers/better_together/person_platform_memberships_controller.rb:48:        redirect_to @person_platform_membership, notice: 'Person platform membership was successfully updated.',
+- app/controllers/better_together/person_platform_memberships_controller.rb:67:      redirect_to person_platform_memberships_url, notice: 'Person platform membership was successfully destroyed.',
+- app/controllers/better_together/content/blocks_controller.rb:23:          redirect_to content_block_path(@block), notice: 'Block was successfully created.'
+- app/controllers/better_together/content/blocks_controller.rb:32:            redirect_to edit_content_block_path(@block), notice: 'Block was successfully updated.'
+- app/controllers/better_together/content/blocks_controller.rb:51:        redirect_to content_blocks_path, notice: 'Block was sucessfully deleted'
+- app/controllers/better_together/people_controller.rb:34:        redirect_to @person, only_path: true, notice: 'Person was successfully created.', status: :see_other
+- app/controllers/better_together/people_controller.rb:56:          redirect_to @person, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+- app/controllers/better_together/people_controller.rb:76:      redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
+- app/controllers/better_together/geography/states_controller.rb:34:          redirect_to @geography_state, notice: 'State was successfully created.', status: :see_other
+- app/controllers/better_together/geography/states_controller.rb:52:          redirect_to @geography_state, notice: 'State was successfully updated.', status: :see_other
+- app/controllers/better_together/geography/states_controller.rb:70:        redirect_to geography_states_url, notice: 'State was successfully destroyed.', status: :see_other
+- app/controllers/better_together/calendars_controller.rb:21:    #     redirect_to @calendar, notice: "Calendar was successfully created."
+- app/controllers/better_together/calendars_controller.rb:30:    #     redirect_to @calendar, notice: "Calendar was successfully updated.", status: :see_other
+- app/controllers/better_together/calendars_controller.rb:39:      redirect_to better_together_calendars_url, notice: 'Calendar was successfully destroyed.', status: :see_other
+- app/controllers/better_together/geography/regions_controller.rb:36:          redirect_to @geography_region, notice: 'Region was successfully created.'
+- app/controllers/better_together/geography/regions_controller.rb:54:          redirect_to @geography_region, notice: 'Region was successfully updated.', status: :see_other
+- app/controllers/better_together/geography/regions_controller.rb:72:        redirect_to geography_regions_url, notice: 'Region was successfully destroyed.', status: :see_other
+- app/controllers/better_together/joatu/agreements_controller.rb:73:          redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement accepted'
+- app/controllers/better_together/joatu/agreements_controller.rb:85:        redirect_to joatu_agreement_path(@joatu_agreement), notice: 'Agreement rejected'
+- app/controllers/better_together/joatu/response_links_controller.rb:52:            redirect_to joatu_request_path(request), notice: 'Request created in response to offer.'
+- app/controllers/better_together/joatu/response_links_controller.rb:73:            redirect_to joatu_offer_path(offer), notice: 'Offer created in response to request.'
+- app/controllers/better_together/users_controller.rb:30:        redirect_to @user, only_path: true, notice: 'User was successfully created.', status: :see_other
+- app/controllers/better_together/users_controller.rb:52:          redirect_to @user, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+- app/controllers/better_together/users_controller.rb:72:      redirect_to users_url, notice: 'User was successfully deleted.', status: :see_other
+- app/controllers/better_together/communities_controller.rb:81:      redirect_to communities_url, notice: 'Community was successfully destroyed.', status: :see_other
+- app/controllers/better_together/roles_controller.rb:37:        redirect_to @role, only_path: true, notice: 'Role was successfully created.'
+- app/controllers/better_together/roles_controller.rb:57:        redirect_to @role, only_path: true, notice: 'Role was successfully updated.', status: :see_other
+- app/controllers/better_together/roles_controller.rb:76:      redirect_to roles_url, notice: 'Role was successfully destroyed.', status: :see_other

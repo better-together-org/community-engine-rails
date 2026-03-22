@@ -1,0 +1,32 @@
+<%# locals: (offers:, offer_request_map:) %>
+<% if offers.present? %>
+  <div class="container my-4">
+    <h2 class="h5 mb-3"><%= t('better_together.joatu.matches.title', default: 'Potential Matches') %></h2>
+    <ul class="list-group">
+      <% offers.each do |offer| %>
+        <% request = offer_request_map[offer.id] %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <%= link_to offer.name, joatu_offer_path(offer), class: 'text-decoration-none' %>
+            <div class="text-muted small"><%= truncate(offer.description.to_s, length: 120) %></div>
+            <% if request %>
+              <div class="text-muted small mt-1">
+                <%= t('better_together.joatu.matches.matches_request', default: 'Matches request:') %>
+                <%= link_to request.name, joatu_request_path(request), class: 'text-decoration-none' %>
+              </div>
+            <% end %>
+          </div>
+          <div>
+            <% if request %>
+              <%= button_to t('better_together.joatu.matches.create_agreement', default: 'Create Agreement'),
+                            joatu_agreements_path(request_id: request.id, offer_id: offer.id),
+                            method: :post,
+                            class: 'btn btn-sm btn-primary' %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+

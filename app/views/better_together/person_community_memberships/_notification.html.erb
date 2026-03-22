@@ -1,0 +1,25 @@
+<!-- app/views/better_together/person_community_memberships/_notification.html.erb -->
+<% if notification.event.record.present? %>
+  <% membership = notification.event.record %>
+  <% joinable = membership.joinable %>
+  <%= render layout: 'better_together/notifications/notification',
+             locals: { notification: notification,
+                       notification_title: notification.title,
+                       notification_url: joinable } do %>
+    <% cache ["membership_notification_content", notification.cache_key_with_version, I18n.locale] do %>
+      <p class="mb-1">
+        <%= notification.body %>
+      </p>
+    <% end %>
+  <% end %>
+<% else %>
+  <!-- Handle orphaned notification gracefully -->
+  <%= render layout: 'better_together/notifications/notification',
+             locals: { notification: notification,
+                       notification_title: t('better_together.notifications.membership_created.title_fallback', default: 'Membership notification'),
+                       notification_url: nil } do %>
+    <p class="mb-1 text-muted">
+      <%= t('better_together.notifications.membership_created.removed_membership', default: 'This membership is no longer available.') %>
+    </p>
+  <% end %>
+<% end %>

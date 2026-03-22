@@ -2,8 +2,9 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe Content::Block, type: :model do
+# :nodoc:
+module BetterTogether # :nodoc:
+  RSpec.describe Content::Block do
     pending "add some examples to (or delete) #{__FILE__}"
   end
 end

@@ -1,0 +1,62 @@
+<%# Normalize local var so this partial works with resource_controller turbo_stream locals %>
+<% category ||= (defined?(joatu_category) && joatu_category) ||
+                (defined?(better_together_joatu_category) && better_together_joatu_category) ||
+                @category || @resource %>
+
+<div id="<%= dom_id(category, 'form') %>">
+<%= form_with(model: category, class: 'form', data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.categories.back_to_categories'), joatu_categories_path, class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.categories.save_category'), class: 'btn btn-primary' %>
+      </div>
+      <% if category.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.categories.view_category'), joatu_category_path(category), class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <%= turbo_frame_tag 'form_errors' do %>
+    <%= render 'layouts/better_together/errors', object: category %>
+  <% end %>
+
+  <%# Type is fixed by STI (BetterTogether::Joatu::Category); include as hidden to be explicit %>
+  <%= form.hidden_field :type, value: 'BetterTogether::Joatu::Category' %>
+
+  <div class="mb-3">
+    <%= form.label :identifier %>
+    <%= form.text_field :identifier, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: category, form: form, attribute: 'name' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: category, form: form, attribute: 'description' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :icon %>
+    <%= form.text_field :icon, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :position %>
+    <%= form.number_field :position, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= render 'better_together/shared/fields/attachments/cover_image', form: %>
+  </div>
+
+  <%= yield :resource_toolbar %>
+<% end %>
+</div>

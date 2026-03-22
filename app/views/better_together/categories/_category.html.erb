@@ -1,2 +1,7 @@
-<div id="<%= dom_id category %>">
-</div>
+
+<%# locals: (category:) %>
+
+<%= render 'better_together/shared/card', entity: category do %>
+  <%= category_class(category.type).model_name.human %>
+<% end %>
+

@@ -1,7 +1,7 @@
 <!-- app/views/better_together/navigation_items/edit.html.erb -->
 
 <div class="container my-3">
-  <h1>Edit Navigation Item: <%= @navigation_item.title %></h1>
+  <h1><%= t('better_together.navigation_items.edit.title', title: @navigation_item.title) %></h1>
 
   <%= render 'form', navigation_area: @navigation_area, navigation_item: @navigation_item, pages: @pages %>
 </div>

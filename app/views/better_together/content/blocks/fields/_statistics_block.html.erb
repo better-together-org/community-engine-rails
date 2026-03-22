@@ -1,0 +1,30 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="statistics-block-fields">
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[heading]", BetterTogether::Content::Block.human_attribute_name('heading', default: 'Heading (optional)'), class: 'form-label' %>
+      <%= text_field_tag "#{scope}[heading]", block.heading, class: 'form-control', placeholder: 'Our Impact' %>
+    </div>
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[columns]", BetterTogether::Content::Block.human_attribute_name('columns', default: 'Columns'), class: 'form-label' %>
+      <%= select_tag "#{scope}[columns]",
+                     options_for_select(
+                       BetterTogether::Content::StatisticsBlock::COLUMN_OPTIONS.map { |c| [c, c] },
+                       block.columns
+                     ),
+                     class: 'form-select',
+                     data: { controller: 'better_together--slim-select' } %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[stats_json]", BetterTogether::Content::Block.human_attribute_name('stats_json', default: 'Statistics (JSON)'), class: 'form-label' %>
+    <%= text_area_tag "#{scope}[stats_json]", block.stats_json, class: 'form-control font-monospace', rows: 8,
+                      placeholder: '[{"label":"Members","value":"500","icon":"fas fa-users"},{"label":"Communities","value":"12","icon":"fas fa-map-marker-alt"}]' %>
+    <div class="form-text">
+      <%= t('better_together.content.blocks.statistics_block.stats_json_help',
+            default: 'JSON array of objects with "label", "value", and optional "icon" (Font Awesome class) keys.') %>
+    </div>
+  </div>
+</div>

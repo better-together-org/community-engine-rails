@@ -1,0 +1,61 @@
+<% if @invitations.any? %>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><%= t('.email') %></th>
+          <th><%= t('.invited_by') %></th>
+          <th><%= t('.sent_at') %></th>
+          <th><%= t('.status') %></th>
+          <th class="text-end"><%= t('.actions') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @invitations.each do |invitation| %>
+          <tr id="invitation_<%= invitation.id %>">
+            <td><%= invitation.invitee_email %></td>
+            <td><%= invitation.inviter.display_name %></td>
+            <td>
+              <span title="<%= l(invitation.last_sent_at, format: :long) %>">
+                <%= time_ago_in_words(invitation.last_sent_at) %> ago
+              </span>
+            </td>
+            <td>
+              <span class="badge bg-<%= invitation_status_color(invitation.status) %>">
+                <%= t("enums.invitation.status.#{invitation.status}") %>
+              </span>
+            </td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm" role="group">
+                <%= button_to t('.resend'), 
+                            resend_event_event_invitation_path(@event, invitation),
+                            method: :put,
+                            class: 'btn btn-outline-primary btn-sm',
+                            form_class: 'd-inline-block',
+                            title: t('.resend_tooltip'),
+                            confirm: t('.resend_confirm') %>
+                
+                <%= button_to t('.delete'), 
+                            event_event_invitation_path(@event, invitation),
+                            method: :delete,
+                            class: 'btn btn-outline-danger btn-sm',
+                            form_class: 'd-inline-block',
+                            title: t('.delete_tooltip'),
+                            confirm: t('.delete_confirm') %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-center py-5">
+    <i class="fas fa-envelope-open fa-3x text-muted mb-3"></i>
+    <h4 class="text-muted"><%= t('.no_invitations') %></h4>
+    <p class="text-muted"><%= t('.no_invitations_description') %></p>
+    <%= link_to t('.send_first_invitation'), 
+                new_event_event_invitation_path(@event), 
+                class: 'btn btn-primary' %>
+  </div>
+<% end %>

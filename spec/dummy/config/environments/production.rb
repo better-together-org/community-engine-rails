@@ -2,7 +2,7 @@
 
 require 'active_support/core_ext/integer/time'
 
-Rails.application.configure do # rubocop:todo Metrics/BlockLength
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -36,15 +36,19 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
   config.assets.initialize_on_precompile = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  config.asset_host = ENV.fetch('ASSET_HOST')
-  config.action_controller.asset_host = ENV.fetch('ASSET_HOST')
+  # ASSET_HOST is optional — when absent, assets are served by the app (e.g. staging).
+  if (asset_host = ENV['ASSET_HOST'].presence)
+    config.asset_host = asset_host
+    config.action_controller.asset_host = asset_host
+  end
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :amazon
+  # Store uploaded files — configurable via ACTIVE_STORAGE_SERVICE (default: amazon).
+  # Set ACTIVE_STORAGE_SERVICE=local for staging/local instances using disk storage.
+  config.active_storage.service = ENV.fetch('ACTIVE_STORAGE_SERVICE', 'amazon').to_sym
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -95,6 +99,12 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
   end
 
   config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info').to_sym
+
+  if config.log_level == :debug
+    config.after_initialize do
+      Rails.logger.warn('RAILS_LOG_LEVEL is set to debug; use only for troubleshooting.')
+    end
+  end
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

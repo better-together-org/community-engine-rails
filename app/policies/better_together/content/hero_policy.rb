@@ -2,9 +2,8 @@
 
 module BetterTogether
   module Content
-    class HeroPolicy < BlockPolicy # rubocop:todo Style/Documentation
-
-      class Scope < BlockPolicy::Scope # rubocop:todo Style/Documentation
+    class HeroPolicy < BlockPolicy
+      class Scope < BlockPolicy::Scope
       end
     end
   end

@@ -1,0 +1,12 @@
+<%# app/views/better_together/checklist_items/edit.html.erb %>
+
+<% content_for :page_title do %>
+  <%= @checklist_item.label.presence || t('better_together.checklist_items.untitled', default: 'Untitled item') %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('globals.edit', default: 'Edit') %> <%= resource_class.model_name.human %></h1>
+
+  <div id="form_errors"></div>
+  <%= render 'form', checklist_item: @checklist_item, form_url: better_together.checklist_checklist_item_path(@checklist, @checklist_item, locale: I18n.locale) %>
+</div>

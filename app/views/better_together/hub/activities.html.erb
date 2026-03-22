@@ -1,0 +1,17 @@
+<% content_for :page_title do %>
+  <%= t('.page_title', default: 'All Activity') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0"><%= t('.page_title', default: 'All Activity') %></h1>
+    <%= link_to t('.back_to_hub', default: 'Back to Hub'), hub_path, class: 'btn btn-outline-secondary btn-sm' %>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <%= render_activities(@activities, layout: 'layouts/better_together/activity_wrapper') %>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,145 @@
+flowchart TD
+    %% Caching & Performance System Process Flow
+    %% Better Together Community Engine Rails
+
+    START[User Request] --> RATE_LIMIT{Rack::Attack Rate Check}
+    
+    %% Rate Limiting Layer
+    RATE_LIMIT -->|Allowed| ROUTE_PROCESS[Route Processing]
+    RATE_LIMIT -->|Blocked| RATE_BLOCK[429 Rate Limit Response]
+    
+    %% Request Processing Layer
+    ROUTE_PROCESS --> LOCALE_SET[Set Locale from URL/Header]
+    LOCALE_SET --> CACHE_CHECK{Fragment Cache Check}
+    
+    %% Fragment Caching Layer
+    CACHE_CHECK -->|Hit| CACHE_HIT[Serve Cached Response]
+    CACHE_CHECK -->|Miss| CONTENT_GEN[Content Generation]
+    
+    %% Content Generation Flow
+    CONTENT_GEN --> DB_QUERY{Database Query Needed?}
+    DB_QUERY -->|Yes| QUERY_OPT[Query Optimization]
+    DB_QUERY -->|No| RENDER_CONTENT[Render Content]
+    
+    %% Database & Query Optimization
+    QUERY_OPT --> EAGER_LOAD{Eager Loading Available?}
+    EAGER_LOAD -->|Yes| PRELOAD_ASSOC[Preload Associations]
+    EAGER_LOAD -->|No| INDIVIDUAL_QUERY[Individual Queries]
+    
+    PRELOAD_ASSOC --> CACHE_RESULT[Cache Query Results]
+    INDIVIDUAL_QUERY --> CACHE_RESULT
+    CACHE_RESULT --> RENDER_CONTENT
+    
+    %% Content Rendering Layer
+    RENDER_CONTENT --> BLOCK_RENDER{Content Blocks?}
+    BLOCK_RENDER -->|Yes| BLOCK_CACHE_CHECK[Check Block Cache]
+    BLOCK_RENDER -->|No| PAGE_CACHE[Cache Page Content]
+    
+    %% Block-Level Caching
+    BLOCK_CACHE_CHECK --> BLOCK_HIT{Block Cache Hit?}
+    BLOCK_HIT -->|Hit| USE_CACHED_BLOCK[Use Cached Block]
+    BLOCK_HIT -->|Miss| RENDER_BLOCK[Render Block Content]
+    
+    RENDER_BLOCK --> STORE_BLOCK_CACHE[Store Block in Cache]
+    STORE_BLOCK_CACHE --> USE_CACHED_BLOCK
+    USE_CACHED_BLOCK --> PAGE_CACHE
+    
+    %% Page Content Caching
+    PAGE_CACHE --> FRAGMENT_STORE[Store in Fragment Cache]
+    FRAGMENT_STORE --> RESPONSE_READY[Response Ready]
+    
+    %% Navigation Caching Subsystem
+    RENDER_CONTENT --> NAV_NEEDED{Navigation Rendering?}
+    NAV_NEEDED -->|Yes| NAV_CACHE_CHECK[Check Navigation Cache]
+    NAV_NEEDED -->|No| RESPONSE_READY
+    
+    NAV_CACHE_CHECK --> NAV_HIT{Navigation Cache Hit?}
+    NAV_HIT -->|Hit| USE_NAV_CACHE[Use Cached Navigation]
+    NAV_HIT -->|Miss| BUILD_NAV[Build Navigation Tree]
+    
+    BUILD_NAV --> PRELOAD_NAV[Preload Nav Translations]
+    PRELOAD_NAV --> NAV_HIERARCHY[Build Navigation Hierarchy]
+    NAV_HIERARCHY --> STORE_NAV_CACHE[Store Navigation Cache]
+    STORE_NAV_CACHE --> USE_NAV_CACHE
+    USE_NAV_CACHE --> RESPONSE_READY
+    
+    %% Permission Caching Subsystem  
+    CONTENT_GEN --> PERM_CHECK{Permission Check Needed?}
+    PERM_CHECK -->|Yes| PERM_CACHE_CHECK[Check Permission Cache]
+    PERM_CHECK -->|No| RENDER_CONTENT
+    
+    PERM_CACHE_CHECK --> PERM_HIT{Permission Cache Hit?}
+    PERM_HIT -->|Hit| USE_PERM_CACHE[Use Cached Permissions]
+    PERM_HIT -->|Miss| CALC_PERMS[Calculate Permissions]
+    
+    CALC_PERMS --> ROLE_LOOKUP[Role & Resource Lookup]
+    ROLE_LOOKUP --> PERM_LOGIC[Apply Permission Logic]
+    PERM_LOGIC --> STORE_PERM_CACHE[Store Permission Cache 12h]
+    STORE_PERM_CACHE --> USE_PERM_CACHE
+    USE_PERM_CACHE --> RENDER_CONTENT
+    
+    %% Background Processing Layer
+    RESPONSE_READY --> BG_JOBS{Background Jobs Needed?}
+    BG_JOBS -->|Yes| QUEUE_JOBS[Queue Sidekiq Jobs]
+    BG_JOBS -->|No| SEND_RESPONSE[Send HTTP Response]
+    
+    QUEUE_JOBS --> SEARCH_INDEX[Search Index Updates]
+    QUEUE_JOBS --> EMAIL_QUEUE[Email Notifications]  
+    QUEUE_JOBS --> METRICS_QUEUE[Metrics Processing]
+    
+    %% Search Indexing Subsystem
+    SEARCH_INDEX --> REDIS_QUEUE[Redis Job Queue]
+    REDIS_QUEUE --> SIDEKIQ_WORKER[Sidekiq Worker]
+    SIDEKIQ_WORKER --> ES_UPDATE[Update Elasticsearch Index]
+    ES_UPDATE --> INDEX_COMPLETE[Indexing Complete]
+    
+    %% Cache Invalidation Layer
+    SEND_RESPONSE --> CACHE_INVALID{Cache Invalidation Needed?}
+    CACHE_INVALID -->|Yes| INVALIDATE_KEYS[Invalidate Cache Keys]
+    CACHE_INVALID -->|No| REQUEST_COMPLETE[Request Complete]
+    
+    INVALIDATE_KEYS --> TOUCH_RECORDS[Touch Related Records]
+    TOUCH_RECORDS --> UPDATE_CACHE_KEYS[Update Cache Keys]
+    UPDATE_CACHE_KEYS --> REQUEST_COMPLETE
+    
+    %% Search Request Flow
+    START --> SEARCH_REQ{Search Request?}
+    SEARCH_REQ -->|Yes| SEARCH_CACHE_CHECK[Check Search Cache]
+    SEARCH_REQ -->|No| RATE_LIMIT
+    
+    SEARCH_CACHE_CHECK --> SEARCH_HIT{Search Cache Hit?}
+    SEARCH_HIT -->|Hit| CACHED_SEARCH[Return Cached Results]
+    SEARCH_HIT -->|Miss| ES_QUERY[Elasticsearch Query]
+    
+    ES_QUERY --> ES_RESULTS[Process Search Results]
+    ES_RESULTS --> CACHE_SEARCH[Cache Search Results]
+    CACHE_SEARCH --> CACHED_SEARCH
+    CACHED_SEARCH --> REQUEST_COMPLETE
+    
+    %% Asset Delivery Flow  
+    START --> ASSET_REQ{Static Asset Request?}
+    ASSET_REQ -->|Yes| CDN_CHECK[Check CDN Cache]
+    ASSET_REQ -->|No| RATE_LIMIT
+    
+    CDN_CHECK --> CDN_HIT{CDN Cache Hit?}
+    CDN_HIT -->|Hit| CDN_SERVE[Serve from CDN]
+    CDN_HIT -->|Miss| ASSET_SERVER[Asset Server Delivery]
+    
+    ASSET_SERVER --> LONG_CACHE[Set Long Cache Headers]
+    LONG_CACHE --> CDN_STORE[Store in CDN Cache]
+    CDN_STORE --> CDN_SERVE
+    CDN_SERVE --> REQUEST_COMPLETE
+    
+    %% Translation Caching Subsystem
+    RENDER_CONTENT --> TRANS_NEEDED{Translations Needed?}
+    TRANS_NEEDED -->|Yes| MOBILITY_CACHE[Check Mobility Cache]
+    TRANS_NEEDED -->|No| RESPONSE_READY
+    
+    MOBILITY_CACHE --> TRANS_HIT{Translation Cache Hit?}
+    TRANS_HIT -->|Hit| USE_TRANS_CACHE[Use Cached Translations]
+    TRANS_HIT -->|Miss| LOOKUP_TRANS[Database Translation Lookup]
+    
+    LOOKUP_TRANS --> FALLBACK_CHECK[Check Locale Fallbacks]
+    FALLBACK_CHECK --> STORE_TRANS_CACHE[Store Translation Cache]
+    STORE_TRANS_CACHE --> USE_TRANS_CACHE
+    USE_TRANS_CACHE --> RESPONSE_READY

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure i18n-tasks (in development/test groups) is available
+export DISABLE_SPRING=1
+export BUNDLE_WITH="${BUNDLE_WITH:-development:test}"
+export BUNDLE_WITHOUT="${BUNDLE_WITHOUT:-}"
+
+usage() {
+  echo "Usage: bin/i18n [normalize|check|health|all]" >&2
+}
+
+cmd="${1:-all}"
+
+case "$cmd" in
+  normalize)
+    bundle exec i18n-tasks normalize
+    ;;
+  check)
+    # Prefer newer command; fall back if unavailable
+    if bundle exec i18n-tasks check-missing >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-missing
+    else
+      bundle exec i18n-tasks missing
+    fi
+    # Interpolation check (part of health, but we run explicitly too)
+    if bundle exec i18n-tasks check-consistent-interpolations >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-consistent-interpolations
+    fi
+    ;;
+  health)
+    bundle exec i18n-tasks health
+    ;;
+  all)
+    bundle exec i18n-tasks normalize
+    if bundle exec i18n-tasks check-missing >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-missing
+    else
+      bundle exec i18n-tasks missing
+    fi
+    if bundle exec i18n-tasks check-consistent-interpolations >/dev/null 2>&1; then
+      bundle exec i18n-tasks check-consistent-interpolations
+    fi
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+esac

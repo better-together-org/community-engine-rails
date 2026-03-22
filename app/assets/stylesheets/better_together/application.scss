@@ -10,26 +10,41 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
+ *= require leaflet-gesture-handling.min
  *= require_self
  */
 
-@import 'theme';
+@use 'theme' as *;
 
 // Import Bootstrap and Font Awesome
 
-@import 'bootstrap';
-@import 'font-awesome';
-@import 'actiontext';
-@import 'contact_details';
-@import 'content_blocks';
-@import 'conversations';
-@import 'forms';
-@import 'metrics';
-@import 'navigation';
-@import 'notifications';
-@import 'profiles';
-@import 'share';
-@import 'trix-extensions/richtext';
+@use 'bootstrap' as *;
+@use 'cards';
+@use 'devise';
+@use 'font-awesome';
+@use 'actiontext';
+@use 'checklist_transitions';
+@use 'checklist_children';
+@use 'checklist_items';
+@use 'contact_details';
+@use 'content_blocks';
+@use 'conversations';
+@use 'forms';
+@use 'image-galleries';
+@use 'invitations';
+@use 'maps';
+@use 'metrics';
+@use 'navigation';
+@use 'notifications';
+@use 'pagination';
+@use 'profiles';
+@use 'share';
+@use 'sidebar_nav';
+@use 'tabs';
+@use 'trix-extensions/richtext';
+@use 'resource_toolbar';
+
+@import 'simple_calendar';
 
 // Styles that use the variables
 .text-opposite-theme {
@@ -64,8 +79,22 @@
   padding-right: 0;
 }
 
+:root {
+  --nav-height: 5vh;
+  --flash-gap: 0.66rem;
+}
+
 #flash_messages {
-  position: relative;
+  position: fixed;
+  width: 100vw;
+  top: calc(var(--nav-height) + var(--flash-gap));
+  z-index: 1001;
+  transition: top 0.02s ease-out;
+  pointer-events: none;
+
+  .alert {
+    pointer-events: auto;
+  }
 }
 
 .wrapper {
@@ -76,4 +105,27 @@
 
 .content {
   flex: 1; /* Allow the main content to grow and take up remaining space */
+  position: relative;
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.spin-horizontal {
+  animation: flip 1s linear infinite;
+}
+
+// Icons that need to be above stretched-link overlays for tooltips/interaction
+.icon-above-stretched-link {
+  position: relative;
+  z-index: 10;
 }

@@ -1,0 +1,36 @@
+flowchart TD
+
+  %% Pages
+  subgraph Pages
+    P1[Create/Edit Page]
+    P2[Set Privacy public/private]
+    P3[Set published_at]
+    P4[Associate Sidebar Nav optional]
+    P5[Add Content Blocks via PageBlocks]
+  end
+
+  P1 --> P2
+  P2 --> P3
+  P3 --> P5
+  P5 --> P6[Render Page]
+  P4 --> P6
+
+  %% Visibility
+  subgraph Visibility
+    V1{Privacy check}
+    V2{published_at <= now}
+  end
+
+  P6 --> V1
+  V1 -->|authorized| V2
+  V2 -->|true| RENDER[Render content]
+  V2 -->|false| HIDE[404 / Not visible]
+  V1 -->|unauthorized| HIDE
+
+  %% Caching
+  subgraph Caching
+    C1[cache page_content key 1m]
+    C2[cache block key]
+  end
+
+  RENDER --> C1 --> C2

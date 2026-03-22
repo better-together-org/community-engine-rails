@@ -1,0 +1,70 @@
+flowchart TD
+
+  %% Create Listing Flow
+  subgraph CL[Create Listing]
+    A[Start] --> B{Create Listing}
+    B -->|Offer| O[Offer created<br>status = open]
+    B -->|Request| R[Request created<br>status = open]
+    O --> M1[Matchmaker finds Request matches<br>Notify both creators]
+    R --> M2[Matchmaker finds Offer matches<br>Notify both creators]
+  end
+
+  %% Direct Response Flows
+  subgraph DR[Direct Response]
+    %% Offer -> Request response
+    O --> ORa[Respond with Request]
+    ORa --> ORb[Prefill Request<br>Build ResponseLink Offer→Request if respondable]
+    ORb --> ORc[Create Request]
+    ORc --> ORd[Mark Offer matched<br>Notify offer creator]
+
+    %% Request -> Offer response
+    R --> ROa[Respond with Offer]
+    ROa --> ROb[Prefill Offer<br>Build ResponseLink Request→Offer if respondable]
+    ROb --> ROc[Create Offer]
+    ROc --> ROd[Mark Request matched]
+  end
+
+  %% Agreement Lifecycle
+  subgraph AG[Agreement Lifecycle]
+    E1[Offer + Request identified] --> A1[Create Agreement<br>status = pending]
+    A1 --> N1[Notify both creators]
+    A1 -->|Accept| G1{Concurrency & state guard}
+    G1 -->|Either side already closed| GE[Block accept with error]
+    G1 -->|OK| A2[Agreement accepted]
+    A2 --> C1[Close Offer & Request<br>status = closed]
+    A2 --> N2[Notify status change]
+    A1 -->|Reject| G2{State guard}
+    G2 -->|Already final/closed| GR[Block reject with error]
+    G2 -->|OK| A3[Agreement rejected]
+    A3 --> N3[Notify status change]
+  end
+
+  %% Notification Read
+  subgraph NO[Notifications]
+    V1[View Offer/Request/Agreement page]
+    V1 --> NR[Mark related notifications as read]
+  end
+
+  %% State Summary
+  subgraph ST[State Transitions]
+    S1[Offer/Request: open]
+    S1 -->|Agreement created or ResponseLink| S2[matched]
+    S2 -->|Agreement accepted| S3[closed]
+    S1 -->|manual action| SF[fulfilled]
+    S2 -->|manual action| SF
+    S1 -->|manual action| SC[closed]
+    S2 -->|manual action| SC
+  end
+
+  %% Target alignment check (implicit in Agreement creation)
+  A1 -. validate .- TGT{Targets align?<br>target_type; target_id exact or wildcard}
+  TGT -- no --> A1
+  TGT -- yes --> N1
+
+  %% Matching notes
+  M1 -. note .- DEDUPE[Group/dedupe match notifications per pair]
+  M2 -. note .- DEDUPE
+
+  %% Permissions gates
+  P1{Authorized participant?} -. gate .- A1
+  P2{Authorized participant?} -. gate .- G1

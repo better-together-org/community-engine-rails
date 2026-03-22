@@ -1,0 +1,19 @@
+.bt-drop-target {
+  outline: 2px dashed rgba(13,110,253,0.18);
+  background-color: rgba(13,110,253,0.03);
+  transition: background-color 120ms ease, outline-color 120ms ease;
+}
+
+.bt-drop-invalid {
+  animation: bt-shake 0.44s ease;
+  background-color: rgba(220,53,69,0.06);
+  outline: 2px dashed rgba(220,53,69,0.12);
+}
+
+@keyframes bt-shake {
+  0% { transform: translateX(0) }
+  25% { transform: translateX(-6px) }
+  50% { transform: translateX(6px) }
+  75% { transform: translateX(-4px) }
+  100% { transform: translateX(0) }
+}

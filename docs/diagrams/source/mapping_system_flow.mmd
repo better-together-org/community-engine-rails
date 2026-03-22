@@ -1,0 +1,79 @@
+graph TB
+    %% User Interaction
+    UserView[User Views Page] --> MapPartial[Map Partial Rendered]
+    MapPartial --> StimulusController[Stimulus Controller Loads]
+    
+    %% Map Initialization
+    StimulusController --> InitMap[Initialize Leaflet Map]
+    InitMap --> LoadLayers[Load Tile Layers OSM/Satellite]
+    LoadLayers --> SetCenter[Set Map Center & Zoom]
+    
+    %% Data Loading
+    SetCenter --> LoadPoints[Load Spatial Points]
+    LoadPoints --> MappableData{Mappable Has Data?}
+    MappableData -->|Yes| ProcessPoints[Process leaflet_points]
+    MappableData -->|No| EmptyMap[Show Empty Map]
+    
+    %% Point Processing
+    ProcessPoints --> ValidateCoords[Validate Coordinates]
+    ValidateCoords --> CreateMarkers[Create Leaflet Markers]
+    CreateMarkers --> AddPopups[Add Popup Content]
+    
+    %% Map Controls
+    AddPopups --> EnableControls[Enable Map Controls]
+    EnableControls --> LayerToggle[Layer Toggle Buttons]
+    EnableControls --> Geolocation[Geolocation Button]
+    EnableControls --> CustomEvents[Custom Event Listeners]
+    
+    %% User Interactions  
+    LayerToggle --> SwitchLayers[Switch Map/Satellite]
+    Geolocation --> GetLocation[Get User Location]
+    CustomEvents --> MapEvents[Map Click/Marker Events]
+    
+    %% Data Updates
+    MapEvents --> UpdateCoords[Update Coordinates]
+    UpdateCoords --> SaveToDatabase[Save to PostGIS]
+    SaveToDatabase --> RefreshMap[Refresh Map Display]
+    
+    %% Map Types & Polymorphic Design
+    subgraph MODELS["Map Models & Associations"]
+        MapModel[Geography::Map<br/>Base Map Class]
+        CommunityMap[CommunityMap<br/>Community-specific]
+        CollectionMap[CommunityCollectionMap<br/>Multi-community]
+        MappableConcern[Mappable Concern<br/>Polymorphic Interface]
+    end
+    
+    %% Spatial Data Pipeline
+    subgraph SPATIAL["Spatial Data Processing"]
+        PostGISDB[PostGIS Database<br/>Spatial Storage]
+        CoordValidation[Coordinate Validation<br/>Lat/Lng Bounds]
+        LeafletConversion[Leaflet Point Conversion<br/>Format Transform]
+        SpatialQuery[Spatial Queries<br/>ST_DWithin]
+    end
+    
+    %% Frontend Integration
+    subgraph FRONTEND["Frontend Components"]
+        StimulusJS[Stimulus Map Controller<br/>JavaScript Logic]
+        LeafletJS[Leaflet.js Library<br/>Map Rendering]
+        TileProviders[Tile Providers<br/>OSM/Satellite]
+        EventSystem[Event System<br/>Custom Events]
+    end
+    
+    %% Connect subgraphs
+    MapModel --> ProcessPoints
+    PostGISDB --> LoadPoints
+    LeafletJS --> InitMap
+    StimulusJS --> StimulusController
+    
+    %% Styling
+    classDef userNode fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef processNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef dataNode fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef controlNode fill:#fff8e1,stroke:#e65100,stroke-width:2px
+    classDef modelNode fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class UserView,MapPartial userNode
+    class StimulusController,InitMap,LoadLayers,ProcessPoints,ValidateCoords processNode
+    class LoadPoints,MappableData,CreateMarkers,SaveToDatabase,PostGISDB dataNode
+    class EnableControls,LayerToggle,Geolocation,CustomEvents controlNode
+    class MapModel,CommunityMap,CollectionMap,MappableConcern modelNode

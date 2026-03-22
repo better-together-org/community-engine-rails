@@ -1,7 +1,48 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New platform</h1>
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= t('better_together.platforms.new.title') %>
+  <% end %>
 
-  <%= render "form", platform: @platform %>
+  <div class="container my-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1><%= t('better_together.platforms.new.title') %></h1>
+      <%= link_to t('better_together.platforms.new.back'), better_together.platforms_path, class: 'btn btn-outline-secondary' %>
+    </div>
 
-  <%= link_to t('globals.back_to_list'), platforms_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-</div>
+    <p class="text-muted mb-4">
+      <%= t('better_together.platforms.new.intro') %>
+    </p>
+
+    <div id="form_errors"></div>
+
+    <%= form_with(model: @platform, url: better_together.platforms_path) do |form| %>
+      <%= form.hidden_field :external, value: true %>
+
+      <div class="mb-3">
+        <%= render partial: 'better_together/shared/translated_string_field',
+                   locals: { model: @platform, form: form, attribute: 'name' } %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :identifier, class: 'form-label' %>
+        <%= form.text_field :identifier, class: 'form-control', placeholder: t('better_together.platforms.new.identifier_placeholder') %>
+        <div class="form-text"><%= t('better_together.platforms.new.identifier_hint') %></div>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :host_url, t('better_together.platforms.new.host_url_label'), class: 'form-label' %>
+        <%= form.url_field :host_url, class: 'form-control', placeholder: t('better_together.platforms.new.host_url_placeholder') %>
+        <div class="form-text"><%= t('better_together.platforms.new.host_url_hint') %></div>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :time_zone, class: 'form-label' %>
+        <%= iana_time_zone_select(form, :time_zone, @platform.time_zone, {}, { class: 'form-select', required: true }) %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.submit t('better_together.platforms.new.submit'), class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

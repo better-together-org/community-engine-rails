@@ -7,8 +7,7 @@ FactoryBot.define do
           class: 'BetterTogether::Wizard',
           aliases: %i[wizard] do
     id { SecureRandom.uuid }
-    name { Faker::Lorem.sentence(word_count: 3) }
-    identifier { name.parameterize }
+    name { Faker::Lorem.unique.sentence(word_count: 3) }
     description { Faker::Lorem.paragraph }
     max_completions { 0 }
     current_completions { Faker::Number.between(from: 0, to: max_completions) }

@@ -1,0 +1,21 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 160, "rankSpacing": 120}}}%%
+graph TD
+  subgraph "Security and Monitoring"
+    SEC1[Security Monitoring] --> SEC2[Failed Login Detection]
+    SEC2 --> SEC3{Suspicious Activity?}
+    SEC3 -->|Yes| SEC4[Account Lockout]
+    SEC3 -->|No| SEC5[Normal Activity Logging]
+    SEC4 --> SEC6[Security Alert]
+    SEC6 --> SEC7[Platform Manager Notification]
+    SEC7 --> SEC8[Investigation Required]
+    SEC5 --> SEC9[Activity Analytics]
+    SEC9 --> SEC10[User Engagement Tracking]
+    SEC10 --> SEC11[Platform Health Monitoring]
+    SEC8 --> SEC12[Account Analysis]
+    SEC12 --> SEC13{Security Risk?}
+    SEC13 -->|Yes| SEC14[Enhanced Security Measures]
+    SEC13 -->|No| SEC15[Account Recovery Process]
+    SEC14 --> SEC16[Password Reset Required]
+    SEC15 --> SEC17[User Notification]
+    SEC16 --> SEC18[Security Incident Documentation]
+  end

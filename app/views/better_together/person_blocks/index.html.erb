@@ -1,0 +1,51 @@
+<% content_for :page_title, t('better_together.person_blocks.index.title') %>
+
+<%= turbo_frame_tag "blocked-people-settings" do %>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="h4 mb-0"><%= t('better_together.person_blocks.index.title') %></h2>
+          <%= link_to t('better_together.person_blocks.index.block_person'),
+                      new_person_block_path(locale: locale),
+                      class: 'btn btn-primary btn-sm' %>
+        </div>
+
+        <% if @blocked_count > 5 %>
+          <!-- Search Form -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <%= form_with url: person_blocks_path(locale: locale), method: :get, local: true, class: 'd-flex' do |form| %>
+                <%= form.text_field :search,
+                                    value: params[:search],
+                                    placeholder: t('better_together.person_blocks.index.search_placeholder'),
+                                    class: 'form-control me-2' %>
+                <%= form.submit t('better_together.person_blocks.index.search'),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+              <% end %>
+            </div>
+            <div class="col-md-6 text-end">
+              <small class="text-muted">
+                <%= t('better_together.person_blocks.index.blocked_count', count: @blocked_count) %>
+              </small>
+            </div>
+          </div>
+        <% else %>
+          <!-- Just show the count when there are 5 or fewer blocked people -->
+          <div class="row mb-3">
+            <div class="col-12 text-end">
+              <small class="text-muted">
+                <%= t('better_together.person_blocks.index.blocked_count', count: @blocked_count) %>
+              </small>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Blocked People List -->
+        <div id="blocked_people_list">
+          <%= render 'index_content' %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

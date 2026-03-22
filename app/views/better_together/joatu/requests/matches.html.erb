@@ -1,0 +1,8 @@
+
+<% content_for :page_title do %>
+  <%= @joatu_request %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<%= render 'better_together/joatu/shared/exchange_nav' %>
+
+<%= render 'better_together/joatu/shared/match_list', resource: @joatu_request %>

@@ -1,0 +1,12 @@
+<%# locals: (event:, visible_hosts: visible_event_hosts(event)) %>
+
+<% if visible_hosts.any? %>
+<%# visible_hosts is now a mixed array of host instances instead of an EventHostCollection %>
+	<div id="<%= dom_id(event, :event_hosts) %>">
+		<h3><%= t('better_together.events.hosted_by') %></h3>
+
+		<div class="mt-2 row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+			<%= render visible_hosts %>
+		</div>
+	</div>
+<% end %>

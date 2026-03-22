@@ -1,13 +1,19 @@
 
 volumes:
   community-engine-bundler-gems:
+    name: community-engine-rails_community-engine-bundler-gems
   community-engine-db-data:
+    name: community-engine-rails_community-engine-db-data
   community-engine-elasticsearch:
+    name: community-engine-rails_community-engine-elasticsearch
   community-engine-redis:
+    name: community-engine-rails_community-engine-redis
+  community-engine-redis-rack-attack:
+    name: community-engine-rails_community-engine-redis-rack-attack
 
 x-env-info: &env-info
   env_file:
-    - './.env'
+    # - './.env'
     - './.env.dev'
 
 x-app-shared: &app-shared
@@ -17,24 +23,41 @@ x-app-shared: &app-shared
     - .:/community-engine
     # - ../pundit-resources:/pundit-resources
     - community-engine-bundler-gems:/usr/local/bundle/
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  environment:
+    DB_HOST: ${DB_HOST:-host.docker.internal}
+    DB_PORT: ${DB_PORT:-5440}
+    DB_USERNAME: ${DB_USERNAME:-postgres}
+    DB_PASSWORD: ${DB_PASSWORD:-postgres}
+    CE_WORKTREE_DB_SUFFIX: ${CE_WORKTREE_DB_SUFFIX:-}
+    ES_HOST: ${ES_HOST:-http://host.docker.internal:9200}
+    ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://host.docker.internal:9200}
+    REDIS_URL: ${REDIS_URL:-redis://host.docker.internal:6380}
+    RACK_ATTACK_REDIS_URL: ${RACK_ATTACK_REDIS_URL:-redis://host.docker.internal:6381}
+    RACK_ATTACK_REDIS_POOL_SIZE: ${RACK_ATTACK_REDIS_POOL_SIZE:-5}
+    RACK_ATTACK_REDIS_POOL_TIMEOUT: ${RACK_ATTACK_REDIS_POOL_TIMEOUT:-5}
   depends_on:
     - db
     - redis
+    - redis-rack-attack
+    - elasticsearch
 
 services:
   app: &app
     <<: *app-shared
-    container_name: community-engine-app
     build: # "context" and "dockerfile" fields have to be under "build"
       context: .
       dockerfile: ./Dockerfile.dev
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
       - "3000:3000"
+    tty: true
+    stdin_open: true
   db:
     <<: *env-info
     container_name: community-engine-db
-    image: postgis/postgis:latest
+    image: imresamu/postgis:17-recent
     volumes:
       - community-engine-db-data:/var/lib/postgresql/data
     ports:
@@ -44,16 +67,18 @@ services:
 
   elasticsearch:
     container_name: community-engine-elasticsearch
-    image: elasticsearch:7.17.23
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.3
     environment:
       - node.name=elasticsearch
       - cluster.name=community-engine-es
       - discovery.seed_hosts=elasticsearch
       - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
-      - 9201:9200
+      - 9200:9200
     ulimits:
       memlock:
         soft: -1
@@ -63,7 +88,6 @@ services:
 
   sidekiq:
     <<: *app-shared
-    container_name: community-engine-sidekiq
     command: bash -c "rm -f spec/dummy/tmp/pids/server.pid && cd ./spec/dummy && bundle exec sidekiq -C config/sidekiq.yml"
     depends_on:
       - app
@@ -72,8 +96,19 @@ services:
     image: 'redis:7.2-alpine'
     container_name: community-engine-redis
     command: redis-server
+    ports:
+      - "6380:6379"
     volumes:
       - community-engine-redis:/data
+
+  redis-rack-attack:
+    image: 'redis:7.2-alpine'
+    container_name: community-engine-redis-rack-attack
+    command: redis-server
+    ports:
+      - "6381:6379"
+    volumes:
+      - community-engine-redis-rack-attack:/data
 
   mail-server:
     image: mailhog/mailhog

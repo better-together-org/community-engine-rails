@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+<% if namespaced? %>
+module <%= module_name %>
+<% end %>  # Mailer for sending <%= invitation_name %> invitation emails
+  # Inherits from InvitationMailerBase for shared invitation email functionality
+  class <%= invitation_name.classify %>InvitationsMailer < <%= namespaced? ? 'InvitationMailerBase' : 'BetterTogether::InvitationMailerBase' %>
+    private
+
+    def invitation_subject
+      I18n.t('<%= namespace_path.present? ? "#{namespace_path}." : "" %><%= invitation_name %>_invitations_mailer.invite.subject',
+             <%= invitation_name %>_name: @invitable&.name,
+             default: 'You are invited to join %<<%= invitation_name %>_name>s')
+    end
+
+    def invitable_instance_variable
+      :@<%= invitation_name %>
+    end
+  end
+<% if namespaced? %>end<% end %>

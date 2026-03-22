@@ -12,8 +12,10 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
-  RSpec.describe MessagesHelper, type: :helper do
-    pending "add some examples to (or delete) #{__FILE__}"
+module BetterTogether # :nodoc:
+  RSpec.describe MessagesHelper do
+    it 'exists' do
+      expect(described_class).to be # rubocop:todo RSpec/Be
+    end
   end
 end

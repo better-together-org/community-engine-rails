@@ -1,0 +1,22 @@
+<%# locals: (latest_offer:, latest_request:) %>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t('.suggested_matches', default: 'Suggested Matches') %></h5>
+  </div>
+  <div class="card-body">
+    <% if latest_offer.present? %>
+      <h6 class="text-muted"><%= t('.for_your_latest_offer', default: 'For your latest offer') %>:</h6>
+      <%= render 'better_together/joatu/shared/match_list', resource: latest_offer %>
+    <% end %>
+
+    <% if latest_request.present? %>
+      <h6 class="text-muted mt-3"><%= t('.for_your_latest_request', default: 'For your latest request') %>:</h6>
+      <%= render 'better_together/joatu/shared/match_list', resource: latest_request %>
+    <% end %>
+
+    <% unless latest_offer || latest_request %>
+      <p class="text-muted mb-0"><%= t('.no_suggestions', default: 'No suggestions yet — create an offer or request to see matches.') %></p>
+    <% end %>
+  </div>
+</div>
+

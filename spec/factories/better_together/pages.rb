@@ -7,13 +7,48 @@ FactoryBot.define do
           class: 'BetterTogether::Page',
           aliases: %i[page] do
     id { SecureRandom.uuid }
-    title { Faker::Lorem.sentence(word_count: 3) }
-    slug { title.parameterize }
+    title { Faker::Lorem.unique.sentence(word_count: 3) }
     content { Faker::Lorem.paragraph }
     meta_description { Faker::Lorem.sentence }
     keywords { Faker::Lorem.words(number: 4).join(', ') }
     published_at { Faker::Date.backward(days: 30) }
-    privacy { BetterTogether::Page::PRIVACY_LEVELS.keys.sample.to_s }
+    privacy { 'public' } # Default to public so tests work for non-managers
     protected { Faker::Boolean.boolean }
+    show_title { true }
+
+    # Use after(:create) to set community after the page is saved
+    # This ensures the host community exists and the association is persisted
+    before(:create) do |page|
+      unless page.platform_id.present?
+        page.platform = Current.platform ||
+                        BetterTogether::Platform.find_by(host: true) ||
+                        create(:better_together_platform)
+      end
+    end
+
+    after(:create) do |page|
+      if page.community_id.blank?
+        host_community = BetterTogether::Community.find_by(host: true)
+        page.update_column(:community_id, host_community&.id) if host_community
+      end
+    end
+
+    trait :with_community do
+      # This trait is now a no-op since the model auto-assigns the host community
+      # Kept for backward compatibility with existing tests
+    end
+
+    trait :published_public do
+      published_at { Faker::Date.backward(days: 30) }
+      privacy { 'public' }
+    end
+
+    trait :unpublished do
+      published_at { nil }
+    end
+
+    trait :private do
+      privacy { 'private' }
+    end
   end
 end

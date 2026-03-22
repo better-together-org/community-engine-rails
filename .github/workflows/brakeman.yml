@@ -1,18 +1,9 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# This workflow integrates Brakeman with GitHub's Code Scanning feature
-# Brakeman is a static analysis security vulnerability scanner for Ruby on Rails applications
-
 name: Brakeman Scan
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ "main" ]
   schedule:
     - cron: '26 3 * * 0'
@@ -22,37 +13,38 @@ permissions:
 
 jobs:
   brakeman-scan:
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     name: Brakeman Scan
+    # Option A: stay on latest (24.04) – requires up-to-date setup-ruby
     runs-on: ubuntu-latest
+    # Option B (fallback): force older image if you prefer
+    # runs-on: ubuntu-22.04
+
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    # Customize the ruby version depending on your needs
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
-      with:
-        ruby-version: '3.2'
+      - name: Setup Ruby
+        # Use the rolling v1 tag so you get fixes for new runner images
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'   # or your exact patch, e.g. '3.2.2'
+          # bundler-cache not needed since we install brakeman directly
 
-    - name: Setup Brakeman
-      env:
-        BRAKEMAN_VERSION: '4.10' # SARIF support is provided in Brakeman version 4.10+
-      run: |
-        gem install brakeman --version $BRAKEMAN_VERSION
+      - name: Setup Brakeman
+        run: |
+          gem install brakeman
 
-    # Execute Brakeman CLI and generate a SARIF output with the security issues identified during the analysis
-    - name: Scan
-      continue-on-error: true
-      run: |
-        brakeman -f sarif -o output.sarif.json .
+      - name: Scan (SARIF)
+        continue-on-error: true
+        run: |
+          brakeman -f sarif -o output.sarif.json .
 
-    # Upload the SARIF file generated in the previous step
-    - name: Upload SARIF
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: output.sarif.json
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: output.sarif.json

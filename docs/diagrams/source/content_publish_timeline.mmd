@@ -1,0 +1,12 @@
+timeline
+  title Page Publish Lifecycle
+  section Drafting
+    Create page: published_at is nil (draft)
+    Add content blocks: via content_page_blocks
+  section Scheduling
+    Set published_at > now: scheduled
+    Update privacy/layout/slug: cached keys include updated_at
+  section Published
+    published_at <= now: published
+    Visible if policy allows: privacy public or authorized
+

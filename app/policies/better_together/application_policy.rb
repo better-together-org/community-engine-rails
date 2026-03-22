@@ -2,12 +2,13 @@
 
 module BetterTogether
   class ApplicationPolicy # rubocop:todo Style/Documentation
-    attr_reader :user, :record, :agent
+    attr_reader :user, :record, :agent, :invitation_token
 
-    def initialize(user, record)
+    def initialize(user, record, invitation_token: nil)
       @user = user
       @agent = user&.person
       @record = record
+      @invitation_token = invitation_token
     end
 
     def index?
@@ -39,23 +40,61 @@ module BetterTogether
     end
 
     class Scope # rubocop:todo Style/Documentation
-      attr_reader :user, :scope, :agent
+      attr_reader :user, :scope, :agent, :invitation_token
 
-      def initialize(user, scope)
+      def initialize(user, scope, invitation_token: nil)
         @user = user
         @agent = user&.person
         @scope = scope
+        @invitation_token = invitation_token
       end
 
-      def resolve
-        scope.all
+      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        result = scope.order(created_at: :desc)
+
+        table = scope.arel_table
+
+        if scope.ancestors.include?(BetterTogether::Privacy)
+          # Only list records that are public unless otherwise granted permission
+          query = table[:privacy].eq('public')
+
+          if permitted_to?('manage_platform')
+            query = query.or(table[:privacy].eq('private'))
+          elsif agent
+            if scope.ancestors.include?(BetterTogether::Joinable) && scope.membership_class.present?
+              membership_table = scope.membership_class.arel_table
+              query = query.or(
+                table[:id].in(
+                  membership_table
+                    .where(membership_table[:member_id]
+                    .eq(agent.id))
+                    .project(:joinable_id)
+                )
+              )
+            end
+
+            if scope.ancestors.include?(BetterTogether::Creatable)
+              query = query.or(
+                table[:creator_id].eq(agent.id)
+              )
+            end
+          end
+
+          result = result.where(query)
+        end
+
+        result
+      end
+
+      def permitted_to?(permission_identifier, record = nil)
+        !!agent&.permitted_to?(permission_identifier, record)
       end
     end
 
     protected
 
-    def permitted_to?(permission_identifier)
-      agent&.permitted_to?(permission_identifier)
+    def permitted_to?(permission_identifier, record = nil)
+      !!agent&.permitted_to?(permission_identifier, record)
     end
   end
 end

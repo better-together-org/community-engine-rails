@@ -28,18 +28,37 @@ module BetterTogether
           protected: true,
           item_type: 'link',
           url: '',
-          linkable: page
+          linkable: page,
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
         )
       end
     end
 
     def top_level_nav_items_includes_children
-      self&.navigation_items&.includes(:string_translations, :linkable, children:
-                                %i[string_translations linkable])&.visible&.top_level&.positioned # rubocop:enable Metrics/CollectionLiteralLength
+      navigation_items.visible.top_level.positioned.includes(
+        :string_translations,
+        linkable: [:string_translations],
+        children: [
+          :string_translations,
+          { linkable: [:string_translations] }
+        ]
+      )
     end
 
     def to_s
       name
+    end
+
+    def self.permitted_attributes(id: false, destroy: false)
+      # Allow core fields for creating/updating navigation areas
+      attrs = %i[
+        name
+        style
+        visible
+      ]
+
+      super + attrs
     end
   end
 end

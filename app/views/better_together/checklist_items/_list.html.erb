@@ -1,0 +1,8 @@
+<%# app/views/better_together/checklist_items/_list.html.erb %>
+<div id="<%= dom_id(checklist, :checklist_items) %>" class="bt-list-fade" data-better_together--checklist-items-target="list" data-bt-debug="true" data-can-update="<%= policy(checklist).update? ? 'true' : 'false' %>">
+  <ul class="list-group bt-checklist" role="list" aria-labelledby="checklist-items-list">
+  <%# Use provided items local when available (e.g., from a parent partial), otherwise fallback to controller helper %>
+  <% items ||= checklist_items_for(checklist, parent_id: nil) %>
+  <%= render partial: 'better_together/checklist_items/checklist_item', collection: items, as: :checklist_item %>
+  </ul>
+</div>

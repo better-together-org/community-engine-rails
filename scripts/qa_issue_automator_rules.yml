@@ -1,0 +1,25 @@
+version: 1
+
+manual_flags:
+  - "Test navigation rendering in browser"
+  - "Check Turbo/Hotwire interactions work (no full page reloads)"
+  - "Test in at least one non-English locale"
+  - "Check browser console for JavaScript errors"
+  - "Visual inspection with non-English locale"
+
+groups:
+  models:
+    check_texts:
+      - "Verify model validations work correctly (create with invalid data)"
+      - "Test model associations (belongs_to, has_many, etc.)"
+      - "Check permitted_attributes are correctly defined"
+      - "Verify enum values match documentation and are string-based"
+      - "Test any new scopes or query methods"
+  policies:
+    check_texts:
+      - "Verify unauthenticated users are denied access"
+      - "Test regular user permissions match expected behavior"
+      - "Test platform manager / admin permissions"
+      - "Verify Scope restricts record visibility appropriately"
+      - "Check that policy is applied in corresponding controller"
+      - "Test edge cases (own records vs others' records)"

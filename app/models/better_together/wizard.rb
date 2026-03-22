@@ -12,7 +12,7 @@ module BetterTogether
 
     slugged :identifier, dependent: :delete_all
 
-    translates :name
+    translates :name, type: :string
     translates :description, type: :text
 
     validates :name, presence: true
@@ -26,8 +26,8 @@ module BetterTogether
       completed = wizard_steps.size == wizard_step_definitions.size &&
                   wizard_steps.ordered.all?(&:completed)
 
-      mark_completed
-      completed
+      mark_completed if completed
+      current_completions.positive?
     end
 
     def limited_completions?
@@ -38,8 +38,8 @@ module BetterTogether
       return if current_completions == max_completions
 
       self.current_completions += 1
-      self.last_completed_at = DateTime.now
-      self.first_completed_at = DateTime.now if first_completed_at.nil?
+      self.last_completed_at = Time.now
+      self.first_completed_at = Time.now if first_completed_at.nil?
 
       save
     end

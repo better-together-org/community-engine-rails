@@ -1,6 +1,7 @@
 
 <%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
-<div class="template-fields">
-  <%= required_label block, :html_content %>
-  <%= text_area_tag "#{scope}[html_content]", block.html_content, class: 'form-control' %>
+<div class="html-fields">
+  <div class="my-3">
+    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'content' } %>
+  </div>
 </div>

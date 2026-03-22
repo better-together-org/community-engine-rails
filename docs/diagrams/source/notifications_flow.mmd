@@ -1,0 +1,62 @@
+flowchart TD
+
+  %% Shared
+  subgraph SH[Shared Infrastructure]
+    EV[Noticed::Event] --> NN[Noticed::Notification]
+    NN --> AC[Action Cable\nBetterTogether::NotificationsChannel]
+    NN --> EM[Email Delivery]
+  end
+
+  %% Messaging Flow
+  subgraph MSG[Conversations]
+    M1[Message created] --> NMN[NewMessageNotifier]
+    NMN -->|deliver to participants| EV
+    EM -. gated .-> NMN
+    NMN -.-> NMN_NOTE[Email waits 15m; one email per unread conversation]
+    MREAD[View conversation] --> MR[Mark read via NotificationReadable]
+  end
+
+  %% Events Flow
+  subgraph EVT[Events]
+    E1[Event created/updated] --> ERS[EventReminderSchedulerJob]
+    ERS --> ERJ[EventReminderJob\nscheduled at intervals]
+    ERJ --> ERN[EventReminderNotifier]
+    E2[Event details changed] --> EUN[EventUpdateNotifier]
+    ERN -->|deliver to going attendees| EV
+    EUN -->|deliver to all attendees| EV
+    EM -. gated .-> ERN
+    EM -. gated .-> EUN
+    ERN -.-> ERN_NOTE[Email waits 15m; one email per unread event\nRespects: event_reminders, notify_by_email]
+    EUN -.-> EUN_NOTE[Includes changed attributes info]
+    EREAD[View event] --> ER[Mark read via NotificationReadable]
+  end
+
+  %% Exchange: Matches
+  subgraph MAT[Exchange Matches]
+    X1[Offer/Request created] --> MF[Exchange#notify_matches]
+    MF --> MN[Joatu::MatchNotifier]
+    RL[ResponseLink created] --> MN
+    MN -->|deliver to creators| EV
+    MN -.-> MN_NOTE[Dedupe: prevent duplicate unread per Offer/Request pair]
+    VOR[View Offer/Request] --> MMR[Mark Match read via NotificationReadable]
+  end
+
+  %% Agreements
+  subgraph AGR[Agreements]
+    A1[Agreement created] --> AN[AgreementNotifier]
+    A2[Agreement status changed] --> ASN[AgreementStatusNotifier]
+    AN --> EV
+    ASN --> EV
+    VAG[View Agreement] --> AR[Mark read via NotificationReadable]
+  end
+
+  %% Page Authorship
+  subgraph PAG[Page Authorship]
+    P1[Author added/removed] --> PAN[PageAuthorshipNotifier]
+    PAN --> EV
+    EM -. gated .-> PAN
+    PAN -.-> PAN_NOTE[Email waits 15m; one email per unread page]
+  end
+
+  %% Unread Count
+  AC --> UC[Unread count included in push]

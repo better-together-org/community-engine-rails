@@ -1,0 +1,26 @@
+flowchart TD
+
+  %% Frontend Tracking
+  subgraph Frontend
+    JS1[metrics_controller] --> PVPOST[POST PageView]
+    JS1 --> LCPPOST[POST LinkClick]
+    JS2[share_controller] --> SHPOST[POST Share]
+    SRCH[SearchController#search] --> SQJOB[TrackSearchQueryJob]
+  end
+
+  %% Backend Records
+  PVPOST --> PV[Metrics::PageView]
+  LCPPOST --> LC[Metrics::LinkClick]
+  SHPOST --> SH[Metrics::Share]
+  SQJOB --> SQ[Metrics::SearchQuery]
+
+  %% Reports
+  subgraph Reports
+    NEWR[Create Report] --> GENR[Generate Report Data]
+    GENR --> CSV[Attach CSV]
+    DL[Download Report] --> TDJ[TrackDownloadJob]
+    TDJ --> DLREC[Metrics::Download]
+  end
+
+  PV --> GENR
+  LC --> GENR

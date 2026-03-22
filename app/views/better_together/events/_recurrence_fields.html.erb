@@ -1,0 +1,102 @@
+<div class="recurrence-fields" data-controller="better-together--recurrence">
+  <%= form.fields_for :recurrence, (event.recurrence || event.build_recurrence) do |recurrence_form| %>
+    <%= recurrence_form.hidden_field :id if event.recurrence&.persisted? %>
+    
+    <!-- Frequency Selection -->
+    <div class="mb-3">
+      <%= recurrence_form.label :frequency, t('better_together.events.recurrence.labels.frequency'), class: 'form-label' %>
+      <%= recurrence_form.select :frequency,
+          recurrence_frequency_options,
+          { prompt: t('better_together.events.recurrence.prompts.select_frequency') },
+          {
+            class: 'form-select',
+            'aria-describedby': 'frequency-help',
+            data: {
+              better_together__recurrence_target: 'frequencyField',
+              action: 'change->better-together--recurrence#updateVisibility'
+            }
+          } %>
+      <small id="frequency-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.frequency') %></small>
+    </div>
+
+    <!-- Interval Selection -->
+    <div class="mb-3">
+      <%= recurrence_form.label :interval, t('better_together.events.recurrence.labels.interval'), class: 'form-label' %>
+      <%= recurrence_form.number_field :interval,
+          value: event.recurrence&.interval || 1,
+          min: 1,
+          max: 365,
+          class: 'form-control',
+          'aria-describedby': 'interval-help',
+          data: { better_together__recurrence_target: 'intervalField' } %>
+      <small id="interval-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.interval') %></small>
+    </div>
+
+    <!-- Weekday Selection (for weekly recurrence) -->
+    <div class="mb-3" data-better-together--recurrence-target="weekdaysField" aria-hidden="true" style="display: none;">
+      <%= recurrence_form.label :weekdays, t('better_together.events.recurrence.labels.weekdays'), class: 'form-label' %>
+      <div class="weekday-checkboxes">
+        <%= weekday_checkboxes(recurrence_form, selected_days: event.recurrence&.weekdays || []) %>
+      </div>
+      <small id="weekdays-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.weekdays') %></small>
+    </div>
+
+    <!-- End Type Selection -->
+    <div class="mb-3">
+      <%= recurrence_form.label :end_type, t('better_together.events.recurrence.labels.end_type'), class: 'form-label' %>
+      <%= recurrence_form.select :end_type,
+          recurrence_end_type_options,
+          { selected: event.recurrence&.end_type || 'never' },
+          {
+            class: 'form-select',
+            'aria-describedby': 'end-type-help',
+            data: {
+              better_together__recurrence_target: 'endTypeField',
+              action: 'change->better-together--recurrence#updateVisibility'
+            }
+          } %>
+      <small id="end-type-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.end_type') %></small>
+    </div>
+
+    <!-- Until Date (shown when end_type is 'until') -->
+    <div class="mb-3" data-better-together--recurrence-target="untilDateField" aria-hidden="true" style="display: none;">
+      <%= recurrence_form.label :ends_on, t('better_together.events.recurrence.labels.ends_on'), class: 'form-label' %>
+      <%= recurrence_form.date_field :ends_on,
+          class: 'form-control',
+          'aria-describedby': 'ends-on-help',
+          min: Date.current.to_s %>
+      <small id="ends-on-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.ends_on') %></small>
+    </div>
+
+    <!-- Count (shown when end_type is 'count') -->
+    <div class="mb-3" data-better-together--recurrence-target="countField" aria-hidden="true" style="display: none;">
+      <%= recurrence_form.label :count, t('better_together.events.recurrence.labels.count'), class: 'form-label' %>
+      <%= recurrence_form.number_field :count,
+          min: 1,
+          max: 999,
+          class: 'form-control',
+          'aria-describedby': 'count-help' %>
+      <small id="count-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.count') %></small>
+    </div>
+
+    <!-- Exception Dates -->
+    <div class="mb-3">
+      <%= recurrence_form.label :exception_dates, t('better_together.events.recurrence.labels.exception_dates'), class: 'form-label' %>
+      <%= recurrence_form.text_area :exception_dates,
+          value: event.recurrence&.exception_dates&.join(', '),
+          class: 'form-control',
+          rows: 2,
+          'aria-describedby': 'exception-dates-help',
+          placeholder: t('better_together.events.recurrence.placeholders.exception_dates') %>
+      <small id="exception-dates-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.exception_dates') %></small>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="mb-3" data-better-together--recurrence-target="preview" role="status" aria-live="polite">
+      <h6><%= t('better_together.events.recurrence.labels.preview') %></h6>
+      <div class="alert alert-info">
+        <%= t('better_together.events.recurrence.hints.preview_placeholder') %>
+      </div>
+    </div>
+  <% end %>
+</div>

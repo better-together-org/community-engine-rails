@@ -1,0 +1,23 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 160, "rankSpacing": 120}}}%%
+graph TD
+  subgraph "User Profile Management"
+    PROF1[User Profile Access] --> PROF2[View Profile Page]
+    PROF2 --> PROF3{Edit Profile?}
+    PROF3 -->|No| PROF4[View Only Mode]
+    PROF3 -->|Yes| PROF5{User Owns Profile?}
+    PROF5 -->|No| PROF6[Permission Check]
+    PROF6 --> PROF7{Admin Access?}
+    PROF7 -->|No| PROF4
+    PROF7 -->|Yes| PROF8[Admin Edit Mode]
+    PROF5 -->|Yes| PROF9[User Edit Mode]
+    PROF8 --> PROF10[Edit Profile Form]
+    PROF9 --> PROF10
+    PROF10 --> PROF11[Update Information]
+    PROF11 --> PROF12{Changes Valid?}
+    PROF12 -->|No| PROF13[Show Validation Errors]
+    PROF13 --> PROF10
+    PROF12 -->|Yes| PROF14[Save Changes]
+    PROF14 --> PROF15[Update Search Index]
+    PROF15 --> PROF16[Broadcast Updates]
+    PROF16 --> PROF17[Show Success Message]
+  end

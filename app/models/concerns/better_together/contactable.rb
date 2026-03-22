@@ -1,11 +1,13 @@
+# frozen_string_literal: true
 
 module BetterTogether
-  module Contactable
+  module Contactable # rubocop:todo Style/Documentation
     extend ActiveSupport::Concern
 
     included do
       has_one :contact_detail, as: :contactable, dependent: :destroy, class_name: 'BetterTogether::ContactDetail'
-      accepts_nested_attributes_for :contact_detail, allow_destroy: true
+      has_many :contacts, as: :contactable, dependent: :destroy, class_name: 'BetterTogether::ContactDetail'
+      accepts_nested_attributes_for :contact_detail, :contacts, reject_if: :all_blank
 
       delegate :has_contact_details?, to: :contact_detail, allow_nil: true
 
@@ -18,21 +20,17 @@ module BetterTogether
       has_many :physical_addresses, -> { where(physical: true) }, through: :contact_detail, source: :addresses
       has_many :website_links, through: :contact_detail, source: :website_links
 
-      after_initialize :build_default_contact_details, if: :new_record?
-      after_initialize :create_contact_detail, if: -> { persisted? && contact_detail.nil? }
+      before_validation :build_default_contact_details, if: :new_record?
+      before_validation :create_contact_detail, if: -> { persisted? && contact_detail.nil? }
     end
 
     class_methods do
       def extra_permitted_attributes
         super + [
-          contact_detail_attributes: [
-            :id, :_destroy,
-            phone_numbers_attributes: [:id, :number, :_destroy, *PhoneNumber.extra_permitted_attributes],
-            email_addresses_attributes: [:id, :email, :_destroy, *EmailAddress.extra_permitted_attributes],
-            social_media_accounts_attributes: [:id, :platform, :handle, :url, :_destroy, *SocialMediaAccount.extra_permitted_attributes],
-            addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name, :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes],
-            website_links_attributes: [:id, :url, :_destroy, *WebsiteLink.extra_permitted_attributes]
-          ]
+          {
+            contact_detail_attributes: BetterTogether::ContactDetail.permitted_attributes(id: true, destroy: true),
+            contacts_attributes: BetterTogether::ContactDetail.permitted_attributes(id: true, destroy: true)
+          }
         ]
       end
     end

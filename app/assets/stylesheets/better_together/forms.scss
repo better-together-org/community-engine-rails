@@ -1,8 +1,24 @@
-@import "theme";
+@use "theme" as *;
 
 .required-indicator {
   color: $danger;
   font-weight: bold;
+}
+
+.ss-content .ss-search input {
+  color: $light-background-text-color;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.agreement-modal-link {
+  text-decoration: none;
+}
+
+.bt-mb-3 {
+  margin-bottom: 1rem;
 }
 
 .hidden-field {
@@ -22,6 +38,12 @@
   transform: translateY(0);
   pointer-events: auto;
   transition: opacity 0.3s ease, transform 0.3s ease, height 0.3s ease;
+}
+
+.ss-main.form-select {
+  display: flex;
+  padding-right: 0.75rem;
+  --bs-form-select-bg-img: none;
 }
 
 /* General slider track styling */
@@ -95,4 +117,12 @@ input[type="range"]::-ms-thumb {
   border: $slider-thumb-border-size solid $slider-thumb-border-color;
   border-radius: 50%;
   cursor: pointer;
+}
+
+trix-toolbar .trix-input--dialog {
+  color: $light-background-text-color;
+}
+
+.ss-content.form-select {
+  overflow-y: auto;
 }

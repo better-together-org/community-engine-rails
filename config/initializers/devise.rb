@@ -14,7 +14,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  config.secret_key = ENV.fetch('DEVISE_SECRET', nil)
+  config.secret_key = ENV.fetch('DEVISE_SECRET') { Rails.application.credentials.secret_key_base }
 
   config.pepper = ENV.fetch('DEVISE_PEPPER', nil)
 
@@ -273,7 +273,26 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+
+  # Configure CSRF protection for OmniAuth to mitigate CVE-2015-9284
+  # See: https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284
+  # Allow only POST requests for security
+  OmniAuth.config.allowed_request_methods = %i[post]
+
+  # CSRF protection is handled by omniauth-rails_csrf_protection gem
+  # which integrates with Rails' authenticity token system.
+  # No need to disable request_validation_phase - the gem handles it securely.
+
+  # Configure OmniAuth to route failures through Devise's callback controller
+  # This ensures failures are handled by our custom failure action instead of
+  # the default OmniAuth::FailureEndpoint which redirects to /auth/failure
+  OmniAuth.config.on_failure = proc do |env|
+    env['devise.mapping'] = Devise.mappings[:user]
+    BetterTogether::Users::OmniauthCallbacksController.action(:failure).call(env)
+  end
+
+  # Request user:email scope to access email address (which may be private on GitHub)
+  config.omniauth :github, ENV.fetch('GITHUB_CLIENT_ID', nil), ENV.fetch('GITHUB_CLIENT_SECRET', nil), scope: 'user:email'
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
@@ -304,7 +323,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # apps is `200 OK` and `302 Found` respectively, but new apps are generated with
   # these new defaults that match Hotwire/Turbo behavior.
   # Note: These might become the new default in future versions of Devise.
-  config.responder.error_status = :unprocessable_entity
+  config.responder.error_status = :unprocessable_content
   config.responder.redirect_status = :see_other
 
   # ==> Configuration for :registerable
@@ -314,16 +333,24 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # config.sign_in_after_change_password = true
 
   config.jwt do |jwt|
-    jwt.secret = ENV.fetch('DEVISE_SECRET', nil)
+    jwt.secret = ENV.fetch('DEVISE_SECRET') do
+      Rails.application.credentials.devise_jwt_secret_key.presence || Rails.application.credentials.secret_key_base
+    end
+    route_scope = BetterTogether.route_scope_path.to_s
+    path_prefix = route_scope.present? ? "/#{route_scope}" : ''
     jwt.dispatch_requests = [
-      ['POST', %r{^/bt/api/auth/sign-in$}]
+      ['POST', %r{^#{path_prefix}/api/auth/sign-in$}]
     ]
     jwt.revocation_requests = [
-      ['DELETE', %r{^/bt/api/auth/sign-out$}]
+      ['DELETE', %r{^#{path_prefix}/api/auth/sign-out$}]
     ]
     jwt.expiration_time = 1.hour.to_i
+    # devise_for :users inside namespace :api generates the :api_user Devise mapping,
+    # so tokens dispatched from /api/auth/sign-in carry scp: "api_user".
+    # Both scopes are listed so JWT auth works regardless of route_scope_path.
     jwt.request_formats = {
-      user: [nil, :json, 'application/vnd.api+json']
+      user: [nil, :json, :jsonapi],
+      api_user: [nil, :json, :jsonapi]
     }
   end
 end

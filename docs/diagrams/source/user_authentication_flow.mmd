@@ -1,0 +1,22 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 160, "rankSpacing": 120}}}%%
+graph TD
+  subgraph "User Authentication"
+    AUTH1[User Sign In Attempt] --> AUTH2[Enter Email/Password]
+    AUTH2 --> AUTH3{Credentials Valid?}
+    AUTH3 -->|No| AUTH4[Show Login Error]
+    AUTH4 --> AUTH5{Too Many Attempts?}
+    AUTH5 -->|Yes| AUTH6[Account Lockout]
+    AUTH5 -->|No| AUTH2
+    AUTH3 -->|Yes| AUTH7{Account Confirmed?}
+    AUTH7 -->|No| AUTH8[Resend Confirmation]
+    AUTH7 -->|Yes| AUTH9[Load User Session]
+    AUTH9 --> AUTH10[Check Platform Privacy]
+    AUTH10 --> AUTH11{Private Platform?}
+    AUTH11 -->|Yes| AUTH12{Valid Invitation?}
+    AUTH12 -->|No| AUTH13[Access Denied]
+    AUTH12 -->|Yes| AUTH14[Grant Access]
+    AUTH11 -->|No| AUTH14
+    AUTH14 --> AUTH15[Load User Context]
+    AUTH15 --> AUTH16[Cache Permissions]
+    AUTH16 --> AUTH17[Redirect to Dashboard]
+  end

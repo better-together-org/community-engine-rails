@@ -1,0 +1,42 @@
+<!-- app/views/better_together/checklists/_form.html.erb -->
+
+<%= content_tag :div, id: 'checklist_form' do %>
+  <%= form_with(model: [@checklist], local: true, class: 'form') do |form| %>
+    <% content_for :action_toolbar do %>
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('globals.back_to_list'), better_together.checklists_path(locale: I18n.locale), class: 'btn btn-secondary' %>
+        </div>
+        <div class="btn-group me-2" role="group">
+          <%= form.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= yield :action_toolbar %>
+
+    <div id="form_errors">
+      <% if @checklist.errors.any? %>
+        <div class="alert alert-danger">
+          <h4><%= pluralize(@checklist.errors.count, "error") %> prohibited this checklist from being saved:</h4>
+          <ul>
+            <% @checklist.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mb-3">
+      <%= render partial: 'better_together/shared/translated_string_field', locals: { model: @checklist, form: form, attribute: 'title' } %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :privacy %>
+      <%= form.select :privacy, options_for_select([['Public', 'public'], ['Private', 'private']], @checklist.privacy), {}, class: 'form-select' %>
+    </div>
+
+    <%= yield :action_toolbar %>
+  <% end %>
+<% end %>

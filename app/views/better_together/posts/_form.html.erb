@@ -1,0 +1,89 @@
+<%= form_with(model: post, class: 'form', id: dom_id(post, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
+  <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+      <div class="btn-group me-2" role="group">
+        <%= link_to t('better_together.posts.back_to_posts', default: 'Back to Posts'), posts_path, class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2" role="group">
+        <%= form.submit t('better_together.posts.save_post', default: 'Save Post'), class: 'btn btn-primary' %>
+      </div>
+      <% if post.persisted? %>
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.posts.view_post', default: 'View Post'), post, class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <% if post.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= t('helpers.errors.heading') %></h4>
+      <ul>
+        <% post.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: post, form: form, attribute: 'title' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: post, form: form, attribute: 'slug' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :privacy, t('better_together.posts.labels.privacy', default: 'Privacy') %>
+    <%= privacy_field(form:, klass: post.class) %>
+  </div>
+
+  <div class="mb-3">
+    <%= required_label form, :categories %>
+    <%= form.select :category_ids,
+      options_from_collection_for_select(
+        resource_class.category_klass.positioned.all.includes(:string_translations),
+        :id, :name, post.category_ids
+      ),
+      { include_blank: true, multiple: true },
+      class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+    <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :author_ids, t('better_together.posts.authors', default: 'Authors') %>
+    <%= form.collection_select :author_ids,
+      BetterTogether::Person.all,
+      :id,
+      :select_option_title,
+      {},
+      { multiple: true,
+        class: "form-select#{' is-invalid' if post.errors[:author_ids].any?}",
+        data: { controller: 'better_together--slim-select' } } %>
+    <% if post.errors[:author_ids].any? %>
+      <div class="invalid-feedback">
+        <%= post.errors[:author_ids].join(', ') %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted"><%= t('hints.authors.select_multiple', default: 'Select one or more authors') %></small>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :published_at %>
+    <%= form.datetime_field :published_at, include_seconds: false, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: post, form: form, attribute: 'content' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= render 'better_together/shared/fields/attachments/cover_image', form: form %>
+  </div>
+
+  <%= yield :resource_toolbar %>
+<% end %>

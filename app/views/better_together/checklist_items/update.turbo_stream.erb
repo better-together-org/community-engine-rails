@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@checklist_item) do %>
+  <%= render partial: 'checklist_item', locals: { checklist_item: @checklist_item } %>
+<% end %>

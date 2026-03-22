@@ -1,6 +1,10 @@
 
 # Dokku Deployment
 
+Before proceeding, review and configure required external services and environment variables:
+
+- See: [External Services Configuration](./external-services-to-configure.md)
+
 # Create the app
 
 This app uses dokku to manage its production environment.
@@ -60,3 +64,7 @@ dokku docker-options:add communityengine.app build '--build-arg FOG_REGION'
 dokku docker-options:add communityengine.app build '--build-arg ASSET_HOST'
 dokku docker-options:add communityengine.app build '--build-arg CDN_DISTRIBUTION_ID'
 ```
+
+## Logging
+
+Configure the application log level with the `RAILS_LOG_LEVEL` environment variable. Use `info` or `warn` in production and reserve `debug` for troubleshooting.

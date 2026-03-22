@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module BetterTogether
-  class WebsiteLink < ApplicationRecord
+  class WebsiteLink < ApplicationRecord # rubocop:todo Style/Documentation
     include Privacy
 
     LABELS = %i[
@@ -9,7 +11,7 @@ module BetterTogether
     ].freeze
     include Labelable
 
-    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail'
+    belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 
     # Validations
     validates :url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }

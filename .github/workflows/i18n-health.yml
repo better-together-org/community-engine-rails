@@ -1,0 +1,95 @@
+name: i18n Translation Health Report
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
+  pull_request:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
+
+jobs:
+  prepare:
+    # Skip automated compat sync PRs (main → compat/*) whose head_ref == 'main'.
+    # The i18n-health job cascades-skip via needs: prepare.
+    if: github.head_ref != 'main'
+    runs-on: ubuntu-latest
+    outputs:
+      rails_version: ${{ steps.branch-target.outputs.rails_version }}
+    steps:
+      - name: Resolve native Rails lane
+        id: branch-target
+        shell: bash
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            branch="${GITHUB_BASE_REF}"
+          else
+            branch="${GITHUB_REF_NAME}"
+          fi
+
+          case "${branch}" in
+            compat/rails-7.2)
+              rails_version="7.2.2.2"
+              ;;
+            compat/rails-8.1)
+              rails_version="8.1.2"
+              ;;
+            main|dev|compat/rails-8.0)
+              rails_version="8.0.3"
+              ;;
+            *)
+              rails_version="8.0.3"
+              ;;
+          esac
+
+          echo "rails_version=${rails_version}" >> "${GITHUB_OUTPUT}"
+
+  i18n-health:
+    needs: prepare
+    runs-on: ubuntu-latest
+    env:
+      # Ensure dev/test gems (incl. i18n-tasks) are installed
+      BUNDLE_WITHOUT: ""
+      BUNDLE_WITH: "development:test"
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        env:
+          # Ensure bundler installs dev/test groups during caching step
+          BUNDLE_WITHOUT: ""
+          BUNDLE_WITH: "development:test"
+        with:
+          ruby-version: '3.4.4'
+      - name: Resolve branch-native bundle
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
+      - name: Verify i18n-tasks
+        run: bundle exec i18n-tasks --version
+      - name: Normalize locale files
+        run: bin/i18n normalize
+      - name: Run i18n checks
+        run: bin/i18n check
+      - name: Upload i18n health report
+        if: always()
+        run: bin/i18n health > i18n-health.txt
+        continue-on-error: true
+      - name: Archive i18n health report
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-health-report
+          path: i18n-health.txt

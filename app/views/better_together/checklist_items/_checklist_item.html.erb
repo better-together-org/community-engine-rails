@@ -1,0 +1,94 @@
+<%# app/views/better_together/checklist_items/_checklist_item.html.erb %>
+<% moved_class = local_assigns[:moved] ? ' moved-item' : '' %>
+<% can_person_toggle = (defined?(current_person) && current_person.present?) %>
+<li tabindex="0" data-id="<%= checklist_item.id %>" data-person-toggle="<%= can_person_toggle ? 'true' : 'false' %>"
+  <% if can_person_toggle %>
+    data-controller="better_together--person-checklist-item"
+    data-better_together--person-checklist-item-checklist-id-value="<%= checklist_item.checklist_id %>"
+    data-better_together--person-checklist-item-checklist-item-id-value="<%= checklist_item.id %>"
+  <% end %>
+  class="list-group-item justify-content-between align-items-center<%= moved_class %>" id="<%= dom_id(checklist_item) %>">
+  <% frame_id = "#{dom_id(checklist_item)}_frame" %>
+  <%= turbo_frame_tag frame_id, class: 'w-100' do %>
+    <div class="d-flex align-items-center">
+      <%# Drag handle: left-most anchor for reordering (keyboard focusable) - only visible to users who can update %>
+      <% if policy(checklist_item).update? %>
+  <div class="drag-handle me-3" role="button" tabindex="0" aria-label="<%= t('better_together.checklist_items.reorder', default: 'Reorder item') %>" title="<%= t('better_together.checklist_items.reorder', default: 'Reorder item') %>" data-bs-toggle="tooltip" data-bs-placement="left" draggable="true">
+          <i class="fa fa-arrows-alt-v" aria-hidden="true"></i>
+        </div>
+      <% end %>
+
+      <div data-better_together--person-checklist-item-target="checkbox"
+       role="button"
+       tabindex="<%= can_person_toggle ? '0' : '-1' %>"
+       aria-pressed="false"
+       aria-disabled="<%= can_person_toggle ? 'false' : 'true' %>"
+       class="me-3 checklist-checkbox"
+       <% if checklist_item.respond_to?(:privacy) && checklist_item.privacy.present? %>
+         data-privacy-style="<%= privacy_style(checklist_item) %>"
+       <% end %>
+       <%= 'data-action="click->better_together--person-checklist-item#toggle keydown->better_together--person-checklist-item#toggle"' if can_person_toggle %>>
+        <%# Use a simple structure (ring + check icon) so the unchecked state can be styled reliably without depending on FontAwesome stack glyphs. %>
+        <span class="bt-checkmark" aria-hidden="true">
+          <span class="bt-check-ring" aria-hidden="true"></span>
+          <i class="fa fa-check bt-check-icon d-none" aria-hidden="true"></i>
+        </span>
+      </div>
+      <% unless can_person_toggle %>
+        <span class="visually-hidden"><%= t('better_together.checklist_items.sign_in_to_toggle', default: 'Sign in to mark this item complete') %></span>
+      <% end %>
+      <div>
+        <strong><%= checklist_item.label.presence || t('better_together.checklist_items.untitled', default: 'Untitled item') %></strong>
+        <small class="text-muted ms-2">(<%= checklist_item.slug %>)</small>
+        <% if checklist_item.description.present? %>
+          <div class="text-muted small"><%= checklist_item.description %></div>
+        <% end %>
+        <%# Privacy badge shown below the description (or under the label when no description) %>
+        <% if checklist_item.respond_to?(:privacy) %>
+          <div class="mt-1"><%= privacy_badge(checklist_item) %></div>
+        <% end %>
+      </div>
+      <div class="ms-auto small text-muted" data-better_together--person-checklist-item-target="timestamp"></div>
+    </div>
+
+    <div class="text-end">
+      <%# Move controls: up / down %>
+      <%# Allow passing checklist local to avoid re-querying parent in turbo streams %>
+      <% parent_checklist = local_assigns[:checklist] || checklist_item.checklist %>
+      <% if policy(checklist_item).update? %>
+        <%# Determine first/last position for disabling controls (exists? queries are cheap with proper indexes) %>
+        <% is_first = !parent_checklist.checklist_items.where('position < ?', checklist_item.position).exists? %>
+        <% is_last = !parent_checklist.checklist_items.where('position > ?', checklist_item.position).exists? %>
+
+        <div class="btn-group me-2" role="group" aria-label="Move item">
+          <% if is_first %>
+            <button class="btn btn-sm btn-outline-secondary keyboard-move-up disabled" title="<%= t('better_together.checklist_items.move_up', default: 'Move up') %>" aria-disabled="true" disabled>&#8593;</button>
+          <% else %>
+            <%= link_to '&#8593;'.html_safe, better_together.position_checklist_checklist_item_path(checklist_item.checklist, checklist_item, direction: 'up', locale: I18n.locale), data: { turbo_method: :patch, turbo_frame: '_top' }, class: 'btn btn-sm btn-outline-secondary keyboard-move-up', title: t('better_together.checklist_items.move_up', default: 'Move up') %>
+          <% end %>
+
+          <% if is_last %>
+            <button class="btn btn-sm btn-outline-secondary keyboard-move-down disabled" title="<%= t('better_together.checklist_items.move_down', default: 'Move down') %>" aria-disabled="true" disabled>&#8595;</button>
+          <% else %>
+            <%= link_to '&#8595;'.html_safe, better_together.position_checklist_checklist_item_path(checklist_item.checklist, checklist_item, direction: 'down', locale: I18n.locale), data: { turbo_method: :patch, turbo_frame: '_top' }, class: 'btn btn-sm btn-outline-secondary keyboard-move-down', title: t('better_together.checklist_items.move_down', default: 'Move down') %>
+          <% end %>
+        </div>
+      <% end %>
+      <% if policy(checklist_item).update? %>
+  <%= link_to t('globals.edit'), better_together.edit_checklist_checklist_item_path(checklist_item.checklist, checklist_item, locale: I18n.locale), data: { turbo_frame: frame_id }, class: 'btn btn-sm btn-outline-secondary me-2' %>
+      <% end %>
+
+      <% if policy(checklist_item).destroy? %>
+        <%= link_to t('globals.delete'), better_together.checklist_checklist_item_path(checklist_item.checklist, checklist_item, locale: I18n.locale), data: { turbo_method: :delete, turbo_confirm: t('globals.are_you_sure'), turbo_frame: '_top' }, class: 'btn btn-sm btn-outline-danger' %>
+      <% end %>
+    </div>
+  <% end %>
+  <%# Render children container (always present so Turbo can target it); CSS hides it when empty %>
+  <% has_children = checklist_item.children.exists? %>
+  <ul id="<%= dom_id(checklist_item, :children) %>" class="list-group ms-4 children_checklist_item <%= dom_class(checklist_item, :children) %>" data-has-children="<%= has_children ? 'true' : 'false' %>">
+    <%# Prefer a provided `items` local (passed down by parent), otherwise use controller helper which memoizes policy_scope + reorder. Fallback to explicit policy_scope with reorder if helper is unavailable in this context. %>
+  <% children_items ||= checklist_items_for(checklist_item.checklist, parent_id: checklist_item.id) %>
+    <%= render partial: 'better_together/checklist_items/checklist_item', collection: children_items, as: :checklist_item %>
+  </ul>
+</li>
+

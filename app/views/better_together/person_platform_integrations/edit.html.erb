@@ -1,0 +1,10 @@
+<h1>Editing OAuth Integration</h1>
+
+<%= render "form", person_platform_integration: @person_platform_integration %>
+
+<br>
+
+<div>
+  <%= link_to "Show this integration", better_together.person_platform_integration_path(@person_platform_integration, locale: I18n.locale) %> |
+  <%= link_to "Back to integrations", better_together.person_platform_integrations_path(locale: I18n.locale) %>
+</div>

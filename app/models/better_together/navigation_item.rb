@@ -6,14 +6,54 @@ module BetterTogether
     include Identifier
     include Positioned
     include Protected
+    include Privacy
 
-    belongs_to :navigation_area
-    belongs_to :linkable, polymorphic: true, optional: true, autosave: true
+    # Visibility strategies - only implement what we need now
+    VISIBILITY_STRATEGIES = %w[
+      authenticated
+      permission
+    ].freeze
+
+    class_attribute :route_names, default: {
+      agreements: 'agreements_url',
+      calls_for_interest: 'calls_for_interest_url',
+      calendars: 'calendars_url',
+      content_blocks: 'content_blocks_url',
+      communities: 'communities_url',
+      events: 'events_url',
+      geography_continents: 'geography_continents_url',
+      geography_countries: 'geography_countries_url',
+      geography_maps: 'geography_maps_url',
+      geography_states: 'geography_states_url',
+      geography_regions: 'geography_regions_url',
+      geography_settlements: 'geography_settlements_url',
+      host_dashboard: 'host_dashboard_url',
+      hub: 'hub_url',
+      joatu_hub: 'joatu_hub_url',
+      joatu_offers: 'joatu_offers_url',
+      joatu_requests: 'joatu_requests_url',
+      metrics_reports: 'metrics_reports_url',
+      navigation_areas: 'navigation_areas_url',
+      oauth_applications: 'oauth_applications_url',
+      pages: 'pages_url',
+      people: 'people_url',
+      posts: 'posts_url',
+      platforms: 'platforms_url',
+      resource_permissions: 'resource_permissions_url',
+      roles: 'roles_url',
+      users: 'users_url',
+      webhook_endpoints: 'webhook_endpoints_url'
+    }
+
+    belongs_to :navigation_area, touch: true
+    belongs_to :linkable, polymorphic: true, optional: true, touch: true
 
     # Association with parent item
     belongs_to :parent,
                class_name: 'NavigationItem',
-               optional: true
+               optional: true,
+               touch: true,
+               counter_cache: :children_count
 
     # Association with child items
     has_many :children,
@@ -29,55 +69,46 @@ module BetterTogether
       'BetterTogether::Page'
     ].freeze
 
-    ROUTE_NAMES = {
-      content_blocks: 'content_blocks_path',
-      communities: 'communities_path',
-      geography_continents: 'geography_continents_path',
-      geography_countries: 'geography_countries_path',
-      geography_states: 'geography_states_path',
-      geography_regions: 'geography_regions_path',
-      geography_settlements: 'geography_settlements_path',
-      host_dashboard: 'host_dashboard_path',
-      metrics_reports: 'metrics_reports_path',
-      navigation_areas: 'navigation_areas_path',
-      pages: 'pages_path',
-      people: 'people_path',
-      platforms: 'platforms_path',
-      resource_permissions: 'resource_permissions_path',
-      roles: 'roles_path',
-      users: 'users_path'
-    }.freeze
-
-    def self.route_name_paths
-      ROUTE_NAMES.values.map(&:to_s)
+    def self.route_name_urls
+      route_names.values.map(&:to_s)
     end
 
     translates :title, type: :string
 
     slugged :title
 
-    validates :title, presence: true, length: { maximum: 255 }
+    validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
-              format: { with: %r{\A(http|https)://.+\z|\A#\z|^/*[\w/-]+}, allow_blank: true,
-                        message: 'must be a valid URL, "#", or an absolute path' }
+              format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
+                        message: 'must be a valid URL, "start with #", or be an absolute path' }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
     validates :linkable_type, inclusion: { in: LINKABLE_CLASSES, allow_nil: true }
-    validates :route_name, inclusion: { in: ->(item) { item.class.route_name_paths }, allow_nil: true, allow_blank: true }
+    validates :route_name, inclusion: { in: lambda { |item|
+      item.class.route_name_urls
+    }, allow_nil: true, allow_blank: true }
+    validates :visibility_strategy, inclusion: { in: VISIBILITY_STRATEGIES }
+    validates :permission_identifier, presence: true, if: -> { visibility_strategy == 'permission' }
+
+    # Validate that permission_identifier is only set when privacy is not public
+    validate :permission_identifier_requires_non_public_privacy
+
+    before_validation :set_default_visibility_strategy
+    before_validation :set_default_privacy
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
 
-    scope :visible, -> {
+    scope :visible, lambda {
       navigation_items = arel_table
       pages = BetterTogether::Page.arel_table
 
       # Construct the LEFT OUTER JOIN condition
       join_condition = navigation_items[:linkable_type].eq('BetterTogether::Page').and(navigation_items[:linkable_id].eq(pages[:id]))
       join = navigation_items
-              .join(pages, Arel::Nodes::OuterJoin)
-              .on(join_condition)
-              .join_sources
+             .join(pages, Arel::Nodes::OuterJoin)
+             .on(join_condition)
+             .join_sources
 
       # Define the conditions
       visible_flag = navigation_items[:visible].eq(true)
@@ -91,9 +122,10 @@ module BetterTogether
       combined_conditions = visible_flag.and(not_page.or(published_page).or(linkable_is_nil))
 
       # Apply the join and where conditions
-      joins(join)
-        .where(combined_conditions)
+      joins(join).where(combined_conditions)
     }
+
+    scope :excluding_hashed, -> { where.not('url ILIKE ? AND linkable_id IS NULL', '#%') }
 
     def build_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
       pages.each_with_index do |page, index|
@@ -106,7 +138,27 @@ module BetterTogether
           protected: true,
           item_type: 'link',
           url: '',
-          linkable: page
+          linkable: page,
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
+        )
+      end
+    end
+
+    def create_children(pages, navigation_area) # rubocop:todo Metrics/MethodLength
+      pages.each_with_index do |page, index|
+        children.create(
+          navigation_area:,
+          title: page.title,
+          slug: page.slug,
+          position: index,
+          visible: true,
+          protected: true,
+          item_type: 'link',
+          url: '',
+          linkable: page,
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
         )
       end
     end
@@ -115,12 +167,16 @@ module BetterTogether
       parent_id.present?
     end
 
+    def children?
+      children.size.positive?
+    end
+
     def dropdown?
       item_type == 'dropdown'
     end
 
     def dropdown_with_visible_children?
-      dropdown? and children.visible.any?
+      @dropdown_with_visible_children ||= dropdown? && children? && children.to_a.any?(&:visible?)
     end
 
     def item_type
@@ -134,6 +190,10 @@ module BetterTogether
       super
     end
 
+    def select_option_title
+      "#{title} (#{slug})"
+    end
+
     def set_position
       return read_attribute(:position) if persisted? || read_attribute(:position).present?
 
@@ -141,21 +201,78 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
-    def title(options = {}, locale: I18n.locale)
+    def set_default_visibility_strategy
+      self.visibility_strategy ||= 'authenticated'
+    end
+
+    def set_default_privacy
+      self.privacy ||= 'public'
+    end
+
+    def title(options = {})
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
+
       super(**options)
     end
 
-    def title=(arg, options = {}, locale: I18n.locale)
-      linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
+    def title=(arg, options = {})
+      # Pass locale from options or use current Mobility locale
+      target_locale = options[:locale] || Mobility.locale
+      linkable.public_send :title=, arg, locale: target_locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
-      super(arg, locale: locale, **options)
+      super(arg, **options)
+    end
+
+    def to_s
+      title
+    end
+
+    # Check if navigation item is visible to a specific user
+    # @param user [User] The user to check visibility for
+    # @param context [Hash] Additional context (platform, community, etc.)
+    # @return [Boolean]
+    def visible_to?(user, context = {})
+      return false unless visible? # Check base visibility flag first
+
+      # Public items are visible to everyone
+      return true if privacy_public?
+
+      # Non-public items require a user
+      return false unless user.present?
+
+      # For private items, check visibility strategy
+      case visibility_strategy
+      when 'authenticated'
+        true # User is authenticated (already checked above)
+      when 'permission'
+        permission_visible?(user, context)
+      else
+        false # Fail closed for unknown strategies
+      end
+    end
+
+    def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
+      # Base attributes used when creating/updating navigation items
+      attrs = %i[
+        url
+        icon
+        position
+        visible
+        item_type
+        parent_id
+        route_name
+        linkable_type
+        linkable_id
+        navigation_area_id
+        visibility_strategy
+        permission_identifier
+      ]
+
+      super + attrs
     end
 
     def url
-      fallback_url = '#'
-
-      return fallback_url if dropdown_with_visible_children?
+      fallback_url = "##{identifier}"
 
       if linkable.present?
         linkable.url
@@ -188,6 +305,10 @@ module BetterTogether
 
     private
 
+    def linkable_provides_title?
+      linkable.present? && linkable.respond_to?(:title)
+    end
+
     def retrieve_route(route)
       # Use `send` to dispatch the correct URL helper
       Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
@@ -198,6 +319,37 @@ module BetterTogether
         Rails.logger.error("Invalid route name: #{route}")
         nil
       end
+    end
+
+    def permission_identifier_requires_non_public_privacy
+      return if privacy != 'public'
+      return unless permission_identifier.present?
+
+      errors.add(:permission_identifier, 'cannot be used with public privacy')
+    end
+
+    def permission_visible?(user, context)
+      return false unless permission_identifier.present?
+
+      platform = context[:platform] || BetterTogether::Platform.find_by(host: true)
+      return false unless platform
+
+      user.permitted_to?(permission_identifier, platform)
+    end
+
+    def saved_change_to_linkable?
+      saved_change_to_linkable_id? || saved_change_to_linkable_type?
+    end
+
+    def touch_navigation_area_on_linkable_change
+      return unless navigation_area
+      return if BetterTogether.skip_navigation_touches
+
+      # Reload to get latest lock_version before touching (prevents StaleObjectError)
+      # Retry once if we still get a stale object error
+      navigation_area.reload.touch
+    rescue ActiveRecord::StaleObjectError
+      navigation_area.reload.touch
     end
   end
 end

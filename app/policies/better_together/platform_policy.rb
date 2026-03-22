@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present?
+      user.present? && (can_manage_platform_settings? || can_manage_network_connections?)
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && user.permitted_to?('manage_platform')
+      user.present? && can_manage_platform_settings?
     end
 
     def edit?
@@ -29,13 +29,37 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected? && !record.host?
+      user.present? && can_manage_platform_settings? && !record.protected? && !record.host?
+    end
+
+    def available_people?
+      PersonPlatformMembershipPolicy.new(user, PersonPlatformMembership.new(joinable: record)).create?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.order(:host, :identifier)
+        results = scope.order(:host, :identifier)
+
+        results = results.privacy_public unless can_manage_platform_settings?
+
+        results
       end
+
+      private
+
+      def can_manage_platform_settings?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
+    end
+
+    private
+
+    def can_manage_platform_settings?
+      user.permitted_to?('manage_platform_settings', record) || user.permitted_to?('manage_platform')
+    end
+
+    def can_manage_network_connections?
+      user.permitted_to?('manage_network_connections')
     end
   end
 end

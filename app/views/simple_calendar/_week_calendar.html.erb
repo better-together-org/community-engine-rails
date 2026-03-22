@@ -1,0 +1,52 @@
+<div class="simple-calendar">
+  <div class="my-4 calendar-heading text-center">
+    <h3 class="calendar-title mb-4">
+      <%= t('simple_calendar.week', default: 'Week') %>
+      <%= calendar.week_number %>
+      <% if calendar.number_of_weeks > 1 %>
+        - <%= calendar.end_week %>
+      <% end %>
+    </h3>
+
+    <div class="nav row mt-4">
+      <div class="col-4 text-start">
+        <%= link_to calendar.url_for_previous_view, class: 'nav-link' do %>
+          <i class="fas fa-chevron-left"></i>
+          <%= t('simple_calendar.previous', default: 'Previous') %>
+        <% end %>
+      </div>
+      <div class="col-4">
+        <%= link_to t('simple_calendar.today', default: 'Today'), calendar.url_for_today_view, class: 'nav-link' %>
+      </div>
+      <div class="col-4 text-end">
+        <%= link_to calendar.url_for_next_view, class: 'nav-link' do %>
+          <%= t('simple_calendar.next', default: 'Next') %>
+          <i class="fas fa-chevron-right"></i>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <% date_range.slice(0, 7).each do |day| %>
+          <th><%= t('date.abbr_day_names')[day.wday] %></th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% date_range.each_slice(7) do |week| %>
+        <tr>
+          <% week.each do |day| %>
+            <%= content_tag :td, class: calendar.td_classes_for(day) do %>
+              <%= l(day, format: (day.day == 1 ? "%b %-d" : "%-d")) %>
+              <% instance_exec(day, calendar.sorted_events_for(day), &passed_block) %>
+            <% end %>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

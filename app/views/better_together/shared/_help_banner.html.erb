@@ -1,0 +1,63 @@
+<%#
+  Reusable Help Banner
+  Locals:
+  - id: unique String (required)
+  - i18n_key: translation key (optional)
+  - default: default text when i18n missing (optional)
+  - text: direct text string (optional; ignored if i18n_key provided)
+  - icon: CSS classes for icon (default: 'fas fa-info-circle')
+  - classes: wrapper classes (default: 'alert alert-info d-flex align-items-start')
+  - role: ARIA role (default: 'status')
+  - hide_url: POST path to hide (default: hide_help_banner_path)
+  - show_url: POST path to show (default: show_help_banner_path)
+  - image_path: optional image to display under text
+  - render_show_again: boolean (default: true)
+%>
+<% banner_id = local_assigns.fetch(:id) %>
+<% render_show_again = local_assigns.fetch(:render_show_again, true) %>
+<% icon = local_assigns.fetch(:icon, 'fas fa-info-circle') %>
+<% classes = local_assigns.fetch(:classes, 'alert alert-info d-flex align-items-start') %>
+<% role = local_assigns.fetch(:role, 'status') %>
+<% hide_url = local_assigns[:hide_url] || hide_help_banner_path %>
+<% if hide_url.blank? %>
+  <% raise "HelpBanner: Missing hide_url for banner_id=#{banner_id}" %>
+<% end %>
+<% show_url = local_assigns[:show_url] || show_help_banner_path %>
+<% message = if local_assigns[:i18n_key]
+               t(local_assigns[:i18n_key], default: local_assigns[:default])
+             else
+               local_assigns[:text] || (block_given? ? yield : '')
+             end %>
+<% image_path = local_assigns[:image_path] %>
+
+<% unless help_banner_hidden?(banner_id) %>
+  <div class="<%= classes %>" role="<%= role %>"
+       data-controller="better_together--help-banner"
+       data-help-banner-id="<%= banner_id %>"
+       data-help-banner-hide-url-value="<%= hide_url %>">
+    <i class="<%= icon %> me-2 mt-1" aria-hidden="true"></i>
+    <div class="flex-grow-1">
+      <%= message %>
+      <% if image_path.present? %>
+        <div class="mt-2">
+          <%= image_tag image_path, class: 'img-fluid rounded shadow-sm', alt: t('better_together.joatu.help.screenshot_alt', default: 'Help screenshot') %>
+        </div>
+      <% end %>
+    </div>
+    <button type="button" class="d-none btn btn-sm btn-outline-secondary ms-2"
+            data-action="click->better_together--help-banner#hide">
+      <%= t('better_together.joatu.help.hide', default: 'Hide this help') %>
+    </button>
+  </div>
+<% else %>
+  <% if render_show_again %>
+    <div class="mb-2">
+      <%= button_to t('better_together.joatu.help.show_again', default: 'Show help again'),
+                    show_url,
+                    method: :post,
+                    params: { id: banner_id },
+                    class: 'btn btn-link btn-sm p-0 align-baseline' %>
+    </div>
+  <% end %>
+<% end %>
+

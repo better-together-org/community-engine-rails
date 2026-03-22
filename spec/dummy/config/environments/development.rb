@@ -2,7 +2,7 @@
 
 require 'active_support/core_ext/integer/time'
 
-Rails.application.configure do # rubocop:todo Metrics/BlockLength
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time
@@ -67,6 +67,10 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
+  # Allows unencrypted values to be store in encrypted columns for transitioning
+  config.active_record.encryption.support_unencrypted_data = true
+  config.active_record.encryption.extend_queries = true
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
@@ -85,5 +89,11 @@ Rails.application.configure do # rubocop:todo Metrics/BlockLength
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 
-  BetterErrors::Middleware.allow_ip! '0.0.0.0/0'
+  BetterErrors::Middleware.allow_ip! '0.0.0.0/0' if defined?(BetterErrors)
+
+  if defined?(FactoryBot)
+    config.to_prepare do
+      FactoryBot.definition_file_paths << File.join(BetterTogether::Engine.root, 'spec', 'factories')
+    end
+  end
 end

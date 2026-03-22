@@ -1,0 +1,18 @@
+<%# locals: (map:, enable_popups: true, use_label_as_popup: false) %>
+
+<% if map %>
+  <div class="map" id="<%= dom_id(map) %>"
+      data-controller="better_together--map"
+      data-better_together--map-center-value="<%= map.center_for_leaflet %>"
+      data-better_together--map-spaces-value="<%= map.leaflet_points.to_json %>"
+      data-better_together--map-zoom-value="<%= map.zoom %>"
+      data-better_together--map-extent-value="<%= map.viewport %>"
+      data-better_together--map-enable-popups-value="<%= enable_popups %>"
+      data-better_together--map-use-label-as-popup-value="<%= use_label_as_popup %>">
+    <div class="map-controls">
+      <button class="btn btn-secondary" data-action="better_together--map#switchToOSM">Map</button>
+      <button class="btn btn-secondary" data-action="better_together--map#switchToSatellite">Satellite</button>
+      <button class="btn btn-secondary" data-action="better_together--map#enableGeolocation">Geolocate Me</button>
+    </div>
+  </div>
+<% end %>

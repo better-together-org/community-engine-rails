@@ -11,9 +11,12 @@ require 'sprockets/railtie'
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
+require 'turbo-rails'
 require 'better_together'
 
-module Dummy
+# Spec helpers for Dummy.
+module Dummy # :nodoc:
+  # Dummy Rails application for specs.
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -23,7 +26,11 @@ module Dummy
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
 
-    config.active_storage.replace_on_assign_to_many = true
+    # Use the latest cache format and remove deprecated Active Storage setting
+    config.active_support.cache_format_version = 7.1
+
+    # Opt in to Rails 8.1 behavior: preserve timezone when converting to Time
+    config.active_support.to_time_preserves_timezone = :zone
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
@@ -31,8 +38,13 @@ module Dummy
       g.test_framework :rspec
     end
 
+    # Opt-in to Rails 8.1 to_time behavior: preserve receiver timezone
+    # See deprecation: `to_time` will always preserve receiver timezone
+    config.active_support.to_time_preserves_timezone = :zone
+
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
+    config.i18n.available_locales = %i[en es fr uk]
+    config.i18n.default_locale = :en
   end
 end

@@ -1,0 +1,23 @@
+
+<%# locals: (form: ) %>
+<div class="buildings mb-4" data-controller="better_together--dynamic-fields" data-dynamic-fields-association="buildings">
+  <h4><%= t('better_together.buildings.title') %></h4>
+
+  <div class="mb-3" data-better_together--dynamic-fields-target="container">
+    <%= form.fields_for :buildings do |building_form| %>
+      <%= render 'better_together/infrastructure/buildings/fields', form: building_form %>
+    <% end %>
+  </div>
+
+  <!-- Hidden template -->
+  <template data-better_together--dynamic-fields-target="template">
+    <%# Build a new Building instance %>
+    <%= form.fields_for :buildings, form.object.buildings.build, child_index: 'NEW_RECORD' do |building_form| %>
+      <%= render 'better_together/infrastructure/buildings/fields', form: building_form %>
+    <% end %>
+  </template>
+
+  <%= link_to '#add-building', class: 'btn btn-outline-primary btn-sm', data: { action: 'click->better_together--dynamic-fields#add' } do %>
+    <i class="fas fa-plus"></i> <%= t('better_together.buildings.add') %>
+  <% end %>
+</div>

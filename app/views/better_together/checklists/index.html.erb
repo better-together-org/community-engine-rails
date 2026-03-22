@@ -1,0 +1,19 @@
+<!-- app/views/better_together/checklists/index.html.erb -->
+
+<% content_for :page_title do %>
+  <%= BetterTogether::Checklist.model_name.human.pluralize %>
+<% end %>
+
+<div class="container my-3">
+  <h1 class="mb-3"><%= t('better_together.checklists.index.title', default: 'Checklists') %></h1>
+
+  <div class="mb-3">
+    <% if policy(::BetterTogether::Checklist).create? %>
+      <%= link_to t('better_together.checklists.index.new', default: 'New Checklist'), better_together.new_checklist_path(locale: I18n.locale), class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+
+  <ul class="list-group" role="list" aria-labelledby="checklists-list">
+    <%= render partial: 'checklist', collection: @checklists, as: :checklist %>
+  </ul>
+</div>

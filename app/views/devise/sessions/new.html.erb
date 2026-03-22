@@ -1,40 +1,52 @@
+<% content_for :page_title do %>
+  <%= t('.sign_in') %>
+<% end %>
+
 <div class="container my-4">
   <div class="row justify-content-center">
     <div class="col-md-6">
       <h2 class="mb-4"><%= t('.sign_in') %></h2>
 
-      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'card card-body' }) do |f| %>
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'card card-body' }, data: { controller: 'better_together--form-validation', turbo: false }) do |f| %>
 
         <!-- Email Field -->
         <div class="mb-3">
-          <%= f.label :email, class: 'form-label' %>
+          <%= f.label :email, t('.email.label'), class: 'form-label' %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control' %>
+          <small class="form-text text-muted"><%= t('.email.help') %></small>
         </div>
 
         <!-- Password Field -->
-        <div class="mb-3">
-          <%= f.label :password, class: 'form-label' %>
-          <%= f.password_field :password, autocomplete: "current-password", class: 'form-control' %>
+        <div class="mb-3" data-controller="better_together--password-toggle">
+          <%= f.label :password, t('.password.label'), class: 'form-label' %>
+          <div class="input-group">
+            <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', "data-target": "better_together--password-toggle.field", minlength: @minimum_password_length || 12 %>
+            <button type="button" data-action="click->better_together--password-toggle#password" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="<%= t('devise.sessions.new.password.toggle') %>">
+              <i class="password-field-icon-1 far fa-eye-slash" data-target="better_together--password-toggle.icon"></i>
+            </button>
+          </div>
+          <small class="form-text text-muted"><%= t('.password.help') %></small>
         </div>
 
         <!-- Remember Me Checkbox -->
         <% if devise_mapping.rememberable? %>
           <div class="mb-3 form-check">
             <%= f.check_box :remember_me, class: 'form-check-input' %>
-            <%= f.label :remember_me, class: 'form-check-label' %>
+            <%= f.label :remember_me, t('.remember_me'), class: 'form-check-label' %>
           </div>
         <% end %>
 
         <!-- Submit Button -->
         <div class="text-center">
           <%= f.submit t('.sign_in'), class: 'btn btn-primary' %>
+
+          <!-- Additional Links -->
+          <%= render "devise/shared/links" %>
         </div>
       <% end %>
 
-      <!-- Additional Links -->
-      <div class="mt-4">
-        <%= render "devise/shared/links" %>
-      </div>
+      <!-- OAuth Buttons (outside form) -->
+      <%= render "devise/shared/omniauth_buttons" %>
     </div>
   </div>
 </div>

@@ -1,0 +1,57 @@
+<% content_for :page_title do %>
+  <%= t('.page_title', default: 'Community Hub') %>
+<% end %>
+
+<div class="container my-3">
+  <h1 class="mb-4"><%= t('.page_title', default: 'Community Hub') %></h1>
+
+  <div class="row">
+    <!-- User-specific section -->
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0"><%= t('.activity', default: 'Activity') %></h5>
+          <%= link_to t('.view_all_activity', default: 'View all'), hub_activities_path, class: 'small text-decoration-none' %>
+        </div>
+        <div class="card-body">
+          <%= render_activities(@activities, :layout => "layouts/better_together/activity_wrapper") %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent offers/requests -->
+    <div class="col-md-6">
+      <% cache([I18n.locale, host_platform&.id, 'hub/recent_offers', BetterTogether::Joatu::Offer.maximum(:updated_at)]) do %>
+        <%= render 'better_together/hub/recent_offers_card', offers: @recent_offers %>
+      <% end %>
+
+      <% cache([I18n.locale, host_platform&.id, 'hub/recent_requests', BetterTogether::Joatu::Request.maximum(:updated_at)]) do %>
+        <%= render 'better_together/hub/recent_requests_card', requests: @recent_requests %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5><%= t('.recommended_communities', default: 'Recommended Communities') %></h5>
+        </div>
+        <div class="card-body">
+          <p><em>Placeholder content for recommended communities</em></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5><%= t('.upcoming_events', default: 'Upcoming Events') %></h5>
+        </div>
+        <div class="card-body">
+          <p><em>Placeholder content for upcoming events</em></p>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</div>

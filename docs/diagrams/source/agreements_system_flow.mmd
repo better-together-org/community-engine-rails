@@ -1,0 +1,73 @@
+graph TB
+    %% Platform Agreement Flow
+    subgraph "Platform Agreement Process"
+        A[User Registration] --> B{Required Agreements Exist?}
+        B -->|Yes| C[Auto-create Agreement Participants]
+        B -->|No| D[Seed Default Agreements]
+        D --> C
+        C --> E[Agreement Participants Created]
+        E --> F[User Can View Agreements]
+        F --> G{Agreement has Linked Page?}
+        G -->|Yes| H[Show Page Content]
+        G -->|No| I[Show Agreement Terms]
+        H --> J[Agreement Accepted]
+        I --> J
+    end
+
+    %% Exchange Agreement Flow
+    subgraph "Exchange Agreement Process"
+        K[User Creates Offer] --> L[User Creates Request]
+        L --> M[Agreement Created Between Offer & Request]
+        M --> N[Notify Both Creators]
+        N --> O[Agreement Status: Pending]
+        O --> P{Participant Action}
+        P -->|Accept| Q[Status: Accepted]
+        P -->|Reject| R[Status: Rejected]
+        Q --> S[Close Offer & Request]
+        Q --> T[Notify Status Change]
+        R --> T
+        S --> U[Agreement Complete]
+        T --> V[Process Complete]
+    end
+
+    %% Validation & Constraints
+    subgraph "Validation Layer"
+        W[Offer/Request Target Match]
+        X[Single Accepted Agreement per Offer/Request]
+        Y[Status Transition Validation]
+        Z[Participant Authorization]
+    end
+
+    %% Connect validation to process
+    M --> W
+    P --> Z
+    Q --> X
+    Q --> Y
+    R --> Y
+
+    %% Notification System
+    subgraph "Notification System"
+        AA[Agreement Created Notification]
+        BB[Status Change Notification]
+        CC[Email Notification]
+        DD[Action Cable Notification]
+    end
+
+    %% Connect notifications
+    N --> AA
+    T --> BB
+    AA --> CC
+    AA --> DD
+    BB --> CC
+    BB --> DD
+
+    %% Styling
+    classDef processBox fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef validationBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef notificationBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef decisionBox fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+
+    class A,C,E,F,H,I,J,K,L,M,O,Q,R,S,U,V processBox
+    class W,X,Y,Z validationBox
+    class AA,BB,CC,DD notificationBox
+    class B,G,P decisionBox

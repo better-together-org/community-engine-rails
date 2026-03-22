@@ -9,7 +9,16 @@ module BetterTogether
     def index
       # Assuming Role class is under the same namespace for consistency
       authorize resource_class # Add this to authorize action
-      @roles = policy_scope(resource_class.with_translations) # Use Pundit's scope
+      @roles = policy_scope(resource_class.with_translations)
+               .includes(:resource_permissions)
+               .order(:resource_type, :position, :identifier)
+      @roles_by_resource_type = @roles.group_by(&:resource_type)
+      @rbac_nav_counts = {
+        roles: @roles.size,
+        resource_permissions: ::BetterTogether::ResourcePermission.count
+      }
+      @available_view_types = %w[card table]
+      @view_type = view_preference('roles_index', default: 'card', allowed: @available_view_types)
     end
 
     # GET /roles/1
@@ -29,25 +38,46 @@ module BetterTogether
     end
 
     # POST /roles
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @role = resource_class.new(role_params)
       authorize @role # Add authorization check
 
       if @role.save
-        redirect_to @role, only_path: true, notice: 'Role was successfully created.'
+        redirect_to @role, only_path: true,
+                           notice: t('flash.generic.created', resource: t('resources.role'))
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @role }
+            )
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
     # PATCH/PUT /roles/1
-    def update
+    def update # rubocop:todo Metrics/MethodLength
       authorize @role # Add authorization check
 
       if @role.update(role_params)
-        redirect_to @role, only_path: true, notice: 'Role was successfully updated.', status: :see_other
+        redirect_to @role, only_path: true,
+                           notice: t('flash.generic.updated', resource: t('resources.role')),
+                           status: :see_other
       else
-        render :edit, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @role }
+            )
+          end
+          format.html { render :edit, status: :unprocessable_content }
+        end
       end
     end
 
@@ -55,7 +85,8 @@ module BetterTogether
     def destroy
       authorize @role # Add authorization check
       @role.destroy
-      redirect_to roles_url, notice: 'Role was successfully destroyed.', status: :see_other
+      redirect_to roles_url, notice: t('flash.generic.destroyed', resource: t('resources.role')),
+                             status: :see_other
     end
 
     private

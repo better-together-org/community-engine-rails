@@ -1,41 +1,66 @@
-<div class="container">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Resource Permission Details</h5>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Identifier:</strong></div>
-        <div class="col-md-9"><%= @resource_permission.identifier %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Action:</strong></div>
-        <div class="col-md-9"><%= @resource_permission.action %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Target:</strong></div>
-        <div class="col-md-9"><%= @resource_permission.target %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Resource Type:</strong></div>
-        <div class="col-md-9"><%= @resource_permission.resource_type %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Position:</strong></div>
-        <div class="col-md-9"><%= @resource_permission.position %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Protected:</strong></div>
-        <div class="col-md-9"><%= @resource_permission.protected ? 'Yes' : 'No' %></div>
-      </div>
+<% content_for :page_title do %>
+  <%= @resource_permission.identifier %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+      <h1 class="mb-1"><%= @resource_permission.identifier %></h1>
+      <p class="text-muted mb-0"><%= @resource_permission.action %> · <%= @resource_permission.target %></p>
     </div>
+
+    <%= render 'shared/resource_toolbar',
+               back_to_list_path: resource_permissions_path,
+               edit_path: policy(@resource_permission).edit? ? edit_resource_permission_path(@resource_permission) : nil,
+               destroy_path: policy(@resource_permission).destroy? ? resource_permission_path(@resource_permission) : nil,
+               destroy_confirm: t('resource_permissions.confirm_destroy') %>
   </div>
 
-  <div class="mt-3">
-    <% if policy(@resource_permission).edit? %>
-      <%= link_to "Edit this Resource Permission", edit_resource_permission_path(@resource_permission), class: "btn btn-primary me-2" %>
-    <% end %>
-    <%= link_to "Back to Resource Permissions", resource_permissions_path, class: "btn btn-secondary me-2" %>
-    <% if policy(@resource_permission).destroy? %>
-      <%= button_to "Destroy this Resource Permission", @resource_permission, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger", style: "margin-right: 10px;" %>
-    <% end %>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-lg-6">
+          <dl class="row mb-0">
+            <dt class="col-md-3"><%= resource_class.human_attribute_name(:action) %></dt>
+            <dd class="col-md-9"><%= @resource_permission.action %></dd>
+
+            <dt class="col-md-3"><%= resource_class.human_attribute_name(:target) %></dt>
+            <dd class="col-md-9"><%= @resource_permission.target %></dd>
+
+            <dt class="col-md-3"><%= resource_class.human_attribute_name(:resource_type) %></dt>
+            <dd class="col-md-9"><%= resource_permission_resource_type_label(@resource_permission.resource_type) %></dd>
+
+            <dt class="col-md-3"><%= resource_class.human_attribute_name(:position) %></dt>
+            <dd class="col-md-9"><%= @resource_permission.position %></dd>
+
+            <dt class="col-md-3"><%= resource_class.human_attribute_name(:protected) %></dt>
+            <dd class="col-md-9"><%= @resource_permission.protected ? t('globals.yes') : t('globals.no') %></dd>
+          </dl>
+        </div>
+        <div class="col-lg-6 mt-4 mt-lg-0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h6 mb-0"><%= t('better_together.resource_permissions.roles.label') %></h2>
+            <% summary = resource_permission_role_summary(@resource_permission, limit: 5) %>
+            <span class="text-muted small">
+              <%= t('better_together.resource_permissions.roles.count', count: summary[:total]) %>
+            </span>
+          </div>
+          <% if summary[:labels].any? %>
+            <div class="d-flex flex-wrap gap-1">
+              <% summary[:labels].each do |label| %>
+                <span class="badge bg-light text-dark"><%= label %></span>
+              <% end %>
+              <% if summary[:remaining].positive? %>
+                <span class="badge bg-secondary">
+                  <%= t('better_together.resource_permissions.roles.more', count: summary[:remaining]) %>
+                </span>
+              <% end %>
+            </div>
+          <% else %>
+            <span class="text-muted"><%= t('better_together.resource_permissions.roles.none') %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

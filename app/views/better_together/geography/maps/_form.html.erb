@@ -1,0 +1,45 @@
+<%= form_with(model: map.becomes(BetterTogether::Geography::Map), class: "form", multipart: true, local: false, data: { controller: "better_together--form-validation" }) do |form| %>
+  <% if map.errors.any? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading"><%= pluralize(map.errors.count, "error") %> prohibited this map from being saved:</h4>
+      <ul>
+        <% map.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :creator_id, value: current_person&.id %>
+
+  <div class="form-group mb-3">
+    <%= required_label form, :type, class: "form-label" %>
+    <%= type_select_field(form: form, model_class: ::BetterTogether::Geography::Map, include_model_class: true, required: true) %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: map, form: form, attribute: 'title' } %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: map, form: form, attribute: 'description' } %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: map, form: form, attribute: 'slug' } %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= required_label form, :privacy, class: "form-label" %>
+    <%= privacy_field(form:, klass: resource_class) %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= required_label form, :zoom, class: "form-label" %>
+    <%= form.number_field :zoom, class: "form-control", required: true, min: 0, max: 20 %>
+  </div>
+
+  <div class="form-group">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+<% end %>

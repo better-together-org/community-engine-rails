@@ -6,9 +6,9 @@ module BetterTogether
   # Reusable helper for common column definitions
   module ColumnDefinitions
     # Adds a 'community' reference for the primary community
-    def bt_community(table_name = nil)
+    def bt_community(table_name = nil, null: false)
       table_name ||= name
-      bt_references :community, target_table: :better_together_communities, null: false,
+      bt_references :community, target_table: :better_together_communities, null:,
                                 index: { name: "by_#{table_name.to_s.parameterize}_community" }
     end
 
@@ -16,37 +16,7 @@ module BetterTogether
     def bt_creator(table_name = nil)
       table_name ||= name
       bt_references :creator, target_table: :better_together_people, null: true,
-                                index: { name: "by_#{table_name.to_s.parameterize}_creator" }
-    end
-
-    # Adds a string column with emoji support and custom options.
-    # @param name [Symbol, String] The name of the column.
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_string(name, **options)
-      options = { limit: 191, **options }
-      options = with_emoji_defaults(**options)
-      string(name, **options)
-    end
-
-    # Adds a text column with emoji support and custom options.
-    # @param name [Symbol, String] The name of the column.
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_text(name, **options)
-      options = with_emoji_defaults(**options)
-      text(name, **options)
-    end
-
-    # Adds a standard 'name' column with emoji support and default or custom indexing.
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_name(**options)
-      name_options = { index: { name: 'by_name' }, **options }
-      bt_emoji_string(:name, **name_options)
-    end
-
-    # Adds a standard 'description' text column with emoji suppor
-    # @param options [Hash] Additional options (like limit, null, default).
-    def bt_emoji_description(**)
-      bt_emoji_text(:description, **)
+                              index: { name: "by_#{table_name.to_s.parameterize}_creator" }
     end
 
     # Adds a host boolean column with a unique constraint that only allows one true value
@@ -85,7 +55,7 @@ module BetterTogether
       integer :position, null: false
     end
 
-    def bt_primary_flag(parent_key: nil)
+    def bt_primary_flag(parent_key: nil, index_base: name)
       col_name = :primary_flag
       boolean col_name, null: false, default: false
 
@@ -93,7 +63,7 @@ module BetterTogether
       columns = parent_key ? [parent_key, col_name] : [col_name]
 
       # Generate the index name
-      index_name = index_name(name.sub('better_together', 'bt'), parent_key)
+      index_name = index_name(index_base.to_s.sub('better_together', 'bt'), parent_key)
 
       # Build the WHERE clause with the column name
       where_clause = "#{col_name} IS TRUE"
@@ -117,7 +87,7 @@ module BetterTogether
     end
 
     # Adds 'privacy' column to give ability to manage record privacy
-    def bt_privacy(table_name = nil, default: 'unlisted')
+    def bt_privacy(table_name = nil, default: 'private')
       table_name ||= name
       # Adding privacy column
       string :privacy, null: false, default:, limit: 50, index: { name: "by_#{table_name}_privacy" }
@@ -129,6 +99,7 @@ module BetterTogether
       string :resource_type, null: false
     end
 
+    # Mostly Deprecated. Still works, but no longer being used. Using translated slugs now.
     # Adds 'slug' column to give ability to set friendly_id using slug col
     def bt_slug
       # Adding slug column
@@ -152,7 +123,10 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/CyclomaticComplexity
-    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, **args)
+    # rubocop:todo Metrics/ParameterLists
+    def bt_references(table_name, table_prefix: 'better_together', target_table: nil, fk_column: nil, fk_options: {},
+                      **args)
+      # rubocop:enable Metrics/ParameterLists
       full_table_name =
         if table_prefix
           "#{table_prefix.to_s.chomp('_')}_#{table_name.to_s.pluralize}"
@@ -175,23 +149,10 @@ module BetterTogether
       # Add foreign key constraint unless polymorphic
       return if polymorphic || foreign_key_provided
 
-      foreign_key target_table, column: fk_column, primary_key: :id
+      foreign_key target_table, column: fk_column, primary_key: :id, **fk_options
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
-
-    private
-
-    # Merges provided options with default settings for emoji suppor
-    # @param options [Hash] Custom options to be merged.
-    # @return [Hash] Options merged with defaults for utf8mb4 collation.
-    def with_emoji_defaults(**options)
-      if ActiveRecord::Base.connection.adapter_name.downcase.starts_with?('mysql')
-        { collation: 'utf8mb4', chatset: 'utf8mb4', **options }
-      else
-        { **options }
-      end
-    end
   end
 end

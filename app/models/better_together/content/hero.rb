@@ -6,13 +6,8 @@ module BetterTogether
     class Hero < Block
       include Translatable
 
-      has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
-      has_many :pages, through: :page_blocks
-
       translates :heading, :cta_text, type: :string
       translates :content, backend: :action_text
-
-      has_one_attached :background_image
 
       AVAILABLE_BTN_CLASSES = {
         primary: 'btn-primary',
@@ -31,13 +26,14 @@ module BetterTogether
         light_outline: 'btn-outline-light',
         dark: 'btn-dark',
         dark_outline: 'btn-outline-dark'
-      }
+      }.freeze
 
       store_attributes :content_data do
         cta_url String, default: ''
       end
 
       store_attributes :css_settings do
+        css_classes String, default: 'text-white'
         container_class String, default: ''
         overlay_color String, default: '#000'
         overlay_opacity Float, default: 0.25
@@ -47,10 +43,6 @@ module BetterTogether
       end
 
       validates :cta_button_style, inclusion: { in: AVAILABLE_BTN_CLASSES.values }
-
-      def self.extra_permitted_attributes
-        %i[ background_image ]
-      end
 
       def overlay_styles
         {

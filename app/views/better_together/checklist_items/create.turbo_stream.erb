@@ -1,0 +1,19 @@
+<% if @checklist_item.parent_id.present? %>
+  <% parent = @checklist_item.parent %>
+  <%= turbo_stream.append dom_id(parent, :children) do %>
+    <%= render partial: 'checklist_item', locals: { checklist_item: @checklist_item } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.append dom_id(@checklist, :checklist_items) do %>
+    <%= render partial: 'checklist_item', locals: { checklist_item: @checklist_item } %>
+  <% end %>
+<% end %>
+
+<%# Replace the new-item form with a fresh form (clears inputs) %>
+<%= turbo_stream.replace dom_id(new_checklist_item) do %>
+  <%= render partial: 'form', locals: { form_object: new_checklist_item, form_url: better_together.checklist_checklist_items_path(@checklist) } %>
+<% end %>
+
+<%= turbo_stream.append dom_id(@checklist, :streams) do %>
+  <div data-action="turbo:before-stream-render->better_together--checklist_items#focusForm" data-better-together-checklist-items-announcement="<%= j t('better_together.checklist_items.created', default: 'Item created') %>"></div>
+<% end %>

@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe ::BetterTogether::Geography::RegionSettlement, type: :model do
-    pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe BetterTogether::Geography::RegionSettlement do
+  it 'exists' do
+    expect(described_class).to be # rubocop:todo RSpec/Be
   end
 end

@@ -1,0 +1,28 @@
+<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title', rows: nil, help_text: nil, input_options: {}) -%>
+
+<%- config = translatable_text_field_config(
+      model: model,
+      scope: scope,
+      temp_id: temp_id,
+      attribute: attribute,
+      rows: rows,
+      help_text: help_text,
+      input_options: input_options
+    ) %>
+
+<%= render layout: 'better_together/content/blocks/fields/shared/translatable_field',
+     locals: {
+       model: config[:model],
+       scope: config[:scope],
+       temp_id: config[:temp_id],
+       attribute: config[:attribute],
+       help_text: config[:help_text]
+     } do |locale_attribute| %>
+
+    <%- options = translatable_text_field_options(config, locale_attribute) %>
+
+    <%= text_area_tag "#{config[:scope]}[#{locale_attribute}]",
+      config[:model].public_send(locale_attribute),
+      **options %>
+
+<% end %>

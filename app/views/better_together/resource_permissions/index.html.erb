@@ -1,20 +1,166 @@
-<% content_for :page_title do %>
-  <%= resource_class.model_name.human.pluralize %>
-<% end %>
+<%= render layout: 'layouts/better_together/rbac' do %>
+  <% content_for :page_title do %>
+    <%= resource_class.model_name.human.pluralize %>
+  <% end %>
 
-<div class="container my-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %>
-      <%= link_to new_resource_permission_path, class: 'btn btn-primary', 'aria-label' => t('.new_resource_permission') do %>
-        <i class="fas fa-plus"></i> <%= t('.new_resource_permission') %>
+  <div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
+    <div class="d-flex align-items-center gap-2">
+      <%= render 'better_together/shared/view_switcher',
+                 view_key: 'resource_permissions_index',
+                 active_view: @view_type,
+                 available_views: @available_view_types,
+                 update_path: view_preferences_path(locale: I18n.locale) %>
+
+      <% if policy(resource_class).create? %>
+        <%= link_to new_resource_permission_path, class: 'btn btn-primary btn-sm', 'aria-label' => t('.new_resource_permission') do %>
+          <i class="fas fa-plus"></i> <%= t('.new_resource_permission') %>
+        <% end %>
       <% end %>
-    <% end %>
-  </div>
-
-  <div class="row">
-    <div class="col">
-      <%= render 'resource_permissions_table', resource_permissions: @resource_permissions %>
     </div>
   </div>
-</div>
+
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('globals.resource_types') %>
+        </button>
+      </li>
+      <% @resource_permissions_by_resource_type.each_with_index do |(resource_type, _permissions), index| %>
+        <% tab_id = "resource-permissions-#{resource_type.parameterize}" %>
+        <% resource_style = resource_permission_resource_type_style(resource_type) %>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link bt-tab-control <%= resource_style[:accent] %> <%= 'active' if index.zero? %>"
+                  id="<%= "#{tab_id}-tab" %>"
+                  data-bs-toggle="tab"
+                  data-bs-target="<%= "##{tab_id}" %>"
+                  data-better_together--tabs-target="tab"
+                  type="button"
+                  role="tab"
+                  aria-controls="<%= tab_id %>"
+                  aria-selected="<%= index.zero? %>">
+            <i class="<%= resource_style[:icon] %> bt-tab-icon" aria-hidden="true"></i>
+            <span><%= resource_permission_resource_type_label(resource_type) %></span>
+            <span class="badge rounded-pill bt-tab-badge ms-2"><%= _permissions.size %></span>
+          </button>
+        </li>
+      <% end %>
+      <% all_tab_id = 'resource-permissions-all' %>
+      <% all_style = resource_permission_all_style %>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control <%= all_style[:accent] %>"
+                id="<%= "#{all_tab_id}-tab" %>"
+                data-better_together--tabs-target="tab"
+                data-better_together--tabs-mode="all"
+                data-better_together--tabs-hash="<%= "##{all_tab_id}" %>"
+                type="button"
+                role="tab"
+                aria-selected="false">
+          <i class="<%= all_style[:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('globals.all') %></span>
+          <span class="badge rounded-pill bt-tab-badge ms-2"><%= @resource_permissions.size %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <% @resource_permissions_by_resource_type.each_with_index do |(resource_type, resource_permissions), index| %>
+        <% tab_id = "resource-permissions-#{resource_type.parameterize}" %>
+        <% resource_style = resource_permission_resource_type_style(resource_type) %>
+        <div class="tab-pane fade <%= 'show active' if index.zero? %> bt-tab-pane bt-tab-pane--resource <%= resource_style[:accent] %>"
+             id="<%= tab_id %>"
+             role="tabpanel"
+             aria-labelledby="<%= "#{tab_id}-tab" %>">
+          <h2 class="h5 my-3 bt-tab-heading <%= resource_style[:accent] %>">
+            <i class="<%= resource_style[:icon] %> bt-tab-icon" aria-hidden="true"></i>
+            <span><%= resource_permission_resource_type_label(resource_type) %></span>
+          </h2>
+          <% resource_permissions_by_action = resource_permissions.group_by(&:action) %>
+          <div class="border rounded-3 bg-body-tertiary p-3 bt-tab-group <%= resource_style[:accent] %>"
+               aria-label="<%= t('globals.actions') %>">
+            <div data-controller="better_together--tabs">
+              <ul class="nav nav-tabs mb-3" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link disabled"
+                        type="button"
+                        role="tab"
+                        aria-disabled="true">
+                  <%= t('globals.actions') %>
+                </button>
+              </li>
+              <% resource_permissions_by_action.each_with_index do |(action, _action_permissions), action_index| %>
+                <% action_tab_id = "#{tab_id}-action-#{action.parameterize}" %>
+                <% action_style = resource_permission_action_style(action) %>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link bt-tab-control <%= action_style[:accent] %> <%= 'active' if action_index.zero? %>"
+                          id="<%= "#{action_tab_id}-tab" %>"
+                          data-bs-toggle="tab"
+                          data-bs-target="<%= "##{action_tab_id}" %>"
+                          data-better_together--tabs-target="tab"
+                          type="button"
+                          role="tab"
+                          aria-controls="<%= action_tab_id %>"
+                          aria-selected="<%= action_index.zero? %>">
+                    <i class="<%= action_style[:icon] %> bt-tab-icon" aria-hidden="true"></i>
+                    <span><%= resource_permission_action_label(action) %></span>
+                    <span class="badge rounded-pill bt-tab-badge ms-2"><%= _action_permissions.size %></span>
+                  </button>
+                </li>
+              <% end %>
+              <% action_all_tab_id = "#{tab_id}-action-all" %>
+              <% action_all_style = resource_permission_all_style %>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link bt-tab-control <%= action_all_style[:accent] %>"
+                        id="<%= "#{action_all_tab_id}-tab" %>"
+                        data-better_together--tabs-target="tab"
+                        data-better_together--tabs-mode="all"
+                        data-better_together--tabs-hash="<%= "##{action_all_tab_id}" %>"
+                        type="button"
+                        role="tab"
+                        aria-selected="false">
+                  <i class="<%= action_all_style[:icon] %> bt-tab-icon" aria-hidden="true"></i>
+                  <span><%= t('globals.all') %></span>
+                  <span class="badge rounded-pill bt-tab-badge ms-2"><%= resource_permissions.size %></span>
+                </button>
+              </li>
+              </ul>
+
+              <div class="tab-content">
+                <% resource_permissions_by_action.each_with_index do |(action, action_permissions), action_index| %>
+                  <% action_tab_id = "#{tab_id}-action-#{action.parameterize}" %>
+                  <% action_style = resource_permission_action_style(action) %>
+                  <div class="tab-pane fade <%= 'show active' if action_index.zero? %> bt-tab-pane bt-tab-pane--action <%= action_style[:accent] %>"
+                       id="<%= action_tab_id %>"
+                       role="tabpanel"
+                       aria-labelledby="<%= "#{action_tab_id}-tab" %>">
+                    <h3 class="h6 my-3 bt-tab-heading <%= action_style[:accent] %>">
+                      <i class="<%= action_style[:icon] %> bt-tab-icon" aria-hidden="true"></i>
+                      <span><%= resource_permission_action_label(action) %></span>
+                    </h3>
+                    <% if @view_type == 'table' %>
+                      <div class="table-responsive resource-permission-table-group">
+                        <%= render 'resource_permissions_table', resource_permissions: action_permissions %>
+                      </div>
+                    <% else %>
+                      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 resource-permission-card-group">
+                        <%= render partial: 'better_together/resource_permissions/resource_permission_card',
+                                   collection: action_permissions,
+                                   as: :resource_permission %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  </div>
+<% end %>

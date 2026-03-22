@@ -1,0 +1,12 @@
+<div class="card mb-4 text-center w-100 py-4">
+  <div class="card-body">
+    <h3 class="card-title"> <%= t('better_together.posts.none_title', default: 'No posts yet') %> </h3>
+    <p class="card-text text-muted mb-3"><%= t('better_together.posts.none_body', default: "There are no posts to show right now.") %></p>
+
+    <div>
+      <% if policy(BetterTogether::Post).create? %>
+        <%= link_to t('better_together.posts.create_post', default: 'Create the first post'), new_post_path, class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+</div>

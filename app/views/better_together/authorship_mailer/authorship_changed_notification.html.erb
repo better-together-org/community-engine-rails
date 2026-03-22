@@ -1,0 +1,23 @@
+<!-- app/views/better_together/authorship_mailer/authorship_changed_notification.html.erb -->
+
+<p><%= t('.greeting', recipient_name: @recipient.name) %></p>
+
+<% if @action == 'removed' %>
+  <% if @actor_name.present? %>
+    <p><%= t('.intro_removed_by', page: @page.title, actor_name: @actor_name) %></p>
+  <% else %>
+    <p><%= t('.intro_removed', page: @page.title) %></p>
+  <% end %>
+<% else %>
+  <% if @actor_name.present? %>
+    <p><%= t('.intro_added_by', page: @page.title, actor_name: @actor_name) %></p>
+  <% else %>
+    <p><%= t('.intro_added', page: @page.title) %></p>
+  <% end %>
+<% end %>
+
+<p><%= t('.view_page') %></p>
+
+<p><%= link_to t('.view_page_link'), @page.url %></p>
+
+<p><%= t('.signature_html', platform: @platform.name) %></p>

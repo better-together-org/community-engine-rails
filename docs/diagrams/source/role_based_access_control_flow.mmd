@@ -1,0 +1,41 @@
+flowchart TD
+
+  %% Entities
+  P[Person]
+  C[Community]
+  PL[Platform]
+  R[Role]
+  RP[ResourcePermission]
+  RRP[RoleResourcePermission]
+  PCM[PersonCommunityMembership]
+  PPM[PersonPlatformMembership]
+
+  P --> PCM
+  P --> PPM
+  PCM --> C
+  PPM --> PL
+  PCM --> R
+  PPM --> R
+  R --> RRP --> RP
+
+  %% Flows
+  subgraph Assign Permissions
+    F1[Create ResourcePermissions] --> F2[Create Roles]
+    F2 --> F3[Link via RoleResourcePermission]
+  end
+
+  subgraph Grant Role
+    G1[Create PersonCommunityMembership or PersonPlatformMembership] --> G2[Attach Role]
+  end
+
+  subgraph Authorization Check
+    A1[permitted_to check] --> A2{record given}
+    A2 -->|No| A3[Global: any Role includes RP]
+    A2 -->|Yes| A4[Record: membership for joinable]
+    A4 --> A5{Membership role includes RP}
+    A5 -->|Yes| ALLOW[Allow]
+    A3 -->|Yes| ALLOW
+    A5 -->|No| DENY[Block]
+    A3 -->|No| DENY
+  end
+

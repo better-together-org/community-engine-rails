@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+# :nodoc:
+module BetterTogether # :nodoc:
+  RSpec.describe File do
+    it 'exists' do
+      expect(described_class).to be # rubocop:todo RSpec/Be
+    end
+  end
+end

@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= t('.title', default: 'New Storage Configuration') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.title', default: 'New Storage Configuration') %></h1>
+  <p class="text-muted"><%= t('.subtitle', platform_name: @platform.name, default: "Add a storage backend for #{@platform.name}") %></p>
+
+  <%= render 'form', storage_configuration: @storage_configuration %>
+</div>

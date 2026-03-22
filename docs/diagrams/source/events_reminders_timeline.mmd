@@ -1,0 +1,13 @@
+timeline
+  title Event Reminder Scheduling
+  section Create/Update Event
+    Save Event: triggers Scheduler
+  section Evaluate Conditions
+    Has attendees? : yes/no
+    Starts in >24h? : schedule 24h job
+    Starts in >1h? : schedule 1h job
+    Starts in future? : schedule start-time job
+  section Delivery
+    Reminder job runs : loads going attendees
+    For each attendee : Noticed => ActionCable + Email (batched)
+

@@ -1,0 +1,6 @@
+<% content_for :page_title, t('.title') %>
+
+<%= turbo_frame_tag "integrations-settings" do %>
+  <%= render "better_together/person_platform_integrations/integrations_list", 
+             person_platform_integrations: @person_platform_integrations %>
+<% end %>

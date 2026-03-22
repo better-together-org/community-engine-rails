@@ -3,8 +3,11 @@
 
 <%# locals: (model:, form:, attribute:, temp_id: SecureRandom.uuid) -%>
 
-<div class="localized-fields" data-controller="translation">
-  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-translation-target="tab">
+<div class="localized-fields" data-controller="better_together--translation"
+     data-better-together--translation-content-too-long-text="<%= t('better_together.translations.errors.content_too_long') %>"
+     data-better-together--translation-translation-request-failed-text="<%= t('better_together.translations.errors.translation_request_failed') %>">
+  <%= required_label form, attribute, class: 'form-label' %>
+  <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>
       <%= translation_tab_button(attribute: attribute, locale: locale, temp_id: temp_id, model: model) %>
     <% end %>
@@ -19,18 +22,39 @@
           role="tabpanel"
           aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
           data-locale="<%= locale %>"
-          data-translation-target="tabContent">
-        <%= form.label model.class.human_attribute_name(locale_attribute) %>
+          data-better_together--translation-target="tabContent">
+        <%= required_label form, locale_attribute, class: 'form-label', locale: locale %>
         <%= form.text_field locale_attribute,
             id: "#{dom_id(model)}-#{locale_attribute}",
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
-            data: { translation_target: "input", action: "input->translation#updateTranslationStatus" } %>
+            data: {action: "input->better_together--translation#updateTranslationStatus" },
+            'data-better_together-translation-target' => "input" %>
         <% if model.errors[locale_attribute].any? %>
           <div class="invalid-feedback">
             <%= model.errors[locale_attribute].join(", ") %>
           </div>
         <% end %>
+        <small class="form-text text-muted">
+          <%= t("better_together.shared.translated_field_hints.#{attribute}") %>
+        </small>
       </div>
     <% end %>
   </div>
+  <%# Component-level error summary for this translated field %>
+  <% component_errors = [] %>
+  <% component_errors.concat(model.errors[attribute]) if model.errors[attribute].any? %>
+  <% I18n.available_locales.each do |loc| %>
+    <% la = "#{attribute}_#{loc}" %>
+    <% component_errors.concat(model.errors[la]) if model.errors[la].any? %>
+  <% end %>
+  <% component_errors.uniq! %>
+  <% if component_errors.any? %>
+    <div class="mt-2 text-danger small">
+      <ul class="mb-0">
+        <% component_errors.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>

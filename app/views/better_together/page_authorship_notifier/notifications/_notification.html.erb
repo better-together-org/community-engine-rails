@@ -1,0 +1,29 @@
+<!-- app/views/better_together/page_authorship_notifier/notifications/_notification.html.erb -->
+<%= render layout: 'better_together/notifications/notification',
+           locals: { notification: notification,
+                     notification_title: (
+                       if notification.action == 'removed'
+                         notification.actor.present? ?
+                           t('better_together.page_authorship_notifier.removed_by', page_title: notification.page.title, actor_name: notification.actor.name) :
+                           t('better_together.page_authorship_notifier.removed', page_title: notification.page.title)
+                       else
+                         notification.actor.present? ?
+                           t('better_together.page_authorship_notifier.added_by', page_title: notification.page.title, actor_name: notification.actor.name) :
+                           t('better_together.page_authorship_notifier.added', page_title: notification.page.title)
+                       end
+                     ),
+                     notification_url: notification.url } do %>
+  <p class="mb-1">
+    <%= notification.page.title %>
+  </p>
+  <% if notification.actor.present? || notification.actor_name.present? %>
+    <p class="mb-0 text-muted small">
+      <%= t('shared.by') rescue '' %>
+      <% if notification.actor.present? && defined?(policy) && policy(notification.actor).respond_to?(:show?) && policy(notification.actor).show? %>
+        <%= link_to(notification.actor, notification.actor, class: 'text-decoration-none') %>
+      <% else %>
+        <%= notification.actor_name || notification.actor&.name %>
+      <% end %>
+    </p>
+  <% end %>
+<% end %>

@@ -1,11 +1,26 @@
 import 'trix'
 
-document.addEventListener("turbo:load", () => {
+// Run the function on initial page load
+document.addEventListener('DOMContentLoaded', initializeRichText);
+
+// Run the function after Turbo finishes loading new content
+
+document.addEventListener("turbo:load", initializeRichText);
+
+function initializeRichText() {
   // Ensure attributes are only added once
   if (!window.headingAttributesAdded) {
     addHeadingAttributes()
     addForegroundColorAttributes()
     addBackgroundColorAttributes()
+
+    window.addEventListener("trix-file-accept", function(event) {
+      const acceptedTypes = ['image/jpeg', 'image/png']
+      if (!acceptedTypes.includes(event.file.type)) {
+        event.preventDefault()
+        alert("Only support attachment of jpeg or png files")
+      }
+    })
     window.headingAttributesAdded = true; // Flag to prevent re-adding
   }
 
@@ -15,7 +30,7 @@ document.addEventListener("turbo:load", () => {
 
   document.removeEventListener("trix-action-invoke", handleTrixAction);
   document.addEventListener("trix-action-invoke", handleTrixAction);
-});
+}
 
 function initializeTrixEditor(event) {
   if (!event.target.hasInitializedRichText) {

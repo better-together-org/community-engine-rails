@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export RAILS_ENV="${RAILS_ENV:-test}"
+export NODE_ENV="${NODE_ENV:-test}"
+export DISABLE_SPRING=1
+
+# Prepare the dummy app database (uses DATABASE_URL), but run specs from project root
+pushd spec/dummy >/dev/null
+bundle exec rails db:prepare
+popd >/dev/null
+
+# Optional: assets if your specs need them
+# pushd spec/dummy >/dev/null && bundle exec rails assets:precompile || true; popd >/dev/null || true
+
+# Run specs from project root
+bundle exec prspec spec --format documentation

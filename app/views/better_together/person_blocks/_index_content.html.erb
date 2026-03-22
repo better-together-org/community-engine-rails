@@ -1,0 +1,39 @@
+<% if @blocked_people.any? %>
+  <div class="list-group">
+    <% @person_blocks.each do |person_block| %>
+      <div class="list-group-item d-flex justify-content-between align-items-center" id="<%= dom_id(person_block) %>">
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <%= profile_image_tag(person_block.blocked,
+                                 size: 50,
+                                 class: 'rounded-circle') %>
+          </div>
+          <div>
+            <h6 class="mb-0"><%= person_block.blocked.name %></h6>
+            <small class="text-muted">
+              <%= t('better_together.person_blocks.index.blocked_on',
+                   date: l(person_block.created_at, format: :short)) %>
+            </small>
+          </div>
+        </div>
+        <div>
+          <%= button_to t('better_together.person_blocks.index.unblock'),
+                        person_block_path(person_block, locale: locale),
+                        method: :delete,
+                        data: {
+                          turbo_method: :delete,
+                          turbo_confirm: t('better_together.person_blocks.index.unblock_confirmation'),
+                          turbo_frame: 'blocked-people-settings'
+                        },
+                        class: 'btn btn-outline-danger btn-sm' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="text-center py-5">
+    <i class="fas fa-user-slash fa-3x text-muted mb-3" aria-hidden="true"></i>
+    <h4 class="text-muted"><%= t('better_together.person_blocks.index.no_blocked_people') %></h4>
+    <p class="text-muted"><%= t('better_together.person_blocks.index.no_blocked_people_description') %></p>
+  </div>
+<% end %>

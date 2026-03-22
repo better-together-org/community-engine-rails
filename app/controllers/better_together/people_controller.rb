@@ -1,21 +1,28 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation
+  class PeopleController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     before_action :set_person, only: %i[show edit update destroy]
-    before_action :authorize_person, only: %i[show edit update destroy]
-    after_action :verify_authorized, except: :index
 
     # GET /people
     def index
-      authorize resource_class
-      @people = policy_scope(resource_class.with_translations)
+      @people = resource_collection
     end
 
     # GET /people/1
     def show
-      # Dispatch the background job for tracking the page view
-      BetterTogether::Metrics::TrackPageViewJob.perform_later(@person, I18n.locale.to_s) unless bot_request?
+      # Preload authored pages for the profile's Pages tab, with translations and background images
+      @authored_pages = policy_scope(@person.authored_pages)
+                        .includes(
+                          :string_translations,
+                          blocks: { background_image_file_attachment: :blob }
+                        )
+
+      # Preload calendar associations to avoid N+1 queries
+      @person.preload_calendar_associations!
+
+      # Categorize person's calendar events for display
+      categorize_person_events
     end
 
     # GET /people/new
@@ -25,14 +32,25 @@ module BetterTogether
     end
 
     # POST /people
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @person = resource_class.new(person_params)
       authorize_person
 
       if @person.save
-        redirect_to @person, only_path: true, notice: 'Person was successfully created.', status: :see_other
+        redirect_to @person, only_path: true,
+                             notice: t('flash.generic.created', resource: t('resources.person')),
+                             status: :see_other
       else
-        render :new, status: :unprocessable_entity
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              'form_errors',
+              partial: 'layouts/better_together/errors',
+              locals: { object: @person }
+            )
+          end
+          format.html { render :new, status: :unprocessable_content }
+        end
       end
     end
 
@@ -40,43 +58,127 @@ module BetterTogether
     def edit; end
 
     # PATCH/PUT /people/1
-    def update
+    # rubocop:disable Metrics/BlockLength
+    def update # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       ActiveRecord::Base.transaction do
-        if @person.update(person_params)
-          redirect_to @person, only_path: true, notice: 'Profile was successfully updated.', status: :see_other
+        # Ensure boolean toggles are respected even when unchecked ("0")
+        toggles = {}
+        person_params_raw = params[:person] || {}
+        if person_params_raw.key?(:notify_by_email)
+          toggles[:notify_by_email] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:notify_by_email])
+        end
+        if person_params_raw.key?(:show_conversation_details)
+          toggles[:show_conversation_details] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:show_conversation_details])
+        end
+        if person_params_raw.key?(:receive_messages_from_members)
+          toggles[:receive_messages_from_members] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:receive_messages_from_members])
+        end
+
+        if @person.update(person_params.merge(toggles))
+          respond_to do |format|
+            format.json do
+              render json: {
+                success: true,
+                message: t('better_together.settings.index.preferences.saved')
+              }
+            end
+            format.html do
+              redirect_to @person, only_path: true,
+                                   notice: t('flash.generic.updated', resource: t('resources.profile', default: t('resources.person'))), # rubocop:disable Layout/LineLength
+                                   status: :see_other
+            end
+          end
         else
-          flash.now[:alert] = 'Please address the errors below.'
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.json do
+              render json: {
+                success: false,
+                errors: @person.errors.to_hash
+              }, status: :unprocessable_entity
+            end
+            format.turbo_stream do
+              render turbo_stream: turbo_stream.update(
+                'form_errors',
+                partial: 'layouts/better_together/errors',
+                locals: { object: @person }
+              )
+            end
+            format.html do
+              flash.now[:alert] = 'Please address the errors below.'
+              render :edit, status: :unprocessable_content
+            end
+          end
         end
       end
     end
+    # rubocop:enable Metrics/BlockLength
 
     # DELETE /people/1
     def destroy
       @person.destroy
-      redirect_to people_url, notice: 'Person was successfully deleted.', status: :see_other
+      redirect_to people_url, notice: t('flash.generic.destroyed', resource: t('resources.person')),
+                              status: :see_other
     end
 
-    private
-
-    # Adds a policy check for the person
-    def authorize_person
-      authorize @person
-    end
+    protected
 
     def id_param
       params[:id] || params[:person_id]
     end
 
+    def me?
+      id_param == 'me'
+    end
+
     def set_person
       @person = set_resource_instance
+      preload_person_profile_associations
+    end
+
+    # Preload all associations accessed in the profile view to prevent N+1 queries.
+    # person_platform_memberships and person_community_memberships each have their joinable
+    # (Platform/Community), role, and attachments resolved in the view.
+    def preload_person_profile_associations # rubocop:disable Metrics/MethodLength
+      return unless @person
+
+      ActiveRecord::Associations::Preloader.new(
+        records: [@person],
+        associations: {
+          person_platform_memberships: {
+            joinable: [:string_translations, { profile_image_attachment: :blob }],
+            role: [:string_translations]
+          },
+          person_community_memberships: {
+            joinable: [:string_translations, { profile_image_attachment: :blob }],
+            role: [:string_translations]
+          },
+          agreement_participants: {},
+          contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts]
+        }
+      ).call
+    end
+
+    def set_resource_instance
+      if me?
+        @resource = helpers.current_person
+      else
+        # Avoid friendly_id history DB quirks by using Mobility translations or identifier first
+        @resource = find_by_translatable(translatable_type: resource_class.name, friendly_id: id_param) ||
+                    resource_class.find_by(identifier: id_param) ||
+                    resource_class.find_by(id: id_param)
+
+        render_not_found and return if @resource.nil?
+      end
+
+      @resource
     end
 
     def person_params
       params.require(:person).permit(
-        :name, :description, :profile_image, :slug,
-        :profile_image, :cover_image, :remove_profile_image, :remove_cover_image,
-        *resource_class.extra_permitted_attributes
+        :name, :description, :profile_image, :slug, :locale, :notify_by_email,
+        :show_conversation_details, :profile_image, :cover_image, :remove_profile_image,
+        :remove_cover_image,
+        *resource_class.permitted_attributes
       )
     end
 
@@ -84,11 +186,26 @@ module BetterTogether
       ::BetterTogether::Person
     end
 
-    def resource_collection
-      resource_class.includes(person_platform_memberships: %i[joinable role],
-                              person_community_memberships: %i[
-                                joinable role
-                              ])
+    def resource_collection # rubocop:todo Metrics/MethodLength
+      policy_scope(resource_class.with_translations.with_attached_profile_image.with_attached_cover_image.includes(
+                     contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts],
+                     person_platform_memberships: {
+                       joinable: [:string_translations, { profile_image_attachment: :blob }],
+                       role: [:string_translations]
+                     },
+                     person_community_memberships: {
+                       joinable: [:string_translations, { profile_image_attachment: :blob }],
+                       role: [:string_translations]
+                     }
+                   ))
+    end
+
+    def categorize_person_events
+      all_events = @person.all_calendar_events
+      @draft_events = all_events.select(&:draft?)
+      @upcoming_events = all_events.select(&:upcoming?)
+      @ongoing_events = all_events.select(&:ongoing?)
+      @past_events = all_events.select(&:past?)
     end
   end
 end

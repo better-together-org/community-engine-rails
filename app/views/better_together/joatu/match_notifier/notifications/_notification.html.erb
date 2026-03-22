@@ -1,0 +1,9 @@
+<!-- app/views/better_together/joatu/match_notifier/notifications/_notification.html.erb -->
+<%= render layout: 'better_together/notifications/notification',
+           locals: { notification: notification,
+                     notification_title: 'New match found',
+                     notification_url: notification.request } do %>
+  <p class="mb-1">
+    Your offer <em><%= notification.offer.name %></em> matches request <em><%= notification.request.name %></em>
+  </p>
+<% end %>

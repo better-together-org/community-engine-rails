@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe Content::PageBlock, type: :model do
-    pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe BetterTogether::Content::PageBlock do
+  it 'exists' do
+    expect(described_class).to be # rubocop:todo RSpec/Be
   end
 end

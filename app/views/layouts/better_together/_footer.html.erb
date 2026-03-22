@@ -2,28 +2,22 @@
 <!-- Footer -->
 <footer id="app-footer" class="footer py-4">
   <%= render partial: 'layouts/better_together/extra_footer_info_top' %>
-  <nav id="footer-pages-nav" class="navbar navbar-expand-lg">
-    <div class="container">
+
+  <nav id="footer-pages-nav" class="navbar navbar-expand navbar-dark bt-underline-nav">
+    <div class="container flex-column">
       <!-- Toggler for mobile view -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="footerNavbarNavDropdown">
-        <!-- Right-aligned nav items -->
-        <ul class="navbar-nav m-auto">
-          <!-- ... other nav items ... -->
-
-          <% if platform_footer_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: platform_footer_nav_items %>
-          <% end %>
-
-          <% if better_together_nav_items.any? %>
-            <%= render 'better_together/navigation_items/navigation_items', navigation_items: better_together_nav_items %>
-          <% end %>
-
-        </ul>
+        <%= cache nav_fragment_cache_key('platform_footer_nav', nav_areas: [platform_footer_nav_area]) do %>
+          <%= render_platform_footer_nav_items %>
+        <% end %>
       </div>
+      <%= cache nav_fragment_cache_key('better_together_footer_nav', nav_areas: [better_together_nav_area]) do %>
+        <%= render_better_together_nav_items %>
+      <% end %>
     </div>
   </nav>
   <nav id="footer-platform-nav" class="navbar navbar-expand-lg">
@@ -32,18 +26,18 @@
         <ul class="navbar-nav justify-content-between">
           <li class="nav-item">
             <p class="navbar-text">
-              <%= host_platform.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+              <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
             </p>
           </li>
           <!-- ... other nav items ... -->
 
           <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
+            <a class="nav-link" href="#back-to-top"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
           </li>
         </ul>
       </div>
-      
     </div>
   </nav>
+
   <%= render partial: 'layouts/better_together/extra_footer_info_bottom' %>
 </footer>
