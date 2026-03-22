@@ -2448,7 +2448,7 @@ es:
         back: Atrás
         host_url_hint: La URL raíz de la instancia de plataforma externa.
         host_url_label: URL
-        host_url_placeholder: 'https://example.com'
+        host_url_placeholder: https://example.com
         identifier_hint: Un identificador único (letras, números, guiones).
         identifier_placeholder: p. ej. plataforma-par
         intro: Registre una instancia remota de Community Engine (o compatible) para

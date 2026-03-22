@@ -2435,7 +2435,7 @@ uk:
         back: Назад
         host_url_hint: Кореневий URL зовнішньої платформи.
         host_url_label: URL
-        host_url_placeholder: 'https://example.com'
+        host_url_placeholder: https://example.com
         identifier_hint: Унікальний ідентифікатор-слаг (літери, цифри, дефіси).
         identifier_placeholder: напр. peer-platform
         intro: Зареєструйте віддалений екземпляр Community Engine (або сумісний) для

@@ -2408,7 +2408,7 @@ en:
         back: Back
         host_url_hint: The root URL of the external platform instance.
         host_url_label: URL
-        host_url_placeholder: 'https://example.com'
+        host_url_placeholder: https://example.com
         identifier_hint: A unique slug identifier for this platform (letters, numbers,
           hyphens).
         identifier_placeholder: e.g. peer-platform
