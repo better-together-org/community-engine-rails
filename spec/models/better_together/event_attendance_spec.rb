@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::EventAttendance do
   let(:person) { create(:better_together_person) }
-  let(:event) { BetterTogether::Event.create!(name: 'Test', starts_at: Time.zone.now, identifier: SecureRandom.uuid) }
+  let(:event) { create(:better_together_event, name: 'Test', starts_at: Time.zone.now) }
   let(:attendance) { described_class.create!(event:, person:, status: 'interested') }
 
   it 'validates inclusion of status' do

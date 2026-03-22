@@ -20,6 +20,14 @@ module BetterTogether # :nodoc:
         post.authorships.build(author: evaluator.author)
         post.slug = post.identifier
       end
+
+      before(:create) do |post|
+        unless post.platform_id.present?
+          post.platform = Current.platform ||
+                          BetterTogether::Platform.find_by(host: true) ||
+                          create(:better_together_platform)
+        end
+      end
     end
   end
 end

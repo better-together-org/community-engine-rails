@@ -78,6 +78,7 @@ module BetterTogether
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
+    validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
     # Automatically grant the page creator an authorship record
@@ -195,9 +196,11 @@ module BetterTogether
     def assign_current_platform_if_available
       return unless has_attribute?(:platform_id)
       return if platform_id.present?
-      return unless Current.platform
 
-      self.platform = Current.platform
+      resolved = Current.platform ||
+                 BetterTogether::Platform.find_by(host: true) ||
+                 BetterTogether::Platform.first
+      self.platform = resolved if resolved
     end
 
     def assign_host_community

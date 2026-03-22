@@ -475,7 +475,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
     t.boolean "is_recurring", default: false, null: false
     t.uuid "parent_event_id"
     t.date "recurrence_exception_dates", default: [], array: true
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
@@ -1120,7 +1120,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
     t.uuid "creator_id"
     t.uuid "community_id"
     t.jsonb "display_settings", default: {}, null: false
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
@@ -1432,7 +1432,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.datetime "published_at"
     t.uuid "creator_id"
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"

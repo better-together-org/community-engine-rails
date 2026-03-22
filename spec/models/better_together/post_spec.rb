@@ -36,7 +36,8 @@ RSpec.describe BetterTogether::Post do
   describe 'after_create #add_creator_as_author' do
     it 'creates an authorship for the creator_id' do
       creator = create(:better_together_person)
-      post = build(:better_together_post)
+      platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform)
+      post = build(:better_together_post, platform: platform)
       # Ensure no prebuilt authorships from the factory
       post.authorships.clear
       post.creator_id = creator.id

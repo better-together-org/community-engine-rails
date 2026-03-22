@@ -36,6 +36,7 @@ module BetterTogether
 
     validates :content,
               presence: true
+    validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
     before_validation :assign_current_platform_if_available
@@ -93,9 +94,11 @@ module BetterTogether
     def assign_current_platform_if_available
       return unless has_attribute?(:platform_id)
       return if platform_id.present?
-      return unless Current.platform
 
-      self.platform = Current.platform
+      resolved = Current.platform ||
+                 BetterTogether::Platform.find_by(host: true) ||
+                 BetterTogether::Platform.first
+      self.platform = resolved if resolved
     end
   end
 end

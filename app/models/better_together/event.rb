@@ -56,6 +56,7 @@ module BetterTogether
       message: '%<value>s is not a valid timezone'
     }
     validates :event_hosts, length: { minimum: 1 }
+    validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
     validate :ends_at_after_starts_at
 
@@ -319,9 +320,11 @@ module BetterTogether
     def assign_current_platform_if_available
       return unless has_attribute?(:platform_id)
       return if platform_id.present?
-      return unless Current.platform
 
-      self.platform = Current.platform
+      resolved = Current.platform ||
+                 BetterTogether::Platform.find_by(host: true) ||
+                 BetterTogether::Platform.first
+      self.platform = resolved if resolved
     end
 
     # Set default duration if not set and start time is present
