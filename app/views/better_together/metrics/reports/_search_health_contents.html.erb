@@ -1,0 +1,127 @@
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:searchhealth][:accent] %>" id="searchhealth" role="tabpanel" aria-labelledby="searchhealth-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:searchhealth][:accent] %>">
+    <i class="<%= metrics_tab_styles[:searchhealth][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span><%= t('better_together.metrics.reports.tabs.search_health', default: 'Search Health') %></span>
+  </h2>
+
+  <% audit = @search_health_report %>
+  <% badge_class = case audit.status.to_sym
+                  when :ok then 'bg-success'
+                  when :disabled then 'bg-secondary'
+                  else 'bg-danger'
+                  end %>
+
+  <div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted small"><%= t('better_together.metrics.reports.search_health.backend', default: 'Backend') %></div>
+          <div class="fs-5 text-capitalize"><%= audit.backend %></div>
+          <span class="badge <%= badge_class %>"><%= audit.status %></span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted small"><%= t('better_together.metrics.reports.search_health.db_documents', default: 'DB Documents') %></div>
+          <div class="fs-5"><%= audit.total_db_count %></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted small"><%= t('better_together.metrics.reports.search_health.index_documents', default: 'Indexed Documents') %></div>
+          <div class="fs-5"><%= audit.total_document_count %></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="text-muted small"><%= t('better_together.metrics.reports.search_health.total_drift', default: 'Total Drift') %></div>
+          <div class="fs-5"><%= audit.total_drift_count %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if audit.unmanaged_model_names.any? %>
+    <div class="alert alert-warning" role="alert">
+      <strong><%= t('better_together.metrics.reports.search_health.unmanaged_models', default: 'Unmanaged searchable models') %>:</strong>
+      <%= audit.unmanaged_model_names.join(', ') %>
+    </div>
+  <% end %>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h3 class="h5 mb-3"><%= t('better_together.metrics.reports.search_health.drift_visualization', default: 'Drift Visualization') %></h3>
+      <% audit.entries.each do |entry| %>
+        <% percent = entry.db_count.zero? ? 0 : ((entry.document_count.to_f / entry.db_count) * 100).round %>
+        <% progress_class = case entry.status.to_sym
+                           when :healthy then 'bg-success'
+                           when :drifted then 'bg-warning'
+                           else 'bg-danger'
+                           end %>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between small mb-1">
+            <span><%= entry.model_name.demodulize %></span>
+            <span><%= entry.document_count %> / <%= entry.db_count %></span>
+          </div>
+          <div class="progress" role="progressbar" aria-label="<%= entry.model_name.demodulize %>" aria-valuenow="<%= percent %>" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar <%= progress_class %>" style="width: <%= percent.clamp(0, 100) %>%"></div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <h3 class="h5 mb-0"><%= t('better_together.metrics.reports.search_health.indices', default: 'Indices') %></h3>
+        <span class="small text-muted">
+          <%= t('better_together.metrics.reports.search_health.generated_at', default: 'Generated at') %>:
+          <%= l(audit.generated_at, format: :long) %>
+        </span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th><%= t('better_together.metrics.reports.search_health.model', default: 'Model') %></th>
+              <th><%= t('better_together.metrics.reports.search_health.index_name', default: 'Index') %></th>
+              <th><%= t('better_together.metrics.reports.search_health.status_label', default: 'Status') %></th>
+              <th><%= t('better_together.metrics.reports.search_health.db_count', default: 'DB Count') %></th>
+              <th><%= t('better_together.metrics.reports.search_health.index_count', default: 'Index Count') %></th>
+              <th><%= t('better_together.metrics.reports.search_health.drift', default: 'Drift') %></th>
+              <th><%= t('better_together.metrics.reports.search_health.store_size', default: 'Store Size') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% audit.entries.each do |entry| %>
+              <% row_badge_class = case entry.status.to_sym
+                                  when :healthy then 'bg-success'
+                                  when :drifted then 'bg-warning text-dark'
+                                  when :missing then 'bg-danger'
+                                  when :disabled then 'bg-secondary'
+                                  else 'bg-danger'
+                                  end %>
+              <tr>
+                <td><%= entry.model_name %></td>
+                <td><code><%= entry.index_name %></code></td>
+                <td><span class="badge <%= row_badge_class %>"><%= entry.status %></span></td>
+                <td><%= entry.db_count %></td>
+                <td><%= entry.document_count %></td>
+                <td><%= entry.drift_count %></td>
+                <td><%= entry.store_size_human %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

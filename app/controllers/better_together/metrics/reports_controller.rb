@@ -114,6 +114,18 @@ module BetterTogether
         render json: { labels: data.keys.map(&:to_s), values: data.values }
       end
 
+      # JSON endpoint for search index drift by model
+      def search_health_data
+        audit = BetterTogether::Search::AuditService.new.call
+
+        render json: {
+          labels: audit.entries.map { |entry| entry.model_name.demodulize },
+          values: audit.entries.map(&:drift_count),
+          backend: audit.backend,
+          status: audit.status
+        }
+      end
+
       # JSON endpoint for daily user account creation and confirmation
       def user_accounts_daily_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         users_scope = filter_by_datetime(BetterTogether::User, :created_at)
@@ -406,6 +418,7 @@ module BetterTogether
         @links_by_host = BetterTogether::Content::Link.group(:host).count
         @invalid_by_host = BetterTogether::Content::Link.where(valid_link: false).group(:host).count
         @failures_daily = BetterTogether::Content::Link.where(valid_link: false).group_by_day(:last_checked_at).count
+        @search_health_report = BetterTogether::Search::AuditService.new.call
       end
       # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
