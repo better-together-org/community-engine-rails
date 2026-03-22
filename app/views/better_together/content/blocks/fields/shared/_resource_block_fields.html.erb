@@ -1,0 +1,62 @@
+<%# Shared form fields for resource collection blocks.
+    locals: (block:, scope:, temp_id:) -%>
+<%- available_communities = policy_scope(BetterTogether::Community).order(:name) %>
+
+<div class="resource-block-fields">
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[display_style]", BetterTogether::Content::Block.human_attribute_name('display_style', default: 'Display Style'), class: 'form-label' %>
+      <%= select_tag "#{scope}[display_style]",
+                     options_for_select(
+                       [['Grid', 'grid'], ['List', 'list']],
+                       block.display_style
+                     ),
+                     class: 'form-select',
+                     data: { controller: 'better_together--slim-select' } %>
+    </div>
+
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[item_limit]", BetterTogether::Content::Block.human_attribute_name('item_limit', default: 'Max Items'), class: 'form-label' %>
+      <%= number_field_tag "#{scope}[item_limit]", block.item_limit, class: 'form-control', min: 1, max: 50 %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[community_scope_id]", BetterTogether::Content::Block.human_attribute_name('community_scope_id', default: 'Scope to Community (optional)'), class: 'form-label' %>
+    <%= select_tag "#{scope}[community_scope_id]",
+                   options_for_select(
+                     available_communities.map { |c| [c.name, c.id] },
+                     block.community_scope_id
+                   ),
+                   include_blank: t('better_together.content.blocks.resource_block.all_communities', default: 'All communities (platform-wide)'),
+                   class: 'form-select',
+                   data: { controller: 'better_together--slim-select' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[resource_ids]", BetterTogether::Content::Block.human_attribute_name('resource_ids', default: 'Specific Record IDs (optional, comma-separated or JSON array)'), class: 'form-label' %>
+    <%= text_field_tag "#{scope}[resource_ids]", block.resource_ids, class: 'form-control',
+                       placeholder: t('better_together.content.blocks.resource_block.resource_ids_placeholder',
+                                      default: 'Leave blank to show latest records') %>
+    <div class="form-text"><%= t('better_together.content.blocks.resource_block.resource_ids_help',
+                                 default: 'If set, only these records will be displayed, ignoring the community scope and ordering.') %></div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <div class="form-check">
+        <%= check_box_tag "#{scope}[show_view_more_link]", 'true', block.show_view_more_link == 'true',
+                          class: 'form-check-input', id: "#{scope}_show_view_more_link" %>
+        <%= label_tag "#{scope}_show_view_more_link",
+                      BetterTogether::Content::Block.human_attribute_name('show_view_more_link', default: 'Show "View all" link'),
+                      class: 'form-check-label' %>
+      </div>
+    </div>
+
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[view_more_url]", BetterTogether::Content::Block.human_attribute_name('view_more_url', default: '"View all" URL'), class: 'form-label' %>
+      <%= url_field_tag "#{scope}[view_more_url]", block.view_more_url, class: 'form-control',
+                        placeholder: 'https://...' %>
+    </div>
+  </div>
+</div>

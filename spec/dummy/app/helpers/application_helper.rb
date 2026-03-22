@@ -1,4 +1,5 @@
 # frozen_string_literal: true
 
-module ApplicationHelper
+# Application helpers stub for CE dummy app.
+module ApplicationHelper # :nodoc:
 end

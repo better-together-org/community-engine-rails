@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Helpers for testing OmniAuth authentication flows in isolation
-module OmniauthTestHelpers
+module OmniauthTestHelpers # :nodoc:
   # Provides RSpec configuration for isolating OmniAuth state
   # Must be called at describe/context level using metadata tag :omniauth
   #

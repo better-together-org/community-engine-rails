@@ -24,6 +24,23 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Conversations
   jsonapi_resources :conversations, only: %i[index show create update]
 
+  # E2E encryption: prekey management + encrypted key backup
+  resources :people, only: [] do
+    member do
+      get  :prekey_bundle,    to: 'prekeys#prekey_bundle'
+      put  :register_prekeys, to: 'prekeys#register_prekeys'
+      get  :key_backup,       to: 'prekeys#key_backup'
+      put  :key_backup,       to: 'prekeys#save_key_backup'
+    end
+  end
+
+  # E2E encryption: conversation-scoped participant prekey bundles
+  resources :conversations, only: [] do
+    member do
+      get :participant_prekey_bundles, to: 'conversations#participant_prekey_bundles'
+    end
+  end
+
   # Messages (create-only for sending, index/show for reading)
   jsonapi_resources :messages, only: %i[index show create]
 
@@ -43,8 +60,12 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Metrics (custom summary endpoint, read-only)
   get 'metrics/summary', to: 'metrics_summary#show'
 
-  # Pages
+  # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :page_blocks
+
+  # Content Blocks (all STI types — filter by page_id or type)
+  jsonapi_resources :blocks
 
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
@@ -66,6 +87,9 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
+
+  # Membership requests — create is public (unauthenticated); read/manage require auth
+  jsonapi_resources :membership_requests, only: %i[index show create destroy]
 
   # Webhook management (outbound subscriptions)
   jsonapi_resources :webhook_endpoints

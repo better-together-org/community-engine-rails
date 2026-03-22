@@ -62,6 +62,10 @@ RSpec.describe BetterTogether::SeedPlanting do
                                                'cancelled' => 'cancelled'
                                              })
     end
+
+    it 'defines planting_type enum with federated_tending' do
+      expect(described_class.planting_types.keys).to include('federated_tending')
+    end
   end
 
   describe 'status management' do
@@ -159,6 +163,20 @@ RSpec.describe BetterTogether::SeedPlanting do
         planting.mark_cancelled!('User requested cancellation')
         expect(planting.reload.metadata['cancellation_reason']).to eq('User requested cancellation')
       end
+    end
+
+    it 'tracks lifecycle transitions for federated tending' do
+      planting = described_class.create!(
+        planting_type: :federated_tending,
+        metadata: { 'seed_count' => 2 },
+        privacy: 'private'
+      )
+
+      planting.mark_started!
+      planting.mark_completed!('processed_count' => 2)
+
+      expect(planting).to be_completed
+      expect(planting.result['processed_count']).to eq(2)
     end
   end
 

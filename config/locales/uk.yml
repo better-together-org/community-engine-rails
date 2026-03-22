@@ -366,6 +366,14 @@ uk:
         text_translations: Переклади тексту
         time_zone: Часовий пояс
         url: URL-адреса
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
       better_together/platform_invitation:
         accepted_at: Прийнято
         community_role: :activerecord.models.community_role
@@ -538,12 +546,36 @@ uk:
           attributes:
             event_hosts:
               too_short: Події повинні мати принаймні одного господаря
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: угоди про підключення вимагають
+                як вихідної, так і цільової платформ
+            target:
+              must_be_platform: має бути платформою
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: угоди про зв'язок особи вимагають вихідної
+                особи, цільової особи та активного підключення платформи
+            target:
+              must_be_person: повинна бути особою
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: має збігатися з особою-отримувачем гранту доступу
         better_together/person_platform_integration:
           attributes:
             provider:
               inclusion: "%{value} не є підтримуваним постачальником OAuth"
             uid:
               taken: вже пов'язано з іншим обліковим записом
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: повинно бути правдою для основного домену
+            primary:
+              already_taken_for_platform: вже зайнятий для цієї платформи
     models:
       action_text/encrypted_rich_text: зашифрований багатий текст
       action_text/rich_text: багатий текст
@@ -592,10 +624,15 @@ uk:
       better_together/oauth_application: Додаток OAuth
       better_together/page: Сторінка
       better_together/person: Особа
+      better_together/person_access_grant: Дозвіл доступу особи
       better_together/person_community_membership: Членство особи в спільноті
+      better_together/person_link: Посилання особи
+      better_together/person_linked_seed: Пов'язане зерно
       better_together/person_platform_integration: Інтеграція OAuth
       better_together/person_platform_membership: Членство особи в платформі
       better_together/platform: Платформа
+      better_together/platform_connection: З'єднання платформ
+      better_together/platform_domain: Домен платформи
       better_together/platform_invitation: Запрошення платформи
       better_together/post: Публікація
       better_together/resource_permission: Дозвіл ресурсу
@@ -603,6 +640,7 @@ uk:
       better_together/role_resource_permission: Дозвіл ролі ресурсу
       better_together/user: Користувач
       better_together/webhook_endpoint: Кінцева точка вебхука
+      better_together/storage_configuration: Конфігурація сховища
       better_together/wizard: Майстер
       better_together/wizard_step: Крок майстра
       better_together/wizard_step_definition: Визначення кроку майстра
@@ -844,7 +882,17 @@ uk:
       add: Add Contact
     content:
       blocks:
+        accordion_block:
+          empty: Елементи не налаштовано.
+          items_json_help: Масив JSON об'єктів з ключами "question" та "answer".
         associated_pages: Associated Pages
+        checklist_block:
+          not_found: Контрольний список не знайдено.
+          select_prompt: "— Виберіть контрольний список —"
+        communities_block:
+          empty: Немає спільнот для відображення.
+        events_block:
+          empty: Немає подій для відображення.
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -870,9 +918,29 @@ uk:
               (наприклад, privacy.en.md, privacy.es.md, privacy.fr.md) і повертається
               до базового файлу, якщо не знайдено.
             preview_placeholder: Попередній перегляд з'явиться тут...
+        navigation_area_block:
+          not_found: Область навігації не знайдено.
+          select_prompt: "— Виберіть область навігації —"
+        people_block:
+          empty: Немає людей для відображення.
+        posts_block:
+          empty: Немає публікацій для відображення.
+        resource_block:
+          all_communities: Усі спільноти (на рівні платформи)
+          resource_ids_help: Якщо встановлено, відображатимуться лише ці записи, ігноруючи
+            область спільноти та порядок.
+          resource_ids_placeholder: Залиште порожнім для відображення останніх записів
+        statistics_block:
+          stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
+            "icon" (клас Font Awesome).
         template:
           default: Типовий шаблон
           host_community_contact_details: Контактні дані спільноти-хоста
+        video_block:
+          missing_url: URL відео не налаштовано.
+          title: Відеопрогравач YouTube
+          url_help: Приймає URL YouTube, Vimeo або будь-який прямий URL вбудовування.
+        view_more: Переглянути все
       mermaid_diagram:
         help:
           auto_height: Якщо увімкнено, висота діаграми автоматично підлаштовується
@@ -995,6 +1063,28 @@ uk:
         denied: Відхилено
         granted: Надано
         unknown: Невідомо
+    e2e:
+      form:
+        status_active: "E2E активний 🔒"
+        status_error: E2E недоступний
+        status_waiting: Очікування ключів учасника…
+      message:
+        decrypt_error: "[Не вдалося розшифрувати повідомлення]"
+        decrypting: "🔒 Розшифрування…"
+      modal:
+        cancel: Скасувати
+        ok: OK
+        passphrase_label: Пароль-фраза
+        title: Безпечний обмін повідомленнями
+      session:
+        confirm_fresh_identity_message: Відновлення не вдалося. Створити нову ідентичність?
+          Старі зашифровані повідомлення залишаться недоступними.
+        passphrase_backup_message: Встановіть резервну пароль-фразу (мін. 12 символів).
+          Залиште порожнім, щоб пропустити.
+        passphrase_restore_message: Знайдено зашифровану резервну копію ключів. Введіть
+          пароль-фразу для відновлення або залиште порожнім, щоб створити нову ідентичність.
+        server_error_message: Не вдалося зв'язатися з сервером резервного копіювання
+          ключів. Будь ласка, перезавантажте сторінку і спробуйте знову.
     email_addresses:
       add: Додати адресу електронної пошти
       email: Електронна пошта
@@ -1005,6 +1095,57 @@ uk:
         school: Школа
         work: Робота
       title: Адреси електронної пошти
+    enums:
+      person_access_grant:
+        status:
+          active: Активний
+          expired: Прострочено
+          pending: Очікує
+          revoked: Відкликано
+      person_link:
+        status:
+          active: Активний
+          pending: Очікує
+          revoked: Відкликано
+      person_linked_seed:
+        seed_type:
+          event: Подія
+          page: Сторінка
+          post: Публікація
+      platform_connection:
+        connection_kind:
+          member: Учасник
+          peer: Рівноправний
+        content_sharing_policy:
+          mirror_network_feed: Дзеркало мережевої стрічки
+          mirrored_publish_back: Дзеркало і зворотна публікація
+          none: Немає
+          selective: Вибірковий
+        federation_auth_policy:
+          api_read: Читання API
+          api_write: Читання і запис API
+          login_only: Тільки вхід
+          none: Немає
+        federation_scope_types:
+          content_read: Читання контенту
+          content_write: Запис контенту
+          identity: Ідентифікація
+          linked_content_read: Читання пов'язаного контенту
+          profile_read: Читання профілю
+        shared_content_types:
+          events: Події
+          pages: Сторінки
+          posts: Публікації
+        status:
+          active: Активний
+          blocked: Заблоковано
+          pending: Очікує
+          suspended: Призупинено
+        sync_status:
+          failed: Помилка
+          idle: Неактивний
+          running: Виконується
+          succeeded: Успішно
     event_invitations:
       index:
         invite_member: Invite member
@@ -1296,7 +1437,7 @@ uk:
         recent_offers: Recent Offers
         view_all_offers: View all
       recent_requests_card:
-        new_request: New Request
+        new_request: Новий запит
         no_requests: No recent requests
         recent_requests: Recent Requests
         view_all_requests: View all
@@ -1385,6 +1526,10 @@ uk:
         request_creator: Request Creator
         show:
           details: Details
+          open_platform_connections: Відкрити з'єднання платформ
+          platform_connection: Підключення платформи
+          source_platform: Платформа-джерело
+          target_platform: Цільова платформа
           title: Agreement
         status: Status
       by: by
@@ -1416,15 +1561,20 @@ uk:
         screenshot_alt: Help screenshot
         show_again: Show help again
       hub:
+        create_agreement: Create Agreement
         empty_agreements: No agreements yet.
         empty_offers: No offers yet.
         empty_requests: No requests yet.
+        matches_offer: 'Matches offer:'
+        matches_request: 'Matches request:'
+        membership_requests: Запити на членство
         my_agreements: My Agreements
         my_offers: My Offers
         my_requests: My Requests
+        none: No matches found right now.
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
-        title: Exchange Hub
+        title: Potential Matches
         view_all_agreements: View all agreements
         view_all_offers: View all offers
         view_all_requests: View all requests
@@ -1441,7 +1591,7 @@ uk:
         offers: Offers
         requests: Requests
       offers:
-        agreement_heading: Agreement
+        agreement_heading: Угода
         agreement_with: Agreement with
         back_to_offers: Back to Offers
         edit_offer: Edit Offer
@@ -1451,22 +1601,26 @@ uk:
         response_to_your_offer_heading: Response to your Offer
         save_offer: Save Offer
         source_request_heading: Responding to Request
-        view_agreement: View Agreement
+        target_platform: Цільова платформа
+        view_agreement: Переглянути угоду
         view_offer: View Offer
-        your_response_heading: Your Response
+        your_response_heading: Ваша відповідь
       requests:
         agreement_heading: Agreement
-        back_to_requests: Back to Requests
-        edit_request: Edit Request
-        empty: No requests found
-        index_header: Requests
+        back_to_requests: Повернутися до запитів
+        edit_request: Редагувати запит
+        empty: Запитів не знайдено
+        index_header: Запити
+        manage_connections: Керувати з'єднаннями
+        new_connection_request: Новий запит на з'єднання
         new_request: New Request
-        respond_with_offer: Respond with Offer
-        response_to_your_request_heading: Response to your Request
-        save_request: Save Request
-        source_offer_heading: Responding to Offer
+        respond_with_offer: Відповісти пропозицією
+        response_to_your_request_heading: Відповідь на ваш запит
+        save_request: Зберегти запит
+        source_offer_heading: Відповідь на пропозицію
+        target_platform: Цільова платформа
         view_agreement: View Agreement
-        view_request: View Request
+        view_request: Переглянути запит
         your_response_heading: Your Response
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -1478,7 +1632,7 @@ uk:
           order_by: Order by
           per_page: Per page
           search-term: Search term
-          status: Status
+          status: Статус
           submit: Search
         newest: Newest
         oldest: Oldest
@@ -1504,6 +1658,8 @@ uk:
           Best regards,<br />
           The %{platform} Team
         subject: A new agreement was created
+      new_match:
+        subject: Нова відповідність Joatu
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
@@ -1548,6 +1704,49 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: Перевірка каптчі не вдалася. Будь ласка, спробуйте ще раз.
+      confirm_approve: Approve this membership request and invite the applicant to
+        join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Будь ласка, розкажіть нам трохи про себе і чому ви хочете
+          приєднатися.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approve_failed: Could not approve the membership request.
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        decline_failed: Could not decline the membership request.
+        declined: Membership request declined.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: Membership request from %{requestor}
+      new:
+        heading: Request Membership
+        intro: Fill in the form below to request membership. We'll be in touch!
+      show:
+        title: Membership Request
+      success:
+        body: Thank you! We've received your membership request and will be in touch
+          soon.
+        heading: Request Received
     messages:
       form:
         placeholder: Type your message...
@@ -1623,7 +1822,7 @@ uk:
           platform: Платформа
           search_queries: Пошуки
           shares: Поширення
-          source: Source
+          source: Джерело
           term: Термін
           total_users: Total Users
           url: URL
@@ -1700,9 +1899,26 @@ uk:
           metrics_types: Типи метрик
           page_views: Перегляди сторінок
           reports: Звіти
+          search_health: Стан пошуку
           search_queries: Пошуки
           shares: Поширення
           users: Users
+        search_health:
+          backend: Backend
+          db_count: Кількість у БД
+          db_documents: Документи БД
+          drift: Розбіжність
+          drift_visualization: Візуалізація розбіжності
+          generated_at: Згенеровано
+          index_count: Кількість в індексі
+          index_documents: Індексовані документи
+          index_name: Індекс
+          indices: Індекси
+          model: Модель
+          status_label: Статус
+          store_size: Розмір сховища
+          total_drift: Загальна розбіжність
+          unmanaged_models: Некеровані пошукові моделі
         title: Звіти метрик
         unknown_type: Невідомо
       shares:
@@ -1737,7 +1953,7 @@ uk:
         new_report: New Report
         no_reports: No reports have been generated yet.
         title: User Account Reports
-        view: View
+        view: Переглянути
       new:
         file_format: File Format
         file_format_help: Select the format for the exported report file.
@@ -2007,15 +2223,364 @@ uk:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_access_grants:
+      errors:
+        duplicate_grant: вже має дозвіл для цього зв'язку та отримувача
+      index:
+        description: Керуйте приватними дозволами доступу, якими ви поділилися з іншими.
+        empty: Ви ще не поділилися жодним дозволом доступу.
+        shared_with_you: Поділились з вами
+        title: Дозволи доступу
+        you_are_sharing: Ви надаєте доступ
+      show:
+        accepted: Прийнято
+        allowed: Дозволено
+        back: Повернутися до дозволів доступу
+        denied: Заборонено
+        expires: Дійсний до
+        grantor: Надавач
+        manage_grant_heading: Управління дозволом
+        no_expiry: Без терміну дії
+        pending: Очікує
+        recipient: Отримувач
+        revoke: Відкликати доступ
+        revoke_confirm: Відкликати цей дозвіл доступу?
+        scope_labels:
+          private_events: Приватні події
+          private_messages: Приватні повідомлення
+          private_pages: Приватні сторінки
+          private_posts: Приватні публікації
+          profile_read: Читання профілю
+        scopes_heading: Дозволи
+        title: Дозвіл доступу
+    person_block:
+      cannot_block_manager: не може бути менеджером платформи
+      cannot_block_self: не можете заблокувати себе
+    person_blocks:
+      index:
+        actions: Дії
+        block_person: Заблокувати людину
+        blocked_at: Заблоковано
+        blocked_count:
+          few: Заблоковано %{count} особи
+          many: Заблоковано %{count} осіб
+          one: Заблоковано 1 особу
+          other: Заблоковано %{count} осіб
+          zero: Нікого не заблоковано
+        blocked_on: Заблоковано %{date}
+        no_blocked_people: Ви ще нікого не заблокували.
+        no_blocked_people_description: Коли ви блокуєте людину, вона не зможе взаємодіяти
+          з вами.
+        search: Пошук
+        search_placeholder: Шукати заблокованих людей...
+        title: Заблоковані люди
+        unblock: Розблокувати
+        unblock_confirmation: Ви впевнені, що хочете розблокувати цю людину?
+      new:
+        back_to_list: Назад до списку заблокованих
+        blocked_person_help: Виберіть людину, яку ви хочете заблокувати, з результатів
+          пошуку.
+        blocked_person_label: Людина для блокування
+        blocked_person_placeholder: Шукати людину для блокування...
+        blocked_person_prompt: Виберіть людину для блокування
+        cancel: Скасувати
+        submit: Заблокувати людину
+        title: Заблокувати людину
+      notices:
+        already_blocked: Цю людину вже заблоковано.
+        blocked: Людину успішно заблоковано.
+        not_found: Людину не знайдено.
+        platform_manager_error: Менеджерів платформи не можна блокувати.
+        self_block_error: Ви не можете заблокувати себе.
+        unblocked: Людину успішно розблоковано.
+    person_linked_seeds:
+      index:
+        description: Приватний вміст, яким поділилися з вами через дозволи федерації.
+        empty: З вами ще не поділилися жодними пов'язаними зернами.
+        title: Пов'язані зерна
+      show:
+        back: Повернутися до пов'язаних зерен
+        empty: Для цього пов'язаного зерна немає доступного вмісту.
+        title: Пов'язане зерно
+    person_links:
+      errors:
+        duplicate_link: вже має зв'язок для цього з'єднання платформи та цільової
+          особи
+      index:
+        description: Керуйте своїми міжплатформеними зв'язками осіб та з'єднаннями
+          федерації.
+        empty: У вас ще немає зв'язків осіб.
+        title: Зв'язки осіб
+      show:
+        access_grants_heading: Дозволи доступу
+        back: Повернутися до зв'язків осіб
+        pending: Очікує
+        platform_connection: З'єднання платформи
+        revoke: Відкликати зв'язок
+        revoke_confirm: Відкликати цей зв'язок особи та її дозволи доступу?
+        source_person: Вихідна особа
+        target_person: Цільова особа
+        title: Зв'язок особи
+        verified: Підтверджено
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Нову інтеграцію облікового запису %{provider} підключено до вашого
+          облікового запису %{created_at}. Ви можете переглянути деталі за адресою
+          %{integration_url}.
+        connected_at: Підключено
+        greeting: Вітаємо, %{name}!
+        integration_details: Деталі інтеграції
+        not_available: Недоступно
+        profile_url: URL профілю
+        provider: Провайдер
+        review_button: Переглянути інтеграцію
+        review_link_html: 'Переглянути цю інтеграцію: %{url}'
+        security_notice_html: Якщо ви не авторизували цю інтеграцію, будь ласка, негайно
+          від'єднайте її та зверніться до служби підтримки. Хтось може мати несанкціонований
+          доступ до вашого облікового запису.
+        security_notice_title: Повідомлення безпеки
+        subject: Нову інтеграцію %{provider} підключено до вашого облікового запису
+        thanks: Дякуємо
+    person_platform_integrations:
+      create:
+        already_connected: У вас вже підключено обліковий запис %{provider}. Будь
+          ласка, спочатку від'єднайте його, якщо бажаєте підключити інший обліковий
+          запис.
+        email_mismatch: 'Неможливо підключити обліковий запис %{provider}: електронна
+          пошта %{email} належить іншому користувачу. Будь ласка, вийдіть з системи
+          і увійдіть з правильним обліковим записом.'
+        failure: Не вдалося підключити обліковий запис %{provider}. Будь ласка, спробуйте
+          ще раз.
+        success: Обліковий запис %{provider} успішно підключено.
+      destroy:
+        cannot_delete_last_oauth: Неможливо від'єднати ваш обліковий запис %{provider},
+          оскільки ви зареєструвалися за допомогою OAuth і не маєте встановленого
+          пароля. Будь ласка, спочатку встановіть пароль у налаштуваннях облікового
+          запису, або підключіть іншого постачальника OAuth перед від'єднанням цього.
+        error: Не вдалося від'єднати інтеграцію.
+        success: Інтеграцію успішно від'єднано.
+      index:
+        all_providers_connected: Ви підключили всіх доступних постачальників OAuth.
+        confirm_disconnect: Ви впевнені, що хочете від'єднати свій обліковий запис
+          %{provider}?
+        connect_github: Підключити GitHub
+        connect_new: Підключити новий обліковий запис
+        connect_provider: Підключити %{provider}
+        connected_at: Підключено %{time} тому
+        disconnect: Від'єднати
+        no_integrations: Ви ще не підключили жодних зовнішніх облікових записів.
+        privacy_note: Ми отримуємо доступ лише до мінімально необхідної інформації.
+          Ви можете від'єднатися в будь-який час.
+        title: Підключені облікові записи
+    phone_numbers:
+      add: Add Phone Number
+      label: Label
+      labels:
+        fax: Fax
+        home: Home
+        mobile: Mobile
+        other: Other
+        work: Work
+      number: Номер
+      title: Номери телефонів
+    platform_connections:
+      actions:
+        approve: Затвердити
+        approve_aria: 'Затвердити з''єднання: %{source} ↔ %{target}'
+        approve_confirm: Затвердити це з'єднання?
+        edit: Редагувати
+        edit_aria: 'Редагувати з''єднання: %{source} ↔ %{target}'
+        suspend: Призупинити
+        suspend_aria: 'Призупинити з''єднання: %{source} ↔ %{target}'
+        suspend_confirm: Призупинити це з'єднання?
+        view: Переглянути
+        view_aria: 'Переглянути з''єднання: %{source} ↔ %{target}'
+      edit:
+        title: Редагувати з'єднання платформи
+      flash:
+        approved: З'єднання затверджено та активовано.
+        cannot_approve: Неможливо схвалити з'єднання зі статусом '%{status}'.
+        cannot_suspend: Неможливо призупинити з'єднання зі статусом '%{status}'.
+        secret_rotated: OAuth-секрет клієнта оновлено. Оновіть конфігурацію віддаленої
+          платформи.
+        suspended: З'єднання призупинено.
+      form:
+        back: Назад
+        connection_kind_hint: 'Учасник: ця платформа приймає учасників іншої. Партнер:
+          рівноправне партнерство між незалежними платформами.'
+        content_sharing_policy_hint: Визначає спосіб синхронізації публічного вмісту.
+          "Дзеркало мережі" синхронізує весь публічний вміст; "Вибірково" синхронізує
+          лише явно зазначені типи.
+        create: Створити з'єднання
+        federation_auth_policy_hint: api_read дозволяє віддаленій платформі отримувати
+          публічний вміст. api_write також дозволяє публікувати тут. login_only обмежується
+          лише автентифікацією користувачів.
+        federation_scopes_hint: Обсяги визначають, які дані віддалена платформа може
+          запитувати у токенах OAuth. Вмикайте лише ті обсяги, що відповідають вашим
+          узгодженим умовам обміну даними.
+        federation_scopes_legend: Обсяги федерації
+        save: Зберегти зміни
+        shared_content_types_hint: Оберіть типи вмісту для включення під час синхронізації
+          з цим з'єднанням.
+        shared_content_types_legend: Типи спільного вмісту
+        source_platform: Вихідна платформа
+        target_platform: Цільова платформа
+      index:
+        columns:
+          auth_policy: Політика автентифікації
+          content_policy: Політика вмісту
+          kind: Тип
+          source: Джерело
+          status: Статус
+          target: Ціль
+        new_connection: Нове з'єднання
+        title: З'єднання платформ
+      new:
+        back: Назад
+        register_platform_hint: Потрібно спочатку зареєструвати віддалену платформу?
+        register_platform_link: Зареєструвати зовнішню платформу →
+        title: Нове з'єднання платформи
+      show:
+        api_read: API читання
+        api_write: API запис
+        approve: Затвердити
+        approve_confirm: Затвердити це з'єднання і зробити його активним?
+        back: Назад
+        connection_kind: Тип з'єднання
+        content_sharing: Обмін вмістом
+        content_sharing_policy: Політика обміну вмістом
+        disabled: Вимкнено
+        edit: Редагувати
+        enabled: Увімкнено
+        federation_auth: Автентифікація федерації
+        federation_auth_policy: Політика автентифікації федерації
+        federation_scopes: Обсяги федерації
+        last_sync_completed: Остання синхронізація завершена
+        last_sync_error: Остання помилка синхронізації
+        last_sync_item_count: Елементів в останній синхронізації
+        last_sync_started: Остання синхронізація розпочата
+        login: Вхід
+        mirroring: Дзеркалювання
+        never: Ніколи
+        none: Немає
+        oauth:
+          client_id: Ідентифікатор клієнта
+          client_secret: Секрет клієнта
+          description: Передайте ці облікові дані оператору %{platform}, щоб вони
+            могли налаштувати відповідне з'єднання на своїй платформі та отримувати
+            токени від OAuth-точки доступу цієї платформи.
+          not_set: Не налаштовано
+          remote_token_endpoint: Віддалена точка доступу токена
+          remote_token_endpoint_hint: Налаштуйте це на віддаленій платформі, вказавши
+            на їхню OAuth-точку доступу.
+          rotate_secret: Оновити секрет
+          rotate_secret_confirm: Оновити OAuth-секрет клієнта? Потрібно буде перенастроїти
+            віддалену платформу.
+          title: Облікові дані OAuth федерації
+          token_endpoint: Точка доступу токена (ця платформа)
+        publish_back: Зворотна публікація
+        shared_content_types: Типи спільного вмісту
+        status: Статус
+        suspend: Призупинити
+        suspend_confirm: Призупинити це з'єднання? Федерація та синхронізація будуть
+          призупинені.
+        sync_cursor: Курсор синхронізації
+        sync_status: Статус синхронізації
+    platform_invitation:
+      acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
+        це запрошення приєднатися до <strong>%{platform}</strong>.
+      community_role_html: Вам надано роль <strong>%{role}</strong> в спільноті <strong>%{platform}</strong>.
+      greeting-placeholder: Було приємно познайомитися з вами нещодавно. Ось запрошення,
+        яке я обіцяв вам надіслати!
+      hints:
+        type: Виберіть тип запрошення.
+      platform_role_html: Вам надано роль <strong>%{role}</strong> на платформі <strong>%{platform}</strong>.
+      title: Вас запрошують приєднатися до %{platform}
+    platform_invitation_mailer:
+      invite:
+        community_role: 'Роль спільноти: %{role}'
+        greeting: Привіт %{recipient_name},
+        ignore: Якщо ви не очікували цього запрошення, будь ласка, проігноруйте цей
+          електронний лист.
+        invitation_code: 'Код запрошення: %{invitation_code}'
+        link_text: Прийняти запрошення
+        message: 'Вас запрошено приєднатися до %{platform} на нашій платформі. Щоб
+          прийняти запрошення, будь ласка, натисніть посилання нижче:'
+        platform_role: 'Роль платформи: %{role}'
+        role_assignment: 'Вам будуть призначені наступні ролі:'
+        signature_html: З найкращими побажаннями,<br /> Команда %{platform}
+        subject: Вас запрошують приєднатися до %{platform}!
+        valid_from: Це запрошення дійсне з %{valid_from}.
+        valid_period: Це запрошення дійсне з %{valid_from} до %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Створити нове запрошення
+      filter_by_status: Фільтрувати за статусом
+      invitations: Запрошення
+      new_invitation: Нове запрошення
+      search_by_email: Пошук за електронною поштою
+      status:
+        accepted: Прийнято
+        expired: Закінчився термін
+        pending: Очікує
+    platforms:
+      form:
+        host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
+          Використовується для її ідентифікації у федерації та генерації URL-адрес
+          OAuth-ендпоінту. Для production має бути HTTPS.
+      new:
+        back: Назад
+        host_url_hint: Кореневий URL зовнішньої платформи.
+        host_url_label: URL
+        host_url_placeholder: https://example.com
+        identifier_hint: Унікальний ідентифікатор-слаг (літери, цифри, дефіси).
+        identifier_placeholder: напр. peer-platform
+        intro: Зареєструйте віддалений екземпляр Community Engine (або сумісний) для
+          вибору при створенні підключення платформи.
+        submit: Зареєструвати зовнішню платформу
+        title: Зареєструвати зовнішню платформу
+      show:
+        new_invitation: Нове запрошення
+    posts:
+      authors: Автори
+      back_to_posts: Назад до постів
+      create_post: Створити перший пост
+      created_on: Створено %{date}
+      created_on_short: Створено
+      delete: Видалити запис
+      edit: Редагувати пост
+      edit_post: Редагувати пост
+      index:
+        new_btn_text: Новий пост
+      labels:
+        privacy: Конфіденційність
+      new_post: Новий пост
+      none_body: Наразі немає постів для показу.
+      none_title: Постів поки що немає
+      published_on: Опубліковано %{date}
+      save_post: Зберегти пост
+      updated_on_short: Оновлено
+      view_post: Переглянути пост
+    primary: Основний
+    rbac:
+      nav:
+        resource_permissions: Дозволи ресурсів
+        roles: Ролі
+    registrations:
+      captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
+        знову.
+      invalid_invitation: Недійсний або прострочений код запрошення. Будь ласка, перевірте
+        свій електронний лист із запрошенням.
+      invitation_required: Для реєстрації на цій платформі потрібен код запрошення
+    remove: Видалити
     reports:
       actions:
         report: Поскаржитися
       attributes:
         category: Категорія
         harm_level: Рівень шкоди
-        requested_outcome: Бажаний результат
-        reason: Короткий опис
         private_details: Приватні деталі для команди безпеки
+        reason: Короткий опис
+        requested_outcome: Бажаний результат
       errors:
         already_reported_by_you: вже було повідомлено вами
       index:
@@ -2023,30 +2588,73 @@ uk:
         new: Новий звіт
         title: Мої звіти про безпеку
       new:
-        category_help: Виберіть варіант, який найкраще відповідає шкоді або проблемі, про яку ви повідомляєте.
+        category_help: Виберіть варіант, який найкраще відповідає шкоді або проблемі,
+          про яку ви повідомляєте.
         consent_to_contact: Ви можете зв'язатися зі мною щодо цього звіту
-        consent_to_restorative_process: Ви можете розглянути відновні варіанти, якщо це доречно
+        consent_to_restorative_process: Ви можете розглянути відновні варіанти, якщо
+          це доречно
         error_summary: Будь ласка, виправте такі проблеми.
-        harm_level_help: Повідомте, наскільки терміновою або серйозною здається ситуація, щоб команда безпеки могла правильно визначити пріоритет.
-        intro: Використовуйте цю форму, щоб попросити про підтримку з безпеки, підтримку меж, відповідальність або терміновий захист.
-        preferences_help: Повідомте, чи можемо ми з вами зв'язатися, чи хочете ви, щоб розглядалися відновні варіанти, і чи є у цьому звіті ризик помсти.
+        harm_level_help: Повідомте, наскільки терміновою або серйозною здається ситуація,
+          щоб команда безпеки могла правильно визначити пріоритет.
+        intro: Використовуйте цю форму, щоб попросити про підтримку з безпеки, підтримку
+          меж, відповідальність або терміновий захист.
+        preferences_help: Повідомте, чи можемо ми з вами зв'язатися, чи хочете ви,
+          щоб розглядалися відновні варіанти, і чи є у цьому звіті ризик помсти.
         preferences_title: Параметри безпеки
-        private_details_help: Додайте будь-який контекст, повторювану поведінку, дати або докази, які мають залишитися в команди безпеки.
+        private_details_help: Додайте будь-який контекст, повторювану поведінку, дати
+          або докази, які мають залишитися в команди безпеки.
         reason_help: Коротко опишіть, що сталося. Спочатку зосередьтеся на головному.
-        requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
+        requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди
+          безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
         retaliation_risk: Я хвилююся щодо помсти або ескалації
         submit: Надіслати звіт
         title: Повідомити про проблему безпеки
-        urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця форма призначена для подальшого супроводу спільнотою та платформою, а не для екстреного реагування.
-        urgent_title: "Якщо ви перебуваєте в безпосередній небезпеці:"
+        urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця
+          форма призначена для подальшого супроводу спільнотою та платформою, а не
+          для екстреного реагування.
+        urgent_title: 'Якщо ви перебуваєте в безпосередній небезпеці:'
       notices:
         created: Звіт успішно надіслано.
       show:
         back: Назад до звітів
-        pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з вами залежно від ваших параметрів згоди.
+        pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з
+          вами залежно від ваших параметрів згоди.
         status: Поточний статус
         summary: Підсумок справи
         title: Звіт про безпеку
+    resource_permissions:
+      actions:
+        create: Створити
+        delete: Видалити
+        download: Завантажити
+        list: Список
+        manage: Керувати
+        read: Читати
+        update: Оновити
+        view: Перегляд
+      index:
+        new_resource_permission: Новий дозвіл ресурсу
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
+      roles:
+        count: усього %{count}
+        label: Ролі
+        more: і ще %{count}
+        none: Ролі не призначено
+    resources:
+      membership_request: Запит на членство
+    roles:
+      index:
+        new_role: Нова роль
+      permissions:
+        count: усього %{count}
+        label: Дозволи
+        more: і ще %{count}
+        none: Дозволи не призначено
+      protection_status:
+        protected: Захищено
+        unprotected: Незахищено
     safety:
       action_statuses:
         active: Активна
@@ -2168,207 +2776,6 @@ uk:
     safety_notes:
       notices:
         created: До справи додано нотатку.
-    person_block:
-      cannot_block_manager: не може бути менеджером платформи
-      cannot_block_self: не можете заблокувати себе
-    person_blocks:
-      index:
-        actions: Дії
-        block_person: Заблокувати людину
-        blocked_at: Заблоковано
-        blocked_count:
-          few: Заблоковано %{count} особи
-          many: Заблоковано %{count} осіб
-          one: Заблоковано 1 особу
-          other: Заблоковано %{count} осіб
-          zero: Нікого не заблоковано
-        blocked_on: Заблоковано %{date}
-        no_blocked_people: Ви ще нікого не заблокували.
-        no_blocked_people_description: Коли ви блокуєте людину, вона не зможе взаємодіяти з вами.
-        search: Пошук
-        search_placeholder: Шукати заблокованих людей...
-        title: Заблоковані люди
-        unblock: Розблокувати
-        unblock_confirmation: Ви впевнені, що хочете розблокувати цю людину?
-      new:
-        back_to_list: Назад до списку заблокованих
-        blocked_person_help: Виберіть людину, яку ви хочете заблокувати, з результатів пошуку.
-        blocked_person_label: Людина для блокування
-        blocked_person_placeholder: Шукати людину для блокування...
-        blocked_person_prompt: Виберіть людину для блокування
-        cancel: Скасувати
-        submit: Заблокувати людину
-        title: Заблокувати людину
-      notices:
-        already_blocked: Цю людину вже заблоковано.
-        blocked: Людину успішно заблоковано.
-        not_found: Людину не знайдено.
-        platform_manager_error: Менеджерів платформи не можна блокувати.
-        self_block_error: Ви не можете заблокувати себе.
-        unblocked: Людину успішно розблоковано.
-    person_platform_integration_mailer:
-      integration_created:
-        body_html: Нову інтеграцію облікового запису %{provider} підключено до вашого
-          облікового запису %{created_at}. Ви можете переглянути деталі за адресою
-          %{integration_url}.
-        connected_at: Підключено
-        greeting: Вітаємо, %{name}!
-        integration_details: Деталі інтеграції
-        not_available: Недоступно
-        profile_url: URL профілю
-        provider: Провайдер
-        review_button: Переглянути інтеграцію
-        review_link_html: 'Переглянути цю інтеграцію: %{url}'
-        security_notice_html: Якщо ви не авторизували цю інтеграцію, будь ласка, негайно
-          від'єднайте її та зверніться до служби підтримки. Хтось може мати несанкціонований
-          доступ до вашого облікового запису.
-        security_notice_title: Повідомлення безпеки
-        subject: Нову інтеграцію %{provider} підключено до вашого облікового запису
-        thanks: Дякуємо
-    person_platform_integrations:
-      create:
-        already_connected: У вас вже підключено обліковий запис %{provider}. Будь
-          ласка, спочатку від'єднайте його, якщо бажаєте підключити інший обліковий
-          запис.
-        email_mismatch: 'Неможливо підключити обліковий запис %{provider}: електронна
-          пошта %{email} належить іншому користувачу. Будь ласка, вийдіть з системи
-          і увійдіть з правильним обліковим записом.'
-        failure: Не вдалося підключити обліковий запис %{provider}. Будь ласка, спробуйте
-          ще раз.
-        success: Обліковий запис %{provider} успішно підключено.
-      destroy:
-        cannot_delete_last_oauth: Неможливо від'єднати ваш обліковий запис %{provider},
-          оскільки ви зареєструвалися за допомогою OAuth і не маєте встановленого
-          пароля. Будь ласка, спочатку встановіть пароль у налаштуваннях облікового
-          запису, або підключіть іншого постачальника OAuth перед від'єднанням цього.
-        error: Не вдалося від'єднати інтеграцію.
-        success: Інтеграцію успішно від'єднано.
-      index:
-        all_providers_connected: Ви підключили всіх доступних постачальників OAuth.
-        confirm_disconnect: Ви впевнені, що хочете від'єднати свій обліковий запис
-          %{provider}?
-        connect_github: Підключити GitHub
-        connect_new: Підключити новий обліковий запис
-        connect_provider: Підключити %{provider}
-        connected_at: Підключено %{time} тому
-        disconnect: Від'єднати
-        no_integrations: Ви ще не підключили жодних зовнішніх облікових записів.
-        privacy_note: Ми отримуємо доступ лише до мінімально необхідної інформації.
-          Ви можете від'єднатися в будь-який час.
-        title: Підключені облікові записи
-    phone_numbers:
-      add: Add Phone Number
-      label: Label
-      labels:
-        fax: Fax
-        home: Home
-        mobile: Mobile
-        other: Other
-        work: Work
-      number: Номер
-      title: Номери телефонів
-    platform_invitation:
-      acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
-        це запрошення приєднатися до <strong>%{platform}</strong>.
-      community_role_html: Вам надано роль <strong>%{role}</strong> в спільноті <strong>%{platform}</strong>.
-      greeting-placeholder: Було приємно познайомитися з вами нещодавно. Ось запрошення,
-        яке я обіцяв вам надіслати!
-      hints:
-        type: Виберіть тип запрошення.
-      platform_role_html: Вам надано роль <strong>%{role}</strong> на платформі <strong>%{platform}</strong>.
-      title: Вас запрошують приєднатися до %{platform}
-    platform_invitation_mailer:
-      invite:
-        community_role: 'Роль спільноти: %{role}'
-        greeting: Привіт %{recipient_name},
-        ignore: Якщо ви не очікували цього запрошення, будь ласка, проігноруйте цей
-          електронний лист.
-        invitation_code: 'Код запрошення: %{invitation_code}'
-        link_text: Прийняти запрошення
-        message: 'Вас запрошено приєднатися до %{platform} на нашій платформі. Щоб
-          прийняти запрошення, будь ласка, натисніть посилання нижче:'
-        platform_role: 'Роль платформи: %{role}'
-        role_assignment: 'Вам будуть призначені наступні ролі:'
-        signature_html: З найкращими побажаннями,<br /> Команда %{platform}
-        subject: Вас запрошують приєднатися до %{platform}!
-        valid_from: Це запрошення дійсне з %{valid_from}.
-        valid_period: Це запрошення дійсне з %{valid_from} до %{valid_until}.
-    platform_invitations:
-      create_new_invitation: Створити нове запрошення
-      filter_by_status: Фільтрувати за статусом
-      invitations: Запрошення
-      new_invitation: Нове запрошення
-      search_by_email: Пошук за електронною поштою
-      status:
-        accepted: Прийнято
-        expired: Закінчився термін
-        pending: Очікує
-    platforms:
-      show:
-        new_invitation: Нове запрошення
-    posts:
-      authors: Автори
-      back_to_posts: Назад до постів
-      create_post: Створити перший пост
-      created_on: Створено %{date}
-      created_on_short: Створено
-      delete: Видалити запис
-      edit: Редагувати пост
-      edit_post: Редагувати пост
-      index:
-        new_btn_text: Новий пост
-      labels:
-        privacy: Конфіденційність
-      new_post: Новий пост
-      none_body: Наразі немає постів для показу.
-      none_title: Постів поки що немає
-      published_on: Опубліковано %{date}
-      save_post: Зберегти пост
-      updated_on_short: Оновлено
-      view_post: Переглянути пост
-    primary: Основний
-    rbac:
-      nav:
-        resource_permissions: Дозволи ресурсів
-        roles: Ролі
-    registrations:
-      captcha_validation_failed: Помилка перевірки безпеки. Будь ласка, спробуйте
-        знову.
-      invalid_invitation: Недійсний або прострочений код запрошення. Будь ласка, перевірте
-        свій електронний лист із запрошенням.
-      invitation_required: Для реєстрації на цій платформі потрібен код запрошення
-    remove: Видалити
-    resource_permissions:
-      actions:
-        create: Створити
-        delete: Видалити
-        download: Завантажити
-        list: Список
-        manage: Керувати
-        read: Читати
-        update: Оновити
-        view: Перегляд
-      index:
-        new_resource_permission: Новий дозвіл ресурсу
-      protection_status:
-        protected: Захищено
-        unprotected: Незахищено
-      roles:
-        count: усього %{count}
-        label: Ролі
-        more: і ще %{count}
-        none: Ролі не призначено
-    roles:
-      index:
-        new_role: Нова роль
-      permissions:
-        count: усього %{count}
-        label: Дозволи
-        more: і ще %{count}
-        none: Дозволи не призначено
-      protection_status:
-        protected: Захищено
-        unprotected: Незахищено
     search:
       all: Все
       page_title: Результати пошуку для "%{query}"
@@ -2412,6 +2819,9 @@ uk:
         integrations:
           description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
           title: Підключені облікові записи
+        my_data:
+          description: View, download, or delete your personal data exports.
+          title: My Data
         navigation_aria_label: Навігація налаштувань
         personal:
           coming_soon: Особисті налаштування з'являться незабаром.
@@ -2436,6 +2846,7 @@ uk:
           developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
+          my_data: My Data
           personal: Особисті
           platform: Платформа
           preferences: Налаштування
@@ -2484,6 +2895,12 @@ uk:
         translation_failed: 'Переклад не вдався: %{message}'
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
+    validators:
+      safe_federation_url:
+        credentials_in_url: не повинен містити облікові дані (користувач:пароль@)
+        insecure_scheme: повинен використовувати http або https
+        invalid_url: не є дійсною URL-адресою
+        private_ip: не повинен вказувати на приватну або зарезервовану IP-адресу
     view_switcher:
       button_label: Перегляд %{view}
       change_view: Змінити тип перегляду
@@ -2496,6 +2913,63 @@ uk:
         card: Картки
         list: Список
         table: Таблиця
+    storage:
+      service_types:
+        amazon: Amazon S3
+        local: Local disk
+        s3_compatible: S3-compatible (Garage / self-hosted)
+    storage_configurations:
+      access_key_hint: Leave blank to keep the existing value when editing.
+      access_key_placeholder: AKIAIOSFODNN7EXAMPLE
+      activated: "'%{name}' is now the active storage configuration."
+      cancel: Cancel
+      cannot_destroy_active: Cannot delete the currently active storage configuration. Activate another first.
+      created: Storage configuration was successfully created.
+      destroyed: Storage configuration was successfully deleted.
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: 'e.g., Primary S3, Local Dev, Garage bts-5'
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
+      index:
+        activate_btn: Set active
+        activate_confirm: Set this as the active storage configuration?
+        active_badge: Active
+        active_config_label: 'Active Configuration:'
+        back_to_platform: Back to Platform
+        bucket_label: Bucket
+        delete_btn: Delete
+        delete_confirm: Delete this storage configuration?
+        edit_btn: Edit
+        effective_storage_heading: Currently Effective Storage
+        endpoint_label: Endpoint
+        env_badge: ENV
+        env_config_label: 'Source:'
+        env_fallback: Environment variables (no platform override set)
+        header_actions: Actions
+        header_bucket: Bucket / Root
+        header_endpoint: Endpoint
+        header_name: Name
+        header_status: Status
+        header_type: Type
+        in_use: In use
+        new_btn: Add Storage
+        no_configs: No storage configurations defined. Environment variables are used by default.
+        not_active: Not active
+        platform_override_badge: Platform Override
+        service_type_label: Service type
+        subtitle: "Storage backends for %{platform_name}"
+        table_aria: Storage configurations
+        title: Storage Configurations
+      new:
+        subtitle: "Add a storage backend for %{platform_name}"
+        title: New Storage Configuration
+      edit:
+        subtitle: "Storage backend for %{platform_name}"
+        title: "Edit %{name}"
     webhook_endpoints:
       actions_aria: Дії вебхука
       active_help: Увімкнути або вимкнути доставку вебхуків для цієї кінцевої точки.
@@ -3128,6 +3602,7 @@ uk:
     all: Все
     are_you_sure: Ви впевнені
     back: Назад
+    back_to_home: Повернутися на головну
     back_to_list: Назад до списку
     cancel: Скасувати
     clear: Очистити
@@ -3154,6 +3629,7 @@ uk:
     no_image: Немає зображення
     no_invitee: Немає запрошеного
     none: Немає
+    not_found: Не знайдено.
     not_sent: Не відправлено
     pagination:
       of: з
@@ -3169,6 +3645,8 @@ uk:
     sent: Відправлено
     show: Показати
     status: Статус
+    submit: Надіслати
+    submitted_at: Надіслано
     tabs:
       about: Про
       attendees: Учасники
@@ -3179,6 +3657,7 @@ uk:
     to: До
     'true': так
     undo_clear: Скасувати очищення
+    unknown: Невідомо
     update: Оновити
     url: URL
     view: Переглянути
@@ -3398,6 +3877,20 @@ uk:
       title: Додати учасника платформи
     show:
       title: Деталі членства на платформі
+  person_seeds:
+    confirm_destroy: Delete this data export? This cannot be undone.
+    export_failed: Your data export could not be completed. Please try again.
+    export_queued: Your data export has been requested. A download link will appear
+      below once it is ready.
+    export_too_soon: You requested an export recently. Please wait before requesting
+      another.
+    export_unavailable: Your account does not have a person profile to export.
+    index:
+      empty: You have no data exports yet.
+      exporting: "Requesting…"
+      new_export: Request Data Export
+      new_export_hint: Generate a portable export of your personal data.
+      title: My Data
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:
@@ -3431,6 +3924,9 @@ uk:
     navigation_area: Область навігації
     page: Сторінка
     person: Особа
+    person_access_grant: Дозвіл доступу особи
+    person_link: Посилання особи
+    seed: Seed
     person_platform_membership: Членство особи на платформі
     platform: Платформа
     profile: Профіль
@@ -3447,6 +3943,30 @@ uk:
   search:
     button: Пошук
     placeholder: Пошук...
+  seeds:
+    actions:
+      destroy: Destroy seed
+      edit: Edit seed
+      show: Show seed
+    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+    edit:
+      title: 'Editing: %{identifier}'
+    form:
+      identifier_placeholder: e.g. host-setup-wizard-v1
+      json_hint: Must be valid JSON.
+    index:
+      empty: No seeds found.
+      new_seed: New seed
+      title: Seeds
+    new:
+      title: New Seed
+    seeded_by: Seeded by %{created_by}
+    show:
+      download_yaml: Download YAML
+      origin: Origin
+      payload: Payload
+      plantings: Planting History
+      yaml_export: YAML Export
   shared:
     by: автор
     links:

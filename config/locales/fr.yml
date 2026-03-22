@@ -366,6 +366,14 @@ fr:
         text_translations: Traductions de texte
         time_zone: Fuseau horaire
         url: URL
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
       better_together/platform_invitation:
         accepted_at: Accepté à
         community_role: :activerecord.models.community_role
@@ -540,6 +548,21 @@ fr:
           attributes:
             event_hosts:
               too_short: Les événements doivent avoir au moins un hôte
+        better_together/joatu/connection_request:
+          attributes:
+            base:
+              missing_platforms_for_connection_agreement: les accords de connexion
+                nécessitent des plateformes source et cible
+            target:
+              must_be_platform: doit être une plateforme
+        better_together/joatu/person_link_request:
+          attributes:
+            base:
+              missing_link_prerequisites: les accords de lien de personne nécessitent
+                une personne source, une personne cible et une connexion de plateforme
+                active
+            target:
+              must_be_person: doit être une personne
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -547,12 +570,23 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_linked_seed:
+          attributes:
+            recipient_person:
+              must_match_grantee: doit correspondre à la personne bénéficiaire de
+                l'autorisation d'accès
         better_together/person_platform_integration:
           attributes:
             provider:
               inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
             uid:
               taken: a déjà été lié à un autre compte
+        better_together/platform_domain:
+          attributes:
+            active:
+              must_be_true_for_primary: doit être vrai pour un domaine principal
+            primary:
+              already_taken_for_platform: a déjà été pris pour cette plateforme
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -601,10 +635,15 @@ fr:
       better_together/oauth_application: Application OAuth
       better_together/page: Page
       better_together/person: Personne
+      better_together/person_access_grant: Autorisation d'accès personnel
       better_together/person_community_membership: Adhésion à la communauté
+      better_together/person_link: Lien de personne
+      better_together/person_linked_seed: Graine liée
       better_together/person_platform_integration: Intégration OAuth
       better_together/person_platform_membership: Adhésion à la plateforme
       better_together/platform: Plateforme
+      better_together/platform_connection: Connexion de plateforme
+      better_together/platform_domain: Domaine de plateforme
       better_together/platform_invitation: Invitation à la Plateforme
       better_together/post: Publication
       better_together/resource_permission: Autorisation des Ressources
@@ -612,6 +651,7 @@ fr:
       better_together/role_resource_permission: Autorisation des Ressources de Rôle
       better_together/user: Utilisateur
       better_together/webhook_endpoint: Point de terminaison webhook
+      better_together/storage_configuration: Configuration de stockage
       better_together/wizard: Assistant
       better_together/wizard_step: Étape du Magicien
       better_together/wizard_step_definition: Définition des Étapes de l'Assistant
@@ -856,7 +896,18 @@ fr:
       add: Ajouter un contact
     content:
       blocks:
+        accordion_block:
+          empty: Aucun élément configuré.
+          items_json_help: Tableau JSON d'objets avec les clés « question » et « answer
+            ».
         associated_pages: Pages associées
+        checklist_block:
+          not_found: Liste de vérification introuvable.
+          select_prompt: "— Sélectionner une liste de vérification —"
+        communities_block:
+          empty: Aucune communauté à afficher.
+        events_block:
+          empty: Aucun événement à afficher.
         markdown:
           fields:
             auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
@@ -883,9 +934,29 @@ fr:
               à la langue (par ex., privacy.en.md, privacy.es.md, privacy.fr.md) et
               revient au fichier de base s'il n'est pas trouvé.
             preview_placeholder: L'aperçu apparaîtra ici...
+        navigation_area_block:
+          not_found: Zone de navigation introuvable.
+          select_prompt: "— Sélectionner une zone de navigation —"
+        people_block:
+          empty: Aucune personne à afficher.
+        posts_block:
+          empty: Aucune publication à afficher.
+        resource_block:
+          all_communities: Toutes les communautés (à l'échelle de la plateforme)
+          resource_ids_help: Si défini, seuls ces enregistrements seront affichés,
+            en ignorant la portée de la communauté et l'ordre.
+          resource_ids_placeholder: Laisser vide pour afficher les derniers enregistrements
+        statistics_block:
+          stats_json_help: Tableau JSON d'objets avec les clés « label », « value
+            » et « icon » optionnel (classe Font Awesome).
         template:
           default: Modèle par défaut
           host_community_contact_details: Coordonnées de la communauté hôte
+        video_block:
+          missing_url: Aucune URL de vidéo configurée.
+          title: Lecteur vidéo YouTube
+          url_help: Accepte les URL YouTube, Vimeo ou tout URL d'intégration direct.
+        view_more: Voir tout
       mermaid_diagram:
         help:
           auto_height: Lorsque activé, la hauteur du diagramme s'ajuste automatiquement
@@ -1009,6 +1080,29 @@ fr:
         denied: Refusé
         granted: Accordé
         unknown: Inconnu
+    e2e:
+      form:
+        status_active: "E2E actif 🔒"
+        status_error: E2E indisponible
+        status_waiting: En attente des clés du participant…
+      message:
+        decrypt_error: "[Impossible de déchiffrer le message]"
+        decrypting: "🔒 Déchiffrement…"
+      modal:
+        cancel: Annuler
+        ok: OK
+        passphrase_label: Phrase de passe
+        title: Messagerie sécurisée
+      session:
+        confirm_fresh_identity_message: Échec de la restauration. Générer une nouvelle
+          identité ? Les anciens messages chiffrés resteront inaccessibles.
+        passphrase_backup_message: Définissez une phrase de passe de sauvegarde (min.
+          12 caractères). Laissez vide pour ignorer.
+        passphrase_restore_message: Sauvegarde de clés chiffrées trouvée. Entrez votre
+          phrase de passe pour restaurer, ou laissez vide pour générer une nouvelle
+          identité.
+        server_error_message: Impossible de joindre le serveur de sauvegarde de clés.
+          Veuillez recharger la page et réessayer.
     email_addresses:
       add: Ajouter une adresse e-mail
       email: E-mail
@@ -1019,6 +1113,57 @@ fr:
         school: École
         work: Travail
       title: Adresses e-mail
+    enums:
+      person_access_grant:
+        status:
+          active: Actif
+          expired: Expiré
+          pending: En attente
+          revoked: Révoqué
+      person_link:
+        status:
+          active: Actif
+          pending: En attente
+          revoked: Révoqué
+      person_linked_seed:
+        seed_type:
+          event: Événement
+          page: Page
+          post: Publication
+      platform_connection:
+        connection_kind:
+          member: Membre
+          peer: Pair
+        content_sharing_policy:
+          mirror_network_feed: Miroir du fil réseau
+          mirrored_publish_back: Miroir et republication
+          none: Aucune
+          selective: Sélectif
+        federation_auth_policy:
+          api_read: Lecture API uniquement
+          api_write: Lecture et écriture API
+          login_only: Connexion seulement
+          none: Aucune
+        federation_scope_types:
+          content_read: Lecture du contenu
+          content_write: Écriture du contenu
+          identity: Identité
+          linked_content_read: Lecture du contenu lié
+          profile_read: Lecture du profil
+        shared_content_types:
+          events: Événements
+          pages: Pages
+          posts: Publications
+        status:
+          active: Actif
+          blocked: Bloqué
+          pending: En attente
+          suspended: Suspendu
+        sync_status:
+          failed: Échoué
+          idle: Inactif
+          running: En cours
+          succeeded: Réussi
     event_invitations:
       index:
         invite_member: Invite member
@@ -1390,6 +1535,10 @@ fr:
         request_creator: Créateur de la demande
         show:
           details: Détails
+          open_platform_connections: Ouvrir les connexions de plateforme
+          platform_connection: Connexion de plateforme
+          source_platform: Plateforme source
+          target_platform: Plateforme cible
           title: Agreement
         status: Statut
       by: by
@@ -1421,24 +1570,29 @@ fr:
         screenshot_alt: Help screenshot
         show_again: Afficher l'aide à nouveau
       hub:
+        create_agreement: Créer un accord
         empty_agreements: Aucun accord pour le moment.
         empty_offers: Aucune offre pour le moment.
         empty_requests: Aucune demande pour le moment.
+        matches_offer: 'Correspond à l''offre :'
+        matches_request: 'Correspond à la demande :'
+        membership_requests: Demandes d'adhésion
         my_agreements: Mes accords
         my_offers: Mes offres
         my_requests: Mes demandes
+        none: Aucune correspondance trouvée pour l'instant.
         sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
         suggested: Correspondances suggérées
-        title: Hub d'échange
+        title: Correspondances potentielles
         view_all_agreements: Voir tous les accords
         view_all_offers: Voir toutes les offres
         view_all_requests: Voir toutes les demandes
       matches:
-        create_agreement: Create Agreement
-        matches_offer: 'Matches offer:'
-        matches_request: 'Matches request:'
-        none: No matches found right now.
-        title: Potential Matches
+        create_agreement: Créer un accord
+        matches_offer: 'Correspond à l''offre :'
+        matches_request: 'Correspond à la demande :'
+        none: Aucune correspondance trouvée pour l'instant.
+        title: Correspondances potentielles
       nav:
         agreements: Accords
         hub: Hub
@@ -1446,7 +1600,7 @@ fr:
         offers: Offres
         requests: Demandes
       offers:
-        agreement_heading: Agreement
+        agreement_heading: Contrat
         agreement_with: Agreement with
         back_to_offers: Back to Offers
         edit_offer: Edit Offer
@@ -1456,22 +1610,26 @@ fr:
         response_to_your_offer_heading: Response to your Offer
         save_offer: Save Offer
         source_request_heading: Responding to Request
-        view_agreement: View Agreement
+        target_platform: Plateforme cible
+        view_agreement: Voir le contrat
         view_offer: View Offer
-        your_response_heading: Your Response
+        your_response_heading: Votre réponse
       requests:
         agreement_heading: Agreement
-        back_to_requests: Back to Requests
-        edit_request: Edit Request
-        empty: No requests found
-        index_header: Requests
-        new_request: New Request
-        respond_with_offer: Respond with Offer
-        response_to_your_request_heading: Response to your Request
-        save_request: Save Request
-        source_offer_heading: Responding to Offer
+        back_to_requests: Retour aux demandes
+        edit_request: Modifier la demande
+        empty: Aucune demande trouvée
+        index_header: Demandes
+        manage_connections: Gérer les connexions
+        new_connection_request: Nouvelle demande de connexion
+        new_request: Nouvelle demande
+        respond_with_offer: Répondre avec une offre
+        response_to_your_request_heading: Réponse à votre demande
+        save_request: Enregistrer la demande
+        source_offer_heading: En réponse à l'offre
+        target_platform: Plateforme cible
         view_agreement: View Agreement
-        view_request: View Request
+        view_request: Voir la demande
         your_response_heading: Your Response
       respond_with_request: Respond with Request
       response_to_your: Response to your %{type}
@@ -1509,6 +1667,8 @@ fr:
           Cordialement,<br />
           L'équipe de %{platform}
         subject: Un nouvel accord a été créé
+      new_match:
+        subject: Nouvelle correspondance Joatu
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
@@ -1560,6 +1720,49 @@ fr:
         signature_text: Cordialement, L'équipe de %{joinable_name}
         subject: Votre adhésion %{joinable_type} a été mise à jour pour %{joinable_name}
         view_joinable: Voir %{joinable_type}
+    membership_requests:
+      actions:
+        approve: Approve
+        decline: Decline
+      captcha_failed: La vérification du captcha a échoué. Veuillez réessayer.
+      confirm_approve: Approve this membership request and invite the applicant to
+        join?
+      confirm_decline: Decline this membership request?
+      confirm_delete: Remove this membership request?
+      fields:
+        description: Message
+        description_hint: Veuillez nous parler un peu de vous et de la raison pour
+          laquelle vous souhaitez nous rejoindre.
+        motivation: Motivation / Message
+        referral_source: How did you hear about us?
+        requestor_email: Your email address
+        requestor_name: Your name
+        status: Status
+        target: Community
+      filter:
+        all: All
+        closed: Declined
+        fulfilled: Fulfilled
+        open: Open
+      flash:
+        approve_failed: Could not approve the membership request.
+        approved: Membership request approved. An invitation has been sent.
+        approved_direct: Membership request approved. The member has been added.
+        decline_failed: Could not decline the membership request.
+        declined: Membership request declined.
+      index:
+        empty: No membership requests at this time.
+        title: Membership Requests
+      name: Membership request from %{requestor}
+      new:
+        heading: Request Membership
+        intro: Fill in the form below to request membership. We'll be in touch!
+      show:
+        title: Membership Request
+      success:
+        body: Thank you! We've received your membership request and will be in touch
+          soon.
+        heading: Request Received
     messages:
       form:
         placeholder: Tapez votre message...
@@ -1713,9 +1916,26 @@ fr:
           metrics_types: Types de métriques
           page_views: Vues de Page
           reports: Rapports
+          search_health: Santé de la recherche
           search_queries: Recherches
           shares: Partages
           users: Users
+        search_health:
+          backend: Backend
+          db_count: Nombre BD
+          db_documents: Documents BD
+          drift: Écart
+          drift_visualization: Visualisation de l'écart
+          generated_at: Généré le
+          index_count: Nombre dans l'index
+          index_documents: Documents indexés
+          index_name: Index
+          indices: Indices
+          model: Modèle
+          status_label: Statut
+          store_size: Taille du stockage
+          total_drift: Écart total
+          unmanaged_models: Modèles recherchables non gérés
         title: Rapports de Métriques
         unknown_type: Inconnu
       shares:
@@ -1750,7 +1970,7 @@ fr:
         new_report: New Report
         no_reports: No reports have been generated yet.
         title: User Account Reports
-        view: View
+        view: Voir
       new:
         file_format: File Format
         file_format_help: Select the format for the exported report file.
@@ -2025,15 +2245,368 @@ fr:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
+    person_access_grants:
+      errors:
+        duplicate_grant: a déjà une autorisation pour ce lien et ce destinataire
+      index:
+        description: Gérez les autorisations d'accès privées que vous avez partagées
+          avec d'autres.
+        empty: Vous n'avez encore partagé aucune autorisation d'accès.
+        shared_with_you: Partagé avec vous
+        title: Autorisations d'accès
+        you_are_sharing: Vous partagez
+      show:
+        accepted: Acceptée
+        allowed: Autorisé
+        back: Retour aux autorisations d'accès
+        denied: Refusé
+        expires: Expire
+        grantor: Émetteur
+        manage_grant_heading: Gérer l'autorisation
+        no_expiry: Sans expiration
+        pending: En attente
+        recipient: Destinataire
+        revoke: Révoquer l'accès
+        revoke_confirm: Révoquer cette autorisation d'accès ?
+        scope_labels:
+          private_events: Événements privés
+          private_messages: Messages privés
+          private_pages: Pages privées
+          private_posts: Publications privées
+          profile_read: Lire le profil
+        scopes_heading: Portées
+        title: Autorisation d'accès
+    person_block:
+      cannot_block_manager: ne peut pas être un gestionnaire de plateforme
+      cannot_block_self: ne peut pas vous bloquer vous-même
+    person_blocks:
+      index:
+        actions: Actions
+        block_person: Bloquer une personne
+        blocked_at: Bloqué
+        blocked_count:
+          one: 1 personne bloquée
+          other: "%{count} personnes bloquées"
+          zero: Aucune personne bloquée
+        blocked_on: Bloqué le %{date}
+        no_blocked_people: Vous n'avez encore bloqué personne.
+        no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
+          plus interagir avec vous.
+        search: Rechercher
+        search_placeholder: Rechercher des personnes bloquées...
+        title: Personnes Bloquées
+        unblock: Débloquer
+        unblock_confirmation: Êtes-vous sûr de vouloir débloquer cette personne?
+      new:
+        back_to_list: Retour aux Personnes Bloquées
+        blocked_person_help: Sélectionnez une personne que vous souhaitez bloquer
+          dans les résultats de recherche.
+        blocked_person_label: Personne à Bloquer
+        blocked_person_placeholder: Rechercher une personne à bloquer...
+        blocked_person_prompt: Sélectionnez une personne à bloquer
+        cancel: Annuler
+        submit: Bloquer la personne
+        title: Bloquer une personne
+      notices:
+        already_blocked: Cette personne est déjà bloquée.
+        blocked: La personne a été bloquée avec succès.
+        not_found: Personne introuvable.
+        platform_manager_error: Les administrateurs de plateforme ne peuvent pas être
+          bloqués.
+        self_block_error: Vous ne pouvez pas vous bloquer vous-même.
+        unblocked: La personne a été débloquée avec succès.
+    person_linked_seeds:
+      index:
+        description: Contenu privé partagé avec vous via des autorisations d'accès
+          fédérées.
+        empty: Aucune graine liée n'a encore été partagée avec vous.
+        title: Graines liées
+      show:
+        back: Retour aux graines liées
+        empty: Aucun contenu disponible pour cette graine liée.
+        title: Graine liée
+    person_links:
+      errors:
+        duplicate_link: a déjà un lien pour cette connexion de plateforme et cette
+          personne cible
+      index:
+        description: Gérez vos liens de personnes entre plateformes et vos connexions
+          de fédération.
+        empty: Vous n'avez pas encore de liens de personnes.
+        title: Liens de personnes
+      show:
+        access_grants_heading: Autorisations d'accès
+        back: Retour aux liens de personnes
+        pending: En attente
+        platform_connection: Connexion de plateforme
+        revoke: Révoquer le lien
+        revoke_confirm: Révoquer ce lien de personne et ses autorisations d'accès
+          ?
+        source_person: Personne source
+        target_person: Personne cible
+        title: Lien de personne
+        verified: Vérifié
+    person_platform_integration_mailer:
+      integration_created:
+        body_html: Une nouvelle intégration de compte %{provider} a été connectée
+          à votre compte le %{created_at}. Vous pouvez consulter les détails sur %{integration_url}.
+        connected_at: Connecté le
+        greeting: Bonjour %{name} !
+        integration_details: Détails de l'intégration
+        not_available: Non disponible
+        profile_url: URL du profil
+        provider: Fournisseur
+        review_button: Consulter l'intégration
+        review_link_html: 'Consulter cette intégration : %{url}'
+        security_notice_html: Si vous n'avez pas autorisé cette intégration, veuillez
+          la déconnecter immédiatement et contacter le support. Quelqu'un pourrait
+          avoir un accès non autorisé à votre compte.
+        security_notice_title: Avis de sécurité
+        subject: Nouvelle intégration %{provider} connectée à votre compte
+        thanks: Merci
+    person_platform_integrations:
+      create:
+        already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
+          d'abord le déconnecter si vous souhaitez connecter un compte différent.
+        email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
+          %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
+          vous connecter avec le bon compte.'
+        failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
+        success: Compte %{provider} connecté avec succès.
+      destroy:
+        cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
+          car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
+          de mot de passe. Veuillez définir un mot de passe d'abord dans les paramètres
+          de votre compte, ou connectez un autre fournisseur OAuth avant de déconnecter
+          celui-ci.
+        error: Échec de la déconnexion de l'intégration.
+        success: Intégration déconnectée avec succès.
+      index:
+        all_providers_connected: Vous avez connecté tous les fournisseurs OAuth disponibles.
+        confirm_disconnect: Êtes-vous sûr de vouloir déconnecter votre compte %{provider}
+          ?
+        connect_github: Connecter GitHub
+        connect_new: Connecter un Nouveau Compte
+        connect_provider: Connecter %{provider}
+        connected_at: Connecté il y a %{time}
+        disconnect: Déconnecter
+        no_integrations: Vous n'avez encore connecté aucun compte externe.
+        privacy_note: Nous n'accédons qu'aux informations minimales nécessaires. Vous
+          pouvez vous déconnecter à tout moment.
+        title: Comptes Connectés
+    phone_numbers:
+      add: Ajouter un numéro de téléphone
+      label: Libellé
+      labels:
+        fax: Fax
+        home: Maison
+        mobile: Mobile
+        other: Autre
+        work: Travail
+      number: Numéro
+      title: Numéros de téléphone
+    platform_connections:
+      actions:
+        approve: Approuver
+        approve_aria: 'Approuver la connexion : %{source} ↔ %{target}'
+        approve_confirm: Approuver cette connexion ?
+        edit: Modifier
+        edit_aria: 'Modifier la connexion : %{source} ↔ %{target}'
+        suspend: Suspendre
+        suspend_aria: 'Suspendre la connexion : %{source} ↔ %{target}'
+        suspend_confirm: Suspendre cette connexion ?
+        view: Voir
+        view_aria: 'Voir la connexion : %{source} ↔ %{target}'
+      edit:
+        title: Modifier la connexion de plateforme
+      flash:
+        approved: Connexion approuvée et activée.
+        cannot_approve: Impossible d'approuver une connexion avec le statut '%{status}'.
+        cannot_suspend: Impossible de suspendre une connexion avec le statut '%{status}'.
+        secret_rotated: Secret OAuth du client renouvelé. Mettez à jour la configuration
+          de la plateforme distante.
+        suspended: Connexion suspendue.
+      form:
+        back: Retour
+        connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre.
+          Pair : partenariat égal entre plateformes indépendantes.'
+        content_sharing_policy_hint: Contrôle comment le contenu public est synchronisé.
+          « Miroir réseau » synchronise tout le contenu public ; « Sélectif » ne synchronise
+          que les types explicitement partagés.
+        create: Créer la connexion
+        federation_auth_policy_hint: api_read permet à la plateforme distante de récupérer
+          le contenu public. api_write lui permet en plus de publier ici. login_only
+          restreint à l'authentification uniquement.
+        federation_scopes_hint: Les portées déterminent quelles données la plateforme
+          distante peut demander dans les jetons OAuth. N'activez que les portées
+          correspondant à vos termes de partage convenus.
+        federation_scopes_legend: Portées de fédération
+        save: Enregistrer les modifications
+        shared_content_types_hint: Sélectionnez les types de contenu à inclure lors
+          de la synchronisation avec cette connexion.
+        shared_content_types_legend: Types de contenu partagés
+        source_platform: Plateforme source
+        target_platform: Plateforme cible
+      index:
+        columns:
+          auth_policy: Politique d'authentification
+          content_policy: Politique de contenu
+          kind: Type
+          source: Source
+          status: Statut
+          target: Cible
+        new_connection: Nouvelle connexion
+        title: Connexions de plateforme
+      new:
+        back: Retour
+        register_platform_hint: Vous devez d'abord enregistrer une plateforme distante ?
+        register_platform_link: Enregistrer une plateforme externe →
+        title: Nouvelle connexion de plateforme
+      show:
+        api_read: Lecture API
+        api_write: Écriture API
+        approve: Approuver
+        approve_confirm: Approuver cette connexion et l'activer ?
+        back: Retour
+        connection_kind: Type de connexion
+        content_sharing: Partage de contenu
+        content_sharing_policy: Politique de partage de contenu
+        disabled: Désactivé
+        edit: Modifier
+        enabled: Activé
+        federation_auth: Authentification de fédération
+        federation_auth_policy: Politique d'authentification de fédération
+        federation_scopes: Portées de fédération
+        last_sync_completed: Dernière synchronisation terminée
+        last_sync_error: Dernière erreur de synchronisation
+        last_sync_item_count: Éléments lors de la dernière synchronisation
+        last_sync_started: Dernière synchronisation démarrée
+        login: Connexion
+        mirroring: Miroir
+        never: Jamais
+        none: Aucun
+        oauth:
+          client_id: Identifiant client
+          client_secret: Secret client
+          description: Transmettez ces identifiants à l'opérateur de %{platform} afin
+            qu'il puisse configurer une connexion correspondante sur sa plateforme
+            et obtenir des jetons depuis l'endpoint OAuth de cette plateforme.
+          not_set: Non configuré
+          remote_token_endpoint: Endpoint de jeton distant
+          remote_token_endpoint_hint: Configurez ceci sur la plateforme distante en
+            pointant vers leur endpoint OAuth.
+          rotate_secret: Renouveler le secret
+          rotate_secret_confirm: Renouveler le secret OAuth du client ? La plateforme
+            distante devra être reconfigurée.
+          title: Identifiants OAuth de fédération
+          token_endpoint: Endpoint de jeton (cette plateforme)
+        publish_back: Republier
+        shared_content_types: Types de contenu partagés
+        status: Statut
+        suspend: Suspendre
+        suspend_confirm: Suspendre cette connexion ? La fédération et la synchronisation
+          seront mises en pause.
+        sync_cursor: Curseur de synchronisation
+        sync_status: État de synchronisation
+    platform_invitation:
+      acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
+        acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
+      community_role_html: Vous avez reçu le rôle de <strong>%{role}</strong> dans
+        la communauté <strong>%{platform}</strong>.
+      greeting-placeholder: Ravi de vous avoir rencontré récemment. Voici l'invitation
+        que je vous avais promis d'envoyer !
+      hints:
+        type: Sélectionnez le type d'invitation.
+      platform_role_html: Vous avez reçu le rôle de <strong>%{role}</strong> dans
+        la plateforme <strong>%{platform}</strong>.
+      title: Vous êtes invité à rejoindre %{platform}
+    platform_invitation_mailer:
+      invite:
+        community_role: 'Rôle de communauté: %{role}'
+        greeting: Bonjour %{recipient_name},
+        ignore: Si vous ne vous attendiez pas à cette invitation, veuillez ignorer
+          cet e-mail.
+        invitation_code: Code d'Invitation %{invitation_code}
+        link_text: Accepter l'invitation
+        message: 'Vous avez été invité à rejoindre %{platform} sur notre plateforme.
+          Pour accepter l''invitation, veuillez cliquer sur le lien ci-dessous :'
+        platform_role: 'Rôle de plateforme: %{role}'
+        role_assignment: 'Les rôles suivants vous seront attribués:'
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{platform}
+        subject: Vous êtes invité à rejoindre %{platform} !
+        valid_from: Cette invitation est valable à partir du %{valid_from}.
+        valid_period: Cette invitation est valable du %{valid_from} au %{valid_until}.
+    platform_invitations:
+      create_new_invitation: Créer une nouvelle invitation
+      filter_by_status: Filtrer par statut
+      invitations: Invitations
+      new_invitation: Nouvelle invitation
+      search_by_email: Rechercher par email
+      status:
+        accepted: Accepté
+        expired: Expiré
+        pending: En attente
+    platforms:
+      form:
+        host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
+          Utilisée pour l'identifier dans la fédération et générer les URLs du point
+          de terminaison OAuth. Doit être HTTPS en production.
+      new:
+        back: Retour
+        host_url_hint: L'URL racine de l'instance de plateforme externe.
+        host_url_label: URL
+        host_url_placeholder: https://example.com
+        identifier_hint: Un identifiant unique (lettres, chiffres, tirets).
+        identifier_placeholder: ex. plateforme-pair
+        intro: Enregistrez une instance distante de Community Engine (ou compatible)
+          pour la sélectionner lors de la création d'une Connexion de plateforme.
+        submit: Enregistrer la plateforme externe
+        title: Enregistrer la plateforme externe
+      show:
+        new_invitation: Nouvelle invitation
+    posts:
+      authors: Auteurs
+      back_to_posts: Retour aux publications
+      create_post: Créer la première publication
+      created_on: Créé %{date}
+      created_on_short: Créé
+      delete: Supprimer l'enregistrement
+      edit: Modifier la publication
+      edit_post: Modifier la publication
+      index:
+        new_btn_text: Nouvelle publication
+      labels:
+        privacy: Confidentialité
+      new_post: Nouvelle publication
+      none_body: Il n'y a pas de publications à afficher pour le moment.
+      none_title: Pas encore de publications
+      published_on: Publié %{date}
+      save_post: Enregistrer la publication
+      updated_on_short: Mis à jour
+      view_post: Voir la publication
+    primary: Principal
+    rbac:
+      nav:
+        resource_permissions: Autorisations de ressources
+        roles: Rôles
+    registrations:
+      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
+      invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
+        votre courriel d'invitation.
+      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
+        plateforme
+    remove: Supprimer
     reports:
       actions:
         report: Signaler
       attributes:
         category: Catégorie
         harm_level: Niveau de préjudice
-        requested_outcome: Résultat demandé
-        reason: Résumé court
         private_details: Détails privés pour l'équipe de sécurité
+        reason: Résumé court
+        requested_outcome: Résultat demandé
       errors:
         already_reported_by_you: a déjà été signalé par vous
       index:
@@ -2041,30 +2614,75 @@ fr:
         new: Nouveau signalement
         title: Mes signalements de sécurité
       new:
-        category_help: Choisissez l'option qui correspond le mieux au préjudice ou à la préoccupation que vous signalez.
+        category_help: Choisissez l'option qui correspond le mieux au préjudice ou
+          à la préoccupation que vous signalez.
         consent_to_contact: Vous pouvez me contacter à propos de ce signalement
-        consent_to_restorative_process: Vous pouvez envisager des options restauratives si cela est approprié
+        consent_to_restorative_process: Vous pouvez envisager des options restauratives
+          si cela est approprié
         error_summary: Veuillez corriger les problèmes suivants.
-        harm_level_help: Indiquez à quel point la situation vous semble urgente ou grave afin que l'équipe de sécurité puisse la traiter correctement.
-        intro: Utilisez ce formulaire pour demander un soutien en matière de sécurité, de limites, de responsabilisation ou de protection urgente.
-        preferences_help: Indiquez si nous pouvons vous contacter, si vous souhaitez que des options restauratives soient envisagées et si un risque de représailles fait partie de ce signalement.
+        harm_level_help: Indiquez à quel point la situation vous semble urgente ou
+          grave afin que l'équipe de sécurité puisse la traiter correctement.
+        intro: Utilisez ce formulaire pour demander un soutien en matière de sécurité,
+          de limites, de responsabilisation ou de protection urgente.
+        preferences_help: Indiquez si nous pouvons vous contacter, si vous souhaitez
+          que des options restauratives soient envisagées et si un risque de représailles
+          fait partie de ce signalement.
         preferences_title: Préférences de sécurité
-        private_details_help: Ajoutez tout contexte, schéma, date ou élément de preuve qui doit rester au sein de l'équipe de sécurité.
-        reason_help: Décrivez brièvement ce qui s'est passé. Commencez par le point principal.
-        requested_outcome_help: Choisissez le type de soutien que vous souhaitez de la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si vous hésitez.
+        private_details_help: Ajoutez tout contexte, schéma, date ou élément de preuve
+          qui doit rester au sein de l'équipe de sécurité.
+        reason_help: Décrivez brièvement ce qui s'est passé. Commencez par le point
+          principal.
+        requested_outcome_help: Choisissez le type de soutien que vous souhaitez de
+          la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si
+          vous hésitez.
         retaliation_risk: Je crains des représailles ou une escalade
         submit: Envoyer le signalement
         title: Signaler un problème de sécurité
-        urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire sert au suivi communautaire et à la plateforme, pas à l'intervention d'urgence.
-        urgent_title: "Si vous êtes en danger immédiat :"
+        urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire
+          sert au suivi communautaire et à la plateforme, pas à l'intervention d'urgence.
+        urgent_title: 'Si vous êtes en danger immédiat :'
       notices:
         created: Le signalement a bien été envoyé.
       show:
         back: Retour aux signalements
-        pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter selon vos préférences de consentement.
+        pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter
+          selon vos préférences de consentement.
         status: Statut actuel
         summary: Résumé du dossier
         title: Signalement de sécurité
+    resource_permissions:
+      actions:
+        create: Créer
+        delete: Supprimer
+        download: Télécharger
+        list: Liste
+        manage: Gérer
+        read: Lire
+        update: Mettre à jour
+        view: Voir
+      index:
+        new_resource_permission: Nouvelle permission de ressource
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
+      roles:
+        count: "%{count} au total"
+        label: Rôles
+        more: et %{count} de plus
+        none: Aucun rôle attribué
+    resources:
+      membership_request: Demande d'adhésion
+    roles:
+      index:
+        new_role: Nouveau rôle
+      permissions:
+        count: "%{count} au total"
+        label: Autorisations
+        more: et %{count} de plus
+        none: Aucune autorisation attribuée
+      protection_status:
+        protected: Protégé
+        unprotected: Non protégé
     safety:
       action_statuses:
         active: Active
@@ -2186,210 +2804,6 @@ fr:
     safety_notes:
       notices:
         created: Une note a été ajoutée au dossier.
-    person_block:
-      cannot_block_manager: ne peut pas être un gestionnaire de plateforme
-      cannot_block_self: ne peut pas vous bloquer vous-même
-    person_blocks:
-      index:
-        actions: Actions
-        block_person: Bloquer une personne
-        blocked_at: Bloqué
-        blocked_count:
-          one: 1 personne bloquée
-          other: "%{count} personnes bloquées"
-          zero: Aucune personne bloquée
-        blocked_on: Bloqué le %{date}
-        no_blocked_people: Vous n'avez encore bloqué personne.
-        no_blocked_people_description: Lorsque vous bloquez quelqu'un, il ne pourra
-          plus interagir avec vous.
-        search: Rechercher
-        search_placeholder: Rechercher des personnes bloquées...
-        title: Personnes Bloquées
-        unblock: Débloquer
-        unblock_confirmation: Êtes-vous sûr de vouloir débloquer cette personne?
-      new:
-        back_to_list: Retour aux Personnes Bloquées
-        blocked_person_help: Sélectionnez une personne que vous souhaitez bloquer
-          dans les résultats de recherche.
-        blocked_person_label: Personne à Bloquer
-        blocked_person_placeholder: Rechercher une personne à bloquer...
-        blocked_person_prompt: Sélectionnez une personne à bloquer
-        cancel: Annuler
-        submit: Bloquer la personne
-        title: Bloquer une personne
-      notices:
-        already_blocked: Cette personne est déjà bloquée.
-        blocked: La personne a été bloquée avec succès.
-        not_found: Personne introuvable.
-        platform_manager_error: Les administrateurs de plateforme ne peuvent pas être
-          bloqués.
-        self_block_error: Vous ne pouvez pas vous bloquer vous-même.
-        unblocked: La personne a été débloquée avec succès.
-    person_platform_integration_mailer:
-      integration_created:
-        body_html: Une nouvelle intégration de compte %{provider} a été connectée
-          à votre compte le %{created_at}. Vous pouvez consulter les détails sur %{integration_url}.
-        connected_at: Connecté le
-        greeting: Bonjour %{name} !
-        integration_details: Détails de l'intégration
-        not_available: Non disponible
-        profile_url: URL du profil
-        provider: Fournisseur
-        review_button: Consulter l'intégration
-        review_link_html: 'Consulter cette intégration : %{url}'
-        security_notice_html: Si vous n'avez pas autorisé cette intégration, veuillez
-          la déconnecter immédiatement et contacter le support. Quelqu'un pourrait
-          avoir un accès non autorisé à votre compte.
-        security_notice_title: Avis de sécurité
-        subject: Nouvelle intégration %{provider} connectée à votre compte
-        thanks: Merci
-    person_platform_integrations:
-      create:
-        already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
-          d'abord le déconnecter si vous souhaitez connecter un compte différent.
-        email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
-          %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
-          vous connecter avec le bon compte.'
-        failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
-        success: Compte %{provider} connecté avec succès.
-      destroy:
-        cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
-          car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
-          de mot de passe. Veuillez définir un mot de passe d'abord dans les paramètres
-          de votre compte, ou connectez un autre fournisseur OAuth avant de déconnecter
-          celui-ci.
-        error: Échec de la déconnexion de l'intégration.
-        success: Intégration déconnectée avec succès.
-      index:
-        all_providers_connected: Vous avez connecté tous les fournisseurs OAuth disponibles.
-        confirm_disconnect: Êtes-vous sûr de vouloir déconnecter votre compte %{provider}
-          ?
-        connect_github: Connecter GitHub
-        connect_new: Connecter un Nouveau Compte
-        connect_provider: Connecter %{provider}
-        connected_at: Connecté il y a %{time}
-        disconnect: Déconnecter
-        no_integrations: Vous n'avez encore connecté aucun compte externe.
-        privacy_note: Nous n'accédons qu'aux informations minimales nécessaires. Vous
-          pouvez vous déconnecter à tout moment.
-        title: Comptes Connectés
-    phone_numbers:
-      add: Ajouter un numéro de téléphone
-      label: Libellé
-      labels:
-        fax: Fax
-        home: Maison
-        mobile: Mobile
-        other: Autre
-        work: Travail
-      number: Numéro
-      title: Numéros de téléphone
-    platform_invitation:
-      acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
-        acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
-      community_role_html: Vous avez reçu le rôle de <strong>%{role}</strong> dans
-        la communauté <strong>%{platform}</strong>.
-      greeting-placeholder: Ravi de vous avoir rencontré récemment. Voici l'invitation
-        que je vous avais promis d'envoyer !
-      hints:
-        type: Sélectionnez le type d'invitation.
-      platform_role_html: Vous avez reçu le rôle de <strong>%{role}</strong> dans
-        la plateforme <strong>%{platform}</strong>.
-      title: Vous êtes invité à rejoindre %{platform}
-    platform_invitation_mailer:
-      invite:
-        community_role: 'Rôle de communauté: %{role}'
-        greeting: Bonjour %{recipient_name},
-        ignore: Si vous ne vous attendiez pas à cette invitation, veuillez ignorer
-          cet e-mail.
-        invitation_code: Code d'Invitation %{invitation_code}
-        link_text: Accepter l'invitation
-        message: 'Vous avez été invité à rejoindre %{platform} sur notre plateforme.
-          Pour accepter l''invitation, veuillez cliquer sur le lien ci-dessous :'
-        platform_role: 'Rôle de plateforme: %{role}'
-        role_assignment: 'Les rôles suivants vous seront attribués:'
-        signature_html: |-
-          Cordialement,<br />
-          L'équipe de %{platform}
-        subject: Vous êtes invité à rejoindre %{platform} !
-        valid_from: Cette invitation est valable à partir du %{valid_from}.
-        valid_period: Cette invitation est valable du %{valid_from} au %{valid_until}.
-    platform_invitations:
-      create_new_invitation: Créer une nouvelle invitation
-      filter_by_status: Filtrer par statut
-      invitations: Invitations
-      new_invitation: Nouvelle invitation
-      search_by_email: Rechercher par email
-      status:
-        accepted: Accepté
-        expired: Expiré
-        pending: En attente
-    platforms:
-      show:
-        new_invitation: Nouvelle invitation
-    posts:
-      authors: Auteurs
-      back_to_posts: Retour aux publications
-      create_post: Créer la première publication
-      created_on: Créé %{date}
-      created_on_short: Créé
-      delete: Supprimer l'enregistrement
-      edit: Modifier la publication
-      edit_post: Modifier la publication
-      index:
-        new_btn_text: Nouvelle publication
-      labels:
-        privacy: Confidentialité
-      new_post: Nouvelle publication
-      none_body: Il n'y a pas de publications à afficher pour le moment.
-      none_title: Pas encore de publications
-      published_on: Publié %{date}
-      save_post: Enregistrer la publication
-      updated_on_short: Mis à jour
-      view_post: Voir la publication
-    primary: Principal
-    rbac:
-      nav:
-        resource_permissions: Autorisations de ressources
-        roles: Rôles
-    registrations:
-      captcha_validation_failed: La vérification de sécurité a échoué. Veuillez réessayer.
-      invalid_invitation: Code d'invitation invalide ou expiré. Veuillez vérifier
-        votre courriel d'invitation.
-      invitation_required: Un code d'invitation est requis pour s'inscrire sur cette
-        plateforme
-    remove: Supprimer
-    resource_permissions:
-      actions:
-        create: Créer
-        delete: Supprimer
-        download: Télécharger
-        list: Liste
-        manage: Gérer
-        read: Lire
-        update: Mettre à jour
-        view: Voir
-      index:
-        new_resource_permission: Nouvelle permission de ressource
-      protection_status:
-        protected: Protégé
-        unprotected: Non protégé
-      roles:
-        count: "%{count} au total"
-        label: Rôles
-        more: et %{count} de plus
-        none: Aucun rôle attribué
-    roles:
-      index:
-        new_role: Nouveau rôle
-      permissions:
-        count: "%{count} au total"
-        label: Autorisations
-        more: et %{count} de plus
-        none: Aucune autorisation attribuée
-      protection_status:
-        protected: Protégé
-        unprotected: Non protégé
     search:
       all: All
       page_title: Search Results for "%{query}"
@@ -2433,6 +2847,9 @@ fr:
         integrations:
           description: Connectez et gérez vos comptes de plateformes externes.
           title: Comptes Connectés
+        my_data:
+          description: View, download, or delete your personal data exports.
+          title: My Data
         navigation_aria_label: Navigation des paramètres
         personal:
           coming_soon: Les paramètres personnels arrivent bientôt.
@@ -2458,6 +2875,7 @@ fr:
           developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
+          my_data: My Data
           personal: Personnel
           platform: Plateforme
           preferences: Préférences
@@ -2505,6 +2923,12 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+    validators:
+      safe_federation_url:
+        credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
+        insecure_scheme: doit utiliser http ou https
+        invalid_url: n'est pas une URL valide
+        private_ip: ne doit pas pointer vers une adresse IP privée ou réservée
     view_switcher:
       button_label: Vue %{view}
       change_view: Changer le type de vue
@@ -2517,6 +2941,63 @@ fr:
         card: Cartes
         list: Liste
         table: Tableau
+    storage:
+      service_types:
+        amazon: Amazon S3
+        local: Local disk
+        s3_compatible: S3-compatible (Garage / self-hosted)
+    storage_configurations:
+      access_key_hint: Leave blank to keep the existing value when editing.
+      access_key_placeholder: AKIAIOSFODNN7EXAMPLE
+      activated: "'%{name}' is now the active storage configuration."
+      cancel: Cancel
+      cannot_destroy_active: Cannot delete the currently active storage configuration. Activate another first.
+      created: Storage configuration was successfully created.
+      destroyed: Storage configuration was successfully deleted.
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: 'e.g., Primary S3, Local Dev, Garage bts-5'
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
+      index:
+        activate_btn: Set active
+        activate_confirm: Set this as the active storage configuration?
+        active_badge: Active
+        active_config_label: 'Active Configuration:'
+        back_to_platform: Back to Platform
+        bucket_label: Bucket
+        delete_btn: Delete
+        delete_confirm: Delete this storage configuration?
+        edit_btn: Edit
+        effective_storage_heading: Currently Effective Storage
+        endpoint_label: Endpoint
+        env_badge: ENV
+        env_config_label: 'Source:'
+        env_fallback: Environment variables (no platform override set)
+        header_actions: Actions
+        header_bucket: Bucket / Root
+        header_endpoint: Endpoint
+        header_name: Name
+        header_status: Status
+        header_type: Type
+        in_use: In use
+        new_btn: Add Storage
+        no_configs: No storage configurations defined. Environment variables are used by default.
+        not_active: Not active
+        platform_override_badge: Platform Override
+        service_type_label: Service type
+        subtitle: "Storage backends for %{platform_name}"
+        table_aria: Storage configurations
+        title: Storage Configurations
+      new:
+        subtitle: "Add a storage backend for %{platform_name}"
+        title: New Storage Configuration
+      edit:
+        subtitle: "Storage backend for %{platform_name}"
+        title: "Edit %{name}"
     webhook_endpoints:
       actions_aria: Actions du webhook
       active_help: Activer ou désactiver la livraison de webhooks pour ce point de
@@ -3132,6 +3613,7 @@ fr:
     all: Tous
     are_you_sure: Êtes-vous sûr ?
     back: Retour
+    back_to_home: Retour à l'accueil
     back_to_list: Retour à la liste
     cancel: Annuler
     clear: Effacer
@@ -3158,6 +3640,7 @@ fr:
     no_image: Pas d'image
     no_invitee: Pas d'invité
     none: Aucun
+    not_found: Non trouvé.
     not_sent: Non envoyé
     pagination:
       of: de
@@ -3174,6 +3657,8 @@ fr:
     sent: Envoyé
     show: Afficher
     status: Statut
+    submit: Soumettre
+    submitted_at: Soumis
     tabs:
       about: À propos
       attendees: Participants
@@ -3184,6 +3669,7 @@ fr:
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement
+    unknown: Inconnu
     update: Mettre à jour
     url: URL
     view: Voir
@@ -3403,6 +3889,20 @@ fr:
       title: Ajouter un membre de plateforme
     show:
       title: Détails d'adhésion à la plateforme
+  person_seeds:
+    confirm_destroy: Delete this data export? This cannot be undone.
+    export_failed: Your data export could not be completed. Please try again.
+    export_queued: Your data export has been requested. A download link will appear
+      below once it is ready.
+    export_too_soon: You requested an export recently. Please wait before requesting
+      another.
+    export_unavailable: Your account does not have a person profile to export.
+    index:
+      empty: You have no data exports yet.
+      exporting: "Requesting…"
+      new_export: Request Data Export
+      new_export_hint: Generate a portable export of your personal data.
+      title: My Data
   platform_invitations:
     confirm_delete: Confirmer la suppression
   platforms:
@@ -3436,6 +3936,9 @@ fr:
     navigation_area: Zone de navigation
     page: Page
     person: Personne
+    person_access_grant: Octroi d'accès de la personne
+    person_link: Lien de la personne
+    seed: Seed
     person_platform_membership: Adhésion à la plateforme de la personne
     platform: Plateforme
     profile: Profil
@@ -3452,6 +3955,30 @@ fr:
   search:
     button: Rechercher
     placeholder: Rechercher...
+  seeds:
+    actions:
+      destroy: Destroy seed
+      edit: Edit seed
+      show: Show seed
+    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+    edit:
+      title: 'Editing: %{identifier}'
+    form:
+      identifier_placeholder: e.g. host-setup-wizard-v1
+      json_hint: Must be valid JSON.
+    index:
+      empty: No seeds found.
+      new_seed: New seed
+      title: Seeds
+    new:
+      title: New Seed
+    seeded_by: Seeded by %{created_by}
+    show:
+      download_yaml: Download YAML
+      origin: Origin
+      payload: Payload
+      plantings: Planting History
+      yaml_export: YAML Export
   shared:
     by: par
     links:

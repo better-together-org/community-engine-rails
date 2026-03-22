@@ -1,0 +1,25 @@
+<%# locals: (statistics_block:) -%>
+<%= cache [statistics_block, statistics_block.stats_json, I18n.locale] do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: statistics_block } do %>
+    <div class="statistics-block py-4">
+      <% if statistics_block.heading.present? %>
+        <h2 class="statistics-block__heading text-center mb-4"><%= statistics_block.heading %></h2>
+      <% end %>
+      <div class="row row-cols-2 row-cols-md-<%= statistics_block.columns %> g-4 text-center">
+        <% statistics_block.parsed_stats.each do |stat| %>
+          <div class="col">
+            <div class="statistics-block__stat p-3">
+              <% if stat[:icon].present? %>
+                <div class="statistics-block__icon mb-2">
+                  <i class="<%= stat[:icon] %> fa-2x text-primary" aria-hidden="true"></i>
+                </div>
+              <% end %>
+              <div class="statistics-block__value display-5 fw-bold"><%= stat[:value] %></div>
+              <div class="statistics-block__label text-muted small text-uppercase letter-spacing-1"><%= stat[:label] %></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

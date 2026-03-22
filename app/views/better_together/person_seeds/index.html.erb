@@ -1,27 +1,27 @@
-<% content_for :page_title, t('.title') %>
+<% content_for :page_title, t('person_seeds.index.title') %>
 
 <%= turbo_frame_tag 'my-data-settings' do %>
   <div class="container my-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1 class="h2">
         <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
-        <%= t('.title') %>
+        <%= t('person_seeds.index.title') %>
       </h1>
       <%= button_to export_person_seeds_path(locale: locale),
                     method: :post,
                     class: 'btn btn-primary',
-                    data: { turbo_submits_with: t('.exporting') } do %>
+                    data: { turbo_submits_with: t('person_seeds.index.exporting') } do %>
         <i class="fa-solid fa-download me-1" aria-hidden="true"></i>
-        <%= t('.new_export') %>
+        <%= t('person_seeds.index.new_export') %>
       <% end %>
     </div>
 
-    <p class="text-muted"><%= t('.new_export_hint') %></p>
+    <p class="text-muted"><%= t('person_seeds.index.new_export_hint') %></p>
 
     <% if @seeds.empty? %>
       <div class="alert alert-info" role="status">
         <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
-        <%= t('.empty') %>
+        <%= t('person_seeds.index.empty') %>
       </div>
     <% else %>
       <%= render partial: 'person_seed', collection: @seeds, as: :seed %>

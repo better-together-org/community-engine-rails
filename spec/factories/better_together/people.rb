@@ -2,7 +2,8 @@
 
 require 'faker'
 
-module BetterTogether
+# FactoryBot factories for BetterTogether models.
+module BetterTogether # :nodoc:
   FactoryBot.define do
     factory 'better_together/person', class: Person,
                                       aliases: %i[better_together_person person inviter invitee creator author] do

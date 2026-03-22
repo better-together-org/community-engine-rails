@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module CalendarExport
+module BetterTogether # :nodoc:
+  module CalendarExport # :nodoc:
     RSpec.describe GoogleCalendarJson do
       let(:creator) { create(:better_together_person) }
       let(:event) do

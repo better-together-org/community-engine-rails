@@ -11,6 +11,7 @@ module BetterTogether
           shares: { icon: 'fas fa-share-alt', accent: 'bt-tab-accent--warning' },
           linkchecker: { icon: 'fas fa-link', accent: 'bt-tab-accent--danger' },
           searchqueries: { icon: 'fas fa-search', accent: 'bt-tab-accent--info' },
+          searchhealth: { icon: 'fas fa-heart-pulse', accent: 'bt-tab-accent--warning' },
           users: { icon: 'fas fa-users', accent: 'bt-tab-accent--secondary' }
         }
       end

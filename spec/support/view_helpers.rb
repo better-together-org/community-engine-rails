@@ -2,7 +2,7 @@
 
 # Provide a minimal `current_person` helper for view specs so they can be
 # stubbed with `allow(view).to receive(:current_person).and_return(person)`.
-module ViewSpecHelpers
+module ViewSpecHelpers # :nodoc:
   def current_person
     nil
   end

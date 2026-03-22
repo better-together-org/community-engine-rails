@@ -52,8 +52,12 @@ updates:
     directory: "/"
     target-branch: compat/rails-7.2
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      patch-updates:
+        update-types:
+          - patch
     ignore:
       - dependency-name: rubocop
         versions:
@@ -103,8 +107,12 @@ updates:
     directory: "/"
     target-branch: compat/rails-8.0
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      patch-updates:
+        update-types:
+          - patch
     ignore:
       - dependency-name: rubocop
         versions:
@@ -151,8 +159,12 @@ updates:
     directory: "/"
     target-branch: compat/rails-8.1
     schedule:
-      interval: daily
-    open-pull-requests-limit: 10
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      patch-updates:
+        update-types:
+          - patch
     ignore:
       - dependency-name: rubocop
         versions:

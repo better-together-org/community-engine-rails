@@ -7,6 +7,8 @@ require 'open3'
 require 'optparse'
 require 'yaml'
 
+# rubocop:disable Style/OneClassPerFile
+
 # Parses CLI arguments for `scripts/qa_issue_automator.rb`.
 class QaIssueAutomatorCli
   DEFAULT_REPO = 'better-together-org/community-engine-rails'
@@ -279,3 +281,4 @@ class QaIssueAutomator
 end
 
 QaIssueAutomator.from_argv(ARGV).run
+# rubocop:enable Style/OneClassPerFile

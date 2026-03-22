@@ -73,4 +73,58 @@ RSpec.describe 'BetterTogether::Api::V1::Messages', :no_auth do
       end
     end
   end
+
+  # ── E2E encrypted message fields ──────────────────────────────────────────
+
+  describe 'E2E encrypted message fields' do
+    let!(:e2e_message) do
+      create(:better_together_message,
+             conversation: conversation,
+             sender: person,
+             content: 'AES-GCM ciphertext payload',
+             e2e_encrypted: true,
+             e2e_version: 2,
+             e2e_protocol: 'dr_v2')
+    end
+
+    describe 'model behavior' do
+      it 'e2e? returns true when e2e_encrypted is true' do
+        expect(e2e_message.e2e?).to be true
+      end
+
+      it 'e2e? returns false for a non-encrypted message' do
+        plain = create(:better_together_message,
+                       conversation: conversation,
+                       sender: person,
+                       content: 'plain message')
+        expect(plain.e2e?).to be false
+      end
+
+      it 'stores e2e_version and e2e_protocol' do
+        expect(e2e_message.e2e_version).to eq(2)
+        expect(e2e_message.e2e_protocol).to eq('dr_v2')
+      end
+    end
+
+    describe 'GET /api/v1/messages/:id — e2e fields are exposed' do
+      let(:url) { "/api/v1/messages/#{e2e_message.id}" }
+
+      before { get url, headers: auth_headers }
+
+      it 'returns 200' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns e2e-encrypted as true in attributes' do
+        attrs = JSON.parse(response.body).dig('data', 'attributes')
+        expect(attrs).to include('e2e-encrypted' => true)
+          .or include('e2e_encrypted' => true)
+      end
+
+      it 'returns e2e-protocol in attributes' do
+        attrs = JSON.parse(response.body).dig('data', 'attributes')
+        expect(attrs.values_at('e2e-protocol', 'e2e_protocol').compact.first).to eq('dr_v2')
+      end
+    end
+  end
 end

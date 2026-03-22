@@ -1,54 +1,48 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Tracks planting operations for seeds and other data import processes
+  # Tracks seed import and tending operations.
   class SeedPlanting < ApplicationRecord # rubocop:todo Metrics/ClassLength
     self.table_name = 'better_together_seed_plantings'
 
     include Creatable
     include Privacy
 
-    # Status enum for tracking planting progress
-    enum :status, {
+    STATUS_VALUES = {
       pending: 'pending',
       in_progress: 'in_progress',
       completed: 'completed',
       failed: 'failed',
       cancelled: 'cancelled'
-    }
+    }.freeze
 
-    # Planting type enum for different kinds of plantings
-    enum :planting_type, {
+    PLANTING_TYPES = {
       seed: 'seed',
       bulk_data: 'bulk_data',
-      configuration: 'configuration'
-    }
+      configuration: 'configuration',
+      federated_tending: 'federated_tending'
+    }.freeze
 
-    # Associations
-    # Note: creator association provided by Creatable concern
+    # NOTE: creator association provided by Creatable concern
     alias planted_by creator
     alias planted_by= creator=
 
     belongs_to :seed, class_name: 'BetterTogether::Seed', optional: true
 
-    # Validations
+    enum :status, STATUS_VALUES, default: :pending, validate: true
+    enum :planting_type, PLANTING_TYPES, default: :seed, validate: true
+
     validates :status, :planting_type, presence: true
     validates :metadata, presence: true
     validate :completed_at_presence_for_terminal_states
     validate :error_message_presence_for_failed_state
 
-    # Scopes
     scope :recent, -> { order(created_at: :desc) }
     scope :active, -> { where(status: %w[pending in_progress]) }
     scope :terminal, -> { where(status: %w[completed failed cancelled]) }
     scope :successful, -> { where(status: 'completed') }
     scope :failed_plantings, -> { where(status: 'failed') }
 
-    # Callbacks
-    # before_validation :set_started_at, if: :status_changed_to_in_progress?
-    # before_validation :set_completed_at, if: :status_changed_to_terminal?
-
-    # Instance methods
     def duration
       return nil unless started_at && completed_at
 
@@ -95,7 +89,7 @@ module BetterTogether
 
     def mark_started!(started_time = Time.current)
       update!(
-        status: 'in_progress',
+        status: :in_progress,
         started_at: started_time,
         metadata: metadata.merge('started_at' => started_time.iso8601)
       )
@@ -106,7 +100,7 @@ module BetterTogether
       duration_seconds = started_at ? (completed_time - started_at).round(2) : nil
 
       update_attrs = {
-        status: 'completed',
+        status: :completed,
         completed_at: completed_time,
         metadata: metadata.merge(
           'completed_at' => completed_time.iso8601,
@@ -121,7 +115,7 @@ module BetterTogether
     def mark_failed!(error, error_details = nil) # rubocop:todo Metrics/MethodLength
       failed_time = Time.current
       update_attrs = {
-        status: 'failed',
+        status: :failed,
         completed_at: failed_time,
         error_message: error.to_s,
         metadata: metadata.merge(
@@ -131,7 +125,7 @@ module BetterTogether
       }
 
       if error_details.present?
-        update_attrs[:metadata] = update_attrs[:metadata].merge('error_details' => error_details)
+        update_attrs[:metadata] = update_attrs[:metadata].merge('error_details' => error_details.deep_stringify_keys)
       end
 
       update!(update_attrs)
@@ -140,7 +134,7 @@ module BetterTogether
     def mark_cancelled!(reason = nil) # rubocop:todo Metrics/MethodLength
       cancelled_time = Time.current
       update_attrs = {
-        status: 'cancelled',
+        status: :cancelled,
         completed_at: cancelled_time,
         metadata: metadata.merge(
           'cancelled_at' => cancelled_time.iso8601,
@@ -153,40 +147,11 @@ module BetterTogether
       update!(update_attrs)
     end
 
-    # Class methods
-    def self.create_for_seed_planting(source:, user: nil, metadata: {})
-      create!(
-        planting_type: 'seed',
-        source: source,
-        user: user,
-        metadata: {
-          'planting_source' => source,
-          'created_at' => Time.current.iso8601
-        }.merge(metadata)
-      )
-    end
-
     def self.cleanup_old_plantings(older_than: 30.days)
-      terminal.where('completed_at < ?', older_than.ago).destroy_all
+      terminal.where(completed_at: ..older_than.ago).destroy_all
     end
 
     private
-
-    def status_changed_to_in_progress?
-      status_changed? && in_progress?
-    end
-
-    def status_changed_to_terminal?
-      status_changed? && terminal?
-    end
-
-    def set_started_at
-      self.started_at ||= Time.current
-    end
-
-    def set_completed_at
-      self.completed_at ||= Time.current if terminal?
-    end
 
     def completed_at_presence_for_terminal_states
       return unless terminal? && completed_at.blank?

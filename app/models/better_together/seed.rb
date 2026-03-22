@@ -1,29 +1,26 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Allows for import and export of data in a structured and standardized way
+  # Canonical CE data envelope for portable export/import between platforms.
   class Seed < ApplicationRecord # rubocop:todo Metrics/ClassLength
     self.table_name = 'better_together_seeds'
-    self.inheritance_column = :type # Defensive for STI safety
+    self.inheritance_column = :type
+
+    DEFAULT_ROOT_KEY = 'better_together'
 
     include Creatable
     include Identifier
     include Privacy
 
-    DEFAULT_ROOT_KEY = 'better_together'
-
     # Security configurations
     MAX_FILE_SIZE = 10.megabytes
     PERMITTED_YAML_CLASSES = [Time, Date, DateTime, Symbol].freeze
     ALLOWED_SEED_DIRECTORIES = %w[config/seeds].freeze
-    # 1) Make sure you have Active Storage set up in your app
-    #    This attaches a single YAML file to each seed record
+
     has_one_attached :yaml_file
 
-    # 2) Polymorphic association: optional
     belongs_to :seedable, polymorphic: true, optional: true
 
-    # 3) Track planting operations
     has_many :seed_plantings, foreign_key: :seed_id, dependent: :destroy
 
     validates :type, :identifier, :version, :created_by, :seeded_at,
@@ -36,15 +33,12 @@ module BetterTogether
     # Security Validation Methods
     # -------------------------------------------------------------
 
-    # Validates file path is within allowed directories
     def self.validate_file_path!(file_path)
       normalized_path = File.expand_path(file_path)
       original_path = file_path.to_s
 
-      # Check for path traversal characters before normalization
       raise SecurityError, "File path contains path traversal characters: #{file_path}" if original_path.include?('..')
 
-      # Check if path is within allowed directories
       allowed = ALLOWED_SEED_DIRECTORIES.any? do |allowed_dir|
         absolute_allowed_dir = File.expand_path(allowed_dir, Rails.root)
         normalized_path.start_with?(absolute_allowed_dir)
@@ -56,7 +50,6 @@ module BetterTogether
             "File path '#{file_path}' is not within allowed seed directories: #{ALLOWED_SEED_DIRECTORIES.join(', ')}"
     end
 
-    # Validates file size is within limits
     def self.validate_file_size!(file_path)
       file_size = File.size(file_path)
       return unless file_size > MAX_FILE_SIZE
@@ -64,7 +57,6 @@ module BetterTogether
       raise SecurityError, "File size #{file_size} bytes exceeds maximum allowed size of #{MAX_FILE_SIZE} bytes"
     end
 
-    # Safe YAML loading with restricted classes
     def self.safe_load_yaml_file(file_path)
       YAML.safe_load_file(
         file_path,
@@ -82,8 +74,8 @@ module BetterTogether
     # Scopes
     # -------------------------------------------------------------
     scope :by_type, ->(type) { where(type: type) }
-    scope :by_identifier, ->(identifier) { where(identifier: identifier) }
-    scope :latest_first, -> { order(created_at: :desc) }
+    scope :by_identifier, ->(identifier) { where(identifier:) }
+    scope :latest_first, -> { order(seeded_at: :desc, created_at: :desc) }
     scope :latest_version, ->(type, identifier) { by_type(type).by_identifier(identifier).latest_first.limit(1) }
     scope :latest, -> { latest_first.limit(1) }
 
@@ -98,13 +90,31 @@ module BetterTogether
       super&.with_indifferent_access || {}
     end
 
-    # Helpers for nested origin data
+    # -------------------------------------------------------------
+    # Instance helpers
+    # -------------------------------------------------------------
     def contributors
       origin[:contributors] || []
     end
 
     def platforms
       origin[:platforms] || []
+    end
+
+    def payload_data
+      payload[:payload].presence || payload
+    end
+
+    def lane
+      origin[:lane].presence || payload_data[:lane]
+    end
+
+    def private_linked?
+      lane == 'private_linked'
+    end
+
+    def platform_shared?
+      lane == 'platform_shared'
     end
 
     # -------------------------------------------------------------
@@ -150,12 +160,44 @@ module BetterTogether
     end
 
     # -------------------------------------------------------------
+    # import_or_update! = upsert by type+identifier
+    # -------------------------------------------------------------
+    def self.import_or_update!(seed_data, root_key: DEFAULT_ROOT_KEY)
+      data = seed_data.deep_symbolize_keys.fetch(root_key.to_sym)
+      record = find_or_build_from_data(data)
+      record.assign_attributes(seed_record_attributes(data))
+      record.save!
+      record
+    end
+
+    def self.find_or_build_from_data(data)
+      metadata = data.fetch(:seed)
+      find_or_initialize_by(
+        type: metadata.fetch(:type, name),
+        identifier: metadata.fetch(:identifier)
+      )
+    end
+
+    def self.seed_record_attributes(data)
+      metadata = data.fetch(:seed)
+      {
+        version: data.fetch(:version),
+        created_by: metadata.fetch(:created_by),
+        seeded_at: Time.iso8601(metadata.fetch(:created_at)),
+        description: metadata.fetch(:description),
+        origin: metadata.fetch(:origin),
+        payload: data.except(:version, :seed),
+        seedable_type: metadata[:seedable_type],
+        seedable_id: metadata[:seedable_id]
+      }
+    end
+
+    # -------------------------------------------------------------
     # Enhanced planting with validation and transaction safety
     # -------------------------------------------------------------
     def self.plant_with_validation(seed_data, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       root_key = options.delete(:root_key) || DEFAULT_ROOT_KEY
 
-      # Create planting record first to ensure it persists even if validation fails
       seed_planting = create_seed_planting(options)
       seed_planting&.mark_started!
 
@@ -176,7 +218,6 @@ module BetterTogether
     rescue KeyError => e
       raise "Missing required field in seed data: #{e.message}"
     rescue ArgumentError => e
-      # Re-raise ArgumentError as ArgumentError to preserve error type for tests
       raise ArgumentError, "Invalid data format in seed: #{e.message}"
     end
 
@@ -192,18 +233,15 @@ module BetterTogether
 
       data = seed_data.deep_symbolize_keys.fetch(root_key.to_sym)
 
-      # Validate required top-level fields
       %i[version seed].each do |field|
         raise ArgumentError, "Seed data missing required field: #{field}" unless data.key?(field)
       end
 
-      # Validate seed metadata
       seed_metadata = data[:seed]
       %i[type identifier created_by created_at description origin].each do |field|
         raise ArgumentError, "Seed metadata missing required field: #{field}" unless seed_metadata.key?(field)
       end
 
-      # Validate version format
       return if data[:version].to_s.match?(/^\d+\.\d+/)
 
       raise ArgumentError, "Invalid version format: #{data[:version]}. Expected format: 'X.Y'"
@@ -215,12 +253,9 @@ module BetterTogether
     def self.create_seed_planting(options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       return nil unless options[:track_planting]
 
-      # Create SeedPlanting record for tracking
       person = find_person_for_planting(options)
 
-      # Build metadata from options, excluding internal tracking fields
       metadata = options.except(:track_planting, :planted_by, :planted_by_id)
-      # Ensure metadata is not empty (required by validation)
       metadata = { 'created_at' => Time.current.iso8601 } if metadata.blank?
 
       planting_attrs = {
@@ -230,7 +265,6 @@ module BetterTogether
         metadata: metadata
       }
 
-      # Only set planted_by if we have a valid person
       planting_attrs[:planted_by] = person if person
 
       SeedPlanting.create!(planting_attrs)
@@ -263,19 +297,16 @@ module BetterTogether
       Rails.logger.error "Seed planting failed for ID: #{seed_planting.id}: #{error.message}"
     end
 
-    # Find the person who should be recorded as planting this seed
     def self.find_person_for_planting(options = {})
       return options[:planted_by] if options[:planted_by].is_a?(Person)
       return Person.find(options[:planted_by_id]) if options[:planted_by_id]
 
-      # No fallback - require explicit person for security
       nil
     end
 
     # -------------------------------------------------------------
     # export = produce a structured hash including seedable info
     # -------------------------------------------------------------
-    # rubocop:todo Metrics/MethodLength
     def export(root_key: DEFAULT_ROOT_KEY) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       seed_obj = {
         type: type,
@@ -286,7 +317,6 @@ module BetterTogether
         origin: origin.deep_symbolize_keys
       }
 
-      # If seedable_type or seedable_id is present, include them
       seed_obj[:seedable_type] = seedable_type if seedable_type.present?
       seed_obj[:seedable_id]   = seedable_id if seedable_id.present?
 
@@ -298,14 +328,11 @@ module BetterTogether
         }
       }
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # Export as YAML
     def export_yaml(root_key: DEFAULT_ROOT_KEY)
       export(root_key: root_key).deep_stringify_keys.to_yaml
     end
 
-    # A recommended file name for the exported seed
     def versioned_file_name
       timestamp = seeded_at.utc.strftime('%Y%m%d%H%M%S')
       "#{type.demodulize.underscore}_#{identifier}_v#{version}_#{timestamp}.yml"
@@ -315,7 +342,6 @@ module BetterTogether
     # Secure seed loading with comprehensive validation
     # -------------------------------------------------------------
     def self.load_seed(source, root_key: DEFAULT_ROOT_KEY) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-      # 1) Direct file path
       if File.exist?(source)
         begin
           validate_file_path!(source)
@@ -330,7 +356,6 @@ module BetterTogether
         end
       end
 
-      # 2) 'namespace' approach => config/seeds/#{source}.yml
       path = Rails.root.join('config', 'seeds', "#{source}.yml").to_s
       raise "Seed file not found for '#{source}' at path '#{path}'" unless File.exist?(path)
 

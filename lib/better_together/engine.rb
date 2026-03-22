@@ -10,6 +10,9 @@ require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
+require 'better_together/storage_resolver'
+require 'better_together/url_sanitizer'
+require 'better_together/rails_8_1_jsonapi_resources_compat'
 require 'bootstrap'
 require 'dartsass-sprockets'
 require 'devise'
@@ -59,7 +62,8 @@ module BetterTogether
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
       "#{root}/app/tools",
-      "#{root}/app/resources"
+      "#{root}/app/resources",
+      "#{root}/app/middleware"
     ]
     # Add routes directory to paths for draw() method
     config.paths['config/routes.rb'] = 'config/routes.rb'
@@ -96,6 +100,14 @@ module BetterTogether
 
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
+    end
+
+    # Insert PlatformContextMiddleware early in the stack so Current.platform
+    # is resolved for all requests — web, JSONAPI, and MCP — before any
+    # controller action runs.
+    initializer 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/platform_context_middleware').to_s
+      app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
     initializer 'better_together.action_mailer' do |app|
@@ -159,24 +171,23 @@ module BetterTogether
       ::ActiveRecord::SchemaDumper.ignore_tables = %w[spatial_ref_sys] + ::ActiveRecord::SchemaDumper.ignore_tables
     end
 
+    initializer 'better_together.mcp_defaults' do |app|
+      unless app.config.respond_to?(:mcp)
+        app.config.mcp = ActiveSupport::OrderedOptions.new
+        app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
+      end
+    end
+
     initializer 'better_together.turbo' do |app|
       app.config.action_view.form_with_generates_remote_forms = true
     end
 
-    # MCP (Model Context Protocol) configuration
-    initializer 'better_together.mcp', after: :load_config_initializers do |app|
-      # Set default MCP configuration
-      mcp_config = ActiveSupport::OrderedOptions.new
-      mcp_config.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development?).to_s == 'true'
-      mcp_config.path_prefix = ENV.fetch('MCP_PATH_PREFIX', '/mcp')
-      mcp_config.auth_token = ENV.fetch('MCP_AUTH_TOKEN', nil)
-      mcp_config.authenticate = mcp_config.auth_token.present? || Rails.env.production?
-      mcp_config.excerpt_length = ENV.fetch('MCP_EXCERPT_LENGTH', 200).to_i
+    initializer 'better_together.append_migrations' do |app|
+      next if app.root.to_s.start_with?(root.to_s)
 
-      app.config.mcp = mcp_config
-
-      # Auto-load MCP support files
-      require 'better_together/mcp/pundit_context'
+      config.paths['db/migrate'].expanded.each do |expanded_path|
+        app.config.paths['db/migrate'] << expanded_path unless app.config.paths['db/migrate'].include?(expanded_path)
+      end
     end
 
     rake_tasks do
