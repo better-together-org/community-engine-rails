@@ -29,16 +29,17 @@ module BetterTogether
         end
       end
 
-      def update # rubocop:todo Metrics/MethodLength
-        respond_to do |format|
-          if @block.update(block_params)
-            redirect_to content_block_path(@block),
-                        notice: t('flash.generic.updated', resource: t('resources.block'))
-          else
+      def update
+        if @block.update(block_params)
+          redirect_to content_block_path(@block),
+                      notice: t('flash.generic.updated', resource: t('resources.block'))
+        else
+          respond_to do |format|
             format.turbo_stream do
               render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
                                                                                         locals: { block: @block })
             end
+            format.html { render :edit }
           end
         end
       end
@@ -77,7 +78,7 @@ module BetterTogether
 
       private
 
-      def block_params
+      def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
           :type, :media, :identifier, :markdown_source_type,
           *resource_class.localized_block_attributes,

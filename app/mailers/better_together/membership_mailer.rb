@@ -3,6 +3,8 @@
 module BetterTogether
   # Sends email notifications when a membership is created
   class MembershipMailer < ApplicationMailer # rubocop:todo Metrics/ClassLength
+    RecipientData = Struct.new(:email, :locale, :time_zone)
+
     include BetterTogether::RolesHelper
 
     helper BetterTogether::RolesHelper

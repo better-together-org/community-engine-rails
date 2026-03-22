@@ -43,8 +43,12 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Metrics (custom summary endpoint, read-only)
   get 'metrics/summary', to: 'metrics_summary#show'
 
-  # Pages
+  # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :page_blocks
+
+  # Content Blocks (all STI types — filter by page_id or type)
+  jsonapi_resources :blocks
 
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
