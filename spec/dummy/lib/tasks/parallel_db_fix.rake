@@ -8,8 +8,11 @@
 # which causes DROP DATABASE to fail with PG::ObjectInUse.
 #
 # Fix: before the parent forks workers, terminate all connections to test
-# databases via pg_stat_activity and clear AR connections from the parent
+# databases via pg_stat_activity and close active AR sockets from the parent
 # process so the fork inherits no live database connections.
+#
+# The connection pool specification (host, port, credentials) is preserved so
+# subsequent tasks (db:parallel:load_schema) can still resolve configuration.
 
 return unless defined?(Rake)
 
@@ -32,21 +35,26 @@ namespace :db do
         target_dbs = [base_db] + (2..4).map { |n| "#{base_db}#{n}" }
         admin_cfg  = db_cfg.symbolize_keys.merge(database: 'postgres')
 
-        target_dbs.each do |target_db|
+        begin
+          # Switch to the postgres admin DB to terminate connections.
           ActiveRecord::Base.establish_connection(admin_cfg)
-          ActiveRecord::Base.connection.execute(
-            'SELECT pg_terminate_backend(pid) FROM pg_stat_activity ' \
-            "WHERE datname = '#{target_db}' AND pid <> pg_backend_pid()"
-          )
-        rescue StandardError => e
-          warn "[parallel_db_fix] Could not terminate connections to #{target_db}: #{e.message}"
+          target_dbs.each do |target_db|
+            ActiveRecord::Base.connection.execute(
+              'SELECT pg_terminate_backend(pid) FROM pg_stat_activity ' \
+              "WHERE datname = '#{target_db}' AND pid <> pg_backend_pid()"
+            )
+          rescue StandardError => e
+            warn "[parallel_db_fix] Could not terminate connections to #{target_db}: #{e.message}"
+          end
         ensure
-          ActiveRecord::Base.remove_connection
+          # Restore the test DB connection spec so subsequent Rake tasks
+          # (e.g. db:parallel:load_schema) do not receive ConnectionNotDefined.
+          ActiveRecord::Base.establish_connection(db_cfg.symbolize_keys)
         end
       end
 
-      # Disconnect all AR connections in the parent so forked workers do not
-      # inherit live sockets to rails_test.
+      # Close all active sockets in the parent process so forked workers do
+      # not inherit open connections. The pool spec is preserved above.
       ActiveRecord::Base.connection_handler.clear_all_connections!
     end
   end
