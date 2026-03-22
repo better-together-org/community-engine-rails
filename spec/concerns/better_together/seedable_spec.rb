@@ -2,6 +2,14 @@
 
 require 'rails_helper'
 
+# Create the test table before defining TestSeedableClass so that
+# ActiveRecord column introspection (triggered at class-definition time
+# in Rails 7+) does not raise PG::UndefinedTable.
+ActiveRecord::Base.connection.create_table(:better_together_test_seedable_classes, force: :cascade) do |t|
+  t.string :name
+  t.timestamps null: false
+end
+
 module BetterTogether
   describe Seedable, type: :model do
     # Define a test ActiveRecord model inline for this spec
@@ -10,14 +18,6 @@ module BetterTogether
       include Seedable
     end
     # rubocop:enable RSpec/LeakyConstantDeclaration
-
-    before(:all) do # rubocop:todo RSpec/BeforeAfterAll
-      ActiveRecord::Base.connection.create_table(:better_together_test_seedable_classes, force: true) do |t|
-        t.string :name
-        t.timestamps null: false
-      end
-      TestSeedableClass.reset_column_information
-    end
 
     after(:all) do # rubocop:todo RSpec/BeforeAfterAll
       ActiveRecord::Base.connection.drop_table(:better_together_test_seedable_classes, if_exists: true)

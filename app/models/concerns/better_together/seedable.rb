@@ -83,10 +83,14 @@ module BetterTogether
         { root_key => build_seed_envelope(records, version) }
       end
 
+      def export_collection_as_seed_yaml(records, **)
+        export_collection_as_seed(records, **).deep_stringify_keys.to_yaml
+      end
+
       private
 
       def build_seed_envelope(records, version)
-        { version:, seed: build_seed_metadata, payload: { records: records.map(&:plant) } }
+        { version:, seed: build_seed_metadata, records: records.map(&:plant) }
       end
 
       def build_seed_metadata

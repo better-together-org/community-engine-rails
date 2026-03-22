@@ -134,19 +134,15 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
 
-    # Full clean to start fresh. Disable FK constraint triggers for the initial clean so
-    # that new FK chains (ActiveStorage, etc.) never require manual pre-clear ordering.
-    # session_replication_role=replica suppresses FK and trigger checks in PostgreSQL.
-    conn = ActiveRecord::Base.connection
-    begin
-      conn.execute('SET session_replication_role = replica')
-      DatabaseCleaner.clean_with(:deletion)
-    ensure
-      conn.execute('SET session_replication_role = DEFAULT')
-    end
-
-    # Load essential seed data with explicit clearing for deterministic baseline
-    # In parallel execution, handle race conditions gracefully
+    # Seed essential data idempotently. No initial full-clean here because:
+    # 1. db:parallel:prepare already gives each CI worker a clean schema.
+    # 2. In CI, parallel_rspec workers share the same database (DATABASE_URL).
+    #    A destructive clean_with(:deletion) in one worker would wipe seeds
+    #    that a sibling worker just created, causing intermittent "Host Setup
+    #    Wizard not configured" / "Platform can't be blank" failures.
+    # All builders use clear: false so seed_data runs without deleting first.
+    # build_with_retry treats duplicate-key errors as "already seeded" — safe
+    # for concurrent workers that race to create the same rows.
     def build_with_retry(times: 3) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       attempts = 0
       begin
@@ -159,8 +155,8 @@ RSpec.configure do |config|
         is_stale_error = e.is_a?(ActiveRecord::StaleObjectError)
         is_foreign_key_error = e.is_a?(ActiveRecord::InvalidForeignKey)
         if attempts < times
-          # In parallel execution, another worker may have already seeded the data
-          # If it's a duplicate key error, just continue - data is already seeded
+          # In parallel execution, another worker may have already seeded the data.
+          # If it's a duplicate key error, just continue - data is already seeded.
           if is_duplicate_error
             Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
           elsif is_foreign_key_error
@@ -173,19 +169,19 @@ RSpec.configure do |config|
             retry
           end
         else
-          # On final attempt, accept duplicate errors as success (data exists)
+          # On final attempt, accept duplicate errors as success (data exists).
           raise unless is_duplicate_error
         end
       end
     end
 
-    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: false) }
 
-    # NavigationBuilder creates Pages that validate platform_id: presence: true.
-    # The Page model's before_validation callback resolves the platform via
-    # Current.platform, Platform.find_by(host: true), or Platform.first — all of
-    # which return nil after DatabaseCleaner wipes the DB. Seed a minimal host
-    # community + platform before NavigationBuilder so that callback never starves.
+    # Seed a host community + platform before NavigationBuilder.
+    # NavigationBuilder creates Page records that validate platform_id: presence: true.
+    # The Page#assign_current_platform_if_available callback resolves via
+    # Current.platform, Platform.find_by(host: true), or Platform.first — all nil
+    # on a fresh database. find_or_create_by! is idempotent across parallel workers.
     build_with_retry do
       host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
         c.name       = 'Test Host Community'
@@ -205,10 +201,10 @@ RSpec.configure do |config|
       end
     end
 
-    build_with_retry { BetterTogether::NavigationBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::AgreementBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::NavigationBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::CategoryBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::AgreementBuilder.build(clear: false) }
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
