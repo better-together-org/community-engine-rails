@@ -15,9 +15,7 @@ FactoryBot.define do
     end
 
     after(:create) do |css_block, evaluator|
-      if evaluator.content_text.present?
-        css_block.update(content: evaluator.content_text)
-      end
+      css_block.update(content: evaluator.content_text) if evaluator.content_text.present?
     end
 
     trait :with_complex_css do
@@ -47,4 +45,6 @@ FactoryBot.define do
       end
     end
   end
+
+  factory :content_css, parent: :better_together_content_css
 end

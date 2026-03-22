@@ -8,6 +8,8 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
   RSpec.describe Page do
     subject(:page) { build(:better_together_page) }
 
+    it_behaves_like 'an indexed searchable model', :better_together_page
+
     describe 'Factory' do
       it 'has a valid factory' do
         expect(page).to be_valid

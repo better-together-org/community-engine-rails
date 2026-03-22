@@ -4,7 +4,7 @@ module BetterTogether
   module Content
     # Renders raw html from an attribute
     class Html < Block
-      translates :content, type: :string
+      translates :content, type: :text
 
       store_attributes :content_data do
         html_content String, default: ''

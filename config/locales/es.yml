@@ -871,26 +871,6 @@ es:
           empty: No hay comunidades para mostrar.
         events_block:
           empty: No hay eventos para mostrar.
-        navigation_area_block:
-          not_found: Área de navegación no encontrada.
-          select_prompt: "— Seleccionar un área de navegación —"
-        people_block:
-          empty: No hay personas para mostrar.
-        posts_block:
-          empty: No hay publicaciones para mostrar.
-        resource_block:
-          all_communities: Todas las comunidades (en toda la plataforma)
-          resource_ids_help: Si se establece, solo se mostrarán estos registros,
-            ignorando el ámbito de la comunidad y el orden.
-          resource_ids_placeholder: Dejar en blanco para mostrar los últimos registros
-        statistics_block:
-          stats_json_help: Arreglo JSON de objetos con claves "label", "value" e
-            "icon" opcional (clase Font Awesome).
-        video_block:
-          missing_url: No se ha configurado ninguna URL de video.
-          title: Reproductor de video de YouTube
-          url_help: Acepta URLs de YouTube, Vimeo o cualquier URL de inserción directa.
-        view_more: Ver todo
         markdown:
           fields:
             auto_sync: Cargar siempre desde archivo (ignorar contenido de base de
@@ -917,9 +897,29 @@ es:
               del idioma (ej., privacy.en.md, privacy.es.md, privacy.fr.md) y recurre
               al archivo base si no se encuentra.
             preview_placeholder: La vista previa aparecerá aquí...
+        navigation_area_block:
+          not_found: Área de navegación no encontrada.
+          select_prompt: "— Seleccionar un área de navegación —"
+        people_block:
+          empty: No hay personas para mostrar.
+        posts_block:
+          empty: No hay publicaciones para mostrar.
+        resource_block:
+          all_communities: Todas las comunidades (en toda la plataforma)
+          resource_ids_help: Si se establece, solo se mostrarán estos registros, ignorando
+            el ámbito de la comunidad y el orden.
+          resource_ids_placeholder: Dejar en blanco para mostrar los últimos registros
+        statistics_block:
+          stats_json_help: Arreglo JSON de objetos con claves "label", "value" e "icon"
+            opcional (clase Font Awesome).
         template:
           default: Plantilla predeterminada
           host_community_contact_details: Detalles de contacto de la comunidad anfitriona
+        video_block:
+          missing_url: No se ha configurado ninguna URL de video.
+          title: Reproductor de video de YouTube
+          url_help: Acepta URLs de YouTube, Vimeo o cualquier URL de inserción directa.
+        view_more: Ver todo
       mermaid_diagram:
         help:
           auto_height: Cuando está habilitado, la altura del diagrama se ajusta automáticamente
@@ -1745,9 +1745,26 @@ es:
           metrics_types: Tipos de métricas
           page_views: Vistas de Página
           reports: Reportes
+          search_health: Estado de la búsqueda
           search_queries: Búsquedas
           shares: Compartidos
           users: Users
+        search_health:
+          backend: Backend
+          db_count: Conteo BD
+          db_documents: Documentos BD
+          drift: Desviación
+          drift_visualization: Visualización de desviación
+          generated_at: Generado el
+          index_count: Conteo del índice
+          index_documents: Documentos indexados
+          index_name: Índice
+          indices: Índices
+          model: Modelo
+          status_label: Estado
+          store_size: Tamaño de almacenamiento
+          total_drift: Desviación total
+          unmanaged_models: Modelos buscables no gestionados
         title: Informes de Métricas
         unknown_type: Desconocido
       shares:
@@ -2055,167 +2072,6 @@ es:
         device-permissions: Permisos del dispositivo
         images: Imágenes
         preferences: Preferences
-    reports:
-      actions:
-        report: Reportar
-      attributes:
-        category: Categoría
-        harm_level: Nivel de daño
-        requested_outcome: Resultado solicitado
-        reason: Resumen breve
-        private_details: Detalles privados para el equipo de seguridad
-      errors:
-        already_reported_by_you: ya fue reportado por ti
-      index:
-        empty: Todavía no has enviado ningún reporte de seguridad.
-        new: Nuevo reporte
-        title: Mis reportes de seguridad
-      new:
-        category_help: Elige la opción que mejor describa el daño o la preocupación que estás reportando.
-        consent_to_contact: Pueden contactarme sobre este reporte
-        consent_to_restorative_process: Pueden considerar opciones restaurativas si corresponde
-        error_summary: Corrige los siguientes problemas.
-        harm_level_help: Indica qué tan urgente o dañina te parece la situación para que el equipo de seguridad pueda priorizarla correctamente.
-        intro: Usa este formulario para pedir apoyo de seguridad, apoyo para establecer límites, rendición de cuentas o protección urgente.
-        preferences_help: Indica si podemos contactarte, si quieres que se consideren opciones restaurativas y si existe riesgo de represalias en este reporte.
-        preferences_title: Preferencias de seguridad
-        private_details_help: Agrega cualquier contexto, patrón, fecha o evidencia que deba permanecer con el equipo de revisión de seguridad.
-        reason_help: Explica brevemente qué pasó. Enfócate primero en la preocupación principal.
-        requested_outcome_help: Elige qué tipo de apoyo quieres del equipo de seguridad. Puedes pedir apoyo aunque no estés segura o seguro.
-        retaliation_risk: Me preocupa una represalia o una escalada
-        submit: Enviar reporte
-        title: Reportar una preocupación de seguridad
-        urgent_help: Contacta primero a los servicios de emergencia locales. Este formulario es para seguimiento comunitario y de la plataforma, no para despacho de emergencias.
-        urgent_title: "Si estás en peligro inmediato:"
-      notices:
-        created: El reporte se envió correctamente.
-      show:
-        back: Volver a los reportes
-        pending_copy: Este caso sigue en curso. Una persona moderadora puede comunicarse contigo según tus preferencias de consentimiento.
-        status: Estado actual
-        summary: Resumen del caso
-        title: Reporte de seguridad
-    safety:
-      action_statuses:
-        active: Activa
-        cancelled: Cancelada
-        completed: Completada
-      action_types:
-        contact_restriction: Restricción de contacto
-        content_hidden: Contenido oculto
-        content_removed: Contenido eliminado
-        event_restriction: Restricción de evento
-        messaging_restriction: Restricción de mensajería
-        restorative_referral: Derivación restaurativa
-        temporary_suspension: Suspensión temporal
-        watch_flag: Marca de seguimiento
-      agreement_statuses:
-        active: Activo
-        breached: Incumplido
-        completed: Completado
-        proposed: Propuesto
-        withdrawn: Retirado
-      case_lanes:
-        administrative: Administrativa
-        immediate_safety: Seguridad inmediata
-        restorative: Restaurativa
-      case_statuses:
-        closed_no_action: Cerrado sin acción
-        needs_reporter_followup: Se necesita seguimiento con quien reportó
-        protective_action_in_effect: Medida de protección en curso
-        resolved: Resuelto
-        restorative_in_progress: Proceso restaurativo en curso
-        submitted: Enviado
-        triaged: Clasificado
-      closure_types:
-        no_action: Sin acción
-        protective_action: Medida de protección
-        restorative_agreement: Acuerdo restaurativo
-        unsupported: No compatible
-        voluntary_resolution: Resolución voluntaria
-      harm_levels:
-        high: Alto
-        low: Bajo
-        medium: Medio
-        urgent: Urgente
-      note_visibilities:
-        internal_only: Solo interno
-        participant_visible: Visible para participantes
-      report_categories:
-        boundary_violation: Violación de límites
-        discrimination: Discriminación
-        fraud: Fraude
-        harassment: Acoso
-        hate_speech: Discurso de odio
-        impersonation: Suplantación de identidad
-        misinformation: Desinformación
-        other: Otro
-        privacy_violation: Violación de privacidad
-        spam_or_scam: Spam o estafa
-      reporter_visible_statuses:
-        closed_no_action: Cerrado sin acción
-        needs_reporter_followup: Se necesita más información de tu parte
-        protective_action_in_effect: Medida de protección en curso
-        resolved: Resuelto
-        restorative_in_progress: Proceso restaurativo en curso
-        submitted: Enviado
-        triaged: En revisión
-        under_review: En revisión
-      requested_outcomes:
-        boundary_support: Apoyo para establecer límites
-        community_accountability: Rendición de cuentas comunitaria
-        content_review: Revisión de contenido
-        mediated_conversation: Conversación mediada
-        other: Otro
-        temporary_protection: Protección temporal
-      shared:
-        any: Cualquiera
-    safety_cases:
-      attributes:
-        accountability_check: Verificación de rendición de cuentas y cuidado institucional
-        action_details: Detalles de la medida
-        action_reason: Motivo de la medida
-        action_status: Estado de la medida
-        action_type: Tipo de medida
-        agreement_summary: Resumen del acuerdo
-        care_check: Verificación de cuidado y resiliencia
-        closure_summary: Resumen de cierre
-        closure_type: Tipo de cierre
-        commitments: Compromisos
-        expires_at: Expira el
-        harmed_party_consented: La parte afectada dio su consentimiento
-        lane: Canal
-        love_inclusivity_check: Verificación de amor e inclusión
-        note_body: Nota
-        note_visibility: Visibilidad de la nota
-        reporter: Persona que reporta
-        responsible_party_consented: La parte responsable dio su consentimiento
-        review_at: Revisar el
-        solidarity_check: Verificación de cooperación y solidaridad
-        status: Estado del caso
-      index:
-        filter: Filtrar
-        title: Casos de seguridad
-      notices:
-        updated: El caso de seguridad fue actualizado.
-      show:
-        actions: Medidas de protección y rendición de cuentas
-        add_action: Registrar medida
-        add_agreement: Crear acuerdo
-        add_note: Agregar nota
-        agreements: Acuerdos restaurativos
-        back: Volver a la cola
-        intake: Recepción del reporte
-        manage: Gestión del caso
-        notes: Notas internas
-        title: Caso de seguridad
-        update_agreement: Actualizar acuerdo
-        update_case: Actualizar caso
-        values_review: Revisión de valores
-        values_review_placeholder: Explica la revisión de valores para esta medida
-    safety_notes:
-      notices:
-        created: Se agregó una nota al caso.
     person_block:
       cannot_block_manager: no puede ser un administrador de la plataforma
       cannot_block_self: no puedes bloquearte a ti mismo
@@ -2388,6 +2244,57 @@ es:
       invitation_required: Se requiere un código de invitación para registrarse en
         esta plataforma
     remove: Eliminar
+    reports:
+      actions:
+        report: Reportar
+      attributes:
+        category: Categoría
+        harm_level: Nivel de daño
+        private_details: Detalles privados para el equipo de seguridad
+        reason: Resumen breve
+        requested_outcome: Resultado solicitado
+      errors:
+        already_reported_by_you: ya fue reportado por ti
+      index:
+        empty: Todavía no has enviado ningún reporte de seguridad.
+        new: Nuevo reporte
+        title: Mis reportes de seguridad
+      new:
+        category_help: Elige la opción que mejor describa el daño o la preocupación
+          que estás reportando.
+        consent_to_contact: Pueden contactarme sobre este reporte
+        consent_to_restorative_process: Pueden considerar opciones restaurativas si
+          corresponde
+        error_summary: Corrige los siguientes problemas.
+        harm_level_help: Indica qué tan urgente o dañina te parece la situación para
+          que el equipo de seguridad pueda priorizarla correctamente.
+        intro: Usa este formulario para pedir apoyo de seguridad, apoyo para establecer
+          límites, rendición de cuentas o protección urgente.
+        preferences_help: Indica si podemos contactarte, si quieres que se consideren
+          opciones restaurativas y si existe riesgo de represalias en este reporte.
+        preferences_title: Preferencias de seguridad
+        private_details_help: Agrega cualquier contexto, patrón, fecha o evidencia
+          que deba permanecer con el equipo de revisión de seguridad.
+        reason_help: Explica brevemente qué pasó. Enfócate primero en la preocupación
+          principal.
+        requested_outcome_help: Elige qué tipo de apoyo quieres del equipo de seguridad.
+          Puedes pedir apoyo aunque no estés segura o seguro.
+        retaliation_risk: Me preocupa una represalia o una escalada
+        submit: Enviar reporte
+        title: Reportar una preocupación de seguridad
+        urgent_help: Contacta primero a los servicios de emergencia locales. Este
+          formulario es para seguimiento comunitario y de la plataforma, no para despacho
+          de emergencias.
+        urgent_title: 'Si estás en peligro inmediato:'
+      notices:
+        created: El reporte se envió correctamente.
+      show:
+        back: Volver a los reportes
+        pending_copy: Este caso sigue en curso. Una persona moderadora puede comunicarse
+          contigo según tus preferencias de consentimiento.
+        status: Estado actual
+        summary: Resumen del caso
+        title: Reporte de seguridad
     resource_permissions:
       actions:
         create: Crear
@@ -2419,6 +2326,127 @@ es:
       protection_status:
         protected: Protegido
         unprotected: No protegido
+    safety:
+      action_statuses:
+        active: Activa
+        cancelled: Cancelada
+        completed: Completada
+      action_types:
+        contact_restriction: Restricción de contacto
+        content_hidden: Contenido oculto
+        content_removed: Contenido eliminado
+        event_restriction: Restricción de evento
+        messaging_restriction: Restricción de mensajería
+        restorative_referral: Derivación restaurativa
+        temporary_suspension: Suspensión temporal
+        watch_flag: Marca de seguimiento
+      agreement_statuses:
+        active: Activo
+        breached: Incumplido
+        completed: Completado
+        proposed: Propuesto
+        withdrawn: Retirado
+      case_lanes:
+        administrative: Administrativa
+        immediate_safety: Seguridad inmediata
+        restorative: Restaurativa
+      case_statuses:
+        closed_no_action: Cerrado sin acción
+        needs_reporter_followup: Se necesita seguimiento con quien reportó
+        protective_action_in_effect: Medida de protección en curso
+        resolved: Resuelto
+        restorative_in_progress: Proceso restaurativo en curso
+        submitted: Enviado
+        triaged: Clasificado
+      closure_types:
+        no_action: Sin acción
+        protective_action: Medida de protección
+        restorative_agreement: Acuerdo restaurativo
+        unsupported: No compatible
+        voluntary_resolution: Resolución voluntaria
+      harm_levels:
+        high: Alto
+        low: Bajo
+        medium: Medio
+        urgent: Urgente
+      note_visibilities:
+        internal_only: Solo interno
+        participant_visible: Visible para participantes
+      report_categories:
+        boundary_violation: Violación de límites
+        discrimination: Discriminación
+        fraud: Fraude
+        harassment: Acoso
+        hate_speech: Discurso de odio
+        impersonation: Suplantación de identidad
+        misinformation: Desinformación
+        other: Otro
+        privacy_violation: Violación de privacidad
+        spam_or_scam: Spam o estafa
+      reporter_visible_statuses:
+        closed_no_action: Cerrado sin acción
+        needs_reporter_followup: Se necesita más información de tu parte
+        protective_action_in_effect: Medida de protección en curso
+        resolved: Resuelto
+        restorative_in_progress: Proceso restaurativo en curso
+        submitted: Enviado
+        triaged: En revisión
+        under_review: En revisión
+      requested_outcomes:
+        boundary_support: Apoyo para establecer límites
+        community_accountability: Rendición de cuentas comunitaria
+        content_review: Revisión de contenido
+        mediated_conversation: Conversación mediada
+        other: Otro
+        temporary_protection: Protección temporal
+      shared:
+        any: Cualquiera
+    safety_cases:
+      attributes:
+        accountability_check: Verificación de rendición de cuentas y cuidado institucional
+        action_details: Detalles de la medida
+        action_reason: Motivo de la medida
+        action_status: Estado de la medida
+        action_type: Tipo de medida
+        agreement_summary: Resumen del acuerdo
+        care_check: Verificación de cuidado y resiliencia
+        closure_summary: Resumen de cierre
+        closure_type: Tipo de cierre
+        commitments: Compromisos
+        expires_at: Expira el
+        harmed_party_consented: La parte afectada dio su consentimiento
+        lane: Canal
+        love_inclusivity_check: Verificación de amor e inclusión
+        note_body: Nota
+        note_visibility: Visibilidad de la nota
+        reporter: Persona que reporta
+        responsible_party_consented: La parte responsable dio su consentimiento
+        review_at: Revisar el
+        solidarity_check: Verificación de cooperación y solidaridad
+        status: Estado del caso
+      index:
+        filter: Filtrar
+        title: Casos de seguridad
+      notices:
+        updated: El caso de seguridad fue actualizado.
+      show:
+        actions: Medidas de protección y rendición de cuentas
+        add_action: Registrar medida
+        add_agreement: Crear acuerdo
+        add_note: Agregar nota
+        agreements: Acuerdos restaurativos
+        back: Volver a la cola
+        intake: Recepción del reporte
+        manage: Gestión del caso
+        notes: Notas internas
+        title: Caso de seguridad
+        update_agreement: Actualizar acuerdo
+        update_case: Actualizar caso
+        values_review: Revisión de valores
+        values_review_placeholder: Explica la revisión de valores para esta medida
+    safety_notes:
+      notices:
+        created: Se agregó una nota al caso.
     search:
       all: Todo
       page_title: Resultados de búsqueda para "%{query}"

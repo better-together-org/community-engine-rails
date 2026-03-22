@@ -37,7 +37,9 @@ module BetterTogether
 
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
-          scope.includes(:pages).order('created_at DESC').all
+          scope.includes(:pages).order(
+            BetterTogether::Content::Block.arel_table[:created_at].desc
+          ).all
         end
       end
     end

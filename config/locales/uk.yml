@@ -863,26 +863,6 @@ uk:
           empty: Немає спільнот для відображення.
         events_block:
           empty: Немає подій для відображення.
-        navigation_area_block:
-          not_found: Область навігації не знайдено.
-          select_prompt: "— Виберіть область навігації —"
-        people_block:
-          empty: Немає людей для відображення.
-        posts_block:
-          empty: Немає публікацій для відображення.
-        resource_block:
-          all_communities: Усі спільноти (на рівні платформи)
-          resource_ids_help: Якщо встановлено, відображатимуться лише ці записи,
-            ігноруючи область спільноти та порядок.
-          resource_ids_placeholder: Залиште порожнім для відображення останніх записів
-        statistics_block:
-          stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
-            "icon" (клас Font Awesome).
-        video_block:
-          missing_url: URL відео не налаштовано.
-          title: Відеопрогравач YouTube
-          url_help: Приймає URL YouTube, Vimeo або будь-який прямий URL вбудовування.
-        view_more: Переглянути все
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -908,9 +888,29 @@ uk:
               (наприклад, privacy.en.md, privacy.es.md, privacy.fr.md) і повертається
               до базового файлу, якщо не знайдено.
             preview_placeholder: Попередній перегляд з'явиться тут...
+        navigation_area_block:
+          not_found: Область навігації не знайдено.
+          select_prompt: "— Виберіть область навігації —"
+        people_block:
+          empty: Немає людей для відображення.
+        posts_block:
+          empty: Немає публікацій для відображення.
+        resource_block:
+          all_communities: Усі спільноти (на рівні платформи)
+          resource_ids_help: Якщо встановлено, відображатимуться лише ці записи, ігноруючи
+            область спільноти та порядок.
+          resource_ids_placeholder: Залиште порожнім для відображення останніх записів
+        statistics_block:
+          stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
+            "icon" (клас Font Awesome).
         template:
           default: Типовий шаблон
           host_community_contact_details: Контактні дані спільноти-хоста
+        video_block:
+          missing_url: URL відео не налаштовано.
+          title: Відеопрогравач YouTube
+          url_help: Приймає URL YouTube, Vimeo або будь-який прямий URL вбудовування.
+        view_more: Переглянути все
       mermaid_diagram:
         help:
           auto_height: Якщо увімкнено, висота діаграми автоматично підлаштовується
@@ -1738,9 +1738,26 @@ uk:
           metrics_types: Типи метрик
           page_views: Перегляди сторінок
           reports: Звіти
+          search_health: Стан пошуку
           search_queries: Пошуки
           shares: Поширення
           users: Users
+        search_health:
+          backend: Backend
+          db_count: Кількість у БД
+          db_documents: Документи БД
+          drift: Розбіжність
+          drift_visualization: Візуалізація розбіжності
+          generated_at: Згенеровано
+          index_count: Кількість в індексі
+          index_documents: Індексовані документи
+          index_name: Індекс
+          indices: Індекси
+          model: Модель
+          status_label: Статус
+          store_size: Розмір сховища
+          total_drift: Загальна розбіжність
+          unmanaged_models: Некеровані пошукові моделі
         title: Звіти метрик
         unknown_type: Невідомо
       shares:
@@ -2045,167 +2062,6 @@ uk:
         device-permissions: Device-permissions
         images: Images
         preferences: Preferences
-    reports:
-      actions:
-        report: Поскаржитися
-      attributes:
-        category: Категорія
-        harm_level: Рівень шкоди
-        requested_outcome: Бажаний результат
-        reason: Короткий опис
-        private_details: Приватні деталі для команди безпеки
-      errors:
-        already_reported_by_you: вже було повідомлено вами
-      index:
-        empty: Ви ще не надсилали жодних звітів про безпеку.
-        new: Новий звіт
-        title: Мої звіти про безпеку
-      new:
-        category_help: Виберіть варіант, який найкраще відповідає шкоді або проблемі, про яку ви повідомляєте.
-        consent_to_contact: Ви можете зв'язатися зі мною щодо цього звіту
-        consent_to_restorative_process: Ви можете розглянути відновні варіанти, якщо це доречно
-        error_summary: Будь ласка, виправте такі проблеми.
-        harm_level_help: Повідомте, наскільки терміновою або серйозною здається ситуація, щоб команда безпеки могла правильно визначити пріоритет.
-        intro: Використовуйте цю форму, щоб попросити про підтримку з безпеки, підтримку меж, відповідальність або терміновий захист.
-        preferences_help: Повідомте, чи можемо ми з вами зв'язатися, чи хочете ви, щоб розглядалися відновні варіанти, і чи є у цьому звіті ризик помсти.
-        preferences_title: Параметри безпеки
-        private_details_help: Додайте будь-який контекст, повторювану поведінку, дати або докази, які мають залишитися в команди безпеки.
-        reason_help: Коротко опишіть, що сталося. Спочатку зосередьтеся на головному.
-        requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
-        retaliation_risk: Я хвилююся щодо помсти або ескалації
-        submit: Надіслати звіт
-        title: Повідомити про проблему безпеки
-        urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця форма призначена для подальшого супроводу спільнотою та платформою, а не для екстреного реагування.
-        urgent_title: "Якщо ви перебуваєте в безпосередній небезпеці:"
-      notices:
-        created: Звіт успішно надіслано.
-      show:
-        back: Назад до звітів
-        pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з вами залежно від ваших параметрів згоди.
-        status: Поточний статус
-        summary: Підсумок справи
-        title: Звіт про безпеку
-    safety:
-      action_statuses:
-        active: Активна
-        cancelled: Скасована
-        completed: Завершена
-      action_types:
-        contact_restriction: Обмеження контакту
-        content_hidden: Контент приховано
-        content_removed: Контент видалено
-        event_restriction: Обмеження подій
-        messaging_restriction: Обмеження повідомлень
-        restorative_referral: Направлення до відновного процесу
-        temporary_suspension: Тимчасове призупинення
-        watch_flag: Позначка спостереження
-      agreement_statuses:
-        active: Активна
-        breached: Порушена
-        completed: Завершена
-        proposed: Запропонована
-        withdrawn: Відкликана
-      case_lanes:
-        administrative: Адміністративна
-        immediate_safety: Негайна безпека
-        restorative: Відновна
-      case_statuses:
-        closed_no_action: Закрито без дій
-        needs_reporter_followup: Потрібен додатковий зв'язок з тим, хто повідомив
-        protective_action_in_effect: Захисний захід діє
-        resolved: Вирішено
-        restorative_in_progress: Відновний процес триває
-        submitted: Подано
-        triaged: Первинно розглянуто
-      closure_types:
-        no_action: Без дій
-        protective_action: Захисний захід
-        restorative_agreement: Відновна угода
-        unsupported: Не підтримується
-        voluntary_resolution: Добровільне вирішення
-      harm_levels:
-        high: Високий
-        low: Низький
-        medium: Середній
-        urgent: Терміновий
-      note_visibilities:
-        internal_only: Лише внутрішньо
-        participant_visible: Видимо для учасників
-      report_categories:
-        boundary_violation: Порушення меж
-        discrimination: Дискримінація
-        fraud: Шахрайство
-        harassment: Домагання
-        hate_speech: Мова ненависті
-        impersonation: Видавання себе за іншу особу
-        misinformation: Дезінформація
-        other: Інше
-        privacy_violation: Порушення приватності
-        spam_or_scam: Спам або шахрайство
-      reporter_visible_statuses:
-        closed_no_action: Закрито без дій
-        needs_reporter_followup: Потрібно більше інформації від вас
-        protective_action_in_effect: Захисний захід діє
-        resolved: Вирішено
-        restorative_in_progress: Відновний процес триває
-        submitted: Подано
-        triaged: На розгляді
-        under_review: На розгляді
-      requested_outcomes:
-        boundary_support: Підтримка у встановленні меж
-        community_accountability: Спільнотна відповідальність
-        content_review: Перегляд контенту
-        mediated_conversation: Посередницька розмова
-        other: Інше
-        temporary_protection: Тимчасовий захист
-      shared:
-        any: Будь-який
-    safety_cases:
-      attributes:
-        accountability_check: Перевірка підзвітності та відповідального ставлення
-        action_details: Деталі заходу
-        action_reason: Причина заходу
-        action_status: Статус заходу
-        action_type: Тип заходу
-        agreement_summary: Підсумок угоди
-        care_check: Перевірка турботи та стійкості
-        closure_summary: Підсумок закриття
-        closure_type: Тип закриття
-        commitments: Зобов'язання
-        expires_at: Діє до
-        harmed_party_consented: Постраждала сторона надала згоду
-        lane: Напрям
-        love_inclusivity_check: Перевірка любові та інклюзивності
-        note_body: Нотатка
-        note_visibility: Видимість нотатки
-        reporter: Людина, яка повідомила
-        responsible_party_consented: Відповідальна сторона надала згоду
-        review_at: Переглянути
-        solidarity_check: Перевірка співпраці та солідарності
-        status: Статус справи
-      index:
-        filter: Фільтрувати
-        title: Справи безпеки
-      notices:
-        updated: Справу безпеки оновлено.
-      show:
-        actions: Захисні та відповідальні заходи
-        add_action: Зафіксувати захід
-        add_agreement: Створити угоду
-        add_note: Додати нотатку
-        agreements: Відновні угоди
-        back: Назад до черги
-        intake: Прийом звіту
-        manage: Керування справою
-        notes: Внутрішні нотатки
-        title: Справа безпеки
-        update_agreement: Оновити угоду
-        update_case: Оновити справу
-        values_review: Огляд цінностей
-        values_review_placeholder: Поясніть оцінку цінностей для цього заходу
-    safety_notes:
-      notices:
-        created: До справи додано нотатку.
     person_block:
       cannot_block_manager: не може бути менеджером платформи
       cannot_block_self: не можете заблокувати себе
@@ -2222,7 +2078,8 @@ uk:
           zero: Нікого не заблоковано
         blocked_on: Заблоковано %{date}
         no_blocked_people: Ви ще нікого не заблокували.
-        no_blocked_people_description: Коли ви блокуєте людину, вона не зможе взаємодіяти з вами.
+        no_blocked_people_description: Коли ви блокуєте людину, вона не зможе взаємодіяти
+          з вами.
         search: Пошук
         search_placeholder: Шукати заблокованих людей...
         title: Заблоковані люди
@@ -2230,7 +2087,8 @@ uk:
         unblock_confirmation: Ви впевнені, що хочете розблокувати цю людину?
       new:
         back_to_list: Назад до списку заблокованих
-        blocked_person_help: Виберіть людину, яку ви хочете заблокувати, з результатів пошуку.
+        blocked_person_help: Виберіть людину, яку ви хочете заблокувати, з результатів
+          пошуку.
         blocked_person_label: Людина для блокування
         blocked_person_placeholder: Шукати людину для блокування...
         blocked_person_prompt: Виберіть людину для блокування
@@ -2376,6 +2234,56 @@ uk:
         свій електронний лист із запрошенням.
       invitation_required: Для реєстрації на цій платформі потрібен код запрошення
     remove: Видалити
+    reports:
+      actions:
+        report: Поскаржитися
+      attributes:
+        category: Категорія
+        harm_level: Рівень шкоди
+        private_details: Приватні деталі для команди безпеки
+        reason: Короткий опис
+        requested_outcome: Бажаний результат
+      errors:
+        already_reported_by_you: вже було повідомлено вами
+      index:
+        empty: Ви ще не надсилали жодних звітів про безпеку.
+        new: Новий звіт
+        title: Мої звіти про безпеку
+      new:
+        category_help: Виберіть варіант, який найкраще відповідає шкоді або проблемі,
+          про яку ви повідомляєте.
+        consent_to_contact: Ви можете зв'язатися зі мною щодо цього звіту
+        consent_to_restorative_process: Ви можете розглянути відновні варіанти, якщо
+          це доречно
+        error_summary: Будь ласка, виправте такі проблеми.
+        harm_level_help: Повідомте, наскільки терміновою або серйозною здається ситуація,
+          щоб команда безпеки могла правильно визначити пріоритет.
+        intro: Використовуйте цю форму, щоб попросити про підтримку з безпеки, підтримку
+          меж, відповідальність або терміновий захист.
+        preferences_help: Повідомте, чи можемо ми з вами зв'язатися, чи хочете ви,
+          щоб розглядалися відновні варіанти, і чи є у цьому звіті ризик помсти.
+        preferences_title: Параметри безпеки
+        private_details_help: Додайте будь-який контекст, повторювану поведінку, дати
+          або докази, які мають залишитися в команди безпеки.
+        reason_help: Коротко опишіть, що сталося. Спочатку зосередьтеся на головному.
+        requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди
+          безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
+        retaliation_risk: Я хвилююся щодо помсти або ескалації
+        submit: Надіслати звіт
+        title: Повідомити про проблему безпеки
+        urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця
+          форма призначена для подальшого супроводу спільнотою та платформою, а не
+          для екстреного реагування.
+        urgent_title: 'Якщо ви перебуваєте в безпосередній небезпеці:'
+      notices:
+        created: Звіт успішно надіслано.
+      show:
+        back: Назад до звітів
+        pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з
+          вами залежно від ваших параметрів згоди.
+        status: Поточний статус
+        summary: Підсумок справи
+        title: Звіт про безпеку
     resource_permissions:
       actions:
         create: Створити
@@ -2407,6 +2315,127 @@ uk:
       protection_status:
         protected: Захищено
         unprotected: Незахищено
+    safety:
+      action_statuses:
+        active: Активна
+        cancelled: Скасована
+        completed: Завершена
+      action_types:
+        contact_restriction: Обмеження контакту
+        content_hidden: Контент приховано
+        content_removed: Контент видалено
+        event_restriction: Обмеження подій
+        messaging_restriction: Обмеження повідомлень
+        restorative_referral: Направлення до відновного процесу
+        temporary_suspension: Тимчасове призупинення
+        watch_flag: Позначка спостереження
+      agreement_statuses:
+        active: Активна
+        breached: Порушена
+        completed: Завершена
+        proposed: Запропонована
+        withdrawn: Відкликана
+      case_lanes:
+        administrative: Адміністративна
+        immediate_safety: Негайна безпека
+        restorative: Відновна
+      case_statuses:
+        closed_no_action: Закрито без дій
+        needs_reporter_followup: Потрібен додатковий зв'язок з тим, хто повідомив
+        protective_action_in_effect: Захисний захід діє
+        resolved: Вирішено
+        restorative_in_progress: Відновний процес триває
+        submitted: Подано
+        triaged: Первинно розглянуто
+      closure_types:
+        no_action: Без дій
+        protective_action: Захисний захід
+        restorative_agreement: Відновна угода
+        unsupported: Не підтримується
+        voluntary_resolution: Добровільне вирішення
+      harm_levels:
+        high: Високий
+        low: Низький
+        medium: Середній
+        urgent: Терміновий
+      note_visibilities:
+        internal_only: Лише внутрішньо
+        participant_visible: Видимо для учасників
+      report_categories:
+        boundary_violation: Порушення меж
+        discrimination: Дискримінація
+        fraud: Шахрайство
+        harassment: Домагання
+        hate_speech: Мова ненависті
+        impersonation: Видавання себе за іншу особу
+        misinformation: Дезінформація
+        other: Інше
+        privacy_violation: Порушення приватності
+        spam_or_scam: Спам або шахрайство
+      reporter_visible_statuses:
+        closed_no_action: Закрито без дій
+        needs_reporter_followup: Потрібно більше інформації від вас
+        protective_action_in_effect: Захисний захід діє
+        resolved: Вирішено
+        restorative_in_progress: Відновний процес триває
+        submitted: Подано
+        triaged: На розгляді
+        under_review: На розгляді
+      requested_outcomes:
+        boundary_support: Підтримка у встановленні меж
+        community_accountability: Спільнотна відповідальність
+        content_review: Перегляд контенту
+        mediated_conversation: Посередницька розмова
+        other: Інше
+        temporary_protection: Тимчасовий захист
+      shared:
+        any: Будь-який
+    safety_cases:
+      attributes:
+        accountability_check: Перевірка підзвітності та відповідального ставлення
+        action_details: Деталі заходу
+        action_reason: Причина заходу
+        action_status: Статус заходу
+        action_type: Тип заходу
+        agreement_summary: Підсумок угоди
+        care_check: Перевірка турботи та стійкості
+        closure_summary: Підсумок закриття
+        closure_type: Тип закриття
+        commitments: Зобов'язання
+        expires_at: Діє до
+        harmed_party_consented: Постраждала сторона надала згоду
+        lane: Напрям
+        love_inclusivity_check: Перевірка любові та інклюзивності
+        note_body: Нотатка
+        note_visibility: Видимість нотатки
+        reporter: Людина, яка повідомила
+        responsible_party_consented: Відповідальна сторона надала згоду
+        review_at: Переглянути
+        solidarity_check: Перевірка співпраці та солідарності
+        status: Статус справи
+      index:
+        filter: Фільтрувати
+        title: Справи безпеки
+      notices:
+        updated: Справу безпеки оновлено.
+      show:
+        actions: Захисні та відповідальні заходи
+        add_action: Зафіксувати захід
+        add_agreement: Створити угоду
+        add_note: Додати нотатку
+        agreements: Відновні угоди
+        back: Назад до черги
+        intake: Прийом звіту
+        manage: Керування справою
+        notes: Внутрішні нотатки
+        title: Справа безпеки
+        update_agreement: Оновити угоду
+        update_case: Оновити справу
+        values_review: Огляд цінностей
+        values_review_placeholder: Поясніть оцінку цінностей для цього заходу
+    safety_notes:
+      notices:
+        created: До справи додано нотатку.
     search:
       all: Все
       page_title: Результати пошуку для "%{query}"
