@@ -41,7 +41,10 @@ module BetterTogether
 
       def build_scope(from_date, to_date)
         scope = BetterTogether::Metrics::PageView.all
-        scope = scope.where('viewed_at >= ?', safe_parse_date(from_date)) if from_date.present? && safe_parse_date(from_date)
+        if from_date.present? && safe_parse_date(from_date)
+          scope = scope.where('viewed_at >= ?',
+                              safe_parse_date(from_date))
+        end
         scope = scope.where('viewed_at <= ?', safe_parse_date(to_date)) if to_date.present? && safe_parse_date(to_date)
         scope
       end
@@ -57,7 +60,7 @@ module BetterTogether
         nil
       end
 
-      def build_summary(scope) # rubocop:disable Metrics/MethodLength
+      def build_summary(scope)
         {
           total_page_views: scope.count,
           unique_pages: scope.distinct.count(:page_url),

@@ -1805,9 +1805,26 @@ en:
           metrics_types: Metrics types
           page_views: Page Views
           reports: Reports
+          search_health: Search Health
           search_queries: Search queries
           shares: Shares
           users: Users
+        search_health:
+          backend: Backend
+          db_count: DB Count
+          db_documents: DB Documents
+          drift: Drift
+          drift_visualization: Drift Visualization
+          generated_at: Generated at
+          index_count: Index Count
+          index_documents: Indexed Documents
+          index_name: Index
+          indices: Indices
+          model: Model
+          status_label: Status
+          store_size: Store Size
+          total_drift: Total Drift
+          unmanaged_models: Unmanaged searchable models
         title: Metrics Reports
         unknown_type: Unknown
       shares:

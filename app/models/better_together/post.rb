@@ -76,8 +76,8 @@ module BetterTogether
     def as_indexed_json(_options = {})
       as_json(
         only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
-          a.starts_with?('title' || a.starts_with?('slug') || a.starts_with?('content'))
+        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
+          attribute.start_with?('title', 'slug', 'content')
         end]
       )
     end

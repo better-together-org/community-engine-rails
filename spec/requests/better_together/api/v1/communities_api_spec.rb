@@ -253,7 +253,9 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
     end
 
     context 'when deleting protected community' do
-      let(:protected_community) { create(:better_together_community, protected: true, creator: platform_manager_user.person) }
+      let(:protected_community) do
+        create(:better_together_community, protected: true, creator: platform_manager_user.person)
+      end
       let(:url) { "/api/v1/communities/#{protected_community.id}" }
 
       before { delete url, headers: platform_manager_headers }

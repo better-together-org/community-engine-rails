@@ -1,5 +1,8 @@
 inherit_from: .rubocop_todo.yml
 
+require:
+  - ./rubocop/cop/better_together/no_raw_sql_in_queries
+
 AllCops:
   Exclude:
     - 'bin/*'
@@ -7,7 +10,9 @@ AllCops:
     - 'spec/dummy/db/schema.rb'
     - 'db/schema.rb'
     - 'vendor/**/*'
+    - 'tmp/**/*'               # CI compat copies and build artifacts
     - 'spec/integration/**/*'  # rswag specs - never run rubocop on these
+    - 'rubocop/**/*'           # custom cop source — not subject to self-inspection
   NewCops: enable
   TargetRubyVersion: 3.4
 plugins:

@@ -24,6 +24,12 @@ module BetterTogether
         "better_together/content/blocks/#{block_name}"
       end
 
+      # Pundit policy lookup — all STI subclasses share BlockPolicy.
+      # Without this, Pundit tries to find e.g. AlertBlockPolicy and raises.
+      def self.policy_class
+        BetterTogether::Content::BlockPolicy
+      end
+
       # Code to be run for each child class
       def self.inherited(subclass)
         super

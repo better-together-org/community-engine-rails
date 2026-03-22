@@ -24,9 +24,9 @@ module BetterTogether
     def execute_elasticsearch_action(record, action)
       case action
       when :index
-        record.__elasticsearch__.index_document
+        BetterTogether::Search.backend.index_record(record)
       when :delete
-        record.__elasticsearch__.delete_document
+        BetterTogether::Search.backend.delete_record(record)
       else
         raise ArgumentError, "Unknown action: #{action}"
       end

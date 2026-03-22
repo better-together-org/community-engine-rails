@@ -1829,9 +1829,26 @@ es:
           metrics_types: Tipos de métricas
           page_views: Vistas de Página
           reports: Reportes
+          search_health: Estado de la búsqueda
           search_queries: Búsquedas
           shares: Compartidos
           users: Users
+        search_health:
+          backend: Backend
+          db_count: Conteo BD
+          db_documents: Documentos BD
+          drift: Desviación
+          drift_visualization: Visualización de desviación
+          generated_at: Generado el
+          index_count: Conteo del índice
+          index_documents: Documentos indexados
+          index_name: Índice
+          indices: Índices
+          model: Modelo
+          status_label: Estado
+          store_size: Tamaño de almacenamiento
+          total_drift: Desviación total
+          unmanaged_models: Modelos buscables no gestionados
         title: Informes de Métricas
         unknown_type: Desconocido
       shares:
