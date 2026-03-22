@@ -36,12 +36,13 @@ module BetterTogether
     private
 
     def eligible_connections
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
+      sharing_policies = Arel.sql("settings->>'content_sharing_policy' IN ('mirror_network_feed', 'mirrored_publish_back')")
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
       ::BetterTogether::PlatformConnection.active
                                           .content_read_capable
                                           .not_syncing
-                                          # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
-                                          .where(Arel.sql("settings->>'content_sharing_policy' IN ('mirror_network_feed', 'mirrored_publish_back')"))
-                                          # rubocop:enable BetterTogether/NoRawSqlInQueries
+                                          .where(sharing_policies)
     end
 
     # Atomically release the Redis lock only if this job still owns it.
