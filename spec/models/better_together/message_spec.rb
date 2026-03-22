@@ -52,7 +52,7 @@ RSpec.describe BetterTogether::Message do
   describe 'Class Methods' do
     describe '.permitted_attributes' do
       it 'returns an array with expected attributes' do
-        expect(described_class.permitted_attributes).to match_array(%i[id content _destroy])
+        expect(described_class.permitted_attributes).to match_array(%i[id content e2e_encrypted e2e_protocol e2e_version _destroy])
       end
     end
   end

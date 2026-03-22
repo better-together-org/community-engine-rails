@@ -1,0 +1,34 @@
+<div class="modal fade"
+     id="e2ePassphraseModal"
+     tabindex="-1"
+     aria-hidden="true"
+     data-controller="better-together--e2e-passphrase-modal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><%= t('better_together.e2e.modal.title', default: 'Secure Messaging') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p data-better-together--e2e-passphrase-modal-target="message"></p>
+        <input type="password"
+               class="form-control mt-2"
+               aria-label="<%= t('better_together.e2e.modal.passphrase_label', default: 'Passphrase') %>"
+               data-better-together--e2e-passphrase-modal-target="input"
+               autocomplete="off" />
+      </div>
+      <div class="modal-footer">
+        <button type="button"
+                class="btn btn-secondary"
+                data-action="click->better-together--e2e-passphrase-modal#cancel">
+          <%= t('better_together.e2e.modal.cancel', default: 'Cancel') %>
+        </button>
+        <button type="button"
+                class="btn btn-primary"
+                data-action="click->better-together--e2e-passphrase-modal#submit">
+          <%= t('better_together.e2e.modal.ok', default: 'OK') %>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

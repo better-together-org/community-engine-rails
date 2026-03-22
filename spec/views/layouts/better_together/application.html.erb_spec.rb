@@ -28,7 +28,12 @@ RSpec.describe 'layouts/better_together/application' do
     allow(view).to receive(:render).with('layouts/better_together/footer').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/mobile_bar').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/custom_body_javascript').and_return('')
-    allow(view).to receive(:base_url).and_return('http://test.host')
+    # Helpers / routes added to the layout on this branch:
+    allow(view).to receive_messages(stimulus_debug_enabled?: false, robots_meta_tag: '', sitemap_index_path: '/sitemap.xml',
+                                    sitemap_path: '/sitemap.xml')
+    allow(view).to receive(:render)
+      .with('better_together/e2e/passphrase_modal').and_return('')
+    allow(view).to receive_messages(current_user: nil, base_url: 'http://test.host')
   end
 
   it 'renders canonical and hreflang links by default' do

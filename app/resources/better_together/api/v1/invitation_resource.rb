@@ -8,6 +8,8 @@ module BetterTogether
       class InvitationResource < ::BetterTogether::Api::ApplicationResource
         model_name '::BetterTogether::Invitation'
 
+        # created_at and updated_at are inherited from ApplicationResource — do not redeclare.
+
         # Attributes
         attributes :status, :locale, :invitee_email
         attribute :invitation_type

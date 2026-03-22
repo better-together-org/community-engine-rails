@@ -41,6 +41,20 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    # Generates a short-lived Devise JWT for the current web-session user so that
+    # in-browser JavaScript can call Devise JWT-protected API endpoints (e.g.
+    # /api/v1/people/:id/key_backup) without re-authenticating via the API.
+    # Returns nil when no user is signed in or JWT generation fails.
+    def current_user_api_token
+      return nil unless user_signed_in? && current_user
+
+      Warden::JWTAuth::UserEncoder.new.call(current_user, :api_user, nil).first
+    rescue Devise::MissingWarden, StandardError
+      # Devise::MissingWarden is raised in view specs where the Warden
+      # middleware is not present in the stack.
+      nil
+    end
+
     def default_url_options
       super.merge(resolved_url_options).merge(locale: I18n.locale)
     end
