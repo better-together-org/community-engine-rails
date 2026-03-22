@@ -58,6 +58,10 @@ module BetterTogether
     # exactly one place (PersonSeedPolicy::Scope). Any seed ID not belonging
     # to this person raises RecordNotFound (404) before Pundit even runs.
     def set_seed
+      # current_user is nil for unauthenticated requests; Pundit authorization
+      # in the action body will raise NotAuthorizedError → redirect to sign-in.
+      return unless current_user
+
       person = current_user.person
       raise ActiveRecord::RecordNotFound unless person
 

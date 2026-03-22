@@ -47,6 +47,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 ## Commands
 
 ### Test Execution Guidelines (CRITICAL)
+- **All CI failures are the agent's responsibility.** There is no such thing as a "pre-existing" or "unrelated" failure. If a test fails on your branch, fix it before declaring the task complete — regardless of when or how the failure was introduced.
 - **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec prspec spec`) until ALL targeted tests pass individually**
 - **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources (even with parallel execution)
 - **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work

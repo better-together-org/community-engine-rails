@@ -147,35 +147,25 @@ RSpec.configure do |config|
       attempts = 0
       begin
         yield
-      rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique,
-             ActiveRecord::StaleObjectError, ActiveRecord::InvalidForeignKey => e
+      rescue StandardError => e
         attempts += 1
         is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
                              e.is_a?(ActiveRecord::RecordNotUnique)
-        is_stale_error = e.is_a?(ActiveRecord::StaleObjectError)
-        is_foreign_key_error = e.is_a?(ActiveRecord::InvalidForeignKey)
-        if attempts < times
-          # In parallel execution, another worker may have already seeded the data.
-          # If it's a duplicate key error, just continue - data is already seeded.
-          if is_duplicate_error
-            Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
-          elsif is_foreign_key_error
-            Rails.logger.debug "Transient FK issue during parallel seed, retrying: #{e.message}"
-            retry
-          elsif is_stale_error
-            Rails.logger.debug "Stale object during parallel seed, retrying: #{e.message}"
-            retry
-          else
-            retry
-          end
-        elsif is_duplicate_error
-        # On final attempt, accept duplicate errors as success (data exists).
-        # For non-duplicate errors, log and continue rather than aborting
-        # before(:suite) — a single builder failure must not prevent the
-        # remaining builders (e.g. SetupWizardBuilder) from running.
-        # already logged above
+        e.is_a?(ActiveRecord::Deadlocked) ||
+          e.is_a?(ActiveRecord::StaleObjectError) ||
+          e.is_a?(ActiveRecord::InvalidForeignKey) ||
+          e.is_a?(ActiveRecord::StatementInvalid)
+
+        if is_duplicate_error
+          # Another parallel worker already seeded this data — that's fine.
+          Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+        elsif attempts < times
+          retry
         else
+          warn "[build_with_retry] FAILED after #{times} attempts: #{e.class}: #{e.message}"
           Rails.logger.warn "build_with_retry: giving up after #{times} attempts (#{e.class}: #{e.message})"
+          # Do NOT re-raise — a single builder failure must not abort before(:suite)
+          # and prevent SetupWizardBuilder (and others) from running.
         end
       end
     end

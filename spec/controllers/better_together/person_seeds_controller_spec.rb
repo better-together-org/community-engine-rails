@@ -84,7 +84,9 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
       before { sign_out user }
 
       it 'redirects to sign-in' do
-        get :show, params: { locale: locale, id: creator_seed.id }
+        # Use a stub UUID — the controller redirects before any seed lookup,
+        # so we don't need (or want) a real seed record here.
+        get :show, params: { locale: locale, id: SecureRandom.uuid }
         expect(response).to have_http_status(:redirect)
       end
     end
@@ -168,8 +170,11 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
     end
 
     it 'does not destroy the other person\'s seed on 404' do
+      # Pin other_seed before measuring count — lazy evaluation inside the
+      # expect block would create the record mid-measurement, inflating the count.
+      other_seed_id = other_seed.id
       expect do
-        delete :destroy, params: { locale: locale, id: other_seed.id }
+        delete :destroy, params: { locale: locale, id: other_seed_id }
       end.not_to change(BetterTogether::Seed, :count)
     end
 
@@ -177,7 +182,9 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
       before { sign_out user }
 
       it 'redirects to sign-in' do
-        delete :destroy, params: { locale: locale, id: creator_seed.id }
+        # Use a stub UUID — the controller redirects before any seed lookup,
+        # so we don't need (or want) a real seed record here.
+        delete :destroy, params: { locale: locale, id: SecureRandom.uuid }
         expect(response).to have_http_status(:redirect)
       end
     end
