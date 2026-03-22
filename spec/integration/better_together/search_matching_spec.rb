@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Real Elasticsearch search matching', type: :integration do
   let(:backend_url) { ENV.fetch('ELASTICSEARCH_URL', 'http://host.docker.internal:9200') }
+  let(:backend_uri) { URI.parse(backend_url) }
   let(:page_index_name) { "better_together-pages-search-spec-#{SecureRandom.hex(6)}" }
   let(:post_index_name) { "better_together-posts-search-spec-#{SecureRandom.hex(6)}" }
   let(:markdown_token) { 'alpha-markdown-orbit-1001' }
@@ -104,7 +105,13 @@ RSpec.describe 'Real Elasticsearch search matching', type: :integration do
 
   def allowed_elasticsearch_request?
     lambda do |uri|
-      [['elasticsearch', 9200], ['host.docker.internal', 9200]].include?([uri.host, uri.port])
+      allowed_hosts = [
+        [backend_uri.host, backend_uri.port],
+        ['elasticsearch', 9200],
+        ['host.docker.internal', 9200]
+      ]
+
+      allowed_hosts.include?([uri.host, uri.port])
     end
   end
 
