@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherPlatformConnections < ActiveRecord::Migration[7.2]
+class CreateBetterTogetherPlatformConnectionsV1 < ActiveRecord::Migration[7.2]
   def change
     create_bt_table :platform_connections do |t|
       t.references :source_platform, null: false, type: :uuid,
