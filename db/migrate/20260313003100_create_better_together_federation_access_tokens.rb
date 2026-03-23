@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherFederationAccessTokens < ActiveRecord::Migration[7.2]
+class CreateBetterTogetherFederationAccessTokensV1 < ActiveRecord::Migration[7.2]
   def change
     create_bt_table :federation_access_tokens do |t|
       t.references :platform_connection,
