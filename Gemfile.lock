@@ -474,7 +474,7 @@ GEM
     i18n_generators (2.2.2)
       activerecord (>= 3.0.0)
       railties (>= 3.0.0)
-    icalendar (2.12.1)
+    icalendar (2.12.2)
       base64
       ice_cube (~> 0.16)
       logger
