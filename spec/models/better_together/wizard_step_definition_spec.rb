@@ -52,6 +52,8 @@ RSpec.describe BetterTogether::WizardStepDefinition do
       end
     end
 
+    it_behaves_like 'a seedable model'
+
     describe '#create_wizard_step' do
       it 'creates a new wizard step and saves it' do
         wizard_step = existing_wizard_step_definition.create_wizard_step

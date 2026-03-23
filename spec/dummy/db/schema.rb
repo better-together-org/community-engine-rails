@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_21_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1466,12 +1466,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
     t.jsonb "settings", default: {}, null: false
     t.uuid "creator_id"
     t.boolean "external", default: false, null: false
+    t.uuid "storage_configuration_id"
     t.index ["community_id"], name: "by_platform_community"
     t.index ["creator_id"], name: "by_better_together_platforms_creator"
     t.index ["external"], name: "index_better_together_platforms_on_external"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
     t.index ["privacy"], name: "by_platform_privacy"
+    t.index ["storage_configuration_id"], name: "index_better_together_platforms_on_storage_configuration_id"
     t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
   end
 
@@ -1725,6 +1727,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
     t.index ["contact_detail_id", "platform"], name: "index_bt_sma_on_contact_detail_and_platform", unique: true
     t.index ["contact_detail_id"], name: "idx_on_contact_detail_id_6380b64b3b"
     t.index ["privacy"], name: "by_better_together_social_media_accounts_privacy"
+  end
+
+  create_table "better_together_storage_configurations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "name", null: false
+    t.string "service_type", default: "local", null: false
+    t.string "endpoint"
+    t.string "bucket"
+    t.string "region"
+    t.string "access_key_id"
+    t.string "secret_access_key"
+    t.index ["platform_id"], name: "index_better_together_storage_configurations_on_platform_id"
+    t.index ["service_type"], name: "index_better_together_storage_configurations_on_service_type"
   end
 
   create_table "better_together_uploads", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2109,6 +2127,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_platforms", "better_together_storage_configurations", column: "storage_configuration_id", deferrable: :deferred
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
@@ -2123,8 +2142,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_16_000001) do
   add_foreign_key "better_together_safety_cases", "better_together_reports", column: "report_id"
   add_foreign_key "better_together_safety_notes", "better_together_people", column: "author_id"
   add_foreign_key "better_together_safety_notes", "better_together_safety_cases", column: "safety_case_id"
+  add_foreign_key "better_together_seed_plantings", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_seed_plantings", "better_together_seeds", column: "seed_id"
+  add_foreign_key "better_together_seeds", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_sitemaps", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
+  add_foreign_key "better_together_storage_configurations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_uploads", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_webhook_deliveries", "better_together_webhook_endpoints", column: "webhook_endpoint_id"
   add_foreign_key "better_together_webhook_endpoints", "better_together_communities", column: "community_id"
