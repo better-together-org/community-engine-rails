@@ -22,7 +22,7 @@
                    class: 'form-label' %>
     <%= form.select :service_type,
                     ::BetterTogether::StorageConfiguration.service_type_options,
-                    { include_blank: false },
+                    {},
                     class: 'form-select',
                     required: true,
                     data: { action: 'change->better-together--storage-configuration-form#toggleS3Fields' } %>

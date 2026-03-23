@@ -1,0 +1,92 @@
+<%= form_with(model: seed, class: 'form') do |form| %>
+  <%= turbo_frame_tag 'form_errors' %>
+
+  <% if seed.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <h4 class="alert-heading"><%= t('views.labels.please_correct') %></h4>
+      <ul class="mb-0">
+        <% seed.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :type, value: seed.type.presence || BetterTogether::Seed.name %>
+
+  <div class="row row-cols-1 row-cols-sm-2">
+    <div class="col mb-3">
+      <%= form.label :identifier, class: 'form-label' %>
+      <%= form.text_field :identifier,
+            class: "form-control#{' is-invalid' if seed.errors[:identifier].any?}",
+            placeholder: t('seeds.form.identifier_placeholder') %>
+      <% if seed.errors[:identifier].any? %>
+        <div class="invalid-feedback"><%= seed.errors[:identifier].join(', ') %></div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3">
+      <%= form.label :version, class: 'form-label' %>
+      <%= form.text_field :version,
+            class: "form-control#{' is-invalid' if seed.errors[:version].any?}",
+            placeholder: '1.0' %>
+      <% if seed.errors[:version].any? %>
+        <div class="invalid-feedback"><%= seed.errors[:version].join(', ') %></div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3">
+      <%= form.label :created_by, class: 'form-label' %>
+      <%= form.text_field :created_by,
+            class: "form-control#{' is-invalid' if seed.errors[:created_by].any?}" %>
+      <% if seed.errors[:created_by].any? %>
+        <div class="invalid-feedback"><%= seed.errors[:created_by].join(', ') %></div>
+      <% end %>
+    </div>
+
+    <div class="col mb-3">
+      <%= form.label :seeded_at, class: 'form-label' %>
+      <%= form.datetime_field :seeded_at,
+            class: "form-control#{' is-invalid' if seed.errors[:seeded_at].any?}" %>
+      <% if seed.errors[:seeded_at].any? %>
+        <div class="invalid-feedback"><%= seed.errors[:seeded_at].join(', ') %></div>
+      <% end %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= form.label :description, class: 'form-label' %>
+      <%= form.text_area :description, rows: 3,
+            class: "form-control#{' is-invalid' if seed.errors[:description].any?}" %>
+      <% if seed.errors[:description].any? %>
+        <div class="invalid-feedback"><%= seed.errors[:description].join(', ') %></div>
+      <% end %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= form.label :origin, class: 'form-label' %>
+      <small class="text-muted d-block mb-1"><%= t('seeds.form.json_hint') %></small>
+      <%= form.text_area :origin, rows: 4,
+            value: (JSON.pretty_generate(seed.origin) rescue seed.origin.to_json),
+            class: "form-control font-monospace#{' is-invalid' if seed.errors[:origin].any?}" %>
+      <% if seed.errors[:origin].any? %>
+        <div class="invalid-feedback"><%= seed.errors[:origin].join(', ') %></div>
+      <% end %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= form.label :payload, class: 'form-label' %>
+      <small class="text-muted d-block mb-1"><%= t('seeds.form.json_hint') %></small>
+      <%= form.text_area :payload, rows: 8,
+            value: (JSON.pretty_generate(seed.payload) rescue seed.payload.to_json),
+            class: "form-control font-monospace#{' is-invalid' if seed.errors[:payload].any?}" %>
+      <% if seed.errors[:payload].any? %>
+        <div class="invalid-feedback"><%= seed.errors[:payload].join(', ') %></div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-2">
+    <%= form.submit class: 'btn btn-primary' %>
+    <%= link_to t('globals.back_to_list'), seeds_path, class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

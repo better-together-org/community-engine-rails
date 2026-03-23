@@ -126,8 +126,30 @@ module AutomaticTestConfiguration # :nodoc:
       host_platform.update!(privacy: 'public', requires_invitation: false)
     end
 
-    wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
-    wizard.mark_completed
+    wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
+    unless wizard
+      warn "[configure_host_platform T=#{ENV.fetch('TEST_ENV_NUMBER', '1')}] " \
+           'wizard missing — seeding via SetupWizardBuilder'
+      begin
+        BetterTogether::SetupWizardBuilder.build(clear: false)
+        wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
+      rescue StandardError => e
+        warn "[configure_host_platform] SetupWizardBuilder failed: #{e.class}: #{e.message.first(200)}"
+      end
+      # Last resort: create minimal wizard directly if builder still didn't produce one
+      unless wizard
+        begin
+          wizard = BetterTogether::Wizard.create!(
+            name: 'Host Setup Wizard',
+            identifier: 'host_setup',
+            max_completions: 1
+          )
+        rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+          wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
+        end
+      end
+    end
+    wizard&.mark_completed if wizard&.persisted?
 
     platform_steward = BetterTogether::User.find_by(email: 'manager@example.test')
 
@@ -393,6 +415,12 @@ RSpec.configure do |config|
 
   config.after(:each, type: :feature) do
     ensure_clean_session
+  end
+
+  # Builder specs create Pages and navigation items that require a host platform.
+  # setup_host_platform_if_needed ensures the platform exists for every example.
+  config.before(:each, type: :builder) do |example|
+    setup_host_platform_if_needed(example)
   end
 
   # Run certain navigation steps after example-level lets have been evaluated

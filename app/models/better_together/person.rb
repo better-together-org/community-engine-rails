@@ -18,6 +18,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Seedable
     include TimezoneAttributeAliasing
     include Viewable
     include Metrics::Viewable

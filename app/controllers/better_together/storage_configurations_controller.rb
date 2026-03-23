@@ -34,6 +34,7 @@ module BetterTogether
 
       if @storage_configuration.save
         redirect_to platform_storage_configurations_path(@platform),
+                    status: :see_other,
                     notice: t('better_together.storage_configurations.created')
       else
         render :new, status: :unprocessable_entity
@@ -46,6 +47,7 @@ module BetterTogether
 
       if @storage_configuration.update(update_params)
         redirect_to platform_storage_configurations_path(@platform),
+                    status: :see_other,
                     notice: t('better_together.storage_configurations.updated')
       else
         render :edit, status: :unprocessable_entity
@@ -58,12 +60,14 @@ module BetterTogether
 
       if @platform.storage_configuration_id == @storage_configuration.id
         redirect_to platform_storage_configurations_path(@platform),
+                    status: :see_other,
                     alert: t('better_together.storage_configurations.cannot_destroy_active')
         return
       end
 
       @storage_configuration.destroy
       redirect_to platform_storage_configurations_path(@platform),
+                  status: :see_other,
                   notice: t('better_together.storage_configurations.destroyed')
     end
 
@@ -76,6 +80,7 @@ module BetterTogether
       rebind_active_storage_service(@platform.reload)
 
       redirect_to platform_storage_configurations_path(@platform),
+                  status: :see_other,
                   notice: t('better_together.storage_configurations.activated',
                             name: @storage_configuration.name)
     end
@@ -83,7 +88,9 @@ module BetterTogether
     private
 
     def set_platform
-      @platform = Platform.find(params[:platform_id])
+      # Routes use platform.to_param which returns the FriendlyId slug.
+      # Use Platform.friendly.find so FriendlyId + Mobility handle the i18n lookup.
+      @platform = Platform.friendly.find(params[:platform_id])
     end
 
     def set_storage_configuration
