@@ -17,8 +17,7 @@ class CreateBetterTogetherFederationAccessTokens < ActiveRecord::Migration[7.2]
 
     add_index :better_together_federation_access_tokens, :token_digest,
               unique: true, name: 'index_bt_federation_access_tokens_on_token_digest'
-
-    add_foreign_key :better_together_federation_access_tokens, :better_together_platform_connections,
-                    column: :platform_connection_id
+    # bt_references :platform_connection already adds the FK to
+    # better_together_platform_connections via create_bt_table; no explicit add_foreign_key needed.
   end
 end
