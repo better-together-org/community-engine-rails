@@ -2,10 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe Metrics::LinkClick do
-    it 'exists' do
-      expect(described_class).to be # rubocop:todo RSpec/Be
-    end
+RSpec.describe BetterTogether::Metrics::LinkClick do
+  it 'exists' do
+    expect(described_class).to be # rubocop:todo RSpec/Be
   end
 end

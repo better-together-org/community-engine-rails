@@ -1,14 +1,13 @@
-<p style="color: green"><%= notice %></p>
-
-<h1>Person platform memberships</h1>
-
-<div id="person_platform_memberships">
-  <% @person_platform_memberships.each do |person_platform_membership| %>
-    <%= render person_platform_membership %>
-    <p>
-      <%= link_to "Show this person platform membership", person_platform_membership %>
-    </p>
-  <% end %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= t('person_platform_memberships.index.title', platform: @platform.name) %></h1>
+  <div>
+    <% if policy(BetterTogether::PersonPlatformMembership.new).new? %>
+      <%= link_to t('person_platform_memberships.index.new_membership'), new_platform_person_platform_membership_path(@platform), class: "btn btn-primary" %>
+    <% end %>
+    <%= link_to t('actions.back_to_platform'), @platform, class: "btn btn-secondary" %>
+  </div>
 </div>
 
-<%= link_to "New person platform membership", new_person_platform_membership_path %>
+<div id="platform_members_list">
+  <%= render partial: 'better_together/person_platform_memberships/members_list', locals: { platform: @platform, memberships: @person_platform_memberships } %>
+</div>

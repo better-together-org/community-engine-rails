@@ -8,7 +8,9 @@ module BetterTogether
     RESOURCE_CLASSES = [
       'BetterTogether::Community',
       'BetterTogether::Platform',
-      'BetterTogether::Person'
+      'BetterTogether::Person',
+      'BetterTogether::Metrics',
+      'BetterTogether::Metrics::Report'
     ].freeze
 
     included do

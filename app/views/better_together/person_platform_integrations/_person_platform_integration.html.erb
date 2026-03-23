@@ -1,0 +1,26 @@
+<div id="<%= dom_id person_platform_integration %>">
+  <p>
+    <strong>Provider:</strong>
+    <%= person_platform_integration.provider %>
+  </p>
+
+  <p>
+    <strong>UID:</strong>
+    <%= person_platform_integration.uid %>
+  </p>
+
+  <p>
+    <strong>Handle:</strong>
+    <%= person_platform_integration.handle %>
+  </p>
+
+  <p>
+    <strong>Profile URL:</strong>
+    <%= link_to person_platform_integration.profile_url, person_platform_integration.profile_url, target: '_blank', rel: 'noopener' if person_platform_integration.profile_url.present? %>
+  </p>
+
+  <p>
+    <strong>Expires at:</strong>
+    <%= person_platform_integration.expires_at ? l(person_platform_integration.expires_at, format: :long) : 'Never' %>
+  </p>
+</div>

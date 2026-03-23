@@ -22,6 +22,8 @@ $slider-thumb-border-size: 2px !default;
 
 :root {
   --ss-main-height: 38px;
+  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(33, 37, 41, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  --bt-navbar-toggler-icon-bg: var(--bs-navbar-toggler-icon-bg);
 }
 
 .navbar-brand {
@@ -70,6 +72,48 @@ $slider-thumb-border-size: 2px !default;
   &:hover, &:focus {
     --bs-nav-link-hover-color: lighten($light-background-text-color, 10%);
   }
+}
+
+.bt-underline-nav {
+  --bt-nav-underline-width: 2px;
+  --bt-nav-underline-color: currentColor;
+  --bt-nav-underline-offset: 4px;
+  --bt-nav-underline-hover-opacity: 0.8;
+  --bt-nav-underline-active-opacity: 1;
+
+  .nav-link {
+    border-bottom: var(--bt-nav-underline-width) solid transparent;
+    transition: border-color 0.2s ease;
+    padding-bottom: var(--bt-nav-underline-offset);
+  }
+
+  .nav-link:hover,
+  .nav-link:focus {
+    border-bottom-color: var(--bt-nav-underline-color);
+    opacity: var(--bt-nav-underline-hover-opacity);
+  }
+
+  .nav-link.active {
+    border-bottom-color: var(--bt-nav-underline-color);
+    opacity: var(--bt-nav-underline-active-opacity);
+  }
+
+  .bt-mobile-nav-link {
+    color: var(--bt-mobile-nav-color, currentColor);
+  }
+
+  .bt-mobile-nav-link:hover,
+  .bt-mobile-nav-link:focus {
+    color: var(--bt-mobile-nav-hover-color, currentColor);
+  }
+}
+
+.navbar-toggler-icon {
+  background-image: var(--bs-navbar-toggler-icon-bg);
+}
+
+.navbar-toggler {
+  color: var(--bt-navbar-toggler-color, #212529);
 }
 
 .dropdown-item {

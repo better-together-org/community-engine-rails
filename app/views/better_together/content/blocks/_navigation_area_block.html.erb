@@ -1,0 +1,24 @@
+<%# locals: (navigation_area_block:) -%>
+<% nav_area = navigation_area_block.navigation_area %>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: navigation_area_block } do %>
+  <% if nav_area.nil? %>
+    <p class="text-muted"><%= t('better_together.content.blocks.navigation_area_block.not_found',
+                                default: 'Navigation area not found.') %></p>
+  <% else %>
+    <% cache [navigation_area_block, nav_area.cache_key_with_version,
+              nav_area.navigation_items.maximum(:updated_at)&.to_i,
+              I18n.locale] do %>
+      <nav class="navigation-area-block" aria-label="<%= nav_area.name %>">
+        <% if nav_area.name.present? %>
+          <h4 class="mb-2"><%= nav_area.name %></h4>
+        <% end %>
+        <ul class="nav flex-column">
+          <%= render partial: 'better_together/navigation_items/navigation_item',
+                     collection: nav_area.navigation_items.positioned.where(visible: true),
+                     as: :navigation_item,
+                     locals: { level: 0 } %>
+        </ul>
+      </nav>
+    <% end %>
+  <% end %>
+<% end %>

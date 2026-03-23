@@ -8,12 +8,29 @@
       <%= render @block %>
     </div>
     <div class="card-footer">
-      <%= link_to content_blocks_path, class: 'btn btn-outline-info me-2', 'aria-label' => t('globals.back_to_list') do %>
-        <i class="fas fa-arrow-left"></i> <%= t('globals.back_to_list') %>
-      <% end %>
-      <%= link_to edit_content_block_path(@block), class: 'btn btn-outline-secondary', 'aria-label' => t('globals.edit') do %>
-        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-      <% end %>
+      <div class="btn-toolbar" role="toolbar" aria-label="Block actions toolbar">
+        <div class="btn-group me-2" role="group" aria-label="Navigation actions">
+          <%= link_to content_blocks_path, class: 'btn btn-outline-info', 'aria-label' => t('globals.back_to_list') do %>
+            <i class="fas fa-arrow-left"></i> <%= t('globals.back_to_list') %>
+          <% end %>
+        </div>
+        
+        <% if policy(@block).edit? %>
+          <div class="btn-group me-2" role="group" aria-label="Edit actions">
+            <%= link_to edit_content_block_path(@block), class: 'btn btn-outline-secondary', 'aria-label' => t('globals.edit') do %>
+              <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <% if policy(@block).destroy? %>
+          <div class="btn-group" role="group" aria-label="Delete actions">
+            <%= button_to content_block_path(@block), method: :delete, data: { turbo_confirm: t('globals.confirm_delete') }, class: 'btn btn-danger', 'aria-label' => t('globals.delete') do %>
+              <i class="fas fa-trash"></i> <%= t('globals.delete') %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>

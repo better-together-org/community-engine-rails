@@ -1,0 +1,129 @@
+<%# locals: (form:) %>
+<div class="nested-fields my-3 border rounded p-3" data-new-record="<%= form.object.new_record? %>" data-better-together--event-hosts-target="hostField">
+  <%= form.hidden_field :_destroy %>
+  <%= form.hidden_field :id unless form.object.new_record? %>
+  
+  <% if form.object.new_record? && form.object.host.blank? %>
+    <!-- New Event Host: Show host type selector and dropdown -->
+    <div class="mb-3" data-better-together--event-hosts-target="newHostSection">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <h6 class="mb-0"><%= t('better_together.events.hosts.new_host') %></h6>
+        <button type="button"
+                class="btn btn-outline-danger btn-sm" 
+                data-action="click->better-together--event-hosts#remove"
+                data-better-together--event-hosts-target="removeButton"
+                aria-label="<%= t('better_together.events.hosts.cancel_add_host') %>">
+          <i class="fas fa-times" aria-hidden="true"></i> <%= t('better_together.events.hosts.cancel') %>
+        </button>
+      </div>
+      
+      <!-- Host Type Selection (Radio Buttons) -->
+      <fieldset class="mb-3">
+        <legend class="form-label"><%= t('better_together.events.hosts.host_type') %></legend>
+        <% BetterTogether::HostsEvents.included_in_models.each_with_index do |host_class, index| %>
+          <div class="form-check form-check-inline">
+            <input type="radio" 
+                   class="form-check-input" 
+                   name="<%= form.object_name %>[host_type]"
+                   id="<%= form.object_name %>_host_type_<%= host_class.name.demodulize.underscore %>_<%= form.options[:child_index] || 'new' %>"
+                   value="<%= host_class.to_s %>"
+                   <%= 'checked="checked"' if index.zero? %>
+                   data-action="change->better-together--event-hosts#hostTypeChanged"
+                   data-better-together--event-hosts-target="hostTypeRadio">
+            <%= form.label "host_type_#{host_class.name.demodulize.underscore}_#{form.options[:child_index] || 'new'}", 
+                          t("activerecord.models.#{host_class.model_name.i18n_key}"), 
+                          class: 'form-check-label' %>
+          </div>
+        <% end %>
+      </fieldset>
+      
+      <!-- Host Selection Dropdown -->
+      <div class="mb-3">
+        <%= form.label :host_id, t('better_together.events.hosts.select_host'), class: 'form-label' %>
+        <%= form.select :host_id, 
+                        [], 
+                        { include_blank: t('better_together.events.hosts.loading') }, 
+                        class: 'form-select',
+                        data: { 
+                          'better-together--event-hosts-target': 'hostSelect',
+                          action: 'change->better-together--event-hosts#hostSelectChanged'
+                        } %>
+      </div>
+    </div>
+  <% else %>
+    <!-- Existing Event Host: Enhanced display with avatar and details -->
+    <%= form.hidden_field :host_id %>
+    <%= form.hidden_field :host_type %>
+    <div class="card border-0 bg-light shadow-sm">
+      <div class="card-body p-3">
+        <div class="d-flex align-items-start gap-3">
+          <!-- Host Avatar/Icon -->
+          <div class="flex-shrink-0">
+            <%= profile_image_tag(form.object.host, 
+                                  class: 'rounded-circle border border-2 border-white shadow-sm', 
+                                  size: 40,
+                                  style: 'width: 40px; height: 40px; object-fit: cover;',
+                                  alt: form.object.host.name) %>
+          </div>
+          
+          <!-- Host Information -->
+          <div class="flex-grow-1 overflow-hidden">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h6 class="mb-0 text-truncate">
+                <%= form.object.host.name %>
+              </h6>
+              <% host_type_key = form.object.host_type.underscore %>
+              <span class="badge bg-<%= host_type_badge_color(host_type_key) %> text-white">
+                <i class="<%= host_type_icon(host_type_key) %> me-1" aria-hidden="true"></i>
+                <%= t("activerecord.models.#{host_type_key}") %>
+              </span>
+            </div>
+            
+            <!-- Additional Host Details -->
+            <div class="text-muted small">
+              <% if form.object.host.respond_to?(:description) && form.object.host.description.present? %>
+                <% description_text = form.object.host.description.respond_to?(:to_plain_text) ? form.object.host.description.to_plain_text : form.object.host.description.to_s %>
+                <p class="mb-1 text-truncate" title="<%= description_text %>">
+                  <%= truncate(description_text, length: 80) %>
+                </p>
+              <% end %>
+              
+              <% if form.object.host.respond_to?(:location) && form.object.host.location.present? %>
+                <div class="d-flex align-items-center gap-1 mb-1">
+                  <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                  <span><%= form.object.host.location %></span>
+                </div>
+              <% end %>
+              
+              <% if form.object.host.respond_to?(:members_count) %>
+                <div class="d-flex align-items-center gap-1">
+                  <i class="fas fa-users" aria-hidden="true"></i>
+                  <span><%= t('better_together.events.hosts.member_count', count: form.object.host.members_count) %></span>
+                </div>
+              <% end %>
+            </div>
+            
+            <!-- Host Role/Permissions Badge -->
+            <div class="mt-2">
+              <span class="badge bg-primary-subtle text-primary border border-primary">
+                <i class="fas fa-crown me-1" aria-hidden="true"></i>
+                <%= t('better_together.events.hosts.can_edit_event') %>
+              </span>
+            </div>
+          </div>
+          
+          <!-- Remove Button -->
+          <div class="flex-shrink-0">
+            <button type="button"
+                    class="btn btn-outline-danger btn-sm" 
+                    data-action="click->better-together--event-hosts#remove"
+                    data-better-together--event-hosts-target="removeButton"
+                    aria-label="<%= t('better_together.events.hosts.remove_host', host: form.object.host.to_s) %>">
+              <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

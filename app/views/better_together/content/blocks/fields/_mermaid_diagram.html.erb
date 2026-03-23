@@ -1,0 +1,113 @@
+<%# frozen_string_literal: true %>
+
+<%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
+
+<div class="mermaid-diagram-fields"
+  data-controller="better-together--mermaid-diagram-editor"
+  data-action="turbo:load->better-together--mermaid-diagram-editor#renderPreview turbo:frame-load->better-together--mermaid-diagram-editor#renderPreview"
+  data-better-together--mermaid-diagram-editor-theme-value="<%= block.theme %>"
+  data-better-together--mermaid-diagram-editor-placeholder-text-value="<%= j(t('better_together.content.mermaid_diagram.no_preview')) %>">
+  <!-- Diagram Source Tab Navigation -->
+  <ul class="nav nav-tabs mb-3" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="source-tab-<%= block.id || 'new' %>" data-bs-toggle="tab" data-bs-target="#source-pane-<%= block.id || 'new' %>" type="button" role="tab" aria-controls="source-pane" aria-selected="true">
+        <%= t('better_together.content.mermaid_diagram.tabs.source') %>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="file-tab-<%= block.id || 'new' %>" data-bs-toggle="tab" data-bs-target="#file-pane-<%= block.id || 'new' %>" type="button" role="tab" aria-controls="file-pane" aria-selected="false">
+        <%= t('better_together.content.mermaid_diagram.tabs.file') %>
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- Diagram Source Pane -->
+    <div class="tab-pane fade show active" id="source-pane-<%= block.id || 'new' %>" role="tabpanel" aria-labelledby="source-tab">
+      <div class="mb-3">
+        <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field',
+                   locals: { 
+                     model: block, 
+                     attribute: 'diagram_source', 
+                     scope: scope,
+                     rows: 15,
+                     input_options: {
+                       data: {
+                         action: 'input->better-together--mermaid-diagram-editor#updatePreview',
+                         'better-together--mermaid-diagram-editor-target': 'sourceInput'
+                       }
+                     },
+                     help_text: t('better_together.content.mermaid_diagram.help.diagram_source')
+                   } %>
+      </div>
+    </div>
+
+    <!-- File Path Pane -->
+    <div class="tab-pane fade" id="file-pane-<%= block.id || 'new' %>" role="tabpanel" aria-labelledby="file-tab">
+      <div class="mb-3">
+        <%= label_tag "#{scope}[diagram_file_path]", block.class.human_attribute_name('diagram_file_path') %>
+        <%= text_field_tag "#{scope}[diagram_file_path]", block.diagram_file_path, class: 'form-control font-monospace', placeholder: 'docs/diagrams/source/example.mmd' %>
+        <div class="form-text">
+          <%= t('better_together.content.mermaid_diagram.help.diagram_file_path') %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Caption -->
+  <div class="mb-3 pb-3 border-bottom">
+    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+               locals: { 
+                 model: block, 
+                 attribute: 'caption', 
+                 scope: scope,
+                 help_text: t('better_together.content.mermaid_diagram.help.caption')
+               } %>
+  </div>
+
+  <!-- Display Options -->
+  <div class="row row-cols-1 row-cols-sm-2 align-items-end">
+    <!-- Theme Selection -->
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= label_tag "#{scope}[theme]", block.class.human_attribute_name('theme') %>
+      <%= select_tag "#{scope}[theme]", 
+                     options_for_select(
+                       BetterTogether::Content::MermaidDiagram::VALID_THEMES.map { |t| [t('better_together.content.mermaid_diagram.themes.' + t), t] },
+                       block.theme
+                     ),
+                     class: 'form-select',
+                     data: { 'better-together--mermaid-diagram-editor-target': 'themeSelect', action: 'change->better-together--mermaid-diagram-editor#updatePreview' } %>
+      <div class="form-text">
+        <%= t('better_together.content.mermaid_diagram.help.theme') %>
+      </div>
+    </div>
+
+    <!-- Auto Height -->
+    <div class="col mb-3 pb-3 border-bottom">
+      <div class="form-check">
+        <%= check_box_tag "#{scope}[auto_height]", '1', block.auto_height, class: 'form-check-input', id: "#{scope}_auto_height" %>
+        <%= label_tag "#{scope}_auto_height", block.class.human_attribute_name('auto_height'), class: 'form-check-label' %>
+      </div>
+      <div class="form-text">
+        <%= t('better_together.content.mermaid_diagram.help.auto_height') %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Area (Optional - could add live preview with Stimulus) -->
+  <div class="mb-3">
+    <h6><%= t('better_together.content.mermaid_diagram.preview_title') %></h6>
+    <div class="border rounded p-3 bg-light"
+         data-better-together--mermaid-diagram-editor-target="preview">
+      <% if block.content.present? %>
+        <pre class="mermaid-diagram"><%= block.content %></pre>
+      <% else %>
+        <p class="text-muted text-center mb-0">
+          <i class="fas fa-info-circle"></i>
+          <%= t('better_together.content.mermaid_diagram.no_preview') %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>

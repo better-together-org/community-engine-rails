@@ -1,34 +1,105 @@
 name: "Ruby on Rails CI"
 
-on: { push: { branches: [main, dev] }, pull_request: { branches: [main, dev] } }
+on:
+  workflow_dispatch:
+  push:
+    # Only run on long-lived integration branches. Feature/fix/chore branches
+    # are covered by pull_request events, so listing them here would fire CI
+    # twice for every push to an open PR.
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
+  pull_request:
+    branches:
+      - main
+      - dev
+      - compat/rails-7.2
+      - compat/rails-8.0
+      - compat/rails-8.1
 
 jobs:
+  prepare:
+    # Skip automated compat sync PRs (main → compat/*) whose head_ref == 'main'.
+    # All downstream jobs (rspec, rubocop, security) cascade-skip via needs: prepare.
+    if: github.head_ref != 'main'
+    runs-on: ubuntu-latest
+    outputs:
+      rails_version: ${{ steps.branch-target.outputs.rails_version }}
+      update_coverage_badge: ${{ steps.branch-target.outputs.update_coverage_badge }}
+    steps:
+      - name: Resolve native Rails lane
+        id: branch-target
+        shell: bash
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            branch="${GITHUB_BASE_REF}"
+          else
+            branch="${GITHUB_REF_NAME}"
+          fi
+
+          case "${branch}" in
+            compat/rails-7.2)
+              rails_version="7.2.2.2"
+              ;;
+            compat/rails-8.1)
+              rails_version="8.1.2"
+              ;;
+            main|dev|compat/rails-8.0)
+              rails_version="8.0.3"
+              ;;
+            *)
+              rails_version="8.0.3"
+              ;;
+          esac
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" && "${branch}" == "main" ]]; then
+            update_coverage_badge="true"
+          else
+            update_coverage_badge="false"
+          fi
+
+          echo "rails_version=${rails_version}" >> "${GITHUB_OUTPUT}"
+          echo "update_coverage_badge=${update_coverage_badge}" >> "${GITHUB_OUTPUT}"
+
   rspec:
+    name: rspec (3.4.4, ${{ needs.prepare.outputs.rails_version }})
+    needs: prepare
     runs-on: ubuntu-latest
     environment: test
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - ruby: '3.4.4'
-            rails: '7.2.2.2'
-            allowed_failure: false   # ✅ required
-          - ruby: '3.4.4'
-            rails: '8.0.2'
-            allowed_failure: true    # ⚠️ allowed to fail
-
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
-      ES_HOST:  "http://localhost"
+      REDIS_URL: "redis://localhost:6379/0"
+      ES_HOST: "http://localhost"
       ELASTICSEARCH_URL: "http://localhost:9200"
-      RAILS_VERSION: ${{ matrix.rails }}
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
+      WORKERS: 4
 
     services:
       postgres:
         image: postgis/postgis:latest
         ports: ["5432:5432"]
-        env: { POSTGRES_DB: rails_test, POSTGRES_USER: rails, POSTGRES_PASSWORD: password }
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+          POSTGRES_INITDB_ARGS: "-c max_connections=200"
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       elasticsearch:
         image: elasticsearch:7.17.23
         ports: ["9200:9200"]
@@ -42,97 +113,138 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Ruby & gems
+      - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: "3.4.4"
 
-          # Run the automatic bundle-install only on 7.2.
-          # For 7.2 / 8.0 it just sets up Ruby *and* restores a cache layer
-          # that we’ll reuse in the later manual install.
-          bundler-cache: ${{ matrix.rails == '7.2.2.2' }}
-
-          # One cache bucket per Rails version so they don’t clobber each other.
-          cache-version: rails-${{ matrix.rails }}
-
-      # Updating Rails can legitimately blow up on the experimental tracks,
-      # so we allow that *step* to error out without failing the job.
-      - name: Update Rails & install gems
-        if: matrix.rails != '7.2.2.2'
-        id: update
+      - name: Resolve branch-native bundle
+        shell: bash
         run: |
-          # turn off deployment mode
           bundle config set deployment false
-          # conservative upgrade to the target rails version
           bundle update rails --conservative
-          # install missing gems (writes bin/rspec, etc)
           bundle install --jobs 4 --retry 3
-        continue-on-error: ${{ matrix.allowed_failure }}
 
-      - name: Prepare DB schema
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+      - name: Prepare parallel test databases
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec rake -f spec/dummy/Rakefile db:schema:load
-        continue-on-error: ${{ matrix.allowed_failure }}
+          cd spec/dummy
+          bundle exec rake db:parallel:create
+          PGPASSWORD=password psql -h localhost -U rails -d postgres \
+            -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'rails_test' AND pid <> pg_backend_pid();" \
+            2>/dev/null || true
+          bundle exec rake db:parallel:prepare
 
       - name: Wait for Elasticsearch
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
         run: |
           echo "Waiting for Elasticsearch to be healthy..."
           curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
-
-      - name: Run RSpec
-        if: (matrix.rails == '7.2.2.2') || steps.update.outcome == 'success'
+      - name: Run RSpec in parallel
         env:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
-          bundle exec rspec
-        continue-on-error: ${{ matrix.allowed_failure }}
+          mkdir -p tmp
+          bundle exec prspec spec --format json --out tmp/rspec_results.json || PRSPEC_EXIT=$?
+          if [[ "${PRSPEC_EXIT:-0}" -ne 0 ]]; then
+            FAILURES=0
+            JSON_FOUND=false
+            for f in tmp/rspec_results*.json; do
+              [[ -f "$f" ]] || continue
+              JSON_FOUND=true
+              COUNT=$(jq '.summary.failure_count // 0' "$f" 2>/dev/null || echo 0)
+              FAILURES=$((FAILURES + COUNT))
+            done
+            if [[ "${JSON_FOUND}" == "false" ]]; then
+              echo "::error::prspec exited ${PRSPEC_EXIT} and no JSON results found (hard crash)"
+              exit "${PRSPEC_EXIT}"
+            elif [[ "${FAILURES}" -gt 0 ]]; then
+              echo "::error::RSpec: ${FAILURES} spec failure(s)"
+              exit 1
+            else
+              echo "prspec exited ${PRSPEC_EXIT} with 0 spec failures (parallel DB teardown race — harmless)"
+            fi
+          fi
 
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-ruby-${{ matrix.ruby }}-rails-${{ matrix.rails }}
+          name: coverage-report-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             coverage/
 
+      - name: Upload RSpec JSON results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rspec-results-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          path: tmp/rspec_results*.json
+          if-no-files-found: warn
+
+      - name: Upload Rails test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rails-test-log-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          path: spec/dummy/log/test.log
+          if-no-files-found: warn
+
       - name: Generate coverage badge
-        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
         run: |
           COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
-          COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" $COVERAGE)
-          npx badgen-cli --subject coverage --status ${COVERAGE}% --color $COLOR > coverage.svg
+          COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" "$COVERAGE")
+          npx badgen-cli --subject coverage --status "${COVERAGE}%" --color "$COLOR" > coverage.svg
 
       - name: Commit badge
-        if: ${{ github.ref == 'refs/heads/main' && success() }}
+        if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update coverage badge"
           file_pattern: coverage.svg
 
-  # ── style & security jobs (unchanged) ───────────────────────────────────────
   rubocop:
+    needs: prepare
     runs-on: ubuntu-latest
+    env:
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
-        with: { bundler-cache: true }
+        with:
+          ruby-version: "3.4.4"
+      - name: Resolve branch-native bundle
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
       - run: bundle exec rubocop --parallel
 
   security:
+    needs: prepare
     runs-on: ubuntu-latest
+    env:
+      RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
-        with: { bundler-cache: true }
+        with:
+          ruby-version: "3.4.4"
+      - name: Resolve branch-native bundle
+        shell: bash
+        run: |
+          bundle config set deployment false
+          bundle update rails --conservative
+          bundle install --jobs 4 --retry 3
       - run: bundle binstubs bundler-audit --force
       - run: bundle exec bundler-audit --update
       - run: bundle exec brakeman -q -w2

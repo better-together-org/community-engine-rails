@@ -13,7 +13,7 @@ module BetterTogether
         config.if = -> { recipient_has_email? && should_notify? }
       end
 
-      param :offer, :request
+      required_param :offer, :request
 
       notification_methods do
         delegate :offer, :request, to: :event

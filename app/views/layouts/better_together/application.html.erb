@@ -12,11 +12,35 @@
     <title><%= (yield(:page_title) + ' | ') if content_for?(:page_title) %><%= host_platform.name %></title>
     <%= open_graph_meta_tags %>
     <%= seo_meta_tags %>
+    <%= canonical_link_tag %>
     <%= robots_meta_tag %>
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= tag.meta name: "stimulus-debug", content: stimulus_debug_enabled?.to_s %>
+    <% if stimulus_debug_enabled? %>
+      <%= tag.meta 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate' %>
+      <%= tag.meta 'http-equiv': 'Pragma', content: 'no-cache' %>
+      <%= tag.meta 'http-equiv': 'Expires', content: '0' %>
+    <% end %>
     <%= csrf_meta_tags %>
+    <% if current_user&.person %>
+      <%= tag.meta name: "current-person-id", content: current_user.person.id %>
+      <%# Short-lived JWT for in-browser API calls (e.g. E2E key backup). Never log or expose this value. %>
+      <%= tag.meta name: "current-user-token", content: current_user_api_token %>
+    <% end %>
     <%= csp_meta_tag %>
+    <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
+    
+    <!-- Sitemap index for search engines -->
+    <link rel="sitemap" type="application/xml" href="<%= sitemap_index_path %>">
+    
+    <!-- Current locale sitemap -->
+    <link rel="alternate" type="application/xml" hreflang="<%= I18n.locale %>" href="<%= sitemap_path(locale: I18n.locale) %>">
+    
+    <!-- Alternate locale sitemaps for multilingual SEO -->
+    <% I18n.available_locales.reject { |loc| loc == I18n.locale }.each do |locale| %>
+      <link rel="alternate" type="application/xml" hreflang="<%= locale %>" href="<%= sitemap_path(locale: locale) %>">
+    <% end %>
 
     <!-- Default Stylesheets -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
@@ -54,6 +78,22 @@
 
       <!-- Custom Mobile Bar from Host App -->
       <%= content_for?(:custom_mobile_bar) ? yield(:custom_mobile_bar) : render('layouts/better_together/mobile_bar') %>
+
+      <!-- E2E session initialiser (conversation-enabled users only; skipped in test env to prevent modal interference) -->
+      <% unless Rails.env.test? %>
+        <% if current_user&.person %>
+          <div data-controller="better-together--e2e-session"
+               data-better-together--e2e-session-person-id-value="<%= current_user.person.id %>"
+               data-better-together--e2e-session-passphrase-backup-message-value="<%= t('better_together.e2e.session.passphrase_backup_message') %>"
+               data-better-together--e2e-session-passphrase-restore-message-value="<%= t('better_together.e2e.session.passphrase_restore_message') %>"
+               data-better-together--e2e-session-confirm-fresh-identity-message-value="<%= t('better_together.e2e.session.confirm_fresh_identity_message') %>"
+               data-better-together--e2e-session-server-error-message-value="<%= t('better_together.e2e.session.server_error_message') %>"
+               hidden></div>
+        <% end %>
+      <% end %>
+
+      <!-- E2E passphrase modal (Bootstrap-based, replaces window.prompt) -->
+      <%= render 'better_together/e2e/passphrase_modal' %>
 
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>

@@ -19,7 +19,7 @@ module BetterTogether
 
       delegate :level, to: :floor
 
-      translates :name
+      translates :name, type: :string
       translates :description, backend: :action_text
 
       slugged :name

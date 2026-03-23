@@ -2,20 +2,21 @@
 
 require 'rails_helper'
 
+# Test job class for ApplicationJob specs.
 class MyJob < BetterTogether::ApplicationJob
   queue_as :urgent
+
+  class Service
+    def self.call(*args); end
+  end
 
   # rescue_from(ActiveRecord::NotFound) do
   #   retry_job wait: 5.minutes, queue: :default
   # end
 
   def perform(*)
-    MyService.call(*)
+    Service.call(*)
   end
-end
-
-class MyService
-  def self.call(*args); end
 end
 
 # rubocop:todo RSpec/RepeatedExampleGroupDescription
@@ -50,7 +51,7 @@ RSpec.describe MyJob do # rubocop:todo RSpec/MultipleDescribes, RSpec/RepeatedEx
   end
 
   it 'executes perform' do
-    expect(MyService).to receive(:call).with(123)
+    expect(MyJob::Service).to receive(:call).with(123)
     perform_enqueued_jobs { job }
   end
 end

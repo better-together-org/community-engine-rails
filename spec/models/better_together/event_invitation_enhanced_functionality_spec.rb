@@ -48,7 +48,7 @@ RSpec.describe BetterTogether::EventInvitation do
                           status: 'pending')
 
         expect(duplicate).not_to be_valid
-        expect(duplicate.errors[:invitee_email]).to include('has already been invited to this event')
+        expect(duplicate.errors[:invitee_email]).to include('has already been taken')
       end
 
       it 'allows duplicate invitations if previous one was declined' do
@@ -99,7 +99,7 @@ RSpec.describe BetterTogether::EventInvitation do
                            invitee_email: nil)
 
         expect(invitation).not_to be_valid
-        expect(invitation.errors[:base]).to include('Either invitee or invitee_email must be present')
+        expect(invitation.errors[:base]).to include('must have either an invitee or invitee email')
       end
 
       it 'accepts invitation with invitee only' do

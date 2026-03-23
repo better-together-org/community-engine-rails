@@ -12,18 +12,18 @@ module BetterTogether
       config.if = -> { recipient_has_email? && should_notify? }
     end
 
-    param :event, :changed_attributes
+    required_param :event, :changed_attributes
 
     notification_methods do
       delegate :event, :changed_attributes, to: :params
     end
 
-    def event = params[:event]
+    def target_event = params[:event]
     def changed_attributes = params[:changed_attributes] || []
 
     def title
       I18n.t('better_together.notifications.event_update.title',
-             event_name: event.name,
+             event_name: target_event.name,
              default: 'Event updated: %<event_name>s')
     end
 
@@ -33,7 +33,7 @@ module BetterTogether
       end.join(', ')
 
       I18n.t('better_together.notifications.event_update.body',
-             event_name: event.name,
+             event_name: target_event.name,
              changes: change_list,
              default: '%<event_name>s has been updated: %<changes>s')
     end
@@ -43,7 +43,7 @@ module BetterTogether
     end
 
     def email_params(_notification)
-      { event:, changed_attributes: }
+      { event: target_event, changed_attributes: }
     end
 
     notification_methods do

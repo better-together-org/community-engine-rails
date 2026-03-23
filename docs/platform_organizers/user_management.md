@@ -492,8 +492,8 @@ This guide explains user management from the Platform Organizer perspective, inc
 ## Related Documentation
 
 - [Platform Administration Guide](platform_administration.md)
-- [Security and Privacy Policies](security_privacy.md)
-- [Community Management Tools](community_management.md)
+- [Security and Privacy Guide](security_privacy.md)
+- [Community Management (Organizer Lens)](community_management.md)
 - [User Support Procedures](user_support_procedures.md)
 - [Compliance and Legal Guidelines](compliance_legal.md)
 

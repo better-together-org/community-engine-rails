@@ -6,6 +6,6 @@ FactoryBot.define do
     creator { nil }
     protected { false }
     privacy { 'private' }
-    title { 'Test Checklist' }
+    sequence(:title) { |n| "Test Checklist #{n}" }
   end
 end

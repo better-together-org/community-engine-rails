@@ -64,7 +64,7 @@ module BetterTogether
                  unique: true,
                  name: "unique_#{member_type}_#{joinable_type}_membership_member_role"
 
-        yield(t) if block_given?
+        yield(bt) if block_given?
       end
     end
     # rubocop:enable Metrics/MethodLength

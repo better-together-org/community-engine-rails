@@ -1,0 +1,30 @@
+<%# frozen_string_literal: true %>
+
+<%= render layout: 'better_together/content/blocks/block', locals: { block: mermaid_diagram } do %>
+  <%= cache mermaid_diagram.cache_key_with_version do %>
+    <div class="mermaid-diagram-block" data-controller="better-together--mermaid" data-better-together--mermaid-theme-value="<%= mermaid_diagram.theme %>">
+      <% if mermaid_diagram.content.present? %>
+        <div class="mermaid-diagram-wrapper <%= 'auto-height' if mermaid_diagram.auto_height %>">
+          <%# TODO: Future enhancement - Add PNG fallback for non-JavaScript users %>
+          <%# Currently requires JavaScript to render diagrams %>
+
+          <%# Show mermaid source for JavaScript-enabled browsers %>
+          <pre class="mermaid-diagram"><%= mermaid_diagram.content %></pre>
+        </div>
+
+        <% if mermaid_diagram.caption.present? %>
+          <figure class="text-center mt-3">
+            <figcaption class="figure-caption">
+              <%= mermaid_diagram.caption %>
+            </figcaption>
+          </figure>
+        <% end %>
+      <% else %>
+        <div class="alert alert-warning" role="alert">
+          <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+          <%= t('better_together.content.mermaid_diagram.no_content') %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,26 @@
+<%# locals: (call_to_action_block:) -%>
+<%= cache call_to_action_block.cache_key_with_version do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: call_to_action_block } do %>
+    <div class="cta-block cta-block--<%= call_to_action_block.layout %> py-5 text-<%= call_to_action_block.layout == 'left' ? 'start' : call_to_action_block.layout == 'right' ? 'end' : 'center' %>">
+      <% if call_to_action_block.heading.present? %>
+        <h2 class="cta-block__heading mb-2"><%= call_to_action_block.heading %></h2>
+      <% end %>
+      <% if call_to_action_block.subheading.present? %>
+        <p class="cta-block__subheading lead mb-3"><%= call_to_action_block.subheading %></p>
+      <% end %>
+      <% if call_to_action_block.body_text.present? %>
+        <p class="cta-block__body mb-4"><%= call_to_action_block.body_text %></p>
+      <% end %>
+      <div class="cta-block__actions d-flex flex-wrap gap-3 justify-content-<%= call_to_action_block.layout == 'left' ? 'start' : call_to_action_block.layout == 'right' ? 'end' : 'center' %>">
+        <% if call_to_action_block.primary_button_label.present? && call_to_action_block.primary_button_url.present? %>
+          <%= link_to call_to_action_block.primary_button_label, call_to_action_block.primary_button_url,
+                      class: 'btn btn-primary btn-lg' %>
+        <% end %>
+        <% if call_to_action_block.secondary_button_label.present? && call_to_action_block.secondary_button_url.present? %>
+          <%= link_to call_to_action_block.secondary_button_label, call_to_action_block.secondary_button_url,
+                      class: 'btn btn-outline-secondary btn-lg' %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -199,8 +199,7 @@ Existing diagrams cover the RSVP journey and reminder scheduling:
   - `app/models/better_together/event_attendance.rb`
 
 - Controllers:
-  - `app/controllers/better_together/events/invitations_controller.rb`
-  - `app/controllers/better_together/invitations_controller.rb`
+  - `app/controllers/better_together/invitations_controller.rb` (unified polymorphic controller for all invitation types)
   - `app/controllers/better_together/events_controller.rb`
 
 - Policies:

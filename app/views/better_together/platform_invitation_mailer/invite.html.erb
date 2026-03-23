@@ -8,6 +8,18 @@
   <%= @greeting %>
 <% end %>
 
+<% if @community_role.present? || @platform_role.present? %>
+  <p><%= t('.role_assignment') %></p>
+  <ul>
+    <% if @community_role.present? %>
+      <li><%= t('.community_role', role: @community_role.name) %></li>
+    <% end %>
+    <% if @platform_role.present? %>
+      <li><%= t('.platform_role', role: @platform_role.name) %></li>
+    <% end %>
+  </ul>
+<% end %>
+
 <p><%= link_to t('.link_text'), @invitation_url, class: 'text-decoration-none' %></p>
 
 <p><%= t('.invitation_code', invitation_code: @platform_invitation.token) %></p>

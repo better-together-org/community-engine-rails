@@ -23,6 +23,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
       # Start with factory attributes, then adapt to permitted keys
       raw_attrs = attributes_for(:better_together_navigation_item)
       permitted = raw_attrs.slice(:url, :icon, :position, :visible, :item_type, :parent_id, :route_name)
+      permitted[:privacy] = 'private'
+      permitted[:visibility_strategy] = 'permission'
+      permitted[:permission_identifier] = 'view_metrics_dashboard'
       # Use localized title key instead of :title; drop non-permitted keys (:slug, :id, :linkable_*)
       permitted["title_#{locale}"] = raw_attrs[:title]
 
@@ -49,6 +52,9 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
       expect(created.url).to eq(params[:navigation_item][:url])
       expect(created.visible).to eq(params[:navigation_item][:visible])
       expect(created.item_type).to eq(params[:navigation_item][:item_type])
+      expect(created.privacy).to eq(params[:navigation_item][:privacy])
+      expect(created.visibility_strategy).to eq(params[:navigation_item][:visibility_strategy])
+      expect(created.permission_identifier).to eq(params[:navigation_item][:permission_identifier])
     end
 
     it 'renders errors on invalid params' do

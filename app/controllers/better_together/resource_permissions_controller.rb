@@ -9,6 +9,15 @@ module BetterTogether
     def index
       authorize resource_class
       @resource_permissions = policy_scope(resource_class.with_translations)
+                              .includes(:roles)
+                              .order(:resource_type, :action, :position, :identifier)
+      @resource_permissions_by_resource_type = @resource_permissions.group_by(&:resource_type)
+      @rbac_nav_counts = {
+        resource_permissions: @resource_permissions.size,
+        roles: ::BetterTogether::Role.count
+      }
+      @available_view_types = %w[card table]
+      @view_type = view_preference('resource_permissions_index', default: 'card', allowed: @available_view_types)
     end
 
     # GET /resource_permissions/1

@@ -7,14 +7,14 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      has_many :event_hosts, as: :host
+      has_many :event_hosts, as: :host, class_name: 'BetterTogether::EventHost'
       has_many :hosted_events, through: :event_hosts, source: :event
     end
 
     def self.included_in_models
       included_module = self
       Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
-      ActiveRecord::Base.descendants.select { |model| model.included_modules.include?(included_module) }
+      ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
     end
   end
 end

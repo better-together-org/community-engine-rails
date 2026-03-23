@@ -1,20 +1,32 @@
 <!-- app/views/better_together/notifications/_notification.html.erb -->
 <div id="<%= dom_id(notification) %>" class="notification list-group-item rounded-0 p-3 <%= 'list-group-item-action' unless notification.read_at %>" data-controller="better_together--notification" data-notification-mark-read-url-value="<%= mark_as_read_notification_path(notification) %>">
   <div class="d-flex justify-content-between">
-    <h6 class="mb-1">
-      <% if notification_url.present? %>
-        <%= link_to notification_title, notification_url, class: 'text-decoration-none stretched-link' %>
-      <% else %>
-        <%= notification_title %>
-      <% end %>
-    </h6>
+    <% # Cache only the title/link, not the timestamp %>
+    <% cache ["notification_title", notification.cache_key_with_version, notification_title, notification_url, I18n.locale] do %>
+      <h6 class="mb-1">
+        <% if notification_url.present? %>
+          <%= link_to notification_title, notification_url, class: 'text-decoration-none stretched-link' %>
+        <% else %>
+          <%= notification_title %>
+        <% end %>
+      </h6>
+    <% end %>
+    <% # Time duration is NOT cached so it updates on every render %>
     <small class="text-muted"><%= t('better_together.notifications.time_ago', time: time_ago_in_words(notification.created_at)) %></small>
   </div>
-  <%= yield if block_given? %> <!-- This will render the specific content from the notification type partial -->
-  <div class="d-flex justify-content-between align-items-center mt-2">
-    <% unless notification.read_at %>
-      <span class="badge bg-success"><%= t('better_together.notifications.new') %></span>
-      <%= button_to t('better_together.notifications.mark_as_read'), mark_as_read_notification_path(notification), method: :post, class: 'btn btn-sm btn-outline-secondary', data: { turbo_stream: true } %>
-    <% end %>
-  </div>
+  
+  <% # Cache the specific notification content %>
+  <% cache ["notification_content", notification.cache_key_with_version, I18n.locale] do %>
+    <%= yield if block_given? %> <!-- This will render the specific content from the notification type partial -->
+  <% end %>
+  
+  <% # Cache the footer section based on read status %>
+  <% cache ["notification_footer", notification.cache_key_with_version, notification.read_at.present?, I18n.locale] do %>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <% unless notification.read_at %>
+        <span class="badge bg-success"><%= t('better_together.notifications.new') %></span>
+        <%= button_to t('better_together.notifications.mark_as_read'), mark_as_read_notification_path(notification), method: :post, class: 'btn btn-sm btn-outline-secondary', data: { turbo_stream: true } %>
+      <% end %>
+    </div>
+  <% end %>
 </div>

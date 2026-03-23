@@ -389,6 +389,8 @@ The platform collects:
 - [Platform Privacy Policy](privacy_policy.md)
 - [Community Guidelines](community_guidelines.md)
 - [Safety and Reporting Tools](safety_reporting.md)
+- [Blocking and Boundaries](blocking_and_boundaries.md)
+- [Reporting Harm and Safety Concerns](reporting_harm_and_safety_concerns.md)
 - [Messaging and Communication](messaging_guide.md)
 - [Community Participation Guide](community_participation.md)
 
@@ -402,9 +404,9 @@ The platform collects:
 
 ### Current Settings Structure
 - **Account Tab:** ✅ Active (email, password, security)
-- **Personal Tab:** 🔄 Coming Soon (personal info, preferences)
-- **Privacy Tab:** 🔄 Coming Soon (privacy, visibility controls)
-- **Platform Tab:** 🔄 Coming Soon (platform-wide settings)
+- **Personal Tab:** Coming Soon (personal info, preferences)
+- **Privacy Tab:** Coming Soon (privacy, visibility controls)
+- **Platform Tab:** Coming Soon (platform-wide settings)
 
 ---
 

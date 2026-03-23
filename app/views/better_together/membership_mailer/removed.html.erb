@@ -1,0 +1,32 @@
+<!-- app/views/better_together/membership_mailer/removed.html.erb -->
+
+<p><%= t('.greeting', name: @member_name || t('better_together.default_member_name')) %></p>
+
+<p><%= t('.message', joinable_type: @joinable_type, joinable_name: @joinable_name, role_name: @role.name) %></p>
+
+<% if @joinable_url.present? %>
+  <p>
+    <%= t('.view_joinable_note', joinable_type: @joinable_type) %>
+    <%= link_to @joinable_url, @joinable_url, class: 'text-decoration-none' %>
+  </p>
+<% end %>
+
+<div style="margin: 20px 0;">
+  <h3><%= t('.removed_permissions_heading') %></h3>
+  <% if @permission_summary[:labels].any? %>
+    <ul>
+      <% @permission_summary[:labels].each do |label| %>
+        <li><%= label %></li>
+      <% end %>
+      <% if @permission_summary[:remaining].positive? %>
+        <li><%= t('.permissions_summary_more', count: @permission_summary[:remaining]) %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p><%= t('.permissions_summary_none') %></p>
+  <% end %>
+</div>
+
+<p><%= t('.footer_message') %></p>
+
+<p><%= t('.signature_html', joinable_name: @joinable_name) %></p>

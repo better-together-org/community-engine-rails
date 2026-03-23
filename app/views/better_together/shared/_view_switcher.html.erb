@@ -1,0 +1,42 @@
+<%# locals: (view_key:, active_view:, available_views:, update_path: view_preferences_path) %>
+<% view_icons = {
+  'card' => 'fa-th-large',
+  'table' => 'fa-table',
+  'list' => 'fa-list',
+  'calendar' => 'fa-calendar'
+} %>
+
+<div class="dropdown" role="group" aria-label="<%= t('better_together.view_switcher.label') %>">
+  <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+    <i class="fas fa-sliders-h" aria-hidden="true"></i>
+    <span class="ms-1"><%= t('better_together.view_switcher.change_view') %></span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <% available_views.each do |view_type| %>
+      <% is_active = view_type == active_view %>
+      <li>
+        <%= button_to update_path,
+                      params: { key: view_key, view_type: view_type, allowed: available_views },
+                      method: :post,
+                      class: "dropdown-item d-flex align-items-center gap-2 #{'active' if is_active}",
+                      form_class: 'm-0',
+                      form: { data: { turbo_prefetch: false } },
+                      data: { turbo_prefetch: false },
+                      disabled: is_active,
+                      aria: {
+                        pressed: is_active,
+                        current: ('true' if is_active),
+                        label: t('better_together.view_switcher.switch_to',
+                                 view: t("better_together.view_switcher.types.#{view_type}"))
+                      } do %>
+          <i class="fas <%= view_icons[view_type] %>" aria-hidden="true"></i>
+          <span><%= t('better_together.view_switcher.button_label',
+                      view: t("better_together.view_switcher.types.#{view_type}")) %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

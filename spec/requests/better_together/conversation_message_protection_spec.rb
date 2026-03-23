@@ -11,11 +11,12 @@ RSpec.describe 'Conversation message protection' do
     configure_host_platform
 
     # Setup: create a manager user (owner of the conversation) and another user
-    manager_user = create(:user, :confirmed, :platform_manager, email: 'owner@example.test', password: 'password12345')
-    other_user = create(:user, :confirmed, email: 'attacker@example.test', password: 'password12345')
+    manager_user = create(:user, :confirmed, :platform_manager, email: 'owner@example.test',
+                                                                password: 'SecureTest123!@#')
+    other_user = create(:user, :confirmed, email: 'attacker@example.test', password: 'SecureTest123!@#')
 
     # Create a conversation as the manager with a nested message
-    login(manager_user.email, 'password12345')
+    login(manager_user.email, 'SecureTest123!@#')
 
     post better_together.conversations_path(locale: I18n.default_locale), params: {
       conversation: {
@@ -34,7 +35,7 @@ RSpec.describe 'Conversation message protection' do
 
     # Now sign in as other_user and attempt to change manager's message via PATCH
     logout
-    login(other_user.email, 'password12345')
+    login(other_user.email, 'SecureTest123!@#')
 
     patch better_together.conversation_path(conversation, locale: I18n.default_locale), params: {
       conversation: {

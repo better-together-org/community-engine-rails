@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/BlockLength
-RSpec.feature 'User Registration' do
+RSpec.feature 'User Registration', :user_registration do
   # Ensure you have a valid user created; using FactoryBot here
   let!(:host_setup_wizard) do
     BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
   end
-  let!(:user) { build(:better_together_user) }
+  let!(:user) { build(:better_together_user, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#') }
   let!(:person) { build(:better_together_person) }
   let!(:privacy_agreement) do
     BetterTogether::Agreement.find_or_create_by(identifier: 'privacy_policy') do |a|
@@ -40,6 +40,8 @@ RSpec.feature 'User Registration' do
   scenario 'User registers successfully' do # rubocop:todo RSpec/MultipleExpectations
     # rubocop:enable RSpec/MultipleExpectations
     host_setup_wizard.mark_completed
+    # Debug: check that we have the right setup
+
     # byebug
     # Visit the sign-in page (adjust the path if your routes differ)
     visit better_together.new_user_registration_path
@@ -53,20 +55,26 @@ RSpec.feature 'User Registration' do
     fill_in 'user[person_attributes][identifier]', with: person.identifier
 
     if page.has_unchecked_field?('terms_of_service_agreement')
+
       check 'terms_of_service_agreement'
     elsif page.has_unchecked_field?('user_accept_terms_of_service')
+
       check 'user_accept_terms_of_service'
     end
 
     if page.has_unchecked_field?('privacy_policy_agreement')
+
       check 'privacy_policy_agreement'
     elsif page.has_unchecked_field?('user_accept_privacy_policy')
+
       check 'user_accept_privacy_policy'
     end
 
     if page.has_unchecked_field?('code_of_conduct_agreement')
+
       check 'code_of_conduct_agreement'
     elsif page.has_unchecked_field?('user_accept_code_of_conduct')
+
       check 'user_accept_code_of_conduct'
     end
 

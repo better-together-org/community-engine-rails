@@ -1,0 +1,28 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="quote-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[quote_text]", BetterTogether::Content::Block.human_attribute_name('quote_text', default: 'Quote'), class: 'form-label' %>
+    <%= text_area_tag "#{scope}[quote_text]", block.quote_text, class: 'form-control', rows: 4,
+                      placeholder: 'Enter the quote text...' %>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[attribution_name]", BetterTogether::Content::Block.human_attribute_name('attribution_name', default: 'Attribution Name'), class: 'form-label' %>
+    <%= text_field_tag "#{scope}[attribution_name]", block.attribution_name, class: 'form-control',
+                       placeholder: 'Jane Smith' %>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[attribution_title]", BetterTogether::Content::Block.human_attribute_name('attribution_title', default: 'Title / Role'), class: 'form-label' %>
+      <%= text_field_tag "#{scope}[attribution_title]", block.attribution_title, class: 'form-control',
+                         placeholder: 'Executive Director' %>
+    </div>
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[attribution_organization]", BetterTogether::Content::Block.human_attribute_name('attribution_organization', default: 'Organization'), class: 'form-label' %>
+      <%= text_field_tag "#{scope}[attribution_organization]", block.attribution_organization, class: 'form-control',
+                         placeholder: 'Better Together Solutions' %>
+    </div>
+  </div>
+</div>

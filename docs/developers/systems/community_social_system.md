@@ -218,7 +218,8 @@ class Community < ApplicationRecord
   has_many :calendars, dependent: :destroy
   joinable joinable_type: 'community', member_type: 'person'
   
-  translates :name, :description
+  translates :name, type: :string
+  translates :description, backend: :action_text
   has_one_attached :profile_image, :cover_image, :logo
   
   validates :name, presence: true

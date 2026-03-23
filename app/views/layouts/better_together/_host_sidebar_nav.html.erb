@@ -1,0 +1,22 @@
+<% return if host_nav_items.blank? %>
+
+<nav class="bt-underline-nav" aria-label="<%= t('better_together.host_nav.label') %>">
+  <div class="d-lg-none mb-3">
+    <button class="btn btn-outline-secondary w-100"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#hostNavSidebar"
+            aria-expanded="false"
+            aria-controls="hostNavSidebar">
+      <i class="fas fa-sitemap me-2" aria-hidden="true"></i>
+      <%= t('better_together.host_nav.toggle') %>
+    </button>
+  </div>
+  <div id="hostNavSidebar" class="collapse d-lg-block">
+    <ul class="nav flex-column gap-2">
+      <%= render partial: 'better_together/navigation_items/navigation_item',
+                 collection: host_nav_items,
+                 as: :navigation_item %>
+    </ul>
+  </div>
+</nav>

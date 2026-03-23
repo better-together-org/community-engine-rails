@@ -14,14 +14,27 @@ module BetterTogether
 
     def index
       authorize resource_class
-      @pages = resource_collection
+
+      @pages = build_filtered_collection
+      @pages = apply_sorting(@pages)
+      @pages = @pages.page(params[:page]).per(25)
     end
 
     def show
       # Hide pages that don't exist or aren't viewable to the current user as 404s
       render_not_found and return if @page.nil?
 
-      @content_blocks = @page.content_blocks
+      # Preload content blocks with their associations for better performance.
+      # Do NOT include :string_translations here — block STI collections may
+      # contain Content::Template records that have no string_translations
+      # association, causing AssociationNotFoundError in Rails 8 (branch.rb:85).
+      # Instead, use preload_block_string_translations to selectively preload
+      # only on block types that define the association.
+      content_blocks = @page.content_blocks.includes(
+        background_image_file_attachment: :blob
+      ).load
+      preload_block_string_translations(content_blocks)
+      @content_blocks = content_blocks
       @layout = 'layouts/better_together/page'
       @layout = @page.layout if @page.layout.present?
     end
@@ -42,8 +55,8 @@ module BetterTogether
               redirect_to edit_page_path(@page), notice: t('flash.generic.created', resource: t('resources.page'))
             end
             format.turbo_stream do
-              flash.now[:notice] = t('flash.generic.created', resource: t('resources.page'))
-              render turbo_stream: turbo_stream.redirect_to(edit_page_path(@page))
+              flash[:notice] = t('flash.generic.created', resource: t('resources.page'))
+              redirect_to edit_page_path(@page), status: :see_other
             end
           else
             format.turbo_stream do
@@ -141,27 +154,11 @@ module BetterTogether
 
     def set_page
       @page = set_resource_instance
+      return unless @page
+
+      @page = preload_page_associations(@page)
     rescue ActiveRecord::RecordNotFound
       render_not_found && return
-    end
-
-    def page_params # rubocop:todo Metrics/MethodLength
-      params.require(:page).permit(
-        :meta_description, :keywords, :published_at, :sidebar_nav_id,
-        :privacy, :layout, :template, *Page.localized_attribute_list,
-        *Page.extra_permitted_attributes,
-        page_blocks_attributes: [
-          :id, :position, :_destroy,
-          {
-            block_attributes: [
-              :id, :type, :identifier, :_destroy,
-              *BetterTogether::Content::Block.localized_block_attributes,
-              *BetterTogether::Content::Block.storext_keys,
-              *BetterTogether::Content::Block.extra_permitted_attributes
-            ]
-          }
-        ]
-      )
     end
 
     def resource_class
@@ -172,8 +169,108 @@ module BetterTogether
       policy_scope(resource_class)
     end
 
+    def apply_sorting(collection)
+      sort_by = params[:sort_by]
+      sort_direction = params[:sort_direction] == 'desc' ? :desc : :asc
+
+      case sort_by
+      when 'title', 'slug'
+        collection.i18n.order(sort_by.to_sym => sort_direction)
+      else
+        collection.order(collection.arel_table[:identifier].send(sort_direction))
+      end
+    end
+
+    def build_filtered_collection
+      collection = base_collection
+      collection = apply_title_filter(collection) if params[:title_filter].present?
+      collection = apply_slug_filter(collection) if params[:slug_filter].present?
+      collection
+    end
+
     def translatable_conditions
       []
+    end
+
+    def base_collection
+      resource_collection.includes(
+        :string_translations,
+        page_blocks: {
+          block: [{ background_image_file_attachment: :blob }]
+        }
+      )
+    end
+
+    def apply_title_filter(collection)
+      search_term = params[:title_filter].strip
+      collection.i18n { title.matches("%#{search_term}%") }
+    end
+
+    def apply_slug_filter(collection)
+      search_term = params[:slug_filter].strip
+      collection.i18n { slug.matches("%#{search_term}%") }
+    end
+
+    def preload_page_associations(page)
+      loaded_page = resource_class.includes(page_includes).find(page.id)
+      preload_block_string_translations(loaded_page.page_blocks.map(&:block))
+      loaded_page
+    end
+
+    def page_includes
+      [
+        :string_translations,
+        :sidebar_nav,
+        { page_blocks: {
+          block: [{ background_image_file_attachment: :blob }]
+        } }
+      ]
+    end
+
+    def page_params
+      params.require(:page).permit(
+        basic_page_attributes + page_blocks_permitted_attributes
+      ).tap do |attrs|
+        attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
+      end
+    end
+
+    def basic_page_attributes
+      [
+        :meta_description, :keywords, :published_at, :sidebar_nav_id,
+        :privacy, :layout, :template, :show_title, *Page.localized_attribute_list,
+        *Page.extra_permitted_attributes
+      ]
+    end
+
+    def page_blocks_permitted_attributes
+      [
+        {
+          page_blocks_attributes: [
+            :id, :position, :_destroy,
+            { block_attributes: block_permitted_attributes }
+          ]
+        }
+      ]
+    end
+
+    def block_permitted_attributes
+      [
+        :id, :type, :identifier, :_destroy,
+        *BetterTogether::Content::Block.localized_block_attributes,
+        *BetterTogether::Content::Block.storext_keys,
+        *BetterTogether::Content::Block.extra_permitted_attributes
+      ]
+    end
+
+    # Preloads string_translations only on block types that define the association,
+    # avoiding AssociationNotFoundError on STI subclasses (e.g. Content::Template)
+    # that do not have any Mobility string-translated attributes.
+    def preload_block_string_translations(blocks)
+      translatable = blocks.select { |b| b.class.reflect_on_association(:string_translations) }
+      return if translatable.empty?
+
+      ActiveRecord::Associations::Preloader.new(records: translatable, associations: :string_translations).call
     end
   end
 end

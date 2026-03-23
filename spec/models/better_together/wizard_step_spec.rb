@@ -4,38 +4,38 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe WizardStep do
-    let(:wizard_step) { build(:better_together_wizard_step) }
+RSpec.describe BetterTogether::WizardStep do
+  subject(:existing_wizard_step) { create(:better_together_wizard_step) }
 
-    subject(:existing_wizard_step) { create(:better_together_wizard_step) }
+  let(:wizard_step) { build(:better_together_wizard_step) }
 
-    describe 'Factory' do
-      it 'has a valid factory' do
-        expect(wizard_step).to be_valid
-      end
+  describe 'Factory' do
+    it 'has a valid factory' do
+      expect(wizard_step).to be_valid
     end
+  end
 
-    describe 'ActiveRecord associations' do
-      # it { is_expected.to belong_to(:wizard) }
-      it {
-        expect(subject).to belong_to(:wizard_step_definition) # rubocop:todo RSpec/NamedSubject
-      }
+  it_behaves_like 'a seedable model'
 
-      it { is_expected.to belong_to(:creator).class_name('BetterTogether::Person').optional }
-    end
+  describe 'ActiveRecord associations' do
+    # it { is_expected.to belong_to(:wizard) }
+    it {
+      expect(subject).to belong_to(:wizard_step_definition) # rubocop:todo RSpec/NamedSubject
+    }
 
-    describe 'ActiveModel validations' do
-      it { is_expected.to validate_inclusion_of(:completed).in_array([true, false]) }
-    end
+    it { is_expected.to belong_to(:creator).class_name('BetterTogether::Person').optional }
+  end
 
-    describe 'Methods' do
-      describe '#mark_as_completed' do
-        it 'marks the wizard step as completed and saves it' do
-          wizard_step.mark_as_completed
-          expect(wizard_step.completed).to be true
-          expect(wizard_step.persisted?).to be true
-        end
+  describe 'ActiveModel validations' do
+    it { is_expected.to validate_inclusion_of(:completed).in_array([true, false]) }
+  end
+
+  describe 'Methods' do
+    describe '#mark_as_completed' do
+      it 'marks the wizard step as completed and saves it' do
+        wizard_step.mark_as_completed
+        expect(wizard_step.completed).to be true
+        expect(wizard_step.persisted?).to be true
       end
     end
   end

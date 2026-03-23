@@ -109,10 +109,17 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
-    def privacy_field(form:, klass:)
+    def privacy_field(form:, klass:, html_options: {})
+      options = { class: 'form-select', required: true }
+      if html_options[:class].present?
+        options[:class] = "#{options[:class]} #{html_options[:class]}".strip
+        html_options = html_options.except(:class)
+      end
+      options.merge!(html_options)
+
       form.select :privacy, klass.privacies.keys.map { |privacy|
         [privacy.humanize, privacy]
-      }, {}, { class: 'form-select', required: true }
+      }, {}, options
     end
 
     # rubocop:todo Metrics/MethodLength
@@ -121,7 +128,7 @@ module BetterTogether
     # when the visible label needs to be different from the translated attribute
     # name (for example: participant_ids -> "Add participants").
     # rubocop:todo Metrics/PerceivedComplexity
-    def required_label(form_or_object, field, label_text: nil, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def required_label(form_or_object, field, label_text: nil, **options) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       # Determine if it's a form object or just an object
       if form_or_object.respond_to?(:object)
         object = form_or_object.object
@@ -152,7 +159,12 @@ module BetterTogether
       end
 
       if form_or_object.respond_to?(:label)
-        form_or_object.label(field, label_text.html_safe, options)
+        label_html = form_or_object.label(field, label_text.html_safe, options)
+        # Some test doubles return an empty string for label; fall back to
+        # `label_tag` to ensure the markup exists in view specs.
+        return label_tag(field, label_text.html_safe, options) if label_html.nil? || label_html.to_s.strip.empty?
+
+        label_html
       else
         label_tag(field, label_text.html_safe, options)
       end
@@ -196,5 +208,22 @@ module BetterTogether
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/MethodLength
+
+    # Generates a role selection field for invitations
+    # @param form [ActionView::Helpers::FormBuilder] The form builder instance
+    # @param field_name [Symbol] The name of the field (typically :role_id)
+    # @param resource_type [String] The resource type to filter roles by (e.g., 'BetterTogether::Community')
+    # @param prompt [String, nil] The prompt text for the select field
+    # @param html_options [Hash] Additional HTML options for the select field
+    # @return [String] HTML for the role selection field
+    def role_select_field(form:, field_name:, resource_type:, html_options: {})
+      roles = BetterTogether::Role.where(resource_type: resource_type)
+                                  .includes(:string_translations)
+                                  .order(:position)
+                                  .i18n
+      html_opts = { class: 'form-select', name: "invitation[#{field_name}]" }.merge(html_options)
+
+      form.collection_select(field_name, roles, :id, :name, {}, html_opts)
+    end
   end
 end

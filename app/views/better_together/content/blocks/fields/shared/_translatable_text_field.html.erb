@@ -1,15 +1,28 @@
-<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title') -%>
+<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title', rows: nil, help_text: nil, input_options: {}) -%>
 
-<%- temp_id = temp_id_for(model, temp_id:) %>
+<%- config = translatable_text_field_config(
+      model: model,
+      scope: scope,
+      temp_id: temp_id,
+      attribute: attribute,
+      rows: rows,
+      help_text: help_text,
+      input_options: input_options
+    ) %>
 
 <%= render layout: 'better_together/content/blocks/fields/shared/translatable_field',
-           locals: { model: model, scope: scope, temp_id: temp_id, attribute: attribute } do |locale_attribute| %>
+     locals: {
+       model: config[:model],
+       scope: config[:scope],
+       temp_id: config[:temp_id],
+       attribute: config[:attribute],
+       help_text: config[:help_text]
+     } do |locale_attribute| %>
 
-  <%= text_area_tag "#{scope}[#{locale_attribute}]",
-        model.public_send(locale_attribute),
-        id: "#{dom_id(model)}-#{locale_attribute}",
-        class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
-        data: {action: "input->better_together--translation#updateTranslationStatus" },
-'data-better_together-translation-target' => "input" %>
+    <%- options = translatable_text_field_options(config, locale_attribute) %>
+
+    <%= text_area_tag "#{config[:scope]}[#{locale_attribute}]",
+      config[:model].public_send(locale_attribute),
+      **options %>
 
 <% end %>

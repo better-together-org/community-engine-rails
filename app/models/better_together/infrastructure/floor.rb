@@ -20,7 +20,7 @@ module BetterTogether
       belongs_to :building, class_name: 'BetterTogether::Infrastructure::Building', touch: true
       has_many :rooms, class_name: 'BetterTogether::Infrastructure::Room', dependent: :destroy
 
-      translates :name
+      translates :name, type: :string
       translates :description, backend: :action_text
 
       slugged :name

@@ -3,6 +3,9 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
+ENV['ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY'] ||= '0123456789abcdef0123456789abcdef'
+ENV['ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY'] ||= 'abcdef0123456789abcdef0123456789'
+ENV['ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT'] ||= 'salt-for-local-test-runs-0123456789'
 require File.expand_path('dummy/config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
@@ -10,6 +13,11 @@ require 'rspec/rails'
 require 'rails-controller-testing'
 
 ActiveJob::Base.queue_adapter = :test
+
+# Configure cache with worker-specific namespace for parallel test isolation
+if ENV['TEST_ENV_NUMBER']
+  Rails.cache = ActiveSupport::Cache::MemoryStore.new(namespace: "test_worker_#{ENV['TEST_ENV_NUMBER']}")
+end
 
 Dir[BetterTogether::Engine.root.join('spec/support/**/*.rb')].each { |f| require f }
 Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| require f }
@@ -33,15 +41,17 @@ Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| requi
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
-  ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
-rescue ActiveRecord::PendingMigrationError => e
-  puts e.to_s.strip
+rescue ActiveRecord::PendingMigrationError
   exit 1
 end
 
 # Essential tables that should be preserved across tests
+# rubocop:todo Metrics/PerceivedComplexity
+# rubocop:todo Lint/CopDirectiveSyntax
 ESSENTIAL_TABLES = %w[
+  better_together_communities
+  better_together_platforms
   better_together_roles
   better_together_resource_permissions
   better_together_role_resource_permissions
@@ -51,6 +61,8 @@ ESSENTIAL_TABLES = %w[
   better_together_wizards
   better_together_wizard_step_definitions
   better_together_agreements
+  better_together_content_blocks
+  better_together_content_page_blocks
   mobility_string_translations
   mobility_text_translations
   action_text_rich_texts
@@ -58,15 +70,34 @@ ESSENTIAL_TABLES = %w[
   active_storage_attachments
   active_storage_variant_records
 ].freeze
+# rubocop:enable Lint/CopDirectiveSyntax
+# rubocop:enable Metrics/PerceivedComplexity
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request
 
+  # Enable assigns method in request specs (requires rails-controller-testing gem)
+  config.include Rails::Controller::Testing::TestProcess, type: :request
+  config.include Rails::Controller::Testing::TemplateAssertions, type: :request
+  config.include Rails::Controller::Testing::Integration, type: :request
+
   config.include Warden::Test::Helpers
   config.after { Warden.test_reset! }
+
+  # Configure OmniAuth for test mode
+  config.before(:suite) do
+    OmniAuth.config.test_mode = true
+  end
+
+  config.after do
+    OmniAuth.config.mock_auth[:github] = nil
+    # Reset navigation touch flag to prevent test pollution
+    BetterTogether.skip_navigation_touches = false
+  end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [Rails.root.join('spec/fixtures')]
@@ -97,41 +128,78 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
   # config.include RequestSpecHelper, type: :controller
   config.include BetterTogether::CapybaraFeatureHelpers, type: :feature
+  config.include OmniauthTestHelpers, :omniauth
 
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
 
-    # Pre-clear FK-dependent tables to avoid violations when referential integrity cannot be disabled
-    begin
-      BetterTogether::RoleResourcePermission.delete_all
-      BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
-      BetterTogether::NavigationItem.where(parent_id: nil).delete_all
-    rescue StandardError => e
-      Rails.logger.debug "Pre-clean step skipped or failed: #{e.message}"
-    end
-
-    # Full clean to start fresh using deletions to avoid deadlocks with Postgres TRUNCATE
-    DatabaseCleaner.clean_with(:deletion)
-
-    # Load essential seed data with explicit clearing for deterministic baseline
-    def build_with_retry(times: 3)
+    # Seed essential data idempotently. No initial full-clean here because:
+    # 1. db:parallel:prepare already gives each CI worker a clean schema.
+    # 2. In CI, parallel_rspec workers share the same database (DATABASE_URL).
+    #    A destructive clean_with(:deletion) in one worker would wipe seeds
+    #    that a sibling worker just created, causing intermittent "Host Setup
+    #    Wizard not configured" / "Platform can't be blank" failures.
+    # All builders use clear: false so seed_data runs without deleting first.
+    # build_with_retry treats duplicate-key errors as "already seeded" — safe
+    # for concurrent workers that race to create the same rows.
+    def build_with_retry(times: 3) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       attempts = 0
       begin
         yield
-      rescue ActiveRecord::Deadlocked
+      rescue StandardError => e
         attempts += 1
-        retry if attempts < times
-        raise
+        is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
+                             e.is_a?(ActiveRecord::RecordNotUnique)
+        e.is_a?(ActiveRecord::Deadlocked) ||
+          e.is_a?(ActiveRecord::StaleObjectError) ||
+          e.is_a?(ActiveRecord::InvalidForeignKey) ||
+          e.is_a?(ActiveRecord::StatementInvalid)
+
+        if is_duplicate_error
+          Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+        elsif attempts < times
+          retry
+        else
+          warn "[build_with_retry] FAILED after #{times} attempts: #{e.class}: #{e.message}"
+          Rails.logger.warn "build_with_retry: giving up after #{times} attempts (#{e.class}: #{e.message})"
+        end
       end
     end
 
-    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::NavigationBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::AgreementBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: false) }
 
-    puts '✅ Loaded essential seed data for test suite'
+    # Seed a host community + platform before NavigationBuilder.
+    # NavigationBuilder creates Page records that validate platform_id: presence: true.
+    # The Page#assign_current_platform_if_available callback resolves via
+    # Current.platform, Platform.find_by(host: true), or Platform.first — all nil
+    # on a fresh database. find_or_create_by! is idempotent across parallel workers.
+    build_with_retry do
+      host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
+        c.name       = 'Test Host Community'
+        c.identifier = 'test-host-community'
+        c.privacy    = 'public'
+        c.protected  = true
+      end
+
+      BetterTogether::Platform.find_or_create_by!(host: true) do |p|
+        p.name       = host_community.name
+        p.identifier = host_community.identifier
+        p.host_url   = 'http://www.example.com'
+        p.time_zone  = 'UTC'
+        p.privacy    = 'public'
+        p.protected  = true
+        p.community  = host_community
+      end
+    end
+
+    # Set Current.platform so Page#assign_current_platform_if_available resolves
+    # correctly during NavigationBuilder (belt + suspenders alongside find_by(host:true)).
+    Current.platform = BetterTogether::Platform.find_by(host: true)
+    build_with_retry { BetterTogether::NavigationBuilder.build(clear: false) }
+    Current.platform = nil
+    build_with_retry { BetterTogether::CategoryBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::AgreementBuilder.build(clear: false) }
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
@@ -141,10 +209,17 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :deletion, { except: ESSENTIAL_TABLES }
 
     DatabaseCleaner.start
+
+    # Clear Rails cache to prevent permission/data pollution between parallel workers
+    # This is critical for RBAC specs that cache permission checks for 12 hours
+    Rails.cache.clear
   end
 
   config.after do
     DatabaseCleaner.clean
+
+    # Clear cache again after each test to ensure clean state
+    Rails.cache.clear
   end
 
   # Reset locale to English after each test to prevent test isolation issues

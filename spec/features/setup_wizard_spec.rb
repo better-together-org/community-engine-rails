@@ -13,13 +13,16 @@ RSpec.feature 'Setup Wizard Flow', :js, skip: 'flaky/setup_wizard - disabled whi
 
     # Start at the root and verify redirection to the wizard
     visit '/'
+    expect(current_path).to eq(better_together.home_page_path(locale: I18n.locale))
+
+    visit better_together.new_user_session_path(locale: I18n.locale)
     expect(current_path).to eq(better_together.setup_wizard_step_platform_details_path(locale: I18n.locale))
     expect(page).to have_content("Please configure your platform's details below")
 
     # Fill in the form fields using the field IDs
     fill_in 'platform[name]', with: platform.name
     fill_in 'platform[description]', with: platform.description
-    fill_in 'platform[url]', with: platform.url
+    fill_in 'platform[host_url]', with: platform.host_url
     select 'Private', from: 'platform[privacy]'
     select 'UTC', from: 'platform[time_zone]'
 

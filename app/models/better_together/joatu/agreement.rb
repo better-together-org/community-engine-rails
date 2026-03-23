@@ -58,6 +58,7 @@ module BetterTogether
           update!(status: :accepted)
           offer.status_closed!
           request.status_closed!
+          request.after_agreement_acceptance!(offer:)
         end
       end
 
@@ -68,6 +69,19 @@ module BetterTogether
 
       def to_s
         "#{offer} ↔ #{request}"
+      end
+
+      def connection_request?
+        request.is_a?(BetterTogether::Joatu::ConnectionRequest)
+      end
+
+      def platform_connection
+        return unless connection_request?
+
+        BetterTogether::PlatformConnection.find_by(
+          source_platform: offer&.target,
+          target_platform: request&.target
+        )
       end
 
       private
@@ -151,6 +165,9 @@ module BetterTogether
       # Ensures the offer targets the same record as the request
       def offer_matches_request_target
         return unless targets_present?
+        return if connection_request_target_pair?
+        return if person_link_request_target_pair?
+        return if person_access_grant_request_target_pair?
         return if offer.target_type == request.target_type && offer.target_id == request.target_id
 
         errors.add(:offer, 'target does not match request target')
@@ -159,6 +176,24 @@ module BetterTogether
       def targets_present?
         offer && request &&
           [offer, request].all? { |r| r.respond_to?(:target_type) && r.respond_to?(:target_id) }
+      end
+
+      def connection_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::ConnectionRequest) &&
+          offer.target.is_a?(BetterTogether::Platform) &&
+          request.target.is_a?(BetterTogether::Platform)
+      end
+
+      def person_link_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::PersonLinkRequest) &&
+          offer.target.is_a?(BetterTogether::Person) &&
+          request.target.is_a?(BetterTogether::Person)
+      end
+
+      def person_access_grant_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::PersonAccessGrantRequest) &&
+          offer.target.is_a?(BetterTogether::Person) &&
+          request.target.is_a?(BetterTogether::Person)
       end
 
       def notify_creators

@@ -1,0 +1,11 @@
+<!-- app/views/better_together/membership_created_notifier/notifications/_notification.html.erb -->
+<%= render layout: 'better_together/notifications/notification',
+           locals: { notification: notification,
+                     notification_title: notification.title,
+                     notification_url: notification.joinable } do %>
+  <% cache ["membership_created_content", notification.cache_key_with_version, I18n.locale] do %>
+    <p class="mb-1">
+      <%= notification.body %>
+    </p>
+  <% end %>
+<% end %>

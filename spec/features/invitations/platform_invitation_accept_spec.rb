@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'accepting a platform invitation' do
+RSpec.describe 'accepting a platform invitation', :user_registration do
   let!(:invitation) do
     create(:better_together_platform_invitation,
            invitable: configure_host_platform)

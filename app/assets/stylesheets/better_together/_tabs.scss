@@ -1,0 +1,74 @@
+.bt-tab-control {
+  --bt-tab-accent: #495057;
+  --bt-tab-accent-rgb: 73, 80, 87;
+  align-items: center;
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.bt-tab-icon {
+  color: var(--bt-tab-accent);
+  font-size: 0.9rem;
+}
+
+.bt-tab-badge {
+  background-color: rgba(var(--bt-tab-accent-rgb), 0.08);
+  border: 1px solid var(--bt-tab-accent);
+  color: var(--bt-tab-accent);
+  font-weight: 600;
+}
+
+.bt-tab-pane {
+  border-left: 4px solid var(--bt-tab-accent);
+  background-color: rgba(var(--bt-tab-accent-rgb), 0.03);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.bt-tab-pane--action {
+  border-left: 0;
+  border-right: 3px solid var(--bt-tab-accent);
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.bt-tab-heading {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.bt-tab-group {
+  border-color: rgba(var(--bt-tab-accent-rgb), 0.2);
+}
+
+.bt-tab-accent--primary {
+  --bt-tab-accent: var(--bs-primary);
+  --bt-tab-accent-rgb: var(--bs-primary-rgb);
+}
+
+.bt-tab-accent--success {
+  --bt-tab-accent: var(--bs-success);
+  --bt-tab-accent-rgb: var(--bs-success-rgb);
+}
+
+.bt-tab-accent--warning {
+  --bt-tab-accent: var(--bs-warning);
+  --bt-tab-accent-rgb: var(--bs-warning-rgb);
+}
+
+.bt-tab-accent--danger {
+  --bt-tab-accent: var(--bs-danger);
+  --bt-tab-accent-rgb: var(--bs-danger-rgb);
+}
+
+.bt-tab-accent--neutral {
+  --bt-tab-accent: var(--bs-secondary);
+  --bt-tab-accent-rgb: var(--bs-secondary-rgb);
+}
+
+.bt-tab-accent--info {
+  --bt-tab-accent: var(--bs-info);
+  --bt-tab-accent-rgb: var(--bs-info-rgb);
+}

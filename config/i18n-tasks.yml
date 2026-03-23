@@ -1,0 +1,123 @@
+# config/i18n-tasks.yml
+base_locale: en
+
+# Configure available locales
+locales:
+  - en
+  - es  
+  - fr
+  - uk
+
+# Data configuration
+data:
+  read:
+    - 'config/locales/%{locale}.yml'
+    - 'config/locales/**/%{locale}.yml'
+  write:
+    - 'config/locales/%{locale}.yml'
+  
+# Search configuration for finding translation keys in code
+search:
+  paths:
+    - app
+    - lib
+    - config
+  
+  # File patterns to scan
+  only:
+    - '*.rb'
+    - '*.erb'
+    - '*.haml'
+    - '*.slim'
+    - '*.js'
+    - '*.yml'
+  
+  # Exclude unnecessary paths
+  exclude:
+    - '**/*.log'
+    - 'spec/**'
+    - 'test/**'
+    - 'tmp/**'
+    - 'log/**'
+    - 'vendor/**'
+    - 'coverage/**'
+
+# Ignore patterns for missing keys
+ignore_missing:
+  # Ignore timezone translation keys from i18n-timezones gem
+  # These are provided by the gem but may not have complete English translations
+  - 'timezones.**'
+  - 'timezone.**'
+  - 'tzinfo.**'
+  
+  # Ignore Rails internal keys that may not need translation
+  - 'activerecord.errors.models.*.attributes.**'
+  
+  # Ignore Devise keys that come from gem
+  - 'devise.sessions.*'
+  - 'devise.passwords.*'
+  - 'devise.registrations.*'
+  - 'devise.confirmations.*'
+  
+# Ignore specific unused keys  
+ignore_unused:
+  # Rails / framework keys are frequently used implicitly (errors, helpers,
+  # distance_of_time_in_words, number helpers, etc.) and won't always be
+  # discoverable via static scanning.
+  - 'actions.*'
+  - 'date.**'
+  - 'datetime.**'
+  - 'errors.**'
+  - 'helpers.**'
+  - 'number.**'
+  - 'support.**'
+  - 'time.**'
+  - 'activerecord.attributes.**'
+  - 'activerecord.errors.**'
+  - 'activerecord.errors.messages.**'
+  - 'activerecord.errors.models.**'
+  - 'activerecord.models.**'
+
+  # Common app-wide keys that are often referenced dynamically
+  - 'devise.**'
+  - 'doorkeeper.**'
+  - 'flash.**'
+  - 'globals.**'
+  - 'hints.**'
+  - 'host_dashboard.**'
+  - 'meta.**'
+  - 'navbar.**'
+  - 'navigation_item.**'
+  - 'pages.**'
+  - 'person_platform_memberships.**'
+
+  # Legacy/simple keys that may be referenced by gems or dynamic forms
+  - 'accepted_at'
+  - 'accessibility_attributes'
+
+  # BetterTogether engine keys are frequently referenced via relative lookups
+  # and other dynamic patterns that i18n-tasks cannot always detect.
+  - 'better_together.**'
+
+  # Timezone name tables are provided/used dynamically (i18n-timezones, etc.)
+  - 'timezones.**'
+  - 'timezone.**'
+  - 'tzinfo.**'
+
+  # Top-level model name aliases used by some serializers/gems
+  - 'content'
+  - 'conversation'
+  - 'conversation_participants'
+  - 'conversations.**'
+
+  # Keys that may be used dynamically
+  - 'better_together.invitations.status.*'
+  - 'better_together.*.status.*'
+  # Template paths are used dynamically by converting path separators to dots
+  - 'better_together.content.blocks.template.*'
+  - 'better_together.static_pages.*'
+  
+# Ignore inconsistent interpolations (variables) in these keys
+ignore_inconsistent_interpolations:
+  - 'better_together.*.flash.*'
+  - 'activerecord.errors.models.*.attributes.*'

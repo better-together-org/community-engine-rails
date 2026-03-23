@@ -11,7 +11,7 @@ gem 'asset_sync'
 gem 'aws-sdk-s3', require: false
 
 # bcrypt for secure password handling
-gem 'bcrypt', '~> 3.1.20'
+gem 'bcrypt', '~> 3.1.22'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
@@ -20,39 +20,40 @@ gem 'fog-aws'
 # Database adapter for PostgreSQL
 gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
-gem 'puma', '~> 6.6'
+gem 'puma', '~> 7.2'
 
 # Pundit for authorization, custom fork for Better Together
-gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources'
+gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources', branch: 'fix/rails-8-1-upper-bound-20260320'
 
 # Core Rails gem
 gem 'rack-protection'
-gem 'rails', ENV.fetch('RAILS_VERSION', '7.2.2.2')
+gem 'rails', ENV.fetch('RAILS_VERSION', '8.0.3')
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
 
 gem 'rswag'
 
-# Sidekiq for background processing
-gem 'sidekiq', '~> 8.0.7'
+# Sidekiq 8.1 requires Rack >= 3.2, which is incompatible with the 7.2 CI lane.
+gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.0.3').start_with?('7.2.') ? '~> 7.3.9' : '~> 8.1.1'
+# Pin connection_pool to avoid breaking changes in 3.x
+gem 'connection_pool', '~> 3.0.2'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
 gem 'sentry-ruby'
 gem 'stackprof'
 
+# Sitemap generation
+gem 'sitemap_generator'
+
 # Storext for easier json attributes, custom fork for Better Together
-gem 'storext', github: 'better-together-org/storext'
+gem 'storext', github: 'better-together-org/storext', branch: 'fix/rails-8-1-upper-bound-20260320'
 
 # Uglifier for JavaScript compression
 gem 'uglifier', '>= 1.3.0'
 
 group :development, :test do
-  # Better errors for enhanced error pages
-  gem 'better_errors'
-  # Binding of caller provides pry console at breakpoints
-  gem 'binding_of_caller'
   # Debugger tool
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   # Faker for generating fake data
@@ -62,14 +63,20 @@ group :development, :test do
   # Fuubar for fancy test progress bar
   gem 'fuubar'
   # Help with managing translation databasde
-  gem 'i18n-tasks', '~> 1.0.15'
+  gem 'i18n-tasks', '~> 1.1.2'
   # Pry for a powerful shell alternative to IRB
+  # Parallel RSpec for running specs concurrently across multiple CPU cores
+  gem 'parallel_rspec'
   gem 'pry'
   # RuboCop for static code analysis
   gem 'rubocop'
 end
 
 group :development do
+  # Better errors for enhanced error pages (excluded from test to prevent marshal errors with parallel_rspec)
+  gem 'better_errors'
+  # Binding of caller provides pry console at breakpoints (excluded from test to prevent marshal errors)
+  gem 'binding_of_caller'
   # Brakeman for static analysis security vulnerability scanning
   gem 'brakeman', require: false
   # Bundler audit for checking gem vulnerabilities
@@ -79,7 +86,7 @@ group :development do
 
   gem 'easy_translate'
   # Listen for file system changes
-  gem 'listen', '>= 3.0.5', '< 3.10'
+  gem 'listen', '>= 3.0.5', '< 3.11'
   # Rack mini profiler for performance profiling
   gem 'rack-mini-profiler'
   # Readline implementation for Ruby
@@ -95,9 +102,15 @@ group :development do
 end
 
 group :test do
+  # axe-core for accessibility testing
+  gem 'axe-core-capybara'
+  gem 'axe-core-rspec'
+  gem 'axe-core-selenium'
   # Capybara for integration testing
   gem 'capybara', '>= 2.15'
   gem 'capybara-screenshot'
+  # Generator testing utilities
+  gem 'generator_spec'
   # WebMock for stubbing external HTTP requests in specs
   gem 'webmock'
   # Coveralls for test coverage reporting
@@ -116,6 +129,7 @@ group :test do
   gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'
   # RSpec for unit testing
+  gem 'faraday-retry'
   gem 'rspec'
   gem 'rspec-rebound'
   # RSpec Rails integration

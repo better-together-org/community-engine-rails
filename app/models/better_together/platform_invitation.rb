@@ -32,8 +32,8 @@ module BetterTogether
 
     has_rich_text :greeting, encrypted: true
 
-    validates :invitee_email, uniqueness: { scope: :invitable_id, allow_nil: true }
-    validates :invitee_email, uniqueness: { scope: :invitable_id, allow_nil: true, allow_blank: true }
+    validates :invitee_email, format: { with: URI::MailTo::EMAIL_REGEXP },
+                              uniqueness: { scope: :invitable_id, allow_nil: true, allow_blank: true }
     validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
     validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
     validates :token, uniqueness: true
@@ -82,6 +82,14 @@ module BetterTogether
 
     def to_s
       "[#{self.class.model_name.human}] - #{id}"
+    end
+
+    # Attributes permitted for strong parameters
+    def self.permitted_attributes(id: false, destroy: false)
+      super + %i[
+        invitee_email platform_role_id community_role_id locale
+        valid_from valid_until greeting session_duration_mins
+      ]
     end
 
     private

@@ -17,10 +17,20 @@
             </div>
           <% end %>
 
+          <% if resource.oauth_without_password? %>
+            <div class="alert alert-info">
+              <%= t('devise.registrations.edit.oauth_user_set_password_info') %>
+            </div>
+          <% end %>
+
           <!-- Password Field -->
           <div class="mb-3">
             <%= f.label :password, class: 'form-label' %>
-            <i>(<%= t('devise.registrations.edit.leave_blank_if_you_don_t_want_to_change_it') %>)</i>
+            <% if resource.oauth_without_password? %>
+              <i>(<%= t('devise.registrations.edit.set_password_to_enable_email_login') %>)</i>
+            <% else %>
+              <i>(<%= t('devise.registrations.edit.leave_blank_if_you_don_t_want_to_change_it') %>)</i>
+            <% end %>
             <%= f.password_field :password, autocomplete: "new-password", class: 'form-control' %>
             <% if @minimum_password_length %>
               <small class="form-text text-muted">
@@ -36,11 +46,13 @@
           </div>
 
           <!-- Current Password Field -->
-          <div class="mb-3">
-            <%= required_label f, :current_password, class: 'form-label' %>
-            <i>(<%= t('devise.registrations.edit.we_need_your_current_password_to_confirm_your_changes') %>)</i>
-            <%= f.password_field :current_password, autocomplete: "current-password", class: 'form-control', required: true %>
-          </div>
+          <% unless resource.oauth_without_password? %>
+            <div class="mb-3">
+              <%= required_label f, :current_password, class: 'form-label' %>
+              <i>(<%= t('devise.registrations.edit.we_need_your_current_password_to_confirm_your_changes') %>)</i>
+              <%= f.password_field :current_password, autocomplete: "current-password", class: 'form-control', required: true %>
+            </div>
+          <% end %>
 
           <!-- Update Button -->
           <div class="text-center mb-4">

@@ -1,7 +1,16 @@
 <!-- app/views/better_together/new_message_notifier/_notification.html.erb -->
 <%= render layout: 'better_together/notifications/notification', locals: { notification: notification, notification_title: t('better_together.new_message_notifier.new_message'), notification_url: notification.url } do %>
-  <p class="mb-1 message-content">
-    <strong><%= policy(notification.sender).show? ? link_to(notification.sender, notification.sender, class: 'text-decoration-none') : notification.sender %></strong><br>
-    <%= notification.message.content.to_plain_text.truncate(50) %>
-  </p>
+  <% # Fragment cache for message-specific content %>
+  <% cache ["message_notification_content", notification.cache_key_with_version, notification.message.cache_key_with_version, I18n.locale] do %>
+    <p class="mb-1 message-content">
+      <% # Cache sender information separately %>
+      <% cache ["message_sender", notification.sender.cache_key_with_version, I18n.locale] do %>
+        <strong><%= policy(notification.sender).show? ? link_to(notification.sender, notification.sender, class: 'text-decoration-none') : notification.sender %></strong><br>
+      <% end %>
+      <% # Cache message content separately %>
+      <% cache ["message_content_truncated", notification.message.cache_key_with_version, I18n.locale] do %>
+        <%= notification.message.content.to_plain_text.truncate(50) %>
+      <% end %>
+    </p>
+  <% end %>
 <% end %>

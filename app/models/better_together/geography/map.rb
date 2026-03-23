@@ -17,7 +17,7 @@ module BetterTogether
 
       slugged :title
 
-      translates :title
+      translates :title, type: :string
       translates :description, backend: :action_text
 
       validates :center, presence: true

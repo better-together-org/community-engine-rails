@@ -12,7 +12,7 @@
       </h5>
       <!-- Delete button (if user has permission) -->
       <% if policy(membership).destroy? %>
-        <%= link_to community_person_community_membership_path(membership.joinable.id, membership),
+        <%= link_to community_person_community_membership_path(membership.joinable, membership),
                     method: :delete,
                     data: { confirm: 'Are you sure you want to remove this member?', turbo_method: :delete, turbo_confirm: 'Are you sure you want to remove this member?', bs_toggle: "tooltip", title: "Remove membership" },
                     class: "btn btn-danger btn-sm",

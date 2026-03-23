@@ -8,5 +8,5 @@
   aria-labelledby="<%= navigation_item.slug %>"
   data-bs-container="body">
   <%= render partial: 'better_together/navigation_items/navigation_dropdown_item',
-  collection: navigation_item.children, as: :navigation_item, locals: { level: } %>
+  collection: navigation_item_children_for(navigation_item), as: :navigation_item, locals: { level: } %>
 </ul>

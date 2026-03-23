@@ -5,7 +5,6 @@ module BetterTogether
   class ConversationMailer < ApplicationMailer
     # rubocop:todo Metrics/AbcSize
     def new_message_notification # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
-      @platform = BetterTogether::Platform.find_by(host: true)
       @message = params[:message]
       @conversation = @message.conversation
       @recipient = params[:recipient]

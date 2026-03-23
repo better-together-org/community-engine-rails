@@ -6,7 +6,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
-      url = request.original_url
+      url = share_button_url
       title = if shareable.respond_to? :title
                 shareable&.title
               elsif shareable.respond_to? :name
@@ -40,7 +40,7 @@ module BetterTogether
                       title:,
                       image:,
                       share_tracking_url:,
-                      shareable_type:,
+                      shareable_type: shareable_type.to_s,
                       shareable_id:
                     },
                     # rubocop:todo Layout/LineLength
@@ -59,9 +59,20 @@ module BetterTogether
 
     private
 
+    def share_button_url
+      if respond_to?(:canonical_current_url, true)
+        send(:canonical_current_url)
+      else
+        request.original_url
+      end
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def share_button_content(platform) # rubocop:todo Metrics/MethodLength
       # Use I18n translations for button content
       case platform.to_sym
+      when :email
+        share_icon('email').to_s
       when :facebook
         share_icon('facebook').to_s
       when :bluesky
@@ -80,12 +91,15 @@ module BetterTogether
     end
 
     def share_icon(platform) # rubocop:todo Metrics/MethodLength
+      # rubocop:disable Metrics/CyclomaticComplexity
       content_tag :div, class: 'fa-stack fa-2x', role: 'img' do
         bg = content_tag :i, '', class: 'bg fas fa-circle fa-stack-2x'
 
         icon =
           # Replace with actual SVG icons or use a helper/library like FontAwesome
           case platform
+          when 'email'
+            '<i class="fa-stack-1x icon fas fa-envelope" ></i>'.html_safe
           when 'facebook'
             '<i class="fa-stack-1x icon fab fa-facebook" ></i>'.html_safe
           when 'bluesky'
@@ -105,5 +119,6 @@ module BetterTogether
         bg + icon
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   end
 end
