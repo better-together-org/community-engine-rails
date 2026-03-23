@@ -5,15 +5,21 @@ require 'rails_helper'
 RSpec.describe 'Platform Privacy with Event Invitations' do
   include FactoryBot::Syntax::Methods
 
+  # Freeze time for consistent event dates
+  before do
+    travel_to(Time.zone.parse('2026-02-15 10:00:00'))
+    platform.update!(privacy: 'private')
+  end
+
   let(:locale) { I18n.default_locale }
   let!(:platform) { configure_host_platform }
-  let!(:manager_user) { find_or_create_test_user('manager@example.test', 'password12345', :platform_manager) }
-  let!(:regular_user) { find_or_create_test_user('user@example.test', 'password12345', :user) }
+  let!(:manager_user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let!(:regular_user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
 
   let!(:private_event) do
     create(:better_together_event,
            name: 'Private Platform Event',
-           starts_at: 1.week.from_now,
+           starts_at: Time.zone.parse('2026-02-22 10:00:00'),  # Explicit time
            privacy: 'private',
            creator: manager_user.person)
   end
@@ -21,26 +27,22 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
   let!(:public_event) do
     create(:better_together_event,
            name: 'Public Event',
-           starts_at: 1.week.from_now,
+           starts_at: Time.zone.parse('2026-02-22 10:00:00'),  # Explicit time
            privacy: 'public',
            creator: manager_user.person)
   end
 
   # Default to private event for most tests
   let!(:event) { private_event }
+  let(:invitee_email) { unique_email }
 
   let!(:invitation) do
     create(:better_together_event_invitation,
            invitable: event,
            inviter: manager_user.person,
-           invitee_email: 'external@example.test',
+           invitee_email: invitee_email,
            status: 'pending',
            locale: I18n.default_locale)
-  end
-
-  before do
-    # Make platform private to test invitation access
-    platform.update!(privacy: 'private')
   end
 
   describe 'accessing private platform via event invitation token' do
@@ -57,7 +59,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
         end
       end
 
-      it 'allows access to event via invitation token' do
+      it 'allows access to event via invitation token', :aggregate_failures do
         # Direct access to event without token should redirect to login
         get better_together.event_path(event.slug, locale: locale)
         expect(response).to redirect_to(new_user_session_path(locale: locale))
@@ -65,10 +67,10 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
         # Access with invitation token should work
         get better_together.event_path(event.slug, locale: locale, invitation_token: invitation.token)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(event.name)
+        expect_html_content(event.name) # Use HTML assertion helper
       end
 
-      it 'stores invitation token in session for later use' do
+      it 'stores invitation token in session for later use', :aggregate_failures do
         get better_together.event_path(event.slug, locale: locale, invitation_token: invitation.token)
 
         # Check that token is stored in session (we can't directly access session in request specs,
@@ -85,7 +87,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
         expired_invitation = create(:better_together_event_invitation, :expired,
                                     invitable: event,
                                     inviter: manager_user.person,
-                                    invitee_email: 'expired@example.test')
+                                    invitee_email: unique_email)
 
         get better_together.event_path(event.slug, locale: locale, invitation_token: expired_invitation.token)
         expect(response).to redirect_to(new_user_session_path(locale: locale))
@@ -101,7 +103,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       it 'still processes invitation tokens for authenticated users' do
         get better_together.event_path(public_event.slug, locale: locale, invitation_token: invitation.token)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(public_event.name)
+        expect_html_content(public_event.name) # Use HTML assertion helper
       end
     end
 
@@ -113,13 +115,13 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       it 'allows unauthenticated access to public events regardless of invitation tokens' do
         get better_together.event_path(public_event.slug, locale: locale)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(public_event.name)
+        expect_html_content(public_event.name) # Use HTML assertion helper
       end
 
       it 'still processes invitation tokens on public platforms for private events' do
         get better_together.event_path(event.slug, locale: locale, invitation_token: invitation.token)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include(event.name)
+        expect_html_content(event.name) # Use HTML assertion helper
       end
     end
   end
@@ -147,7 +149,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
 
       get path_with_params
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(event.name)
+      expect_html_content(event.name) # Use HTML assertion helper
     end
   end
 
@@ -161,8 +163,8 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       post user_registration_path(locale: locale), params: {
         user: {
           email: invitation.invitee_email,
-          password: 'password12345',
-          password_confirmation: 'password12345',
+          password: 'SecureTest123!@#',
+          password_confirmation: 'SecureTest123!@#',
           person_attributes: {
             name: 'New User',
             identifier: 'newuser'
@@ -178,7 +180,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
       created_user = BetterTogether::User.find_by(email: invitation.invitee_email)
       created_user.confirm
 
-      login(invitation.invitee_email, 'password12345')
+      login(invitation.invitee_email, 'SecureTest123!@#')
 
       # Should redirect to the event after successful registration. Compare by slug to avoid locale path differences
       expect(response.request.fullpath).to include(event.slug)

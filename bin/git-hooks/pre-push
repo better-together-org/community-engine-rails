@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Pre-push hook: run full-repo RuboCop to catch offenses in files not staged
+# in the current commit (pre-commit only lints staged files).
+#
+# Runs before every `git push`. Fast enough for routine use because RuboCop
+# caches results in .rubocop_cache and --parallel uses all available cores.
+#
+# Install: bin/install-git-hooks (symlinks this to .git/hooks/pre-push)
+
+set -euo pipefail
+
+echo "pre-push: Running rubocop --parallel on full repo…"
+
+rubocop_exit=0
+bundle exec rubocop --parallel || rubocop_exit=$?
+
+if [ "$rubocop_exit" -ne 0 ]; then
+  echo ""
+  echo "pre-push: ✗ RuboCop offenses detected. Fix them before pushing."
+  echo "          Run 'bundle exec rubocop -A' to auto-correct where possible."
+  exit 1
+fi
+
+echo "pre-push: ✓ RuboCop clean."

@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# Pre-commit hook
+#   1. Ensure ActiveRecord schema and migration versions use 7.2, never 8.0
+#   2. Run rubocop -A on staged Ruby files and re-stage auto-corrections
+#   3. Run i18n-tasks health when locale/Ruby files are staged
+#
+# Install: bin/install-git-hooks (or manually symlink to .git/hooks/pre-commit)
+
+set -euo pipefail
+
+REQUIRED_VERSION="7.2"
+BAD_VERSION="8.0"
+FIXED=0
+
+# Check staged files only
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+for file in $staged_files; do
+  case "$file" in
+    spec/dummy/db/schema.rb)
+      if grep -q "ActiveRecord::Schema\[${BAD_VERSION}\]" "$file" 2>/dev/null; then
+        sed -i "s/ActiveRecord::Schema\[${BAD_VERSION}\]/ActiveRecord::Schema[${REQUIRED_VERSION}]/g" "$file"
+        git add "$file"
+        FIXED=$((FIXED + 1))
+        echo "pre-commit: Fixed schema version ${BAD_VERSION} → ${REQUIRED_VERSION} in $file"
+      fi
+      ;;
+    db/migrate/*.rb)
+      if grep -q "ActiveRecord::Migration\[${BAD_VERSION}\]" "$file" 2>/dev/null; then
+        sed -i "s/ActiveRecord::Migration\[${BAD_VERSION}\]/ActiveRecord::Migration[${REQUIRED_VERSION}]/g" "$file"
+        git add "$file"
+        FIXED=$((FIXED + 1))
+        echo "pre-commit: Fixed migration version ${BAD_VERSION} → ${REQUIRED_VERSION} in $file"
+      fi
+      ;;
+  esac
+done
+
+if [ "$FIXED" -gt 0 ]; then
+  echo "pre-commit: Auto-fixed $FIXED file(s) to use ActiveRecord version [${REQUIRED_VERSION}]"
+fi
+
+# ---------------------------------------------------------------------------
+# RuboCop: auto-correct staged Ruby files then fail on remaining offenses
+# ---------------------------------------------------------------------------
+# Determine staged Ruby files (skip generated dummy files)
+staged_ruby=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E '\.(rb|rake|gemspec|jbuilder)$' \
+  | grep -v '^spec/dummy/db/' \
+  || true)
+
+if [ -n "$staged_ruby" ]; then
+  echo "pre-commit: Running rubocop -A on staged Ruby files…"
+
+  # Run rubocop -A; capture exit code without aborting via set -e
+  rubocop_exit=0
+  # shellcheck disable=SC2086
+  bundle exec rubocop -A $staged_ruby || rubocop_exit=$?
+
+  # Re-stage any files rubocop auto-corrected
+  # shellcheck disable=SC2086
+  git add $staged_ruby
+
+  if [ "$rubocop_exit" -ne 0 ]; then
+    echo ""
+    echo "pre-commit: ✗ RuboCop found offenses that could not be auto-corrected."
+    echo "            Fix the remaining issues above, then re-stage and commit."
+    exit 1
+  fi
+
+  echo "pre-commit: ✓ RuboCop clean."
+fi
+
+# ---------------------------------------------------------------------------
+# i18n-tasks health: run when locale YML or Ruby files are staged
+# ---------------------------------------------------------------------------
+staged_i18n=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E '\.(rb|yml|yaml)$' \
+  | grep -v '^spec/' \
+  || true)
+
+if [ -n "$staged_i18n" ]; then
+  echo "pre-commit: Running i18n-tasks health…"
+
+  i18n_exit=0
+  bundle exec i18n-tasks health || i18n_exit=$?
+
+  if [ "$i18n_exit" -ne 0 ]; then
+    echo ""
+    echo "pre-commit: ✗ i18n-tasks health check failed."
+    echo "            Run 'bin/i18n all' to normalize and fix missing/unused keys, then re-stage."
+    exit 1
+  fi
+
+  echo "pre-commit: ✓ i18n-tasks health clean."
+fi
+
+exit 0

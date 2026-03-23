@@ -1,0 +1,50 @@
+# frozen_string_literal: true
+<% if namespaced? %>
+module <%= module_name %>
+<% end %>  # Invitation for <%= invitable_model_name.pluralize %> using the polymorphic invitations table
+  class <%= invitation_name.classify %>Invitation < <%= namespaced? ? 'Invitation' : 'BetterTogether::Invitation' %>
+    validate :invitee_uniqueness_for_<%= invitation_name %>
+
+    # Convenience helpers (invitable is the <%= invitation_name %>)
+    def <%= invitation_name %>
+      invitable
+    end
+
+    def after_accept!(invitee_person: nil)
+      person = invitee_person || resolve_invitee_person
+      return unless person && <%= invitation_name %>
+
+      # TODO: Customize this method to handle what happens after invitation acceptance
+      # For example:
+      # - Create membership records
+      # - Grant roles or permissions
+      # - Send welcome notifications
+      # - Log activities
+      
+      # Example implementation:
+      # ensure_<%= invitation_name %>_membership!(person)
+    end
+
+    def url_for_review
+      BetterTogether::Engine.routes.url_helpers.<%= invitation_name %>_url(
+        invitable.slug,
+        locale: locale,
+        invitation_token: token
+      )
+    end
+
+    private
+
+    def invitee_uniqueness_for_<%= invitation_name %>
+      return unless <%= invitation_name %>
+
+      check_duplicate_person_invitation
+      check_duplicate_email_invitation
+    end
+
+    # Uncomment and customize if needed:
+    # def ensure_<%= invitation_name %>_membership!(person)
+    #   # Create membership or role assignment
+    # end
+  end
+<% if namespaced? %>end<% end %>

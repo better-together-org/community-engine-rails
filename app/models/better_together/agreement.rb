@@ -18,7 +18,7 @@ module BetterTogether
 
     accepts_nested_attributes_for :agreement_terms, reject_if: :all_blank, allow_destroy: true
 
-    translates :title
+    translates :title, type: :string
     translates :description, backend: :action_text
 
     def self.permitted_attributes(id: false, destroy: false)

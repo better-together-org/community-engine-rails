@@ -2,8 +2,6 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe EventHost do
-    pending "add some examples to (or delete) #{__FILE__}"
-  end
+RSpec.describe BetterTogether::EventHost do
+  pending "add some examples to (or delete) #{__FILE__}"
 end

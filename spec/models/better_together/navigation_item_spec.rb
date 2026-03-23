@@ -58,7 +58,7 @@ end
 
 # spec/models/better_together/navigation_item_spec.rb
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe NavigationItem do
     subject(:navigation_item) { build(:better_together_navigation_item) }
     let!(:existing_navigation_item) { create(:better_together_navigation_item) }
@@ -84,6 +84,97 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to allow_value('http://example.com').for(:url) }
       it { is_expected.to allow_value('#').for(:url) }
       it { is_expected.to allow_value('').for(:url) }
+
+      describe 'title validation with linked page' do
+        it 'is valid when title is blank but linkable page has a title' do
+          page = create(:page, title: 'Page Title')
+          nav_item = build(:better_together_navigation_item,
+                           title: nil,
+                           linkable: page)
+
+          expect(nav_item).to be_valid
+        end
+
+        it 'is invalid when title is blank and no linkable is present' do
+          nav_item = build(:better_together_navigation_item, title: nil)
+
+          expect(nav_item).not_to be_valid
+          expect(nav_item.errors[:title]).to include("can't be blank")
+        end
+
+        it 'uses linkable title when nav item title is not set' do
+          page = create(:page, title: 'Linked Page Title')
+          nav_item = build(:better_together_navigation_item,
+                           title: nil,
+                           linkable: page)
+
+          expect(nav_item.title).to eq('Linked Page Title')
+        end
+
+        it 'is valid when both nav item title and linkable are present' do
+          page = create(:page, title: 'Page Title')
+          nav_item = build(:better_together_navigation_item,
+                           title: 'Nav Title',
+                           linkable: page)
+
+          expect(nav_item).to be_valid
+        end
+      end
+
+      describe 'visibility_strategy validation' do
+        it { is_expected.to validate_inclusion_of(:visibility_strategy).in_array(%w[authenticated permission]) }
+      end
+
+      describe 'permission_identifier validation' do
+        context 'when visibility_strategy is permission' do
+          before { navigation_item.visibility_strategy = 'permission' }
+
+          it { is_expected.to validate_presence_of(:permission_identifier) }
+        end
+
+        context 'when visibility_strategy is authenticated' do
+          before { navigation_item.visibility_strategy = 'authenticated' }
+
+          it { is_expected.not_to validate_presence_of(:permission_identifier) }
+        end
+      end
+
+      describe 'permission_identifier_requires_non_public_privacy validation' do
+        context 'when permission_identifier is set and privacy is public' do
+          before do
+            navigation_item.permission_identifier = 'view_metrics_dashboard'
+            navigation_item.privacy = 'public'
+          end
+
+          it 'is invalid' do
+            expect(navigation_item).not_to be_valid
+            expect(navigation_item.errors[:permission_identifier])
+              .to include('cannot be used with public privacy')
+          end
+        end
+
+        context 'when permission_identifier is set and privacy is private' do
+          before do
+            navigation_item.permission_identifier = 'view_metrics_dashboard'
+            navigation_item.privacy = 'private'
+          end
+
+          it 'is valid' do
+            expect(navigation_item).to be_valid
+          end
+        end
+
+        context 'when permission_identifier is blank and privacy is public' do
+          before do
+            navigation_item.permission_identifier = nil
+            navigation_item.privacy = 'public'
+          end
+
+          it 'is valid' do
+            expect(navigation_item).to be_valid
+          end
+        end
+      end
     end
 
     describe 'Attributes' do
@@ -97,6 +188,9 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:protected) }
       it { is_expected.to respond_to(:linkable_type) }
       it { is_expected.to respond_to(:linkable_id) }
+      it { is_expected.to respond_to(:privacy) }
+      it { is_expected.to respond_to(:visibility_strategy) }
+      it { is_expected.to respond_to(:permission_identifier) }
     end
 
     describe 'Scopes' do
@@ -180,6 +274,175 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
             end
           end
         end
+      end
+
+      describe '#visible_to?' do
+        let(:platform) { create(:better_together_platform) }
+        let(:user) { create(:better_together_person) }
+        let(:context) { { platform: } }
+
+        before do
+          navigation_item.visible = true # Ensure item passes visible? check
+        end
+
+        context 'when privacy is public' do
+          before { navigation_item.privacy = 'public' }
+
+          it 'returns true for any user' do
+            expect(navigation_item.visible_to?(user, context)).to be true
+          end
+
+          it 'returns true for nil user' do
+            expect(navigation_item.visible_to?(nil, context)).to be true
+          end
+        end
+
+        context 'when privacy is private' do
+          before { navigation_item.privacy = 'private' }
+
+          it 'returns false for nil user' do
+            expect(navigation_item.visible_to?(nil, context)).to be false
+          end
+
+          it 'returns true for authenticated user with authenticated strategy' do
+            expect(navigation_item.visible_to?(user, context)).to be true
+          end
+
+          context 'with visibility_strategy permission' do
+            before do
+              navigation_item.visibility_strategy = 'permission'
+              navigation_item.permission_identifier = 'view_metrics_dashboard'
+              navigation_item.save!
+            end
+
+            it 'returns true when user has permission' do
+              allow(user).to receive(:permitted_to?)
+                .with('view_metrics_dashboard', platform)
+                .and_return(true)
+
+              expect(navigation_item.visible_to?(user, context)).to be true
+            end
+
+            it 'returns false when user lacks permission' do
+              allow(user).to receive(:permitted_to?)
+                .with('view_metrics_dashboard', platform)
+                .and_return(false)
+
+              expect(navigation_item.visible_to?(user, context)).to be false
+            end
+
+            it 'returns false when platform is missing from context' do
+              expect(navigation_item.visible_to?(user, {})).to be false
+            end
+          end
+        end
+      end
+
+      describe '#permission_visible?' do
+        let(:platform) { create(:better_together_platform) }
+        let(:user) { create(:better_together_person) }
+        let(:context) { { platform: } }
+
+        before do
+          navigation_item.permission_identifier = 'view_metrics_dashboard'
+        end
+
+        it 'returns false when platform is missing from context' do
+          expect(navigation_item.send(:permission_visible?, user, {})).to be false
+        end
+
+        it 'returns false when permission_identifier is blank' do
+          navigation_item.permission_identifier = nil
+          expect(navigation_item.send(:permission_visible?, user, context)).to be false
+        end
+
+        it 'returns true when user has the required permission' do
+          allow(user).to receive(:permitted_to?)
+            .with('view_metrics_dashboard', platform)
+            .and_return(true)
+
+          expect(navigation_item.send(:permission_visible?, user, context)).to be true
+        end
+
+        it 'returns false when user lacks the required permission' do
+          allow(user).to receive(:permitted_to?)
+            .with('view_metrics_dashboard', platform)
+            .and_return(false)
+
+          expect(navigation_item.send(:permission_visible?, user, context)).to be false
+        end
+      end
+    end
+
+    describe 'Cache invalidation' do
+      let(:navigation_area) { create(:better_together_navigation_area) }
+      let(:original_page) { create(:better_together_page, title: 'Page One') }
+      let(:new_page) { create(:better_together_page, title: 'Page Two') }
+      let!(:nav_item) do
+        create(:better_together_navigation_item,
+               navigation_area:,
+               linkable: original_page)
+      end
+
+      it 'touches navigation_area when linkable association is updated' do
+        # Record the original timestamp
+        original_updated_at = navigation_area.reload.updated_at
+
+        # Wait a moment to ensure timestamp difference
+        sleep 0.01
+
+        # Update the linkable association
+        nav_item.update!(linkable: new_page)
+
+        # Verify navigation_area timestamp was updated
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
+      end
+
+      it 'changes navigation_area cache_key_with_version when linkable is updated' do
+        # Record the original cache key
+        original_cache_key = navigation_area.reload.cache_key_with_version
+
+        # Wait to ensure timestamp difference
+        sleep 0.01
+
+        # Update the linkable association
+        nav_item.update!(linkable: new_page)
+
+        # Verify cache key changed
+        new_cache_key = navigation_area.reload.cache_key_with_version
+        expect(new_cache_key).not_to eq(original_cache_key)
+      end
+
+      it 'touches navigation_area when linkable is set to nil' do
+        original_updated_at = navigation_area.reload.updated_at
+        sleep 0.01
+
+        nav_item.update!(linkable: nil)
+
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
+      end
+
+      it 'touches navigation_area when linkable is initially set' do
+        nav_item_without_linkable = create(:better_together_navigation_item,
+                                           navigation_area:,
+                                           linkable: nil)
+        original_updated_at = navigation_area.reload.updated_at
+        sleep 0.01
+
+        nav_item_without_linkable.update!(linkable: original_page)
+
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
+      end
+
+      it 'touches navigation_area when linked page is updated (via callback)' do
+        original_updated_at = navigation_area.reload.updated_at
+        sleep 0.01
+
+        # Update the linked page - this should trigger touch_navigation_items callback
+        original_page.update!(title: 'Updated via Callback')
+
+        # Navigation area should be touched  via page -> navigation_items -> navigation_area chain
+        expect(navigation_area.reload.updated_at).to be > original_updated_at
       end
     end
   end

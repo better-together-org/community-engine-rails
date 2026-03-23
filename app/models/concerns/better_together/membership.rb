@@ -11,10 +11,14 @@ module BetterTogether
                    class_name: joinable_class,
                    autosave: true
         belongs_to :member,
-                   class_name: member_class
+                   class_name: member_class,
+                   touch: true
         belongs_to :role,
                    -> { where(resource_type: joinable_class) }
 
+        validates :member, presence: true
+        validates :role, presence: true
+        validates :joinable, presence: true
         validates :role, uniqueness: {
           scope: %i[joinable_id member_id]
         }

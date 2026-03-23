@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Joatu::ResponseLinksController, :as_user do
-  let(:user) { create(:user, :confirmed, password: 'password12345') }
+  let(:user) { create(:user, :confirmed, password: 'SecureTest123!@#') }
   let(:person) { user.person }
   let(:offer) { create(:better_together_joatu_offer, creator: person) }
   let(:request_resource) { create(:better_together_joatu_request) }
@@ -13,8 +13,7 @@ RSpec.describe BetterTogether::Joatu::ResponseLinksController, :as_user do
     # rubocop:enable RSpec/MultipleExpectations
     offer.update!(status: 'closed')
     post joatu_response_links_path(locale: I18n.locale), params: { source_type: 'BetterTogether::Joatu::Offer', source_id: offer.id }
-    puts "RESPONSE STATUS: #{response.status}"
-    puts response.body
+
     expect(response).to redirect_to(joatu_hub_path)
     follow_redirect!
     expect(response.body).to include('Cannot respond to a source that is not open or matched')
@@ -25,8 +24,7 @@ RSpec.describe BetterTogether::Joatu::ResponseLinksController, :as_user do
     # rubocop:enable RSpec/MultipleExpectations
     request_resource.update!(status: 'open')
     post joatu_response_links_path(locale: I18n.locale), params: { source_type: 'BetterTogether::Joatu::Request', source_id: request_resource.id }
-    puts "RESPONSE STATUS: #{response.status}"
-    puts response.body
+
     # Expect redirect to the newly created offer's show path
     created_offer = BetterTogether::Joatu::Offer.order(:created_at).last
     expect(response).to redirect_to(joatu_offer_path(created_offer))

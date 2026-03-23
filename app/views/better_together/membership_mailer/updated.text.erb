@@ -1,0 +1,34 @@
+<%= t('.greeting', name: @member_name) %>
+
+<%= t('.message', joinable_type: @joinable_type, joinable_name: @joinable_name, old_role_name: @old_role.name, new_role_name: @new_role.name) %>
+
+<% if @joinable_url.present? %>
+<%= t('.view_joinable', joinable_type: @joinable_type) %>:
+<%= @joinable_url %>
+<% end %>
+
+<%= t('.previous_permissions_heading') %>
+<% if @old_permission_summary[:labels].any? %>
+<% @old_permission_summary[:labels].each do |label| %>
+- <%= label %>
+<% end %>
+<% if @old_permission_summary[:remaining].positive? %>
+- <%= t('.permissions_summary_more', count: @old_permission_summary[:remaining]) %>
+<% end %>
+<% else %>
+<%= t('.permissions_summary_none') %>
+<% end %>
+
+<%= t('.new_permissions_heading') %>
+<% if @new_permission_summary[:labels].any? %>
+<% @new_permission_summary[:labels].each do |label| %>
+- <%= label %>
+<% end %>
+<% if @new_permission_summary[:remaining].positive? %>
+- <%= t('.permissions_summary_more', count: @new_permission_summary[:remaining]) %>
+<% end %>
+<% else %>
+<%= t('.permissions_summary_none') %>
+<% end %>
+
+<%= t('.signature_text', joinable_name: @joinable_name) %>

@@ -5,13 +5,12 @@ FactoryBot.define do
           class: 'BetterTogether::Community',
           aliases: %i[better_together_community community]) do
     id { Faker::Internet.uuid }
-    identifier { Faker::Internet.unique.uuid }
-    name { Faker::Company.name }
+    name { "#{Faker::Company.name} #{SecureRandom.hex(4)}" }
     description { Faker::Lorem.paragraphs(number: 3).join("\n\n") }
     privacy { 'private' }
     host { false }
     protected { false }
-    slug { name.parameterize }
+    identifier { "community-#{SecureRandom.hex(10)}" }
 
     trait :creator do
       association :creator, factory: :person

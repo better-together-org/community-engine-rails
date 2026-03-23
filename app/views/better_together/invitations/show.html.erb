@@ -3,17 +3,33 @@
 
   <% if @event %>
     <p><%= t('better_together.invitations.event_name', default: 'Event:') %> <strong><%= @event.name %></strong></p>
+  <% elsif @community %>
+    <p><%= t('better_together.invitations.community_name', default: 'Community:') %> <strong><%= @community.name %></strong></p>
   <% end %>
 
-  <div class="d-flex gap-2">
-    <%= button_to t('better_together.invitations.accept', default: 'Accept'),
-                  better_together.accept_invitation_path(@invitation.token),
-                  method: :post,
-                  class: 'btn btn-success' %>
-    <%= button_to t('better_together.invitations.decline', default: 'Decline'),
-                  better_together.decline_invitation_path(@invitation.token),
-                  method: :post,
-                  class: 'btn btn-outline-secondary' %>
-  </div>
+  <% if @invitation.status_pending? %>
+    <div class="d-flex gap-2">
+      <%= button_to t('better_together.invitations.accept', default: 'Accept'),
+                    better_together.accept_invitation_path(@invitation.token),
+                    method: :post,
+                    class: 'btn btn-success' %>
+      <%= button_to t('better_together.invitations.decline', default: 'Decline'),
+                    better_together.decline_invitation_path(@invitation.token),
+                    method: :post,
+                    class: 'btn btn-outline-secondary' %>
+    </div>
+  <% elsif @invitation.status_declined? %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>
+      <%= t('better_together.invitations.already_declined', 
+            default: 'This invitation has already been declined.') %>
+    </div>
+  <% elsif @invitation.status_accepted? %>
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle me-2"></i>
+      <%= t('better_together.invitations.already_accepted', 
+            default: 'This invitation has already been accepted.') %>
+    </div>
+  <% end %>
 </div>
 

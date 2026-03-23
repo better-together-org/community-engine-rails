@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-docker compose up $@
+if [[ $# -gt 0 ]]; then
+  ./bin/dc up --no-deps "$@"
+else
+  ./bin/dc up "$@"
+fi

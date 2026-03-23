@@ -10,7 +10,9 @@ module BetterTogether
     property :password
     property :password_confirmation
 
-    property :person do
+    property :person, populator: lambda { |_options|
+      self.person = model.person || model.build_person
+    } do
       property :identifier
       property :description
       property :name

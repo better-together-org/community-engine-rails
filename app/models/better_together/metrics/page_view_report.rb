@@ -4,6 +4,9 @@ module BetterTogether
   module Metrics
     # PageViewReport records tracking instances of reports run against the BetterTogether::Metrics::PageView records
     class PageViewReport < ApplicationRecord # rubocop:todo Metrics/ClassLength
+      # Associations
+      belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :page_view_reports, optional: true
+
       # Active Storage attachment for the generated file.
       has_one_attached :report_file
 
@@ -114,11 +117,13 @@ module BetterTogether
                       raise "Unsupported file format: #{file_format}"
                     end
 
-        report_file.attach(
-          io: File.open(file_path),
-          filename: build_filename,
-          content_type: file_format == 'csv' ? 'text/csv' : 'application/octet-stream'
-        )
+        File.open(file_path, 'rb') do |io|
+          report_file.attach(
+            io: io,
+            filename: build_filename,
+            content_type: file_format == 'csv' ? 'text/csv' : 'application/octet-stream'
+          )
+        end
       ensure
         # Remove the temporary file if it exists.
         File.delete(file_path) if file_path && File.exist?(file_path)

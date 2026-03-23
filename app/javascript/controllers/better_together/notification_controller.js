@@ -28,9 +28,12 @@ export default class extends Controller {
         'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
         'Accept': 'text/vnd.turbo-stream.html',
       }
-    }).then(() => {
-      // After marking as read, follow the link
-      window.location = event.target.href
+    }).then(response => {
+      if (response.ok) {
+        // Turbo Stream will handle the badge update
+        // After marking as read, follow the link
+        window.location = event.target.href
+      }
     })
   }
 }

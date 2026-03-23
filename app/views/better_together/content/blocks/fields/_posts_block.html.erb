@@ -1,0 +1,19 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="posts-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[posts_scope]", BetterTogether::Content::Block.human_attribute_name('posts_scope', default: 'Posts Scope'), class: 'form-label' %>
+    <%= select_tag "#{scope}[posts_scope]",
+                   options_for_select(
+                     BetterTogether::Content::PostsBlock::POSTS_SCOPES.map do |s|
+                       [t("better_together.content.blocks.posts_block.scopes.#{s}", default: s.humanize), s]
+                     end,
+                     block.posts_scope
+                   ),
+                   class: 'form-select',
+                   data: { controller: 'better_together--slim-select' } %>
+  </div>
+
+  <%= render partial: 'better_together/content/blocks/fields/shared/resource_block_fields',
+             locals: { block:, scope:, temp_id: } %>
+</div>

@@ -1,59 +1,71 @@
-<div class="container my-3">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h3 class="card-title mb-4"><%= @role.name %></h3>
+<% content_for :page_title do %>
+  <%= @role.name %> | <%= resource_class.model_name.human.pluralize %>
+<% end %>
 
-      <div class="row mb-3">
-        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:identifier) %>:</strong></div>
-        <div class="col-md-9"><%= @role.identifier %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:name) %>:</strong></div>
-        <div class="col-md-9"><%= @role.name %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:description) %>:</strong></div>
-        <div class="col-md-9"><%= @role.description.presence || t('globals.no_description') %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:resource_type) %>:</strong></div>
-        <% resource_klass = BetterTogether::SafeClassResolver.resolve(
-             @role.resource_type,
-             allowed: BetterTogether::Resourceful::RESOURCE_CLASSES
-           ) %>
-        <div class="col-md-9"><%= resource_klass ? resource_klass.model_name.human : @role.resource_type %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:position) %>:</strong></div>
-        <div class="col-md-9"><%= @role.position %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong><%= resource_class.human_attribute_name(:protected) %>:</strong></div>
-        <div class="col-md-9"><%= @role.protected ? t('globals.yes') : t('globals.no') %></div>
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+      <h1 class="mb-1"><%= @role.name %></h1>
+      <p class="text-muted mb-0"><%= @role.identifier %></p>
+    </div>
+
+    <%= render 'shared/resource_toolbar',
+               back_to_list_path: roles_path,
+               edit_path: policy(@role).edit? ? edit_role_path(@role) : nil,
+               destroy_path: policy(@role).destroy? ? role_path(@role) : nil,
+               destroy_confirm: t('roles.confirm_destroy') %>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-lg-6">
+          <dl class="row mb-0">
+        <dt class="col-md-3"><%= resource_class.human_attribute_name(:name) %></dt>
+        <dd class="col-md-9"><%= @role.name %></dd>
+
+        <dt class="col-md-3"><%= resource_class.human_attribute_name(:description) %></dt>
+        <dd class="col-md-9"><%= @role.description.presence || t('globals.no_description') %></dd>
+
+        <dt class="col-md-3"><%= resource_class.human_attribute_name(:resource_type) %></dt>
+        <dd class="col-md-9"><%= role_resource_type_label(@role.resource_type) %></dd>
+
+        <dt class="col-md-3"><%= resource_class.human_attribute_name(:position) %></dt>
+        <dd class="col-md-9"><%= @role.position %></dd>
+
+        <dt class="col-md-3"><%= resource_class.human_attribute_name(:protected) %></dt>
+        <dd class="col-md-9"><%= @role.protected ? t('globals.yes') : t('globals.no') %></dd>
+          </dl>
+        </div>
+        <div class="col-lg-6 mt-4 mt-lg-0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h6 mb-0"><%= t('better_together.roles.permissions.label') %></h2>
+            <% summary = role_permission_summary(@role, limit: 5) %>
+            <span class="text-muted small">
+              <%= t('better_together.roles.permissions.count', count: summary[:total]) %>
+            </span>
+          </div>
+          <% if summary[:labels].any? %>
+            <div class="d-flex flex-wrap gap-1">
+              <% summary[:labels].each do |label| %>
+                <span class="badge bg-light text-dark"><%= label %></span>
+              <% end %>
+              <% if summary[:remaining].positive? %>
+                <span class="badge bg-secondary">
+                  <%= t('better_together.roles.permissions.more', count: summary[:remaining]) %>
+                </span>
+              <% end %>
+            </div>
+          <% else %>
+            <span class="text-muted"><%= t('better_together.roles.permissions.none') %></span>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="mt-3">
-    <h4><%= BetterTogether::ResourcePermission.model_name.human.pluralize %></h4>
+    <h2 class="h4"><%= BetterTogether::ResourcePermission.model_name.human.pluralize %></h2>
     <%= render 'better_together/resource_permissions/resource_permissions_table', resource_permissions: @role.resource_permissions %>
-  </div>
-
-  <div class="mt-3">
-    <% if policy(@role).edit? %>
-      <%= link_to edit_role_path(@role), class: "btn btn-outline-secondary me-2", 'aria-label' => t('globals.edit') do %>
-        <i class="fas fa-edit"></i> <%= t('globals.edit') %>
-      <% end %>
-    <% end %>
-    
-    <%= link_to roles_path, class: "btn btn-outline-info me-2", 'aria-label' => t('globals.back_to_list') do %>
-      <i class="fas fa-arrow-left"></i> <%= t('globals.back_to_list') %>
-    <% end %>
-    
-    <% if policy(@role).destroy? %>
-      <%= button_to @role, data: { turbo_method: :delete, turbo_confirm: t('roles.confirm_destroy') }, class: "btn btn-outline-danger", 'aria-label' => t('globals.destroy') do %>
-        <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
-      <% end %>
-    <% end %>
   </div>
 </div>

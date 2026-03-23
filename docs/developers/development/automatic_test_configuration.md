@@ -62,7 +62,7 @@ end
 RSpec.describe 'SomeController' do
   before do
     configure_host_platform
-    login('manager@example.test', 'password12345') 
+    login('manager@example.test', 'xkcd4559!&@G') 
   end
   
   # tests...

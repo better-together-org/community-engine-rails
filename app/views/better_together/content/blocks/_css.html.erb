@@ -1,4 +1,4 @@
 
 <% if css.content.present? %>
-  <%= content_tag :style, sanitize_block_css(css.content), type: 'text/css', id: dom_id(css) %>
+  <%= content_tag :style, sanitize_block_css(css.content).html_safe, type: 'text/css', id: dom_id(css) %>
 <% end %>

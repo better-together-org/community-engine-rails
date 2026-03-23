@@ -9,20 +9,25 @@ module BetterTogether
       def show?
         return false unless user.present?
 
-        participant? || permitted_to?('manage_platform')
+        return can_view_connection_agreement? if connection_request_agreement?
+
+        participant? || can_manage_joatu?
       end
 
       def create?
         return false unless user.present?
 
-        # Allow either offer or request creator to create an agreement
-        participant? || permitted_to?('manage_platform')
+        return can_manage_network_connections? if connection_request_agreement?
+
+        participant? || can_manage_joatu?
       end
 
       def update?
         return false unless user.present?
 
-        participant? || permitted_to?('manage_platform')
+        return can_approve_network_connections? if connection_request_agreement?
+
+        participant? || can_manage_joatu?
       end
       alias accept? update?
       alias reject? update?
@@ -30,7 +35,9 @@ module BetterTogether
       def destroy?
         return false unless user.present?
 
-        participant? || permitted_to?('manage_platform')
+        return can_manage_network_connections? if connection_request_agreement?
+
+        participant? || can_manage_joatu?
       end
 
       def participant?
@@ -42,7 +49,8 @@ module BetterTogether
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
         def resolve # rubocop:todo Metrics/AbcSize
           return scope.none unless user.present?
-          return scope.all if permitted_to?('manage_platform')
+          return scope.all if can_manage_joatu?
+          return scope.all if can_manage_network_connections? && connection_request_agreement_scope?
 
           # Agreements where the agent is either the offer or request creator
           offers = BetterTogether::Joatu::Offer.arel_table
@@ -53,6 +61,45 @@ module BetterTogether
             offers[:creator_id].eq(agent&.id).or(requests[:creator_id].eq(agent&.id))
           )
         end
+
+        private
+
+        def can_manage_joatu?
+          permitted_to?('manage_joatu')
+        end
+
+        def can_manage_network_connections?
+          permitted_to?('manage_network_connections')
+        end
+
+        def connection_request_agreement_scope?
+          scope.joins(:request).where(better_together_joatu_requests: { type: 'BetterTogether::Joatu::ConnectionRequest' })
+          true
+        rescue StandardError
+          false
+        end
+      end
+
+      private
+
+      def connection_request_agreement?
+        record.request.is_a?(BetterTogether::Joatu::ConnectionRequest)
+      end
+
+      def can_manage_joatu?
+        permitted_to?('manage_joatu')
+      end
+
+      def can_manage_network_connections?
+        permitted_to?('manage_network_connections')
+      end
+
+      def can_approve_network_connections?
+        permitted_to?('approve_network_connections')
+      end
+
+      def can_view_connection_agreement?
+        can_manage_network_connections? || can_approve_network_connections? || participant?
       end
     end
   end

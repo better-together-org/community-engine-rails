@@ -1,0 +1,117 @@
+<!-- Link Checker Tab Pane -->
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:linkchecker][:accent] %>" id="linkchecker" role="tabpanel" aria-labelledby="linkchecker-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:linkchecker][:accent] %>">
+    <i class="<%= metrics_tab_styles[:linkchecker][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span><%= t('better_together.metrics.reports.tabs.link_checker') %></span>
+  </h2>
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active"
+                id="linkchecker-charts-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#linkchecker-charts"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="linkchecker-charts"
+                aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral"
+                id="linkchecker-reports-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#linkchecker-reports"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="linkchecker-reports"
+                aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="linkchecker-charts"
+            role="tabpanel"
+            aria-labelledby="linkchecker-charts-tab"
+            data-controller="better_together--metrics-charts"
+            data-host-platform-name="<%= host_platform.name.parameterize %>">
+        <div class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.links_by_host') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'linksByHostChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="linksByHostChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.links_by_host') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.host') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.links') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'linksByHostChart',
+              data_url: links_by_host_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates[:link_checker] %>
+        </div>
+
+        <div class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.invalid_links_by_host') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'invalidByHostChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="invalidByHostChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.invalid_links_by_host') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.host') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.invalid_links') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'invalidByHostChart',
+              data_url: invalid_by_host_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates[:link_checker] %>
+        </div>
+
+        <div class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.invalid_links_over_time') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'failuresDailyChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="failuresDailyChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.invalid_links_over_time') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.invalid_links') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'failuresDailyChart',
+              data_url: failures_daily_data_metrics_reports_path(locale: I18n.locale) %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+          id="linkchecker-reports"
+          role="tabpanel"
+          aria-labelledby="linkchecker-reports-tab">
+        <turbo-frame id="link_checker_reports" src="<%= metrics_link_checker_reports_path %>"></turbo-frame>
+      </div>
+    </div>
+  </div>
+</div>

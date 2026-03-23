@@ -6,6 +6,13 @@ module BetterTogether
     include Identifier
     include Positioned
     include Protected
+    include Privacy
+
+    # Visibility strategies - only implement what we need now
+    VISIBILITY_STRATEGIES = %w[
+      authenticated
+      permission
+    ].freeze
 
     class_attribute :route_names, default: {
       agreements: 'agreements_url',
@@ -27,17 +34,19 @@ module BetterTogether
       joatu_requests: 'joatu_requests_url',
       metrics_reports: 'metrics_reports_url',
       navigation_areas: 'navigation_areas_url',
+      oauth_applications: 'oauth_applications_url',
       pages: 'pages_url',
       people: 'people_url',
       posts: 'posts_url',
       platforms: 'platforms_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
-      users: 'users_url'
+      users: 'users_url',
+      webhook_endpoints: 'webhook_endpoints_url'
     }
 
     belongs_to :navigation_area, touch: true
-    belongs_to :linkable, polymorphic: true, optional: true, autosave: true
+    belongs_to :linkable, polymorphic: true, optional: true, touch: true
 
     # Association with parent item
     belongs_to :parent,
@@ -68,7 +77,7 @@ module BetterTogether
 
     slugged :title
 
-    validates :title, presence: true, length: { maximum: 255 }
+    validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
               format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
                         message: 'must be a valid URL, "start with #", or be an absolute path' }
@@ -78,6 +87,14 @@ module BetterTogether
     validates :route_name, inclusion: { in: lambda { |item|
       item.class.route_name_urls
     }, allow_nil: true, allow_blank: true }
+    validates :visibility_strategy, inclusion: { in: VISIBILITY_STRATEGIES }
+    validates :permission_identifier, presence: true, if: -> { visibility_strategy == 'permission' }
+
+    # Validate that permission_identifier is only set when privacy is not public
+    validate :permission_identifier_requires_non_public_privacy
+
+    before_validation :set_default_visibility_strategy
+    before_validation :set_default_privacy
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
@@ -121,7 +138,9 @@ module BetterTogether
           protected: true,
           item_type: 'link',
           url: '',
-          linkable: page
+          linkable: page,
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
         )
       end
     end
@@ -137,7 +156,9 @@ module BetterTogether
           protected: true,
           item_type: 'link',
           url: '',
-          linkable: page
+          linkable: page,
+          privacy: page.privacy,
+          visibility_strategy: 'authenticated'
         )
       end
     end
@@ -155,7 +176,7 @@ module BetterTogether
     end
 
     def dropdown_with_visible_children?
-      @dropdown_with_visible_children ||= dropdown? and children? && children.to_a.any?(&:visible?)
+      @dropdown_with_visible_children ||= dropdown? && children? && children.to_a.any?(&:visible?)
     end
 
     def item_type
@@ -180,6 +201,14 @@ module BetterTogether
       max_position ? max_position + 1 : 0
     end
 
+    def set_default_visibility_strategy
+      self.visibility_strategy ||= 'authenticated'
+    end
+
+    def set_default_privacy
+      self.privacy ||= 'public'
+    end
+
     def title(options = {})
       return linkable.title(**options) if linkable.present? && linkable.respond_to?(:title)
 
@@ -187,13 +216,39 @@ module BetterTogether
     end
 
     def title=(arg, options = {})
-      linkable.public_send :title=, arg, locale: locale, **options if linkable.present? && linkable.respond_to?(:title=)
+      # Pass locale from options or use current Mobility locale
+      target_locale = options[:locale] || Mobility.locale
+      linkable.public_send :title=, arg, locale: target_locale, **options if linkable.present? && linkable.respond_to?(:title=)
 
       super(arg, **options)
     end
 
     def to_s
       title
+    end
+
+    # Check if navigation item is visible to a specific user
+    # @param user [User] The user to check visibility for
+    # @param context [Hash] Additional context (platform, community, etc.)
+    # @return [Boolean]
+    def visible_to?(user, context = {})
+      return false unless visible? # Check base visibility flag first
+
+      # Public items are visible to everyone
+      return true if privacy_public?
+
+      # Non-public items require a user
+      return false unless user.present?
+
+      # For private items, check visibility strategy
+      case visibility_strategy
+      when 'authenticated'
+        true # User is authenticated (already checked above)
+      when 'permission'
+        permission_visible?(user, context)
+      else
+        false # Fail closed for unknown strategies
+      end
     end
 
     def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
@@ -209,6 +264,8 @@ module BetterTogether
         linkable_type
         linkable_id
         navigation_area_id
+        visibility_strategy
+        permission_identifier
       ]
 
       super + attrs
@@ -250,6 +307,10 @@ module BetterTogether
 
     private
 
+    def linkable_provides_title?
+      linkable.present? && linkable.respond_to?(:title)
+    end
+
     def retrieve_route(route)
       # Use `send` to dispatch the correct URL helper
       Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
@@ -260,6 +321,37 @@ module BetterTogether
         Rails.logger.error("Invalid route name: #{route}")
         nil
       end
+    end
+
+    def permission_identifier_requires_non_public_privacy
+      return if privacy != 'public'
+      return unless permission_identifier.present?
+
+      errors.add(:permission_identifier, 'cannot be used with public privacy')
+    end
+
+    def permission_visible?(user, context)
+      return false unless permission_identifier.present?
+
+      platform = context[:platform] || BetterTogether::Platform.find_by(host: true)
+      return false unless platform
+
+      user.permitted_to?(permission_identifier, platform)
+    end
+
+    def saved_change_to_linkable?
+      saved_change_to_linkable_id? || saved_change_to_linkable_type?
+    end
+
+    def touch_navigation_area_on_linkable_change
+      return unless navigation_area
+      return if BetterTogether.skip_navigation_touches
+
+      # Reload to get latest lock_version before touching (prevents StaleObjectError)
+      # Retry once if we still get a stale object error
+      navigation_area.reload.touch
+    rescue ActiveRecord::StaleObjectError
+      navigation_area.reload.touch
     end
   end
 end

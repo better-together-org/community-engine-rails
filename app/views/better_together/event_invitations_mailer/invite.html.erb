@@ -30,7 +30,7 @@
     
     <% if @event.description.present? %>
       <div style="margin: 12px 0;">
-        <%= simple_format(@event.description) %>
+        <%= simple_format(@event.description.to_plain_text) %>
       </div>
     <% end %>
   </div>

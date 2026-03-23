@@ -1,0 +1,89 @@
+<% if person_platform_integrations.any? %>
+  <div class="list-group mb-4">
+    <% person_platform_integrations.each do |integration| %>
+      <div class="list-group-item list-group-item-action" id="<%= dom_id(integration) %>">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="flex-grow-1">
+            <div class="d-flex align-items-center mb-2">
+              <%= render "better_together/person_platform_integrations/provider_icon", provider: integration.provider %>
+              <div class="ms-3">
+                <h5 class="mb-1">
+                  <%= integration.provider.titleize %>
+                </h5>
+                <% if integration.handle.present? %>
+                  <p class="text-muted small mb-0">
+                    <i class="fa-solid fa-at me-1" aria-hidden="true"></i>
+                    <%= integration.handle %>
+                  </p>
+                <% end %>
+              </div>
+            </div>
+            
+            <% if integration.profile_url.present? %>
+              <div class="small text-muted mb-2">
+                <i class="fa-solid fa-link me-1" aria-hidden="true"></i>
+                <%= link_to integration.profile_url, integration.profile_url, 
+                    target: "_blank", 
+                    rel: "noopener noreferrer",
+                    class: "text-decoration-none" %>
+              </div>
+            <% end %>
+            
+            <div class="small text-muted">
+              <i class="fa-solid fa-calendar me-1" aria-hidden="true"></i>
+              <%= t('better_together.person_platform_integrations.index.connected_at', time: time_ago_in_words(integration.created_at)) %>
+            </div>
+          </div>
+          
+          <div class="ms-3">
+            <%= button_to person_platform_integration_path(integration, locale: I18n.locale),
+                          method: :delete,
+                          data: { 
+                            turbo_confirm: t('better_together.person_platform_integrations.index.confirm_disconnect', provider: integration.provider.titleize),
+                            turbo_frame: "integrations-settings"
+                          },
+                          class: "btn btn-outline-danger btn-sm" do %>
+              <i class="fa-solid fa-unlink me-1" aria-hidden="true"></i>
+              <%= t('better_together.person_platform_integrations.index.disconnect') %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info" role="status">
+    <i class="fa-solid fa-info-circle me-2" aria-hidden="true"></i>
+    <%= t('better_together.person_platform_integrations.index.no_integrations') %>
+  </div>
+<% end %>
+
+<div class="mt-4">
+  <h4 class="h6 mb-3">
+    <i class="fa-solid fa-plug me-2" aria-hidden="true"></i>
+    <%= t('better_together.person_platform_integrations.index.connect_new') %>
+  </h4>
+  
+  <% connected_providers = person_platform_integrations.map(&:provider).map(&:to_sym) %>
+  <% available_providers = BetterTogether::User.omniauth_providers - connected_providers %>
+  
+  <% if available_providers.any? %>
+    <div class="d-flex gap-2 flex-wrap justify-content-center">
+      <% available_providers.each do |provider| %>
+        <%= button_to omniauth_authorize_path(:user, provider),
+                      method: :post,
+                      class: oauth_provider_button_class(provider),
+                      data: { turbo: false },
+                      form: { data: { turbo: false } } do %>
+          <i class="<%= oauth_provider_icon_class(provider) %> me-2" aria-hidden="true"></i>
+          <%= t("better_together.person_platform_integrations.index.connect_provider", provider: OmniAuth::Utils.camelize(provider)) %>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-success" role="status">
+      <i class="fa-solid fa-check-circle me-2" aria-hidden="true"></i>
+      <%= t('better_together.person_platform_integrations.index.all_providers_connected') %>
+    </div>
+  <% end %>
+</div>

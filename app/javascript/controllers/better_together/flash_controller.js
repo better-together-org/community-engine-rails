@@ -7,6 +7,9 @@ export default class extends Controller {
     if (this.hasMessageTarget) {
       this.dismissAfterDelay(); // Dismiss after a delay when connected
     }
+    
+    // Ensure positioning is updated when flash messages appear
+    this.updatePosition()
   }
 
   dismissAfterDelay() {
@@ -16,6 +19,18 @@ export default class extends Controller {
           message.remove(); // Remove the alert element from the DOM
         }
       });
-    }, 10000); // Dismiss after 10000 milliseconds
+    }, 7500); // Dismiss after 10000 milliseconds
+  }
+  
+  updatePosition() {
+    // Force a reflow to ensure --nav-height is updated
+    // This is called when flash messages connect to ensure proper positioning
+    requestAnimationFrame(() => {
+      const nav = document.getElementById('main-nav')
+      if (nav) {
+        const height = nav.offsetHeight
+        document.documentElement.style.setProperty('--nav-height', `${height}px`)
+      }
+    })
   }
 }

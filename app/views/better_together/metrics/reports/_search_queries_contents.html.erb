@@ -1,0 +1,118 @@
+<!-- Search Queries Tab Pane -->
+<div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:searchqueries][:accent] %>" id="searchqueries" role="tabpanel" aria-labelledby="searchqueries-tab">
+  <h2 class="h5 my-3 bt-tab-heading <%= metrics_tab_styles[:searchqueries][:accent] %>">
+    <i class="<%= metrics_tab_styles[:searchqueries][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+    <span><%= t('better_together.metrics.reports.tabs.search_queries') %></span>
+  </h2>
+
+  <div data-controller="better_together--tabs">
+    <ul class="nav nav-tabs mb-3" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link disabled"
+                type="button"
+                role="tab"
+                aria-disabled="true">
+          <%= t('better_together.metrics.reports.tabs.charts_and_reports') %>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral active"
+                id="searchqueries-charts-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#searchqueries-charts"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="searchqueries-charts"
+                aria-selected="true">
+          <span><%= t('better_together.metrics.reports.tabs.charts') %></span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link bt-tab-control bt-tab-accent--neutral"
+                id="searchqueries-reports-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#searchqueries-reports"
+                data-better_together--tabs-target="tab"
+                type="button"
+                role="tab"
+                aria-controls="searchqueries-reports"
+                aria-selected="false">
+          <span><%= t('better_together.metrics.reports.tabs.reports') %></span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+            id="searchqueries-charts"
+            role="tabpanel"
+            aria-labelledby="searchqueries-charts-tab"
+            data-controller="better_together--metrics-charts"
+            data-better_together--metrics-charts-host-platform-logo-url="<%= host_community_logo_url %>"
+            data-better_together--metrics-charts-host-platform-name="<%= host_community.name %>">
+        <div class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.search_queries_by_term') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'searchQueriesChart' %>
+          </div>
+
+          <!-- Color Legend -->
+          <div class="search-results-legend mt-2 d-flex flex-wrap gap-3 align-items-center small mb-3" role="status" aria-live="polite">
+            <span class="fw-bold"><%= t('better_together.metrics.reports.legends.result_quality') %>:</span>
+            <% @result_levels ||= BetterTogether::Metrics::DEFAULT_RESULT_LEVELS %>
+            <% @result_levels.each do |level| %>
+              <span>
+                <span class="search-results-badge search-results-<%= level[:level] %>">
+                  <%= t("better_together.metrics.reports.legends.#{level[:i18n_key]}") %>
+                </span>
+                <%= BetterTogether::Metrics.range_label_for(level) %>
+              </span>
+            <% end %>
+          </div>
+
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="searchQueriesChart"
+                  data-chart-data="<%= {labels: [], values: [], avgResults: []}.to_json %>"
+                  data-results-thresholds="<%= (@result_levels || BetterTogether::Metrics::DEFAULT_RESULT_LEVELS).to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.search_queries_by_term') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.term') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.search_queries') %>"
+                  data-level-translations="<%= {none: t('better_together.metrics.reports.legends.no_results'), low: t('better_together.metrics.reports.legends.low_results'), medium: t('better_together.metrics.reports.legends.medium_results'), high: t('better_together.metrics.reports.legends.high_results'), excellent: t('better_together.metrics.reports.legends.excellent_results')}.to_json %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'searchQueriesChart',
+              data_url: search_queries_by_term_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates[:search_queries] %>
+        </div>
+
+        <div class="metrics-chart-block">
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <h2 class="mb-0"><%= t('better_together.metrics.reports.charts.daily_search_queries') %></h2>
+            <%= render 'chart_action_toolbar', chart_name: 'dailySearchQueriesChart' %>
+          </div>
+          <canvas class="metrics-chart"
+                  data-better_together--metrics-charts-target="dailySearchQueriesChart"
+                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-label="<%= t('better_together.metrics.reports.csv_headers.daily_search_queries') %>"
+                  data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
+                  data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.search_queries') %>">
+          </canvas>
+
+          <%= render 'datetime_filter',
+              chart_type: 'dailySearchQueriesChart',
+              data_url: search_queries_daily_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates[:search_queries] %>
+        </div>
+      </div>
+
+      <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"
+          id="searchqueries-reports"
+          role="tabpanel"
+          aria-labelledby="searchqueries-reports-tab">
+        <p class="text-muted"><%= t('better_together.metrics.reports.coming_soon') %></p>
+      </div>
+    </div>
+  </div>
+</div>

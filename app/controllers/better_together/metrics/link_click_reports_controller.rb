@@ -10,7 +10,10 @@ module BetterTogether
 
       # GET /metrics/link_click_reports
       def index
-        @link_click_reports = BetterTogether::Metrics::LinkClickReport.order(created_at: :desc)
+        authorize %i[metrics link_click_report], :index?,
+                  policy_class: BetterTogether::Metrics::LinkClickReportPolicy
+        @link_click_reports = BetterTogether::Metrics::LinkClickReport.with_attached_report_file
+                                                                      .order(created_at: :desc)
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/link_click_reports/index',
                  locals: { link_click_reports: @link_click_reports }, layout: false
@@ -21,6 +24,8 @@ module BetterTogether
 
       # GET /metrics/link_click_reports/new
       def new
+        authorize %i[metrics link_click_report], :create?,
+                  policy_class: BetterTogether::Metrics::LinkClickReportPolicy
         @link_click_report = BetterTogether::Metrics::LinkClickReport.new
         # For LinkClick reports, you might want to let users filter by internal or external clicks.
         # For example, providing a selection list for internal (true) or external (false) clicks.
@@ -29,6 +34,9 @@ module BetterTogether
 
       # POST /metrics/link_click_reports
       def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        authorize %i[metrics link_click_report], :create?,
+                  policy_class: BetterTogether::Metrics::LinkClickReportPolicy
+
         opts = {
           from_date: link_click_report_params.dig(:filters, :from_date),
           to_date: link_click_report_params.dig(:filters, :to_date),
@@ -74,6 +82,8 @@ module BetterTogether
       # GET /metrics/link_click_reports/:id/download
       # rubocop:todo Metrics/MethodLength
       def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        authorize @link_click_report, :download?
+
         report = @link_click_report
         if report.report_file.attached?
           # Log the download via a background job.

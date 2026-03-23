@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe Event do
     subject(:event) { build(:event) }
 
@@ -11,6 +11,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to accept_nested_attributes_for(:location) }
       it { is_expected.to have_many(:event_attendances).dependent(:destroy) }
       it { is_expected.to have_many(:attendees).through(:event_attendances).source(:person) }
+      it { is_expected.to belong_to(:platform).optional }
     end
 
     describe 'validations' do
@@ -46,12 +47,14 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           expect(event).not_to be_valid
         end
       end
+
+      it { is_expected.to validate_uniqueness_of(:source_id).scoped_to(:platform_id).allow_blank }
     end
 
     describe 'scopes' do
       describe '.past' do
-        it 'returns events that have started' do
-          past_event = create(:event, starts_at: 1.day.ago)
+        it 'returns events that have ended' do
+          past_event = create(:event, starts_at: 2.days.ago, ends_at: 1.day.ago)
           _upcoming_event = create(:event, starts_at: 1.day.from_now)
           expect(described_class.past).to include(past_event)
         end
@@ -84,6 +87,81 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
 
     describe 'callbacks' do
       let(:draft_event) { build(:event, :draft) }
+
+      describe '#sync_time_duration_relationship' do
+        context 'when starts_at changes' do
+          it 'updates ends_at to maintain duration when duration exists' do
+            event = create(:event, starts_at: 2.hours.from_now, duration_minutes: 120)
+            original_ends_at = event.ends_at
+
+            event.update!(starts_at: 3.hours.from_now)
+
+            expect(event.ends_at).not_to eq(original_ends_at)
+            expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
+            expect(event.duration_minutes).to eq(120)
+          end
+
+          it 'calculates and maintains duration when ends_at exists but no duration' do
+            start_time = 2.hours.from_now
+            end_time = start_time + 90.minutes
+            event = create(:event, starts_at: start_time, ends_at: end_time)
+
+            # Event factory sets default duration to 30, then sync recalculates from ends_at
+            # The created event should have duration calculated from the ends_at
+            event.reload
+            expect(event.duration_minutes).to eq(90)
+
+            # Now change starts_at
+            new_start = 4.hours.from_now
+            event.update!(starts_at: new_start)
+
+            # ends_at should maintain the 90-minute duration
+            expect(event.ends_at).to be_within(1.second).of(new_start + 90.minutes)
+            expect(event.duration_minutes).to eq(90)
+          end
+        end
+
+        context 'when ends_at changes' do
+          it 'recalculates duration_minutes' do
+            event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
+            original_duration = event.duration_minutes
+
+            event.update!(ends_at: event.starts_at + 3.hours)
+
+            expect(event.duration_minutes).not_to eq(original_duration)
+            expect(event.duration_minutes).to eq(180)
+          end
+
+          it 'validates ends_at is after starts_at' do
+            event = build(:event, starts_at: 2.hours.from_now, ends_at: 1.hour.from_now)
+
+            expect(event).not_to be_valid
+            expect(event.errors[:ends_at]).to include('must be after the start time')
+          end
+        end
+
+        context 'when duration_minutes changes' do
+          it 'updates ends_at' do
+            event = create(:event, starts_at: 1.hour.from_now, duration_minutes: 60)
+            original_ends_at = event.ends_at
+
+            event.update!(duration_minutes: 120)
+
+            expect(event.ends_at).not_to eq(original_ends_at)
+            expect(event.ends_at).to be_within(1.second).of(event.starts_at + 120.minutes)
+          end
+        end
+
+        context 'when ends_at is blank but duration exists' do
+          it 'calculates ends_at from duration' do
+            start_time = 2.hours.from_now
+            event = build(:event, starts_at: start_time, duration_minutes: 90, ends_at: nil)
+            event.save!
+
+            expect(event.ends_at).to be_within(1.second).of(start_time + 90.minutes)
+          end
+        end
+      end
 
       describe '#schedule_reminder_notifications' do
         it 'enqueues reminder job when conditions are met' do
@@ -121,6 +199,77 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           event = create(:event, :upcoming)
 
           expect { event.send(:send_update_notifications) }.not_to have_enqueued_job(Noticed::EventJob)
+        end
+      end
+
+      describe '#sync_calendar_entry_times' do
+        let(:calendar) { create('better_together/calendar') }
+        let(:event) { create(:event, starts_at: 1.week.from_now, ends_at: 1.week.from_now + 1.hour) }
+        let!(:calendar_entry) do
+          create('better_together/calendar_entry',
+                 calendar: calendar,
+                 event: event,
+                 starts_at: event.starts_at,
+                 ends_at: event.ends_at,
+                 duration_minutes: event.duration_minutes)
+        end
+
+        it 'updates calendar entry times when event starts_at changes' do
+          new_starts_at = 2.weeks.from_now
+          new_ends_at = new_starts_at + 1.hour
+
+          event.update!(starts_at: new_starts_at, ends_at: new_ends_at)
+
+          calendar_entry.reload
+          expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+          expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
+        end
+
+        it 'updates calendar entry times when event ends_at changes' do
+          new_ends_at = event.starts_at + 2.hours
+
+          event.update!(ends_at: new_ends_at)
+
+          calendar_entry.reload
+          expect(calendar_entry.ends_at.to_i).to eq(new_ends_at.to_i)
+          # Duration should also update due to sync_time_duration_relationship callback
+          expect(calendar_entry.duration_minutes).to eq(event.duration_minutes)
+        end
+
+        it 'updates calendar entry duration when event duration changes' do
+          event.update!(duration_minutes: 120)
+
+          calendar_entry.reload
+          expect(calendar_entry.duration_minutes).to eq(120)
+          # ends_at should be recalculated by sync_time_duration_relationship
+          expect(calendar_entry.ends_at.to_i).to eq((event.starts_at + 120.minutes).to_i)
+        end
+
+        it 'updates all calendar entries when event belongs to multiple calendars' do
+          second_calendar = create('better_together/calendar')
+          second_entry = create('better_together/calendar_entry',
+                                calendar: second_calendar,
+                                event: event,
+                                starts_at: event.starts_at,
+                                ends_at: event.ends_at)
+
+          new_starts_at = 2.weeks.from_now
+          event.update!(starts_at: new_starts_at, ends_at: new_starts_at + 1.hour)
+
+          calendar_entry.reload
+          second_entry.reload
+
+          expect(calendar_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+          expect(second_entry.starts_at.to_i).to eq(new_starts_at.to_i)
+        end
+
+        it 'does not update calendar entries when non-temporal fields change' do
+          original_starts_at = calendar_entry.starts_at
+
+          event.update!(name: 'Updated Name')
+
+          calendar_entry.reload
+          expect(calendar_entry.starts_at.to_i).to eq(original_starts_at.to_i)
         end
       end
     end
@@ -246,15 +395,18 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#host_community' do
         let(:event) { build(:event) }
 
-        context 'when host community exists' do
-          let!(:host_community) { create(:community, :host) }
+        context 'when host community exists', :skip_host_setup do
+          let!(:host_community) { create(:community) }
+
+          before do
+            allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.where(id: host_community.id))
+          end
 
           it 'returns the host community' do
             expect(event.host_community).to eq(host_community)
           end
 
           it 'caches the host community' do
-            allow(BetterTogether::Community).to receive(:host).and_call_original
             expect(event.host_community).to eq(host_community)
             event.host_community
             expect(BetterTogether::Community).to have_received(:host).once
@@ -262,6 +414,10 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         end
 
         context 'when no host community exists' do
+          before do
+            allow(BetterTogether::Community).to receive(:host).and_return(BetterTogether::Community.none)
+          end
+
           it 'returns nil when no host community exists' do
             expect(event.host_community).to be_nil
           end
@@ -273,6 +429,56 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
           event.valid? # Trigger validation which runs set_host callback
           expect(event.event_hosts.map(&:host)).to include(event.creator)
         end
+      end
+    end
+
+    describe 'federation provenance' do
+      let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
+      let(:remote_platform) { create(:better_together_platform, :external) }
+
+      around do |example|
+        previous_platform = Current.platform
+        Current.platform = local_platform
+        example.run
+        Current.platform = previous_platform
+      end
+
+      it 'assigns the current platform by default' do
+        event.valid?
+
+        expect(event.platform).to eq(local_platform)
+      end
+
+      it 'treats a current-platform event as local' do
+        event.valid?
+
+        expect(event).to be_local_to_platform(local_platform)
+        expect(event).not_to be_remote_to_platform(local_platform)
+      end
+
+      it 'treats a sourced event from another platform as mirrored' do
+        mirrored_event = build(
+          :event,
+          platform: remote_platform,
+          source_id: 'remote-event-1'
+        )
+
+        expect(mirrored_event).to be_mirrored
+        expect(mirrored_event).to be_remote_to_platform(local_platform)
+        expect(mirrored_event.source_identifier).to eq('remote-event-1')
+      end
+
+      it 'treats a CE UUID-preserved event as mirrored without a source_id' do
+        mirrored_event = build(
+          :event,
+          id: SecureRandom.uuid,
+          platform: remote_platform,
+          source_id: nil
+        )
+
+        expect(mirrored_event).to be_mirrored
+        expect(mirrored_event).to be_preserved_remote_uuid
+        expect(mirrored_event.source_identifier).to eq(mirrored_event.id)
       end
     end
 

@@ -1,0 +1,95 @@
+<%= form_with(model: [@platform, storage_configuration],
+              class: 'form',
+              id: dom_id(storage_configuration, 'form'),
+              data: { controller: 'better-together--storage-configuration-form' }) do |form| %>
+
+  <div id="form_errors">
+    <%= render 'layouts/better_together/errors', object: storage_configuration %>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :name, t('activerecord.attributes.better_together/storage_configuration.name', default: 'Name'),
+                   class: 'form-label' %>
+    <%= form.text_field :name,
+                        class: 'form-control',
+                        required: true,
+                        placeholder: t('better_together.storage_configurations.name_placeholder', default: 'e.g., Primary S3, Local Dev') %>
+    <div class="form-text"><%= t('better_together.storage_configurations.name_hint', default: 'A human-readable label for this storage backend.') %></div>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.label :service_type, t('activerecord.attributes.better_together/storage_configuration.service_type', default: 'Storage type'),
+                   class: 'form-label' %>
+    <%= form.select :service_type,
+                    ::BetterTogether::StorageConfiguration.service_type_options,
+                    {},
+                    class: 'form-select',
+                    required: true,
+                    data: { action: 'change->better-together--storage-configuration-form#toggleS3Fields' } %>
+  </div>
+
+  <%# S3 / S3-compatible fields — shown/hidden via Stimulus controller %>
+  <div data-better-together--storage-configuration-form-target="s3Fields"
+       class="<%= storage_configuration.local? ? 'd-none' : '' %>">
+
+    <div class="card mb-3 border-secondary">
+      <div class="card-header"><%= t('better_together.storage_configurations.s3_credentials_heading', default: 'S3 Credentials') %></div>
+      <div class="card-body">
+
+        <div class="form-group mb-3">
+          <%= form.label :access_key_id, t('activerecord.attributes.better_together/storage_configuration.access_key_id', default: 'Access Key ID'),
+                         class: 'form-label' %>
+          <%= form.text_field :access_key_id,
+                              class: 'form-control',
+                              autocomplete: 'off',
+                              placeholder: t('better_together.storage_configurations.access_key_placeholder', default: 'AKIAIOSFODNN7EXAMPLE') %>
+          <div class="form-text"><%= t('better_together.storage_configurations.access_key_hint', default: 'Leave blank to keep the existing value when editing.') %></div>
+        </div>
+
+        <div class="form-group mb-3">
+          <%= form.label :secret_access_key, t('activerecord.attributes.better_together/storage_configuration.secret_access_key', default: 'Secret Access Key'),
+                         class: 'form-label' %>
+          <%= form.password_field :secret_access_key,
+                                  class: 'form-control',
+                                  autocomplete: 'new-password',
+                                  placeholder: t('better_together.storage_configurations.secret_key_placeholder', default: '••••••••') %>
+          <div class="form-text"><%= t('better_together.storage_configurations.secret_key_hint', default: 'Leave blank to keep the existing value when editing.') %></div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 form-group mb-3">
+            <%= form.label :bucket, t('activerecord.attributes.better_together/storage_configuration.bucket', default: 'Bucket name'),
+                           class: 'form-label' %>
+            <%= form.text_field :bucket, class: 'form-control', placeholder: 'my-app-uploads' %>
+          </div>
+          <div class="col-md-6 form-group mb-3"
+               data-better-together--storage-configuration-form-target="regionField">
+            <%= form.label :region, t('activerecord.attributes.better_together/storage_configuration.region', default: 'Region'),
+                           class: 'form-label' %>
+            <%= form.text_field :region, class: 'form-control', placeholder: 'us-east-1' %>
+            <div class="form-text"><%= t('better_together.storage_configurations.region_hint', default: 'Required for Amazon S3. Leave blank for S3-compatible services.') %></div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3"
+             data-better-together--storage-configuration-form-target="endpointField">
+          <%= form.label :endpoint, t('activerecord.attributes.better_together/storage_configuration.endpoint', default: 'Endpoint URL'),
+                         class: 'form-label' %>
+          <%= form.url_field :endpoint,
+                             class: 'form-control',
+                             placeholder: 'https://s3.example.com' %>
+          <div class="form-text"><%= t('better_together.storage_configurations.endpoint_hint', default: 'Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.') %></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <%= form.submit storage_configuration.persisted? ? t('helpers.submit.update', model: ::BetterTogether::StorageConfiguration.model_name.human) : t('helpers.submit.create', model: ::BetterTogether::StorageConfiguration.model_name.human),
+                    class: 'btn btn-primary' %>
+    <%= link_to t('better_together.storage_configurations.cancel', default: 'Cancel'),
+                platform_storage_configurations_path(@platform),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

@@ -10,6 +10,8 @@ module BetterTogether
                polymorphic: true,
                autosave: true
 
+    accepts_nested_attributes_for :identity
+
     validates :identity,
               presence: true
     validates :agent,

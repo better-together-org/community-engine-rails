@@ -119,18 +119,26 @@ module BetterTogether
 
       # Determine if entity has a profile image
       if entity.respond_to?(:profile_image) && entity.profile_image.attached?
-        attachment = if entity.respond_to?(:optimized_profile_image)
-                       entity.optimized_profile_image
-                     else
-                       entity.profile_image_variant(image_size)
-                     end
+        # Use optimized URL method that doesn't block on .processed
+        image_url = if entity.respond_to?(:profile_image_url)
+                      entity.profile_image_url(size: image_size)
+                    elsif entity.respond_to?(:optimized_profile_image)
+                      rails_storage_proxy_url(entity.optimized_profile_image)
+                    else
+                      # Fallback to variant without calling .processed
+                      rails_storage_proxy_url(entity.profile_image_variant(image_size))
+                    end
 
-        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+        image_tag(image_url, **image_tag_attributes) if image_url
       else
         # Use a default image based on the entity type
         default_image = default_profile_image(entity, image_format)
         image_tag(image_url(default_image), **image_tag_attributes)
       end
+    rescue ActiveStorage::FileNotFoundError
+      # Use a default image based on the entity type
+      default_image = default_profile_image(entity, image_format)
+      image_tag(image_url(default_image), **image_tag_attributes)
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity

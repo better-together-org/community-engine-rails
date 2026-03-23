@@ -9,7 +9,7 @@ RSpec.describe 'Person completes checklist', :js do
   let!(:person) { create(:better_together_person, user: user) }
 
   before do
-    find_or_create_test_user('user@example.test', 'password12345', :user)
+    find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
     capybara_login_as_user
   end
 

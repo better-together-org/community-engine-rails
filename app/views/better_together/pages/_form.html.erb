@@ -66,6 +66,12 @@
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">
+      <%= form.label :show_title %>
+      <%= render partial: 'better_together/shared/fields/toggle_switch', locals: { form: form, attr: :show_title } %>
+      <small class="form-text text-muted mt-2">Display the page title when there is no hero block.</small>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :published_at %>
       <%= form.datetime_field :published_at, include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
 

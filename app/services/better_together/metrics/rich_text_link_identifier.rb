@@ -176,7 +176,7 @@ module BetterTogether
       def rt_platform_host
         @rt_platform_host ||= begin
           host_platform = BetterTogether::Platform.host.first
-          URI(host_platform.url).host
+          URI(host_platform.host_url).host
         rescue StandardError
           nil
         end

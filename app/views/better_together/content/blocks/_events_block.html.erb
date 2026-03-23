@@ -1,0 +1,29 @@
+<%# locals: (events_block:) -%>
+<%
+  order_scope = case events_block.event_scope
+                when 'upcoming' then ->(s) { s.where('starts_at >= ?', Time.current).order(starts_at: :asc) }
+                when 'recent'   then ->(s) { s.where('starts_at < ?', Time.current).order(starts_at: :desc) }
+                else                 ->(s) { s.order(starts_at: :desc) }
+                end
+
+  events = resource_block_collection(events_block, BetterTogether::Event, extra_scope: order_scope)
+  cache_key = [events_block, events_block.community_scope_id, events_block.event_scope,
+               BetterTogether::Event.maximum(:updated_at)&.to_i,
+               BetterTogether::Event.count,
+               I18n.locale]
+%>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: events_block } do %>
+  <%= cache cache_key do %>
+    <div class="events-block-collection row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <%= render(events) || content_tag(:p, t('better_together.content.blocks.events_block.empty',
+                                             default: 'No events to display.')) %>
+    </div>
+
+    <% if events_block.show_view_more? %>
+      <div class="text-center mt-4">
+        <%= link_to t('better_together.content.blocks.view_more', default: 'View all'),
+                    events_block.view_more_url, class: 'btn btn-outline-primary' %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

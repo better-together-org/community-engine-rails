@@ -1,33 +1,35 @@
-<% content_for :page_title do %>
-  <%= resource_class.model_name.human.pluralize %>
-<% end %>
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= resource_class.model_name.human.pluralize %>
+  <% end %>
 
-<div class="container my-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %> <!-- Policy check using resource_class -->
-      <%= link_to new_person_path, class: 'btn btn-primary' do %>
-        <i class="fas fa-plus"></i> <%= t('.new_person') %>
+  <div class="container my-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1><%= resource_class.model_name.human.pluralize %></h1>
+      <% if policy(resource_class).create? %> <!-- Policy check using resource_class -->
+        <%= link_to new_person_path, class: 'btn btn-primary' do %>
+          <i class="fas fa-plus"></i> <%= t('.new_person') %>
+        <% end %>
       <% end %>
-    <% end %>
-  </div>
+    </div>
 
-  <div class="row">
-    <div class="col">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th><%= resource_class.human_attribute_name(:identifier) %></th>
-            <th><%= resource_class.human_attribute_name(:name) %></th>
-            <th><%= resource_class.human_attribute_name(:description) %></th>
-            <th><%= resource_class.human_attribute_name(:slug) %></th>
-            <th class="text-end"><%= t('globals.actions') %></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render partial: 'better_together/people/person_row', collection: @people, as: :person %>
-        </tbody>
-      </table>
+    <div class="row">
+      <div class="col">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th><%= resource_class.human_attribute_name(:identifier) %></th>
+              <th><%= resource_class.human_attribute_name(:name) %></th>
+              <th><%= resource_class.human_attribute_name(:description) %></th>
+              <th><%= resource_class.human_attribute_name(:slug) %></th>
+              <th class="text-end"><%= t('globals.actions') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: 'better_together/people/person_row', collection: @people, as: :person %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
+<% end %>

@@ -1,0 +1,32 @@
+# frozen_string_literal: true
+<% if namespaced? %>
+module <%= module_name %>
+<% end %>  # Notifier for <%= invitation_name %> invitation notifications
+  # Inherits from InvitationNotifierBase for shared notification functionality
+  class <%= invitation_name.classify %>InvitationNotifier < <%= namespaced? ? 'InvitationNotifierBase' : 'BetterTogether::InvitationNotifierBase' %>
+    deliver_by :email, mailer: '<%= invitation_class_name.gsub('::', '::') %>sMailer', method: :invite, params: :email_params,
+                       queue: :mailers
+
+    notification_methods do
+      delegate :title, :body, :invitation, :invitable, to: :<%= invitation_name %>
+    end
+
+    private
+
+    def title_i18n_key
+      '<%= namespace_path.present? ? "#{namespace_path}." : "" %>notifications.<%= invitation_name %>_invitation.title'
+    end
+
+    def body_i18n_key
+      '<%= namespace_path.present? ? "#{namespace_path}." : "" %>notifications.<%= invitation_name %>_invitation.body'
+    end
+
+    def title_i18n_vars
+      { <%= invitation_name %>_name: invitable&.name }
+    end
+
+    def body_i18n_vars
+      { <%= invitation_name %>_name: invitable&.name }
+    end
+  end
+<% if namespaced? %>end<% end %>

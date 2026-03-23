@@ -17,12 +17,12 @@ module BetterTogether
 
     # Returns the base URL configured for BetterTogether.
     def base_url
-      ::BetterTogether.base_url
+      current_platform_base_url
     end
 
     # Returns the base URL configured for BetterTogether.
     def base_url_with_locale
-      ::BetterTogether.base_url_with_locale
+      build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
     # Returns the base path configured for BetterTogether.
@@ -49,8 +49,22 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    # Generates a short-lived Devise JWT for the current web-session user so that
+    # in-browser JavaScript can call Devise JWT-protected API endpoints (e.g.
+    # /api/v1/people/:id/key_backup) without re-authenticating via the API.
+    # Returns nil when no user is signed in or JWT generation fails.
+    def current_user_api_token
+      return nil unless user_signed_in? && current_user
+
+      Warden::JWTAuth::UserEncoder.new.call(current_user, :api_user, nil).first
+    rescue Devise::MissingWarden, StandardError
+      # Devise::MissingWarden is raised in view specs where the Warden
+      # middleware is not present in the stack.
+      nil
+    end
+
     def default_url_options
-      super.merge(locale: I18n.locale)
+      super.merge(resolved_url_options).merge(locale: I18n.locale)
     end
 
     def permitted_to?(permission_identifier)
@@ -75,19 +89,22 @@ module BetterTogether
     end
 
     # Finds the platform marked as host or returns a new default host platform instance.
-    # This method ensures there is always a host platform available, even if not set in the database.
+    # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
+    # check_platform_privacy, SEO helpers, and layout partials on every request).
     def host_platform
-      platform = ::BetterTogether::Platform.find_by(host: true)
-      return platform if platform
-
-      ::BetterTogether::Platform.new(name: 'Better Together Community Engine', url: base_url,
-                                     privacy: 'private')
+      @host_platform ||= Current.platform || ::BetterTogether::Platform.find_by(host: true) ||
+                         ::BetterTogether::Platform.new(
+                           name: 'Better Together Community Engine',
+                           url: ::BetterTogether.base_url,
+                           privacy: 'private'
+                         )
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      # rubocop:todo Layout/LineLength
-      @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
+      @host_community ||= host_platform.community ||
+                          # rubocop:todo Layout/LineLength
+                          ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
                           # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
@@ -128,7 +145,14 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     def robots_meta_tag(content = 'index,follow')
-      meta_content = content_for?(:meta_robots) ? content_for(:meta_robots) : content
+      # Prevent indexing when debug mode is enabled
+      meta_content = if stimulus_debug_enabled?
+                       'noindex,nofollow'
+                     elsif content_for?(:meta_robots)
+                       content_for(:meta_robots)
+                     else
+                       content
+                     end
       tag.meta(name: 'robots', content: meta_content)
     end
 
@@ -151,7 +175,7 @@ module BetterTogether
                          t('og.default_description', platform_name: host_platform.name)
                        end
 
-      og_url = content_for?(:og_url) ? content_for(:og_url) : request.original_url
+      og_url = content_for?(:og_url) ? canonicalize_url(content_for(:og_url)) : canonical_current_url
 
       og_image = content_for?(:og_image) ? content_for(:og_image) : host_community_logo_url
 
@@ -168,6 +192,31 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
+    # Generates a canonical link tag for the current request.
+    # Defaults to request.original_url but can be overridden by setting
+    # `content_for(:canonical_url)` in views. When provided a relative path,
+    # the host and locale are ensured by prefixing with `base_url_with_locale`.
+    def canonical_link_tag
+      canonical_url = if content_for?(:canonical_url)
+                        explicit_or_canonical_url(content_for(:canonical_url))
+                      else
+                        canonical_current_url
+                      end
+
+      tag.link(rel: 'canonical', href: canonical_url)
+    end
+
+    # Generates `<link rel="alternate" hreflang="..." href="...">` tags for
+    # each locale supported by the application. These tags help search engines
+    # understand language-specific versions of a page.
+    def hreflang_links
+      tags = I18n.available_locales.map do |locale|
+        tag.link(rel: 'alternate', hreflang: locale, href: url_for(locale:, only_path: false))
+      end
+
+      safe_join(tags, "\n")
+    end
+
     # Retrieves the setup wizard for hosts or raises an error if not found.
     # This is crucial for initial setup processes and should be pre-configured.
     def host_setup_wizard
@@ -180,9 +229,9 @@ module BetterTogether
     def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
         if args.any? && args.first.is_a?(Hash)
-          args = [args.first.merge(ApplicationController.default_url_options)]
+          args = [args.first.merge(default_url_options)]
         else
-          args << ApplicationController.default_url_options
+          args << default_url_options
         end
         BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
       elsif main_app_url_helper?(method)
@@ -201,7 +250,289 @@ module BetterTogether
       better_together_url_helper?(method) || super
     end
 
+    # Determines if Stimulus debug mode should be enabled
+    # Enable when debug param is present or session is active and not expired
+    def stimulus_debug_enabled?
+      return true if params[:debug] == 'true'
+      return false unless session[:stimulus_debug]
+
+      # Check if session has expired
+      if session[:stimulus_debug_expires_at].present?
+        session[:stimulus_debug_expires_at] > Time.current
+      else
+        false
+      end
+    end
+
+    def current_platform_domain
+      Current.platform_domain ||
+        Current.platform&.primary_platform_domain ||
+        ::BetterTogether::Platform.find_by(host: true)&.primary_platform_domain
+    end
+
+    def canonical_current_url
+      canonicalize_url(request.original_url)
+    end
+
+    def canonicalize_url(url)
+      return url if url.blank?
+
+      uri = URI.parse(url.to_s)
+      path = extract_canonical_path(uri, url)
+      build_url_for_path(base_url, path) + uri_query_string(uri) + uri_fragment_string(uri)
+    rescue URI::InvalidURIError
+      build_url_for_path(base_url_with_locale, normalize_relative_path(url.to_s))
+    end
+
+    def uri_query_string(uri)
+      uri.query.present? ? "?#{uri.query}" : ''
+    end
+
+    def uri_fragment_string(uri)
+      uri.fragment.present? ? "##{uri.fragment}" : ''
+    end
+
+    def extract_canonical_path(uri, _original_url)
+      if uri.host.present?
+        uri.path.presence || '/'
+      else
+        normalize_relative_path(uri.path.presence || '/')
+      end
+    end
+
+    def explicit_or_canonical_url(url)
+      return url if url.to_s.start_with?('http://', 'https://')
+
+      canonicalize_url(url)
+    end
+
+    # Most commonly used timezones across different continents and regions
+    # NOTE: These must be IANA identifiers that have corresponding Rails TimeZone entries
+    # Rails uses Etc/UTC for UTC, and America/New_York covers both US Eastern and Canada Eastern (Toronto)
+    # America/Los_Angeles covers both US Pacific and Canada Pacific (Vancouver)
+    # Asia/Muscat is used for Abu Dhabi/Dubai
+    COMMON_TIMEZONES = [
+      'Etc/UTC',             # UTC (Rails uses Etc/UTC, not UTC)
+      'America/New_York',    # US/Canada Eastern
+      'America/Chicago',     # US Central
+      'America/Denver',      # US Mountain
+      'America/Los_Angeles', # US/Canada Pacific
+      'America/Halifax',     # Canada Atlantic
+      'America/Mexico_City', # Mexico
+      'America/Sao_Paulo',   # Brazil
+      'Europe/London',       # UK
+      'Europe/Paris',        # France/Central Europe
+      'Europe/Berlin',       # Germany
+      'Europe/Amsterdam',    # Netherlands
+      'Europe/Rome',         # Italy
+      'Europe/Madrid',       # Spain
+      'Asia/Tokyo',          # Japan
+      'Asia/Shanghai',       # China
+      'Asia/Hong_Kong',      # Hong Kong
+      'Asia/Singapore',      # Singapore
+      'Asia/Muscat',         # UAE (Abu Dhabi/Dubai)
+      'Asia/Kolkata',        # India
+      'Australia/Sydney',    # Australia Eastern
+      'Australia/Melbourne', # Australia Eastern
+      'Pacific/Auckland',    # New Zealand
+      'Africa/Johannesburg'  # South Africa
+    ].freeze
+
+    # Returns timezone options sorted by UTC offset (ascending), then alphabetically
+    # Display format: "(GMT-05:00) Eastern Time (US & Canada)"
+    # Value is the IANA identifier: "America/New_York"
+    # Returns array of [display_name, iana_identifier] pairs
+    # rubocop:disable Metrics/AbcSize
+    def iana_timezone_options_for_select
+      # Build a hash of IANA ID => Rails TimeZone to deduplicate
+      # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
+      zones_hash = ActiveSupport::TimeZone.all.each_with_object({}) do |rails_tz, hash|
+        iana_id = rails_tz.tzinfo.name
+        # Only store first Rails TimeZone for each IANA identifier
+        hash[iana_id] ||= rails_tz
+      end
+
+      # Convert to array of [display_name, iana_id, offset] for sorting
+      zones = zones_hash.map do |iana_id, rails_tz|
+        display_name = rails_tz.to_s # "(GMT-05:00) Eastern Time (US & Canada)"
+        offset_seconds = rails_tz.utc_offset
+
+        [display_name, iana_id, offset_seconds]
+      end
+
+      # Sort by offset (ascending), then alphabetically by display name, then by IANA ID
+      zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
+           .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
+    end
+    # rubocop:enable Metrics/AbcSize
+
+    # Returns commonly used timezone options sorted by UTC offset
+    # Used for the "Common Timezones" priority optgroup
+    # rubocop:disable Metrics/AbcSize
+    def priority_timezone_options
+      # Build a hash of IANA ID => Rails TimeZone to deduplicate
+      # (some IANA identifiers have multiple Rails TimeZone names like Tokyo/Osaka/Sapporo)
+      priority_zones_hash = ActiveSupport::TimeZone.all.each_with_object({}) do |rails_tz, hash|
+        iana_id = rails_tz.tzinfo.name
+        next unless COMMON_TIMEZONES.include?(iana_id)
+
+        # Only store first Rails TimeZone for each IANA identifier
+        hash[iana_id] ||= rails_tz
+      end
+
+      # Convert to array of [display_name, iana_id, offset] for sorting
+      priority_zones = priority_zones_hash.map do |iana_id, rails_tz|
+        display_name = rails_tz.to_s # "(GMT-05:00) Eastern Time (US & Canada)"
+        offset_seconds = rails_tz.utc_offset
+
+        [display_name, iana_id, offset_seconds]
+      end
+
+      # Sort by offset (ascending), then alphabetically by display name, then by IANA ID
+      priority_zones.sort_by { |tz_name, tz_id, offset| [offset, tz_name, tz_id] }
+                    .map { |tz_name, tz_id, _offset| [tz_name, tz_id] }
+    end
+    # rubocop:enable Metrics/AbcSize
+
+    # Returns timezone options grouped by continent/region, excluding priority zones
+    # Each group is sorted by UTC offset (ascending), then alphabetically
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
+    def iana_timezone_options_grouped
+      # Build a hash of IANA ID => Rails TimeZone to deduplicate
+      # (some IANA identifiers have multiple Rails TimeZone names)
+      zones_hash = ActiveSupport::TimeZone.all.each_with_object({}) do |rails_tz, hash|
+        iana_id = rails_tz.tzinfo.name
+        next if COMMON_TIMEZONES.include?(iana_id) # Exclude priority zones
+        next unless iana_id.include?('/') # Skip legacy POSIX timezone names (HST, PST8PDT, etc.)
+        next if iana_id.start_with?('Etc/') # Skip technical Etc/ timezones
+
+        # Only store first Rails TimeZone for each IANA identifier
+        hash[iana_id] ||= rails_tz
+      end
+
+      # Convert to array of [continent, display_name, iana_id, offset] for grouping
+      all_zones = zones_hash.map do |iana_id, rails_tz|
+        display_name = rails_tz.to_s # "(GMT-05:00) Eastern Time (US & Canada)"
+        offset_seconds = rails_tz.utc_offset
+
+        # Group by continent (first segment before /)
+        continent = iana_id.split('/').first
+        [continent, display_name, iana_id, offset_seconds]
+      end
+
+      # Group by continent
+      grouped = all_zones.group_by { |continent, _tz_name, _tz_id, _offset| continent }
+
+      # Sort each group by offset, then alphabetically by display name, then by IANA ID
+      grouped.transform_values do |zones|
+        zones.sort_by { |_continent, tz_name, tz_id, offset| [offset, tz_name, tz_id] }
+             .map { |_continent, tz_name, tz_id, _offset| [tz_name, tz_id] }
+      end
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
+
+    # Returns timezone options with priority group first, then continent-grouped options
+    # Format suitable for grouped_options_for_select
+    def iana_timezone_options_with_priority
+      priority_group = ['Common Timezones', priority_timezone_options]
+      continent_groups = iana_timezone_options_grouped.sort.to_a
+
+      [priority_group] + continent_groups
+    end
+
+    # Renders an IANA timezone select field with SlimSelect integration
+    # Uses grouped options (priority zones + continent groups) and includes
+    # SlimSelect controller for enhanced search/filter UX
+    #
+    # Supports multiple calling patterns for backward compatibility:
+    #   iana_time_zone_select(form, :timezone)
+    #   iana_time_zone_select(form, :timezone, 'America/New_York')
+    #   iana_time_zone_select(form, :timezone, nil, {}, html_options)
+    #   iana_time_zone_select(form, :timezone, options: {}, html_options: {})
+    #
+    # @param form [ActionView::Helpers::FormBuilder] The form builder object
+    # @param attribute [Symbol] The attribute name (e.g., :timezone)
+    # @param selected_or_priority [String, Array, nil] Selected timezone or priority zones array
+    # @param options [Hash] Standard Rails select options (include_blank, prompt, etc.)
+    # @param html_options [Hash] HTML options for the select tag
+    # @return [String] HTML select element with SlimSelect integration
+    # rubocop:disable Metrics/MethodLength
+    def iana_time_zone_select(form, attribute, selected_or_priority = nil, options = {}, html_options = {})
+      # Determine selected timezone from various sources
+      selected = if selected_or_priority.is_a?(String)
+                   selected_or_priority
+                 else
+                   html_options.delete(:selected) || options[:selected]
+                 end
+
+      # Default HTML options with SlimSelect controller integration
+      default_html_options = {
+        class: 'form-select',
+        data: {
+          controller: 'better-together--slim-select',
+          'better-together--slim-select-config-value': {
+            search: true,
+            searchPlaceholder: 'Search timezones...',
+            searchHighlight: true,
+            closeOnSelect: true,
+            showSearch: true,
+            searchingText: 'Searching...',
+            searchText: 'No results',
+            placeholderText: 'Select a timezone'
+          }.to_json
+        }
+      }
+
+      # Merge user-provided HTML options
+      merged_html_options = default_html_options.deep_merge(html_options)
+
+      # Use grouped_options_for_select with priority + continent groups
+      grouped_options = iana_timezone_options_with_priority
+
+      form.select(
+        attribute,
+        grouped_options_for_select(grouped_options, selected),
+        options,
+        merged_html_options
+      )
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    def friendly_timezone_label(tz_id)
+      rails_tz = ActiveSupport::TimeZone.all.find { |t| t.tzinfo.name == tz_id }
+      rails_tz ? rails_tz.to_s : tz_id
+    end
+
     private
+
+    def current_platform_base_url
+      Current.platform&.resolved_host_url ||
+        current_platform_domain&.url ||
+        ::BetterTogether::Platform.find_by(host: true)&.resolved_host_url ||
+        ::BetterTogether.base_url
+    end
+
+    def build_url_for_path(root_url, path)
+      root = root_url.to_s.chomp('/')
+      normalized_path = normalize_relative_path(path)
+      "#{root}#{normalized_path}"
+    end
+
+    def normalize_relative_path(path)
+      normalized = path.to_s
+      normalized = "/#{normalized}" unless normalized.start_with?('/')
+      normalized
+    end
+
+    def resolved_url_options
+      uri = URI.parse(base_url)
+      options = { host: uri.host }
+      options[:protocol] = uri.scheme if uri.scheme.present?
+      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
+      options
+    end
 
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def main_app_url_helper?(method)
@@ -235,6 +566,64 @@ module BetterTogether
         { icon: 'fas fa-circle', color: '#6c757d',
           tooltip: t('better_together.events.relationship.calendar', default: 'Calendar event') }
       end
+    end
+
+    # Sanitizes a URL to prevent XSS attacks by validating it's a safe URL scheme
+    # @param url [String] The URL to sanitize
+    # @return [String] The sanitized URL or '#' if invalid
+    def sanitize_url(url)
+      return '#' if url.blank?
+
+      # Convert to string in case it's a SafeBuffer
+      url_string = url.to_s.strip
+
+      # Check if it's a valid URL with safe scheme
+      begin
+        uri = URI.parse(url_string)
+        # Allow http, https, mailto, tel, and relative paths
+        if uri.scheme.nil? || %w[http https mailto tel].include?(uri.scheme.downcase)
+          url_string
+        else
+          '#'
+        end
+      rescue URI::InvalidURIError
+        # If URL parsing fails, check if it's a relative path
+        url_string.start_with?('/') ? url_string : '#'
+      end
+    end
+
+    # Determines the default timezone for an event form
+    # Priority: event timezone > current person timezone > platform timezone > UTC
+    # Reloads person and platform to ensure fresh data in tests
+    # @param event [Event] The event to determine timezone for
+    # @return [String] IANA timezone identifier
+    def default_timezone_for_event(event)
+      event_timezone_preference(event) || person_timezone_preference || platform_timezone_preference || 'UTC'
+    end
+
+    def event_timezone_preference(event)
+      return unless event.respond_to?(:timezone)
+
+      tz = event.timezone.presence
+      return tz unless event.respond_to?(:new_record?) && event.new_record?
+
+      default_column_tz = event.class.try(:column_defaults).try(:[], 'timezone')
+      return nil if tz.present? && default_column_tz.present? && tz == default_column_tz
+
+      tz
+    end
+
+    def person_timezone_preference
+      return @person_timezone_preference if defined?(@person_timezone_preference)
+
+      person = respond_to?(:current_user) ? current_user&.person : current_person
+      @person_timezone_preference = person&.time_zone.presence
+    end
+
+    def platform_timezone_preference
+      return @platform_timezone_preference if defined?(@platform_timezone_preference)
+
+      @platform_timezone_preference = host_platform&.time_zone.presence
     end
   end
 end

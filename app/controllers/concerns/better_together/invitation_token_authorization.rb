@@ -3,6 +3,7 @@
 module BetterTogether
   # Concern to override Pundit's authorize method to support invitation token authorization
   # This allows policies to receive invitation tokens for context-aware authorization
+  # Also provides shared invitation token handling methods for controllers
   module InvitationTokenAuthorization
     extend ActiveSupport::Concern
 
@@ -56,6 +57,106 @@ module BetterTogether
     # @param token [String] The invitation token
     def current_invitation_token=(token)
       @current_invitation_token = token
+    end
+
+    # Common invitation token handling methods
+
+    # Extract invitation token from params or current token
+    def extract_invitation_token
+      params[:invitation_token].presence || params[:token].presence || current_invitation_token
+    end
+
+    # Find valid invitation by token for the current resource
+    def find_valid_invitation(token)
+      resource = instance_variable_get("@#{invitation_resource_name}")
+      invitation_class = invitation_class_for_resource
+
+      if resource
+        invitation_class.pending.not_expired.find_by(token: token, invitable: resource)
+      else
+        invitation_class.pending.not_expired.find_by(token: token)
+      end
+    end
+
+    # Persist invitation to session if token came from params
+    def persist_invitation_to_session(invitation, _token)
+      return unless token_came_from_params?
+
+      store_invitation_in_session(invitation)
+      locale_from_invitation(invitation)
+      self.current_invitation_token = invitation.token
+    end
+
+    # Check if token came from request parameters
+    def token_came_from_params?
+      params[:invitation_token].present? || params[:token].present?
+    end
+
+    # Store invitation in session with resource-specific key
+    def store_invitation_in_session(invitation)
+      session_key = "#{invitation_resource_name}_invitation_token"
+      expires_key = "#{invitation_resource_name}_invitation_expires_at"
+
+      session[session_key] = invitation.token
+      session[expires_key] = calculate_invitation_session_expiry(invitation)
+    end
+
+    # Calculate session expiry for any invitation type
+    # Uses the earlier of: invitation.valid_until, session_duration_mins, or 1 hour default
+    def calculate_invitation_session_expiry(invitation)
+      expiry_times = []
+
+      # Add invitation's valid_until if present
+      expiry_times << invitation.valid_until if invitation.valid_until.present?
+
+      # Add session duration based on invitation's setting (if it has this attribute)
+      if invitation.respond_to?(:session_duration_mins) && invitation.session_duration_mins.present?
+        expiry_times << invitation.session_duration_mins.minutes.from_now
+      end
+
+      # Default to configured session duration if no other limits set
+      expiry_times << BetterTogether::Invitable.default_invitation_session_duration.from_now if expiry_times.empty?
+
+      # Return the earliest expiry time
+      expiry_times.min
+    end
+
+    # Set locale from invitation
+    def locale_from_invitation(invitation)
+      return unless invitation.locale.present?
+
+      I18n.locale = invitation.locale
+      session[:locale] = I18n.locale
+    end
+
+    # Common privacy check override pattern
+    def extract_invitation_token_for_privacy
+      session_key = "#{invitation_resource_name}_invitation_token"
+      params[:invitation_token].presence || params[:token].presence || session[session_key].presence
+    end
+
+    def platform_public_or_user_authenticated?
+      helpers.host_platform.privacy_public? || current_user.present?
+    end
+
+    def token_and_params_present?(token)
+      token.present? && params[:id].present?
+    end
+
+    def find_any_invitation_by_token(token)
+      invitation_class_for_resource.find_by(token: token)
+    end
+
+    # Template methods - controllers should implement these
+
+    # Return the resource name (e.g., 'event', 'community')
+    def invitation_resource_name
+      raise NotImplementedError, 'Subclasses must implement invitation_resource_name'
+    end
+
+    # Return the invitation class for this resource type
+    def invitation_class_for_resource
+      raise NotImplementedError, 'Subclasses must implement invitation_class_for_resource'
     end
 
     # Helper method to determine policy class for a record

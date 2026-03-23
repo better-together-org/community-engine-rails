@@ -4,6 +4,8 @@ module BetterTogether
   module Geography
     class ContinentsController < ApplicationController # rubocop:todo Style/Documentation
       before_action :set_geography_continent, only: %i[show edit update destroy]
+      before_action :authorize_geography_continent, only: %i[show edit update destroy]
+      after_action :verify_authorized, except: :index
 
       # GET /geography/continents
       def index
@@ -77,6 +79,11 @@ module BetterTogether
       # Only allow a list of trusted parameters through.
       def geography_continent_params
         params.fetch(:geography_continent, {})
+      end
+
+      # Adds a policy check for the continent
+      def authorize_geography_continent
+        authorize @geography_continent
       end
     end
   end

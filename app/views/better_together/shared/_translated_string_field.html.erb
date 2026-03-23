@@ -3,7 +3,9 @@
 
 <%# locals: (model:, form:, attribute:, temp_id: SecureRandom.uuid) -%>
 
-<div class="localized-fields" data-controller="better_together--translation">
+<div class="localized-fields" data-controller="better_together--translation"
+     data-better-together--translation-content-too-long-text="<%= t('better_together.translations.errors.content_too_long') %>"
+     data-better-together--translation-translation-request-failed-text="<%= t('better_together.translations.errors.translation_request_failed') %>">
   <%= required_label form, attribute, class: 'form-label' %>
   <ul class="nav nav-tabs px-2" id="<%= attribute %>-translation-tabs-<%= temp_id %>" role="tablist" data-better_together--translation-target="tab">
     <%- I18n.available_locales.each do |locale| %>

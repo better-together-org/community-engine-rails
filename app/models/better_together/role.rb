@@ -13,7 +13,7 @@ module BetterTogether
 
     slugged :identifier, dependent: :delete_all
 
-    translates :name
+    translates :name, type: :string
     translates :description, type: :text
 
     validates :name,

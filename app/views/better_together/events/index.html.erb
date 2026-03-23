@@ -17,14 +17,21 @@
     </div>
   <% end %>
 
-  <% if @upcoming_events.size > 0 || @past_events.size > 0 %>
-    <h2>Upcoming</h2>
+  <% if @upcoming_events.size > 0 || @ongoing_events.size > 0 || @past_events.size > 0 %>
+    <h2><%= t('better_together.people.calendar.upcoming_events') %></h2>
     <div class="row">
       <%= render(@upcoming_events) || render('none') %>
     </div>
 
+    <% if @ongoing_events.size > 0 %>
+      <h2><%= t('better_together.people.calendar.ongoing_events') %></h2>
+      <div class="row">
+        <%= render(@ongoing_events) %>
+      </div>
+    <% end %>
+
     <% if @past_events.size > 0 %>
-      <h2>Past</h2>
+      <h2><%= t('better_together.people.calendar.recent_events') %></h2>
       <div class="row">
         <%= render(@past_events) %>
       </div>

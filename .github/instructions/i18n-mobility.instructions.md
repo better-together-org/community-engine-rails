@@ -5,7 +5,7 @@ applyTo: "**/*.rb,**/*.yml,**/*.erb"
 
 ## Keys & Locales
 - Use `better_together.*` namespace for engine translations.
-- Add missing keys in English first, then translate (fr, es, etc).
+- Add missing keys in English first, then translate (fr, es, uk, etc).
 
 ## Mobility
 - Translate model attributes; list them via helper methods.

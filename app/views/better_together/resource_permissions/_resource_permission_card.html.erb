@@ -1,0 +1,67 @@
+<div class="col" id="<%= dom_id(resource_permission) %>">
+  <div class="card h-100 shadow-sm">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <div>
+          <h3 class="h6 mb-1"><%= resource_permission.identifier %></h3>
+          <p class="text-muted small mb-0"><%= resource_permission.action %> · <%= resource_permission.target %></p>
+        </div>
+        <span class="badge <%= resource_permission.protected? ? 'bg-secondary' : 'bg-light text-dark' %>">
+          <%= resource_permission.protected? ? t('better_together.resource_permissions.protection_status.protected') :
+                                              t('better_together.resource_permissions.protection_status.unprotected') %>
+        </span>
+      </div>
+
+      <div class="mb-3">
+        <p class="text-muted mb-2"><%= t('better_together.resource_permissions.roles.label') %></p>
+        <% summary = resource_permission_role_summary(resource_permission, limit: 4) %>
+        <% if summary[:labels].any? %>
+          <div class="d-flex flex-wrap gap-1">
+            <% summary[:labels].each do |label| %>
+              <span class="badge bg-light text-dark"><%= label %></span>
+            <% end %>
+            <% if summary[:remaining].positive? %>
+              <span class="badge bg-secondary">
+                <%= t('better_together.resource_permissions.roles.more', count: summary[:remaining]) %>
+              </span>
+            <% end %>
+          </div>
+        <% else %>
+          <span class="text-muted"><%= t('better_together.resource_permissions.roles.none') %></span>
+        <% end %>
+      </div>
+
+      <dl class="row mb-0">
+        <dt class="col-5 text-muted"><%= resource_permission.class.human_attribute_name(:position) %></dt>
+        <dd class="col-7 mb-0"><%= resource_permission.position %></dd>
+      </dl>
+    </div>
+    <div class="card-footer bg-transparent border-0 pt-0">
+      <div class="d-flex flex-wrap gap-2">
+        <% if policy(resource_permission).show? %>
+          <%= link_to resource_permission_path(resource_permission),
+                      class: 'btn btn-outline-info btn-sm',
+                      'aria-label' => t('globals.show') do %>
+            <i class="fas fa-eye"></i> <%= t('globals.show') %>
+          <% end %>
+        <% end %>
+        <% if policy(resource_permission).edit? %>
+          <%= link_to edit_resource_permission_path(resource_permission),
+                      class: 'btn btn-outline-secondary btn-sm',
+                      'aria-label' => t('globals.edit') do %>
+            <i class="fas fa-edit"></i> <%= t('globals.edit') %>
+          <% end %>
+        <% end %>
+        <% if policy(resource_permission).destroy? %>
+          <%= link_to resource_permission_path(resource_permission),
+                      method: :delete,
+                      data: { turbo_method: :delete, turbo_confirm: t('resource_permissions.confirm_destroy') },
+                      class: 'btn btn-outline-danger btn-sm',
+                      'aria-label' => t('globals.destroy') do %>
+            <i class="fas fa-trash-alt"></i> <%= t('globals.destroy') %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

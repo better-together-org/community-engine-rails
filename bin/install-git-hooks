@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Install project git hooks by symlinking from .git/hooks/ to bin/git-hooks/
+#
+# The pre-commit hook runs:
+#   - ActiveRecord version guard (schema/migrations must use 7.2, not 8.0)
+#   - rubocop -A on staged Ruby files (auto-corrects and re-stages; fails on uncorrectable offenses)
+#   - i18n-tasks health on staged locale/Ruby files (fails on missing or unused keys)
+#
+# Requires: bundle exec (i.e. gems installed locally or via a bundler-managed environment)
+set -euo pipefail
+
+HOOK_DIR="$(git rev-parse --show-toplevel)/bin/git-hooks"
+GIT_HOOK_DIR="$(git rev-parse --git-common-dir)/hooks"
+
+for hook in "$HOOK_DIR"/*; do
+  hook_name=$(basename "$hook")
+  target="$GIT_HOOK_DIR/$hook_name"
+
+  if [ -e "$target" ] && [ ! -L "$target" ]; then
+    echo "⚠  $hook_name: existing non-symlink hook found, skipping (back it up manually)"
+    continue
+  fi
+
+  ln -sf "$hook" "$target"
+  chmod +x "$hook"
+  echo "✓  Installed $hook_name → $target"
+done
+
+echo ""
+echo "Run 'bundle install' to ensure rubocop and i18n-tasks gems are available locally."

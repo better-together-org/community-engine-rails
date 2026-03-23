@@ -55,6 +55,7 @@ RSpec.describe 'BetterTogether::Events datetime fields partial', :as_platform_ma
         event: {
           name_en: 'Test Event with Datetime',
           description_en: 'Testing our new datetime partial',
+          timezone: 'America/New_York',
           starts_at: 1.hour.from_now.strftime('%Y-%m-%dT%H:%M'),
           ends_at: 2.hours.from_now.strftime('%Y-%m-%dT%H:%M'),
           duration_minutes: '60',

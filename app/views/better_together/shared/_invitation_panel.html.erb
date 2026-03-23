@@ -1,0 +1,116 @@
+<% 
+  # Extract configuration from local_assigns
+  invitable = local_assigns[:invitable]
+  invitation_class = local_assigns[:invitation_class]
+  invitation_path = local_assigns[:invitation_path] 
+  available_people_path = local_assigns[:available_people_path]
+  panel_title_key = local_assigns[:panel_title_key] || 'better_together.invitations.panel.title'
+  additional_fields = local_assigns[:additional_fields] || {}
+  
+  invitation = invitation_class.new(invitable: invitable, inviter: current_person) 
+%>
+
+<%# Only show the invitation UI to users permitted to create invitations %>
+<% if policy(invitation).create? %>
+  <div class="card my-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span><%= t(panel_title_key, default: 'Invite People') %></span>
+    </div>
+    <div class="card-body">
+      <div id="form_errors"></div>
+      
+      <!-- Tab Navigation -->
+      <ul class="nav nav-tabs mb-3" id="invitationTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="invite-person-tab" data-bs-toggle="tab" data-bs-target="#invite-person" type="button" role="tab" aria-controls="invite-person" aria-selected="true">
+            <%= t('better_together.invitations.invite_person', default: 'Invite Member') %>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="invite-email-tab" data-bs-toggle="tab" data-bs-target="#invite-email" type="button" role="tab" aria-controls="invite-email" aria-selected="false">
+            <%= t('better_together.invitations.invite_by_email', default: 'Invite by Email') %>
+          </button>
+        </li>
+      </ul>
+      
+      <!-- Tab Content -->
+      <div class="tab-content" id="invitationTabContent">
+        <!-- Invite Person Tab -->
+        <div class="tab-pane fade show active" id="invite-person" role="tabpanel" aria-labelledby="invite-person-tab">
+          <%= form_with url: invitation_path, method: :post, data: { turbo: true }, id: 'invite_person_form' do |f| %>
+            <div class="row g-2 align-items-end">
+              <div class="col-sm-<%= additional_fields.any? ? '6' : '9' %>">
+                <%= f.label :invitee_id, t('better_together.invitations.select_person', default: 'Select Person'), class: 'form-label' %>
+                <%= f.select :invitee_id, [], 
+                    { prompt: t('better_together.invitations.search_people', default: 'Search for people...') }, 
+                    { 
+                      class: 'form-select', 
+                      name: 'invitation[invitee_id]',
+                      data: { 
+                        controller: 'better-together--slim-select',
+                        'better-together--slim-select-options-value': {
+                          ajax: {
+                            url: available_people_path
+                          },
+                          settings: {
+                            searchPlaceholder: t('better_together.invitations.search_people', default: 'Search for people...'),
+                            searchHighlight: true,
+                            closeOnSelect: true
+                          }
+                        }.to_json
+                      }
+                    } %>
+              </div>
+
+              <% additional_fields.each do |field_name, field_config| %>
+                <div class="col-sm-3">
+                  <%= f.label field_name, field_config[:label], class: 'form-label' %>
+                  <% if field_config[:helper_method] %>
+                    <%= send(field_config[:helper_method], form: f, field_name: field_name, **field_config.except(:label, :helper_method)) %>
+                  <% else %>
+                    <%= render partial: field_config[:partial], locals: { form: f, field_name: field_name, config: field_config } %>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="col-sm-3">
+                <%= f.submit t('better_together.invitations.send_invite', default: 'Send Invitation'), class: 'btn btn-primary w-100' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Invite by Email Tab -->
+        <div class="tab-pane fade" id="invite-email" role="tabpanel" aria-labelledby="invite-email-tab">
+          <%= form_with url: invitation_path, method: :post, data: { turbo: true }, id: 'invite_email_form' do |f| %>
+            <div class="row g-2 align-items-end">
+              <div class="col-sm-<%= additional_fields.any? ? '4' : '6' %>">
+                <%= f.label :invitee_email, t('better_together.invitations.invitee_email', default: 'Email'), class: 'form-label' %>
+                <%= f.email_field :invitee_email, name: 'invitation[invitee_email]', class: 'form-control', required: true %>
+              </div>
+              <div class="col-sm-<%= additional_fields.any? ? '2' : '3' %>">
+                <%= f.label :locale, t('globals.locale', default: 'Locale'), class: 'form-label' %>
+                <%= language_select_field(form: f, field_name: :locale, selected_locale: I18n.locale, html_options: { name: 'invitation[locale]', class: 'form-select' }) %>
+              </div>
+              
+              <% additional_fields.each do |field_name, field_config| %>
+                <div class="col-sm-3">
+                  <%= f.label field_name, field_config[:label], class: 'form-label' %>
+                  <% if field_config[:helper_method] %>
+                    <%= send(field_config[:helper_method], form: f, field_name: field_name, **field_config.except(:label, :helper_method)) %>
+                  <% else %>
+                    <%= render partial: field_config[:partial], locals: { form: f, field_name: field_name, config: field_config } %>
+                  <% end %>
+                </div>
+              <% end %>
+              
+              <div class="col-sm-3">
+                <%= f.submit t('better_together.invitations.send_invite', default: 'Send Invitation'), class: 'btn btn-primary w-100' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -9,7 +9,6 @@ FactoryBot.define do
     id { SecureRandom.uuid }
     association :navigation_area, factory: :better_together_navigation_area
     title { Faker::Lorem.unique.sentence }
-    slug { title.parameterize }
     url { Faker::Internet.url }
     icon { Faker::Lorem.word }
     position { Faker::Number.between(from: 0, to: 10) }

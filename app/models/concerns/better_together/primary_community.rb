@@ -20,10 +20,10 @@ module BetterTogether
     end
 
     class_methods do
-      def has_community(class_name: community_class_name) # rubocop:todo Naming/PredicatePrefix
+      def has_community(class_name: community_class_name, dependent: :destroy) # rubocop:todo Naming/PredicatePrefix
         self.community_class_name = class_name
 
-        belongs_to :community, class_name: community_class_name, dependent: :destroy, autosave: true
+        belongs_to :community, class_name: community_class_name, dependent:, autosave: true
 
         accepts_nested_attributes_for :community, reject_if: :blank
 
@@ -37,7 +37,7 @@ module BetterTogether
 
       create_community(
         name:,
-        description:,
+        description: (respond_to?(:description) ? description : "#{name}'s primary community"),
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
         privacy: (respond_to?(:privacy) ? privacy : 'private'),
         **primary_community_extra_attrs

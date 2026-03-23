@@ -1,0 +1,614 @@
+#!/usr/bin/env bash
+# bin/qa-review — Reusable QA workflow for PR review
+#
+# Analyzes the diff between a feature branch and base branch, categorizes
+# changes, generates a QA checklist, and creates a GitHub issue assigned
+# to the reviewer.
+#
+# Usage:
+#   bin/qa-review [OPTIONS]
+#
+# Options:
+#   --base BRANCH      Base branch to compare against (default: main)
+#   --assignee USER    GitHub user to assign the QA issue (default: current gh user)
+#   --pr NUMBER        PR number to link (auto-detected from branch if omitted)
+#   --repo OWNER/REPO  GitHub repository (auto-detected from git remote)
+#   --dry-run          Print the issue body to stdout without creating it
+#   --output FILE      Write the issue body to a file (in addition to creating)
+#   --help             Show this help message
+#
+# Examples:
+#   bin/qa-review --dry-run
+#   bin/qa-review --assignee rsmithlal --pr 1220
+#   bin/qa-review --base develop --dry-run --output qa-checklist.md
+#
+set -euo pipefail
+
+# ─── Defaults ────────────────────────────────────────────────────────────────
+BASE_BRANCH="main"
+ASSIGNEE=""
+PR_NUMBER=""
+REPO=""
+DRY_RUN=false
+OUTPUT_FILE=""
+HEAD_BRANCH=""
+
+# ─── Parse arguments ─────────────────────────────────────────────────────────
+show_help() {
+  sed -n '2,/^$/s/^# \?//p' "$0"
+  exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --base)       BASE_BRANCH="$2"; shift 2 ;;
+    --assignee)   ASSIGNEE="$2"; shift 2 ;;
+    --pr)         PR_NUMBER="$2"; shift 2 ;;
+    --repo)       REPO="$2"; shift 2 ;;
+    --dry-run)    DRY_RUN=true; shift ;;
+    --output)     OUTPUT_FILE="$2"; shift 2 ;;
+    --help|-h)    show_help ;;
+    *)            echo "Unknown option: $1" >&2; show_help ;;
+  esac
+done
+
+# ─── Auto-detect values ──────────────────────────────────────────────────────
+HEAD_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [[ -z "$REPO" ]]; then
+  # Extract owner/repo from git remote (supports both HTTPS and SSH)
+  REMOTE_URL=$(git remote get-url origin 2>/dev/null || git remote get-url github 2>/dev/null || echo "")
+  if [[ -n "$REMOTE_URL" ]]; then
+    REPO=$(echo "$REMOTE_URL" | sed -E 's#^(https?://github\.com/|git@github\.com:)##; s#\.git$##')
+  fi
+fi
+
+if [[ -z "$ASSIGNEE" ]]; then
+  ASSIGNEE=$(gh api user --jq '.login' 2>/dev/null || echo "")
+fi
+
+if [[ -z "$PR_NUMBER" && -n "$REPO" ]]; then
+  PR_NUMBER=$(gh pr list --repo "$REPO" --head "$HEAD_BRANCH" --json number --jq '.[0].number' 2>/dev/null || echo "")
+fi
+
+# ─── Validate ────────────────────────────────────────────────────────────────
+if ! git rev-parse --verify "$BASE_BRANCH" &>/dev/null; then
+  echo "Error: Base branch '$BASE_BRANCH' not found." >&2
+  exit 1
+fi
+
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║  QA Review Generator                                       ║"
+echo "╠══════════════════════════════════════════════════════════════╣"
+echo "║  Branch:   $HEAD_BRANCH → $BASE_BRANCH"
+echo "║  Repo:     ${REPO:-<not detected>}"
+echo "║  PR:       ${PR_NUMBER:-<none>}"
+echo "║  Assignee: ${ASSIGNEE:-<none>}"
+echo "║  Dry run:  $DRY_RUN"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+# ─── Collect changed files ───────────────────────────────────────────────────
+CHANGED_FILES=$(git diff --name-only "$BASE_BRANCH"..."$HEAD_BRANCH" 2>/dev/null || \
+                git diff --name-only "$BASE_BRANCH".."$HEAD_BRANCH")
+
+if [[ -z "$CHANGED_FILES" ]]; then
+  echo "No changes detected between $HEAD_BRANCH and $BASE_BRANCH."
+  exit 0
+fi
+
+DIFF_STAT=$(git diff --stat "$BASE_BRANCH"..."$HEAD_BRANCH" 2>/dev/null | tail -1 || echo "")
+COMMIT_COUNT=$(git log --oneline "$BASE_BRANCH".."$HEAD_BRANCH" 2>/dev/null | wc -l | tr -d ' ')
+
+# ─── Categorize files ────────────────────────────────────────────────────────
+declare -a CAT_MODELS=() CAT_API_CONTROLLERS=() CAT_WEB_CONTROLLERS=()
+declare -a CAT_CONCERNS=() CAT_VIEWS=() CAT_POLICIES=() CAT_RESOURCES=()
+declare -a CAT_ROUTES=() CAT_I18N=() CAT_JAVASCRIPT=() CAT_CONFIG=()
+declare -a CAT_MIGRATIONS=() CAT_MCP_TOOLS=() CAT_JOBS=() CAT_SPECS=()
+declare -a CAT_DOCS=() CAT_FACTORIES=() CAT_MAILERS=() CAT_BUILDERS=()
+declare -a CAT_OTHER=()
+
+while IFS= read -r file; do
+  case "$file" in
+    app/models/concerns/*)         CAT_CONCERNS+=("$file") ;;
+    app/models/*)                  CAT_MODELS+=("$file") ;;
+    app/controllers/*/api/*)       CAT_API_CONTROLLERS+=("$file") ;;
+    app/controllers/concerns/*)    CAT_CONCERNS+=("$file") ;;
+    app/controllers/*)             CAT_WEB_CONTROLLERS+=("$file") ;;
+    app/views/*)                   CAT_VIEWS+=("$file") ;;
+    app/policies/*)                CAT_POLICIES+=("$file") ;;
+    app/resources/*)               CAT_RESOURCES+=("$file") ;;
+    app/tools/*)                   CAT_MCP_TOOLS+=("$file") ;;
+    app/jobs/*)                    CAT_JOBS+=("$file") ;;
+    app/builders/*)                CAT_BUILDERS+=("$file") ;;
+    app/mailers/*)                 CAT_MAILERS+=("$file") ;;
+    app/javascript/*)              CAT_JAVASCRIPT+=("$file") ;;
+    config/routes*)                CAT_ROUTES+=("$file") ;;
+    config/locales/*)              CAT_I18N+=("$file") ;;
+    config/initializers/*)         CAT_CONFIG+=("$file") ;;
+    db/migrate/*)                  CAT_MIGRATIONS+=("$file") ;;
+    spec/factories/*)              CAT_FACTORIES+=("$file") ;;
+    spec/*)                        CAT_SPECS+=("$file") ;;
+    docs/*)                        CAT_DOCS+=("$file") ;;
+    *.gemspec|Gemfile*|lib/*)      CAT_CONFIG+=("$file") ;;
+    .github/*|AGENTS.md)           CAT_DOCS+=("$file") ;;
+    *)                             CAT_OTHER+=("$file") ;;
+  esac
+done <<< "$CHANGED_FILES"
+
+# ─── Helper: list files as markdown links ─────────────────────────────────────
+file_links() {
+  local -n arr=$1
+  local base_url=""
+  if [[ -n "$REPO" && -n "$HEAD_BRANCH" ]]; then
+    base_url="https://github.com/$REPO/blob/$HEAD_BRANCH"
+  fi
+  for f in "${arr[@]}"; do
+    if [[ -n "$base_url" ]]; then
+      echo "  - [\`$f\`]($base_url/$f)"
+    else
+      echo "  - \`$f\`"
+    fi
+  done
+}
+
+# ─── Helper: count arrays ────────────────────────────────────────────────────
+count() { echo "${#1[@]}"; }
+
+# ─── Build QA issue body ─────────────────────────────────────────────────────
+PR_LINK=""
+if [[ -n "$PR_NUMBER" && -n "$REPO" ]]; then
+  PR_LINK="https://github.com/$REPO/pull/$PR_NUMBER"
+fi
+
+BODY="# QA Review: \`$HEAD_BRANCH\` → \`$BASE_BRANCH\`
+
+"
+
+if [[ -n "$PR_LINK" ]]; then
+  BODY+="**Pull Request:** [#$PR_NUMBER]($PR_LINK)
+"
+fi
+
+BODY+="**Commits:** $COMMIT_COUNT | **Stats:** $DIFF_STAT
+**Generated:** $(date -u +"%Y-%m-%d %H:%M UTC")
+
+---
+
+## Change Summary
+
+| Category | Count |
+|----------|-------|
+| Models | ${#CAT_MODELS[@]} |
+| API Controllers | ${#CAT_API_CONTROLLERS[@]} |
+| Web Controllers | ${#CAT_WEB_CONTROLLERS[@]} |
+| Concerns | ${#CAT_CONCERNS[@]} |
+| Views | ${#CAT_VIEWS[@]} |
+| Policies | ${#CAT_POLICIES[@]} |
+| API Resources | ${#CAT_RESOURCES[@]} |
+| Routes | ${#CAT_ROUTES[@]} |
+| I18n / Locales | ${#CAT_I18N[@]} |
+| JavaScript | ${#CAT_JAVASCRIPT[@]} |
+| Config / Initializers | ${#CAT_CONFIG[@]} |
+| Migrations | ${#CAT_MIGRATIONS[@]} |
+| MCP Tools | ${#CAT_MCP_TOOLS[@]} |
+| Jobs | ${#CAT_JOBS[@]} |
+| Builders | ${#CAT_BUILDERS[@]} |
+| Specs | ${#CAT_SPECS[@]} |
+| Docs | ${#CAT_DOCS[@]} |
+| Other | ${#CAT_OTHER[@]} |
+
+---
+
+## QA Checklist
+
+"
+
+# ── Models ────────────────────────────────────────────────────────────────────
+if [[ ${#CAT_MODELS[@]} -gt 0 ]]; then
+  BODY+="### Models (${#CAT_MODELS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_MODELS)
+
+</details>
+
+- [ ] Verify model validations work correctly (create with invalid data)
+- [ ] Test model associations (belongs_to, has_many, etc.)
+- [ ] Check permitted_attributes are correctly defined
+- [ ] Verify enum values match documentation and are string-based
+- [ ] Test any new scopes or query methods
+
+"
+fi
+
+# ── API Controllers ──────────────────────────────────────────────────────────
+if [[ ${#CAT_API_CONTROLLERS[@]} -gt 0 ]]; then
+  BODY+="### API Controllers (${#CAT_API_CONTROLLERS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_API_CONTROLLERS)
+
+</details>
+
+- [ ] Test each API endpoint with valid OAuth token (200/201 responses)
+- [ ] Test each API endpoint without token (401 Unauthorized)
+- [ ] Test with insufficient permissions (403 Forbidden)
+- [ ] Verify JSONAPI response format (\`type\`, \`id\`, \`attributes\`)
+- [ ] Test pagination parameters (\`page[number]\`, \`page[size]\`)
+- [ ] Test filter parameters where applicable
+- [ ] Verify error responses include proper JSONAPI error objects
+- [ ] Check rate limiting (Rack::Attack) applies to API endpoints
+
+"
+fi
+
+# ── Web Controllers ──────────────────────────────────────────────────────────
+if [[ ${#CAT_WEB_CONTROLLERS[@]} -gt 0 ]]; then
+  BODY+="### Web Controllers (${#CAT_WEB_CONTROLLERS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_WEB_CONTROLLERS)
+
+</details>
+
+- [ ] Test index action — page loads, lists records
+- [ ] Test show action — displays record details
+- [ ] Test new/create flow — form renders, submission creates record
+- [ ] Test edit/update flow — form pre-fills, submission updates record
+- [ ] Test destroy action — record is deleted/soft-deleted
+- [ ] Verify Pundit authorization on each action
+- [ ] Test as unauthenticated user (should redirect to login)
+- [ ] Test as regular user (appropriate restrictions)
+- [ ] Test as platform manager (full access)
+- [ ] Verify flash messages display correctly
+- [ ] Check Turbo/Hotwire interactions work (no full page reloads)
+
+"
+fi
+
+# ── Concerns ─────────────────────────────────────────────────────────────────
+if [[ ${#CAT_CONCERNS[@]} -gt 0 ]]; then
+  BODY+="### Concerns (${#CAT_CONCERNS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_CONCERNS)
+
+</details>
+
+- [ ] Verify concern is properly included in target models/controllers
+- [ ] Test concern behavior through the including class
+- [ ] Check for proper method delegation and conflict resolution
+
+"
+fi
+
+# ── Views ────────────────────────────────────────────────────────────────────
+if [[ ${#CAT_VIEWS[@]} -gt 0 ]]; then
+  BODY+="### Views (${#CAT_VIEWS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_VIEWS)
+
+</details>
+
+- [ ] Visual inspection of each view in browser
+- [ ] Verify all user-facing text uses I18n (no hard-coded strings)
+- [ ] Check Bootstrap 5.3 layout and responsive behavior
+- [ ] Run accessibility check (axe-core / browser devtools)
+- [ ] Verify form labels and ARIA attributes (WCAG 2.1 AA)
+- [ ] Test keyboard navigation on interactive elements
+- [ ] Check color contrast ratios (4.5:1 normal, 3:1 large text)
+- [ ] Verify Turbo Frame/Stream boundaries are correct
+- [ ] Test form validation (client-side and server-side error display)
+
+"
+fi
+
+# ── Policies ─────────────────────────────────────────────────────────────────
+if [[ ${#CAT_POLICIES[@]} -gt 0 ]]; then
+  BODY+="### Policies (${#CAT_POLICIES[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_POLICIES)
+
+</details>
+
+- [ ] Verify unauthenticated users are denied access
+- [ ] Test regular user permissions match expected behavior
+- [ ] Test platform manager / admin permissions
+- [ ] Verify Scope restricts record visibility appropriately
+- [ ] Check that policy is applied in corresponding controller
+- [ ] Test edge cases (own records vs others' records)
+
+"
+fi
+
+# ── Resources ────────────────────────────────────────────────────────────────
+if [[ ${#CAT_RESOURCES[@]} -gt 0 ]]; then
+  BODY+="### API Resources / Serializers (${#CAT_RESOURCES[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_RESOURCES)
+
+</details>
+
+- [ ] Verify exposed attributes match API documentation
+- [ ] Check that sensitive fields are NOT exposed in API responses
+- [ ] Verify relationships are serialized correctly
+- [ ] Test filtering and sorting parameters
+- [ ] Confirm creatable/updatable fields are properly restricted
+
+"
+fi
+
+# ── Routes ───────────────────────────────────────────────────────────────────
+if [[ ${#CAT_ROUTES[@]} -gt 0 ]]; then
+  BODY+="### Routes (${#CAT_ROUTES[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_ROUTES)
+
+</details>
+
+- [ ] Verify new routes are accessible (\`rails routes\` output)
+- [ ] Check route naming conventions match project standards
+- [ ] Test URL helpers work in views and controllers
+- [ ] Verify locale constraints are applied to engine routes
+- [ ] Check API versioning namespace is correct
+
+"
+fi
+
+# ── I18n ─────────────────────────────────────────────────────────────────────
+if [[ ${#CAT_I18N[@]} -gt 0 ]]; then
+  BODY+="### I18n / Locales (${#CAT_I18N[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_I18N)
+
+</details>
+
+- [ ] Run \`bin/i18n health\` — no missing keys
+- [ ] Verify all new keys have translations in en, es, fr, uk
+- [ ] Check translation quality (not just English copies)
+- [ ] Visual inspection with non-English locale
+- [ ] Verify interpolation variables are correct
+- [ ] Check locale files are properly normalized
+
+"
+fi
+
+# ── JavaScript ───────────────────────────────────────────────────────────────
+if [[ ${#CAT_JAVASCRIPT[@]} -gt 0 ]]; then
+  BODY+="### JavaScript / Stimulus (${#CAT_JAVASCRIPT[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_JAVASCRIPT)
+
+</details>
+
+- [ ] Test Stimulus controller connection (data-controller attribute)
+- [ ] Verify interactive behavior in browser
+- [ ] Test keyboard accessibility of interactive elements
+- [ ] Check for console errors in browser devtools
+- [ ] Verify importmap registration if new controllers added
+- [ ] Test graceful degradation without JavaScript
+
+"
+fi
+
+# ── Config / Initializers ────────────────────────────────────────────────────
+if [[ ${#CAT_CONFIG[@]} -gt 0 ]]; then
+  BODY+="### Config / Initializers (${#CAT_CONFIG[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_CONFIG)
+
+</details>
+
+- [ ] Verify app starts cleanly with new configuration
+- [ ] Check no secrets or credentials are hard-coded
+- [ ] Verify ENV.fetch is used (not ENV[])
+- [ ] Test configuration in development and test environments
+- [ ] Review gem version constraints for compatibility
+
+"
+fi
+
+# ── Migrations ───────────────────────────────────────────────────────────────
+if [[ ${#CAT_MIGRATIONS[@]} -gt 0 ]]; then
+  BODY+="### Migrations (${#CAT_MIGRATIONS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_MIGRATIONS)
+
+</details>
+
+- [ ] Verify migration runs cleanly (\`rails db:migrate\`)
+- [ ] Verify migration is reversible (\`rails db:rollback\`)
+- [ ] Check UUID primary keys (create_bt_table)
+- [ ] Verify indexes are added for foreign keys and query columns
+- [ ] Check null constraints and defaults match model validations
+- [ ] Review for data safety (no destructive changes to existing data)
+
+"
+fi
+
+# ── MCP Tools ────────────────────────────────────────────────────────────────
+if [[ ${#CAT_MCP_TOOLS[@]} -gt 0 ]]; then
+  BODY+="### MCP Tools (${#CAT_MCP_TOOLS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_MCP_TOOLS)
+
+</details>
+
+- [ ] Test each tool via MCP endpoint with valid authentication
+- [ ] Verify tool respects privacy scoping (no private data leakage)
+- [ ] Test with blocked users — verify block filtering works
+- [ ] Verify Pundit authorization is enforced
+- [ ] Test input validation and error responses
+- [ ] Check timezone handling in tool responses
+- [ ] Verify tool descriptions and parameter documentation
+
+"
+fi
+
+# ── Jobs ─────────────────────────────────────────────────────────────────────
+if [[ ${#CAT_JOBS[@]} -gt 0 ]]; then
+  BODY+="### Background Jobs (${#CAT_JOBS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_JOBS)
+
+</details>
+
+- [ ] Verify job enqueues with correct queue name
+- [ ] Test job execution with valid inputs
+- [ ] Test job error handling and retry behavior
+- [ ] Verify job idempotency (safe to re-run)
+- [ ] Check Sidekiq dashboard for job visibility
+
+"
+fi
+
+# ── Builders ─────────────────────────────────────────────────────────────────
+if [[ ${#CAT_BUILDERS[@]} -gt 0 ]]; then
+  BODY+="### Builders (${#CAT_BUILDERS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_BUILDERS)
+
+</details>
+
+- [ ] Verify navigation items appear in the correct position
+- [ ] Check navigation item visibility based on authorization
+- [ ] Test navigation rendering in browser
+
+"
+fi
+
+# ── Cross-cutting QA ─────────────────────────────────────────────────────────
+BODY+="### Cross-cutting Checks
+
+- [ ] Run full test suite: \`bin/dc-run bin/ci\` — all passing
+- [ ] Run security scan: \`bin/dc-run bundle exec brakeman --quiet --no-pager\`
+- [ ] Run style check: \`bin/dc-run bundle exec rubocop\`
+- [ ] Run i18n check: \`bin/dc-run bin/i18n\`
+- [ ] Verify no N+1 queries in new features (check logs)
+- [ ] Review for proper error handling (no unrescued exceptions)
+- [ ] Check browser console for JavaScript errors
+- [ ] Test in at least one non-English locale
+
+"
+
+# ── Documentation review ─────────────────────────────────────────────────────
+if [[ ${#CAT_DOCS[@]} -gt 0 ]]; then
+  BODY+="### Documentation (${#CAT_DOCS[@]} files)
+
+<details><summary>Changed files</summary>
+
+$(file_links CAT_DOCS)
+
+</details>
+
+- [ ] Review documentation accuracy
+- [ ] Verify code examples are correct and up to date
+- [ ] Check for broken links
+- [ ] Ensure documentation matches implementation
+
+"
+fi
+
+# ── Specs review ─────────────────────────────────────────────────────────────
+if [[ ${#CAT_SPECS[@]} -gt 0 ]]; then
+  BODY+="### Test Coverage Review (${#CAT_SPECS[@]} spec files)
+
+- [ ] Verify new functionality has corresponding specs
+- [ ] Check that specs test both happy path and error cases
+- [ ] Review spec descriptions for clarity
+- [ ] Verify no flaky tests (run specs multiple times)
+- [ ] Check for proper use of HTML assertion helpers (factory content)
+
+"
+fi
+
+BODY+="---
+
+*Generated by \`bin/qa-review\` — see \`bin/qa-review --help\` for usage.*
+"
+
+# ─── Output ──────────────────────────────────────────────────────────────────
+if [[ -n "$OUTPUT_FILE" ]]; then
+  echo "$BODY" > "$OUTPUT_FILE"
+  echo "✓ QA checklist written to: $OUTPUT_FILE"
+fi
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "$BODY"
+  echo ""
+  echo "═══ DRY RUN — issue not created ═══"
+  exit 0
+fi
+
+# ─── Create GitHub issue ─────────────────────────────────────────────────────
+if [[ -z "$REPO" ]]; then
+  echo "Error: Could not detect GitHub repository. Use --repo OWNER/REPO" >&2
+  exit 1
+fi
+
+ISSUE_TITLE="QA Review: $HEAD_BRANCH → $BASE_BRANCH"
+
+CREATE_ARGS=(
+  --repo "$REPO"
+  --title "$ISSUE_TITLE"
+  --body "$BODY"
+)
+
+if [[ -n "$ASSIGNEE" ]]; then
+  CREATE_ARGS+=(--assignee "$ASSIGNEE")
+fi
+
+# Add label if it exists
+if gh label list --repo "$REPO" --search "QA" --json name --jq '.[].name' 2>/dev/null | grep -qi "qa"; then
+  CREATE_ARGS+=(--label "QA")
+fi
+
+echo "Creating GitHub issue..."
+ISSUE_URL=$(gh issue create "${CREATE_ARGS[@]}" 2>&1)
+
+if [[ $? -eq 0 ]]; then
+  echo ""
+  echo "╔══════════════════════════════════════════════════════════════╗"
+  echo "║  ✓ QA issue created successfully!                          ║"
+  echo "╠══════════════════════════════════════════════════════════════╣"
+  echo "║  $ISSUE_URL"
+  echo "╚══════════════════════════════════════════════════════════════╝"
+
+  # Link issue to PR if we have one
+  if [[ -n "$PR_NUMBER" ]]; then
+    gh pr comment "$PR_NUMBER" --repo "$REPO" \
+      --body "🔍 **QA Review Created:** $ISSUE_URL" 2>/dev/null || true
+    echo "✓ Linked QA issue to PR #$PR_NUMBER"
+  fi
+else
+  echo "Error creating issue:" >&2
+  echo "$ISSUE_URL" >&2
+  exit 1
+fi

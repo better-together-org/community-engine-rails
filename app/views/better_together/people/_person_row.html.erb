@@ -15,7 +15,7 @@
       <% end %>
     <% end %>
     <% if policy(person).destroy? %>
-      <%= link_to person_path(person), method: :delete, data: { turbo_confirm: 'delete', turbo_confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Person' do %>
+      <%= link_to person_path(person), method: :delete, data: { turbo_confirm: t('people.confirm_delete') }, class: 'btn btn-outline-danger btn-sm', 'aria-label' => 'Delete Person' do %>
         <i class="fas fa-trash-alt"></i> <%= t('globals.delete') %>
       <% end %>
     <% end %>

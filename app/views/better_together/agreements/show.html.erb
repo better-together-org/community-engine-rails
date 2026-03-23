@@ -1,24 +1,25 @@
+<turbo-frame id="agreement_modal_frame">
+  <div class="container mt-4">
+    <% if @page.present? %>
+      <%= link_to 'Edit', edit_agreement_path(@agreement), class: 'btn btn-primary mt-3' if policy(@agreement).edit? %>
+      <%= render template: 'better_together/pages/show' %>
+    <% else %>
+      <div class="card">
+        <div class="card-header">
+          <h1><%= @agreement.title %></h1>
+        </div>
+        <div class="card-body">
+          <p class="card-text"><strong>Description:</strong> <%= @agreement.description %></p>
+          <p class="card-text"><strong>Creator:</strong> <%= @agreement.creator %></p>
+          <p class="card-text"><strong>Privacy:</strong> <%= privacy_display_value(@agreement) %></p>
 
-<div class="container mt-4">
-  <% if @page.present? %>
-    <%= link_to 'Edit', edit_agreement_path(@agreement), class: 'btn btn-primary mt-3' if policy(@agreement).edit? %>
-    <%= render template: 'better_together/pages/show' %>
-  <% else %>
-    <div class="card">
-      <div class="card-header">
-        <h1><%= @agreement.title %></h1>
+            <hr>
+            <h2 class="h5 mb-3"> <%= t('better_together.agreements.terms', default: 'Terms') %> </h2>
+            <%= render partial: 'better_together/agreement_terms/terms_list', locals: { agreement: @agreement } %>
+          <%= link_to 'Edit', edit_agreement_path(@agreement), class: 'btn btn-primary mt-3' if policy(@agreement).edit? %>
+        </div>
       </div>
-      <div class="card-body">
-        <p class="card-text"><strong>Description:</strong> <%= @agreement.description %></p>
-        <p class="card-text"><strong>Creator:</strong> <%= @agreement.creator %></p>
-        <p class="card-text"><strong>Privacy:</strong> <%= privacy_display_value(@agreement) %></p>
-
-          <hr>
-          <h2 class="h5 mb-3"> <%= t('better_together.agreements.terms', default: 'Terms') %> </h2>
-          <%= render partial: 'better_together/agreement_terms/terms_list', locals: { agreement: @agreement } %>
-        <%= link_to 'Edit', edit_agreement_path(@agreement), class: 'btn btn-primary mt-3' if policy(@agreement).edit? %>
-      </div>
-    </div>
-  <% end %>
-</div>
+    <% end %>
+  </div>
+</turbo-frame>
 

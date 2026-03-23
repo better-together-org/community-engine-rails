@@ -4,6 +4,25 @@ module BetterTogether
   module Content
     # Helpers for Content Blocks
     module BlocksHelper
+      TEMPLATE_TRANSLATION_KEYS = {
+        'better_together/content/blocks/template/default' => 'better_together.content.blocks.template.default',
+        'better_together/content/blocks/template/host_community_contact_details' =>
+          'better_together.content.blocks.template.host_community_contact_details',
+        'better_together/static_pages/privacy' => 'better_together.static_pages.privacy',
+        'better_together/static_pages/terms_of_service' => 'better_together.static_pages.terms_of_service',
+        'better_together/static_pages/code_of_conduct' => 'better_together.static_pages.code_of_conduct',
+        'better_together/static_pages/accessibility' => 'better_together.static_pages.accessibility',
+        'better_together/static_pages/cookie_consent' => 'better_together.static_pages.cookie_consent',
+        'better_together/static_pages/code_contributor_agreement' =>
+          'better_together.static_pages.code_contributor_agreement',
+        'better_together/static_pages/content_contributor_agreement' =>
+          'better_together.static_pages.content_contributor_agreement',
+        'better_together/static_pages/faq' => 'better_together.static_pages.faq',
+        'better_together/static_pages/better_together' => 'better_together.static_pages.better_together',
+        'better_together/static_pages/community_engine' => 'better_together.static_pages.community_engine',
+        'better_together/static_pages/subprocessors' => 'better_together.static_pages.subprocessors'
+      }.freeze
+
       # Returns an array of acceptable image file types
       def acceptable_image_file_types
         BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES
@@ -31,6 +50,65 @@ module BetterTogether
         sanitized.gsub!(/expression\s*\(/i, '')
         sanitized.gsub!(/url\s*\(\s*javascript:[^)]*\)/i, 'url("")')
         sanitized
+      end
+
+      # Returns data attributes for mermaid controller if markdown contains mermaid diagrams
+      def mermaid_controller_attributes(markdown)
+        return {} unless markdown.contains_mermaid?
+
+        { data: { controller: 'better-together--mermaid' } }
+      end
+
+      def template_options_for(block)
+        block.class.available_templates.map do |path|
+          key = TEMPLATE_TRANSLATION_KEYS.fetch(path, path.tr('/', '.'))
+          [I18n.t(key, default: path.tr('/', ' ').tr('_', ' ').titleize), path]
+        end
+      end
+
+      # Returns a privacy-scoped, optionally community-scoped, limited collection
+      # of records for a resource collection block.
+      #
+      # @param block [BetterTogether::Content::Block] the resource block instance
+      # @param resource_class [Class] the ActiveRecord class to query
+      # @param extra_scope [Proc, nil] optional lambda applied to the scope after
+      #   policy_scope and community scoping, before limit (e.g., ordering)
+      # @return [ActiveRecord::Relation]
+      def resource_block_collection(block, resource_class, extra_scope: nil)
+        ids = block.parsed_resource_ids
+
+        scope = if ids.any?
+                  resource_class.where(id: ids)
+                else
+                  policy_scope(resource_class)
+                end
+
+        scope = apply_community_scope(scope, resource_class, block.scoped_community) if block.scoped_community.present?
+
+        scope = extra_scope.call(scope) if extra_scope.present?
+        scope.limit(block.item_limit)
+      end
+
+      private
+
+      # Applies a community join/filter appropriate for the given resource_class.
+      def apply_community_scope(scope, resource_class, community) # rubocop:disable Metrics/MethodLength
+        case resource_class.name
+        when 'BetterTogether::Event'
+          scope.joins(:event_hosts).where(better_together_event_hosts: { host_id: community.id,
+                                                                         host_type: community.class.name })
+        when 'BetterTogether::Post'
+          scope.joins(:authorships)
+               .where(better_together_authorships: { author_id: community.id,
+                                                     author_type: community.class.name })
+        when 'BetterTogether::Person'
+          scope.joins(:person_community_memberships)
+               .where(better_together_person_community_memberships: { community_id: community.id })
+        when 'BetterTogether::Community'
+          scope.where(id: community.id)
+        else
+          scope
+        end
       end
     end
   end

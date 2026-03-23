@@ -1,0 +1,66 @@
+graph TB
+    Start([Sitemap Generation Triggered]) --> CheckDB{Database<br/>Available?}
+    
+    CheckDB -->|No| SkipDB[Log: Database unavailable<br/>Skip generation]
+    CheckDB -->|Yes| CheckPlatform{Host Platform<br/>Exists?}
+    SkipDB --> End([End])
+    
+    CheckPlatform -->|No| SkipPlatform[Log: No host platform<br/>Skip generation]
+    CheckPlatform -->|Yes| InitGen[Initialize Sitemap Generator<br/>public_path: tmp/]
+    SkipPlatform --> End
+    
+    InitGen --> LocaleLoop{For each locale<br/>en, es, fr, uk}
+    
+    LocaleLoop --> SetLocalePath[Set sitemaps_path:<br/>sitemaps/locale/]
+    SetLocalePath --> LoadConfig[Load config/sitemap.rb]
+    LoadConfig --> GenResources[Generate Sitemap Resources]
+    
+    GenResources --> AddHome[Add Home Page<br/>with locale param]
+    AddHome --> AddCommIndex[Add Communities Index<br/>with locale param]
+    AddCommIndex --> AddComm[Add Public Communities<br/>.privacy_public filter]
+    
+    AddComm --> AddPostIndex[Add Posts Index<br/>with locale param]
+    AddPostIndex --> AddPost[Add Published Public Posts<br/>.published.privacy_public]
+    
+    AddPost --> AddEventIndex[Add Events Index<br/>with locale param]
+    AddEventIndex --> AddEvent[Add Public Events<br/>.privacy_public filter]
+    
+    AddEvent --> AddPages[Add Published Public Pages<br/>.published.privacy_public]
+    
+    AddPages --> CompressSitemap[Compress to<br/>sitemap.xml.gz]
+    CompressSitemap --> AttachFile[Attach file to<br/>Active Storage]
+    
+    AttachFile --> SaveRecord[Save Sitemap record<br/>platform_id + locale]
+    SaveRecord --> LogSuccess[Log: Sitemap generated<br/>for locale]
+    
+    LogSuccess --> MoreLocales{More locales?}
+    MoreLocales -->|Yes| LocaleLoop
+    MoreLocales -->|No| GenIndex[Generate Sitemap Index]
+    
+    GenIndex --> IndexLoop{For each locale}
+    IndexLoop --> AddIndexEntry[Add locale sitemap URL<br/>to index]
+    AddIndexEntry --> MoreIndex{More locales?}
+    MoreIndex -->|Yes| IndexLoop
+    MoreIndex -->|No| CompressIndex[Compress index to<br/>sitemap_index.xml.gz]
+    
+    CompressIndex --> AttachIndex[Attach index to<br/>Active Storage]
+    AttachIndex --> SaveIndex[Save Sitemap record<br/>platform_id + locale: 'index']
+    SaveIndex --> LogIndexSuccess[Log: Index generated]
+    
+    LogIndexSuccess --> Cleanup[Cleanup tmp files]
+    Cleanup --> End
+    
+    GenResources -.->|Error| HandleError[Catch Exception<br/>Log error + backtrace]
+    HandleError --> Cleanup
+    
+    style Start fill:#e1f5e1
+    style End fill:#ffe1e1
+    style CheckDB fill:#fff3cd
+    style CheckPlatform fill:#fff3cd
+    style AddComm fill:#d4edda
+    style AddPost fill:#d4edda
+    style AddEvent fill:#d4edda
+    style AddPages fill:#d4edda
+    style HandleError fill:#f8d7da
+    style SaveRecord fill:#cce5ff
+    style SaveIndex fill:#cce5ff

@@ -9,7 +9,7 @@ module BetterTogether
     include Identifier
     include Privacy
 
-    translates :name
+    translates :name, type: :string
     translates :description, backend: :action_text
 
     slugged :name
@@ -50,12 +50,12 @@ module BetterTogether
     }
 
     scope :upcoming, lambda {
-      start_query = arel_table[:starts_at].gteq(DateTime.now)
+      start_query = arel_table[:starts_at].gteq(Time.now)
       where(start_query)
     }
 
     scope :past, lambda {
-      start_query = arel_table[:starts_at].lt(DateTime.now)
+      start_query = arel_table[:starts_at].lt(Time.now)
       where(start_query)
     }
 

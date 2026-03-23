@@ -59,11 +59,11 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
     # rubocop:todo RSpec/MultipleExpectations
     it 'allows creator to update their checklist' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
-      user = create(:better_together_user, :confirmed, password: 'password12345')
+      user = create(:better_together_user, :confirmed, password: 'SecureTest123!@#')
       checklist = create(:better_together_checklist, creator: user.person)
 
       # sign in as that user
-      login(user.email, 'password12345')
+      login(user.email, 'SecureTest123!@#')
 
       patch better_together.checklist_path(checklist, locale: I18n.default_locale),
             params: { checklist: { title_en: 'Creator Update' } }

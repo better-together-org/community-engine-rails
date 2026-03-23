@@ -7,14 +7,16 @@ FactoryBot.define do
           class: 'BetterTogether::Platform',
           aliases: %i[better_together_platform platform] do
     id { SecureRandom.uuid }
-    name { Faker::Company.name }
+    name { Faker::Company.unique.name }
     description { Faker::Lorem.paragraph }
-    identifier { Faker::Internet.unique.username(specifier: 10..20) }
-    # Ensure uniqueness to avoid validation collisions across specs
-    sequence(:url) { |n| "http://platform-#{n}.test" }
+    identifier { "platform-#{SecureRandom.hex(10)}" }
+    # Ensure uniqueness to avoid validation collisions across parallel specs
+    host_url { "http://platform-#{SecureRandom.hex(6)}.test" }
     host { false }
-    time_zone { Faker::Address.time_zone }
+    # Use IANA timezone identifiers from TZInfo
+    time_zone { TZInfo::Timezone.all_identifiers.sample }
     privacy { 'private' }
+    external { false }
     # community # Assumes a factory for BetterTogether::Community exists
 
     trait :host do
@@ -22,8 +24,31 @@ FactoryBot.define do
       protected { true }
     end
 
+    trait :external do
+      external { true }
+      host { false }
+      software_variant { 'generic' }
+      federation_protocol { nil }
+      oauth_issuer_url { nil }
+    end
+
+    trait :oauth_provider do
+      external { true }
+      host { false }
+      name { %w[GitHub Facebook Google Twitter].sample }
+      url { "https://#{name.downcase}-#{SecureRandom.hex(4)}.com" }
+    end
+
     trait :public do
       privacy { 'public' }
+    end
+
+    trait :community_engine_peer do
+      external { true }
+      host { false }
+      software_variant { 'community_engine' }
+      federation_protocol { 'ce_oauth' }
+      oauth_issuer_url { host_url }
     end
   end
 end

@@ -1,12 +1,23 @@
 <!-- app/views/better_together/host_dashboard/_resource_card.html.erb -->
 
-<%# locals: (collection:, model_class: collection.model, model_name: model_class.model_name, count:, url_helper: :url_for, show_attr: :to_s) -%>
+<%# locals: (collection:, model_class: collection.model, model_name: model_class.model_name, count:, url_helper: :url_for, show_attr: :to_s, link_index: nil, link_resources: nil, index_url: nil) -%>
+
+<% collection ||= [] %>
+<% model_class ||= collection.respond_to?(:model) ? collection.model : collection.first&.class %>
+<% model_name ||= model_class&.model_name %>
+
+<% index_allowed = if local_assigns.key?(:link_index)
+                     link_index
+                   else
+                     model_class.present? && policy(model_class).index?
+                   end %>
+<% index_url = local_assigns[:index_url] %>
 
 <div class="col mb-4">
   <div class="card hover-effect shadow-sm h-100">
     <div class="card-header d-flex justify-content-between align-items-center">
-      <% if policy(model_class).index? %>
-        <%= link_to model_class, class: "h6 text-decoration-none" do %>
+      <% if index_allowed %>
+        <%= link_to(index_url || model_class, class: "h6 text-decoration-none") do %>
           <i class="fas fa-folder-open me-2"></i><%= model_name.human.pluralize(2, I18n.locale) %>
         <% end %>
       <% else %>
@@ -21,7 +32,12 @@
         <% collection.each do |resource| %>
           <div class="d-flex justify-content-between mb-2">							
             <span class="text-truncate" style="max-width: 70%;" data-bs-toggle="tooltip" title="<%= resource.to_s %>">
-							<% if policy(resource).show? %>
+              <% resource_link_allowed = if local_assigns.key?(:link_resources)
+                                           link_resources
+                                         else
+                                           policy(resource).show?
+                                         end %>
+              <% if resource_link_allowed %>
                 <%= link_to resource, public_send(url_helper, resource), class: "text-decoration-none" %>
               <% else %>
                 <%= resource.public_send(show_attr) %>
@@ -38,9 +54,10 @@
         </div>
       <% end %>
     </div>
-    <% if policy(model_class).index? %>
+    <% if index_allowed %>
       <div class="card-footer text-end">
-        <%= link_to t('host_dashboard.resource_card.view_all'), model_class, class: "btn btn-sm btn-outline-info" %>
+        <%= link_to t('host_dashboard.resource_card.view_all'), (index_url || model_class),
+                    class: "btn btn-sm btn-outline-info" %>
       </div>
     <% end %>
   </div>

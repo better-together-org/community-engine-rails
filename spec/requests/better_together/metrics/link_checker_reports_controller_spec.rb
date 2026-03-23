@@ -91,6 +91,8 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportsController, :as_platfo
     before do
       allow(BetterTogether::Metrics::LinkCheckerReport).to receive(:find).with('fake-id').and_return(fake_report)
       allow(BetterTogether::Metrics::TrackDownloadJob).to receive(:perform_later)
+      # Stub authorization for fake struct since Pundit can't find policy for Struct
+      allow_any_instance_of(described_class).to receive(:authorize).and_return(true) # rubocop:disable RSpec/AnyInstance
       get better_together.download_metrics_link_checker_report_path(locale:, id: 'fake-id')
     end
 

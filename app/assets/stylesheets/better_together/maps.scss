@@ -9,4 +9,8 @@
     right: 10px;
     z-index: 401;
   }
+
+  .leaflet-control, .leaflet-bottom, .leaflet-top {
+    z-index: 401;
+  }
 }

@@ -4,6 +4,8 @@ module BetterTogether
   module Geography
     class RegionSettlementsController < ApplicationController # rubocop:todo Style/Documentation
       before_action :set_geography_region_settlement, only: %i[show edit update destroy]
+      before_action :authorize_geography_region_settlement, only: %i[show edit update destroy]
+      after_action :verify_authorized, except: :index
 
       # GET /geography/region_settlements
       def index
@@ -80,6 +82,11 @@ module BetterTogether
       # Only allow a list of trusted parameters through.
       def geography_region_settlement_params
         params.fetch(:geography_region_settlement, {})
+      end
+
+      # Adds a policy check for the region settlement
+      def authorize_geography_region_settlement
+        authorize @geography_region_settlement
       end
     end
   end
