@@ -417,6 +417,12 @@ RSpec.configure do |config|
     ensure_clean_session
   end
 
+  # Builder specs create Pages and navigation items that require a host platform.
+  # setup_host_platform_if_needed ensures the platform exists for every example.
+  config.before(:each, type: :builder) do |example|
+    setup_host_platform_if_needed(example)
+  end
+
   # Run certain navigation steps after example-level lets have been evaluated
   config.append_before(:each, type: :feature) do |example|
     full_description = [

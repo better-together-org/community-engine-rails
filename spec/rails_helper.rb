@@ -41,7 +41,6 @@ Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| requi
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
-  ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError
   exit 1
@@ -157,15 +156,12 @@ RSpec.configure do |config|
           e.is_a?(ActiveRecord::StatementInvalid)
 
         if is_duplicate_error
-          # Another parallel worker already seeded this data — that's fine.
           Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
         elsif attempts < times
           retry
         else
           warn "[build_with_retry] FAILED after #{times} attempts: #{e.class}: #{e.message}"
           Rails.logger.warn "build_with_retry: giving up after #{times} attempts (#{e.class}: #{e.message})"
-          # Do NOT re-raise — a single builder failure must not abort before(:suite)
-          # and prevent SetupWizardBuilder (and others) from running.
         end
       end
     end

@@ -251,6 +251,13 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
     let!(:config) { create(:better_together_storage_configuration, platform:, name: 'Primary Store') }
 
     before do
+      # Force a fresh HTTP login for every example in this describe block.
+      # The automatic auth helper caches the "already authenticated" state by
+      # parent-group description (Thread.current[:__bt_authenticated_description]),
+      # so consecutive examples with identical parent descriptions can have their
+      # login silently skipped.  An explicit login here guarantees a valid session
+      # regardless of what ran before.
+      login('manager@example.test', 'SecureTest123!@#')
       # Stub the private rebind helper so activate doesn't need a live AS backend.
       allow_any_instance_of(BetterTogether::StorageConfigurationsController) # rubocop:disable RSpec/AnyInstance
         .to receive(:rebind_active_storage_service)
@@ -267,7 +274,10 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       put activate_path(config)
       follow_redirect!
 
-      expect(response.body).to include(
+      # I18n value contains single quotes which Rails HTML-escapes to &#39;
+      # in the rendered flash partial; use expect_html_content so Nokogiri
+      # decodes entities before the string comparison.
+      expect_html_content(
         I18n.t('better_together.storage_configurations.activated', name: config.name)
       )
     end
@@ -280,16 +290,19 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
     let!(:config) { create(:better_together_storage_configuration, platform:) }
 
     context 'when not logged in' do
-      before { sign_out :user }
+      before { logout }
 
-      it 'redirects index to sign-in' do
+      # These routes are behind an `authenticated :user` Devise constraint scoped
+      # to platform managers. Unauthenticated requests do not match the constraint
+      # and receive 404 (Not Found) rather than a sign-in redirect.
+      it 'returns 404 for index (route constraint requires platform manager)' do
         get index_path
-        expect(response).to redirect_to(better_together.new_user_session_path(locale:))
+        expect(response).to have_http_status(:not_found)
       end
 
-      it 'redirects new to sign-in' do
+      it 'returns 404 for new (route constraint requires platform manager)' do
         get new_path
-        expect(response).to redirect_to(better_together.new_user_session_path(locale:))
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

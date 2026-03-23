@@ -26,8 +26,13 @@ module BetterTogether
     validates :type, :identifier, :version, :created_by, :seeded_at,
               :description, :origin, :payload, presence: true
 
+    # Fields whose changes warrant re-exporting the YAML file.
+    # A touch (only updated_at changes) must NOT trigger re-attachment;
+    # that would recurse via Active Storage's belongs_to touch: true.
+    YAML_CONTENT_FIELDS = %w[payload version description origin seeded_at created_by type identifier].freeze
+
     after_create_commit :attach_yaml_file
-    after_update_commit :attach_yaml_file
+    after_update_commit :attach_yaml_file_on_content_change
 
     # -------------------------------------------------------------
     # Security Validation Methods
@@ -376,6 +381,10 @@ module BetterTogether
     # -------------------------------------------------------------
     # Attach the exported YAML as an Active Storage file
     # -------------------------------------------------------------
+    def attach_yaml_file_on_content_change
+      attach_yaml_file if previous_changes.keys.intersect?(YAML_CONTENT_FIELDS)
+    end
+
     def attach_yaml_file
       # Guard against infinite recursion: Active Storage's `belongs_to :record,
       # touch: true` fires after_update_commit on a *different Ruby instance* of
