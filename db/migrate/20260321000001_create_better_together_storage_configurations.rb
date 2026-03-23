@@ -4,7 +4,6 @@
 #
 # Each platform can have many storage configurations; platforms.storage_configuration_id
 # identifies the platform's currently active (primary) storage backend.
-# rubocop:disable Metrics/MethodLength
 class CreateBetterTogetherStorageConfigurations < ActiveRecord::Migration[7.2]
   def change
     create_bt_table :storage_configurations do |t|
@@ -26,7 +25,8 @@ class CreateBetterTogetherStorageConfigurations < ActiveRecord::Migration[7.2]
       t.string :secret_access_key
 
       t.index :service_type
-      t.index :platform_id
+      # bt_references :platform already creates an index on platform_id via create_bt_table;
+      # no explicit t.index :platform_id needed.
     end
 
     # Add nullable FK on platforms pointing to the active storage configuration.
@@ -38,4 +38,3 @@ class CreateBetterTogetherStorageConfigurations < ActiveRecord::Migration[7.2]
                   foreign_key: { to_table: :better_together_storage_configurations, deferrable: :deferred }
   end
 end
-# rubocop:enable Metrics/MethodLength
