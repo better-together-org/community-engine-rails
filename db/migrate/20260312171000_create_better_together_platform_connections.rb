@@ -4,7 +4,6 @@
 # A connection represents a directed trust relationship between two platforms, enabling
 # content sharing, federated auth, and other cross-instance collaboration features.
 class CreateBetterTogetherPlatformConnections < ActiveRecord::Migration[7.2]
-  # rubocop:disable Metrics/MethodLength
   def change
     create_bt_table :platform_connections do |t|
       t.bt_references :source_platform, target_table: :better_together_platforms,
@@ -28,11 +27,7 @@ class CreateBetterTogetherPlatformConnections < ActiveRecord::Migration[7.2]
               unique: true, name: 'index_bt_platform_connections_on_source_and_target'
     add_index :better_together_platform_connections, :status,
               name: 'index_better_together_platform_connections_on_status'
-
-    add_foreign_key :better_together_platform_connections, :better_together_platforms,
-                    column: :source_platform_id
-    add_foreign_key :better_together_platform_connections, :better_together_platforms,
-                    column: :target_platform_id
+    # bt_references :source_platform and :target_platform already add FKs to
+    # better_together_platforms via create_bt_table; no explicit add_foreign_key needed.
   end
-  # rubocop:enable Metrics/MethodLength
 end
