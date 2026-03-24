@@ -183,8 +183,11 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      # Skip if this IS the engine (avoids double-loading in development)
-      next if app.root.to_s.start_with?(root.to_s)
+      # Skip if this IS the engine (avoids double-loading in development).
+      # Use exact match so spec/dummy (a subdirectory of the engine) is not
+      # incorrectly excluded — spec/dummy is a distinct app root and needs the
+      # engine's migration path appended just like any external host app.
+      next if app.root.to_s == root.to_s
 
       # Skip if the host app has already installed CE migrations via
       # `rails better_together:install:migrations`. Installed migrations carry
