@@ -39,7 +39,15 @@ module BetterTogether
 
       def find_or_initialize_post
         if preserve_remote_uuid? && uuid?(remote_id)
+          # 1. Already mirrored with the same UUID — most common repeat-sync path.
           existing = ::BetterTogether::Post.find_by(id: remote_id)
+          return existing if existing
+
+          # 2. Previously mirrored via the source_id path (e.g. before preserve_remote_uuid
+          #    was enabled on this connection) — prevents duplicate record creation.
+          existing = ::BetterTogether::Post.find_by(
+            platform: connection.source_platform, source_id: remote_id
+          )
           return existing if existing
 
           ::BetterTogether::Post.new(id: remote_id)
@@ -73,9 +81,27 @@ module BetterTogether
       end
 
       def normalized_identifier(post)
-        remote_attributes[:identifier].presence ||
-          post.identifier.presence ||
-          "federated-post-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
+        # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
+        return post.identifier if post.persisted?
+
+        base = remote_attributes[:identifier].presence ||
+               "federated-post-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
+        identifier_or_namespaced(::BetterTogether::Post, base, post.id)
+      end
+
+      # Returns +base+ unchanged when no other record claims it; otherwise prepends the
+      # source platform identifier to prevent a uniqueness validation failure on ingest.
+      def identifier_or_namespaced(model_class, base, exclude_id)
+        return base unless identifier_taken?(model_class, base, exclude_id)
+
+        source_slug = connection.source_platform.identifier.to_s.parameterize.presence || 'remote'
+        "#{source_slug}-#{base}"
+      end
+
+      def identifier_taken?(model_class, identifier, exclude_id)
+        scope = model_class.where(identifier:)
+        scope = scope.where.not(id: exclude_id) if exclude_id.present?
+        scope.exists?
       end
 
       def normalized_source_updated_at
