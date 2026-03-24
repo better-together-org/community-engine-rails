@@ -16,20 +16,18 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
   let(:other_user)   { create(:better_together_user, :confirmed) }
   let(:other_person) { other_user.person }
 
-  # Seeds owned by the current person
-  let(:creator_seed)  { create(:better_together_seed, :created_by_person, creator: person) }
-  let(:seedable_seed) { create(:better_together_seed, :owned_as_seedable, person: person) }
+  let(:personal_export_seed) { create(:better_together_seed, :personal_export, person: person) }
+  let(:creator_only_seed) { create(:better_together_seed, :created_by_person, creator: person) }
 
-  # Seed belonging to another person (used for IDOR tests)
-  let(:other_seed) { create(:better_together_seed, :created_by_person, creator: other_person) }
+  let(:other_seed) { create(:better_together_seed, :personal_export, person: other_person) }
 
   # ----------------------------------------------------------------
   # GET #index
   # ----------------------------------------------------------------
   describe 'GET #index' do
     before do
-      creator_seed
-      seedable_seed
+      personal_export_seed
+      creator_only_seed
       other_seed
     end
 
@@ -38,9 +36,10 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
       expect(response).to have_http_status(:success)
     end
 
-    it 'assigns only seeds owned by the current person' do
+    it 'assigns only the current person personal export seeds' do
       get :index, params: { locale: locale }
-      expect(assigns(:seeds)).to include(creator_seed, seedable_seed)
+      expect(assigns(:seeds)).to include(personal_export_seed)
+      expect(assigns(:seeds)).not_to include(creator_only_seed)
       expect(assigns(:seeds)).not_to include(other_seed)
     end
 
@@ -59,19 +58,19 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
   # GET #show
   # ----------------------------------------------------------------
   describe 'GET #show' do
-    it 'returns http success for a creator-owned seed' do
-      get :show, params: { locale: locale, id: creator_seed.id }
-      expect(response).to have_http_status(:success)
-    end
-
-    it 'returns http success for a seedable-owned seed' do
-      get :show, params: { locale: locale, id: seedable_seed.id }
+    it 'returns http success for a personal export seed' do
+      get :show, params: { locale: locale, id: personal_export_seed.id }
       expect(response).to have_http_status(:success)
     end
 
     it 'assigns the correct seed' do
-      get :show, params: { locale: locale, id: creator_seed.id }
-      expect(assigns(:seed)).to eq(creator_seed)
+      get :show, params: { locale: locale, id: personal_export_seed.id }
+      expect(assigns(:seed)).to eq(personal_export_seed)
+    end
+
+    it 'returns 404 for creator-owned seeds that are not personal exports' do
+      get :show, params: { locale: locale, id: creator_only_seed.id }
+      expect(response).to have_http_status(:not_found)
     end
 
     # IDOR: another person's seed ID must not leak via show
@@ -121,7 +120,7 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
     end
 
     context 'when an export was already requested within the last hour' do
-      before { create(:better_together_seed, :created_by_person, creator: person) }
+      before { create(:better_together_seed, :personal_export, person: person) }
 
       it 'does not create another Seed' do
         expect do
@@ -132,6 +131,16 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
       it 'redirects with an alert' do
         post :export, params: { locale: locale }
         expect(flash[:alert]).to be_present
+      end
+    end
+
+    context 'when the person has other recently created non-personal seeds' do
+      before { create(:better_together_seed, :created_by_person, creator: person) }
+
+      it 'still allows the personal export' do
+        expect do
+          post :export, params: { locale: locale }
+        end.to change(BetterTogether::Seed, :count).by(1)
       end
     end
 
@@ -151,16 +160,21 @@ RSpec.describe BetterTogether::PersonSeedsController, :as_user do
   # ----------------------------------------------------------------
   describe 'DELETE #destroy' do
     it 'destroys the seed' do
-      seed_id = creator_seed.id
+      seed_id = personal_export_seed.id
       expect do
         delete :destroy, params: { locale: locale, id: seed_id }
       end.to change(BetterTogether::Seed, :count).by(-1)
     end
 
     it 'redirects with a success notice' do
-      delete :destroy, params: { locale: locale, id: creator_seed.id }
+      delete :destroy, params: { locale: locale, id: personal_export_seed.id }
       expect(response).to redirect_to(person_seeds_path(locale: locale))
       expect(flash[:notice]).to be_present
+    end
+
+    it 'returns 404 for creator-owned seeds that are not personal exports' do
+      delete :destroy, params: { locale: locale, id: creator_only_seed.id }
+      expect(response).to have_http_status(:not_found)
     end
 
     # IDOR: destroy must not act on another person's seed

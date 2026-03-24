@@ -190,9 +190,16 @@ RSpec.describe BetterTogether::PersonPlatformMembershipPolicy, type: :policy do
              role: analytics_viewer_role)
     end
 
-    it 'returns all memberships' do
+    it 'returns manageable platform memberships for a manager' do
       scope = described_class::Scope.new(manager_user, BetterTogether::PersonPlatformMembership).resolve
       expect(scope).to include(first_membership, second_membership)
+    end
+
+    it 'returns only the actor memberships for a regular user' do
+      scope = described_class::Scope.new(regular_user, BetterTogether::PersonPlatformMembership).resolve
+
+      expect(scope).to include(first_membership)
+      expect(scope).not_to include(second_membership)
     end
   end
 end

@@ -8,19 +8,16 @@ RSpec.describe BetterTogether::PersonSeedPolicy do
   let(:other_user)  { create(:better_together_user, :confirmed) }
   let(:other_agent) { other_user.person }
 
-  # Seed owned via creator_id
-  let(:creator_seed) do
+  let(:personal_export_seed) do
+    create(:better_together_seed, :personal_export, person: agent)
+  end
+
+  let(:creator_only_seed) do
     create(:better_together_seed, :created_by_person, creator: agent)
   end
 
-  # Seed owned via seedable polymorphic association
-  let(:seedable_seed) do
-    create(:better_together_seed, :owned_as_seedable, person: agent)
-  end
-
-  # Seed belonging to a different person
   let(:other_seed) do
-    create(:better_together_seed, :created_by_person, creator: other_agent)
+    create(:better_together_seed, :personal_export, person: other_agent)
   end
 
   # Seed with no owner at all
@@ -56,12 +53,12 @@ RSpec.describe BetterTogether::PersonSeedPolicy do
   # show?
   # ----------------------------------------------------------------
   describe '#show?' do
-    it 'allows when creator_id matches agent' do
-      expect(described_class.new(user, creator_seed).show?).to be true
+    it 'allows when the seed is the actor personal export' do
+      expect(described_class.new(user, personal_export_seed).show?).to be true
     end
 
-    it 'allows when seedable matches agent' do
-      expect(described_class.new(user, seedable_seed).show?).to be true
+    it 'denies creator-owned seeds that are not personal exports' do
+      expect(described_class.new(user, creator_only_seed).show?).to be false
     end
 
     it 'denies for another person\'s seed' do
@@ -73,7 +70,7 @@ RSpec.describe BetterTogether::PersonSeedPolicy do
     end
 
     it 'denies for unauthenticated user' do
-      expect(described_class.new(nil, creator_seed).show?).to be false
+      expect(described_class.new(nil, personal_export_seed).show?).to be false
     end
   end
 
@@ -81,12 +78,12 @@ RSpec.describe BetterTogether::PersonSeedPolicy do
   # destroy?
   # ----------------------------------------------------------------
   describe '#destroy?' do
-    it 'allows when creator_id matches agent' do
-      expect(described_class.new(user, creator_seed).destroy?).to be true
+    it 'allows when the seed is the actor personal export' do
+      expect(described_class.new(user, personal_export_seed).destroy?).to be true
     end
 
-    it 'allows when seedable matches agent' do
-      expect(described_class.new(user, seedable_seed).destroy?).to be true
+    it 'denies creator-owned seeds that are not personal exports' do
+      expect(described_class.new(user, creator_only_seed).destroy?).to be false
     end
 
     it 'denies for another person\'s seed' do
@@ -94,7 +91,7 @@ RSpec.describe BetterTogether::PersonSeedPolicy do
     end
 
     it 'denies for unauthenticated user' do
-      expect(described_class.new(nil, creator_seed).destroy?).to be false
+      expect(described_class.new(nil, personal_export_seed).destroy?).to be false
     end
   end
 
@@ -105,18 +102,18 @@ RSpec.describe BetterTogether::PersonSeedPolicy do
     subject(:resolved) { described_class::Scope.new(user, BetterTogether::Seed).resolve }
 
     before do
-      creator_seed
-      seedable_seed
+      personal_export_seed
+      creator_only_seed
       other_seed
       unowned_seed
     end
 
-    it 'includes seeds where creator_id matches agent' do
-      expect(resolved).to include(creator_seed)
+    it 'includes the actor personal export seeds' do
+      expect(resolved).to include(personal_export_seed)
     end
 
-    it 'includes seeds where seedable matches agent' do
-      expect(resolved).to include(seedable_seed)
+    it 'excludes creator-owned seeds that are not personal exports' do
+      expect(resolved).not_to include(creator_only_seed)
     end
 
     it 'excludes seeds owned by another person' do

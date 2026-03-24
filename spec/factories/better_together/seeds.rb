@@ -50,5 +50,14 @@ FactoryBot.define do
       seedable_type { 'BetterTogether::Person' }
       seedable_id { person.id }
     end
+
+    trait :personal_export do
+      transient do
+        person { create(:better_together_person) }
+      end
+      creator_id { person.id }
+      seedable_type { 'BetterTogether::Person' }
+      seedable_id { person.id }
+    end
   end
 end
