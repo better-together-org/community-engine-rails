@@ -24,11 +24,35 @@ module BetterTogether
     # Scope class for filtering platform invitations based on user permissions
     class Scope < ApplicationPolicy::Scope
       def resolve
-        results = scope
-        results = scope.where(inviter: agent) unless permitted_to?('manage_platform')
+        return scope.none unless user.present?
 
-        results
+        if permitted_to?('manage_platform')
+          scope.all
+        else
+          scope.where(invitable_id: manageable_platform_ids)
+        end
       end
+
+      private
+
+      def manageable_platform_ids
+        BetterTogether::PersonPlatformMembership
+          .joins(role: { role_resource_permissions: :resource_permission })
+          .where(member_id: agent.id)
+          .where(better_together_resource_permissions: { identifier: %w[manage_platform_members manage_platform_roles] })
+          .select(:joinable_id)
+      end
+    end
+
+    private
+
+    def can_manage_platform_members?
+      return true if permitted_to?('manage_platform_members') || permitted_to?('manage_platform_roles')
+
+      platform = record.try(:invitable)
+
+      permitted_to?('manage_platform_members', platform) ||
+        permitted_to?('manage_platform_roles', platform)
     end
   end
 end
