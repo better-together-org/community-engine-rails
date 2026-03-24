@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      permitted_to?('manage_platform')
+      platform_navigation_manager?
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      permitted_to?('manage_platform')
+      platform_navigation_manager?
     end
 
     def edit?
@@ -29,17 +29,31 @@ module BetterTogether
     end
 
     def destroy?
-      permitted_to?('manage_platform') && !record.protected?
+      platform_navigation_manager? && !record.protected?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        if user.present?
+        if platform_navigation_manager?
           scope.all
+        elsif user.present?
+          scope.where(visibility_strategy: %w[public authenticated]).top_level.positioned.includes(:children)
         else
-          scope.visible.top_level.ordered.includes(:children)
+          scope.visible.top_level.positioned.includes(:children).where(visibility_strategy: 'public')
         end
       end
+
+      private
+
+      def platform_navigation_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
+    end
+
+    private
+
+    def platform_navigation_manager?
+      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
     end
   end
 end

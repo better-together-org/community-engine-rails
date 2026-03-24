@@ -18,6 +18,14 @@ FactoryBot.define do
 
     # Use after(:create) to set community after the page is saved
     # This ensures the host community exists and the association is persisted
+    before(:create) do |page|
+      unless page.platform_id.present?
+        page.platform = Current.platform ||
+                        BetterTogether::Platform.find_by(host: true) ||
+                        create(:better_together_platform)
+      end
+    end
+
     after(:create) do |page|
       if page.community_id.blank?
         host_community = BetterTogether::Community.find_by(host: true)

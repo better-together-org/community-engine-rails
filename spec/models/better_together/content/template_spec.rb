@@ -160,11 +160,13 @@ RSpec.describe BetterTogether::Content::Template do
   end
 
   describe 'integration with Page model' do
+    let(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform) }
     let(:page) do
       BetterTogether::Page.create!(
         title: 'Test Page',
         slug: 'test-page',
         privacy: 'public',
+        platform: platform,
         page_blocks_attributes: [
           {
             block_attributes: {

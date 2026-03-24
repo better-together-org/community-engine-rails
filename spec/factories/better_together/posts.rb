@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module BetterTogether
+# FactoryBot factories for BetterTogether models.
+module BetterTogether # :nodoc:
   FactoryBot.define do
     sequence(:post_title) { |n| "Sample Post #{n}" }
     sequence(:post_identifier) { |n| "sample-post-#{n}" }
@@ -18,6 +19,14 @@ module BetterTogether
       after(:build) do |post, evaluator|
         post.authorships.build(author: evaluator.author)
         post.slug = post.identifier
+      end
+
+      before(:create) do |post|
+        unless post.platform_id.present?
+          post.platform = Current.platform ||
+                          BetterTogether::Platform.find_by(host: true) ||
+                          create(:better_together_platform)
+        end
       end
     end
   end

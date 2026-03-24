@@ -11,19 +11,16 @@ module BetterTogether
     end
 
     def create?
-      user.present? && can_manage_memberships?
+      user.present? && can_manage_community_members?
     end
 
     def edit?
-      update?
-    end
-
-    def update?
-      user.present? && can_manage_memberships?
+      user.present? && can_manage_community_members?
     end
 
     def destroy?
-      user.present? && !me? && can_manage_memberships? && !record.member.permitted_to?('manage_platform')
+      user.present? && !me? && can_manage_community_members? &&
+        !record.member.permitted_to?('manage_community_roles', record.joinable)
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
@@ -53,6 +50,13 @@ module BetterTogether
     end
 
     protected
+
+    def can_manage_community_members?
+      community = record.try(:joinable)
+
+      permitted_to?('manage_community_members', community) ||
+        permitted_to?('manage_community_roles', community)
+    end
 
     def me?
       record.member == agent

@@ -19,10 +19,11 @@ RSpec.describe BetterTogether::PersonBlockPolicy do
       expect(described_class.new(user, record).create?).to be true
     end
 
-    it 'denies when blocked is a platform manager' do
+    it 'denies when blocked is a platform steward' do
       host_platform = BetterTogether::Platform.find_by(host: true)
       manager_user = create(:better_together_user, :confirmed)
-      platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+      platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                              BetterTogether::Role.find_by(identifier: 'platform_manager')
       BetterTogether::PersonPlatformMembership.create!(
         joinable: host_platform,
         member: manager_user.person,

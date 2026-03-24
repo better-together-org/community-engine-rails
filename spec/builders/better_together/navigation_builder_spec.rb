@@ -3,11 +3,18 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe NavigationBuilder, type: :builder do
     before do
+      # seed_data creates Pages that require a platform; set Current.platform so
+      # Page#assign_current_platform_if_available resolves correctly.
+      Current.platform = BetterTogether::Platform.find_by(host: true)
       # Clean up existing navigation data before each test
       described_class.clear_existing
+    end
+
+    after do
+      Current.platform = nil
     end
 
     describe '.reset_navigation_areas' do

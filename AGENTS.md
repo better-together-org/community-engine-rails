@@ -47,6 +47,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 ## Commands
 
 ### Test Execution Guidelines (CRITICAL)
+- **All CI failures are the agent's responsibility.** There is no such thing as a "pre-existing" or "unrelated" failure. If a test fails on your branch, fix it before declaring the task complete — regardless of when or how the failure was introduced.
 - **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec prspec spec`) until ALL targeted tests pass individually**
 - **Full suite takes 13-18 minutes** - running it prematurely wastes time and resources (even with parallel execution)
 - **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
@@ -110,6 +111,12 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Avoid introducing new external services in tests; stub where possible.
 - If RuboCop reports offenses after autocorrect, update and rerun until clean.
 - Keep commit messages and PR descriptions concise and informative.
+
+## Repository Write Boundary (CRITICAL)
+- Only create, edit, move, or delete files within the current repository root.
+- Never write project artifacts to `/tmp` (or any system-wide temp directory) as part of coding tasks.
+- Use repository-scoped temporary paths instead (for example `tmp/` inside the repo, which remains repository-local).
+- If a command or script defaults to `/tmp`, override it to a repository path before running.
 
 ## String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries.

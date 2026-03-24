@@ -28,11 +28,13 @@ namespace :sitemap do
       next unless File.exist?(file_path)
 
       sitemap_record = BetterTogether::Sitemap.find_or_initialize_by(platform: platform, locale: locale.to_s)
-      sitemap_record.file.attach(
-        io: File.open(file_path),
-        filename: "sitemap_#{locale}.xml.gz",
-        content_type: 'application/gzip'
-      )
+      File.open(file_path, 'rb') do |io|
+        sitemap_record.file.attach(
+          io: io,
+          filename: "sitemap_#{locale}.xml.gz",
+          content_type: 'application/gzip'
+        )
+      end
       sitemap_record.save!
     end
 
@@ -40,11 +42,13 @@ namespace :sitemap do
     index_path = Rails.root.join('tmp', 'sitemap.xml.gz')
     if File.exist?(index_path)
       index_record = BetterTogether::Sitemap.find_or_initialize_by(platform: platform, locale: 'index')
-      index_record.file.attach(
-        io: File.open(index_path),
-        filename: 'sitemap_index.xml.gz',
-        content_type: 'application/gzip'
-      )
+      File.open(index_path, 'rb') do |io|
+        index_record.file.attach(
+          io: io,
+          filename: 'sitemap_index.xml.gz',
+          content_type: 'application/gzip'
+        )
+      end
       index_record.save!
     end
   rescue ActiveRecord::ActiveRecordError => e

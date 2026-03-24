@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
-module InvitationTestHelpers
+# Test helpers for platform and community invitation specs.
+module InvitationTestHelpers # :nodoc:
   # Create a community invitation with the correct STI type
   # Use this instead of create(:better_together_invitation, invitable: community)
   # @param community [BetterTogether::Community] The community being invited to
@@ -11,25 +12,33 @@ module InvitationTestHelpers
     FactoryBot.create(:better_together_community_invitation, invitable: community, **attributes)
   end
 
-  # Ensures a community coordinator role exists with proper permissions for invitation management
-  def ensure_community_coordinator_role_with_permissions
-    find_or_create_role('community_coordinator', coordinator_role_attributes).tap do |role|
-      role.assign_resource_permissions(coordinator_permissions)
+  # Ensures a community organizer role exists with proper permissions for invitation management
+  def ensure_community_organizer_role_with_permissions
+    find_or_create_role('community_organizer', organizer_role_attributes).tap do |role|
+      role.assign_resource_permissions(organizer_permissions)
     end
   end
 
-  # Creates a community membership with coordinator role for a user
-  #  For Capybara/system tests, pass refresh_session: true to force a page reload
-  def make_community_coordinator(user, community, refresh_session: false)
-    create_membership_with_role(user, community, ensure_community_coordinator_role_with_permissions)
+  # Creates a community membership with organizer role for a user
+  def make_community_organizer(user, community, refresh_session: false)
+    create_membership_with_role(user, community, ensure_community_organizer_role_with_permissions)
     refresh_session_if_needed(refresh_session)
   end
 
-  # Ensures a community facilitator role exists with proper permissions
+  # Transitional helper: coordinator now aliases to community organizer.
+  def ensure_community_coordinator_role_with_permissions
+    ensure_community_organizer_role_with_permissions
+  end
+
+  # Transitional helper: coordinator now aliases to community organizer.
+  #  For Capybara/system tests, pass refresh_session: true to force a page reload
+  def make_community_coordinator(user, community, refresh_session: false)
+    make_community_organizer(user, community, refresh_session: refresh_session)
+  end
+
+  # Transitional helper: facilitator now aliases to community organizer.
   def ensure_community_facilitator_role_with_permissions
-    find_or_create_role('community_facilitator', facilitator_role_attributes).tap do |role|
-      role.assign_resource_permissions(facilitator_permissions)
-    end
+    ensure_community_organizer_role_with_permissions
   end
 
   private
@@ -41,38 +50,22 @@ module InvitationTestHelpers
     ) || BetterTogether::Role.create!(attributes.merge(identifier: identifier))
   end
 
-  def coordinator_role_attributes
+  def organizer_role_attributes
     {
       resource_type: 'BetterTogether::Community',
-      name: 'Community Coordinator',
+      name: 'Community Organizer',
       position: 3,
       protected: true,
-      description: 'Manages community engagement and events, enhancing interaction and supporting ' \
-                   'sub-community initiatives.'
+      description: 'Coordinates community engagement, events, content, and participation workflows.'
     }
   end
 
-  def coordinator_permissions
+  def organizer_permissions
     %w[
       read_community list_community create_community update_community delete_community
       manage_community_settings manage_community_content manage_community_roles
       manage_community_notifications invite_community_members
     ]
-  end
-
-  def facilitator_role_attributes
-    {
-      resource_type: 'BetterTogether::Community',
-      name: 'Community Facilitator',
-      position: 2,
-      protected: true,
-      description: 'Guides discussions and ensures inclusivity, acting as a mediator to foster a positive ' \
-                   'community environment.'
-    }
-  end
-
-  def facilitator_permissions
-    %w[read_community list_community create_community update_community delete_community invite_community_members]
   end
 
   def create_membership_with_role(user, community, role)

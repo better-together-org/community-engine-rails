@@ -597,6 +597,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
     t.index ["privacy"], name: "by_better_together_geography_maps_privacy"
   end
 
+
   create_table "better_together_geography_region_settlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2020,8 +2021,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_geography_geospatial_spaces", "better_together_geography_spaces", column: "space_id"
-  add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_regions", column: "region_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_settlements", column: "settlement_id"
   add_foreign_key "better_together_geography_regions", "better_together_communities", column: "community_id"

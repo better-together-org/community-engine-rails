@@ -4,15 +4,15 @@ module BetterTogether
   module Content
     class BlockPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
       def index?
-        user.present? and user.permitted_to?('manage_platform')
+        platform_content_manager?
       end
 
       def show?
-        user.present? and user.permitted_to?('manage_platform')
+        platform_content_manager?
       end
 
       def create?
-        user.present? and user.permitted_to?('manage_platform')
+        platform_content_manager?
       end
 
       def new?
@@ -20,7 +20,7 @@ module BetterTogether
       end
 
       def update?
-        user.present? and user.permitted_to?('manage_platform')
+        platform_content_manager?
       end
 
       def edit?
@@ -28,7 +28,7 @@ module BetterTogether
       end
 
       def destroy?
-        user.present? and user.permitted_to?('manage_platform')
+        platform_content_manager?
       end
 
       def preview_markdown?
@@ -37,8 +37,16 @@ module BetterTogether
 
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
-          scope.includes(:pages).order('created_at DESC').all
+          scope.includes(:pages).order(
+            BetterTogether::Content::Block.arel_table[:created_at].desc
+          ).all
         end
+      end
+
+      private
+
+      def platform_content_manager?
+        user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform'))
       end
     end
   end

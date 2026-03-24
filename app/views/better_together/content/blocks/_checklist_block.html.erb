@@ -1,0 +1,31 @@
+<%# locals: (checklist_block:) -%>
+<% checklist = checklist_block.checklist %>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: checklist_block } do %>
+  <% if checklist.nil? %>
+    <p class="text-muted"><%= t('better_together.content.blocks.checklist_block.not_found',
+                                default: 'Checklist not found.') %></p>
+  <% else %>
+    <% cache [checklist_block, checklist.cache_key_with_version,
+              checklist.checklist_items.maximum(:updated_at)&.to_i,
+              I18n.locale] do %>
+      <div class="checklist-block">
+        <h4 class="mb-3"><%= checklist.title %></h4>
+        <% can_person = defined?(current_person) && current_person.present? %>
+        <div data-controller="better_together--checklist-items<%= ' better_together--checklist-completion' if can_person %>"
+             data-better_together--checklist-items-checklist-id-value="<%= checklist.id %>"
+             data-can-update="false"
+             <%= can_person ? "data-better_together--checklist-completion-checklist-id-value=#{checklist.id} data-better_together--checklist-completion-message-value=#{j t('better_together.checklists.show.completed_message', default: 'Checklist complete')}" : '' %>>
+          <div data-better_together--checklist-completion-target="message"></div>
+          <%= render partial: 'better_together/checklist_items/list', locals: { checklist: checklist } %>
+        </div>
+      </div>
+
+      <% if checklist_block.show_view_more? %>
+        <div class="text-center mt-4">
+          <%= link_to t('better_together.content.blocks.view_more', default: 'View all'),
+                      checklist_block.view_more_url, class: 'btn btn-outline-primary' %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,4 +1,9 @@
 {
-  "ignored_warnings": [],
-  "brakeman_version": "7.1.1"
+  "ignored_warnings": [
+    {
+      "fingerprint": "9d04db63e7542ef95d4d432528cc9fdaf169fbab491f1040408799817f7bd248",
+      "note": "html_safe on to_plain_text output in data attribute for E2E Stimulus controller. Value is ciphertext passed to JS, not rendered as HTML. Accepted risk; tracked for security review."
+    }
+  ],
+  "brakeman_version": "8.0.4"
 }

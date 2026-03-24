@@ -101,6 +101,7 @@ module BetterTogether
         end
 
         apply_source_prefill_offer(resource_instance)
+        apply_target_prefill_offer(resource_instance)
       end
 
       # rubocop:todo Metrics/PerceivedComplexity
@@ -220,6 +221,13 @@ module BetterTogether
         rp = super
         rp[:creator_id] ||= helpers.current_person&.id
         rp
+      end
+
+      def apply_target_prefill_offer(offer)
+        return unless offer
+        return unless offer.target.is_a?(::BetterTogether::Platform)
+
+        @target = offer.target
       end
     end
   end

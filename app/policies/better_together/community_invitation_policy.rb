@@ -20,7 +20,7 @@ module BetterTogether
              .joins(person_community_memberships: { role: { role_resource_permissions: :resource_permission } })
              .where(
                better_together_person_community_memberships: { member_id: agent.id },
-               better_together_resource_permissions: { identifier: 'invite_community_members' }
+               better_together_resource_permissions: { identifier: %w[invite_community_members manage_community_members manage_community_roles] }
              )
       end
     end

@@ -4,9 +4,11 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe Page do
     subject(:page) { build(:better_together_page) }
+
+    it_behaves_like 'an indexed searchable model', :better_together_page
 
     describe 'Factory' do
       it 'has a valid factory' do
@@ -30,6 +32,10 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:layout) }
       it { is_expected.to respond_to(:template) }
       it { is_expected.to respond_to(:protected) }
+      it { is_expected.to respond_to(:platform_id) }
+      it { is_expected.to respond_to(:source_id) }
+      it { is_expected.to respond_to(:source_updated_at) }
+      it { is_expected.to respond_to(:last_synced_at) }
     end
 
     describe 'Scopes' do
@@ -78,6 +84,56 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       describe '#url' do
         it 'returns the full URL of the page' do
           expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")
+        end
+      end
+
+      describe 'federation provenance' do
+        let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
+        let(:remote_platform) { create(:better_together_platform, :external) }
+
+        around do |example|
+          previous_platform = Current.platform
+          Current.platform = local_platform
+          example.run
+          Current.platform = previous_platform
+        end
+
+        it 'assigns the current platform by default' do
+          page.valid?
+
+          expect(page.platform).to eq(local_platform)
+        end
+
+        it 'treats a current-platform page as local' do
+          page.valid?
+
+          expect(page).to be_local_to_platform(local_platform)
+          expect(page).not_to be_remote_to_platform(local_platform)
+        end
+
+        it 'treats a sourced page from another platform as mirrored' do
+          mirrored_page = build(
+            :better_together_page,
+            platform: remote_platform,
+            source_id: 'remote-page-1'
+          )
+
+          expect(mirrored_page).to be_mirrored
+          expect(mirrored_page).to be_remote_to_platform(local_platform)
+          expect(mirrored_page.source_identifier).to eq('remote-page-1')
+        end
+
+        it 'treats a CE UUID-preserved page as mirrored without a source_id' do
+          mirrored_page = build(
+            :better_together_page,
+            id: SecureRandom.uuid,
+            platform: remote_platform,
+            source_id: nil
+          )
+
+          expect(mirrored_page).to be_mirrored
+          expect(mirrored_page).to be_preserved_remote_uuid
+          expect(mirrored_page.source_identifier).to eq(mirrored_page.id)
         end
       end
 

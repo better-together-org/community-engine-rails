@@ -12,7 +12,7 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe Content::BlocksHelper do
     describe '#sanitize_block_css' do
       context 'with safe CSS' do

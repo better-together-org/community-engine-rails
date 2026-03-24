@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe TranslationsController, :as_user do # rubocop:disable Metrics/BlockLength
     describe 'POST #translate' do # rubocop:disable Metrics/BlockLength
       let(:person) { BetterTogether::User.find_by(email: 'user@example.test')&.person }

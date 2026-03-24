@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
   let(:creator_person) { create(:better_together_person) }
   let(:creator_user)   { create(:better_together_user, person: creator_person) }
-  let(:manager_user)   { create(:better_together_user, :platform_manager) }
+  let(:steward_user)   { create(:better_together_user, :platform_steward) }
   let(:normal_user)    { create(:better_together_user) }
 
   let(:offer) { create(:better_together_joatu_offer, creator: creator_person) }
@@ -30,8 +30,8 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
       expect(described_class.new(creator_user, offer).update?).to be true
     end
 
-    it 'allows a manager' do
-      expect(described_class.new(manager_user, offer).update?).to be true
+    it 'allows a steward' do
+      expect(described_class.new(steward_user, offer).update?).to be true
     end
 
     it 'denies other users' do
@@ -44,8 +44,8 @@ RSpec.describe BetterTogether::Joatu::OfferPolicy, type: :policy do
       expect(described_class.new(creator_user, offer).destroy?).to be true
     end
 
-    it 'allows a manager' do
-      expect(described_class.new(manager_user, offer).destroy?).to be true
+    it 'allows a steward' do
+      expect(described_class.new(steward_user, offer).destroy?).to be true
     end
 
     it 'denies other users' do
