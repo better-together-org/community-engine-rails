@@ -2,8 +2,8 @@
 
 **Tracking issue:** better-together-org/community-engine-rails#1407
 **Related plans:**
-- [Federation authorship opt-in](federation-authorship-opt-in.md) — branch `plan/federation-authorship-opt-in`
-- [Posts index search/filter/pagination](posts-index-filter-pagination.md) — branch `plan/posts-index-filter-pagination`
+- [Federation authorship opt-in](federation-authorship-opt-in.md) — PR #1408 (`plan/federation-authorship-opt-in`)
+- [Posts index search/filter/pagination](posts-index-filter-pagination.md) — PR #1409 (`plan/posts-index-filter-pagination`)
 
 ---
 
