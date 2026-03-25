@@ -25,7 +25,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/MethodLength
     def create_host_platform # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @form = ::BetterTogether::HostPlatformDetailsForm.new(::BetterTogether::Platform.new)
+      @form = ::BetterTogether::HostPlatformDetailsForm.new(base_platform)
 
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
@@ -124,13 +124,12 @@ module BetterTogether
     end
 
     def base_platform
-      ::BetterTogether::Platform.new(
-        url: helpers.base_url,
-        privacy: 'private',
-        time_zone: Time.zone.name,
-        protected: true,
-        host: true
-      )
+      ::BetterTogether::Platform.find_or_initialize_by(host: true) do |platform|
+        platform.url        = helpers.base_url
+        platform.privacy    = 'private'
+        platform.time_zone  = Time.zone.name
+        platform.protected  = true
+      end
     end
 
     def platform_params
