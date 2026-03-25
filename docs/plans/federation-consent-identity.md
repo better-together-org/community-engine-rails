@@ -2,7 +2,7 @@
 
 **Tracking issue:** better-together-org/community-engine-rails#1407
 **Target version:** v0.11.1 (blocks any PlatformConnection activation)
-**Status:** Design complete — implementation pending
+**Status:** Consent/identity design complete; transport T1 implementation in progress
 
 ---
 
@@ -25,6 +25,22 @@ This plan supersedes that design with:
    platform, UUID-preserved from the source, so attribution is coherent and mergeable.
 3. **PersonLink claim flow** — native persons on destination platforms can claim federated
    stubs, consolidating their identity across platforms.
+
+## Current Transport Implementation Slice (v0.11.0)
+
+The immediate implementation work is intentionally narrower than the consent/identity
+architecture above. For same-instance staging and multi-tenant testing, federation pulls now
+target a small transport layer:
+
+1. `BetterTogether::Federation::Transport::TransportResolver` chooses transport.
+2. `DirectAdapter` is used when both source and target platforms are `local_hosted?`.
+3. `HttpAdapter` preserves the existing OAuth + `Net::HTTP` content feed path for all
+   other connections.
+4. `BetterTogether::FederatedContentPullService` remains the public orchestration entrypoint.
+
+This slice reuses the existing `BetterTogether::Content::FederatedContentExportService`
+for in-process export. It does not yet add endpoint registries, LAN/private-network
+probing, or proxy routing.
 
 ---
 
