@@ -2869,6 +2869,8 @@ es:
           privacy: Privacidad
         title: Configuración
     setup_wizard_steps:
+      already_completed: Esta plataforma ya ha sido configurada. Por favor inicie
+        sesión para administrar su plataforma.
       create_admin:
         flash:
           please_address_errors: Por favor, corrija los errores a continuación.

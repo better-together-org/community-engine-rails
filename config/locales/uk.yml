@@ -2853,6 +2853,8 @@ uk:
           privacy: Конфіденційність
         title: Settings
     setup_wizard_steps:
+      already_completed: Цю платформу вже налаштовано. Будь ласка, увійдіть, щоб керувати
+        своєю платформою.
       create_admin:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.

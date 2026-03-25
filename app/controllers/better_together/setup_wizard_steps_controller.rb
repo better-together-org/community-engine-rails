@@ -5,6 +5,11 @@ module BetterTogether
   class SetupWizardStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
 
+    # Guard all actions: once the host setup wizard is completed it cannot be
+    # re-entered or re-submitted, regardless of authentication state.
+    # This covers POST actions that skip :determine_wizard_outcome above.
+    before_action :ensure_setup_wizard_incomplete
+
     def redirect
       public_send permitted_path(params[:path])
     end
@@ -147,6 +152,23 @@ module BetterTogether
       # Possible helper names should include
       # setup_wizard_step_platform_details and setup_wizard_step_admin_creation
       setup_wizard_step_path(step_definition.identifier)
+    end
+
+    # Redirect away if the host setup wizard has already been completed.
+    # Applied to every action — including the POST actions that skip
+    # :determine_wizard_outcome — so the wizard cannot be re-submitted or
+    # replayed once the first platform manager has finished onboarding.
+    # Authenticated platform managers are sent to root; all others to the
+    # sign-in page (the wizard is no longer a public surface once done).
+    def ensure_setup_wizard_incomplete
+      return unless helpers.host_setup_wizard&.completed?
+
+      if user_signed_in?
+        redirect_to root_path, alert: t('better_together.setup_wizard_steps.already_completed')
+      else
+        redirect_to new_user_session_path(locale: I18n.locale),
+                    alert: t('better_together.setup_wizard_steps.already_completed')
+      end
     end
   end
 end
