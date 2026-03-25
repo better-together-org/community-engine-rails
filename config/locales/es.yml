@@ -3721,6 +3721,47 @@ es:
     resource:
       type: Tipo
     type_select_field: Seleccione el tipo para este campo.
+  host:
+    operations:
+      index:
+        api_heading: API & Developer Tools
+        description: Operational tools for platform managers. All interfaces below
+          require platform manager access.
+        jobs_heading: Background Jobs
+        mcp_heading: MCP AI Server
+        page_title: Platform Operations
+        title: Platform Operations
+        view_all: View All Operations Tools
+      mcp:
+        auth_note: Tools and resources are filtered per-request by CE RBAC. Connect
+          via any MCP-compatible client using the SSE endpoint below.
+        auth_note_label: Authentication
+        badge_disabled: Disabled
+        badge_enabled: Running
+        connection_title: Connection Details
+        description: Model Context Protocol server for AI tool access. Provides CE
+          tools and resources to Claude and other MCP-compatible clients. Auth is
+          handled per-tool via CE RBAC.
+        sse_endpoint: SSE endpoint
+        title: MCP Server
+      oauth:
+        badge: CE Native
+        description: Manage OAuth 2.0 applications that access the CE API. Create
+          client credentials for n8n, MCP clients, and third-party integrations.
+        open: Manage OAuth Apps
+        title: OAuth Applications
+      sidekiq:
+        badge: Active
+        description: Monitor and manage background job queues including email delivery,
+          federation sync, Elasticsearch indexing, and sitemap refresh jobs.
+        open: Open Sidekiq
+        title: Sidekiq Queue Manager
+      swagger:
+        badge: API Docs
+        description: Interactive OpenAPI documentation for the CE REST API. Requires
+          a valid OAuth 2.0 access token to call authenticated endpoints.
+        open: Open API Docs
+        title: API Documentation
   host_dashboard:
     index:
       better_together: Mejor juntos
@@ -3732,6 +3773,7 @@ es:
       geography: Geografía
       geography_mapping: Cartografía geográfica
       infrastructure: Infraestructura
+      operations: Platform Operations
       page_title: Panel de control del anfitrión
       title: Panel de control del anfitrión
     resource_card:

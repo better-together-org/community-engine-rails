@@ -1,0 +1,118 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= t('host.operations.index.page_title') %>
+  <% end %>
+
+  <div class="container my-3">
+    <h1><%= t('host.operations.index.title') %></h1>
+    <p class="text-muted"><%= t('host.operations.index.description') %></p>
+
+    <%# ── Background Jobs ─────────────────────────────────────────────── %>
+    <section aria-labelledby="ops-jobs-heading" class="mt-4">
+      <h2 id="ops-jobs-heading" class="h5 mb-3">
+        <i class="fas fa-tasks me-2" aria-hidden="true"></i>
+        <%= t('host.operations.index.jobs_heading') %>
+      </h2>
+      <div class="row row-cols-1 row-cols-md-2">
+        <%= render partial: 'tool_card', locals: {
+              frame_id:    'sidekiq-management',
+              title:       t('host.operations.sidekiq.title'),
+              description: t('host.operations.sidekiq.description'),
+              icon:        'fas fa-layer-group',
+              url:         '/sidekiq',
+              link_text:   t('host.operations.sidekiq.open'),
+              target:      '_top',
+              external:    true,
+              badge_text:  t('host.operations.sidekiq.badge'),
+              badge_class: 'bg-success'
+            } %>
+      </div>
+    </section>
+
+    <%# ── API & Developer Tools ───────────────────────────────────────── %>
+    <section aria-labelledby="ops-api-heading" class="mt-4">
+      <h2 id="ops-api-heading" class="h5 mb-3">
+        <i class="fas fa-plug me-2" aria-hidden="true"></i>
+        <%= t('host.operations.index.api_heading') %>
+      </h2>
+      <div class="row row-cols-1 row-cols-md-2">
+        <%# Swagger / API docs %>
+        <% if @swagger_available %>
+          <%= render partial: 'tool_card', locals: {
+                frame_id:    'api-docs',
+                title:       t('host.operations.swagger.title'),
+                description: t('host.operations.swagger.description'),
+                icon:        'fas fa-file-alt',
+                url:         '/api/docs',
+                link_text:   t('host.operations.swagger.open'),
+                target:      '_top',
+                external:    true,
+                badge_text:  t('host.operations.swagger.badge'),
+                badge_class: 'bg-info text-dark'
+              } %>
+        <% end %>
+
+        <%# OAuth applications %>
+        <%= render partial: 'tool_card', locals: {
+              frame_id:    'oauth-applications',
+              title:       t('host.operations.oauth.title'),
+              description: t('host.operations.oauth.description'),
+              icon:        'fas fa-key',
+              url:         oauth_applications_path,
+              link_text:   t('host.operations.oauth.open'),
+              target:      '_top',
+              external:    false,
+              badge_text:  t('host.operations.oauth.badge'),
+              badge_class: 'bg-primary'
+            } %>
+      </div>
+    </section>
+
+    <%# ── MCP Server ──────────────────────────────────────────────────── %>
+    <section aria-labelledby="ops-mcp-heading" class="mt-4">
+      <h2 id="ops-mcp-heading" class="h5 mb-3">
+        <i class="fas fa-robot me-2" aria-hidden="true"></i>
+        <%= t('host.operations.index.mcp_heading') %>
+      </h2>
+      <div class="row row-cols-1 row-cols-md-2">
+        <%= render partial: 'tool_card', locals: {
+              frame_id:    'mcp-server',
+              title:       t('host.operations.mcp.title'),
+              description: t('host.operations.mcp.description'),
+              icon:        'fas fa-satellite-dish',
+              url:         nil,
+              link_text:   nil,
+              target:      '_top',
+              external:    true,
+              badge_text:  @mcp_enabled ? t('host.operations.mcp.badge_enabled')
+                                        : t('host.operations.mcp.badge_disabled'),
+              badge_class: @mcp_enabled ? 'bg-success' : 'bg-secondary'
+            } %>
+        <% if @mcp_enabled %>
+          <div class="col mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header">
+                <h3 class="h6 mb-0">
+                  <i class="fas fa-info-circle me-2" aria-hidden="true"></i>
+                  <%= t('host.operations.mcp.connection_title') %>
+                </h3>
+              </div>
+              <div class="card-body">
+                <dl class="mb-0 small">
+                  <dt><%= t('host.operations.mcp.sse_endpoint') %></dt>
+                  <dd>
+                    <code aria-label="<%= t('host.operations.mcp.sse_endpoint') %>">
+                      <%= request.base_url %><%= @mcp_path %>/sse
+                    </code>
+                  </dd>
+                  <dt class="mt-2"><%= t('host.operations.mcp.auth_note_label') %></dt>
+                  <dd class="text-muted"><%= t('host.operations.mcp.auth_note') %></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </div>
+<% end %>

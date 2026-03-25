@@ -1,0 +1,40 @@
+<%#
+  locals: (
+    frame_id:,            # turbo-frame id scoping this tool section
+    title:,               # card heading
+    description:,         # accessible description shown in card body
+    icon:,                # FontAwesome class e.g. "fas fa-tasks"
+    url: nil,             # primary action URL (nil = no link rendered)
+    link_text: nil,       # text for primary action button
+    target: "_top",       # turbo-frame target: "_top" for full-page nav, "_blank" for new tab
+    external: true,       # true = add data-turbo="false" to the action link
+    badge_text: nil,      # optional status badge label
+    badge_class: "bg-secondary"  # Bootstrap badge class
+  )
+-%>
+<%= turbo_frame_tag frame_id, target: target, class: "col mb-4 d-block" do %>
+  <div class="card shadow-sm h-100">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3 class="h6 mb-0">
+        <i class="<%= icon %> me-2" aria-hidden="true"></i>
+        <%= title %>
+      </h3>
+      <% if badge_text.present? %>
+        <span class="badge <%= badge_class %>" role="status">
+          <%= badge_text %>
+        </span>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <p class="card-text text-muted small mb-0"><%= description %></p>
+    </div>
+    <% if url.present? && link_text.present? %>
+      <div class="card-footer text-end">
+        <%= link_to link_text, url,
+                    class: "btn btn-sm btn-outline-primary",
+                    data: (external ? { turbo: false } : {}),
+                    aria: { label: "#{link_text}: #{title}" } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

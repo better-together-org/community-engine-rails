@@ -340,6 +340,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
 
+            # Platform operations tools (Sidekiq, API docs, MCP, OAuth)
+            get 'operations', to: 'host/operations#index', as: :host_operations
+
             resources :categories
 
             # Lists all used content blocks. Allows setting built-in system blocks.
