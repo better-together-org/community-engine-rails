@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+# shellcheck source=./docker-compose-env.sh
+source "$repo_root/bin/docker-compose-env.sh"
+
+services=(db redis redis-rack-attack elasticsearch)
+
+./bin/dc up -d "${services[@]}" >/dev/null
+
+wait_for_tcp() {
+  local host="$1"
+  local port="$2"
+  local label="$3"
+  local timeout="${4:-30}"
+  local deadline=$((SECONDS + timeout))
+
+  until ruby -rsocket -e "s=TCPSocket.new(ARGV[0], Integer(ARGV[1])); s.close" "$host" "$port" >/dev/null 2>&1; do
+    if (( SECONDS >= deadline )); then
+      echo "Timed out waiting for ${label} at ${host}:${port}" >&2
+      return 1
+    fi
+    sleep 1
+  done
+}
+
+wait_for_http() {
+  local url="$1"
+  local label="$2"
+  local timeout="${3:-45}"
+  local deadline=$((SECONDS + timeout))
+
+  until curl -fsS "$url" >/dev/null 2>&1; do
+    if (( SECONDS >= deadline )); then
+      echo "Timed out waiting for ${label} at ${url}" >&2
+      return 1
+    fi
+    sleep 1
+  done
+}
+
+wait_for_tcp "127.0.0.1" "5440" "Postgres"
+wait_for_tcp "127.0.0.1" "6380" "Redis"
+wait_for_tcp "127.0.0.1" "6381" "RackAttack Redis"
+wait_for_http "http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=1s" "Elasticsearch"
