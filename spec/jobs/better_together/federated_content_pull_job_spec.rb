@@ -29,8 +29,15 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
         next_cursor: 'cursor-5'
       )
     end
+    let(:resolution) do
+      BetterTogether::Federation::Transport::Resolution.new(
+        tier: :same_instance,
+        adapter_class: BetterTogether::Federation::Transport::DirectAdapter
+      )
+    end
 
     it 'pulls a batch, ingests inline, and enqueues the next page' do
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
       allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(pull_result)
       allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(ingest_result)
 
@@ -45,6 +52,7 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
     end
 
     it 'marks sync failure on pull error' do
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
       allow(BetterTogether::FederatedContentPullService).to receive(:call).and_raise(StandardError, 'remote failure')
 
       expect do
@@ -55,6 +63,19 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
       expect(connection).to be_sync_failed
       expect(connection.sync_cursor).to eq('cursor-7')
       expect(connection.last_sync_error_message).to eq('remote failure')
+    end
+
+    it 'can run same-instance pulls without invoking the http adapter directly' do
+      direct_result = BetterTogether::FederatedContentPullService::Result.new(connection:, seeds: [], next_cursor: nil)
+
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+      allow(BetterTogether::Federation::Transport::DirectAdapter).to receive(:call).and_return(direct_result)
+      allow(BetterTogether::Federation::Transport::HttpAdapter).to receive(:call)
+
+      described_class.perform_now(platform_connection_id: connection.id)
+
+      expect(BetterTogether::Federation::Transport::DirectAdapter).to have_received(:call)
+      expect(BetterTogether::Federation::Transport::HttpAdapter).not_to have_received(:call)
     end
   end
 end

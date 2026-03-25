@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
+./bin/dc-ensure-services
+
 ./bin/dc run --rm --no-deps app "$@"
