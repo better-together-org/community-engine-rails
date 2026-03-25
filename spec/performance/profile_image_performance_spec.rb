@@ -21,8 +21,10 @@ RSpec.describe 'Profile Image Performance', type: :request do
                role: role) # Reuse the same platform role
       end
     end
+    let!(:viewer_user) { create(:better_together_user, :confirmed) }
 
     it 'loads platform show page efficiently with profile images' do
+      sign_in viewer_user
       # Measure execution time
       start_time = Time.current
 
