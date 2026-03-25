@@ -40,22 +40,21 @@ module BetterTogether
     end
 
     def find_or_initialize_event
-      if effective_preserve_remote_uuid? && uuid?(remote_id)
-        # 1. Already mirrored with the same UUID — most common repeat-sync path.
-        existing = ::BetterTogether::Event.find_by(id: remote_id)
-        return existing if existing
+      return find_or_initialize_event_by_source_id unless mirror_with_remote_uuid?
 
-        # 2. Previously mirrored via the source_id path (e.g. before preserve_remote_uuid
-        #    was enabled on this connection) — prevents duplicate record creation.
-        existing = ::BetterTogether::Event.find_by(
-          platform: connection.target_platform, source_id: remote_id
-        )
-        return existing if existing
+      existing_event_with_remote_uuid || existing_event_by_source_id || ::BetterTogether::Event.new(id: remote_id)
+    end
 
-        ::BetterTogether::Event.new(id: remote_id)
-      else
-        ::BetterTogether::Event.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
-      end
+    def find_or_initialize_event_by_source_id
+      ::BetterTogether::Event.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+    end
+
+    def existing_event_with_remote_uuid
+      ::BetterTogether::Event.find_by(id: remote_id, platform: connection.target_platform)
+    end
+
+    def existing_event_by_source_id
+      ::BetterTogether::Event.find_by(platform: connection.target_platform, source_id: remote_id)
     end
 
     def assign_attributes(event)
@@ -134,7 +133,15 @@ module BetterTogether
     end
 
     def effective_preserve_remote_uuid?
-      preserve_remote_uuid? && !connection.target_platform.local_hosted?
+      preserve_remote_uuid? && !same_instance_connection?
+    end
+
+    def mirror_with_remote_uuid?
+      effective_preserve_remote_uuid? && uuid?(remote_id)
+    end
+
+    def same_instance_connection?
+      connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
     end
 
     def uuid?(value)
