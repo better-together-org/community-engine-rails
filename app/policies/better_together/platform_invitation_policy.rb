@@ -21,6 +21,16 @@ module BetterTogether
       user.present? && record.status_pending? && (record.inviter.id == agent.id || can_manage_platform_members?)
     end
 
+    private
+
+    def can_manage_platform_members?
+      return true if permitted_to?('manage_platform_members') || permitted_to?('manage_platform_roles')
+
+      platform = record.try(:invitable)
+      permitted_to?('manage_platform_members', platform) ||
+        permitted_to?('manage_platform_roles', platform)
+    end
+
     # Scope class for filtering platform invitations based on user permissions
     class Scope < ApplicationPolicy::Scope
       def resolve

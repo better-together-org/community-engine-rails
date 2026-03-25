@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::DocumentationBuilder, type: :model do
     before do
       # build creates Pages that require a platform; set Current.platform so
       # Page#assign_current_platform_if_available resolves correctly.
-      Current.platform = BetterTogether::Platform.find_by(host: true)
+      Current.platform = configure_host_platform
 
       File.write(tmp_docs_root.join('README.md'), '# Overview')
 
