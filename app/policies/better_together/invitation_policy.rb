@@ -5,7 +5,10 @@ module BetterTogether
   # This class defines standard invitation operations and delegates invitable-specific logic to subclasses
   class InvitationPolicy < ApplicationPolicy
     def create?
-      user.present? && allowed_on_invitable?
+      return false unless user.present?
+      return true if permitted_to?('manage_platform')
+
+      allowed_on_invitable?
     end
 
     def destroy?
