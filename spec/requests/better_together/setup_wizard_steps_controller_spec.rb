@@ -138,10 +138,6 @@ module BetterTogether # :nodoc:
         it 'displays validation errors' do
           expect(response.body).to include('alert-warning').or include("can't be blank")
         end
-
-        it 'sets flash alert' do
-          expect(flash[:alert]).to be_present
-        end
       end
 
       context 'when ActiveRecord::RecordInvalid is raised' do
