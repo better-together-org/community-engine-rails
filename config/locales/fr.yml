@@ -2882,6 +2882,8 @@ fr:
           privacy: Confidentialité
         title: Paramètres
     setup_wizard_steps:
+      already_completed: Cette plateforme a déjà été configurée. Veuillez vous connecter
+        pour gérer votre plateforme.
       create_admin:
         flash:
           please_address_errors: Veuillez corriger les erreurs ci-dessous.

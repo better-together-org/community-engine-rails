@@ -2824,6 +2824,8 @@ en:
           privacy: Privacy
         title: Settings
     setup_wizard_steps:
+      already_completed: This platform has already been set up. Please sign in to
+        manage your platform.
       create_admin:
         flash:
           please_address_errors: Please address the errors below.
