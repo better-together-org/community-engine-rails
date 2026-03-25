@@ -2,8 +2,8 @@
 
 **Tracking issue:** better-together-org/community-engine-rails#1407
 **Related plans:**
-- [Posts index search/filter/pagination](posts-index-filter-pagination.md) — branch `plan/posts-index-filter-pagination`
-- [Events index search/filter/pagination](events-index-filter-pagination.md) — branch `plan/events-index-filter-pagination`
+- [Posts index search/filter/pagination](posts-index-filter-pagination.md) — PR #1409 (`plan/posts-index-filter-pagination`)
+- [Events index search/filter/pagination](events-index-filter-pagination.md) — PR #1410 (`plan/events-index-filter-pagination`)
 
 ---
 
