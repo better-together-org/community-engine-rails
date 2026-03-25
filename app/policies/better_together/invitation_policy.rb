@@ -5,13 +5,7 @@ module BetterTogether
   # This class defines standard invitation operations and delegates invitable-specific logic to subclasses
   class InvitationPolicy < ApplicationPolicy
     def create?
-      return false unless user.present?
-
-      # Platform managers may create any invitation regardless of invitable type
-      return true if permitted_to?('manage_platform')
-
-      # Delegate to the concrete invitable-specific check
-      allowed_on_invitable?
+      user.present? && allowed_on_invitable?
     end
 
     def destroy?
@@ -29,7 +23,6 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless user.present?
-        return scope.all if permitted_to?('manage_platform')
 
         # Users see invitations for resources they can manage
         filtered_invitations_scope
@@ -44,8 +37,7 @@ module BetterTogether
 
       # Helper method for building invitable type conditions
       def invitable_type_condition(type_class)
-        scope.joins(:invitable)
-             .where(better_together_invitations: { invitable_type: type_class.name })
+        scope.where(invitable_type: type_class.name)
       end
     end
 

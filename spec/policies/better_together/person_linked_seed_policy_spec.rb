@@ -20,6 +20,12 @@ RSpec.describe BetterTogether::PersonLinkedSeedPolicy do
     it 'denies the grantor from viewing the linked seed payload' do
       expect(described_class.new(grantor_user, linked_seed).show?).to be(false)
     end
+
+    it 'denies the recipient when the grant is revoked' do
+      linked_seed.person_access_grant.revoke!
+
+      expect(policy.show?).to be(false)
+    end
   end
 
   describe described_class::Scope do
@@ -30,6 +36,14 @@ RSpec.describe BetterTogether::PersonLinkedSeedPolicy do
 
       expect(resolved).to include(linked_seed)
       expect(resolved).not_to include(other_linked_seed)
+    end
+
+    it 'excludes linked seeds whose grants are no longer active' do
+      linked_seed.person_access_grant.revoke!
+
+      resolved = BetterTogether::PersonLinkedSeedPolicy::Scope.new(user, BetterTogether::PersonLinkedSeed.all).resolve
+
+      expect(resolved).not_to include(linked_seed)
     end
   end
 end

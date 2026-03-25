@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_21_000001) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -502,10 +502,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000001) do
     t.datetime "last_used_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["platform_connection_id"], name: "index_bt_federation_access_tokens_on_platform_connection_id"
-    t.index ["token_digest"], name: "index_bt_federation_access_tokens_on_token_digest", unique: true
     t.index ["expires_at"], name: "index_bt_federation_access_tokens_on_expires_at"
+    t.index ["platform_connection_id"], name: "index_bt_federation_access_tokens_on_platform_connection_id"
     t.index ["revoked_at"], name: "index_bt_federation_access_tokens_on_revoked_at"
+    t.index ["token_digest"], name: "index_bt_federation_access_tokens_on_token_digest", unique: true
   end
 
   create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1180,27 +1180,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000001) do
   end
 
   create_table "better_together_person_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "person_link_id", null: false
-    t.uuid "grantor_person_id", null: false
-    t.uuid "grantee_person_id"
-    t.string "status", default: "pending", null: false
-    t.string "remote_grantee_identifier"
-    t.string "remote_grantee_name"
-    t.datetime "accepted_at"
-    t.datetime "revoked_at"
-    t.datetime "expires_at"
-    t.jsonb "settings", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "sync_cursor"
-    t.index ["grantee_person_id"], name: "idx_on_grantee_person_id_ecbd23756c"
-    t.index ["grantor_person_id"], name: "idx_on_grantor_person_id_f154f48033"
-    t.index ["person_link_id", "grantor_person_id", "grantee_person_id"], name: "index_bt_person_access_grants_on_link_and_people", unique: true
-    t.index ["person_link_id"], name: "index_better_together_person_access_grants_on_person_link_id"
-    t.index ["status"], name: "index_better_together_person_access_grants_on_status"
-  end
-
-  create_table "better_together_person_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.uuid "person_link_id", null: false
     t.uuid "grantor_person_id", null: false
@@ -1215,13 +1194,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "sync_cursor"
+    t.index ["expires_at"], name: "index_bt_person_access_grants_on_expires_at"
     t.index ["grantee_person_id"], name: "idx_on_grantee_person_id_ecbd23756c"
     t.index ["grantor_person_id"], name: "idx_on_grantor_person_id_f154f48033"
     t.index ["person_link_id", "grantor_person_id", "grantee_person_id"], name: "index_bt_person_access_grants_on_link_and_people", unique: true
     t.index ["person_link_id"], name: "index_better_together_person_access_grants_on_person_link_id"
-    t.index ["status"], name: "index_better_together_person_access_grants_on_status"
-    t.index ["expires_at"], name: "index_bt_person_access_grants_on_expires_at"
     t.index ["revoked_at"], name: "index_bt_person_access_grants_on_revoked_at"
+    t.index ["status"], name: "index_better_together_person_access_grants_on_status"
   end
 
   create_table "better_together_person_blocks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1307,10 +1286,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000001) do
     t.datetime "updated_at", null: false
     t.index ["platform_connection_id", "source_person_id", "target_person_id"], name: "index_bt_person_links_on_connection_and_people", unique: true
     t.index ["platform_connection_id"], name: "index_better_together_person_links_on_platform_connection_id"
+    t.index ["revoked_at"], name: "index_bt_person_links_on_revoked_at"
     t.index ["source_person_id"], name: "index_better_together_person_links_on_source_person_id"
     t.index ["status"], name: "index_better_together_person_links_on_status"
     t.index ["target_person_id"], name: "index_better_together_person_links_on_target_person_id"
-    t.index ["revoked_at"], name: "index_bt_person_links_on_revoked_at"
   end
 
   create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
