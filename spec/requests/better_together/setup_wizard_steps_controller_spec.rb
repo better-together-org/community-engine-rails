@@ -418,18 +418,34 @@ module BetterTogether # :nodoc:
 
       describe '#base_platform' do
         before do
+          @original_host_platform_ids = BetterTogether::Platform.where(host: true).pluck(:id)
+          BetterTogether::Platform.where(host: true).update_all(host: false)
           # rubocop:disable RSpec/MessageChain
           allow(controller).to receive_message_chain(:helpers, :base_url).and_return('http://test.example.com')
           # rubocop:enable RSpec/MessageChain
         end
 
-        it 'creates a platform with default attributes' do
+        after do
+          BetterTogether::Platform.where(id: @original_host_platform_ids).update_all(host: true)
+        end
+
+        it 'initializes a host platform with default attributes when one does not exist' do
           platform = controller.send(:base_platform)
           expect(platform).to be_a(Platform)
           expect(platform.privacy).to eq('private')
           expect(platform.protected).to be true
           expect(platform.host).to be true
           expect(platform.time_zone).to eq(Time.zone.name)
+        end
+
+        it 'returns the existing host platform unchanged when one already exists' do
+          existing_platform = BetterTogether::Platform.find(@original_host_platform_ids.first)
+          existing_platform.update_columns(host: true, privacy: 'public')
+
+          platform = controller.send(:base_platform)
+
+          expect(platform).to eq(existing_platform)
+          expect(platform.privacy).to eq('public')
         end
       end
     end
