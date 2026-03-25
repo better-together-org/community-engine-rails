@@ -57,7 +57,9 @@ RSpec.describe BetterTogether::PlatformContextMiddleware do
         # better_together_platforms is in ESSENTIAL_TABLES so host platforms persist
         # across parallel workers. Stub both resolution paths to simulate a bare DB.
         allow(BetterTogether::PlatformDomain).to receive(:resolve).and_return(nil)
-        allow(BetterTogether::Platform).to receive(:find_by).with(host: true).and_return(nil)
+        allow(Rails.cache).to receive(:fetch)
+          .with('better_together/host_platform_id', expires_in: 5.minutes)
+          .and_return(nil)
         _response, captured = call_with_host('unknown-host.test')
         expect(captured[:platform]).to be_nil
       end

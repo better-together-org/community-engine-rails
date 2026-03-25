@@ -19,27 +19,19 @@ module BetterTogether
       owns_seed?
     end
 
-    # Resolves seeds owned by or seeded from the authenticated agent.
+    # Resolves personal export seeds for the authenticated agent (GDPR self-service).
     class Scope < ApplicationPolicy::Scope
-      def resolve # rubocop:todo Metrics/AbcSize
+      def resolve
         return scope.none unless agent
 
-        t = scope.arel_table
-        scope.where(
-          t[:creator_id].eq(agent.id).or(
-            t[:seedable_type].eq(agent.class.name).and(t[:seedable_id].eq(agent.id))
-          )
-        ).latest_first
+        scope.personal_exports_for(agent).latest_first
       end
     end
 
     private
 
     def owns_seed?
-      agent.present? && (
-        record.creator_id == agent.id ||
-        (record.seedable_type == agent.class.name && record.seedable_id == agent.id)
-      )
+      agent.present? && record.personal_export? && record.seedable_id.to_s == agent.id.to_s
     end
   end
 end
