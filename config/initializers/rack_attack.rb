@@ -19,7 +19,7 @@ module Rack
 
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
-      # ActiveSupport 8.0.3 still initializes ConnectionPool with a positional Hash,
+      # ActiveSupport 8.0 still initializes ConnectionPool with a positional Hash,
       # which breaks with connection_pool 3.x keyword-only initialization.
       rack_attack_redis_pool = ConnectionPool.new(
         size: rack_attack_pool_size,
