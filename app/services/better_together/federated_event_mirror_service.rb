@@ -40,7 +40,7 @@ module BetterTogether
     end
 
     def find_or_initialize_event
-      if preserve_remote_uuid? && uuid?(remote_id)
+      if effective_preserve_remote_uuid? && uuid?(remote_id)
         # 1. Already mirrored with the same UUID — most common repeat-sync path.
         existing = ::BetterTogether::Event.find_by(id: remote_id)
         return existing if existing
@@ -80,7 +80,7 @@ module BetterTogether
         privacy: remote_attributes[:privacy].presence || 'public',
         creator_id: remote_attributes[:creator_id],
         platform: connection.source_platform,
-        source_id: preserve_remote_uuid? ? nil : remote_id,
+        source_id: effective_preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
       }
@@ -131,6 +131,10 @@ module BetterTogether
 
     def preserve_remote_uuid?
       preserve_remote_uuid
+    end
+
+    def effective_preserve_remote_uuid?
+      preserve_remote_uuid? && !connection.target_platform.local_hosted?
     end
 
     def uuid?(value)

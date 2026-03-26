@@ -28,6 +28,20 @@ wait_for_tcp() {
   done
 }
 
+wait_for_postgres() {
+  local container_name="${1:-community-engine-db}"
+  local timeout="${2:-45}"
+  local deadline=$((SECONDS + timeout))
+
+  until docker exec "$container_name" pg_isready -U postgres >/dev/null 2>&1; do
+    if (( SECONDS >= deadline )); then
+      echo "Timed out waiting for Postgres readiness in container ${container_name}" >&2
+      return 1
+    fi
+    sleep 1
+  done
+}
+
 wait_for_http() {
   local url="$1"
   local label="$2"
@@ -44,6 +58,7 @@ wait_for_http() {
 }
 
 wait_for_tcp "127.0.0.1" "5440" "Postgres"
+wait_for_postgres "community-engine-db"
 wait_for_tcp "127.0.0.1" "6380" "Redis"
 wait_for_tcp "127.0.0.1" "6381" "RackAttack Redis"
 wait_for_http "http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=1s" "Elasticsearch"

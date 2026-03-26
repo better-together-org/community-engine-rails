@@ -5,6 +5,12 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 repo_basename="$(basename "$repo_root")"
 
+# Community Engine's compose stack uses fixed service/container/volume names for the
+# shared dev database, Redis, and Elasticsearch services. Secondary git worktrees
+# must reuse the primary compose project instead of inventing a per-worktree one,
+# otherwise `bin/dc-run` cannot resolve `db`/`redis` and conflicts on fixed names.
+export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-community-engine-rails}"
+
 sanitize_slug() {
   printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+//; s/_+$//'
 }
