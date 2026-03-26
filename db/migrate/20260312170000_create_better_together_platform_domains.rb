@@ -2,18 +2,26 @@
 
 class CreateBetterTogetherPlatformDomains < ActiveRecord::Migration[7.2]
   def change
-    create_bt_table :platform_domains do |t|
-      t.references :platform, null: false, type: :uuid, foreign_key: { to_table: :better_together_platforms }
-      t.string :hostname, null: false
-      t.boolean :primary, null: false, default: false
-      t.boolean :active, null: false, default: true
+    unless table_exists?(:better_together_platform_domains)
+      create_bt_table :platform_domains do |t|
+        t.references :platform, null: false, type: :uuid, foreign_key: { to_table: :better_together_platforms }
+        t.string :hostname, null: false
+        t.boolean :primary, null: false, default: false
+        t.boolean :active, null: false, default: true
+      end
     end
 
-    add_index :better_together_platform_domains, 'lower(hostname)', unique: true,
-                                                                    name: 'index_better_together_platform_domains_on_lower_hostname'
-    add_index :better_together_platform_domains, %i[platform_id primary],
-              unique: true,
-              where: '"primary" IS TRUE',
-              name: 'index_better_together_platform_domains_on_primary'
+    unless index_name_exists?(:better_together_platform_domains,
+                              'index_better_together_platform_domains_on_lower_hostname')
+      add_index :better_together_platform_domains, 'lower(hostname)', unique: true,
+                                                                      name: 'index_better_together_platform_domains_on_lower_hostname'
+    end
+    unless index_name_exists?(:better_together_platform_domains,
+                              'index_better_together_platform_domains_on_primary')
+      add_index :better_together_platform_domains, %i[platform_id primary],
+                unique: true,
+                where: '"primary" IS TRUE',
+                name: 'index_better_together_platform_domains_on_primary'
+    end
   end
 end

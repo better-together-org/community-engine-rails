@@ -12,8 +12,10 @@
 # immediately verifiable via the new path.
 class AddOauthClientSecretDigestToBetterTogetherPlatformConnections < ActiveRecord::Migration[7.2]
   def up
-    add_column :better_together_platform_connections,
-               :oauth_client_secret_digest, :string
+    unless column_exists?(:better_together_platform_connections, :oauth_client_secret_digest)
+      add_column :better_together_platform_connections,
+                 :oauth_client_secret_digest, :string
+    end
 
     require 'bcrypt'
 
@@ -35,6 +37,7 @@ class AddOauthClientSecretDigestToBetterTogetherPlatformConnections < ActiveReco
   end
 
   def down
-    remove_column :better_together_platform_connections, :oauth_client_secret_digest
+    remove_column :better_together_platform_connections, :oauth_client_secret_digest if column_exists?(:better_together_platform_connections,
+                                                                                                       :oauth_client_secret_digest)
   end
 end
