@@ -135,15 +135,19 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **`bt_*` column helpers**: Use standardized column definitions (bt_references, bt_identifier, bt_privacy, etc.)
 - **Consistent naming**: All tables automatically prefixed with `better_together_`
 - **UUID foreign keys**: Use `bt_references` for all associations to maintain consistency
+- **Migrations must be idempotent against partial-schema states**: guard additive DDL with `table_exists?`, `column_exists?`, `index_exists?`, or `index_name_exists?` so interrupted host-app upgrades can be retried safely
+- **Partial-state failures are source bugs**: if a host app upgrade hits duplicate tables, columns, or indexes from a prior partial run, patch the originating CE migration instead of relying on host-app-only repair code
 - **Example migration pattern**:
   ```ruby
   class CreateBetterTogetherExampleModel < ActiveRecord::Migration[7.1]
     def change
-      create_bt_table :example_models do |t|
-        t.bt_identifier
-        t.bt_privacy
-        t.bt_references :person, null: false
-        t.string :status, default: "pending"
+      unless table_exists?(:better_together_example_models)
+        create_bt_table :example_models do |t|
+          t.bt_identifier
+          t.bt_privacy
+          t.bt_references :person, null: false
+          t.string :status, default: "pending"
+        end
       end
     end
   end
