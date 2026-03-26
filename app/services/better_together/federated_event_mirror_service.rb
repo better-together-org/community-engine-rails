@@ -5,6 +5,8 @@ module BetterTogether
   # rubocop:disable Metrics/ClassLength -- Event service requires timezone validation and
   #   event-host management that the simpler Post/Page services do not.
   class FederatedEventMirrorService
+    include ::BetterTogether::Federation::MirroredIdentifierResolution
+
     def initialize(connection:, remote_attributes:, remote_id:, preserve_remote_uuid: false, source_updated_at: nil)
       @connection = connection
       @remote_attributes = remote_attributes.to_h.with_indifferent_access
@@ -98,19 +100,6 @@ module BetterTogether
       base = remote_attributes[:identifier].presence ||
              "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
       identifier_or_namespaced(::BetterTogether::Event, base, event.id)
-    end
-
-    def identifier_or_namespaced(model_class, base, exclude_id)
-      return base unless identifier_taken?(model_class, base, exclude_id)
-
-      source_slug = connection.source_platform.identifier.to_s.parameterize.presence || 'remote'
-      "#{source_slug}-#{base}"
-    end
-
-    def identifier_taken?(model_class, identifier, exclude_id)
-      scope = model_class.where(identifier:)
-      scope = scope.where.not(id: exclude_id) if exclude_id.present?
-      scope.exists?
     end
 
     def normalized_timezone

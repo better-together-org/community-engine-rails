@@ -4,6 +4,8 @@ module BetterTogether
   module Content
     # Imports or updates a mirrored Post record from a connected remote platform.
     class FederatedPostMirrorService
+      include ::BetterTogether::Federation::MirroredIdentifierResolution
+
       def initialize(connection:, remote_attributes:, remote_id:, preserve_remote_uuid: false, source_updated_at: nil)
         @connection = connection
         @remote_attributes = remote_attributes.to_h.with_indifferent_access
@@ -86,21 +88,6 @@ module BetterTogether
         base = remote_attributes[:identifier].presence ||
                "federated-post-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
         identifier_or_namespaced(::BetterTogether::Post, base, post.id)
-      end
-
-      # Returns +base+ unchanged when no other record claims it; otherwise prepends the
-      # source platform identifier to prevent a uniqueness validation failure on ingest.
-      def identifier_or_namespaced(model_class, base, exclude_id)
-        return base unless identifier_taken?(model_class, base, exclude_id)
-
-        source_slug = connection.source_platform.identifier.to_s.parameterize.presence || 'remote'
-        "#{source_slug}-#{base}"
-      end
-
-      def identifier_taken?(model_class, identifier, exclude_id)
-        scope = model_class.where(identifier:)
-        scope = scope.where.not(id: exclude_id) if exclude_id.present?
-        scope.exists?
       end
 
       def normalized_source_updated_at
