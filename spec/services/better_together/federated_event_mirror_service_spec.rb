@@ -41,7 +41,7 @@ module BetterTogether # :nodoc:
         ).call
 
         expect(event.id).not_to eq(remote_id)
-        expect(event.platform).to eq(source_platform)
+        expect(event.platform).to eq(target_platform)
         expect(event.source_id).to eq(remote_id)
         expect(event.last_synced_at).to be_present
         expect(event.event_hosts.map(&:host)).to include(source_platform)
@@ -68,7 +68,7 @@ module BetterTogether # :nodoc:
 
         expect(event.id).to eq(remote_id)
         expect(event.source_id).to be_nil
-        expect(event.platform).to eq(source_platform)
+        expect(event.platform).to eq(external_target)
         expect(event.event_hosts.map(&:host)).to include(source_platform)
       end
 
@@ -82,7 +82,7 @@ module BetterTogether # :nodoc:
 
         expect(event.id).not_to eq('legacy-event-42')
         expect(event.source_id).to eq('legacy-event-42')
-        expect(event.platform).to eq(source_platform)
+        expect(event.platform).to eq(target_platform)
         expect(event.event_hosts.map(&:host)).to include(source_platform)
       end
 

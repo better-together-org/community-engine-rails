@@ -46,13 +46,13 @@ module BetterTogether
           # 2. Previously mirrored via the source_id path (e.g. before preserve_remote_uuid
           #    was enabled on this connection) — prevents duplicate record creation.
           existing = ::BetterTogether::Page.find_by(
-            platform: connection.source_platform, source_id: remote_id
+            platform: connection.target_platform, source_id: remote_id
           )
           return existing if existing
 
           ::BetterTogether::Page.new(id: remote_id)
         else
-          ::BetterTogether::Page.find_or_initialize_by(platform: connection.source_platform, source_id: remote_id)
+          ::BetterTogether::Page.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
         end
       end
 
@@ -86,7 +86,7 @@ module BetterTogether
 
       def mirror_tracking_attributes
         {
-          platform: connection.source_platform,
+          platform: connection.target_platform,
           source_id: effective_preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current

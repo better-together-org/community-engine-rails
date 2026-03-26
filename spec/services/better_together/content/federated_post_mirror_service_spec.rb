@@ -37,7 +37,7 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
       ).call
 
       expect(post.id).not_to eq(remote_id)
-      expect(post.platform).to eq(source_platform)
+      expect(post.platform).to eq(target_platform)
       expect(post.source_id).to eq(remote_id)
       expect(post.last_synced_at).to be_present
     end
@@ -63,7 +63,7 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
 
       expect(post.id).to eq(remote_id)
       expect(post.source_id).to be_nil
-      expect(post.platform).to eq(source_platform)
+      expect(post.platform).to eq(external_target)
     end
 
     it 'falls back to source_id for non-UUID remote identifiers' do
@@ -76,7 +76,7 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
 
       expect(post.id).not_to eq('legacy-post-42')
       expect(post.source_id).to eq('legacy-post-42')
-      expect(post.platform).to eq(source_platform)
+      expect(post.platform).to eq(target_platform)
     end
 
     it 'updates an existing mirrored post on repeat import' do

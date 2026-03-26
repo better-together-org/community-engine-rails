@@ -46,13 +46,13 @@ module BetterTogether
           # 2. Previously mirrored via the source_id path (e.g. before preserve_remote_uuid
           #    was enabled on this connection) — prevents duplicate record creation.
           existing = ::BetterTogether::Post.find_by(
-            platform: connection.source_platform, source_id: remote_id
+            platform: connection.target_platform, source_id: remote_id
           )
           return existing if existing
 
           ::BetterTogether::Post.new(id: remote_id)
         else
-          ::BetterTogether::Post.find_or_initialize_by(platform: connection.source_platform, source_id: remote_id)
+          ::BetterTogether::Post.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
         end
       end
 
@@ -68,7 +68,7 @@ module BetterTogether
           privacy: remote_attributes[:privacy].presence || 'public',
           published_at: remote_attributes[:published_at],
           creator_id: remote_attributes[:creator_id],
-          platform: connection.source_platform
+          platform: connection.target_platform
         }.merge(post_sync_attributes)
       end
 
