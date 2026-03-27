@@ -16,7 +16,7 @@
           <% existing = model.send("#{attribute}_#{locale}") rescue nil %>
           <% if existing && existing.respond_to?(:blob) && existing.blob.present? %>
             <% if existing.blob.image? %>
-              <%= image_tag url_for(existing.blob.variant(resize: "300x200")) %>
+              <%= image_tag rails_storage_proxy_url(existing.blob.variant(resize: "300x200")) %>
             <% else %>
               <%= link_to existing.blob.filename.to_s, url_for(existing.blob) %>
             <% end %>
