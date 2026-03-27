@@ -29,7 +29,7 @@ RSpec.describe BetterTogether::ImageHelper do
       it 'uses the optimized profile_image_url method' do
         allow(person).to receive(:profile_image_url).with(size: 300).and_return('/rails/active_storage/representations/proxy/test')
         result = profile_image_tag(person)
-        expect(result).to include('src="/rails/active_storage/representations/proxy/test"')
+        expect(result).to include('src="http://test.host/rails/active_storage/representations/proxy/test"')
         expect(result).to include('class="profile-image rounded-circle')
       end
 
