@@ -122,7 +122,7 @@ module BetterTogether
     end
 
     def effective_preserve_remote_uuid?
-      preserve_remote_uuid? && !same_instance_connection?
+      preserve_remote_uuid? && !shared_target_database?
     end
 
     def mirror_with_remote_uuid?
@@ -131,6 +131,10 @@ module BetterTogether
 
     def same_instance_connection?
       connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
+    end
+
+    def shared_target_database?
+      connection.target_platform.local_hosted?
     end
 
     def uuid?(value)
