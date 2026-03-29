@@ -1919,22 +1919,6 @@ uk:
           search_queries: Пошуки
           shares: Поширення
           users: Users
-        search_health:
-          backend: Backend
-          db_count: Кількість у БД
-          db_documents: Документи БД
-          drift: Розбіжність
-          drift_visualization: Візуалізація розбіжності
-          generated_at: Згенеровано
-          index_count: Кількість в індексі
-          index_documents: Індексовані документи
-          index_name: Індекс
-          indices: Індекси
-          model: Модель
-          status_label: Статус
-          store_size: Розмір сховища
-          total_drift: Загальна розбіжність
-          unmanaged_models: Некеровані пошукові моделі
         title: Звіти метрик
         unknown_type: Невідомо
       shares:
