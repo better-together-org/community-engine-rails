@@ -219,6 +219,12 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Devise registration page prompts for an invitation code when none is present.
   - Accepted invitations prefill email, apply community/platform roles, and are marked accepted on successful sign‑up.
 
+## Session Audit And Worktree Bootstrap
+- Start each agent session with `./scripts/session_command_log.sh init`.
+- Before mutating work, run `./scripts/session_worktree.sh ensure --repo . --agent <codex|claude|copilot|local> --session-id "${CODEX_THREAD_ID:-$(date -u +%Y%m%dT%H%M%SZ)}" --storage-mode local`.
+- Run consequential commands through `./scripts/session_command_log.sh run --intent "<intent>" -- <command>`.
+- Session command logs and worktree metadata must remain anchored in the repository's main `logs/sessions/` directory, even when the current shell is inside a linked worktree.
+
 ## Privacy Practices for Platform Organizers
 - Default posture: keep `requires_invitation` enabled unless there is a clear, consented need to open registration.
 - Privacy policy: publish and maintain a platform‑specific privacy policy; disclose any third‑party trackers (e.g., GA, Sentry) and their purposes.
