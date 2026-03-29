@@ -1,6 +1,4 @@
 docker-env.conf
-.env
-.env.*
 tmp/
 log/
 .git/
