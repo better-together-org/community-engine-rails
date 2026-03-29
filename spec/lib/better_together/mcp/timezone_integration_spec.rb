@@ -106,7 +106,6 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
       # so assert against the actual offset for the user's zone at that instant.
       time = Time.iso8601(content['current_time'])
       expected_offset = ActiveSupport::TimeZone['Europe/London'].period_for_utc(time.utc).utc_total_offset
-
       expect(time.utc_offset).to eq(expected_offset)
     end
   end
