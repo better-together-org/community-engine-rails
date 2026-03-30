@@ -316,6 +316,8 @@ es:
         conversations: Conversaciones
         created_conversations: Conversaciones creadas
         description: Descripción
+        federate_content: Permitir que esta plataforma incluya tus publicaciones,
+          páginas y eventos públicos en fuentes de federación aprobadas.
         identifications: Identificaciones
         identifier: Identificador
         locale: Idioma
@@ -2229,6 +2231,8 @@ es:
         microphone: Micrófono
         notifications: Notificaciones
         permissions_group_label: Permissions group label
+      federate_content: Permitir que esta plataforma incluya tus publicaciones, páginas
+        y eventos públicos en fuentes de federación aprobadas.
       index:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
@@ -3712,10 +3716,12 @@ es:
         cover_image: Imagen de portada
       person:
         allow_messages_from_members: Optar por recibir mensajes de personas que no
-          sean administradores de la plataforma.
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
         description: Proporcione una breve descripción o biografía.
+        federate_content: Optar por permitir que esta plataforma comparta tus publicaciones,
+          páginas y eventos públicos con plataformas conectadas aprobadas. sean administradores
+          de la plataforma.
         locale: Selecciona el idioma preferido para la persona.
         name: Ingrese el nombre completo de la persona.
         notify_by_email: Envía un correo electrónico cuando una conversación tiene
