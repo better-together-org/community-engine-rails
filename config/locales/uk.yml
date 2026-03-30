@@ -591,6 +591,7 @@ uk:
       better_together/content/css: Користувацький CSS
       better_together/content/hero: Герой
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Зображення
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Діаграма Mermaid
@@ -891,8 +892,26 @@ uk:
           select_prompt: "— Виберіть контрольний список —"
         communities_block:
           empty: Немає спільнот для відображення.
+        embeds:
+          blocked_body: "%{title} не вдалося показати тут, оскільки ця платформа не
+            внесла це джерело iframe до дозволених у налаштуваннях політики безпеки
+            вмісту."
+          blocked_instructions: Додайте %{origin} у Хост > Платформа > Безпека / вбудовування
+            CSP > Дозволені джерела вихідних iframe, а потім перезавантажте цю сторінку.
+          blocked_origin_label: 'Заблоковане джерело:'
+          blocked_title: Цей вбудований вміст зараз заблоковано
+          invalid_url_body: Перевірте URL iframe і переконайтеся, що це повна HTTPS-адреса.
+          invalid_url_title: Цей вбудований вміст має недійсний URL
+          open_in_new_tab: Відкрити вбудований вміст у новій вкладці
         events_block:
           empty: Немає подій для відображення.
+        iframe_block:
+          csp_help: Якщо це вбудовування не дозволене для поточної платформи, Community
+            Engine покаже видиме повідомлення з підказкою замість порожнього iframe.
+          default_title: Вбудований вміст
+          missing_url: URL iframe не налаштовано.
+          url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
+            або інше довірене вбудовування зі спільнотного простору.
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -2524,6 +2543,18 @@ uk:
         pending: Очікує
     platforms:
       form:
+        csp_frame_ancestors_text_hint: Хто може вбудовувати цей сайт CE. Виберіть
+          довірені джерела або введіть новий hostname/джерело й натисніть Enter. Залиште
+          порожнім, щоб зберегти frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Дозволені джерела для вхідного вбудовування
+        csp_frame_src_text_hint: Що цей сайт CE може вбудовувати в iframe, наприклад
+          Formbricks або інші довірені вбудовування зі спільнот. Виберіть довірені
+          джерела або введіть новий hostname/джерело й натисніть Enter.
+        csp_frame_src_text_label: Дозволені джерела для вихідних iframe
+        csp_img_src_text_hint: Додаткові хости зображень, з яких цей сайт CE може
+          завантажувати зображення. Виберіть довірені джерела або введіть новий hostname/джерело
+          й натисніть Enter.
+        csp_img_src_text_label: Дозволені зовнішні джерела зображень
         host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
           Використовується для її ідентифікації у федерації та генерації URL-адрес
           OAuth-ендпоінту. Для production має бути HTTPS.
@@ -2820,8 +2851,9 @@ uk:
           description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
           title: Підключені облікові записи
         my_data:
-          description: View, download, or delete your personal data exports.
-          title: My Data
+          description: Переглядайте, завантажуйте або видаляйте свої експорти персональних
+            даних.
+          title: Мої дані
         navigation_aria_label: Навігація налаштувань
         personal:
           coming_soon: Особисті налаштування з'являться незабаром.
@@ -2846,7 +2878,7 @@ uk:
           developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
-          my_data: My Data
+          my_data: Мої дані
           personal: Особисті
           platform: Платформа
           preferences: Налаштування
@@ -3884,19 +3916,19 @@ uk:
     show:
       title: Деталі членства на платформі
   person_seeds:
-    confirm_destroy: Delete this data export? This cannot be undone.
-    export_failed: Your data export could not be completed. Please try again.
-    export_queued: Your data export has been requested. A download link will appear
-      below once it is ready.
-    export_too_soon: You requested an export recently. Please wait before requesting
-      another.
-    export_unavailable: Your account does not have a person profile to export.
+    confirm_destroy: Видалити цей експорт даних? Цю дію не можна скасувати.
+    export_failed: Не вдалося завершити експорт ваших даних. Спробуйте ще раз.
+    export_queued: Ваш експорт даних запитано. Посилання для завантаження з'явиться
+      нижче, щойно він буде готовий.
+    export_too_soon: Ви нещодавно вже запитували експорт. Зачекайте перед повторним
+      запитом.
+    export_unavailable: У вашого облікового запису немає профілю особи для експорту.
     index:
-      empty: You have no data exports yet.
-      exporting: Requesting…
-      new_export: Request Data Export
-      new_export_hint: Generate a portable export of your personal data.
-      title: My Data
+      empty: У вас ще немає експортів даних.
+      exporting: Запит надсилається…
+      new_export: Запросити експорт даних
+      new_export_hint: Створіть переносний експорт своїх персональних даних.
+      title: Мої дані
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:
@@ -3951,10 +3983,10 @@ uk:
     placeholder: Пошук...
   seeds:
     actions:
-      destroy: Destroy seed
+      destroy: Видалити seed
       edit: Edit seed
-      show: Show seed
-    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+      show: Переглянути seed
+    confirm_destroy: Ви впевнені, що хочете видалити цей seed? Цю дію не можна скасувати.
     edit:
       title: 'Editing: %{identifier}'
     errors:
@@ -3967,14 +3999,14 @@ uk:
       new_seed: New seed
       title: Seeds
     new:
-      title: New Seed
-    seeded_by: Seeded by %{created_by}
+      title: Новий seed
+    seeded_by: Створено %{created_by}
     show:
-      download_yaml: Download YAML
-      origin: Origin
-      payload: Payload
-      plantings: Planting History
-      yaml_export: YAML Export
+      download_yaml: Завантажити YAML
+      origin: Походження
+      payload: Вміст
+      plantings: Історія висадження
+      yaml_export: Експорт YAML
   shared:
     by: автор
     links:

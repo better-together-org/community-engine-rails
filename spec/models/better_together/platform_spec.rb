@@ -83,6 +83,27 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
         expect(platform.errors[:host_url]).to be_present
       end
     end
+
+    it 'normalizes CSP origin text fields into platform settings' do
+      platform = build(
+        :better_together_platform,
+        csp_frame_ancestors_text: "bebettertogether.ca\nhttps://forms.btsdev.ca",
+        csp_frame_src_text: "forms.btsdev.ca\nwww.youtube.com",
+        csp_img_src_text: 'images.example.com'
+      )
+
+      expect(platform).to be_valid
+      expect(platform.csp_frame_ancestors).to eq(['https://bebettertogether.ca', 'https://forms.btsdev.ca'])
+      expect(platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
+      expect(platform.csp_img_src).to eq(['https://images.example.com'])
+    end
+
+    it 'adds validation errors for invalid CSP origin entries' do
+      platform = build(:better_together_platform, csp_frame_src_text: "https://forms.btsdev.ca/embed\nhttp://bad.example.com")
+
+      expect(platform).not_to be_valid
+      expect(platform.errors[:csp_frame_src_text]).to be_present
+    end
   end
 
   describe 'platform domain synchronization' do
