@@ -4,7 +4,7 @@
 module BetterTogether
   module Metrics
     class TrackDownloadJob < MetricsJob # rubocop:todo Style/Documentation
-      def perform(downloadable, file_name, file_type, file_size, locale, platform_id, logged_in) # rubocop:todo Metrics/ParameterLists
+      def perform(downloadable, file_name, file_type, file_size, locale, platform_id = nil, logged_in = false) # rubocop:todo Metrics/ParameterLists,Style/OptionalBooleanParameter
         BetterTogether::Metrics::Download.create!(
           downloadable:, # Polymorphic resource
           file_name:,            # File name

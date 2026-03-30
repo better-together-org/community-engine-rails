@@ -10,7 +10,7 @@ RSpec.describe BetterTogether::Metrics::TrackPageViewJob, 'Platform tracking' do
   describe 'tracking platform page views' do
     it 'creates a page view with URL for Platform' do
       expect do
-        described_class.perform_now(platform, locale)
+        described_class.perform_now(platform, locale, platform.id, false)
       end.to change(BetterTogether::Metrics::PageView, :count).by(1)
 
       page_view = BetterTogether::Metrics::PageView.last
@@ -21,7 +21,7 @@ RSpec.describe BetterTogether::Metrics::TrackPageViewJob, 'Platform tracking' do
     end
 
     it 'stores only the path component of the URL' do
-      described_class.perform_now(platform, locale)
+      described_class.perform_now(platform, locale, platform.id, false)
 
       page_view = BetterTogether::Metrics::PageView.last
       # page_url should be just the path, not a full URL
