@@ -28,6 +28,10 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
   describe 'POST /api/v1/membership_requests' do
     let(:url) { '/api/v1/membership_requests' }
 
+    it 'registers a dedicated Rack::Attack throttle for public submissions' do
+      expect(Rack::Attack.throttles.keys).to include('api_membership_requests/ip')
+    end
+
     context 'with valid unauthenticated request' do
       before { post url, params: valid_payload, headers: jsonapi_headers }
 
