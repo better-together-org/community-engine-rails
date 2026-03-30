@@ -9,9 +9,11 @@
     <%= link_to t('better_together.platform_connections.actions.view'), better_together.platform_connection_path(platform_connection),
                 class: 'btn btn-sm btn-outline-primary',
                 aria: { label: t('better_together.platform_connections.actions.view_aria', source: platform_connection.source_platform.name, target: platform_connection.target_platform.name) } %>
-    <%= link_to t('better_together.platform_connections.actions.edit'), better_together.edit_platform_connection_path(platform_connection),
-                class: 'btn btn-sm btn-outline-secondary',
-                aria: { label: t('better_together.platform_connections.actions.edit_aria', source: platform_connection.source_platform.name, target: platform_connection.target_platform.name) } %>
+    <% if policy(platform_connection).update? %>
+      <%= link_to t('better_together.platform_connections.actions.edit'), better_together.edit_platform_connection_path(platform_connection),
+                  class: 'btn btn-sm btn-outline-secondary',
+                  aria: { label: t('better_together.platform_connections.actions.edit_aria', source: platform_connection.source_platform.name, target: platform_connection.target_platform.name) } %>
+    <% end %>
     <% if policy(platform_connection).approve? && (platform_connection.pending? || platform_connection.suspended?) %>
       <%= button_to t('better_together.platform_connections.actions.approve'),
                     better_together.approve_platform_connection_path(platform_connection),

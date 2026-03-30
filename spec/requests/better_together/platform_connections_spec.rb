@@ -54,6 +54,28 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
       expect(response).to have_http_status(:not_found)
     end
+
+    it 'does not render edit links for approval-only operators' do
+      sign_in approval_operator
+
+      get better_together.platform_connections_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include(better_together.edit_platform_connection_path(platform_connection))
+    end
+  end
+
+  describe 'GET /show' do
+    it 'shows approve controls but no edit link for approval-only operators' do
+      pending_connection = create(:better_together_platform_connection)
+      sign_in approval_operator
+
+      get better_together.platform_connection_path(pending_connection, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(better_together.approve_platform_connection_path(pending_connection))
+      expect(response.body).not_to include(better_together.edit_platform_connection_path(pending_connection))
+    end
   end
 
   describe 'GET /new' do
@@ -246,6 +268,25 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
       expect(response).to have_http_status(:not_found)
       expect(platform_connection.reload.federation_auth_policy).not_to eq('api_write')
+    end
+  end
+
+  describe 'GET /edit' do
+    it 'does not expose a writable status field in the generic edit form' do
+      sign_in network_admin
+
+      get better_together.edit_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('name="platform_connection[status]"')
+    end
+
+    it 'rejects edit access for approval-only operators' do
+      sign_in approval_operator
+
+      get better_together.edit_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end
