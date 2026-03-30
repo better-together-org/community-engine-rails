@@ -10,6 +10,7 @@ This guide explains how page views, link clicks, shares, and downloads are track
 - Search queries: tracked in two ways:
   - Server‑side in `SearchController#search` after Elasticsearch returns (records `query`, `results_count`, `locale`).
   - API endpoint `/:locale/bt/metrics/search_queries` (POST) via `Metrics::SearchQueriesController#create` for client‑side tracking.
+  - Host platforms can disable search-query analytics entirely or switch to hashed capture so repeated terms can still be counted without storing raw query text.
 - Downloads: when a report file is downloaded, `TrackDownloadJob` records a `Metrics::Download` (filename, content_type, byte_size, locale).
 
 ## Data Models
@@ -26,6 +27,7 @@ This guide explains how page views, link clicks, shares, and downloads are track
 - `Metrics::SearchQuery`
   - Stores `query`, `searched_at`, `locale`.
   - Created by `Metrics::TrackSearchQueryJob` either from `SearchController#search` or the `/metrics/search_queries` endpoint.
+  - When a platform sets `search_query_analytics_mode` to `hashed`, stored values are SHA-256 digests prefixed with `sha256:`.
 
 ## Reports
 - `Metrics::LinkClickReport`
@@ -56,7 +58,7 @@ This guide explains how page views, link clicks, shares, and downloads are track
 - Privacy‑first:
   - We record what happened, not who did it. No user identifiers are stored in metrics events.
   - Page view URLs strip query parameters and are sanitized to remove sensitive keys; persisted `page_url` is the path only.
-  - Search query tracking stores the query string, count of results, timestamp, and locale.
+  - Search query tracking can be disabled per host platform, or reduced to hashed values so raw search terms are not retained.
   - Platform managers may add third‑party tools (e.g., GA, Sentry) per their own privacy policy and consent practices.
 - Locale: all metrics record `locale` for reporting.
 - Performance: reports aggregate via grouped database queries and only touch filtered subsets.

@@ -31,8 +31,11 @@ module BetterTogether
     end
 
     def track_search_query(search_results)
+      query = BetterTogether::Metrics::SearchQueryCaptureService.new.call(@query)
+      return if query.blank?
+
       BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
-        @query,
+        query,
         search_results.records.length,
         I18n.locale.to_s
       )

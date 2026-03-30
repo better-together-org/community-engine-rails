@@ -25,6 +25,7 @@ module BetterTogether
     CONNECTION_BOOTSTRAP_STATES = %w[pending_host_request pending_review connected opted_out disabled].freeze
     FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
     SOFTWARE_VARIANTS = %w[community_engine generic].freeze
+    SEARCH_QUERY_ANALYTICS_MODES = %w[full hashed].freeze
     CSP_SETTING_KEYS = {
       csp_frame_ancestors_text: 'csp_frame_ancestors',
       csp_frame_src_text: 'csp_frame_src',
@@ -55,6 +56,8 @@ module BetterTogether
       connection_bootstrap_state String
       federation_protocol String
       oauth_issuer_url String
+      search_query_analytics_enabled Boolean, default: true
+      search_query_analytics_mode String, default: 'full'
     end
 
     # Alias the database url column to host_url for clarity
@@ -74,9 +77,8 @@ module BetterTogether
     validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
     validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
     validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
-    validates :oauth_issuer_url,
-              format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
-              allow_blank: true
+    validates :search_query_analytics_mode, inclusion: { in: SEARCH_QUERY_ANALYTICS_MODES }
+    validates :oauth_issuer_url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
     validate :validate_csp_origin_text_fields
 
