@@ -4,51 +4,61 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Metrics::TrackLinkClickJob do
   describe '#perform' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
     let(:url) { 'https://example.com' }
     let(:page_url) { 'https://mysite.com/page' }
     let(:locale) { 'en' }
     let(:internal) { false }
+    let(:logged_in) { true }
 
     it 'creates a LinkClick record' do
       expect do
-        described_class.new.perform(url, page_url, locale, internal)
+        described_class.new.perform(url, page_url, locale, internal, host_platform.id, logged_in)
       end.to change(BetterTogether::Metrics::LinkClick, :count).by(1)
     end
 
     it 'sets the url correctly' do
-      described_class.new.perform(url, page_url, locale, internal)
+      described_class.new.perform(url, page_url, locale, internal, host_platform.id, logged_in)
       link_click = BetterTogether::Metrics::LinkClick.last
       expect(link_click.url).to eq(url)
     end
 
     it 'sets the page_url correctly' do
-      described_class.new.perform(url, page_url, locale, internal)
+      described_class.new.perform(url, page_url, locale, internal, host_platform.id, logged_in)
       link_click = BetterTogether::Metrics::LinkClick.last
       expect(link_click.page_url).to eq(page_url)
     end
 
     it 'sets the locale correctly' do
-      described_class.new.perform(url, page_url, locale, internal)
+      described_class.new.perform(url, page_url, locale, internal, host_platform.id, logged_in)
       link_click = BetterTogether::Metrics::LinkClick.last
       expect(link_click.locale).to eq(locale)
     end
 
     it 'sets the internal flag correctly' do
-      described_class.new.perform(url, page_url, locale, true)
+      described_class.new.perform(url, page_url, locale, true, host_platform.id, logged_in)
       link_click = BetterTogether::Metrics::LinkClick.last
       expect(link_click.internal).to be true
     end
 
     it 'sets clicked_at to current time' do
-      described_class.new.perform(url, page_url, locale, internal)
+      described_class.new.perform(url, page_url, locale, internal, host_platform.id, logged_in)
       link_click = BetterTogether::Metrics::LinkClick.last
       expect(link_click.clicked_at).to be_within(1.second).of(Time.current)
     end
 
+    it 'stores platform and logged-in state' do
+      described_class.new.perform(url, page_url, locale, internal, host_platform.id, logged_in)
+      link_click = BetterTogether::Metrics::LinkClick.last
+
+      expect(link_click.platform).to eq(host_platform)
+      expect(link_click.logged_in).to be(true)
+    end
+
     it 'enqueues the job' do
       expect do
-        described_class.perform_later(url, page_url, locale, internal)
-      end.to have_enqueued_job(described_class).with(url, page_url, locale, internal)
+        described_class.perform_later(url, page_url, locale, internal, host_platform.id, logged_in)
+      end.to have_enqueued_job(described_class).with(url, page_url, locale, internal, host_platform.id, logged_in)
     end
 
     it 'uses the metrics queue' do

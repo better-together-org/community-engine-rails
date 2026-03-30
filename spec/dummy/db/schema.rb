@@ -892,8 +892,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.string "file_type", null: false
     t.bigint "file_size", null: false
     t.datetime "downloaded_at", null: false
+    t.uuid "platform_id", null: false
+    t.boolean "logged_in", default: false, null: false
     t.index ["downloadable_type", "downloadable_id"], name: "index_better_together_metrics_downloads_on_downloadable"
     t.index ["locale"], name: "by_better_together_metrics_downloads_locale"
+    t.index ["platform_id"], name: "index_better_together_metrics_downloads_on_platform_id"
   end
 
   create_table "better_together_metrics_link_checker_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -917,8 +920,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.string "file_format", default: "csv", null: false
     t.jsonb "report_data", default: {}, null: false
     t.uuid "creator_id"
+    t.uuid "platform_id", null: false
     t.index ["creator_id"], name: "index_better_together_metrics_link_click_reports_on_creator_id"
     t.index ["filters"], name: "index_better_together_metrics_link_click_reports_on_filters", using: :gin
+    t.index ["platform_id"], name: "idx_on_platform_id_83bad64dcb"
   end
 
   create_table "better_together_metrics_link_clicks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -930,6 +935,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.string "locale", null: false
     t.boolean "internal", default: true
     t.datetime "clicked_at", null: false
+    t.uuid "platform_id", null: false
+    t.boolean "logged_in", default: false, null: false
+    t.index ["platform_id"], name: "index_better_together_metrics_link_clicks_on_platform_id"
   end
 
   create_table "better_together_metrics_page_view_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -941,8 +949,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.string "file_format", default: "csv", null: false
     t.jsonb "report_data", default: {}, null: false
     t.uuid "creator_id"
+    t.uuid "platform_id", null: false
     t.index ["creator_id"], name: "index_better_together_metrics_page_view_reports_on_creator_id"
     t.index ["filters"], name: "index_better_together_metrics_page_view_reports_on_filters", using: :gin
+    t.index ["platform_id"], name: "index_better_together_metrics_page_view_reports_on_platform_id"
   end
 
   create_table "better_together_metrics_page_views", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -954,8 +964,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.uuid "pageable_id"
     t.datetime "viewed_at", null: false
     t.string "page_url"
+    t.uuid "platform_id", null: false
+    t.boolean "logged_in", default: false, null: false
     t.index ["locale"], name: "by_better_together_metrics_page_views_locale"
     t.index ["pageable_type", "pageable_id"], name: "index_better_together_metrics_page_views_on_pageable"
+    t.index ["platform_id"], name: "index_better_together_metrics_page_views_on_platform_id"
   end
 
   create_table "better_together_metrics_rich_text_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -988,7 +1001,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.string "query", null: false
     t.integer "results_count", null: false
     t.datetime "searched_at", null: false
+    t.uuid "platform_id", null: false
+    t.boolean "logged_in", default: false, null: false
     t.index ["locale"], name: "by_better_together_metrics_search_queries_locale"
+    t.index ["platform_id"], name: "index_better_together_metrics_search_queries_on_platform_id"
   end
 
   create_table "better_together_metrics_shares", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1001,8 +1017,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.datetime "shared_at", null: false
     t.string "shareable_type"
     t.uuid "shareable_id"
+    t.uuid "platform_id", null: false
+    t.boolean "logged_in", default: false, null: false
     t.index ["locale"], name: "by_better_together_metrics_shares_locale"
     t.index ["platform", "url"], name: "index_better_together_metrics_shares_on_platform_and_url"
+    t.index ["platform_id"], name: "index_better_together_metrics_shares_on_platform_id"
     t.index ["shareable_type", "shareable_id"], name: "index_better_together_metrics_shares_on_shareable"
   end
 
@@ -2083,9 +2102,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
   add_foreign_key "better_together_joatu_response_links", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
+  add_foreign_key "better_together_metrics_downloads", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_metrics_link_checker_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_metrics_link_click_reports", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_metrics_link_click_reports", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_metrics_link_clicks", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_metrics_page_view_reports", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_metrics_page_view_reports", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_metrics_page_views", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_metrics_search_queries", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_metrics_shares", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_metrics_user_account_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"

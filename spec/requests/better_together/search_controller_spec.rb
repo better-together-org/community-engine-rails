@@ -7,6 +7,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
   let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
   let(:capture_service) { instance_double(BetterTogether::Metrics::SearchQueryCaptureService, call: captured_query) }
   let(:captured_query) { 'test query' }
+  let!(:host_platform) { configure_host_platform }
 
   before do
     allow(BetterTogether::Search).to receive(:backend).and_return(backend)
@@ -44,7 +45,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         expect do
           get better_together.search_path(locale:), params: { q: 'test query' }
         end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
-          .with('test query', 0, locale.to_s)
+          .with(captured_query, 0, locale.to_s, host_platform.id, true)
       end
 
       it 'creates a search query metric when job is performed' do
@@ -58,7 +59,9 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         expect(metric).to have_attributes(
           query: 'test query',
           results_count: 0,
-          locale: locale.to_s
+          locale: locale.to_s,
+          platform_id: host_platform.id,
+          logged_in: true
         )
       end
 
@@ -70,7 +73,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         expect do
           get better_together.search_path(locale:), params: { q: 'Test Query' }
         end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
-          .with("sha256:#{Digest::SHA256.hexdigest('test query')}", 0, locale.to_s)
+          .with("sha256:#{Digest::SHA256.hexdigest('test query')}", 0, locale.to_s, host_platform.id, true)
       end
 
       it 'does not enqueue search analytics when capture returns nil' do
@@ -120,7 +123,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         expect do
           get better_together.search_path(locale:), params: { q: 'test' }
         end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
-          .with('test', 0, locale.to_s)
+          .with('test', 0, locale.to_s, host_platform.id, true)
 
         expect(response).to have_http_status(:ok)
       end
