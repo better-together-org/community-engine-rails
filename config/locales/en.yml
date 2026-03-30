@@ -3654,10 +3654,11 @@ en:
         cover_image: Cover image
       person:
         allow_messages_from_members: Opt-in to receive messages from people other
+          than platform managers.
         cover_image: Upload a cover image to display at the top of the profile.
         description: Provide a brief description or biography.
         federate_content: Opt-in to let this platform share your public posts, pages,
-          and events with approved connected platforms. than platform managers.
+          and events with approved connected platforms.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
