@@ -25,8 +25,10 @@
     <%= csrf_meta_tags %>
     <% if current_user&.person %>
       <%= tag.meta name: "current-person-id", content: current_user.person.id %>
-      <%# Short-lived JWT for in-browser API calls (e.g. E2E key backup). Never log or expose this value. %>
-      <%= tag.meta name: "current-user-token", content: current_user_api_token %>
+      <% if e2ee_messaging_enabled? %>
+        <%# Short-lived JWT for in-browser API calls (e.g. E2E key backup). Never log or expose this value. %>
+        <%= tag.meta name: "current-user-token", content: current_user_api_token %>
+      <% end %>
     <% end %>
     <%= csp_meta_tag %>
     <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
@@ -78,23 +80,6 @@
 
       <!-- Custom Mobile Bar from Host App -->
       <%= content_for?(:custom_mobile_bar) ? yield(:custom_mobile_bar) : render('layouts/better_together/mobile_bar') %>
-
-      <!-- E2E session initialiser (conversation-enabled users only; skipped in test env to prevent modal interference) -->
-      <% unless Rails.env.test? %>
-        <% if current_user&.person %>
-          <div data-controller="better-together--e2e-session"
-               data-better-together--e2e-session-person-id-value="<%= current_user.person.id %>"
-               data-better-together--e2e-session-passphrase-backup-message-value="<%= t('better_together.e2e.session.passphrase_backup_message') %>"
-               data-better-together--e2e-session-passphrase-restore-message-value="<%= t('better_together.e2e.session.passphrase_restore_message') %>"
-               data-better-together--e2e-session-confirm-fresh-identity-message-value="<%= t('better_together.e2e.session.confirm_fresh_identity_message') %>"
-               data-better-together--e2e-session-server-error-message-value="<%= t('better_together.e2e.session.server_error_message') %>"
-               hidden></div>
-        <% end %>
-      <% end %>
-
-      <!-- E2E passphrase modal (Bootstrap-based, replaces window.prompt) -->
-      <%= render 'better_together/e2e/passphrase_modal' %>
-
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
     </div>

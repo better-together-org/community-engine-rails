@@ -72,4 +72,6 @@
 		<div class="card-footer">
 			<%= render partial: 'better_together/messages/form' , locals: { conversation: conversation, message: message } %>
 		</div>
+
+		<%= render 'better_together/e2e/session_bootstrap' if BetterTogether.e2ee_messaging_enabled? && current_person.present? %>
 </div>

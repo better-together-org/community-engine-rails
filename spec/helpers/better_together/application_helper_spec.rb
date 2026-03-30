@@ -127,6 +127,35 @@ RSpec.describe BetterTogether::ApplicationHelper do
     end
   end
 
+  describe '#e2ee_messaging_enabled?' do
+    before do
+      allow(ENV).to receive(:fetch).and_call_original
+    end
+
+    it 'defaults to false when the feature flag is unset' do
+      allow(ENV).to receive(:fetch).with('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil).and_return(nil)
+
+      expect(helper.e2ee_messaging_enabled?).to be false
+    end
+
+    it 'returns true when the feature flag is enabled' do
+      allow(ENV).to receive(:fetch).with('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil).and_return('true')
+
+      expect(helper.e2ee_messaging_enabled?).to be true
+    end
+  end
+
+  describe '#e2ee_messaging_enabled_for?' do
+    let(:person) { double('person', present?: true) } # rubocop:todo RSpec/VerifiedDoubles
+
+    it 'requires both the feature flag and a person' do
+      allow(helper).to receive(:e2ee_messaging_enabled?).and_return(true)
+
+      expect(helper.e2ee_messaging_enabled_for?(person)).to be true
+      expect(helper.e2ee_messaging_enabled_for?(nil)).to be false
+    end
+  end
+
   describe '#robots_meta_tag' do
     it 'renders default robots meta tag' do
       allow(helper).to receive(:stimulus_debug_enabled?).and_return(false)

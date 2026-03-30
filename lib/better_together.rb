@@ -30,6 +30,10 @@ module BetterTogether
   self.swagger_additional_endpoints = []
 
   class << self
+    def e2ee_messaging_enabled?
+      ActiveModel::Type::Boolean.new.cast(ENV.fetch('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil)) == true
+    end
+
     def base_path
       BetterTogether::Engine.routes.find_script_name({})
     end

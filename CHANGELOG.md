@@ -21,8 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Federation idempotent mirror lookup + identifier conflict namespacing (#1405)
 
 #### End-to-End Encrypted Conversations
-- Signal Protocol E2E encryption for conversations: `EncryptedConversation` model, key exchange, sealed-sender delivery (#1357)
-- Encryption state stored per conversation; plaintext fallback for legacy conversations
+- Signal Protocol E2E encryption beta for conversations: `EncryptedConversation` model, key exchange, sealed-sender delivery (#1357)
+- Disabled by default behind `BETTER_TOGETHER_E2EE_MESSAGING_ENABLED`; the E2EE bootstrap and send-form behaviors are mounted from conversation surfaces rather than the main application layout
+- Activation guidance for `0.11.0`: limit enablement to opted-in deployments and intended conversation surfaces while V9/V10 bundle follow-ups remain open in the security model
+- Encryption state stored per conversation; plaintext fallback remains available for legacy or not-yet-ready conversations
 
 #### CMS Block System
 - `BlockResource` base model and 19 concrete block type models: text, image, video, audio, map, embed, CTA, divider, accordion, checklist, mermaid diagram, and more (#1376)

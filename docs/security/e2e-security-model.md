@@ -2,7 +2,20 @@
 
 **Feature:** Signal Protocol E2E encryption for 1:1 and group conversations
 **Branch:** feat/e2e-signal-protocol
-**Last updated:** 2026-03-16
+**Last updated:** 2026-03-30
+
+---
+
+## Release posture for 0.11.0
+
+Community Engine `0.11.0` ships the E2EE conversation stack as a beta capability. Current code keeps the feature disabled by default unless `BETTER_TOGETHER_E2EE_MESSAGING_ENABLED` is set, and the E2EE session bootstrap is rendered from conversation surfaces rather than mounted globally from the main application layout.
+
+Recommended activation posture:
+
+- enable only on deployments that have explicitly opted in
+- limit rollout to intended conversation surfaces and support cohorts
+- describe the feature as beta / disabled-by-default, not broad general availability
+- review the pending V9 and V10 follow-ups before widening rollout guidance
 
 ---
 
@@ -59,12 +72,20 @@ The following claims are accurate and may be made:
 > "Your backup passphrase is never sent to the server. It cannot be recovered if lost.
 > Use a passphrase of at least 20 characters."
 
+> "This deployment has enabled Community Engine's beta end-to-end encryption for selected
+> conversations."
+
 The following claims are **NOT** accurate and must not be made:
 
 - ~~"Your messages cannot be read by anyone but you and your recipients"~~ — physical device
   access or browser-level compromise on the same origin can expose key material.
 - ~~"Your encryption keys are protected even if your device is compromised"~~ — not true for
   web-based E2E; make no such claim.
+- ~~"End-to-end encryption is enabled everywhere by default"~~ — `0.11.0` keeps the feature
+  disabled by default unless a deployment explicitly opts in.
+- ~~"Community Engine end-to-end encryption is generally available for all deployments"~~ —
+  the current rollout posture is beta-gated and limited to selected deployments and
+  conversation surfaces.
 
 ---
 
