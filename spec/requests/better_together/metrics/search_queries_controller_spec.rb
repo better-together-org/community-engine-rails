@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::Metrics::SearchQueriesController' do
   let(:locale) { I18n.default_locale }
   let(:capture_service) { instance_double(BetterTogether::Metrics::SearchQueryCaptureService, call: 'test') }
+  let!(:host_platform) { configure_host_platform }
 
   before do
     allow(BetterTogether::Metrics::SearchQueryCaptureService).to receive(:new).and_return(capture_service)
@@ -18,7 +19,8 @@ RSpec.describe 'BetterTogether::Metrics::SearchQueriesController' do
         query: 'test',
         results_count: 3
       }
-    end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob).with('test', 3, locale.to_s)
+    end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+      .with('test', 3, locale.to_s, host_platform.id, false)
 
     expect(response).to have_http_status(:ok)
     expect(JSON.parse(response.body)['success']).to be(true)
@@ -35,7 +37,7 @@ RSpec.describe 'BetterTogether::Metrics::SearchQueriesController' do
         results_count: 3
       }
     end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
-      .with("sha256:#{Digest::SHA256.hexdigest('test query')}", 3, locale.to_s)
+      .with("sha256:#{Digest::SHA256.hexdigest('test query')}", 3, locale.to_s, host_platform.id, false)
   end
 
   it 'does not enqueue when capture returns nil' do
