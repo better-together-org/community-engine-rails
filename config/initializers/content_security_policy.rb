@@ -13,12 +13,15 @@ Rails.application.configure do
     # and the configured asset host when host apps serve digested assets from a separate CDN domain.
     p.script_src(*BetterTogether::ContentSecurityPolicySources.script_sources)
     p.style_src(*BetterTogether::ContentSecurityPolicySources.style_sources)
+    # These helpers keep the strict baseline while allowing trusted origins from
+    # env defaults and optional per-platform settings.
     p.img_src(*BetterTogether::ContentSecurityPolicySources.img_sources)
     p.font_src(*BetterTogether::ContentSecurityPolicySources.font_sources)
+    p.frame_src(*BetterTogether::ContentSecurityPolicySources.frame_sources)
     p.connect_src :self,
                   :wss # ActionCable WebSocket connections
     p.form_action :self
-    p.frame_ancestors :none
+    p.frame_ancestors(*BetterTogether::ContentSecurityPolicySources.frame_ancestor_sources)
     p.object_src :none
   end
 

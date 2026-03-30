@@ -23,15 +23,9 @@ module BetterTogether
         'better_together/static_pages/subprocessors' => 'better_together.static_pages.subprocessors'
       }.freeze
 
-      # Returns an array of acceptable image file types
-      def acceptable_image_file_types
-        BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES
-      end
+      def acceptable_image_file_types = BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES
 
-      # Helper to generate a unique temp_id for a model
-      def temp_id_for(model, temp_id: SecureRandom.uuid)
-        model.persisted? ? model.id : temp_id
-      end
+      def temp_id_for(model, temp_id: SecureRandom.uuid) = model.persisted? ? model.id : temp_id
 
       # Sanitize HTML content for safe rendering in custom blocks
       def sanitize_block_html(html)
@@ -66,14 +60,37 @@ module BetterTogether
         end
       end
 
+      def iframe_embed_state(url)
+        origin = BetterTogether::ContentSecurityPolicySources.origin_for_url(url)
+        return { status: :invalid, origin: nil, allowed_sources: resolved_frame_sources } if origin.nil?
+
+        {
+          status: iframe_origin_allowed?(origin) ? :allowed : :blocked,
+          origin: origin,
+          allowed_sources: resolved_frame_sources
+        }
+      end
+
+      def resolved_frame_sources
+        @resolved_frame_sources ||= BetterTogether::ContentSecurityPolicySources.frame_sources.flat_map do |source|
+          source.respond_to?(:call) ? Array(instance_exec(&source)) : [source]
+        end.uniq
+      end
+
+      def iframe_origin_allowed?(origin)
+        current_origin = BetterTogether::ContentSecurityPolicySources.origin_for_url(request&.base_url)
+        resolved_frame_sources.any? do |source|
+          source == origin || (source == :self && current_origin.present? && current_origin == origin)
+        end
+      end
+
+      def iframe_embed_cache_key(block, url)
+        [block.cache_key_with_version, request&.base_url,
+         BetterTogether::ContentSecurityPolicySources.origin_for_url(url), resolved_frame_sources]
+      end
+
       # Returns a privacy-scoped, optionally community-scoped, limited collection
-      # of records for a resource collection block.
-      #
-      # @param block [BetterTogether::Content::Block] the resource block instance
-      # @param resource_class [Class] the ActiveRecord class to query
-      # @param extra_scope [Proc, nil] optional lambda applied to the scope after
-      #   policy_scope and community scoping, before limit (e.g., ordering)
-      # @return [ActiveRecord::Relation]
+      # for a resource collection block.
       def resource_block_collection(block, resource_class, extra_scope: nil)
         ids = block.parsed_resource_ids
 

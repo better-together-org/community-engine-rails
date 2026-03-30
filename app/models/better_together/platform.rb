@@ -25,6 +25,11 @@ module BetterTogether
     CONNECTION_BOOTSTRAP_STATES = %w[pending_host_request pending_review connected opted_out disabled].freeze
     FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
     SOFTWARE_VARIANTS = %w[community_engine generic].freeze
+    CSP_SETTING_KEYS = {
+      csp_frame_ancestors_text: 'csp_frame_ancestors',
+      csp_frame_src_text: 'csp_frame_src',
+      csp_img_src_text: 'csp_img_src'
+    }.freeze
 
     has_community
 
@@ -73,8 +78,10 @@ module BetterTogether
               format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
               allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
+    validate :validate_csp_origin_text_fields
 
     before_validation :apply_platform_registry_defaults
+    before_validation :persist_csp_origin_settings
 
     scope :external, -> { where(external: true) }
     scope :internal, -> { where(external: false) }
@@ -112,10 +119,35 @@ module BetterTogether
 
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image
+    attr_writer :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text
 
     # Callbacks to remove images if necessary
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
+
+    def csp_frame_ancestors
+      csp_setting_values('csp_frame_ancestors')
+    end
+
+    def csp_frame_src
+      csp_setting_values('csp_frame_src')
+    end
+
+    def csp_img_src
+      csp_setting_values('csp_img_src')
+    end
+
+    def csp_frame_ancestors_text
+      @csp_frame_ancestors_text || csp_frame_ancestors.join("\n")
+    end
+
+    def csp_frame_src_text
+      @csp_frame_src_text || csp_frame_src.join("\n")
+    end
+
+    def csp_img_src_text
+      @csp_img_src_text || csp_img_src.join("\n")
+    end
 
     def cache_key
       "#{super}/#{css_block&.updated_at&.to_i}"
@@ -161,6 +193,45 @@ module BetterTogether
       BetterTogether::SafeFederationUrlValidator
         .new(attributes: [:oauth_issuer_url])
         .validate_each(self, :oauth_issuer_url, oauth_issuer_url)
+    end
+
+    def persist_csp_origin_settings
+      updated_settings = settings.deep_dup
+
+      CSP_SETTING_KEYS.each do |text_attribute, setting_key|
+        next unless instance_variable_defined?(:"@#{text_attribute}")
+
+        normalized_values = BetterTogether::ContentSecurityPolicySources
+                            .parse_origin_list(public_send(text_attribute))
+
+        if normalized_values.empty?
+          updated_settings.delete(setting_key)
+        else
+          updated_settings[setting_key] = normalized_values
+        end
+      end
+
+      self.settings = updated_settings
+    end
+
+    def validate_csp_origin_text_fields
+      CSP_SETTING_KEYS.each_key do |text_attribute|
+        next unless instance_variable_defined?(:"@#{text_attribute}")
+
+        invalid_values = BetterTogether::ContentSecurityPolicySources.invalid_origins(public_send(text_attribute))
+        next if invalid_values.empty?
+
+        errors.add(
+          text_attribute,
+          "contains invalid origins: #{invalid_values.join(', ')}. Use HTTPS origins or hostnames only."
+        )
+      end
+    end
+
+    def csp_setting_values(setting_key)
+      Array(settings[setting_key]).filter_map do |value|
+        BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
+      end.uniq
     end
   end
 end

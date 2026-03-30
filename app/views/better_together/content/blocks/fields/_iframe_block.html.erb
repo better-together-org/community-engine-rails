@@ -1,0 +1,36 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="iframe-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[iframe_url]", block.class.human_attribute_name('iframe_url', default: 'Iframe URL'), class: 'form-label' %>
+    <%= url_field_tag "#{scope}[iframe_url]", block.iframe_url, class: 'form-control',
+                      placeholder: 'https://forms.btsdev.ca/s/example' %>
+    <div class="form-text">
+      <%= t('better_together.content.blocks.iframe_block.url_help') %>
+    </div>
+  </div>
+
+  <div class="mb-3 row row-cols-1 row-cols-sm-2">
+    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+               locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'title' } %>
+    <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+               locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'caption' } %>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[aspect_ratio]", block.class.human_attribute_name('aspect_ratio', default: 'Aspect Ratio'), class: 'form-label' %>
+      <%= select_tag "#{scope}[aspect_ratio]",
+                     options_for_select(
+                       [['16:9 (Widescreen)', '16x9'], ['4:3 (Standard)', '4x3'], ['1:1 (Square)', '1x1'], ['21:9 (Wide)', '21x9']],
+                       block.aspect_ratio
+                     ),
+                     class: 'form-select',
+                     data: { controller: 'better_together--slim-select' } %>
+    </div>
+  </div>
+
+  <div class="form-text text-muted">
+    <%= t('better_together.content.blocks.iframe_block.csp_help') %>
+  </div>
+</div>

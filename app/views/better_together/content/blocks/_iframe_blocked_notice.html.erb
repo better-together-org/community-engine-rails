@@ -1,0 +1,23 @@
+<%# locals: (aspect_ratio:, iframe_url:, embed_state:, title:) -%>
+<div class="ratio ratio-<%= aspect_ratio %>">
+  <div class="iframe-block__notice border rounded d-flex align-items-center justify-content-center p-4 text-center bg-light" role="alert">
+    <div class="mx-auto" style="max-width: 34rem;">
+      <p class="fw-semibold mb-2"><%= t('better_together.content.blocks.embeds.blocked_title') %></p>
+      <p class="text-muted mb-3">
+        <%= t('better_together.content.blocks.embeds.blocked_body', title: title) %>
+      </p>
+      <p class="small text-muted mb-3">
+        <strong><%= t('better_together.content.blocks.embeds.blocked_origin_label') %></strong>
+        <span class="font-monospace text-body"><%= embed_state[:origin] %></span>
+      </p>
+      <p class="small text-muted mb-3">
+        <%= t('better_together.content.blocks.embeds.blocked_instructions', origin: embed_state[:origin]) %>
+      </p>
+      <%= link_to t('better_together.content.blocks.embeds.open_in_new_tab'),
+                  iframe_url,
+                  class: 'btn btn-primary btn-sm',
+                  target: '_blank',
+                  rel: 'noopener noreferrer' %>
+    </div>
+  </div>
+</div>

@@ -45,6 +45,10 @@ module BetterTogether
         end
       end
 
+      def embed_title
+        caption.presence || I18n.t('better_together.content.blocks.video_block.title')
+      end
+
       def self.content_addable?
         true
       end
