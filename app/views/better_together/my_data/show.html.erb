@@ -1,0 +1,124 @@
+<%= turbo_frame_tag 'my-data-settings' do %>
+  <div class="container my-3">
+    <h1 class="h2 mb-3">
+      <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
+      <%= t('better_together.settings.index.my_data.title') %>
+    </h1>
+    <p class="text-muted mb-4"><%= t('better_together.settings.index.my_data.description') %></p>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="h5 mb-1"><%= t('better_together.settings.index.my_data.exports.title') %></h2>
+            <p class="text-muted mb-0"><%= t('better_together.settings.index.my_data.exports.description') %></p>
+          </div>
+          <%= button_to person_data_exports_path(locale: locale), method: :post, class: 'btn btn-primary', data: { turbo_submits_with: t('better_together.settings.index.my_data.exports.requesting') } do %>
+            <i class="fa-solid fa-download me-1" aria-hidden="true"></i>
+            <%= t('better_together.settings.index.my_data.exports.request') %>
+          <% end %>
+        </div>
+
+        <% if @person_data_exports.empty? %>
+          <div class="alert alert-info mb-0" role="status"><%= t('better_together.settings.index.my_data.exports.empty') %></div>
+        <% else %>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th><%= t('better_together.settings.index.my_data.exports.requested_at') %></th>
+                  <th><%= t('better_together.settings.index.my_data.exports.status') %></th>
+                  <th><%= t('better_together.settings.index.my_data.exports.actions') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @person_data_exports.each do |export| %>
+                  <tr id="person_data_export_<%= export.id %>">
+                    <td><%= l(export.requested_at, format: :long) %></td>
+                    <td><span class="badge text-bg-secondary"><%= export.status.humanize %></span></td>
+                    <td>
+                      <% if export.completed? && export.export_file.attached? %>
+                        <%= link_to t('better_together.settings.index.my_data.exports.download'), person_data_export_path(export, locale: locale), class: 'btn btn-sm btn-outline-primary' %>
+                      <% elsif export.failed? %>
+                        <span class="text-danger small"><%= export.error_message %></span>
+                      <% else %>
+                        <span class="text-muted small"><%= t('better_together.settings.index.my_data.exports.pending') %></span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <h2 class="h5 mb-1"><%= t('better_together.settings.index.my_data.deletion.title') %></h2>
+        <p class="text-muted"><%= t('better_together.settings.index.my_data.deletion.description') %></p>
+
+        <%= form_with url: person_deletion_requests_path(locale: locale), method: :post, local: true do |form| %>
+          <div class="mb-3">
+            <%= form.label :requested_reason, t('better_together.settings.index.my_data.deletion.reason'), class: 'form-label' %>
+            <%= form.text_area :requested_reason, name: 'person_deletion_request[requested_reason]', rows: 3, class: 'form-control' %>
+          </div>
+          <%= form.submit t('better_together.settings.index.my_data.deletion.submit'), class: 'btn btn-outline-danger' %>
+        <% end %>
+
+        <% if @person_deletion_requests.any? %>
+          <hr>
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th><%= t('better_together.settings.index.my_data.deletion.requested_at') %></th>
+                  <th><%= t('better_together.settings.index.my_data.deletion.status') %></th>
+                  <th><%= t('better_together.settings.index.my_data.deletion.actions') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @person_deletion_requests.each do |request| %>
+                  <tr id="person_deletion_request_<%= request.id %>">
+                    <td><%= l(request.requested_at, format: :long) %></td>
+                    <td><span class="badge text-bg-warning"><%= request.status.humanize %></span></td>
+                    <td>
+                      <% if request.pending? %>
+                        <%= button_to t('better_together.settings.index.my_data.deletion.cancel'), person_deletion_request_path(request, locale: locale), method: :delete, class: 'btn btn-sm btn-outline-secondary' %>
+                      <% else %>
+                        <span class="text-muted small"><%= request.resolved_at ? l(request.resolved_at, format: :long) : '—' %></span>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5 mb-1"><%= t('better_together.settings.index.my_data.seeds.title') %></h2>
+        <p class="text-muted"><%= t('better_together.settings.index.my_data.seeds.description') %></p>
+        <% if @personal_seeds.empty? %>
+          <div class="alert alert-info mb-0" role="status"><%= t('better_together.settings.index.my_data.seeds.empty') %></div>
+        <% else %>
+          <ul class="list-group list-group-flush">
+            <% @personal_seeds.each do |seed| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <div>
+                  <strong><%= seed.identifier %></strong>
+                  <div class="small text-muted"><%= l(seed.seeded_at || seed.created_at, format: :long) %></div>
+                </div>
+                <%= link_to t('better_together.settings.index.my_data.seeds.view'), person_seed_path(seed, locale: locale), class: 'btn btn-sm btn-outline-secondary' %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
