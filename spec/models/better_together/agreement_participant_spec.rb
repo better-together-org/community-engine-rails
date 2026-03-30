@@ -38,4 +38,12 @@ RSpec.describe BetterTogether::AgreementParticipant do
     expect(participant.agreement_updated_at_snapshot).to eq(original_revision)
     expect(participant.audit_context).to include('source_path' => '/en/agreements/status')
   end
+
+  it 'falls back to a humanized identifier when the agreement title is blank' do
+    agreement.update!(title: nil)
+
+    participant = create(:better_together_agreement_participant, agreement:, person:)
+
+    expect(participant.agreement_title_snapshot).to eq(agreement.identifier.to_s.humanize)
+  end
 end
