@@ -223,7 +223,7 @@
             <p class="text-muted mb-4"><%= t('.my_data.description') %></p>
 
             <%= turbo_frame_tag 'my-data-settings',
-                                src: person_seeds_path(locale: locale),
+                                src: settings_my_data_path(locale: locale),
                                 loading: 'lazy',
                                 class: 'd-block' do %>
               <div class="d-flex justify-content-center py-4">
