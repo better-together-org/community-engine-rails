@@ -15,6 +15,7 @@ This guide helps elected platform organizers manage platform-wide operations whi
 ## Compliance and Governance
 - [Roles and Permissions](../shared/roles_and_permissions.md) - Authority structure and delegation
 - [Privacy Principles](../shared/privacy_principles.md) - Platform security & privacy
+- [Federation Privacy and Consent](federation_privacy_and_consent.md) - Safe operation of cross-platform trust and sharing
 
 ## Democratic Leadership
 Platform organizers are elected by the platform community and serve to support community organizers while maintaining platform-wide standards and cooperative values.
