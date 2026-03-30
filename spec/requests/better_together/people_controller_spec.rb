@@ -125,7 +125,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   end
 
   describe 'PATCH /:locale/.../host/p/:id' do
-    let!(:person) { create(:better_together_person) }
+    let!(:person) { platform_manager.person }
 
     # rubocop:todo RSpec/MultipleExpectations
     it 'updates name and redirects' do # rubocop:todo RSpec/MultipleExpectations
