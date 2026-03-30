@@ -18,7 +18,7 @@ module BetterTogether
     alias new? create?
 
     def update?
-      can_manage_network_connections? || can_approve_network_connections?
+      can_manage_network_connections?
     end
     alias edit? update?
 
