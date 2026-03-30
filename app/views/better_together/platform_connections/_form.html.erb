@@ -51,7 +51,7 @@
 
     <div class="row">
       <div class="col-md-6 mb-3">
-        <label class="form-label" for="platform_connection_status"><%= t('activerecord.attributes.better_together/platform_connection.status') %></label>
+        <label class="form-label" for="platform_connection_status"><%= BetterTogether::PlatformConnection.human_attribute_name(:status) %></label>
         <p id="platform_connection_status" class="form-control-plaintext mb-0">
           <%= t("better_together.enums.platform_connection.status.#{platform_connection.status}") %>
         </p>
