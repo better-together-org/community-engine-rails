@@ -3,6 +3,8 @@
 module BetterTogether
   # Handles dispatching search queries to elasticsearch and displaying the results
   class SearchController < ApplicationController
+    include Metrics::PlatformContext
+
     def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       @query = params[:q]
       search_results = perform_search
@@ -37,7 +39,9 @@ module BetterTogether
       BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
         query,
         search_results.records.length,
-        I18n.locale.to_s
+        I18n.locale.to_s,
+        metrics_platform.id,
+        metrics_logged_in?
       )
     end
 

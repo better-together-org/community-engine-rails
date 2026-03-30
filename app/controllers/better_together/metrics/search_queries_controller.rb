@@ -3,7 +3,9 @@
 module BetterTogether
   module Metrics
     class SearchQueriesController < ApplicationController # rubocop:todo Style/Documentation
-      def create
+      include PlatformContext
+
+      def create # rubocop:todo Metrics/MethodLength
         query = params[:query]
         results_count = params[:results_count]
         locale = I18n.locale.to_s
@@ -15,7 +17,13 @@ module BetterTogether
 
         tracked_query = BetterTogether::Metrics::SearchQueryCaptureService.new.call(query)
         if tracked_query.present?
-          BetterTogether::Metrics::TrackSearchQueryJob.perform_later(tracked_query, results_count.to_i, locale)
+          BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
+            tracked_query,
+            results_count.to_i,
+            locale,
+            metrics_platform.id,
+            metrics_logged_in?
+          )
         end
 
         render json: { success: true }, status: :ok
