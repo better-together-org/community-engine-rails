@@ -711,6 +711,14 @@ fr:
         close: Fermer
         title: Afficher l'accord requis
       participant:
+        acceptance_methods:
+          agreement_review: examen de l’accord
+          api: API
+          legacy: enregistrement hérité
+          sign_up: inscription
+          system: système
+        accepted_via: Accepté via %{method}
+        agreement_revision: Révision de l’accord %{timestamp}
         pending: en attente
       show:
         title: Accord

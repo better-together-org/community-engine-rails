@@ -710,6 +710,14 @@ es:
         close: Cerrar
         title: Ver acuerdo requerido
       participant:
+        acceptance_methods:
+          agreement_review: revisión del acuerdo
+          api: API
+          legacy: registro heredado
+          sign_up: registro
+          system: sistema
+        accepted_via: Aceptado mediante %{method}
+        agreement_revision: Versión del acuerdo %{timestamp}
         pending: Pendiente
       show:
         title: Acuerdo

@@ -699,6 +699,14 @@ uk:
         close: Закрити
         title: Переглянути обов'язкову угоду
       participant:
+        acceptance_methods:
+          agreement_review: перегляд угоди
+          api: API
+          legacy: застарілий запис
+          sign_up: реєстрація
+          system: система
+        accepted_via: Прийнято через %{method}
+        agreement_revision: Редакція угоди %{timestamp}
         pending: очікує
       show:
         title: Угода

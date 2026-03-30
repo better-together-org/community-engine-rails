@@ -705,6 +705,14 @@ en:
         close: Close
         title: View required agreement
       participant:
+        acceptance_methods:
+          agreement_review: agreement review
+          api: API
+          legacy: legacy record
+          sign_up: sign up
+          system: system
+        accepted_via: Accepted via %{method}
+        agreement_revision: Agreement revision %{timestamp}
         pending: pending
       show:
         title: Agreement
