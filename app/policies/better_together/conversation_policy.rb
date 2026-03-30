@@ -102,9 +102,23 @@ module BetterTogether
     def platform_people
       BetterTogether::Person
         .includes(:string_translations)
-        .joins(:person_platform_memberships)
-        .merge(BetterTogether::PersonPlatformMembership.active.where(joinable: platform))
+        .where(id: current_platform_person_ids)
         .distinct
+    end
+
+    def current_platform_person_ids
+      ids = BetterTogether::PersonPlatformMembership
+            .active
+            .where(joinable: platform)
+            .pluck(:member_id)
+
+      return ids unless platform&.host? && platform.community.present?
+
+      host_community_ids = BetterTogether::PersonCommunityMembership
+                           .where(joinable: platform.community)
+                           .pluck(:member_id)
+
+      ids | host_community_ids
     end
   end
 end

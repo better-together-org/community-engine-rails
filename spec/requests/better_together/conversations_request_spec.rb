@@ -23,6 +23,9 @@ RSpec.describe 'BetterTogether::Conversations' do
   let!(:other_platform_opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Other Platform Person')
   end
+  let!(:host_only_opted_in_person) do
+    create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Host Community Person')
+  end
 
   before do
     manage_platform_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform')
@@ -34,6 +37,7 @@ RSpec.describe 'BetterTogether::Conversations' do
     create(:better_together_person_platform_membership, member: opted_in_person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: non_opted_person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: other_platform_opted_in_person, joinable: other_platform)
+    create(:better_together_person_community_membership, member: host_only_opted_in_person, joinable: host_platform.community)
   end
 
   describe 'GET /conversations/new' do
@@ -46,7 +50,11 @@ RSpec.describe 'BetterTogether::Conversations' do
         get better_together.new_conversation_path(locale: I18n.default_locale)
 
         expect(response).to have_http_status(:ok)
-        expect(participant_option_labels).to include(manager_user.person.select_option_title, opted_in_person.select_option_title)
+        expect(participant_option_labels).to include(
+          manager_user.person.select_option_title,
+          opted_in_person.select_option_title,
+          host_only_opted_in_person.select_option_title
+        )
         expect(participant_option_labels).not_to include(non_opted_person.select_option_title)
         expect(participant_option_labels).not_to include(other_platform_opted_in_person.select_option_title)
       end
@@ -63,7 +71,8 @@ RSpec.describe 'BetterTogether::Conversations' do
           manager_user.person.select_option_title,
           regular_user.person.select_option_title,
           opted_in_person.select_option_title,
-          non_opted_person.select_option_title
+          non_opted_person.select_option_title,
+          host_only_opted_in_person.select_option_title
         )
         expect(participant_option_labels).not_to include(other_platform_opted_in_person.select_option_title)
       end

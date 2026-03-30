@@ -19,6 +19,9 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
   let!(:other_platform_opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true })
   end
+  let!(:host_only_opted_in_person) do
+    create(:better_together_person, preferences: { receive_messages_from_members: true })
+  end
 
   before do
     manage_platform_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform')
@@ -28,6 +31,7 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
     create(:better_together_person_platform_membership, member: opted_in_person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: non_opted_person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: other_platform_opted_in_person, joinable: other_platform)
+    create(:better_together_person_community_membership, member: host_only_opted_in_person, joinable: host_platform.community)
   end
 
   describe '#permitted_participants' do
@@ -35,7 +39,7 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
       it 'includes only people on the current platform' do
         policy = described_class.new(steward_user, BetterTogether::Conversation.new)
         ids = policy.permitted_participants.pluck(:id)
-        expect(ids).to include(steward_person.id, opted_in_person.id, non_opted_person.id)
+        expect(ids).to include(steward_person.id, opted_in_person.id, non_opted_person.id, host_only_opted_in_person.id)
         expect(ids).not_to include(other_platform_opted_in_person.id)
       end
     end
@@ -51,7 +55,7 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
         # rubocop:enable RSpec/MultipleExpectations
         policy = described_class.new(regular_user, BetterTogether::Conversation.new)
         people = policy.permitted_participants
-        expect(people).to include(steward_person, opted_in_person)
+        expect(people).to include(steward_person, opted_in_person, host_only_opted_in_person)
         expect(people).not_to include(non_opted_person)
         expect(people).not_to include(other_platform_opted_in_person)
       end
@@ -69,6 +73,10 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
     it 'allows create when user present and participants are permitted' do
       # opted_in_person should be allowed for regular users
       expect(policy.create?(participants: [opted_in_person])).to be true
+    end
+
+    it 'allows create with a host-community recipient who opted in' do
+      expect(policy.create?(participants: [host_only_opted_in_person])).to be true
     end
 
     it 'denies create when any participant is not permitted' do
