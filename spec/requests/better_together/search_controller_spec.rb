@@ -5,9 +5,12 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::SearchController', :as_user do
   let(:locale) { I18n.default_locale }
   let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
+  let(:capture_service) { instance_double(BetterTogether::Metrics::SearchQueryCaptureService, call: captured_query) }
+  let(:captured_query) { 'test query' }
 
   before do
     allow(BetterTogether::Search).to receive(:backend).and_return(backend)
+    allow(BetterTogether::Metrics::SearchQueryCaptureService).to receive(:new).and_return(capture_service)
   end
 
   describe 'GET /search' do
@@ -59,6 +62,25 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         )
       end
 
+      it 'hashes tracked queries when the capture service returns a digest' do
+        allow(capture_service).to receive(:call)
+          .with('Test Query')
+          .and_return("sha256:#{Digest::SHA256.hexdigest('test query')}")
+
+        expect do
+          get better_together.search_path(locale:), params: { q: 'Test Query' }
+        end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+          .with("sha256:#{Digest::SHA256.hexdigest('test query')}", 0, locale.to_s)
+      end
+
+      it 'does not enqueue search analytics when capture returns nil' do
+        allow(capture_service).to receive(:call).with('test query').and_return(nil)
+
+        expect do
+          get better_together.search_path(locale:), params: { q: 'test query' }
+        end.not_to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+      end
+
       it 'filters private linked seed models out of the global search set' do
         # PersonLinkedSeed.global_searchable? returns false so Registry excludes it from
         # global_search_models. The registry_spec covers this at unit level; here we confirm
@@ -91,6 +113,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
             error: 'StandardError: ES Error'
           )
         )
+        allow(capture_service).to receive(:call).with('test').and_return('test')
       end
 
       it 'handles the error gracefully and still tracks metrics' do
