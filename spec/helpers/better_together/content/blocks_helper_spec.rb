@@ -127,6 +127,15 @@ module BetterTogether # :nodoc:
         html = '<a href="http://example.com" class="link" target="_blank">Link</a>'
         expect(helper.sanitize_block_html(html)).to eq(html)
       end
+
+      it 'removes iframe tags so embeds must use dedicated block types' do
+        html = '<p>Before</p><iframe src="https://forms.btsdev.ca/s/example" title="Survey"></iframe><p>After</p>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).not_to include('<iframe')
+        expect(sanitized).to include('<p>Before</p>')
+        expect(sanitized).to include('<p>After</p>')
+      end
     end
 
     describe '#acceptable_image_file_types' do
