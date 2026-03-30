@@ -3,7 +3,7 @@
 module BetterTogether
   module Content
     # Exports cursor-paginated local-origin content for a federated peer connection.
-    class FederatedContentExportService
+    class FederatedContentExportService # rubocop:todo Metrics/ClassLength
       DEFAULT_LIMIT = 50
       MAX_LIMIT = 200
 
@@ -63,36 +63,58 @@ module BetterTogether
 
       def exportable_posts
         apply_cursor(
-          ::BetterTogether::Post.where(platform: connection.source_platform, privacy: 'public')
-                                .where(source_id: nil)
-                                .where.not(published_at: nil)
-                                .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
+          consent_scoped(
+            ::BetterTogether::Post.where(platform: connection.source_platform, privacy: 'public')
+                                  .where(source_id: nil)
+                                  .where.not(published_at: nil)
+                                  .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
+          )
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
       def exportable_pages
         apply_cursor(
-          ::BetterTogether::Page.where(platform: connection.source_platform, privacy: 'public')
-                                .where(source_id: nil)
-                                .where.not(published_at: nil)
-                                .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
+          consent_scoped(
+            ::BetterTogether::Page.where(platform: connection.source_platform, privacy: 'public')
+                                  .where(source_id: nil)
+                                  .where.not(published_at: nil)
+                                  .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
+          )
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
       def exportable_events
         apply_cursor(
-          ::BetterTogether::Event.where(platform: connection.source_platform, privacy: 'public')
-                                 .where(source_id: nil)
-                                 .where.not(starts_at: nil)
+          consent_scoped(
+            ::BetterTogether::Event.where(platform: connection.source_platform, privacy: 'public')
+                                   .where(source_id: nil)
+                                   .where.not(starts_at: nil)
+          )
         ).order(updated_at: :asc, id: :asc).limit(limit)
+      end
+
+      def consent_scoped(query)
+        return query unless query.klass.column_names.include?('creator_id')
+
+        creator_table = ::BetterTogether::Person.quoted_table_name
+        model_table = query.klass.quoted_table_name
+        # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB preference match on optional creator requires a left join predicate
+        query.left_joins(:creator).where(
+          Arel.sql(
+            "#{model_table}.creator_id IS NULL OR " \
+            "(#{creator_table}.preferences @> '{\"federate_content\": true}')"
+          )
+        )
+        # rubocop:enable BetterTogether/NoRawSqlInQueries
       end
 
       def apply_cursor(query)
         return query unless cursor
 
+        table = query.klass.quoted_table_name
         # rubocop:disable BetterTogether/NoRawSqlInQueries -- keyset pagination requires a compound OR across (updated_at, id); no Arel equivalent without N+1 risk
         query.where(
-          Arel.sql('updated_at > ? OR (updated_at = ? AND id > ?)'),
+          Arel.sql("#{table}.updated_at > ? OR (#{table}.updated_at = ? AND #{table}.id > ?)"),
           cursor[:updated_at], cursor[:updated_at], cursor[:id]
         )
         # rubocop:enable BetterTogether/NoRawSqlInQueries

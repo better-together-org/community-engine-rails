@@ -316,6 +316,8 @@ en:
         conversations: Conversations
         created_conversations: Created conversations
         description: Description
+        federate_content: Allow this platform to include your public posts, pages,
+          and events in approved federation feeds.
         identifications: Identifications
         identifier: Identifier
         locale: Language
@@ -2200,6 +2202,8 @@ en:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      federate_content: Allow this platform to include your public posts, pages, and
+        events in approved federation feeds.
       index:
         new_person: New person
       notification_preferences: Message notification preferences
@@ -3653,6 +3657,8 @@ en:
           than platform managers.
         cover_image: Upload a cover image to display at the top of the profile.
         description: Provide a brief description or biography.
+        federate_content: Opt-in to let this platform share your public posts, pages,
+          and events with approved connected platforms.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.

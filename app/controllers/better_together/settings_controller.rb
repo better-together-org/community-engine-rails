@@ -69,6 +69,7 @@ module BetterTogether
         :locale,
         :time_zone,
         :receive_messages_from_members,
+        :federate_content,
         :notify_by_email,
         :show_conversation_details
       )

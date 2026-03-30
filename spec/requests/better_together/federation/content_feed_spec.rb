@@ -50,7 +50,8 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
   end
 
   it 'returns a cursor-paginated content batch for an authorized peer' do
-    post = create(:better_together_post, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
+    creator = create(:better_together_person, federate_content: true)
+    post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
 
     get better_together.federation_content_feed_path(locale:),
         headers: { 'Authorization' => "Bearer #{oauth_access_token}" }
@@ -61,6 +62,17 @@ RSpec.describe 'BetterTogether::Federation::ContentFeed', :no_auth do
     expect(payload['seeds'].first['better_together']['payload']['type']).to eq('post')
     expect(payload['seeds'].first['better_together']['payload']['id']).to eq(post.id)
     expect(payload['next_cursor']).to be_present
+  end
+
+  it 'excludes content from creators who have not opted into federation' do
+    creator = create(:better_together_person, federate_content: false)
+    create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
+
+    get better_together.federation_content_feed_path(locale:),
+        headers: { 'Authorization' => "Bearer #{oauth_access_token}" }
+
+    expect(response).to have_http_status(:ok)
+    expect(JSON.parse(response.body)['seeds']).to eq([])
   end
 
   it 'returns unauthorized when the bearer token is missing or invalid' do

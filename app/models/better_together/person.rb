@@ -124,6 +124,7 @@ module BetterTogether
       locale String, default: I18n.default_locale.to_s
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
       receive_messages_from_members Boolean, default: false
+      federate_content Boolean, default: false
     end
 
     store_attributes :notification_preferences do
@@ -147,6 +148,12 @@ module BetterTogether
     def receive_messages_from_members=(value)
       prefs = (preferences || {}).dup
       prefs['receive_messages_from_members'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.preferences = prefs
+    end
+
+    def federate_content=(value)
+      prefs = (preferences || {}).dup
+      prefs['federate_content'] = ActiveModel::Type::Boolean.new.cast(value)
       self.preferences = prefs
     end
 

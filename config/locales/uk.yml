@@ -316,6 +316,8 @@ uk:
         conversations: Розмови
         created_conversations: Створені розмови
         description: Опис
+        federate_content: Дозволити цій платформі включати ваші публічні дописи, сторінки
+          та події до схвалених федеративних стрічок.
         identifications: Ідентифікації
         identifier: Ідентифікатор
         locale: Мова
@@ -2216,6 +2218,8 @@ uk:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      federate_content: Дозволити цій платформі включати ваші публічні дописи, сторінки
+        та події до схвалених федеративних стрічок.
       index:
         new_person: New person
       notification_preferences: Message notification preferences
@@ -3719,10 +3723,12 @@ uk:
         cover_image: Зображення обкладинки
       person:
         allow_messages_from_members: Дозволити отримувати повідомлення від людей,
-          окрім менеджерів платформи.
         cover_image: Завантажте зображення обкладинки для відображення у верхній частині
           профілю.
         description: Надайте короткий опис або біографію.
+        federate_content: Дозволити цій платформі ділитися вашими публічними дописами,
+          сторінками та подіями зі схваленими підключеними платформами. окрім менеджерів
+          платформи.
         locale: Виберіть бажану мову для особи.
         name: Введіть повне ім'я особи.
         notify_by_email: Надсилати електронний лист, коли в розмові є непрочитане
