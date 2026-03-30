@@ -53,7 +53,7 @@ module BetterTogether
     end
 
     def agreement_title_snapshot_value
-      agreement_title_snapshot.presence || agreement.title.to_s
+      agreement_title_snapshot.presence || agreement.title.presence || agreement.identifier.to_s.humanize
     end
 
     def agreement_updated_at_snapshot_value

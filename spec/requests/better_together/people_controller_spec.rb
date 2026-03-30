@@ -20,7 +20,11 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
     end
 
     it 'shows agreement acceptance audit details when present', :aggregate_failures do
-      agreement = create(:better_together_agreement, title: 'Privacy Policy')
+      agreement = create(
+        :better_together_agreement,
+        title: 'Privacy Policy Audit Snapshot',
+        identifier: "privacy-policy-audit-#{SecureRandom.hex(4)}"
+      )
       participant = create(
         :better_together_agreement_participant,
         person:,
