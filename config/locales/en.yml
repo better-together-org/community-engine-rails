@@ -597,6 +597,7 @@ en:
       better_together/content/css: Custom CSS
       better_together/content/hero: Hero
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Image
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
@@ -897,8 +898,26 @@ en:
           select_prompt: "— Select a checklist —"
         communities_block:
           empty: No communities to display.
+        embeds:
+          blocked_body: "%{title} could not be shown here because this platform has
+            not allowlisted that iframe origin in Content Security Policy settings."
+          blocked_instructions: Add %{origin} under Host > Platform > Security / CSP
+            embeds > Allowed outbound iframe origins, then reload this page.
+          blocked_origin_label: 'Blocked origin:'
+          blocked_title: This embedded content is currently blocked
+          invalid_url_body: Check the iframe URL and make sure it is a full HTTPS
+            address.
+          invalid_url_title: This embedded content has an invalid URL
+          open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        iframe_block:
+          csp_help: If this embed is not allowlisted for the current platform, Community
+            Engine shows a visible guidance message instead of a blank iframe.
+          default_title: Embedded content
+          missing_url: No iframe URL configured.
+          url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
+            another trusted community-space embed.
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -2497,6 +2516,17 @@ en:
         pending: Pending
     platforms:
       form:
+        csp_frame_ancestors_text_hint: Who may embed this CE site. Select trusted
+          origins or type a new hostname/origin and press Enter. Leave blank to keep
+          frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Allowed inbound framing origins
+        csp_frame_src_text_hint: What this CE site may embed in iframes, such as Formbricks
+          or other trusted community embeds. Select trusted origins or type a new
+          hostname/origin and press Enter.
+        csp_frame_src_text_label: Allowed outbound iframe origins
+        csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
+          trusted origins or type a new hostname/origin and press Enter.
+        csp_img_src_text_label: Allowed external image origins
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.

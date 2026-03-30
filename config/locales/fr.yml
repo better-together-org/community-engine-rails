@@ -602,6 +602,7 @@ fr:
       better_together/content/css: CSS Personnalisé
       better_together/content/hero: Héros
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Image
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagramme Mermaid
@@ -906,8 +907,29 @@ fr:
           select_prompt: "— Sélectionner une liste de vérification —"
         communities_block:
           empty: Aucune communauté à afficher.
+        embeds:
+          blocked_body: "%{title} n'a pas pu être affiché ici parce que cette plateforme
+            n'a pas autorisé cette origine d'iframe dans les paramètres de la politique
+            de sécurité du contenu."
+          blocked_instructions: Ajoutez %{origin} dans Hôte > Plateforme > Sécurité
+            / intégrations CSP > Origines d'iframe sortantes autorisées, puis rechargez
+            cette page.
+          blocked_origin_label: 'Origine bloquée :'
+          blocked_title: Ce contenu intégré est actuellement bloqué
+          invalid_url_body: Vérifiez l'URL de l'iframe et assurez-vous qu'il s'agit
+            d'une adresse HTTPS complète.
+          invalid_url_title: Ce contenu intégré possède une URL invalide
+          open_in_new_tab: Ouvrir le contenu intégré dans un nouvel onglet
         events_block:
           empty: Aucun événement à afficher.
+        iframe_block:
+          csp_help: Si cette intégration n'est pas autorisée pour la plateforme actuelle,
+            Community Engine affichera un message d'aide visible au lieu d'une iframe
+            vide.
+          default_title: Contenu intégré
+          missing_url: Aucune URL d'iframe configurée.
+          url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
+            ou une autre intégration de confiance d'un espace communautaire.
         markdown:
           fields:
             auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
@@ -2550,6 +2572,19 @@ fr:
         pending: En attente
     platforms:
       form:
+        csp_frame_ancestors_text_hint: Qui peut intégrer ce site CE. Sélectionnez
+          des origines de confiance ou saisissez un nouveau nom d'hôte/origine puis
+          appuyez sur Entrée. Laissez vide pour conserver frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Origines autorisées pour l'intégration entrante
+        csp_frame_src_text_hint: Ce que ce site CE peut intégrer dans des iframes,
+          comme Formbricks ou d'autres intégrations communautaires de confiance. Sélectionnez
+          des origines de confiance ou saisissez un nouveau nom d'hôte/origine puis
+          appuyez sur Entrée.
+        csp_frame_src_text_label: Origines autorisées pour les iframes sortantes
+        csp_img_src_text_hint: Hôtes d'images supplémentaires que ce site CE peut
+          charger. Sélectionnez des origines de confiance ou saisissez un nouveau
+          nom d'hôte/origine puis appuyez sur Entrée.
+        csp_img_src_text_label: Origines externes d'images autorisées
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
@@ -2848,8 +2883,9 @@ fr:
           description: Connectez et gérez vos comptes de plateformes externes.
           title: Comptes Connectés
         my_data:
-          description: View, download, or delete your personal data exports.
-          title: My Data
+          description: Voir, télécharger ou supprimer vos exportations de données
+            personnelles.
+          title: Mes données
         navigation_aria_label: Navigation des paramètres
         personal:
           coming_soon: Les paramètres personnels arrivent bientôt.
@@ -2875,7 +2911,7 @@ fr:
           developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
-          my_data: My Data
+          my_data: Mes données
           personal: Personnel
           platform: Plateforme
           preferences: Préférences
@@ -3896,19 +3932,20 @@ fr:
     show:
       title: Détails d'adhésion à la plateforme
   person_seeds:
-    confirm_destroy: Delete this data export? This cannot be undone.
-    export_failed: Your data export could not be completed. Please try again.
-    export_queued: Your data export has been requested. A download link will appear
-      below once it is ready.
-    export_too_soon: You requested an export recently. Please wait before requesting
-      another.
-    export_unavailable: Your account does not have a person profile to export.
+    confirm_destroy: Supprimer cette exportation de données ? Cette action est irréversible.
+    export_failed: Votre exportation de données n'a pas pu être terminée. Veuillez
+      réessayer.
+    export_queued: Votre exportation de données a été demandée. Un lien de téléchargement
+      apparaîtra ci-dessous lorsqu'elle sera prête.
+    export_too_soon: Vous avez demandé une exportation récemment. Veuillez attendre
+      avant d'en demander une autre.
+    export_unavailable: Votre compte ne possède pas de profil de personne à exporter.
     index:
-      empty: You have no data exports yet.
-      exporting: Requesting…
-      new_export: Request Data Export
-      new_export_hint: Generate a portable export of your personal data.
-      title: My Data
+      empty: Vous n'avez pas encore d'exportations de données.
+      exporting: Demande en cours…
+      new_export: Demander une exportation de données
+      new_export_hint: Générez une exportation portable de vos données personnelles.
+      title: Mes données
   platform_invitations:
     confirm_delete: Confirmer la suppression
   platforms:
@@ -3963,10 +4000,11 @@ fr:
     placeholder: Rechercher...
   seeds:
     actions:
-      destroy: Destroy seed
+      destroy: Supprimer la graine
       edit: Edit seed
-      show: Show seed
-    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+      show: Voir la graine
+    confirm_destroy: Êtes-vous sûr de vouloir supprimer cette graine ? Cette action
+      est irréversible.
     edit:
       title: 'Editing: %{identifier}'
     errors:
@@ -3977,16 +4015,16 @@ fr:
     index:
       empty: No seeds found.
       new_seed: New seed
-      title: Seeds
+      title: Graines
     new:
-      title: New Seed
-    seeded_by: Seeded by %{created_by}
+      title: Nouvelle graine
+    seeded_by: Générée par %{created_by}
     show:
-      download_yaml: Download YAML
-      origin: Origin
-      payload: Payload
-      plantings: Planting History
-      yaml_export: YAML Export
+      download_yaml: Télécharger le YAML
+      origin: Origine
+      payload: Contenu
+      plantings: Historique de plantation
+      yaml_export: Export YAML
   shared:
     by: par
     links:
