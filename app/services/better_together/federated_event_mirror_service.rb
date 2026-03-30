@@ -2,7 +2,11 @@
 
 module BetterTogether
   # Imports or updates a mirrored Event record from a connected remote platform.
+  # rubocop:disable Metrics/ClassLength -- Event service requires timezone validation and
+  #   event-host management that the simpler Post/Page services do not.
   class FederatedEventMirrorService
+    include ::BetterTogether::Federation::MirroredIdentifierResolution
+
     def initialize(connection:, remote_attributes:, remote_id:, preserve_remote_uuid: false, source_updated_at: nil)
       @connection = connection
       @remote_attributes = remote_attributes.to_h.with_indifferent_access
@@ -38,14 +42,21 @@ module BetterTogether
     end
 
     def find_or_initialize_event
-      if preserve_remote_uuid? && uuid?(remote_id)
-        existing = ::BetterTogether::Event.find_by(id: remote_id)
-        return existing if existing
+      return find_or_initialize_event_by_source_id unless mirror_with_remote_uuid?
 
-        ::BetterTogether::Event.new(id: remote_id)
-      else
-        ::BetterTogether::Event.find_or_initialize_by(platform: connection.source_platform, source_id: remote_id)
-      end
+      existing_event_with_remote_uuid || existing_event_by_source_id || ::BetterTogether::Event.new(id: remote_id)
+    end
+
+    def find_or_initialize_event_by_source_id
+      ::BetterTogether::Event.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+    end
+
+    def existing_event_with_remote_uuid
+      ::BetterTogether::Event.find_by(id: remote_id, platform: connection.target_platform)
+    end
+
+    def existing_event_by_source_id
+      ::BetterTogether::Event.find_by(platform: connection.target_platform, source_id: remote_id)
     end
 
     def assign_attributes(event)
@@ -69,8 +80,8 @@ module BetterTogether
         identifier: normalized_identifier(record),
         privacy: remote_attributes[:privacy].presence || 'public',
         creator_id: remote_attributes[:creator_id],
-        platform: connection.source_platform,
-        source_id: preserve_remote_uuid? ? nil : remote_id,
+        platform: connection.target_platform,
+        source_id: effective_preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
       }
@@ -83,9 +94,12 @@ module BetterTogether
     end
 
     def normalized_identifier(event)
-      remote_attributes[:identifier].presence ||
-        event.identifier.presence ||
-        "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
+      # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
+      return event.identifier if event.persisted?
+
+      base = remote_attributes[:identifier].presence ||
+             "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
+      identifier_or_namespaced(::BetterTogether::Event, base, event.id)
     end
 
     def normalized_timezone
@@ -107,8 +121,25 @@ module BetterTogether
       preserve_remote_uuid
     end
 
+    def effective_preserve_remote_uuid?
+      preserve_remote_uuid? && !shared_target_database?
+    end
+
+    def mirror_with_remote_uuid?
+      effective_preserve_remote_uuid? && uuid?(remote_id)
+    end
+
+    def same_instance_connection?
+      connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
+    end
+
+    def shared_target_database?
+      connection.target_platform.local_hosted?
+    end
+
     def uuid?(value)
       /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

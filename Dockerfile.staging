@@ -1,0 +1,75 @@
+# Dockerfile.staging — production-like build for internal bts-0 staging.
+# Differences from production Dockerfile:
+#   - No asset_sync step (no S3 credentials needed)
+#   - Assets served locally by puma (RAILS_SERVE_STATIC_FILES=true)
+#   - No Sentry CLI install
+#   - No AWS build args
+
+# Stage 1: Build environment
+FROM ruby:3.4.4 AS builder
+
+# Install dependencies
+RUN apt-get update -qq \
+  && apt-get install -y --no-install-recommends \
+    build-essential \
+    postgresql-client \
+    libpq-dev \
+    nodejs \
+    libssl-dev \
+    apt-transport-https \
+    ca-certificates \
+    libvips42 \
+    curl \
+  && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /community-engine
+
+# Copy Gemfile and Gemfile.lock
+COPY Gemfile Gemfile.lock better_together.gemspec ./
+
+COPY lib lib
+
+# Install bundler and gems
+RUN gem uninstall bundler \
+  && gem install bundler:2.4.13 \
+  && bundle install --jobs 4 --retry 3
+
+# Copy the rest of the application code
+COPY . .
+
+# Precompile assets only (no S3 sync — skip app:assets:precompile composite task)
+ENV ASSET_SYNC_ENABLED=false
+RUN cd spec/dummy && bundle exec rake assets:precompile
+
+# Stage 2: Runtime environment
+FROM ruby:3.4.4
+
+# Install runtime dependencies (no Sentry CLI)
+RUN apt-get update -qq \
+  && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    nodejs \
+    libssl-dev \
+    libvips42 \
+    curl \
+  && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /community-engine
+
+# Copy gems and application code from the build stage
+COPY --from=builder /usr/local/bundle /usr/local/bundle
+COPY --from=builder /community-engine /community-engine
+
+# Clean cache from builder (avoids chmod traversal of thousands of asset cache files)
+# and create required runtime directories fresh
+RUN rm -rf spec/dummy/tmp/cache && mkdir -p spec/dummy/tmp/pids && chmod 755 spec/dummy/tmp/pids
+
+# Set environment variables
+ENV RAILS_ENV=production
+ENV RACK_ENV=production
+ENV RAILS_SERVE_STATIC_FILES=true
+
+# Run the application
+CMD ["bash", "-c", "cd spec/dummy && bundle exec puma -C config/puma.rb"]

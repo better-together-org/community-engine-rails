@@ -6,29 +6,26 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
-# Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
+# Amazon S3 storage.
+# Set ACTIVE_STORAGE_SERVICE=amazon in production, plus the env vars below.
 amazon:
   service: S3
   access_key_id: <%= ENV.fetch('AWS_ACCESS_KEY_ID', nil) %>
   secret_access_key: <%= ENV.fetch('AWS_SECRET_ACCESS_KEY', nil) %>
-  region: <%= ENV.fetch('S3_REGION', nil) %>
-  bucket: <%= ENV.fetch('S3_BUCKET_NAME', nil) %>
+  region: <%= ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1')) %>
+  bucket: <%= ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil)) %>
+  endpoint: <%= ENV.fetch('S3_ENDPOINT', nil) %>
+  force_path_style: <%= ENV.key?('S3_ENDPOINT') %>
 
-# Remember not to checkin your GCS keyfile to a repository
-# google:
-#   service: GCS
-#   project: your_project
-#   credentials: <%= Rails.root.join("path/to/gcs.keyfile") %>
-#   bucket: your_own_bucket
-
-# Use rails credentials:edit to set the Azure Storage secret (as azure_storage:storage_access_key)
-# microsoft:
-#   service: AzureStorage
-#   storage_account_name: your_account_name
-#   storage_access_key: <%= Rails.application.credentials.dig(:azure_storage, :storage_access_key) %>
-#   container: your_container_name
-
-# mirror:
-#   service: Mirror
-#   primary: local
-#   mirrors: [ amazon, google, microsoft ]
+# Generic S3-compatible storage (e.g. Garage by Deuxfleurs cooperative, or any other
+# S3-compatible self-hosted object store).
+# Set ACTIVE_STORAGE_SERVICE=s3_compatible plus the env vars below.
+# S3_ENDPOINT is required and enables path-style access automatically.
+s3_compatible:
+  service: S3
+  access_key_id: <%= ENV.fetch('AWS_ACCESS_KEY_ID', nil) %>
+  secret_access_key: <%= ENV.fetch('AWS_SECRET_ACCESS_KEY', nil) %>
+  region: <%= ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1')) %>
+  bucket: <%= ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil)) %>
+  endpoint: <%= ENV.fetch('S3_ENDPOINT', nil) %>
+  force_path_style: true

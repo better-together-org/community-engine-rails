@@ -65,3 +65,4 @@ rspec_result.json
 spec/dummy/config/credentials/test.yml
 # Prevent accidental commits of test log output files
 *.log
+logs/sessions/

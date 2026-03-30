@@ -34,7 +34,7 @@ module BetterTogether
       # Platform managers may act across communities
       return true if permitted_to?('manage_platform')
 
-      # Check for specific community-scoped permissions
+      # Check for specific invite/manage permissions on this community
       permitted_to?('invite_community_members', community) ||
         permitted_to?('manage_community_members', community) ||
         permitted_to?('manage_community_roles', community)

@@ -413,6 +413,14 @@ uk:
         lock_version: Версія блокування
         resource_permission: :activerecord.models.resource_permission
         role: :activerecord.models.role
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
       better_together/user:
         confirmation_sent_at: Підтвердження надіслано о
         confirmation_token: Токен підтвердження
@@ -630,6 +638,7 @@ uk:
       better_together/resource_permission: Дозвіл ресурсу
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
+      better_together/storage_configuration: Конфігурація сховища
       better_together/user: Користувач
       better_together/webhook_endpoint: Кінцева точка вебхука
       better_together/wizard: Майстер
@@ -1881,19 +1890,6 @@ uk:
           medium_results: Середня
           no_results: Без результатів
           result_quality: Середня кількість результатів на пошук
-        tabs:
-          charts: Графіки
-          charts_and_reports: Графіки й звіти
-          downloads: Завантаження
-          link_checker: Перевірка посилань
-          link_clicks: Кліки по посиланнях
-          metrics_types: Типи метрик
-          page_views: Перегляди сторінок
-          reports: Звіти
-          search_health: Стан пошуку
-          search_queries: Пошуки
-          shares: Поширення
-          users: Users
         search_health:
           backend: Backend
           db_count: Кількість у БД
@@ -1910,6 +1906,19 @@ uk:
           store_size: Розмір сховища
           total_drift: Загальна розбіжність
           unmanaged_models: Некеровані пошукові моделі
+        tabs:
+          charts: Графіки
+          charts_and_reports: Графіки й звіти
+          downloads: Завантаження
+          link_checker: Перевірка посилань
+          link_clicks: Кліки по посиланнях
+          metrics_types: Типи метрик
+          page_views: Перегляди сторінок
+          reports: Звіти
+          search_health: Стан пошуку
+          search_queries: Пошуки
+          shares: Поширення
+          users: Users
         title: Звіти метрик
         unknown_type: Невідомо
       shares:
@@ -2810,6 +2819,9 @@ uk:
         integrations:
           description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
           title: Підключені облікові записи
+        my_data:
+          description: View, download, or delete your personal data exports.
+          title: My Data
         navigation_aria_label: Навігація налаштувань
         personal:
           coming_soon: Особисті налаштування з'являться незабаром.
@@ -2834,12 +2846,15 @@ uk:
           developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
+          my_data: My Data
           personal: Особисті
           platform: Платформа
           preferences: Налаштування
           privacy: Конфіденційність
         title: Settings
     setup_wizard_steps:
+      already_completed: Цю платформу вже налаштовано. Будь ласка, увійдіть, щоб керувати
+        своєю платформою.
       create_admin:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.
@@ -2872,6 +2887,67 @@ uk:
       platform: Платформа
       title: Акаунти соціальних мереж
       url: URL-адреса
+    storage:
+      service_types:
+        amazon: Amazon S3
+        local: Local disk
+        s3_compatible: S3-compatible (Garage / self-hosted)
+    storage_configurations:
+      access_key_hint: Leave blank to keep the existing value when editing.
+      access_key_placeholder: AKIAIOSFODNN7EXAMPLE
+      activated: "'%{name}' is now the active storage configuration."
+      cancel: Cancel
+      cannot_destroy_active: Cannot delete the currently active storage configuration.
+        Activate another first.
+      created: Storage configuration was successfully created.
+      destroyed: Storage configuration was successfully deleted.
+      edit:
+        subtitle: Storage backend for %{platform_name}
+        title: Edit %{name}
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
+        for Amazon S3. Path-style access is enabled automatically when an endpoint
+        is set.
+      index:
+        activate_btn: Set active
+        activate_confirm: Set this as the active storage configuration?
+        active_badge: Active
+        active_config_label: 'Active Configuration:'
+        back_to_platform: Back to Platform
+        bucket_label: Bucket
+        delete_btn: Delete
+        delete_confirm: Delete this storage configuration?
+        edit_btn: Edit
+        effective_storage_heading: Currently Effective Storage
+        endpoint_label: Endpoint
+        env_badge: ENV
+        env_config_label: 'Source:'
+        env_fallback: Environment variables (no platform override set)
+        header_actions: Actions
+        header_bucket: Bucket / Root
+        header_endpoint: Endpoint
+        header_name: Name
+        header_status: Status
+        header_type: Type
+        in_use: In use
+        new_btn: Add Storage
+        no_configs: No storage configurations defined. Environment variables are used
+          by default.
+        not_active: Not active
+        platform_override_badge: Platform Override
+        service_type_label: Service type
+        subtitle: Storage backends for %{platform_name}
+        table_aria: Storage configurations
+        title: Storage Configurations
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      new:
+        subtitle: Add a storage backend for %{platform_name}
+        title: New Storage Configuration
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
     translations:
       errors:
         content_blank: Вміст не може бути порожнім
@@ -3807,6 +3883,20 @@ uk:
       title: Додати учасника платформи
     show:
       title: Деталі членства на платформі
+  person_seeds:
+    confirm_destroy: Delete this data export? This cannot be undone.
+    export_failed: Your data export could not be completed. Please try again.
+    export_queued: Your data export has been requested. A download link will appear
+      below once it is ready.
+    export_too_soon: You requested an export recently. Please wait before requesting
+      another.
+    export_unavailable: Your account does not have a person profile to export.
+    index:
+      empty: You have no data exports yet.
+      exporting: Requesting…
+      new_export: Request Data Export
+      new_export_hint: Generate a portable export of your personal data.
+      title: My Data
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:
@@ -3850,6 +3940,7 @@ uk:
     report: Звіт
     resource_permission: Дозвіл ресурсу
     role: Роль
+    seed: Seed
     settlement: Поселення
     state: Штат/Область
     user: Користувач
@@ -3858,6 +3949,32 @@ uk:
   search:
     button: Пошук
     placeholder: Пошук...
+  seeds:
+    actions:
+      destroy: Destroy seed
+      edit: Edit seed
+      show: Show seed
+    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+    edit:
+      title: 'Editing: %{identifier}'
+    errors:
+      invalid_json: must be valid JSON
+    form:
+      identifier_placeholder: e.g. host-setup-wizard-v1
+      json_hint: Must be valid JSON.
+    index:
+      empty: No seeds found.
+      new_seed: New seed
+      title: Seeds
+    new:
+      title: New Seed
+    seeded_by: Seeded by %{created_by}
+    show:
+      download_yaml: Download YAML
+      origin: Origin
+      payload: Payload
+      plantings: Planting History
+      yaml_export: YAML Export
   shared:
     by: автор
     links:

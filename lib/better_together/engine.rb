@@ -10,6 +10,7 @@ require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
+require 'better_together/storage_resolver'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
 require 'bootstrap'
@@ -182,7 +183,18 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      next if app.root.to_s.start_with?(root.to_s)
+      # Skip if this IS the engine (avoids double-loading in development).
+      # Use exact match so spec/dummy (a subdirectory of the engine) is not
+      # incorrectly excluded — spec/dummy is a distinct app root and needs the
+      # engine's migration path appended just like any external host app.
+      next if app.root.to_s == root.to_s
+
+      # Skip if the host app has already installed CE migrations via
+      # `rails better_together:install:migrations`. Installed migrations carry
+      # the `.better_together.rb` suffix assigned by Rails' install:migrations
+      # task, so their presence signals that the host app manages migrations
+      # independently and does not need the engine path appended.
+      next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
 
       config.paths['db/migrate'].expanded.each do |expanded_path|
         app.config.paths['db/migrate'] << expanded_path unless app.config.paths['db/migrate'].include?(expanded_path)

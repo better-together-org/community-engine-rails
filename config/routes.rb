@@ -255,6 +255,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :person_seeds, only: %i[index show destroy], path: 'my/seeds' do
+          collection { post :export }
+        end
+
         get 'settings', to: 'settings#index'
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
@@ -359,6 +363,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               end
             end
 
+            # Seed data management
+            resources :seeds
+
             # People and memberships
             resources :people
             resources :person_community_memberships
@@ -379,6 +386,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :platform_invitations, only: %i[create destroy] do
                 member do
                   put :resend
+                end
+              end
+              resources :storage_configurations, except: %i[show] do
+                member do
+                  put :activate
                 end
               end
             end

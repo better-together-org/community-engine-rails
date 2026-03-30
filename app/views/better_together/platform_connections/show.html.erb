@@ -114,7 +114,7 @@
           <dl class="row mb-2">
             <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.token_endpoint') %></dt>
             <dd class="col-sm-9">
-              <code><%= @platform_connection.source_platform.resolved_host_url %><%= better_together.federation_oauth_token_path(locale: nil) %></code>
+              <code><%= @platform_connection.source_platform.resolved_host_url %><%= better_together.federation_oauth_token_path(locale: I18n.locale) %></code>
             </dd>
 
             <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.client_id') %></dt>
