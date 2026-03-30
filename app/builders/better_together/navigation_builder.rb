@@ -7,14 +7,16 @@ module BetterTogether
   class NavigationBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
       def seed_data
-        I18n.with_locale(:en) do
-          build_header
-          build_host
-          build_better_together
-          build_footer
-          # DocumentationBuilder.build # TODO: Re-enable when documentation is ready
+        with_seed_platform_context do
+          I18n.with_locale(:en) do
+            build_header
+            build_host
+            build_better_together
+            build_footer
+            # DocumentationBuilder.build # TODO: Re-enable when documentation is ready
 
-          create_unassociated_pages
+            create_unassociated_pages
+          end
         end
       end
 
@@ -607,12 +609,14 @@ module BetterTogether
         delete_navigation_items
         delete_navigation_areas
         puts 'Rebuilding navigation areas...'
-        I18n.with_locale(:en) do
-          build_header
-          build_host
-          build_better_together
-          build_footer
-          # DocumentationBuilder.build # TODO: Re-enable when documentation is ready
+        with_seed_platform_context do
+          I18n.with_locale(:en) do
+            build_header
+            build_host
+            build_better_together
+            build_footer
+            # DocumentationBuilder.build # TODO: Re-enable when documentation is ready
+          end
         end
         puts 'Navigation areas reset complete!'
       end
@@ -632,24 +636,62 @@ module BetterTogether
         end
 
         # Rebuild the specific area
-        I18n.with_locale(:en) do
-          case slug
-          when 'platform-header'
-            build_header
-          when 'platform-host'
-            build_host
-          when 'better-together'
-            build_better_together
-          when 'platform-footer'
-            build_footer
-          when 'documentation'
-            DocumentationBuilder.build # Available but not auto-seeded
-          else
-            puts "Unknown navigation area slug: #{slug}"
-            return
+        with_seed_platform_context do
+          I18n.with_locale(:en) do
+            case slug
+            when 'platform-header'
+              build_header
+            when 'platform-host'
+              build_host
+            when 'better-together'
+              build_better_together
+            when 'platform-footer'
+              build_footer
+            when 'documentation'
+              DocumentationBuilder.build # Available but not auto-seeded
+            else
+              puts "Unknown navigation area slug: #{slug}"
+              return
+            end
           end
         end
         puts "Navigation area '#{slug}' reset complete!"
+      end
+
+      def with_seed_platform_context
+        previous_platform = Current.platform
+        Current.platform = ensure_host_platform_for_seeds
+        yield
+      ensure
+        Current.platform = previous_platform
+      end
+
+      def ensure_host_platform_for_seeds
+        ::BetterTogether::Platform.find_by(host: true) ||
+          ::BetterTogether::Platform.first ||
+          build_host_platform_for_seeds
+      end
+
+      def build_host_platform_for_seeds # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+        host_community = ::BetterTogether::Community.find_or_create_by!(host: true) do |community|
+          community.name = 'Community Engine'
+          community.identifier = 'community-engine'
+          community.description = 'Host community for seeded navigation content.'
+          community.privacy = 'public'
+          community.protected = true
+        end
+
+        ::BetterTogether::Platform.find_or_create_by!(host: true) do |platform|
+          platform.name = host_community.name
+          platform.identifier = host_community.identifier
+          platform.description = host_community.description
+          platform.community = host_community
+          platform.host_url = BetterTogether.base_url
+          platform.external = false
+          platform.privacy = 'public'
+          platform.protected = true
+          platform.time_zone = ENV.fetch('PLATFORM_TIME_ZONE', 'UTC')
+        end
       end
 
       def create_unassociated_pages # rubocop:todo Metrics/MethodLength
