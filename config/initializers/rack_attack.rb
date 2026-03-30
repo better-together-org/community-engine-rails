@@ -117,6 +117,13 @@ module Rack
       req.ip if req.path.include?('/api/auth/password') && req.post?
     end
 
+    # Throttle public membership request submissions by IP (5 requests per minute).
+    # This endpoint is intentionally unauthenticated, so it needs a dedicated guard
+    # even when host apps do not wire captcha enforcement yet.
+    throttle('api_membership_requests/ip', limit: 5, period: 1.minute) do |req|
+      req.ip if req.path.include?('/api/v1/membership_requests') && req.post?
+    end
+
     # Throttle OAuth token endpoint by IP (10 requests per minute)
     throttle('oauth/token/ip', limit: 10, period: 1.minute) do |req|
       req.ip if req.path.include?('/oauth/token') && req.post?
