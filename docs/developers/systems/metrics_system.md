@@ -62,25 +62,31 @@ This guide explains how page views, link clicks, shares, and downloads are track
 - Performance: reports aggregate via grouped database queries and only touch filtered subsets.
 - Storage: exported CSVs are attached via Active Storage and purged on report destroy.
 
-## Data Deletion & Retention (Examples)
-These examples illustrate how a host can manage retention and deletion in line with their policy. Adjust windows to your needs and run in maintenance windows.
+## Data Deletion & Retention
+Use the built-in retention task to purge stale raw metrics and generated report exports in line with your host privacy policy.
 
-Rails console snippets:
+Default windows:
+- raw metrics: 180 days
+- generated report exports: 90 days
 
-```ruby
-# Purge report exports older than 90 days
-BetterTogether::Metrics::LinkClickReport.where('created_at < ?', 90.days.ago).find_each(&:destroy)
-BetterTogether::Metrics::PageViewReport.where('created_at < ?', 90.days.ago).find_each(&:destroy)
+Dry run:
 
-# Delete raw metrics older than 180 days (batch as needed)
-BetterTogether::Metrics::PageView.where('viewed_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::LinkClick.where('clicked_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::Share.where('shared_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::Download.where('downloaded_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::SearchQuery.where('searched_at < ?', 180.days.ago).in_batches.delete_all
+```bash
+bundle exec rake better_together:metrics:retention DRY_RUN=true
 ```
 
+Override the windows:
+
+```bash
+bundle exec rake better_together:metrics:retention RAW_METRICS_DAYS=120 REPORT_DAYS=30
+```
+
+The task:
+- deletes old raw metrics in batches to avoid long-running transactions
+- destroys old report records so their attached export files are purged too
+- prints a JSON summary of eligible and deleted rows for each metrics/report type
+
 Tips:
-- Use `in_batches` to avoid long‑running transactions.
-- Consider wrapping deletions in a Rake task and scheduling via cron.
-- Announce retention in your privacy policy and honor deletion requests.
+- schedule the task during low-traffic maintenance windows
+- use `DRY_RUN=true` before changing windows in production
+- announce retention in your privacy policy and honor deletion requests
