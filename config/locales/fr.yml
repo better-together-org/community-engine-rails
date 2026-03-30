@@ -316,6 +316,8 @@ fr:
         conversations: Conversations
         created_conversations: Conversations créées
         description: Description
+        federate_content: Autoriser cette plateforme à inclure vos publications, pages
+          et événements publics dans des flux de fédération approuvés.
         identifications: Identifications
         identifier: Identifiant
         locale: Langue
@@ -2239,6 +2241,8 @@ fr:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Groupe de permissions
+      federate_content: Autoriser cette plateforme à inclure vos publications, pages
+        et événements publics dans des flux de fédération approuvés.
       index:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
@@ -3735,9 +3739,11 @@ fr:
         cover_image: Cover image
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
-          personnes autres que les gestionnaires de la plateforme.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
+        federate_content: Choisir d'autoriser cette plateforme à partager vos publications,
+          pages et événements publics avec des plateformes connectées approuvées.
+          personnes autres que les gestionnaires de la plateforme.
         locale: Sélectionnez la langue préférée pour la personne.
         name: Entrez le nom complet de la personne.
         notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message
