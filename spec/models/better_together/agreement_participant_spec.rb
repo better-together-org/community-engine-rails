@@ -14,4 +14,28 @@ RSpec.describe BetterTogether::AgreementParticipant do
   it 'has a valid factory' do
     expect(participant).to be_valid
   end
+
+  it 'captures immutable agreement acceptance audit details on create', :aggregate_failures do
+    agreement.update!(title: 'Original Title')
+
+    participant = create(
+      :better_together_agreement_participant,
+      agreement:,
+      person:,
+      acceptance_method: :agreement_review,
+      audit_context: { 'source_path' => '/en/agreements/status' }
+    )
+
+    original_digest = participant.agreement_content_digest
+    original_title = participant.agreement_title_snapshot
+    original_revision = participant.agreement_updated_at_snapshot
+
+    agreement.update!(title: 'Updated Title')
+    participant.reload
+
+    expect(participant.agreement_title_snapshot).to eq(original_title)
+    expect(participant.agreement_content_digest).to eq(original_digest)
+    expect(participant.agreement_updated_at_snapshot).to eq(original_revision)
+    expect(participant.audit_context).to include('source_path' => '/en/agreements/status')
+  end
 end

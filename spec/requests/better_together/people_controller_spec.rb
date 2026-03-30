@@ -18,6 +18,32 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       get better_together.edit_person_path(locale:, id: person.slug)
       expect(response).to have_http_status(:ok)
     end
+
+    it 'shows agreement acceptance audit details when present', :aggregate_failures do
+      agreement = create(:better_together_agreement, title: 'Privacy Policy')
+      participant = create(
+        :better_together_agreement_participant,
+        person:,
+        agreement:,
+        accepted_at: Time.zone.parse('2026-03-30 12:00:00'),
+        acceptance_method: :agreement_review,
+        agreement_title_snapshot: 'Privacy Policy (March 2026)',
+        agreement_updated_at_snapshot: Time.zone.parse('2026-03-30 09:00:00')
+      )
+
+      get better_together.person_path(locale:, id: person.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(participant.agreement_title_snapshot)
+      expect(response.body).to include(
+        I18n.t(
+          'better_together.agreements.participant.accepted_via',
+          method: I18n.t('better_together.agreements.participant.acceptance_methods.agreement_review')
+        )
+      )
+      expect(response.body).to include(I18n.t('better_together.agreements.participant.agreement_revision', timestamp: '').strip)
+      expect(response.body).to include(participant.agreement_updated_at_snapshot.in_time_zone.strftime('%B %d, %Y'))
+    end
   end
 
   describe 'GET /:locale/.../host/p/:id (show) - calendar tab' do

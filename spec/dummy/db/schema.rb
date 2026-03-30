@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
+ActiveRecord::Schema[7.2].define(version: 2026_03_30_203000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -105,6 +105,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_194500) do
     t.uuid "person_id", null: false
     t.string "group_identifier"
     t.datetime "accepted_at"
+    t.string "acceptance_method", default: "agreement_review", null: false
+    t.string "agreement_identifier_snapshot", null: false
+    t.string "agreement_title_snapshot", null: false
+    t.datetime "agreement_updated_at_snapshot", null: false
+    t.string "agreement_content_digest", null: false
+    t.jsonb "audit_context", default: {}, null: false
     t.index ["agreement_id", "person_id"], name: "index_bt_agreement_participants_on_agreement_and_person", unique: true
     t.index ["agreement_id"], name: "index_better_together_agreement_participants_on_agreement_id"
     t.index ["group_identifier"], name: "idx_on_group_identifier_06b6e57c0b"

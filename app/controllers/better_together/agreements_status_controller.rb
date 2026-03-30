@@ -82,10 +82,12 @@ module BetterTogether
         param_name = "#{agreement.identifier}_agreement"
         next unless params[param_name] == '1'
 
-        BetterTogether::AgreementParticipant.create!(
+        BetterTogether::AgreementAcceptanceRecorder.record!(
           agreement: agreement,
           person: current_user.person,
-          accepted_at: Time.current
+          acceptance_method: :agreement_review,
+          accepted_at: Time.current,
+          context: { request: }
         )
       end
     end
