@@ -42,7 +42,7 @@ module BetterTogether
 
     # Returns the people that the agent is permitted to message
     def permitted_participants
-      return BetterTogether::Person.includes(:string_translations).all if admin_participant_access?
+      return platform_people if admin_participant_access?
 
       admin_and_opted_in_participants
     end
@@ -72,6 +72,8 @@ module BetterTogether
 
     def platform_steward_ids
       BetterTogether::PersonPlatformMembership
+        .active
+        .where(joinable: platform)
         .joins(role: { role_resource_permissions: :resource_permission })
         .where(better_together_resource_permissions: {
                  identifier: %w[manage_platform_members manage_platform_settings manage_platform]
@@ -81,16 +83,27 @@ module BetterTogether
     end
 
     def opted_in_participants
-      BetterTogether::Person.where(
+      platform_people.where(
         'preferences @> ?', { receive_messages_from_members: true }.to_json
       )
     end
 
     def admin_and_opted_in_participants
-      BetterTogether::Person
-        .includes(:string_translations)
+      platform_people
         .where(id: platform_steward_ids)
         .or(opted_in_participants)
+        .distinct
+    end
+
+    def platform
+      Current.platform || BetterTogether::Platform.find_by(host: true)
+    end
+
+    def platform_people
+      BetterTogether::Person
+        .includes(:string_translations)
+        .joins(:person_platform_memberships)
+        .merge(BetterTogether::PersonPlatformMembership.active.where(joinable: platform))
         .distinct
     end
   end
