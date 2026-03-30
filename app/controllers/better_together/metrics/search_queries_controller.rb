@@ -13,7 +13,10 @@ module BetterTogether
                  status: :unprocessable_content and return
         end
 
-        BetterTogether::Metrics::TrackSearchQueryJob.perform_later(query, results_count.to_i, locale)
+        tracked_query = BetterTogether::Metrics::SearchQueryCaptureService.new.call(query)
+        if tracked_query.present?
+          BetterTogether::Metrics::TrackSearchQueryJob.perform_later(tracked_query, results_count.to_i, locale)
+        end
 
         render json: { success: true }, status: :ok
       end
