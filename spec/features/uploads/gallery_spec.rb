@@ -2,13 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe 'uploads gallery', type: :feature, js: true do # rubocop:disable Metrics/BlockLength
+RSpec.describe 'uploads gallery', :js do # rubocop:disable Metrics/BlockLength
   include BetterTogether::DeviseSessionHelpers
+
+  let(:creator) { BetterTogether::User.find_by(email: 'manager@example.test').person }
 
   before do
     configure_host_platform
     login_as_platform_manager
-    @creator = BetterTogether::User.find_by(email: 'manager@example.test').person
   end
 
   def create_upload(name, creator:, created_at: Time.current)
@@ -18,8 +19,8 @@ RSpec.describe 'uploads gallery', type: :feature, js: true do # rubocop:disable 
   end
 
   scenario 'searches, sorts, and copies upload urls' do
-    create_upload('Alpha', creator: @creator, created_at: 2.days.ago)
-    create_upload('Beta', creator: @creator, created_at: 1.day.ago)
+    create_upload('Alpha', creator:, created_at: 2.days.ago)
+    create_upload('Beta', creator:, created_at: 1.day.ago)
 
     visit file_index_path(locale: I18n.default_locale)
 
@@ -30,7 +31,11 @@ RSpec.describe 'uploads gallery', type: :feature, js: true do # rubocop:disable 
     expect(page).to have_selector('[data-name="Alpha"]', visible: true)
     expect(page).to have_selector('[data-name="Beta"].d-none', visible: :all)
 
-    find('select[data-better_together--uploads-target="sort"]').select('Name')
+    find('select[data-better_together--uploads-target="sort"]').find('option', text: 'Name').select_option
+    expect(page).to have_selector('[data-name="Alpha"]', visible: true)
+    expect(page).to have_selector('[data-name="Beta"].d-none', visible: :all)
+
+    fill_in placeholder: 'Search uploads', with: ''
     expect(page.all('[data-better_together--uploads-target="item"] .card-title').map(&:text))
       .to eq(%w[Alpha Beta])
 
