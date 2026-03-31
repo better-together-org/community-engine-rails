@@ -200,14 +200,13 @@ module BetterTogether
       profile_image.variant(resize_to_fill: [size, size])
     end
 
-    # Get optimized profile image variant without blocking rendering
+    # Return a same-origin proxy path so image requests stay compatible with CSP.
     def profile_image_url(size: 300)
       return nil unless profile_image.attached?
 
       variant = profile_image.variant(resize_to_fill: [size, size])
 
-      # For better performance, use Rails URL helpers for variant
-      Rails.application.routes.url_helpers.url_for(variant)
+      Rails.application.routes.url_helpers.rails_storage_proxy_path(variant, only_path: true)
     rescue ActiveStorage::FileNotFoundError
       nil
     end
