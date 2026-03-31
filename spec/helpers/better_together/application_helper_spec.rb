@@ -55,9 +55,11 @@ RSpec.describe BetterTogether::ApplicationHelper do
 
     describe '#set_meta_description' do
       it 'stores translated description in content_for and renders meta tag' do
-        allow(helper).to receive(:host_platform).and_return(double(name: 'MyPlatform'))
-        allow(helper).to receive(:request).and_return(double(original_url: 'http://example.com'))
-        allow(helper).to receive(:host_community_logo_url).and_return(nil)
+        allow(helper).to receive_messages(
+          host_platform: double(name: 'MyPlatform'),
+          request: double(original_url: 'http://example.com'),
+          host_community_logo_url: nil
+        )
 
         helper.set_meta_description('communities.index', platform_name: 'MyPlatform')
 

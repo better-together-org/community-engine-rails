@@ -3838,6 +3838,13 @@ uk:
     uk: Українська
   meta:
     default_description: Ласкаво просимо на %{platform_name}
+    descriptions:
+      communities:
+        index: Відкривайте спільноти на %{platform_name}.
+        show: Дізнайтеся більше про %{community_name} на %{platform_name}.
+      conversations:
+        index: Переглядайте свої розмови на %{platform_name}.
+        show: Переглянути розмову %{conversation_subject} на %{platform_name}.
     page:
       description_fallback: Читайте %{title} на %{platform_name}
   metrics:
