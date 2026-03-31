@@ -316,6 +316,8 @@ es:
         conversations: Conversaciones
         created_conversations: Conversaciones creadas
         description: Descripción
+        federate_content: Permitir que esta plataforma incluya tus publicaciones,
+          páginas y eventos públicos en fuentes de federación aprobadas.
         identifications: Identificaciones
         identifier: Identificador
         locale: Idioma
@@ -366,14 +368,6 @@ es:
         text_translations: Traducciones de texto
         time_zone: Huso horario
         url: URL
-      better_together/storage_configuration:
-        access_key_id: Access Key ID
-        bucket: Bucket name
-        endpoint: Endpoint URL
-        name: Name
-        region: Region
-        secret_access_key: Secret Access Key
-        service_type: Storage type
       better_together/platform_invitation:
         accepted_at: Aceptado en
         community_role: :activerecord.models.community_role
@@ -421,6 +415,14 @@ es:
         lock_version: Versión de bloqueo
         resource_permission: :activerecord.models.resource_permission
         role: :activerecord.models.role
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
       better_together/user:
         confirmation_sent_at: Confirmación enviada a
         confirmation_token: Código de confirmación
@@ -600,6 +602,7 @@ es:
       better_together/content/css: CSS personalizado
       better_together/content/hero: Héroe
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Imagen
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagrama Mermaid
@@ -647,9 +650,9 @@ es:
       better_together/resource_permission: Permiso de recursos
       better_together/role: Papel
       better_together/role_resource_permission: Permiso de recursos de rol
+      better_together/storage_configuration: Configuración de almacenamiento
       better_together/user: Usuario
       better_together/webhook_endpoint: Punto de conexión de webhook
-      better_together/storage_configuration: Configuración de almacenamiento
       better_together/wizard: Mago
       better_together/wizard_step: Paso del asistente
       better_together/wizard_step_definition: Definición de pasos del asistente
@@ -707,6 +710,14 @@ es:
         close: Cerrar
         title: Ver acuerdo requerido
       participant:
+        acceptance_methods:
+          agreement_review: revisión del acuerdo
+          api: API
+          legacy: registro heredado
+          sign_up: registro
+          system: sistema
+        accepted_via: Aceptado mediante %{method}
+        agreement_revision: Versión del acuerdo %{timestamp}
         pending: Pendiente
       show:
         title: Acuerdo
@@ -901,8 +912,28 @@ es:
           select_prompt: "— Seleccionar una lista de verificación —"
         communities_block:
           empty: No hay comunidades para mostrar.
+        embeds:
+          blocked_body: "%{title} no pudo mostrarse aquí porque esta plataforma no
+            ha incluido ese origen de iframe en la lista permitida de la Política
+            de Seguridad de Contenido."
+          blocked_instructions: Agrega %{origin} en Anfitrión > Plataforma > Seguridad
+            / inserciones CSP > Orígenes permitidos de iframes salientes y luego recarga
+            esta página.
+          blocked_origin_label: 'Origen bloqueado:'
+          blocked_title: Este contenido incrustado está bloqueado actualmente
+          invalid_url_body: Revisa la URL del iframe y asegúrate de que sea una dirección
+            HTTPS completa.
+          invalid_url_title: Este contenido incrustado tiene una URL no válida
+          open_in_new_tab: Abrir contenido incrustado en una nueva pestaña
         events_block:
           empty: No hay eventos para mostrar.
+        iframe_block:
+          csp_help: Si este contenido no está permitido para la plataforma actual,
+            Community Engine mostrará una guía visible en lugar de un iframe en blanco.
+          default_title: Contenido incrustado
+          missing_url: No se ha configurado ninguna URL de iframe.
+          url_help: Acepta una URL HTTPS completa de iframe, como una encuesta de
+            Formbricks u otra inserción confiable de un espacio comunitario.
         markdown:
           fields:
             auto_sync: Cargar siempre desde archivo (ignorar contenido de base de
@@ -1900,19 +1931,6 @@ es:
           medium_results: Medio
           no_results: Sin resultados
           result_quality: Promedio de resultados por búsqueda
-        tabs:
-          charts: Gráficos
-          charts_and_reports: Gráficos y reportes
-          downloads: Descargas
-          link_checker: Verificador de Enlaces
-          link_clicks: Clics en Enlaces
-          metrics_types: Tipos de métricas
-          page_views: Vistas de Página
-          reports: Reportes
-          search_health: Estado de la búsqueda
-          search_queries: Búsquedas
-          shares: Compartidos
-          users: Users
         search_health:
           backend: Backend
           db_count: Conteo BD
@@ -1929,6 +1947,19 @@ es:
           store_size: Tamaño de almacenamiento
           total_drift: Desviación total
           unmanaged_models: Modelos buscables no gestionados
+        tabs:
+          charts: Gráficos
+          charts_and_reports: Gráficos y reportes
+          downloads: Descargas
+          link_checker: Verificador de Enlaces
+          link_clicks: Clics en Enlaces
+          metrics_types: Tipos de métricas
+          page_views: Vistas de Página
+          reports: Reportes
+          search_health: Estado de la búsqueda
+          search_queries: Búsquedas
+          shares: Compartidos
+          users: Users
         title: Informes de Métricas
         unknown_type: Desconocido
       shares:
@@ -2208,6 +2239,8 @@ es:
         microphone: Micrófono
         notifications: Notificaciones
         permissions_group_label: Permissions group label
+      federate_content: Permitir que esta plataforma incluya tus publicaciones, páginas
+        y eventos públicos en fuentes de federación aprobadas.
       index:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
@@ -2538,6 +2571,18 @@ es:
         pending: Pendiente
     platforms:
       form:
+        csp_frame_ancestors_text_hint: Quién puede incrustar este sitio de CE. Selecciona
+          orígenes de confianza o escribe un nuevo hostname/origen y presiona Enter.
+          Déjalo en blanco para mantener frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Orígenes permitidos para incrustación entrante
+        csp_frame_src_text_hint: Qué puede incrustar este sitio de CE en iframes,
+          como Formbricks u otras integraciones comunitarias de confianza. Selecciona
+          orígenes de confianza o escribe un nuevo hostname/origen y presiona Enter.
+        csp_frame_src_text_label: Orígenes permitidos para iframes salientes
+        csp_img_src_text_hint: Hosts de imágenes adicionales desde los que este sitio
+          de CE puede cargar. Selecciona orígenes de confianza o escribe un nuevo
+          hostname/origen y presiona Enter.
+        csp_img_src_text_label: Orígenes externos de imágenes permitidos
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
@@ -2835,6 +2880,42 @@ es:
         integrations:
           description: Conecte y gestione sus cuentas de plataformas externas.
           title: Cuentas Conectadas
+        my_data:
+          deletion:
+            actions: Actions
+            cancel: Cancel request
+            description: Deletion requests are queued for human review so safety,
+              legal, and community obligations can be handled carefully.
+            reason: Reason for deletion request
+            requested_at: Requested
+            status: Status
+            submit: Request account deletion
+            title: Account deletion requests
+          deletion_request_cancelled: Your deletion request has been cancelled.
+          deletion_request_created: Your deletion request has been submitted.
+          deletion_request_failed: We could not create your deletion request.
+          description: Ver, descargar o eliminar sus exportaciones de datos personales.
+          export_not_ready: Your export is not ready yet.
+          export_requested: Your data export has been requested.
+          exports:
+            actions: Actions
+            description: Generate a portable JSON export of your profile, memberships,
+              agreements, and other account-linked records.
+            download: Download
+            empty: You have not requested any account exports yet.
+            pending: Export in progress
+            request: Request export
+            requested_at: Requested
+            requesting: Requesting export...
+            status: Status
+            title: Downloadable account exports
+          seeds:
+            description: Earlier personal exports remain available here for advanced
+              portability and interoperability workflows.
+            empty: No legacy portable seed exports are available.
+            title: Existing portable seed exports
+            view: View
+          title: Mis datos
         navigation_aria_label: Navegación de configuración
         personal:
           coming_soon: La configuración personal estará disponible pronto.
@@ -2859,12 +2940,15 @@ es:
           developer: Desarrollador
           device_permissions: Permisos del Dispositivo
           integrations: Integraciones
+          my_data: Mis datos
           personal: Personal
           platform: Plataforma
           preferences: Preferencias
           privacy: Privacidad
         title: Configuración
     setup_wizard_steps:
+      already_completed: Esta plataforma ya ha sido configurada. Por favor inicie
+        sesión para administrar su plataforma.
       create_admin:
         flash:
           please_address_errors: Por favor, corrija los errores a continuación.
@@ -2897,35 +2981,6 @@ es:
       platform: Plataforma
       title: Cuentas de Redes Sociales
       url: URL
-    translations:
-      errors:
-        content_blank: El contenido no puede estar en blanco
-        content_too_long: El contenido es demasiado largo para traducir. Por favor,
-          limite su texto a aproximadamente 8.000 palabras (~50.000 caracteres) e
-          inténtelo de nuevo.
-        invalid_source_locale: Idioma de origen no válido
-        invalid_target_locale: Idioma de destino no válido
-        translation_failed: 'La traducción falló: %{message}'
-        translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
-          de nuevo.
-    validators:
-      safe_federation_url:
-        credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
-        insecure_scheme: debe usar http o https
-        invalid_url: no es una URL válida
-        private_ip: no debe apuntar a una dirección IP privada o reservada
-    view_switcher:
-      button_label: Vista %{view}
-      change_view: Cambiar tipo de vista
-      flash:
-        updated: Tipo de vista actualizado.
-      label: Opciones de vista
-      switch_to: Cambiar a vista %{view}
-      types:
-        calendar: Calendario
-        card: Tarjetas
-        list: Lista
-        table: Tabla
     storage:
       service_types:
         amazon: Amazon S3
@@ -2936,17 +2991,16 @@ es:
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
       cancel: Cancel
-      cannot_destroy_active: Cannot delete the currently active storage configuration. Activate another first.
+      cannot_destroy_active: Cannot delete the currently active storage configuration.
+        Activate another first.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
-      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.
-      name_hint: A human-readable label for this storage backend.
-      name_placeholder: 'e.g., Primary S3, Local Dev, Garage bts-5'
-      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
-      s3_credentials_heading: S3 Credentials
-      secret_key_hint: Leave blank to keep the existing value when editing.
-      secret_key_placeholder: "••••••••"
-      updated: Storage configuration was successfully updated.
+      edit:
+        subtitle: Storage backend for %{platform_name}
+        title: Edit %{name}
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
+        for Amazon S3. Path-style access is enabled automatically when an endpoint
+        is set.
       index:
         activate_btn: Set active
         activate_confirm: Set this as the active storage configuration?
@@ -2970,19 +3024,56 @@ es:
         header_type: Type
         in_use: In use
         new_btn: Add Storage
-        no_configs: No storage configurations defined. Environment variables are used by default.
+        no_configs: No storage configurations defined. Environment variables are used
+          by default.
         not_active: Not active
         platform_override_badge: Platform Override
         service_type_label: Service type
-        subtitle: "Storage backends for %{platform_name}"
+        subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
         title: Storage Configurations
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
       new:
-        subtitle: "Add a storage backend for %{platform_name}"
+        subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
-      edit:
-        subtitle: "Storage backend for %{platform_name}"
-        title: "Edit %{name}"
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
+    translations:
+      errors:
+        content_blank: El contenido no puede estar en blanco
+        content_too_long: El contenido es demasiado largo para traducir. Por favor,
+          limite su texto a aproximadamente 8.000 palabras (~50.000 caracteres) e
+          inténtelo de nuevo.
+        invalid_source_locale: Idioma de origen no válido
+        invalid_target_locale: Idioma de destino no válido
+        translation_failed: 'La traducción falló: %{message}'
+        translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
+          de nuevo.
+    uploads:
+      index:
+        storage_usage: Estás usando %{size} de almacenamiento
+    validators:
+      safe_federation_url:
+        credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
+        insecure_scheme: debe usar http o https
+        invalid_url: no es una URL válida
+        private_ip: no debe apuntar a una dirección IP privada o reservada
+    view_switcher:
+      button_label: Vista %{view}
+      change_view: Cambiar tipo de vista
+      flash:
+        updated: Tipo de vista actualizado.
+      label: Opciones de vista
+      switch_to: Cambiar a vista %{view}
+      types:
+        calendar: Calendario
+        card: Tarjetas
+        list: Lista
+        table: Tabla
     webhook_endpoints:
       actions_aria: Acciones del webhook
       active_help: Habilitar o deshabilitar la entrega de webhooks para este punto
@@ -3669,10 +3760,12 @@ es:
         cover_image: Imagen de portada
       person:
         allow_messages_from_members: Optar por recibir mensajes de personas que no
-          sean administradores de la plataforma.
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
         description: Proporcione una breve descripción o biografía.
+        federate_content: Optar por permitir que esta plataforma comparta tus publicaciones,
+          páginas y eventos públicos con plataformas conectadas aprobadas. sean administradores
+          de la plataforma.
         locale: Selecciona el idioma preferido para la persona.
         name: Ingrese el nombre completo de la persona.
         notify_by_email: Envía un correo electrónico cuando una conversación tiene
@@ -3741,6 +3834,13 @@ es:
     uk: Українська
   meta:
     default_description: Bienvenido a %{platform_name}
+    descriptions:
+      communities:
+        index: Descubre comunidades en %{platform_name}.
+        show: Conoce %{community_name} en %{platform_name}.
+      conversations:
+        index: Explora tus conversaciones en %{platform_name}.
+        show: Ver conversación %{conversation_subject} en %{platform_name}.
     page:
       description_fallback: Lee %{title} en %{platform_name}
   metrics:
@@ -3867,6 +3967,21 @@ es:
       title: Agregar miembro de plataforma
     show:
       title: Detalles de membresía de plataforma
+  person_seeds:
+    confirm_destroy: "¿Eliminar esta exportación de datos? Esta acción no se puede
+      deshacer."
+    export_failed: No se pudo completar su exportación de datos. Inténtelo de nuevo.
+    export_queued: Se ha solicitado su exportación de datos. Aparecerá un enlace de
+      descarga debajo cuando esté lista.
+    export_too_soon: Solicitó una exportación hace poco. Espere antes de solicitar
+      otra.
+    export_unavailable: Su cuenta no tiene un perfil de persona para exportar.
+    index:
+      empty: Aún no tiene exportaciones de datos.
+      exporting: Solicitando…
+      new_export: Solicitar exportación de datos
+      new_export_hint: Genere una exportación portable de sus datos personales.
+      title: Mis datos
   platform_invitations:
     confirm_delete: Confirmar eliminación
   platforms:
@@ -3910,6 +4025,7 @@ es:
     report: Informe
     resource_permission: Permiso de recurso
     role: Rol
+    seed: Seed
     settlement: Asentamiento
     state: Estado
     user: Usuario
@@ -3918,6 +4034,33 @@ es:
   search:
     button: Buscar
     placeholder: Buscar...
+  seeds:
+    actions:
+      destroy: Eliminar semilla
+      edit: Edit seed
+      show: Ver semilla
+    confirm_destroy: "¿Está seguro de que desea eliminar esta semilla? Esta acción
+      no se puede deshacer."
+    edit:
+      title: 'Editing: %{identifier}'
+    errors:
+      invalid_json: must be valid JSON
+    form:
+      identifier_placeholder: e.g. host-setup-wizard-v1
+      json_hint: Must be valid JSON.
+    index:
+      empty: No seeds found.
+      new_seed: New seed
+      title: Semillas
+    new:
+      title: Nueva semilla
+    seeded_by: Generada por %{created_by}
+    show:
+      download_yaml: Descargar YAML
+      origin: Origen
+      payload: Contenido
+      plantings: Historial de siembra
+      yaml_export: Exportación YAML
   shared:
     by: por
     links:

@@ -6,18 +6,28 @@
 class AddExpiryIndexesToFederationTables < ActiveRecord::Migration[7.1]
   def change
     # FederationAccessToken — hot-path: every inbound M2M token lookup
-    add_index :better_together_federation_access_tokens, :expires_at,
-              name: 'index_bt_federation_access_tokens_on_expires_at'
-    add_index :better_together_federation_access_tokens, :revoked_at,
-              name: 'index_bt_federation_access_tokens_on_revoked_at'
+    unless index_name_exists?(:better_together_federation_access_tokens, 'index_bt_federation_access_tokens_on_expires_at')
+      add_index :better_together_federation_access_tokens, :expires_at,
+                name: 'index_bt_federation_access_tokens_on_expires_at'
+    end
+    unless index_name_exists?(:better_together_federation_access_tokens, 'index_bt_federation_access_tokens_on_revoked_at')
+      add_index :better_together_federation_access_tokens, :revoked_at,
+                name: 'index_bt_federation_access_tokens_on_revoked_at'
+    end
 
     # PersonAccessGrant — queried on every linked-seed export
-    add_index :better_together_person_access_grants, :expires_at,
-              name: 'index_bt_person_access_grants_on_expires_at'
-    add_index :better_together_person_access_grants, :revoked_at,
-              name: 'index_bt_person_access_grants_on_revoked_at'
+    unless index_name_exists?(:better_together_person_access_grants, 'index_bt_person_access_grants_on_expires_at')
+      add_index :better_together_person_access_grants, :expires_at,
+                name: 'index_bt_person_access_grants_on_expires_at'
+    end
+    unless index_name_exists?(:better_together_person_access_grants, 'index_bt_person_access_grants_on_revoked_at')
+      add_index :better_together_person_access_grants, :revoked_at,
+                name: 'index_bt_person_access_grants_on_revoked_at'
+    end
 
     # PersonLink — queried when resolving federation identity
+    return if index_name_exists?(:better_together_person_links, 'index_bt_person_links_on_revoked_at')
+
     add_index :better_together_person_links, :revoked_at,
               name: 'index_bt_person_links_on_revoked_at'
   end

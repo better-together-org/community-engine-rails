@@ -1,3 +1,49 @@
+<%
+  csp_slim_select_options = {
+    addable: true,
+    settings: {
+      closeOnSelect: false,
+      hideSelected: true,
+      searchPlaceholder: 'Search or type an origin...',
+      searchText: 'No matching origins yet. Press Enter to add a new one.',
+      addableText: 'Press "Enter" to add {value}'
+    }
+  }.to_json
+
+  frame_ancestor_options = ([
+    'https://bebettertogether.ca',
+    'https://communityengine.app',
+    'https://newfoundlandlabrador.online',
+    'https://newcomernavigatornl.ca',
+    'https://app.nlvenues.com'
+  ] + platform.csp_frame_ancestors).uniq
+
+  frame_src_options = ([
+    'https://forms.btsdev.ca',
+    'https://bebettertogether.ca',
+    'https://communityengine.app',
+    'https://newfoundlandlabrador.online',
+    'https://newcomernavigatornl.ca',
+    'https://app.nlvenues.com'
+  ] + platform.csp_frame_src).uniq
+
+  img_src_options = ([
+    'https://bebettertogether.ca',
+    'https://communityengine.app',
+    'https://newfoundlandlabrador.online',
+    'https://newcomernavigatornl.ca',
+    'https://app.nlvenues.com'
+  ] + platform.csp_img_src).uniq
+%>
+
+<%
+  identifier_field_id = "#{dom_id(platform)}_identifier"
+  host_url_field_id = "#{dom_id(platform)}_host_url"
+  time_zone_field_id = "#{dom_id(platform)}_time_zone"
+  privacy_field_id = "#{dom_id(platform)}_privacy"
+  requires_invitation_field_id = "#{dom_id(platform)}_requires_invitation"
+%>
+
 <%= form_with(model: platform) do |form| %>
   <% if platform.errors.any? %>
     <div class="alert alert-danger" role="alert">
@@ -20,8 +66,8 @@
   <% end %>
 
   <div class="mb-3">
-    <%= form.label :identifier, class: "form-label" %>
-    <%= form.text_field :identifier, class: "form-control", disabled: platform.protected %>
+    <%= form.label :identifier, class: "form-label", for: identifier_field_id %>
+    <%= form.text_field :identifier, id: identifier_field_id, class: "form-control", disabled: platform.protected %>
   </div>
 
   <div class="mb-3">
@@ -33,27 +79,124 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :host_url, class: "form-label" %>
-    <%= form.text_field :host_url, class: "form-control", disabled: platform.protected %>
+    <%= form.label :host_url, class: "form-label", for: host_url_field_id %>
+    <%= form.text_field :host_url, id: host_url_field_id, class: "form-control", disabled: platform.protected %>
     <p class="form-text text-muted"><%= t('better_together.platforms.form.host_url_hint') %></p>
   </div>
 
   <div class="mb-3">
-    <%= form.label :time_zone, class: "form-label" %>
-    <%= iana_time_zone_select(form, :time_zone, @platform.time_zone, {}, { class: 'form-select', id: 'time_zone_select', required: true }) %>
+    <%= form.label :time_zone, class: "form-label", for: time_zone_field_id %>
+    <%= iana_time_zone_select(form, :time_zone, @platform.time_zone, {}, { class: 'form-select', id: time_zone_field_id, required: true }) %>
   </div>
 
   <div class="mb-3">
-    <%= form.label :privacy, class: "form-label" %>
-    <%= privacy_field(form:, klass: resource_class) %>
+    <%= form.label :privacy, class: "form-label", for: privacy_field_id %>
+    <%= privacy_field(form:, klass: resource_class, html_options: { id: privacy_field_id }) %>
   </div>
 
   <div class="mb-3">
     <div class="form-check">
-      <%= form.label :requires_invitation, class: "form-check-label" %>
-      <%= form.check_box :requires_invitation, { class: "form-check-input", checked: platform.requires_invitation? } %>
+      <%= form.check_box :requires_invitation, { class: "form-check-input", checked: platform.requires_invitation?, id: requires_invitation_field_id } %>
+      <%= form.label :requires_invitation, class: "form-check-label", for: requires_invitation_field_id %>
       <div class="form-text text-muted">
         When enabled, new users must supply a valid invitation code to register. Invitations prefill email and can assign community/platform roles upon acceptance. This is the default behavior.
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion mb-3" id="<%= dom_id(platform, 'csp_settings') %>">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="<%= dom_id(platform, 'csp_settings_header') %>">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(platform, 'csp_settings_collapse') %>" aria-expanded="false" aria-controls="<%= dom_id(platform, 'csp_settings_collapse') %>">
+          Security / CSP embeds
+        </button>
+      </h2>
+      <div id="<%= dom_id(platform, 'csp_settings_collapse') %>" class="accordion-collapse collapse" aria-labelledby="<%= dom_id(platform, 'csp_settings_header') %>" data-bs-parent="#<%= dom_id(platform, 'csp_settings') %>">
+        <div class="accordion-body">
+          <div class="mb-3">
+            <%= form.label :csp_frame_ancestors_text,
+                           t('better_together.platforms.form.csp_frame_ancestors_text_label', default: 'Allowed inbound framing origins'),
+                           class: 'form-label' %>
+            <%= form.select :csp_frame_ancestors_text,
+                            options_for_select(frame_ancestor_options, platform.csp_frame_ancestors),
+                            {},
+                            {
+                              multiple: true,
+                              class: "form-select#{' is-invalid' if platform.errors[:csp_frame_ancestors_text].any?}",
+                              data: {
+                                controller: 'better_together--slim-select',
+                                'better_together--slim-select-options-value': csp_slim_select_options
+                              }
+                            } %>
+            <div class="form-text text-muted">
+              <%= t(
+                    'better_together.platforms.form.csp_frame_ancestors_text_hint',
+                    default: "Who may embed this CE site. Select trusted origins or type a new hostname/origin and press Enter. Leave blank to keep frame-ancestors 'none'."
+                  ) %>
+            </div>
+            <% if platform.errors[:csp_frame_ancestors_text].any? %>
+              <div class="invalid-feedback d-block">
+                <%= platform.errors[:csp_frame_ancestors_text].join(', ') %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :csp_frame_src_text,
+                           t('better_together.platforms.form.csp_frame_src_text_label', default: 'Allowed outbound iframe origins'),
+                           class: 'form-label' %>
+            <%= form.select :csp_frame_src_text,
+                            options_for_select(frame_src_options, platform.csp_frame_src),
+                            {},
+                            {
+                              multiple: true,
+                              class: "form-select#{' is-invalid' if platform.errors[:csp_frame_src_text].any?}",
+                              data: {
+                                controller: 'better_together--slim-select',
+                                'better_together--slim-select-options-value': csp_slim_select_options
+                              }
+                            } %>
+            <div class="form-text text-muted">
+              <%= t(
+                    'better_together.platforms.form.csp_frame_src_text_hint',
+                    default: 'What this CE site may embed in iframes, such as Formbricks or YouTube. Select trusted origins or type a new hostname/origin and press Enter.'
+                  ) %>
+            </div>
+            <% if platform.errors[:csp_frame_src_text].any? %>
+              <div class="invalid-feedback d-block">
+                <%= platform.errors[:csp_frame_src_text].join(', ') %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :csp_img_src_text,
+                           t('better_together.platforms.form.csp_img_src_text_label', default: 'Allowed external image origins'),
+                           class: 'form-label' %>
+            <%= form.select :csp_img_src_text,
+                            options_for_select(img_src_options, platform.csp_img_src),
+                            {},
+                            {
+                              multiple: true,
+                              class: "form-select#{' is-invalid' if platform.errors[:csp_img_src_text].any?}",
+                              data: {
+                                controller: 'better_together--slim-select',
+                                'better_together--slim-select-options-value': csp_slim_select_options
+                              }
+                            } %>
+            <div class="form-text text-muted">
+              <%= t(
+                    'better_together.platforms.form.csp_img_src_text_hint',
+                    default: 'Extra image hosts this CE site may load from. Select trusted origins or type a new hostname/origin and press Enter.'
+                  ) %>
+            </div>
+            <% if platform.errors[:csp_img_src_text].any? %>
+              <div class="invalid-feedback d-block">
+                <%= platform.errors[:csp_img_src_text].join(', ') %>
+              </div>
+            <% end %>
+          </div>
+        </div>
       </div>
     </div>
   </div>

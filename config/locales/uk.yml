@@ -316,6 +316,8 @@ uk:
         conversations: Розмови
         created_conversations: Створені розмови
         description: Опис
+        federate_content: Дозволити цій платформі включати ваші публічні дописи, сторінки
+          та події до схвалених федеративних стрічок.
         identifications: Ідентифікації
         identifier: Ідентифікатор
         locale: Мова
@@ -366,14 +368,6 @@ uk:
         text_translations: Переклади тексту
         time_zone: Часовий пояс
         url: URL-адреса
-      better_together/storage_configuration:
-        access_key_id: Access Key ID
-        bucket: Bucket name
-        endpoint: Endpoint URL
-        name: Name
-        region: Region
-        secret_access_key: Secret Access Key
-        service_type: Storage type
       better_together/platform_invitation:
         accepted_at: Прийнято
         community_role: :activerecord.models.community_role
@@ -421,6 +415,14 @@ uk:
         lock_version: Версія блокування
         resource_permission: :activerecord.models.resource_permission
         role: :activerecord.models.role
+      better_together/storage_configuration:
+        access_key_id: Access Key ID
+        bucket: Bucket name
+        endpoint: Endpoint URL
+        name: Name
+        region: Region
+        secret_access_key: Secret Access Key
+        service_type: Storage type
       better_together/user:
         confirmation_sent_at: Підтвердження надіслано о
         confirmation_token: Токен підтвердження
@@ -591,6 +593,7 @@ uk:
       better_together/content/css: Користувацький CSS
       better_together/content/hero: Герой
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Зображення
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Діаграма Mermaid
@@ -638,9 +641,9 @@ uk:
       better_together/resource_permission: Дозвіл ресурсу
       better_together/role: Роль
       better_together/role_resource_permission: Дозвіл ролі ресурсу
+      better_together/storage_configuration: Конфігурація сховища
       better_together/user: Користувач
       better_together/webhook_endpoint: Кінцева точка вебхука
-      better_together/storage_configuration: Конфігурація сховища
       better_together/wizard: Майстер
       better_together/wizard_step: Крок майстра
       better_together/wizard_step_definition: Визначення кроку майстра
@@ -696,6 +699,14 @@ uk:
         close: Закрити
         title: Переглянути обов'язкову угоду
       participant:
+        acceptance_methods:
+          agreement_review: перегляд угоди
+          api: API
+          legacy: застарілий запис
+          sign_up: реєстрація
+          system: система
+        accepted_via: Прийнято через %{method}
+        agreement_revision: Редакція угоди %{timestamp}
         pending: очікує
       show:
         title: Угода
@@ -891,8 +902,26 @@ uk:
           select_prompt: "— Виберіть контрольний список —"
         communities_block:
           empty: Немає спільнот для відображення.
+        embeds:
+          blocked_body: "%{title} не вдалося показати тут, оскільки ця платформа не
+            внесла це джерело iframe до дозволених у налаштуваннях політики безпеки
+            вмісту."
+          blocked_instructions: Додайте %{origin} у Хост > Платформа > Безпека / вбудовування
+            CSP > Дозволені джерела вихідних iframe, а потім перезавантажте цю сторінку.
+          blocked_origin_label: 'Заблоковане джерело:'
+          blocked_title: Цей вбудований вміст зараз заблоковано
+          invalid_url_body: Перевірте URL iframe і переконайтеся, що це повна HTTPS-адреса.
+          invalid_url_title: Цей вбудований вміст має недійсний URL
+          open_in_new_tab: Відкрити вбудований вміст у новій вкладці
         events_block:
           empty: Немає подій для відображення.
+        iframe_block:
+          csp_help: Якщо це вбудовування не дозволене для поточної платформи, Community
+            Engine покаже видиме повідомлення з підказкою замість порожнього iframe.
+          default_title: Вбудований вміст
+          missing_url: URL iframe не налаштовано.
+          url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
+            або інше довірене вбудовування зі спільнотного простору.
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -1890,19 +1919,6 @@ uk:
           medium_results: Середня
           no_results: Без результатів
           result_quality: Середня кількість результатів на пошук
-        tabs:
-          charts: Графіки
-          charts_and_reports: Графіки й звіти
-          downloads: Завантаження
-          link_checker: Перевірка посилань
-          link_clicks: Кліки по посиланнях
-          metrics_types: Типи метрик
-          page_views: Перегляди сторінок
-          reports: Звіти
-          search_health: Стан пошуку
-          search_queries: Пошуки
-          shares: Поширення
-          users: Users
         search_health:
           backend: Backend
           db_count: Кількість у БД
@@ -1919,6 +1935,19 @@ uk:
           store_size: Розмір сховища
           total_drift: Загальна розбіжність
           unmanaged_models: Некеровані пошукові моделі
+        tabs:
+          charts: Графіки
+          charts_and_reports: Графіки й звіти
+          downloads: Завантаження
+          link_checker: Перевірка посилань
+          link_clicks: Кліки по посиланнях
+          metrics_types: Типи метрик
+          page_views: Перегляди сторінок
+          reports: Звіти
+          search_health: Стан пошуку
+          search_queries: Пошуки
+          shares: Поширення
+          users: Users
         title: Звіти метрик
         unknown_type: Невідомо
       shares:
@@ -2197,6 +2226,8 @@ uk:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      federate_content: Дозволити цій платформі включати ваші публічні дописи, сторінки
+        та події до схвалених федеративних стрічок.
       index:
         new_person: New person
       notification_preferences: Message notification preferences
@@ -2524,6 +2555,18 @@ uk:
         pending: Очікує
     platforms:
       form:
+        csp_frame_ancestors_text_hint: Хто може вбудовувати цей сайт CE. Виберіть
+          довірені джерела або введіть новий hostname/джерело й натисніть Enter. Залиште
+          порожнім, щоб зберегти frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Дозволені джерела для вхідного вбудовування
+        csp_frame_src_text_hint: Що цей сайт CE може вбудовувати в iframe, наприклад
+          Formbricks або інші довірені вбудовування зі спільнот. Виберіть довірені
+          джерела або введіть новий hostname/джерело й натисніть Enter.
+        csp_frame_src_text_label: Дозволені джерела для вихідних iframe
+        csp_img_src_text_hint: Додаткові хости зображень, з яких цей сайт CE може
+          завантажувати зображення. Виберіть довірені джерела або введіть новий hostname/джерело
+          й натисніть Enter.
+        csp_img_src_text_label: Дозволені зовнішні джерела зображень
         host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
           Використовується для її ідентифікації у федерації та генерації URL-адрес
           OAuth-ендпоінту. Для production має бути HTTPS.
@@ -2819,6 +2862,43 @@ uk:
         integrations:
           description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
           title: Підключені облікові записи
+        my_data:
+          deletion:
+            actions: Actions
+            cancel: Cancel request
+            description: Deletion requests are queued for human review so safety,
+              legal, and community obligations can be handled carefully.
+            reason: Reason for deletion request
+            requested_at: Requested
+            status: Status
+            submit: Request account deletion
+            title: Account deletion requests
+          deletion_request_cancelled: Your deletion request has been cancelled.
+          deletion_request_created: Your deletion request has been submitted.
+          deletion_request_failed: We could not create your deletion request.
+          description: Переглядайте, завантажуйте або видаляйте свої експорти персональних
+            даних.
+          export_not_ready: Your export is not ready yet.
+          export_requested: Your data export has been requested.
+          exports:
+            actions: Actions
+            description: Generate a portable JSON export of your profile, memberships,
+              agreements, and other account-linked records.
+            download: Download
+            empty: You have not requested any account exports yet.
+            pending: Export in progress
+            request: Request export
+            requested_at: Requested
+            requesting: Requesting export...
+            status: Status
+            title: Downloadable account exports
+          seeds:
+            description: Earlier personal exports remain available here for advanced
+              portability and interoperability workflows.
+            empty: No legacy portable seed exports are available.
+            title: Existing portable seed exports
+            view: View
+          title: Мої дані
         navigation_aria_label: Навігація налаштувань
         personal:
           coming_soon: Особисті налаштування з'являться незабаром.
@@ -2843,12 +2923,15 @@ uk:
           developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
+          my_data: Мої дані
           personal: Особисті
           platform: Платформа
           preferences: Налаштування
           privacy: Конфіденційність
         title: Settings
     setup_wizard_steps:
+      already_completed: Цю платформу вже налаштовано. Будь ласка, увійдіть, щоб керувати
+        своєю платформою.
       create_admin:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.
@@ -2881,34 +2964,6 @@ uk:
       platform: Платформа
       title: Акаунти соціальних мереж
       url: URL-адреса
-    translations:
-      errors:
-        content_blank: Вміст не може бути порожнім
-        content_too_long: Вміст занадто довгий для перекладу. Будь ласка, обмежте
-          текст приблизно до 8 000 слів (~50 000 символів) і спробуйте знову.
-        invalid_source_locale: Недійсна мова джерела
-        invalid_target_locale: Недійсна мова перекладу
-        translation_failed: 'Переклад не вдався: %{message}'
-        translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
-          знову.
-    validators:
-      safe_federation_url:
-        credentials_in_url: не повинен містити облікові дані (користувач:пароль@)
-        insecure_scheme: повинен використовувати http або https
-        invalid_url: не є дійсною URL-адресою
-        private_ip: не повинен вказувати на приватну або зарезервовану IP-адресу
-    view_switcher:
-      button_label: Перегляд %{view}
-      change_view: Змінити тип перегляду
-      flash:
-        updated: Тип перегляду оновлено.
-      label: Параметри перегляду
-      switch_to: Перемкнути на вигляд %{view}
-      types:
-        calendar: Календар
-        card: Картки
-        list: Список
-        table: Таблиця
     storage:
       service_types:
         amazon: Amazon S3
@@ -2919,17 +2974,16 @@ uk:
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
       cancel: Cancel
-      cannot_destroy_active: Cannot delete the currently active storage configuration. Activate another first.
+      cannot_destroy_active: Cannot delete the currently active storage configuration.
+        Activate another first.
       created: Storage configuration was successfully created.
       destroyed: Storage configuration was successfully deleted.
-      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank for Amazon S3. Path-style access is enabled automatically when an endpoint is set.
-      name_hint: A human-readable label for this storage backend.
-      name_placeholder: 'e.g., Primary S3, Local Dev, Garage bts-5'
-      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
-      s3_credentials_heading: S3 Credentials
-      secret_key_hint: Leave blank to keep the existing value when editing.
-      secret_key_placeholder: "••••••••"
-      updated: Storage configuration was successfully updated.
+      edit:
+        subtitle: Storage backend for %{platform_name}
+        title: Edit %{name}
+      endpoint_hint: Required for S3-compatible services (Garage, etc.). Leave blank
+        for Amazon S3. Path-style access is enabled automatically when an endpoint
+        is set.
       index:
         activate_btn: Set active
         activate_confirm: Set this as the active storage configuration?
@@ -2953,19 +3007,55 @@ uk:
         header_type: Type
         in_use: In use
         new_btn: Add Storage
-        no_configs: No storage configurations defined. Environment variables are used by default.
+        no_configs: No storage configurations defined. Environment variables are used
+          by default.
         not_active: Not active
         platform_override_badge: Platform Override
         service_type_label: Service type
-        subtitle: "Storage backends for %{platform_name}"
+        subtitle: Storage backends for %{platform_name}
         table_aria: Storage configurations
         title: Storage Configurations
+      name_hint: A human-readable label for this storage backend.
+      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
       new:
-        subtitle: "Add a storage backend for %{platform_name}"
+        subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
-      edit:
-        subtitle: "Storage backend for %{platform_name}"
-        title: "Edit %{name}"
+      region_hint: Required for Amazon S3. Leave blank for S3-compatible services.
+      s3_credentials_heading: S3 Credentials
+      secret_key_hint: Leave blank to keep the existing value when editing.
+      secret_key_placeholder: "••••••••"
+      updated: Storage configuration was successfully updated.
+    translations:
+      errors:
+        content_blank: Вміст не може бути порожнім
+        content_too_long: Вміст занадто довгий для перекладу. Будь ласка, обмежте
+          текст приблизно до 8 000 слів (~50 000 символів) і спробуйте знову.
+        invalid_source_locale: Недійсна мова джерела
+        invalid_target_locale: Недійсна мова перекладу
+        translation_failed: 'Переклад не вдався: %{message}'
+        translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
+          знову.
+    uploads:
+      index:
+        storage_usage: Ви використовуєте %{size} сховища
+    validators:
+      safe_federation_url:
+        credentials_in_url: не повинен містити облікові дані (користувач:пароль@)
+        insecure_scheme: повинен використовувати http або https
+        invalid_url: не є дійсною URL-адресою
+        private_ip: не повинен вказувати на приватну або зарезервовану IP-адресу
+    view_switcher:
+      button_label: Перегляд %{view}
+      change_view: Змінити тип перегляду
+      flash:
+        updated: Тип перегляду оновлено.
+      label: Параметри перегляду
+      switch_to: Перемкнути на вигляд %{view}
+      types:
+        calendar: Календар
+        card: Картки
+        list: Список
+        table: Таблиця
     webhook_endpoints:
       actions_aria: Дії вебхука
       active_help: Увімкнути або вимкнути доставку вебхуків для цієї кінцевої точки.
@@ -3677,10 +3767,12 @@ uk:
         cover_image: Зображення обкладинки
       person:
         allow_messages_from_members: Дозволити отримувати повідомлення від людей,
-          окрім менеджерів платформи.
         cover_image: Завантажте зображення обкладинки для відображення у верхній частині
           профілю.
         description: Надайте короткий опис або біографію.
+        federate_content: Дозволити цій платформі ділитися вашими публічними дописами,
+          сторінками та подіями зі схваленими підключеними платформами. окрім менеджерів
+          платформи.
         locale: Виберіть бажану мову для особи.
         name: Введіть повне ім'я особи.
         notify_by_email: Надсилати електронний лист, коли в розмові є непрочитане
@@ -3749,6 +3841,13 @@ uk:
     uk: Українська
   meta:
     default_description: Ласкаво просимо на %{platform_name}
+    descriptions:
+      communities:
+        index: Відкривайте спільноти на %{platform_name}.
+        show: Дізнайтеся більше про %{community_name} на %{platform_name}.
+      conversations:
+        index: Переглядайте свої розмови на %{platform_name}.
+        show: Переглянути розмову %{conversation_subject} на %{platform_name}.
     page:
       description_fallback: Читайте %{title} на %{platform_name}
   metrics:
@@ -3873,6 +3972,20 @@ uk:
       title: Додати учасника платформи
     show:
       title: Деталі членства на платформі
+  person_seeds:
+    confirm_destroy: Видалити цей експорт даних? Цю дію не можна скасувати.
+    export_failed: Не вдалося завершити експорт ваших даних. Спробуйте ще раз.
+    export_queued: Ваш експорт даних запитано. Посилання для завантаження з'явиться
+      нижче, щойно він буде готовий.
+    export_too_soon: Ви нещодавно вже запитували експорт. Зачекайте перед повторним
+      запитом.
+    export_unavailable: У вашого облікового запису немає профілю особи для експорту.
+    index:
+      empty: У вас ще немає експортів даних.
+      exporting: Запит надсилається…
+      new_export: Запросити експорт даних
+      new_export_hint: Створіть переносний експорт своїх персональних даних.
+      title: Мої дані
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:
@@ -3916,6 +4029,7 @@ uk:
     report: Звіт
     resource_permission: Дозвіл ресурсу
     role: Роль
+    seed: Seed
     settlement: Поселення
     state: Штат/Область
     user: Користувач
@@ -3924,6 +4038,32 @@ uk:
   search:
     button: Пошук
     placeholder: Пошук...
+  seeds:
+    actions:
+      destroy: Видалити seed
+      edit: Edit seed
+      show: Переглянути seed
+    confirm_destroy: Ви впевнені, що хочете видалити цей seed? Цю дію не можна скасувати.
+    edit:
+      title: 'Editing: %{identifier}'
+    errors:
+      invalid_json: must be valid JSON
+    form:
+      identifier_placeholder: e.g. host-setup-wizard-v1
+      json_hint: Must be valid JSON.
+    index:
+      empty: No seeds found.
+      new_seed: New seed
+      title: Seeds
+    new:
+      title: Новий seed
+    seeded_by: Створено %{created_by}
+    show:
+      download_yaml: Завантажити YAML
+      origin: Походження
+      payload: Вміст
+      plantings: Історія висадження
+      yaml_export: Експорт YAML
   shared:
     by: автор
     links:

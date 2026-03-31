@@ -49,6 +49,10 @@
           <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>
           <%= t('.tabs.preferences') %>
         </button>
+        <button class="nav-link text-start" id="my-data-tab" data-bs-toggle="pill" data-bs-target="#my-data" type="button" role="tab" aria-controls="my-data" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
+          <%= t('.tabs.my_data') %>
+        </button>
         <!-- <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" type="button" role="tab" aria-controls="privacy" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-shield-alt me-2" aria-hidden="true"></i>
           <%= t('.tabs.privacy') %>
@@ -204,6 +208,30 @@
 
             <!-- Self-contained preference fields -->
             <%= render 'better_together/people/preferences_self_contained', person: current_user.person %>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Data Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="my-data" role="tabpanel" aria-labelledby="my-data-tab">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
+              <%= t('.my_data.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.my_data.description') %></p>
+
+            <%= turbo_frame_tag 'my-data-settings',
+                                src: settings_my_data_path(locale: locale),
+                                loading: 'lazy',
+                                class: 'd-block' do %>
+              <div class="d-flex justify-content-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>

@@ -1,3 +1,15 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
+# shellcheck source=./docker-compose-env.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/docker-compose-env.sh"
+
+./bin/dc-ensure-services
+
+joined_args=" $* "
+if [[ -n "${CE_WORKTREE_DB_SUFFIX:-}" ]] && [[ "$joined_args" == *" rspec "* || "$joined_args" == *" prspec "* || "$joined_args" == *" RAILS_ENV=test "* ]]; then
+  ./bin/dc-prepare-worktree-test-dbs
+fi
+
 ./bin/dc run --rm --no-deps app "$@"

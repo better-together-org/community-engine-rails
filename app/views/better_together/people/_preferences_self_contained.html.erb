@@ -35,7 +35,7 @@
           hint: t('helpers.hint.person.show_conversation_details')) %>
   </div>
 
-  <!-- Messaging Preferences -->
+  <!-- Messaging and Federation Preferences -->
   <div class="mb-4">
     <h5 class="mb-3">
       <i class="fa-solid fa-envelope me-2" aria-hidden="true"></i>
@@ -47,6 +47,11 @@
           field_type: :toggle,
           label: t('activerecord.attributes.better_together/person.receive_messages_from_members'),
           hint: t('helpers.hint.person.allow_messages_from_members')) %>
+
+    <%= preference_field(person, :federate_content,
+          field_type: :toggle,
+          label: t('activerecord.attributes.better_together/person.federate_content'),
+          hint: t('helpers.hint.person.federate_content')) %>
 
     <div class="alert alert-info mt-3" role="alert">
       <i class="fa-solid fa-shield-halved me-2" aria-hidden="true"></i>

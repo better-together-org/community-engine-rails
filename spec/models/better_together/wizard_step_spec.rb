@@ -15,6 +15,8 @@ RSpec.describe BetterTogether::WizardStep do
     end
   end
 
+  it_behaves_like 'a seedable model'
+
   describe 'ActiveRecord associations' do
     # it { is_expected.to belong_to(:wizard) }
     it {

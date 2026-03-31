@@ -18,6 +18,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Seedable
     include TimezoneAttributeAliasing
     include Viewable
     include Metrics::Viewable
@@ -85,6 +86,9 @@ module BetterTogether
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
     has_many :event_invitations, class_name: 'BetterTogether::EventInvitation', as: :invitee, dependent: :destroy
 
+    has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
+    has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
+
     has_one :user_identification,
             lambda {
               where(
@@ -123,6 +127,7 @@ module BetterTogether
       locale String, default: I18n.default_locale.to_s
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
       receive_messages_from_members Boolean, default: false
+      federate_content Boolean, default: false
     end
 
     store_attributes :notification_preferences do
@@ -146,6 +151,12 @@ module BetterTogether
     def receive_messages_from_members=(value)
       prefs = (preferences || {}).dup
       prefs['receive_messages_from_members'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.preferences = prefs
+    end
+
+    def federate_content=(value)
+      prefs = (preferences || {}).dup
+      prefs['federate_content'] = ActiveModel::Type::Boolean.new.cast(value)
       self.preferences = prefs
     end
 

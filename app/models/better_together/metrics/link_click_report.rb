@@ -4,6 +4,8 @@ module BetterTogether
   module Metrics
     # LinkClickReport records tracking instances of reports run against the BetterTogether::Metrics::LinkClick records.
     class LinkClickReport < ApplicationRecord # rubocop:todo Metrics/ClassLength
+      include PlatformScoped
+
       # Associations
       belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :link_click_reports, optional: true
 
@@ -36,7 +38,7 @@ module BetterTogether
         report_by_clicks = {}
 
         # Build a base scope for filtering LinkClick records.
-        base_scope = BetterTogether::Metrics::LinkClick.all
+        base_scope = BetterTogether::Metrics::LinkClick.for_platform(platform)
         base_scope = base_scope.where('clicked_at >= ?', from_date) if from_date
         base_scope = base_scope.where('clicked_at <= ?', to_date) if to_date
         base_scope = base_scope.where(internal: filter_internal) unless filter_internal.nil?
@@ -117,7 +119,7 @@ module BetterTogether
         to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
         filter_internal = filters['filter_internal']
 
-        base_scope = BetterTogether::Metrics::LinkClick.all
+        base_scope = BetterTogether::Metrics::LinkClick.for_platform(platform)
         base_scope = base_scope.where('clicked_at >= ?', from_date) if from_date
         base_scope = base_scope.where('clicked_at <= ?', to_date) if to_date
         base_scope = base_scope.where(internal: filter_internal) unless filter_internal.nil?
@@ -176,7 +178,7 @@ module BetterTogether
       # Class Methods
       #
       class << self
-        def create_and_generate!(from_date: nil, to_date: nil, filter_internal: nil, sort_by_total_clicks: false,
+        def create_and_generate!(platform:, from_date: nil, to_date: nil, filter_internal: nil, sort_by_total_clicks: false, # rubocop:todo Metrics/ParameterLists
                                  file_format: 'csv')
           filters = {}
           filters['from_date'] = from_date if from_date.present?
@@ -184,6 +186,7 @@ module BetterTogether
           filters['filter_internal'] = filter_internal unless filter_internal.nil?
 
           create!(
+            platform: platform,
             filters: filters,
             sort_by_total_clicks: sort_by_total_clicks,
             file_format: file_format

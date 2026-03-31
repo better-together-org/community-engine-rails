@@ -5,7 +5,9 @@ FactoryBot.define do
     file_name { Faker::File.file_name(ext: %w[pdf doc xls].sample) }
     file_type { %w[pdf doc xls].sample }
     file_size { Faker::Number.between(from: 1024, to: 10_485_760) }
+    platform { BetterTogether::Platform.find_by(host: true) || association(:better_together_platform, :host) }
     locale { I18n.available_locales.sample.to_s }
+    logged_in { false }
     downloaded_at { Faker::Time.between(from: 15.days.ago, to: 1.day.ago) }
 
     trait :with_community do

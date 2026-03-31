@@ -14,8 +14,10 @@
       <div class="btn-group">
         <%= link_to t('better_together.platform_connections.show.back'),
                     better_together.platform_connections_path, class: 'btn btn-outline-secondary' %>
-        <%= link_to t('better_together.platform_connections.show.edit'),
-                    better_together.edit_platform_connection_path(@platform_connection), class: 'btn btn-primary' %>
+        <% if policy(@platform_connection).update? %>
+          <%= link_to t('better_together.platform_connections.show.edit'),
+                      better_together.edit_platform_connection_path(@platform_connection), class: 'btn btn-primary' %>
+        <% end %>
         <% if policy(@platform_connection).approve? && (@platform_connection.pending? || @platform_connection.suspended?) %>
           <%= button_to t('better_together.platform_connections.show.approve'),
                         better_together.approve_platform_connection_path(@platform_connection),
@@ -114,7 +116,7 @@
           <dl class="row mb-2">
             <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.token_endpoint') %></dt>
             <dd class="col-sm-9">
-              <code><%= @platform_connection.source_platform.resolved_host_url %><%= better_together.federation_oauth_token_path(locale: nil) %></code>
+              <code><%= @platform_connection.source_platform.resolved_host_url %><%= better_together.federation_oauth_token_path(locale: I18n.locale) %></code>
             </dd>
 
             <dt class="col-sm-3"><%= t('better_together.platform_connections.show.oauth.client_id') %></dt>

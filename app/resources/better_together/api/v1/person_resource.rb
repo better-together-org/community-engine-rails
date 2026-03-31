@@ -18,6 +18,7 @@ module BetterTogether
         attribute :locale
         attribute :time_zone
         attribute :receive_messages_from_members
+        attribute :federate_content
 
         # Notification preference attributes
         attribute :notify_by_email
@@ -60,6 +61,10 @@ module BetterTogether
 
         def receive_messages_from_members
           @model.receive_messages_from_members
+        end
+
+        def federate_content
+          @model.federate_content
         end
 
         def notify_by_email

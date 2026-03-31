@@ -2,6 +2,8 @@
   <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
+<% set_meta_description('communities.show', community_name: @resource.name, platform_name: host_platform.name) %>
+
 <div class="container-fluid mb-3 px-0">
 
   <div class="profile-header position-relative">

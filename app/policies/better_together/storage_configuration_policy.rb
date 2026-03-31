@@ -34,5 +34,11 @@ module BetterTogether
     def activate?
       platform_manager?
     end
+
+    private
+
+    def platform_manager?
+      user&.person&.permitted_to?('manage_platform')
+    end
   end
 end
