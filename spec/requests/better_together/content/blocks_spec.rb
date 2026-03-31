@@ -2,12 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Content Blocks', type: :request do
+RSpec.describe 'Content Blocks' do
   describe 'POST /content/blocks' do
     let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
 
     before do
-      login(user)
+      login(user.email, 'SecureTest123!@#')
     end
 
     it 'attaches existing blob when media_signed_id is provided' do
@@ -17,14 +17,14 @@ RSpec.describe 'Content Blocks', type: :request do
         content_type: 'image/png'
       )
 
-      expect {
+      expect do
         post better_together.content_blocks_path, params: {
           block: {
             type: 'BetterTogether::Content::Image',
             media_signed_id: blob.signed_id
           }
         }
-      }.to change(BetterTogether::Content::Image, :count).by(1)
+      end.to change(BetterTogether::Content::Image, :count).by(1)
 
       block = BetterTogether::Content::Image.last
       expect(block.media).to be_attached
