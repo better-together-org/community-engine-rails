@@ -27,7 +27,7 @@ module BetterTogether
         name: community.name,
         url: community_url(community)
       }
-      data[:description] = community.description.to_plain_text if community.respond_to?(:description) && community.description.present?
+      data[:description] = plain_text_description(community.description) if community.respond_to?(:description) && community.description.present?
       if community.logo.attached?
         attachment = community.respond_to?(:optimized_logo) ? community.optimized_logo : community.logo
         data[:logo] = rails_storage_proxy_url(attachment)
@@ -51,13 +51,21 @@ module BetterTogether
     def event_structured_description(event)
       return unless event.respond_to?(:description) && event.description.present?
 
-      event.description.to_plain_text
+      plain_text_description(event.description)
     end
 
     def event_structured_location(event)
       return unless event.respond_to?(:location) && event.location.present?
 
       event.location.to_s
+    end
+
+    private
+
+    def plain_text_description(value)
+      return if value.blank?
+
+      value.respond_to?(:to_plain_text) ? value.to_plain_text : value.to_s
     end
   end
 end
