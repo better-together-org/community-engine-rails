@@ -39,9 +39,7 @@ RSpec.describe 'layouts/better_together/application' do
     # Helpers / routes added to the layout on this branch:
     allow(view).to receive_messages(stimulus_debug_enabled?: false, robots_meta_tag: '', sitemap_index_path: '/sitemap.xml',
                                     sitemap_path: '/sitemap.xml')
-    allow(view).to receive(:render)
-      .with('better_together/e2e/passphrase_modal').and_return('')
-    allow(view).to receive_messages(current_user: nil, base_url: 'http://test.host')
+    allow(view).to receive_messages(current_user: nil, base_url: 'http://test.host', e2ee_messaging_enabled?: false)
   end
 
   it 'renders canonical and hreflang links by default' do
@@ -58,5 +56,17 @@ RSpec.describe 'layouts/better_together/application' do
 
     expect(rendered).to include('<link rel="alternate" hreflang="fr" href="/fr" />')
     expect(rendered).not_to include('<link rel="alternate" hreflang="en" href="/en" />')
+  end
+
+  it 'does not mount E2EE bootstrap or modal in the global layout' do
+    person = build_stubbed(:person)
+    user = build_stubbed(:user, person: person)
+    allow(view).to receive_messages(current_user: user, e2ee_messaging_enabled?: true, current_user_api_token: 'jwt-token')
+
+    render template: 'layouts/better_together/application'
+
+    expect(rendered).to include('meta name="current-user-token" content="jwt-token"')
+    expect(rendered).not_to include('better-together--e2e-session')
+    expect(rendered).not_to include('e2ePassphraseModal')
   end
 end
