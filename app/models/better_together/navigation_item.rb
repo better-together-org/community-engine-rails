@@ -310,11 +310,10 @@ module BetterTogether
     end
 
     def retrieve_route(route)
-      # Use `send` to dispatch the correct URL helper
-      Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
+      BetterTogether::Engine.routes.url_helpers.public_send(route, locale: I18n.locale)
     rescue NoMethodError
       begin
-        BetterTogether::Engine.routes.url_helpers.public_send(route, locale: I18n.locale)
+        Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
       rescue NoMethodError
         Rails.logger.error("Invalid route name: #{route}")
         nil
