@@ -21,17 +21,9 @@ module BetterTogether
     end
 
     def community_structured_data(community)
-      data = {
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        name: community.name,
-        url: community_url(community)
-      }
-      data[:description] = plain_text_description(community.description) if community.respond_to?(:description) && community.description.present?
-      if community.logo.attached?
-        attachment = community.respond_to?(:optimized_logo) ? community.optimized_logo : community.logo
-        data[:logo] = rails_storage_proxy_url(attachment)
-      end
+      data = base_community_structured_data(community)
+      add_community_description(data, community)
+      add_community_logo(data, community)
       data
     end
 
@@ -42,7 +34,7 @@ module BetterTogether
         name: event.name,
         startDate: event.starts_at&.iso8601,
         endDate: event.ends_at&.iso8601,
-        url: event_url(event),
+        url: (event_url(event) if routable_record?(event)),
         description: event_structured_description(event),
         location: event_structured_location(event)
       }.compact
@@ -66,6 +58,36 @@ module BetterTogether
       return if value.blank?
 
       value.respond_to?(:to_plain_text) ? value.to_plain_text : value.to_s
+    end
+
+    def base_community_structured_data(community)
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: community.name,
+        url: (community_url(community) if routable_record?(community))
+      }.compact
+    end
+
+    def add_community_description(data, community)
+      return unless community.respond_to?(:description) && community.description.present?
+
+      data[:description] = plain_text_description(community.description)
+    end
+
+    def add_community_logo(data, community)
+      return unless routable_record?(community) && community.logo.attached?
+
+      attachment = community.respond_to?(:optimized_logo) ? community.optimized_logo : community.logo
+      data[:logo] = rails_storage_proxy_url(attachment)
+    end
+
+    def routable_record?(record)
+      return false if record.blank?
+
+      return record.persisted? if record.respond_to?(:persisted?)
+
+      record.respond_to?(:to_param) && record.to_param.present?
     end
   end
 end
