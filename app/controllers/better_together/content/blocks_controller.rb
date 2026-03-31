@@ -2,14 +2,14 @@
 
 module BetterTogether
   module Content
-    # CRUD for content blocks independently of pages
+    # Handles CRUD for content blocks independently of pages.
+    # rubocop:todo Metrics/ClassLength
     class BlocksController < ResourceController
       before_action :authenticate_user!
       before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
       before_action :authorize_preview, only: [:preview_markdown]
       before_action only: %i[index], if: -> { Rails.env.development? } do
-        # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
         resource_class.load_all_subclasses
       end
 
@@ -18,7 +18,8 @@ module BetterTogether
       end
 
       def create
-        @block = resource_instance(block_params)
+        @block = resource_class.new(processed_block_params)
+        attach_signed_media(@block)
         authorize_resource
 
         if @block.save
@@ -30,17 +31,10 @@ module BetterTogether
       end
 
       def update
-        if @block.update(block_params)
-          redirect_to content_block_path(@block),
-                      notice: t('flash.generic.updated', resource: t('resources.block'))
+        if persist_prepared_block
+          respond_to { |format| redirect_after_update(format) }
         else
-          respond_to do |format|
-            format.turbo_stream do
-              render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
-                                                                                        locals: { block: @block })
-            end
-            format.html { render :edit }
-          end
+          respond_to { |format| render_update_errors(format) }
         end
       end
 
@@ -80,7 +74,7 @@ module BetterTogether
 
       def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
-          :type, :media, :identifier, :markdown_source_type,
+          :type, :media, :identifier, :markdown_source_type, :media_signed_id,
           *resource_class.localized_block_attributes,
           *resource_class.storext_keys
         )
@@ -98,8 +92,39 @@ module BetterTogether
         permitted_params
       end
 
+      def processed_block_params
+        block_params.except(:media_signed_id)
+      end
+
+      def persist_prepared_block
+        @block.assign_attributes(processed_block_params)
+        attach_signed_media(@block)
+        @block.save
+      end
+
+      def redirect_after_update(format)
+        notice = t('flash.generic.updated', resource: t('resources.block'))
+
+        format.html { redirect_to content_block_path(@block), notice: }
+        format.turbo_stream { redirect_to content_block_path(@block), notice: }
+      end
+
+      def render_update_errors(format)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
+                                                                                    locals: { block: @block }),
+                 status: :unprocessable_entity
+        end
+        format.html { render :edit, status: :unprocessable_entity }
+      end
+
       def set_block
         @block = set_resource_instance
+      end
+
+      def attach_signed_media(record)
+        signed_id = params.dig(:block, :media_signed_id)
+        record.media.attach(signed_id) if signed_id.present?
       end
 
       def resource_class
@@ -114,5 +139,6 @@ module BetterTogether
         authorize(resource_class, :preview_markdown?)
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
