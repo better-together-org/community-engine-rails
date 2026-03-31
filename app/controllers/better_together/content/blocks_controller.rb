@@ -92,6 +92,18 @@ module BetterTogether
         permitted_params
       end
 
+      def permitted_block_attributes
+        [
+          :type,
+          :media,
+          :identifier,
+          :markdown_source_type,
+          *resource_class.localized_block_attributes,
+          *resource_class.storext_keys,
+          *resource_class.extra_permitted_attributes
+        ]
+      end
+
       def processed_block_params
         block_params.except(:media_signed_id)
       end
