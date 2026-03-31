@@ -3035,6 +3035,9 @@ uk:
         translation_failed: 'Переклад не вдався: %{message}'
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
+    uploads:
+      index:
+        storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:
         credentials_in_url: не повинен містити облікові дані (користувач:пароль@)
