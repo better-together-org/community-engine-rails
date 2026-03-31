@@ -3053,6 +3053,9 @@ es:
         translation_failed: 'La traducción falló: %{message}'
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
+    uploads:
+      index:
+        storage_usage: Estás usando %{size} de almacenamiento
     validators:
       safe_federation_url:
         credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
