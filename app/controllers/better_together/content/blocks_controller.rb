@@ -2,14 +2,14 @@
 
 module BetterTogether
   module Content
-    # CRUD for content blocks independently of pages
+    # Handles CRUD for content blocks independently of pages.
+    # rubocop:todo Metrics/ClassLength
     class BlocksController < ResourceController
       before_action :authenticate_user!
       before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
       before_action :authorize_preview, only: [:preview_markdown]
       before_action only: %i[index], if: -> { Rails.env.development? } do
-        # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
         resource_class.load_all_subclasses
       end
 
@@ -31,11 +31,8 @@ module BetterTogether
       end
 
       def update
-        @block.assign_attributes(processed_block_params)
-        attach_signed_media(@block)
-
         respond_to do |format|
-          if @block.save
+          if persist_prepared_block
             redirect_to content_block_path(@block),
                         notice: t('flash.generic.updated', resource: t('resources.block'))
           else
@@ -106,6 +103,12 @@ module BetterTogether
         block_params.except(:media_signed_id)
       end
 
+      def persist_prepared_block
+        @block.assign_attributes(processed_block_params)
+        attach_signed_media(@block)
+        @block.save
+      end
+
       def set_block
         @block = set_resource_instance
       end
@@ -127,5 +130,6 @@ module BetterTogether
         authorize(resource_class, :preview_markdown?)
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
