@@ -294,6 +294,12 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '.seed_host_url' do
+        it 'uses the Rails test host URL during specs' do
+          expect(described_class.send(:seed_host_url)).to eq('http://www.example.com')
+        end
+      end
+
       describe '.build_header' do
         it 'creates Platform Header navigation area' do
           described_class.build_header

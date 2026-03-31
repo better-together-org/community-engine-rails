@@ -686,12 +686,18 @@ module BetterTogether
           platform.identifier = host_community.identifier
           platform.description = host_community.description
           platform.community = host_community
-          platform.host_url = BetterTogether.base_url
+          platform.host_url = seed_host_url
           platform.external = false
           platform.privacy = 'public'
           platform.protected = true
           platform.time_zone = ENV.fetch('PLATFORM_TIME_ZONE', 'UTC')
         end
+      end
+
+      def seed_host_url
+        return 'http://www.example.com' if Rails.env.test?
+
+        BetterTogether.base_url
       end
 
       def create_unassociated_pages # rubocop:todo Metrics/MethodLength
