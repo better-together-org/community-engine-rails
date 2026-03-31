@@ -10,6 +10,6 @@ RSpec.describe 'better_together/uploads/index.html.erb' do
 
     render
 
-    expect(rendered).to include("You're using 3 MB of storage")
+    expect(rendered).to include('You&#39;re using 3 MB of storage')
   end
 end
