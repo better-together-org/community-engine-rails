@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe 'better_together/uploads/index.html.erb' do
   it 'renders total storage usage' do
     view.define_singleton_method(:resource_class) { BetterTogether::Upload }
+    allow(view).to receive(:total_upload_size).and_return('3 MB')
     assign(:uploads, [])
-    assign(:total_size, 3.megabytes)
 
     render
 
