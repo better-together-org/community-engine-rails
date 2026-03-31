@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/uploads/index.html.erb', type: :view do
+RSpec.describe 'better_together/uploads/index.html.erb' do
   it 'renders total storage usage' do
     view.define_singleton_method(:resource_class) { BetterTogether::Upload }
     assign(:uploads, [])

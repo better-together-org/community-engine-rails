@@ -3067,6 +3067,9 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+    uploads:
+      index:
+        storage_usage: Vous utilisez %{size} de stockage
     validators:
       safe_federation_url:
         credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
