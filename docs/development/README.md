@@ -5,7 +5,7 @@
 
 ## Getting Started
 
-- [🛠️ Development Setup](dev-setup.md) - Complete local development environment setup guide
+- [Development Setup](dev-setup.md) - Complete local development environment setup guide
 - [Rails Version Branch Maintenance](rails_version_branch_maintenance.md) - Branch strategy, CI flow, and dependency update procedure for Rails compatibility lines
 
 ## Quick Links
