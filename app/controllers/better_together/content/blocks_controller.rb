@@ -78,11 +78,7 @@ module BetterTogether
       private
 
       def block_params
-        permitted_params = params.require(:block).permit(
-          :type, :media, :identifier, :markdown_source_type,
-          *resource_class.localized_block_attributes,
-          *resource_class.storext_keys
-        )
+        permitted_params = params.require(:block).permit(*permitted_block_attributes)
 
         # Handle markdown_source_type: clear the unused field
         if permitted_params[:markdown_source_type].present?
@@ -95,6 +91,18 @@ module BetterTogether
         end
 
         permitted_params
+      end
+
+      def permitted_block_attributes
+        [
+          :type,
+          :media,
+          :identifier,
+          :markdown_source_type,
+          *resource_class.localized_block_attributes,
+          *resource_class.storext_keys,
+          *resource_class.extra_permitted_attributes
+        ]
       end
 
       def set_block
