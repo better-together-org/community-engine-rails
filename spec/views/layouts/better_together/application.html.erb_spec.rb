@@ -5,9 +5,17 @@ require 'rails_helper'
 RSpec.describe 'layouts/better_together/application' do
   before do
     view.extend BetterTogether::ApplicationHelper
+    host_platform = double(name: 'Platform', url: 'http://test.host', cache_key_with_version: '1', css_block: nil)
+    host_community = double(
+      name: 'Community',
+      description: nil,
+      logo: double(attached?: false),
+      persisted?: false
+    )
 
     allow(view).to receive_messages(
-      host_platform: double(name: 'Platform', cache_key_with_version: '1', css_block: nil),
+      host_platform: host_platform,
+      host_community: host_community,
       open_graph_meta_tags: '',
       seo_meta_tags: '',
       javascript_importmap_tags: '',
