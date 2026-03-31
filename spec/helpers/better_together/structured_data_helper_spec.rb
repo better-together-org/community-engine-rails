@@ -26,6 +26,8 @@ RSpec.describe BetterTogether::StructuredDataHelper do
 
   describe '#event_structured_data' do
     it 'includes event properties' do
+      allow(event).to receive(:persisted?).and_return(true)
+
       data = event_structured_data(event)
       expect(data[:name]).to eq('Event')
       expect(data[:url]).to eq('https://example.com/events/event')
@@ -42,6 +44,12 @@ RSpec.describe BetterTogether::StructuredDataHelper do
   describe '#community_structured_data' do
     it 'handles plain string descriptions' do
       expect(community_structured_data(community)[:description]).to eq('A welcoming place')
+    end
+
+    it 'omits url for unroutable communities' do
+      data = community_structured_data(build(:community, name: 'Draft Community'))
+
+      expect(data).not_to have_key(:url)
     end
   end
 end
