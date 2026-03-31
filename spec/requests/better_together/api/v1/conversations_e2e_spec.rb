@@ -95,16 +95,16 @@ RSpec.describe 'BetterTogether::Api::V1::Conversations E2E', :no_auth do
         expect(response).to have_http_status(:ok)
       end
 
-      it 'returns a bundle for each registered participant' do
+      it 'returns a bundle for each other registered participant' do
         json = JSON.parse(response.body)
         bundles = json['data']
-        expect(bundles.length).to eq(2)
+        expect(bundles.length).to eq(1)
       end
 
-      it 'each bundle includes person_id' do
+      it 'omits the requesting participant bundle' do
         json = JSON.parse(response.body)
         person_ids = json['data'].map { |b| b['person_id'] }
-        expect(person_ids).to include(person.id, other_person.id)
+        expect(person_ids).to contain_exactly(other_person.id)
       end
 
       it 'each bundle includes identity_key' do
@@ -140,6 +140,11 @@ RSpec.describe 'BetterTogether::Api::V1::Conversations E2E', :no_auth do
         json['data'].each do |bundle|
           expect(bundle['one_time_prekey']).to be_nil
         end
+      end
+
+      it 'does not consume the requester one-time prekey when loading participant bundles' do
+        expect(person.one_time_prekeys.unconsumed.count).to eq(1)
+        expect(other_person.one_time_prekeys.unconsumed.count).to eq(0)
       end
     end
 
