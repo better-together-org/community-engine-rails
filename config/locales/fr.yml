@@ -3854,6 +3854,13 @@ fr:
     uk: Українська
   meta:
     default_description: Bienvenue sur %{platform_name}
+    descriptions:
+      communities:
+        index: Découvrir les communautés sur %{platform_name}.
+        show: En savoir plus sur %{community_name} sur %{platform_name}.
+      conversations:
+        index: Parcourez vos conversations sur %{platform_name}.
+        show: Voir la conversation %{conversation_subject} sur %{platform_name}.
     page:
       description_fallback: Lire %{title} sur %{platform_name}
   metrics:

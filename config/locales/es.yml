@@ -3831,6 +3831,13 @@ es:
     uk: Українська
   meta:
     default_description: Bienvenido a %{platform_name}
+    descriptions:
+      communities:
+        index: Descubre comunidades en %{platform_name}.
+        show: Conoce %{community_name} en %{platform_name}.
+      conversations:
+        index: Explora tus conversaciones en %{platform_name}.
+        show: Ver conversación %{conversation_subject} en %{platform_name}.
     page:
       description_fallback: Lee %{title} en %{platform_name}
   metrics:

@@ -114,6 +114,17 @@ module BetterTogether
       rails_storage_proxy_url(attachment)
     end
 
+    # Sets a translated meta description for the current view. Provide the
+    # translation scope without the `meta.descriptions` prefix.
+    #
+    #   set_meta_description('communities.show', community_name: @resource.name)
+    #
+    # @param scope [String] translation scope under meta.descriptions
+    # @param options [Hash] interpolation values for the translation
+    def set_meta_description(scope, **)
+      content_for(:meta_description, t("meta.descriptions.#{scope}", **))
+    end
+
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
     # from translations and fall back to the Open Graph description when set.
     # rubocop:todo Metrics/MethodLength
