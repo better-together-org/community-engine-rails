@@ -51,6 +51,7 @@ RSpec.describe 'better_together/conversations/_conversation_content' do
     render_partial
 
     expect(rendered).to include('better-together--e2e-session')
+    expect(rendered).to include('data-e2e-session-state="initializing"')
     expect(rendered).to include('e2ePassphraseModal')
   end
 end

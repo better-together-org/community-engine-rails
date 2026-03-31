@@ -9,6 +9,7 @@
 <% e2ee_enabled = BetterTogether.e2ee_messaging_enabled? %>
 <% form_data = { controller: 'better_together--message-form' } %>
 <% content_data = { "data-better_together--message-form-target": "content" } %>
+<% submit_data = {} %>
 <% if e2ee_enabled %>
   <% form_data[:controller] = "#{form_data[:controller]} better-together--e2e-message-form" %>
   <% form_data.merge!(
@@ -20,6 +21,7 @@
     "better-together--e2e-message-form-status-error-label-value": t('better_together.e2e.form.status_error')
   ) %>
   <% content_data["data-better-together--e2e-message-form-target"] = "content" %>
+  <% submit_data["data-better-together--e2e-message-form-target"] = "submit" %>
 <% end %>
 <div id="e2e_message_form_<%= conversation.id %>">
   <%= form_with(model: message, url: form_url, local: false, html: { id: "new_message", data: form_data }) do |form| %>
@@ -33,9 +35,9 @@
           <small class="text-muted me-auto"
             data-better-together--e2e-message-form-target="status"></small>
         <% end %>
-        <button class="btn btn-primary ms-2" type="submit">
+        <%= button_tag type: 'submit', class: 'btn btn-primary ms-2', disabled: e2ee_enabled, **submit_data do %>
           <%= t('better_together.messages.form.send') %> <i class="fas fa-paper-plane"></i>
-        </button>
+        <% end %>
       </div>
     </div>
   <% end %>

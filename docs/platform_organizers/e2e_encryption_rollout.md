@@ -104,7 +104,9 @@ Operators should treat this as expected behavior, not a bug:
 
 ## Plaintext fallback behavior
 
-The feature degrades gracefully when required key material is missing. In that case, messages may fall back to plaintext instead of failing hard.
+The message form now stays disabled while the current user's local key session is still initializing (for example, during first-device key generation or encrypted-backup restore). This avoids a first-visit race where an opted-in deployment could submit plaintext before the browser had finished preparing the local E2EE identity.
+
+After that local bootstrap is complete, the feature still degrades gracefully when required participant key material is missing. In that case, messages may fall back to plaintext instead of failing hard.
 
 This is important operationally because it means:
 

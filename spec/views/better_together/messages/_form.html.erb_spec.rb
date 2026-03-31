@@ -24,6 +24,8 @@ RSpec.describe 'better_together/messages/_form' do
     expect(rendered).to include('data-controller="better_together--message-form"')
     expect(rendered).not_to include('better-together--e2e-message-form')
     expect(rendered).not_to include('data-better-together--e2e-message-form-target="status"')
+    expect(rendered).not_to include('data-better-together--e2e-message-form-target="submit"')
+    expect(rendered).not_to include('disabled="disabled"')
   end
 
   it 'adds E2EE form wiring when the feature flag is enabled' do
@@ -34,5 +36,7 @@ RSpec.describe 'better_together/messages/_form' do
     expect(rendered).to include('data-controller="better_together--message-form better-together--e2e-message-form"')
     expect(rendered).to include(%(data-better-together--e2e-message-form-conversation-id-value="#{conversation.id}"))
     expect(rendered).to include('data-better-together--e2e-message-form-target="status"')
+    expect(rendered).to include('data-better-together--e2e-message-form-target="submit"')
+    expect(rendered).to include('disabled="disabled"')
   end
 end
