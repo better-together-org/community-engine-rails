@@ -63,6 +63,7 @@ module BetterTogether
     def e2ee_messaging_enabled_for?(person = current_person)
       e2ee_messaging_enabled? && person.present?
     end
+
     def default_url_options
       super.merge(resolved_url_options).merge(locale: I18n.locale)
     end

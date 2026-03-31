@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::StructuredDataHelper, type: :helper do
+RSpec.describe BetterTogether::StructuredDataHelper do
   let(:platform) { build(:platform, name: 'Platform', url: 'https://example.com') }
   let(:event) { BetterTogether::Event.new(name: 'Event', starts_at: Time.zone.parse('2024-01-01 12:00:00')) }
 

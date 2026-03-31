@@ -36,17 +36,28 @@ module BetterTogether
     end
 
     def event_structured_data(event)
-      data = {
+      {
         '@context': 'https://schema.org',
         '@type': 'Event',
         name: event.name,
         startDate: event.starts_at&.iso8601,
         endDate: event.ends_at&.iso8601,
-        url: event_url(event)
-      }
-      data[:description] = event.description.to_plain_text if event.respond_to?(:description) && event.description.present?
-      data[:location] = event.location.to_s if event.respond_to?(:location) && event.location.present?
-      data.compact
+        url: event_url(event),
+        description: event_structured_description(event),
+        location: event_structured_location(event)
+      }.compact
+    end
+
+    def event_structured_description(event)
+      return unless event.respond_to?(:description) && event.description.present?
+
+      event.description.to_plain_text
+    end
+
+    def event_structured_location(event)
+      return unless event.respond_to?(:location) && event.location.present?
+
+      event.location.to_s
     end
   end
 end
