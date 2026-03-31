@@ -5,6 +5,8 @@ require BetterTogether::Engine.root.join('db/migrate/20260320235959_seed_platfor
 require BetterTogether::Engine.root.join('db/migrate/20260321000002_backfill_host_platform_memberships')
 
 RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/DescribeClass
+  include BetterTogether::Engine.routes.url_helpers
+
   let(:seed_migration) { SeedPlatformMemberRoleBeforeHostBackfill.new }
   let(:backfill_migration) { BackfillHostPlatformMemberships.new }
   let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
@@ -30,6 +32,8 @@ RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/
     created_role = BetterTogether::Role.find_by(identifier: 'platform_member')
     expect(created_role).to be_present
     expect(created_role.resource_type).to eq('BetterTogether::Platform')
+    expect(created_role.slug).to eq('platform_member')
+    expect(role_path(created_role, locale: I18n.default_locale)).to include('/roles/platform_member')
 
     assignment_scope = BetterTogether::RoleResourcePermission.where(
       role_id: created_role.id,

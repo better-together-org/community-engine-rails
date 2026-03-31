@@ -22,6 +22,10 @@ class SeedPlatformMemberRoleBeforeHostBackfill < ActiveRecord::Migration[7.2]
     self.table_name = 'mobility_text_translations'
   end
 
+  class FriendlyIdSlug < ActiveRecord::Base
+    self.table_name = 'friendly_id_slugs'
+  end
+
   def up
     role = Role.find_or_initialize_by(identifier: 'platform_member')
     role.assign_attributes(
@@ -31,6 +35,7 @@ class SeedPlatformMemberRoleBeforeHostBackfill < ActiveRecord::Migration[7.2]
     )
     role.position ||= next_position_for(Role, 'BetterTogether::Platform')
     role.save! if role.changed?
+    upsert_slug!(role, 'BetterTogether::Role')
 
     upsert_role_translation!(
       MobilityStringTranslation,
@@ -54,6 +59,7 @@ class SeedPlatformMemberRoleBeforeHostBackfill < ActiveRecord::Migration[7.2]
       position: 1
     )
     permission.save! if permission.changed?
+    upsert_slug!(permission, 'BetterTogether::ResourcePermission')
 
     RoleResourcePermission.find_or_create_by!(
       role_id: role.id,
@@ -82,6 +88,31 @@ class SeedPlatformMemberRoleBeforeHostBackfill < ActiveRecord::Migration[7.2]
       translatable_id: role_id
     )
     translation.value = value
+    translation.save! if translation.changed?
+  end
+
+  def upsert_slug!(record, sluggable_type)
+    slug = record.identifier.to_s.parameterize
+    upsert_mobility_slug!(sluggable_type, record.id, slug)
+
+    friendly_slug = FriendlyIdSlug.find_or_initialize_by(
+      sluggable_type:,
+      sluggable_id: record.id,
+      locale: I18n.default_locale.to_s
+    )
+    friendly_slug.slug = slug
+    friendly_slug.scope = nil
+    friendly_slug.save! if friendly_slug.changed?
+  end
+
+  def upsert_mobility_slug!(translatable_type, translatable_id, slug)
+    translation = MobilityStringTranslation.find_or_initialize_by(
+      locale: I18n.default_locale.to_s,
+      key: 'slug',
+      translatable_type:,
+      translatable_id:
+    )
+    translation.value = slug
     translation.save! if translation.changed?
   end
 
