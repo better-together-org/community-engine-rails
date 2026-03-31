@@ -237,13 +237,13 @@ module BetterTogether
       return render_not_found if exception.is_a?(ActiveRecord::RecordNotFound)
 
       if Rails.env.test?
-        msg = "[TEST][Exception] #{exception.class}: #{exception.message}"
-        Rails.logger.error msg
-        Rails.logger.error(exception.backtrace.first(15).join("\n")) if exception.backtrace
+        msg = log_exception_details(exception, prefix: '[TEST][Exception]')
         warn msg
         warn(exception.backtrace.first(15).join("\n")) if exception.backtrace
       end
       raise exception unless Rails.env.production?
+
+      log_exception_details(exception, prefix: '[PRODUCTION][Exception]')
 
       # call error reporting
       error_reporting(exception)
@@ -266,7 +266,27 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
-    def error_reporting(exception); end
+    def error_reporting(exception)
+      return unless defined?(::Sentry)
+
+      ::Sentry.capture_exception(exception)
+    rescue StandardError => e
+      Rails.logger.error("[PRODUCTION][SentryCaptureFailure] #{e.class}: #{e.message}")
+    end
+
+    def log_exception_details(exception, prefix:)
+      msg = "#{prefix} #{exception.class}: #{exception.message} #{request_error_context}"
+
+      Rails.logger.error(msg)
+      Rails.logger.error(exception.backtrace.first(25).join("\n")) if exception.backtrace
+      msg
+    end
+
+    def request_error_context
+      "request_id=#{request.request_id} method=#{request.request_method} " \
+        "path=#{request.fullpath} controller=#{controller_name} action=#{action_name} " \
+        "user_id=#{current_user&.id || 'anonymous'}"
+    end
 
     # Extract language from request header
     def extract_locale_from_accept_language_header
