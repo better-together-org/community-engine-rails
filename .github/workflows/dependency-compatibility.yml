@@ -5,9 +5,7 @@ on:
     branches:
       - main
       - dev
-      - compat/rails-7.2
-      - compat/rails-8.0
-      - compat/rails-8.1
+      - compat/rails-*
     paths:
       - Gemfile
       - Gemfile.lock
@@ -17,6 +15,9 @@ permissions:
 
 jobs:
   detect:
+    # Skip automated sync PRs (main → compat/*) — those have head_ref == 'main'
+    # and their results would be misattributed to main's commit status.
+    if: github.head_ref != 'main'
     runs-on: ubuntu-latest
     outputs:
       rails_version: ${{ steps.detect.outputs.rails_version }}
@@ -40,10 +41,10 @@ jobs:
               rails_version="8.1.2"
               ;;
             main|dev|compat/rails-8.0)
-              rails_version="8.0.3"
+              rails_version="8.0.4.1"
               ;;
             *)
-              rails_version="8.0.3"
+              rails_version="8.0.4.1"
               ;;
           esac
 

@@ -1,0 +1,20 @@
+<%# locals: (quote_block:) -%>
+<%= cache quote_block.cache_key_with_version do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: quote_block } do %>
+    <figure class="quote-block py-4">
+      <blockquote class="quote-block__text blockquote fs-4 fst-italic border-start border-4 border-primary ps-4">
+        <p class="mb-0"><%= quote_block.quote_text %></p>
+      </blockquote>
+      <% if quote_block.attribution_name.present? %>
+        <figcaption class="quote-block__attribution blockquote-footer mt-3">
+          <%= quote_block.attribution_name %>
+          <% if quote_block.attribution_title.present? || quote_block.attribution_organization.present? %>
+            <cite title="<%= quote_block.attribution_organization %>">
+              <%= [quote_block.attribution_title, quote_block.attribution_organization].reject(&:blank?).join(', ') %>
+            </cite>
+          <% end %>
+        </figcaption>
+      <% end %>
+    </figure>
+  <% end %>
+<% end %>

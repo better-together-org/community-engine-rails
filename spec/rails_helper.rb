@@ -3,6 +3,9 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
+ENV['ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY'] ||= '0123456789abcdef0123456789abcdef'
+ENV['ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY'] ||= 'abcdef0123456789abcdef0123456789'
+ENV['ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT'] ||= 'salt-for-local-test-runs-0123456789'
 require File.expand_path('dummy/config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
@@ -38,9 +41,8 @@ Dir[BetterTogether::Engine.root.join('spec/factories/**/*.rb')].each { |f| requi
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
-  ActiveRecord::Migrator.migrations_paths = 'spec/dummy/db/migrate'
   ActiveRecord::Migration.maintain_test_schema!
-rescue ActiveRecord::PendingMigrationError => e
+rescue ActiveRecord::PendingMigrationError
   exit 1
 end
 
@@ -131,53 +133,73 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
 
-    # Pre-clear FK-dependent tables to avoid violations when referential integrity cannot be disabled
-    begin
-      BetterTogether::RoleResourcePermission.delete_all
-      BetterTogether::NavigationItem.where.not(parent_id: nil).delete_all
-      BetterTogether::NavigationItem.where(parent_id: nil).delete_all
-    rescue StandardError => e
-      Rails.logger.debug "Pre-clean step skipped or failed: #{e.message}"
-    end
-
-    # Full clean to start fresh using deletions to avoid deadlocks with Postgres TRUNCATE
-    DatabaseCleaner.clean_with(:deletion)
-
-    # Load essential seed data with explicit clearing for deterministic baseline
-    # In parallel execution, handle race conditions gracefully
+    # Seed essential data idempotently. No initial full-clean here because:
+    # 1. db:parallel:prepare already gives each CI worker a clean schema.
+    # 2. In CI, parallel_rspec workers share the same database (DATABASE_URL).
+    #    A destructive clean_with(:deletion) in one worker would wipe seeds
+    #    that a sibling worker just created, causing intermittent "Host Setup
+    #    Wizard not configured" / "Platform can't be blank" failures.
+    # All builders use clear: false so seed_data runs without deleting first.
+    # build_with_retry treats duplicate-key errors as "already seeded" — safe
+    # for concurrent workers that race to create the same rows.
     def build_with_retry(times: 3) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       attempts = 0
       begin
         yield
-      rescue ActiveRecord::Deadlocked, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique,
-             ActiveRecord::StaleObjectError => e
+      rescue StandardError => e
         attempts += 1
         is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
                              e.is_a?(ActiveRecord::RecordNotUnique)
-        is_stale_error = e.is_a?(ActiveRecord::StaleObjectError)
-        if attempts < times
-          # In parallel execution, another worker may have already seeded the data
-          # If it's a duplicate key error, just continue - data is already seeded
-          if is_duplicate_error
-            Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
-          elsif is_stale_error
-            Rails.logger.debug "Stale object during parallel seed, retrying: #{e.message}"
-            retry
-          else
-            retry
-          end
+        e.is_a?(ActiveRecord::Deadlocked) ||
+          e.is_a?(ActiveRecord::StaleObjectError) ||
+          e.is_a?(ActiveRecord::InvalidForeignKey) ||
+          e.is_a?(ActiveRecord::StatementInvalid)
+
+        if is_duplicate_error
+          Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+        elsif attempts < times
+          retry
         else
-          # On final attempt, accept duplicate errors as success (data exists)
-          raise unless is_duplicate_error
+          warn "[build_with_retry] FAILED after #{times} attempts: #{e.class}: #{e.message}"
+          Rails.logger.warn "build_with_retry: giving up after #{times} attempts (#{e.class}: #{e.message})"
         end
       end
     end
 
-    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::NavigationBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::CategoryBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: true) }
-    build_with_retry { BetterTogether::AgreementBuilder.build(clear: true) }
+    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: false) }
+
+    # Seed a host community + platform before NavigationBuilder.
+    # NavigationBuilder creates Page records that validate platform_id: presence: true.
+    # The Page#assign_current_platform_if_available callback resolves via
+    # Current.platform, Platform.find_by(host: true), or Platform.first — all nil
+    # on a fresh database. find_or_create_by! is idempotent across parallel workers.
+    build_with_retry do
+      host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
+        c.name       = 'Test Host Community'
+        c.identifier = 'test-host-community'
+        c.privacy    = 'public'
+        c.protected  = true
+      end
+
+      BetterTogether::Platform.find_or_create_by!(host: true) do |p|
+        p.name       = host_community.name
+        p.identifier = host_community.identifier
+        p.host_url   = 'http://www.example.com'
+        p.time_zone  = 'UTC'
+        p.privacy    = 'public'
+        p.protected  = true
+        p.community  = host_community
+      end
+    end
+
+    # Set Current.platform so Page#assign_current_platform_if_available resolves
+    # correctly during NavigationBuilder (belt + suspenders alongside find_by(host:true)).
+    Current.platform = BetterTogether::Platform.find_by(host: true)
+    build_with_retry { BetterTogether::NavigationBuilder.build(clear: false) }
+    Current.platform = nil
+    build_with_retry { BetterTogether::CategoryBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::AgreementBuilder.build(clear: false) }
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL

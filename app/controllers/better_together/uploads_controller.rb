@@ -3,6 +3,8 @@
 module BetterTogether
   # CRUD for Uploads
   class UploadsController < FriendlyResourceController
+    include Metrics::PlatformContext
+
     before_action :set_resource_instance, only: %i[show edit update destroy download]
     before_action :authorize_resource, only: %i[new show edit update destroy download]
 
@@ -14,7 +16,9 @@ module BetterTogether
           resource_instance.filename.to_s,                  # Filename
           resource_instance.content_type,                   # File type (content type)
           resource_instance.byte_size,                      # File size
-          I18n.locale.to_s                                  # Locale
+          I18n.locale.to_s,                                 # Locale
+          metrics_platform.id,
+          metrics_logged_in?
         )
 
         send_data resource_instance.download,

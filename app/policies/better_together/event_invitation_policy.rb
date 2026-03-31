@@ -9,19 +9,21 @@ module BetterTogether
       private
 
       def filtered_invitations_scope
+        return scope.none unless user&.person
+
         invitable_type_condition(BetterTogether::Event)
-          .where(manageable_events_condition)
+          .where(invitable_id: manageable_event_ids)
       end
 
-      def manageable_events_condition
-        [
-          'better_together_events.creator_id = ? OR ' \
-          'EXISTS (SELECT 1 FROM better_together_event_hosts ' \
-          'WHERE better_together_event_hosts.event_id = better_together_events.id ' \
-          'AND better_together_event_hosts.host_type = ? ' \
-          'AND better_together_event_hosts.host_id = ?)',
-          user.person&.id, 'BetterTogether::Person', user.person&.id
-        ]
+      def manageable_event_ids
+        person_event_ids = BetterTogether::Event.where(creator_id: agent.id).select(:id)
+        hosted_event_ids = BetterTogether::EventHost.where(host_id: agent.valid_event_host_ids).select(:event_id)
+
+        person_event_ids.or(BetterTogether::Event.where(id: hosted_event_ids)).select(:id)
+      end
+
+      def platform_event_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
       end
     end
 
@@ -30,19 +32,18 @@ module BetterTogether
     def allowed_on_invitable?
       event = record.invitable
       return false unless event.is_a?(BetterTogether::Event)
+      return false unless agent
 
-      # Platform managers may act across events
-      return true if permitted_to?('manage_platform')
+      # Platform stewards may act across events
+      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
 
-      ep = BetterTogether::EventPolicy.new(user, event)
-      # Event hosts or event creator
-      ep.event_host_member? || (user.present? && event.creator == agent)
+      event.creator == agent || event_host_match?(event)
     end
 
-    def event_host_member?
-      return false unless user&.person && record.invitable.is_a?(BetterTogether::Event)
+    def event_host_match?(event)
+      return false unless agent.valid_event_host_ids.any?
 
-      record.invitable.event_hosts.exists?(host_type: 'BetterTogether::Person', host_id: user.person.id)
+      event.event_hosts.where(host_id: agent.valid_event_host_ids).exists?
     end
   end
 end

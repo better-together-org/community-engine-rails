@@ -49,7 +49,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # Public community viewing - must be BEFORE authenticated routes
       resources :communities, only: %i[index]
-      resources :communities, only: %i[show], path: 'c', as: 'community'
+      resources :communities, only: %i[show], path: 'c', as: 'community' do
+        resources :membership_requests,
+                  controller: 'membership_requests',
+                  only: %i[index show new create destroy] do
+          member do
+            post :approve
+            post :decline
+          end
+        end
+      end
 
       devise_scope :user do
         unauthenticated :user do
@@ -153,7 +162,16 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             get :search
           end
         end
+
         resources :reports, only: %i[index show new create]
+
+        resources :platform_connections, only: %i[index show new create edit update] do
+          member do
+            patch :approve
+            patch :suspend
+            patch :rotate_secret
+          end
+        end
 
         namespace :joatu, path: 'exchange' do
           # Exchange hub landing page
@@ -213,11 +231,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
 
+        resources :person_access_grants, path: 'access-grants', only: %i[index show update] do
+          member do
+            post :revoke
+          end
+        end
+        resources :person_links, path: 'person-links', only: %i[index show] do
+          member do
+            post :revoke
+          end
+        end
+        resources :person_linked_seeds, path: 'linked-seeds', only: %i[index show]
+
         resources :person_platform_integrations
 
         resources :posts
 
-        resources :platforms, only: %i[index show edit update] do
+        resources :platforms, only: %i[index show new create edit update] do
           resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
@@ -225,8 +255,15 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :person_seeds, only: %i[index show destroy], path: 'my/seeds' do
+          collection { post :export }
+        end
+
         get 'settings', to: 'settings#index'
+        resources :person_data_exports, only: %i[create show]
+        resources :person_deletion_requests, only: %i[create destroy]
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
+        get 'settings/my_data', to: 'settings#my_data', as: :settings_my_data
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
                                                              as: :mark_integration_notifications_read
 
@@ -289,6 +326,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   get :failures_daily_data
                   get :search_queries_by_term_data
                   get :search_queries_daily_data
+                  get :search_health_data
                   get :user_accounts_daily_data
                   get :user_confirmation_rate_data
                   get :user_registration_sources_data
@@ -328,6 +366,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               end
             end
 
+            # Seed data management
+            resources :seeds
+
             # People and memberships
             resources :people
             resources :person_community_memberships
@@ -340,7 +381,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
 
             # Platform list
-            resources :platforms, only: %i[index show edit update] do
+            resources :platforms, only: %i[index show new create edit update] do
               member do
                 get :available_people
               end
@@ -348,6 +389,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :platform_invitations, only: %i[create destroy] do
                 member do
                   put :resend
+                end
+              end
+              resources :storage_configurations, except: %i[show] do
+                member do
+                  put :activate
                 end
               end
             end
@@ -376,6 +422,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       end
 
       # These routes all are accessible to unauthenticated users
+      namespace :federation do
+        post 'oauth/token', to: 'oauth_tokens#create', as: :oauth_token
+        resource :content_feed, only: :show, controller: :content_feed
+        resources :linked_seeds, only: :index, controller: :linked_seeds
+      end
+
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
       # Public access: allow viewing public checklists
@@ -482,13 +534,20 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
   end
 
-  # Catch all requests without a locale and redirect to the default...
+  # Catch all requests without a locale and redirect to the default locale.
+  # The constraint must check ALL available locales (not just I18n.locale) because
+  # locale is set via before_action *after* route matching. Without this, requests
+  # like /fr/à-propos-de-nous slip through and become /en/fr/à-propos-de-nous,
+  # causing URI::InvalidURIError when ActionDispatch calls URI.parse on the redirect URL.
+  # Paths are percent-encoded via BetterTogether::UrlSanitizer — see that module for details.
   get '*path',
-      to: redirect { |params, _request| "/#{I18n.locale}/#{params[:path]}" },
+      to: redirect { |params, _request|
+        path = BetterTogether::UrlSanitizer.encode_path(params[:path])
+        "/#{I18n.default_locale}/#{path}"
+      },
       constraints: lambda { |req|
-        # raise 'error'
-        !req.path.starts_with? "/#{I18n.locale}" and
-          !req.path.starts_with? '/rails'
+        I18n.available_locales.none? { |locale| req.path.start_with?("/#{locale}/") || req.path == "/#{locale}" } and
+          !req.path.start_with?('/rails')
       }
   get '', to: redirect("/#{I18n.default_locale}")
 end

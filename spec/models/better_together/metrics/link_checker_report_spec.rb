@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ClassLength
+# Plain-old Ruby object stub for link checker report specs.
 class ReportPORO
   # Minimal PORO reproducing CSV and filename logic so tests run without ActiveRecord
   attr_accessor :report_data, :file_format, :filters

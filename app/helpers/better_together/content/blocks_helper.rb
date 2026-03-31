@@ -23,20 +23,14 @@ module BetterTogether
         'better_together/static_pages/subprocessors' => 'better_together.static_pages.subprocessors'
       }.freeze
 
-      # Returns an array of acceptable image file types
-      def acceptable_image_file_types
-        BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES
-      end
+      def acceptable_image_file_types = BetterTogether::Attachments::Images::VALID_IMAGE_CONTENT_TYPES
 
-      # Helper to generate a unique temp_id for a model
-      def temp_id_for(model, temp_id: SecureRandom.uuid)
-        model.persisted? ? model.id : temp_id
-      end
+      def temp_id_for(model, temp_id: SecureRandom.uuid) = model.persisted? ? model.id : temp_id
 
       # Sanitize HTML content for safe rendering in custom blocks
       def sanitize_block_html(html)
         allowed_tags = %w[p br strong em b i ul ol li a span h1 h2 h3 h4 h5 h6 img figure figcaption blockquote pre
-                          code iframe div]
+                          code div]
         allowed_attrs = %w[href src alt style title class target rel]
         sanitize(html.to_s, tags: allowed_tags, attributes: allowed_attrs)
       end
@@ -63,6 +57,74 @@ module BetterTogether
         block.class.available_templates.map do |path|
           key = TEMPLATE_TRANSLATION_KEYS.fetch(path, path.tr('/', '.'))
           [I18n.t(key, default: path.tr('/', ' ').tr('_', ' ').titleize), path]
+        end
+      end
+
+      def iframe_embed_state(url)
+        origin = BetterTogether::ContentSecurityPolicySources.origin_for_url(url)
+        return { status: :invalid, origin: nil, allowed_sources: resolved_frame_sources } if origin.nil?
+
+        {
+          status: iframe_origin_allowed?(origin) ? :allowed : :blocked,
+          origin: origin,
+          allowed_sources: resolved_frame_sources
+        }
+      end
+
+      def resolved_frame_sources
+        @resolved_frame_sources ||= BetterTogether::ContentSecurityPolicySources.frame_sources.flat_map do |source|
+          source.respond_to?(:call) ? Array(instance_exec(&source)) : [source]
+        end.uniq
+      end
+
+      def iframe_origin_allowed?(origin)
+        current_origin = BetterTogether::ContentSecurityPolicySources.origin_for_url(request&.base_url)
+        resolved_frame_sources.any? do |source|
+          source == origin || (source == :self && current_origin.present? && current_origin == origin)
+        end
+      end
+
+      def iframe_embed_cache_key(block, url)
+        [block.cache_key_with_version, request&.base_url,
+         BetterTogether::ContentSecurityPolicySources.origin_for_url(url), resolved_frame_sources]
+      end
+
+      # Returns a privacy-scoped, optionally community-scoped, limited collection
+      # for a resource collection block.
+      def resource_block_collection(block, resource_class, extra_scope: nil)
+        ids = block.parsed_resource_ids
+
+        scope = if ids.any?
+                  resource_class.where(id: ids)
+                else
+                  policy_scope(resource_class)
+                end
+
+        scope = apply_community_scope(scope, resource_class, block.scoped_community) if block.scoped_community.present?
+
+        scope = extra_scope.call(scope) if extra_scope.present?
+        scope.limit(block.item_limit)
+      end
+
+      private
+
+      # Applies a community join/filter appropriate for the given resource_class.
+      def apply_community_scope(scope, resource_class, community) # rubocop:disable Metrics/MethodLength
+        case resource_class.name
+        when 'BetterTogether::Event'
+          scope.joins(:event_hosts).where(better_together_event_hosts: { host_id: community.id,
+                                                                         host_type: community.class.name })
+        when 'BetterTogether::Post'
+          scope.joins(:authorships)
+               .where(better_together_authorships: { author_id: community.id,
+                                                     author_type: community.class.name })
+        when 'BetterTogether::Person'
+          scope.joins(:person_community_memberships)
+               .where(better_together_person_community_memberships: { community_id: community.id })
+        when 'BetterTogether::Community'
+          scope.where(id: community.id)
+        else
+          scope
         end
       end
     end

@@ -5,6 +5,7 @@ module BetterTogether
   module Metrics
     class PageView < ApplicationRecord # rubocop:todo Style/Documentation
       include Utf8UrlHandler
+      include PlatformScoped
 
       SENSITIVE_QUERY_PARAMS = %w[token password secret].freeze
 
@@ -13,6 +14,7 @@ module BetterTogether
       # Validations
       validates :viewed_at, presence: true
       validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
+      validates :logged_in, inclusion: { in: [true, false] }
 
       # validates :page_url, presence: true
 

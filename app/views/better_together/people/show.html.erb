@@ -195,14 +195,26 @@
                       <% agreement = participant.agreement %>
                       <li class="list-group-item d-flex justify-content-between align-items-center" role="listitem">
                         <div>
-                          <%= link_to (agreement.title.presence || agreement.to_s), agreement_path(agreement), class: 'text-decoration-none', title: (agreement.title.presence || agreement.to_s), aria_label: (agreement.title.presence || agreement.to_s) %>
+                          <% agreement_title = participant.agreement_title_snapshot.presence || agreement.title.presence || agreement.to_s %>
+                          <%= link_to agreement_title, agreement_path(agreement), class: 'text-decoration-none', title: agreement_title, aria_label: agreement_title %>
                           <% if agreement.respond_to?(:description) && agreement.description.present? %>
                             <div class="text-muted small"><%= truncate(strip_tags(agreement.description.to_s), length: 120) %></div>
                           <% end %>
                         </div>
                         <div class="text-nowrap">
                           <% if participant.accepted_at.present? %>
-                            <span class="text-success" aria-label="Accepted on <%= l(participant.accepted_at, format: :long) %>"><%= l(participant.accepted_at, format: :long) %></span>
+                            <div class="text-success" aria-label="Accepted on <%= l(participant.accepted_at, format: :long) %>"><%= l(participant.accepted_at, format: :long) %></div>
+                            <div class="text-muted small">
+                              <%= t('better_together.agreements.participant.accepted_via',
+                                    method: t("better_together.agreements.participant.acceptance_methods.#{participant.acceptance_method}",
+                                              default: participant.acceptance_method.to_s.humanize)) %>
+                            </div>
+                            <% if participant.agreement_updated_at_snapshot.present? %>
+                              <div class="text-muted small">
+                                <%= t('better_together.agreements.participant.agreement_revision',
+                                      timestamp: l(participant.agreement_updated_at_snapshot, format: :long)) %>
+                              </div>
+                            <% end %>
                           <% else %>
                             <span class="text-warning" aria-label="Pending"><%= t('better_together.agreements.participant.pending', default: 'pending') %></span>
                           <% end %>

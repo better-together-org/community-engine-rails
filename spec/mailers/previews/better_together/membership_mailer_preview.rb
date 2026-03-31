@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterTogether
+module BetterTogether # :nodoc:
   # Preview at /rails/mailers/better_together/membership_mailer
   class MembershipMailerPreview < ActionMailer::Preview # rubocop:todo Metrics/ClassLength
     include FactoryBot::Syntax::Methods
@@ -105,7 +105,7 @@ module BetterTogether
       )
       ensure_role_permissions(role, 'BetterTogether::Platform')
 
-      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+      recipient_struct = Struct.new(:email, :locale, :time_zone)
       recipient = recipient_struct.new(
         email: 'former.member@example.com',
         locale: I18n.default_locale,
@@ -130,7 +130,7 @@ module BetterTogether
       )
       ensure_role_permissions(role, 'BetterTogether::Community')
 
-      recipient_struct = Struct.new(:email, :locale, :time_zone, keyword_init: true)
+      recipient_struct = Struct.new(:email, :locale, :time_zone)
       recipient = recipient_struct.new(
         email: 'former.member@example.com',
         locale: I18n.default_locale,

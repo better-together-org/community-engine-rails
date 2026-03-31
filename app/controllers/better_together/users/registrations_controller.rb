@@ -143,7 +143,7 @@ module BetterTogether
       end
 
       def configure_permitted_parameters
-        devise_parameter_sanitizer.permit(:sign_up, keys: [person_attributes: %i[identifier name description]])
+        devise_parameter_sanitizer.permit(:sign_up, keys: [{ person_attributes: %i[identifier name description] }])
       end
 
       def set_required_agreements
@@ -385,17 +385,26 @@ module BetterTogether
           return
         end
 
+        required_registration_agreements.find_each do |agreement|
+          record_registration_agreement_acceptance(person, agreement)
+        end
+      end
+
+      def required_registration_agreements
         identifiers = %w[privacy_policy terms_of_service]
         identifiers << 'code_of_conduct' if BetterTogether::Agreement.exists?(identifier: 'code_of_conduct')
-        agreements = BetterTogether::Agreement.where(identifier: identifiers)
 
-        agreements.find_each do |agreement|
-          BetterTogether::AgreementParticipant.create!(
-            agreement: agreement,
-            person: person,
-            accepted_at: Time.current
-          )
-        end
+        BetterTogether::Agreement.where(identifier: identifiers)
+      end
+
+      def record_registration_agreement_acceptance(person, agreement)
+        BetterTogether::AgreementAcceptanceRecorder.record!(
+          agreement: agreement,
+          person: person,
+          acceptance_method: :sign_up,
+          accepted_at: Time.current,
+          context: { request: }
+        )
       end
     end
   end

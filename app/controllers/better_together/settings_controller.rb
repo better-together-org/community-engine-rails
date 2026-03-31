@@ -39,6 +39,14 @@ module BetterTogether
       render json: { success: true, marked_read: count }
     end
 
+    def my_data
+      @person_data_exports = @person.person_data_exports.with_attached_export_file.latest_first.limit(10)
+      @person_deletion_requests = @person.person_deletion_requests.latest_first.limit(10)
+      @personal_seeds = BetterTogether::Seed.personal_exports_for(@person).latest_first.limit(10)
+
+      render 'better_together/my_data/show', layout: false
+    end
+
     def update_preferences
       if @person.update(person_params)
         redirect_to settings_path(locale: I18n.locale),
@@ -69,6 +77,7 @@ module BetterTogether
         :locale,
         :time_zone,
         :receive_messages_from_members,
+        :federate_content,
         :notify_by_email,
         :show_conversation_details
       )

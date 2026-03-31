@@ -1,0 +1,101 @@
+<% content_for :page_title do %>
+  <%= @seed.identifier %> | <%= t('person_seeds.index.title') %>
+<% end %>
+
+<%= turbo_frame_tag 'my-data-settings' do %>
+  <div class="container my-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1>
+        <%= @seed.identifier %>
+        <span class="badge bg-secondary"><%= @seed.version %></span>
+      </h1>
+      <div class="btn-toolbar" role="toolbar" aria-label="<%= t('globals.actions') %>">
+        <% if @seed.yaml_file.attached? %>
+          <%= link_to rails_blob_path(@seed.yaml_file, disposition: 'attachment'),
+                      class: 'btn btn-outline-secondary me-2' do %>
+            <i class="fas fa-download" aria-hidden="true"></i>
+            <%= t('seeds.show.download_yaml') %>
+          <% end %>
+        <% end %>
+        <%= link_to person_seed_path(@seed, locale: locale),
+                    data: { 'turbo-method': 'delete', turbo_confirm: t('person_seeds.confirm_destroy') },
+                    class: 'btn btn-outline-danger me-2',
+                    'aria-label' => t('seeds.actions.destroy') do %>
+          <i class="fas fa-trash-alt" aria-hidden="true"></i> <%= t('globals.destroy') %>
+        <% end %>
+        <%= link_to person_seeds_path(locale: locale),
+                    class: 'btn btn-outline-secondary',
+                    data: { turbo_frame: 'my-data-settings' } do %>
+          <i class="fas fa-arrow-left" aria-hidden="true"></i> <%= t('globals.back_to_list') %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <dl class="row">
+          <dt class="col-sm-4"><%= Seed.human_attribute_name(:type) %></dt>
+          <dd class="col-sm-8"><code><%= @seed.type %></code></dd>
+
+          <dt class="col-sm-4"><%= Seed.human_attribute_name(:identifier) %></dt>
+          <dd class="col-sm-8"><%= @seed.identifier %></dd>
+
+          <dt class="col-sm-4"><%= Seed.human_attribute_name(:version) %></dt>
+          <dd class="col-sm-8"><%= @seed.version %></dd>
+
+          <dt class="col-sm-4"><%= Seed.human_attribute_name(:description) %></dt>
+          <dd class="col-sm-8"><%= @seed.description %></dd>
+
+          <dt class="col-sm-4"><%= Seed.human_attribute_name(:created_by) %></dt>
+          <dd class="col-sm-8"><%= @seed.created_by %></dd>
+
+          <dt class="col-sm-4"><%= Seed.human_attribute_name(:seeded_at) %></dt>
+          <dd class="col-sm-8"><%= l(@seed.seeded_at, format: :long) if @seed.seeded_at %></dd>
+
+          <% if @seed.seedable.present? %>
+            <dt class="col-sm-4"><%= Seed.human_attribute_name(:seedable) %></dt>
+            <dd class="col-sm-8">
+              <%= @seed.seedable_type %> #<%= @seed.seedable_id %>
+            </dd>
+          <% end %>
+        </dl>
+      </div>
+
+      <div class="col-md-6">
+        <h5><%= t('seeds.show.origin') %></h5>
+        <pre class="bg-light p-2 rounded small"><%= JSON.pretty_generate(@seed.origin) rescue h(@seed.origin.inspect) %></pre>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <h5><%= t('seeds.show.payload') %></h5>
+      <pre class="bg-light p-2 rounded small" style="max-height: 400px; overflow-y: auto;"><%= JSON.pretty_generate(@seed.payload) rescue h(@seed.payload.inspect) %></pre>
+    </div>
+
+    <% if @seed.seed_plantings.any? %>
+      <div class="mt-3">
+        <h5><%= t('seeds.show.plantings') %></h5>
+        <table class="table table-sm table-striped">
+          <thead>
+            <tr>
+              <th><%= SeedPlanting.human_attribute_name(:status) %></th>
+              <th><%= SeedPlanting.human_attribute_name(:planting_type) %></th>
+              <th><%= SeedPlanting.human_attribute_name(:started_at) %></th>
+              <th><%= SeedPlanting.human_attribute_name(:completed_at) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @seed.seed_plantings.order(created_at: :desc).each do |planting| %>
+              <tr>
+                <td><span class="badge bg-<%= planting.completed? ? 'success' : planting.failed? ? 'danger' : 'secondary' %>"><%= planting.status %></span></td>
+                <td><%= planting.planting_type %></td>
+                <td><%= l(planting.started_at, format: :short) if planting.started_at %></td>
+                <td><%= l(planting.completed_at, format: :short) if planting.completed_at %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+<% end %>

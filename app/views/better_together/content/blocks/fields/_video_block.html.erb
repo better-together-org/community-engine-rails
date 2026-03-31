@@ -1,0 +1,30 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<div class="video-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[video_url]", BetterTogether::Content::Block.human_attribute_name('video_url', default: 'Video URL'), class: 'form-label' %>
+    <%= url_field_tag "#{scope}[video_url]", block.video_url, class: 'form-control',
+                      placeholder: 'https://www.youtube.com/watch?v=...' %>
+    <div class="form-text">
+      <%= t('better_together.content.blocks.video_block.url_help',
+            default: 'Accepts YouTube, Vimeo, or any direct embed URL.') %>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-sm-2 mb-3">
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[aspect_ratio]", BetterTogether::Content::Block.human_attribute_name('aspect_ratio', default: 'Aspect Ratio'), class: 'form-label' %>
+      <%= select_tag "#{scope}[aspect_ratio]",
+                     options_for_select(
+                       [['16:9 (Widescreen)', '16x9'], ['4:3 (Standard)', '4x3'], ['1:1 (Square)', '1x1']],
+                       block.aspect_ratio
+                     ),
+                     class: 'form-select',
+                     data: { controller: 'better_together--slim-select' } %>
+    </div>
+    <div class="col mb-3">
+      <%= label_tag "#{scope}[caption]", BetterTogether::Content::Block.human_attribute_name('caption', default: 'Caption (optional)'), class: 'form-label' %>
+      <%= text_field_tag "#{scope}[caption]", block.caption, class: 'form-control' %>
+    </div>
+  </div>
+</div>

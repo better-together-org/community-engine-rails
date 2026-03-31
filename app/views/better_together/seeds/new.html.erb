@@ -1,0 +1,15 @@
+<% content_for :page_title do %>
+  <%= t('seeds.new.title') %> | <%= t('seeds.index.title') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= t('seeds.new.title') %></h1>
+    <%= link_to seeds_path, class: 'btn btn-outline-secondary' do %>
+      <i class="fas fa-arrow-left" aria-hidden="true"></i> <%= t('globals.back_to_list') %>
+    <% end %>
+  </div>
+
+  <div id="form_errors"></div>
+  <%= render 'form', seed: @seed %>
+</div>

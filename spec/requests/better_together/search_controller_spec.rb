@@ -4,25 +4,39 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::SearchController', :as_user do
   let(:locale) { I18n.default_locale }
+  let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
+  let(:capture_service) { instance_double(BetterTogether::Metrics::SearchQueryCaptureService, call: captured_query) }
+  let(:captured_query) { 'test query' }
+  let!(:host_platform) { configure_host_platform }
 
   before do
-    # Stub Searchable to return an empty array to avoid ES model issues
-    allow(BetterTogether::Searchable).to receive(:included_in_models).and_return([])
+    allow(BetterTogether::Search).to receive(:backend).and_return(backend)
+    allow(BetterTogether::Metrics::SearchQueryCaptureService).to receive(:new).and_return(capture_service)
   end
 
   describe 'GET /search' do
     it 'renders search results page' do
+      allow(backend).to receive(:search).and_return(
+        BetterTogether::Search::SearchResult.new(
+          records: [],
+          suggestions: [],
+          status: :ok,
+          backend: :elasticsearch
+        )
+      )
+
       get better_together.search_path(locale:), params: { q: 'test' }
       expect(response).to have_http_status(:ok)
     end
 
     context 'when searching with a query' do
       before do
-        # Stub Elasticsearch to avoid needing a running ES instance
-        allow(Elasticsearch::Model).to receive(:search).and_return(
-          double(
-            records: double(to_a: []),
-            response: { 'suggest' => { 'suggestions' => [] } }
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [],
+            suggestions: [],
+            status: :ok,
+            backend: :elasticsearch
           )
         )
       end
@@ -31,7 +45,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         expect do
           get better_together.search_path(locale:), params: { q: 'test query' }
         end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
-          .with('test query', 0, locale.to_s)
+          .with(captured_query, 0, locale.to_s, host_platform.id, true)
       end
 
       it 'creates a search query metric when job is performed' do
@@ -45,8 +59,41 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         expect(metric).to have_attributes(
           query: 'test query',
           results_count: 0,
-          locale: locale.to_s
+          locale: locale.to_s,
+          platform_id: host_platform.id,
+          logged_in: true
         )
+      end
+
+      it 'hashes tracked queries when the capture service returns a digest' do
+        allow(capture_service).to receive(:call)
+          .with('Test Query')
+          .and_return("sha256:#{Digest::SHA256.hexdigest('test query')}")
+
+        expect do
+          get better_together.search_path(locale:), params: { q: 'Test Query' }
+        end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+          .with("sha256:#{Digest::SHA256.hexdigest('test query')}", 0, locale.to_s, host_platform.id, true)
+      end
+
+      it 'does not enqueue search analytics when capture returns nil' do
+        allow(capture_service).to receive(:call).with('test query').and_return(nil)
+
+        expect do
+          get better_together.search_path(locale:), params: { q: 'test query' }
+        end.not_to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+      end
+
+      it 'filters private linked seed models out of the global search set' do
+        # PersonLinkedSeed.global_searchable? returns false so Registry excludes it from
+        # global_search_models. The registry_spec covers this at unit level; here we confirm
+        # the search endpoint still returns 200 and the Registry reflects the exclusion.
+        expect(BetterTogether::Search::Registry.global_search_models)
+          .not_to include(BetterTogether::PersonLinkedSeed)
+
+        get better_together.search_path(locale:), params: { q: 'test query' }
+
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -60,14 +107,23 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
 
     context 'when Elasticsearch raises an error' do
       before do
-        allow(Elasticsearch::Model).to receive(:search).and_raise(StandardError, 'ES Error')
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [],
+            suggestions: [],
+            status: :unreachable,
+            backend: :elasticsearch,
+            error: 'StandardError: ES Error'
+          )
+        )
+        allow(capture_service).to receive(:call).with('test').and_return('test')
       end
 
       it 'handles the error gracefully and still tracks metrics' do
         expect do
           get better_together.search_path(locale:), params: { q: 'test' }
         end.to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
-          .with('test', 0, locale.to_s)
+          .with('test', 0, locale.to_s, host_platform.id, true)
 
         expect(response).to have_http_status(:ok)
       end

@@ -5,6 +5,7 @@ module BetterTogether
     # Controller for metrics reports and chart data endpoints
     class ReportsController < ApplicationController # rubocop:disable Metrics/ClassLength
       include DatetimeFilterable
+      include PlatformContext
 
       # Predefined colors for known viewable types
       VIEWABLE_TYPE_COLORS = {
@@ -32,7 +33,7 @@ module BetterTogether
 
       # JSON endpoint for page views grouped by URL and pageable_type (stacked bar chart)
       def page_views_by_url_data # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-        scope = filter_by_datetime(BetterTogether::Metrics::PageView, :viewed_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::PageView), :viewed_at)
         views_by_url_and_type = scope.group(:page_url, :pageable_type).count
 
         pageable_types = scope.distinct.pluck(:pageable_type).compact
@@ -55,7 +56,7 @@ module BetterTogether
 
       # JSON endpoint for daily page views grouped by pageable_type (stacked line chart)
       def page_views_daily_data # rubocop:disable Metrics/AbcSize
-        scope = filter_by_datetime(BetterTogether::Metrics::PageView, :viewed_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::PageView), :viewed_at)
         views_by_day_and_type = scope.group_by_day(:viewed_at).group(:pageable_type).count
 
         pageable_types = scope.distinct.pluck(:pageable_type).compact
@@ -76,7 +77,7 @@ module BetterTogether
 
       # JSON endpoint for link clicks grouped by URL
       def link_clicks_by_url_data
-        scope = filter_by_datetime(BetterTogether::Metrics::LinkClick, :clicked_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::LinkClick), :clicked_at)
         data = scope.group(:url).order('count_all DESC').limit(20).count
 
         render json: { labels: data.keys, values: data.values }
@@ -84,7 +85,7 @@ module BetterTogether
 
       # JSON endpoint for daily link clicks
       def link_clicks_daily_data
-        scope = filter_by_datetime(BetterTogether::Metrics::LinkClick, :clicked_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::LinkClick), :clicked_at)
         data = scope.group_by_day(:clicked_at).count
 
         render json: { labels: data.keys.map(&:to_s), values: data.values }
@@ -92,7 +93,7 @@ module BetterTogether
 
       # JSON endpoint for top search queries by term
       def search_queries_by_term_data
-        scope = filter_by_datetime(BetterTogether::Metrics::SearchQuery, :searched_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::SearchQuery), :searched_at)
         search_counts = scope.group(:query).order('count_all DESC').limit(20).count
         avg_results = calculate_average_results(scope, search_counts.keys)
         avg_results_array = search_counts.keys.map { |query| avg_results[query] || 0 }
@@ -108,10 +109,22 @@ module BetterTogether
 
       # JSON endpoint for daily search queries
       def search_queries_daily_data
-        scope = filter_by_datetime(BetterTogether::Metrics::SearchQuery, :searched_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::SearchQuery), :searched_at)
         data = scope.group_by_day(:searched_at).count
 
         render json: { labels: data.keys.map(&:to_s), values: data.values }
+      end
+
+      # JSON endpoint for search index drift by model
+      def search_health_data
+        audit = BetterTogether::Search::AuditService.new.call
+
+        render json: {
+          labels: audit.entries.map { |entry| entry.model_name.demodulize },
+          values: audit.entries.map(&:drift_count),
+          backend: audit.backend,
+          status: audit.status
+        }
       end
 
       # JSON endpoint for daily user account creation and confirmation
@@ -259,7 +272,7 @@ module BetterTogether
 
       # JSON endpoint for downloads grouped by file name
       def downloads_by_file_data
-        scope = filter_by_datetime(BetterTogether::Metrics::Download, :downloaded_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::Download), :downloaded_at)
         data = scope.group(:file_name).count
 
         render json: { labels: data.keys, values: data.values }
@@ -267,7 +280,7 @@ module BetterTogether
 
       # JSON endpoint for shares grouped by platform
       def shares_by_platform_data
-        scope = filter_by_datetime(BetterTogether::Metrics::Share, :shared_at)
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::Share), :shared_at)
         data = scope.group(:platform).count
 
         # Build datasets with colors for Chart.js pie chart
@@ -283,8 +296,8 @@ module BetterTogether
       end
 
       # JSON endpoint for shares grouped by URL and platform (stacked bar chart)
-      def shares_by_url_and_platform_data
-        scope = filter_by_datetime(BetterTogether::Metrics::Share, :shared_at)
+      def shares_by_url_and_platform_data # rubocop:todo Metrics/AbcSize
+        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::Share), :shared_at)
         shares_by_url_and_platform = scope.group(:url, :platform).count
 
         platforms = scope.distinct.pluck(:platform)
@@ -356,12 +369,12 @@ module BetterTogether
       # rubocop:disable Metrics/AbcSize
       def set_min_dates # rubocop:disable Metrics/CyclomaticComplexity
         @min_dates = {
-          page_views: (BetterTogether::Metrics::PageView.minimum(:viewed_at) || 1.year.ago) - 1.day,
-          link_clicks: (BetterTogether::Metrics::LinkClick.minimum(:clicked_at) || 1.year.ago) - 1.day,
-          downloads: (BetterTogether::Metrics::Download.minimum(:downloaded_at) || 1.year.ago) - 1.day,
-          shares: (BetterTogether::Metrics::Share.minimum(:shared_at) || 1.year.ago) - 1.day,
+          page_views: (metrics_scope(BetterTogether::Metrics::PageView).minimum(:viewed_at) || 1.year.ago) - 1.day,
+          link_clicks: (metrics_scope(BetterTogether::Metrics::LinkClick).minimum(:clicked_at) || 1.year.ago) - 1.day,
+          downloads: (metrics_scope(BetterTogether::Metrics::Download).minimum(:downloaded_at) || 1.year.ago) - 1.day,
+          shares: (metrics_scope(BetterTogether::Metrics::Share).minimum(:shared_at) || 1.year.ago) - 1.day,
           link_checker: (BetterTogether::Content::Link.minimum(:created_at) || 1.year.ago) - 1.day,
-          search_queries: (BetterTogether::Metrics::SearchQuery.minimum(:searched_at) || 1.year.ago) - 1.day,
+          search_queries: (metrics_scope(BetterTogether::Metrics::SearchQuery).minimum(:searched_at) || 1.year.ago) - 1.day,
           user_accounts: (BetterTogether::User.minimum(:created_at) || 1.year.ago) - 1.day
         }
       end
@@ -371,21 +384,24 @@ module BetterTogether
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def set_metrics_data
         # Page views
-        @page_views_by_url = BetterTogether::Metrics::PageView.group(:page_url).count
-        @page_views_daily = BetterTogether::Metrics::PageView.group_by_day(:viewed_at).count
+        @page_view_scope = metrics_scope(BetterTogether::Metrics::PageView)
+        @page_views_by_url = @page_view_scope.group(:page_url).count
+        @page_views_daily = @page_view_scope.group_by_day(:viewed_at).count
 
         # Link clicks
-        @link_clicks_by_url = BetterTogether::Metrics::LinkClick.group(:url).count
-        @link_clicks_daily = BetterTogether::Metrics::LinkClick.group_by_day(:clicked_at).count
-        @internal_vs_external = BetterTogether::Metrics::LinkClick.group(:internal).count
-        @link_clicks_by_page = BetterTogether::Metrics::LinkClick.group(:page_url).count
+        @link_click_scope = metrics_scope(BetterTogether::Metrics::LinkClick)
+        @link_clicks_by_url = @link_click_scope.group(:url).count
+        @link_clicks_daily = @link_click_scope.group_by_day(:clicked_at).count
+        @internal_vs_external = @link_click_scope.group(:internal).count
+        @link_clicks_by_page = @link_click_scope.group(:page_url).count
 
         # Downloads
-        @downloads_by_file = BetterTogether::Metrics::Download.group(:file_name).count
+        @downloads_by_file = metrics_scope(BetterTogether::Metrics::Download).group(:file_name).count
 
         # Shares
-        @shares_by_platform = BetterTogether::Metrics::Share.group(:platform).count
-        @shares_by_url_and_platform = BetterTogether::Metrics::Share.group(:url, :platform).count
+        @share_scope = metrics_scope(BetterTogether::Metrics::Share)
+        @shares_by_platform = @share_scope.group(:platform).count
+        @shares_by_url_and_platform = @share_scope.group(:url, :platform).count
 
         # Prepare shares data for Chart.js
         urls = @shares_by_url_and_platform.keys.map(&:first).uniq
@@ -406,6 +422,7 @@ module BetterTogether
         @links_by_host = BetterTogether::Content::Link.group(:host).count
         @invalid_by_host = BetterTogether::Content::Link.where(valid_link: false).group(:host).count
         @failures_daily = BetterTogether::Content::Link.where(valid_link: false).group_by_day(:last_checked_at).count
+        @search_health_report = BetterTogether::Search::AuditService.new.call
       end
       # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
@@ -415,6 +432,10 @@ module BetterTogether
              .group(:query)
              .average(:results_count)
              .transform_values { |v| v.to_f.round(1) }
+      end
+
+      def metrics_scope(model)
+        model.for_platform(metrics_platform)
       end
 
       # Helper method to generate consistent colors for viewable types

@@ -4,6 +4,8 @@ module BetterTogether
   module Metrics
     # PageViewReport records tracking instances of reports run against the BetterTogether::Metrics::PageView records
     class PageViewReport < ApplicationRecord # rubocop:todo Metrics/ClassLength
+      include PlatformScoped
+
       # Associations
       belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :page_view_reports, optional: true
 
@@ -35,7 +37,7 @@ module BetterTogether
         report_by_type = {}
 
         # Build a base scope for filtering.
-        base_scope = BetterTogether::Metrics::PageView.all
+        base_scope = BetterTogether::Metrics::PageView.for_platform(platform)
         base_scope = base_scope.where('viewed_at >= ?', from_date) if from_date
         base_scope = base_scope.where('viewed_at <= ?', to_date) if to_date
         base_scope = base_scope.where(pageable_type: filter_pageable_type) if filter_pageable_type.present?
@@ -117,11 +119,13 @@ module BetterTogether
                       raise "Unsupported file format: #{file_format}"
                     end
 
-        report_file.attach(
-          io: File.open(file_path),
-          filename: build_filename,
-          content_type: file_format == 'csv' ? 'text/csv' : 'application/octet-stream'
-        )
+        File.open(file_path, 'rb') do |io|
+          report_file.attach(
+            io: io,
+            filename: build_filename,
+            content_type: file_format == 'csv' ? 'text/csv' : 'application/octet-stream'
+          )
+        end
       ensure
         # Remove the temporary file if it exists.
         File.delete(file_path) if file_path && File.exist?(file_path)
@@ -147,7 +151,7 @@ module BetterTogether
         to_date = filters['to_date'].present? ? Date.parse(filters['to_date']) : nil
         filter_pageable_type = filters['filter_pageable_type']
 
-        base_scope = BetterTogether::Metrics::PageView.all
+        base_scope = BetterTogether::Metrics::PageView.for_platform(platform)
         base_scope = base_scope.where('viewed_at >= ?', from_date) if from_date
         base_scope = base_scope.where('viewed_at <= ?', to_date) if to_date
         base_scope = base_scope.where(pageable_type: filter_pageable_type) if filter_pageable_type.present?
@@ -233,7 +237,7 @@ module BetterTogether
       # Class Methods
       #
       class << self
-        def create_and_generate!(from_date: nil, to_date: nil, filter_pageable_type: nil, sort_by_total_views: false,
+        def create_and_generate!(platform:, from_date: nil, to_date: nil, filter_pageable_type: nil, sort_by_total_views: false, # rubocop:todo Metrics/ParameterLists
                                  file_format: 'csv')
           filters = {}
           filters['from_date'] = from_date if from_date.present?
@@ -241,6 +245,7 @@ module BetterTogether
           filters['filter_pageable_type'] = filter_pageable_type if filter_pageable_type.present?
 
           create!(
+            platform: platform,
             filters: filters,
             sort_by_total_views: sort_by_total_views,
             file_format: file_format

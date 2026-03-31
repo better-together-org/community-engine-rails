@@ -5,9 +5,17 @@ require 'rails_helper'
 RSpec.describe 'layouts/better_together/application' do
   before do
     view.extend BetterTogether::ApplicationHelper
+    host_platform = double(name: 'Platform', url: 'http://test.host', cache_key_with_version: '1', css_block: nil)
+    host_community = double(
+      name: 'Community',
+      description: nil,
+      logo: double(attached?: false),
+      persisted?: false
+    )
 
     allow(view).to receive_messages(
-      host_platform: double(name: 'Platform', cache_key_with_version: '1', css_block: nil),
+      host_platform: host_platform,
+      host_community: host_community,
       open_graph_meta_tags: '',
       seo_meta_tags: '',
       javascript_importmap_tags: '',
@@ -28,6 +36,12 @@ RSpec.describe 'layouts/better_together/application' do
     allow(view).to receive(:render).with('layouts/better_together/footer').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/mobile_bar').and_return('')
     allow(view).to receive(:render).with('layouts/better_together/custom_body_javascript').and_return('')
+    # Helpers / routes added to the layout on this branch:
+    allow(view).to receive_messages(stimulus_debug_enabled?: false, robots_meta_tag: '', sitemap_index_path: '/sitemap.xml',
+                                    sitemap_path: '/sitemap.xml')
+    allow(view).to receive(:render)
+      .with('better_together/e2e/passphrase_modal').and_return('')
+    allow(view).to receive_messages(current_user: nil, base_url: 'http://test.host')
   end
 
   it 'renders canonical and hreflang links by default' do

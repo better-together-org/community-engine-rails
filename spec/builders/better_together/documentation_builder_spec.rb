@@ -7,6 +7,10 @@ RSpec.describe BetterTogether::DocumentationBuilder, type: :model do
     let(:tmp_docs_root) { Pathname.new(Dir.mktmpdir('docs-nav')) }
 
     before do
+      # build creates Pages that require a platform; set Current.platform so
+      # Page#assign_current_platform_if_available resolves correctly.
+      Current.platform = configure_host_platform
+
       File.write(tmp_docs_root.join('README.md'), '# Overview')
 
       developers_dir = tmp_docs_root.join('developers')
@@ -23,6 +27,7 @@ RSpec.describe BetterTogether::DocumentationBuilder, type: :model do
 
     after do
       FileUtils.remove_entry(tmp_docs_root)
+      Current.platform = nil
     end
 
     it 'creates a documentation navigation area with nested items' do

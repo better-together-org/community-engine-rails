@@ -3,14 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
-  let(:manager_user) { create(:better_together_user, :platform_manager) }
+  let(:manager_user) { create(:better_together_user, :platform_steward) }
   let(:normal_user) { create(:better_together_user) }
   let(:markdown_block) { create(:content_markdown) }
 
   describe '#index?' do
     subject { described_class.new(user, markdown_block).index? }
 
-    context 'when user is a platform manager' do
+    context 'when user is a platform steward' do
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -32,7 +32,7 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   describe '#show?' do
     subject { described_class.new(user, markdown_block).show? }
 
-    context 'when user is a platform manager' do
+    context 'when user is a platform steward' do
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   describe '#create?' do
     subject { described_class.new(user, markdown_block).create? }
 
-    context 'when user is a platform manager' do
+    context 'when user is a platform steward' do
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -76,7 +76,7 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   describe '#new?' do
     subject { described_class.new(user, markdown_block).new? }
 
-    context 'when user is a platform manager' do
+    context 'when user is a platform steward' do
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -92,7 +92,7 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   describe '#update?' do
     subject { described_class.new(user, markdown_block).update? }
 
-    context 'when user is a platform manager' do
+    context 'when user is a platform steward' do
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -114,7 +114,7 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   describe '#edit?' do
     subject { described_class.new(user, markdown_block).edit? }
 
-    context 'when user is a platform manager' do
+    context 'when user is a platform steward' do
       let(:user) { manager_user }
 
       it { is_expected.to be true }
@@ -130,7 +130,7 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   describe '#destroy?' do
     subject { described_class.new(user, markdown_block).destroy? }
 
-    context 'when user is a platform manager' do
+    context 'when user is a platform steward' do
       let(:user) { manager_user }
 
       it { is_expected.to be true }

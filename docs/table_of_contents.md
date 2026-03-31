@@ -38,6 +38,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
 - [GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
+- [Federation Privacy and Consent](platform_organizers/federation_privacy_and_consent.md) - Safe operation of platform-to-platform trust
 
 #### **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
@@ -52,6 +53,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Conversations README](developers/systems/README_conversations.md) - Messaging system overview
 - [Events System](developers/systems/events_system.md) - Event management
 - [Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
+- [Federation System](developers/systems/federation_system.md) - Platform connections, scopes, and sync
 - [Geography System](developers/systems/geography_system.md) - Location and mapping
 - [I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting

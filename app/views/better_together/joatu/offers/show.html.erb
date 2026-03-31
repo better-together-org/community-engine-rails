@@ -21,6 +21,13 @@
     <%= @joatu_offer.description %>
   </div>
 
+  <% if @joatu_offer.target.is_a?(BetterTogether::Platform) %>
+    <div class="alert alert-info">
+      <strong><%= t('better_together.joatu.offers.target_platform', default: 'Target platform') %>:</strong>
+      <%= link_to @joatu_offer.target.name, @joatu_offer.target %>
+    </div>
+  <% end %>
+
   <div class="mt-3">
     <%# Determine whether the current_person has an agreement involving this offer (used elsewhere) %>
     <% user_agreement = agreement_for_current_person(@joatu_offer) if defined?(current_person) && current_person %>

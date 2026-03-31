@@ -123,6 +123,25 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           expect(participant.accepted_at).to be_present
           expect(participant.accepted_at).to be_within(1.second).of(Time.current)
         end
+
+        it 'records acceptance audit details', :aggregate_failures do
+          post better_together.agreements_status_path(locale: I18n.locale), params: {
+            privacy_policy_agreement: '1',
+            terms_of_service_agreement: '1',
+            code_of_conduct_agreement: '1'
+          }
+
+          participant = BetterTogether::AgreementParticipant.find_by!(person: person, agreement: privacy_policy)
+
+          expect(participant.acceptance_method).to eq('agreement_review')
+          expect(participant.agreement_identifier_snapshot).to eq('privacy_policy')
+          expect(participant.agreement_title_snapshot).to eq('Privacy Policy')
+          expect(participant.agreement_content_digest).to match(/\A\h{64}\z/)
+          expect(participant.audit_context).to include(
+            'locale' => I18n.locale.to_s,
+            'source_path' => better_together.agreements_status_path(locale: I18n.locale)
+          )
+        end
       end
 
       context 'when not accepting all required agreements' do # rubocop:todo RSpec/NestedGroups

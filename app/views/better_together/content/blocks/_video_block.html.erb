@@ -1,0 +1,19 @@
+<%# locals: (video_block:) -%>
+<%= cache iframe_embed_cache_key(video_block, video_block.embed_url) do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: video_block } do %>
+    <% if video_block.video_url.present? %>
+      <%= render partial: 'better_together/content/blocks/iframe_embed',
+                 locals: {
+                   block: video_block,
+                   iframe_url: video_block.embed_url,
+                   aspect_ratio: video_block.aspect_ratio,
+                   title: video_block.embed_title,
+                   caption: video_block.caption,
+                   iframe_allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+                   allow_fullscreen: true
+                 } %>
+    <% else %>
+      <p class="text-muted"><%= t('better_together.content.blocks.video_block.missing_url', default: 'No video URL configured.') %></p>
+    <% end %>
+  <% end %>
+<% end %>

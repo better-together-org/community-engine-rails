@@ -5,21 +5,25 @@ module BetterTogether
   class JoatuMailer < ApplicationMailer
     # Support both direct delivery (recipient, offer:, request:) and
     # Noticed delivery using `.with(offer:, request:, recipient:)`.
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def new_match(recipient = nil, *_args, offer: nil, request: nil, **kwargs)
       # Accept various call shapes from Noticed or direct invocation.
       @recipient = recipient || kwargs[:recipient] || params[:recipient]
       @offer = offer || kwargs[:offer] || params[:offer]
       @request = request || kwargs[:request] || params[:request]
 
-      mail(to: @recipient.email, subject: 'New Joatu match')
+      self.locale = @recipient.locale if @recipient.respond_to?(:locale)
+      self.time_zone = @recipient.time_zone if @recipient.respond_to?(:time_zone)
+
+      mail(to: @recipient.email, subject: t('.subject'))
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def agreement_created
       @agreement = params[:agreement]
       @offer = @agreement.offer
       @request = @agreement.request
       @recipient = params[:recipient]
-      @platform = BetterTogether::Platform.find_by(host: true)
 
       self.locale = @recipient.locale
       self.time_zone = @recipient.time_zone
@@ -28,7 +32,6 @@ module BetterTogether
     end
 
     def agreement_status_changed
-      @platform = BetterTogether::Platform.find_by(host: true)
       @agreement = params[:agreement]
       @recipient = params[:recipient]
       @status = @agreement.status

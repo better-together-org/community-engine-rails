@@ -3,14 +3,27 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe NavigationBuilder, type: :builder do
     before do
+      # seed_data creates Pages that require a platform; set Current.platform so
+      # Page#assign_current_platform_if_available resolves correctly.
+      Current.platform = BetterTogether::Platform.find_by(host: true)
       # Clean up existing navigation data before each test
       described_class.clear_existing
     end
 
+    after do
+      Current.platform = nil
+    end
+
     describe '.reset_navigation_areas' do
+      it 'uses a seed platform context while rebuilding all areas' do
+        expect(described_class).to receive(:with_seed_platform_context).and_call_original
+
+        described_class.reset_navigation_areas
+      end
+
       it 'deletes all navigation items' do
         # Create some test navigation areas and items first
         area = create(:better_together_navigation_area)
@@ -105,6 +118,12 @@ module BetterTogether
           footer = BetterTogether::NavigationArea.i18n.find_by(slug: 'platform-footer')
           expect(footer).to be_present
           expect(footer.navigation_items.count).to be > 0
+        end
+
+        it 'uses a seed platform context while rebuilding a specific area' do
+          expect(described_class).to receive(:with_seed_platform_context).and_call_original
+
+          described_class.reset_navigation_area('platform-footer')
         end
 
         it 'works for documentation' do
@@ -242,6 +261,42 @@ module BetterTogether
             .to change(NavigationArea, :count).by(4)
             .and change(NavigationItem, :count).by_at_least(1)
             .and change(Page, :count).by_at_least(1)
+        end
+
+        it 'uses a seed platform context while seeding' do
+          expect(described_class).to receive(:with_seed_platform_context).and_call_original
+
+          described_class.seed_data
+        end
+      end
+
+      describe '.with_seed_platform_context' do
+        it 'sets and restores Current.platform around the yield' do
+          previous_platform = create(
+            :better_together_platform,
+            community: create(:better_together_community)
+          )
+          host_platform = BetterTogether::Platform.find_by(host: true) || create(
+            :better_together_platform, :host,
+            community: create(:better_together_community, :host)
+          )
+
+          Current.platform = previous_platform
+          allow(described_class).to receive(:ensure_host_platform_for_seeds).and_return(host_platform)
+
+          yielded_platform = nil
+          described_class.send(:with_seed_platform_context) do
+            yielded_platform = Current.platform
+          end
+
+          expect(yielded_platform).to eq(host_platform)
+          expect(Current.platform).to eq(previous_platform)
+        end
+      end
+
+      describe '.seed_host_url' do
+        it 'uses the Rails test host URL during specs' do
+          expect(described_class.send(:seed_host_url)).to eq('http://www.example.com')
         end
       end
 

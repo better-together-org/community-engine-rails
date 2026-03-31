@@ -52,5 +52,13 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
     user = BetterTogether::User.find_by(email: test_email)
     expect(user).to be_present
     expect(user.person.agreement_participants.count).to eq(3)
+
+    participant = user.person.agreement_participants.find_by!(agreement: privacy_agreement)
+    expect(participant.acceptance_method).to eq('sign_up')
+    expect(participant.agreement_identifier_snapshot).to eq('privacy_policy')
+    expect(participant.audit_context).to include(
+      'locale' => I18n.default_locale.to_s,
+      'source_path' => user_registration_path(locale: I18n.default_locale)
+    )
   end
 end
