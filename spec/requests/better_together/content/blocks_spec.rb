@@ -31,4 +31,24 @@ RSpec.describe 'Content Blocks' do
       expect(block.media.blob).to eq(blob)
     end
   end
+
+  describe 'PATCH /content/blocks/:id' do
+    let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
+    let(:block) { create(:better_together_content_image) }
+
+    before do
+      login(user.email, 'SecureTest123!@#')
+    end
+
+    it 'redirects successfully for html requests' do
+      patch better_together.content_block_path(block), params: {
+        block: {
+          alt_text_en: 'Updated alt text'
+        }
+      }
+
+      expect(response).to redirect_to(better_together.content_block_path(block))
+      expect(block.reload.alt_text).to eq('Updated alt text')
+    end
+  end
 end

@@ -31,17 +31,10 @@ module BetterTogether
       end
 
       def update
-        respond_to do |format|
-          if persist_prepared_block
-            redirect_to content_block_path(@block),
-                        notice: t('flash.generic.updated', resource: t('resources.block'))
-          else
-            format.turbo_stream do
-              render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
-                                                                                        locals: { block: @block })
-            end
-            format.html { render :edit }
-          end
+        if persist_prepared_block
+          respond_to { |format| redirect_after_update(format) }
+        else
+          respond_to { |format| render_update_errors(format) }
         end
       end
 
@@ -107,6 +100,22 @@ module BetterTogether
         @block.assign_attributes(processed_block_params)
         attach_signed_media(@block)
         @block.save
+      end
+
+      def redirect_after_update(format)
+        notice = t('flash.generic.updated', resource: t('resources.block'))
+
+        format.html { redirect_to content_block_path(@block), notice: }
+        format.turbo_stream { redirect_to content_block_path(@block), notice: }
+      end
+
+      def render_update_errors(format)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
+                                                                                    locals: { block: @block }),
+                 status: :unprocessable_entity
+        end
+        format.html { render :edit, status: :unprocessable_entity }
       end
 
       def set_block
