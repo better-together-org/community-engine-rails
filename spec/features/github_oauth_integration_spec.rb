@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
+RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup do
   include BetterTogether::DeviseSessionHelpers
 
   let!(:platform) { configure_host_platform }
@@ -184,7 +184,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       let(:incomplete_auth_hash) do
         OmniAuth::AuthHash.new({
                                  provider: 'github',
-                                 uid: '123456',
+                                 uid: unique_oauth_uid,
                                  info: {
                                    # Missing email
                                    name: 'Test User'
@@ -224,14 +224,18 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
   end
 
   describe 'Post-authentication behavior' do
+    let(:post_auth_oauth_email) { unique_email }
+    let(:post_auth_oauth_uid) { unique_oauth_uid }
+    let(:post_auth_oauth_nickname) { unique_username }
+
     let(:github_auth_hash) do
       OmniAuth::AuthHash.new({
                                provider: 'github',
-                               uid: '123456',
+                               uid: post_auth_oauth_uid,
                                info: {
-                                 email: 'test@example.com',
+                                 email: post_auth_oauth_email,
                                  name: 'Test User',
-                                 nickname: 'testuser'
+                                 nickname: post_auth_oauth_nickname
                                },
                                credentials: {
                                  token: 'github_access_token_123'
@@ -257,7 +261,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
 
       # User should be able to access other protected pages
       # This tests that the session was properly established
-      user = BetterTogether.user_class.find_by(email: 'test@example.com')
+      user = BetterTogether.user_class.find_by(email: post_auth_oauth_email)
       expect(user).to be_present
     end
 
@@ -270,7 +274,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       visit '/'
 
       # User should still be signed in
-      user = BetterTogether.user_class.find_by(email: 'test@example.com')
+      user = BetterTogether.user_class.find_by(email: post_auth_oauth_email)
       expect(user).to be_present
     end
   end
