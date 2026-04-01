@@ -271,6 +271,10 @@ module BetterTogether
       flash[:error] = 'There was a problem signing you in. Please register or try signing in later.'
       redirect_to helpers.base_url
     end
+
+    def after_omniauth_failure_path_for(_scope)
+      new_user_session_path(locale: I18n.locale)
+    end
   end
   # rubocop:enable Metrics/ClassLength
 end
