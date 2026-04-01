@@ -7,6 +7,7 @@ module BetterTogether
     include PublicActivity::StoreController
     include Pundit::Authorization
     include InvitationSessionManagement
+    include Rails.application.routes.mounted_helpers
 
     protect_from_forgery with: :exception
 
@@ -37,6 +38,7 @@ module BetterTogether
 
     helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
                   :turbo_native_app?, :view_preference
+    helper Rails.application.routes.mounted_helpers
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
