@@ -22,6 +22,8 @@ module AutomaticTestConfiguration # :nodoc:
   extend ActiveSupport::Concern
   include FactoryBot::Syntax::Methods
 
+  DEFAULT_TEST_USER_PASSWORD = 'SecureTest123!@#'
+
   # Keywords that trigger automatic platform steward authentication
   MANAGER_KEYWORDS = [
     'platform manager',
@@ -343,21 +345,24 @@ module AutomaticTestConfiguration # :nodoc:
     respond_to?(:visit) && respond_to?(:page)
   end
 
-  def find_or_create_test_user(email, password, role_type = :user)
+  def find_or_create_test_user(email, _password = DEFAULT_TEST_USER_PASSWORD, role_type = :user)
     user = BetterTogether::User.find_or_initialize_by(email: email)
-    user.password = password if user.new_record?
+    user.password = DEFAULT_TEST_USER_PASSWORD if user.new_record?
     user.confirmed_at ||= Time.zone.now
     user.confirmation_sent_at ||= Time.zone.now
 
     unless user.person
       base_identifier = email.split('@').first.parameterize.presence || SecureRandom.hex(6)
       default_name = role_type == :user ? 'Test User' : 'Platform Steward'
-      existing_person = BetterTogether::Person.find_by(identifier: base_identifier)
-      if existing_person
-        user.person = existing_person
-      else
-        user.build_person(name: default_name, identifier: base_identifier)
+      identifier = base_identifier
+      suffix = 0
+
+      while BetterTogether::Person.where(identifier: identifier).exists?
+        suffix += 1
+        identifier = "#{base_identifier}-#{suffix}"
       end
+
+      user.build_person(name: default_name, identifier: identifier)
     end
 
     begin

@@ -214,7 +214,7 @@ RSpec.configure do |config|
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
   config.before do |example|
     if %i[controller feature request].include?(example.metadata[:type]) &&
-       !Rails.application.routes.url_helpers.respond_to?(:better_together_path)
+       !Rails.application.routes.mounted_helpers.respond_to?(:better_together)
       Rails.application.reload_routes!
     end
 
