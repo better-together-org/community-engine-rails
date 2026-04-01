@@ -287,8 +287,7 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # This ensures failures are handled by our custom failure action instead of
   # the default OmniAuth::FailureEndpoint which redirects to /auth/failure
   OmniAuth.config.on_failure = proc do |env|
-    env['devise.mapping'] = Devise.mappings[:user]
-    BetterTogether::Users::OmniauthCallbacksController.action(:failure).call(env)
+    BetterTogether::Users::OmniauthCallbacksController.omniauth_failure_handler.call(env)
   end
 
   # Request user:email scope to access email address (which may be private on GitHub)

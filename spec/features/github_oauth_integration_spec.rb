@@ -150,8 +150,8 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       it 'handles OAuth failure gracefully' do
         visit '/users/auth/github/callback'
 
-        expect(page).to have_text('Could not authenticate you from GitHub because "Invalid credentials"')
-        expect(page).to have_current_path(%r{^/(en/)?users/sign-in}, ignore_query: true)
+        expect(page).to have_text('There was a problem signing you in. Please register or try signing in later.')
+        expect(page).to have_current_path(%r{^/(en)?/?$}, ignore_query: true)
       end
     end
 
@@ -217,8 +217,8 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       it 'displays appropriate error message' do
         visit '/users/auth/github/callback'
 
-        expect(page).to have_text('Could not authenticate you from GitHub because "Access denied"')
-        expect(page).to have_current_path(%r{^/(en/)?users/sign-in}, ignore_query: true)
+        expect(page).to have_text('There was a problem signing you in. Please register or try signing in later.')
+        expect(page).to have_current_path(%r{^/(en)?/?$}, ignore_query: true)
       end
     end
   end
