@@ -1,13 +1,15 @@
-<% devise_mapping = local_assigns.key?(:devise_mapping) ? local_assigns[:devise_mapping] : devise_mapping %>
-<% resource_class = local_assigns.key?(:resource_class) ? local_assigns[:resource_class] : resource_class %>
-<% resource_name = local_assigns.key?(:resource_name) ? local_assigns[:resource_name] : resource_name %>
-<%- if devise_mapping.omniauthable? %>
-  <% available_providers = configured_omniauth_providers(resource_class) %>
+<% resolved_devise_mapping = local_assigns.key?(:devise_mapping) ? local_assigns[:devise_mapping] : devise_mapping %>
+<% resolved_resource_class = local_assigns.key?(:resource_class) ? local_assigns[:resource_class] : resource_class %>
+<% resolved_resource_class ||= resolved_devise_mapping.to if resolved_devise_mapping.respond_to?(:to) %>
+<% resolved_resource_name = local_assigns.key?(:resource_name) ? local_assigns[:resource_name] : resource_name %>
+<% resolved_resource_name ||= resolved_devise_mapping.name if resolved_devise_mapping.respond_to?(:name) %>
+<%- if resolved_devise_mapping&.omniauthable? && resolved_resource_class.present? && resolved_resource_name.present? %>
+  <% available_providers = configured_omniauth_providers(resolved_resource_class) %>
   <% if available_providers.any? %>
   <div class="mt-3">
     <div class="d-flex gap-2 flex-wrap justify-content-center">
       <%- available_providers.each do |provider| %>
-        <%= button_to omniauth_authorize_path(resource_name, provider),
+        <%= button_to omniauth_authorize_path(resolved_resource_name, provider),
                       method: :post,
                       class: oauth_provider_button_class(provider),
                       data: { turbo: false },

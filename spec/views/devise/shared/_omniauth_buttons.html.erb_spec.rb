@@ -4,11 +4,15 @@ require 'rails_helper'
 
 RSpec.describe 'devise/shared/_omniauth_buttons' do
   before do
-    allow(view).to receive_messages(
-      devise_mapping: double(omniauthable?: true),
-      resource_class: BetterTogether::User,
-      resource_name: :user
-    )
+    view.extend BetterTogether::OauthButtonsHelper
+
+    mapping = double(omniauthable?: true, to: BetterTogether::User, name: :user)
+    resource_klass = BetterTogether::User
+    resource_identifier = :user
+
+    view.define_singleton_method(:devise_mapping) { mapping }
+    view.define_singleton_method(:resource_class) { resource_klass }
+    view.define_singleton_method(:resource_name) { resource_identifier }
   end
 
   def render_buttons
@@ -34,5 +38,15 @@ RSpec.describe 'devise/shared/_omniauth_buttons' do
     render_buttons
 
     expect(rendered).to include('Sign in with GitHub')
+  end
+
+  it 'does not error when resource_class is nil and credentials are missing' do
+    view.define_singleton_method(:resource_class) { nil }
+    allow(ENV).to receive(:fetch).and_call_original
+    allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return(nil)
+    allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return(nil)
+
+    expect { render_buttons }.not_to raise_error
+    expect(rendered).not_to include('Sign in with GitHub')
   end
 end
