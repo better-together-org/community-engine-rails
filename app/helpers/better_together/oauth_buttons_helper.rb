@@ -3,6 +3,10 @@
 module BetterTogether
   # Helper methods for rendering OAuth provider sign-in buttons with proper branding
   module OauthButtonsHelper
+    OAUTH_PROVIDER_ENV_VARS = {
+      github: %w[GITHUB_CLIENT_ID GITHUB_CLIENT_SECRET]
+    }.freeze
+
     # Returns the appropriate Bootstrap button class for an OAuth provider
     # @param provider [Symbol, String] The OAuth provider name
     # @return [String] Bootstrap button classes
@@ -19,6 +23,10 @@ module BetterTogether
       else
         'btn btn-secondary'
       end
+    end
+
+    def configured_omniauth_providers(resource_class)
+      resource_class.omniauth_providers.select { |provider| oauth_provider_credentials_present?(provider) }
     end
 
     # Returns the Font Awesome icon class for an OAuth provider
@@ -41,6 +49,13 @@ module BetterTogether
       else
         'fa-solid fa-plug'
       end
+    end
+
+    private
+
+    def oauth_provider_credentials_present?(provider)
+      required_env_vars = OAUTH_PROVIDER_ENV_VARS.fetch(provider.to_sym, [])
+      required_env_vars.all? { |env_var| ENV.fetch(env_var, nil).present? }
     end
   end
 end

@@ -139,14 +139,17 @@
       <%= render partial: 'devise/registrations/extra_registration_fields', locals: { form: f, resource: resource } %>
 
       <!-- Submit Button -->
-      <div id="submit-section" class="text-center submit-section">
-        <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'registration-submit-btn' %>
+          <div id="submit-section" class="text-center submit-section">
+            <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'registration-submit-btn' %>
             <!-- Additional Links -->
             <div id="additional-links" class="additional-links">
               <%= render "devise/shared/links" %>
             </div>
           </div>
         <% end %>
+
+        <%# Render the shared OAuth sign-in buttons after the form so sign-up and sign-in use the same credential gating. %>
+        <%= render "devise/shared/omniauth_buttons" %>
       </div>
     </div>
   <% end %>
