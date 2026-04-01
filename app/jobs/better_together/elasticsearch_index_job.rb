@@ -11,8 +11,6 @@ module BetterTogether
     discard_on ActiveJob::DeserializationError
 
     def perform(record, action)
-      return unless record.respond_to? :__elasticsearch__
-
       execute_elasticsearch_action(record, action)
     rescue ActiveRecord::RecordNotFound
       # Record was deleted before the job could run - this is expected for delete operations
