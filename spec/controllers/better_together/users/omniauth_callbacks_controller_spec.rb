@@ -77,6 +77,14 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
     @request.env['devise.mapping'] = devise_mapping # rubocop:todo RSpec/InstanceVariable
   end
 
+  describe '#after_omniauth_failure_path_for' do
+    it 'returns the localized sign-in path' do
+      I18n.with_locale(:en) do
+        expect(controller.send(:after_omniauth_failure_path_for, :user)).to eq(new_user_session_path(locale: :en))
+      end
+    end
+  end
+
   describe 'GitHub OAuth callback', :no_auth do
     let(:oauth_email) { unique_email }
     let(:oauth_uid) { unique_oauth_uid }
