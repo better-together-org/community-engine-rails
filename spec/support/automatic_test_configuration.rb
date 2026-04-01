@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'digest'
+
 # rubocop:disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 # Automatic Test Configuration
 #
@@ -355,11 +357,16 @@ module AutomaticTestConfiguration # :nodoc:
       base_identifier = email.split('@').first.parameterize.presence || SecureRandom.hex(6)
       default_name = role_type == :user ? 'Test User' : 'Platform Steward'
       identifier = base_identifier
-      suffix = 0
 
-      while BetterTogether::Person.where(identifier: identifier).exists?
-        suffix += 1
-        identifier = "#{base_identifier}-#{suffix}"
+      if BetterTogether::Person.where(identifier: identifier).exists?
+        digest_identifier = "#{base_identifier}-#{Digest::SHA256.hexdigest(email)[0, 8]}"
+        identifier = digest_identifier
+        suffix = 0
+
+        while BetterTogether::Person.where(identifier: identifier).exists?
+          suffix += 1
+          identifier = "#{digest_identifier}-#{suffix}"
+        end
       end
 
       user.build_person(name: default_name, identifier: identifier)
