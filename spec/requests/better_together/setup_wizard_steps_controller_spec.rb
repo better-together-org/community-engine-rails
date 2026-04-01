@@ -99,6 +99,11 @@ module BetterTogether # :nodoc:
           expect(platform.host).to be true
         end
 
+        it 'defaults the platform to invitation-only registration' do
+          platform = Platform.find_by(url: unique_url)
+          expect(platform.requires_invitation).to be true
+        end
+
         it 'marks the wizard step as completed' do
           wizard.reload
           step = wizard.wizard_steps.find_by(wizard_step_definition: platform_details_step)
@@ -434,6 +439,7 @@ module BetterTogether # :nodoc:
           expect(platform).to be_a(Platform)
           expect(platform.privacy).to eq('private')
           expect(platform.protected).to be true
+          expect(platform.requires_invitation).to be true
           expect(platform.host).to be true
           expect(platform.time_zone).to eq(Time.zone.name)
         end
