@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonDeletionRequestsController, :as_user do
   include Devise::Test::ControllerHelpers
-  include Rails.application.routes.url_helpers
+  include BetterTogether::Engine.routes.url_helpers
   include AutomaticTestConfiguration
 
   routes { BetterTogether::Engine.routes }
