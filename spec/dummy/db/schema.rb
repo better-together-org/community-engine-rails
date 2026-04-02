@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_01_143000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_02_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1611,6 +1611,28 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_01_143000) do
     t.index ["resource_type", "position"], name: "index_resource_permissions_on_resource_type_and_position", unique: true
   end
 
+  create_table "better_together_robots", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id"
+    t.string "name", null: false
+    t.string "identifier", null: false
+    t.string "robot_type", default: "translation", null: false
+    t.string "provider", default: "openai", null: false
+    t.string "default_model"
+    t.string "default_embedding_model"
+    t.text "system_prompt"
+    t.json "settings", default: {}, null: false
+    t.boolean "active", default: true, null: false
+    t.index ["active"], name: "index_better_together_robots_on_active"
+    t.index ["identifier"], name: "index_bt_global_robots_on_identifier", unique: true, where: "(platform_id IS NULL)"
+    t.index ["platform_id", "identifier"], name: "index_bt_robots_on_platform_and_identifier", unique: true
+    t.index ["platform_id"], name: "index_better_together_robots_on_platform_id"
+    t.index ["provider"], name: "index_better_together_robots_on_provider"
+    t.index ["robot_type"], name: "index_better_together_robots_on_robot_type"
+  end
+
   create_table "better_together_role_resource_permissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2205,6 +2227,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_01_143000) do
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
+  add_foreign_key "better_together_robots", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_resource_permissions", column: "resource_permission_id"
   add_foreign_key "better_together_role_resource_permissions", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_safety_actions", "better_together_people", column: "actor_id"

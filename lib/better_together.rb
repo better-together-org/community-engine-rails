@@ -7,7 +7,7 @@ require 'better_together/sitemap_helper'
 require 'better_together/mcp'
 
 # Convenience setters and getters for the engine
-module BetterTogether
+module BetterTogether # rubocop:disable Metrics/ModuleLength
   mattr_accessor :base_url,
                  :adapter_registry,
                  :new_user_password_path,
@@ -51,13 +51,17 @@ module BetterTogether
     federation
   ].freeze
 
-  class << self
+  class << self # rubocop:disable Metrics/ClassLength
     def register_adapter(group, name = nil, adapter = nil, &)
       adapter_registry.register(group, name, adapter, &)
     end
 
     def adapters_for(group)
       adapter_registry.adapters_for(group)
+    end
+
+    def adapter_for(group, name = nil)
+      adapter_registry.adapter_for(group, name)
     end
 
     def clear_adapters!(group = nil)
@@ -73,6 +77,22 @@ module BetterTogether
       register_adapter(:error_reporting, name, adapter)
     end
 
+    def register_llm_adapter(name = nil, adapter = nil, &)
+      register_adapter(:llm, name, adapter, &)
+    end
+
+    def clear_llm_adapters!
+      clear_adapters!(:llm)
+    end
+
+    def register_embedding_adapter(name = nil, adapter = nil, &)
+      register_adapter(:embeddings, name, adapter, &)
+    end
+
+    def clear_embedding_adapters!
+      clear_adapters!(:embeddings)
+    end
+
     def clear_error_reporters!
       clear_adapters!(:error_reporting)
     end
@@ -81,6 +101,27 @@ module BetterTogether
       return default_error_reporter(exception, context:) if adapters_for(:error_reporting).blank?
 
       dispatch_to_adapters(:error_reporting, exception, context:)
+    end
+
+    def llm_chat(prompt:, adapter_name: nil, **options)
+      entry = adapter_for(:llm, adapter_name || options[:provider])
+      return entry.fetch(:adapter).call(prompt:, **options) if entry.present?
+
+      BetterTogether::Llm::DefaultAdapter.new.call(prompt:, **options)
+    end
+
+    def embed_text(text, adapter_name: nil, **options)
+      entry = adapter_for(:embeddings, adapter_name || options[:provider])
+      return entry.fetch(:adapter).call(text, **options) if entry.present?
+
+      BetterTogether::Embeddings::DefaultAdapter.new.call(text, **options)
+    end
+
+    def llm_available?(identifier: nil, platform: Current.platform)
+      return true if adapters_for(:llm).any?
+
+      robot = resolve_llm_robot(identifier:, platform:)
+      llm_provider_available?(robot)
     end
 
     def e2ee_messaging_enabled?
@@ -133,6 +174,24 @@ module BetterTogether
       return unless defined?(Rails) && Rails.respond_to?(:error) && Rails.error.respond_to?(:report)
 
       Rails.error.report(exception, handled: true, severity: :error, context:)
+    end
+
+    def resolve_llm_robot(identifier:, platform:)
+      return unless identifier.present? && defined?(BetterTogether::Robot)
+
+      BetterTogether::Robot.resolve(identifier:, platform:)
+    end
+
+    def llm_provider_available?(robot)
+      provider = robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
+      return openai_llm_available? if provider == 'openai'
+      return true if provider == 'ollama'
+
+      robot.present?
+    end
+
+    def openai_llm_available?
+      ENV.fetch('OPENAI_API_KEY', nil).present? || ENV.fetch('OPENAI_ACCESS_TOKEN', nil).present?
     end
   end
 end
