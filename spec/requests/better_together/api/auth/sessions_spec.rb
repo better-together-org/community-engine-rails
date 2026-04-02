@@ -158,9 +158,11 @@ RSpec.describe 'BetterTogether::Api::Auth::Sessions', :no_auth do
   end
 
   def extract_jti_from_token(token)
-    secret = ENV.fetch('DEVISE_SECRET') do
-      Rails.application.credentials.devise_jwt_secret_key.presence || Rails.application.credentials.secret_key_base
-    end
+    secret = ENV['DEVISE_SECRET'].presence ||
+             Devise::JWT.config.secret ||
+             Rails.application.credentials.devise_jwt_secret_key.presence ||
+             Rails.application.credentials.secret_key_base.presence ||
+             Devise.secret_key
     JWT.decode(token, secret)[0]['jti']
   rescue JWT::DecodeError
     nil
