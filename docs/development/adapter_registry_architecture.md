@@ -20,11 +20,16 @@ External providers must live in host apps or thin wrapper gems.
 Examples of external-provider wrapper gems:
 
 - Sentry error reporting
+- Sidekiq / Redis queue and cache integrations
+- SMTP provider integrations
+- S3-compatible object storage integrations
 - Google analytics or search console integrations
 - Cloudflare metrics or Turnstile integrations
 - Formbricks survey/feedback integrations
 - Nextcloud publication or collaboration integrations
 - Discourse / Forem / Reddit / LinkedIn / Facebook / Instagram publishing integrations
+- OpenAI and other LLM providers via `ruby_llm`
+- Borgberry-mediated audited local Ollama access
 - Google Maps or other mapping backends
 
 ## Built-In Subsystem Groups
@@ -32,9 +37,18 @@ Examples of external-provider wrapper gems:
 The adapter registry currently reserves these subsystem groups:
 
 - `error_reporting`
+- `queue`
+- `cache`
+- `throttling`
+- `storage`
+- `smtp`
 - `search`
 - `metrics`
 - `publishing`
+- `spatial`
+- `tenancy`
+- `llm`
+- `embeddings`
 - `translation`
 - `mapping`
 - `federation`
@@ -94,6 +108,10 @@ end
 
 The same pattern can be used for:
 
+- `:queue, :sidekiq`
+- `:cache, :redis`
+- `:storage, :s3_compatible`
+- `:smtp, :smtp_generic`
 - `:metrics, :google_analytics`
 - `:metrics, :cloudflare`
 - `:publishing, :discourse`
@@ -101,6 +119,9 @@ The same pattern can be used for:
 - `:publishing, :facebook`
 - `:search, :ce`
 - `:search, :google`
+- `:llm, :openai`
+- `:llm, :borgberry`
+- `:embeddings, :borgberry`
 
 ## Privacy and Consent Constraints
 
@@ -114,8 +135,34 @@ Rules for adapter gems:
 - no over-sharing of community membership, moderation, or private draft data
 - only send the minimum payload required by the provider
 - keep provider-specific secrets/config outside the CE gem
+- no silent fallback from audited local AI routing to a cloud provider
+- AI prompts, model selections, and response metadata must remain auditable
 
 This is especially important for corporate platforms such as Facebook, Instagram, LinkedIn, and Google services.
+
+## AI and LLM Adapters
+
+The current CE AI implementation is still directly coupled to OpenAI. That is transitional.
+
+Target architecture:
+
+- CE defines stable `llm` and `embeddings` subsystem contracts
+- CE uses `ruby_llm` as the abstraction layer instead of depending on direct `ruby-openai` calls
+- provider gems register concrete LLM backends
+- Borgberry is the preferred BTS-hosted audited path for local Ollama usage
+
+Planned provider shape:
+
+- `better_together-ruby-llm-openai`
+- `better_together-borgberry-llm`
+
+Rules:
+
+- no external LLM provider is required by the CE gem
+- no silent fallback from Borgberry/Ollama to OpenAI or another cloud provider
+- tenant, platform, and community context must be preserved for authorization and audit
+- prompt and response handling should support redaction and policy-aware logging
+- embeddings should follow the same pattern as chat/completion calls
 
 ## Recommended Next Adapter Waves
 
@@ -123,9 +170,16 @@ This is especially important for corporate platforms such as Facebook, Instagram
 
 - `better_together-sentry`
 - `better_together-borgberry-observability`
+- `better_together-sidekiq`
+- `better_together-redis-cache`
+- `better_together-redis-throttling`
+- `better_together-smtp`
 
 ### Wave 2
 
+- `better_together-active_storage-s3-compatible`
+- `better_together-borgberry-llm`
+- `better_together-ruby-llm-openai`
 - `better_together-google-metrics`
 - `better_together-cloudflare-metrics`
 - `better_together-formbricks`
@@ -149,9 +203,25 @@ These later social-platform gems should go through an explicit privacy and conse
 
 The same pattern should be applied to other subsystems over time:
 
+- `queue`
+  - Rails-native default adapter in CE
+  - optional Sidekiq provider gem
+- `cache` and `throttling`
+  - local/file/memory defaults in CE
+  - optional Redis provider gems
+- `storage`
+  - local Active Storage by default
+  - optional S3-compatible provider gems
+- `smtp`
+  - local/test/bootstrap-safe mail delivery by default
+  - optional platform-configured SMTP provider records
 - `search`
   - internal CE search adapter
   - optional Google or external provider adapters
+- `llm` and `embeddings`
+  - `ruby_llm` abstraction
+  - Borgberry-audited local Ollama routing
+  - optional cloud-provider thin gems
 - `translation`
   - internal CE/Mobility pipeline
   - future alternate translation backends
@@ -169,7 +239,9 @@ Implemented now:
 
 Not implemented yet:
 
+- concrete queue/cache/storage/smtp contracts
 - concrete search adapter contract
 - concrete metrics payload contract
 - concrete publishing payload contract
+- concrete llm/embeddings payload contracts
 - thin wrapper gems
