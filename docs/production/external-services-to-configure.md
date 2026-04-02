@@ -40,26 +40,34 @@ Rails configuration references:
 - `spec/dummy/config/initializers/asset_sync.rb:5` – S3 credentials and bucket settings
 - `spec/dummy/config/environments/production.rb:39` – `config.asset_host`
 
-## OpenAI (Optional Features)
+## LLM Providers (Optional Features)
 
-Some features (e.g., translations, bots) use OpenAI if available. If unset, those features remain disabled.
+Some features (for example translations and future bot workflows) use the CE
+`llm` adapter subsystem. CE now routes those calls through `ruby_llm` and a
+configured robot/provider instead of hardwiring OpenAI into the core gem.
 
-Required to enable:
-- `OPENAI_ACCESS_TOKEN`: API key used by helpers and robots.
+Baseline provider selection:
+- `BETTER_TOGETHER_LLM_PROVIDER`: Provider key used by the active robot or as the global fallback.
+- `BETTER_TOGETHER_LLM_MODEL`: Default model identifier when a robot does not override it.
 
-Optional:
-- `OPENAI_API_BASE`: Override API base (e.g., Azure OpenAI endpoint).
+Provider-specific credentials remain optional and depend on the installed thin gem:
+- OpenAI-compatible providers: `OPENAI_API_KEY` or `OPENAI_ACCESS_TOKEN`
+- OpenAI-compatible base override: `OPENAI_API_BASE`
+- Local Ollama/Borgberry routing: provider-specific configuration in the future Borgberry adapter gem
 
 Example environment:
 ```bash
-OPENAI_ACCESS_TOKEN=sk-...
-# Optional for Azure/OpenAI proxy
-# OPENAI_API_BASE=https://your-azure-endpoint.openai.azure.com
+BETTER_TOGETHER_LLM_PROVIDER=openai
+BETTER_TOGETHER_LLM_MODEL=gpt-4.1-mini
+OPENAI_API_KEY=sk-...
+# Optional OpenAI-compatible override
+# OPENAI_API_BASE=https://your-openai-compatible-endpoint.example/v1
 ```
 
 References:
-- `app/robots/better_together/application_bot.rb:10`
-- `app/helpers/better_together/translatable_fields_helper.rb:20`
+- `app/robots/better_together/application_bot.rb`
+- `app/models/better_together/robot.rb`
+- `app/helpers/better_together/translatable_fields_helper.rb`
 
 ## Sentry (Backend + Browser)
 
@@ -196,7 +204,7 @@ SECRET_KEY_BASE=<generated-secret>
 ## Quick Checklist
 
 - S3/CDN: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `FOG_DIRECTORY`, `FOG_REGION`, `ASSET_HOST`
-- OpenAI: `OPENAI_ACCESS_TOKEN` (optional)
+- LLM provider credentials: `BETTER_TOGETHER_LLM_PROVIDER`, `BETTER_TOGETHER_LLM_MODEL`, plus provider-specific secrets such as `OPENAI_API_KEY` (optional)
 - Sentry: `SENTRY_DSN`, `SENTRY_CLIENT_KEY`, `GIT_REV`
 - Email: `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`
 - Elasticsearch: `ELASTICSEARCH_URL` or `ES_HOST` + `ES_PORT`

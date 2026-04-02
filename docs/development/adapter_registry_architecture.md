@@ -142,7 +142,8 @@ This is especially important for corporate platforms such as Facebook, Instagram
 
 ## AI and LLM Adapters
 
-The current CE AI implementation is still directly coupled to OpenAI. That is transitional.
+The current CE AI entry points now route through the adapter registry and
+`ruby_llm`, but the provider extraction work is still incomplete.
 
 Target architecture:
 
