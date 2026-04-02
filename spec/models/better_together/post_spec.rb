@@ -33,6 +33,22 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe '.latest_first' do
+    it 'orders newer published posts before older published posts' do
+      older_post = create(:better_together_post, published_at: 3.days.ago, created_at: 4.days.ago)
+      newer_post = create(:better_together_post, published_at: 1.day.ago, created_at: 2.days.ago)
+
+      expect(described_class.latest_first).to eq([newer_post, older_post])
+    end
+
+    it 'falls back to created_at when published_at is nil' do
+      older_draft = create(:better_together_post, published_at: nil, created_at: 3.days.ago)
+      newer_draft = create(:better_together_post, published_at: nil, created_at: 1.day.ago)
+
+      expect(described_class.latest_first).to eq([newer_draft, older_draft])
+    end
+  end
+
   describe 'after_create #add_creator_as_author' do
     it 'creates an authorship for the creator_id' do
       creator = create(:better_together_person)

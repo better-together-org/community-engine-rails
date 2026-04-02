@@ -39,6 +39,8 @@ module BetterTogether
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
+    scope :latest_first, -> { order(Arel.sql('COALESCE(published_at, created_at) DESC'), created_at: :desc) }
+
     before_validation :assign_current_platform_if_available
 
     # Automatically grant the post creator an authorship record

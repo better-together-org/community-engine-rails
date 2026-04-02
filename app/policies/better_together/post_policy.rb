@@ -36,9 +36,9 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        return scope.all if platform_content_manager?
+        return scope.latest_first if platform_content_manager?
 
-        base = scope.published
+        base = scope.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
         public_posts = posts_table[:privacy].eq('public')
         return base.where(public_posts) unless agent
