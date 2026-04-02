@@ -106,6 +106,20 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     end
   end
 
+  describe 'settings defaults' do
+    it 'defaults raw new platforms to requiring invitations immediately' do
+      platform = described_class.new(host_url: 'https://example.test', time_zone: 'UTC', privacy: 'private', protected: true)
+
+      expect(platform.requires_invitation).to be(true)
+    end
+
+    it 'defaults new platforms to requiring invitations' do
+      platform = build(:better_together_platform)
+
+      expect(platform.requires_invitation).to be(true)
+    end
+  end
+
   describe 'platform domain synchronization' do
     it 'creates a primary platform domain for internal platforms from host_url' do
       platform = create(:better_together_platform, host_url: "https://primary-#{SecureRandom.hex(4)}.example.test")
