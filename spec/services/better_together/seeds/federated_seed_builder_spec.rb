@@ -12,6 +12,7 @@ RSpec.describe BetterTogether::Seeds::FederatedSeedBuilder do
     seed = described_class.call(record: post, connection:, lane: 'platform_shared')
 
     expect(seed['better_together'][:seed][:origin][:lane]).to eq('platform_shared')
+    expect(seed['better_together'][:seed][:origin][:profile]).to eq('platform_shared')
     expect(seed['better_together'][:payload][:type]).to eq('post')
     expect(seed['better_together'][:payload][:id]).to eq(post.id)
   end

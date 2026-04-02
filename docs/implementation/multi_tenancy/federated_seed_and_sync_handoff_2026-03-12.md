@@ -217,6 +217,13 @@ Implemented:
 - seed builder and ingestor services
 - content export/import/pull flows adapted to seed-based exchange
 
+Current follow-on direction:
+
+- `BetterTogether::Seeds::Builder` is now the canonical seed-construction seam.
+- `BetterTogether::Seeds::Ingest` is now the canonical seed-import seam before lane-specific handling.
+- `PersonDataExport` remains the request/lifecycle wrapper, but the export package is now seed-backed.
+- `FederatedSeedBuilder` and `FederatedSeedIngestor` should be treated as compatibility wrappers, not the target architecture.
+
 Key commit:
 
 - `1fa53eee`

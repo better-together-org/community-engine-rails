@@ -28,9 +28,11 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
 
       result = described_class.call(connection:, limit: 10)
       payloads = result.seeds.map { |seed| seed['better_together'][:payload] }
+      origins = result.seeds.map { |seed| seed['better_together'][:seed][:origin] }
 
       expect(payloads.map { |payload| payload[:type] }).to include('post', 'page', 'event')
       expect(payloads.map { |payload| payload[:id] }).to include(post.id, page.id, event.id)
+      expect(origins).to all(include(profile: 'platform_shared', lane: 'platform_shared'))
       expect(result.next_cursor).to be_present
     end
 

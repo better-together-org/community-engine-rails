@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Seeds
-    # Persists an imported seed envelope and dispatches it to the mirror layer.
+    # Compatibility wrapper over Seeds::Ingest for mirrored-content callers.
     class FederatedSeedIngestor
       IMPORTER_MAP = {
         'post' => ::BetterTogether::Content::FederatedPostMirrorService,
@@ -20,25 +20,31 @@ module BetterTogether
       end
 
       def call
-        seed = ::BetterTogether::Seed.import_or_update!(seed_data)
-        payload = seed.payload_data
-        importer_class = IMPORTER_MAP[payload[:type].to_s]
-        return [seed, nil] if importer_class.nil?
+        result = ::BetterTogether::Seeds::Ingest.call(
+          seed_data: seed_data,
+          connection: connection,
+          record_importer: method(:import_record)
+        )
 
-        record = importer_class.new(
-          connection:,
-          remote_attributes: payload[:attributes] || {},
-          remote_id: payload.fetch(:id),
-          preserve_remote_uuid: payload[:preserve_remote_uuid],
-          source_updated_at: payload[:source_updated_at]
-        ).call
-
-        [seed, record]
+        [result.seed_record, result.imported_record]
       end
 
       private
 
       attr_reader :connection, :seed_data
+
+      def import_record(payload:, connection:, **)
+        importer_class = IMPORTER_MAP[payload[:type].to_s]
+        return nil if importer_class.nil?
+
+        importer_class.new(
+          connection: connection,
+          remote_attributes: payload[:attributes] || {},
+          remote_id: payload.fetch(:id),
+          preserve_remote_uuid: payload[:preserve_remote_uuid],
+          source_updated_at: payload[:source_updated_at]
+        ).call
+      end
     end
   end
 end

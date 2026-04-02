@@ -1,15 +1,44 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Builds a portable, non-destructive account export payload for a person.
+  # Builds a seed-backed account export package while leaving PersonDataExport
+  # as the request/lifecycle wrapper.
   # rubocop:disable Metrics/ClassLength
   class PersonDataExportService
+    Result = Data.define(:seed_record, :seed_hash, :account_data)
+
     def initialize(person:)
       @person = person
     end
 
     def call
+      Result.new(builder_result.seed_record, builder_result.seed_hash, account_data)
+    end
+
+    private
+
+    attr_reader :person
+
+    def builder_result
+      @builder_result ||= ::BetterTogether::Seeds::Builder.call(
+        subject: person,
+        profile: :personal_export,
+        persist: true,
+        creator_id: person.id,
+        context: builder_context
+      )
+    end
+
+    def builder_context
       {
+        created_by: 'PersonDataExport',
+        description: "Personal data export for #{person.identifier}",
+        payload: account_data
+      }
+    end
+
+    def account_data
+      @account_data ||= {
         exported_at: Time.current.iso8601,
         person: person_attributes,
         memberships: memberships,
@@ -22,10 +51,6 @@ module BetterTogether
         seeds: seeds
       }
     end
-
-    private
-
-    attr_reader :person
 
     def person_attributes
       person.slice(
