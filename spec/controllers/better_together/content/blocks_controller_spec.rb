@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Content::BlocksController, :as_platform_manager do
   include Devise::Test::ControllerHelpers
-  include Rails.application.routes.url_helpers
+  include BetterTogether::Engine.routes.url_helpers
   include AutomaticTestConfiguration
 
   routes { BetterTogether::Engine.routes }
@@ -33,7 +33,7 @@ RSpec.describe BetterTogether::Content::BlocksController, :as_platform_manager d
       end.to change(BetterTogether::Content::Html, :count).by(1)
 
       created_block = BetterTogether::Content::Html.order(created_at: :desc).first
-      expect(response).to redirect_to(content_block_path(created_block))
+      expect(response).to redirect_to(content_block_path(locale: locale, id: created_block.to_param))
       expect(created_block.html_content).to eq(html_content)
     end
   end
@@ -54,7 +54,7 @@ RSpec.describe BetterTogether::Content::BlocksController, :as_platform_manager d
         }
       }
 
-      expect(response).to redirect_to(content_block_path(block))
+      expect(response).to redirect_to(content_block_path(locale: locale, id: block.to_param))
       expect(block.reload.html_content).to eq(updated_html_content)
     end
   end

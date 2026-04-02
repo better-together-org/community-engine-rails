@@ -76,10 +76,14 @@ RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/
   it 'backfills missing host-platform memberships as active platform_member memberships' do
     seed_migration.up
     legacy_user = create(:better_together_user, :confirmed)
+    existing_membership = BetterTogether::PersonPlatformMembership.find_by(
+      joinable: host_platform,
+      member: legacy_user.person
+    )
 
-    expect do
-      backfill_migration.up
-    end.to change(BetterTogether::PersonPlatformMembership, :count).by(1)
+    expect(existing_membership).to be_nil
+
+    backfill_migration.up
 
     membership = BetterTogether::PersonPlatformMembership.find_by(
       joinable: host_platform,

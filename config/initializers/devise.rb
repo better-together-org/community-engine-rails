@@ -333,9 +333,6 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
   # config.sign_in_after_change_password = true
 
   config.jwt do |jwt|
-    jwt.secret = ENV.fetch('DEVISE_SECRET') do
-      Rails.application.credentials.devise_jwt_secret_key.presence || Rails.application.credentials.secret_key_base
-    end
     route_scope = BetterTogether.route_scope_path.to_s
     path_prefix = route_scope.present? ? "/#{route_scope}" : ''
     jwt.dispatch_requests = [
@@ -353,4 +350,17 @@ Devise.setup do |config| # rubocop:todo Metrics/BlockLength
       api_user: [nil, :json, :jsonapi]
     }
   end
+end
+
+Rails.application.config.after_initialize do
+  jwt_secret = ENV['DEVISE_SECRET'].presence ||
+               Rails.application.credentials.devise_jwt_secret_key.presence ||
+               Rails.application.credentials.secret_key_base.presence ||
+               Devise.secret_key ||
+               Rails.application.secret_key_base
+
+  Devise::JWT.config.secret = jwt_secret
+  Devise::JWT.config.decoding_secret = jwt_secret
+  Warden::JWTAuth.config.secret = jwt_secret
+  Warden::JWTAuth.config.decoding_secret = jwt_secret
 end
