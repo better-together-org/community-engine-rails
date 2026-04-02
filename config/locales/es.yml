@@ -3575,6 +3575,7 @@ es:
       unlocked: Tu cuenta ha sido desbloqueada. Ya puedes iniciar sesión.
   devise_omniauth_callbacks:
     failure: Hubo un problema al iniciar sesión a través de %{kind}. %{reason}
+    generic_failure: Hubo un problema al iniciar sesión. Por favor regístrese o inténtelo de nuevo más tarde.
     success: Autenticado exitosamente desde la cuenta de %{kind}.
   doorkeeper:
     errors:

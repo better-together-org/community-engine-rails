@@ -100,10 +100,12 @@ RSpec.configure do |config|
   # Configure OmniAuth for test mode
   config.before(:suite) do
     OmniAuth.config.test_mode = true
+    OmniauthTestHelpers.reset_failure_handler!
   end
 
   config.after do
     OmniAuth.config.mock_auth[:github] = nil
+    OmniauthTestHelpers.reset_failure_handler!
     # Reset navigation touch flag to prevent test pollution
     BetterTogether.skip_navigation_touches = false
   end
