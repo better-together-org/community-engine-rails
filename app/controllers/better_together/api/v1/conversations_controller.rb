@@ -40,7 +40,7 @@ module BetterTogether
           conversation = BetterTogether::Conversation.find(params[:id])
           authorize conversation, :show? # consistent Pundit check for participant membership
 
-          bundles = conversation.participants.map do |person|
+          bundles = conversation.participants.reject { |person| person == current_user&.person }.map do |person|
             next nil unless person.identity_key_public.present?
 
             one_time_prekey = consume_one_time_prekey_for(person)
