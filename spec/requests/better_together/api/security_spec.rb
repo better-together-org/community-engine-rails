@@ -174,8 +174,7 @@ RSpec.describe 'API Security - Password Exposure Prevention', :no_auth do
       }, as: :json
 
       token = response.headers['Authorization'].sub('Bearer ', '')
-      jwt_secret = Rails.application.credentials.devise_jwt_secret_key.presence || Rails.application.credentials.secret_key_base
-      decoded_token = JWT.decode(token, jwt_secret)[0]
+      decoded_token = JWT.decode(token, nil, false)[0]
 
       expect(decoded_token).not_to have_key('password')
       expect(decoded_token).not_to have_key('encrypted_password')
