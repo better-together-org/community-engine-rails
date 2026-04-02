@@ -595,17 +595,31 @@ en:
       better_together/category: Category
       better_together/checklist: Checklist
       better_together/community: Community
+      better_together/content/accordion_block: Accordion
+      better_together/content/alert_block: Alert
       better_together/content/block: Block
+      better_together/content/call_to_action_block: Call to Action
+      better_together/content/checklist_block: Checklist
+      better_together/content/communities_block: Communities
       better_together/content/css: Custom CSS
+      better_together/content/events_block: Events
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/link: Link
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
+      better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
+      better_together/content/people_block: People
+      better_together/content/platform_block: Platform
+      better_together/content/posts_block: Posts
+      better_together/content/quote_block: Quote
       better_together/content/rich_text: Rich Text
+      better_together/content/statistics_block: Statistics
       better_together/content/template: Template File
+      better_together/content/video_block: Video
       better_together/conversation: Conversation
       better_together/conversation_participant: Conversation Participant
       better_together/event: Event

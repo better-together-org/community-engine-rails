@@ -598,17 +598,31 @@ es:
       better_together/category: Categoría
       better_together/checklist: Lista de verificación
       better_together/community: Comunidad
+      better_together/content/accordion_block: Acordeón
+      better_together/content/alert_block: Alerta
       better_together/content/block: Bloquear
+      better_together/content/call_to_action_block: Llamada a la acción
+      better_together/content/checklist_block: Lista de verificación
+      better_together/content/communities_block: Comunidades
       better_together/content/css: CSS personalizado
+      better_together/content/events_block: Eventos
       better_together/content/hero: Héroe
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Imagen
+      better_together/content/link: Enlace
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagrama Mermaid
+      better_together/content/navigation_area_block: Área de navegación
       better_together/content/page_block: Bloqueo de página
+      better_together/content/people_block: Personas
+      better_together/content/platform_block: Plataforma
+      better_together/content/posts_block: Publicaciones
+      better_together/content/quote_block: Cita
       better_together/content/rich_text: Texto enriquecido
+      better_together/content/statistics_block: Estadísticas
       better_together/content/template: Archivo de plantilla
+      better_together/content/video_block: Video
       better_together/conversation: Conversación
       better_together/conversation_participant: Participante en la conversación
       better_together/event: Evento
