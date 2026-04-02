@@ -10,11 +10,15 @@ module BetterTogether
     end
 
     include Author
+    include Communicator
     include Contactable
+    include CreatedRecords
     include FriendlySlug
+    include GovernanceParticipant
     include HostsEvents
     include Identifier
     include Identity
+    include InvitationParticipant
     include Member
     include PrimaryCommunity
     include Privacy
@@ -88,6 +92,13 @@ module BetterTogether
 
     has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
     has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
+    has_many :person_purge_audits, class_name: 'BetterTogether::PersonPurgeAudit', inverse_of: :person
+    has_many :person_checklist_items, class_name: 'BetterTogether::PersonChecklistItem', dependent: :destroy, inverse_of: :person
+    has_many :ai_translation_logs,
+             class_name: 'BetterTogether::Ai::Log::Translation',
+             foreign_key: :initiator_id,
+             inverse_of: :initiator,
+             dependent: :destroy
 
     has_one :user_identification,
             lambda {
@@ -191,6 +202,8 @@ module BetterTogether
 
     has_one_attached :profile_image
     has_one_attached :cover_image
+
+    scope :anonymized, -> { where.not(anonymized_at: nil) }
 
     # Resize the profile image before rendering (non-blocking version)
     def profile_image_variant(size)

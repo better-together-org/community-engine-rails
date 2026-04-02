@@ -60,7 +60,7 @@ module BetterTogether
              dependent: :nullify
 
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
-    belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
+    belongs_to :creator, class_name: 'BetterTogether::Person', optional: true, inverse_of: :created_pages
 
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 

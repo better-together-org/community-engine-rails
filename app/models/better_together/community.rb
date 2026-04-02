@@ -17,7 +17,8 @@ module BetterTogether
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
-               optional: true
+               optional: true,
+               inverse_of: :created_communities
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
