@@ -222,7 +222,7 @@ Current follow-on direction:
 - `BetterTogether::Seeds::Builder` is now the canonical seed-construction seam.
 - `BetterTogether::Seeds::Ingest` is now the canonical seed-import seam before lane-specific handling.
 - `PersonDataExport` remains the request/lifecycle wrapper, but the export package is now seed-backed.
-- `FederatedSeedBuilder` and `FederatedSeedIngestor` should be treated as compatibility wrappers, not the target architecture.
+- federated content and linked-private lanes now call the shared seed seams directly.
 
 Key commit:
 
