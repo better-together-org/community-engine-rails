@@ -28,9 +28,9 @@ module BetterTogether
 
       # Set the page_url if the pageable object doesn't respond to :url
       def set_page_url # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        url = if pageable.respond_to?(:url)
-                pageable.becomes(pageable.class.base_class).url
-              elsif pageable.present? && page_url.blank?
+        url = if pageable.present?
+                routing_url_for_pageable || fallback_url_for_pageable
+              elsif page_url.blank?
                 generate_url_for_pageable
               else
                 page_url
@@ -47,6 +47,18 @@ module BetterTogether
           # If we can't parse it at all, add an error
           errors.add(:page_url, 'is invalid')
         end
+      end
+
+      def routing_url_for_pageable
+        return unless pageable.respond_to?(:route_url)
+
+        pageable.becomes(pageable.class.base_class).route_url(locale: locale)
+      end
+
+      def fallback_url_for_pageable
+        return unless pageable.respond_to?(:url)
+
+        pageable.becomes(pageable.class.base_class).url
       end
 
       def page_url_without_sensitive_parameters
