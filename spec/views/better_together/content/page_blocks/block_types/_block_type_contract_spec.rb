@@ -5,12 +5,8 @@ require 'rails_helper'
 RSpec.describe 'better_together/content/page_blocks/block_types/_block_type.html.erb' do
   let(:page) { build(:better_together_page) }
 
-  before(:all) do
-    BetterTogether::Content::Block.load_all_subclasses
-  end
-
   before do
-    view.define_singleton_method(:new_page_page_block_path) { |_page, **_options| }
+    BetterTogether::Content::Block.load_all_subclasses
     allow(view).to receive(:new_page_page_block_path).and_return('/pages/page_blocks/new')
   end
 

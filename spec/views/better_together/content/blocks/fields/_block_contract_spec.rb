@@ -6,19 +6,17 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
   helper BetterTogether::Content::BlocksHelper
   helper BetterTogether::TranslatableFieldsHelper
 
-  INTERNAL_NONLOCALIZED_FIELDS = {
-    'BetterTogether::Content::Html' => %w[html_content]
-  }.freeze
-
   let(:scope) { 'page[page_blocks_attributes][0][block_attributes]' }
   let(:temp_id) { 'block-contract-spec' }
   let(:base_storext_keys) { BetterTogether::Content::Block.storext_definitions.keys.map(&:to_s) }
-
-  before(:all) do
-    BetterTogether::Content::Block.load_all_subclasses
+  let(:internal_nonlocalized_fields) do
+    {
+      'BetterTogether::Content::Html' => %w[html_content]
+    }.freeze
   end
 
   before do
+    BetterTogether::Content::Block.load_all_subclasses
     view.define_singleton_method(:current_person) { nil }
     view.define_singleton_method(:policy_scope) do |_scope|
       BetterTogether::Community.none
@@ -42,10 +40,15 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
   end
 
   def expected_nonlocalized_attributes_for(klass)
-    attachment_names = klass.reflect_on_all_attachments.map { |attachment| attachment.name.to_s } - %w[background_image_file]
-    storext_keys = klass.storext_definitions.keys.map(&:to_s) - base_storext_keys
+    (attachment_names_for(klass) + storext_keys_for(klass)).uniq.sort - internal_nonlocalized_fields.fetch(klass.name, [])
+  end
 
-    (attachment_names + storext_keys).uniq.sort - INTERNAL_NONLOCALIZED_FIELDS.fetch(klass.name, [])
+  def attachment_names_for(klass)
+    klass.reflect_on_all_attachments.map { |attachment| attachment.name.to_s } - %w[background_image_file]
+  end
+
+  def storext_keys_for(klass)
+    klass.storext_definitions.keys.map(&:to_s) - base_storext_keys
   end
 
   it 'renders every addable block editor and surfaces translated and non-translated block attributes' do
@@ -59,14 +62,14 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
 
       expected_localized_attributes_for(klass).each do |attribute|
         I18n.available_locales.each do |locale|
-          expect(page).to have_css(%([name="#{scope}[#{attribute}_#{locale}]"]), visible: :all),
-                           "#{klass.name} is missing translated field #{attribute}_#{locale}"
+          translated_field_error = "#{klass.name} is missing translated field #{attribute}_#{locale}"
+          expect(page).to have_css(%([name="#{scope}[#{attribute}_#{locale}]"]), visible: :all), translated_field_error
         end
       end
 
       expected_nonlocalized_attributes_for(klass).each do |attribute|
-        expect(page).to have_css(%([name="#{scope}[#{attribute}]"]), visible: :all),
-                         "#{klass.name} is missing non-translated field #{attribute}"
+        nontranslated_field_error = "#{klass.name} is missing non-translated field #{attribute}"
+        expect(page).to have_css(%([name="#{scope}[#{attribute}]"]), visible: :all), nontranslated_field_error
       end
     end
   end
