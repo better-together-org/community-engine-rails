@@ -53,4 +53,12 @@ RSpec.describe BetterTogether::AdapterRegistry do
     expect(registry.adapters_for(:error_reporting)).to eq([])
     expect(search_adapter).to have_received(:call).with(query: 'welcome')
   end
+
+  it 'can look up a specific named adapter for direct invocation' do
+    adapter = ->(*) {}
+
+    registry.register(:llm, :ollama, adapter)
+
+    expect(registry.adapter_for(:llm, :ollama)).to eq(name: :ollama, adapter:)
+  end
 end

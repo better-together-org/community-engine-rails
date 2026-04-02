@@ -115,6 +115,10 @@ module BetterTogether
              class_name: 'BetterTogether::StorageConfiguration',
              dependent: :destroy
 
+    has_many :robots,
+             class_name: 'BetterTogether::Robot',
+             dependent: :destroy
+
     belongs_to :active_storage_configuration,
                class_name: 'BetterTogether::StorageConfiguration',
                foreign_key: :storage_configuration_id,

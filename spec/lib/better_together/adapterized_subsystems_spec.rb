@@ -55,6 +55,34 @@ RSpec.describe BetterTogether do
         context:
       )
     end
+
+    it 'routes llm requests through a named adapter when one is registered' do
+      adapter = instance_double(Proc)
+      allow(adapter).to receive(:call).and_return(content: 'Bonjour')
+
+      described_class.register_llm_adapter(:ollama, adapter)
+
+      result = described_class.llm_chat(
+        prompt: 'Hello',
+        provider: 'ollama',
+        model: 'llama3.2'
+      )
+
+      expect(result).to eq(content: 'Bonjour')
+      expect(adapter).to have_received(:call).with(prompt: 'Hello', provider: 'ollama', model: 'llama3.2')
+    end
+
+    it 'routes embedding requests through a named adapter when one is registered' do
+      adapter = instance_double(Proc)
+      allow(adapter).to receive(:call).and_return(vectors: [0.1, 0.2])
+
+      described_class.register_embedding_adapter(:borgberry, adapter)
+
+      result = described_class.embed_text('hello', provider: 'borgberry', model: 'embed-small')
+
+      expect(result).to eq(vectors: [0.1, 0.2])
+      expect(adapter).to have_received(:call).with('hello', provider: 'borgberry', model: 'embed-small')
+    end
   end
 end
 # rubocop:enable RSpec/SpecFilePathFormat
