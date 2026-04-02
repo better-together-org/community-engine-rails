@@ -6,6 +6,7 @@ module BetterTogether # :nodoc:
   module CapybaraFeatureHelpers # :nodoc:
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
     include BetterTogether::Engine.routes.url_helpers
 
     # Setup or update a single host platform and return a platform-steward user
