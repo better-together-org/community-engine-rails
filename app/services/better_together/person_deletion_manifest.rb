@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Loads and normalizes the manifest that classifies person/user-related records.
   class PersonDeletionManifest
     CONFIG_PATH = BetterTogether::Engine.root.join('config/person_deletion_inventory.yml')
 

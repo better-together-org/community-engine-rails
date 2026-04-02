@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Reverse associations for safety and deletion-review governance roles.
   module GovernanceParticipant
     extend ActiveSupport::Concern
 
+    # rubocop:disable Metrics/BlockLength
     included do
       has_many :authored_safety_notes,
                foreign_key: :author_id,
@@ -34,5 +36,6 @@ module BetterTogether
                class_name: 'BetterTogether::PersonPurgeAudit',
                inverse_of: :reviewed_by
     end
+    # rubocop:enable Metrics/BlockLength
   end
 end

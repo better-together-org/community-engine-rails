@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Immutable audit record for person deletion and hard-delete executions.
   class PersonPurgeAudit < ApplicationRecord
     self.table_name = 'better_together_person_purge_audits'
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Reverse associations for invitations and guest access records.
   module InvitationParticipant
     extend ActiveSupport::Concern
 

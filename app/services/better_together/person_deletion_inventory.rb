@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Builds a manifest-driven inventory of records implicated in reviewed person deletion.
   class PersonDeletionInventory
     class << self
       def call(person:)
@@ -88,7 +89,7 @@ module BetterTogether
       ApplicationRecord.descendants
                        .select { |klass| klass.name&.start_with?('BetterTogether::') }
                        .reject(&:abstract_class?)
-                       .select { |klass| klass.included_modules.include?(BetterTogether::Creatable) }
+                       .select { |klass| klass.include?(BetterTogether::Creatable) }
                        .select { |klass| klass.column_names.include?('creator_id') }
     end
 

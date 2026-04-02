@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Reverse associations for person-authored communications.
   module Communicator
     extend ActiveSupport::Concern
 
