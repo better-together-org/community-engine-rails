@@ -2,107 +2,126 @@
 
 module BetterTogether
   module Users
-    # Extends Devise registration flows with BTS-specific profile and deletion-request handling.
-    # rubocop:disable Metrics/ClassLength
-    class RegistrationsController < Devise::RegistrationsController
-      before_action :configure_permitted_parameters, if: :devise_controller?
-      before_action :configure_account_update_params, only: [:update]
+    # Override default Devise registrations controller
+    class RegistrationsController < ::Devise::RegistrationsController # rubocop:todo Metrics/ClassLength
+      include DeviseLocales
+      include InvitationSessionManagement
+
+      skip_before_action :check_platform_privacy
+      before_action :configure_permitted_parameters
+      # Process invitation code parameters before loading from session
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/MethodLength
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Lint/CopDirectiveSyntax
+      before_action :process_invitation_code_parameters, only: %i[new create]
+      # rubocop:enable Lint/CopDirectiveSyntax
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/PerceivedComplexity
+      # rubocop:todo Metrics/AbcSize
+      # rubocop:todo Lint/CopDirectiveSyntax
       before_action :set_required_agreements, only: %i[new create]
+      # rubocop:enable Lint/CopDirectiveSyntax
+      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/PerceivedComplexity
+      before_action :load_all_invitations_from_session, only: %i[new create]
+      before_action :check_invitation_requirement, only: [:create]
+      before_action :configure_account_update_params, only: [:update]
 
-      # GET /resource/sign_up
-      def new
-        super do |resource|
-          resource.build_person if resource.person.blank?
-        end
-      end
-
-      # POST /resource
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      def create
-        build_resource(sign_up_params)
-        resource.build_person(identifier: resource.email.split('@').first.titleize) if resource.person.blank?
-
-        # Ensure agreements are properly initialized
-        initialize_agreements
-
-        ActiveRecord::Base.transaction do
-          # Save the user first
-          resource.save!
-
-          # Create or find the person if not already created through nested attributes
-          person = resource.person || BetterTogether::Person.find_or_create_by!(name: resource.email.split('@').first.titleize) do |p|
-            p.identifier = resource.email.split('@').first.titleize
-            p.description = "User profile for #{resource.email}"
-          end
-
-          # Ensure user has an identification
-          unless resource.person_identification
-            person_identification = BetterTogether::PersonIdentification.create!(person: person, identifier: resource.email)
-            resource.build_person_identification(person_identification: person_identification)
-            resource.save!
-          end
-
-          # Handle agreements if they exist
-          handle_agreements_creation(person)
-
-          if resource.persisted?
-            # Sign out any existing session before signing in the new user
-            sign_out(current_user) if user_signed_in?
-            sign_up(resource_name, resource)
-            respond_with resource, location: after_sign_up_path_for(resource)
-          else
-            # This should not happen with save!, but handle it defensively
-            clean_up_passwords resource
-            set_minimum_password_length
-            respond_with resource
-          end
-        end
-      rescue ActiveRecord::RecordInvalid, ActiveRecord::InvalidForeignKey => e
-        Rails.logger.error "Registration failed: #{e.message}"
-        build_resource(sign_up_params) if resource.nil?
-        resource&.errors&.add(:base, 'Registration could not be completed. Please try again.')
-        respond_with resource
-      end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-
-      # rubocop:disable Metrics/AbcSize
-      def update
+      # PUT /resource
+      # We need to use a copy of the resource because we don't want to change
+      # the current user in place.
+      def update # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
         prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
 
         resource_updated = update_resource(resource, account_update_params)
         yield resource if block_given?
-
         if resource_updated
-          bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
+          # Re-fetch resource from DB to get correct class (in case OauthUser -> User conversion)
+          # reload() doesn't change class in STI, so we need to fetch fresh from DB
+          self.resource = resource_class.find(resource.id)
+
           set_flash_message_for_update(resource, prev_unconfirmed_email)
-          respond_with resource, location: after_update_path_for(resource)
+
+          # If password was changed and user type converted, force session refresh
+          # Sign out and back in to ensure session uses correct User class
+          if sign_in_after_change_password?
+            sign_out(resource)
+            sign_in(resource, scope: resource_name)
+          end
+
+          respond_to do |format|
+            format.html { respond_with resource, location: after_update_path_for(resource) }
+            format.turbo_stream do
+              flash.now[:notice] = I18n.t('devise.registrations.updated')
+              render turbo_stream: [
+                turbo_stream.replace(
+                  'flash_messages',
+                  partial: 'layouts/better_together/flash_messages',
+                  locals: { flash: }
+                ),
+                turbo_stream.replace(
+                  'account-settings',
+                  partial: 'devise/registrations/edit_form'
+                )
+              ]
+            end
+          end
         else
           clean_up_passwords resource
           set_minimum_password_length
-          respond_with resource
+
+          respond_to do |format|
+            format.html { respond_with resource, location: after_update_path_for(resource) }
+            format.turbo_stream do
+              render turbo_stream: [
+                turbo_stream.replace('form_errors', partial: 'layouts/better_together/errors',
+                                                    locals: { object: resource }),
+                turbo_stream.replace(
+                  'account-settings',
+                  partial: 'devise/registrations/edit_form'
+                )
+              ]
+            end
+          end
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      def create_admin
-        build_resource(admin_sign_up_params)
-        resource.build_person if resource.person.blank?
+      def new
+        super do |user|
+          setup_user_from_invitations(user)
+          user.build_person unless user.person
+        end
+      end
 
-        # Ensure agreements are properly initialized
-        initialize_agreements
+      def create # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        unless agreements_accepted?
+          handle_agreements_not_accepted
+          return
+        end
 
+        # Validate captcha if enabled by host application
+        unless validate_captcha_if_enabled?
+          build_resource(sign_up_params)
+          handle_captcha_validation_failure(resource)
+          return
+        end
+
+        # Use transaction for all user creation and associated records
         ActiveRecord::Base.transaction do
-          # Save the user first
-          resource.save!
+          # Call Devise's default create behavior
+          super
 
-          # Handle agreements if they exist
-          handle_agreements_creation(resource.person) if resource.person
-
-          raise ActiveRecord::Rollback unless resource.persisted?
-
-          handle_user_creation(resource)
+          # Handle post-registration setup if user was created successfully
+          if resource.persisted? && resource.errors.empty?
+            handle_user_creation(resource)
+          elsif resource.persisted?
+            # User was created but has errors - rollback to maintain consistency
+            raise ActiveRecord::Rollback
+          end
         end
       rescue ActiveRecord::RecordInvalid, ActiveRecord::InvalidForeignKey => e
         # Clean up and show user-friendly error
@@ -111,7 +130,6 @@ module BetterTogether
         resource&.errors&.add(:base, 'Registration could not be completed. Please try again.')
         respond_with resource
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       def destroy
         active_request = find_or_create_deletion_request
@@ -160,53 +178,250 @@ module BetterTogether
       end
 
       # Hook method for host applications to implement captcha validation
-      def valid_captcha?
+      # Override this method in host applications to add Turnstile or other captcha validation
+      # @return [Boolean] true if captcha is valid or not enabled, false if validation fails
+      def validate_captcha_if_enabled?
+        # Default implementation - no captcha validation
+        # Host applications should override this method to implement their captcha logic
         true
       end
 
-      # Hook method for host applications to handle user creation
+      # Hook method for host applications to handle captcha validation failures
+      # Override this method in host applications to customize error handling
+      # @param resource [User] the user resource being created
+      def handle_captcha_validation_failure(resource)
+        # Default implementation - adds a generic error message
+        resource.errors.add(:base, I18n.t('better_together.registrations.captcha_validation_failed',
+                                          default: 'Security verification failed. Please try again.'))
+        respond_with resource
+      end
+
+      def after_sign_up_path_for(resource) # rubocop:todo Metrics/CyclomaticComplexity
+        # Try to get redirect path from invitations
+        invitation_path = after_sign_up_path_from_invitations
+        return invitation_path if invitation_path
+
+        if is_navigational_format? && helpers.host_platform&.privacy_private?
+          return better_together.new_user_session_path
+        end
+
+        super
+      end
+
+      def handle_agreements_not_accepted
+        build_resource(sign_up_params)
+        resource.errors.add(:base, I18n.t('devise.registrations.new.agreements_required'))
+        respond_with resource
+      end
+
       def handle_user_creation(user)
-        sign_up(resource_name, user)
-        respond_with user, location: after_sign_up_path_for(user)
-      end
+        # Ensure person exists - either update existing from invitation or create new
+        return unless ensure_person_exists?(user)
 
-      private
+        # Reload user to ensure all nested attributes and associations are properly loaded
+        user.reload
+        person = user.person
 
-      def admin_sign_up_params
-        params.require(:user).permit(:email, :password, :password_confirmation,
-                                     person_attributes: %i[name identifier description])
-      end
-
-      def initialize_agreements
-        return unless resource&.person
-
-        person = resource.person
-        person.build_privacy_policy_agreement if person.privacy_policy_agreement.blank?
-        person.build_terms_of_service_agreement if person.terms_of_service_agreement.blank?
-        person.build_code_of_conduct_agreement if person.code_of_conduct_agreement.blank?
-      end
-
-      # rubocop:disable Metrics/CyclomaticComplexity
-      def handle_agreements_creation(person)
-        return unless person
-
-        # Create privacy policy agreement acceptance if present
-        if @privacy_policy_agreement && params[:privacy_policy_accepted] == '1'
-          person.create_privacy_policy_agreement!(agreement: @privacy_policy_agreement, accepted: true, accepted_at: Time.current)
+        unless person&.persisted?
+          Rails.logger.error "Person not found or not persisted for user #{user.id}"
+          return
         end
 
-        # Create terms of service agreement acceptance if present
-        if @terms_of_service_agreement && params[:terms_of_service_accepted] == '1'
-          person.create_terms_of_service_agreement!(agreement: @terms_of_service_agreement, accepted: true, accepted_at: Time.current)
+        setup_community_membership(user, person)
+        handle_all_invitations(user)
+        create_agreement_participants(person)
+      end
+
+      def ensure_person_exists?(user)
+        # If user already has a person (from invitation with existing user), keep it as-is
+        if user.person.present? && person_comes_from_invitation?(user)
+          Rails.logger.info "Using existing person from invitation: #{user.person.identifier}"
+          return true
+        elsif user.person.present?
+          # Person exists but not from invitation - update with form params
+          return update_person_from_invitation_params?(user, person_params)
         end
 
-        # Create code of conduct agreement acceptance if present
-        return unless @code_of_conduct_agreement && params[:code_of_conduct_accepted] == '1'
-
-        person.create_code_of_conduct_agreement!(agreement: @code_of_conduct_agreement, accepted: true, accepted_at: Time.current)
+        # Otherwise, set up person for user (either from invitation or create new)
+        setup_person_for_user(user)
+        true
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
+
+      def person_comes_from_invitation?(user)
+        # Check if the current person is the invitee from any invitation type
+        [@community_invitation, @event_invitation, @platform_invitation].any? do |invitation|
+          invitation&.invitee == user.person
+        end
+      end
+
+      def setup_person_for_user(user)
+        # Check all invitation types for existing invitee
+        invitation = [@event_invitation, @community_invitation, @platform_invitation].find { |inv| inv&.invitee.present? }
+
+        return update_existing_person_from_invitation(user, invitation) if invitation
+
+        create_new_person_for_user(user)
+      end
+
+      def update_existing_person_from_invitation(user, invitation)
+        user.person = invitation.invitee
+        return if user.person.update(person_params)
+
+        Rails.logger.error "Failed to update person from invitation: #{user.person.errors.full_messages}"
+        user.errors.add(:person, 'Could not update person information')
+      end
+
+      def create_new_person_for_user(user) # rubocop:todo Metrics/AbcSize
+        if person_params.empty?
+          Rails.logger.error 'Person params are empty, cannot build person'
+          user.errors.add(:person, 'Person information is required')
+          return
+        end
+
+        user.build_person(person_params)
+        return unless save_person?(user, validate: true)
+
+        # Save person identification
+        person_identification = user.person_identification
+        return if person_identification&.save
+
+        Rails.logger.error "Failed to save person identification: #{person_identification&.errors&.full_messages}"
+        user.errors.add(:person, 'Could not link person to user')
+      end
+
+      def save_person?(user, validate: true)
+        return true if user.person.save(validate: validate)
+
+        Rails.logger.error "Failed to save person: #{user.person.errors.full_messages}"
+        user.errors.add(:person, 'Could not save person information')
+        false
+      end
+
+      def setup_community_membership(user, person_param = nil) # rubocop:todo Metrics/MethodLength
+        person = person_param || user.person
+        community_role = determine_community_role_from_invitations
+
+        begin
+          helpers.host_community.person_community_memberships.find_or_create_by!(
+            member: person,
+            role: community_role
+          ) do |membership|
+            membership.status = 'pending' # Explicitly set to pending during registration
+          end
+        rescue ActiveRecord::InvalidForeignKey => e
+          Rails.logger.error "Foreign key violation creating community membership: #{e.message}"
+          raise e
+        rescue StandardError => e
+          Rails.logger.error "Unexpected error creating community membership: #{e.message}"
+          raise e
+        end
+      end
+
+      def after_inactive_sign_up_path_for(resource)
+        if is_navigational_format? && helpers.host_platform&.privacy_private?
+          return better_together.new_user_session_path
+        end
+
+        super
+      end
+
+      def after_update_path_for(_resource)
+        better_together.edit_user_registration_path
+      end
+
+      def person_params
+        return {} unless params[:user] && params[:user][:person_attributes]
+
+        params.require(:user).require(:person_attributes).permit(%i[identifier name description])
+      rescue ActionController::ParameterMissing => e
+        Rails.logger.error "Missing person parameters: #{e.message}"
+        {}
+      end
+
+      def agreements_accepted?
+        # Ensure required agreements are set
+        set_required_agreements if @privacy_policy_agreement.nil?
+
+        required = [params[:privacy_policy_agreement], params[:terms_of_service_agreement]]
+        # If a code of conduct agreement exists, require it as well
+        required << params[:code_of_conduct_agreement] if @code_of_conduct_agreement.present?
+
+        required.all? { |v| v == '1' }
+      end
+
+      # Process invitation_code parameter and store in session if present
+      def process_invitation_code_parameters
+        return unless params[:invitation_code].present?
+
+        # Find the invitation by token
+        invitation = BetterTogether::Invitation.find_by(token: params[:invitation_code])
+        return unless invitation
+
+        # Determine invitation type and store both in session and instance variables
+        invitation_type = determine_invitation_type(invitation)
+        return unless invitation_type
+
+        store_invitation_token_in_session(invitation, invitation_type)
+        # Also directly set the instance variable for immediate use
+        store_invitation_instance(invitation_type, invitation)
+      end
+
+      # Check if platform requires invitation and if valid invitation exists
+      def check_invitation_requirement # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        return unless helpers.host_platform&.requires_invitation?
+
+        # If invitation code was provided but no valid session invitation exists, it's invalid
+        if params[:invitation_code].present? && !valid_invitation_in_session?
+          @user = resource_class.new(sign_up_params)
+          @resource = @user # Devise looks for @resource
+          @user.build_person unless @user.person
+          @minimum_password_length = resource_class.password_length.min if resource_class.respond_to?(:password_length)
+          @user.errors.add(:base, I18n.t('better_together.registrations.invalid_invitation'))
+          render :new, status: :unprocessable_entity and return
+        end
+
+        # Check if any valid invitation exists in session
+        return if valid_invitation_in_session?
+
+        # No invitation code provided at all
+        @user = resource_class.new(sign_up_params)
+        @resource = @user # Devise looks for @resource
+        @user.build_person unless @user.person
+        @minimum_password_length = resource_class.password_length.min if resource_class.respond_to?(:password_length)
+        @user.errors.add(:base, I18n.t('better_together.registrations.invitation_required'))
+        render :new, status: :unprocessable_entity
+      end
+
+      # Determine the invitation type from the invitation class
+      def determine_invitation_type(invitation)
+        case invitation
+        when BetterTogether::CommunityInvitation
+          :community
+        when BetterTogether::EventInvitation
+          :event
+        when BetterTogether::PlatformInvitation
+          :platform
+        end
+      end
+
+      def create_agreement_participants(person)
+        unless person&.persisted?
+          Rails.logger.error 'Cannot create agreement participants - person not persisted'
+          return
+        end
+
+        identifiers = %w[privacy_policy terms_of_service]
+        identifiers << 'code_of_conduct' if BetterTogether::Agreement.exists?(identifier: 'code_of_conduct')
+        agreements = BetterTogether::Agreement.where(identifier: identifiers)
+
+        agreements.find_each do |agreement|
+          BetterTogether::AgreementParticipant.create!(
+            agreement: agreement,
+            person: person,
+            accepted_at: Time.current
+          )
+        end
+      end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end
