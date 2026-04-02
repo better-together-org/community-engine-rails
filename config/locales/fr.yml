@@ -946,6 +946,15 @@ fr:
           open_in_new_tab: Ouvrir le contenu intégré dans un nouvel onglet
         events_block:
           empty: Aucun événement à afficher.
+        hero:
+          editor:
+            background: Arrière-plan
+            cta_button: Bouton d’appel à l’action
+            cta_url_invalid: Veuillez fournir une URL valide commençant par http://
+              ou https://.
+            heading_color: Couleur du titre
+            overlay_color: Couleur de superposition
+            paragraph_color: Couleur du paragraphe
         iframe_block:
           csp_help: Si cette intégration n'est pas autorisée pour la plateforme actuelle,
             Community Engine affichera un message d'aide visible au lieu d'une iframe

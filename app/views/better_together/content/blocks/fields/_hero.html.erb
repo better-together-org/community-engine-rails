@@ -11,7 +11,7 @@
     <%= render partial: 'better_together/content/blocks/fields/shared/translatable_rich_text_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'content' } %>
   </div>
 
-  <h6 class="mt-4 mb-2">CTA Button</h6>
+  <h6 class="mt-4 mb-2"><%= t('better_together.content.blocks.hero.editor.cta_button') %></h6>
   <div class="mb-3 row row-cols-1 row-cols-sm-2">
     <div class="align-self-end mb-3">
       <%= label_tag "#{scope}[cta_button_style]", block.class.human_attribute_name('cta_button_style'), class: 'form-label' %>
@@ -22,7 +22,7 @@
       <%= label_tag "#{scope}[cta_url]", block.class.human_attribute_name('cta_url'), class: 'form-label' %>
       <%= url_field_tag "#{scope}[cta_url]", block.cta_url, class: 'form-control' %>
       <div class="invalid-feedback">
-        Please provide a valid url starting with http:// or https://.
+        <%= t('better_together.content.blocks.hero.editor.cta_url_invalid') %>
       </div>
     </div>
 
@@ -30,17 +30,17 @@
 
   </div>
 
-  <h6 class="mt-4 mb-2">Background</h6>
+  <h6 class="mt-4 mb-2"><%= t('better_together.content.blocks.hero.editor.background') %></h6>
 
   <div class="mb-3 row row-cols-1 row-cols-sm-2">
     <div class="col overlay-color">
-      <%= render partial: 'better_together/content/blocks/fields/shared/color_field', locals: { scope:, attribute: :overlay_color, label: 'Overlay Color', value: block.overlay_color } %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/color_field', locals: { scope:, attribute: :overlay_color, label: t('better_together.content.blocks.hero.editor.overlay_color'), value: block.overlay_color } %>
     </div>
     <%= render partial: 'better_together/content/blocks/fields/shared/range_slider_field',
       locals: { block:, scope:, attribute: :overlay_opacity, value: block.overlay_opacity, min: 0, max: 1, step: 0.05, representation_format: "percentage" } %>
     <%= render partial: 'better_together/content/blocks/fields/shared/color_field',
-      locals: { scope:, attribute: :heading_color, label: 'Heading Color', value: block.heading_color } %>
+      locals: { scope:, attribute: :heading_color, label: t('better_together.content.blocks.hero.editor.heading_color'), value: block.heading_color } %>
     <%= render partial: 'better_together/content/blocks/fields/shared/color_field',
-      locals: { scope:, attribute: :paragraph_color, label: 'Paragraph Color', value: block.paragraph_color } %>
+      locals: { scope:, attribute: :paragraph_color, label: t('better_together.content.blocks.hero.editor.paragraph_color'), value: block.paragraph_color } %>
   </div>
 </div>
