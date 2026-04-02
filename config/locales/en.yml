@@ -3511,7 +3511,8 @@ en:
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   devise_omniauth_callbacks:
     failure: There was a problem signing you in through %{kind}. %{reason}
-    generic_failure: There was a problem signing you in. Please register or try signing in later.
+    generic_failure: There was a problem signing you in. Please register or try signing
+      in later.
     success: Successfully authenticated from %{kind} account.
   doorkeeper:
     errors:
