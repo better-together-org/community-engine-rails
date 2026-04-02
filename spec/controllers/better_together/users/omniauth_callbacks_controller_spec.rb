@@ -91,6 +91,17 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
     end
   end
 
+  describe '#failure' do
+    it 'redirects to the localized sign-in path' do
+      I18n.with_locale(:en) do
+        get :failure
+
+        expect(flash[:error]).to eq('There was a problem signing you in. Please register or try signing in later.')
+        expect(response).to redirect_to(new_user_session_path(locale: :en))
+      end
+    end
+  end
+
   describe 'GitHub OAuth callback', :no_auth do
     let(:oauth_email) { unique_email }
     let(:oauth_uid) { unique_oauth_uid }

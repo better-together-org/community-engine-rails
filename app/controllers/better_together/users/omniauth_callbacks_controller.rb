@@ -19,7 +19,8 @@ module BetterTogether
       end
 
       def failure
-        super
+        flash[:error] = t('devise_omniauth_callbacks.generic_failure')
+        redirect_to after_omniauth_failure_path_for(:user), allow_other_host: false
       end
     end
   end

@@ -3594,6 +3594,7 @@ fr:
       unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
   devise_omniauth_callbacks:
     failure: Il y a eu un problème lors de votre connexion via %{kind}. %{reason}
+    generic_failure: Un problème est survenu lors de votre connexion. Veuillez vous inscrire ou réessayer plus tard.
     success: Authentification réussie depuis le compte %{kind}.
   doorkeeper:
     errors:
