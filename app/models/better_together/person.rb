@@ -241,21 +241,28 @@ module BetterTogether
     end
 
     def primary_calendar
-      @primary_calendar ||= calendars.find_or_create_by(
-        identifier: "#{identifier}-personal-calendar",
-        community:
-      ) do |calendar|
-        calendar.name = I18n.t('better_together.calendars.personal_calendar_name', name: name)
-        calendar.privacy = 'private'
-        calendar.protected = true
+      @primary_calendar ||= begin
+        calendar_identifier = "#{identifier}-personal-calendar"
+
+        calendars.find_or_create_by!(
+          identifier: calendar_identifier,
+          community:
+        ) do |calendar|
+          calendar.name = I18n.t('better_together.calendars.personal_calendar_name', name: name)
+          calendar.privacy = 'private'
+          calendar.protected = true
+        end
+      rescue ActiveRecord::RecordNotUnique
+        calendars.find_by!(identifier: calendar_identifier, community:)
       end
     end
 
     def after_record_created
       return unless community
 
-      community.reload
-      community.update!(creator_id: id)
+      BetterTogether::Community.where(id: community_id)
+                               .where.not(creator_id: id)
+                               .update_all(creator_id: id, updated_at: Time.current)
     end
 
     # Returns all events relevant to this person's calendar view

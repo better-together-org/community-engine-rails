@@ -79,6 +79,15 @@ RSpec.configure do |config|
 
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Rails.application.routes.url_helpers, type: :controller
+  config.include Rails.application.routes.url_helpers, type: :feature
+  config.include Rails.application.routes.url_helpers, type: :request
+  config.include Rails.application.routes.mounted_helpers, type: :controller
+  config.include Rails.application.routes.mounted_helpers, type: :feature
+  config.include Rails.application.routes.mounted_helpers, type: :request
+  config.include BetterTogether::Engine.routes.url_helpers, type: :controller
+  config.include BetterTogether::Engine.routes.url_helpers, type: :feature
+  config.include BetterTogether::Engine.routes.url_helpers, type: :request
 
   # Enable assigns method in request specs (requires rails-controller-testing gem)
   config.include Rails::Controller::Testing::TestProcess, type: :request
@@ -203,10 +212,18 @@ RSpec.configure do |config|
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
-  config.before do
-    # Always use deletion strategy with essential table preservation
-    # This avoids PostgreSQL FK constraint issues that truncation causes
-    DatabaseCleaner.strategy = :deletion, { except: ESSENTIAL_TABLES }
+  config.before do |example|
+    if %i[controller feature request].include?(example.metadata[:type]) &&
+       !Rails.application.routes.mounted_helpers.respond_to?(:better_together)
+      Rails.application.reload_routes!
+    end
+
+    DatabaseCleaner.strategy =
+      if example.metadata[:js] || example.metadata[:feature] || example.metadata[:system]
+        [:deletion, { except: ESSENTIAL_TABLES }]
+      else
+        :transaction
+      end
 
     DatabaseCleaner.start
 
