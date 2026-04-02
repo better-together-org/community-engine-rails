@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_30_203000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_01_143000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1197,6 +1197,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_203000) do
     t.text "key_backup_blob"
     t.text "key_backup_salt"
     t.datetime "key_backup_updated_at"
+    t.datetime "deleted_at"
+    t.datetime "anonymized_at"
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["privacy"], name: "by_better_together_people_privacy"
@@ -1381,6 +1383,33 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_203000) do
     t.index ["member_id"], name: "person_platform_membership_by_member"
     t.index ["role_id"], name: "person_platform_membership_by_role"
     t.index ["status"], name: "index_better_together_person_platform_memberships_on_status"
+  end
+
+  create_table "better_together_person_purge_audits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "person_id"
+    t.uuid "person_deletion_request_id"
+    t.uuid "reviewed_by_id"
+    t.string "status", default: "running", null: false
+    t.string "user_email_snapshot"
+    t.string "person_identifier_snapshot"
+    t.string "person_name_snapshot"
+    t.text "requested_reason_snapshot"
+    t.text "reviewer_notes_snapshot"
+    t.jsonb "inventory_snapshot", default: {}, null: false
+    t.jsonb "execution_snapshot", default: {}, null: false
+    t.text "error_message"
+    t.datetime "requested_at"
+    t.datetime "reviewed_at"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "failed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_deletion_request_id"], name: "idx_on_person_deletion_request_id_7f6f7a45bb"
+    t.index ["person_id"], name: "index_better_together_person_purge_audits_on_person_id"
+    t.index ["requested_at"], name: "index_better_together_person_purge_audits_on_requested_at"
+    t.index ["reviewed_by_id"], name: "index_better_together_person_purge_audits_on_reviewed_by_id"
+    t.index ["status"], name: "index_better_together_person_purge_audits_on_status"
   end
 
   create_table "better_together_phone_numbers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2155,6 +2184,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_30_203000) do
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_platforms", column: "joinable_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_roles", column: "role_id"
+  add_foreign_key "better_together_person_purge_audits", "better_together_people", column: "person_id"
+  add_foreign_key "better_together_person_purge_audits", "better_together_people", column: "reviewed_by_id"
+  add_foreign_key "better_together_person_purge_audits", "better_together_person_deletion_requests", column: "person_deletion_request_id"
   add_foreign_key "better_together_phone_numbers", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_places", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_places", "better_together_geography_spaces", column: "space_id"

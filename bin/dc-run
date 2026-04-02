@@ -12,4 +12,10 @@ if [[ -n "${CE_WORKTREE_DB_SUFFIX:-}" ]] && [[ "$joined_args" == *" rspec "* || 
   ./bin/dc-prepare-worktree-test-dbs
 fi
 
+if [[ "${1:-}" == "bundle" && "${2:-}" == "exec" && ( "${3:-}" == "rails" || "${3:-}" == "rake" ) ]]; then
+  set -- ./bin/dummy "$@"
+elif [[ "${1:-}" == "bin/rails" || "${1:-}" == "./bin/rails" || "${1:-}" == "bin/rake" || "${1:-}" == "./bin/rake" ]]; then
+  set -- ./bin/dummy "$@"
+fi
+
 ./bin/dc run --rm --no-deps app "$@"

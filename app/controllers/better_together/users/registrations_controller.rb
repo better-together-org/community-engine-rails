@@ -131,6 +131,26 @@ module BetterTogether
         respond_with resource
       end
 
+      def destroy
+        active_request = current_user.person.person_deletion_requests.active.first
+
+        active_request ||= current_user.person.person_deletion_requests.create!(
+          requested_at: Time.current,
+          requested_reason: 'Requested from account settings'
+        )
+
+        redirect_to settings_my_data_path(locale: I18n.locale),
+                    notice: if active_request.previously_new_record?
+                              I18n.t('better_together.settings.index.my_data.deletion_request_created')
+                            else
+                              I18n.t(
+                                'better_together.settings.index.my_data.deletion_request_exists',
+                                default: 'Your deletion request is already pending review.'
+                              )
+                            end,
+                    status: :see_other
+      end
+
       protected
 
       def account_update_params
