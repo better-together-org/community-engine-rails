@@ -36,7 +36,18 @@ module BetterTogether
 
     def dispatch(group, *, **)
       adapters_for(group).map do |entry|
-        entry.fetch(:adapter).call(*, **)
+        {
+          name: entry[:name],
+          result: entry.fetch(:adapter).call(*, **),
+          error: nil
+        }
+      rescue StandardError => e
+        log_dispatch_failure(group:, entry:, exception: e)
+        {
+          name: entry[:name],
+          result: nil,
+          error: e
+        }
       end
     end
 
@@ -48,6 +59,16 @@ module BetterTogether
 
     def normalize_group(group)
       group.to_sym
+    end
+
+    def log_dispatch_failure(group:, entry:, exception:)
+      return unless defined?(Rails) && Rails.respond_to?(:logger) && Rails.logger.present?
+
+      Rails.logger.error(
+        '[BetterTogether::AdapterRegistry] dispatch failed ' \
+        "group=#{group} adapter=#{entry[:name] || 'anonymous'} " \
+        "#{exception.class}: #{exception.message}"
+      )
     end
   end
 end
