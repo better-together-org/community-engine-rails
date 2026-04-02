@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup do
   include Devise::Test::ControllerHelpers
-  include Rails.application.routes.url_helpers
+  include BetterTogether::Engine.routes.url_helpers
   include AutomaticTestConfiguration
 
   routes { BetterTogether::Engine.routes }
@@ -25,7 +25,7 @@ RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup 
 
       delete :destroy, params: { locale: locale }
 
-      expect(response).to redirect_to(settings_my_data_path(locale: locale))
+      expect(response).to redirect_to(BetterTogether::Engine.routes.url_helpers.settings_my_data_path(locale: locale))
       expect(BetterTogether::User.count).to eq(starting_user_count)
       expect(user.reload).to be_present
       expect(user.person.person_deletion_requests.active.count).to eq(starting_request_count.zero? ? 1 : starting_request_count)

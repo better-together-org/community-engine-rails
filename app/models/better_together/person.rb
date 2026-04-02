@@ -37,7 +37,11 @@ module BetterTogether
     has_many :conversation_participants, dependent: :destroy
     has_many :one_time_prekeys, dependent: :destroy, class_name: 'BetterTogether::OneTimePrekey'
     has_many :conversations, through: :conversation_participants
-    has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
+    has_many :created_conversations,
+             foreign_key: :creator_id,
+             class_name: 'BetterTogether::Conversation',
+             dependent: :destroy,
+             inverse_of: :creator
 
     has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
