@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Scrubs direct identifying fields from a person while preserving retained references.
   class PersonDeletionAnonymizer
     class << self
       def call(person:)
@@ -18,7 +19,14 @@ module BetterTogether
       purge_attachments!
       destroy_contact_detail!
 
-      person.update!(
+      person.update!(anonymized_attributes)
+    end
+
+    private
+
+    # rubocop:disable Metrics/MethodLength
+    def anonymized_attributes
+      {
         name: deleted_name,
         description: nil,
         identifier: deleted_identifier,
@@ -35,10 +43,9 @@ module BetterTogether
         key_backup_updated_at: nil,
         deleted_at: Time.current,
         anonymized_at: Time.current
-      )
+      }
     end
-
-    private
+    # rubocop:enable Metrics/MethodLength
 
     def purge_attachments!
       person.profile_image.purge if person.profile_image.attached?

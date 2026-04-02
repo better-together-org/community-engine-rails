@@ -2207,6 +2207,7 @@ uk:
         search_by_slug: Search by slug...
         search_by_title: Search by title...
     people:
+      deleted_name: Видалена особа
       allow_messages_from_members: Allow messages from platform members
       calendar:
         attended: Відвідав
@@ -2875,6 +2876,7 @@ uk:
             title: Account deletion requests
           deletion_request_cancelled: Your deletion request has been cancelled.
           deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
           deletion_request_failed: We could not create your deletion request.
           description: Переглядайте, завантажуйте або видаляйте свої експорти персональних
             даних.

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Builds a fully destructive inventory for prelaunch account cleanup.
   class PersonHardDeletionInventory
     class << self
       def call(person:)
@@ -46,12 +47,12 @@ module BetterTogether
       end
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def reflected_entries_for(owner:, owner_label:)
       return [] unless owner
 
       owner.class.reflect_on_all_associations.filter_map do |reflection|
-        next if reflection.options[:through].present?
-        next unless direct_destroyable_reflection?(reflection)
+        next unless includable_reflection?(reflection)
 
         records = extract_records(owner, reflection)
         next if records.empty?
@@ -68,6 +69,11 @@ module BetterTogether
           dependent: reflection.options[:dependent].to_s
         }
       end
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def includable_reflection?(reflection)
+      reflection.options[:through].blank? && direct_destroyable_reflection?(reflection)
     end
 
     def direct_destroyable_reflection?(reflection)
