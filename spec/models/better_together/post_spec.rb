@@ -47,6 +47,14 @@ RSpec.describe BetterTogether::Post do
 
       expect(described_class.latest_first).to eq([newer_draft, older_draft])
     end
+
+    it 'remains valid when chained with translation joins' do
+      older_post = create(:better_together_post, published_at: 3.days.ago, created_at: 4.days.ago)
+      newer_post = create(:better_together_post, published_at: 1.day.ago, created_at: 2.days.ago)
+
+      expect { described_class.i18n.latest_first.load }.not_to raise_error
+      expect(described_class.i18n.latest_first.where(id: [older_post.id, newer_post.id]).to_a).to eq([newer_post, older_post])
+    end
   end
 
   describe 'after_create #add_creator_as_author' do

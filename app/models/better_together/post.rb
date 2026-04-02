@@ -39,7 +39,12 @@ module BetterTogether
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
-    scope :latest_first, -> { order(Arel.sql('COALESCE(published_at, created_at) DESC'), created_at: :desc) }
+    scope :latest_first, lambda {
+      order(
+        Arel.sql('COALESCE(better_together_posts.published_at, better_together_posts.created_at) DESC'),
+        arel_table[:created_at].desc
+      )
+    }
 
     before_validation :assign_current_platform_if_available
 
