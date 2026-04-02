@@ -2244,7 +2244,6 @@ fr:
         search_by_slug: Rechercher par slug...
         search_by_title: Rechercher par titre...
     people:
-      deleted_name: Personne supprimée
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
         attended: J'ai participé
@@ -2258,6 +2257,7 @@ fr:
         recent_events: Événements Récents
         title: Calendrier Personnel
         upcoming_events: Événements à Venir
+      deleted_name: Personne supprimée
       device_permissions:
         camera: Caméra
         location: Localisation
