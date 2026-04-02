@@ -50,7 +50,7 @@ module BetterTogether
     slugged :name
 
     store_attributes :settings do
-      requires_invitation Boolean, default: false
+      requires_invitation Boolean, default: true
       software_variant String
       network_visibility String, default: 'private'
       connection_bootstrap_state String
@@ -82,6 +82,7 @@ module BetterTogether
     validate :oauth_issuer_url_ssrf_safe
     validate :validate_csp_origin_text_fields
 
+    after_initialize :set_default_requires_invitation, if: :new_record?
     before_validation :apply_platform_registry_defaults
     before_validation :persist_csp_origin_settings
 
@@ -126,6 +127,14 @@ module BetterTogether
     # Callbacks to remove images if necessary
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
+
+    private
+
+    def set_default_requires_invitation
+      self.requires_invitation = true if requires_invitation.nil?
+    end
+
+    public
 
     def csp_frame_ancestors
       csp_setting_values('csp_frame_ancestors')
