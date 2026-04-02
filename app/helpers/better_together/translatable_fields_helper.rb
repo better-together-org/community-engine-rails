@@ -91,7 +91,8 @@ module BetterTogether
       end
     end
 
-    # Combines the dropdown button and menu only if the API key is present
+    # Combines the dropdown button and menu only when the translation robot
+    # resolves to an available configured LLM provider.
     def render_translation_dropdown(locale, unique_locale_attribute, attribute, base_url, translation_present)
       dropdown_button(locale, unique_locale_attribute, translation_present) +
         dropdown_menu(attribute, locale, unique_locale_attribute, base_url)

@@ -1,10 +1,10 @@
 graph TB
     %% AI System Configuration
     subgraph CONFIG["AI System Configuration"]
-        A[Environment Setup] --> B{OPENAI_ACCESS_TOKEN Set?}
-        B -->|Yes| C[Initialize OpenAI Client]
+        A[Environment Setup] --> B{LLM Provider Configured?}
+        B -->|Yes| C[Initialize RubyLLM Adapter]
         B -->|No| D[Disable AI Features]
-        C --> E[Configure GPT Model]
+        C --> E[Resolve Robot and Model]
         E --> F[AI Features Available]
     end
 
@@ -26,8 +26,8 @@ graph TB
         P[Receive Translation Request] --> Q[Pre-process Content]
         Q --> R[Extract Trix Attachments]
         R --> S[Create Placeholder Map]
-        S --> T[OpenAI API Call]
-        T --> U[Process GPT Response]
+        S --> T[LLM Adapter Call]
+        T --> U[Process Model Response]
         U --> V[Restore Attachments]
         V --> W[Calculate Token Usage]
         W --> X[Estimate Cost]
