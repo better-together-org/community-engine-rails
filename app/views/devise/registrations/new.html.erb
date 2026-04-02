@@ -147,6 +147,9 @@
             </div>
           </div>
         <% end %>
+
+        <%# Render the shared OAuth sign-in buttons after the form so sign-up and sign-in use the same credential gating. %>
+        <%= render "devise/shared/omniauth_buttons" %>
       </div>
     </div>
   <% end %>

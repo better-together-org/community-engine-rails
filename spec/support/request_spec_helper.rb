@@ -3,6 +3,7 @@
 # Common route helpers included in request specs.
 module RequestSpecHelper # :nodoc:
   include Rails.application.routes.url_helpers
+  include Rails.application.routes.mounted_helpers
   include BetterTogether::Engine.routes.url_helpers
 
   # Ensure route helpers use default locale
