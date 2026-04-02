@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Reverse associations for records explicitly created by a person.
   module CreatedRecords
     extend ActiveSupport::Concern
 

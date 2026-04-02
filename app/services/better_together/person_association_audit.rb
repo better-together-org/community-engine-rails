@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'set'
-
 module BetterTogether
+  # Verifies that person/user references are declared in the deletion manifest and reverse associations.
   class PersonAssociationAudit
     class << self
       def call
@@ -32,6 +31,7 @@ module BetterTogether
       manifest_entries.select { |entry| entry['reverse_association'].present? }
     end
 
+    # rubocop:disable Metrics/AbcSize
     def discovered_references
       Rails.application.eager_load!
 
@@ -50,6 +50,7 @@ module BetterTogether
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize
 
     def covered_by_manifest?(reference)
       return true if manifest_specific_references.any? { |entry| entry.fetch('key') == reference.fetch(:key) }

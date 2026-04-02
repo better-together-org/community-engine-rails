@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::Users::RegistrationsController, :skip_host_setup 
 
   before do
     configure_host_platform
-    @request.env['devise.mapping'] = Devise.mappings[:user]
+    request.env['devise.mapping'] = Devise.mappings[:user]
     sign_in user
   end
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Executes the mixed-policy GDPR deletion flow for reviewed account deletion requests.
+  # rubocop:disable Metrics/ClassLength
   class PersonDeletionExecutor
     class << self
       def call(person_deletion_request:, reviewed_by: nil, reviewer_notes: nil)
@@ -22,6 +24,7 @@ module BetterTogether
       @reviewer_notes = reviewer_notes
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def call
       inventory = BetterTogether::PersonDeletionInventory.call(person:)
       audit = build_audit(inventory)
@@ -49,9 +52,11 @@ module BetterTogether
       )
       raise
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def build_audit(inventory)
       BetterTogether::PersonPurgeAudit.create!(
         person:,
@@ -70,6 +75,7 @@ module BetterTogether
         execution_snapshot: { 'destroyed_entries' => [] }
       )
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def approve_request_if_needed!
       return unless person_deletion_request.pending?
@@ -80,6 +86,7 @@ module BetterTogether
       )
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def execute_inventory(inventory)
       processed = {}
       destroyed_entries = []
@@ -116,6 +123,7 @@ module BetterTogether
         anonymized_person_id: person.id.to_s
       }
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def scrub_request_text!
       person_deletion_request.update!(
@@ -124,4 +132,5 @@ module BetterTogether
       )
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
