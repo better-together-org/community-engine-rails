@@ -1,0 +1,15 @@
+flowchart TD
+    A[Member opens account settings<br/>with cancel section visible] --> B{Before or after PR 1486?}
+    B -->|Before| C[Direct destructive delete button<br/>submits Devise destroy]
+    B -->|After| D[Danger button routes to My Data]
+    D --> E[Member reviews exports,<br/>deletion form, and prior requests]
+    E --> F[Member submits deletion request reason]
+    F --> G[PersonDeletionRequestsController<br/>creates pending request]
+    G --> H[Platform reviewer approves request]
+    H --> I[PersonDeletionExecutor runs mixed-policy purge]
+    I --> J[Destroy linked records listed as destroy]
+    I --> K[Anonymize retained person record]
+    I --> L[Retain deletion request and purge audit snapshots]
+    J --> M[Reviewed GDPR flow complete]
+    K --> M
+    L --> M
