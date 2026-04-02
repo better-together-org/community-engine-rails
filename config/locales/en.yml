@@ -2205,7 +2205,6 @@ en:
         search_by_slug: Search by slug...
         search_by_title: Search by title...
     people:
-      deleted_name: Deleted person
       allow_messages_from_members: Allow messages from platform members
       calendar:
         attended: Attended
@@ -2219,6 +2218,7 @@ en:
         recent_events: Recent Events
         title: Personal Calendar
         upcoming_events: Upcoming Events
+      deleted_name: Deleted person
       device_permissions:
         camera: Camera
         location: Location

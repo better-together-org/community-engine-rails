@@ -2221,7 +2221,6 @@ uk:
         search_by_slug: Search by slug...
         search_by_title: Search by title...
     people:
-      deleted_name: Видалена особа
       allow_messages_from_members: Allow messages from platform members
       calendar:
         attended: Відвідав
@@ -2235,6 +2234,7 @@ uk:
         recent_events: Нещодавні Події
         title: Особистий Календар
         upcoming_events: Майбутні Події
+      deleted_name: Видалена особа
       device_permissions:
         camera: Camera
         location: Location

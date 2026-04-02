@@ -2234,7 +2234,6 @@ es:
         search_by_slug: Buscar por slug...
         search_by_title: Buscar por título...
     people:
-      deleted_name: Persona eliminada
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:
         attended: Participé
@@ -2248,6 +2247,7 @@ es:
         recent_events: Eventos Recientes
         title: Calendario Personal
         upcoming_events: Eventos Próximos
+      deleted_name: Persona eliminada
       device_permissions:
         camera: Cámara
         location: Ubicación
