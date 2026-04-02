@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Executes a full destructive cleanup for safe prelaunch account purges.
+  # rubocop:disable Metrics/ClassLength
   class PersonHardDeletionExecutor
+    DELETE_ONLY_CLASSES = [::BetterTogether::ConversationParticipant].freeze
+
     class << self
       def call(person:, reviewed_by: nil, reason: nil)
         new(person:, reviewed_by:, reason:).call
@@ -16,19 +20,14 @@ module BetterTogether
       @reason = reason
     end
 
+    # rubocop:disable Metrics/MethodLength
     def call
       inventory = BetterTogether::PersonHardDeletionInventory.call(person:)
       audit = build_audit(inventory)
 
       ActiveRecord::Base.transaction do
         prepare_owned_belongs_to_cycles!(inventory)
-        execution_snapshot = execute_inventory(inventory)
-
-        audit.update!(
-          status: :completed,
-          execution_snapshot: execution_snapshot,
-          completed_at: Time.current
-        )
+        complete_audit!(audit, execute_inventory(inventory))
       end
 
       audit
@@ -41,9 +40,11 @@ module BetterTogether
       )
       raise
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def build_audit(inventory)
       BetterTogether::PersonPurgeAudit.create!(
         reviewed_by: persistent_reviewer,
@@ -63,20 +64,23 @@ module BetterTogether
         }
       )
     end
+    # rubocop:enable Metrics/MethodLength
+
+    def complete_audit!(audit, execution_snapshot)
+      audit.update!(
+        status: :completed,
+        execution_snapshot: execution_snapshot,
+        completed_at: Time.current
+      )
+    end
 
     def prepare_owned_belongs_to_cycles!(inventory)
       return unless person&.persisted?
 
-      community_entry = inventory.fetch(:entries).find { |entry| entry.fetch(:model) == 'BetterTogether::Community' }
-      return unless community_entry
-
-      owned_community = BetterTogether::Community.find_by(id: community_entry.fetch(:ids), creator_id: person.id)
+      owned_community = owned_community_entry(inventory)
       return unless owned_community && person.community_id == owned_community.id
 
-      fallback_community = BetterTogether::Community.where.not(id: owned_community.id).first
-      raise ActiveRecord::RecordNotFound, 'No fallback community available to detach person before hard delete' unless fallback_community
-
-      person.update_columns(community_id: fallback_community.id, updated_at: Time.current)
+      person.update_columns(community_id: fallback_community!(owned_community).id, updated_at: Time.current)
     end
 
     def execute_inventory(inventory)
@@ -84,20 +88,11 @@ module BetterTogether
       destroyed_entries = []
 
       ordered_entries(inventory).each do |entry|
-        model_class = entry.fetch(:model).constantize
-        scoped_ids = Array(entry.fetch(:ids)).reject { |id| processed[[model_class.name, id.to_s]] }
+        model_class = entry_model(entry)
+        scoped_ids = unprocessed_ids(entry, model_class, processed)
         next if scoped_ids.empty?
 
-        execution_methods = []
-
-        model_class.where(id: scoped_ids).find_each do |record|
-          processed[[record.class.name, record.id.to_s]] = true
-          execution_methods << destroy_record(record, entry)
-        end
-
-        destroyed_entries << entry.slice(:key, :kind, :model, :count, :ids, :original_action).merge(
-          execution_methods: execution_methods.uniq
-        )
+        destroyed_entries << destroy_entry(entry, model_class, scoped_ids, processed)
       end
 
       {
@@ -132,16 +127,11 @@ module BetterTogether
     def delete_only_record?(record, entry)
       return true if %w[user person].include?(entry.fetch(:key))
 
-      record.class.name == 'BetterTogether::ConversationParticipant'
+      DELETE_ONLY_CLASSES.any? { |klass| record.instance_of?(klass) }
     end
 
     def deferred_until_after_person?(entry)
-      return false unless person
-
-      person.class.reflect_on_all_associations(:belongs_to).any? do |reflection|
-        target = person.public_send(reflection.name)
-        target && target.class.name == entry.fetch(:model) && Array(entry.fetch(:ids)).map(&:to_s).include?(target.id.to_s)
-      end
+      person && belongs_to_targets.any? { |target| entry_targets?(entry, target) }
     end
 
     def persistent_reviewer
@@ -150,5 +140,47 @@ module BetterTogether
 
       reviewed_by
     end
+
+    def owned_community_entry(inventory)
+      community_entry = inventory.fetch(:entries).find { |entry| entry.fetch(:model) == 'BetterTogether::Community' }
+      return unless community_entry
+
+      BetterTogether::Community.find_by(id: community_entry.fetch(:ids), creator_id: person.id)
+    end
+
+    def fallback_community!(owned_community)
+      BetterTogether::Community.where.not(id: owned_community.id).first ||
+        raise(ActiveRecord::RecordNotFound, 'No fallback community available to detach person before hard delete')
+    end
+
+    def entry_model(entry)
+      entry.fetch(:model).constantize
+    end
+
+    def unprocessed_ids(entry, model_class, processed)
+      Array(entry.fetch(:ids)).reject { |id| processed[[model_class.name, id.to_s]] }
+    end
+
+    def destroy_entry(entry, model_class, scoped_ids, processed)
+      execution_methods = model_class.where(id: scoped_ids).find_each.with_object([]) do |record, methods|
+        processed[[record.class.name, record.id.to_s]] = true
+        methods << destroy_record(record, entry)
+      end
+
+      entry.slice(:key, :kind, :model, :count, :ids, :original_action).merge(
+        execution_methods: execution_methods.uniq
+      )
+    end
+
+    def belongs_to_targets
+      person.class.reflect_on_all_associations(:belongs_to).filter_map do |reflection|
+        person.public_send(reflection.name)
+      end
+    end
+
+    def entry_targets?(entry, target)
+      target.instance_of?(entry_model(entry)) && Array(entry.fetch(:ids)).map(&:to_s).include?(target.id.to_s)
+    end
   end
+  # rubocop:enable Metrics/ClassLength
 end
