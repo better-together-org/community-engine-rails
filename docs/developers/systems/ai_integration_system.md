@@ -2,7 +2,29 @@
 
 ## Overview
 
-The Better Together Community Engine includes a comprehensive AI integration system primarily focused on automated content translation using OpenAI's GPT models. The system provides both real-time translation capabilities through the user interface and batch processing tools for large-scale content localization.
+The Better Together Community Engine includes a comprehensive AI integration system primarily focused on automated content translation. The current implementation is still directly OpenAI-based, but the target architecture is provider-adapter driven so CE can support audited local and remote model backends without requiring any one external provider in the core gem.
+
+## Architecture Status
+
+Current state:
+
+- CE bots call OpenAI directly
+- `ruby-openai` is wired into the current bot layer
+- translation is the main AI workflow currently implemented
+
+Target state:
+
+- CE defines `llm` and `embeddings` subsystem groups in the adapter registry
+- CE uses `ruby_llm` as the abstraction layer for model calls
+- direct OpenAI integration moves into a thin provider gem
+- Borgberry becomes the preferred BTS-hosted audited path for local Ollama execution
+
+Guardrails for the target architecture:
+
+- no external LLM provider is required by CE core
+- no silent fallback from local audited Borgberry routing to a cloud provider
+- platform, tenant, and community context must be preserved for authorization and audit
+- prompts, responses, model identifiers, and usage metadata must be auditable with redaction controls when needed
 
 ## Process Flow Diagram
 

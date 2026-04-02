@@ -34,9 +34,18 @@ module BetterTogether
 
   ADAPTER_GROUPS = %i[
     error_reporting
+    queue
+    cache
+    throttling
+    storage
+    smtp
     search
     metrics
     publishing
+    spatial
+    tenancy
+    llm
+    embeddings
     translation
     mapping
     federation
