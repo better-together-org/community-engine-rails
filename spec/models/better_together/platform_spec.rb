@@ -106,6 +106,22 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     end
   end
 
+  describe 'host URL storage' do
+    it 'keeps the persisted url column available as the host url' do
+      host_url = "https://host-#{SecureRandom.hex(4)}.example.test"
+      platform = create(:better_together_platform, host_url:)
+
+      expect(platform.url).to eq(host_url)
+      expect(platform.host_url).to eq(host_url)
+    end
+
+    it 'exposes a separate route_url helper for the internal platform route' do
+      platform = create(:better_together_platform, host_url: "https://host-#{SecureRandom.hex(4)}.example.test")
+
+      expect(platform.route_url).to include("/platforms/#{platform.to_param}")
+    end
+  end
+
   describe 'settings defaults' do
     it 'defaults raw new platforms to requiring invitations immediately' do
       platform = described_class.new(host_url: 'https://example.test', time_zone: 'UTC', privacy: 'private', protected: true)
