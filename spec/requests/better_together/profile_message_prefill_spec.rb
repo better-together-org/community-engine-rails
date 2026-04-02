@@ -7,7 +7,8 @@ RSpec.describe 'Profile message prefill' do
 
   let!(:host_platform) { configure_host_platform }
   let!(:other_platform) { create(:better_together_platform) }
-  let!(:user) { create(:user, :confirmed, email: 'user@example.test', password: 'SecureTest123!@#') }
+  let!(:user_email) { "profile-prefill-#{SecureRandom.hex(4)}@example.test" }
+  let!(:user) { create(:user, :confirmed, email: user_email, password: 'SecureTest123!@#') }
   let!(:other_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Target Person')
   end
@@ -19,7 +20,7 @@ RSpec.describe 'Profile message prefill' do
     create(:better_together_person_platform_membership, member: user.person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: other_person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: other_platform_person, joinable: other_platform)
-    login(user.email, 'SecureTest123!@#')
+    login(user_email, 'SecureTest123!@#')
   end
 
   it 'preselects a permitted current-platform person from the profile message link' do

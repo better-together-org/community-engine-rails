@@ -45,8 +45,14 @@ RSpec.describe 'Content::Css block CRUD', :as_platform_manager, :js do
       # Expect redirect to show page
       expect(page).to have_current_path(%r{/host/content/blocks/[^/]+$}, wait: 10)
 
-      # Re-open edit to read back the stored value
-      click_link 'Edit', match: :first
+      created_block = BetterTogether::Content::Css.find_by!(identifier: 'truncation-regression-test')
+
+      # Re-open edit directly to verify the saved value without depending on
+      # show-page action link rendering.
+      visit better_together.edit_content_block_path(
+        locale: I18n.default_locale,
+        id: created_block.id
+      )
 
       stored = find_field('block[content_en]').value
       expect(stored.length).to be > 255
