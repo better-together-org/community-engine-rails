@@ -3,11 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'better_together/content/blocks/new/_block.html.erb' do
-  before(:all) do
-    BetterTogether::Content::Block.load_all_subclasses
-  end
-
   before do
+    BetterTogether::Content::Block.load_all_subclasses
     view.define_singleton_method(:new_content_block_path) { |_options = {}| '/content/blocks/new' }
   end
 
