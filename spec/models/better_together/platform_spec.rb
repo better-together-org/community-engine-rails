@@ -120,6 +120,7 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
 
       expect(platform.route_url).to include("/platforms/#{platform.to_param}")
     end
+  end
 
   describe 'settings defaults' do
     it 'defaults raw new platforms to requiring invitations immediately' do

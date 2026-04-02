@@ -27,9 +27,9 @@ module BetterTogether
       attr_reader :page_url_query
 
       # Set the page_url if the pageable object doesn't respond to :url
-      def set_page_url # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def set_page_url # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         url = if pageable.present?
-                routing_url_for_pageable || fallback_url_for_pageable
+                routing_url_for_pageable || fallback_url_for_pageable || generate_url_for_pageable
               elsif page_url.blank?
                 generate_url_for_pageable
               else
