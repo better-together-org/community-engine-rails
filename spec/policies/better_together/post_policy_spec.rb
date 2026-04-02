@@ -157,6 +157,27 @@ RSpec.describe BetterTogether::PostPolicy do
       expect(scope.resolve).to include(manager_draft, creator_private_published, creator_public_published, blocked_public_post)
     end
 
+    it 'orders visible posts latest first for unauthenticated users' do
+      older_post = create(
+        :better_together_post,
+        creator: creator_user.person,
+        author: creator_user.person,
+        privacy: 'public',
+        published_at: 5.days.ago
+      )
+      newer_post = create(
+        :better_together_post,
+        creator: creator_user.person,
+        author: creator_user.person,
+        privacy: 'public',
+        published_at: 1.day.ago
+      )
+
+      scope = described_class::Scope.new(nil, BetterTogether::Post)
+
+      expect(scope.resolve.where(id: [older_post.id, newer_post.id]).to_a).to eq([newer_post, older_post])
+    end
+
     it 'returns only published public posts for unauthenticated users' do
       scope = described_class::Scope.new(nil, BetterTogether::Post)
       result = scope.resolve
