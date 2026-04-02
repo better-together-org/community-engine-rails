@@ -172,6 +172,7 @@ module BetterTogether
       EventsBlockResource         = BlockResource
       HeroResource                = BlockResource
       HtmlResource                = BlockResource
+      IframeBlockResource         = BlockResource
       ImageResource               = BlockResource
       MarkdownResource            = BlockResource
       MermaidDiagramResource      = BlockResource
