@@ -34,8 +34,17 @@ RSpec.describe BetterTogether::ErrorReportingTestController do
     allow(controller).to receive(:current_user).and_return(nil)
   end
 
-  it 'logs rescued production exceptions and reports them to sentry' do
-    allow(Sentry).to receive(:capture_exception)
+  around do |example|
+    original_registry = BetterTogether.adapter_registry
+    BetterTogether.adapter_registry = BetterTogether::AdapterRegistry.new
+    example.run
+    BetterTogether.adapter_registry = original_registry
+  end
+
+  it 'logs rescued production exceptions and reports them through the configured adapter registry' do
+    adapter = instance_double(Proc)
+    allow(adapter).to receive(:call)
+    BetterTogether.register_error_reporter(:test, adapter)
 
     get :index, params: { locale: 'en' }
 
@@ -45,17 +54,29 @@ RSpec.describe BetterTogether::ErrorReportingTestController do
     expect(logger).to have_received(:error).with(include('method=GET'))
     expect(logger).to have_received(:error).with(include('path=/index?locale=en'))
     expect(logger).to have_received(:error).at_least(:twice)
-    expect(Sentry).to have_received(:capture_exception).with(instance_of(StandardError))
+    expect(adapter).to have_received(:call).with(
+      instance_of(StandardError),
+      context: hash_including(
+        request_id: nil,
+        request_method: 'GET',
+        path: '/index?locale=en',
+        controller: 'error_reporting_test',
+        action: 'index',
+        user_id: 'anonymous'
+      )
+    )
     expect(log_output.string).to include('[PRODUCTION][Exception] StandardError: boom')
   end
 
-  it 'logs sentry capture failures without masking the original 500 response' do
-    allow(Sentry).to receive(:capture_exception).and_raise(StandardError, 'sentry down')
+  it 'logs adapter failures without masking the original 500 response' do
+    BetterTogether.register_error_reporter(:failing, lambda do |_exception, context:|
+      raise StandardError, "adapter down for #{context[:request_id]}"
+    end)
 
     get :index, params: { locale: 'en' }
 
     expect(response).to have_http_status(:internal_server_error)
-    expect(logger).to have_received(:error).with(include('[PRODUCTION][SentryCaptureFailure] StandardError: sentry down'))
-    expect(log_output.string).to include('[PRODUCTION][SentryCaptureFailure] StandardError: sentry down')
+    expect(logger).to have_received(:error).with(include('[PRODUCTION][ErrorReportingFailure] StandardError: adapter down for '))
+    expect(log_output.string).to include('[PRODUCTION][ErrorReportingFailure] StandardError: adapter down for ')
   end
 end
