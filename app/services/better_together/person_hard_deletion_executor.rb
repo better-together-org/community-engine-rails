@@ -106,9 +106,7 @@ module BetterTogether
         %w[user person].include?(entry.fetch(:key))
       end
 
-      deferred_entries, early_entries = non_self_entries.partition { |entry| deferred_until_after_person?(entry) }
-
-      early_entries + self_entries.sort_by { |entry| entry.fetch(:key) == 'user' ? 0 : 1 } + deferred_entries
+      non_self_entries + self_entries.sort_by { |entry| entry.fetch(:key) == 'user' ? 0 : 1 }
     end
 
     def destroy_record(record, entry)
