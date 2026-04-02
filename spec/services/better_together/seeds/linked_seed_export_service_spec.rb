@@ -53,5 +53,25 @@ RSpec.describe BetterTogether::Seeds::LinkedSeedExportService do
       expect(result.person_access_grant).to be_nil
       expect(result.seeds).to eq([])
     end
+
+    it 'continues pagination beyond 500 offset records' do
+      create_list(
+        :better_together_post,
+        504,
+        creator: grant.grantor_person,
+        privacy: 'private',
+        platform: source_platform
+      )
+
+      result = described_class.call(
+        connection:,
+        recipient_identifier: grant.grantee_person.identifier,
+        cursor: '500',
+        limit: 10
+      )
+
+      expect(result.seeds.length).to eq(5)
+      expect(result.next_cursor).to be_nil
+    end
   end
 end
