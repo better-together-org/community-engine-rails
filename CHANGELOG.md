@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Federation authorship opt-in: `federate_authorship` boolean on `Person` settings — authors who want attribution on federated platforms can opt in (#1408)
 - `federated_author` JSONB column on posts, pages, and events for mirrored bylines
 - Federation idempotent mirror lookup + identifier conflict namespacing (#1405)
+- Federation member export consent controls for cross-platform sharing preferences (#1465)
 
 #### End-to-End Encrypted Conversations
 - Signal Protocol E2E encryption beta for conversations: `EncryptedConversation` model, key exchange, sealed-sender delivery (#1357)
@@ -42,6 +43,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BetterTogether::Seed` model for structured data snapshots (#790)
 - Personal data export flow: `personal_export?` predicate, `PersonSeedsController` scoped to the authenticated user's own exports
 - `PersonLinkedSeedPolicy` for policy-guarded seed access (#1403)
+
+#### Privacy, Consent & Data Rights
+- Member data export workflow with `PersonDataExport` / `PersonDeletionRequest` records for privacy-led self-service and review flows (#1468)
+- Agreement acceptance audit trail with immutable method, identifier/title snapshot, revision timestamp, content digest, and privacy-safe audit context on `AgreementParticipant` (#1469)
+
+#### Metrics & Reporting
+- Platform-scoped analytics reads and writes across metrics dashboards, reports, summaries, and tracking jobs (#1461)
+- Configurable metrics retention controls for raw analytics data (#1462)
+- Reduced search query retention footprint to minimize stored personal data in analytics (#1463)
+
+#### Content Authoring & SEO
+- Image library selection flow for content block images (#999)
+- JSON-LD structured data helpers for richer search engine metadata (#1024)
+- Standard-page meta description helpers for improved previews and discovery (#1040)
 
 #### MembershipRequest
 - `MembershipRequest` STI model with `pending`/`approved`/`declined` states (#1356)
@@ -79,6 +94,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository write-boundary agent instructions
 
 ### Fixed
+- **Authoring:** Preload event associations and add pagination to reduce host-side metrics and content list load issues (#1034)
+- **Federation:** Narrow platform connection updates so host dashboards only mutate the intended fields (#1458)
+- **Messaging:** Scope conversation participants to the current platform (#1459)
+- **Navigation:** Seed navigation using the host platform context so installs pick up the correct platform-owned records (#1466)
+- **Observability:** Log and report rescued production exceptions to both server logs and Sentry (#1472)
+- **Uploads:** Restore same-origin profile image URLs through the Rails storage proxy instead of presigned direct S3 URLs (#1474)
 - **Policies:** Restored `can_manage_platform_members?` to `PlatformInvitationPolicy` outer class after it was accidentally removed by the RBAC hardening commit — `index?`, `create?`, `destroy?`, `resend?` all call this method
 - **Policies:** RBAC scope hardening — cleaner `PersonCommunityMembershipPolicy` / `PersonPlatformMembershipPolicy` resolution; tighter invitation role checks (#1403)
 - **Middleware:** Cache host platform UUID (not the AR object) to prevent stale-object bugs (#1406)
