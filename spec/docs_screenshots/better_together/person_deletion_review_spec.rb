@@ -15,6 +15,15 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
     Current.platform = nil
   end
 
+  def ensure_pending_deletion_request!
+    manager = BetterTogether::User.find_by!(email: 'manager@example.test')
+    manager.person.person_deletion_requests.active.first ||
+      manager.person.person_deletion_requests.create!(
+        requested_at: Time.current,
+        requested_reason: 'Documentation screenshot request'
+      )
+  end
+
   it 'captures the account deletion entrypoint and optional my data flow evidence' do
     entry_slug = ENV.fetch('ENTRY_SLUG', 'person_deletion_entrypoint')
     expect_direct_delete_button = ENV['EXPECT_DIRECT_DELETE_BUTTON'] == '1'
@@ -49,12 +58,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
     next unless ENV['CAPTURE_MY_DATA'] == '1'
 
     my_data_slug = ENV.fetch('MY_DATA_SLUG', 'person_deletion_my_data')
-    manager = BetterTogether::User.find_by!(email: 'manager@example.test')
-    manager.person.person_deletion_requests.active.first ||
-      manager.person.person_deletion_requests.create!(
-        requested_at: Time.current,
-        requested_reason: 'Documentation screenshot request'
-      )
+    ensure_pending_deletion_request!
 
     my_data_result = BetterTogether::CapybaraScreenshotEngine.capture(
       my_data_slug,
@@ -77,5 +81,37 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
 
     expect(my_data_result[:desktop]).to end_with("docs/screenshots/desktop/#{my_data_slug}.png")
     expect(my_data_result[:mobile]).to end_with("docs/screenshots/mobile/#{my_data_slug}.png")
+
+    next unless ENV['CAPTURE_EMBEDDED_MY_DATA'] == '1'
+
+    embedded_my_data_slug = ENV.fetch('EMBEDDED_MY_DATA_SLUG', 'person_deletion_my_data_embedded')
+
+    embedded_my_data_result = BetterTogether::CapybaraScreenshotEngine.capture(
+      embedded_my_data_slug,
+      device: :both,
+      metadata: {
+        locale: I18n.default_locale,
+        role: 'platform_manager',
+        feature_set: 'person_deletion_review',
+        source_spec: self.class.metadata[:file_path]
+      }
+    ) do
+      capybara_login_as_platform_manager
+      expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
+      visit settings_path(locale: I18n.default_locale)
+
+      find('#my-data-tab', wait: 10).click
+      expect(page).to have_css('#my-data-tab.active', wait: 10)
+      expect(page).to have_css('#my-data.show.active', wait: 10)
+
+      within('turbo-frame#my-data-settings') do
+        expect(page).to have_text(I18n.t('better_together.settings.index.my_data.title'))
+        expect(page).to have_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
+        expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel'))
+      end
+    end
+
+    expect(embedded_my_data_result[:desktop]).to end_with("docs/screenshots/desktop/#{embedded_my_data_slug}.png")
+    expect(embedded_my_data_result[:mobile]).to end_with("docs/screenshots/mobile/#{embedded_my_data_slug}.png")
   end
 end
