@@ -9,9 +9,9 @@ module BetterTogether
       export = BetterTogether::PersonDataExport.find(export_id)
       export.mark_processing!
 
-      payload = BetterTogether::PersonDataExportService.new(person: export.person).call
+      result = BetterTogether::PersonDataExportService.new(person: export.person).call
       export.export_file.attach(
-        io: StringIO.new(JSON.pretty_generate(payload)),
+        io: StringIO.new(JSON.pretty_generate(result.seed_hash)),
         filename: export.filename,
         content_type: 'application/json'
       )

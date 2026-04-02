@@ -43,6 +43,7 @@ RSpec.describe BetterTogether::Seeds::LinkedSeedExportService do
       expect(result.seeds.length).to eq(1)
       seed = result.seeds.first.with_indifferent_access.fetch(BetterTogether::Seed::DEFAULT_ROOT_KEY).with_indifferent_access
       expect(seed.dig('seed', 'origin', 'lane')).to eq('private_linked')
+      expect(seed.dig('seed', 'origin', 'profile')).to eq('private_linked')
       expect(seed.dig('seed', 'origin', 'person_access_grant_id')).to eq(grant.id)
       expect(seed.dig('payload', 'type')).to eq('post')
     end

@@ -12,8 +12,11 @@ RSpec.describe BetterTogether::PersonDataExportService do
       create(:better_together_seed, :personal_export, person: person)
     end
 
-    it 'returns a portable hash with core person data' do
-      payload = described_class.new(person: person).call
+    it 'returns a seed-backed personal export package and persists the export seed' do
+      result = described_class.new(person: person).call
+      seed_hash = result.seed_hash
+      root = seed_hash[BetterTogether::Seed::DEFAULT_ROOT_KEY]
+      payload = root[:payload]
 
       expect(payload[:person]).to include(
         id: person.id,
@@ -24,6 +27,9 @@ RSpec.describe BetterTogether::PersonDataExportService do
       expect(payload[:memberships][:platforms]).not_to be_empty
       expect(payload[:blocks][:blocked_people]).not_to be_empty
       expect(payload[:seeds]).not_to be_empty
+      expect(root[:seed][:origin][:profile]).to eq('personal_export')
+      expect(result.seed_record).to be_a(BetterTogether::Seed)
+      expect(result.seed_record.creator_id).to eq(person.id)
     end
   end
 end
