@@ -43,8 +43,8 @@ module BetterTogether
   ].freeze
 
   class << self
-    def register_adapter(group, name = nil, adapter = nil, &block)
-      adapter_registry.register(group, name, adapter, &block)
+    def register_adapter(group, name = nil, adapter = nil, &)
+      adapter_registry.register(group, name, adapter, &)
     end
 
     def adapters_for(group)
@@ -55,8 +55,8 @@ module BetterTogether
       adapter_registry.clear!(group)
     end
 
-    def dispatch_to_adapters(group, *args, **kwargs)
-      adapter_registry.dispatch(group, *args, **kwargs)
+    def dispatch_to_adapters(group, *, **)
+      adapter_registry.dispatch(group, *, **)
     end
 
     def register_error_reporter(name = nil, reporter = nil, &block)

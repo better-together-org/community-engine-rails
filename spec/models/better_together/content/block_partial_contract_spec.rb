@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Content::Block, type: :model do
-  before(:all) do
+RSpec.describe BetterTogether::Content::Block do
+  before do
     described_class.load_all_subclasses
   end
 

@@ -10,7 +10,7 @@ module BetterTogether
 
     def register(group, name = nil, adapter = nil, &block)
       callable = adapter || block
-      raise ArgumentError, 'adapter must respond to #call' unless callable&.respond_to?(:call)
+      raise ArgumentError, 'adapter must respond to #call' unless callable.respond_to?(:call)
 
       key = normalize_group(group)
       @entries[key] = @entries[key].reject { |entry| entry[:name] == name } if name.present?
@@ -27,9 +27,9 @@ module BetterTogether
       @entries.delete(normalize_group(group))
     end
 
-    def dispatch(group, *args, **kwargs)
+    def dispatch(group, *, **)
       adapters_for(group).map do |entry|
-        entry.fetch(:adapter).call(*args, **kwargs)
+        entry.fetch(:adapter).call(*, **)
       end
     end
 
