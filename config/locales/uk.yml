@@ -589,17 +589,31 @@ uk:
       better_together/category: Категорія
       better_together/checklist: Контрольний список
       better_together/community: Спільнота
+      better_together/content/accordion_block: Акордеон
+      better_together/content/alert_block: Сповіщення
       better_together/content/block: Блок
+      better_together/content/call_to_action_block: Заклик до дії
+      better_together/content/checklist_block: Контрольний список
+      better_together/content/communities_block: Спільноти
       better_together/content/css: Користувацький CSS
+      better_together/content/events_block: Події
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Зображення
+      better_together/content/link: Посилання
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Діаграма Mermaid
+      better_together/content/navigation_area_block: Область навігації
       better_together/content/page_block: Блок сторінки
+      better_together/content/people_block: Люди
+      better_together/content/platform_block: Платформа
+      better_together/content/posts_block: Публікації
+      better_together/content/quote_block: Цитата
       better_together/content/rich_text: Багатий текст
+      better_together/content/statistics_block: Статистика
       better_together/content/template: Файл шаблону
+      better_together/content/video_block: Відео
       better_together/conversation: Розмова
       better_together/conversation_participant: Учасник розмови
       better_together/event: Подія
