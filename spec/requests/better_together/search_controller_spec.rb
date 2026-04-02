@@ -134,7 +134,6 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
 
       before do
-        allow_any_instance_of(BetterTogether::ApplicationController).to receive(:current_user).and_return(nil)
         allow(backend).to receive(:search).and_return(
           BetterTogether::Search::SearchResult.new(
             records: [public_post, private_post, scheduled_page],
