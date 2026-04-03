@@ -56,49 +56,5 @@
       </div>
     </div>
 
-    <div class="card border-0 shadow-sm mb-4">
-      <div class="card-body">
-        <h3 class="h5 mb-1"><%= t('better_together.settings.index.my_data.deletion.title') %></h3>
-        <p class="text-muted"><%= t('better_together.settings.index.my_data.deletion.description') %></p>
-
-        <%= form_with url: person_deletion_requests_path(locale: locale), method: :post, local: true do |form| %>
-          <div class="mb-3">
-            <%= form.label :requested_reason, t('better_together.settings.index.my_data.deletion.reason'), class: 'form-label' %>
-            <%= form.text_area :requested_reason, name: 'person_deletion_request[requested_reason]', rows: 3, class: 'form-control' %>
-          </div>
-          <%= form.submit t('better_together.settings.index.my_data.deletion.submit'), class: 'btn btn-outline-danger' %>
-        <% end %>
-
-        <% if @person_deletion_requests.any? %>
-          <hr>
-          <div class="table-responsive">
-            <table class="table align-middle mb-0">
-              <thead>
-                <tr>
-                  <th><%= t('better_together.settings.index.my_data.deletion.requested_at') %></th>
-                  <th><%= t('better_together.settings.index.my_data.deletion.status') %></th>
-                  <th><%= t('better_together.settings.index.my_data.deletion.actions') %></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @person_deletion_requests.each do |request| %>
-                  <tr id="person_deletion_request_<%= request.id %>">
-                    <td><%= l(request.requested_at, format: :long) %></td>
-                    <td><span class="badge text-bg-warning"><%= request.status.humanize %></span></td>
-                    <td>
-                      <% if request.pending? %>
-                        <%= button_to t('better_together.settings.index.my_data.deletion.cancel'), person_deletion_request_path(request, locale: locale), method: :delete, class: 'btn btn-sm btn-outline-secondary' %>
-                      <% else %>
-                        <span class="text-muted small"><%= request.resolved_at ? l(request.resolved_at, format: :long) : '—' %></span>
-                      <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        <% end %>
-      </div>
-    </div>
   </div>
 <% end %>

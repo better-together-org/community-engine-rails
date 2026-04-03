@@ -29,6 +29,7 @@ module BetterTogether
       before_action :load_all_invitations_from_session, only: %i[new create]
       before_action :check_invitation_requirement, only: [:create]
       before_action :configure_account_update_params, only: [:update]
+      before_action :load_person_deletion_requests, only: %i[edit update]
 
       # PUT /resource
       # We need to use a copy of the resource because we don't want to change
@@ -134,7 +135,7 @@ module BetterTogether
       def destroy
         active_request = find_or_create_deletion_request
 
-        redirect_to settings_my_data_path(locale: I18n.locale),
+        redirect_to edit_user_registration_path(locale: I18n.locale),
                     notice: deletion_request_notice(active_request),
                     status: :see_other
       end
@@ -175,6 +176,12 @@ module BetterTogether
           'better_together.settings.index.my_data.deletion_request_exists',
           default: 'Your deletion request is already pending review.'
         )
+      end
+
+      def load_person_deletion_requests
+        return unless current_user&.person
+
+        @person_deletion_requests = current_user.person.person_deletion_requests.latest_first.limit(10)
       end
 
       # Hook method for host applications to implement captcha validation

@@ -20,16 +20,15 @@ RSpec.describe BetterTogether::SettingsController, :as_user do
       request.headers['Turbo-Frame'] = 'my-data-settings'
     end
 
-    it 'renders export and deletion sections without the legacy seed section' do
+    it 'renders export content without legacy seed or deletion sections' do
       create(:better_together_person_data_export, :completed, person: user.person)
-      create(:better_together_person_deletion_request, person: user.person)
       create(:better_together_seed, :personal_export, person: user.person)
 
       get :my_data, params: { locale: locale }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t('better_together.settings.index.my_data.exports.title'))
-      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.deletion.title'))
+      expect(response.body).not_to include(I18n.t('better_together.settings.index.my_data.deletion.title'))
       expect(response.body).not_to include(I18n.t('better_together.settings.index.my_data.seeds.title'))
       expect(response.body).not_to include('fa-solid fa-database me-2')
     end

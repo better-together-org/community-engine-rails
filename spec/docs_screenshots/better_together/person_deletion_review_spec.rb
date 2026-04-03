@@ -88,16 +88,11 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
     ) do
       capybara_login_as_platform_manager
       expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
-      visit edit_user_registration_path(locale: I18n.default_locale, cancel: 1)
+      visit edit_user_registration_path(locale: I18n.default_locale)
 
       expect(page).to have_text(I18n.t('devise.registrations.edit.cancel_my_account'))
-
-      if expect_direct_delete_button
-        expect(page).to have_button(I18n.t('devise.registrations.edit.cancel_my_account'))
-      else
-        expect(page).to have_link(I18n.t('better_together.settings.index.my_data.title'))
-        expect(page).to have_no_button(I18n.t('devise.registrations.edit.cancel_my_account'))
-      end
+      expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.submit'))
+      expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel')) if expect_direct_delete_button
     end
 
     expect(entry_result[:desktop]).to end_with("docs/screenshots/desktop/#{entry_slug}.png")
@@ -125,9 +120,8 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
 
       expect(page).to have_text(I18n.t('better_together.settings.index.my_data.title'))
       expect(page).to have_text(I18n.t('better_together.settings.index.my_data.exports.title'))
-      expect(page).to have_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
       expect(page).to have_link(I18n.t('better_together.settings.index.my_data.exports.download'))
-      expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel'))
+      expect(page).to have_no_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
     end
 
     expect(my_data_result[:desktop]).to end_with("docs/screenshots/desktop/#{my_data_slug}.png")
@@ -157,8 +151,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
 
       within('turbo-frame#my-data-settings') do
         expect(page).to have_text(I18n.t('better_together.settings.index.my_data.exports.title'))
-        expect(page).to have_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
-        expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel'))
+        expect(page).to have_no_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
       end
     end
 
