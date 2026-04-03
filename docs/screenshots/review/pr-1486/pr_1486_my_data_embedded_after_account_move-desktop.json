@@ -1,0 +1,11 @@
+{
+  "name": "pr_1486_my_data_embedded_after_account_move",
+  "device": "desktop",
+  "url": "http://127.0.0.1:37959/en/settings#my-data",
+  "title": "Settings | Test Host Community",
+  "captured_at": "2026-04-03T17:49:48Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "person_deletion_review",
+  "source_spec": "./spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
+}
