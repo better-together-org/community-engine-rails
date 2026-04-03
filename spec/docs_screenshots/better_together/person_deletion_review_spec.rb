@@ -90,7 +90,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
       expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
       visit edit_user_registration_path(locale: I18n.default_locale)
 
-      expect(page).to have_text(I18n.t('devise.registrations.edit.cancel_my_account'))
+      expect(page).to have_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
       expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.submit'))
       expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel')) if expect_direct_delete_button
     end
