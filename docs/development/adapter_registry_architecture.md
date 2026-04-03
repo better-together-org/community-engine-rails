@@ -72,6 +72,7 @@ BetterTogether.report_error(exception, context: ...)
 Behavior:
 
 - if `error_reporting` adapters are registered, all of them receive the exception
+- adapter dispatch attempts every registered provider, logs individual provider failures, and only raises after fan-out completes
 - if none are registered, CE falls back to `Rails.error.report`
 
 This gives host apps a safe default while allowing thin gems to register providers like Sentry or BTS-hosted observability services.

@@ -53,4 +53,29 @@ RSpec.describe BetterTogether::AdapterRegistry do
     expect(registry.adapters_for(:error_reporting)).to eq([])
     expect(search_adapter).to have_received(:call).with(query: 'welcome')
   end
+
+  it 'continues dispatching remaining adapters after one failure and raises an aggregate error' do
+    failing_adapter = instance_double(Proc)
+    healthy_adapter = instance_double(Proc)
+    logger = instance_double(Logger, error: nil)
+
+    allow(Rails).to receive(:logger).and_return(logger)
+    allow(failing_adapter).to receive(:call).and_raise(StandardError, 'adapter down')
+    allow(healthy_adapter).to receive(:call)
+
+    registry.register(:error_reporting, :primary, failing_adapter)
+    registry.register(:error_reporting, :secondary, healthy_adapter)
+
+    expect do
+      registry.dispatch(:error_reporting, exception, context:)
+    end.to raise_error(
+      BetterTogether::AdapterRegistry::DispatchError,
+      /primary \(StandardError: adapter down\)/
+    )
+
+    expect(healthy_adapter).to have_received(:call).with(exception, context:)
+    expect(logger).to have_received(:error).with(
+      include('[AdapterDispatchFailure] group=error_reporting adapter=primary StandardError: adapter down')
+    )
+  end
 end

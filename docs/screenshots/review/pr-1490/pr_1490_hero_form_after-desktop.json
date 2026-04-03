@@ -1,0 +1,12 @@
+{
+  "name": "pr_1490_hero_form_after",
+  "device": "desktop",
+  "url": "http://127.0.0.1:38873/en/host/content/blocks/new?block_type=BetterTogether%3A%3AContent%3A%3AHero",
+  "title": "Test Host Community",
+  "captured_at": "2026-04-03T01:05:55Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "block_editor_contract_review",
+  "flow": "hero_block_editor",
+  "source_spec": "./spec/docs_screenshots/better_together/block_editor_contract_review_spec.rb"
+}
