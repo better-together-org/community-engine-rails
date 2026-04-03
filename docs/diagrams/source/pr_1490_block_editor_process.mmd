@@ -1,0 +1,10 @@
+flowchart TD
+    A[Platform manager opens New Content Block] --> B[BlocksController#new]
+    B --> C[Generic block form]
+    C --> D[Fields partial selected by block.block_name]
+    D --> E[Checklist block now renders shared resource_block_fields plus checklist selector]
+    D --> F[Hero block now renders heading/paragraph color controls]
+    E --> G[Manager configures checklist block]
+    F --> H[Manager configures hero block]
+    H --> I[Hero render applies configured text colors]
+

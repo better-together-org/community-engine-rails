@@ -1,0 +1,12 @@
+{
+  "name": "pr_1490_checklist_form_after",
+  "device": "mobile",
+  "url": "http://127.0.0.1:38873/en/host/content/blocks/new?block_type=BetterTogether%3A%3AContent%3A%3AChecklistBlock",
+  "title": "Test Host Community",
+  "captured_at": "2026-04-03T01:05:53Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "block_editor_contract_review",
+  "flow": "checklist_block_editor",
+  "source_spec": "./spec/docs_screenshots/better_together/block_editor_contract_review_spec.rb"
+}
