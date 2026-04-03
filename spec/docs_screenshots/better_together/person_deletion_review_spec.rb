@@ -10,6 +10,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = configure_host_platform
+    ensure_platform_manager!
   end
 
   after do
@@ -24,6 +25,26 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
         requested_reason: 'Documentation screenshot request'
       )
   end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def ensure_platform_manager!
+    manager = BetterTogether::User.find_or_initialize_by(email: 'manager@example.test')
+    manager.password = 'SecureTest123!@#' if manager.new_record?
+    manager.confirmed_at ||= Time.zone.now
+    manager.confirmation_sent_at ||= Time.zone.now
+
+    unless manager.person
+      manager.build_person(name: 'Platform Steward', identifier: 'manager-example-test')
+    end
+
+    manager.save! if manager.new_record? || manager.changed? || manager.person&.changed?
+    manager
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+    BetterTogether::User.find_by!(email: 'manager@example.test').tap do |user|
+      user.update_columns(confirmed_at: Time.zone.now, confirmation_sent_at: Time.zone.now) unless user.confirmed?
+    end
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def reset_personal_export_artifacts!(person)
     person.person_data_exports.destroy_all
@@ -75,6 +96,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
   it 'captures the account deletion entrypoint and optional my data flow evidence' do
     entry_slug = ENV.fetch('ENTRY_SLUG', 'person_deletion_entrypoint')
     expect_direct_delete_button = ENV['EXPECT_DIRECT_DELETE_BUTTON'] == '1'
+    ensure_pending_deletion_request! if expect_direct_delete_button
 
     entry_result = BetterTogether::CapybaraScreenshotEngine.capture(
       entry_slug,
@@ -86,6 +108,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
         source_spec: self.class.metadata[:file_path]
       }
     ) do
+      ensure_platform_manager!
       capybara_login_as_platform_manager
       expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
       visit edit_user_registration_path(locale: I18n.default_locale)
@@ -114,6 +137,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
         source_spec: self.class.metadata[:file_path]
       }
     ) do
+      ensure_platform_manager!
       capybara_login_as_platform_manager
       expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
       visit settings_my_data_path(locale: I18n.default_locale)
@@ -141,6 +165,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
         source_spec: self.class.metadata[:file_path]
       }
     ) do
+      ensure_platform_manager!
       capybara_login_as_platform_manager
       expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
       visit settings_path(locale: I18n.default_locale)
@@ -171,6 +196,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
         source_spec: self.class.metadata[:file_path]
       }
     ) do
+      ensure_platform_manager!
       capybara_login_as_platform_manager
       visit person_seeds_path(locale: I18n.default_locale)
 
@@ -193,6 +219,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
         source_spec: self.class.metadata[:file_path]
       }
     ) do
+      ensure_platform_manager!
       capybara_login_as_platform_manager
       visit person_seed_path(seed_artifacts[:seed], locale: I18n.default_locale)
 

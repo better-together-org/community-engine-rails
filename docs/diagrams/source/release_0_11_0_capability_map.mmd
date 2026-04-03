@@ -1,28 +1,40 @@
-flowchart LR
+flowchart TD
 
   V010["0.10.0 baseline"]
 
-  subgraph MAIN["0.11.0 merged and release-unblock candidate"]
-    MT["Multi-tenant platform context"]
-    FED["Federation and mirrored content"]
-    BLOCKS["CMS blocks, JSON:API, and MCP tools"]
-    SAFE["Safety reporting and personal-data stewardship"]
-    DISC["Search, events, and discovery improvements"]
-    DEV["CI, migration, and developer-experience hardening"]
-    EMBEDS["Safe iframe embeds and CSP origin controls (#1421)"]
-    SCOPE["Scope keyword-options regression fix (#1456)"]
-    E2EE["E2EE beta-gated rollout posture"]
+  subgraph RELEASE["0.11.0 release packet structure"]
+    FED["1. Federation, platform connections, and multi-tenant scoping"]
+    PRIV["2. Privacy, member data rights, and consent auditing"]
+    SAFE["3. Safety, reporting, and encrypted messaging"]
+    METRICS["4. Metrics, analytics retention, and reporting hygiene"]
+    CONTENT["5. Content, media, and authoring UX"]
+    SEO["6. SEO, structured data, and native polish"]
+    HARDEN["7. Bug fixes, migrations, dependencies, and hardening"]
   end
 
-  V010 --> MT
-  V010 --> BLOCKS
-  MT --> FED
-  FED --> SAFE
-  BLOCKS --> EMBEDS
-  BLOCKS --> DISC
-  DISC --> DEV
-  SAFE --> SCOPE
-  SAFE --> E2EE
-  DEV --> EMBEDS
-  DEV --> SCOPE
-  DEV --> E2EE
+  subgraph EVIDENCE["Current evidence and remaining release gaps"]
+    DOCS["Current-tip docs and system guides"]
+    DIAGRAMS["Current-tip Mermaid sources and release capability map"]
+    REVIEW["Current-tip review screenshots from PR 1486 and PR 1490"]
+    GAPS["Release-specific screenshots and export/deletion docs still to add"]
+  end
+
+  V010 --> FED
+  V010 --> CONTENT
+  FED --> PRIV
+  FED --> METRICS
+  PRIV --> SAFE
+  CONTENT --> SEO
+  CONTENT --> HARDEN
+  METRICS --> HARDEN
+  SAFE --> HARDEN
+  SEO --> HARDEN
+
+  FED --> DOCS
+  PRIV --> DOCS
+  SAFE --> DIAGRAMS
+  CONTENT --> REVIEW
+  PRIV --> REVIEW
+  METRICS --> GAPS
+  CONTENT --> GAPS
+  SEO --> GAPS

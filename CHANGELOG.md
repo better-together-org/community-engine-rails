@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.0] – Unreleased
 
+Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
+
 ### Added
 
 #### Multi-Tenant Platform Architecture & Federation MVP
@@ -238,7 +240,7 @@ See git history for changes prior to v0.9.0.
 
 ---
 
-[0.11.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.10.0...HEAD
+[0.11.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.10.0...main
 [0.10.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/better-together-org/community-engine-rails/releases/tag/v0.8.1

@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_block_image_library",
+  "device": "mobile",
+  "url": "http://127.0.0.1:34615/en/host/content/blocks/new?block_type=BetterTogether%3A%3AContent%3A%3AImage",
+  "title": "Test Host Community",
+  "captured_at": "2026-04-03T20:27:14Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_block_image_library",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_uploads_gallery_spec.rb"
+}
