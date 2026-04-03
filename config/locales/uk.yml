@@ -2243,6 +2243,7 @@ uk:
         recent_events: Нещодавні Події
         title: Особистий Календар
         upcoming_events: Майбутні Події
+      deleted_name: Видалена особа
       device_permissions:
         camera: Camera
         location: Location
@@ -2898,6 +2899,7 @@ uk:
             title: Account deletion requests
           deletion_request_cancelled: Your deletion request has been cancelled.
           deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
           deletion_request_failed: We could not create your deletion request.
           description: Переглядайте, завантажуйте або видаляйте свої експорти персональних
             даних.

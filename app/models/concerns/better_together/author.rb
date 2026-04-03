@@ -7,7 +7,9 @@ module BetterTogether
 
     included do
       has_many :authorships,
-               foreign_key: :author_id
+               foreign_key: :author_id,
+               class_name: 'BetterTogether::Authorship',
+               inverse_of: :author
       has_many :authored_pages,
                through: :authorships,
                source: :authorable,

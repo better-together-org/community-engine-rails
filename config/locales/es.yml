@@ -2256,6 +2256,7 @@ es:
         recent_events: Eventos Recientes
         title: Calendario Personal
         upcoming_events: Eventos Próximos
+      deleted_name: Persona eliminada
       device_permissions:
         camera: Cámara
         location: Ubicación
@@ -2916,6 +2917,7 @@ es:
             title: Account deletion requests
           deletion_request_cancelled: Your deletion request has been cancelled.
           deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
           deletion_request_failed: We could not create your deletion request.
           description: Ver, descargar o eliminar sus exportaciones de datos personales.
           export_not_ready: Your export is not ready yet.

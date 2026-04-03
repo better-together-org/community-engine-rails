@@ -97,16 +97,20 @@ module BetterTogether
       end
 
       def build_seed(record, grant)
-        ::BetterTogether::Seeds::FederatedSeedBuilder.call(
-          record:,
-          connection:,
+        ::BetterTogether::Seeds::Builder.call(
+          subject: record,
+          profile: :private_linked,
+          context: {
+            connection: connection,
+            origin_metadata: {
+              person_access_grant_id: grant.id,
+              recipient_identifier: recipient_identifier,
+              required_scope: TYPE_SCOPE_MAP.fetch(serialized_type_for(record))
+            }
+          },
           lane: 'private_linked',
-          origin_metadata: {
-            person_access_grant_id: grant.id,
-            recipient_identifier: recipient_identifier,
-            required_scope: TYPE_SCOPE_MAP.fetch(serialized_type_for(record))
-          }
-        )
+          persist: false
+        ).seed_hash
       end
 
       def serialized_type_for(record)

@@ -1,0 +1,11 @@
+{
+  "name": "pr_1486_account_delete_after",
+  "device": "desktop",
+  "url": "http://127.0.0.1:34745/en/users/edit?cancel=1",
+  "title": "Edit User | Test Host Community",
+  "captured_at": "2026-04-02T22:34:04Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "person_deletion_review",
+  "source_spec": "./spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
+}
