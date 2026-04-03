@@ -1,0 +1,12 @@
+{
+  "name": "release_0_11_0_statistics_block_editor",
+  "device": "desktop",
+  "url": "http://127.0.0.1:37539/en/host/pages/release-0-11-0-statistics_block-editor-page/edit",
+  "title": "Edit Release 0.11.0 Statistics Editor | Pages | Test Host Community",
+  "captured_at": "2026-04-03T22:55:11Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_content_block_roster",
+  "flow": "page_block_editor",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_content_block_roster_spec.rb"
+}

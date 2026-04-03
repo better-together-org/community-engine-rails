@@ -1,0 +1,12 @@
+{
+  "name": "release_0_11_0_navigation_area_block_render",
+  "device": "desktop",
+  "url": "http://127.0.0.1:37539/en/host/pages/release-0-11-0-navigation_area_block-page",
+  "title": "Release 0.11.0 Navigation Area Block | Test Host Community",
+  "captured_at": "2026-04-03T22:55:00Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_content_block_roster",
+  "flow": "page_block_render",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_content_block_roster_spec.rb"
+}
