@@ -1,9 +1,9 @@
 {
   "name": "pr_1486_my_data_embedded_after",
   "device": "mobile",
-  "url": "http://127.0.0.1:38277/en/settings#my-data",
+  "url": "http://127.0.0.1:35933/en/settings#my-data",
   "title": "Settings | Test Host Community",
-  "captured_at": "2026-04-02T22:57:13Z",
+  "captured_at": "2026-04-03T00:31:38Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "person_deletion_review",
