@@ -54,6 +54,14 @@ RSpec.describe BetterTogether::AdapterRegistry do
     expect(search_adapter).to have_received(:call).with(query: 'welcome')
   end
 
+  it 'can look up a specific named adapter for direct invocation' do
+    adapter = ->(*) {}
+
+    registry.register(:llm, :ollama, adapter)
+
+    expect(registry.adapter_for(:llm, :ollama)).to eq(name: :ollama, adapter:)
+  end
+
   it 'continues dispatching remaining adapters after one failure and raises an aggregate error' do
     failing_adapter = instance_double(Proc)
     healthy_adapter = instance_double(Proc)

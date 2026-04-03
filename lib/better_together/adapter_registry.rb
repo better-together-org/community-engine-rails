@@ -43,6 +43,13 @@ module BetterTogether
       @entries[normalize_group(group)].dup
     end
 
+    def adapter_for(group, name = nil)
+      entries = adapters_for(group)
+      return entries.first if name.nil?
+
+      entries.find { |entry| entry[:name]&.to_sym == name.to_sym }
+    end
+
     def clear!(group = nil)
       return @entries.clear if group.nil?
 

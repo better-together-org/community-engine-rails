@@ -37,6 +37,57 @@ Future:
 - local Loki bridge
 - email/page/on-call integrations if needed
 
+## Queue, Cache, Throttling, and Storage
+
+Target subsystems:
+
+- `:queue`
+- `:cache`
+- `:throttling`
+- `:storage`
+
+Internal/default adapters:
+
+- Rails-native Active Job backend
+- local/file/memory cache fallbacks
+- local Active Storage disk service
+
+External thin gems:
+
+- `better_together-sidekiq`
+- `better_together-sidekiq-scheduler`
+- `better_together-redis-cache`
+- `better_together-redis-throttling`
+- `better_together-active_storage-s3-compatible`
+
+Rules:
+
+- CE must boot and run without Redis, Sidekiq, or S3
+- Redis and Sidekiq remain supported, but not required
+- jobs that require cross-process coordination must declare that requirement
+- lock-dependent or throttling-dependent behavior must fail closed when no safe adapter is available
+
+## SMTP
+
+Target subsystem: `:smtp`
+
+Internal/default adapters:
+
+- local/test/bootstrap-safe mail delivery
+- host-app bootstrap env fallback only when no platform SMTP provider is active
+
+External thin gems:
+
+- `better_together-smtp`
+- future provider-specific SMTP wrappers only when they add real value over generic SMTP
+
+Rules:
+
+- SMTP must be platform-configurable, not silently inherited from BTS defaults
+- credentials belong to platform-scoped configuration records with encrypted secrets
+- management and activation must be permission-gated
+- no secrets should be readable after creation outside explicit write/update flows
+
 ## Metrics
 
 Target subsystem: `:metrics`
@@ -112,6 +163,32 @@ Rules:
 - public content only unless explicit scoped consent exists
 - never leak private community or moderation content
 - respect robots/privacy/publication state
+
+## AI, LLM, and Embeddings
+
+Target subsystems:
+
+- `:llm`
+- `:embeddings`
+
+Internal/default adapters:
+
+- none required in CE core
+- BTS-hosted Borgberry bridge for audited local model access
+
+External thin gems:
+
+- `better_together-borgberry-llm`
+- `better_together-ruby-llm-openai`
+
+Rules:
+
+- CE should target `ruby_llm` as the provider abstraction instead of direct `ruby-openai`
+- direct OpenAI usage is transitional and should move behind a thin provider gem
+- Borgberry-mediated local Ollama access is the preferred BTS path
+- no silent fallback from audited local routing to cloud providers
+- tenant, platform, and community context must be preserved for audit and authorization
+- prompts, outputs, model identifiers, and tool usage metadata should be auditable with redaction controls
 
 ## Translation
 
@@ -191,8 +268,14 @@ If any answer is weak, the adapter should not ship.
 
 1. Extract host-app Sentry use to `better_together-sentry`
 2. Implement `better_together-borgberry-observability`
-3. Define a stable `:metrics` event payload contract
-4. Build `better_together-google-metrics`
-5. Define a stable `:publishing` payload contract
-6. Build `better_together-discourse-publishing`
-7. Design consent/policy model for corporate publishing adapters before any implementation
+3. Define stable `:queue`, `:cache`, `:throttling`, and `:storage` contracts
+4. Build `better_together-sidekiq`, `better_together-redis-cache`, and `better_together-redis-throttling`
+5. Define a stable `:smtp` contract and platform SMTP configuration model
+6. Define stable `:llm` and `:embeddings` payload contracts around `ruby_llm`
+7. Build `better_together-borgberry-llm`
+8. Build `better_together-ruby-llm-openai`
+9. Define a stable `:metrics` event payload contract
+10. Build `better_together-google-metrics`
+11. Define a stable `:publishing` payload contract
+12. Build `better_together-discourse-publishing`
+13. Design consent/policy model for corporate publishing adapters before any implementation
