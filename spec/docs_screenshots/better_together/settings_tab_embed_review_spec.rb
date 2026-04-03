@@ -47,6 +47,26 @@ RSpec.describe 'Documentation screenshots for settings tab embeds', :docs_screen
     expect(result[:mobile]).to end_with("docs/screenshots/mobile/#{slug}.png")
   end
 
+  it 'captures embedded account tab screenshots with deletion UI' do
+    manager = BetterTogether::User.find_by!(email: 'manager@example.test')
+    create(:better_together_person_deletion_request, person: manager.person)
+
+    slug = ENV.fetch('EMBEDDED_ACCOUNT_DELETION_SLUG', 'settings_account_deletion_embedded')
+
+    result = capture_settings_tab(
+      slug:,
+      tab_selector: '#account-tab',
+      frame_selector: 'turbo-frame#account-settings'
+    ) do
+      expect(page).to have_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
+      expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.submit'))
+      expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel'))
+    end
+
+    expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{slug}.png")
+    expect(result[:mobile]).to end_with("docs/screenshots/mobile/#{slug}.png")
+  end
+
   private
 
   def screenshot_metadata
