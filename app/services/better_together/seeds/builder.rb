@@ -187,7 +187,7 @@ module BetterTogether
           identifier: identifier,
           version:,
           created_by: created_by,
-          creator_id:,
+          creator_id: normalized_creator_id,
           seeded_at: created_at,
           seedable_type: seedable_type,
           seedable_id: seedable_id,
@@ -237,6 +237,12 @@ module BetterTogether
           seedable_type:,
           seedable_id:
         }
+      end
+
+      def normalized_creator_id
+        return unless creator_id.present?
+
+        ::BetterTogether::Person.where(id: creator_id).pick(:id)
       end
     end
   end

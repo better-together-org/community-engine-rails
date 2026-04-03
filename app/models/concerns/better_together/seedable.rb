@@ -34,7 +34,7 @@ module BetterTogether
     )
       ::BetterTogether::Seeds::Builder.call(
         subject: self,
-        profile: creator_id.present? && creator_id.to_s == id.to_s ? 'personal_export' : 'manual_export',
+        profile: person_self_export?(creator_id) ? 'personal_export' : 'manual_export',
         context: { description: seed_description },
         persist: true,
         creator_id:,
@@ -45,6 +45,12 @@ module BetterTogether
 
     def export_as_seed_yaml(**)
       export_as_seed(**).deep_stringify_keys.to_yaml
+    end
+
+    private
+
+    def person_self_export?(creator_id)
+      is_a?(::BetterTogether::Person) && creator_id.present? && creator_id.to_s == id.to_s
     end
 
     class_methods do

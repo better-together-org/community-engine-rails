@@ -25,4 +25,20 @@ RSpec.describe BetterTogether::PersonDeletionInventory do
     expect(keys).to include('BetterTogether::PersonDataExport#person')
     expect(keys).to include('BetterTogether::Message#sender')
   end
+
+  it 'splits generic creatable creator entries by concrete model' do
+    page = create(:better_together_page, creator: person)
+    BetterTogether::Authorship.create!(author: person, authorable: page, creator: person)
+    create(:better_together_seed, :created_by_person, creator: person)
+
+    inventory = described_class.call(person:)
+    entries = inventory.fetch(:entries).index_by { |entry| entry.fetch(:key) }
+
+    expect(entries.fetch('BetterTogether::Creatable#creator:BetterTogether::Authorship')).to include(
+      model: 'BetterTogether::Authorship'
+    )
+    expect(entries.fetch('BetterTogether::Creatable#creator:BetterTogether::Seed')).to include(
+      model: 'BetterTogether::Seed'
+    )
+  end
 end

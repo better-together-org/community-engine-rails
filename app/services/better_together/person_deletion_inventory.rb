@@ -21,7 +21,7 @@ module BetterTogether
         generated_at: Time.current.iso8601,
         person_id: person.id,
         user_id: user&.id,
-        entries: manifest_entries.filter_map { |entry| snapshot_entry(entry) }
+        entries: manifest_entries.flat_map { |entry| snapshot_entries(entry) }
       }
     end
 
@@ -31,15 +31,30 @@ module BetterTogether
       BetterTogether::PersonDeletionManifest.entries
     end
 
-    def snapshot_entry(entry)
+    def snapshot_entries(entry)
       records = resolve_records(entry)
-      return if records.empty?
+      return [] if records.empty?
 
+      if entry.fetch('kind') == 'creatable_creator_reference'
+        records.group_by(&:class).sort_by { |klass, _| klass.name }.map do |klass, grouped_records|
+          build_entry(
+            entry,
+            grouped_records,
+            key: "#{entry.fetch('key')}:#{klass.name}",
+            model: klass.name
+          )
+        end
+      else
+        [build_entry(entry, records)]
+      end
+    end
+
+    def build_entry(entry, records, key: entry.fetch('key'), model: records.first.class.name)
       {
-        key: entry.fetch('key'),
+        key:,
         action: entry.fetch('action'),
         kind: entry.fetch('kind'),
-        model: records.first.class.name,
+        model:,
         count: records.size,
         ids: records.map { |record| record.id.to_s },
         concern: entry['concern'],
