@@ -1,9 +1,9 @@
 {
   "name": "release_0_11_0_video_block_editor",
   "device": "desktop",
-  "url": "http://127.0.0.1:37539/en/host/pages/release-0-11-0-video_block-editor-page/edit",
+  "url": "http://127.0.0.1:46573/en/host/pages/release-0-11-0-video_block-editor-page/edit",
   "title": "Edit Release 0.11.0 Video Editor | Pages | Test Host Community",
-  "captured_at": "2026-04-03T22:55:14Z",
+  "captured_at": "2026-04-03T23:22:25Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_content_block_roster",

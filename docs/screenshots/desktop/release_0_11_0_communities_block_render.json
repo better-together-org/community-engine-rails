@@ -1,9 +1,9 @@
 {
   "name": "release_0_11_0_communities_block_render",
   "device": "desktop",
-  "url": "http://127.0.0.1:37539/en/host/pages/release-0-11-0-communities_block-page",
+  "url": "http://127.0.0.1:46573/en/host/pages/release-0-11-0-communities_block-page",
   "title": "Release 0.11.0 Communities Block | Test Host Community",
-  "captured_at": "2026-04-03T22:54:50Z",
+  "captured_at": "2026-04-03T23:22:02Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_content_block_roster",

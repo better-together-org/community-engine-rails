@@ -284,16 +284,43 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       login_for_docs_capture
       visit better_together.edit_page_path(editor_page.slug, locale: I18n.default_locale)
 
+      focus_page_blocks_editor
+
       within('.page-block-fields:first-of-type') do
         expect(page).to have_text(definition[:label])
         expect(page).to have_text('Identifier')
         expect(page).to have_css('input, select, textarea', minimum: 2, visible: :all)
       end
-
-      page.execute_script('window.scrollTo(0, document.querySelector(".page-block-fields").getBoundingClientRect().top + window.scrollY - 40)')
     end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+  # rubocop:disable Metrics/MethodLength
+  def focus_page_blocks_editor
+    expect(page).to have_selector('#blocks-list .page-block-fields', wait: 10)
+    expect(page).to have_selector('h2', text: 'Page Blocks', wait: 10)
+
+    page.execute_script(<<~JS)
+      (() => {
+        const heading = Array.from(document.querySelectorAll('h2')).find((node) => node.textContent.trim() === 'Page Blocks');
+        const firstBlock = document.querySelector('#blocks-list .page-block-fields');
+        if (!heading || !firstBlock) return;
+
+        const headingTop = heading.getBoundingClientRect().top + window.scrollY;
+        const blockTop = firstBlock.getBoundingClientRect().top + window.scrollY;
+        const target = Math.max(0, headingTop - 24);
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+        const formHeight = Math.max(heading.offsetHeight + (blockTop - headingTop) + firstBlock.offsetHeight + 24, 0);
+
+        window.scrollTo(0, target);
+
+        if (formHeight > viewportHeight) {
+          firstBlock.style.scrollMarginTop = '4.5rem';
+        }
+      })();
+    JS
+  end
+  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def capture_render_example(definition)
