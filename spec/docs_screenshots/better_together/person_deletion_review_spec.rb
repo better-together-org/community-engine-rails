@@ -126,9 +126,7 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
       expect(page).to have_text(I18n.t('better_together.settings.index.my_data.title'))
       expect(page).to have_text(I18n.t('better_together.settings.index.my_data.exports.title'))
       expect(page).to have_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
-      expect(page).to have_text(I18n.t('better_together.settings.index.my_data.seeds.title'))
       expect(page).to have_link(I18n.t('better_together.settings.index.my_data.exports.download'))
-      expect(page).to have_link(I18n.t('better_together.settings.index.my_data.seeds.view'))
       expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel'))
     end
 
@@ -158,10 +156,8 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
       expect(page).to have_css('#my-data.show.active', wait: 10)
 
       within('turbo-frame#my-data-settings') do
-        expect(page).to have_text(I18n.t('better_together.settings.index.my_data.title'))
         expect(page).to have_text(I18n.t('better_together.settings.index.my_data.exports.title'))
         expect(page).to have_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
-        expect(page).to have_text(I18n.t('better_together.settings.index.my_data.seeds.title'))
         expect(page).to have_button(I18n.t('better_together.settings.index.my_data.deletion.cancel'))
       end
     end
@@ -170,55 +166,6 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
     expect(embedded_my_data_result[:mobile]).to end_with("docs/screenshots/mobile/#{embedded_my_data_slug}.png")
 
     next unless ENV['CAPTURE_SEED_ARCHITECTURE'] == '1'
-
-    my_data_seeds_slug = ENV.fetch('MY_DATA_SEEDS_SLUG', 'person_deletion_my_data_seeds')
-    my_data_seeds_result = BetterTogether::CapybaraScreenshotEngine.capture(
-      my_data_seeds_slug,
-      device: :both,
-      metadata: {
-        locale: I18n.default_locale,
-        role: 'platform_manager',
-        feature_set: 'person_deletion_review',
-        source_spec: self.class.metadata[:file_path]
-      }
-    ) do
-      capybara_login_as_platform_manager
-      visit settings_my_data_path(locale: I18n.default_locale)
-
-      scroll_to_heading!(I18n.t('better_together.settings.index.my_data.seeds.title'))
-      expect(page).to have_link(I18n.t('better_together.settings.index.my_data.seeds.view'))
-      expect(page).to have_text(seed_artifacts[:seed].identifier)
-    end
-
-    expect(my_data_seeds_result[:desktop]).to end_with("docs/screenshots/desktop/#{my_data_seeds_slug}.png")
-    expect(my_data_seeds_result[:mobile]).to end_with("docs/screenshots/mobile/#{my_data_seeds_slug}.png")
-
-    embedded_seed_slug = ENV.fetch('EMBEDDED_MY_DATA_SEEDS_SLUG', 'person_deletion_my_data_seeds_embedded')
-    embedded_seed_result = BetterTogether::CapybaraScreenshotEngine.capture(
-      embedded_seed_slug,
-      device: :both,
-      metadata: {
-        locale: I18n.default_locale,
-        role: 'platform_manager',
-        feature_set: 'person_deletion_review',
-        source_spec: self.class.metadata[:file_path]
-      }
-    ) do
-      capybara_login_as_platform_manager
-      visit settings_path(locale: I18n.default_locale)
-
-      find('#my-data-tab', wait: 10).click
-      within('turbo-frame#my-data-settings') do
-        expect(page).to have_text(I18n.t('better_together.settings.index.my_data.seeds.title'))
-        expect(page).to have_link(I18n.t('better_together.settings.index.my_data.seeds.view'))
-      end
-
-      scroll_to_heading!(I18n.t('better_together.settings.index.my_data.seeds.title'))
-      expect(page).to have_text(seed_artifacts[:seed].identifier)
-    end
-
-    expect(embedded_seed_result[:desktop]).to end_with("docs/screenshots/desktop/#{embedded_seed_slug}.png")
-    expect(embedded_seed_result[:mobile]).to end_with("docs/screenshots/mobile/#{embedded_seed_slug}.png")
 
     seed_index_slug = ENV.fetch('PERSON_SEEDS_INDEX_SLUG', 'person_deletion_person_seeds_index')
     seed_index_result = BetterTogether::CapybaraScreenshotEngine.capture(

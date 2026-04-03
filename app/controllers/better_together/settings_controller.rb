@@ -42,7 +42,6 @@ module BetterTogether
     def my_data
       @person_data_exports = @person.person_data_exports.with_attached_export_file.latest_first.limit(10)
       @person_deletion_requests = @person.person_deletion_requests.latest_first.limit(10)
-      @personal_seeds = BetterTogether::Seed.personal_exports_for(@person).latest_first.limit(10)
 
       render 'better_together/my_data/show', layout: false
     end
