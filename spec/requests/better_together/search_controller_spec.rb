@@ -105,6 +105,100 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
     end
 
+    context 'when the backend returns mixed-visibility records', :no_auth do
+      let!(:public_post) do
+        create(
+          :better_together_post,
+          title: 'Borgberry Public Post',
+          privacy: 'public',
+          published_at: 1.day.ago
+        )
+      end
+
+      let!(:private_post) do
+        create(
+          :better_together_post,
+          title: 'Borgberry Private Post',
+          privacy: 'private',
+          published_at: 1.day.ago
+        )
+      end
+
+      let!(:scheduled_page) do
+        create(
+          :better_together_page,
+          title: 'Borgberry Scheduled Page',
+          privacy: 'public',
+          published_at: 1.day.from_now
+        )
+      end
+
+      before do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [public_post, private_post, scheduled_page],
+            suggestions: ['borgberry private post'],
+            status: :ok,
+            backend: :elasticsearch
+          )
+        )
+      end
+
+      it 'renders only records visible to the current visitor and suppresses suggestions' do
+        get better_together.search_path(locale:), params: { q: 'borgberry' }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Borgberry Public Post')
+        expect(response.body).not_to include('Borgberry Private Post')
+        expect(response.body).not_to include('Borgberry Scheduled Page')
+        expect(response.body).not_to include('Did you mean?')
+        expect(response.body).not_to include('borgberry private post')
+      end
+    end
+
+    context 'when the backend returns the current user private content', :as_user do
+      let(:user) { BetterTogether::User.find_by!(email: 'user@example.test') }
+      let!(:own_private_post) do
+        create(
+          :better_together_post,
+          title: 'My Borgberry Draft',
+          privacy: 'private',
+          published_at: 1.day.ago,
+          creator: user.person,
+          author: user.person
+        )
+      end
+
+      let!(:other_private_post) do
+        create(
+          :better_together_post,
+          title: 'Someone Else Borgberry Draft',
+          privacy: 'private',
+          published_at: 1.day.ago
+        )
+      end
+
+      before do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [own_private_post, other_private_post],
+            suggestions: ['someone else borgberry draft'],
+            status: :ok,
+            backend: :elasticsearch
+          )
+        )
+      end
+
+      it 'keeps authorized private records while filtering unauthorized ones' do
+        get better_together.search_path(locale:), params: { q: 'borgberry' }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('My Borgberry Draft')
+        expect(response.body).not_to include('Someone Else Borgberry Draft')
+        expect(response.body).not_to include('Did you mean?')
+      end
+    end
+
     context 'when Elasticsearch raises an error' do
       before do
         allow(backend).to receive(:search).and_return(

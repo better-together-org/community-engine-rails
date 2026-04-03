@@ -1,0 +1,12 @@
+{
+  "name": "pr_1490_hero_render_before",
+  "device": "desktop",
+  "url": "http://127.0.0.1:45867/en/host/pages/pr-1490-hero-docs-page",
+  "title": "PR 1490 Hero Docs Page | Test Host Community",
+  "captured_at": "2026-04-03T01:08:08Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "block_editor_contract_review",
+  "flow": "hero_block_render",
+  "source_spec": "./spec/docs_screenshots/better_together/block_editor_contract_review_spec.rb"
+}

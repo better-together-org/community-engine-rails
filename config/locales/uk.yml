@@ -929,6 +929,15 @@ uk:
           open_in_new_tab: Відкрити вбудований вміст у новій вкладці
         events_block:
           empty: Немає подій для відображення.
+        hero:
+          editor:
+            background: Тло
+            cta_button: Кнопка заклику до дії
+            cta_url_invalid: Укажіть дійсну URL-адресу, що починається з http:// або
+              https://.
+            heading_color: Колір заголовка
+            overlay_color: Колір накладання
+            paragraph_color: Колір абзацу
         iframe_block:
           csp_help: Якщо це вбудовування не дозволене для поточної платформи, Community
             Engine покаже видиме повідомлення з підказкою замість порожнього iframe.
@@ -3572,6 +3581,8 @@ uk:
         для продовження.
   devise_omniauth_callbacks:
     failure: Виникла проблема з входом через %{kind}. %{reason}
+    generic_failure: Виникла проблема під час входу. Будь ласка, зареєструйтеся або
+      спробуйте ще раз пізніше.
     success: Успішно автентифіковано з облікового запису %{kind}.
   doorkeeper:
     errors:

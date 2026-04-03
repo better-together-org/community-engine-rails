@@ -7,6 +7,7 @@ module BetterTogether
     include PublicActivity::StoreController
     include Pundit::Authorization
     include InvitationSessionManagement
+    include Rails.application.routes.mounted_helpers
 
     protect_from_forgery with: :exception
 
@@ -37,6 +38,7 @@ module BetterTogether
 
     helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
                   :turbo_native_app?, :view_preference
+    helper Rails.application.routes.mounted_helpers
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -267,11 +269,9 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     def error_reporting(exception)
-      return unless defined?(::Sentry)
-
-      ::Sentry.capture_exception(exception)
+      BetterTogether.report_error(exception, context: error_reporting_context)
     rescue StandardError => e
-      Rails.logger.error("[PRODUCTION][SentryCaptureFailure] #{e.class}: #{e.message}")
+      Rails.logger.error("[PRODUCTION][ErrorReportingFailure] #{e.class}: #{e.message}")
     end
 
     def log_exception_details(exception, prefix:)
@@ -286,6 +286,17 @@ module BetterTogether
       "request_id=#{request.request_id} method=#{request.request_method} " \
         "path=#{request.fullpath} controller=#{controller_name} action=#{action_name} " \
         "user_id=#{current_user&.id || 'anonymous'}"
+    end
+
+    def error_reporting_context
+      {
+        request_id: request.request_id,
+        request_method: request.request_method,
+        path: request.fullpath,
+        controller: controller_name,
+        action: action_name,
+        user_id: current_user&.id || 'anonymous'
+      }
     end
 
     # Extract language from request header

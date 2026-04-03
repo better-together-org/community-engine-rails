@@ -115,6 +115,10 @@ module BetterTogether
              class_name: 'BetterTogether::StorageConfiguration',
              dependent: :destroy
 
+    has_many :robots,
+             class_name: 'BetterTogether::Robot',
+             dependent: :destroy
+
     belongs_to :active_storage_configuration,
                class_name: 'BetterTogether::StorageConfiguration',
                foreign_key: :storage_configuration_id,
@@ -174,12 +178,12 @@ module BetterTogether
       primary_platform_domain&.url || host_url
     end
 
-    # Return the routing URL for this platform (used by metrics tracking)
-    # Returns nil for new records that haven't been persisted yet
-    def url
+    # Route URL for the platform resource within the current host app.
+    # Keep the persisted `url` column available for the platform host URL.
+    def route_url(locale: I18n.locale)
       return nil unless persisted?
 
-      BetterTogether::Engine.routes.url_helpers.platform_url(self, locale: I18n.locale)
+      BetterTogether::Engine.routes.url_helpers.platform_url(self, locale:)
     end
 
     def primary_community_extra_attrs

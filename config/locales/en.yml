@@ -935,6 +935,14 @@ en:
           open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        hero:
+          editor:
+            background: Background
+            cta_button: CTA Button
+            cta_url_invalid: Please provide a valid URL starting with http:// or https://.
+            heading_color: Heading Color
+            overlay_color: Overlay Color
+            paragraph_color: Paragraph Color
         iframe_block:
           csp_help: If this embed is not allowlisted for the current platform, Community
             Engine shows a visible guidance message instead of a blank iframe.
@@ -3513,6 +3521,8 @@ en:
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   devise_omniauth_callbacks:
     failure: There was a problem signing you in through %{kind}. %{reason}
+    generic_failure: There was a problem signing you in. Please register or try signing
+      in later.
     success: Successfully authenticated from %{kind} account.
   doorkeeper:
     errors:

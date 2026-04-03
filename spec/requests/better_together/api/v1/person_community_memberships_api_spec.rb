@@ -16,6 +16,8 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
 
   let(:community) { create(:better_together_community) }
   let(:role) { BetterTogether::Role.find_by(identifier: 'community_member') || create(:better_together_role) }
+  let(:target_person) { regular_user.person }
+  let!(:community_manager_membership) { make_community_organizer(manager_user, community) }
 
   describe 'GET /api/v1/person_community_memberships' do
     let(:url) { '/api/v1/person_community_memberships' }
@@ -80,6 +82,89 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
         attrs = json['data']['attributes']
 
         expect(attrs).to have_key('status')
+      end
+    end
+  end
+
+  describe 'POST /api/v1/person_community_memberships' do
+    let(:url) { '/api/v1/person_community_memberships' }
+    let(:payload) do
+      {
+        data: {
+          type: 'person_community_memberships',
+          attributes: { status: 'active' },
+          relationships: {
+            member: { data: { type: 'people', id: target_person.id } },
+            joinable: { data: { type: 'communities', id: community.id } },
+            role: { data: { type: 'roles', id: role.id } }
+          }
+        }
+      }.to_json
+    end
+
+    context 'when authenticated as platform manager' do
+      before { post url, params: payload, headers: manager_headers }
+
+      it 'returns created status' do
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'returns the created membership' do
+        json = JSON.parse(response.body)
+        expect(json['data']['type']).to eq('person_community_memberships')
+        expect(json['data']['attributes']['status']).to eq('active')
+      end
+    end
+
+    context 'when not authenticated' do
+      before { post url, params: payload, headers: jsonapi_headers }
+
+      it 'returns unauthorized status' do
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
+  describe 'GET /api/v1/people/:person_id/relationships/communities' do
+    let!(:membership) do
+      create(:better_together_person_community_membership,
+             member: target_person, joinable: community, role: role)
+    end
+    let(:url) { "/api/v1/people/#{target_person.id}/relationships/communities" }
+
+    context 'when authenticated' do
+      before { get url, headers: manager_headers }
+
+      it 'returns success status' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns community resource linkage' do
+        json = JSON.parse(response.body)
+        ids = Array(json['data']).map { |d| d['id'] }
+        expect(ids).to include(community.id)
+      end
+    end
+  end
+
+  describe 'GET /api/v1/communities/:community_id/relationships/members' do
+    let!(:membership) do
+      create(:better_together_person_community_membership,
+             member: target_person, joinable: community, role: role)
+    end
+    let(:url) { "/api/v1/communities/#{community.id}/relationships/members" }
+
+    context 'when authenticated' do
+      before { get url, headers: manager_headers }
+
+      it 'returns success status' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns person resource linkage' do
+        json = JSON.parse(response.body)
+        ids = Array(json['data']).map { |d| d['id'] }
+        expect(ids).to include(target_person.id)
       end
     end
   end

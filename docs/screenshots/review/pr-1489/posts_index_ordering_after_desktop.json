@@ -1,0 +1,11 @@
+{
+  "name": "posts_index_ordering",
+  "device": "desktop",
+  "url": "http://127.0.0.1:41799/en/posts",
+  "title": "Posts | Test Host Community",
+  "captured_at": "2026-04-02T20:54:02Z",
+  "locale": "en",
+  "role": "guest",
+  "feature_set": "posts",
+  "source_spec": "./spec/docs_screenshots/better_together/posts_index_ordering_spec.rb"
+}

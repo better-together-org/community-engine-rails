@@ -46,8 +46,10 @@ module BetterTogether
     end
 
     def assign_search_results(search_results)
-      @results = Kaminari.paginate_array(search_results.records).page(params[:page]).per(10)
-      @suggestions = search_results.suggestions
+      @results = Kaminari.paginate_array(visible_search_records(search_results.records)).page(params[:page]).per(10)
+      # Backend term suggestions are not privacy-aware and can leak unpublished or
+      # private titles. Keep them disabled until the search backend can scope them.
+      @suggestions = []
       @search_backend = search_results.backend
       @search_status = search_results.status
     end
@@ -56,6 +58,25 @@ module BetterTogether
       return unless search_results.status == :unreachable
 
       Rails.logger.warn("Search error: #{search_results.error}")
+    end
+
+    def visible_search_records(records)
+      Array(records).select { |record| search_record_visible?(record) }
+    end
+
+    def search_record_visible?(record)
+      return public_search_record?(record) if current_user.nil?
+
+      policy(record).show?
+    rescue Pundit::Error, NoMethodError
+      false
+    end
+
+    def public_search_record?(record)
+      privacy_visible = !record.respond_to?(:privacy_public?) || record.privacy_public?
+      publish_visible = !record.respond_to?(:published?) || record.published?
+
+      privacy_visible && publish_visible
     end
   end
 end

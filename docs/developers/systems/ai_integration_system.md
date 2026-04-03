@@ -2,7 +2,30 @@
 
 ## Overview
 
-The Better Together Community Engine includes a comprehensive AI integration system primarily focused on automated content translation using OpenAI's GPT models. The system provides both real-time translation capabilities through the user interface and batch processing tools for large-scale content localization.
+The Better Together Community Engine includes a comprehensive AI integration system primarily focused on automated content translation. The current implementation now routes through CE robots, the adapter registry, and `ruby_llm`, so CE can support audited local and remote model backends without requiring any one external provider in the core gem.
+
+## Architecture Status
+
+Current state:
+
+- CE defines `llm` and `embeddings` subsystem groups in the adapter registry
+- CE bots resolve a `BetterTogether::Robot` and dispatch through `ruby_llm`
+- translation is the main AI workflow currently implemented
+- provider extraction is still in progress, so OpenAI-compatible credentials remain the most complete configured path today
+
+Target state:
+
+- CE defines `llm` and `embeddings` subsystem groups in the adapter registry
+- CE uses `ruby_llm` as the abstraction layer for model calls
+- direct OpenAI integration moves into a thin provider gem
+- Borgberry becomes the preferred BTS-hosted audited path for local Ollama execution
+
+Guardrails for the target architecture:
+
+- no external LLM provider is required by CE core
+- no silent fallback from local audited Borgberry routing to a cloud provider
+- platform, tenant, and community context must be preserved for authorization and audit
+- prompts, responses, model identifiers, and usage metadata must be auditable with redaction controls when needed
 
 ## Process Flow Diagram
 
@@ -10,10 +33,10 @@ The Better Together Community Engine includes a comprehensive AI integration sys
 graph TB
     %% AI System Configuration
     subgraph "AI System Configuration"
-        A[Environment Setup] --> B{OPENAI_ACCESS_TOKEN Set?}
-        B -->|Yes| C[Initialize OpenAI Client]
+        A[Environment Setup] --> B{LLM Provider Configured?}
+        B -->|Yes| C[Initialize RubyLLM Adapter]
         B -->|No| D[Disable AI Features]
-        C --> E[Configure GPT Model]
+        C --> E[Resolve Robot and Model]
         E --> F[AI Features Available]
     end
 
@@ -35,8 +58,8 @@ graph TB
         P[Receive Translation Request] --> Q[Pre-process Content]
         Q --> R[Extract Trix Attachments]
         R --> S[Create Placeholder Map]
-        S --> T[OpenAI API Call]
-        T --> U[Process GPT Response]
+        S --> T[LLM Adapter Call]
+        T --> U[Process Model Response]
         U --> V[Restore Attachments]
         V --> W[Calculate Token Usage]
         W --> X[Estimate Cost]
@@ -123,7 +146,7 @@ graph TB
 
 The AI integration system operates through several interconnected processes:
 
-**System Configuration**: Automatic detection and setup of OpenAI integration based on environment variables.
+**System Configuration**: Automatic detection and setup of the configured LLM provider and robot based on environment variables and persisted robot records.
 
 **Real-time Translation**: User-initiated translations through the web interface with immediate feedback.
 
@@ -141,18 +164,18 @@ The AI integration system operates through several interconnected processes:
 
 #### 1. ApplicationBot (`app/robots/better_together/application_bot.rb`)
 
-**Purpose**: Base class for all AI-powered bots providing shared OpenAI client configuration.
+**Purpose**: Base class for all AI-powered bots providing shared robot resolution and `ruby_llm` dispatch helpers.
 
 **Key Features**:
-- Automatic OpenAI client initialization
-- Configurable model selection (defaults to GPT-4O-mini)
-- Environment variable validation
+- Automatic robot resolution
+- Configurable provider/model selection
+- Environment variable validation for provider-specific fallbacks
 - Error handling for missing credentials
 
 **Configuration**:
 ```ruby
-# Default model: 'gpt-4o-mini-2024-07-18'
-bot = ApplicationBot.new(model: 'gpt-3.5-turbo')
+# Default robot/model resolution
+bot = ApplicationBot.new(model: 'gpt-4.1-mini')
 ```
 
 #### 2. TranslationBot (`app/robots/better_together/translation_bot.rb`)
@@ -161,7 +184,7 @@ bot = ApplicationBot.new(model: 'gpt-3.5-turbo')
 
 **Key Features**:
 - **Trix Attachment Processing**: Preserves rich text editor attachments during translation
-- **Token Counting**: Accurate cost estimation using OpenAI's token counting
+- **Token Counting**: Provider/model-aware usage accounting
 - **Usage Logging**: Automatic logging of all translation requests
 - **Multi-locale Support**: Handles translation between any supported locale pair
 - **Content Preprocessing**: Intelligent handling of HTML and rich text content
@@ -169,7 +192,7 @@ bot = ApplicationBot.new(model: 'gpt-3.5-turbo')
 **Translation Workflow**:
 1. **Content Extraction**: Extract source content from various field types
 2. **Attachment Processing**: Replace Trix attachments with placeholders
-3. **API Communication**: Submit processed content to OpenAI
+3. **LLM Dispatch**: Submit processed content through the configured robot/provider
 4. **Response Processing**: Parse and validate translation response
 5. **Restoration**: Replace placeholders with original attachments
 6. **Cost Calculation**: Estimate usage costs based on token consumption
@@ -256,14 +279,13 @@ POST /translations/translate
 
 **Components**:
 - **Language Tab Buttons**: Navigation between locales with status indicators
-- **AI Translation Dropdown**: Contextual translation options (only when API key present)
+- **AI Translation Dropdown**: Contextual translation options (only when a translation robot resolves to an available provider)
 - **Status Indicators**: Visual feedback for translation completeness
 - **Responsive Layout**: Bootstrap-integrated design
 
 **Conditional Rendering**:
 ```ruby
-# AI features only shown when OpenAI is configured
-if ENV['OPENAI_ACCESS_TOKEN']
+if BetterTogether.llm_available?(identifier: 'translation', platform: Current.platform)
   render_translation_dropdown(locale, unique_locale_attribute, attribute, base_url, translation_present)
 end
 ```
@@ -301,35 +323,33 @@ rake better_together:ai_translations:from_en:nav_item_attrs
 
 #### Required Configuration
 ```bash
-# OpenAI API access token (required for AI features)
-OPENAI_ACCESS_TOKEN=sk-...your-api-key
+BETTER_TOGETHER_LLM_PROVIDER=openai
+BETTER_TOGETHER_LLM_MODEL=gpt-4.1-mini
+OPENAI_API_KEY=sk-...your-api-key
 ```
 
 #### Optional Configuration
 ```bash
-# Model selection (defaults to gpt-4o-mini-2024-07-18)
-OPENAI_MODEL=gpt-3.5-turbo
+# OpenAI-compatible base override
+# OPENAI_API_BASE=https://your-openai-compatible-endpoint.example/v1
 
-# API endpoint customization (uses OpenAI default)
-OPENAI_BASE_URL=https://api.openai.com/v1
+# Future Borgberry/Ollama routing is provided by the Borgberry adapter gem.
 ```
 
-### OpenAI Client Configuration (`config/initializers/openai.rb`)
+### RubyLLM Configuration (`config/initializers/ruby_llm.rb`)
 ```ruby
-if ENV['OPENAI_ACCESS_TOKEN']
-  OpenAI.configure do |config|
-    config.access_token = ENV.fetch('OPENAI_ACCESS_TOKEN')
-    config.log_errors = Rails.env.development?
-  end
+RubyLLM.configure do |config|
+  config.openai_api_key = ENV.fetch('OPENAI_API_KEY', nil) || ENV.fetch('OPENAI_ACCESS_TOKEN', nil)
+  config.openai_api_base = ENV.fetch('OPENAI_API_BASE', nil)
 end
 ```
 
 ### Dependency Management
-The system uses the `ruby-openai` gem for API integration:
+The system uses the `ruby_llm` gem as the provider abstraction layer:
 
 ```ruby
 # better_together.gemspec
-spec.add_dependency 'ruby-openai'
+spec.add_dependency 'ruby_llm'
 ```
 
 ## Cost Management
@@ -376,7 +396,7 @@ BetterTogether::Ai::Log::Translation
 ## Security Considerations
 
 ### API Key Management
-- **Environment Variables**: Store OpenAI API key securely
+- **Environment Variables**: Store provider credentials securely
 - **Access Control**: Limit translation features to authenticated users
 - **Rate Limiting**: Consider implementing rate limits for API calls
 - **Error Handling**: Prevent API key exposure in error messages
@@ -446,7 +466,7 @@ end
 - **Error Handling**: Various failure scenarios
 
 ### Integration Tests
-- **API Communication**: OpenAI service integration
+- **LLM Dispatch**: Provider adapter integration
 - **Logging System**: Translation log creation and retrieval
 - **Controller Actions**: HTTP endpoint functionality
 - **Background Jobs**: Asynchronous logging behavior
@@ -460,7 +480,8 @@ end
 ### Test Configuration
 ```ruby
 # Test environment setup
-ENV['OPENAI_ACCESS_TOKEN'] = 'test_key'
+ENV['BETTER_TOGETHER_LLM_PROVIDER'] = 'openai'
+ENV['OPENAI_API_KEY'] = 'test_key'
 
 # Mock API responses for testing
 WebMock.stub_request(:post, /api\.openai\.com/)
@@ -494,7 +515,7 @@ config.log_errors = false
 ## Future Enhancements
 
 ### Planned Features
-- **Multiple AI Providers**: Support for Google Translate, DeepL, etc.
+- **Multiple AI Providers**: Support for Borgberry/Ollama, OpenAI-compatible endpoints, and other `ruby_llm` providers
 - **Translation Memory**: Leverage previous translations for consistency
 - **Batch Translation UI**: Web interface for bulk operations
 - **Quality Scoring**: AI translation quality assessment
@@ -523,7 +544,7 @@ config.log_errors = false
 
 #### 1. AI Features Not Visible
 **Symptoms**: No AI translate dropdown appears
-**Solution**: Verify `OPENAI_ACCESS_TOKEN` environment variable is set
+**Solution**: Verify the translation robot resolves and that the configured provider credentials are present
 
 #### 2. Translation Requests Failing
 **Symptoms**: API errors in logs, empty translation responses
@@ -548,7 +569,8 @@ config.log_errors = false
 ### Debug Commands
 ```ruby
 # Check AI system configuration
-BetterTogether::ApplicationBot.new.client.inspect
+bot = BetterTogether::ApplicationBot.new
+{ provider: bot.provider, model: bot.model, robot: bot.robot&.identifier }
 
 # Review recent translation activity
 BetterTogether::Ai::Log::Translation.recent.limit(10)
