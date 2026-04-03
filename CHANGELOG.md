@@ -33,7 +33,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - `BlockResource` base model and 19 concrete block type models: text, image, video, audio, map, embed, CTA, divider, accordion, checklist, mermaid diagram, and more (#1376)
 - MCP tools for block management (create, update, delete, reorder)
 - JSON:API endpoints for content blocks and page blocks (#1373)
-- 12 additional content block types added in follow-up (#1350)
+- 12 additional content block types implemented in follow-up, with page-builder rollout deferred until a 0.11.x patch review (#1350)
 - Missing `blocks/new/_mermaid_diagram` partial restored (#1349)
 
 #### Storage Adapter

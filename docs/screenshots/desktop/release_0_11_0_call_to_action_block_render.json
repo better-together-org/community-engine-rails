@@ -1,9 +1,9 @@
 {
   "name": "release_0_11_0_call_to_action_block_render",
   "device": "desktop",
-  "url": "http://127.0.0.1:46573/en/host/pages/release-0-11-0-call_to_action_block-page",
+  "url": "http://127.0.0.1:40941/en/host/pages/release-0-11-0-call_to_action_block-page",
   "title": "Release 0.11.0 Call to Action Block | Test Host Community",
-  "captured_at": "2026-04-03T23:21:56Z",
+  "captured_at": "2026-04-03T23:33:42Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_content_block_roster",

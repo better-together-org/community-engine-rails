@@ -7,7 +7,7 @@ module BetterTogether
       include ::BetterTogether::Content::ResourceBlockAttributes
 
       def self.content_addable?
-        true
+        false
       end
     end
   end

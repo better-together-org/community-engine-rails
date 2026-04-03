@@ -20,7 +20,7 @@ module BetterTogether
       end
 
       def self.content_addable?
-        true
+        false
       end
 
       def self.extra_permitted_attributes

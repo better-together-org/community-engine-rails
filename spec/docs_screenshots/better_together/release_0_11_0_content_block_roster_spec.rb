@@ -141,17 +141,21 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
     expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
   end
 
+  # rubocop:disable Metrics/AbcSize
   def capture_add_block_list
     capture_docs_screenshot('release_0_11_0_content_block_add_list', flow: 'page_block_add_list') do
       login_for_docs_capture
       visit better_together.edit_page_path(chooser_page.slug, locale: I18n.default_locale)
       click_button 'Add Block'
 
-      block_definitions.each do |definition|
-        expect(page).to have_link(definition[:label])
+      within('#available-block-types') do
+        block_definitions.each do |definition|
+          expect(page).to have_no_link(definition[:label])
+        end
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   # rubocop:disable Metrics/MethodLength
   def block_definitions

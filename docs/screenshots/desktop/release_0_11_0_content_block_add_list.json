@@ -1,9 +1,9 @@
 {
   "name": "release_0_11_0_content_block_add_list",
   "device": "desktop",
-  "url": "http://127.0.0.1:46573/en/host/pages/release-0-11-0-content-block-picker/edit",
+  "url": "http://127.0.0.1:40941/en/host/pages/release-0-11-0-content-block-picker/edit",
   "title": "Edit Release 0.11.0 Content Block Picker | Pages | Test Host Community",
-  "captured_at": "2026-04-03T23:21:47Z",
+  "captured_at": "2026-04-03T23:33:33Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_content_block_roster",

@@ -1,9 +1,9 @@
 {
   "name": "release_0_11_0_accordion_block_editor",
   "device": "desktop",
-  "url": "http://127.0.0.1:46573/en/host/pages/release-0-11-0-accordion_block-editor-page/edit",
+  "url": "http://127.0.0.1:40941/en/host/pages/release-0-11-0-accordion_block-editor-page/edit",
   "title": "Edit Release 0.11.0 Accordion Editor | Pages | Test Host Community",
-  "captured_at": "2026-04-03T23:21:48Z",
+  "captured_at": "2026-04-03T23:33:34Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_content_block_roster",
