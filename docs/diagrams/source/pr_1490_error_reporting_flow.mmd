@@ -1,0 +1,21 @@
+flowchart LR
+    A[Unhandled production exception] --> B[ApplicationController#handle_error]
+    B --> C[log_exception_details]
+    C --> D[BetterTogether report_error]
+    D --> E[AdapterRegistry.dispatch :error_reporting]
+    E --> F[Reporter adapter 1]
+    E --> G[Reporter adapter 2]
+    E --> H[Reporter adapter N]
+    F --> I{failure?}
+    I -- yes --> J[log AdapterDispatchFailure]
+    I -- no --> K[adapter success]
+    G --> L{failure?}
+    L -- yes --> J
+    L -- no --> K
+    H --> M{failure?}
+    M -- yes --> J
+    M -- no --> K
+    J --> N[raise DispatchError after fan-out completes]
+    N --> O[ApplicationController logs ErrorReportingFailure]
+    K --> P[500 response still rendered to user]
+    O --> P
