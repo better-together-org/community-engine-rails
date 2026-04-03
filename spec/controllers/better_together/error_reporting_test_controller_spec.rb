@@ -76,7 +76,11 @@ RSpec.describe BetterTogether::ErrorReportingTestController do
     get :index, params: { locale: 'en' }
 
     expect(response).to have_http_status(:internal_server_error)
-    expect(logger).to have_received(:error).with(include('[PRODUCTION][ErrorReportingFailure] StandardError: adapter down for '))
-    expect(log_output.string).to include('[PRODUCTION][ErrorReportingFailure] StandardError: adapter down for ')
+    expect(logger).to have_received(:error).with(
+      include('[BetterTogether::AdapterRegistry] dispatch failed group=error_reporting adapter=failing StandardError: adapter down for ')
+    )
+    expect(log_output.string).to include(
+      '[BetterTogether::AdapterRegistry] dispatch failed group=error_reporting adapter=failing StandardError: adapter down for '
+    )
   end
 end
