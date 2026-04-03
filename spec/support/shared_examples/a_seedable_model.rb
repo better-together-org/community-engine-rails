@@ -56,9 +56,15 @@ RSpec.shared_examples 'a seedable model' do
         expect(BetterTogether::Seed.last.creator_id).to eq(creator.id)
       end
 
-      it 'marks personal self-export with the personal_export profile' do
+      it 'only marks person self-export with the personal_export profile' do
         record.export_as_seed(creator_id: record.id)
-        expect(BetterTogether::Seed.last.origin[:profile]).to eq('personal_export')
+        if record.is_a?(BetterTogether::Person)
+          expect(BetterTogether::Seed.last.origin[:profile]).to eq('personal_export')
+          expect(BetterTogether::Seed.last.creator_id).to eq(record.id)
+        else
+          expect(BetterTogether::Seed.last.origin[:profile]).to eq('manual_export')
+          expect(BetterTogether::Seed.last.creator_id).to be_nil
+        end
       end
     end
 
