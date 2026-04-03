@@ -4,6 +4,28 @@ module BetterTogether
   # In-memory registry for subsystem adapters/providers.
   # Each subsystem can register multiple named adapters and dispatch to all of them.
   class AdapterRegistry
+    # Raised after dispatch fan-out completes when one or more adapters fail.
+    class DispatchError < StandardError
+      attr_reader :group, :failures
+
+      def initialize(group:, failures:)
+        @group = group
+        @failures = failures
+        super(build_message(group, failures))
+      end
+
+      private
+
+      def build_message(group, failures)
+        failure_summary = failures.map do |failure|
+          adapter_name = failure[:name] || 'anonymous'
+          "#{adapter_name} (#{failure[:error].class}: #{failure[:error].message})"
+        end.join(', ')
+
+        "Adapter dispatch failed for #{group}: #{failure_summary}"
+      end
+    end
+
     def initialize
       @entries = Hash.new { |hash, key| hash[key] = [] }
     end
@@ -35,20 +57,19 @@ module BetterTogether
     end
 
     def dispatch(group, *, **)
-      adapters_for(group).map do |entry|
-        {
-          name: entry[:name],
-          result: entry.fetch(:adapter).call(*, **),
-          error: nil
-        }
+      normalized_group = normalize_group(group)
+      failures = []
+      results = adapters_for(normalized_group).map do |entry|
+        entry.fetch(:adapter).call(*, **)
       rescue StandardError => e
-        log_dispatch_failure(group:, entry:, exception: e)
-        {
-          name: entry[:name],
-          result: nil,
-          error: e
-        }
+        log_dispatch_failure(normalized_group, entry, e)
+        failures << { name: entry[:name], error: e }
+        nil
       end
+
+      raise DispatchError.new(group: normalized_group, failures:) if failures.any?
+
+      results
     end
 
     def groups
@@ -61,14 +82,11 @@ module BetterTogether
       group.to_sym
     end
 
-    def log_dispatch_failure(group:, entry:, exception:)
-      return unless defined?(Rails) && Rails.respond_to?(:logger) && Rails.logger.present?
+    def log_dispatch_failure(group, entry, error)
+      return unless defined?(Rails) && Rails.respond_to?(:logger) && Rails.logger
 
-      Rails.logger.error(
-        '[BetterTogether::AdapterRegistry] dispatch failed ' \
-        "group=#{group} adapter=#{entry[:name] || 'anonymous'} " \
-        "#{exception.class}: #{exception.message}"
-      )
+      adapter_name = entry[:name] || 'anonymous'
+      Rails.logger.error("[AdapterDispatchFailure] group=#{group} adapter=#{adapter_name} #{error.class}: #{error.message}")
     end
   end
 end

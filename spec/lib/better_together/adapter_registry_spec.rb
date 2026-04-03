@@ -62,21 +62,28 @@ RSpec.describe BetterTogether::AdapterRegistry do
     expect(registry.adapter_for(:llm, :ollama)).to eq(name: :ollama, adapter:)
   end
 
-  it 'continues dispatching remaining adapters when one raises' do
+  it 'continues dispatching remaining adapters after one failure and raises an aggregate error' do
     failing_adapter = instance_double(Proc)
-    working_adapter = instance_double(Proc)
+    healthy_adapter = instance_double(Proc)
+    logger = instance_double(Logger, error: nil)
 
-    allow(failing_adapter).to receive(:call).and_raise(exception)
-    allow(working_adapter).to receive(:call).and_return(:ok)
+    allow(Rails).to receive(:logger).and_return(logger)
+    allow(failing_adapter).to receive(:call).and_raise(StandardError, 'adapter down')
+    allow(healthy_adapter).to receive(:call)
 
-    registry.register(:error_reporting, :failing, failing_adapter)
-    registry.register(:error_reporting, :working, working_adapter)
+    registry.register(:error_reporting, :primary, failing_adapter)
+    registry.register(:error_reporting, :secondary, healthy_adapter)
 
-    results = registry.dispatch(:error_reporting, exception, context:)
+    expect do
+      registry.dispatch(:error_reporting, exception, context:)
+    end.to raise_error(
+      BetterTogether::AdapterRegistry::DispatchError,
+      /primary \(StandardError: adapter down\)/
+    )
 
-    expect(working_adapter).to have_received(:call).with(exception, context:)
-    expect(results.map { |entry| entry[:name] }).to eq(%i[failing working])
-    expect(results.first[:error]).to eq(exception)
-    expect(results.second[:result]).to eq(:ok)
+    expect(healthy_adapter).to have_received(:call).with(exception, context:)
+    expect(logger).to have_received(:error).with(
+      include('[AdapterDispatchFailure] group=error_reporting adapter=primary StandardError: adapter down')
+    )
   end
 end

@@ -77,10 +77,35 @@ RSpec.describe BetterTogether::ErrorReportingTestController do
 
     expect(response).to have_http_status(:internal_server_error)
     expect(logger).to have_received(:error).with(
-      include('[BetterTogether::AdapterRegistry] dispatch failed group=error_reporting adapter=failing StandardError: adapter down for ')
+      include('[AdapterDispatchFailure] group=error_reporting adapter=failing StandardError: adapter down for ')
     )
-    expect(log_output.string).to include(
-      '[BetterTogether::AdapterRegistry] dispatch failed group=error_reporting adapter=failing StandardError: adapter down for '
+    expect(logger).to have_received(:error).with(include('[PRODUCTION][ErrorReportingFailure] BetterTogether::AdapterRegistry::DispatchError:'))
+    expect(log_output.string).to include('[AdapterDispatchFailure] group=error_reporting adapter=failing StandardError: adapter down for ')
+    expect(log_output.string).to include('[PRODUCTION][ErrorReportingFailure] BetterTogether::AdapterRegistry::DispatchError:')
+  end
+
+  it 'continues to later error reporters after one adapter failure' do
+    healthy_adapter = instance_double(Proc)
+    allow(healthy_adapter).to receive(:call)
+
+    BetterTogether.register_error_reporter(:failing, lambda do |_exception, context:|
+      raise StandardError, "adapter down for #{context[:request_id]}"
+    end)
+    BetterTogether.register_error_reporter(:healthy, healthy_adapter)
+
+    get :index, params: { locale: 'en' }
+
+    expect(response).to have_http_status(:internal_server_error)
+    expect(healthy_adapter).to have_received(:call).with(
+      instance_of(StandardError),
+      context: hash_including(
+        request_method: 'GET',
+        path: '/index?locale=en',
+        controller: 'error_reporting_test',
+        action: 'index'
+      )
     )
+    expect(log_output.string).to include('[AdapterDispatchFailure] group=error_reporting adapter=failing')
+    expect(log_output.string).to include('[PRODUCTION][ErrorReportingFailure] BetterTogether::AdapterRegistry::DispatchError:')
   end
 end
