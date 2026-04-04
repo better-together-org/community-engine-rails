@@ -150,7 +150,7 @@ module BetterTogether
       }.compact
     end
 
-    def governance_bundle_payload(include_provenance: false)
+    def governance_bundle_payload(include_provenance: false) # rubocop:todo Metrics/MethodLength
       {
         id: id,
         reference_key: reference_key,
