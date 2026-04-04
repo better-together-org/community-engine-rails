@@ -225,6 +225,29 @@ module BetterTogether # :nodoc:
             locator: 'p. 10',
             excerpt: 'Shared reality requires traceable evidence.'
           )
+          expect(browser_groups.first[:origin]).to eq('current_record')
+          expect(browser_groups.first[:record_type]).to eq('Page')
+        end
+
+        it 'includes contribution metadata in linked evidence browser groups' do
+          page = create(:better_together_page)
+          contributor = create(:person, name: 'Doc Reviewer')
+          contribution = BetterTogether::Authorship.create!(
+            authorable: page,
+            author: contributor,
+            role: 'reviewer',
+            contribution_type: 'documentation'
+          )
+          create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
+
+          contribution_group = page.available_evidence_citation_browser_groups.find { |group| group[:origin] == 'contribution' }
+
+          expect(contribution_group).to include(
+            origin: 'contribution',
+            record_type: 'Authorship',
+            contribution_role: 'reviewer',
+            contribution_type: 'documentation'
+          )
         end
       end
 

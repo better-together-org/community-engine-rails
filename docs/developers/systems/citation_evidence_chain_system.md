@@ -21,6 +21,14 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 
 ## Current Implementation
 
+### Review assets
+
+- [Mermaid Source](../../diagrams/source/pr_1494_claim_evidence_browser_flow.mmd)
+- [PNG Export](../../diagrams/exports/png/pr_1494_claim_evidence_browser_flow.png)
+- [SVG Export](../../diagrams/exports/svg/pr_1494_claim_evidence_browser_flow.svg)
+- [Desktop Screenshot](../../screenshots/desktop/claim_evidence_browser.png)
+- [Mobile Screenshot](../../screenshots/mobile/claim_evidence_browser.png)
+
 ### Structured citations
 
 `BetterTogether::Citation` is a polymorphic record that can attach to:
@@ -153,6 +161,15 @@ The picker now groups available citations by evidence source, including:
 This gives claim reviewers a first evidence browser for pulling in supporting material that was attached to adjacent contribution records without duplicating citation data immediately.
 
 The claim evidence form now also renders a browseable source panel for each evidence link. Reviewers can inspect grouped citations, preview locators and excerpts, and apply a citation into the current evidence link with one action. When available, locator and excerpt values are copied into the evidence link as drafting defaults.
+
+That browser now includes lightweight filters for:
+
+- source origin
+- record type
+- contribution role
+- contribution type
+
+This keeps the first cross-record evidence browser usable even when a publishing record is linked to several contribution records with overlapping citation inventories.
 
 ### Selector-aware Trix integration
 

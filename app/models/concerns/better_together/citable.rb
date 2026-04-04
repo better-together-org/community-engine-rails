@@ -83,8 +83,13 @@ module BetterTogether
 
     def available_evidence_citation_browser_groups
       available_evidence_citation_sources.map do |group_label, citations|
+        source_record = citations.first&.citeable
         {
           label: group_label,
+          origin: evidence_browser_origin_for(source_record),
+          record_type: evidence_browser_record_type_for(source_record),
+          contribution_role: evidence_browser_contribution_role_for(source_record),
+          contribution_type: evidence_browser_contribution_type_for(source_record),
           citations: citations.map do |citation|
             {
               id: citation.id,
@@ -124,6 +129,25 @@ module BetterTogether
       contributor_name = 'Linked contributor' if contributor_name.blank?
 
       "#{contributor_name}: #{contribution.role.to_s.humanize}"
+    end
+
+    def evidence_browser_origin_for(source_record)
+      source_record.is_a?(BetterTogether::Authorship) ? 'contribution' : 'current_record'
+    end
+
+    def evidence_browser_record_type_for(source_record)
+      return self.class.model_name.human if source_record == self
+      return source_record.class.model_name.human if source_record.respond_to?(:class) && source_record.class.respond_to?(:model_name)
+
+      source_record.class.name.demodulize.humanize
+    end
+
+    def evidence_browser_contribution_role_for(source_record)
+      source_record.respond_to?(:role) ? source_record.role.to_s : nil
+    end
+
+    def evidence_browser_contribution_type_for(source_record)
+      source_record.respond_to?(:contribution_type) ? source_record.contribution_type.to_s : nil
     end
   end
 end
