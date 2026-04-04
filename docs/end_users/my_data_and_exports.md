@@ -24,7 +24,7 @@ Direct route in the current app:
 
 - `/settings/my_data`
 
-You may also reach it through the Settings page where **My Data** appears as its own tab.
+The normal user-facing flow is through the main **Settings** page where **My Data** appears as its own tab.
 
 ## What You Can Do There
 
@@ -36,9 +36,9 @@ The page currently includes:
 - status badges for each request
 - a download action when an export is complete
 
-![My Data view showing the export request button and the current export history table.](../screenshots/desktop/release_0_11_0_member_data_export.png)
+![My Data settings tab showing the normal settings layout, the active My Data tab, the export request button, and the current export history table.](../screenshots/desktop/release_0_11_0_settings_my_data_tab.png)
 
-[Mobile screenshot of the My Data export view](../screenshots/mobile/release_0_11_0_member_data_export.png)
+[Mobile screenshot of the My Data settings tab](../screenshots/mobile/release_0_11_0_settings_my_data_tab.png)
 
 ## How To Request An Export
 

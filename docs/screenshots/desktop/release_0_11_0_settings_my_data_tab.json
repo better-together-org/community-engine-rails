@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_settings_my_data_tab",
+  "device": "desktop",
+  "url": "http://127.0.0.1:33159/en/settings#my-data",
+  "title": "Settings | Halvorson-Grimes",
+  "captured_at": "2026-04-04T15:28:53Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "settings_embed_review",
+  "source_spec": "./spec/docs_screenshots/better_together/settings_tab_embed_review_spec.rb"
+}

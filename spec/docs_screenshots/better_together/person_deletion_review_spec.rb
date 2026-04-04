@@ -151,38 +151,6 @@ RSpec.describe 'Documentation screenshots for person deletion review flow', :doc
     expect(my_data_result[:desktop]).to end_with("docs/screenshots/desktop/#{my_data_slug}.png")
     expect(my_data_result[:mobile]).to end_with("docs/screenshots/mobile/#{my_data_slug}.png")
 
-    next unless ENV['CAPTURE_EMBEDDED_MY_DATA'] == '1'
-
-    embedded_my_data_slug = ENV.fetch('EMBEDDED_MY_DATA_SLUG', 'person_deletion_my_data_embedded')
-
-    embedded_my_data_result = BetterTogether::CapybaraScreenshotEngine.capture(
-      embedded_my_data_slug,
-      device: :both,
-      metadata: {
-        locale: I18n.default_locale,
-        role: 'platform_manager',
-        feature_set: 'person_deletion_review',
-        source_spec: self.class.metadata[:file_path]
-      }
-    ) do
-      ensure_platform_manager!
-      capybara_login_as_platform_manager
-      expect(page).to have_no_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
-      visit settings_path(locale: I18n.default_locale)
-
-      find('#my-data-tab', wait: 10).click
-      expect(page).to have_css('#my-data-tab.active', wait: 10)
-      expect(page).to have_css('#my-data.show.active', wait: 10)
-
-      within('turbo-frame#my-data-settings') do
-        expect(page).to have_text(I18n.t('better_together.settings.index.my_data.exports.title'))
-        expect(page).to have_no_text(I18n.t('better_together.settings.index.my_data.deletion.title'))
-      end
-    end
-
-    expect(embedded_my_data_result[:desktop]).to end_with("docs/screenshots/desktop/#{embedded_my_data_slug}.png")
-    expect(embedded_my_data_result[:mobile]).to end_with("docs/screenshots/mobile/#{embedded_my_data_slug}.png")
-
     next unless ENV['CAPTURE_SEED_ARCHITECTURE'] == '1'
 
     seed_index_slug = ENV.fetch('PERSON_SEEDS_INDEX_SLUG', 'person_deletion_person_seeds_index')

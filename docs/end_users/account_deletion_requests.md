@@ -14,7 +14,7 @@ In `0.11.0`, this is intentionally a review-oriented workflow rather than an ins
 
 The current deletion request entrypoint is available from account settings.
 
-You reach it from the account-edit/settings area rather than from the **My Data** export table.
+The normal user-facing flow is through the main **Settings** page where the account tab contains the deletion-request controls.
 
 ## What The Current Flow Does
 
@@ -25,9 +25,9 @@ The current interface allows you to:
 - see whether a request is already active
 - cancel the request if needed before the platform completes review
 
-![Account deletion request entrypoint showing the current delete-request controls in account settings.](../screenshots/desktop/release_0_11_0_person_deletion_request.png)
+![Account settings tab showing the current delete-request controls in the normal settings layout.](../screenshots/desktop/release_0_11_0_settings_account_deletion.png)
 
-[Mobile screenshot of the account deletion request entrypoint](../screenshots/mobile/release_0_11_0_person_deletion_request.png)
+[Mobile screenshot of the account settings deletion-request controls](../screenshots/mobile/release_0_11_0_settings_account_deletion.png)
 
 ## How To Request Account Deletion
 

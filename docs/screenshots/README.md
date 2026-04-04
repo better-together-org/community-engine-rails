@@ -28,8 +28,9 @@ When screenshots are captured specifically for a release note or release review 
 
 Examples:
 
-- `release_0_11_0_member_data_export`
-- `release_0_11_0_person_deletion_request`
+- `release_0_11_0_settings_my_data_tab`
+- `release_0_11_0_settings_account_deletion`
+- `release_0_11_0_settings_blocked_people`
 - `release_0_11_0_uploads_gallery`
 - `release_0_11_0_block_image_library`
 
