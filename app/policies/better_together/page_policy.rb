@@ -5,7 +5,7 @@
 module BetterTogether
   class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      platform_content_manager? || (agent.present? && agent.authored_pages.any?)
+      platform_content_manager? || (agent.present? && (agent.authored_pages.any? || agent.contributed_pages.any?))
     end
 
     def show?
@@ -26,7 +26,7 @@ module BetterTogether
     end
 
     def update?
-      platform_content_manager? || (agent.present? && record.governed_authors.include?(agent))
+      platform_content_manager? || (agent.present? && record.editable_contributors.include?(agent))
     end
 
     def edit?
@@ -49,16 +49,20 @@ module BetterTogether
           # Platform stewards and host-community content managers see all pages
           base.order(:identifier)
         elsif agent.present?
-          # Authors see their own pages (private or unpublished) plus published public pages
+          # Contributors see their own pages (private or unpublished) plus published public pages
           pt = BetterTogether::Page.arel_table
           at = BetterTogether::Authorship.arel_table
 
-          # Subquery for pages authored by this agent
+          # Subquery for pages with author/editor contributions by this agent
           authored_subquery = at
                               .project(at[:authorable_id])
                               .where(
                                 at[:author_type].eq(agent.class.name)
                                   .and(at[:author_id].eq(agent.id))
+                                  .and(at[:role].in([
+                                    BetterTogether::Authorship::AUTHOR_ROLE,
+                                    BetterTogether::Authorship::EDITOR_ROLE
+                                  ]))
                                   .and(at[:authorable_type].eq('BetterTogether::Page'))
                               )
 

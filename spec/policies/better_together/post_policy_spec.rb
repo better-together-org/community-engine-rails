@@ -6,6 +6,7 @@ RSpec.describe BetterTogether::PostPolicy do
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:creator_user) { create(:better_together_user, :confirmed) }
+  let(:editor_user) { create(:better_together_user, :confirmed) }
 
   let(:public_published_post) do
     create(
@@ -110,6 +111,12 @@ RSpec.describe BetterTogether::PostPolicy do
   describe '#update?' do
     it 'allows platform managers' do
       expect(described_class.new(platform_manager_user, public_published_post).update?).to be true
+    end
+
+    it 'allows editors' do
+      public_published_post.add_governed_contributor(editor_user.person, role: 'editor')
+
+      expect(described_class.new(editor_user, public_published_post).update?).to be true
     end
 
     it 'denies regular users' do

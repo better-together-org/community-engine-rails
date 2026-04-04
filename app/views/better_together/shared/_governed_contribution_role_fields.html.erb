@@ -1,0 +1,37 @@
+<%# locals: (form:, record:, role_name:, role_label:) %>
+<% people_method = "#{role_name}_ids" %>
+<% robot_method = "robot_#{role_name}_ids" %>
+
+<div class="col mb-3 pb-3 border-bottom">
+  <%= form.label people_method, "People #{role_label}" %>
+  <%= form.collection_select people_method,
+    BetterTogether::Person.all,
+    :id,
+    :select_option_title,
+    {},
+    { multiple: true,
+      class: "form-select#{' is-invalid' if record.errors[people_method].any?}",
+      data: { controller: "better_together--slim-select" } } %>
+  <% if record.errors[people_method].any? %>
+    <div class="invalid-feedback">
+      <%= record.errors[people_method].join(', ') %>
+    </div>
+  <% end %>
+</div>
+
+<div class="col mb-3 pb-3 border-bottom">
+  <%= form.label robot_method, "Robot #{role_label}" %>
+  <%= form.collection_select robot_method,
+    BetterTogether::Robot.available_for_platform(Current.platform),
+    :id,
+    :select_option_title,
+    {},
+    { multiple: true,
+      class: "form-select#{' is-invalid' if record.errors[robot_method].any?}",
+      data: { controller: "better_together--slim-select" } } %>
+  <% if record.errors[robot_method].any? %>
+    <div class="invalid-feedback">
+      <%= record.errors[robot_method].join(', ') %>
+    </div>
+  <% end %>
+</div>

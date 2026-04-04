@@ -66,9 +66,9 @@
                   </div>
                 <% end %>
 
-                <% if @post.respond_to?(:governed_authors) && @post.governed_authors.any? %>
+                <% if @post.respond_to?(:contribution_roles_with_contributors) && @post.contribution_roles_with_contributors.any? %>
                   <div class="ms-sm-3">
-                    <%= render 'better_together/shared/governed_authors', authors: @post.governed_authors, flex_layout: 'flex-row', flex_align_items: 'center' %>
+                    <%= render 'better_together/shared/governed_contributions', record: @post %>
                   </div>
                 <% end %>
 
