@@ -132,40 +132,15 @@
       <% end %>
     </div>
 
-    <!-- Authors: assign one or more people and/or robots as page authors -->
-    <div class="col mb-3 pb-3 border-bottom">
-      <%= form.label :author_ids, 'People Authors' %>
-      <%= form.collection_select :author_ids,
-        BetterTogether::Person.order(:identifier),
-        :id,
-        :select_option_title,
-        {},
-        { multiple: true,
-          class: "form-select#{' is-invalid' if page.errors[:author_ids].any?}",
-          data: { controller: "better_together--slim-select" } } %>
-      <% if page.errors[:author_ids].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:author_ids].join(', ') %>
-        </div>
-      <% end %>
-
-      <div class="mt-3">
-        <%= form.label :robot_author_ids, 'Robot Authors' %>
-        <%= form.collection_select :robot_author_ids,
-          BetterTogether::Robot.available_for_platform(page.platform || Current.platform),
-          :id,
-          :select_option_title,
-          {},
-          { multiple: true,
-            class: "form-select#{' is-invalid' if page.errors[:robot_author_ids].any?}",
-            data: { controller: "better_together--slim-select" } } %>
-        <% if page.errors[:robot_author_ids].any? %>
-          <div class="invalid-feedback">
-            <%= page.errors[:robot_author_ids].join(', ') %>
-          </div>
-        <% end %>
-      </div>
-    </div>
+    <% BetterTogether::Authorable::CONTRIBUTION_ROLE_CONFIG.each_key do |role_name| %>
+      <%= render partial: 'better_together/shared/governed_contribution_role_fields',
+                 locals: {
+                    form:,
+                    record: page,
+                    role_name:,
+                    role_label: page.contribution_role_label(role_name)
+                  } %>
+    <% end %>
   </div>
 
   <!-- Host app can extend the page form via this partial -->

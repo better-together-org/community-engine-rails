@@ -25,7 +25,7 @@ module BetterTogether
     alias new? create?
 
     def update?
-      creator_or_platform_steward?
+      creator_platform_steward_or_editor?
     end
     alias edit? update?
 
@@ -74,12 +74,20 @@ module BetterTogether
       record.creator == agent || platform_content_manager?
     end
 
+    def creator_platform_steward_or_editor?
+      creator_or_platform_steward? || (agent.present? && record.editable_contributors.include?(agent))
+    end
+
     def post_author_ids
       @post_author_ids ||= if record.authorships.loaded?
-                             record.authorships.select { |authorship| authorship.author_type == 'BetterTogether::Person' }
+                             record.authorships.select do |authorship|
+                               authorship.author_type == 'BetterTogether::Person' &&
+                                 authorship.role == BetterTogether::Authorship::AUTHOR_ROLE
+                             end
                                                .map(&:author_id)
                            else
-                             record.authorships.where(author_type: 'BetterTogether::Person').pluck(:author_id)
+                             record.authorships.where(author_type: 'BetterTogether::Person',
+                                                      role: BetterTogether::Authorship::AUTHOR_ROLE).pluck(:author_id)
                            end
     end
 

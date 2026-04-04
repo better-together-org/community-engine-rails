@@ -72,6 +72,25 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
         expect(created_page.robot_authors).to include(robot)
       end
 
+      it 'persists selected editor contributions for people and robots' do
+        editor = create(:better_together_person)
+        robot_editor = create(:better_together_robot, platform: BetterTogether::Platform.find_by(host: true))
+
+        post better_together.pages_path, params: {
+          page: {
+            title: 'Collaboratively Edited Page',
+            privacy: 'private',
+            editor_ids: [editor.id],
+            robot_editor_ids: [robot_editor.id]
+          },
+          locale: I18n.default_locale
+        }
+
+        created_page = BetterTogether::Page.last
+        expect(created_page.editors).to include(editor)
+        expect(created_page.robot_editors).to include(robot_editor)
+      end
+
       it 'sets the creator from current_person' do
         platform_manager_user = BetterTogether::User.find_by(email: 'manager@example.test')
 
