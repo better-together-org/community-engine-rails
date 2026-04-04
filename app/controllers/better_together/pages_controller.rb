@@ -84,7 +84,7 @@ module BetterTogether
       redirect_to edit_page_path(result.page),
                   notice: t(
                     'better_together.pages.release_package_draft.created',
-                    default: 'Private release package draft created. Companion draft post: %{post_title}',
+                    default: 'Private release package draft created. Companion draft post: %<post_title>s',
                     post_title: result.post.title
                   )
     end

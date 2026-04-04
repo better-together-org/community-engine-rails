@@ -5,11 +5,13 @@ module BetterTogether
     # Access control for Joatu::Offer
     class OfferPolicy < ApplicationPolicy
       def index? = user.present?
+
       def show?
         return false unless user.present?
 
         scope_allows_record?
       end
+
       def create? = user.present?
       alias new? create?
 

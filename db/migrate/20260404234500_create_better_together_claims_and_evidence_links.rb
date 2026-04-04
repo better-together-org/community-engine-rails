@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBetterTogetherClaimsAndEvidenceLinks < ActiveRecord::Migration[7.1]
   def change
     create_table :better_together_claims, id: :uuid do |t|

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_claim_fields', type: :view do
+RSpec.describe 'better_together/shared/_claim_fields' do
   it 'renders selector helper controls for media-capable records' do
     page = build(:better_together_page)
     claim = page.claims.build

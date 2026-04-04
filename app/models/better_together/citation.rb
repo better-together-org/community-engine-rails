@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Structured citation record for auditable evidence and bibliography export.
-  class Citation < ApplicationRecord
+  class Citation < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Positioned
     include BetterTogether::Creatable
 
@@ -24,6 +24,22 @@ module BetterTogether
       artwork
     ].freeze
 
+    CSL_GENRES = {
+      'oral_history' => 'Oral history',
+      'repository' => 'Software repository',
+      'pull_request' => 'Pull request',
+      'policy' => 'Policy document',
+      'artwork' => 'Artwork',
+      'story' => 'Story'
+    }.freeze
+
+    CSL_MEDIA = {
+      'video' => 'Video',
+      'image' => 'Image',
+      'artwork' => 'Artwork',
+      'oral_history' => 'Recorded testimony'
+    }.freeze
+
     belongs_to :citeable, polymorphic: true
 
     before_validation :normalize_reference_key
@@ -44,7 +60,7 @@ module BetterTogether
       [source_author.presence, title.presence, publisher.presence].compact.join('. ')
     end
 
-    def apa_citation(include_provenance: false)
+    def apa_citation(include_provenance: false) # rubocop:todo Metrics/AbcSize
       parts = []
       parts << source_author if source_author.present?
       parts << "(#{published_on&.year || 'n.d.'})"
@@ -56,7 +72,7 @@ module BetterTogether
       include_provenance ? [citation_text, provenance_note].compact.join(' ') : citation_text
     end
 
-    def mla_citation(include_provenance: false)
+    def mla_citation(include_provenance: false) # rubocop:todo Metrics/AbcSize
       parts = []
       parts << source_author if source_author.present?
       parts << %("#{title}")
@@ -107,7 +123,7 @@ module BetterTogether
       "Imported from linked citation: #{import_audit_summary}"
     end
 
-    def to_csl_json(include_provenance: false)
+    def to_csl_json(include_provenance: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       {
         id: reference_key,
         type: csl_type,
@@ -115,7 +131,7 @@ module BetterTogether
         author: csl_author_list,
         editor: csl_editor_list,
         publisher: publisher.presence,
-        "container-title": csl_container_title,
+        'container-title': csl_container_title,
         genre: csl_genre,
         medium: csl_medium,
         version: csl_version,
@@ -136,7 +152,7 @@ module BetterTogether
 
     private
 
-    def csl_type
+    def csl_type # rubocop:todo Metrics/MethodLength
       {
         'article' => 'article-journal',
         'book' => 'book',
@@ -181,35 +197,11 @@ module BetterTogether
     end
 
     def csl_genre
-      metadata_value(:genre) ||
-        case source_kind
-        when 'oral_history'
-          'Oral history'
-        when 'repository'
-          'Software repository'
-        when 'pull_request'
-          'Pull request'
-        when 'policy'
-          'Policy document'
-        when 'artwork'
-          'Artwork'
-        when 'story'
-          'Story'
-        end
+      metadata_value(:genre) || CSL_GENRES[source_kind]
     end
 
     def csl_medium
-      metadata_value(:medium) ||
-        case source_kind
-        when 'video'
-          'Video'
-        when 'image'
-          'Image'
-        when 'artwork'
-          'Artwork'
-        when 'oral_history'
-          'Recorded testimony'
-        end
+      metadata_value(:medium) || CSL_MEDIA[source_kind]
     end
 
     def csl_version

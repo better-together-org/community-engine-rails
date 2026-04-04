@@ -43,7 +43,7 @@ module BetterTogether
         super + %i[media]
       end
 
-      def evidence_selector_options
+      def evidence_selector_options # rubocop:todo Metrics/MethodLength
         super + [
           {
             value: "#{evidence_selector}:media",
@@ -59,7 +59,7 @@ module BetterTogether
           },
           {
             value: "#{evidence_selector}:region:*",
-            label: "Image region selector"
+            label: 'Image region selector'
           }
         ]
       end

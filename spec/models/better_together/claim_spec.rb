@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Claim, type: :model do
+RSpec.describe BetterTogether::Claim do
   describe 'normalization and relationships' do
     it 'normalizes the claim key from the statement when missing' do
       claim = build(:better_together_claim, claim_key: nil, statement: 'Community members deserve evidence-backed claims.')

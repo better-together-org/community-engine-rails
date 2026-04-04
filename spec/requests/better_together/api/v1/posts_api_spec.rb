@@ -105,7 +105,7 @@ RSpec.describe 'BetterTogether::Api::V1::Posts', :no_auth do
       it 'blocks public creation until the publishing agreement is accepted' do
         post url, params: valid_params.to_json, headers: platform_manager_headers
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'creates the post after publishing agreement acceptance' do

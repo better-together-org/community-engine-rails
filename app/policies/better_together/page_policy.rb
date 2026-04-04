@@ -61,9 +61,9 @@ module BetterTogether
                                 at[:author_type].eq(agent.class.name)
                                   .and(at[:author_id].eq(agent.id))
                                   .and(at[:role].in([
-                                    BetterTogether::Authorship::AUTHOR_ROLE,
-                                    BetterTogether::Authorship::EDITOR_ROLE
-                                  ]))
+                                                      BetterTogether::Authorship::AUTHOR_ROLE,
+                                                      BetterTogether::Authorship::EDITOR_ROLE
+                                                    ]))
                                   .and(at[:authorable_type].eq('BetterTogether::Page'))
                               )
 

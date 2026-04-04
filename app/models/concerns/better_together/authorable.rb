@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Transitional contributable concern backed by BetterTogether::Authorship records.
-  module Authorable
+  module Authorable # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
     CONTRIBUTION_ROLE_CONFIG = {
@@ -25,7 +25,7 @@ module BetterTogether
       'exchange_participant' => 'Exchange Participants'
     }.freeze
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       has_many :contributions,
                -> { positioned },
                as: :authorable,
@@ -35,12 +35,16 @@ module BetterTogether
                as: :authorable,
                class_name: 'BetterTogether::Authorship'
       has_many :authors,
-               -> { where(better_together_authorships: { author_type: 'BetterTogether::Person', role: BetterTogether::Authorship::AUTHOR_ROLE }) },
+               lambda {
+                 where(better_together_authorships: { author_type: 'BetterTogether::Person', role: BetterTogether::Authorship::AUTHOR_ROLE })
+               },
                through: :contributions,
                source: :author,
                source_type: 'BetterTogether::Person'
       has_many :robot_authors,
-               -> { where(better_together_authorships: { author_type: 'BetterTogether::Robot', role: BetterTogether::Authorship::AUTHOR_ROLE }) },
+               lambda {
+                 where(better_together_authorships: { author_type: 'BetterTogether::Robot', role: BetterTogether::Authorship::AUTHOR_ROLE })
+               },
                through: :contributions,
                source: :author,
                source_type: 'BetterTogether::Robot'
@@ -50,8 +54,8 @@ module BetterTogether
 
       CONTRIBUTION_ROLE_CONFIG.each do |association_name, role_value|
         plural_name = association_name.to_s.pluralize
-        contribution_assoc = "#{association_name}_contributions".to_sym
-        robot_assoc = "robot_#{plural_name}".to_sym
+        contribution_assoc = :"#{association_name}_contributions"
+        robot_assoc = :"robot_#{plural_name}"
 
         has_many contribution_assoc,
                  -> { where(better_together_authorships: { role: role_value }) },
@@ -75,8 +79,8 @@ module BetterTogether
         super + [
           *CONTRIBUTION_ROLE_CONFIG.keys.flat_map do |role_name|
             [
-              { "#{role_name}_ids".to_sym => [] },
-              { "robot_#{role_name}_ids".to_sym => [] }
+              { "#{role_name}_ids": [] },
+              { "robot_#{role_name}_ids": [] }
             ]
           end
         ]

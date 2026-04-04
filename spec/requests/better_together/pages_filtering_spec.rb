@@ -171,7 +171,7 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
         post better_together.create_release_package_draft_pages_path,
              params: { title: 'Community Engine 0.11.0 Release Package' }
       end.to change(BetterTogether::Page, :count).by(1)
-        .and change(BetterTogether::Post, :count).by(1)
+                                                 .and change(BetterTogether::Post, :count).by(1)
 
       created_page = BetterTogether::Page.order(created_at: :desc).first
       created_post = BetterTogether::Post.order(created_at: :desc).first

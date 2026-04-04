@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_citation_fields_section', type: :view do
+RSpec.describe 'better_together/shared/_citation_fields_section' do
   it 'renders linked citation import controls for contribution citations' do
     page = create(:better_together_page)
     contributor = create(:person, name: 'Import Reviewer')

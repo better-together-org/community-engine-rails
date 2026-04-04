@@ -46,4 +46,3 @@ class MakeAuthorshipAuthorsPolymorphic < ActiveRecord::Migration[7.2]
     remove_column :better_together_authorships, :author_type if column_exists?(:better_together_authorships, :author_type)
   end
 end
-
