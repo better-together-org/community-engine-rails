@@ -133,6 +133,13 @@ For media-capable blocks, selector suggestions now go further than the base bloc
   - caption
   - timestamp-based annotation placeholders
 
+Claim entry forms now also include selector helpers for the two most common media-specific cases:
+
+- exact video timestamps, normalized to `HH:MM:SS`
+- image regions using `x/y/w/h` coordinates
+
+Those helpers write back into the canonical `selector` field rather than introducing separate hidden schema, so the persisted selector remains auditable and transportable across exports.
+
 ### Selector-aware Trix integration
 
 The rich text toolbar now includes a `Citation` action modeled on the existing Trix link dialog flow.
@@ -180,6 +187,18 @@ The exportable citeable keys currently include:
 - `joatu_agreement`
 
 `csl` currently returns normalized CSL-style JSON generated from structured citation metadata. `apa` and `mla` return line-oriented plain text derived from the same source data instead of storing style-specific bibliography strings as primary records.
+
+The CSL export now includes richer cooperative-governance metadata where available through `Citation#metadata`, including:
+
+- container or archive titles
+- editor lists
+- version and record numbers
+- archive locations
+- medium and genre
+- jurisdiction
+- keyword lists
+
+This keeps the primary citation record style-agnostic while giving downstream tools enough structure to generate more faithful MLA, APA, CSL, and governance-oriented exports later.
 
 ## Standards Direction
 

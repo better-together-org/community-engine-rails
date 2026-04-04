@@ -1,4 +1,11 @@
-<div class="border rounded p-3 mb-3">
+<% selector_options = local_assigns.fetch(:selector_options, []) %>
+<% video_selector_options = selector_options.select { |option| option[:value].to_s.end_with?(':video') } %>
+<% image_selector_options = selector_options.select { |option| option[:value].to_s.end_with?(':media') } %>
+
+<div class="border rounded p-3 mb-3"
+     data-controller="better_together--claim-selector"
+     data-better-together--claim-selector-video-selectors-value="<%= video_selector_options.to_json %>"
+     data-better-together--claim-selector-image-selectors-value="<%= image_selector_options.to_json %>">
   <div class="row row-cols-1 row-cols-md-2">
     <div class="col mb-3">
       <%= claim_fields.label :claim_key, 'Claim Key' %>
@@ -23,9 +30,106 @@
       <%= claim_fields.text_field :selector,
                                   class: 'form-control',
                                   placeholder: 'trix-range:12:48 or block:markdown:intro',
-                                  list: selector_datalist_id %>
+                                  list: selector_datalist_id,
+                                  data: { better_together__claim_selector_target: 'selectorInput' } %>
       <small class="form-text text-muted">Optional selector for the content span, block, or media segment this claim describes. Suggested selectors are available for supported records.</small>
     </div>
+
+    <% if video_selector_options.any? || image_selector_options.any? %>
+      <div class="col-12">
+        <div class="border rounded bg-light p-3 mb-3">
+          <h5 class="h6 mb-2">Selector Helpers</h5>
+          <p class="text-muted small mb-3">
+            Use these helpers to compose exact timestamp or image-region selectors, then keep refining the selector field directly if needed.
+          </p>
+
+          <% if video_selector_options.any? %>
+            <div class="row row-cols-1 row-cols-md-2 align-items-end mb-3">
+              <div class="col mb-2">
+                <label class="form-label">Video Source</label>
+                <select class="form-select"
+                        data-better-together--claim-selector-target="videoSource"
+                        data-action="change->better_together--claim-selector#composeVideoSelector">
+                  <option value="">Select video source</option>
+                  <% video_selector_options.each do |selector_option| %>
+                    <option value="<%= selector_option[:value] %>"><%= selector_option[:label] %></option>
+                  <% end %>
+                </select>
+              </div>
+
+              <div class="col mb-2">
+                <label class="form-label">Timestamp</label>
+                <input type="text"
+                       class="form-control"
+                       placeholder="00:03:12"
+                       data-better-together--claim-selector-target="videoTimestamp"
+                       data-action="input->better_together--claim-selector#composeVideoSelector change->better_together--claim-selector#composeVideoSelector">
+              </div>
+            </div>
+          <% end %>
+
+          <% if image_selector_options.any? %>
+            <div class="row row-cols-2 row-cols-md-5 align-items-end">
+              <div class="col-12 col-md mb-2">
+                <label class="form-label">Image Source</label>
+                <select class="form-select"
+                        data-better-together--claim-selector-target="imageSource"
+                        data-action="change->better_together--claim-selector#composeImageSelector">
+                  <option value="">Select image source</option>
+                  <% image_selector_options.each do |selector_option| %>
+                    <option value="<%= selector_option[:value] %>"><%= selector_option[:label] %></option>
+                  <% end %>
+                </select>
+              </div>
+
+              <div class="col mb-2">
+                <label class="form-label">X</label>
+                <input type="number"
+                       min="0"
+                       step="1"
+                       class="form-control"
+                       placeholder="10"
+                       data-better-together--claim-selector-target="regionX"
+                       data-action="input->better_together--claim-selector#composeImageSelector change->better_together--claim-selector#composeImageSelector">
+              </div>
+
+              <div class="col mb-2">
+                <label class="form-label">Y</label>
+                <input type="number"
+                       min="0"
+                       step="1"
+                       class="form-control"
+                       placeholder="20"
+                       data-better-together--claim-selector-target="regionY"
+                       data-action="input->better_together--claim-selector#composeImageSelector change->better_together--claim-selector#composeImageSelector">
+              </div>
+
+              <div class="col mb-2">
+                <label class="form-label">W</label>
+                <input type="number"
+                       min="1"
+                       step="1"
+                       class="form-control"
+                       placeholder="30"
+                       data-better-together--claim-selector-target="regionWidth"
+                       data-action="input->better_together--claim-selector#composeImageSelector change->better_together--claim-selector#composeImageSelector">
+              </div>
+
+              <div class="col mb-2">
+                <label class="form-label">H</label>
+                <input type="number"
+                       min="1"
+                       step="1"
+                       class="form-control"
+                       placeholder="40"
+                       data-better-together--claim-selector-target="regionHeight"
+                       data-action="input->better_together--claim-selector#composeImageSelector change->better_together--claim-selector#composeImageSelector">
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <% evidence_records = claim_fields.object.evidence_links.to_a.presence || Array.new(1) { claim_fields.object.evidence_links.build } %>
