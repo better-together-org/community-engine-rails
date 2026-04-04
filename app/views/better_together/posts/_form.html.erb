@@ -67,6 +67,10 @@
   <% end %>
 
   <div class="mb-3">
+    <%= render 'better_together/shared/github_contribution_import_panel', record: post %>
+  </div>
+
+  <div class="mb-3">
     <%= form.label :published_at %>
     <%= form.datetime_field :published_at, include_seconds: false, class: 'form-control' %>
   </div>

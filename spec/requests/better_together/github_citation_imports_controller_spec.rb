@@ -2,15 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_user do
+RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
-  let(:user) do
-    BetterTogether::User.find_by(email: 'user@example.test') ||
-      create(
-        :user,
-        email: 'user@example.test',
-        password: 'SecureTest123!@#'
-      )
+  let(:manager_user) do
+    BetterTogether::User.find_by(email: 'manager@example.test') || create(:user,
+                                                                           :platform_manager,
+                                                                           email: 'manager@example.test',
+                                                                           password: 'SecureTest123!@#')
   end
   let!(:github_platform) do
     BetterTogether::Platform.external.find_or_create_by!(identifier: 'github') do |platform|
@@ -26,8 +24,8 @@ RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_user do
   before do
     create(:person_platform_integration,
            :github,
-           user:,
-           person: user.person,
+           user: manager_user,
+           person: manager_user.person,
            platform: github_platform,
            handle: 'linked-reviewer',
            auth: {
@@ -72,5 +70,36 @@ RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_user do
     expect(json['groups'].first['label']).to eq('GitHub: @linked-reviewer')
     expect(json['groups'].first['citations'].map { |citation| citation['source_kind'] }).to include('repository', 'pull_request')
     expect(json['groups'].first['citations'].first['metadata']['repository_name']).to eq('better-together-org/community-engine-rails')
+  end
+
+  it 'imports a github citation candidate into the target record bibliography' do
+    page = create(:better_together_page)
+
+    post better_together.import_github_citation_path(
+      citeable_key: 'page',
+      id: page.slug,
+      locale:,
+      format: :json
+    ), params: {
+      source: {
+        reference_key: 'pull_request_1494',
+        source_kind: 'pull_request',
+        title: 'Governed publishing and evidence chain',
+        source_author: 'linked-reviewer',
+        publisher: 'GitHub',
+        source_url: 'https://github.com/better-together-org/community-engine-rails/pull/1494',
+        locator: 'PR #1494',
+        metadata: {
+          repository_name: 'better-together-org/community-engine-rails',
+          pull_request_number: 1494,
+          github_handle: 'linked-reviewer'
+        }
+      }
+    }, as: :json
+
+    expect(response).to have_http_status(:ok)
+    json = JSON.parse(response.body)
+    expect(json['citation']['reference_key']).to eq('pull_request_1494')
+    expect(page.reload.citations.find(json['citation']['id']).metadata['repository_name']).to eq('better-together-org/community-engine-rails')
   end
 end

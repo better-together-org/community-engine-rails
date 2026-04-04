@@ -3,6 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe 'better_together/shared/_evidence_link_fields' do
+  let!(:github_platform) do
+    BetterTogether::Platform.external.find_or_create_by!(identifier: 'github') do |platform|
+      platform.name = 'GitHub'
+      platform.url = 'https://github.com'
+      platform.description = 'GitHub OAuth Provider'
+      platform.time_zone = 'UTC'
+      platform.privacy = :public
+      platform.host = false
+    end
+  end
+
   it 'renders grouped citation options from the current record and linked contributions' do
     page = create(:better_together_page)
     create(:citation, citeable: page, reference_key: 'local_record', title: 'Local Record Citation')
@@ -35,5 +46,42 @@ RSpec.describe 'better_together/shared/_evidence_link_fields' do
     expect(rendered).to include('Record Type')
     expect(rendered).to include('Contribution Role')
     expect(rendered).to include('Contribution Type')
+  end
+
+  it 'renders github evidence import controls for signed-in users with linked github identities' do
+    page = create(:better_together_page)
+    claim = page.claims.build
+    evidence_link = claim.evidence_links.build
+    form_builder = ActionView::Helpers::FormBuilder.new(:evidence_link, evidence_link, view, {})
+    user = create(:user)
+
+    create(:person_platform_integration,
+           :github,
+           user:,
+           person: user.person,
+           platform: github_platform,
+           handle: 'evidence-editor',
+           auth: {
+             'citation_import_preview' => [
+               {
+                 'reference_key' => 'pull_request_1494',
+                 'source_kind' => 'pull_request',
+                 'title' => 'Governed publishing and evidence chain'
+               }
+             ]
+           })
+
+    allow(view).to receive(:current_user).and_return(user)
+
+    render partial: 'better_together/shared/evidence_link_fields',
+           locals: {
+             evidence_link_fields: form_builder,
+             record: page
+           }
+
+    expect(rendered).to include('Import GitHub Evidence')
+    expect(rendered).to include('Load GitHub Evidence')
+    expect(rendered).to include('data-better_together--evidence-browser-github-url-value=')
+    expect(rendered).to include('data-better_together--evidence-browser-github-import-url-value=')
   end
 end

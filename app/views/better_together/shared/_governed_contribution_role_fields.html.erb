@@ -11,7 +11,9 @@
     {},
     { multiple: true,
       class: "form-select#{' is-invalid' if record.errors[people_method].any?}",
-      data: { controller: "better_together--slim-select" } } %>
+      data: { controller: "better_together--slim-select",
+              better_together__github_contribution_import_target: 'roleSelect',
+              role_name: role_name } } %>
   <% if record.errors[people_method].any? %>
     <div class="invalid-feedback">
       <%= record.errors[people_method].join(', ') %>

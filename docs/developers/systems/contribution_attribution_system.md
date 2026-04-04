@@ -29,6 +29,8 @@ The platform needs to attribute many kinds of value creation, including:
 - `author` remains the default role for existing page/post flows
 - `authors` and `robot_authors` remain available as compatibility helpers
 - `contributors`, `contributions`, and role-aware query helpers are now the broader interface
+- page and post forms now expose a multi-role governed contribution editor
+- persisted page and post records can now import GitHub-native contribution activity directly into governed contribution records
 
 ## JOATU Integration
 
@@ -38,9 +40,23 @@ The platform needs to attribute many kinds of value creation, including:
 
 This is the first step toward treating exchanges as community contribution rather than only transactional data.
 
+## GitHub-linked contribution imports
+
+When a person has a linked GitHub identity, Community Engine can now import GitHub-native activity into governed contribution records on persisted pages and posts.
+
+The current mapping is:
+
+- `repository` -> `role: author`, `contribution_type: code`
+- `pull_request` -> `role: author`, `contribution_type: code`
+- `commit` -> `role: author`, `contribution_type: code`
+- `issue` -> `role: idea_source`, `contribution_type: documentation`
+
+The import path deliberately merges repeated GitHub activity into one governed contribution record per contributor / role / contribution type. Imported source entries are stored in `details['github_sources']` so attribution remains auditable without creating one bridge record per commit or pull request.
+
+This gives the contribution system a first native bridge from GitHub OAuth-linked identities into CE contribution attribution while preserving the broader governed contribution model.
+
 ## Future Work
 
-- replace page/post author-only form controls with multi-role contribution editors
 - add explicit contribution rendering for roles beyond author
-- connect contribution `details` to GitHub OAuth-linked identities and repository activity
 - expand contributable coverage to governance, moderation, surveys, and financial records
+- extend GitHub-native contribution import beyond pages and posts into broader governed records where that attribution is meaningful
