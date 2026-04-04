@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_record_evidence_summary', type: :view do
+RSpec.describe 'better_together/shared/_record_evidence_summary' do
   it 'renders claim, citation, and imported citation counts' do
     page = create(:better_together_page)
     create(:claim, claimable: page, statement: 'Shared reality depends on traceable evidence.')

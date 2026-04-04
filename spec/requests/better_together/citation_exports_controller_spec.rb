@@ -52,7 +52,7 @@ RSpec.describe 'BetterTogether::CitationExportsController', :as_user do
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
-      expect(json['include_provenance']).to eq(true)
+      expect(json['include_provenance']).to be(true)
       expect(json['citations'].first['note']).to include('Imported from linked citation:')
 
       get better_together.citation_export_path(citeable_key: 'page', id: page.slug, locale:, style: 'apa',
@@ -73,7 +73,7 @@ RSpec.describe 'BetterTogether::CitationExportsController', :as_user do
              profile_url: 'https://github.com/bundle-reviewer',
              access_token: 'token')
 
-      contribution = BetterTogether::Authorship.create!(
+      BetterTogether::Authorship.create!(
         authorable: page,
         author: reviewer,
         role: 'reviewer',

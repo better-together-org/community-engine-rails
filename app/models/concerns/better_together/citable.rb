@@ -20,24 +20,22 @@ module BetterTogether
       def extra_permitted_attributes # rubocop:todo Metrics/MethodLength
         super + [
           {
-            citations_attributes: %i[
-              id
-              position
-              reference_key
-              source_kind
-              title
-              source_author
-              publisher
-              source_url
-              locator
-              published_on
-              accessed_on
-              excerpt
-              rights_notes
-              {
-                metadata: {}
-              }
-              _destroy
+            citations_attributes: [
+              :id,
+              :position,
+              :reference_key,
+              :source_kind,
+              :title,
+              :source_author,
+              :publisher,
+              :source_url,
+              :locator,
+              :published_on,
+              :accessed_on,
+              :excerpt,
+              :rights_notes,
+              { metadata: {} },
+              :_destroy
             ]
           }
         ]
@@ -149,7 +147,7 @@ module BetterTogether
       end
     end
 
-    def governance_citation_bundle(include_provenance: false)
+    def governance_citation_bundle(include_provenance: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       {
         citeable: {
           type: self.class.name,
@@ -196,7 +194,7 @@ module BetterTogether
       source_record.respond_to?(:contribution_type) ? source_record.contribution_type.to_s : nil
     end
 
-    def governance_bundle_contributions
+    def governance_bundle_contributions # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
       return [] unless respond_to?(:contributions)
 
       contributions.includes(:author).map do |contribution|
@@ -209,9 +207,9 @@ module BetterTogether
           contributor: {
             id: contributor&.id,
             type: contributor&.class&.name,
-            name: contributor&.respond_to?(:name) ? contributor.name : contributor.to_s,
-            github_handles: contributor&.respond_to?(:github_handles) ? contributor.github_handles : [],
-            github_profile_urls: contributor&.respond_to?(:github_profile_urls) ? contributor.github_profile_urls : []
+            name: contributor.respond_to?(:name) ? contributor.name : contributor.to_s,
+            github_handles: contributor.respond_to?(:github_handles) ? contributor.github_handles : [],
+            github_profile_urls: contributor.respond_to?(:github_profile_urls) ? contributor.github_profile_urls : []
           }.compact
         }
       end

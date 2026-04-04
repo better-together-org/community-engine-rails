@@ -60,7 +60,7 @@ module BetterTogether
       [source_author.presence, title.presence, publisher.presence].compact.join('. ')
     end
 
-    def apa_citation(include_provenance: false) # rubocop:todo Metrics/AbcSize
+    def apa_citation(include_provenance: false) # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity
       parts = []
       parts << source_author if source_author.present?
       parts << "(#{published_on&.year || 'n.d.'})"

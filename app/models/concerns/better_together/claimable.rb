@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Adds claim and evidence link support to published and contributed records.
-  module Claimable
+  module Claimable # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
     RICH_TEXT_SELECTOR_ATTRIBUTES = %w[content description description_html].freeze
@@ -71,7 +71,7 @@ module BetterTogether
       ).uniq { |option| option[:value] }
     end
 
-    def claims_as_json_bundle
+    def claims_as_json_bundle # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       claims.includes(evidence_links: :citation).map do |claim|
         {
           id: claim.id,

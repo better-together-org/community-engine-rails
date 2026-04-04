@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_bibliography', type: :view do
+RSpec.describe 'better_together/shared/_bibliography' do
   it 'renders import audit metadata for linked citation copies' do
     post = create(:better_together_post)
     create(:citation,
