@@ -91,7 +91,18 @@ The system suggests future product work in:
 
 ## Current Status
 
-This is currently a **documentation and design target**.
+This system is now **partially implemented** in PR `#1494`.
 
-Community Engine can already compose strong pages and posts, but the dedicated private-draft release workflow and governed robot authorship layer are not yet implemented as a complete product feature.
+Implemented foundation:
 
+- a release-package draft builder now exists for creating a private draft `page + post` pair
+- governed contribution attribution can now represent broader editorial roles on the underlying content
+- citation, claim, and evidence-chain primitives are now available on the publishing records involved in the package
+- the public publishing agreement gate ensures publication can be constrained by explicit agreement state
+
+Still future work:
+
+- a dedicated review-state UX for release packages
+- a polished end-user package authoring surface tailored to this workflow
+- fully governed robot-led package publication as a first-class product flow
+- a final screenshot set for the complete release workflow once that UI is stable
