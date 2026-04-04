@@ -21,6 +21,9 @@
     <%= @joatu_offer.description %>
   </div>
 
+  <%= render 'better_together/shared/claims_and_evidence', record: @joatu_offer %>
+  <%= render 'better_together/shared/bibliography', record: @joatu_offer %>
+
   <% if @joatu_offer.target.is_a?(BetterTogether::Platform) %>
     <div class="alert alert-info">
       <strong><%= t('better_together.joatu.offers.target_platform', default: 'Target platform') %>:</strong>

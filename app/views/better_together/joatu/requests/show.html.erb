@@ -21,6 +21,9 @@
     <%= @joatu_request.description %>
   </div>
 
+  <%= render 'better_together/shared/claims_and_evidence', record: @joatu_request %>
+  <%= render 'better_together/shared/bibliography', record: @joatu_request %>
+
   <% if @joatu_request.is_a?(BetterTogether::Joatu::ConnectionRequest) && @joatu_request.target.is_a?(BetterTogether::Platform) %>
     <div class="alert alert-info">
       <strong><%= t('better_together.joatu.requests.target_platform', default: 'Target platform') %>:</strong>

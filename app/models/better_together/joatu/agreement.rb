@@ -5,6 +5,8 @@ module BetterTogether
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
       include BetterTogether::Authorable
+      include BetterTogether::Citable
+      include BetterTogether::Claimable
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable

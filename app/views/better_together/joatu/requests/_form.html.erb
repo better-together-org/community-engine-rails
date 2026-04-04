@@ -122,5 +122,8 @@
     <% end %>
   <% end %>
 
+  <%= render 'better_together/shared/citation_fields_section', form:, record: joatu_request %>
+  <%= render 'better_together/shared/claim_fields_section', form:, record: joatu_request %>
+
   <%= yield :resource_toolbar %>
 <% end %>
