@@ -65,7 +65,7 @@ Page and post forms now expose a `Citations and Evidence` section. That lets edi
 
 ### Rendering
 
-Pages and posts now render an `Evidence and Citations` bibliography section when citations are present.
+Pages, posts, events, calls for interest, and JOATU exchanges now render an `Evidence and Citations` bibliography section when citations are present.
 
 ### Claims and evidence links
 
@@ -197,5 +197,5 @@ The current slice does **not** yet implement:
 1. Add richer claim selectors for exact rich text spans, blocks, images, and media timestamps.
 2. Add export/import mapping for CSL JSON and related open citation formats.
 3. Add citation picker dialogs to Trix so editors choose existing evidence records instead of typing keys manually.
-4. Extend citation rendering to JOATU exchanges, governance records, and contribution histories.
+4. Extend citation rendering to governance records and contribution histories.
 5. Add provenance events and source-graph relations for derivation, supersession, and custody history.
