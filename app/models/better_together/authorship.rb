@@ -5,6 +5,7 @@ module BetterTogether
   class Authorship < ApplicationRecord
     include Positioned
     include Citable
+    include Claimable
     include BetterTogether::Creatable
 
     AUTHOR_ROLE = 'author'

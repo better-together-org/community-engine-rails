@@ -16,7 +16,7 @@ This system separates three concerns:
 2. `Display/export formatting`
 3. `Claim-to-evidence and provenance linking`
 
-The first two are implemented in PR `#1494`. The third is the next required phase.
+The first two were implemented first. PR `#1494` now adds the first schema-backed claim layer as well.
 
 ## Current Implementation
 
@@ -66,6 +66,28 @@ Page and post forms now expose a `Citations and Evidence` section. That lets edi
 ### Rendering
 
 Pages and posts now render an `Evidence and Citations` bibliography section when citations are present.
+
+### Claims and evidence links
+
+`BetterTogether::Claim` and `BetterTogether::EvidenceLink` now provide the first explicit evidence graph layer.
+
+A claim records:
+
+- `claim_key`
+- `statement`
+- `selector`
+- `review_status`
+
+An evidence link records:
+
+- `relation_type`
+- `citation`
+- `locator`
+- `quoted_text`
+- `editor_note`
+- `review_status`
+
+This allows one page or post to store several explicit assertions and connect each one to one or more citations with typed relationships like `supports` or `contests`.
 
 ### Trix integration
 
@@ -147,7 +169,6 @@ This means future source metadata must support:
 
 The current slice does **not** yet implement:
 
-- claim-level evidence objects
 - automatic style switching in published views
 - importer/exporter support for CSL JSON, BibTeX, RIS, or JSON-LD
 - citation-aware moderation or review workflows
@@ -156,8 +177,8 @@ The current slice does **not** yet implement:
 
 ## Next Steps
 
-1. Add `Claim` and `EvidenceLink` records so specific published assertions can point to one or more sources.
-2. Add claim selectors for rich text spans, blocks, images, and media timestamps.
-3. Add export/import mapping for CSL JSON and related open citation formats.
-4. Add citation picker dialogs to Trix so editors choose existing evidence records instead of typing keys manually.
-5. Extend citation rendering to JOATU exchanges, governance records, and contribution histories.
+1. Add richer claim selectors for exact rich text spans, blocks, images, and media timestamps.
+2. Add export/import mapping for CSL JSON and related open citation formats.
+3. Add citation picker dialogs to Trix so editors choose existing evidence records instead of typing keys manually.
+4. Extend citation rendering to JOATU exchanges, governance records, and contribution histories.
+5. Add provenance events and source-graph relations for derivation, supersession, and custody history.

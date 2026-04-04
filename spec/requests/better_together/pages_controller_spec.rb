@@ -54,6 +54,29 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).to include('citation-page_evidence_record')
     end
 
+    it 'renders claims and supporting evidence when present' do
+      citation = create(:better_together_citation,
+                        citeable: page,
+                        title: 'Claim Support Record',
+                        reference_key: 'claim_support_record')
+      claim = create(:better_together_claim,
+                     claimable: page,
+                     claim_key: 'supported_publication_claim',
+                     statement: 'Public claims should stay tied to auditable evidence.')
+      create(:better_together_evidence_link,
+             claim:,
+             citation:,
+             relation_type: 'supports',
+             locator: 'p. 3')
+
+      get better_together.page_path(page.slug, locale:)
+
+      expect(response.body).to include('Claims and Supporting Evidence')
+      expect(response.body).to include('Public claims should stay tied to auditable evidence.')
+      expect(response.body).to include('Claim Support Record')
+      expect(response.body).to include('claim-supported_publication_claim')
+    end
+
     context 'when the page contains a Content::Template block (no string_translations association)' do
       before do
         # Content::Template has no Mobility string attributes — it must not raise
