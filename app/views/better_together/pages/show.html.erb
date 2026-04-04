@@ -92,6 +92,8 @@
         <%= yield :page_content %>
       <% end %>
 
+      <%= render 'better_together/shared/bibliography', record: @page %>
+
       <%= share_buttons(shareable: @page) if @page.privacy_public? %>
     <% end %>
   <% end %>

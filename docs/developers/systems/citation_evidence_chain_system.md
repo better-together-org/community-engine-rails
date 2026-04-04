@@ -1,0 +1,163 @@
+# Citation and Evidence Chain System
+
+## Purpose
+
+Community Engine needs a citation system that does more than format bibliography text. The platform must support:
+
+- structured source metadata
+- auditable attribution and provenance
+- export to MLA, APA, and future cooperative governance styles
+- citation of nontraditional evidence, including oral history, images, stories, art, policy, and community testimony
+- accessible evidence rendering in published pages and posts
+
+This system separates three concerns:
+
+1. `Citation metadata`
+2. `Display/export formatting`
+3. `Claim-to-evidence and provenance linking`
+
+The first two are implemented in PR `#1494`. The third is the next required phase.
+
+## Current Implementation
+
+### Structured citations
+
+`BetterTogether::Citation` is a polymorphic record that can attach to:
+
+- `BetterTogether::Page`
+- `BetterTogether::Post`
+- `BetterTogether::Authorship`
+
+Each citation currently stores:
+
+- `reference_key`
+- `source_kind`
+- `title`
+- `source_author`
+- `publisher`
+- `source_url`
+- `locator`
+- `published_on`
+- `accessed_on`
+- `excerpt`
+- `rights_notes`
+- `metadata`
+
+This gives CE a normalized, auditable citation record instead of a freeform footnote string.
+
+### Citeable records
+
+The `BetterTogether::Citable` concern adds:
+
+- polymorphic `citations`
+- nested attribute support for forms
+- bibliography helper methods
+
+It is currently included in:
+
+- `BetterTogether::Page`
+- `BetterTogether::Post`
+- `BetterTogether::Authorship`
+
+### Publishing UI
+
+Page and post forms now expose a `Citations and Evidence` section. That lets editors enter structured evidence metadata directly on the content record.
+
+### Rendering
+
+Pages and posts now render an `Evidence and Citations` bibliography section when citations are present.
+
+### Trix integration
+
+The rich text toolbar now includes a `Citation` action. The first implementation inserts a stable inline citation reference pointing at a structured bibliography entry by `reference_key`.
+
+This is intentionally minimal. It provides anchorable inline references without pretending that the editor already has a fully modeled claim-level evidence graph.
+
+## Standards Direction
+
+The current metadata layer is designed to grow toward standards-compatible export and provenance.
+
+### Citation formatting
+
+The platform should store richer normalized metadata than any single style requires, then render style-specific output later.
+
+Current export helpers:
+
+- `apa_citation`
+- `mla_citation`
+
+Future export targets should be driven from normalized source metadata rather than storing style-specific strings as the source of truth.
+
+Recommended compatibility targets:
+
+- CSL JSON for citation/export interoperability
+- DCMI / Dublin Core terms for descriptive metadata interoperability
+- DataCite relation modeling for related identifiers and source graphs
+
+### Provenance and evidence chains
+
+The citation table is not the final provenance system. We still need a graph of:
+
+- `Claim`
+- `EvidenceLink`
+- `ProvenanceEvent`
+- `Agent`
+- `Source`
+
+That later phase should support:
+
+- one claim supported by multiple sources
+- one source supporting multiple claims
+- derivation chains
+- editorial review state
+- citation selectors and locators
+- rights and consent metadata for sensitive sources
+
+Recommended conceptual standards for that phase:
+
+- W3C PROV-O for provenance
+- W3C Web Annotation for claim/selector links
+- PREMIS-style event logging for preservation/audit events
+- DataCite relation types for source graph relationships
+
+## Nontraditional Evidence
+
+The system must treat the following as first-class evidence types, not miscellaneous edge cases:
+
+- oral history
+- interviews
+- community testimony
+- stories
+- artwork
+- images
+- policies and governance documents
+- repositories, issues, and pull requests
+- surveys and other community research outputs
+
+This means future source metadata must support:
+
+- consent and access restrictions
+- narrator/interviewer or storyteller/collector roles
+- repository or holding institution
+- rights and reuse context
+- community protocol notes
+- locators like page, timestamp, figure, paragraph, slide, or commit SHA
+
+## Known Limits
+
+The current slice does **not** yet implement:
+
+- claim-level evidence objects
+- automatic style switching in published views
+- importer/exporter support for CSL JSON, BibTeX, RIS, or JSON-LD
+- citation-aware moderation or review workflows
+- structured Trix dialogs with picker-backed citation selection
+- conversion between footnotes, endnotes, and bibliography-only references
+
+## Next Steps
+
+1. Add `Claim` and `EvidenceLink` records so specific published assertions can point to one or more sources.
+2. Add claim selectors for rich text spans, blocks, images, and media timestamps.
+3. Add export/import mapping for CSL JSON and related open citation formats.
+4. Add citation picker dialogs to Trix so editors choose existing evidence records instead of typing keys manually.
+5. Extend citation rendering to JOATU exchanges, governance records, and contribution histories.

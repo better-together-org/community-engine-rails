@@ -4,6 +4,7 @@ module BetterTogether
   # Connects a governed contributor to an authorable record with explicit role metadata.
   class Authorship < ApplicationRecord
     include Positioned
+    include Citable
     include BetterTogether::Creatable
 
     AUTHOR_ROLE = 'author'
