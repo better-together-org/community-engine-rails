@@ -13,6 +13,9 @@ module BetterTogether
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     has_many :authorships, as: :author, class_name: 'BetterTogether::Authorship', inverse_of: :author, dependent: :restrict_with_exception
 
+    has_many :agreement_participants, as: :participant, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreements, through: :agreement_participants
+
     validates :name, :identifier, :provider, presence: true
     validates :identifier, format: { with: /\A[a-z0-9][a-z0-9_-]*\z/ }
     validates :robot_type, inclusion: { in: ROBOT_TYPES }

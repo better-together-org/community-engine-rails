@@ -7,9 +7,9 @@ module BetterTogether
       new(...).record!
     end
 
-    def initialize(agreement:, person:, acceptance_method:, accepted_at: Time.current, context: {})
+    def initialize(agreement:, participant: nil, person: nil, acceptance_method:, accepted_at: Time.current, context: {})
       @agreement = agreement
-      @person = person
+      @participant = participant || person
       @acceptance_method = acceptance_method
       @accepted_at = accepted_at
       @context = context
@@ -18,7 +18,7 @@ module BetterTogether
     def record!
       AgreementParticipant.create!(
         agreement:,
-        person:,
+        participant:,
         accepted_at:,
         acceptance_method:,
         audit_context: normalized_audit_context
@@ -27,7 +27,7 @@ module BetterTogether
 
     private
 
-    attr_reader :accepted_at, :acceptance_method, :agreement, :context, :person
+    attr_reader :accepted_at, :acceptance_method, :agreement, :context, :participant
 
     def normalized_audit_context
       base_context = context.except(:request).to_h.deep_stringify_keys

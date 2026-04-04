@@ -73,6 +73,18 @@ RSpec.describe BetterTogether::Robot do
       expect(robot.governed_agent_key).to eq('robot:release-bot')
       expect(robot.governed_agent_label).to eq('Release Bot (robot)')
     end
+
+    it 'can satisfy agreement checks as a governed agent' do
+      robot = create(:robot, identifier: 'release-bot', name: 'Release Bot')
+      agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |record|
+        record.title = 'Content Publishing Agreement'
+        record.privacy = 'public'
+        record.protected = true
+      end
+      create(:better_together_agreement_participant, agreement:, participant: robot, accepted_at: Time.current)
+
+      expect(robot.accepted_agreement?('content_publishing_agreement')).to be(true)
+    end
   end
 
   describe '#to_s' do

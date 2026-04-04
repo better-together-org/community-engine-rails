@@ -20,6 +20,7 @@ module BetterTogether
       translate_enum :privacy
 
       validates :privacy, presence: true, inclusion: { in: PRIVACY_LEVELS.values }
+      validate :require_publishing_agreement_for_public_visibility
 
       scope :privacy_public, -> { where(privacy: 'public') }
       scope :privacy_community, -> { where(privacy: 'community') }
@@ -36,6 +37,19 @@ module BetterTogether
       included_module = self
       Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
       ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
+    end
+
+    private
+
+    def require_publishing_agreement_for_public_visibility
+      return unless privacy_public?
+      return unless new_record? || will_save_change_to_privacy?
+
+      BetterTogether::PublicVisibilityGate.allow!(
+        record: self,
+        actor: Current.governed_agent,
+        target_privacy: privacy
+      )
     end
   end
 end
