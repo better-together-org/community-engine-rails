@@ -44,7 +44,7 @@ module BetterTogether
              dependent: :destroy,
              inverse_of: :creator
 
-    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreement_participants, as: :participant, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 
     has_many :person_blocks, foreign_key: :blocker_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'

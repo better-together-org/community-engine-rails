@@ -40,6 +40,13 @@ module BetterTogether
     def governed_agent_label
       "#{governed_agent_display_name} (#{governed_agent_type})"
     end
+
+    def accepted_agreement?(identifier)
+      BetterTogether::ChecksRequiredAgreements.accepted_agreement?(self, identifier:)
+    end
+
+    def missing_agreement?(identifier)
+      !accepted_agreement?(identifier)
+    end
   end
 end
-

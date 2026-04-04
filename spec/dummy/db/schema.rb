@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_04_190000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_04_204500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -102,7 +102,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_190000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "agreement_id", null: false
-    t.uuid "person_id", null: false
+    t.uuid "person_id"
     t.string "group_identifier"
     t.datetime "accepted_at"
     t.string "acceptance_method", default: "agreement_review", null: false
@@ -111,6 +111,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_190000) do
     t.datetime "agreement_updated_at_snapshot", null: false
     t.string "agreement_content_digest", null: false
     t.jsonb "audit_context", default: {}, null: false
+    t.string "participant_type", null: false
+    t.uuid "participant_id", null: false
+    t.index ["agreement_id", "participant_type", "participant_id"], name: "idx_better_together_agreement_participants_unique_participant", unique: true
     t.index ["agreement_id", "person_id"], name: "index_bt_agreement_participants_on_agreement_and_person", unique: true
     t.index ["agreement_id"], name: "index_better_together_agreement_participants_on_agreement_id"
     t.index ["group_identifier"], name: "idx_on_group_identifier_06b6e57c0b"
