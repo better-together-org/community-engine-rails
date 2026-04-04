@@ -1,0 +1,12 @@
+<% claim_records = record.claims.to_a.presence || Array.new(2) { record.claims.build } %>
+
+<div class="mt-4">
+  <h3 class="h5">Claims and Supporting Evidence</h3>
+  <p class="text-muted small">
+    Record specific claims, review status, and which citations support or contest them.
+  </p>
+
+  <%= form.fields_for :claims, claim_records do |claim_fields| %>
+    <%= render 'better_together/shared/claim_fields', claim_fields:, record: %>
+  <% end %>
+</div>

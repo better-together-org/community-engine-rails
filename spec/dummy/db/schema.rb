@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_04_233000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_04_234500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -334,6 +334,23 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_233000) do
     t.index ["creator_id"], name: "index_better_together_citations_on_creator_id"
   end
 
+  create_table "better_together_claims", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "claimable_type", null: false
+    t.uuid "claimable_id", null: false
+    t.uuid "creator_id"
+    t.integer "position"
+    t.string "claim_key", null: false
+    t.text "statement", null: false
+    t.text "selector"
+    t.string "review_status", default: "draft", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["claimable_type", "claimable_id", "claim_key"], name: "idx_bt_claims_on_claimable_and_claim_key", unique: true
+    t.index ["claimable_type", "claimable_id"], name: "idx_bt_claims_on_claimable"
+    t.index ["creator_id"], name: "index_better_together_claims_on_creator_id"
+  end
+
   create_table "better_together_comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -530,6 +547,25 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_233000) do
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
+  end
+
+  create_table "better_together_evidence_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "claim_id", null: false
+    t.uuid "citation_id", null: false
+    t.uuid "creator_id"
+    t.integer "position"
+    t.string "relation_type", default: "supports", null: false
+    t.string "locator"
+    t.text "quoted_text"
+    t.text "editor_note"
+    t.string "review_status", default: "draft", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["citation_id"], name: "index_better_together_evidence_links_on_citation_id"
+    t.index ["claim_id", "citation_id", "relation_type"], name: "idx_bt_evidence_links_on_claim_citation_relation", unique: true
+    t.index ["claim_id"], name: "index_better_together_evidence_links_on_claim_id"
+    t.index ["creator_id"], name: "index_better_together_evidence_links_on_creator_id"
   end
 
   create_table "better_together_federation_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2143,6 +2179,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_233000) do
   add_foreign_key "better_together_checklist_items", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_checklists", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_citations", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_claims", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_comments", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_communities", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_content_blocks", "better_together_people", column: "creator_id"
@@ -2159,6 +2196,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_233000) do
   add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_evidence_links", "better_together_citations", column: "citation_id"
+  add_foreign_key "better_together_evidence_links", "better_together_claims", column: "claim_id"
+  add_foreign_key "better_together_evidence_links", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_federation_access_tokens", "better_together_platform_connections", column: "platform_connection_id"
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"

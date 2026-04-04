@@ -147,6 +147,7 @@
   <%= render partial: 'better_together/pages/extra_page_fields', locals: { form:, page: } %>
 
   <%= render 'better_together/shared/citation_fields_section', form:, record: page %>
+  <%= render 'better_together/shared/claim_fields_section', form:, record: page %>
 
   <% if page.persisted? %>
     <div class="row my-3">
