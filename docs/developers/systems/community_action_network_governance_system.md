@@ -167,6 +167,7 @@ This governance layer does not replace current systems. It frames and extends th
 ## Related System Docs
 
 - [Agreements System Documentation](agreements_system.md)
+- [Public Publishing Agreement Gate System](public_publishing_agreement_gate_system.md)
 - [Robot Author Identity System](robot_author_identity_system.md)
 - [Release Package Publishing System](release_package_publishing_system.md)
 - [Actor-Safe Creator and Authorship Migration Plan](actor_safe_creator_authorship_migration_plan.md)
