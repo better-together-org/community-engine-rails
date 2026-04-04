@@ -44,7 +44,7 @@ module BetterTogether
       [source_author.presence, title.presence, publisher.presence].compact.join('. ')
     end
 
-    def apa_citation
+    def apa_citation(include_provenance: false)
       parts = []
       parts << source_author if source_author.present?
       parts << "(#{published_on&.year || 'n.d.'})"
@@ -52,10 +52,11 @@ module BetterTogether
       parts << publisher if publisher.present?
       parts << locator if locator.present?
       parts << source_url if source_url.present?
-      parts.compact.join('. ').gsub('..', '.')
+      citation_text = parts.compact.join('. ').gsub('..', '.')
+      include_provenance ? [citation_text, provenance_note].compact.join(' ') : citation_text
     end
 
-    def mla_citation
+    def mla_citation(include_provenance: false)
       parts = []
       parts << source_author if source_author.present?
       parts << %("#{title}")
@@ -63,7 +64,8 @@ module BetterTogether
       parts << published_on.strftime('%-d %b. %Y') if published_on.present?
       parts << locator if locator.present?
       parts << source_url if source_url.present?
-      parts.compact.join(', ').sub(', "', ' "')
+      citation_text = parts.compact.join(', ').sub(', "', ' "')
+      include_provenance ? [citation_text, provenance_note].compact.join(' ') : citation_text
     end
 
     def accessible_reference
@@ -99,7 +101,13 @@ module BetterTogether
       ].compact.join(' | ')
     end
 
-    def to_csl_json
+    def provenance_note
+      return unless imported_from_linked_record?
+
+      "Imported from linked citation: #{import_audit_summary}"
+    end
+
+    def to_csl_json(include_provenance: false)
       {
         id: reference_key,
         type: csl_type,
@@ -120,7 +128,7 @@ module BetterTogether
         issued: csl_date_hash(published_on),
         accessed: csl_date_hash(accessed_on),
         locator: locator.presence,
-        note: rights_notes.presence,
+        note: csl_note(include_provenance:),
         abstract: excerpt.presence,
         keyword: csl_keywords.presence
       }.compact
@@ -238,6 +246,13 @@ module BetterTogether
 
     def metadata_value(key)
       metadata[key.to_s].presence || metadata[key.to_sym].presence
+    end
+
+    def csl_note(include_provenance: false)
+      notes = []
+      notes << rights_notes.presence
+      notes << provenance_note if include_provenance
+      notes.compact.join(' ').presence
     end
 
     def parse_name_list(value)

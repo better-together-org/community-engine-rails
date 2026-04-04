@@ -249,6 +249,28 @@ The CSL export now includes richer cooperative-governance metadata where availab
 
 This keeps the primary citation record style-agnostic while giving downstream tools enough structure to generate more faithful MLA, APA, CSL, and governance-oriented exports later.
 
+Provenance-aware export is now optional rather than implicit. When `include_provenance=true` is supplied to the export route, imported citation copies append their linked-source provenance to the exported CSL note field and to line-oriented APA or MLA output. Default exports remain clean and citation-style focused.
+
+### Contribution evidence summaries
+
+Imported citation provenance is also surfaced outside full bibliography views.
+
+Contributed page and post cards now render a shared record evidence summary that shows:
+
+- claim count
+- citation count
+- imported citation count
+
+That summary appears anywhere those shared card partials are rendered, including person profile contribution tabs. This gives contributors and reviewers a compact view of evidence density and imported-source reliance before opening the full record.
+
+Additional review assets for this slice:
+
+- [Contribution Evidence Summary Flow Source](../../diagrams/source/pr_1494_contribution_evidence_summary_flow.mmd)
+- [Contribution Evidence Summary PNG](../../diagrams/exports/png/pr_1494_contribution_evidence_summary_flow.png)
+- [Contribution Evidence Summary SVG](../../diagrams/exports/svg/pr_1494_contribution_evidence_summary_flow.svg)
+- [Contribution Evidence Summary Desktop Screenshot](../../screenshots/desktop/contribution_evidence_summary.png)
+- [Contribution Evidence Summary Mobile Screenshot](../../screenshots/mobile/contribution_evidence_summary.png)
+
 ## Standards Direction
 
 The current metadata layer is designed to grow toward standards-compatible export and provenance.

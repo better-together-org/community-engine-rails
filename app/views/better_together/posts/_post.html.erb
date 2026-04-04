@@ -9,6 +9,10 @@
     </div>
   <% end %>
 
+  <div class="mb-3">
+    <%= render 'better_together/shared/record_evidence_summary', record: post %>
+  </div>
+
   <div class="mt-auto">
     <small class="text-muted">
       <% if post.respond_to?(:published_at) && post.published_at.present? %>
