@@ -3,6 +3,7 @@
 
   <%= render 'better_together/shared/claims_and_evidence', record: @calendar %>
   <%= render 'better_together/shared/bibliography', record: @calendar %>
+  <%= render 'better_together/shared/governance_bundle_links', record: @calendar if @calendar.bibliography_entries.any? || @calendar.claims.any? %>
 
   <div class="my-3 d-flex justify-content-between">
     <%= link_to "Edit this calendar", edit_calendar_path(@calendar), class: "btn btn-primary" %>

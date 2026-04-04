@@ -160,7 +160,7 @@ module BetterTogether
           claims: respond_to?(:claims) ? claims.size : 0,
           contributions: respond_to?(:contributions) ? contributions.size : 0
         },
-        citations: citations_as_csl_json(include_provenance:),
+        citations: bibliography_entries.map { |citation| citation.governance_bundle_payload(include_provenance:) },
         claims: respond_to?(:claims_as_json_bundle) ? claims_as_json_bundle : [],
         contributions: governance_bundle_contributions
       }

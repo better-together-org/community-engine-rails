@@ -150,6 +150,24 @@ module BetterTogether
       }.compact
     end
 
+    def governance_bundle_payload(include_provenance: false)
+      {
+        id: id,
+        reference_key: reference_key,
+        source_kind: source_kind,
+        title: title,
+        source_author: source_author,
+        publisher: publisher,
+        source_url: source_url,
+        locator: locator,
+        excerpt: excerpt,
+        imported_from_linked_record: imported_from_linked_record?,
+        import_audit_summary: import_audit_summary,
+        csl: to_csl_json(include_provenance:),
+        platform_metadata: governance_platform_metadata
+      }.compact
+    end
+
     private
 
     def csl_type # rubocop:todo Metrics/MethodLength
@@ -238,6 +256,20 @@ module BetterTogether
 
     def metadata_value(key)
       metadata[key.to_s].presence || metadata[key.to_sym].presence
+    end
+
+    def governance_platform_metadata
+      selected = metadata.slice(
+        'repository_name',
+        'repository_path',
+        'pull_request_number',
+        'issue_number',
+        'commit_sha',
+        'version',
+        'archive_location',
+        'container_title'
+      )
+      selected.presence
     end
 
     def csl_note(include_provenance: false)
