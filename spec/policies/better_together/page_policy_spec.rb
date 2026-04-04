@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers, RSpec/NamedSubject
+
 RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec/MultipleMemoizedHelpers
   let!(:public_published)   { create(:better_together_page, published_at: 1.day.ago, privacy: 'public') }
   let!(:public_unpublished) { create(:better_together_page, published_at: nil, privacy: 'public') }
@@ -65,7 +67,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       end
       # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-      context 'editor' do
+      context 'editor' do # rubocop:todo RSpec/MultipleMemoizedHelpers
         let(:user) { editor_user }
         let(:page) { private_unpublished }
 
@@ -107,7 +109,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    context 'editor' do
+    context 'editor' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { editor_user }
       let(:page) { private_unpublished }
 
@@ -148,7 +150,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    context 'editor' do
+    context 'editor' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { editor_user }
 
       it 'includes contributed and published public pages' do
@@ -190,3 +192,4 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers, RSpec/NamedSubject

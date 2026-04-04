@@ -1477,6 +1477,8 @@ fr:
           title: Titre
     global:
       add: Ajouter
+    governance:
+      robot_author: Auteur robot
     host_nav:
       label: Navigation de l’hôte
       toggle: Navigation de l’hôte
@@ -2250,8 +2252,12 @@ fr:
         clear_filters: Effacer les filtres
         filter: Filtrer
         new_page: Nouvelle page
+        new_release_package_draft: Nouveau brouillon de paquet de publication
         search_by_slug: Rechercher par slug...
         search_by_title: Rechercher par titre...
+      release_package_draft:
+        created: 'Brouillon privé de paquet de publication créé. Publication associée
+          : %{post_title}'
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:

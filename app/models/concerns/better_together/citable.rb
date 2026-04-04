@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Adds structured citations and bibliography helpers to a record.
-  module Citable
+  module Citable # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
     included do
@@ -17,7 +17,7 @@ module BetterTogether
     end
 
     class_methods do
-      def extra_permitted_attributes
+      def extra_permitted_attributes # rubocop:todo Metrics/MethodLength
         super + [
           {
             citations_attributes: %i[
@@ -84,7 +84,7 @@ module BetterTogether
       end
     end
 
-    def available_evidence_citation_browser_groups
+    def available_evidence_citation_browser_groups # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       available_evidence_citation_sources.map do |group_label, citations|
         source_record = citations.first&.citeable
         {
@@ -157,7 +157,7 @@ module BetterTogether
     private
 
     def contribution_evidence_source_label(contribution)
-      contributor_name = contribution.author&.respond_to?(:name) ? contribution.author.name : contribution.author.to_s
+      contributor_name = contribution.author.respond_to?(:name) ? contribution.author.name : contribution.author.to_s
       contributor_name = 'Linked contributor' if contributor_name.blank?
 
       "#{contributor_name}: #{contribution.role.to_s.humanize}"

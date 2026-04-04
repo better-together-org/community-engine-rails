@@ -46,7 +46,7 @@ module BetterTogether
       Rails.logger.debug "[AGREEMENTS DEBUG] Unaccepted IDs: #{@unaccepted_agreements.pluck(:identifier)}"
     end
 
-    def load_all_required_agreements
+    def load_all_required_agreements # rubocop:todo Metrics/AbcSize
       required_identifiers = BetterTogether::ChecksRequiredAgreements.required_agreement_identifiers
       required_identifiers |= requested_agreement_identifiers
 

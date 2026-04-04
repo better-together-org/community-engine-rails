@@ -204,7 +204,8 @@ module BetterTogether # :nodoc:
           groups = page.available_evidence_citation_option_groups
 
           expect(groups['Current record']).to include(["#{local_citation.reference_key}: #{local_citation.title}", local_citation.id])
-          expect(groups['Evidence Keeper: Reviewer']).to include(["#{linked_citation.reference_key}: #{linked_citation.title}", linked_citation.id])
+          expect(groups['Evidence Keeper: Reviewer']).to include(["#{linked_citation.reference_key}: #{linked_citation.title}",
+                                                                  linked_citation.id])
         end
 
         it 'builds evidence browser groups with preview metadata' do

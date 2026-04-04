@@ -5,7 +5,7 @@ module BetterTogether
   module Author
     extend ActiveSupport::Concern
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       has_many :contributions,
                as: :author,
                class_name: 'BetterTogether::Authorship',

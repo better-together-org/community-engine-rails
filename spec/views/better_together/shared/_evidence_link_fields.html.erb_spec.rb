@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_evidence_link_fields', type: :view do
+RSpec.describe 'better_together/shared/_evidence_link_fields' do
   it 'renders grouped citation options from the current record and linked contributions' do
     page = create(:better_together_page)
     create(:citation, citeable: page, reference_key: 'local_record', title: 'Local Record Citation')

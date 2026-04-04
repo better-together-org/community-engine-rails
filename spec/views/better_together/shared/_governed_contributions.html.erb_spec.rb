@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_governed_contributions', type: :view do
+RSpec.describe 'better_together/shared/_governed_contributions' do
   it 'renders grouped contribution roles for people and robots' do
     post = create(:better_together_post)
     person = create(:better_together_person, name: 'Editor Person', identifier: 'editor-person')
@@ -15,8 +15,7 @@ RSpec.describe 'better_together/shared/_governed_contributions', type: :view do
       '<img alt="Editor Person" />'.html_safe
     end
 
-    allow(view).to receive(:current_person).and_return(nil)
-    allow(view).to receive(:policy).and_return(double(show?: true))
+    allow(view).to receive_messages(current_person: nil, policy: double(show?: true))
     allow(view).to receive(:person_path) { |arg| "/people/#{arg.to_param}" }
 
     render partial: 'better_together/shared/governed_contributions', locals: { record: post }

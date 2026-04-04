@@ -5,7 +5,7 @@ module BetterTogether
   class ReleasePackageDraftBuilder
     Result = Data.define(:page, :post)
 
-    DEFAULT_POST_CONTENT = <<~CONTENT.freeze
+    DEFAULT_POST_CONTENT = <<~CONTENT
       This is a private draft release package announcement.
 
       Review and edit this post before publication.

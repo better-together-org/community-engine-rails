@@ -18,8 +18,8 @@ module BetterTogether
       accepts_nested_attributes_for :claims, allow_destroy: true, reject_if: :reject_blank_claim_attributes?
     end
 
-    class_methods do
-      def extra_permitted_attributes
+    class_methods do # rubocop:todo Metrics/BlockLength
+      def extra_permitted_attributes # rubocop:todo Metrics/MethodLength
         super + [
           {
             claims_attributes: [
@@ -123,9 +123,7 @@ module BetterTogether
       blocks << hero_block if respond_to?(:hero_block) && hero_block.present?
       blocks.concat(Array(content_blocks)) if respond_to?(:content_blocks)
 
-      blocks.compact.map do |block|
-        block.evidence_selector_options
-      end
+      blocks.compact.map(&:evidence_selector_options)
             .flatten
     end
   end

@@ -69,7 +69,7 @@ module BetterTogether
           },
           {
             value: "#{evidence_selector}:timestamp:*",
-            label: "Video timestamp selector"
+            label: 'Video timestamp selector'
           }
         ]
       end

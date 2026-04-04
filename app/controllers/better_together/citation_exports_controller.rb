@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Exports citeable bibliography data in CSL JSON and plain-text formats.
   class CitationExportsController < ApplicationController
     CITEABLE_TYPES = {
       'page' => BetterTogether::Page,
@@ -16,7 +17,7 @@ module BetterTogether
 
     before_action :set_citeable
 
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       authorize @citeable, :show?
 
       case export_style

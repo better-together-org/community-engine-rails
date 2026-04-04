@@ -6,7 +6,7 @@ module BetterTogether
   class PublicVisibilityGate
     AGREEMENT_IDENTIFIER = 'content_publishing_agreement'
 
-    Result = Struct.new(:allowed, :reasons, keyword_init: true) do
+    Result = Struct.new(:allowed, :reasons) do
       def allowed?
         allowed
       end

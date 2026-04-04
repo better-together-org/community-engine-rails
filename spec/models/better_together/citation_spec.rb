@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Citation, type: :model do
+RSpec.describe BetterTogether::Citation do
   describe 'normalization and formatting' do
     it 'normalizes the reference key from the title when missing' do
       citation = build(:better_together_citation, reference_key: nil, title: 'Oral History Session 4')
@@ -52,7 +52,7 @@ RSpec.describe BetterTogether::Citation, type: :model do
       expect(exported[:author]).to include({ family: 'Morgan', given: 'Leah' })
       expect(exported[:author]).to include({ family: 'Collective', given: 'River' })
       expect(exported[:editor]).to eq([{ family: 'Lovelace', given: 'Ada' }])
-      expect(exported[:"container-title"]).to eq('Universe 13 Oral History Archive')
+      expect(exported[:'container-title']).to eq('Universe 13 Oral History Archive')
       expect(exported[:medium]).to eq('Audio interview')
       expect(exported[:archive]).to eq('BTS Community Archive')
       expect(exported[:archive_location]).to eq('box-4/folder-2')
@@ -79,12 +79,12 @@ RSpec.describe BetterTogether::Citation, type: :model do
                            })
 
       expect(repository.to_csl_json[:type]).to eq('software')
-      expect(repository.to_csl_json[:"container-title"]).to eq('better-together-org/community-engine-rails')
+      expect(repository.to_csl_json[:'container-title']).to eq('better-together-org/community-engine-rails')
       expect(repository.to_csl_json[:version]).to eq('0.11.0')
       expect(repository.to_csl_json[:archive_location]).to eq('pull/1494')
 
       expect(pull_request.to_csl_json[:type]).to eq('post-weblog')
-      expect(pull_request.to_csl_json[:"container-title"]).to eq('better-together-org/community-engine-rails')
+      expect(pull_request.to_csl_json[:'container-title']).to eq('better-together-org/community-engine-rails')
       expect(pull_request.to_csl_json[:number]).to eq(1494)
       expect(pull_request.to_csl_json[:genre]).to eq('Pull request')
     end

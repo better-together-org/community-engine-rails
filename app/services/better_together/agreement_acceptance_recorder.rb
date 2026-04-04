@@ -7,7 +7,7 @@ module BetterTogether
       new(...).record!
     end
 
-    def initialize(agreement:, participant: nil, person: nil, acceptance_method:, accepted_at: Time.current, context: {})
+    def initialize(agreement:, acceptance_method:, participant: nil, person: nil, accepted_at: Time.current, context: {}) # rubocop:todo Metrics/ParameterLists
       @agreement = agreement
       @participant = participant || person
       @acceptance_method = acceptance_method
