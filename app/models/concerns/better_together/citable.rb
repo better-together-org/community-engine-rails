@@ -107,6 +107,10 @@ module BetterTogether
       end
     end
 
+    def importable_linked_citation_groups
+      available_evidence_citation_browser_groups.select { |group| group[:origin] == 'contribution' }
+    end
+
     def citations_as_csl_json
       bibliography_entries.map(&:to_csl_json)
     end
