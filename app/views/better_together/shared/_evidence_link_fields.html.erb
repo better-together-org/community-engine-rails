@@ -1,11 +1,16 @@
+<% citation_option_groups = record.respond_to?(:available_evidence_citation_option_groups) ? record.available_evidence_citation_option_groups : {} %>
+
 <div class="border rounded p-2 mb-2">
   <div class="row row-cols-1 row-cols-md-2">
     <div class="col mb-2">
       <%= evidence_link_fields.label :citation_id, 'Citation' %>
       <%= evidence_link_fields.select :citation_id,
-                                      options_for_select(record.citations.map { |citation| [citation.title, citation.id] }, evidence_link_fields.object.citation_id),
+                                      grouped_options_for_select(citation_option_groups, evidence_link_fields.object.citation_id),
                                       { include_blank: true },
                                       class: 'form-select' %>
+      <small class="form-text text-muted">
+        Evidence links can reference citations on this record and linked contribution records.
+      </small>
     </div>
 
     <div class="col mb-2">

@@ -55,6 +55,32 @@ module BetterTogether
       end
     end
 
+    def available_evidence_citation_sources
+      sources = []
+
+      if bibliography_entries.any?
+        sources << ['Current record', bibliography_entries]
+      end
+
+      if respond_to?(:contributions)
+        contributions.includes(:author, :citations).each do |contribution|
+          next if contribution.bibliography_entries.blank?
+
+          sources << [contribution_evidence_source_label(contribution), contribution.bibliography_entries]
+        end
+      end
+
+      sources
+    end
+
+    def available_evidence_citation_option_groups
+      available_evidence_citation_sources.each_with_object({}) do |(group_label, citations), groups|
+        groups[group_label] = citations.map do |citation|
+          ["#{citation.reference_key}: #{citation.title}", citation.id]
+        end
+      end
+    end
+
     def citations_as_csl_json
       bibliography_entries.map(&:to_csl_json)
     end
@@ -68,6 +94,15 @@ module BetterTogether
       else
         []
       end
+    end
+
+    private
+
+    def contribution_evidence_source_label(contribution)
+      contributor_name = contribution.author&.respond_to?(:name) ? contribution.author.name : contribution.author.to_s
+      contributor_name = 'Linked contributor' if contributor_name.blank?
+
+      "#{contributor_name}: #{contribution.role.to_s.humanize}"
     end
   end
 end

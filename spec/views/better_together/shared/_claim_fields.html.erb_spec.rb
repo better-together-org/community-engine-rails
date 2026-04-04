@@ -20,6 +20,7 @@ RSpec.describe 'better_together/shared/_claim_fields', type: :view do
            }
 
     expect(rendered).to include('data-controller="better_together--claim-selector"')
+    expect(rendered).to include('Suggested Selector')
     expect(rendered).to include('Video Source')
     expect(rendered).to include('Image Source')
     expect(rendered).to include('block:image:hero:media')

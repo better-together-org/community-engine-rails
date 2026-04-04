@@ -35,6 +35,20 @@
       <small class="form-text text-muted">Optional selector for the content span, block, or media segment this claim describes. Suggested selectors are available for supported records.</small>
     </div>
 
+    <% if selector_options.any? %>
+      <div class="col-12 mb-3">
+        <label class="form-label">Suggested Selector</label>
+        <select class="form-select"
+                data-better-together--claim-selector-target="selectorPreset"
+                data-action="change->better_together--claim-selector#applyPreset">
+          <option value="">Choose a suggested selector</option>
+          <% selector_options.each do |selector_option| %>
+            <option value="<%= selector_option[:value] %>"><%= selector_option[:label] %></option>
+          <% end %>
+        </select>
+      </div>
+    <% end %>
+
     <% if video_selector_options.any? || image_selector_options.any? %>
       <div class="col-12">
         <div class="border rounded bg-light p-3 mb-3">
