@@ -43,6 +43,10 @@ That actor layer should eventually support at least:
 
 and possibly future collective or delegated authoring patterns if the product evolves that way.
 
+The next concrete bridge from design to implementation is documented in:
+
+- [Actor-Safe Creator and Authorship Migration Plan](actor_safe_creator_authorship_migration_plan.md)
+
 ## Required Robot Identity Surface
 
 A robot author should be represented with at least:
@@ -87,4 +91,3 @@ This is especially important for release packages, launch pages, and milestone p
 This design is **not yet implemented** as a first-class CE feature.
 
 The robot system exists, but the author identity and governed authorship surfaces described here are still future work.
-

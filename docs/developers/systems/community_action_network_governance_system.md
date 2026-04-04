@@ -164,6 +164,13 @@ This governance layer does not replace current systems. It frames and extends th
 - **Robot system**
   - becomes a governed participant model rather than only a configuration surface
 
+## Related System Docs
+
+- [Agreements System Documentation](agreements_system.md)
+- [Robot Author Identity System](robot_author_identity_system.md)
+- [Release Package Publishing System](release_package_publishing_system.md)
+- [Actor-Safe Creator and Authorship Migration Plan](actor_safe_creator_authorship_migration_plan.md)
+
 ## Immediate Implementation Implications
 
 This system implies four major follow-on designs:
