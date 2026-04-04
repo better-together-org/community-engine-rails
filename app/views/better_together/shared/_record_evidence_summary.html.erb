@@ -13,3 +13,5 @@
   <% summary_parts << "#{imported_count} imported" if imported_count.positive? %>
   <%= summary_parts.join(' · ') %>
 </div>
+
+<%= render 'better_together/shared/governance_bundle_links', record:, compact: true %>

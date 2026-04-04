@@ -51,6 +51,8 @@ RSpec.describe 'Documentation screenshots for contribution evidence summary', :d
       expect(page).to have_text('1 claim')
       expect(page).to have_text('1 citation')
       expect(page).to have_text('1 imported')
+      expect(page).to have_link('Governance Bundle')
+      expect(page).to have_link('CSL Export')
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/contribution_evidence_summary.png')

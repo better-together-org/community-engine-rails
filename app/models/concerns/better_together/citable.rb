@@ -120,6 +120,20 @@ module BetterTogether
       bibliography_entries.count(&:imported_from_linked_record?)
     end
 
+    def citation_export_key
+      {
+        'BetterTogether::Page' => 'page',
+        'BetterTogether::Post' => 'post',
+        'BetterTogether::Event' => 'event',
+        'BetterTogether::CallForInterest' => 'call_for_interest',
+        'BetterTogether::Agreement' => 'agreement',
+        'BetterTogether::Calendar' => 'calendar',
+        'BetterTogether::Joatu::Request' => 'joatu_request',
+        'BetterTogether::Joatu::Offer' => 'joatu_offer',
+        'BetterTogether::Joatu::Agreement' => 'joatu_agreement'
+      }[self.class.name]
+    end
+
     def citations_as_csl_json(include_provenance: false)
       bibliography_entries.map { |citation| citation.to_csl_json(include_provenance:) }
     end
@@ -195,7 +209,9 @@ module BetterTogether
           contributor: {
             id: contributor&.id,
             type: contributor&.class&.name,
-            name: contributor&.respond_to?(:name) ? contributor.name : contributor.to_s
+            name: contributor&.respond_to?(:name) ? contributor.name : contributor.to_s,
+            github_handles: contributor&.respond_to?(:github_handles) ? contributor.github_handles : [],
+            github_profile_urls: contributor&.respond_to?(:github_profile_urls) ? contributor.github_profile_urls : []
           }.compact
         }
       end

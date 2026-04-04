@@ -63,9 +63,19 @@ RSpec.describe 'BetterTogether::CitationExportsController', :as_user do
     end
 
     it 'exports a governance citation bundle with claims and contributions' do
+      reviewer = create(:person, name: 'Bundle Reviewer')
+      create(:person_platform_integration,
+             person: reviewer,
+             user: reviewer.user || create(:user, person: reviewer),
+             provider: 'github',
+             uid: SecureRandom.uuid,
+             handle: 'bundle-reviewer',
+             profile_url: 'https://github.com/bundle-reviewer',
+             access_token: 'token')
+
       contribution = BetterTogether::Authorship.create!(
         authorable: page,
-        author: create(:person, name: 'Bundle Reviewer'),
+        author: reviewer,
         role: 'reviewer',
         contribution_type: 'governance'
       )
@@ -84,6 +94,8 @@ RSpec.describe 'BetterTogether::CitationExportsController', :as_user do
       expect(json['bundle']['summary']['contributions']).to eq(1)
       expect(json['bundle']['claims'].first['statement']).to eq('Claims should have auditable support.')
       expect(json['bundle']['contributions'].first['role']).to eq('reviewer')
+      expect(json['bundle']['contributions'].first['contributor']['github_handles']).to eq(['bundle-reviewer'])
+      expect(json['bundle']['contributions'].first['contributor']['github_profile_urls']).to eq(['https://github.com/bundle-reviewer'])
     end
   end
 end

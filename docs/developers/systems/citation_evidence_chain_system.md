@@ -260,6 +260,9 @@ Contributed page and post cards now render a shared record evidence summary that
 - claim count
 - citation count
 - imported citation count
+- direct download links for:
+  - governance bundle export
+  - CSL export
 
 That summary appears anywhere those shared card partials are rendered, including person profile contribution tabs. This gives contributors and reviewers a compact view of evidence density and imported-source reliance before opening the full record.
 
@@ -286,6 +289,7 @@ That bundle returns:
 - CSL-style citation payloads
 - claim and evidence-link structures
 - linked contribution summaries
+- linked GitHub identity metadata for contributors when local GitHub OAuth integrations exist
 
 This gives reviewers a single machine-readable export that can be used for cooperative governance review, audit trails, or downstream packaging without flattening everything into one text bibliography.
 

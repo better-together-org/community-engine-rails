@@ -22,5 +22,7 @@ RSpec.describe 'better_together/shared/_record_evidence_summary', type: :view do
     expect(rendered).to include('1 claim')
     expect(rendered).to include('1 citation')
     expect(rendered).to include('1 imported')
+    expect(rendered).to include('Governance Bundle')
+    expect(rendered).to include('CSL Export')
   end
 end

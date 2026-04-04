@@ -125,6 +125,7 @@
 
                 <%= render 'better_together/shared/claims_and_evidence', record: @event %>
                 <%= render 'better_together/shared/bibliography', record: @event %>
+                <%= render 'better_together/shared/governance_bundle_links', record: @event if @event.bibliography_entries.any? || @event.claims.any? %>
 
                 <%= render 'better_together/events/event_hosts', event: @event %>
               </div>

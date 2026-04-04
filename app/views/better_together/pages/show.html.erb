@@ -94,6 +94,7 @@
 
       <%= render 'better_together/shared/claims_and_evidence', record: @page %>
       <%= render 'better_together/shared/bibliography', record: @page %>
+      <%= render 'better_together/shared/governance_bundle_links', record: @page if @page.bibliography_entries.any? || @page.claims.any? %>
 
       <%= share_buttons(shareable: @page) if @page.privacy_public? %>
     <% end %>

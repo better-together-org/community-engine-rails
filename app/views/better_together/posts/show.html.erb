@@ -98,6 +98,7 @@
 
           <%= render 'better_together/shared/claims_and_evidence', record: @post %>
           <%= render 'better_together/shared/bibliography', record: @post %>
+          <%= render 'better_together/shared/governance_bundle_links', record: @post if @post.bibliography_entries.any? || @post.claims.any? %>
 
           <%# Footer dates removed as requested; actions live in the header toolbar %>
                </div>
