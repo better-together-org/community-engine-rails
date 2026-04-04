@@ -1,0 +1,10 @@
+{
+  "name": "release_0_11_0_platform_connection_editor",
+  "device": "desktop",
+  "url": "http://127.0.0.1:39147/en/platform_connections/1ad9f468-27a8-4d11-b01b-06b3712d764a/edit",
+  "title": "Edit Platform Connection | Community Engine Host",
+  "captured_at": "2026-04-04T13:53:36Z",
+  "locale": "en",
+  "feature_set": "release_0_11_0_federation_platform",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}

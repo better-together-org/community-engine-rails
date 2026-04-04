@@ -1,0 +1,10 @@
+{
+  "name": "release_0_11_0_person_platform_integrations",
+  "device": "mobile",
+  "url": "http://127.0.0.1:39147/en/person_platform_integrations",
+  "title": "Connected Accounts | Community Engine Host",
+  "captured_at": "2026-04-04T13:53:24Z",
+  "locale": "en",
+  "feature_set": "release_0_11_0_federation_platform",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}
