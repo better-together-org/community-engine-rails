@@ -54,5 +54,20 @@ module BetterTogether
         [citation.reference_key, citation.title]
       end
     end
+
+    def citations_as_csl_json
+      bibliography_entries.map(&:to_csl_json)
+    end
+
+    def citation_export_lines(style)
+      case style.to_s
+      when 'apa'
+        bibliography_entries.map(&:apa_citation)
+      when 'mla'
+        bibliography_entries.map(&:mla_citation)
+      else
+        []
+      end
+    end
   end
 end

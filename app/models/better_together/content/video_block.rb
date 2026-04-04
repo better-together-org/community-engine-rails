@@ -56,6 +56,23 @@ module BetterTogether
       def self.extra_permitted_attributes
         super + %i[video_url caption aspect_ratio]
       end
+
+      def evidence_selector_options
+        super + [
+          {
+            value: "#{evidence_selector}:video",
+            label: "Video embed: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:caption",
+            label: "Video caption: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:timestamp:*",
+            label: "Video timestamp selector"
+          }
+        ]
+      end
     end
   end
 end
