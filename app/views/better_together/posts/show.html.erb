@@ -66,7 +66,6 @@
                   </div>
                 <% end %>
 
-                <%# Authors — render governed authors truthfully %>
                 <% if @post.respond_to?(:governed_authors) && @post.governed_authors.any? %>
                   <div class="ms-sm-3">
                     <%= render 'better_together/shared/governed_authors', authors: @post.governed_authors, flex_layout: 'flex-row', flex_align_items: 'center' %>

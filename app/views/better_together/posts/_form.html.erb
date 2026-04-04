@@ -55,7 +55,7 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :author_ids, t('better_together.posts.authors', default: 'Authors') %>
+    <%= form.label :author_ids, t('better_together.posts.authors_people', default: 'People Authors') %>
     <%= form.collection_select :author_ids,
       BetterTogether::Person.order(:identifier),
       :id,

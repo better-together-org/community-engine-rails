@@ -132,9 +132,9 @@
       <% end %>
     </div>
 
-    <!-- Authors: assign one or more people or robots as page authors -->
+    <!-- Authors: assign one or more people and/or robots as page authors -->
     <div class="col mb-3 pb-3 border-bottom">
-      <%= form.label :author_ids, 'Authors' %>
+      <%= form.label :author_ids, 'People Authors' %>
       <%= form.collection_select :author_ids,
         BetterTogether::Person.order(:identifier),
         :id,
