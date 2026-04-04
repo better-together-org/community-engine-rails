@@ -28,6 +28,11 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 - [SVG Export](../../diagrams/exports/svg/pr_1494_claim_evidence_browser_flow.svg)
 - [Desktop Screenshot](../../screenshots/desktop/claim_evidence_browser.png)
 - [Mobile Screenshot](../../screenshots/mobile/claim_evidence_browser.png)
+- [Citation Import Flow Source](../../diagrams/source/pr_1494_citation_import_flow.mmd)
+- [Citation Import Flow PNG](../../diagrams/exports/png/pr_1494_citation_import_flow.png)
+- [Citation Import Flow SVG](../../diagrams/exports/svg/pr_1494_citation_import_flow.svg)
+- [Citation Import Desktop Screenshot](../../screenshots/desktop/citation_import_browser.png)
+- [Citation Import Mobile Screenshot](../../screenshots/mobile/citation_import_browser.png)
 
 ### Structured citations
 
@@ -192,6 +197,8 @@ This is still intentionally incremental. It does not yet provide a full claim pi
 - bibliography-backed inline citation references
 
 Inline Trix citations intentionally remain record-local for now. That preserves correct bibliography anchors in published rich text. Cross-record evidence browsing is currently implemented in claim evidence workflows, where linked citations can be referenced without silently importing or duplicating them into the publishing record.
+
+To bridge that gap safely, citation field forms now include an explicit `Import Linked Citation Into This Record` panel. Editors can review linked contribution citations and copy one into the current record's own citation rows. This makes the duplication deliberate, visible, and auditable instead of implicit.
 
 ### Export surface
 

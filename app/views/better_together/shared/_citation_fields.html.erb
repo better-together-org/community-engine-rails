@@ -1,8 +1,8 @@
-<div class="border rounded p-3 mb-3">
+<div class="border rounded p-3 mb-3" data-better_together--citation-import-target="citationFields">
   <div class="row row-cols-1 row-cols-md-2">
     <div class="col mb-3">
       <%= citation_fields.label :reference_key, 'Citation Key' %>
-      <%= citation_fields.text_field :reference_key, class: 'form-control', placeholder: 'smith_2024' %>
+      <%= citation_fields.text_field :reference_key, class: 'form-control', placeholder: 'smith_2024', data: { field_name: 'reference_key' } %>
       <small class="form-text text-muted">Use this key in the editor citation tool.</small>
     </div>
 
@@ -11,22 +11,23 @@
       <%= citation_fields.select :source_kind,
                                  options_for_select(BetterTogether::Citation::SOURCE_KINDS.map { |kind| [kind.humanize, kind] }, citation_fields.object.source_kind),
                                  {},
-                                 class: 'form-select' %>
+                                 class: 'form-select',
+                                 data: { field_name: 'source_kind' } %>
     </div>
 
     <div class="col-12 mb-3">
       <%= citation_fields.label :title %>
-      <%= citation_fields.text_field :title, class: 'form-control' %>
+      <%= citation_fields.text_field :title, class: 'form-control', data: { field_name: 'title' } %>
     </div>
 
     <div class="col mb-3">
       <%= citation_fields.label :source_author, 'Author / Source' %>
-      <%= citation_fields.text_field :source_author, class: 'form-control' %>
+      <%= citation_fields.text_field :source_author, class: 'form-control', data: { field_name: 'source_author' } %>
     </div>
 
     <div class="col mb-3">
       <%= citation_fields.label :publisher %>
-      <%= citation_fields.text_field :publisher, class: 'form-control' %>
+      <%= citation_fields.text_field :publisher, class: 'form-control', data: { field_name: 'publisher' } %>
     </div>
 
     <div class="col mb-3">
@@ -41,17 +42,17 @@
 
     <div class="col-12 mb-3">
       <%= citation_fields.label :source_url %>
-      <%= citation_fields.url_field :source_url, class: 'form-control', placeholder: 'https://...' %>
+      <%= citation_fields.url_field :source_url, class: 'form-control', placeholder: 'https://...', data: { field_name: 'source_url' } %>
     </div>
 
     <div class="col-12 mb-3">
       <%= citation_fields.label :locator %>
-      <%= citation_fields.text_field :locator, class: 'form-control', placeholder: 'p. 17, fig. 2, commit abc123, interview 00:13:20' %>
+      <%= citation_fields.text_field :locator, class: 'form-control', placeholder: 'p. 17, fig. 2, commit abc123, interview 00:13:20', data: { field_name: 'locator' } %>
     </div>
 
     <div class="col-12 mb-3">
       <%= citation_fields.label :excerpt %>
-      <%= citation_fields.text_area :excerpt, class: 'form-control', rows: 3 %>
+      <%= citation_fields.text_area :excerpt, class: 'form-control', rows: 3, data: { field_name: 'excerpt' } %>
     </div>
 
     <div class="col-12 mb-3">
