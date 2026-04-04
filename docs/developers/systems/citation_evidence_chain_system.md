@@ -43,6 +43,13 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 - [GitHub Evidence and Contribution Import Flow SVG](../../diagrams/exports/svg/pr_1494_github_evidence_and_contribution_import_flow.svg)
 - [GitHub Contribution Import Desktop Screenshot](../../screenshots/desktop/github_contribution_import_browser.png)
 - [GitHub Contribution Import Mobile Screenshot](../../screenshots/mobile/github_contribution_import_browser.png)
+- [Profile and Community Contribution Summary Flow Source](../../diagrams/source/pr_1494_profile_and_community_contribution_summaries_flow.mmd)
+- [Profile and Community Contribution Summary Flow PNG](../../diagrams/exports/png/pr_1494_profile_and_community_contribution_summaries_flow.png)
+- [Profile and Community Contribution Summary Flow SVG](../../diagrams/exports/svg/pr_1494_profile_and_community_contribution_summaries_flow.svg)
+- [Profile Contribution Summary Desktop Screenshot](../../screenshots/desktop/contribution_evidence_summary.png)
+- [Profile Contribution Summary Mobile Screenshot](../../screenshots/mobile/contribution_evidence_summary.png)
+- [Community Page Contribution Summary Desktop Screenshot](../../screenshots/desktop/community_page_contribution_summary.png)
+- [Community Page Contribution Summary Mobile Screenshot](../../screenshots/mobile/community_page_contribution_summary.png)
 
 ### Structured citations
 
@@ -254,6 +261,18 @@ GitHub-native metadata is stored in citation `metadata` and can include:
 - `github_handle`
 
 This gives the platform a reusable path for evidence import from code-hosting systems without inventing a parallel GitHub-only evidence schema.
+
+### Profile and community evidence visibility
+
+Evidence and citation export links now appear alongside broader governed contribution summaries on browsing surfaces where people evaluate community work, not only on record show pages.
+
+That currently includes:
+
+- profile contribution cards for pages and posts
+- community page cards for pages scoped to a community
+- community event cards
+
+This matters because auditable evidence needs to stay visible at the point of discovery, not only after drilling into a full record view or downloading a governance bundle.
 
 ### GitHub claim evidence import
 

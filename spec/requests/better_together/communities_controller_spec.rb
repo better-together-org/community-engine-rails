@@ -573,6 +573,30 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
         expect(response.body).to include('1 imported')
       end
 
+      it 'shows community page contribution and evidence summaries when pages are scoped to the community' do
+        page = create(:better_together_page,
+                      community: community,
+                      privacy: 'public',
+                      published_at: 1.day.ago)
+        contributor = create(:better_together_person, name: 'Community Page Maintainer')
+        page.add_governed_contributor(contributor, role: 'editor')
+        page.contributions.first.update!(details: {
+                                           'github_handle' => 'community-maintainer',
+                                           'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                         })
+        create(:claim, claimable: page, statement: 'Community pages should expose evidence summaries.')
+        create(:citation, citeable: page, reference_key: 'community_page_source', title: 'Community Page Source')
+
+        get better_together.community_path(locale:, id: community.slug)
+
+        expect(response.body).to include('pages-tab')
+        expect(response.body).to include(page.title)
+        expect(response.body).to include('Contributors:')
+        expect(response.body).to include('GitHub-linked')
+        expect(response.body).to include('GitHub: @community-maintainer')
+        expect(response.body).to include('Evidence:')
+      end
+
       it 'does not show create event button' do
         get better_together.community_path(locale:, id: community.slug)
         expect(response.body).not_to include('Create an Event')

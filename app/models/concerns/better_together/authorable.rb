@@ -115,6 +115,28 @@ module BetterTogether
                    .reject { |_role, actors| actors.empty? }
     end
 
+    def github_backed_contributions
+      contributions.select do |contribution|
+        Array(contribution.details&.fetch('github_sources', nil)).any?
+      end
+    end
+
+    def github_backed_contribution_count
+      github_backed_contributions.size
+    end
+
+    def github_backed_source_count
+      github_backed_contributions.sum do |contribution|
+        Array(contribution.details&.fetch('github_sources', nil)).size
+      end
+    end
+
+    def github_contributor_handles
+      github_backed_contributions.filter_map do |contribution|
+        contribution.details&.fetch('github_handle', nil)
+      end.uniq.sort
+    end
+
     def contribution_role_label(role)
       CONTRIBUTION_ROLE_LABELS.fetch(role.to_s, role.to_s.humanize)
     end
