@@ -23,6 +23,7 @@ module BetterTogether
         include BetterTogether::Categorizable
         include BetterTogether::Translatable
         include BetterTogether::FriendlySlug
+        include BetterTogether::Privacy
 
         enum :status, STATUS_VALUES, prefix: :status
         enum :urgency, URGENCY_VALUES, prefix: :urgency
@@ -55,7 +56,7 @@ module BetterTogether
       class_methods do
         def permitted_attributes(id: false, destroy: false)
           super +
-            %i[target_type target_id address_id status urgency] +
+            %i[target_type target_id address_id status urgency privacy] +
             [{ address_attributes: BetterTogether::Address.permitted_attributes(id: true, destroy: true) }]
         end
       end

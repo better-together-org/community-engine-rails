@@ -5,6 +5,7 @@ module BetterTogether
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
       include FriendlySlug
+      include BetterTogether::Privacy
       include Metrics::Viewable
 
       STATUS_VALUES = {
@@ -48,7 +49,7 @@ module BetterTogether
       }, if: :status_accepted?
 
       def self.permitted_attributes(id: false, destroy: false)
-        super + %i[offer_id request_id terms value status]
+        super + %i[offer_id request_id terms value status privacy]
       end
 
       def accept!
