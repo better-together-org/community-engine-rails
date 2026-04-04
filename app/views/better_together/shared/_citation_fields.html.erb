@@ -1,0 +1,71 @@
+<div class="border rounded p-3 mb-3">
+  <div class="row row-cols-1 row-cols-md-2">
+    <div class="col mb-3">
+      <%= citation_fields.label :reference_key, 'Citation Key' %>
+      <%= citation_fields.text_field :reference_key, class: 'form-control', placeholder: 'smith_2024' %>
+      <small class="form-text text-muted">Use this key in the editor citation tool.</small>
+    </div>
+
+    <div class="col mb-3">
+      <%= citation_fields.label :source_kind, 'Source Type' %>
+      <%= citation_fields.select :source_kind,
+                                 options_for_select(BetterTogether::Citation::SOURCE_KINDS.map { |kind| [kind.humanize, kind] }, citation_fields.object.source_kind),
+                                 {},
+                                 class: 'form-select' %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= citation_fields.label :title %>
+      <%= citation_fields.text_field :title, class: 'form-control' %>
+    </div>
+
+    <div class="col mb-3">
+      <%= citation_fields.label :source_author, 'Author / Source' %>
+      <%= citation_fields.text_field :source_author, class: 'form-control' %>
+    </div>
+
+    <div class="col mb-3">
+      <%= citation_fields.label :publisher %>
+      <%= citation_fields.text_field :publisher, class: 'form-control' %>
+    </div>
+
+    <div class="col mb-3">
+      <%= citation_fields.label :published_on %>
+      <%= citation_fields.date_field :published_on, class: 'form-control' %>
+    </div>
+
+    <div class="col mb-3">
+      <%= citation_fields.label :accessed_on %>
+      <%= citation_fields.date_field :accessed_on, class: 'form-control' %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= citation_fields.label :source_url %>
+      <%= citation_fields.url_field :source_url, class: 'form-control', placeholder: 'https://...' %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= citation_fields.label :locator %>
+      <%= citation_fields.text_field :locator, class: 'form-control', placeholder: 'p. 17, fig. 2, commit abc123, interview 00:13:20' %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= citation_fields.label :excerpt %>
+      <%= citation_fields.text_area :excerpt, class: 'form-control', rows: 3 %>
+    </div>
+
+    <div class="col-12 mb-3">
+      <%= citation_fields.label :rights_notes %>
+      <%= citation_fields.text_area :rights_notes, class: 'form-control', rows: 2 %>
+    </div>
+
+    <% if citation_fields.object.persisted? %>
+      <div class="col-12">
+        <div class="form-check">
+          <%= citation_fields.check_box :_destroy, class: 'form-check-input' %>
+          <%= citation_fields.label :_destroy, 'Remove citation', class: 'form-check-label' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -42,6 +42,8 @@ function initializeTrixEditor(event) {
 function handleTrixAction(event) {
   if (event.actionName === "x-horizontal-rule") {
     insertHorizontalRule(event);
+  } else if (event.actionName === "x-citation") {
+    insertCitationReference(event);
   }
 }
 
@@ -56,12 +58,23 @@ function buildHorizontalRule() {
   });
 }
 
+function insertCitationReference(event) {
+  const referenceKey = window.prompt("Citation key");
+  if (!referenceKey) return;
+
+  const locator = window.prompt("Optional locator (page, timestamp, figure)");
+  const label = locator ? `${referenceKey}, ${locator}` : referenceKey;
+  const html = `<sup class="citation-reference"><a href="#citation-${referenceKey}" data-citation-key="${referenceKey}">[${label}]</a></sup>`;
+  event.target.editor.insertHTML(html);
+}
+
 class RichText {
   constructor(element) {
     this.element = element;
     this.insertHeadingElements();
     this.insertDividerElements();
     this.insertColorElements();
+    this.insertCitationElements();
   }
 
   insertHeadingElements() {
@@ -112,6 +125,12 @@ class RichText {
     }
   }
 
+  insertCitationElements() {
+    if (!this.toolbarElement.querySelector('.trix-button--icon-citation')) {
+      this.buttonGroupTextTools.insertAdjacentHTML("beforeend", this.citationButtonTemplate);
+    }
+  }
+
   get buttonGroupBlockTools() {
     return this.toolbarElement.querySelector("[data-trix-button-group=block-tools]");
   }
@@ -146,6 +165,10 @@ class RichText {
 
   get colorButtonTemplate() {
     return '<button type="button" class="trix-button trix-button--icon trix-button--icon-color" data-trix-action="x-color" title="Color" tabindex="-1">Color</button>';
+  }
+
+  get citationButtonTemplate() {
+    return '<button type="button" class="trix-button trix-button--icon trix-button--icon-citation" data-trix-action="x-citation" title="Citation" tabindex="-1">Citation</button>';
   }
 
   get dialogHeadingTemplate() {

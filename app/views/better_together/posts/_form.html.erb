@@ -75,6 +75,8 @@
     <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: post, form: form, attribute: 'content' } %>
   </div>
 
+  <%= render 'better_together/shared/citation_fields_section', form:, record: post %>
+
   <div class="mb-3">
     <%= render 'better_together/shared/fields/attachments/cover_image', form: form %>
   </div>

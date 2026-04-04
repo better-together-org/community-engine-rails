@@ -1,6 +1,7 @@
 trix-toolbar {
   .trix-button--icon-horizontal-rule::before { background-image: image-url("better_together/trix-extensions/trix_horizontal_rule.svg"); }
   .trix-button--icon-color::before { background-image: image-url("better_together/trix-extensions/trix_color.svg"); }
+  .trix-button--icon-citation::before { content: "[]"; background-image: none; }
 
   .trix-dialog--heading { max-width: 160px; }
 
@@ -58,6 +59,14 @@ trix-editor {
 }
 
 .trix-content, trix-editor {
+  .citation-reference {
+    font-size: 0.875em;
+  }
+
+  .citation-reference a {
+    text-decoration: none;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     line-height: 1.2;
     margin: 0;

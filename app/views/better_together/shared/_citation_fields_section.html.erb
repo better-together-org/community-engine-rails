@@ -1,0 +1,12 @@
+<% citation_records = record.citations.to_a.presence || Array.new(3) { record.citations.build } %>
+
+<div class="mt-4">
+  <h3 class="h5">Citations and Evidence</h3>
+  <p class="text-muted small">
+    Add structured citations for claims, images, stories, oral histories, datasets, policies, and other evidence.
+  </p>
+
+  <%= form.fields_for :citations, citation_records do |citation_fields| %>
+    <%= render 'better_together/shared/citation_fields', citation_fields: %>
+  <% end %>
+</div>

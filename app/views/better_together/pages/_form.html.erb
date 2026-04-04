@@ -146,6 +146,8 @@
   <!-- Host app can extend the page form via this partial -->
   <%= render partial: 'better_together/pages/extra_page_fields', locals: { form:, page: } %>
 
+  <%= render 'better_together/shared/citation_fields_section', form:, record: page %>
+
   <% if page.persisted? %>
     <div class="row my-3">
       <div class="col">

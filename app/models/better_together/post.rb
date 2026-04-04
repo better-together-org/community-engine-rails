@@ -8,6 +8,7 @@ module BetterTogether
     include BlockFilterable
     include FriendlySlug
     include Categorizable
+    include Citable
     include Creatable
     include Identifier
     include Metrics::Viewable
