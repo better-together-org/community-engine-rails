@@ -12,6 +12,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
   let(:author_user)   { create(:better_together_user, person: author_person) }
   let(:steward_user)  { create(:better_together_user, :platform_steward) }
   let(:normal_user)   { create(:better_together_user) }
+  let(:robot_author)  { create(:robot, platform: private_unpublished.platform) }
 
   before do
     # Grant authorship for the private/unpublished page
@@ -142,6 +143,19 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
+
+    context 'with a robot-authored private page' do
+      let(:user) { normal_user }
+
+      before do
+        private_unpublished.authorships.where(author: author_person).delete_all
+        private_unpublished.authorships.create!(author: robot_author)
+      end
+
+      it 'does not treat an unrelated human user as the author' do
+        expect(subject).not_to include(private_unpublished) # rubocop:todo RSpec/NamedSubject
+      end
+    end
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
     context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers

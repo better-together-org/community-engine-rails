@@ -81,6 +81,21 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#governed_authors' do
+        it 'includes both person and robot authors in authorship order' do
+          page = create(:better_together_page)
+          person = create(:better_together_person)
+          robot = create(:robot, platform: page.platform)
+
+          page.authorships.create!(author: person, position: 1)
+          page.authorships.create!(author: robot, position: 2)
+
+          expect(page.governed_authors).to eq([person, robot])
+          expect(page.authors).to eq([person])
+          expect(page.robot_authors).to eq([robot])
+        end
+      end
+
       describe '#url' do
         it 'returns the full URL of the page' do
           expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")

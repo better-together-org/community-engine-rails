@@ -67,6 +67,11 @@
           <% title_wrapper_classes = @page.layout&.include?('full_width') ? 'my-4' : 'container my-4' %>
           <div class="<%= title_wrapper_classes %>">
             <h1 class="page-title"><%= @page.title %></h1>
+            <% if @page.respond_to?(:governed_authors) && @page.governed_authors.any? %>
+              <div class="mt-3">
+                <%= render 'better_together/shared/governed_authors', authors: @page.governed_authors, flex_layout: 'flex-row', flex_align_items: 'center' %>
+              </div>
+            <% end %>
           </div>
         <% end %>
       <% end %>

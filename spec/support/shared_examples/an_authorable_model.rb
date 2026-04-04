@@ -10,5 +10,6 @@ RSpec.shared_examples 'an authorable model' do
   describe 'ActiveRecord associations' do
     it { is_expected.to have_many(:authorships) }
     it { is_expected.to have_many(:authors).through(:authorships) }
+    it { is_expected.to have_many(:robot_authors).through(:authorships) }
   end
 end

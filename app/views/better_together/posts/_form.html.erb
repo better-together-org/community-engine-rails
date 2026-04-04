@@ -57,7 +57,7 @@
   <div class="mb-3">
     <%= form.label :author_ids, t('better_together.posts.authors', default: 'Authors') %>
     <%= form.collection_select :author_ids,
-      BetterTogether::Person.all,
+      BetterTogether::Person.order(:identifier),
       :id,
       :select_option_title,
       {},
@@ -67,6 +67,24 @@
     <% if post.errors[:author_ids].any? %>
       <div class="invalid-feedback">
         <%= post.errors[:author_ids].join(', ') %>
+      </div>
+    <% end %>
+    <small class="form-text text-muted"><%= t('hints.authors.select_multiple', default: 'Select one or more authors') %></small>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :robot_author_ids, t('better_together.posts.robot_authors', default: 'Robot Authors') %>
+    <%= form.collection_select :robot_author_ids,
+      BetterTogether::Robot.available_for_platform(post.platform || Current.platform),
+      :id,
+      :select_option_title,
+      {},
+      { multiple: true,
+        class: "form-select#{' is-invalid' if post.errors[:robot_author_ids].any?}",
+        data: { controller: 'better_together--slim-select' } } %>
+    <% if post.errors[:robot_author_ids].any? %>
+      <div class="invalid-feedback">
+        <%= post.errors[:robot_author_ids].join(', ') %>
       </div>
     <% end %>
     <small class="form-text text-muted"><%= t('hints.authors.select_multiple', default: 'Select one or more authors') %></small>

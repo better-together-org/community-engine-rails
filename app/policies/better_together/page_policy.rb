@@ -53,7 +53,8 @@ module BetterTogether
           authored_subquery = at
                               .project(at[:authorable_id])
                               .where(
-                                at[:author_id].eq(agent.id)
+                                at[:author_type].eq('BetterTogether::Person')
+                                  .and(at[:author_id].eq(agent.id))
                                   .and(at[:authorable_type].eq('BetterTogether::Page'))
                               )
 
