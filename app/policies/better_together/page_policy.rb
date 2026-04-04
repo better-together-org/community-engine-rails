@@ -22,7 +22,7 @@ module BetterTogether
     end
 
     def update?
-      platform_content_manager? || (agent.present? && record.authors.include?(agent))
+      platform_content_manager? || (agent.present? && record.governed_authors.include?(agent))
     end
 
     def edit?
