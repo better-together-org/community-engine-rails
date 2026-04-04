@@ -1,4 +1,3 @@
-<%# locals: (statistics_block:) -%>
 <%= cache [statistics_block, statistics_block.stats_json, I18n.locale] do %>
   <%= render layout: 'better_together/content/blocks/block', locals: { block: statistics_block } do %>
     <div class="statistics-block py-4">

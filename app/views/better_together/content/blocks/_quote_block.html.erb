@@ -1,4 +1,3 @@
-<%# locals: (quote_block:) -%>
 <%= cache quote_block.cache_key_with_version do %>
   <%= render layout: 'better_together/content/blocks/block', locals: { block: quote_block } do %>
     <figure class="quote-block py-4">

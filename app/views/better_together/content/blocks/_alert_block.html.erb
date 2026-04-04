@@ -1,4 +1,3 @@
-<%# locals: (alert_block:) -%>
 <%= cache alert_block.cache_key_with_version do %>
   <%= render layout: 'better_together/content/blocks/block', locals: { block: alert_block } do %>
     <div class="alert alert-<%= alert_block.alert_level %><%= ' alert-dismissible fade show' if alert_block.dismissible? %>"
