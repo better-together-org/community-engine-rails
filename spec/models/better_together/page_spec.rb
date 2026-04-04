@@ -175,6 +175,22 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe 'evidence selector options' do
+        it 'includes media-specific selectors from page content blocks' do
+          page = create(:better_together_page)
+          image_block = create(:better_together_content_image, identifier: 'launch-image')
+          video_block = create(:content_video_block, identifier: 'launch-video')
+          page.page_blocks.create!(block: image_block, position: 0)
+          page.page_blocks.create!(block: video_block, position: 1)
+
+          expect(page.evidence_selector_options).to include(
+            include(value: 'block:image:launch-image:media'),
+            include(value: 'block:image:launch-image:region:*'),
+            include(value: 'block:video_block:launch-video:timestamp:*')
+          )
+        end
+      end
+
       describe '#as_indexed_json' do
         context 'with template blocks' do
           let(:page) do

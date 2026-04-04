@@ -121,6 +121,18 @@ The current selector convention is:
 
 This gives claims and future editor tooling a stable way to point at markdown, rich text, alert, hero, image, statistics, and other block-based content without patching each block partial independently.
 
+For media-capable blocks, selector suggestions now go further than the base block anchor:
+
+- image blocks suggest selectors for:
+  - the media asset
+  - caption
+  - alt text
+  - region-based annotation placeholders
+- video blocks suggest selectors for:
+  - the embedded video
+  - caption
+  - timestamp-based annotation placeholders
+
 ### Selector-aware Trix integration
 
 The rich text toolbar now includes a `Citation` action modeled on the existing Trix link dialog flow.
@@ -138,7 +150,36 @@ This is still intentionally incremental. It does not yet provide a full claim pi
 
 - exact rich-text span targeting
 - stable block selector targeting
+- media-aware selector suggestions for image and video blocks
 - bibliography-backed inline citation references
+
+### Export surface
+
+The first machine-readable citation export surface now exists through `CitationExportsController`.
+
+Supported export styles:
+
+- `csl`
+- `apa`
+- `mla`
+
+The current public route shape is:
+
+- `/citations/export/:citeable_key/:id?style=csl`
+
+The exportable citeable keys currently include:
+
+- `page`
+- `post`
+- `event`
+- `call_for_interest`
+- `agreement`
+- `calendar`
+- `joatu_request`
+- `joatu_offer`
+- `joatu_agreement`
+
+`csl` currently returns normalized CSL-style JSON generated from structured citation metadata. `apa` and `mla` return line-oriented plain text derived from the same source data instead of storing style-specific bibliography strings as primary records.
 
 ## Standards Direction
 
@@ -152,6 +193,7 @@ Current export helpers:
 
 - `apa_citation`
 - `mla_citation`
+- `to_csl_json`
 
 Future export targets should be driven from normalized source metadata rather than storing style-specific strings as the source of truth.
 

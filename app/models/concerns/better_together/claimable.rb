@@ -94,11 +94,9 @@ module BetterTogether
       blocks.concat(Array(content_blocks)) if respond_to?(:content_blocks)
 
       blocks.compact.map do |block|
-        {
-          value: block.evidence_selector,
-          label: "Block: #{block}"
-        }
+        block.evidence_selector_options
       end
+            .flatten
     end
   end
 end
