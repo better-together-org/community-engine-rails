@@ -52,6 +52,8 @@ RSpec.describe 'Documentation screenshots for community event evidence summary',
       expect(page).to have_text('1 claim')
       expect(page).to have_text('1 citation')
       expect(page).to have_text('1 imported')
+      expect(page).to have_link('Governance Bundle')
+      expect(page).to have_link('CSL Export')
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/community_event_evidence_summary.png')

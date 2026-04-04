@@ -250,6 +250,10 @@ module BetterTogether
       github_integrations.order(:handle).pluck(:handle).compact_blank.uniq
     end
 
+    def github_profile_urls
+      github_integrations.order(:handle).pluck(:profile_url).compact_blank.uniq
+    end
+
     def contribution_records
       contributions.includes(:authorable).order(created_at: :desc)
     end
