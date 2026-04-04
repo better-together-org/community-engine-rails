@@ -171,6 +171,7 @@ This governance layer does not replace current systems. It frames and extends th
 - [Robot Author Identity System](robot_author_identity_system.md)
 - [Release Package Publishing System](release_package_publishing_system.md)
 - [Actor-Safe Creator and Authorship Migration Plan](actor_safe_creator_authorship_migration_plan.md)
+- [PR 1494 Scope Consolidation](pr_1494_scope_consolidation.md)
 - [JOATU Public Visibility Hardening Plan](joatu_public_visibility_hardening_plan.md)
 
 ## Immediate Implementation Implications
