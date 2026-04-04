@@ -1,7 +1,9 @@
 
 <!-- app/views/better_together/shared/_translated_rich_text_field.html.erb -->
 
-<%# locals: (model:, form:, attribute:, citation_options: [], temp_id: SecureRandom.uuid) -%>
+<%# locals: (model:, form:, attribute:, citation_options: [], selector_options: nil, temp_id: SecureRandom.uuid) -%>
+<% citation_options = local_assigns.fetch(:citation_options, []) %>
+<% selector_options = local_assigns.fetch(:selector_options, model.respond_to?(:evidence_selector_options) ? model.evidence_selector_options : []) %>
 
 <div class="localized-fields" data-controller="better_together--translation"
      data-better-together--translation-content-too-long-text="<%= t('better_together.translations.errors.content_too_long') %>"
@@ -29,6 +31,7 @@
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
             'data-better_together-translation-target' => 'trix',
             'data-citation-options' => citation_options.to_json,
+            'data-selector-options' => selector_options.to_json,
             id: "#{dom_id(model)}-#{locale_attribute}"
         %>
         <% if model.errors[locale_attribute].any? %>

@@ -9,6 +9,7 @@ Community Engine needs a citation system that does more than format bibliography
 - export to MLA, APA, and future cooperative governance styles
 - citation of nontraditional evidence, including oral history, images, stories, art, policy, and community testimony
 - accessible evidence rendering in published pages and posts
+- selector-aware evidence targeting across rich text, content blocks, and other publishable records
 
 This system separates three concerns:
 
@@ -26,6 +27,13 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 
 - `BetterTogether::Page`
 - `BetterTogether::Post`
+- `BetterTogether::Event`
+- `BetterTogether::CallForInterest`
+- `BetterTogether::Agreement`
+- `BetterTogether::Calendar`
+- `BetterTogether::Joatu::Request`
+- `BetterTogether::Joatu::Offer`
+- `BetterTogether::Joatu::Agreement`
 - `BetterTogether::Authorship`
 
 Each citation currently stores:
@@ -57,15 +65,22 @@ It is currently included in:
 
 - `BetterTogether::Page`
 - `BetterTogether::Post`
+- `BetterTogether::Event`
+- `BetterTogether::CallForInterest`
+- `BetterTogether::Agreement`
+- `BetterTogether::Calendar`
+- `BetterTogether::Joatu::Request`
+- `BetterTogether::Joatu::Offer`
+- `BetterTogether::Joatu::Agreement`
 - `BetterTogether::Authorship`
 
 ### Publishing UI
 
-Page and post forms now expose a `Citations and Evidence` section. That lets editors enter structured evidence metadata directly on the content record.
+Page, post, event, call-for-interest, agreement, calendar, and JOATU exchange forms now expose a `Citations and Evidence` section. That lets editors enter structured evidence metadata directly on the record being published or governed.
 
 ### Rendering
 
-Pages, posts, events, calls for interest, and JOATU exchanges now render an `Evidence and Citations` bibliography section when citations are present.
+Pages, posts, events, calls for interest, agreements, calendars, and JOATU exchanges now render an `Evidence and Citations` bibliography section when citations are present.
 
 ### Claims and evidence links
 
@@ -106,11 +121,24 @@ The current selector convention is:
 
 This gives claims and future editor tooling a stable way to point at markdown, rich text, alert, hero, image, statistics, and other block-based content without patching each block partial independently.
 
-### Trix integration
+### Selector-aware Trix integration
 
-The rich text toolbar now includes a `Citation` action. The first implementation inserts a stable inline citation reference pointing at a structured bibliography entry by `reference_key`.
+The rich text toolbar now includes a `Citation` action modeled on the existing Trix link dialog flow.
 
-This is intentionally minimal. It provides anchorable inline references without pretending that the editor already has a fully modeled claim-level evidence graph.
+The current dialog now supports:
+
+- citation selection from structured record-local citation options
+- optional locator entry
+- selector metadata selection
+- exact selected-text range capture using `trix-range:<start>:<end>`
+
+When text is selected before opening the dialog, the editor restores that selection and inserts the citation around it, attaching a stable `data-evidence-selector` attribute when available.
+
+This is still intentionally incremental. It does not yet provide a full claim picker or source browser, but it now bridges:
+
+- exact rich-text span targeting
+- stable block selector targeting
+- bibliography-backed inline citation references
 
 ## Standards Direction
 
@@ -189,12 +217,12 @@ The current slice does **not** yet implement:
 - automatic style switching in published views
 - importer/exporter support for CSL JSON, BibTeX, RIS, or JSON-LD
 - citation-aware moderation or review workflows
-- structured Trix dialogs with picker-backed citation selection
+- global picker-backed citation browsing across records
 - conversion between footnotes, endnotes, and bibliography-only references
 
 ## Next Steps
 
-1. Add richer claim selectors for exact rich text spans, blocks, images, and media timestamps.
+1. Add richer claim selectors for images, media timestamps, and cross-record evidence targets beyond the current `trix-range` and block selector support.
 2. Add export/import mapping for CSL JSON and related open citation formats.
 3. Add citation picker dialogs to Trix so editors choose existing evidence records instead of typing keys manually.
 4. Extend citation rendering to governance records and contribution histories.

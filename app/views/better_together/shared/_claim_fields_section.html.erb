@@ -1,4 +1,6 @@
 <% claim_records = record.claims.to_a.presence || Array.new(2) { record.claims.build } %>
+<% selector_options = record.respond_to?(:evidence_selector_options) ? record.evidence_selector_options : [] %>
+<% selector_datalist_id = "#{dom_id(record, :evidence_selectors)}" %>
 
 <div class="mt-4">
   <h3 class="h5">Claims and Supporting Evidence</h3>
@@ -6,7 +8,18 @@
     Record specific claims, review status, and which citations support or contest them.
   </p>
 
+  <% if selector_options.any? %>
+    <datalist id="<%= selector_datalist_id %>">
+      <% selector_options.each do |selector_option| %>
+        <option value="<%= selector_option[:value] %>"><%= selector_option[:label] %></option>
+      <% end %>
+    </datalist>
+  <% end %>
+
   <%= form.fields_for :claims, claim_records do |claim_fields| %>
-    <%= render 'better_together/shared/claim_fields', claim_fields:, record: %>
+    <%= render 'better_together/shared/claim_fields',
+               claim_fields:,
+               record:,
+               selector_datalist_id: %>
   <% end %>
 </div>

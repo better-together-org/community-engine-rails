@@ -148,7 +148,9 @@ class RichText {
     const dialog = this.citationDialogElement;
     if (!dialog) return;
 
+    this.captureSelection();
     this.populateCitationOptions();
+    this.populateSelectorOptions();
     dialog.style.display = 'block';
     this.citationSelectElement?.focus();
   }
@@ -159,6 +161,7 @@ class RichText {
     this.citationDialogElement.style.display = 'none';
     if (this.citationSelectElement) this.citationSelectElement.selectedIndex = 0;
     if (this.citationLocatorElement) this.citationLocatorElement.value = '';
+    if (this.citationSelectorElement) this.citationSelectorElement.selectedIndex = 0;
   }
 
   populateCitationOptions() {
@@ -174,26 +177,62 @@ class RichText {
     if (currentValue) this.citationSelectElement.value = currentValue;
   }
 
+  populateSelectorOptions() {
+    if (!this.citationSelectorElement) return;
+
+    const selectedRangeOption = this.selectionRangeOption;
+    const currentValue = this.citationSelectorElement.value;
+    const options = [{ value: '', label: 'No selector metadata' }]
+      .concat(selectedRangeOption ? [selectedRangeOption] : [])
+      .concat(this.selectorOptions);
+
+    this.citationSelectorElement.innerHTML = options
+      .map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`)
+      .join('');
+
+    if (currentValue) {
+      this.citationSelectorElement.value = currentValue;
+    } else if (selectedRangeOption) {
+      this.citationSelectorElement.value = selectedRangeOption.value;
+    }
+  }
+
   insertCitationFromDialog() {
     const referenceKey = this.citationSelectElement?.value;
     if (!referenceKey) return;
 
     const locator = this.citationLocatorElement?.value?.trim();
+    const selector = this.citationSelectorElement?.value?.trim();
     const href = `#citation-${referenceKey}`;
     const selectedText = this.selectedText();
+    const evidenceSelectorAttribute = selector ? ` data-evidence-selector="${escapeHtml(selector)}"` : '';
+
+    this.restoreSelection();
 
     if (selectedText) {
-      this.element.editor.insertHTML(`<a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}">${escapeHtml(selectedText)}</a>`);
+      this.element.editor.insertHTML(`<a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}"${evidenceSelectorAttribute}>${escapeHtml(selectedText)}</a>`);
     } else {
       const label = locator ? `${referenceKey}, ${locator}` : referenceKey;
-      this.element.editor.insertHTML(`<sup class="citation-reference"><a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}">[${escapeHtml(label)}]</a></sup>`);
+      this.element.editor.insertHTML(`<sup class="citation-reference"><a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}"${evidenceSelectorAttribute}>[${escapeHtml(label)}]</a></sup>`);
     }
 
     this.closeCitationDialog();
   }
 
+  captureSelection() {
+    this.lastSelectionRange = this.element.editor.getSelectedRange();
+    this.lastSelectedText = this.selectedTextFromRange(this.lastSelectionRange);
+  }
+
+  restoreSelection() {
+    if (this.lastSelectionRange) this.element.editor.setSelectedRange(this.lastSelectionRange);
+  }
+
   selectedText() {
-    const range = this.element.editor.getSelectedRange();
+    return this.lastSelectedText || this.selectedTextFromRange(this.element.editor.getSelectedRange());
+  }
+
+  selectedTextFromRange(range) {
     if (!range || range[0] === range[1]) return '';
 
     return this.element.editor.getDocument().toString().slice(range[0], range[1]).trim();
@@ -223,6 +262,10 @@ class RichText {
     return this.dialogsElement.querySelector('[data-trix-citation-locator]');
   }
 
+  get citationSelectorElement() {
+    return this.dialogsElement.querySelector('[data-trix-selector-select]');
+  }
+
   get citationOptions() {
     const raw = this.element.dataset.citationOptions;
     if (!raw) return [];
@@ -232,6 +275,27 @@ class RichText {
     } catch (_error) {
       return [];
     }
+  }
+
+  get selectorOptions() {
+    const raw = this.element.dataset.selectorOptions;
+    if (!raw) return [];
+
+    try {
+      return JSON.parse(raw);
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  get selectionRangeOption() {
+    const range = this.lastSelectionRange;
+    if (!range || range[0] === range[1]) return null;
+
+    return {
+      value: `trix-range:${range[0]}:${range[1]}`,
+      label: `Selected text (${range[0]}-${range[1]})`
+    };
   }
 
   get originalHeadingButton() {
@@ -311,6 +375,8 @@ class RichText {
           <select id="trix-citation-select" class="trix-input trix-input--dialog" data-trix-citation-select></select>
           <label class="trix-label" for="trix-citation-locator">Locator</label>
           <input id="trix-citation-locator" type="text" class="trix-input trix-input--dialog" data-trix-citation-locator placeholder="Optional page, figure, timestamp">
+          <label class="trix-label" for="trix-selector-select">Selector</label>
+          <select id="trix-selector-select" class="trix-input trix-input--dialog" data-trix-selector-select></select>
           <div class="trix-button-group mt-2">
             <button type="button" class="trix-button trix-button--dialog trix-dialog--citation-insert">Insert</button>
             <button type="button" class="trix-button trix-button--dialog trix-dialog--citation-cancel">Cancel</button>

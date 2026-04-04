@@ -5,6 +5,8 @@ module BetterTogether
   module Claimable
     extend ActiveSupport::Concern
 
+    RICH_TEXT_SELECTOR_ATTRIBUTES = %w[content description description_html].freeze
+
     included do
       has_many :claims,
                -> { order(:position, :created_at) },
@@ -56,6 +58,46 @@ module BetterTogether
       evidence_attributes = Array(attributes['evidence_links_attributes']&.values)
       evidence_attributes.all? do |evidence_link_attributes|
         evidence_link_attributes.except('id', '_destroy').values.all?(&:blank?)
+      end
+    end
+
+    public
+
+    def evidence_selector_options
+      (
+        default_evidence_selector_options +
+        rich_text_evidence_selector_options +
+        block_evidence_selector_options
+      ).uniq { |option| option[:value] }
+    end
+
+    private
+
+    def default_evidence_selector_options
+      [{ value: 'record', label: 'Entire record' }]
+    end
+
+    def rich_text_evidence_selector_options
+      RICH_TEXT_SELECTOR_ATTRIBUTES.filter_map do |attribute|
+        next unless respond_to?(attribute)
+
+        {
+          value: "rich_text:#{attribute}",
+          label: "#{attribute.to_s.humanize} rich text"
+        }
+      end
+    end
+
+    def block_evidence_selector_options
+      blocks = []
+      blocks << hero_block if respond_to?(:hero_block) && hero_block.present?
+      blocks.concat(Array(content_blocks)) if respond_to?(:content_blocks)
+
+      blocks.compact.map do |block|
+        {
+          value: block.evidence_selector,
+          label: "Block: #{block}"
+        }
       end
     end
   end
