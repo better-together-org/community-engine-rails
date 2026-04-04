@@ -1,0 +1,11 @@
+{
+  "name": "claim_evidence_browser",
+  "device": "mobile",
+  "url": "http://127.0.0.1:33983/en/host/pages/claim-evidence-browser-83332033/edit",
+  "title": "Edit Fugiat consequatur ut. | Pages | Test Host Community",
+  "captured_at": "2026-04-04T20:39:07Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "claim_evidence_browser",
+  "source_spec": "./spec/docs_screenshots/better_together/claim_evidence_browser_spec.rb"
+}

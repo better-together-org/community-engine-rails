@@ -31,5 +31,9 @@ RSpec.describe 'better_together/shared/_evidence_link_fields', type: :view do
     expect(rendered).to include('review_notes: Review Notes')
     expect(rendered).to include('Browse Evidence Sources')
     expect(rendered).to include('Use Citation')
+    expect(rendered).to include('Source Origin')
+    expect(rendered).to include('Record Type')
+    expect(rendered).to include('Contribution Role')
+    expect(rendered).to include('Contribution Type')
   end
 end

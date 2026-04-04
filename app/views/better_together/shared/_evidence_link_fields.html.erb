@@ -1,5 +1,9 @@
 <% citation_option_groups = record.respond_to?(:available_evidence_citation_option_groups) ? record.available_evidence_citation_option_groups : {} %>
 <% citation_browser_groups = record.respond_to?(:available_evidence_citation_browser_groups) ? record.available_evidence_citation_browser_groups : [] %>
+<% origins = citation_browser_groups.map { |group| group[:origin] }.compact.uniq %>
+<% record_types = citation_browser_groups.map { |group| group[:record_type] }.compact.uniq %>
+<% contribution_roles = citation_browser_groups.map { |group| group[:contribution_role] }.compact.uniq %>
+<% contribution_types = citation_browser_groups.map { |group| group[:contribution_type] }.compact.uniq %>
 
 <div class="border rounded p-2 mb-2" data-controller="better_together--evidence-browser">
   <div class="row row-cols-1 row-cols-md-2">
@@ -49,9 +53,80 @@
     <details class="mt-2">
       <summary class="small fw-semibold">Browse Evidence Sources</summary>
       <div class="mt-3">
+        <div class="border rounded p-2 bg-light mb-3">
+          <div class="row row-cols-1 row-cols-md-4 g-2">
+            <div class="col">
+              <label class="form-label small">Source Origin</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="originFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All origins</option>
+                <% origins.each do |origin| %>
+                  <option value="<%= origin %>"><%= origin.humanize %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="form-label small">Record Type</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="recordTypeFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All record types</option>
+                <% record_types.each do |record_type| %>
+                  <option value="<%= record_type %>"><%= record_type %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="form-label small">Contribution Role</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="roleFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All roles</option>
+                <% contribution_roles.each do |role| %>
+                  <option value="<%= role %>"><%= role.humanize %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="form-label small">Contribution Type</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="contributionTypeFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All contribution types</option>
+                <% contribution_types.each do |contribution_type| %>
+                  <option value="<%= contribution_type %>"><%= contribution_type.humanize %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </div>
+
         <% citation_browser_groups.each do |group| %>
-          <div class="mb-3">
-            <h5 class="h6 mb-2"><%= group[:label] %></h5>
+          <div class="mb-3"
+               data-better_together--evidence-browser-target="group"
+               data-origin="<%= group[:origin] %>"
+               data-record-type="<%= group[:record_type] %>"
+               data-role="<%= group[:contribution_role] %>"
+               data-contribution-type="<%= group[:contribution_type] %>">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <h5 class="h6 mb-0"><%= group[:label] %></h5>
+              <% if group[:origin].present? %>
+                <span class="badge text-bg-secondary"><%= group[:origin].humanize %></span>
+              <% end %>
+              <% if group[:record_type].present? %>
+                <span class="badge text-bg-light border"><%= group[:record_type] %></span>
+              <% end %>
+              <% if group[:contribution_role].present? %>
+                <span class="badge text-bg-info"><%= group[:contribution_role].humanize %></span>
+              <% end %>
+              <% if group[:contribution_type].present? %>
+                <span class="badge text-bg-warning"><%= group[:contribution_type].humanize %></span>
+              <% end %>
+            </div>
             <div class="d-grid gap-2">
               <% group[:citations].each do |citation| %>
                 <div class="border rounded p-2 bg-light-subtle">
