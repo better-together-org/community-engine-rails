@@ -5,9 +5,12 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_user do
   let(:locale) { I18n.default_locale }
   let(:user) do
-    BetterTogether::User.find_by(email: 'user@example.test') || create(:user,
-                                                                        email: 'user@example.test',
-                                                                        password: 'SecureTest123!@#')
+    BetterTogether::User.find_by(email: 'user@example.test') ||
+      create(
+        :user,
+        email: 'user@example.test',
+        password: 'SecureTest123!@#'
+      )
   end
   let!(:github_platform) do
     BetterTogether::Platform.external.find_or_create_by!(identifier: 'github') do |platform|
