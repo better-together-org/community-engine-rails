@@ -301,6 +301,26 @@ Additional review assets for this slice:
 - [Community Event Evidence Summary Desktop Screenshot](../../screenshots/desktop/community_event_evidence_summary.png)
 - [Community Event Evidence Summary Mobile Screenshot](../../screenshots/mobile/community_event_evidence_summary.png)
 
+### Cross-record evidence exports
+
+The shared governance export links are no longer limited to page, post, and event surfaces. They now appear across the other evidence-bearing record types that already render claims and bibliography sections, including:
+
+- JOATU requests
+- JOATU offers
+- JOATU agreements
+- agreements
+- calendars
+
+The governance bundle payload also now preserves raw GitHub-native citation metadata for repository and pull-request style sources. This keeps the normalized CSL rendering while also exposing repository paths, pull request numbers, and commit identifiers in the audit packet when that information exists locally in citation metadata.
+
+Additional review assets for this slice:
+
+- [Cross-record Evidence Exports Flow Source](../../diagrams/source/pr_1494_cross_record_evidence_exports_flow.mmd)
+- [Cross-record Evidence Exports PNG](../../diagrams/exports/png/pr_1494_cross_record_evidence_exports_flow.png)
+- [Cross-record Evidence Exports SVG](../../diagrams/exports/svg/pr_1494_cross_record_evidence_exports_flow.svg)
+- [JOATU Evidence Bundle Links Desktop Screenshot](../../screenshots/desktop/joatu_evidence_bundle_links.png)
+- [JOATU Evidence Bundle Links Mobile Screenshot](../../screenshots/mobile/joatu_evidence_bundle_links.png)
+
 ## Standards Direction
 
 The current metadata layer is designed to grow toward standards-compatible export and provenance.

@@ -96,6 +96,30 @@ RSpec.describe 'BetterTogether::CitationExportsController', :as_user do
       expect(json['bundle']['contributions'].first['role']).to eq('reviewer')
       expect(json['bundle']['contributions'].first['contributor']['github_handles']).to eq(['bundle-reviewer'])
       expect(json['bundle']['contributions'].first['contributor']['github_profile_urls']).to eq(['https://github.com/bundle-reviewer'])
+      expect(json['bundle']['citations'].first['csl']['title']).to eq('Shared Reality Charter')
+      expect(json['bundle']['citations'].first['platform_metadata']).to be_nil
+    end
+
+    it 'preserves github-native citation metadata in governance bundles' do
+      page.citations.first.update!(
+        source_kind: 'pull_request',
+        metadata: {
+          'repository_name' => 'better-together-org/community-engine-rails',
+          'pull_request_number' => 1494,
+          'repository_path' => 'pull/1494',
+          'commit_sha' => 'abc123def456'
+        }
+      )
+
+      get better_together.citation_export_path(citeable_key: 'page', id: page.slug, locale:, style: 'bundle')
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      citation = json['bundle']['citations'].first
+      expect(citation['source_kind']).to eq('pull_request')
+      expect(citation['platform_metadata']['repository_name']).to eq('better-together-org/community-engine-rails')
+      expect(citation['platform_metadata']['pull_request_number']).to eq(1494)
+      expect(citation['platform_metadata']['commit_sha']).to eq('abc123def456')
     end
   end
 end
