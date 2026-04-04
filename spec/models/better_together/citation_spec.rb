@@ -103,5 +103,20 @@ RSpec.describe BetterTogether::Citation, type: :model do
       expect(citation.imported_from_reference_key).to eq('review_notes')
       expect(citation.import_audit_summary).to eq('Consensus Reviewer: Reviewer | review_notes')
     end
+
+    it 'optionally appends provenance notes in exported citation formats' do
+      citation = build(:better_together_citation,
+                       source_author: 'Jane Smith',
+                       title: 'Shared Reality Notes',
+                       metadata: {
+                         'imported_from_reference_key' => 'review_notes',
+                         'imported_from_record_label' => 'Consensus Reviewer: Reviewer',
+                         'imported_from_citation_id' => 'source-citation-id'
+                       })
+
+      expect(citation.apa_citation(include_provenance: true)).to include('Imported from linked citation:')
+      expect(citation.mla_citation(include_provenance: true)).to include('Consensus Reviewer: Reviewer | review_notes')
+      expect(citation.to_csl_json(include_provenance: true)[:note]).to include('Imported from linked citation:')
+    end
   end
 end

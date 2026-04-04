@@ -23,15 +23,16 @@ module BetterTogether
       when 'csl'
         render json: {
           format: 'csl-json',
+          include_provenance: include_provenance?,
           citeable: {
             key: params[:citeable_key],
             id: @citeable.id,
             label: @citeable.to_s
           },
-          citations: @citeable.citations_as_csl_json
+          citations: @citeable.citations_as_csl_json(include_provenance: include_provenance?)
         }
       when 'apa', 'mla'
-        send_data @citeable.citation_export_lines(export_style).join("\n"),
+        send_data @citeable.citation_export_lines(export_style, include_provenance: include_provenance?).join("\n"),
                   filename: export_filename(export_style),
                   type: 'text/plain; charset=UTF-8',
                   disposition: 'inline'
@@ -61,6 +62,10 @@ module BetterTogether
 
     def export_filename(style)
       "#{params[:citeable_key]}-#{@citeable.id}-citations.#{style == 'csl' ? 'json' : 'txt'}"
+    end
+
+    def include_provenance?
+      ActiveModel::Type::Boolean.new.cast(params[:include_provenance])
     end
   end
 end

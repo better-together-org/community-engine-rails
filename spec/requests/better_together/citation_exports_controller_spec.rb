@@ -37,5 +37,29 @@ RSpec.describe 'BetterTogether::CitationExportsController', :as_user do
       expect(response.media_type).to eq('text/plain')
       expect(response.body).to include('Shared Reality Charter')
     end
+
+    it 'optionally includes provenance in exported citation output' do
+      page.citations.first.update!(
+        metadata: {
+          'imported_from_reference_key' => 'review_notes',
+          'imported_from_record_label' => 'Consensus Reviewer: Reviewer',
+          'imported_from_citation_id' => 'source-citation-id'
+        }
+      )
+
+      get better_together.citation_export_path(citeable_key: 'page', id: page.slug, locale:, style: 'csl',
+                                               include_provenance: true)
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['include_provenance']).to eq(true)
+      expect(json['citations'].first['note']).to include('Imported from linked citation:')
+
+      get better_together.citation_export_path(citeable_key: 'page', id: page.slug, locale:, style: 'apa',
+                                               include_provenance: true)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Imported from linked citation:')
+    end
   end
 end

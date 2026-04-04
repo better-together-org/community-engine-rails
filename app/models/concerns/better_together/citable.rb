@@ -116,16 +116,20 @@ module BetterTogether
       available_evidence_citation_browser_groups.select { |group| group[:origin] == 'contribution' }
     end
 
-    def citations_as_csl_json
-      bibliography_entries.map(&:to_csl_json)
+    def imported_citation_count
+      bibliography_entries.count(&:imported_from_linked_record?)
     end
 
-    def citation_export_lines(style)
+    def citations_as_csl_json(include_provenance: false)
+      bibliography_entries.map { |citation| citation.to_csl_json(include_provenance:) }
+    end
+
+    def citation_export_lines(style, include_provenance: false)
       case style.to_s
       when 'apa'
-        bibliography_entries.map(&:apa_citation)
+        bibliography_entries.map { |citation| citation.apa_citation(include_provenance:) }
       when 'mla'
-        bibliography_entries.map(&:mla_citation)
+        bibliography_entries.map { |citation| citation.mla_citation(include_provenance:) }
       else
         []
       end

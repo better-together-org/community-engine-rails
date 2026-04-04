@@ -1,0 +1,15 @@
+<%# locals: (record:) %>
+<% return unless record.respond_to?(:bibliography_entries) || record.respond_to?(:claims) %>
+<% citation_count = record.respond_to?(:bibliography_entries) ? record.bibliography_entries.size : 0 %>
+<% claim_count = record.respond_to?(:claims) ? record.claims.size : 0 %>
+<% imported_count = record.respond_to?(:imported_citation_count) ? record.imported_citation_count : 0 %>
+<% return if citation_count.zero? && claim_count.zero? && imported_count.zero? %>
+
+<div class="small text-muted record-evidence-summary">
+  <span><strong>Evidence:</strong></span>
+  <% summary_parts = [] %>
+  <% summary_parts << "#{claim_count} #{'claim'.pluralize(claim_count)}" if claim_count.positive? %>
+  <% summary_parts << "#{citation_count} #{'citation'.pluralize(citation_count)}" if citation_count.positive? %>
+  <% summary_parts << "#{imported_count} imported" if imported_count.positive? %>
+  <%= summary_parts.join(' · ') %>
+</div>
