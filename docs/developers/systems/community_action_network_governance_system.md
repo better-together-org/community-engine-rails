@@ -186,6 +186,19 @@ This system implies four major follow-on designs:
 
 ## Status
 
-This is currently a **design and documentation foundation**, not a fully implemented system.
+This system is now **partially implemented** through PR `#1494`.
 
-The codebase already contains pieces of the model, but not the complete constitutional layer described here.
+Implemented portions include:
+
+- governed-agent-safe agreement participation
+- a broader governed contribution/authorship substrate
+- public publishing agreement gating
+- JOATU privacy hardening
+- structured citation, claim, and evidence foundations
+
+What remains incomplete is the full constitutional and workflow layer:
+
+- complete robot-native authorship and publishing UX
+- full review-state and challenge-path product surfaces
+- broader resource-governance visibility beyond the currently implemented governed records
+- a finalized release-package workflow built on top of these foundations

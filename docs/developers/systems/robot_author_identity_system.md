@@ -88,6 +88,18 @@ This is especially important for release packages, launch pages, and milestone p
 
 ## Current Status
 
-This design is **not yet implemented** as a first-class CE feature.
+This system is now **partially implemented** in PR `#1494`.
 
-The robot system exists, but the author identity and governed authorship surfaces described here are still future work.
+Implemented foundation:
+
+- robot participation is now actor-safe in the broader governed contribution model
+- robot authors can be assigned on content records through the governed contribution/authorship layer
+- page and post forms can now select robot contributors alongside people
+- public contribution and evidence surfaces can now render robot-backed governed contribution data truthfully through the broader contribution model
+
+Still future work:
+
+- a complete first-class robot profile/detail surface
+- fully robot-native public author presentation across every content surface
+- explicit robot-led publish/review workflow UX
+- the dedicated governed release-package workflow that treats robot authorship as a primary path instead of only a compatible substrate
