@@ -221,7 +221,7 @@ module BetterTogether
     def add_creator_as_author
       return unless respond_to?(:creator_id) && creator_id.present?
 
-      authorships.find_or_create_by(author_id: creator_id)
+      authorships.find_or_create_by(author: creator)
     end
 
     # Touch navigation areas for all navigation items that link to this page

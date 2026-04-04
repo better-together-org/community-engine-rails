@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Connects an author (eg: person) to an authorable (eg: post)
+  # Connects a governed author (person or robot) to an authorable record.
   class Authorship < ApplicationRecord
     include Positioned
     include BetterTogether::Creatable
@@ -20,10 +20,17 @@ module BetterTogether
       self.creator_context_id = previous
     end
 
+    AUTHOR_TYPES = [
+      'BetterTogether::Person',
+      'BetterTogether::Robot'
+    ].freeze
+
     belongs_to :author,
-               class_name: 'BetterTogether::Person'
+               polymorphic: true
     belongs_to :authorable,
                polymorphic: true
+
+    validates :author_type, inclusion: { in: AUTHOR_TYPES }
 
     # Notify authors when they are added to or removed from a Page
     after_commit :notify_added_to_page, on: :create
@@ -41,6 +48,7 @@ module BetterTogether
     # rubocop:todo Metrics/CyclomaticComplexity
     def notify_added_to_page # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       return unless authorable.is_a?(BetterTogether::Page)
+      return unless author.is_a?(BetterTogether::Person)
       # Skip notifying if the assigned author created this authorship
       return if creator_id.present? && creator_id == author_id
 
@@ -64,6 +72,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def notify_removed_from_page # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       return unless authorable.is_a?(BetterTogether::Page)
+      return unless author.is_a?(BetterTogether::Person)
 
       # Skip notifying when the acting person equals the removed author.
       # Prefer creator_context_id (thread-local) when provided, otherwise fall back to Current.person when available.

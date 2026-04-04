@@ -71,6 +71,20 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe '#governed_authors' do
+    it 'includes robot authors alongside people authors' do
+      post = create(:better_together_post)
+      person = create(:better_together_person)
+      robot = create(:robot, platform: post.platform)
+
+      post.authorships.create!(author: person, position: 1)
+      post.authorships.create!(author: robot, position: 2)
+
+      expect(post.governed_authors).to eq([post.authorships.first.author, person, robot].uniq)
+      expect(post.robot_authors).to include(robot)
+    end
+  end
+
   describe 'federation provenance' do
     it 'assigns Current.platform when available' do
       platform = create(:better_together_platform)
