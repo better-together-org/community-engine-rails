@@ -3,6 +3,7 @@
 module BetterTogether
   # Persists platform-aware robot configuration for LLM-driven tasks.
   class Robot < ApplicationRecord
+    include Author
     include GovernedAgent
 
     self.table_name = 'better_together_robots'
@@ -61,6 +62,14 @@ module BetterTogether
 
     def embedding_model
       default_embedding_model.presence || ENV.fetch('BETTER_TOGETHER_EMBEDDING_MODEL', 'text-embedding-3-small')
+    end
+
+    def handle
+      identifier
+    end
+
+    def to_s
+      name
     end
 
     private

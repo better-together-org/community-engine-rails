@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_04_163000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_04_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -178,8 +178,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_163000) do
     t.uuid "authorable_id", null: false
     t.uuid "author_id", null: false
     t.uuid "creator_id"
-    t.string "author_type", default: "BetterTogether::Person", null: false
-    t.index ["author_type", "author_id"], name: "by_authorship_author"
+    t.string "author_type", null: false
+    t.index ["author_type", "author_id"], name: "by_authorship_author_type_and_id"
     t.index ["authorable_type", "authorable_id"], name: "by_authorship_authorable"
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
   end
