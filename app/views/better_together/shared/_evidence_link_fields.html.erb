@@ -4,8 +4,22 @@
 <% record_types = citation_browser_groups.map { |group| group[:record_type] }.compact.uniq %>
 <% contribution_roles = citation_browser_groups.map { |group| group[:contribution_role] }.compact.uniq %>
 <% contribution_types = citation_browser_groups.map { |group| group[:contribution_type] }.compact.uniq %>
+<%
+  signed_in_user = begin
+    current_user
+  rescue StandardError
+    nil
+  end
+%>
+<% github_import_url = signed_in_user.present? ? better_together.github_citation_imports_path(locale: I18n.locale, format: :json) : nil %>
+<% github_create_url = if signed_in_user.present? && record.respond_to?(:citation_export_key)
+  better_together.import_github_citation_path(citeable_key: record.citation_export_key, id: record.to_param, locale: I18n.locale, format: :json)
+end %>
 
-<div class="border rounded p-2 mb-2" data-controller="better_together--evidence-browser">
+<div class="border rounded p-2 mb-2"
+     data-controller="better_together--evidence-browser"
+     data-better_together--evidence-browser-github-url-value="<%= github_import_url %>"
+     data-better_together--evidence-browser-github-import-url-value="<%= github_create_url %>">
   <div class="row row-cols-1 row-cols-md-2">
     <div class="col mb-2">
       <%= evidence_link_fields.label :citation_id, 'Citation' %>
@@ -162,6 +176,27 @@
             </div>
           </div>
         <% end %>
+      </div>
+    </details>
+  <% end %>
+
+  <% if github_import_url.present? && github_create_url.present? %>
+    <details class="mt-2" data-action="toggle->better_together--evidence-browser#loadGithubSources">
+      <summary class="small fw-semibold">Import GitHub Evidence</summary>
+      <div class="mt-3">
+        <p class="text-muted small">
+          Load GitHub repository, pull request, issue, and commit sources, import them into this record's bibliography, and attach them to this claim in one step.
+        </p>
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+          <button type="button"
+                  class="btn btn-sm btn-outline-dark"
+                  data-action="click->better_together--evidence-browser#loadGithubSources"
+                  data-better_together--evidence-browser-target="githubLoadButton">
+            Load GitHub Evidence
+          </button>
+          <span class="small text-muted" data-better_together--evidence-browser-target="githubStatus"></span>
+        </div>
+        <div class="d-grid gap-3" data-better_together--evidence-browser-target="githubGroups"></div>
       </div>
     </details>
   <% end %>

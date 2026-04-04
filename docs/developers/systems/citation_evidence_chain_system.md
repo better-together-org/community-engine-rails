@@ -38,6 +38,11 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 - [GitHub Citation Import Flow SVG](../../diagrams/exports/svg/pr_1494_github_citation_import_flow.svg)
 - [GitHub Citation Import Desktop Screenshot](../../screenshots/desktop/github_citation_import_browser.png)
 - [GitHub Citation Import Mobile Screenshot](../../screenshots/mobile/github_citation_import_browser.png)
+- [GitHub Evidence and Contribution Import Flow Source](../../diagrams/source/pr_1494_github_evidence_and_contribution_import_flow.mmd)
+- [GitHub Evidence and Contribution Import Flow PNG](../../diagrams/exports/png/pr_1494_github_evidence_and_contribution_import_flow.png)
+- [GitHub Evidence and Contribution Import Flow SVG](../../diagrams/exports/svg/pr_1494_github_evidence_and_contribution_import_flow.svg)
+- [GitHub Contribution Import Desktop Screenshot](../../screenshots/desktop/github_contribution_import_browser.png)
+- [GitHub Contribution Import Mobile Screenshot](../../screenshots/mobile/github_contribution_import_browser.png)
 
 ### Structured citations
 
@@ -249,6 +254,26 @@ GitHub-native metadata is stored in citation `metadata` and can include:
 - `github_handle`
 
 This gives the platform a reusable path for evidence import from code-hosting systems without inventing a parallel GitHub-only evidence schema.
+
+### GitHub claim evidence import
+
+Claim evidence workflows can now import GitHub-native sources directly from the evidence browser.
+
+That flow extends the existing GitHub citation import path with a record-local import step:
+
+1. load linked GitHub sources in the claim evidence browser
+2. import the chosen source into the current record bibliography
+3. attach the imported local citation to the evidence link
+4. preserve local bibliography anchors and export behavior
+
+The implementation uses:
+
+- `BetterTogether::GithubCitationImportsController`
+- `BetterTogether::GithubCitationImportCatalog`
+- `BetterTogether::GithubCitationImportService`
+- `better_together--evidence-browser` Stimulus controller
+
+This keeps claim evidence selection auditable. The evidence link still points at a local citation id on the record, but that local citation records GitHub provenance in its metadata.
 
 ### Export surface
 

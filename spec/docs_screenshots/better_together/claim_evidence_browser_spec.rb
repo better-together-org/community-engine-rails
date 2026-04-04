@@ -34,6 +34,33 @@ RSpec.describe 'Documentation screenshots for claim evidence browser', :docs_scr
            locator: 'p. 11',
            excerpt: 'Reviewed and verified against contribution notes.')
 
+    github_platform = BetterTogether::Platform.external.find_or_create_by!(identifier: 'github') do |platform|
+      platform.name = 'GitHub'
+      platform.url = 'https://github.com'
+      platform.description = 'GitHub OAuth Provider'
+      platform.time_zone = 'UTC'
+      platform.privacy = :public
+      platform.host = false
+    end
+
+    manager = BetterTogether::User.find_by(email: 'manager@example.test') ||
+              create(:user, :platform_manager, email: 'manager@example.test', password: 'SecureTest123!@#')
+    create(:person_platform_integration,
+           :github,
+           user: manager,
+           person: manager.person,
+           platform: github_platform,
+           handle: 'evidence-maintainer',
+           auth: {
+             'citation_import_preview' => [
+               {
+                 'reference_key' => 'commit_governance_bundle_links',
+                 'source_kind' => 'commit',
+                 'title' => 'Add governance bundle links'
+               }
+             ]
+           })
+
     result = BetterTogether::CapybaraScreenshotEngine.capture(
       'claim_evidence_browser',
       device: :both,
@@ -51,6 +78,8 @@ RSpec.describe 'Documentation screenshots for claim evidence browser', :docs_scr
       all('summary', text: 'Browse Evidence Sources', minimum: 1).first.click
       expect(page).to have_text('Source Origin')
       expect(page).to have_text('Consensus Reviewer: Reviewer')
+      all('summary', text: 'Import GitHub Evidence', minimum: 1).first.click
+      expect(page).to have_button('Load GitHub Evidence')
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/claim_evidence_browser.png')

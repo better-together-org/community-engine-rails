@@ -47,6 +47,46 @@ RSpec.describe BetterTogether::Authorship do
       expect(person.authored_posts).not_to include(post)
     end
 
+    it 'merges github source mappings into a single governed contribution record' do
+      page = create(:page)
+      person = create(:person)
+
+      described_class.create!(
+        author: person,
+        authorable: page,
+        role: 'author',
+        contribution_type: 'code',
+        details: {
+          source: 'github',
+          github_sources: [
+            {
+              reference_key: 'pull_request_1494',
+              source_kind: 'pull_request',
+              pull_request_number: 1494
+            }
+          ]
+        }
+      )
+
+      contribution = BetterTogether::GithubContributionImportService.new(
+        record: page,
+        contributor: person,
+        source: {
+          reference_key: 'commit_abc123',
+          source_kind: 'commit',
+          title: 'Add governance bundle links',
+          source_url: 'https://github.com/better-together-org/community-engine-rails/commit/abc123',
+          metadata: {
+            commit_sha: 'abc123',
+            repository_name: 'better-together-org/community-engine-rails'
+          }
+        }
+      ).import!
+
+      expect(contribution.details['github_sources'].size).to eq(2)
+      expect(contribution.details['github_sources'].last['commit_sha']).to eq('abc123')
+    end
+
     it 'does not notify robots when they are added to a page' do
       expect do
         page.authorships.create!(author: robot)
