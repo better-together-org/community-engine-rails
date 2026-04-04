@@ -146,6 +146,10 @@ This is especially important for corporate platforms such as Facebook, Instagram
 The current CE AI entry points now route through the adapter registry and
 `ruby_llm`, but the provider extraction work is still incomplete.
 
+The persisted robot configuration layer that selects provider/model/prompt
+profiles is documented separately in
+[Robot Configuration System](../developers/systems/robot_configuration_system.md).
+
 Target architecture:
 
 - CE defines stable `llm` and `embeddings` subsystem contracts
