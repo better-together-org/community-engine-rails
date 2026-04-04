@@ -19,9 +19,15 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', :as_user do
   end
 
   describe 'GET /index' do
-    it 'returns success' do
+    it 'returns success with contribution and evidence summaries' do
+      create(:claim, claimable: agreement, statement: 'Agreements can expose evidence on list views.')
+      create(:citation, citeable: agreement, reference_key: 'joatu_agreement_summary', title: 'JOATU Agreement Summary')
+
       get better_together.joatu_agreements_path(locale: I18n.locale)
       expect(response).to be_successful
+      expect(response.body).to include('Contributors:')
+      expect(response.body).to include('Evidence:')
+      expect(response.body).to include('Governance Bundle')
     end
   end
 

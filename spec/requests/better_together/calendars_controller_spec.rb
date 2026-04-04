@@ -5,9 +5,15 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   let(:locale) { I18n.default_locale }
 
-  it 'renders index' do
+  it 'renders index with evidence summaries when present' do
+    calendar = create('better_together/calendar', privacy: 'public')
+    create(:claim, claimable: calendar, statement: 'Calendars can expose evidence on listing surfaces.')
+    create(:citation, citeable: calendar, reference_key: 'calendar_index_summary', title: 'Calendar Index Summary')
+
     get better_together.calendars_path(locale:)
     expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Evidence:')
+    expect(response.body).to include('Governance Bundle')
   end
 
   context 'when viewing calendar show page' do
