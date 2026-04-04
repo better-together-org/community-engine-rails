@@ -41,6 +41,20 @@ trix-toolbar {
     }
   }
 
+  .trix-dialog--citation {
+    max-width: 320px;
+
+    .trix-dialog__link-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .trix-input--dialog {
+      width: 100%;
+    }
+  }
+
   .trix-dialog {
     padding: 5px;
 
@@ -65,6 +79,11 @@ trix-editor {
 
   .citation-reference a {
     text-decoration: none;
+  }
+
+  .citation-link {
+    text-decoration: underline dotted;
+    text-underline-offset: 0.15em;
   }
 
   h1, h2, h3, h4, h5, h6 {

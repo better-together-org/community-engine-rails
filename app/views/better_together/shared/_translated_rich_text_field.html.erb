@@ -1,7 +1,7 @@
 
 <!-- app/views/better_together/shared/_translated_rich_text_field.html.erb -->
 
-<%# locals: (model:, form:, attribute:, temp_id: SecureRandom.uuid) -%>
+<%# locals: (model:, form:, attribute:, citation_options: [], temp_id: SecureRandom.uuid) -%>
 
 <div class="localized-fields" data-controller="better_together--translation"
      data-better-together--translation-content-too-long-text="<%= t('better_together.translations.errors.content_too_long') %>"
@@ -28,6 +28,7 @@
           form.rich_text_area locale_attribute,
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
             'data-better_together-translation-target' => 'trix',
+            'data-citation-options' => citation_options.to_json,
             id: "#{dom_id(model)}-#{locale_attribute}"
         %>
         <% if model.errors[locale_attribute].any? %>

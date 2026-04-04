@@ -39,6 +39,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       get better_together.page_path(page.slug, locale:)
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include('data-evidence-selector="block:markdown:')
     end
 
     it 'renders a bibliography for structured citations' do
