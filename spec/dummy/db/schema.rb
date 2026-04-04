@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_04_204500) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_04_213000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -809,9 +809,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_204500) do
     t.text "terms"
     t.string "value"
     t.string "status", default: "pending", null: false
+    t.string "privacy", default: "private", null: false
     t.index ["offer_id", "request_id"], name: "bt_joatu_agreements_unique_offer_request", unique: true
     t.index ["offer_id"], name: "bt_joatu_agreements_by_offer"
     t.index ["offer_id"], name: "bt_joatu_agreements_one_accepted_per_offer", unique: true, where: "((status)::text = 'accepted'::text)"
+    t.index ["privacy"], name: "index_better_together_joatu_agreements_on_privacy"
     t.index ["request_id"], name: "bt_joatu_agreements_by_request"
     t.index ["request_id"], name: "bt_joatu_agreements_one_accepted_per_request", unique: true, where: "((status)::text = 'accepted'::text)"
   end
@@ -826,8 +828,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_204500) do
     t.uuid "target_id"
     t.string "urgency", default: "normal", null: false
     t.uuid "address_id"
+    t.string "privacy", default: "private", null: false
     t.index ["address_id"], name: "index_better_together_joatu_offers_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_offers_creator"
+    t.index ["privacy"], name: "index_better_together_joatu_offers_on_privacy"
     t.index ["target_type", "target_id"], name: "bt_joatu_offers_on_target"
   end
 
@@ -845,8 +849,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_204500) do
     t.string "requestor_name"
     t.string "requestor_email"
     t.string "referral_source"
+    t.string "privacy", default: "private", null: false
     t.index ["address_id"], name: "index_better_together_joatu_requests_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_requests_creator"
+    t.index ["privacy"], name: "index_better_together_joatu_requests_on_privacy"
     t.index ["requestor_email"], name: "index_bt_joatu_requests_on_requestor_email"
     t.index ["target_type", "target_id"], name: "bt_joatu_requests_on_target"
     t.index ["type"], name: "index_better_together_joatu_requests_on_type"

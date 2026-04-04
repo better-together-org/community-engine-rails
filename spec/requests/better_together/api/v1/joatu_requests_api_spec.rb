@@ -11,7 +11,11 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuRequests', :no_auth do
 
   describe 'GET /api/v1/joatu_requests' do
     let(:url) { '/api/v1/joatu_requests' }
-    let!(:joatu_request) { create(:better_together_joatu_request, creator: person) }
+    let!(:owned_private_request) { create(:better_together_joatu_request, creator: person, privacy: 'private') }
+    let!(:public_request) do
+      create(:better_together_joatu_request, privacy: 'private').tap { |request| request.update_column(:privacy, 'public') }
+    end
+    let!(:other_private_request) { create(:better_together_joatu_request, privacy: 'private') }
 
     context 'when authenticated' do
       before { get url, headers: auth_headers }
@@ -29,7 +33,8 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuRequests', :no_auth do
       it 'includes accessible requests' do
         json = JSON.parse(response.body)
         ids = json['data'].map { |d| d['id'] }
-        expect(ids).to include(joatu_request.id)
+        expect(ids).to include(owned_private_request.id, public_request.id)
+        expect(ids).not_to include(other_private_request.id)
       end
     end
 
@@ -43,7 +48,7 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuRequests', :no_auth do
   end
 
   describe 'GET /api/v1/joatu_requests/:id' do
-    let(:joatu_request) { create(:better_together_joatu_request, creator: person) }
+    let(:joatu_request) { create(:better_together_joatu_request, creator: person, privacy: 'private') }
     let(:url) { "/api/v1/joatu_requests/#{joatu_request.id}" }
 
     context 'when authenticated' do
@@ -64,6 +69,16 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuRequests', :no_auth do
           'status' => joatu_request.status,
           'urgency' => joatu_request.urgency
         )
+      end
+    end
+
+    context 'when authenticated but record is a different private request' do
+      let(:joatu_request) { create(:better_together_joatu_request, privacy: 'private') }
+
+      before { get url, headers: auth_headers }
+
+      it 'returns not found' do
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

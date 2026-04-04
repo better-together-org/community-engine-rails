@@ -90,6 +90,11 @@
   </div>
 
   <div class="mb-3">
+    <%= required_label form, :privacy, class: 'form-label' %>
+    <%= privacy_field(form:, klass: joatu_request.class) %>
+  </div>
+
+  <div class="mb-3">
     <%= required_label form, :categories %>
     <%= form.select :category_ids, options_from_collection_for_select(BetterTogether::Joatu::Category.positioned.all.includes(:string_translations), :id, :name, joatu_request.category_ids), { include_blank: true, multiple: true }, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
     <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>

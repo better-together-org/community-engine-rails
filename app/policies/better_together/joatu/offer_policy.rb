@@ -5,7 +5,11 @@ module BetterTogether
     # Access control for Joatu::Offer
     class OfferPolicy < ApplicationPolicy
       def index? = user.present?
-      def show?  = user.present?
+      def show?
+        return false unless user.present?
+
+        scope_allows_record?
+      end
       def create? = user.present?
       alias new? create?
 
@@ -40,9 +44,11 @@ module BetterTogether
 
           agent_id = agent&.id
 
-          # Offers that are not responses to another resource (no response_link where response is this offer)
+          # Public offers that are not responses to another resource
           # rubocop:todo Layout/LineLength
-          not_responses = scope.left_joins(:response_links_as_response).where(better_together_joatu_response_links: { id: nil })
+          public_not_responses = scope.where(privacy: 'public')
+                                      .left_joins(:response_links_as_response)
+                                      .where(better_together_joatu_response_links: { id: nil })
           # rubocop:enable Layout/LineLength
 
           # Offers owned by the agent
@@ -64,12 +70,20 @@ module BetterTogether
 
           response_to_my_request = scope.joins(join_sources).where(requests[:creator_id].eq(agent_id))
 
-          # Combine the allowed sets: not_responses (public) OR owned OR response_to_my_request
+          # Combine the allowed sets: public non-responses OR owned OR response_to_my_request
           # rubocop:todo Layout/LineLength
-          scope.where(id: not_responses.select(:id)).or(scope.where(id: owned.select(:id))).or(scope.where(id: response_to_my_request.select(:id)))
+          scope.where(id: public_not_responses.select(:id))
+               .or(scope.where(id: owned.select(:id)))
+               .or(scope.where(id: response_to_my_request.select(:id)))
           # rubocop:enable Layout/LineLength
         end
         # rubocop:enable Metrics/MethodLength
+      end
+
+      private
+
+      def scope_allows_record?
+        self.class::Scope.new(user, record.class).resolve.where(id: record.id).exists?
       end
     end
   end

@@ -11,7 +11,7 @@ module BetterTogether
 
         return can_view_connection_agreement? if connection_request_agreement?
 
-        participant? || can_manage_joatu?
+        scope_allows_record?
       end
 
       def create?
@@ -52,14 +52,18 @@ module BetterTogether
           return scope.all if can_manage_joatu?
           return scope.all if can_manage_network_connections? && connection_request_agreement_scope?
 
+          public_records = scope.where(privacy: 'public')
+
           # Agreements where the agent is either the offer or request creator
           offers = BetterTogether::Joatu::Offer.arel_table
           requests = BetterTogether::Joatu::Request.arel_table
 
           join = scope.joins(:offer, :request)
-          join.where(
+          participant_records = join.where(
             offers[:creator_id].eq(agent&.id).or(requests[:creator_id].eq(agent&.id))
           )
+
+          public_records.or(scope.where(id: participant_records.select(:id)))
         end
 
         private
@@ -100,6 +104,10 @@ module BetterTogether
 
       def can_view_connection_agreement?
         can_manage_network_connections? || can_approve_network_connections? || participant?
+      end
+
+      def scope_allows_record?
+        self.class::Scope.new(user, record.class).resolve.where(id: record.id).exists?
       end
     end
   end
