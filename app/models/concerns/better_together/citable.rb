@@ -81,6 +81,27 @@ module BetterTogether
       end
     end
 
+    def available_evidence_citation_browser_groups
+      available_evidence_citation_sources.map do |group_label, citations|
+        {
+          label: group_label,
+          citations: citations.map do |citation|
+            {
+              id: citation.id,
+              reference_key: citation.reference_key,
+              title: citation.title,
+              source_kind: citation.source_kind,
+              source_author: citation.source_author,
+              publisher: citation.publisher,
+              locator: citation.locator,
+              excerpt: citation.excerpt,
+              source_url: citation.source_url
+            }.compact
+          end
+        }
+      end
+    end
+
     def citations_as_csl_json
       bibliography_entries.map(&:to_csl_json)
     end

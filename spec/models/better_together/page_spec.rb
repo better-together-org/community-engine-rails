@@ -206,6 +206,26 @@ module BetterTogether # :nodoc:
           expect(groups['Current record']).to include(["#{local_citation.reference_key}: #{local_citation.title}", local_citation.id])
           expect(groups['Evidence Keeper: Reviewer']).to include(["#{linked_citation.reference_key}: #{linked_citation.title}", linked_citation.id])
         end
+
+        it 'builds evidence browser groups with preview metadata' do
+          page = create(:better_together_page)
+          create(:citation,
+                 citeable: page,
+                 reference_key: 'local_record',
+                 title: 'Local Record Citation',
+                 locator: 'p. 10',
+                 excerpt: 'Shared reality requires traceable evidence.')
+
+          browser_groups = page.available_evidence_citation_browser_groups
+
+          expect(browser_groups.first[:label]).to eq('Current record')
+          expect(browser_groups.first[:citations].first).to include(
+            reference_key: 'local_record',
+            title: 'Local Record Citation',
+            locator: 'p. 10',
+            excerpt: 'Shared reality requires traceable evidence.'
+          )
+        end
       end
 
       describe '#as_indexed_json' do

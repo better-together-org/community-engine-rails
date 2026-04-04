@@ -29,5 +29,7 @@ RSpec.describe 'better_together/shared/_evidence_link_fields', type: :view do
     expect(rendered).to include('Consensus Reviewer: Reviewer')
     expect(rendered).to include('local_record: Local Record Citation')
     expect(rendered).to include('review_notes: Review Notes')
+    expect(rendered).to include('Browse Evidence Sources')
+    expect(rendered).to include('Use Citation')
   end
 end

@@ -152,6 +152,8 @@ The picker now groups available citations by evidence source, including:
 
 This gives claim reviewers a first evidence browser for pulling in supporting material that was attached to adjacent contribution records without duplicating citation data immediately.
 
+The claim evidence form now also renders a browseable source panel for each evidence link. Reviewers can inspect grouped citations, preview locators and excerpts, and apply a citation into the current evidence link with one action. When available, locator and excerpt values are copied into the evidence link as drafting defaults.
+
 ### Selector-aware Trix integration
 
 The rich text toolbar now includes a `Citation` action modeled on the existing Trix link dialog flow.
@@ -171,6 +173,8 @@ This is still intentionally incremental. It does not yet provide a full claim pi
 - stable block selector targeting
 - media-aware selector suggestions for image and video blocks
 - bibliography-backed inline citation references
+
+Inline Trix citations intentionally remain record-local for now. That preserves correct bibliography anchors in published rich text. Cross-record evidence browsing is currently implemented in claim evidence workflows, where linked citations can be referenced without silently importing or duplicating them into the publishing record.
 
 ### Export surface
 

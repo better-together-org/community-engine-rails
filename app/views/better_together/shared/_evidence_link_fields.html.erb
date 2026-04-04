@@ -1,13 +1,15 @@
 <% citation_option_groups = record.respond_to?(:available_evidence_citation_option_groups) ? record.available_evidence_citation_option_groups : {} %>
+<% citation_browser_groups = record.respond_to?(:available_evidence_citation_browser_groups) ? record.available_evidence_citation_browser_groups : [] %>
 
-<div class="border rounded p-2 mb-2">
+<div class="border rounded p-2 mb-2" data-controller="better_together--evidence-browser">
   <div class="row row-cols-1 row-cols-md-2">
     <div class="col mb-2">
       <%= evidence_link_fields.label :citation_id, 'Citation' %>
       <%= evidence_link_fields.select :citation_id,
                                       grouped_options_for_select(citation_option_groups, evidence_link_fields.object.citation_id),
                                       { include_blank: true },
-                                      class: 'form-select' %>
+                                      class: 'form-select',
+                                      data: { better_together__evidence_browser_target: 'citationSelect' } %>
       <small class="form-text text-muted">
         Evidence links can reference citations on this record and linked contribution records.
       </small>
@@ -23,12 +25,18 @@
 
     <div class="col-12 mb-2">
       <%= evidence_link_fields.label :locator %>
-      <%= evidence_link_fields.text_field :locator, class: 'form-control', placeholder: 'p. 10, fig. 2, 00:03:12' %>
+      <%= evidence_link_fields.text_field :locator,
+                                          class: 'form-control',
+                                          placeholder: 'p. 10, fig. 2, 00:03:12',
+                                          data: { better_together__evidence_browser_target: 'locatorInput' } %>
     </div>
 
     <div class="col-12 mb-2">
       <%= evidence_link_fields.label :quoted_text %>
-      <%= evidence_link_fields.text_area :quoted_text, class: 'form-control', rows: 2 %>
+      <%= evidence_link_fields.text_area :quoted_text,
+                                         class: 'form-control',
+                                         rows: 2,
+                                         data: { better_together__evidence_browser_target: 'quotedTextInput' } %>
     </div>
 
     <div class="col-12 mb-2">
@@ -36,4 +44,50 @@
       <%= evidence_link_fields.text_area :editor_note, class: 'form-control', rows: 2 %>
     </div>
   </div>
+
+  <% if citation_browser_groups.any? %>
+    <details class="mt-2">
+      <summary class="small fw-semibold">Browse Evidence Sources</summary>
+      <div class="mt-3">
+        <% citation_browser_groups.each do |group| %>
+          <div class="mb-3">
+            <h5 class="h6 mb-2"><%= group[:label] %></h5>
+            <div class="d-grid gap-2">
+              <% group[:citations].each do |citation| %>
+                <div class="border rounded p-2 bg-light-subtle">
+                  <div class="d-flex justify-content-between gap-2 align-items-start">
+                    <div>
+                      <div class="fw-semibold"><%= citation[:reference_key] %>: <%= citation[:title] %></div>
+                      <div class="small text-muted">
+                        <%= [citation[:source_kind]&.humanize, citation[:source_author], citation[:publisher]].compact.join(' | ') %>
+                      </div>
+                    </div>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            data-action="click->better_together--evidence-browser#chooseCitation"
+                            data-citation-id="<%= citation[:id] %>"
+                            data-locator="<%= citation[:locator] %>"
+                            data-excerpt="<%= citation[:excerpt] %>">
+                      Use Citation
+                    </button>
+                  </div>
+                  <% if citation[:locator].present? %>
+                    <div class="small mt-2"><strong>Locator:</strong> <%= citation[:locator] %></div>
+                  <% end %>
+                  <% if citation[:excerpt].present? %>
+                    <div class="small mt-1"><strong>Excerpt:</strong> <%= truncate(citation[:excerpt], length: 180) %></div>
+                  <% end %>
+                  <% if citation[:source_url].present? %>
+                    <div class="small mt-1">
+                      <%= link_to citation[:source_url], citation[:source_url], target: '_blank', rel: 'noopener' %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
 </div>
