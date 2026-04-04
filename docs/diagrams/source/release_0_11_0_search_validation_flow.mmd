@@ -1,0 +1,13 @@
+flowchart TD
+    A[Search request] --> B[SearchController]
+    B --> C[Search backend registry]
+    C --> D[ElasticsearchBackend]
+    D --> E[Elasticsearch query execution]
+    E --> F[Search results returned]
+    F --> G[TrackSearchQueryJob]
+    G --> H[SearchQueryCaptureService]
+    H --> I{Platform analytics mode}
+    I -- disabled --> J[Do not persist query text]
+    I -- hashed --> K[Persist sha256 query digest]
+    I -- full --> L[Persist normalized query text]
+    D --> M[Live validation and audit-oriented specs]
