@@ -1,0 +1,11 @@
+{
+  "name": "community_event_evidence_summary",
+  "device": "desktop",
+  "url": "http://127.0.0.1:32811/en/c/community-b30ac572f0b2cc5ddfef",
+  "title": "Evidence Summary Community | Communities | Test Host Community",
+  "captured_at": "2026-04-04T21:51:42Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "community_event_evidence_summary",
+  "source_spec": "./spec/docs_screenshots/better_together/community_event_evidence_summary_spec.rb"
+}

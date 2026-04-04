@@ -271,6 +271,32 @@ Additional review assets for this slice:
 - [Contribution Evidence Summary Desktop Screenshot](../../screenshots/desktop/contribution_evidence_summary.png)
 - [Contribution Evidence Summary Mobile Screenshot](../../screenshots/mobile/contribution_evidence_summary.png)
 
+### Community-facing evidence and governance bundles
+
+The same shared evidence summary now appears on event cards, which means community event listings inherit evidence density and imported-citation visibility without needing a community-specific evidence renderer.
+
+The citation export endpoint also now supports a governance review packet mode:
+
+- `style=bundle`
+
+That bundle returns:
+
+- citeable record metadata
+- summary counts for citations, imported citations, claims, and contributions
+- CSL-style citation payloads
+- claim and evidence-link structures
+- linked contribution summaries
+
+This gives reviewers a single machine-readable export that can be used for cooperative governance review, audit trails, or downstream packaging without flattening everything into one text bibliography.
+
+Additional review assets for this slice:
+
+- [Governance Bundle and Community Evidence Flow Source](../../diagrams/source/pr_1494_governance_bundle_and_community_evidence_flow.mmd)
+- [Governance Bundle and Community Evidence PNG](../../diagrams/exports/png/pr_1494_governance_bundle_and_community_evidence_flow.png)
+- [Governance Bundle and Community Evidence SVG](../../diagrams/exports/svg/pr_1494_governance_bundle_and_community_evidence_flow.svg)
+- [Community Event Evidence Summary Desktop Screenshot](../../screenshots/desktop/community_event_evidence_summary.png)
+- [Community Event Evidence Summary Mobile Screenshot](../../screenshots/mobile/community_event_evidence_summary.png)
+
 ## Standards Direction
 
 The current metadata layer is designed to grow toward standards-compatible export and provenance.

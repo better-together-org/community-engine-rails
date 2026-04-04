@@ -71,6 +71,36 @@ module BetterTogether
       ).uniq { |option| option[:value] }
     end
 
+    def claims_as_json_bundle
+      claims.includes(evidence_links: :citation).map do |claim|
+        {
+          id: claim.id,
+          claim_key: claim.claim_key,
+          statement: claim.statement,
+          selector: claim.selector,
+          review_status: claim.review_status,
+          evidence_links: claim.evidence_links.map do |evidence_link|
+            citation = evidence_link.citation
+
+            {
+              id: evidence_link.id,
+              relation_type: evidence_link.relation_type,
+              locator: evidence_link.locator,
+              quoted_text: evidence_link.quoted_text,
+              editor_note: evidence_link.editor_note,
+              review_status: evidence_link.review_status,
+              citation: citation && {
+                id: citation.id,
+                reference_key: citation.reference_key,
+                title: citation.title,
+                source_kind: citation.source_kind
+              }
+            }.compact
+          end
+        }.compact
+      end
+    end
+
     private
 
     def default_evidence_selector_options
