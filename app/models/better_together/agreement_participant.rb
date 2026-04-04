@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # joins people to agreements they have accepted
+  # joins people to agreements they have accepted. This remains person-bound
+  # today and is a future migration point for broader governed-agent
+  # participation.
   class AgreementParticipant < ApplicationRecord
     belongs_to :agreement, class_name: 'BetterTogether::Agreement'
     belongs_to :person, class_name: 'BetterTogether::Person'

@@ -39,6 +39,17 @@ RSpec.describe BetterTogether::Person do
     end
   end
 
+  describe 'community action network identity helpers' do
+    it 'exposes governed agent metadata for people' do
+      expect(person.governed_agent?).to be(true)
+      expect(person.governed_agent_type).to eq('person')
+      expect(person.governed_agent_identifier).to eq(person.identifier)
+      expect(person.governed_agent_display_name).to eq(person.name)
+      expect(person.governed_agent_key).to eq("person:#{person.identifier}")
+      expect(person.governed_agent_label).to eq("#{person.name} (person)")
+    end
+  end
+
   describe '#unaccepted_required_agreements' do
     let(:person) { create(:person) }
 
@@ -108,8 +119,9 @@ RSpec.describe BetterTogether::Person do
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') { |a| a.title = 'Terms of Service' } }
 
       before do
-        # Ensure code_of_conduct doesn't exist for this test
-        BetterTogether::Agreement.where(identifier: 'code_of_conduct').delete_all
+        allow(BetterTogether::Agreement).to receive(:exists?)
+          .with(identifier: 'code_of_conduct')
+          .and_return(false)
       end
 
       it 'returns only privacy_policy and terms_of_service' do

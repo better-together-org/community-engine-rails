@@ -59,4 +59,17 @@ RSpec.describe BetterTogether::Robot do
       expect(robot.select_option_title).to eq('Writer Bot - robot:writer')
     end
   end
+
+  describe 'community action network identity helpers' do
+    it 'exposes governed agent metadata for robots' do
+      robot = build(:robot, identifier: 'release-bot', name: 'Release Bot')
+
+      expect(robot.governed_agent?).to be(true)
+      expect(robot.governed_agent_type).to eq('robot')
+      expect(robot.governed_agent_identifier).to eq('release-bot')
+      expect(robot.governed_agent_display_name).to eq('Release Bot')
+      expect(robot.governed_agent_key).to eq('robot:release-bot')
+      expect(robot.governed_agent_label).to eq('Release Bot (robot)')
+    end
+  end
 end
