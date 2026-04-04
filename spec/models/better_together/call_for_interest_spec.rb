@@ -25,6 +25,8 @@ module BetterTogether # :nodoc:
     describe 'associations' do
       it { is_expected.to belong_to(:interestable).optional }
       it { is_expected.to belong_to(:creator) }
+      it { is_expected.to have_many(:citations).dependent(:destroy) }
+      it { is_expected.to have_many(:claims).dependent(:destroy) }
     end
 
     describe 'validations' do
@@ -132,6 +134,15 @@ module BetterTogether # :nodoc:
         expect(call1.identifier).to be_present
         expect(call2.identifier).to be_present
         expect(call1.identifier).not_to eq(call2.identifier)
+      end
+    end
+
+    describe 'citation and evidence helpers' do
+      it 'exposes citation reference options' do
+        call = create(:call_for_interest)
+        citation = create(:citation, citeable: call, reference_key: 'story-1', title: 'Community story')
+
+        expect(call.citation_reference_options).to include([citation.reference_key, citation.title])
       end
     end
   end

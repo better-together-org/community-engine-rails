@@ -13,7 +13,7 @@ module BetterTogether
                dependent: :destroy,
                inverse_of: :claimable
 
-      accepts_nested_attributes_for :claims, allow_destroy: true, reject_if: :all_blank
+      accepts_nested_attributes_for :claims, allow_destroy: true, reject_if: :reject_blank_claim_attributes?
     end
 
     class_methods do
@@ -44,6 +44,18 @@ module BetterTogether
             ]
           }
         ]
+      end
+    end
+
+    private
+
+    def reject_blank_claim_attributes?(attributes)
+      claim_attributes = attributes.except('evidence_links_attributes')
+      return false unless claim_attributes.values.all?(&:blank?)
+
+      evidence_attributes = Array(attributes['evidence_links_attributes']&.values)
+      evidence_attributes.all? do |evidence_link_attributes|
+        evidence_link_attributes.except('id', '_destroy').values.all?(&:blank?)
       end
     end
   end
