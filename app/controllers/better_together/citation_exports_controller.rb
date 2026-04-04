@@ -17,7 +17,7 @@ module BetterTogether
 
     before_action :set_citeable
 
-    def show # rubocop:todo Metrics/MethodLength
+    def show # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @citeable, :show?
 
       case export_style
