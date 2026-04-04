@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "selectorInput",
+    "selectorPreset",
     "videoSource",
     "videoTimestamp",
     "imageSource",
@@ -13,6 +14,16 @@ export default class extends Controller {
   ]
 
   connect() {
+    this.hydrateHelpersFromSelector()
+  }
+
+  applyPreset() {
+    if (!this.hasSelectorPresetTarget || !this.hasSelectorInputTarget) return
+
+    const selector = this.selectorPresetTarget.value
+    if (!selector) return
+
+    this.selectorInputTarget.value = selector
     this.hydrateHelpersFromSelector()
   }
 
@@ -48,6 +59,10 @@ export default class extends Controller {
 
     const selector = this.selectorInputTarget.value?.trim()
     if (!selector) return
+
+    if (this.hasSelectorPresetTarget) {
+      this.selectorPresetTarget.value = selector
+    }
 
     const timestampMatch = selector.match(/^(.*):timestamp:([0-9]{2}:[0-9]{2}:[0-9]{2})$/)
     if (timestampMatch && this.hasVideoSourceTarget && this.hasVideoTimestampTarget) {

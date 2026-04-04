@@ -189,6 +189,23 @@ module BetterTogether # :nodoc:
             include(value: 'block:video_block:launch-video:timestamp:*')
           )
         end
+
+        it 'includes linked contribution citations in grouped evidence source options' do
+          page = create(:better_together_page)
+          local_citation = create(:citation, citeable: page, reference_key: 'local_record', title: 'Local Record Citation')
+          contributor = create(:person, name: 'Evidence Keeper')
+          contribution = BetterTogether::Authorship.create!(
+            authorable: page,
+            author: contributor,
+            role: 'reviewer'
+          )
+          linked_citation = create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
+
+          groups = page.available_evidence_citation_option_groups
+
+          expect(groups['Current record']).to include(["#{local_citation.reference_key}: #{local_citation.title}", local_citation.id])
+          expect(groups['Evidence Keeper: Reviewer']).to include(["#{linked_citation.reference_key}: #{linked_citation.title}", linked_citation.id])
+        end
       end
 
       describe '#as_indexed_json' do

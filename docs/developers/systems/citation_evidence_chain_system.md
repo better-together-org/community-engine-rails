@@ -137,8 +137,20 @@ Claim entry forms now also include selector helpers for the two most common medi
 
 - exact video timestamps, normalized to `HH:MM:SS`
 - image regions using `x/y/w/h` coordinates
+- suggested selector presets for record, rich text, and block/media targets
 
 Those helpers write back into the canonical `selector` field rather than introducing separate hidden schema, so the persisted selector remains auditable and transportable across exports.
+
+### Evidence picker expansion
+
+Evidence link forms no longer only expose citations created directly on the current record.
+
+The picker now groups available citations by evidence source, including:
+
+- `Current record`
+- linked contribution records such as review, editing, or authorship contribution entries that carry their own citations
+
+This gives claim reviewers a first evidence browser for pulling in supporting material that was attached to adjacent contribution records without duplicating citation data immediately.
 
 ### Selector-aware Trix integration
 
