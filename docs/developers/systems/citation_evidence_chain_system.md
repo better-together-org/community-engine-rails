@@ -55,6 +55,11 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 - [JOATU and Governance Listing Summaries Flow SVG](../../diagrams/exports/svg/pr_1494_joatu_and_governance_listing_summaries_flow.svg)
 - [JOATU Listing Summaries Desktop Screenshot](../../screenshots/desktop/joatu_listing_summaries.png)
 - [JOATU Listing Summaries Mobile Screenshot](../../screenshots/mobile/joatu_listing_summaries.png)
+- [JOATU GitHub Contribution Import Flow Source](../../diagrams/source/pr_1494_joatu_github_contribution_import_flow.mmd)
+- [JOATU GitHub Contribution Import Flow PNG](../../diagrams/exports/png/pr_1494_joatu_github_contribution_import_flow.png)
+- [JOATU GitHub Contribution Import Flow SVG](../../diagrams/exports/svg/pr_1494_joatu_github_contribution_import_flow.svg)
+- [JOATU GitHub Contribution Import Desktop Screenshot](../../screenshots/desktop/joatu_github_contribution_import_browser.png)
+- [JOATU GitHub Contribution Import Mobile Screenshot](../../screenshots/mobile/joatu_github_contribution_import_browser.png)
 
 ### Structured citations
 
@@ -266,6 +271,8 @@ GitHub-native metadata is stored in citation `metadata` and can include:
 - `github_handle`
 
 This gives the platform a reusable path for evidence import from code-hosting systems without inventing a parallel GitHub-only evidence schema.
+
+The same local-first import path now also powers governed contribution imports on JOATU request and offer edit forms. That means exchange records can carry auditable GitHub-backed contribution context in the same `details['github_sources']` structure used by page and post contribution records, and the controller path also supports JOATU agreements for API-driven import.
 
 ### Profile and community evidence visibility
 
