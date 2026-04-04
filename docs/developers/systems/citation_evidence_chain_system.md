@@ -200,6 +200,15 @@ Inline Trix citations intentionally remain record-local for now. That preserves 
 
 To bridge that gap safely, citation field forms now include an explicit `Import Linked Citation Into This Record` panel. Editors can review linked contribution citations and copy one into the current record's own citation rows. This makes the duplication deliberate, visible, and auditable instead of implicit.
 
+Imported citation copies now also store audit metadata in the local citation record. The copied citation can record:
+
+- source citation id
+- source citation key
+- source record label
+- source record type
+
+That provenance is rendered in the bibliography so readers and reviewers can tell when a local citation entry originated from a linked contribution record rather than being authored directly on the current record.
+
 ### Export surface
 
 The first machine-readable citation export surface now exists through `CitationExportsController`.

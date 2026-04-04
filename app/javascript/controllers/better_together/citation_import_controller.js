@@ -18,6 +18,12 @@ export default class extends Controller {
     this.populateField(target, "source_url", source.sourceUrl)
     this.populateField(target, "locator", source.locator)
     this.populateField(target, "excerpt", source.excerpt)
+    this.populateMetadata(target, {
+      imported_from_citation_id: source.citationId,
+      imported_from_reference_key: source.referenceKey,
+      imported_from_record_label: source.recordLabel,
+      imported_from_record_type: source.recordType
+    })
   }
 
   firstAvailableCitationFields() {
@@ -41,5 +47,25 @@ export default class extends Controller {
 
   readField(container, fieldName) {
     return container.querySelector(`[data-field-name="${fieldName}"]`)?.value?.trim()
+  }
+
+  populateMetadata(container, values) {
+    const field = container.querySelector('[data-field-name="metadata"]')
+    if (!field) return
+
+    let metadata = {}
+    try {
+      metadata = field.value ? JSON.parse(field.value) : {}
+    } catch (_error) {
+      metadata = {}
+    }
+
+    Object.entries(values).forEach(([key, value]) => {
+      if (value) metadata[key] = value
+    })
+
+    field.value = JSON.stringify(metadata)
+    field.dispatchEvent(new Event("input", { bubbles: true }))
+    field.dispatchEvent(new Event("change", { bubbles: true }))
   }
 }
