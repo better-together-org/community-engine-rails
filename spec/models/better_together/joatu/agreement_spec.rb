@@ -9,6 +9,14 @@ RSpec.describe BetterTogether::Joatu::Agreement do
   let(:request)   { create(:better_together_joatu_request, creator: creator_b) }
 
   describe 'status transitions' do
+    it 'records both creators as exchange participants' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+
+      expect(agreement.contributions.pluck(:role).uniq).to eq(['exchange_participant'])
+      expect(agreement.contributions.pluck(:contribution_type).uniq).to eq(['community_exchange'])
+      expect(agreement.contributors_for(:exchange_participant)).to match_array([creator_a, creator_b])
+    end
+
     it 'starts pending' do
       agreement = described_class.new(offer:, request:)
       expect(agreement).to be_valid

@@ -24,6 +24,7 @@ module BetterTogether
         include BetterTogether::Translatable
         include BetterTogether::FriendlySlug
         include BetterTogether::Privacy
+        include BetterTogether::Authorable
 
         enum :status, STATUS_VALUES, prefix: :status
         enum :urgency, URGENCY_VALUES, prefix: :urgency
@@ -51,6 +52,7 @@ module BetterTogether
         accepts_nested_attributes_for :address, allow_destroy: true
 
         after_commit :notify_matches, on: :create
+        after_create :add_creator_as_exchange_contributor
       end
 
       class_methods do
@@ -73,6 +75,14 @@ module BetterTogether
       end
 
       private
+
+      def add_creator_as_exchange_contributor
+        add_governed_contributor(
+          creator,
+          role: BetterTogether::Authorship::EXCHANGE_INITIATOR_ROLE,
+          contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
+        )
+      end
 
       def notify_matches # rubocop:todo Metrics/MethodLength
         find_matches.find_each do |other|

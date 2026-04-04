@@ -4,6 +4,7 @@ module BetterTogether
   module Joatu
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
+      include BetterTogether::Authorable
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable
@@ -31,6 +32,7 @@ module BetterTogether
 
       # When an agreement is created, mark the paired offer/request as matched
       after_create :mark_associated_matched
+      after_create :add_participant_contributions
 
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
 
@@ -216,6 +218,16 @@ module BetterTogether
         notifier = BetterTogether::Joatu::AgreementStatusNotifier.with(record: self)
         notifier.deliver_later(offer.creator) if offer&.creator
         notifier.deliver_later(request.creator) if request&.creator
+      end
+
+      def add_participant_contributions
+        [offer&.creator, request&.creator].compact.uniq.each do |participant|
+          add_governed_contributor(
+            participant,
+            role: BetterTogether::Authorship::EXCHANGE_PARTICIPANT_ROLE,
+            contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
+          )
+        end
       end
     end
   end

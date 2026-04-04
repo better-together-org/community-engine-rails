@@ -64,4 +64,13 @@ RSpec.describe BetterTogether::Joatu::Request do
     request_model.categories = []
     expect(request_model).not_to be_valid
   end
+
+  it 'records creator contribution as an exchange initiator' do
+    request_record = create(:better_together_joatu_request)
+
+    expect(request_record.contributions.count).to eq(1)
+    expect(request_record.contributions.first.role).to eq('exchange_initiator')
+    expect(request_record.contributions.first.contribution_type).to eq('community_exchange')
+    expect(request_record.contributors_for(:exchange_initiator)).to contain_exactly(request_record.creator)
+  end
 end

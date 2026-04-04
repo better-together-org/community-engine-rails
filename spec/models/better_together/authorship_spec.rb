@@ -16,6 +16,37 @@ RSpec.describe BetterTogether::Authorship do
       expect(page.governed_authors).to include(robot)
     end
 
+    it 'defaults new contribution records to author/content' do
+      page = create(:page)
+      person = create(:person)
+
+      contribution = described_class.create!(author: person, authorable: page)
+
+      expect(contribution.role).to eq('author')
+      expect(contribution.contribution_type).to eq('content')
+      expect(contribution).to be_author_role
+    end
+
+    it 'supports non-author contribution roles and types' do
+      post = create(:post)
+      person = create(:person)
+
+      contribution = described_class.create!(
+        author: person,
+        authorable: post,
+        role: 'reviewer',
+        contribution_type: 'documentation',
+        details: { source: 'github', pull_request: 1494 }
+      )
+
+      expect(contribution.role).to eq('reviewer')
+      expect(contribution.contribution_type).to eq('documentation')
+      expect(contribution.details).to include('source' => 'github', 'pull_request' => 1494)
+      expect(post.contributors_for(:reviewer)).to include(person)
+      expect(person.contributed_posts).to include(post)
+      expect(person.authored_posts).not_to include(post)
+    end
+
     it 'does not notify robots when they are added to a page' do
       expect do
         page.authorships.create!(author: robot)
