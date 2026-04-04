@@ -89,6 +89,22 @@ RSpec.describe BetterTogether::Citation do
       expect(pull_request.to_csl_json[:genre]).to eq('Pull request')
     end
 
+    it 'exports commit metadata in CSL-compatible fields' do
+      commit = build(:better_together_citation,
+                     source_kind: 'commit',
+                     title: 'Add governance bundle export links',
+                     metadata: {
+                       'repository_name' => 'better-together-org/community-engine-rails',
+                       'commit_sha' => 'abc123def456',
+                       'github_handle' => 'bts-robot'
+                     })
+
+      expect(commit.to_csl_json[:type]).to eq('post-weblog')
+      expect(commit.to_csl_json[:'container-title']).to eq('better-together-org/community-engine-rails')
+      expect(commit.governance_bundle_payload[:platform_metadata]['commit_sha']).to eq('abc123def456')
+      expect(commit.governance_bundle_payload[:platform_metadata]['github_handle']).to eq('bts-robot')
+    end
+
     it 'exposes import audit metadata for linked citation copies' do
       citation = build(:better_together_citation,
                        metadata: {
