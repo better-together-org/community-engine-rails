@@ -13,6 +13,7 @@ module BetterTogether
       image
       interview
       issue
+      commit
       oral_history
       policy
       pull_request
@@ -177,7 +178,8 @@ module BetterTogether
         'dataset' => 'dataset',
         'image' => 'graphic',
         'interview' => 'interview',
-        'issue' => 'post-weblog',
+      'issue' => 'post-weblog',
+      'commit' => 'post-weblog',
         'oral_history' => 'interview',
         'policy' => 'report',
         'pull_request' => 'post-weblog',
@@ -265,6 +267,7 @@ module BetterTogether
         'pull_request_number',
         'issue_number',
         'commit_sha',
+        'github_handle',
         'version',
         'archive_location',
         'container_title'

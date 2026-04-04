@@ -33,6 +33,11 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 - [Citation Import Flow SVG](../../diagrams/exports/svg/pr_1494_citation_import_flow.svg)
 - [Citation Import Desktop Screenshot](../../screenshots/desktop/citation_import_browser.png)
 - [Citation Import Mobile Screenshot](../../screenshots/mobile/citation_import_browser.png)
+- [GitHub Citation Import Flow Source](../../diagrams/source/pr_1494_github_citation_import_flow.mmd)
+- [GitHub Citation Import Flow PNG](../../diagrams/exports/png/pr_1494_github_citation_import_flow.png)
+- [GitHub Citation Import Flow SVG](../../diagrams/exports/svg/pr_1494_github_citation_import_flow.svg)
+- [GitHub Citation Import Desktop Screenshot](../../screenshots/desktop/github_citation_import_browser.png)
+- [GitHub Citation Import Mobile Screenshot](../../screenshots/mobile/github_citation_import_browser.png)
 
 ### Structured citations
 
@@ -208,6 +213,42 @@ Imported citation copies now also store audit metadata in the local citation rec
 - source record type
 
 That provenance is rendered in the bibliography so readers and reviewers can tell when a local citation entry originated from a linked contribution record rather than being authored directly on the current record.
+
+### GitHub-native citation import
+
+Linked GitHub identities can now provide importable citation candidates directly inside the citation form.
+
+The import flow uses a dedicated authenticated endpoint and a small catalog service:
+
+- `BetterTogether::GithubCitationImportsController`
+- `BetterTogether::GithubCitationImportCatalog`
+
+This keeps the existing citation model intact. GitHub repositories, pull requests, issues, and commits are normalized into ordinary `BetterTogether::Citation` field values before they are saved on the current record.
+
+The current import path is intentionally local-bibliography-first:
+
+1. load GitHub source candidates from a linked identity
+2. choose a repository, pull request, issue, or commit source
+3. import it into a local citation row on the current record
+4. save it as part of that record's own bibliography
+
+That preserves:
+
+- local inline Trix citation anchors
+- local evidence picker behavior
+- bundle / CSL / MLA / APA export consistency
+- explicit provenance for imported copies
+
+GitHub-native metadata is stored in citation `metadata` and can include:
+
+- `repository_name`
+- `repository_path`
+- `pull_request_number`
+- `issue_number`
+- `commit_sha`
+- `github_handle`
+
+This gives the platform a reusable path for evidence import from code-hosting systems without inventing a parallel GitHub-only evidence schema.
 
 ### Export surface
 

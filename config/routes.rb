@@ -435,6 +435,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
       get 'citations/export/:citeable_key/:id', to: 'citation_exports#show', as: :citation_export
+      get 'citations/import/github', to: 'github_citation_imports#index', as: :github_citation_imports
       # Public access: allow viewing public checklists
       resources :checklists, only: %i[index show]
 

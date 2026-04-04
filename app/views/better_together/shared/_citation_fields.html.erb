@@ -35,12 +35,12 @@
 
     <div class="col mb-3">
       <%= citation_fields.label :published_on %>
-      <%= citation_fields.date_field :published_on, class: 'form-control' %>
+      <%= citation_fields.date_field :published_on, class: 'form-control', data: { field_name: 'published_on' } %>
     </div>
 
     <div class="col mb-3">
       <%= citation_fields.label :accessed_on %>
-      <%= citation_fields.date_field :accessed_on, class: 'form-control' %>
+      <%= citation_fields.date_field :accessed_on, class: 'form-control', data: { field_name: 'accessed_on' } %>
     </div>
 
     <div class="col-12 mb-3">
