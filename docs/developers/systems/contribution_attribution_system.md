@@ -42,7 +42,7 @@ This is the first step toward treating exchanges as community contribution rathe
 
 ## GitHub-linked contribution imports
 
-When a person has a linked GitHub identity, Community Engine can now import GitHub-native activity into governed contribution records on persisted pages and posts.
+When a person has a linked GitHub identity, Community Engine can now import GitHub-native activity into governed contribution records on persisted pages, posts, JOATU requests, and JOATU offers.
 
 The current mapping is:
 
@@ -52,6 +52,8 @@ The current mapping is:
 - `issue` -> `role: idea_source`, `contribution_type: documentation`
 
 The import path deliberately merges repeated GitHub activity into one governed contribution record per contributor / role / contribution type. Imported source entries are stored in `details['github_sources']` so attribution remains auditable without creating one bridge record per commit or pull request.
+
+The GitHub contribution import endpoint also now accepts `joatu_agreement` as a contributable key, so agreement-level import is available to the same governed contribution service even though JOATU agreements do not yet expose a dedicated edit-form panel in the current UI.
 
 This gives the contribution system a first native bridge from GitHub OAuth-linked identities into CE contribution attribution while preserving the broader governed contribution model.
 

@@ -5,7 +5,10 @@ module BetterTogether
   class GithubContributionImportsController < ApplicationController
     CONTRIBUTABLE_TYPES = {
       'page' => BetterTogether::Page,
-      'post' => BetterTogether::Post
+      'post' => BetterTogether::Post,
+      'joatu_request' => BetterTogether::Joatu::Request,
+      'joatu_offer' => BetterTogether::Joatu::Offer,
+      'joatu_agreement' => BetterTogether::Joatu::Agreement
     }.freeze
 
     before_action :authenticate_user!
