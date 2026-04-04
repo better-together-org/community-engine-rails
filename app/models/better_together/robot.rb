@@ -3,6 +3,8 @@
 module BetterTogether
   # Persists platform-aware robot configuration for LLM-driven tasks.
   class Robot < ApplicationRecord
+    include GovernedAgent
+
     self.table_name = 'better_together_robots'
 
     ROBOT_TYPES = %w[translation assistant automation].freeze
