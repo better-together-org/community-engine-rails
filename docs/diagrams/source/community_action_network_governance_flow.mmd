@@ -1,0 +1,58 @@
+graph TB
+    subgraph Agents["Community Action Network Agents"]
+        P[People]
+        R[Robots]
+        C[Communities and Platforms]
+        S[Stewardship Roles]
+    end
+
+    subgraph Constitution["Governance Foundations"]
+        D[Equal Dignity]
+        U[Universal Rights and Duties]
+        I[Informed Consent]
+        A[Anti-domination and Reviewability]
+        G[Shared Resource Stewardship]
+    end
+
+    subgraph Systems["CE System Layers"]
+        AG[Unified Agreements and Policy]
+        RB[RBAC and Policy Authorization]
+        AU[Robot Author Identity]
+        RP[Release Package Publishing]
+        RS[Resource and Rights Surfaces]
+    end
+
+    subgraph Outcomes["Community Outcomes"]
+        T[Truthful Participation]
+        V[Visible Authority]
+        Q[Reviewable Publishing]
+        X[Safer Access to Shared Resources]
+    end
+
+    P --> D
+    R --> D
+    C --> D
+    S --> D
+
+    D --> U
+    D --> I
+    D --> A
+    D --> G
+
+    U --> AG
+    I --> AG
+    A --> RB
+    G --> RS
+    U --> AU
+    I --> RP
+    A --> RP
+    AG --> AU
+    AG --> RS
+    RB --> RS
+    AU --> RP
+
+    AU --> T
+    RS --> V
+    RP --> Q
+    RS --> X
+
