@@ -20,6 +20,10 @@ RSpec.describe 'Documentation screenshots for contribution evidence summary', :d
       role: 'reviewer',
       contribution_type: 'documentation'
     )
+    page_record.contributions.first.update!(details: {
+                                              'github_handle' => 'evidence-summary',
+                                              'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                            })
 
     create(:claim, claimable: page_record, statement: 'Traceable evidence improves accountable publishing.')
     create(:citation,
@@ -48,6 +52,9 @@ RSpec.describe 'Documentation screenshots for contribution evidence summary', :d
       expect(page).to have_text('Contributions', wait: 10)
       click_link 'Contributions'
       expect(page).to have_text('Evidence:')
+      expect(page).to have_text('Contributors:')
+      expect(page).to have_text('GitHub-linked')
+      expect(page).to have_text('GitHub: @evidence-summary')
       expect(page).to have_text('1 claim')
       expect(page).to have_text('1 citation')
       expect(page).to have_text('1 imported')

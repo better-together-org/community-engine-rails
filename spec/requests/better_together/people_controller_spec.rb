@@ -54,6 +54,14 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       post = create(:better_together_post, creator: person, author: person, privacy: 'private')
       page.add_governed_contributor(person, role: 'editor')
       post.add_governed_contributor(person, role: 'reviewer')
+      page.contributions.first.update!(details: {
+                                         'github_handle' => 'octo-person',
+                                         'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                       })
+      post.contributions.first.update!(details: {
+                                         'github_handle' => 'octo-person',
+                                         'github_sources' => [{ 'reference_key' => 'commit_abc123' }]
+                                       })
 
       create(
         :better_together_person_platform_integration,
@@ -73,6 +81,8 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       expect(response.body).to include(post.title)
       expect(response.body).to include('Linked GitHub Identities')
       expect(response.body).to include('octo-person')
+      expect(response.body).to include('GitHub-linked')
+      expect(response.body).to include('GitHub source')
     end
   end
 

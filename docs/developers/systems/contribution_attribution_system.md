@@ -55,6 +55,26 @@ The import path deliberately merges repeated GitHub activity into one governed c
 
 This gives the contribution system a first native bridge from GitHub OAuth-linked identities into CE contribution attribution while preserving the broader governed contribution model.
 
+## Contribution visibility surfaces
+
+Governed contribution metadata is now surfaced beyond edit forms.
+
+Current public or semi-public contribution summary surfaces include:
+
+- page cards
+- post cards
+- profile contribution tabs
+- community page listings
+
+The shared contribution summary surface now reports:
+
+- governed contribution record count
+- GitHub-linked governed contribution count
+- GitHub source count aggregated from `details['github_sources']`
+- linked GitHub handles when present
+
+This keeps attribution readable in the browsing UI without forcing readers into raw bundle exports.
+
 ## Future Work
 
 - add explicit contribution rendering for roles beyond author
