@@ -31,6 +31,12 @@ module BetterTogether
           },
           citations: @citeable.citations_as_csl_json(include_provenance: include_provenance?)
         }
+      when 'bundle'
+        render json: {
+          format: 'governance-citation-bundle',
+          include_provenance: include_provenance?,
+          bundle: @citeable.governance_citation_bundle(include_provenance: include_provenance?)
+        }
       when 'apa', 'mla'
         send_data @citeable.citation_export_lines(export_style, include_provenance: include_provenance?).join("\n"),
                   filename: export_filename(export_style),
@@ -61,7 +67,8 @@ module BetterTogether
     end
 
     def export_filename(style)
-      "#{params[:citeable_key]}-#{@citeable.id}-citations.#{style == 'csl' ? 'json' : 'txt'}"
+      extension = %w[csl bundle].include?(style) ? 'json' : 'txt'
+      "#{params[:citeable_key]}-#{@citeable.id}-citations.#{extension}"
     end
 
     def include_provenance?

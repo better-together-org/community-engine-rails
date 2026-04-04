@@ -135,6 +135,25 @@ module BetterTogether
       end
     end
 
+    def governance_citation_bundle(include_provenance: false)
+      {
+        citeable: {
+          type: self.class.name,
+          id: id,
+          label: to_s
+        },
+        summary: {
+          citations: bibliography_entries.size,
+          imported_citations: imported_citation_count,
+          claims: respond_to?(:claims) ? claims.size : 0,
+          contributions: respond_to?(:contributions) ? contributions.size : 0
+        },
+        citations: citations_as_csl_json(include_provenance:),
+        claims: respond_to?(:claims_as_json_bundle) ? claims_as_json_bundle : [],
+        contributions: governance_bundle_contributions
+      }
+    end
+
     private
 
     def contribution_evidence_source_label(contribution)
@@ -161,6 +180,25 @@ module BetterTogether
 
     def evidence_browser_contribution_type_for(source_record)
       source_record.respond_to?(:contribution_type) ? source_record.contribution_type.to_s : nil
+    end
+
+    def governance_bundle_contributions
+      return [] unless respond_to?(:contributions)
+
+      contributions.includes(:author).map do |contribution|
+        contributor = contribution.author
+
+        {
+          id: contribution.id,
+          role: contribution.role,
+          contribution_type: contribution.contribution_type,
+          contributor: {
+            id: contributor&.id,
+            type: contributor&.class&.name,
+            name: contributor&.respond_to?(:name) ? contributor.name : contributor.to_s
+          }.compact
+        }
+      end
     end
   end
 end

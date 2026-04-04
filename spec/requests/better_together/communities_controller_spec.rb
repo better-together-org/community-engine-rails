@@ -553,6 +553,26 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
         expect(response.body).to include('past_events_list')
       end
 
+      it 'shows evidence summary metadata on community event cards' do
+        create(:claim, claimable: upcoming_event, statement: 'Upcoming events need traceable evidence.')
+        create(:citation,
+               citeable: upcoming_event,
+               reference_key: 'community_event_source',
+               title: 'Community Event Source',
+               metadata: {
+                 'imported_from_reference_key' => 'review_notes',
+                 'imported_from_record_label' => 'Consensus Reviewer: Reviewer',
+                 'imported_from_citation_id' => 'source-citation-id'
+               })
+
+        get better_together.community_path(locale:, id: community.slug)
+
+        expect(response.body).to include('Evidence:')
+        expect(response.body).to include('1 claim')
+        expect(response.body).to include('1 citation')
+        expect(response.body).to include('1 imported')
+      end
+
       it 'does not show create event button' do
         get better_together.community_path(locale:, id: community.slug)
         expect(response.body).not_to include('Create an Event')

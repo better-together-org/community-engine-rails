@@ -61,5 +61,29 @@ RSpec.describe 'BetterTogether::CitationExportsController', :as_user do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Imported from linked citation:')
     end
+
+    it 'exports a governance citation bundle with claims and contributions' do
+      contribution = BetterTogether::Authorship.create!(
+        authorable: page,
+        author: create(:person, name: 'Bundle Reviewer'),
+        role: 'reviewer',
+        contribution_type: 'governance'
+      )
+      citation = page.citations.first
+      claim = create(:claim, claimable: page, statement: 'Claims should have auditable support.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
+
+      get better_together.citation_export_path(citeable_key: 'page', id: page.slug, locale:, style: 'bundle',
+                                               include_provenance: true)
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['format']).to eq('governance-citation-bundle')
+      expect(json['bundle']['summary']['citations']).to eq(1)
+      expect(json['bundle']['summary']['claims']).to eq(1)
+      expect(json['bundle']['summary']['contributions']).to eq(1)
+      expect(json['bundle']['claims'].first['statement']).to eq('Claims should have auditable support.')
+      expect(json['bundle']['contributions'].first['role']).to eq('reviewer')
+    end
   end
 end
