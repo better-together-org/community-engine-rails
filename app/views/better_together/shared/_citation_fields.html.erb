@@ -1,4 +1,7 @@
 <div class="border rounded p-3 mb-3" data-better_together--citation-import-target="citationFields">
+  <%= citation_fields.hidden_field :metadata,
+                                   value: citation_fields.object.metadata.to_json,
+                                   data: { field_name: 'metadata' } %>
   <div class="row row-cols-1 row-cols-md-2">
     <div class="col mb-3">
       <%= citation_fields.label :reference_key, 'Citation Key' %>
@@ -54,6 +57,15 @@
       <%= citation_fields.label :excerpt %>
       <%= citation_fields.text_area :excerpt, class: 'form-control', rows: 3, data: { field_name: 'excerpt' } %>
     </div>
+
+    <% if citation_fields.object.imported_from_linked_record? %>
+      <div class="col-12 mb-3">
+        <div class="small text-muted">
+          Imported from linked citation:
+          <strong><%= citation_fields.object.import_audit_summary %></strong>
+        </div>
+      </div>
+    <% end %>
 
     <div class="col-12 mb-3">
       <%= citation_fields.label :rights_notes %>

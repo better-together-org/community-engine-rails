@@ -30,5 +30,7 @@ RSpec.describe 'better_together/shared/_citation_fields_section', type: :view do
     expect(rendered).to include('Import Reviewer: Reviewer')
     expect(rendered).to include('Import Citation')
     expect(rendered).to include('review_notes: Review Notes')
+    expect(rendered).to include('data-citation-id=')
+    expect(rendered).to include('data-record-label=')
   end
 end

@@ -88,5 +88,20 @@ RSpec.describe BetterTogether::Citation, type: :model do
       expect(pull_request.to_csl_json[:number]).to eq(1494)
       expect(pull_request.to_csl_json[:genre]).to eq('Pull request')
     end
+
+    it 'exposes import audit metadata for linked citation copies' do
+      citation = build(:better_together_citation,
+                       metadata: {
+                         'imported_from_citation_id' => 'source-citation-id',
+                         'imported_from_reference_key' => 'review_notes',
+                         'imported_from_record_label' => 'Consensus Reviewer: Reviewer',
+                         'imported_from_record_type' => 'Authorship'
+                       })
+
+      expect(citation).to be_imported_from_linked_record
+      expect(citation.imported_from_citation_id).to eq('source-citation-id')
+      expect(citation.imported_from_reference_key).to eq('review_notes')
+      expect(citation.import_audit_summary).to eq('Consensus Reviewer: Reviewer | review_notes')
+    end
   end
 end

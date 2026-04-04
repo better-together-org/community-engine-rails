@@ -70,6 +70,35 @@ module BetterTogether
       display_reference.presence || title
     end
 
+    def imported_from_linked_record?
+      imported_from_citation_id.present? || imported_from_reference_key.present?
+    end
+
+    def imported_from_reference_key
+      metadata_value(:imported_from_reference_key)
+    end
+
+    def imported_from_citation_id
+      metadata_value(:imported_from_citation_id)
+    end
+
+    def imported_from_record_label
+      metadata_value(:imported_from_record_label)
+    end
+
+    def imported_from_record_type
+      metadata_value(:imported_from_record_type)
+    end
+
+    def import_audit_summary
+      return unless imported_from_linked_record?
+
+      [
+        imported_from_record_label.presence || imported_from_record_type.presence,
+        imported_from_reference_key.presence
+      ].compact.join(' | ')
+    end
+
     def to_csl_json
       {
         id: reference_key,

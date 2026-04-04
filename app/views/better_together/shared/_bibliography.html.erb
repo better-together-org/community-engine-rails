@@ -7,6 +7,11 @@
       <li id="<%= citation.anchor_id %>" class="mb-3">
         <div><strong><%= citation.title %></strong></div>
         <div class="small text-muted"><%= citation.accessible_reference %></div>
+        <% if citation.imported_from_linked_record? %>
+          <div class="small text-muted">
+            <strong>Imported from linked citation:</strong> <%= citation.import_audit_summary %>
+          </div>
+        <% end %>
         <div class="small"><strong>APA:</strong> <%= citation.apa_citation %></div>
         <div class="small"><strong>MLA:</strong> <%= citation.mla_citation %></div>
         <% if citation.source_url.present? %>

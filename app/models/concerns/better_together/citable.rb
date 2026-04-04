@@ -34,6 +34,9 @@ module BetterTogether
               accessed_on
               excerpt
               rights_notes
+              {
+                metadata: {}
+              }
               _destroy
             ]
           }
@@ -95,6 +98,8 @@ module BetterTogether
               id: citation.id,
               reference_key: citation.reference_key,
               title: citation.title,
+              citeable_type: citation.citeable_type,
+              citeable_id: citation.citeable_id,
               source_kind: citation.source_kind,
               source_author: citation.source_author,
               publisher: citation.publisher,
