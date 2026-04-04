@@ -73,4 +73,15 @@ RSpec.describe BetterTogether::Joatu::Request do
     expect(request_record.contributions.first.contribution_type).to eq('community_exchange')
     expect(request_record.contributors_for(:exchange_initiator)).to contain_exactly(request_record.creator)
   end
+
+  it 'supports citations and claims on the exchange record' do
+    request_record = create(:better_together_joatu_request)
+    citation = create(:better_together_citation, citeable: request_record, reference_key: 'request_source')
+    claim = create(:better_together_claim, claimable: request_record, claim_key: 'request_claim')
+    create(:better_together_evidence_link, claim:, citation:)
+
+    expect(request_record.citations).to contain_exactly(citation)
+    expect(request_record.claims).to contain_exactly(claim)
+    expect(claim.citations).to contain_exactly(citation)
+  end
 end

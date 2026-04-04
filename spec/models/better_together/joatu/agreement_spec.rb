@@ -17,6 +17,17 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect(agreement.contributors_for(:exchange_participant)).to match_array([creator_a, creator_b])
     end
 
+    it 'supports citations and claims on the agreement record' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+      citation = create(:better_together_citation, citeable: agreement, reference_key: 'agreement_source')
+      claim = create(:better_together_claim, claimable: agreement, claim_key: 'agreement_claim')
+      create(:better_together_evidence_link, claim:, citation:)
+
+      expect(agreement.citations).to contain_exactly(citation)
+      expect(agreement.claims).to contain_exactly(claim)
+      expect(claim.citations).to contain_exactly(citation)
+    end
+
     it 'starts pending' do
       agreement = described_class.new(offer:, request:)
       expect(agreement).to be_valid

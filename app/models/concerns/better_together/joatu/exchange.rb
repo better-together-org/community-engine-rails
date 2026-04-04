@@ -21,6 +21,8 @@ module BetterTogether
 
       included do
         include BetterTogether::Categorizable
+        include BetterTogether::Citable
+        include BetterTogether::Claimable
         include BetterTogether::Translatable
         include BetterTogether::FriendlySlug
         include BetterTogether::Privacy
