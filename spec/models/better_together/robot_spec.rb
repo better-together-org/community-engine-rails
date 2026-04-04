@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Robot do
+  it_behaves_like 'an author model'
+
   describe '.resolve' do
     let(:platform) { create(:platform) }
     let!(:global_robot) do
@@ -70,6 +72,14 @@ RSpec.describe BetterTogether::Robot do
       expect(robot.governed_agent_display_name).to eq('Release Bot')
       expect(robot.governed_agent_key).to eq('robot:release-bot')
       expect(robot.governed_agent_label).to eq('Release Bot (robot)')
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns the robot name' do
+      robot = build(:robot, name: 'Release Bot')
+
+      expect(robot.to_s).to eq('Release Bot')
     end
   end
 end

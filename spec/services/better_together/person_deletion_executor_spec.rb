@@ -7,7 +7,9 @@ RSpec.describe BetterTogether::PersonDeletionExecutor do
   let(:person) { user.person }
   let(:reviewer) { create(:better_together_person) }
   let(:deletion_request) { create(:better_together_person_deletion_request, person:) }
-  let(:retained_authorship_count) { BetterTogether::Authorship.where(author_id: person.id).count }
+  let(:retained_authorship_count) do
+    BetterTogether::Authorship.where(author_type: 'BetterTogether::Person', author_id: person.id).count
+  end
 
   before do
     create(:better_together_person_data_export, person:)
@@ -31,7 +33,8 @@ RSpec.describe BetterTogether::PersonDeletionExecutor do
     expect(BetterTogether::User.exists?(user.id)).to be(false)
     expect(BetterTogether::PersonDataExport.where(person_id: person.id)).to be_empty
     expect(BetterTogether::Message.where(sender_id: person.id).count).to eq(1)
-    expect(BetterTogether::Authorship.where(author_id: person.id).count).to eq(retained_authorship_count)
+    expect(BetterTogether::Authorship.where(author_type: 'BetterTogether::Person', author_id: person.id).count)
+      .to eq(retained_authorship_count)
 
     person.reload
     deletion_request.reload
