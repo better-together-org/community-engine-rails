@@ -65,6 +65,9 @@ Current public or semi-public contribution summary surfaces include:
 - post cards
 - profile contribution tabs
 - community page listings
+- JOATU request listings
+- JOATU offer listings
+- JOATU agreement listings
 
 The shared contribution summary surface now reports:
 

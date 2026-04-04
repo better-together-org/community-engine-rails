@@ -50,6 +50,11 @@ The first two were implemented first. PR `#1494` now adds the first schema-backe
 - [Profile Contribution Summary Mobile Screenshot](../../screenshots/mobile/contribution_evidence_summary.png)
 - [Community Page Contribution Summary Desktop Screenshot](../../screenshots/desktop/community_page_contribution_summary.png)
 - [Community Page Contribution Summary Mobile Screenshot](../../screenshots/mobile/community_page_contribution_summary.png)
+- [JOATU and Governance Listing Summaries Flow Source](../../diagrams/source/pr_1494_joatu_and_governance_listing_summaries_flow.mmd)
+- [JOATU and Governance Listing Summaries Flow PNG](../../diagrams/exports/png/pr_1494_joatu_and_governance_listing_summaries_flow.png)
+- [JOATU and Governance Listing Summaries Flow SVG](../../diagrams/exports/svg/pr_1494_joatu_and_governance_listing_summaries_flow.svg)
+- [JOATU Listing Summaries Desktop Screenshot](../../screenshots/desktop/joatu_listing_summaries.png)
+- [JOATU Listing Summaries Mobile Screenshot](../../screenshots/mobile/joatu_listing_summaries.png)
 
 ### Structured citations
 
@@ -405,6 +410,28 @@ Additional review assets for this slice:
 - [Cross-record Evidence Exports SVG](../../diagrams/exports/svg/pr_1494_cross_record_evidence_exports_flow.svg)
 - [JOATU Evidence Bundle Links Desktop Screenshot](../../screenshots/desktop/joatu_evidence_bundle_links.png)
 - [JOATU Evidence Bundle Links Mobile Screenshot](../../screenshots/mobile/joatu_evidence_bundle_links.png)
+
+### Listing-level evidence and export visibility
+
+Evidence summaries and export links now appear on more browsing and governance surfaces, not only record show pages.
+
+That now includes:
+
+- JOATU request listings
+- JOATU offer listings
+- JOATU agreement listings
+- calendar cards
+- agreement index rows
+
+This keeps contribution and evidence review available earlier in the reading flow, where people are comparing records before deciding which full page to open.
+
+Additional review assets for this slice:
+
+- [JOATU and Governance Listing Summaries Flow Source](../../diagrams/source/pr_1494_joatu_and_governance_listing_summaries_flow.mmd)
+- [JOATU and Governance Listing Summaries Flow PNG](../../diagrams/exports/png/pr_1494_joatu_and_governance_listing_summaries_flow.png)
+- [JOATU and Governance Listing Summaries Flow SVG](../../diagrams/exports/svg/pr_1494_joatu_and_governance_listing_summaries_flow.svg)
+- [JOATU Listing Summaries Desktop Screenshot](../../screenshots/desktop/joatu_listing_summaries.png)
+- [JOATU Listing Summaries Mobile Screenshot](../../screenshots/mobile/joatu_listing_summaries.png)
 
 ## Standards Direction
 
