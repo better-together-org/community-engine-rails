@@ -219,13 +219,6 @@ module BetterTogether
       BetterTogether::Community.find_by(id: host_platform_community_id)
     end
 
-    def add_creator_as_author
-      return unless respond_to?(:creator_id) && creator_id.present?
-      return if authorships.exists?
-
-      authorships.find_or_create_by(author: creator)
-    end
-
     # Touch navigation areas for all navigation items that link to this page
     # to invalidate their navigation area cache. We only touch each distinct
     # navigation area once to avoid redundant writes when multiple items in

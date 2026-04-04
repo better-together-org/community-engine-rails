@@ -93,13 +93,6 @@ module BetterTogether
 
     private
 
-    def add_creator_as_author
-      return unless respond_to?(:creator_id) && creator_id.present?
-      return if authorships.exists?
-
-      authorships.find_or_create_by(author: creator)
-    end
-
     def assign_current_platform_if_available
       return unless has_attribute?(:platform_id)
       return if platform_id.present?

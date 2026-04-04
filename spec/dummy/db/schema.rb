@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_04_213000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_04_223000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -182,9 +182,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_04_213000) do
     t.uuid "author_id", null: false
     t.uuid "creator_id"
     t.string "author_type", null: false
+    t.string "role", default: "author", null: false
+    t.string "contribution_type", default: "content", null: false
+    t.jsonb "details", default: {}, null: false
     t.index ["author_type", "author_id"], name: "by_authorship_author_type_and_id"
+    t.index ["authorable_type", "authorable_id", "role"], name: "by_better_together_authorships_authorable_role"
     t.index ["authorable_type", "authorable_id"], name: "by_authorship_authorable"
+    t.index ["contribution_type"], name: "by_better_together_authorships_contribution_type"
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
+    t.index ["role"], name: "by_better_together_authorships_role"
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
