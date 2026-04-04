@@ -69,6 +69,21 @@ RSpec.describe BetterTogether::Post do
 
       expect(post.authors.reload.map(&:id)).to include(creator.id)
     end
+
+    it 'does not add the creator when an explicit robot author was selected' do
+      creator = create(:better_together_person)
+      platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform)
+      robot = create(:robot, platform:)
+      post = described_class.new(title: 'Robot Post', identifier: 'robot-post', content: 'Body', privacy: 'public',
+                                 platform:, creator:)
+
+      post.robot_authors << robot
+      post.save!
+
+      expect(post.robot_authors).to contain_exactly(robot)
+      expect(post.authors).to be_empty
+      expect(post.governed_authors).to contain_exactly(robot)
+    end
   end
 
   describe '#governed_authors' do
