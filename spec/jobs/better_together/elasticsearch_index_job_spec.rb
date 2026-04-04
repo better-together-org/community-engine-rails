@@ -23,7 +23,7 @@ RSpec.describe BetterTogether::ElasticsearchIndexJob do
   end
 
   it 'delegates to the configured backend even when the record lacks elasticsearch helpers' do
-    plain_record = instance_double(String, to_global_id: 'gid://test/String/1')
+    plain_record = instance_double(BetterTogether::Platform)
 
     expect(backend).to receive(:index_record).with(plain_record)
 

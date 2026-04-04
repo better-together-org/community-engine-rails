@@ -11,7 +11,8 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
   end
 
   it 'uses pg_search_query scopes when available' do
-    record = instance_double(BetterTogether::Page, id: 10, pg_search_rank: 0.42)
+    search_result_class = Struct.new(:id, :pg_search_rank)
+    record = instance_double(search_result_class, id: 10, pg_search_rank: 0.42)
     relation = instance_double(ActiveRecord::Relation)
     model_class = class_double(BetterTogether::Page)
     entry = instance_double(BetterTogether::Search::Registry::Entry, model_class:)

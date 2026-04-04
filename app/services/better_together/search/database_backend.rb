@@ -4,7 +4,7 @@ module BetterTogether
   module Search
     # Database-backed fallback search used when Elasticsearch is unavailable
     # or intentionally disabled for a host app.
-    class DatabaseBackend < BaseBackend
+    class DatabaseBackend < BaseBackend # rubocop:todo Metrics/ClassLength, Naming/PredicateMethod
       def backend_key
         :database
       end
@@ -21,30 +21,12 @@ module BetterTogether
         normalized_terms = normalize_terms(query)
         return empty_result(status: :idle) if normalized_terms.empty?
 
-        matches = Registry.entries.flat_map do |entry|
-          score_matching_records(entry, normalized_terms)
-        end
-
-        ordered_records = matches
-                          .sort_by { |match| [-match[:score], match[:record].id.to_i] }
-                          .map { |match| match[:record] }
-
-        SearchResult.new(
-          records: ordered_records,
-          suggestions: [],
-          status: :ok,
-          backend: backend_key
-        )
+        build_search_result(scored_matches_for(normalized_terms))
       rescue StandardError => e
-        SearchResult.new(
-          records: [],
-          suggestions: [],
-          status: :unreachable,
-          backend: backend_key,
-          error: "#{e.class}: #{e.message}"
-        )
+        unreachable_result(e)
       end
 
+      # rubocop:disable Naming/PredicateMethod
       def create_index(_entry)
         true
       end
@@ -84,8 +66,38 @@ module BetterTogether
       def delete_record(_record)
         true
       end
+      # rubocop:enable Naming/PredicateMethod
 
       protected
+
+      def scored_matches_for(terms)
+        Registry.entries.flat_map do |entry|
+          score_matching_records(entry, terms)
+        end
+      end
+
+      def build_search_result(matches)
+        ordered_records = matches
+                          .sort_by { |match| [-match[:score], match[:record].id.to_i] }
+                          .map { |match| match[:record] }
+
+        SearchResult.new(
+          records: ordered_records,
+          suggestions: [],
+          status: :ok,
+          backend: backend_key
+        )
+      end
+
+      def unreachable_result(error)
+        SearchResult.new(
+          records: [],
+          suggestions: [],
+          status: :unreachable,
+          backend: backend_key,
+          error: "#{error.class}: #{error.message}"
+        )
+      end
 
       def score_matching_records(entry, terms)
         Array(entry.relation.to_a).filter_map do |record|
