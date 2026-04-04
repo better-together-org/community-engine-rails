@@ -52,6 +52,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
 - [Citation and Evidence Chain System](developers/systems/citation_evidence_chain_system.md) - Structured citations, claims, and evidence linking
 - [Community Action Network Governance System](developers/systems/community_action_network_governance_system.md) - Constitutional governance model for people, bots, and shared resources
+- [PR 1494 Scope Consolidation](developers/systems/pr_1494_scope_consolidation.md) - Cut line for governed publishing, contribution, and evidence scope in PR 1494
 - [Community Social System](developers/systems/community_social_system.md) - Social features
 - [Content Management](developers/systems/content_management.md) - Content creation and management
 - [Conversations Messaging System](developers/systems/conversations_messaging_system.md) - Real-time messaging
