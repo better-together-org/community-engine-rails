@@ -76,13 +76,24 @@ module BetterTogether
         type: csl_type,
         title: title,
         author: csl_author_list,
+        editor: csl_editor_list,
         publisher: publisher.presence,
+        "container-title": csl_container_title,
+        genre: csl_genre,
+        medium: csl_medium,
+        version: csl_version,
+        number: csl_number,
+        archive: csl_archive,
+        archive_location: csl_archive_location,
+        language: csl_language,
+        jurisdiction: csl_jurisdiction,
         URL: source_url.presence,
         issued: csl_date_hash(published_on),
         accessed: csl_date_hash(accessed_on),
         locator: locator.presence,
         note: rights_notes.presence,
-        abstract: excerpt.presence
+        abstract: excerpt.presence,
+        keyword: csl_keywords.presence
       }.compact
     end
 
@@ -111,21 +122,108 @@ module BetterTogether
     def csl_author_list
       return unless source_author.present?
 
-      source_author.split(';').map do |author_name|
-        parts = author_name.strip.split
-        next { literal: author_name.strip } if parts.length <= 1
+      parse_name_list(source_author)
+    end
 
-        {
-          family: parts.last,
-          given: parts[0..-2].join(' ')
-        }
-      end
+    def csl_editor_list
+      return unless metadata_value(:editors).present?
+
+      parse_name_list(metadata_value(:editors))
     end
 
     def csl_date_hash(date)
       return unless date.present?
 
       { 'date-parts' => [[date.year, date.month, date.day].compact] }
+    end
+
+    def csl_container_title
+      metadata_value(:container_title) ||
+        metadata_value(:repository_name) ||
+        metadata_value(:collection_title)
+    end
+
+    def csl_genre
+      metadata_value(:genre) ||
+        case source_kind
+        when 'oral_history'
+          'Oral history'
+        when 'repository'
+          'Software repository'
+        when 'pull_request'
+          'Pull request'
+        when 'policy'
+          'Policy document'
+        when 'artwork'
+          'Artwork'
+        when 'story'
+          'Story'
+        end
+    end
+
+    def csl_medium
+      metadata_value(:medium) ||
+        case source_kind
+        when 'video'
+          'Video'
+        when 'image'
+          'Image'
+        when 'artwork'
+          'Artwork'
+        when 'oral_history'
+          'Recorded testimony'
+        end
+    end
+
+    def csl_version
+      metadata_value(:version) || metadata_value(:software_version)
+    end
+
+    def csl_number
+      metadata_value(:number) || metadata_value(:pull_request_number)
+    end
+
+    def csl_archive
+      metadata_value(:archive) || metadata_value(:collection)
+    end
+
+    def csl_archive_location
+      metadata_value(:archive_location) || metadata_value(:repository_path)
+    end
+
+    def csl_language
+      metadata_value(:language)
+    end
+
+    def csl_jurisdiction
+      metadata_value(:jurisdiction)
+    end
+
+    def csl_keywords
+      raw_keywords = metadata_value(:keywords)
+      return raw_keywords if raw_keywords.is_a?(Array)
+      return raw_keywords.split(';').map(&:strip).reject(&:blank?) if raw_keywords.is_a?(String)
+
+      []
+    end
+
+    def metadata_value(key)
+      metadata[key.to_s].presence || metadata[key.to_sym].presence
+    end
+
+    def parse_name_list(value)
+      value.to_s.split(';').filter_map do |author_name|
+        normalized_name = author_name.strip
+        next if normalized_name.blank?
+
+        parts = normalized_name.split
+        next({ literal: normalized_name }) if parts.length <= 1
+
+        {
+          family: parts.last,
+          given: parts[0..-2].join(' ')
+        }
+      end.presence
     end
 
     def normalize_reference_key
