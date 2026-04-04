@@ -72,7 +72,13 @@
   </div>
 
   <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: post, form: form, attribute: 'content' } %>
+    <%= render partial: 'better_together/shared/translated_rich_text_field',
+               locals: {
+                 model: post,
+                 form: form,
+                 attribute: 'content',
+                 citation_options: post.citation_reference_options
+               } %>
   </div>
 
   <%= render 'better_together/shared/citation_fields_section', form:, record: post %>

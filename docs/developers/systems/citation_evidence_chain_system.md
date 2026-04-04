@@ -89,6 +89,23 @@ An evidence link records:
 
 This allows one page or post to store several explicit assertions and connect each one to one or more citations with typed relationships like `supports` or `contests`.
 
+### Block-level selector support
+
+Rendered content blocks now expose stable evidence target metadata through the shared block wrapper.
+
+Each rendered block includes:
+
+- `id` based on `dom_id(block)`
+- `data-citation-target`
+- `data-evidence-selector`
+- `data-block-type`
+
+The current selector convention is:
+
+- `block:<block_name>:<identifier-or-id>`
+
+This gives claims and future editor tooling a stable way to point at markdown, rich text, alert, hero, image, statistics, and other block-based content without patching each block partial independently.
+
 ### Trix integration
 
 The rich text toolbar now includes a `Citation` action. The first implementation inserts a stable inline citation reference pointing at a structured bibliography entry by `reference_key`.

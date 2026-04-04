@@ -43,7 +43,9 @@ function handleTrixAction(event) {
   if (event.actionName === "x-horizontal-rule") {
     insertHorizontalRule(event);
   } else if (event.actionName === "x-citation") {
-    insertCitationReference(event);
+    event.preventDefault();
+    const richText = event.target.richTextExtension;
+    if (richText) richText.openCitationDialog();
   }
 }
 
@@ -58,19 +60,10 @@ function buildHorizontalRule() {
   });
 }
 
-function insertCitationReference(event) {
-  const referenceKey = window.prompt("Citation key");
-  if (!referenceKey) return;
-
-  const locator = window.prompt("Optional locator (page, timestamp, figure)");
-  const label = locator ? `${referenceKey}, ${locator}` : referenceKey;
-  const html = `<sup class="citation-reference"><a href="#citation-${referenceKey}" data-citation-key="${referenceKey}">[${label}]</a></sup>`;
-  event.target.editor.insertHTML(html);
-}
-
 class RichText {
   constructor(element) {
     this.element = element;
+    this.element.richTextExtension = this;
     this.insertHeadingElements();
     this.insertDividerElements();
     this.insertColorElements();
@@ -129,6 +122,81 @@ class RichText {
     if (!this.toolbarElement.querySelector('.trix-button--icon-citation')) {
       this.buttonGroupTextTools.insertAdjacentHTML("beforeend", this.citationButtonTemplate);
     }
+
+    if (!this.dialogsElement.querySelector('.trix-dialog--citation')) {
+      this.dialogsElement.insertAdjacentHTML("beforeend", this.dialogCitationTemplate);
+      this.bindCitationDialog();
+    }
+  }
+
+  bindCitationDialog() {
+    const insertButton = this.dialogsElement.querySelector('.trix-dialog--citation-insert');
+    const cancelButton = this.dialogsElement.querySelector('.trix-dialog--citation-cancel');
+
+    insertButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.insertCitationFromDialog();
+    });
+
+    cancelButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.closeCitationDialog();
+    });
+  }
+
+  openCitationDialog() {
+    const dialog = this.citationDialogElement;
+    if (!dialog) return;
+
+    this.populateCitationOptions();
+    dialog.style.display = 'block';
+    this.citationSelectElement?.focus();
+  }
+
+  closeCitationDialog() {
+    if (!this.citationDialogElement) return;
+
+    this.citationDialogElement.style.display = 'none';
+    if (this.citationSelectElement) this.citationSelectElement.selectedIndex = 0;
+    if (this.citationLocatorElement) this.citationLocatorElement.value = '';
+  }
+
+  populateCitationOptions() {
+    if (!this.citationSelectElement) return;
+
+    const options = this.citationOptions;
+    const currentValue = this.citationSelectElement.value;
+    const optionMarkup = ['<option value="">Select citation</option>']
+      .concat(options.map((option) => `<option value="${escapeHtml(option.referenceKey)}">${escapeHtml(option.label)}</option>`))
+      .join('');
+
+    this.citationSelectElement.innerHTML = optionMarkup;
+    if (currentValue) this.citationSelectElement.value = currentValue;
+  }
+
+  insertCitationFromDialog() {
+    const referenceKey = this.citationSelectElement?.value;
+    if (!referenceKey) return;
+
+    const locator = this.citationLocatorElement?.value?.trim();
+    const href = `#citation-${referenceKey}`;
+    const selectedText = this.selectedText();
+
+    if (selectedText) {
+      this.element.editor.insertHTML(`<a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}">${escapeHtml(selectedText)}</a>`);
+    } else {
+      const label = locator ? `${referenceKey}, ${locator}` : referenceKey;
+      this.element.editor.insertHTML(`<sup class="citation-reference"><a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}">[${escapeHtml(label)}]</a></sup>`);
+    }
+
+    this.closeCitationDialog();
+  }
+
+  selectedText() {
+    const range = this.element.editor.getSelectedRange();
+    if (!range || range[0] === range[1]) return '';
+
+    return this.element.editor.getDocument().toString().slice(range[0], range[1]).trim();
   }
 
   get buttonGroupBlockTools() {
@@ -141,6 +209,29 @@ class RichText {
 
   get dialogsElement() {
     return this.toolbarElement.querySelector("[data-trix-dialogs]");
+  }
+
+  get citationDialogElement() {
+    return this.dialogsElement.querySelector('.trix-dialog--citation');
+  }
+
+  get citationSelectElement() {
+    return this.dialogsElement.querySelector('[data-trix-citation-select]');
+  }
+
+  get citationLocatorElement() {
+    return this.dialogsElement.querySelector('[data-trix-citation-locator]');
+  }
+
+  get citationOptions() {
+    const raw = this.element.dataset.citationOptions;
+    if (!raw) return [];
+
+    try {
+      return JSON.parse(raw);
+    } catch (_error) {
+      return [];
+    }
   }
 
   get originalHeadingButton() {
@@ -211,6 +302,32 @@ class RichText {
       </div>
     `;
   }
+
+  get dialogCitationTemplate() {
+    return `
+      <div class="trix-dialog trix-dialog--citation" data-trix-dialog="x-citation" style="display:none;">
+        <div class="trix-dialog__link-fields">
+          <label class="trix-label" for="trix-citation-select">Citation</label>
+          <select id="trix-citation-select" class="trix-input trix-input--dialog" data-trix-citation-select></select>
+          <label class="trix-label" for="trix-citation-locator">Locator</label>
+          <input id="trix-citation-locator" type="text" class="trix-input trix-input--dialog" data-trix-citation-locator placeholder="Optional page, figure, timestamp">
+          <div class="trix-button-group mt-2">
+            <button type="button" class="trix-button trix-button--dialog trix-dialog--citation-insert">Insert</button>
+            <button type="button" class="trix-button trix-button--dialog trix-dialog--citation-cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function addHeadingAttributes() {
