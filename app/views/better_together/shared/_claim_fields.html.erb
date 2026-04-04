@@ -20,8 +20,11 @@
 
     <div class="col-12 mb-3">
       <%= claim_fields.label :selector %>
-      <%= claim_fields.text_field :selector, class: 'form-control', placeholder: 'paragraph:2, sentence:1' %>
-      <small class="form-text text-muted">Optional selector for the content span, block, or media segment this claim describes.</small>
+      <%= claim_fields.text_field :selector,
+                                  class: 'form-control',
+                                  placeholder: 'trix-range:12:48 or block:markdown:intro',
+                                  list: selector_datalist_id %>
+      <small class="form-text text-muted">Optional selector for the content span, block, or media segment this claim describes. Suggested selectors are available for supported records.</small>
     </div>
   </div>
 

@@ -30,12 +30,19 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
     before do
       BetterTogether::CalendarEntry.create!(calendar:, event: upcoming_event, starts_at: upcoming_event.starts_at)
       BetterTogether::CalendarEntry.create!(calendar:, event: past_event, starts_at: past_event.starts_at)
+
+      citation = create(:citation, citeable: calendar, title: 'Calendar charter', reference_key: 'calendar-charter')
+      claim = create(:claim, claimable: calendar, statement: 'This calendar reflects the community schedule.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
     end
 
-    it 'renders successfully' do
+    it 'renders successfully with evidence sections' do
       get better_together.calendar_path(calendar, locale:)
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Claims and Supporting Evidence')
+      expect(response.body).to include('Evidence and Citations')
+      expect(response.body).to include('Calendar charter')
     end
   end
 

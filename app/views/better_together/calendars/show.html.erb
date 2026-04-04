@@ -1,6 +1,9 @@
 <div class="container mt-5">
   <%= render @calendar %>
 
+  <%= render 'better_together/shared/claims_and_evidence', record: @calendar %>
+  <%= render 'better_together/shared/bibliography', record: @calendar %>
+
   <div class="my-3 d-flex justify-content-between">
     <%= link_to "Edit this calendar", edit_calendar_path(@calendar), class: "btn btn-primary" %>
     <%= link_to "Back to calendars", calendars_path, class: "btn btn-secondary" %>

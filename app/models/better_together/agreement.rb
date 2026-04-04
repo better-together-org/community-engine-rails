@@ -5,6 +5,8 @@ require 'digest'
 module BetterTogether
   # Statements agreed upon by its participants
   class Agreement < ApplicationRecord
+    include Citable
+    include Claimable
     include Creatable
     include Identifier
     include Privacy
