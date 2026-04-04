@@ -242,6 +242,22 @@ module BetterTogether
       [id] + member_communities.pluck(:id)
     end
 
+    def github_integrations
+      person_platform_integrations.github
+    end
+
+    def github_handles
+      github_integrations.order(:handle).pluck(:handle).compact_blank.uniq
+    end
+
+    def contribution_records
+      contributions.includes(:authorable).order(created_at: :desc)
+    end
+
+    def content_contribution_records
+      contribution_records.where(authorable_type: ['BetterTogether::Page', 'BetterTogether::Post'])
+    end
+
     def handle
       identifier
     end
