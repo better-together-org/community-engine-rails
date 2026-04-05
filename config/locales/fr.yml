@@ -2654,6 +2654,7 @@ fr:
       none_body: Il n'y a pas de publications à afficher pour le moment.
       none_title: Pas encore de publications
       published_on: Publié %{date}
+      robot_authors: Auteurs robots
       save_post: Enregistrer la publication
       updated_on_short: Mis à jour
       view_post: Voir la publication

@@ -3,6 +3,27 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Authorship do
+  describe 'polymorphic authors' do
+    it 'supports robot authorship records' do
+      page = create(:page)
+      robot = create(:robot, platform: page.platform)
+
+      authorship = page.authorships.create!(author: robot)
+
+      expect(authorship.author).to eq(robot)
+      expect(authorship.author_type).to eq('BetterTogether::Robot')
+    end
+
+    it 'does not notify robots when they are added to a page' do
+      page = create(:page)
+      robot = create(:robot, platform: page.platform)
+
+      expect do
+        page.authorships.create!(author: robot)
+      end.not_to(change(Noticed::Notification, :count))
+    end
+  end
+
   describe 'notifications on add' do
     let(:person) { create(:person) }
     let(:page)   { create(:page) }

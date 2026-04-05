@@ -62,8 +62,9 @@ module BetterTogether
 
     before_validation :assign_current_platform_if_available
 
-    # Automatically grant the post creator an authorship record
-    after_create :add_creator_as_author
+    # Automatically grant the post creator an authorship record only when no
+    # explicit human or robot authors were selected during creation.
+    after_commit :add_creator_as_author, on: :create
 
     def to_s
       title
@@ -108,8 +109,9 @@ module BetterTogether
 
     def add_creator_as_author
       return unless respond_to?(:creator_id) && creator_id.present?
+      return if authorships.exists?
 
-      authorships.find_or_create_by(author_id: creator_id)
+      authorships.find_or_create_by(author: creator)
     end
 
     def assign_current_platform_if_available

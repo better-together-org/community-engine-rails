@@ -62,6 +62,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
 - [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across Elasticsearch, database, and pg_search search modes
+- [Robot Authored Page And Post Publishing](developers/systems/robot_authored_page_post_publishing_system.md) - Narrow workflow for truthful robot bylines on pages and posts
 - [Security Protection System](developers/systems/security_protection_system.md) - Security measures
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
@@ -147,6 +148,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [PR 1479 Search Backend Architecture](diagrams/source/pr_1479_search_backend_architecture.mmd)
 - [PR 1479 Search Backend Flow](diagrams/source/pr_1479_search_backend_flow.mmd)
 - [PR 1479 Search Backend Process](diagrams/source/pr_1479_search_backend_process.mmd)
+- [PR 1496 Robot Authored Page And Post Flow](diagrams/source/pr_1496_robot_authored_page_post_flow.mmd)
 - [0.11.0 Release Capability Map](diagrams/source/release_0_11_0_capability_map.mmd)
 - [Role Based Access Control Flow](diagrams/source/role_based_access_control_flow.mmd)
 - [Security Protection Flow](diagrams/source/security_protection_flow.mmd)
@@ -186,6 +188,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [README](development/README.md) - Development resources overview
 - [Development Setup](development/dev-setup.md) - Local development guide
 - [♿ Accessibility Testing](development/accessibility_testing.md) - Browser accessibility and screenshot testing guidance
+- [Pull Request Evidence Standard](development/pull_request_evidence_standard.md) - Tiered evidence requirements for PR docs, diagrams, and screenshots
 - [Screenshot And Documentation Tooling Assessment](development/screenshot_and_documentation_tooling_assessment.md) - CE and management-tool tooling assessment
 
 #### **Joatu Exchange System** - [`joatu/`](joatu/)

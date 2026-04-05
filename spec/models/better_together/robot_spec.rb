@@ -41,4 +41,22 @@ RSpec.describe BetterTogether::Robot do
       expect(robot.settings_hash['assume_model_exists']).to be(true)
     end
   end
+
+  describe '.available_for_platform' do
+    let(:platform) { create(:platform) }
+    let!(:global_robot) { create(:robot, :global, name: 'Global Robot') }
+    let!(:platform_robot) { create(:robot, platform:, name: 'Platform Robot') }
+
+    it 'returns global and platform-specific active robots' do
+      expect(described_class.available_for_platform(platform)).to include(global_robot, platform_robot)
+    end
+  end
+
+  describe '#select_option_title' do
+    it 'renders a robot-specific select label' do
+      robot = build(:robot, identifier: 'writer', name: 'Writer Bot')
+
+      expect(robot.select_option_title).to eq('Writer Bot - robot:writer')
+    end
+  end
 end

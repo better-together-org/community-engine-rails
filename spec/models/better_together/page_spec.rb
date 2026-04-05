@@ -81,6 +81,44 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#governed_authors' do
+        it 'includes both person and robot authors in authorship order' do
+          page = create(:better_together_page)
+          person = create(:better_together_person)
+          robot = create(:robot, platform: page.platform)
+
+          page.authorships.create!(author: person, position: 1)
+          page.authorships.create!(author: robot, position: 2)
+
+          expect(page.governed_authors).to eq([person, robot])
+          expect(page.authors).to eq([person])
+          expect(page.robot_authors).to eq([robot])
+        end
+      end
+
+      describe 'creator fallback authorship' do
+        it 'adds the creator as author when no explicit authors were selected' do
+          creator = create(:better_together_person)
+          page = create(:better_together_page, creator:)
+
+          expect(page.authors).to include(creator)
+        end
+
+        it 'does not add the creator when an explicit robot author was selected' do
+          creator = create(:better_together_person)
+          platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform)
+          robot = create(:robot, platform:)
+          page = described_class.new(title: 'Robot Page', privacy: 'public', platform:, creator:)
+
+          page.robot_authors << robot
+          page.save!
+
+          expect(page.robot_authors).to contain_exactly(robot)
+          expect(page.authors).to be_empty
+          expect(page.governed_authors).to contain_exactly(robot)
+        end
+      end
+
       describe '#url' do
         it 'returns the full URL of the page' do
           expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")
