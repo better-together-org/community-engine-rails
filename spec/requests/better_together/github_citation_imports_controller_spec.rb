@@ -5,10 +5,13 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:manager_user) do
-    BetterTogether::User.find_by(email: 'manager@example.test') || create(:user,
-                                                                           :platform_manager,
-                                                                           email: 'manager@example.test',
-                                                                           password: 'SecureTest123!@#')
+    BetterTogether::User.find_by(email: 'manager@example.test') ||
+      create(
+        :user,
+        :platform_manager,
+        email: 'manager@example.test',
+        password: 'SecureTest123!@#'
+      )
   end
   let!(:github_platform) do
     BetterTogether::Platform.external.find_or_create_by!(identifier: 'github') do |platform|
@@ -22,6 +25,8 @@ RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_platform_m
   end
 
   before do
+    sign_in manager_user
+
     create(:person_platform_integration,
            :github,
            user: manager_user,

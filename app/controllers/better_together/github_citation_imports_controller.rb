@@ -3,6 +3,8 @@
 module BetterTogether
   # Returns importable GitHub citation candidates for the current person.
   class GithubCitationImportsController < ApplicationController
+    CITEABLE_TYPES = BetterTogether::CitationExportsController::CITEABLE_TYPES
+
     before_action :authenticate_user!
     before_action :set_citeable, only: :create
 
@@ -34,8 +36,6 @@ module BetterTogether
     end
 
     private
-
-    CITEABLE_TYPES = BetterTogether::CitationExportsController::CITEABLE_TYPES
 
     def set_citeable
       klass = CITEABLE_TYPES[params[:citeable_key]]

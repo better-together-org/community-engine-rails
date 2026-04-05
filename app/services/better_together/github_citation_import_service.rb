@@ -3,6 +3,9 @@
 module BetterTogether
   # Persists a GitHub-native citation candidate onto a local citeable record.
   class GithubCitationImportService
+    CITATION_ATTRIBUTE_KEYS = %i[source_kind title source_author source_url locator excerpt].freeze
+    DATE_ATTRIBUTE_KEYS = %i[published_on accessed_on].freeze
+
     def initialize(record:, source:)
       @record = record
       @source = source.deep_symbolize_keys
@@ -28,18 +31,17 @@ module BetterTogether
     end
 
     def citation_attributes
-      {
+      attributes = source.slice(*CITATION_ATTRIBUTE_KEYS).merge(
         reference_key: reference_key,
-        source_kind: source[:source_kind],
-        title: source[:title],
-        source_author: source[:source_author],
-        publisher: source[:publisher].presence || 'GitHub',
-        source_url: source[:source_url],
-        locator: source[:locator],
-        excerpt: source[:excerpt],
-        published_on: parse_date(source[:published_on]),
-        accessed_on: parse_date(source[:accessed_on]) || Date.current
-      }.compact
+        publisher: source[:publisher].presence || 'GitHub'
+      )
+
+      DATE_ATTRIBUTE_KEYS.each do |attribute|
+        attributes[attribute] = parsed_source_date(attribute)
+      end
+
+      attributes[:accessed_on] ||= Date.current
+      attributes.compact
     end
 
     def merged_metadata(citation)
@@ -57,6 +59,10 @@ module BetterTogether
 
     def reference_key
       source[:reference_key].presence || source[:title].to_s.parameterize(separator: '_')
+    end
+
+    def parsed_source_date(attribute)
+      parse_date(source[attribute])
     end
 
     def parse_date(value)
