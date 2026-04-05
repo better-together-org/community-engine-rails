@@ -65,9 +65,7 @@ module BetterTogether
     private
 
     def admin_participant_access?
-      permitted_to?('list_person') ||
-        permitted_to?('manage_platform_members') ||
-        permitted_to?('manage_platform')
+      can_read_people_directory?
     end
 
     def platform_steward_ids

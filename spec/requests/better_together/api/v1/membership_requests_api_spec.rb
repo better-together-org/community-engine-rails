@@ -7,7 +7,7 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
     { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' }
   end
 
-  let(:community) { create(:better_together_community) }
+  let(:community) { create(:better_together_community, :membership_requests_enabled) }
 
   let(:valid_payload) do
     {
@@ -119,8 +119,8 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
 
       before { post url, params: platform_payload, headers: jsonapi_headers }
 
-      it 'returns 422 unprocessable entity' do
-        expect(response).to have_http_status(:unprocessable_content)
+      it 'returns not found for an unsupported target type' do
+        expect(response).to have_http_status(:not_found)
       end
     end
 

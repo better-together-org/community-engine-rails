@@ -10,6 +10,9 @@
 %>
 
 <div class="container my-4">
+  <% membership_request_target = host_platform.primary_community %>
+  <% membership_request_enabled = membership_request_target.present? &&
+                                  host_platform.membership_requests_enabled_for?(membership_request_target) %>
 
   <%= render partial: 'better_together/platform_invitations/registration', locals: { platform_invitation: @platform_invitation } if @platform_invitation %>
 
@@ -29,6 +32,10 @@
         <% end %>
       </div>
     </div>
+
+    <%= render 'devise/registrations/membership_request_interstitial',
+               community: membership_request_target,
+               membership_request: BetterTogether::Joatu::MembershipRequest.new(target: membership_request_target) if membership_request_enabled %>
   <% else %>
     <div class="row justify-content-center">
       <div class="col-md-6">

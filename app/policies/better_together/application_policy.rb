@@ -175,6 +175,38 @@ module BetterTogether
       !!agent&.permitted_to?(permission_identifier, record)
     end
 
+    def can_read_people_directory?(target = nil)
+      permitted_to?('list_person', target)
+    end
+
+    def can_read_private_people?(target = nil)
+      permitted_to?('read_person', target)
+    end
+
+    def can_manage_user_accounts?(target = nil)
+      permitted_to?('manage_platform_users', target)
+    end
+
+    def can_view_metrics_dashboard?(target = nil)
+      permitted_to?('view_metrics_dashboard', target)
+    end
+
+    def can_create_metrics_reports?(target = nil)
+      permitted_to?('create_metrics_reports', target)
+    end
+
+    def can_download_metrics_reports?(target = nil)
+      permitted_to?('download_metrics_reports', target)
+    end
+
+    def can_review_safety_disclosures?(target = nil)
+      permitted_to?('manage_platform_safety', target)
+    end
+
+    def can_manage_webhook_endpoints?(target = nil)
+      permitted_to?('manage_platform_api', target)
+    end
+
     def public_or_member_scoped_community?(target = record)
       privacy_public?(target) || (privacy_community?(target) && member_of_resolved_community?(target))
     end

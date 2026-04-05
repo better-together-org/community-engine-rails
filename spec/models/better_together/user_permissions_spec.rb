@@ -26,6 +26,15 @@ RSpec.describe BetterTogether::User do
     it 'grants platform permissions' do
       expect(user.permitted_to?('manage_platform')).to be(true)
     end
+
+    it 'does not grant sensitive directory access by default' do
+      expect(user.permitted_to?('read_person')).to be(false)
+      expect(user.permitted_to?('list_person')).to be(false)
+    end
+
+    it 'does not grant user-account administration by default' do
+      expect(user.permitted_to?('manage_platform_users')).to be(false)
+    end
   end
 
   describe 'membership cache invalidation' do

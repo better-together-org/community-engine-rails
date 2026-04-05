@@ -6,7 +6,6 @@ module BetterTogether
   class InvitationPolicy < ApplicationPolicy
     def create?
       return false unless user.present?
-      return true if permitted_to?('manage_platform')
 
       allowed_on_invitable?
     end

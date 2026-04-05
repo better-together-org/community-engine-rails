@@ -12,6 +12,12 @@ module BetterTogether
         authorize BetterTogether::Safety::Case
 
         @safety_cases = filtered_safety_cases
+        @local_review_snapshot = Rails.cache.fetch(
+          BetterTogether::Safety::LocalReviewSnapshotService::CACHE_KEY,
+          expires_in: 15.minutes
+        ) do
+          BetterTogether::Safety::LocalReviewSnapshotService.new.call
+        end
       end
 
       def show

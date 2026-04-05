@@ -126,9 +126,12 @@ module AutomaticTestConfiguration # :nodoc:
     end
 
     # Ensure it's public and open for registration by default
-    unless host_platform.privacy == 'public' && host_platform.requires_invitation == false
-      host_platform.update!(privacy: 'public', requires_invitation: false)
+    unless host_platform.privacy == 'public' &&
+           host_platform.requires_invitation == false &&
+           host_platform.allow_membership_requests == false
+      host_platform.update!(privacy: 'public', requires_invitation: false, allow_membership_requests: false)
     end
+    host_platform.primary_community&.update!(allow_membership_requests: false) if host_platform.primary_community&.allow_membership_requests?
 
     wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
     unless wizard
@@ -187,11 +190,21 @@ module AutomaticTestConfiguration # :nodoc:
     end
 
     if platform_steward_role && platform_steward.person
-      membership = host_platform.person_platform_memberships.find_or_initialize_by(
-        member: platform_steward.person,
-        role: platform_steward_role
+      existing_membership = host_platform.person_platform_memberships.find_by(
+        member_id: platform_steward.person.id,
+        role_id: platform_steward_role.id
       )
-      membership.save! if membership.new_record? || membership.changed?
+      return host_platform if existing_membership
+
+      begin
+        platform_steward.person.reload
+        host_platform.person_platform_memberships.create!(
+          member_id: platform_steward.person.id,
+          role_id: platform_steward_role.id
+        )
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, ActiveRecord::StaleObjectError
+        nil
+      end
     end
 
     host_platform
