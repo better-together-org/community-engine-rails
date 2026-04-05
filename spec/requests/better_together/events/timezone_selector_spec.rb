@@ -77,6 +77,7 @@ RSpec.describe 'Event Timezone Selector' do
         }
       }
     end
+
     before do
       # Ensure manager exists (automatic test configuration should have created this)
       raise 'Manager user not found - automatic test configuration may have failed' unless manager_user
