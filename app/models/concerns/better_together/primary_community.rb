@@ -35,25 +35,24 @@ module BetterTogether
     def create_primary_community
       return if community.present?
 
-      default_privacy = if respond_to?(:external?) && external?
-                          'private'
-                        elsif respond_to?(:privacy)
-                          privacy
-                        else
-                          'private'
-                        end
-
       create_community(
         name:,
         description: (respond_to?(:description) ? description : "#{name}'s primary community"),
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
-        privacy: default_privacy,
+        privacy: primary_community_privacy,
         **primary_community_extra_attrs
       )
     end
 
     def primary_community_extra_attrs
       {}
+    end
+
+    def primary_community_privacy
+      return 'private' if respond_to?(:external?) && external?
+      return privacy if respond_to?(:privacy)
+
+      'private'
     end
 
     # Backwards-compatible accessor used in tests and callers expecting a `primary_community` method
