@@ -6,6 +6,24 @@ RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
                :docs_screenshot, :js, :skip_host_setup, retry: 0, type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
+  RELEASE_UPLOAD_IMAGE_FIXTURES = [
+    {
+      name: 'Aurora Banner',
+      asset_path: File.expand_path('../../../app/assets/images/better_together/websiteplanet-dummy-1080X300.png', __dir__),
+      content_type: 'image/png'
+    },
+    {
+      name: 'Community Garden',
+      asset_path: File.expand_path('../../../app/assets/images/better_together/unsplash-community-1.jpeg', __dir__),
+      content_type: 'image/jpeg'
+    },
+    {
+      name: 'Welcome Poster',
+      asset_path: File.expand_path('../../../app/assets/images/cover_images/default_cover_image_generic.jpg', __dir__),
+      content_type: 'image/jpeg'
+    }
+  ].freeze
+
   let(:creator) { BetterTogether::User.find_by!(email: 'manager@example.test').person }
 
   before do
@@ -48,25 +66,26 @@ RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
   end
 
   def seed_release_uploads!
-    create_image_upload('Aurora Banner', created_at: 3.days.ago)
-    create_image_upload('Community Garden', created_at: 2.days.ago)
-    create_image_upload('Welcome Poster', created_at: 1.day.ago)
-  end
-
-  def create_image_upload(name, created_at:)
-    create(:better_together_upload, name:, creator:, created_at:).tap do |upload|
-      upload.file.attach(
-        io: StringIO.new(minimal_png_data),
-        filename: "#{name.parameterize}.png",
-        content_type: 'image/png'
+    RELEASE_UPLOAD_IMAGE_FIXTURES.zip([3.days.ago, 2.days.ago, 1.day.ago]).each do |fixture, created_at|
+      create_image_upload(
+        fixture.fetch(:name),
+        asset_path: fixture.fetch(:asset_path),
+        content_type: fixture.fetch(:content_type),
+        created_at:
       )
     end
   end
 
-  def minimal_png_data
-    # rubocop:disable Layout/LineLength
-    "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\b\x06\x00\x00\x00\x1F\x15\xC4\x89\x00\x00\x00\nIDATx\x9Cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xB4\x00\x00\x00\x00IEND\xAEB`\x82"
-    # rubocop:enable Layout/LineLength
+  def create_image_upload(name, asset_path:, content_type:, created_at:)
+    create(:better_together_upload, name:, creator:, created_at:).tap do |upload|
+      File.open(asset_path, 'rb') do |file|
+        upload.file.attach(
+          io: file,
+          filename: File.basename(asset_path),
+          content_type:
+        )
+      end
+    end
   end
 
   # rubocop:disable Metrics/AbcSize
