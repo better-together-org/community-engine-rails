@@ -81,8 +81,9 @@ module BetterTogether
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
-    # Automatically grant the page creator an authorship record
-    after_create :add_creator_as_author
+    # Automatically grant the page creator an authorship record only when no
+    # explicit human or robot authors were selected during creation.
+    after_commit :add_creator_as_author, on: :create
 
     # Touch associated navigation_items to invalidate navigation cache when page title changes
     # Use title_previously_changed? for Mobility-translated attributes
@@ -220,8 +221,9 @@ module BetterTogether
 
     def add_creator_as_author
       return unless respond_to?(:creator_id) && creator_id.present?
+      return if authorships.exists?
 
-      authorships.find_or_create_by(author_id: creator_id)
+      authorships.find_or_create_by(author: creator)
     end
 
     # Touch navigation areas for all navigation items that link to this page

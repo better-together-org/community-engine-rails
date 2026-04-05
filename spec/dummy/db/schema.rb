@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_01_143000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_04_163000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -178,7 +178,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_01_143000) do
     t.uuid "authorable_id", null: false
     t.uuid "author_id", null: false
     t.uuid "creator_id"
-    t.index ["author_id"], name: "by_authorship_author"
+    t.string "author_type", default: "BetterTogether::Person", null: false
+    t.index ["author_type", "author_id"], name: "by_authorship_author"
     t.index ["authorable_type", "authorable_id"], name: "by_authorship_authorable"
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
   end
@@ -2092,7 +2093,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_01_143000) do
   add_foreign_key "better_together_agreements", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_agreements", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
-  add_foreign_key "better_together_authorships", "better_together_people", column: "author_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendars", "better_together_communities", column: "community_id"
