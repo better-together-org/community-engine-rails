@@ -17,11 +17,7 @@ module BetterTogether
       settings index: default_elasticsearch_index
 
       searchable pg_search: {
-        against: %i[slug],
-        associated_against: {
-          string_translations: [:value],
-          rich_text_translations: [:body]
-        },
+        against: %i[status urgency],
         using: {
           tsearch: {
             prefix: true,

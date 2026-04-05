@@ -42,6 +42,8 @@ Diagrams:
 - Architecture: [pr_1479_search_backend_architecture.mmd](../../diagrams/source/pr_1479_search_backend_architecture.mmd)
 - Flow: [pr_1479_search_backend_flow.mmd](../../diagrams/source/pr_1479_search_backend_flow.mmd)
 - Process: [pr_1479_search_backend_process.mmd](../../diagrams/source/pr_1479_search_backend_process.mmd)
+- Contract normalization: [pr_1479_search_contract_normalization.mmd](../../diagrams/source/pr_1479_search_contract_normalization.mmd)
+- Model onboarding: [pr_1479_searchable_model_onboarding.mmd](../../diagrams/source/pr_1479_searchable_model_onboarding.mmd)
 
 ## Backend Responsibilities
 
@@ -87,12 +89,32 @@ That concern now owns:
 - `BetterTogether::Checklist`
 - `BetterTogether::CallForInterest`
 
-The shared pg_search-backed scope definitions cover:
+The shared search contract now distinguishes between:
 
-- slugs and identifiers where present
-- translated string content
-- translated rich text content
-- normalized plain-text document payloads for fallback/database search
+- **native pg_search fields** backed by real table columns such as `identifier`,
+  `status`, and `urgency`
+- **auto-merged translated associations** from `string_translations`,
+  `text_translations`, and `rich_text_translations` when a model exposes them
+- **normalized plain-text document payloads** used by the database fallback path
+  inside the `pg_search` adapter for models whose richest searchable content is
+  assembled outside direct SQL-backed associations
+
+Practical implications:
+
+- translated titles/names/slugs now flow through the shared translation
+  associations instead of assuming a physical `slug` column exists
+- translated text fields such as `Community#description` are included for
+  `pg_search` alongside translated rich text
+- `Page` uses the database-compatible fallback inside the `pg_search` adapter so
+  block, markdown, template, and page-rich-text content stay searchable without
+  requiring unsupported nested `pg_search` association wiring
+
+The new diagrams above separate two responsibilities:
+
+- **contract normalization**: what the shared `Searchable` concern now does for
+  every supported model
+- **model onboarding**: the implementation steps a model must satisfy before it
+  can reliably surface in search results across adapters
 
 ## Request Flow
 

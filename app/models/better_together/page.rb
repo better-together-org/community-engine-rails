@@ -77,19 +77,7 @@ module BetterTogether
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 
-    searchable pg_search: {
-      against: [:slug],
-      associated_against: {
-        string_translations: [:value],
-        rich_text_translations: [:body]
-      },
-      using: {
-        tsearch: {
-          prefix: true,
-          dictionary: 'simple'
-        }
-      }
-    }
+    searchable
 
     # Validations
     validates :title, presence: true
@@ -128,7 +116,7 @@ module BetterTogether
       json = as_json(
         only: [:id],
         methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug')
+          attribute.start_with?('title', 'slug', 'content')
         end],
         include: {
           markdown_blocks: {

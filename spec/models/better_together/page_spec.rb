@@ -433,6 +433,25 @@ module BetterTogether # :nodoc:
           end
         end
 
+        context 'with translated page content' do
+          let(:token) { 'pagecontentsignal1006' }
+          let(:page) do
+            create(
+              :better_together_page,
+              title: 'Contentful Page',
+              slug: 'contentful-page',
+              privacy: 'public',
+              content: "<p>#{token}</p>"
+            )
+          end
+
+          it 'includes localized page content for Elasticsearch indexing' do
+            result = page.as_indexed_json
+
+            expect(result.values.flatten.compact.join(' ')).to include(token)
+          end
+        end
+
         context 'without template blocks or attribute' do
           let(:page) do
             create(:better_together_page,
