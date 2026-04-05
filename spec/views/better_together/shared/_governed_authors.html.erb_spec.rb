@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_governed_authors', type: :view do
+RSpec.describe 'better_together/shared/_governed_authors' do
   it 'renders both person and robot mentions truthfully' do
     person = create(:person, name: 'Person Author', identifier: 'person-author')
     robot = create(:robot, name: 'Release Bot', identifier: 'release-bot')

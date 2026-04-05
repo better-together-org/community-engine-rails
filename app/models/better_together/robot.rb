@@ -26,13 +26,6 @@ module BetterTogether
     scope :global, -> { where(platform_id: nil) }
     scope :for_platform, ->(platform) { where(platform:) }
     scope :by_identifier, ->(identifier) { where(identifier:) }
-    scope :available_for_platform, lambda { |platform = Current.platform|
-      if platform.present?
-        active.where(platform_id: [platform.id, nil])
-      else
-        active.global
-      end
-    }
 
     def self.available_for_platform(platform = Current.platform)
       relation = active
@@ -62,10 +55,6 @@ module BetterTogether
       default_model.presence || ENV.fetch('BETTER_TOGETHER_LLM_MODEL', 'gpt-4o-mini-2024-07-18')
     end
 
-    def select_option_title
-      "#{name} - robot:#{identifier}"
-    end
-
     def to_s
       name
     end
@@ -80,10 +69,6 @@ module BetterTogether
 
     def select_option_title
       "#{name} - @#{identifier} (robot)"
-    end
-
-    def to_s
-      name
     end
 
     private
