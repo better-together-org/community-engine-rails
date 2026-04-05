@@ -68,14 +68,31 @@ switch.
 
 ## Model Integration
 
-`BetterTogether::Page` and `BetterTogether::Post` now include `PgSearch::Model`
-and expose `pg_search_scope :pg_search_query`.
+Searchable models now declare their backend-neutral search contract through
+`BetterTogether::Searchable`.
 
-The initial scope covers:
+That concern now owns:
 
-- slugs and identifiers
+- Elasticsearch model wiring and index callbacks
+- the shared `searchable ...` DSL for pg_search-backed model configuration
+- the backend-facing query hook used by `PgSearchBackend`
+- the default searchable model registry entry used by `Search::Registry`
+
+`Page` and `Post` were migrated first, and the same contract now also covers:
+
+- `BetterTogether::Event`
+- `BetterTogether::Community`
+- `BetterTogether::Joatu::Offer`
+- `BetterTogether::Joatu::Request`
+- `BetterTogether::Checklist`
+- `BetterTogether::CallForInterest`
+
+The shared pg_search-backed scope definitions cover:
+
+- slugs and identifiers where present
 - translated string content
 - translated rich text content
+- normalized plain-text document payloads for fallback/database search
 
 ## Request Flow
 
@@ -85,8 +102,9 @@ At runtime the search path is:
 2. register built-in search adapters when needed
 3. resolve the selected adapter entry from the registry
 4. instantiate the backend
-5. execute the query through that backend
-6. return a `SearchResult` tagged with backend and status metadata
+5. execute the query through the shared searchable-model contract
+6. filter the returned records through policy scopes in the controller
+7. return a `SearchResult` tagged with backend and status metadata
 
 ## Process Implications
 
@@ -95,12 +113,14 @@ The process for adding a search backend is now:
 1. implement or reuse a `BetterTogether::Search::BaseBackend`
 2. register it under the `:search` subsystem
 3. point `SEARCH_BACKEND` at that backend key
-4. optionally add model-native scopes where richer ranking is needed
+4. onboard searchable models through `BetterTogether::Searchable`
+5. optionally add model-specific pg_search configuration through the shared DSL where richer ranking is needed
 
 ## Reviewer Notes
 
 Reviewers should treat this as:
 
 - a new backend-selection architecture
+- a shared searchable-model contract instead of model-local pg_search wiring
 - a safer fallback strategy for hosts without Elasticsearch
-- an incremental migration path toward Postgres-native search
+- an incremental migration path toward Postgres-native search with policy-scope filtering at render time

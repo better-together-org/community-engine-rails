@@ -147,12 +147,38 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       it 'renders only records visible to the current visitor and suppresses suggestions' do
         get better_together.search_path(locale:), params: { q: 'borgberry' }
 
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('Borgberry Public Post')
-        expect(response.body).not_to include('Borgberry Private Post')
-        expect(response.body).not_to include('Borgberry Scheduled Page')
+        expect(visible_titles).to include('Borgberry Public Post')
+        expect(visible_titles).not_to include('Borgberry Private Post')
+        expect(visible_titles).not_to include('Borgberry Scheduled Page')
         expect(response.body).not_to include('Did you mean?')
         expect(response.body).not_to include('borgberry private post')
+      end
+    end
+
+    context 'when the backend returns records that require authentication', :no_auth do
+      let!(:offer) { create(:better_together_joatu_offer, name: 'Borgberry Mutual Aid Offer') }
+
+      before do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [offer],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+      end
+
+      it 'filters records whose policy denies guest access' do
+        get better_together.search_path(locale:), params: { q: 'borgberry' }
+
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
+        expect(response).to have_http_status(:ok)
+        expect(visible_titles).not_to include('Borgberry Mutual Aid Offer')
       end
     end
 
@@ -192,9 +218,11 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       it 'keeps authorized private records while filtering unauthorized ones' do
         get better_together.search_path(locale:), params: { q: 'borgberry' }
 
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('My Borgberry Draft')
-        expect(response.body).not_to include('Someone Else Borgberry Draft')
+        expect(visible_titles).to include('My Borgberry Draft')
+        expect(visible_titles).not_to include('Someone Else Borgberry Draft')
         expect(response.body).not_to include('Did you mean?')
       end
     end

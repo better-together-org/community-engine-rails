@@ -102,7 +102,7 @@ module BetterTogether
       end
 
       def build_response(query)
-        Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.global_search_models)
+        Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.models)
       end
 
       def search_result(response)

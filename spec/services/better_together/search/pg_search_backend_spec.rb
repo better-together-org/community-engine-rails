@@ -14,18 +14,36 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
     search_result_class = Struct.new(:id, :pg_search_rank)
     record = instance_double(search_result_class, id: 10, pg_search_rank: 0.42)
     relation = instance_double(ActiveRecord::Relation)
-    model_class = class_double(BetterTogether::Page)
-    entry = instance_double(BetterTogether::Search::Registry::Entry, model_class:)
+    entry = instance_double(
+      BetterTogether::Search::Registry::Entry,
+      pg_search_enabled?: true,
+      search_relation: relation
+    )
 
     allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
-    allow(model_class).to receive(:respond_to?).with(:pg_search_query).and_return(true)
-    allow(model_class).to receive(:pg_search_query).with('borgberry').and_return(relation)
+    allow(entry).to receive(:search_relation).with('borgberry').and_return(relation)
     allow(relation).to receive(:limit).with(50).and_return([record])
 
     result = backend.search('borgberry')
 
     expect(result.status).to eq(:ok)
     expect(result.backend).to eq(:pg_search)
+    expect(result.records).to eq([record])
+  end
+
+  it 'falls back to database scoring when a model has no pg_search scope configured' do
+    record = instance_double(BetterTogether::Checklist, id: 10, as_indexed_json: { title: 'Borgberry checklist archive' })
+    entry = instance_double(
+      BetterTogether::Search::Registry::Entry,
+      pg_search_enabled?: false,
+      relation: [record]
+    )
+
+    allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
+
+    result = backend.search('borgberry archive')
+
+    expect(result.status).to eq(:ok)
     expect(result.records).to eq([record])
   end
 end
