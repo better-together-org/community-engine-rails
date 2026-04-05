@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::CallForInterest do
 
   it 'creates calls with events' do
     call = create(:call_for_interest, :with_event)
-    expect(call.interestable).to be_an(Event)
+    expect(call.interestable).to be_an(BetterTogether::Event)
   end
 
   describe 'associations' do
@@ -128,6 +128,10 @@ RSpec.describe BetterTogether::CallForInterest do
     it 'generates unique identifiers' do
       call1 = create(:call_for_interest)
       call2 = create(:call_for_interest)
+
+      expect(call1.identifier).to be_present
+      expect(call2.identifier).to be_present
+      expect(call1.identifier).not_to eq(call2.identifier)
     end
   end
 
