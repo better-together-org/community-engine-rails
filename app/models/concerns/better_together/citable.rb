@@ -13,7 +13,7 @@ module BetterTogether
                dependent: :destroy,
                inverse_of: :citeable
 
-      accepts_nested_attributes_for :citations, allow_destroy: true, reject_if: :all_blank
+      accepts_nested_attributes_for :citations, allow_destroy: true, reject_if: :reject_blank_citation_attributes?
     end
 
     class_methods do
@@ -167,6 +167,14 @@ module BetterTogether
     end
 
     private
+
+    def reject_blank_citation_attributes?(attributes)
+      substantive_attributes = attributes.except('id', '_destroy', 'source_kind', 'metadata')
+      return false unless substantive_attributes.values.all?(&:blank?)
+
+      metadata = attributes['metadata']
+      metadata.blank? || metadata == '{}' || metadata == 'null'
+    end
 
     def contribution_evidence_source_label(contribution)
       contributor_name = contribution.author.respond_to?(:name) ? contribution.author.name : contribution.author.to_s
