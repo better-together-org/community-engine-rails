@@ -17,6 +17,8 @@ Required:
 - markdown updates under `docs/`
 - Mermaid source updates under `docs/diagrams/source/` when diagrams change
 - rendered PNG and SVG exports under `docs/diagrams/exports/`
+- PR body links to the key changed files
+- PR body notes the validation and spec coverage used for review
 - explicit screenshot exemption note when no UI workflow changed
 
 ### Backend / Behavioral
@@ -28,6 +30,8 @@ Required:
 - targeted automated tests
 - updated documentation under `docs/`
 - a system or architecture diagram when the change affects a meaningful flow or data boundary
+- PR body links to the key changed files
+- PR body calls out the targeted spec/test coverage used for review
 - explicit screenshot exemption note when screenshots are not applicable
 
 ### UI / Workflow
@@ -42,6 +46,8 @@ Required:
 - docs screenshot spec under `spec/docs_screenshots/`
 - desktop screenshots under `docs/screenshots/desktop/`
 - mobile screenshots under `docs/screenshots/mobile/`
+- PR body links to the key changed files
+- PR body links to screenshot, diagram, and spec coverage artifacts explicitly
 
 ## Significant PR Packet Rule
 
@@ -61,3 +67,16 @@ Community Engine enforces the structural portion of this standard through:
 - the `pr_evidence` CI job in `.github/workflows/rubyonrails.yml`
 
 The validator checks that the required evidence file groups are present in the diff for the inferred PR tier. It does not replace human review of evidence quality.
+
+For pull requests, the PR body should remain the canonical GitHub review packet. At minimum it should contain:
+
+- `## Summary`
+- `## Evidence Tier`
+- `## Screenshots / Diagrams`
+
+The `Screenshots / Diagrams` section should include direct reviewer-facing links or paths for:
+
+- changed files
+- spec / test coverage
+- diagram source and rendered exports
+- screenshot specs and generated screenshots

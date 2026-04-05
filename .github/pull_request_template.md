@@ -28,6 +28,8 @@ Select one:
 Link the canonical evidence for this PR:
 
 - Docs:
+- Changed files:
+- Spec / test coverage:
 - Diagram source/export:
 - Screenshot spec:
 - Desktop/mobile screenshots:

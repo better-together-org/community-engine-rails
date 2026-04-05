@@ -72,10 +72,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Fetch base branch
         run: git fetch origin "${GITHUB_BASE_REF}" --depth=1
+      - name: Write pull request body
+        shell: bash
+        run: |
+          cat <<'EOF' > tmp_pr_body.md
+          ${{ github.event.pull_request.body }}
+          EOF
       - name: Validate PR evidence artifacts
         run: |
           chmod +x scripts/validate_pr_evidence.sh
-          scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD
+          scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
 
   rspec:
     name: rspec (3.4.4, ${{ needs.prepare.outputs.rails_version }})

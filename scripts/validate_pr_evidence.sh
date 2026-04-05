@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat >&2 <<'EOF'
 Usage:
-  scripts/validate_pr_evidence.sh [--base-ref REF] [--head-ref REF]
+  scripts/validate_pr_evidence.sh [--base-ref REF] [--head-ref REF] [--pr-body-file PATH]
 
 Validate pull request evidence artifacts using the Community Engine tiered PR
 evidence policy.
@@ -13,6 +13,7 @@ EOF
 
 BASE_REF="${BASE_REF:-}"
 HEAD_REF="${HEAD_REF:-HEAD}"
+PR_BODY_FILE="${PR_BODY_FILE:-}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -22,6 +23,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --head-ref)
       HEAD_REF="$2"
+      shift 2
+      ;;
+    --pr-body-file)
+      PR_BODY_FILE="$2"
       shift 2
       ;;
     -h|--help)
@@ -96,6 +101,37 @@ require_any_changed() {
   return 1
 }
 
+require_pr_body_section() {
+  local heading="$1"
+  local message="$2"
+
+  [[ -n "$PR_BODY_FILE" ]] || return 0
+  [[ -f "$PR_BODY_FILE" ]] || { echo "error: PR body file not found: $PR_BODY_FILE" >&2; return 1; }
+
+  python3 - "$PR_BODY_FILE" "$heading" "$message" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+body_path = Path(sys.argv[1])
+heading = sys.argv[2]
+message = sys.argv[3]
+text = body_path.read_text(encoding="utf-8")
+pattern = re.compile(rf"^##\s+{re.escape(heading)}\s*$", re.MULTILINE)
+match = pattern.search(text)
+if not match:
+    print(f"error: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+start = match.end()
+next_match = re.search(r"^##\s+.+$", text[start:], re.MULTILINE)
+section = text[start:start + next_match.start()] if next_match else text[start:]
+if not re.search(r"\S", section):
+    print(f"error: {message}", file=sys.stderr)
+    raise SystemExit(1)
+PY
+}
+
 if all_changed_match; then
   TIER="docs-only"
 elif has_changed 'app/views/*' || has_changed 'app/javascript/*' || has_changed 'app/assets/*' || has_changed 'spec/docs_screenshots/*'; then
@@ -107,6 +143,10 @@ fi
 echo "Inferred PR evidence tier: $TIER"
 
 FAILURES=0
+
+require_pr_body_section 'Summary' 'PR body must include a populated Summary section' || FAILURES=$((FAILURES + 1))
+require_pr_body_section 'Evidence Tier' 'PR body must include a populated Evidence Tier section' || FAILURES=$((FAILURES + 1))
+require_pr_body_section 'Screenshots / Diagrams' 'PR body must include screenshot, diagram, changed-file, and spec coverage links' || FAILURES=$((FAILURES + 1))
 
 case "$TIER" in
   docs-only)
