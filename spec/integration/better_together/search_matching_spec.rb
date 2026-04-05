@@ -7,6 +7,7 @@ RSpec.describe 'Real Elasticsearch search matching', type: :integration do
   let(:backend_uri) { URI.parse(backend_url) }
   let(:page_index_name) { "better_together-pages-search-spec-#{SecureRandom.hex(6)}" }
   let(:post_index_name) { "better_together-posts-search-spec-#{SecureRandom.hex(6)}" }
+  let(:search_entries) { [BetterTogether::Page.search_registry_entry, BetterTogether::Post.search_registry_entry] }
   let(:markdown_token) { 'alpha-markdown-orbit-1001' }
   let(:rich_text_token) { 'beta-richtext-ember-1002' }
   let(:post_title_token) { 'gamma-posttitle-lantern-1003' }
@@ -100,6 +101,9 @@ RSpec.describe 'Real Elasticsearch search matching', type: :integration do
   end
 
   before do
+    allow(BetterTogether::Search::Registry).to receive(:entries).and_return(search_entries)
+    allow(BetterTogether::Search::Registry).to receive(:models).and_return(search_entries.map(&:model_class))
+    allow(BetterTogether::Search::Registry).to receive(:global_search_models).and_return(search_entries.map(&:model_class))
     reindex_registry!
   end
 
