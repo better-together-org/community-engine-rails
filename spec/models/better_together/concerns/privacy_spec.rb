@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::Privacy do # rubocop:todo RSpec/SpecFilePathForma
   # Test using the actual Page model which includes Privacy
   describe 'scopes' do
     before do
-      BetterTogether::Page.delete_all
+      BetterTogether::Page.destroy_all
       create(:better_together_page, title: 'Public Page', slug: 'public-test', privacy: 'public')
       create(:better_together_page, title: 'Community Page', slug: 'community-test', privacy: 'community')
       create(:better_together_page, title: 'Private Page', slug: 'private-test', privacy: 'private')
@@ -125,7 +125,7 @@ RSpec.describe BetterTogether::Privacy do # rubocop:todo RSpec/SpecFilePathForma
     it 'returns models that include Privacy concern' do
       models = described_class.included_in_models
       expect(models).to include(BetterTogether::Page)
-      expect(models.all? { |m| m.included_modules.include?(described_class) }).to be true
+      expect(models.all? { |m| m.include?(described_class) }).to be true
     end
   end
 
