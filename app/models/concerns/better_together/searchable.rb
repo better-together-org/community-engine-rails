@@ -24,11 +24,13 @@ module BetterTogether
     # Class-level helpers for searchable models.
     module ClassMethods
       def searchable(scope_name: :pg_search_query, global_search: true, pg_search: nil)
-        self.search_global_search_enabled = global_search
-        self.search_scope_name = pg_search.present? ? scope_name : nil
-        self.search_pg_search_options = pg_search&.deep_dup
+        normalized_pg_search = normalize_pg_search_options(pg_search)
 
-        pg_search_scope(scope_name, **pg_search) if pg_search.present?
+        self.search_global_search_enabled = global_search
+        self.search_scope_name = normalized_pg_search.present? ? scope_name : nil
+        self.search_pg_search_options = normalized_pg_search&.deep_dup
+
+        pg_search_scope(scope_name, **normalized_pg_search) if normalized_pg_search.present?
       end
 
       def elasticsearch_runtime_enabled?
@@ -106,6 +108,37 @@ module BetterTogether
             }
           }
         }
+      end
+
+      private
+
+      def normalize_pg_search_options(pg_search)
+        return if pg_search.blank?
+
+        pg_search.deep_dup.tap do |options|
+          options[:associated_against] = merge_pg_search_associations(
+            default_pg_search_associations,
+            options[:associated_against] || {}
+          )
+        end
+      end
+
+      def default_pg_search_associations
+        {}.tap do |associations|
+          associations[:string_translations] = [:value] if reflect_on_association(:string_translations)
+          associations[:text_translations] = [:value] if reflect_on_association(:text_translations)
+          associations[:rich_text_translations] = [:body] if reflect_on_association(:rich_text_translations)
+        end
+      end
+
+      def merge_pg_search_associations(defaults, overrides)
+        defaults.deep_merge(overrides) do |_key, default_value, override_value|
+          if default_value.is_a?(Array) && override_value.is_a?(Array)
+            (default_value + override_value).uniq
+          else
+            override_value
+          end
+        end
       end
     end
 

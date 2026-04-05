@@ -32,11 +32,7 @@ module BetterTogether
     slugged :title
 
     searchable pg_search: {
-      against: %i[slug identifier],
-      associated_against: {
-        string_translations: [:value],
-        rich_text_translations: [:body]
-      },
+      against: [:identifier],
       using: {
         tsearch: {
           prefix: true,

@@ -4,9 +4,18 @@ flowchart LR
     C --> D[Elasticsearch backend]
     C --> E[Database backend]
     C --> F[PgSearch backend]
-    F --> G[pg_search scopes on Page and Post]
-    E --> H[Fallback record scoring]
-    D --> I[Elasticsearch index]
-    G --> J[SearchResult]
-    H --> J
-    I --> J
+    B --> G[Search::Registry]
+    G --> H[Searchable models]
+    H --> I[Shared Searchable contract]
+    I --> J[as_indexed_json payload]
+    I --> K[pg_search scope when configured]
+    D --> J
+    E --> J
+    F --> K
+    F --> E
+    K --> L[SQL-backed matches]
+    E --> M[Fallback record scoring]
+    J --> N[Elasticsearch index]
+    L --> O[SearchResult]
+    M --> O
+    N --> O

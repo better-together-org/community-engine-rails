@@ -26,7 +26,7 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
 
     result = backend.search('borgberry')
 
-    expect(result.status).to eq(:ok)
+    expect(result.status).to eq(:ok), result.error
     expect(result.backend).to eq(:pg_search)
     expect(result.records).to eq([record])
   end
@@ -43,7 +43,49 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
 
     result = backend.search('borgberry archive')
 
-    expect(result.status).to eq(:ok)
+    expect(result.status).to eq(:ok), result.error
     expect(result.records).to eq([record])
+  end
+
+  it 'matches page markdown block content through the database-backed fallback' do
+    token = 'alphamarkdownorbit1001'
+    page = create(
+      :better_together_page,
+      title: 'Markdown Search Page',
+      slug: 'markdown-search-page',
+      privacy: 'public',
+      page_blocks_attributes: [
+        {
+          block_attributes: {
+            type: 'BetterTogether::Content::Markdown',
+            markdown_source: "This page only mentions #{token} in markdown."
+          }
+        }
+      ]
+    )
+
+    allow(BetterTogether::Search::Registry).to receive(:entries).and_return([BetterTogether::Page.search_registry_entry])
+
+    result = backend.search(token)
+
+    expect(result.status).to eq(:ok), result.error
+    expect(result.records).to contain_exactly(page)
+  end
+
+  it 'matches community translated text content through pg_search associations' do
+    token = 'communitysignalharbor1002'
+    community = create(
+      :better_together_community,
+      name: 'Community Search Group',
+      description: "This community description includes #{token}.",
+      privacy: 'public'
+    )
+
+    allow(BetterTogether::Search::Registry).to receive(:entries).and_return([BetterTogether::Community.search_registry_entry])
+
+    result = backend.search(token)
+
+    expect(result.status).to eq(:ok), result.error
+    expect(result.records).to contain_exactly(community)
   end
 end
