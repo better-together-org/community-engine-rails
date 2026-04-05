@@ -8,6 +8,12 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
   before do
     travel_to(Time.zone.parse('2026-02-15 10:00:00'))
     login('manager@example.test', 'SecureTest123!@#')
+    [privacy_policy, terms_of_service, code_of_conduct, content_publishing_agreement].each do |agreement|
+      BetterTogether::AgreementParticipant.find_or_create_by!(participant: user.person, agreement: agreement) do |participant|
+        participant.person = user.person
+        participant.accepted_at = Time.current
+      end
+    end
   end
 
   let(:locale) { I18n.default_locale }
@@ -53,15 +59,6 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
 
     schedule.add_recurrence_rule(rule)
     schedule.to_yaml
-  end
-
-  before do
-    [privacy_policy, terms_of_service, code_of_conduct, content_publishing_agreement].each do |agreement|
-      BetterTogether::AgreementParticipant.find_or_create_by!(participant: user.person, agreement: agreement) do |participant|
-        participant.person = user.person
-        participant.accepted_at = Time.current
-      end
-    end
   end
 
   describe 'POST /events with recurrence_attributes' do
