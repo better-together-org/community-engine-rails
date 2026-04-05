@@ -1,0 +1,12 @@
+flowchart LR
+    A[Search caller] --> B[BetterTogether::Search]
+    B --> C[Adapter registry]
+    C --> D[Elasticsearch backend]
+    C --> E[Database backend]
+    C --> F[PgSearch backend]
+    F --> G[pg_search scopes on Page and Post]
+    E --> H[Fallback record scoring]
+    D --> I[Elasticsearch index]
+    G --> J[SearchResult]
+    H --> J
+    I --> J
