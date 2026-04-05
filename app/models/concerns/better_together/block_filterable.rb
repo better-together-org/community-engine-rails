@@ -18,7 +18,8 @@ module BetterTogether
         relation = where.not(id: blocked_authorships)
         next relation unless column_names.include?('creator_id')
 
-        relation.where.not(creator_id: blocked_ids)
+        creator_id = arel_table[:creator_id]
+        relation.where(creator_id.eq(nil).or(creator_id.not_in(blocked_ids)))
       }
     end
   end
