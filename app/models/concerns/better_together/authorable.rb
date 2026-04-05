@@ -61,6 +61,9 @@ module BetterTogether
                  -> { where(better_together_authorships: { role: role_value }) },
                  as: :authorable,
                  class_name: 'BetterTogether::Authorship'
+
+        next if association_name == :author
+
         has_many plural_name.to_sym,
                  -> { where(better_together_authorships: { author_type: 'BetterTogether::Person', role: role_value }) },
                  through: contribution_assoc,
