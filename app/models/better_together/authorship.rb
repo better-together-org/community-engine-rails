@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Connects a governed contributor to an authorable record with explicit role metadata.
-  class Authorship < ApplicationRecord
+  class Authorship < ApplicationRecord # rubocop:disable Metrics/ClassLength
     include Positioned
     include Citable
     include Claimable

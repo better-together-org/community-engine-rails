@@ -52,13 +52,13 @@ RSpec.describe BetterTogether::Robot do
     it 'returns global and platform-specific active robots' do
       expect(described_class.available_for_platform(platform)).to include(global_robot, platform_robot)
     end
-  end
 
-  describe '#select_option_title' do
-    it 'renders a robot-specific select label' do
-      robot = build(:robot, identifier: 'writer', name: 'Writer Bot')
+    it 'excludes robots from other platforms' do
+      create(:robot, platform: create(:platform), name: 'Other Platform Robot')
 
-      expect(robot.select_option_title).to eq('Writer Bot - robot:writer')
+      expect(described_class.available_for_platform(platform)).not_to include(
+        described_class.find_by(name: 'Other Platform Robot')
+      )
     end
   end
 
@@ -100,19 +100,6 @@ RSpec.describe BetterTogether::Robot do
       robot = build(:robot, identifier: 'release-bot', name: 'Release Bot')
 
       expect(robot.select_option_title).to eq('Release Bot - @release-bot (robot)')
-    end
-  end
-
-  describe '.available_for_platform' do
-    it 'includes platform-specific and global active robots for the given platform' do
-      platform = create(:better_together_platform)
-      platform_robot = create(:robot, platform:, identifier: 'platform-bot')
-      global_robot = create(:robot, :global, identifier: 'global-bot')
-      create(:robot, platform: create(:better_together_platform), identifier: 'other-bot')
-
-      result = described_class.available_for_platform(platform)
-
-      expect(result).to include(platform_robot, global_robot)
     end
   end
 end

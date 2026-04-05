@@ -15,7 +15,8 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     sleep 1 # Allow submission to process
   end
 
-  def set_event_timezone(timezone)
+  # rubocop:disable Metrics/MethodLength
+  def choose_event_timezone(timezone)
     timezone_select = find("select[name='event[timezone]']", visible: false)
     option_label = timezone_select.find("option[value='#{timezone}']", visible: false).text
     slim_select_id = timezone_select['data-id']
@@ -34,6 +35,7 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
       select.dispatchEvent(new Event('change', { bubbles: true }));
     JS
   end
+  # rubocop:enable Metrics/MethodLength
 
   before do
     # Ensure clean session state to prevent parallel test pollution
@@ -66,7 +68,7 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     expect(page).to have_css('select[name="event[timezone]"]', visible: :all, wait: 10)
     expect(page).to have_css('.ss-main', wait: 5)
 
-    set_event_timezone('America/New_York')
+    choose_event_timezone('America/New_York')
 
     # Fill in datetime fields - wait for them to be present first
     expect(page).to have_field('event_starts_at', wait: 5)
@@ -194,7 +196,7 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     expect(find_field('event_ends_at').value).to eq('2026-06-10T16:00')
 
     # Change timezone to Mountain time
-    set_event_timezone('America/Denver')
+    choose_event_timezone('America/Denver')
 
     # Enter new times (should be interpreted as Mountain time now)
     page.execute_script("document.getElementById('event_starts_at').value = '2026-06-10T15:00'")

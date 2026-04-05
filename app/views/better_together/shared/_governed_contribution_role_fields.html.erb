@@ -24,7 +24,7 @@
 <div class="col mb-3 pb-3 border-bottom">
   <%= form.label robot_method, "Robot #{role_label}" %>
   <%= form.collection_select robot_method,
-    BetterTogether::Robot.available_for_platform(Current.platform),
+    BetterTogether::Robot.available_for_platform(record.platform || Current.platform),
     :id,
     :select_option_title,
     {},
