@@ -9,6 +9,12 @@ RSpec.describe BetterTogether::CallForInterest do
     expect(build(:better_together_call_for_interest)).to be_valid
   end
 
+  it 'creates draft calls for interest' do
+    call = create(:call_for_interest, :draft)
+    expect(call.starts_at).to be_nil
+    expect(call.ends_at).to be_nil
+  end
+
   describe '#as_indexed_json' do
     it 'includes translated name and description content' do
       call_for_interest = create(
