@@ -123,6 +123,7 @@ jobs:
         image: elasticsearch:7.17.23
         ports: ["9200:9200"]
         env:
+          logger.level: error
           node.name: elasticsearch
           cluster.name: better-together-es
           discovery.seed_hosts: elasticsearch
