@@ -24,6 +24,11 @@ RSpec.describe BetterTogether::CallForInterest do
     end
   end
 
+  it 'creates calls with events' do
+    call = create(:call_for_interest, :with_event)
+    expect(call.interestable).to be_an(BetterTogether::Event)
+  end
+
   describe 'associations' do
     it { is_expected.to belong_to(:interestable).optional }
     it { is_expected.to belong_to(:creator) }
