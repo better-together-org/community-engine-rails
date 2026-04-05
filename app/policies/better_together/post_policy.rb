@@ -72,7 +72,7 @@ module BetterTogether
     def post_author_ids
       @post_author_ids ||= if record.authorships.loaded?
                              record.authorships.select { |authorship| authorship.author_type == 'BetterTogether::Person' }
-                                              .map(&:author_id)
+                                               .map(&:author_id)
                            else
                              record.authorships.where(author_type: 'BetterTogether::Person').pluck(:author_id)
                            end

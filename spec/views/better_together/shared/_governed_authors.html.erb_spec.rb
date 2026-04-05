@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_governed_authors', type: :view do
+RSpec.describe 'better_together/shared/_governed_authors' do
   it 'renders both person and robot authors truthfully' do
     assign(:current_person, nil)
     view.define_singleton_method(:profile_image_tag) { |_person, **_opts| '<span>profile</span>'.html_safe }
