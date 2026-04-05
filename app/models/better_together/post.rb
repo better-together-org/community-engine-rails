@@ -33,6 +33,16 @@ module BetterTogether
 
     slugged :title
 
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
+
     validates :title,
               presence: true
 

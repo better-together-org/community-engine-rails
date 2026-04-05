@@ -61,15 +61,22 @@ module BetterTogether
     end
 
     def visible_search_records(records)
-      Array(records).select { |record| search_record_visible?(record) }
+      Array(records).group_by(&:class).flat_map do |model_class, model_records|
+        visible_records_for(model_class, model_records)
+      end
     end
 
     def search_record_visible?(record)
-      return public_search_record?(record) if current_user.nil?
-
       policy(record).show?
     rescue Pundit::Error, NoMethodError
-      false
+      public_search_record?(record)
+    end
+
+    def visible_records_for(model_class, records)
+      visible_ids = policy_scope(model_class).where(id: records.map(&:id)).pluck(:id)
+      records.select { |record| visible_ids.include?(record.id) }
+    rescue Pundit::Error, NoMethodError
+      records.select { |record| search_record_visible?(record) }
     end
 
     def public_search_record?(record)

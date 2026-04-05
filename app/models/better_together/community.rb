@@ -14,6 +14,7 @@ module BetterTogether
     include Protected
     include Privacy
     include Metrics::Viewable
+    include Searchable
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -38,6 +39,18 @@ module BetterTogether
     translates :name, type: :string
     translates :description, type: :text
     translates :description_html, backend: :action_text
+
+    settings index: default_elasticsearch_index
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
@@ -79,6 +92,17 @@ module BetterTogether
 
     def as_community
       becomes(self.class.base_class)
+    end
+
+    def as_indexed_json(_options = {})
+      {
+        id:,
+        name:,
+        slug:,
+        identifier:,
+        description:,
+        description_html: description_html.present? ? search_text_value(description_html) : nil
+      }.compact.as_json
     end
 
     # Resize the cover image to specific dimensions

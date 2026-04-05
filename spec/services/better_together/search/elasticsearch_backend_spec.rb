@@ -69,4 +69,14 @@ RSpec.describe BetterTogether::Search::ElasticsearchBackend do
       backend.import_model(entry, force: true)
     end
   end
+
+  describe '#delete_index' do
+    it 'ignores missing-index deletes caused by parallel index churn' do
+      allow(indices).to receive(:exists).with(index: entry.index_name).and_return(true)
+      allow(model_class).to receive(:delete_elastic_index!)
+        .and_raise(StandardError.new('[404] {"error":{"type":"index_not_found_exception"},"status":404}'))
+
+      expect { backend.delete_index(entry) }.not_to raise_error
+    end
+  end
 end

@@ -77,6 +77,8 @@ module BetterTogether
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 
+    searchable
+
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
@@ -114,7 +116,7 @@ module BetterTogether
       json = as_json(
         only: [:id],
         methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug')
+          attribute.start_with?('title', 'slug', 'content')
         end],
         include: {
           markdown_blocks: {

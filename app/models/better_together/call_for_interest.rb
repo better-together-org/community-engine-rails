@@ -10,11 +10,24 @@ module BetterTogether
     include Creatable
     include Identifier
     include Privacy
+    include Searchable
 
     translates :name, type: :string
     translates :description, backend: :action_text
 
+    settings index: default_elasticsearch_index
+
     slugged :name
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     belongs_to :interestable, polymorphic: true, optional: true
 
@@ -95,6 +108,16 @@ module BetterTogether
         # Otherwise, use the optimized JPG variant
         cover_image.variant(:optimized_jpeg).processed
       end
+    end
+
+    def as_indexed_json(_options = {})
+      {
+        id:,
+        name:,
+        slug:,
+        identifier:,
+        description: description.present? ? search_text_value(description) : nil
+      }.compact.as_json
     end
 
     include ::BetterTogether::RemoveableAttachment
