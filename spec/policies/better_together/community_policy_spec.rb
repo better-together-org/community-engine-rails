@@ -139,5 +139,43 @@ RSpec.describe BetterTogether::CommunityPolicy do
         expect(policy.show?).to be true
       end
     end
+
+    context 'when community is community scoped and user is authenticated' do
+      let(:community) { create(:better_together_community, privacy: 'community') }
+      let(:user) { create(:better_together_user) }
+
+      it 'allows viewing' do
+        expect(policy.show?).to be true
+      end
+    end
+
+    context 'when community is community scoped and user is a guest' do
+      let(:community) { create(:better_together_community, privacy: 'community') }
+      let(:user) { nil }
+
+      it 'does not allow viewing' do
+        expect(policy.show?).to be false
+      end
+    end
+  end
+
+  describe 'Scope' do
+    let!(:public_community) { create(:better_together_community, privacy: 'public') }
+    let!(:community_scoped_community) { create(:better_together_community, privacy: 'community') }
+
+    it 'includes community-scoped communities for signed-in users' do
+      user = create(:better_together_user)
+
+      resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community, community_scoped_community)
+    end
+
+    it 'excludes community-scoped communities for guests' do
+      resolved = described_class::Scope.new(nil, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community)
+      expect(resolved).not_to include(community_scoped_community)
+    end
   end
 end

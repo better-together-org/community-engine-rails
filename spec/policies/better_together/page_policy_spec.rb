@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec/MultipleMemoizedHelpers
-  let!(:public_published)   { create(:better_together_page, published_at: 1.day.ago, privacy: 'public') }
+  let!(:public_published) { create(:better_together_page, published_at: 1.day.ago, privacy: 'public') }
+  let!(:community_published) { create(:better_together_page, published_at: 1.day.ago, privacy: 'community') }
   let!(:public_unpublished) { create(:better_together_page, published_at: nil, privacy: 'public') }
   let!(:private_published)  { create(:better_together_page, published_at: 1.day.ago, privacy: 'private') }
   let!(:private_unpublished) { create(:better_together_page, published_at: nil, privacy: 'private') }
@@ -37,6 +38,22 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       # rubocop:enable RSpec/MultipleMemoizedHelpers
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
+
+    context 'for published community pages' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:page) { community_published }
+
+      context 'signed-in user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+        let(:user) { normal_user }
+
+        it { is_expected.to be true }
+      end
+
+      context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+        let(:user) { nil }
+
+        it { is_expected.to be false }
+      end
+    end
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
     context 'for private or unpublished pages' do # rubocop:todo RSpec/MultipleMemoizedHelpers
@@ -125,7 +142,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       let(:user) { author_user }
 
       it 'includes authored and published public pages' do
-        expect(subject).to include(public_published, private_unpublished) # rubocop:todo RSpec/NamedSubject
+        expect(subject).to include(public_published, community_published, private_unpublished) # rubocop:todo RSpec/NamedSubject
         expect(subject).not_to include(public_unpublished, private_published) # rubocop:todo RSpec/NamedSubject
       end
     end
@@ -136,7 +153,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       let(:user) { normal_user }
 
       it 'includes published public pages and nothing else is guaranteed' do
-        expect(subject).to include(public_published) # rubocop:todo RSpec/NamedSubject
+        expect(subject).to include(public_published, community_published) # rubocop:todo RSpec/NamedSubject
         # rubocop:todo RSpec/NamedSubject
         expect(subject).not_to include(public_unpublished, private_published, private_unpublished)
         # rubocop:enable RSpec/NamedSubject
@@ -157,7 +174,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       it 'includes published public pages and nothing else is guaranteed' do
         expect(subject).to include(public_published) # rubocop:todo RSpec/NamedSubject
         # rubocop:todo RSpec/NamedSubject
-        expect(subject).not_to include(public_unpublished, private_published, private_unpublished)
+        expect(subject).not_to include(community_published, public_unpublished, private_published, private_unpublished)
         # rubocop:enable RSpec/NamedSubject
       end
     end

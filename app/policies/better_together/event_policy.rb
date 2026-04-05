@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def show?
-      (record.privacy_public? && record.starts_at.present?) ||
+      (public_or_signed_in_community?(record) && record.starts_at.present?) ||
         creator_or_platform_steward ||
         event_host_member? ||
         invitation? ||
@@ -78,12 +78,15 @@ module BetterTogether
       protected
 
       # rubocop:todo Metrics/MethodLength
-      def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         events_table = ::BetterTogether::Event.arel_table
         event_hosts_table = ::BetterTogether::EventHost.arel_table
 
-        # Only list events that are public and where the current person is a member or a creator
-        query = events_table[:privacy].eq('public')
+        query = if agent.present?
+                  events_table[:privacy].in(%w[public community])
+                else
+                  events_table[:privacy].eq('public')
+                end
 
         if platform_event_manager?
           query = query.or(events_table[:privacy].eq('private'))

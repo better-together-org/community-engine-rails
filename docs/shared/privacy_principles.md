@@ -5,7 +5,7 @@ The Community Engine is designed with privacy as a first principle. Features, de
 ## Defaults: Private by Design
 - Access control: Role‑based access (RBAC) determines who can see or do what. Content and management areas are accessible only to permitted members.
 - Registration: Platforms are configured by default to require an invitation code (see Accounts & Invitations). Hosts can relax this, but the default is invite‑only.
-- Content visibility: Pages respect both privacy level (public/private) and publication status (published_at). Unpublished or private content is not exposed.
+- Content visibility: Pages and other covered content surfaces respect privacy level (`public`, `community`, `private`) and publication status where applicable. Community-scoped content is visible to signed-in people; unpublished or private content still requires stronger access.
 
 ## Metrics: Event‑Only, Not Identity
 - We record what happened, not who did it. Metrics events do not store user identifiers.

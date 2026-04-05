@@ -56,8 +56,9 @@ module BetterTogether
         table = scope.arel_table
 
         if scope.ancestors.include?(BetterTogether::Privacy)
-          # Only list records that are public unless otherwise granted permission
-          query = table[:privacy].eq('public')
+          # Signed-in people can see community-scoped records. Private records still
+          # require an explicit management, membership, or ownership path.
+          query = visible_privacy_query(table)
 
           if permitted_to?('manage_platform')
             query = query.or(table[:privacy].eq('private'))
@@ -90,12 +91,32 @@ module BetterTogether
       def permitted_to?(permission_identifier, record = nil)
         !!agent&.permitted_to?(permission_identifier, record)
       end
+
+      private
+
+      def visible_privacy_query(table)
+        return table[:privacy].eq('public') unless agent
+
+        table[:privacy].in(%w[public community])
+      end
     end
 
     protected
 
     def permitted_to?(permission_identifier, record = nil)
       !!agent&.permitted_to?(permission_identifier, record)
+    end
+
+    def public_or_signed_in_community?(target = record)
+      privacy_public?(target) || (agent.present? && privacy_community?(target))
+    end
+
+    def privacy_public?(target = record)
+      target.respond_to?(:privacy_public?) && target.privacy_public?
+    end
+
+    def privacy_community?(target = record)
+      target.respond_to?(:privacy_community?) && target.privacy_community?
     end
   end
 end

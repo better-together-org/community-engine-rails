@@ -27,6 +27,16 @@ RSpec.describe BetterTogether::PostPolicy do
     )
   end
 
+  let(:community_published_post) do
+    create(
+      :better_together_post,
+      creator: creator_user.person,
+      author: creator_user.person,
+      privacy: 'community',
+      published_at: 1.minute.ago
+    )
+  end
+
   let(:draft_post) do
     create(
       :better_together_post,
@@ -65,6 +75,10 @@ RSpec.describe BetterTogether::PostPolicy do
       expect(described_class.new(regular_user, public_published_post).show?).to be true
     end
 
+    it 'allows published community posts for signed-in users' do
+      expect(described_class.new(regular_user, community_published_post).show?).to be true
+    end
+
     it 'denies published private posts for other regular users' do
       expect(described_class.new(regular_user, private_published_post).show?).to be false
     end
@@ -75,6 +89,10 @@ RSpec.describe BetterTogether::PostPolicy do
 
     it 'denies published private posts for unauthenticated users' do
       expect(described_class.new(nil, private_published_post).show?).to be false
+    end
+
+    it 'denies published community posts for unauthenticated users' do
+      expect(described_class.new(nil, community_published_post).show?).to be false
     end
 
     it 'denies posts authored by blocked people' do
@@ -139,6 +157,7 @@ RSpec.describe BetterTogether::PostPolicy do
     end
 
     let!(:creator_private_published) { private_published_post }
+    let!(:creator_community_published) { community_published_post }
     let!(:creator_public_published) { public_published_post }
 
     let!(:blocked_author_user) { create(:better_together_user, :confirmed) }
@@ -155,6 +174,7 @@ RSpec.describe BetterTogether::PostPolicy do
     it 'returns all posts for platform managers' do
       scope = described_class::Scope.new(platform_manager_user, BetterTogether::Post)
       expect(scope.resolve).to include(manager_draft, creator_private_published, creator_public_published, blocked_public_post)
+      expect(scope.resolve).to include(creator_community_published)
     end
 
     it 'orders visible posts latest first for unauthenticated users' do
@@ -183,6 +203,7 @@ RSpec.describe BetterTogether::PostPolicy do
       result = scope.resolve
 
       expect(result).to include(creator_public_published, blocked_public_post)
+      expect(result).not_to include(creator_community_published)
       expect(result).not_to include(creator_private_published)
       expect(result).not_to include(manager_draft)
     end
@@ -208,6 +229,7 @@ RSpec.describe BetterTogether::PostPolicy do
       result = scope.resolve
 
       expect(result).to include(creator_public_published)
+      expect(result).to include(creator_community_published)
       expect(result).to include(own_published_private)
       expect(result).not_to include(creator_private_published)
       expect(result).not_to include(own_draft_public)

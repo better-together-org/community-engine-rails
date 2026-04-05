@@ -59,6 +59,26 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
     # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 
+  describe '#show?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    subject { described_class.new(user, record).show? }
+
+    let(:record) { create(:better_together_checklist_item, checklist: checklist) }
+
+    context 'when the parent checklist is community scoped and the user is signed in' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { normal_user }
+      let(:checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'community') }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when the parent checklist is community scoped and the user is a guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { nil }
+      let(:checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'community') }
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe '#destroy?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject { described_class.new(user, item).destroy? }
 

@@ -1,0 +1,27 @@
+flowchart LR
+    A[BetterTogether::Privacy] --> B[ApplicationPolicy helpers]
+    B --> C[Default Scope visibility]
+
+    C --> D[PagePolicy]
+    C --> E[PostPolicy]
+    C --> F[ChecklistPolicy]
+    F --> G[ChecklistItemPolicy]
+    C --> H[CommunityPolicy]
+    C --> I[EventPolicy]
+    C --> J[CallForInterestPolicy]
+    C --> K[PlatformPolicy]
+    C --> L[CalendarPolicy]
+
+    D --> M[Published page browsing]
+    E --> N[Published post browsing]
+    F --> O[Checklist browsing and authoring]
+    H --> P[Community profile visibility]
+    I --> Q[Event browsing]
+    J --> R[Calls for interest]
+    K --> S[Platform listing]
+    L --> T[Calendar visibility]
+
+    O --> U[Checklist edit form uses shared privacy_field]
+    P --> V[Community badge screenshot]
+    U --> W[Checklist authoring screenshot]
+

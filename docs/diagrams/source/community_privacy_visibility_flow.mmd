@@ -1,0 +1,23 @@
+flowchart TD
+    A[Record has privacy level] --> B{Viewer state}
+
+    B -->|Guest| C{Privacy}
+    C -->|public| D[Allow show/index]
+    C -->|community| E[Deny]
+    C -->|private| E
+
+    B -->|Signed-in person| F{Privacy}
+    F -->|public| G[Allow show/index]
+    F -->|community| G
+    F -->|private| H{Existing special access?}
+
+    H -->|creator / manager / member / host / invite| I[Allow by policy-specific rule]
+    H -->|no| E
+
+    B -->|Manager / steward| J[Allow all privacy levels]
+
+    D --> K[Rendered content and badges]
+    G --> K
+    I --> K
+    J --> K
+

@@ -14,8 +14,9 @@ module BetterTogether
       # Deny if author is blocked
       return false if blocked_author?
 
-      # Allow if published and public
-      record.published? && record.privacy_public?
+      # Allow published public posts to everyone and published community posts to
+      # signed-in people.
+      record.published? && public_or_signed_in_community?(record)
     end
 
     def create?
@@ -40,11 +41,15 @@ module BetterTogether
 
         base = scope.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
-        public_posts = posts_table[:privacy].eq('public')
-        return base.where(public_posts) unless agent
+        visible_posts = if agent.present?
+                          posts_table[:privacy].in(%w[public community])
+                        else
+                          posts_table[:privacy].eq('public')
+                        end
+        return base.where(visible_posts) unless agent
 
         creator_posts = posts_table[:creator_id].eq(agent.id)
-        base.where(public_posts.or(creator_posts))
+        base.where(visible_posts.or(creator_posts))
       end
       # rubocop:enable Metrics/AbcSize
 

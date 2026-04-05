@@ -32,7 +32,7 @@ module BetterTogether
     end
 
     def can_view_calendar?
-      return true if record.privacy_public?
+      return true if public_or_signed_in_community?(record)
       return true if record.creator == agent
 
       false

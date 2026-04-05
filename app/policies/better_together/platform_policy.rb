@@ -40,7 +40,13 @@ module BetterTogether
       def resolve
         results = scope.order(:host, :identifier)
 
-        results = results.privacy_public unless can_manage_platform_settings?
+        unless can_manage_platform_settings?
+          results = if user.present?
+                      results.where(privacy: %w[public community])
+                    else
+                      results.privacy_public
+                    end
+        end
 
         results
       end

@@ -7,7 +7,7 @@ module BetterTogether
     end
 
     def show?
-      record.privacy_public? ||
+      public_or_signed_in_community?(record) ||
         member_of_community? ||
         creator_of_community? ||
         can_manage_community? ||
@@ -105,8 +105,12 @@ module BetterTogether
         communities_table = ::BetterTogether::Community.arel_table
         person_community_memberships_table = ::BetterTogether::PersonCommunityMembership.arel_table
 
-        # Only list communities that are public and where the current person is a member or a creator
-        query = communities_table[:privacy].eq('public')
+        # Signed-in people can browse community-scoped communities in addition to public ones.
+        query = if agent.present?
+                  communities_table[:privacy].in(%w[public community])
+                else
+                  communities_table[:privacy].eq('public')
+                end
 
         if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
           query = query.or(communities_table[:privacy].eq('private'))

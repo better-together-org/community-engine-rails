@@ -9,8 +9,9 @@ module BetterTogether
     end
 
     def show?
-      # Anyone can view published public pages; editors (managers or authors) can view private/unpublished pages
-      (record.published? && record.privacy_public?) || update?
+      # Anyone can view published public pages; signed-in people can also view
+      # published community pages. Editors can still view private/unpublished pages.
+      (record.published? && public_or_signed_in_community?(record)) || update?
     end
 
     def create?
@@ -58,16 +59,21 @@ module BetterTogether
                                   .and(at[:authorable_type].eq('BetterTogether::Page'))
                               )
 
-          # Predicate for published public pages
+          visible_privacy = if agent.present?
+                              pt[:privacy].in(%w[public community])
+                            else
+                              pt[:privacy].eq('public')
+                            end
+
+          # Predicate for published pages visible to this audience
           published_pub = pt[:published_at].lteq(Time.current)
-                                           .and(pt[:privacy].eq('public'))
+                                           .and(visible_privacy)
 
           # Combine predicates: either published public or authored
           base.where(published_pub.or(pt[:id].in(authored_subquery)))
         else
-          # Regular users only see published public pages
-          base.published
-              .privacy_public
+          # Guests only see published public pages
+          base.published.privacy_public
         end
       end
 
