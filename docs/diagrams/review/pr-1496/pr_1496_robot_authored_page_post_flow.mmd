@@ -1,0 +1,11 @@
+flowchart TD
+  A[Platform manager opens page or post form] --> B{Explicit authors selected?}
+  B -->|Yes| C[Persist selected people and or robots as authors]
+  B -->|No| D[Fallback adds human creator as author]
+  C --> E[Save page or post]
+  D --> E
+  E --> F[Render governed authors on show and card surfaces]
+  F --> G{Byline composition}
+  G -->|Robot only| H[Show robot identity truthfully]
+  G -->|Mixed| I[Show human and robot byline truthfully]
+  G -->|Human only| J[Show existing human byline behavior]
