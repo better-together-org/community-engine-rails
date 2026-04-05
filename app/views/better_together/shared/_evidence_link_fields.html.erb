@@ -12,7 +12,7 @@
   end
 %>
 <% github_import_url = signed_in_user.present? ? better_together.github_citation_imports_path(locale: I18n.locale, format: :json) : nil %>
-<% github_create_url = if signed_in_user.present? && record.respond_to?(:citation_export_key)
+<% github_create_url = if signed_in_user.present? && record.persisted? && record.respond_to?(:citation_export_key)
   better_together.import_github_citation_path(citeable_key: record.citation_export_key, id: record.to_param, locale: I18n.locale, format: :json)
 end %>
 

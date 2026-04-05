@@ -16,13 +16,18 @@ module BetterTogether
     end
 
     def record!
-      AgreementParticipant.create!(
+      agreement_participant = AgreementParticipant.find_or_initialize_by(
         agreement:,
-        participant:,
+        participant:
+      )
+
+      agreement_participant.assign_attributes(
         accepted_at:,
         acceptance_method:,
         audit_context: normalized_audit_context
       )
+      agreement_participant.save!
+      agreement_participant
     end
 
     private

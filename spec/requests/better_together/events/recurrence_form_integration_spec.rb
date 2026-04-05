@@ -13,23 +13,22 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let!(:community) { BetterTogether::Community.find_by(host: true) }
   let!(:user) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
+  let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
+  let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
+  let(:starts_at) { Time.zone.parse('2026-02-22 10:00:00') }
+  let(:ends_at) { Time.zone.parse('2026-02-22 12:00:00') }
   let(:event_params) do
     {
       name: 'Weekly Meeting',
       slug: 'weekly-meeting',
-      description: 'A recurring weekly meeting',
-      starts_at: Time.zone.parse('2026-02-22 10:00:00'),  # Explicit time
-      ends_at: Time.zone.parse('2026-02-22 12:00:00'),    # Explicit time
+      starts_at: starts_at.iso8601,
       timezone: 'America/New_York',
       privacy: 'public',
-      category_ids: [],
-      creator_id: user.person.id,
-      event_hosts_attributes: {
-        '0' => {
-          host_id: community.id,
-          host_type: 'BetterTogether::Community'
-        }
-      }
+      category_ids: []
     }
   end
 
@@ -54,6 +53,15 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
 
     schedule.add_recurrence_rule(rule)
     schedule.to_yaml
+  end
+
+  before do
+    [privacy_policy, terms_of_service, code_of_conduct, content_publishing_agreement].each do |agreement|
+      BetterTogether::AgreementParticipant.find_or_create_by!(participant: user.person, agreement: agreement) do |participant|
+        participant.person = user.person
+        participant.accepted_at = Time.current
+      end
+    end
   end
 
   describe 'POST /events with recurrence_attributes' do
