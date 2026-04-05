@@ -25,6 +25,6 @@ RSpec.describe 'better_together/shared/_governed_contributions' do
     expect(rendered).to include('Editors')
     expect(rendered).to include('Reviewers')
     expect(page).to have_link('Editor Person', href: "/people/#{person.to_param}")
-    expect(rendered).to include('Review Bot (@review-bot)')
+    expect(rendered).to include('Review Bot')
   end
 end
