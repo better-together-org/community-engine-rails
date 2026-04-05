@@ -1,9 +1,9 @@
 {
   "name": "release_0_11_0_block_image_library",
   "device": "desktop",
-  "url": "http://127.0.0.1:43223/en/host/content/blocks/new?block_type=BetterTogether%3A%3AContent%3A%3AImage",
+  "url": "http://127.0.0.1:38479/en/host/content/blocks/new?block_type=BetterTogether%3A%3AContent%3A%3AImage",
   "title": "Halvorson-Grimes",
-  "captured_at": "2026-04-05T03:43:43Z",
+  "captured_at": "2026-04-05T16:02:54Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_block_image_library",

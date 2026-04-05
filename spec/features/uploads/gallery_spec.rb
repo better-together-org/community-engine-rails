@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'uri'
 
 RSpec.describe 'uploads gallery', :js do # rubocop:disable Metrics/BlockLength
   include BetterTogether::DeviseSessionHelpers
@@ -48,5 +49,33 @@ RSpec.describe 'uploads gallery', :js do # rubocop:disable Metrics/BlockLength
     JS
     copy_button.click
     expect(page.evaluate_script('window.copiedText')).to eq(copy_button['data-url'])
+  end
+
+  scenario 'uses the current request host for upload and image library previews' do
+    image_path = File.expand_path('../../../app/assets/images/better_together/unsplash-community-1.jpeg', __dir__)
+
+    create(:better_together_upload, name: 'Gallery Image', creator:).tap do |upload|
+      File.open(image_path, 'rb') do |file|
+        upload.file.attach(io: file, filename: 'gallery-image.jpeg', content_type: 'image/jpeg')
+      end
+    end
+
+    visit file_index_path(locale: I18n.default_locale)
+
+    current_origin = URI.parse(page.current_url).then { |url| "#{url.scheme}://#{url.host}:#{url.port}" }
+    card_image = find('[data-better_together--uploads-target="item"] img.card-img-top', match: :first)
+    copy_button = find('button', text: 'Copy URL', match: :first)
+
+    expect(card_image[:src]).to start_with(current_origin)
+    expect(copy_button['data-url']).to start_with(current_origin)
+
+    visit new_content_block_path(locale: I18n.default_locale, block_type: 'BetterTogether::Content::Image')
+    click_button 'Choose from library'
+
+    expect(page).to have_css('.modal.show', wait: 10)
+
+    library_image = find('.modal.show img', match: :first)
+    expect(library_image[:src]).to start_with(current_origin)
+    expect(library_image['data-url']).to start_with(current_origin)
   end
 end

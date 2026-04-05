@@ -27,7 +27,7 @@
   </div>
   <%= hidden_field_tag "#{scope}[media_signed_id]", nil, "data-better_together--image-library-target" => 'signedIdField' %>
   <!-- Image preview container (empty initially) -->
-  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= block.media.url if block.media.attached? %>">
+  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= storage_proxy_url_for(block.media) if block.media.attached? %>">
     <!-- The image preview will be dynamically inserted here -->
   </div>
 
@@ -43,7 +43,8 @@
             <% BetterTogether::Upload.with_creator(current_person).each do |upload| %>
               <% next unless upload.content_type.start_with?('image/') %>
               <div class="col-3">
-                <%= image_tag upload.url, class: 'img-fluid', data: { action: 'click->better_together--image-library#select', signed_id: upload.file.blob.signed_id, url: upload.url } %>
+                <% upload_url = storage_proxy_url_for(upload.file) %>
+                <%= image_tag upload_url, class: 'img-fluid', data: { action: 'click->better_together--image-library#select', signed_id: upload.file.blob.signed_id, url: upload_url } %>
               </div>
             <% end %>
           </div>

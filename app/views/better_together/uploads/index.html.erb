@@ -26,7 +26,7 @@
       <div class="col-md-3" data-better_together--uploads-target="item" data-name="<%= upload.name.to_s %>" data-created-at="<%= upload.created_at.iso8601 %>">
         <div class="card h-100">
           <% if upload.file.attached? && upload.file.representable? %>
-            <%= image_tag rails_storage_proxy_url(upload.file.representation(resize_to_limit: [200, 200]).processed),
+            <%= image_tag storage_proxy_url_for(upload.file.representation(resize_to_limit: [200, 200]).processed),
                           class: "card-img-top",
                           alt: upload.name %>
           <% end %>
@@ -38,7 +38,7 @@
               <li><strong>Type:</strong> <%= upload.content_type %></li>
             </ul>
             <div class="mt-auto btn-group">
-              <button class="btn btn-sm btn-outline-secondary" data-action="better_together--uploads#copy" data-url="<%= main_app.url_for(upload.file) %>">Copy URL</button>
+              <button class="btn btn-sm btn-outline-secondary" data-action="better_together--uploads#copy" data-url="<%= storage_proxy_url_for(upload.file) %>">Copy URL</button>
               <button class="btn btn-sm btn-primary" data-action="better_together--uploads#insert" data-signed-id="<%= upload.file.blob.signed_id %>">Insert</button>
             </div>
           </div>
