@@ -211,6 +211,9 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
   end
 
   describe 'POST /:locale/c', :as_platform_manager do
+    let!(:content_publishing_agreement) do
+      BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+    end
     let(:community_name) { "New Community #{SecureRandom.hex(4)}" }
     let(:valid_params) do
       {
@@ -220,6 +223,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
           privacy: 'public'
         }
       }
+    end
+
+    before do
+      BetterTogether::AgreementParticipant.find_or_create_by!(
+        participant: platform_manager.person,
+        agreement: content_publishing_agreement
+      ) do |participant|
+        participant.person = platform_manager.person
+        participant.accepted_at = Time.current
+      end
     end
 
     it 'creates a new community' do
@@ -267,6 +280,9 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
   end
 
   describe 'PATCH /:locale/c/:slug', :as_platform_manager do
+    let!(:content_publishing_agreement) do
+      BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+    end
     let(:community) do
       create(:better_together_community,
              name: 'Original Name',
@@ -281,6 +297,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
           privacy: 'public'
         }
       }
+    end
+
+    before do
+      BetterTogether::AgreementParticipant.find_or_create_by!(
+        participant: platform_manager.person,
+        agreement: content_publishing_agreement
+      ) do |participant|
+        participant.person = platform_manager.person
+        participant.accepted_at = Time.current
+      end
     end
 
     it 'updates the community using slug' do
