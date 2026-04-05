@@ -11,7 +11,11 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuOffers', :no_auth do
 
   describe 'GET /api/v1/joatu_offers' do
     let(:url) { '/api/v1/joatu_offers' }
-    let!(:offer) { create(:better_together_joatu_offer, creator: person) }
+    let!(:owned_private_offer) { create(:better_together_joatu_offer, creator: person, privacy: 'private') }
+    let!(:public_offer) do
+      create(:better_together_joatu_offer, privacy: 'private').tap { |offer| offer.update_column(:privacy, 'public') }
+    end
+    let!(:other_private_offer) { create(:better_together_joatu_offer, privacy: 'private') }
 
     context 'when authenticated' do
       before { get url, headers: auth_headers }
@@ -29,7 +33,8 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuOffers', :no_auth do
       it 'includes accessible offers' do
         json = JSON.parse(response.body)
         ids = json['data'].map { |d| d['id'] }
-        expect(ids).to include(offer.id)
+        expect(ids).to include(owned_private_offer.id, public_offer.id)
+        expect(ids).not_to include(other_private_offer.id)
       end
     end
 
@@ -43,7 +48,7 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuOffers', :no_auth do
   end
 
   describe 'GET /api/v1/joatu_offers/:id' do
-    let(:offer) { create(:better_together_joatu_offer, creator: person) }
+    let(:offer) { create(:better_together_joatu_offer, creator: person, privacy: 'private') }
     let(:url) { "/api/v1/joatu_offers/#{offer.id}" }
 
     context 'when authenticated' do
@@ -64,6 +69,16 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuOffers', :no_auth do
           'status' => offer.status,
           'urgency' => offer.urgency
         )
+      end
+    end
+
+    context 'when authenticated but record is a different private offer' do
+      let(:offer) { create(:better_together_joatu_offer, privacy: 'private') }
+
+      before { get url, headers: auth_headers }
+
+      it 'returns not found' do
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

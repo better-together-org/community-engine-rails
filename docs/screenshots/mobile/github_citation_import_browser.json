@@ -1,0 +1,11 @@
+{
+  "name": "github_citation_import_browser",
+  "device": "mobile",
+  "url": "http://127.0.0.1:40999/en/host/pages/github-citation-import-browser-8e5bca6a/edit",
+  "title": "Edit Impedit pariatur alias. | Pages | Test Host Community",
+  "captured_at": "2026-04-04T22:25:52Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "github_citation_import_browser",
+  "source_spec": "./spec/docs_screenshots/better_together/github_citation_import_browser_spec.rb"
+}

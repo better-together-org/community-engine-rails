@@ -7,27 +7,32 @@ module BetterTogether
       new(...).record!
     end
 
-    def initialize(agreement:, person:, acceptance_method:, accepted_at: Time.current, context: {})
+    def initialize(agreement:, acceptance_method:, participant: nil, person: nil, accepted_at: Time.current, context: {}) # rubocop:todo Metrics/ParameterLists
       @agreement = agreement
-      @person = person
+      @participant = participant || person
       @acceptance_method = acceptance_method
       @accepted_at = accepted_at
       @context = context
     end
 
     def record!
-      AgreementParticipant.create!(
+      agreement_participant = AgreementParticipant.find_or_initialize_by(
         agreement:,
-        person:,
+        participant:
+      )
+
+      agreement_participant.assign_attributes(
         accepted_at:,
         acceptance_method:,
         audit_context: normalized_audit_context
       )
+      agreement_participant.save!
+      agreement_participant
     end
 
     private
 
-    attr_reader :accepted_at, :acceptance_method, :agreement, :context, :person
+    attr_reader :accepted_at, :acceptance_method, :agreement, :context, :participant
 
     def normalized_audit_context
       base_context = context.except(:request).to_h.deep_stringify_keys

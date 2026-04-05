@@ -12,6 +12,9 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
   let(:regular_headers) { api_auth_headers(regular_user, token: regular_token) }
 
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   describe 'GET /api/v1/blocks' do
     let(:url) { '/api/v1/blocks' }
@@ -103,7 +106,14 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
     end
 
     context 'when authenticated as platform manager' do
-      before { post url, params: payload, headers: manager_headers.merge(jsonapi_headers) }
+      before do
+        create(:better_together_agreement_participant,
+               agreement: content_publishing_agreement,
+               participant: manager_user.person,
+               accepted_at: Time.current)
+
+        post url, params: payload, headers: manager_headers.merge(jsonapi_headers)
+      end
 
       it 'returns created status' do
         expect(response).to have_http_status(:created)

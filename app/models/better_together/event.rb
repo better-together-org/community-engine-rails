@@ -6,6 +6,8 @@ module BetterTogether
   class Event < ApplicationRecord
     include Attachments::Images
     include Categorizable
+    include Citable
+    include Claimable
     include Creatable
     include FriendlySlug
     include Identifier

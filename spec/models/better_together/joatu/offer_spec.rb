@@ -92,4 +92,24 @@ RSpec.describe BetterTogether::Joatu::Offer do
     offer.categories = []
     expect(offer).not_to be_valid
   end
+
+  it 'records creator contribution as an exchange initiator' do
+    offer_record = create(:better_together_joatu_offer)
+
+    expect(offer_record.contributions.count).to eq(1)
+    expect(offer_record.contributions.first.role).to eq('exchange_initiator')
+    expect(offer_record.contributions.first.contribution_type).to eq('community_exchange')
+    expect(offer_record.contributors_for(:exchange_initiator)).to contain_exactly(offer_record.creator)
+  end
+
+  it 'supports citations and claims on the exchange record' do
+    offer_record = create(:better_together_joatu_offer)
+    citation = create(:better_together_citation, citeable: offer_record, reference_key: 'offer_source')
+    claim = create(:better_together_claim, claimable: offer_record, claim_key: 'offer_claim')
+    create(:better_together_evidence_link, claim:, citation:)
+
+    expect(offer_record.citations).to contain_exactly(citation)
+    expect(offer_record.claims).to contain_exactly(claim)
+    expect(claim.citations).to contain_exactly(citation)
+  end
 end

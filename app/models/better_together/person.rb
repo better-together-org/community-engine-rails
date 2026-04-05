@@ -15,6 +15,7 @@ module BetterTogether
     include CreatedRecords
     include FriendlySlug
     include GovernanceParticipant
+    include GovernedAgent
     include HostsEvents
     include Identifier
     include Identity
@@ -43,7 +44,7 @@ module BetterTogether
              dependent: :destroy,
              inverse_of: :creator
 
-    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreement_participants, as: :participant, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 
     has_many :person_blocks, foreign_key: :blocker_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
@@ -239,6 +240,26 @@ module BetterTogether
 
     def valid_event_host_ids
       [id] + member_communities.pluck(:id)
+    end
+
+    def github_integrations
+      person_platform_integrations.github
+    end
+
+    def github_handles
+      github_integrations.order(:handle).pluck(:handle).compact_blank.uniq
+    end
+
+    def github_profile_urls
+      github_integrations.order(:handle).pluck(:profile_url).compact_blank.uniq
+    end
+
+    def contribution_records
+      contributions.includes(:authorable).order(created_at: :desc)
+    end
+
+    def content_contribution_records
+      contribution_records.where(authorable_type: ['BetterTogether::Page', 'BetterTogether::Post'])
     end
 
     def handle

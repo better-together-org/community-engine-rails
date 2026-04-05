@@ -8,6 +8,9 @@ RSpec.describe 'API V1 - People', :skip_host_setup do
   let(:token) { api_sign_in_and_get_token(user) }
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   before do
     configure_host_platform
@@ -169,6 +172,13 @@ RSpec.describe 'API V1 - People', :skip_host_setup do
                  }
                },
                required: ['data']
+
+        let!(:publishing_agreement_acceptance) do
+          create(:better_together_agreement_participant,
+                 agreement: content_publishing_agreement,
+                 participant: platform_manager_user.person,
+                 accepted_at: Time.current)
+        end
 
         run_test!
       end

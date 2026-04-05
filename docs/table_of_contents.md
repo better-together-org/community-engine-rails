@@ -48,7 +48,15 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
+- [Actor-Safe Creator and Authorship Migration Plan](developers/systems/actor_safe_creator_authorship_migration_plan.md) - Phased path toward governed-agent-safe creator and authorship models
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
+- [Citation and Evidence Chain System](developers/systems/citation_evidence_chain_system.md) - Structured citations, claims, and evidence linking
+- [Community Action Network Governance System](developers/systems/community_action_network_governance_system.md) - Constitutional governance model for people, bots, and shared resources
+- [Contribution Attribution System](developers/systems/contribution_attribution_system.md) - Governed contributor roles, contribution types, and structured attribution details
+- [Public Publishing Agreement Gate System](developers/systems/public_publishing_agreement_gate_system.md) - Enforced agreement acceptance before governed public visibility
+- [PR 1494 Scope Consolidation](developers/systems/pr_1494_scope_consolidation.md) - Cut line for governed publishing, contribution, and evidence scope in PR 1494
+- [Release Package Publishing System](developers/systems/release_package_publishing_system.md) - Proposed CE-native workflow for governed release packages
+- [Robot Author Identity System](developers/systems/robot_author_identity_system.md) - Proposed model for truthful robot authorship on governed content
 - [Community Social System](developers/systems/community_social_system.md) - Social features
 - [Content Management](developers/systems/content_management.md) - Content creation and management
 - [Conversations Messaging System](developers/systems/conversations_messaging_system.md) - Real-time messaging
@@ -133,6 +141,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Accounts Flow](diagrams/source/accounts_flow.mmd)
 - [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
 - [⚡ Caching Performance Flow](diagrams/source/caching_performance_flow.mmd)
+- [Community Action Network Governance Flow](diagrams/source/community_action_network_governance_flow.mmd)
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
 - [Content Flow](diagrams/source/content_flow.mmd)
 - [Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)

@@ -9,6 +9,7 @@ FactoryBot.define do
     creator { association :better_together_person }
     status { 'open' }
     urgency { 'normal' }
+    privacy { 'private' }
 
     trait :with_target do
       target { association :better_together_person }

@@ -75,7 +75,13 @@
   </div>
 
   <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: joatu_request, form: form, attribute: 'description' } %>
+    <%= render partial: 'better_together/shared/translated_rich_text_field',
+               locals: {
+                 model: joatu_request,
+                 form: form,
+                 attribute: 'description',
+                 citation_options: joatu_request.citation_reference_options
+               } %>
   </div>
 
   <div class="row">
@@ -87,6 +93,11 @@
       <%= required_label form, :urgency %>
       <%= form.select :urgency, BetterTogether::Joatu::Exchange::URGENCY_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
     </div>
+  </div>
+
+  <div class="mb-3">
+    <%= required_label form, :privacy, class: 'form-label' %>
+    <%= privacy_field(form:, klass: joatu_request.class) %>
   </div>
 
   <div class="mb-3">
@@ -116,6 +127,10 @@
       <%= rl.hidden_field :creator_id, value: current_person&.id %>
     <% end %>
   <% end %>
+
+  <%= render 'better_together/shared/citation_fields_section', form:, record: joatu_request %>
+  <%= render 'better_together/shared/github_contribution_import_panel', record: joatu_request %>
+  <%= render 'better_together/shared/claim_fields_section', form:, record: joatu_request %>
 
   <%= yield :resource_toolbar %>
 <% end %>

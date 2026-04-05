@@ -1,6 +1,9 @@
 
 <div id="<%= dom_id(block) %>"
      class="content-block <%= dom_class(block) %><%= block.inline_classes %>"
+     data-citation-target="<%= block.citation_target_key %>"
+     data-evidence-selector="<%= block.evidence_selector %>"
+     data-block-type="<%= block.block_name %>"
      style="<%= block.inline_block_styles %>">
   <%= render partial: 'better_together/content/blocks/extra_block_components', locals: { block: } %>
   <%= yield %>

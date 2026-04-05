@@ -1,0 +1,11 @@
+{
+  "name": "contribution_evidence_summary",
+  "device": "mobile",
+  "url": "http://127.0.0.1:35207/en/p/person-658dbf3c840d0eae2113#contributions",
+  "title": "Evidence Summary Contributor | People | Test Host Community",
+  "captured_at": "2026-04-04T22:54:28Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "contribution_evidence_summary",
+  "source_spec": "./spec/docs_screenshots/better_together/contribution_evidence_summary_spec.rb"
+}

@@ -4,8 +4,20 @@ require 'rails_helper'
 
 RSpec.describe 'Joatu offer and request forms', :as_platform_manager do
   let!(:category) { create(:better_together_joatu_category) }
+  let(:manager_person) { BetterTogether::User.find_by(email: 'manager@example.test').person }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   before do
+    BetterTogether::AgreementParticipant.find_or_create_by!(
+      participant: manager_person,
+      agreement: content_publishing_agreement
+    ) do |participant|
+      participant.person = manager_person
+      participant.accepted_at = Time.current
+    end
+
     visit new_joatu_offer_path(locale: I18n.default_locale)
     fill_in name: 'joatu_offer[name_en]', with: 'Bike repair'
     # Populate the underlying ActionText hidden input for current locale

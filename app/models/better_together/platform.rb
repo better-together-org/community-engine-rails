@@ -81,6 +81,7 @@ module BetterTogether
     validates :oauth_issuer_url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
     validate :validate_csp_origin_text_fields
+    validate :require_publishing_agreement_for_public_network_visibility
 
     after_initialize :set_default_requires_invitation, if: :new_record?
     before_validation :apply_platform_registry_defaults
@@ -208,6 +209,17 @@ module BetterTogether
       BetterTogether::SafeFederationUrlValidator
         .new(attributes: [:oauth_issuer_url])
         .validate_each(self, :oauth_issuer_url, oauth_issuer_url)
+    end
+
+    def require_publishing_agreement_for_public_network_visibility
+      return unless network_visibility == 'public'
+      return unless new_record? || will_save_change_to_network_visibility?
+
+      BetterTogether::PublicVisibilityGate.allow!(
+        record: self,
+        actor: Current.governed_agent,
+        target_network_visibility: network_visibility
+      )
     end
 
     def persist_csp_origin_settings
