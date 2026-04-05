@@ -101,9 +101,11 @@ RSpec.describe 'Real Elasticsearch search matching', type: :integration do
   end
 
   before do
-    allow(BetterTogether::Search::Registry).to receive(:entries).and_return(search_entries)
-    allow(BetterTogether::Search::Registry).to receive(:models).and_return(search_entries.map(&:model_class))
-    allow(BetterTogether::Search::Registry).to receive(:global_search_models).and_return(search_entries.map(&:model_class))
+    allow(BetterTogether::Search::Registry).to receive_messages(
+      entries: search_entries,
+      models: search_entries.map(&:model_class),
+      global_search_models: search_entries.map(&:model_class)
+    )
     reindex_registry!
   end
 
