@@ -2640,6 +2640,7 @@ es:
       none_body: No hay publicaciones para mostrar en este momento.
       none_title: Aún no hay publicaciones
       published_on: Publicado %{date}
+      robot_authors: Autores robot
       save_post: Guardar publicación
       updated_on_short: Actualizado
       view_post: Ver publicación

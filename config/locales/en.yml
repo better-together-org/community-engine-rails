@@ -2596,6 +2596,7 @@ en:
       none_body: There are no posts to show right now.
       none_title: No posts yet
       published_on: Published %{date}
+      robot_authors: Robot Authors
       save_post: Save Post
       updated_on_short: Updated
       view_post: View Post

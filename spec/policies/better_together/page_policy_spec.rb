@@ -141,21 +141,14 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
         expect(subject).not_to include(public_unpublished, private_published, private_unpublished)
         # rubocop:enable RSpec/NamedSubject
       end
-    end
-    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
-    context 'with a robot-authored private page' do
-      let(:user) { normal_user }
-
-      before do
+      it 'does not treat a robot-authored private page as authored by an unrelated human user' do
         private_unpublished.authorships.where(author: author_person).delete_all
         private_unpublished.authorships.create!(author: robot_author)
-      end
-
-      it 'does not treat an unrelated human user as the author' do
         expect(subject).not_to include(private_unpublished) # rubocop:todo RSpec/NamedSubject
       end
     end
+    # rubocop:enable RSpec/MultipleMemoizedHelpers
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
     context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers

@@ -2624,6 +2624,7 @@ uk:
       none_body: Наразі немає постів для показу.
       none_title: Постів поки що немає
       published_on: Опубліковано %{date}
+      robot_authors: Автори-роботи
       save_post: Зберегти пост
       updated_on_short: Оновлено
       view_post: Переглянути пост
