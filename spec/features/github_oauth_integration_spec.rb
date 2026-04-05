@@ -76,7 +76,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
         initial_count = BetterTogether.user_class.count
         visit '/users/auth/github/callback'
 
-        expect(page).to have_current_path('/en/agreements/status', ignore_query: true)
+        expect(page).to have_current_path('/en', ignore_query: true)
 
         # Check that OAuth user was created (since it's a new email from OAuth)
         # Or linked to existing if email matching logic works
@@ -120,7 +120,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
       it 'updates existing integration and signs in user', :aggregate_failures do
         visit '/users/auth/github/callback'
 
-        expect(page).to have_current_path('/en/agreements/status', ignore_query: true)
+        expect(page).to have_current_path('/en', ignore_query: true)
 
         # Check that integration was updated
         existing_integration.reload

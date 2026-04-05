@@ -4,6 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::ChecklistsController' do
   let(:locale) { I18n.default_locale }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   describe 'GET /checklists/:id' do
     let(:checklist) { create(:better_together_checklist, title: 'My List', privacy: 'public') }
@@ -29,6 +32,14 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('value="community"')
       expect(response.body).to include('Community')
+    end
+
+    before do
+      manager_person = BetterTogether::User.find_by(email: 'manager@example.test').person
+      create(:better_together_agreement_participant,
+             agreement: content_publishing_agreement,
+             participant: manager_person,
+             accepted_at: Time.current)
     end
 
     it 'creates a checklist' do # rubocop:todo RSpec/MultipleExpectations
