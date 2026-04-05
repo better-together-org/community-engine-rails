@@ -2,7 +2,7 @@
 
 module BetterTogether
   # A gathering
-  class Community < ApplicationRecord
+  class Community < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Contactable
     include HostsEvents
     include Identifier
@@ -17,7 +17,8 @@ module BetterTogether
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
-               optional: true
+               optional: true,
+               inverse_of: :created_communities
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
@@ -127,13 +128,35 @@ module BetterTogether
     private
 
     def create_default_calendar
-      # Ensure identifiers remain unique across calendars by namespacing with the community identifier
-      calendars.create!(
-        identifier: "default-#{identifier}",
-        name: 'Default',
-        description: I18n.t('better_together.calendars.default_description',
-                            community_name: name,
-                            default: 'Default calendar for %<community_name>s')
+      calendar_identifier = "default-#{identifier}"
+      calendar = build_default_calendar(calendar_identifier)
+      calendar.save! if calendar.new_record? || calendar.changed?
+    rescue ActiveRecord::RecordInvalid => e
+      log_default_calendar_seed_error(e.record, calendar_identifier)
+      raise
+    end
+
+    def build_default_calendar(calendar_identifier)
+      calendars.find_or_initialize_by(identifier: calendar_identifier).tap do |calendar|
+        # Calendar slugs are globally unique, so the default calendar also needs
+        # a deterministic unique slug rather than the shared "default" slug.
+        calendar.slug = calendar_identifier if calendar.slug.blank?
+        calendar.name = 'Default' if calendar.name.blank?
+        calendar.description = I18n.t(
+          'better_together.calendars.default_description',
+          community_name: name,
+          default: 'Default calendar for %<community_name>s'
+        )
+      end
+    end
+
+    def log_default_calendar_seed_error(record, calendar_identifier)
+      Rails.logger.error(
+        '[BetterTogether::Community#create_default_calendar] ' \
+        "community_id=#{id} identifier=#{identifier} " \
+        "calendar_identifier=#{calendar_identifier} errors=#{record.errors.full_messages.join(' | ')} " \
+        "attrs=#{record.attributes.slice('id', 'community_id', 'identifier', 'locale', 'privacy', 'protected').inspect} " \
+        "slug=#{record.try(:slug).inspect} name=#{record.try(:name).inspect}"
       )
     end
 

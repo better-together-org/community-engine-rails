@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+# shellcheck source=./docker-compose-env.sh
+source "$repo_root/bin/docker-compose-env.sh"
+
+if [[ -z "${CE_WORKTREE_DB_SUFFIX:-}" ]]; then
+  exit 0
+fi
+
+primary_test_db="community_engine_test${CE_WORKTREE_DB_SUFFIX}"
+
+if docker exec community-engine-db psql -U postgres -tAc \
+  "SELECT 1 FROM pg_database WHERE datname='${primary_test_db}'" | grep -q 1; then
+  exit 0
+fi
+
+echo "Preparing worktree test databases for suffix ${CE_WORKTREE_DB_SUFFIX}..."
+
+# Rebuild the primary test DB from schema in the dummy app context.
+./bin/dc run --rm --no-deps app ./bin/dummy rails db:drop db:create db:schema:load RAILS_ENV=test >/dev/null
+
+# Prepare the parallel test DBs for prspec-style runs in the same worktree.
+./bin/dc run --rm --no-deps app ./bin/dummy bundle exec rake \
+  db:parallel:purge db:parallel:create db:parallel:prepare >/dev/null
+

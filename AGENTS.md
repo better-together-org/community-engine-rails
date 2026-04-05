@@ -135,15 +135,19 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **`bt_*` column helpers**: Use standardized column definitions (bt_references, bt_identifier, bt_privacy, etc.)
 - **Consistent naming**: All tables automatically prefixed with `better_together_`
 - **UUID foreign keys**: Use `bt_references` for all associations to maintain consistency
+- **Migrations must be idempotent against partial-schema states**: guard additive DDL with `table_exists?`, `column_exists?`, `index_exists?`, or `index_name_exists?` so interrupted host-app upgrades can be retried safely
+- **Partial-state failures are source bugs**: if a host app upgrade hits duplicate tables, columns, or indexes from a prior partial run, patch the originating CE migration instead of relying on host-app-only repair code
 - **Example migration pattern**:
   ```ruby
   class CreateBetterTogetherExampleModel < ActiveRecord::Migration[7.1]
     def change
-      create_bt_table :example_models do |t|
-        t.bt_identifier
-        t.bt_privacy
-        t.bt_references :person, null: false
-        t.string :status, default: "pending"
+      unless table_exists?(:better_together_example_models)
+        create_bt_table :example_models do |t|
+          t.bt_identifier
+          t.bt_privacy
+          t.bt_references :person, null: false
+          t.string :status, default: "pending"
+        end
       end
     end
   end
@@ -214,6 +218,12 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Effects:
   - Devise registration page prompts for an invitation code when none is present.
   - Accepted invitations prefill email, apply community/platform roles, and are marked accepted on successful sign‑up.
+
+## Session Audit And Worktree Bootstrap
+- Start each agent session with `./scripts/session_command_log.sh init`.
+- Before mutating work, run `./scripts/session_worktree.sh ensure --repo . --agent <codex|claude|copilot|local> --session-id "${CODEX_THREAD_ID:-$(date -u +%Y%m%dT%H%M%SZ)}" --storage-mode local`.
+- Run consequential commands through `./scripts/session_command_log.sh run --intent "<intent>" -- <command>`.
+- Session command logs and worktree metadata must remain anchored in the repository's main `logs/sessions/` directory, even when the current shell is inside a linked worktree.
 
 ## Privacy Practices for Platform Organizers
 - Default posture: keep `requires_invitation` enabled unless there is a clear, consented need to open registration.

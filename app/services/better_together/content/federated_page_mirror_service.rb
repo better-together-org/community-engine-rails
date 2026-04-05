@@ -3,7 +3,11 @@
 module BetterTogether
   module Content
     # Imports or updates a mirrored Page record from a connected remote platform.
+    # rubocop:disable Metrics/ClassLength -- shared mirrored-content bookkeeping keeps
+    # the Page service slightly above the default threshold.
     class FederatedPageMirrorService
+      include ::BetterTogether::Federation::MirroredIdentifierResolution
+
       def initialize(connection:, remote_attributes:, remote_id:, preserve_remote_uuid: false, source_updated_at: nil)
         @connection = connection
         @remote_attributes = remote_attributes.to_h.with_indifferent_access
@@ -38,14 +42,21 @@ module BetterTogether
       end
 
       def find_or_initialize_page
-        if preserve_remote_uuid? && uuid?(remote_id)
-          existing = ::BetterTogether::Page.find_by(id: remote_id)
-          return existing if existing
+        return find_or_initialize_page_by_source_id unless mirror_with_remote_uuid?
 
-          ::BetterTogether::Page.new(id: remote_id)
-        else
-          ::BetterTogether::Page.find_or_initialize_by(platform: connection.source_platform, source_id: remote_id)
-        end
+        existing_page_with_remote_uuid || existing_page_by_source_id || ::BetterTogether::Page.new(id: remote_id)
+      end
+
+      def find_or_initialize_page_by_source_id
+        ::BetterTogether::Page.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+      end
+
+      def existing_page_with_remote_uuid
+        ::BetterTogether::Page.find_by(id: remote_id, platform: connection.target_platform)
+      end
+
+      def existing_page_by_source_id
+        ::BetterTogether::Page.find_by(platform: connection.target_platform, source_id: remote_id)
       end
 
       def assign_attributes(page)
@@ -78,17 +89,20 @@ module BetterTogether
 
       def mirror_tracking_attributes
         {
-          platform: connection.source_platform,
-          source_id: preserve_remote_uuid? ? nil : remote_id,
+          platform: connection.target_platform,
+          source_id: effective_preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current
         }
       end
 
       def normalized_identifier(page)
-        remote_attributes[:identifier].presence ||
-          page.identifier.presence ||
-          "federated-page-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
+        # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
+        return page.identifier if page.persisted?
+
+        base = remote_attributes[:identifier].presence ||
+               "federated-page-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
+        identifier_or_namespaced(::BetterTogether::Page, base, page.id)
       end
 
       def normalized_source_updated_at
@@ -102,9 +116,26 @@ module BetterTogether
         preserve_remote_uuid
       end
 
+      def effective_preserve_remote_uuid?
+        preserve_remote_uuid? && !shared_target_database?
+      end
+
+      def mirror_with_remote_uuid?
+        effective_preserve_remote_uuid? && uuid?(remote_id)
+      end
+
+      def same_instance_connection?
+        connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
+      end
+
+      def shared_target_database?
+        connection.target_platform.local_hosted?
+      end
+
       def uuid?(value)
         /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

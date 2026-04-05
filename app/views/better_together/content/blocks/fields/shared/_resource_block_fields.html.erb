@@ -1,6 +1,7 @@
 <%# Shared form fields for resource collection blocks.
     locals: (block:, scope:, temp_id:) -%>
-<%- available_communities = policy_scope(BetterTogether::Community).order(:name) %>
+<%- available_communities = policy_scope(BetterTogether::Community).includes(:string_translations)
+                                                               .sort_by { |community| community.name.to_s.downcase } %>
 
 <div class="resource-block-fields">
   <div class="row row-cols-1 row-cols-sm-2 mb-3">

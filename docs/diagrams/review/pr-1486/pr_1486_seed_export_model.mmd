@@ -1,0 +1,52 @@
+classDiagram
+    class Person {
+      +id
+      +identifier
+      +export_as_seed()
+    }
+
+    class PersonDataExport {
+      +status
+      +requested_at
+      +export_file
+      +mark_processing!()
+      +mark_completed!()
+    }
+
+    class PersonDataExportService {
+      +call()
+      +account_data()
+    }
+
+    class SeedsBuilder {
+      +call(subject, profile, persist, creator_id, context)
+      +seed_hash
+      +seed_record
+    }
+
+    class Seed {
+      +identifier
+      +origin
+      +payload
+      +yaml_file
+      +personal_export?()
+    }
+
+    class SeedsIngest {
+      +call(seed_data, connection, record_importer)
+    }
+
+    class SeedPlanting {
+      +status
+      +planting_type
+      +metadata
+    }
+
+    Person "1" --> "*" PersonDataExport : requests
+    Person "1" --> "*" Seed : personal_exports_for
+    PersonDataExportService --> Person : serializes
+    PersonDataExportService --> SeedsBuilder : delegates to
+    SeedsBuilder --> Seed : persists canonical envelope
+    Seed "1" --> "*" SeedPlanting : import history
+    SeedsIngest --> Seed : imports canonical seed data
+

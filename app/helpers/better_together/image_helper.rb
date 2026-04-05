@@ -129,7 +129,7 @@ module BetterTogether
                       rails_storage_proxy_url(entity.profile_image_variant(image_size))
                     end
 
-        image_tag(image_url, **image_tag_attributes) if image_url
+        image_tag(same_origin_image_url(image_url), **image_tag_attributes) if image_url
       else
         # Use a default image based on the entity type
         default_image = default_profile_image(entity, image_format)
@@ -169,6 +169,13 @@ module BetterTogether
     end
 
     private
+
+    def same_origin_image_url(image_url)
+      return image_url unless image_url.to_s.start_with?('/')
+      return image_url unless respond_to?(:request) && request
+
+      "#{request.base_url}#{image_url}"
+    end
 
     def default_cover_image(entity, image_format)
       case entity.class.name

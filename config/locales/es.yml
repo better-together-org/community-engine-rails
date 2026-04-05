@@ -316,6 +316,8 @@ es:
         conversations: Conversaciones
         created_conversations: Conversaciones creadas
         description: Descripción
+        federate_content: Permitir que esta plataforma incluya tus publicaciones,
+          páginas y eventos públicos en fuentes de federación aprobadas.
         identifications: Identificaciones
         identifier: Identificador
         locale: Idioma
@@ -596,16 +598,31 @@ es:
       better_together/category: Categoría
       better_together/checklist: Lista de verificación
       better_together/community: Comunidad
+      better_together/content/accordion_block: Acordeón
+      better_together/content/alert_block: Alerta
       better_together/content/block: Bloquear
+      better_together/content/call_to_action_block: Llamada a la acción
+      better_together/content/checklist_block: Lista de verificación
+      better_together/content/communities_block: Comunidades
       better_together/content/css: CSS personalizado
+      better_together/content/events_block: Eventos
       better_together/content/hero: Héroe
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Imagen
+      better_together/content/link: Enlace
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagrama Mermaid
+      better_together/content/navigation_area_block: Área de navegación
       better_together/content/page_block: Bloqueo de página
+      better_together/content/people_block: Personas
+      better_together/content/platform_block: Plataforma
+      better_together/content/posts_block: Publicaciones
+      better_together/content/quote_block: Cita
       better_together/content/rich_text: Texto enriquecido
+      better_together/content/statistics_block: Estadísticas
       better_together/content/template: Archivo de plantilla
+      better_together/content/video_block: Video
       better_together/conversation: Conversación
       better_together/conversation_participant: Participante en la conversación
       better_together/event: Evento
@@ -707,6 +724,14 @@ es:
         close: Cerrar
         title: Ver acuerdo requerido
       participant:
+        acceptance_methods:
+          agreement_review: revisión del acuerdo
+          api: API
+          legacy: registro heredado
+          sign_up: registro
+          system: sistema
+        accepted_via: Aceptado mediante %{method}
+        agreement_revision: Versión del acuerdo %{timestamp}
         pending: Pendiente
       show:
         title: Acuerdo
@@ -901,8 +926,37 @@ es:
           select_prompt: "— Seleccionar una lista de verificación —"
         communities_block:
           empty: No hay comunidades para mostrar.
+        embeds:
+          blocked_body: "%{title} no pudo mostrarse aquí porque esta plataforma no
+            ha incluido ese origen de iframe en la lista permitida de la Política
+            de Seguridad de Contenido."
+          blocked_instructions: Agrega %{origin} en Anfitrión > Plataforma > Seguridad
+            / inserciones CSP > Orígenes permitidos de iframes salientes y luego recarga
+            esta página.
+          blocked_origin_label: 'Origen bloqueado:'
+          blocked_title: Este contenido incrustado está bloqueado actualmente
+          invalid_url_body: Revisa la URL del iframe y asegúrate de que sea una dirección
+            HTTPS completa.
+          invalid_url_title: Este contenido incrustado tiene una URL no válida
+          open_in_new_tab: Abrir contenido incrustado en una nueva pestaña
         events_block:
           empty: No hay eventos para mostrar.
+        hero:
+          editor:
+            background: Fondo
+            cta_button: Botón de llamada a la acción
+            cta_url_invalid: Proporcione una URL válida que comience con http:// o
+              https://.
+            heading_color: Color del encabezado
+            overlay_color: Color de superposición
+            paragraph_color: Color del párrafo
+        iframe_block:
+          csp_help: Si este contenido no está permitido para la plataforma actual,
+            Community Engine mostrará una guía visible en lugar de un iframe en blanco.
+          default_title: Contenido incrustado
+          missing_url: No se ha configurado ninguna URL de iframe.
+          url_help: Acepta una URL HTTPS completa de iframe, como una encuesta de
+            Formbricks u otra inserción confiable de un espacio comunitario.
         markdown:
           fields:
             auto_sync: Cargar siempre desde archivo (ignorar contenido de base de
@@ -2202,12 +2256,15 @@ es:
         recent_events: Eventos Recientes
         title: Calendario Personal
         upcoming_events: Eventos Próximos
+      deleted_name: Persona eliminada
       device_permissions:
         camera: Cámara
         location: Ubicación
         microphone: Micrófono
         notifications: Notificaciones
         permissions_group_label: Permissions group label
+      federate_content: Permitir que esta plataforma incluya tus publicaciones, páginas
+        y eventos públicos en fuentes de federación aprobadas.
       index:
         new_person: Nueva persona
       notification_preferences: Preferencias de notificación de mensajes
@@ -2538,6 +2595,18 @@ es:
         pending: Pendiente
     platforms:
       form:
+        csp_frame_ancestors_text_hint: Quién puede incrustar este sitio de CE. Selecciona
+          orígenes de confianza o escribe un nuevo hostname/origen y presiona Enter.
+          Déjalo en blanco para mantener frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Orígenes permitidos para incrustación entrante
+        csp_frame_src_text_hint: Qué puede incrustar este sitio de CE en iframes,
+          como Formbricks u otras integraciones comunitarias de confianza. Selecciona
+          orígenes de confianza o escribe un nuevo hostname/origen y presiona Enter.
+        csp_frame_src_text_label: Orígenes permitidos para iframes salientes
+        csp_img_src_text_hint: Hosts de imágenes adicionales desde los que este sitio
+          de CE puede cargar. Selecciona orígenes de confianza o escribe un nuevo
+          hostname/origen y presiona Enter.
+        csp_img_src_text_label: Orígenes externos de imágenes permitidos
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
@@ -2571,6 +2640,7 @@ es:
       none_body: No hay publicaciones para mostrar en este momento.
       none_title: Aún no hay publicaciones
       published_on: Publicado %{date}
+      robot_authors: Autores robot
       save_post: Guardar publicación
       updated_on_short: Actualizado
       view_post: Ver publicación
@@ -2836,8 +2906,42 @@ es:
           description: Conecte y gestione sus cuentas de plataformas externas.
           title: Cuentas Conectadas
         my_data:
-          description: View, download, or delete your personal data exports.
-          title: My Data
+          deletion:
+            actions: Actions
+            cancel: Cancel request
+            description: Deletion requests are queued for human review so safety,
+              legal, and community obligations can be handled carefully.
+            reason: Reason for deletion request
+            requested_at: Requested
+            status: Status
+            submit: Request account deletion
+            title: Account deletion requests
+          deletion_request_cancelled: Your deletion request has been cancelled.
+          deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
+          deletion_request_failed: We could not create your deletion request.
+          description: Ver, descargar o eliminar sus exportaciones de datos personales.
+          export_not_ready: Your export is not ready yet.
+          export_requested: Your data export has been requested.
+          exports:
+            actions: Actions
+            description: Generate a portable JSON export of your profile, memberships,
+              agreements, and other account-linked records.
+            download: Download
+            empty: You have not requested any account exports yet.
+            pending: Export in progress
+            request: Request export
+            requested_at: Requested
+            requesting: Requesting export...
+            status: Status
+            title: Downloadable account exports
+          seeds:
+            description: Earlier personal exports remain available here for advanced
+              portability and interoperability workflows.
+            empty: No legacy portable seed exports are available.
+            title: Existing portable seed exports
+            view: View
+          title: Mis datos
         navigation_aria_label: Navegación de configuración
         personal:
           coming_soon: La configuración personal estará disponible pronto.
@@ -2862,13 +2966,15 @@ es:
           developer: Desarrollador
           device_permissions: Permisos del Dispositivo
           integrations: Integraciones
-          my_data: My Data
+          my_data: Mis datos
           personal: Personal
           platform: Plataforma
           preferences: Preferencias
           privacy: Privacidad
         title: Configuración
     setup_wizard_steps:
+      already_completed: Esta plataforma ya ha sido configurada. Por favor inicie
+        sesión para administrar su plataforma.
       create_admin:
         flash:
           please_address_errors: Por favor, corrija los errores a continuación.
@@ -2973,6 +3079,9 @@ es:
         translation_failed: 'La traducción falló: %{message}'
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
+    uploads:
+      index:
+        storage_usage: Estás usando %{size} de almacenamiento
     validators:
       safe_federation_url:
         credentials_in_url: no debe incluir credenciales (usuario:contraseña@)
@@ -3476,6 +3585,8 @@ es:
       unlocked: Tu cuenta ha sido desbloqueada. Ya puedes iniciar sesión.
   devise_omniauth_callbacks:
     failure: Hubo un problema al iniciar sesión a través de %{kind}. %{reason}
+    generic_failure: Hubo un problema al iniciar sesión. Por favor regístrese o inténtelo
+      de nuevo más tarde.
     success: Autenticado exitosamente desde la cuenta de %{kind}.
   doorkeeper:
     errors:
@@ -3677,10 +3788,12 @@ es:
         cover_image: Imagen de portada
       person:
         allow_messages_from_members: Optar por recibir mensajes de personas que no
-          sean administradores de la plataforma.
         cover_image: Sube una imagen de portada para mostrar en la parte superior
           del perfil.
         description: Proporcione una breve descripción o biografía.
+        federate_content: Optar por permitir que esta plataforma comparta tus publicaciones,
+          páginas y eventos públicos con plataformas conectadas aprobadas. sean administradores
+          de la plataforma.
         locale: Selecciona el idioma preferido para la persona.
         name: Ingrese el nombre completo de la persona.
         notify_by_email: Envía un correo electrónico cuando una conversación tiene
@@ -3749,6 +3862,13 @@ es:
     uk: Українська
   meta:
     default_description: Bienvenido a %{platform_name}
+    descriptions:
+      communities:
+        index: Descubre comunidades en %{platform_name}.
+        show: Conoce %{community_name} en %{platform_name}.
+      conversations:
+        index: Explora tus conversaciones en %{platform_name}.
+        show: Ver conversación %{conversation_subject} en %{platform_name}.
     page:
       description_fallback: Lee %{title} en %{platform_name}
   metrics:
@@ -3876,19 +3996,20 @@ es:
     show:
       title: Detalles de membresía de plataforma
   person_seeds:
-    confirm_destroy: Delete this data export? This cannot be undone.
-    export_failed: Your data export could not be completed. Please try again.
-    export_queued: Your data export has been requested. A download link will appear
-      below once it is ready.
-    export_too_soon: You requested an export recently. Please wait before requesting
-      another.
-    export_unavailable: Your account does not have a person profile to export.
+    confirm_destroy: "¿Eliminar esta exportación de datos? Esta acción no se puede
+      deshacer."
+    export_failed: No se pudo completar su exportación de datos. Inténtelo de nuevo.
+    export_queued: Se ha solicitado su exportación de datos. Aparecerá un enlace de
+      descarga debajo cuando esté lista.
+    export_too_soon: Solicitó una exportación hace poco. Espere antes de solicitar
+      otra.
+    export_unavailable: Su cuenta no tiene un perfil de persona para exportar.
     index:
-      empty: You have no data exports yet.
-      exporting: Requesting…
-      new_export: Request Data Export
-      new_export_hint: Generate a portable export of your personal data.
-      title: My Data
+      empty: Aún no tiene exportaciones de datos.
+      exporting: Solicitando…
+      new_export: Solicitar exportación de datos
+      new_export_hint: Genere una exportación portable de sus datos personales.
+      title: Mis datos
   platform_invitations:
     confirm_delete: Confirmar eliminación
   platforms:
@@ -3943,10 +4064,11 @@ es:
     placeholder: Buscar...
   seeds:
     actions:
-      destroy: Destroy seed
+      destroy: Eliminar semilla
       edit: Edit seed
-      show: Show seed
-    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+      show: Ver semilla
+    confirm_destroy: "¿Está seguro de que desea eliminar esta semilla? Esta acción
+      no se puede deshacer."
     edit:
       title: 'Editing: %{identifier}'
     errors:
@@ -3957,16 +4079,16 @@ es:
     index:
       empty: No seeds found.
       new_seed: New seed
-      title: Seeds
+      title: Semillas
     new:
-      title: New Seed
-    seeded_by: Seeded by %{created_by}
+      title: Nueva semilla
+    seeded_by: Generada por %{created_by}
     show:
-      download_yaml: Download YAML
-      origin: Origin
-      payload: Payload
-      plantings: Planting History
-      yaml_export: YAML Export
+      download_yaml: Descargar YAML
+      origin: Origen
+      payload: Contenido
+      plantings: Historial de siembra
+      yaml_export: Exportación YAML
   shared:
     by: por
     links:

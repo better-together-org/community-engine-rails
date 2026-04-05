@@ -4,6 +4,12 @@ module BetterTogether
   module Content
     # Imports a batch of mirrored content records through the federated mirror services.
     class FederatedContentIngestService
+      IMPORTER_MAP = {
+        'post' => ::BetterTogether::Content::FederatedPostMirrorService,
+        'page' => ::BetterTogether::Content::FederatedPageMirrorService,
+        'event' => ::BetterTogether::FederatedEventMirrorService
+      }.freeze
+
       Result = Struct.new(
         :connection,
         :processed_count,
@@ -67,7 +73,14 @@ module BetterTogether
       end
 
       def classify_seed(seed_data, batches)
-        seed, record = ::BetterTogether::Seeds::FederatedSeedIngestor.call(connection:, seed_data:)
+        result = ::BetterTogether::Seeds::Ingest.call(
+          seed_data: seed_data,
+          connection: connection,
+          record_importer: method(:import_record)
+        )
+        seed = result.seed_record
+        record = result.imported_record
+
         if record.nil?
           batches[:unsupported_seeds] << seed_data
         else
@@ -92,6 +105,19 @@ module BetterTogether
           'processed_count' => result.processed_count,
           'unsupported_count' => result.unsupported_seeds.length
         }
+      end
+
+      def import_record(payload:, connection:, **)
+        importer_class = IMPORTER_MAP[payload[:type].to_s]
+        return nil if importer_class.nil?
+
+        importer_class.new(
+          connection: connection,
+          remote_attributes: payload[:attributes] || {},
+          remote_id: payload.fetch(:id),
+          preserve_remote_uuid: payload[:preserve_remote_uuid],
+          source_updated_at: payload[:source_updated_at]
+        ).call
       end
     end
   end

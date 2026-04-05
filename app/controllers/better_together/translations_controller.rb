@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Handles AI-powered translation requests via the TranslationBot (OpenAI).
+  # Handles AI-powered translation requests via the TranslationBot.
   #
   # Security rationale (audit finding H4):
-  #   The translate action forwards user-supplied content directly to the OpenAI API.
+  #   The translate action forwards user-supplied content to a configured LLM adapter.
   #   Without input validation an authenticated user could:
   #     1. Send megabytes of text, causing unbounded API cost and slow responses.
   #     2. Pass arbitrary strings as locale parameters, which are interpolated into
@@ -13,7 +13,7 @@ module BetterTogether
   #   content reaches the TranslationBot or the external API.
   class TranslationsController < ApplicationController
     # Maximum content size allowed for translation (50 KB).
-    # This limits OpenAI token consumption and prevents abuse.
+    # This limits token consumption and prevents abuse.
     MAX_CONTENT_SIZE = 50.kilobytes
 
     def translate # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -27,7 +27,7 @@ module BetterTogether
                       status: :unprocessable_content
       end
 
-      # Guard: cap payload size to prevent excessive OpenAI token usage / cost.
+      # Guard: cap payload size to prevent excessive token usage / cost.
       if content.bytesize > MAX_CONTENT_SIZE
         return render json: {
           error: t('better_together.translations.errors.content_too_long')

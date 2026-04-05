@@ -35,9 +35,12 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
 *Multi-tenant administrators and platform operators*
 - [README](platform_organizers/README.md) - Platform administration guide
+- [End-to-End Encryption Rollout](platform_organizers/e2e_encryption_rollout.md) - Encrypted-conversation rollout and support guide
+- [Embedded Content & CSP Controls](platform_organizers/embedded_content_and_csp.md) - Trusted iframe/video origin management
 - [Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
 - [GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
+- [Federation Privacy and Consent](platform_organizers/federation_privacy_and_consent.md) - Safe operation of platform-to-platform trust
 
 #### **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
@@ -52,11 +55,13 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Conversations README](developers/systems/README_conversations.md) - Messaging system overview
 - [Events System](developers/systems/events_system.md) - Event management
 - [Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
+- [Federation System](developers/systems/federation_system.md) - Platform connections, scopes, and sync
 - [Geography System](developers/systems/geography_system.md) - Location and mapping
 - [I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
+- [Robot Authored Page And Post Publishing](developers/systems/robot_authored_page_post_publishing_system.md) - Narrow workflow for truthful robot bylines on pages and posts
 - [Security Protection System](developers/systems/security_protection_system.md) - Security measures
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
@@ -100,6 +105,10 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Implementation** - [`implementation/`](implementation/)
 *Project management, planning, and templates*
 - [README](implementation/README.md) - Implementation resources overview
+
+#### **Release Notes** - [`releases/`](releases/)
+*Release summaries and coverage checks*
+- [0.11.0 Release Overview](releases/0.11.0.md) - `0.10.0` to current `main`, including late release-candidate fixes
 
 ##### **Current Plans** - [`implementation/current_plans/`](implementation/current_plans/)
 - [Community Social System Acceptance Criteria](implementation/current_plans/community_social_system_acceptance_criteria.md)
@@ -164,6 +173,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
 - [Content Flow](diagrams/source/content_flow.mmd)
 - [Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
+- [E2E Encrypted Conversation Flow](diagrams/source/e2e_encrypted_conversation_flow.mmd)
 - [Documentation System Flow](diagrams/source/documentation_system_flow.mmd)
 - [Events Flow](diagrams/source/events_flow.mmd)
 - [Exchange Flow](diagrams/source/exchange_flow.mmd)
@@ -172,6 +182,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Metrics Flow](diagrams/source/metrics_flow.mmd)
 - [Navigation Flow](diagrams/source/navigation_flow.mmd)
 - [Notifications Flow](diagrams/source/notifications_flow.mmd)
+- [PR 1496 Robot Authored Page And Post Flow](diagrams/source/pr_1496_robot_authored_page_post_flow.mmd)
+- [0.11.0 Release Capability Map](diagrams/source/release_0_11_0_capability_map.mmd)
 - [Role Based Access Control Flow](diagrams/source/role_based_access_control_flow.mmd)
 - [Security Protection Flow](diagrams/source/security_protection_flow.mmd)
 - [Sitemap Generation Flow](diagrams/source/sitemap_generation_flow.mmd)
@@ -210,6 +222,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [README](development/README.md) - Development resources overview
 - [Development Setup](development/dev-setup.md) - Local development guide
 - [♿ Accessibility Testing](development/accessibility_testing.md) - Browser accessibility and screenshot testing guidance
+- [Pull Request Evidence Standard](development/pull_request_evidence_standard.md) - Tiered evidence requirements for PR docs, diagrams, and screenshots
 - [Screenshot And Documentation Tooling Assessment](development/screenshot_and_documentation_tooling_assessment.md) - CE and management-tool tooling assessment
 
 #### **Joatu Exchange System** - [`joatu/`](joatu/)

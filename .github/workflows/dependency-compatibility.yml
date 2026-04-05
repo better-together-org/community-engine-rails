@@ -41,10 +41,10 @@ jobs:
               rails_version="8.1.2"
               ;;
             main|dev|compat/rails-8.0)
-              rails_version="8.0.3"
+              rails_version="8.0.4.1"
               ;;
             *)
-              rails_version="8.0.3"
+              rails_version="8.0.4.1"
               ;;
           esac
 

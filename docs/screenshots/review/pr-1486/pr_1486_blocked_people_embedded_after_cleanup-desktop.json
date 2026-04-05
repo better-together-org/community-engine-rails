@@ -1,0 +1,11 @@
+{
+  "name": "pr_1486_blocked_people_embedded_after_cleanup",
+  "device": "desktop",
+  "url": "http://127.0.0.1:37145/en/settings#blocked-people",
+  "title": "Settings | Test Host Community",
+  "captured_at": "2026-04-03T17:41:17Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "settings_embed_review",
+  "source_spec": "./spec/docs_screenshots/better_together/settings_tab_embed_review_spec.rb"
+}

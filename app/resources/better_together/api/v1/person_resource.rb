@@ -18,6 +18,7 @@ module BetterTogether
         attribute :locale
         attribute :time_zone
         attribute :receive_messages_from_members
+        attribute :federate_content
 
         # Notification preference attributes
         attribute :notify_by_email
@@ -29,7 +30,7 @@ module BetterTogether
 
         # Relationships
         has_one :user
-        has_many :communities
+        has_many :communities, relation_name: :member_communities
         has_many :person_community_memberships
         # TODO: Enable when corresponding resources are created
         # has_many :conversations
@@ -60,6 +61,10 @@ module BetterTogether
 
         def receive_messages_from_members
           @model.receive_messages_from_members
+        end
+
+        def federate_content
+          @model.federate_content
         end
 
         def notify_by_email

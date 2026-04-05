@@ -83,6 +83,15 @@ module BetterTogether
     scope :latest_first, -> { order(seeded_at: :desc, created_at: :desc) }
     scope :latest_version, ->(type, identifier) { by_type(type).by_identifier(identifier).latest_first.limit(1) }
     scope :latest, -> { latest_first.limit(1) }
+    scope :personal_exports_for, lambda { |person|
+      return none unless person
+
+      where(
+        creator_id: person.id,
+        seedable_type: 'BetterTogether::Person',
+        seedable_id: person.id
+      )
+    }
 
     # -------------------------------------------------------------
     # Accessor overrides for origin/payload => Indifferent Access
@@ -120,6 +129,20 @@ module BetterTogether
 
     def platform_shared?
       lane == 'platform_shared'
+    end
+
+    def personal_export?
+      seedable_type == 'BetterTogether::Person' &&
+        creator_id.present? &&
+        creator_id.to_s == seedable_id.to_s
+    end
+
+    def seed_category
+      return :federated_linked if private_linked?
+      return :federated_shared if platform_shared?
+      return :personal_export if personal_export?
+
+      :platform_managed
     end
 
     # -------------------------------------------------------------

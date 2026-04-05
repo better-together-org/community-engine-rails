@@ -316,6 +316,8 @@ en:
         conversations: Conversations
         created_conversations: Created conversations
         description: Description
+        federate_content: Allow this platform to include your public posts, pages,
+          and events in approved federation feeds.
         identifications: Identifications
         identifier: Identifier
         locale: Language
@@ -593,16 +595,31 @@ en:
       better_together/category: Category
       better_together/checklist: Checklist
       better_together/community: Community
+      better_together/content/accordion_block: Accordion
+      better_together/content/alert_block: Alert
       better_together/content/block: Block
+      better_together/content/call_to_action_block: Call to Action
+      better_together/content/checklist_block: Checklist
+      better_together/content/communities_block: Communities
       better_together/content/css: Custom CSS
+      better_together/content/events_block: Events
       better_together/content/hero: Hero
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/link: Link
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
+      better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
+      better_together/content/people_block: People
+      better_together/content/platform_block: Platform
+      better_together/content/posts_block: Posts
+      better_together/content/quote_block: Quote
       better_together/content/rich_text: Rich Text
+      better_together/content/statistics_block: Statistics
       better_together/content/template: Template File
+      better_together/content/video_block: Video
       better_together/conversation: Conversation
       better_together/conversation_participant: Conversation Participant
       better_together/event: Event
@@ -702,6 +719,14 @@ en:
         close: Close
         title: View required agreement
       participant:
+        acceptance_methods:
+          agreement_review: agreement review
+          api: API
+          legacy: legacy record
+          sign_up: sign up
+          system: system
+        accepted_via: Accepted via %{method}
+        agreement_revision: Agreement revision %{timestamp}
         pending: pending
       show:
         title: Agreement
@@ -897,8 +922,34 @@ en:
           select_prompt: "— Select a checklist —"
         communities_block:
           empty: No communities to display.
+        embeds:
+          blocked_body: "%{title} could not be shown here because this platform has
+            not allowlisted that iframe origin in Content Security Policy settings."
+          blocked_instructions: Add %{origin} under Host > Platform > Security / CSP
+            embeds > Allowed outbound iframe origins, then reload this page.
+          blocked_origin_label: 'Blocked origin:'
+          blocked_title: This embedded content is currently blocked
+          invalid_url_body: Check the iframe URL and make sure it is a full HTTPS
+            address.
+          invalid_url_title: This embedded content has an invalid URL
+          open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        hero:
+          editor:
+            background: Background
+            cta_button: CTA Button
+            cta_url_invalid: Please provide a valid URL starting with http:// or https://.
+            heading_color: Heading Color
+            overlay_color: Overlay Color
+            paragraph_color: Paragraph Color
+        iframe_block:
+          csp_help: If this embed is not allowlisted for the current platform, Community
+            Engine shows a visible guidance message instead of a blank iframe.
+          default_title: Embedded content
+          missing_url: No iframe URL configured.
+          url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
+            another trusted community-space embed.
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -2175,12 +2226,15 @@ en:
         recent_events: Recent Events
         title: Personal Calendar
         upcoming_events: Upcoming Events
+      deleted_name: Deleted person
       device_permissions:
         camera: Camera
         location: Location
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      federate_content: Allow this platform to include your public posts, pages, and
+        events in approved federation feeds.
       index:
         new_person: New person
       notification_preferences: Message notification preferences
@@ -2497,6 +2551,17 @@ en:
         pending: Pending
     platforms:
       form:
+        csp_frame_ancestors_text_hint: Who may embed this CE site. Select trusted
+          origins or type a new hostname/origin and press Enter. Leave blank to keep
+          frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Allowed inbound framing origins
+        csp_frame_src_text_hint: What this CE site may embed in iframes, such as Formbricks
+          or other trusted community embeds. Select trusted origins or type a new
+          hostname/origin and press Enter.
+        csp_frame_src_text_label: Allowed outbound iframe origins
+        csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
+          trusted origins or type a new hostname/origin and press Enter.
+        csp_img_src_text_label: Allowed external image origins
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
@@ -2531,6 +2596,7 @@ en:
       none_body: There are no posts to show right now.
       none_title: No posts yet
       published_on: Published %{date}
+      robot_authors: Robot Authors
       save_post: Save Post
       updated_on_short: Updated
       view_post: View Post
@@ -2791,7 +2857,41 @@ en:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
         my_data:
+          deletion:
+            actions: Actions
+            cancel: Cancel request
+            description: Deletion requests are queued for human review so safety,
+              legal, and community obligations can be handled carefully.
+            reason: Reason for deletion request
+            requested_at: Requested
+            status: Status
+            submit: Request account deletion
+            title: Account deletion requests
+          deletion_request_cancelled: Your deletion request has been cancelled.
+          deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
+          deletion_request_failed: We could not create your deletion request.
           description: View, download, or delete your personal data exports.
+          export_not_ready: Your export is not ready yet.
+          export_requested: Your data export has been requested.
+          exports:
+            actions: Actions
+            description: Generate a portable JSON export of your profile, memberships,
+              agreements, and other account-linked records.
+            download: Download
+            empty: You have not requested any account exports yet.
+            pending: Export in progress
+            request: Request export
+            requested_at: Requested
+            requesting: Requesting export...
+            status: Status
+            title: Downloadable account exports
+          seeds:
+            description: Earlier personal exports remain available here for advanced
+              portability and interoperability workflows.
+            empty: No legacy portable seed exports are available.
+            title: Existing portable seed exports
+            view: View
           title: My Data
         navigation_aria_label: Settings navigation
         personal:
@@ -2824,6 +2924,8 @@ en:
           privacy: Privacy
         title: Settings
     setup_wizard_steps:
+      already_completed: This platform has already been set up. Please sign in to
+        manage your platform.
       create_admin:
         flash:
           please_address_errors: Please address the errors below.
@@ -2926,6 +3028,9 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+    uploads:
+      index:
+        storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:
         credentials_in_url: must not include credentials (user:password@)
@@ -3417,6 +3522,8 @@ en:
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   devise_omniauth_callbacks:
     failure: There was a problem signing you in through %{kind}. %{reason}
+    generic_failure: There was a problem signing you in. Please register or try signing
+      in later.
     success: Successfully authenticated from %{kind} account.
   doorkeeper:
     errors:
@@ -3621,6 +3728,8 @@ en:
           than platform managers.
         cover_image: Upload a cover image to display at the top of the profile.
         description: Provide a brief description or biography.
+        federate_content: Opt-in to let this platform share your public posts, pages,
+          and events with approved connected platforms.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
@@ -3687,6 +3796,13 @@ en:
     uk: Українська
   meta:
     default_description: Welcome to %{platform_name}
+    descriptions:
+      communities:
+        index: Discover communities on %{platform_name}.
+        show: Learn about %{community_name} on %{platform_name}.
+      conversations:
+        index: Browse conversations on %{platform_name}.
+        show: View conversation %{conversation_subject} on %{platform_name}.
     page:
       description_fallback: Read %{title} on %{platform_name}
   metrics:

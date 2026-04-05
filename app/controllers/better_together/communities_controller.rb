@@ -101,8 +101,9 @@ module BetterTogether
     # DELETE /communities/1
     def destroy
       @community.destroy
-      redirect_to communities_url, notice: t('flash.generic.destroyed', resource: t('resources.community')),
-                                   status: :see_other
+      redirect_to BetterTogether::Engine.routes.url_helpers.communities_url(**default_url_options),
+                  notice: t('flash.generic.destroyed', resource: t('resources.community')),
+                  status: :see_other
     end
 
     private

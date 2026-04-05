@@ -5,6 +5,11 @@ module BetterTogether
   class SetupWizardStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
     skip_before_action :determine_wizard_outcome, only: %i[create_host_platform create_admin]
 
+    # Guard all actions: once the host setup wizard is completed it cannot be
+    # re-entered or re-submitted, regardless of authentication state.
+    # This covers POST actions that skip :determine_wizard_outcome above.
+    before_action :ensure_setup_wizard_incomplete
+
     def redirect
       public_send permitted_path(params[:path])
     end
@@ -25,7 +30,7 @@ module BetterTogether
 
     # rubocop:todo Metrics/MethodLength
     def create_host_platform # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      @form = ::BetterTogether::HostPlatformDetailsForm.new(::BetterTogether::Platform.new)
+      @form = ::BetterTogether::HostPlatformDetailsForm.new(base_platform)
 
       if @form.validate(platform_params)
         ActiveRecord::Base.transaction do
@@ -124,13 +129,13 @@ module BetterTogether
     end
 
     def base_platform
-      ::BetterTogether::Platform.new(
-        url: helpers.base_url,
-        privacy: 'private',
-        time_zone: Time.zone.name,
-        protected: true,
-        host: true
-      )
+      ::BetterTogether::Platform.find_or_initialize_by(host: true) do |platform|
+        platform.url                 = helpers.base_url
+        platform.privacy             = 'private'
+        platform.time_zone           = Time.zone.name
+        platform.protected           = true
+        platform.requires_invitation = true
+      end
     end
 
     def platform_params
@@ -148,6 +153,23 @@ module BetterTogether
       # Possible helper names should include
       # setup_wizard_step_platform_details and setup_wizard_step_admin_creation
       setup_wizard_step_path(step_definition.identifier)
+    end
+
+    # Redirect away if the host setup wizard has already been completed.
+    # Applied to every action — including the POST actions that skip
+    # :determine_wizard_outcome — so the wizard cannot be re-submitted or
+    # replayed once the first platform manager has finished onboarding.
+    # Authenticated platform managers are sent to root; all others to the
+    # sign-in page (the wizard is no longer a public surface once done).
+    def ensure_setup_wizard_incomplete
+      return unless helpers.host_setup_wizard&.completed?
+
+      if user_signed_in?
+        redirect_to root_path, alert: t('better_together.setup_wizard_steps.already_completed')
+      else
+        redirect_to new_user_session_path(locale: I18n.locale),
+                    alert: t('better_together.setup_wizard_steps.already_completed')
+      end
     end
   end
 end

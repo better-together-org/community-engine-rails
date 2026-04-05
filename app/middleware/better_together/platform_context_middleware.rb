@@ -38,9 +38,15 @@ module BetterTogether
     private
 
     def cached_host_platform
-      Rails.cache.fetch('better_together/host_platform', expires_in: 5.minutes) do
-        BetterTogether::Platform.find_by(host: true)
+      # Cache only the UUID to avoid serializing an AR object into the cache store.
+      # Caching a full ActiveRecord object as YAML triggers Psych::DisallowedClass on
+      # read when Psych safe-load mode is active (Psych 4 / Ruby 3.1+), causing every
+      # request to 500 after the first cache write. Storing only the UUID is safe and
+      # still eliminates the DB query on the hot path.
+      id = Rails.cache.fetch('better_together/host_platform_id', expires_in: 5.minutes) do
+        BetterTogether::Platform.where(host: true).pick(:id)
       end
+      id ? BetterTogether::Platform.find_by(id: id) : nil
     end
   end
 end
