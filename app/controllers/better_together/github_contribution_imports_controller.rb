@@ -17,25 +17,29 @@ module BetterTogether
     def create
       authorize @contributable, :update?
 
-      contribution = BetterTogether::GithubContributionImportService.new(
+      render json: { contribution: contribution_payload(import_contribution) }
+    end
+
+    private
+
+    def import_contribution
+      BetterTogether::GithubContributionImportService.new(
         record: @contributable,
         contributor: current_user.person,
         source: import_source_params.to_h
       ).import!
-
-      render json: {
-        contribution: {
-          id: contribution.id,
-          role: contribution.role,
-          contribution_type: contribution.contribution_type,
-          contributor_id: current_user.person.id,
-          contributor_name: current_user.person.name,
-          github_sources_count: Array(contribution.details['github_sources']).size
-        }
-      }
     end
 
-    private
+    def contribution_payload(contribution)
+      {
+        id: contribution.id,
+        role: contribution.role,
+        contribution_type: contribution.contribution_type,
+        contributor_id: current_user.person.id,
+        contributor_name: current_user.person.name,
+        github_sources_count: Array(contribution.details['github_sources']).size
+      }
+    end
 
     def set_contributable
       klass = CONTRIBUTABLE_TYPES[params[:contributable_key]]

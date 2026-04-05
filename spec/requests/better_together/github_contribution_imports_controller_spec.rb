@@ -5,14 +5,19 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::GithubContributionImportsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:manager_user) do
-    BetterTogether::User.find_by(email: 'manager@example.test') || create(:user,
-                                                                           :platform_manager,
-                                                                           email: 'manager@example.test',
-                                                                           password: 'SecureTest123!@#')
+    BetterTogether::User.find_by(email: 'manager@example.test') ||
+      create(
+        :user,
+        :platform_manager,
+        email: 'manager@example.test',
+        password: 'SecureTest123!@#'
+      )
   end
   let(:page) { create(:better_together_page) }
   let(:joatu_request) { create(:better_together_joatu_request) }
   let(:joatu_agreement) { create(:joatu_agreement) }
+
+  before { sign_in manager_user }
 
   it 'imports github activity into a governed contribution record for the current person' do
     post better_together.github_contribution_imports_path(

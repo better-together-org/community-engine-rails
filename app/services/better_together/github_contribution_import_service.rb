@@ -3,6 +3,15 @@
 module BetterTogether
   # Persists a GitHub activity mapping into a governed contribution record.
   class GithubContributionImportService
+    SOURCE_ENTRY_KEYS = %i[reference_key source_kind title source_url locator].freeze
+    SOURCE_METADATA_KEYS = {
+      repository_name: :repository_name,
+      pull_request_number: :pull_request_number,
+      issue_number: :issue_number,
+      commit_sha: :commit_sha,
+      github_handle: :github_handle
+    }.freeze
+
     SOURCE_ROLE_MAPPING = {
       'repository' => BetterTogether::Authorship::AUTHOR_ROLE,
       'pull_request' => BetterTogether::Authorship::AUTHOR_ROLE,
@@ -48,21 +57,10 @@ module BetterTogether
     end
 
     def merged_details(contribution)
-      details = contribution.details.is_a?(Hash) ? contribution.details.deep_dup : {}
-      github_sources = Array(details['github_sources']).map(&:deep_stringify_keys)
-      source_entry = contribution_source_entry
-
-      unless github_sources.any? do |entry|
-        entry['source_kind'] == source_entry['source_kind'] &&
-          entry['source_url'] == source_entry['source_url'] &&
-          entry['locator'] == source_entry['locator']
-      end
-        github_sources << source_entry
-      end
-
+      details = contribution_details(contribution)
       details.merge(
         'source' => 'github',
-        'github_sources' => github_sources,
+        'github_sources' => merged_github_sources(details),
         'latest_github_source_kind' => source[:source_kind],
         'repository_name' => source.dig(:metadata, :repository_name),
         'github_handle' => source.dig(:metadata, :github_handle)
@@ -70,18 +68,36 @@ module BetterTogether
     end
 
     def contribution_source_entry
-      {
-        'reference_key' => source[:reference_key],
-        'source_kind' => source[:source_kind],
-        'title' => source[:title],
-        'source_url' => source[:source_url],
-        'locator' => source[:locator],
-        'repository_name' => source.dig(:metadata, :repository_name),
-        'pull_request_number' => source.dig(:metadata, :pull_request_number),
-        'issue_number' => source.dig(:metadata, :issue_number),
-        'commit_sha' => source.dig(:metadata, :commit_sha),
-        'github_handle' => source.dig(:metadata, :github_handle)
-      }.compact
+      source.slice(*SOURCE_ENTRY_KEYS)
+            .deep_stringify_keys
+            .merge(source_entry_metadata)
+            .compact
+    end
+
+    def contribution_details(contribution)
+      contribution.details.is_a?(Hash) ? contribution.details.deep_dup : {}
+    end
+
+    def merged_github_sources(details)
+      github_sources = Array(details['github_sources']).map(&:deep_stringify_keys)
+      source_entry = contribution_source_entry
+      return github_sources if github_source_exists?(github_sources, source_entry)
+
+      github_sources + [source_entry]
+    end
+
+    def github_source_exists?(github_sources, source_entry)
+      github_sources.any? { |entry| source_identity(entry) == source_identity(source_entry) }
+    end
+
+    def source_identity(entry)
+      entry.values_at('source_kind', 'source_url', 'locator')
+    end
+
+    def source_entry_metadata
+      SOURCE_METADATA_KEYS.each_with_object({}) do |(key, metadata_key), metadata|
+        metadata[key.to_s] = source.dig(:metadata, metadata_key)
+      end
     end
   end
 end
