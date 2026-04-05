@@ -3,7 +3,6 @@
 module BetterTogether
   # Represents a blog post
   class Post < ApplicationRecord
-    include PgSearch::Model
     include Attachments::Images
     include Authorable
     include BlockFilterable
@@ -34,18 +33,19 @@ module BetterTogether
 
     slugged :title
 
-    pg_search_scope :pg_search_query,
-                    against: %i[slug identifier],
-                    associated_against: {
-                      string_translations: [:value],
-                      rich_text_translations: [:body]
-                    },
-                    using: {
-                      tsearch: {
-                        prefix: true,
-                        dictionary: 'simple'
-                      }
-                    }
+    searchable pg_search: {
+      against: %i[slug identifier],
+      associated_against: {
+        string_translations: [:value],
+        rich_text_translations: [:body]
+      },
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     validates :title,
               presence: true

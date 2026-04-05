@@ -17,6 +17,7 @@ module BetterTogether
     include Metrics::Viewable
     include Privacy
     include RecurringSchedulable
+    include Searchable
     include Seedable
     include TimezoneAttributeAliasing
     include TrackedActivity
@@ -47,7 +48,23 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
+    settings index: default_elasticsearch_index
+
     slugged :name
+
+    searchable pg_search: {
+      against: %i[slug identifier],
+      associated_against: {
+        string_translations: [:value],
+        rich_text_translations: [:body]
+      },
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     validates :name, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
@@ -83,6 +100,16 @@ module BetterTogether
       return nil if ends_at.nil?
 
       ends_at.in_time_zone(timezone)
+    end
+
+    def as_indexed_json(_options = {})
+      {
+        id:,
+        name:,
+        slug:,
+        identifier:,
+        description: description.present? ? search_text_value(description) : nil
+      }.compact.as_json
     end
 
     # Returns starts_at in a specified timezone

@@ -25,10 +25,9 @@ module BetterTogether
       private
 
       def pg_search_matches(entry, query)
-        model_class = entry.model_class
-        return score_matching_records(entry, normalize_terms(query)) unless model_class.respond_to?(:pg_search_query)
+        return score_matching_records(entry, normalize_terms(query)) unless entry.pg_search_enabled?
 
-        model_class.pg_search_query(query).limit(50).map do |record|
+        entry.search_relation(query).limit(50).map do |record|
           {
             record:,
             score: record.try(:pg_search_rank).to_f

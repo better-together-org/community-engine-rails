@@ -5,7 +5,6 @@ require 'storext'
 module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord # rubocop:disable Metrics/ClassLength
-    include PgSearch::Model
     include Authorable
     include Claimable
     # When adding authors via `author_ids=` or association ops, controllers can
@@ -78,18 +77,19 @@ module BetterTogether
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 
-    pg_search_scope :pg_search_query,
-                    against: [:slug],
-                    associated_against: {
-                      string_translations: [:value],
-                      rich_text_translations: [:body]
-                    },
-                    using: {
-                      tsearch: {
-                        prefix: true,
-                        dictionary: 'simple'
-                      }
-                    }
+    searchable pg_search: {
+      against: [:slug],
+      associated_against: {
+        string_translations: [:value],
+        rich_text_translations: [:body]
+      },
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     # Validations
     validates :title, presence: true
