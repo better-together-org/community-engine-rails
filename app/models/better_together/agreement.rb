@@ -5,6 +5,8 @@ require 'digest'
 module BetterTogether
   # Statements agreed upon by its participants
   class Agreement < ApplicationRecord
+    include Citable
+    include Claimable
     include Creatable
     include Identifier
     include Privacy
@@ -15,7 +17,6 @@ module BetterTogether
     # Optional link to a Page: when set, the page's content will be shown
     # instead of the agreement's terms in the public agreement view.
     belongs_to :page, class_name: 'BetterTogether::Page', optional: true
-    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :participants, through: :agreement_participants, source: :person
 
     accepts_nested_attributes_for :agreement_terms, reject_if: :all_blank, allow_destroy: true

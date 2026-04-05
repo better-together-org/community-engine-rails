@@ -27,7 +27,8 @@ RSpec.describe BetterTogether::PersonHardDeletionExecutor do
     user_id = user.id
     person_id = person.id
     message_ids = BetterTogether::Message.where(sender_id: person.id).pluck(:id)
-    authorship_ids = BetterTogether::Authorship.where(author_id: person.id).pluck(:id)
+    authorship_ids = BetterTogether::Authorship.where(author_type: 'BetterTogether::Person', author_id: person.id)
+                                               .pluck(:id)
 
     audit = described_class.call(person:, reviewed_by: reviewer, reason: 'prelaunch bot cleanup')
 

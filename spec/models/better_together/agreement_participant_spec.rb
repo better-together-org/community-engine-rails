@@ -3,16 +3,17 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::AgreementParticipant do
-  subject(:participant) { create(:better_together_agreement_participant, agreement:, person:) }
+  subject(:participant_record) { create(:better_together_agreement_participant, agreement:, participant: person) }
 
   let(:agreement) { create(:better_together_agreement) }
   let(:person) { create(:better_together_person) }
+  let(:robot) { create(:robot) }
 
   it { is_expected.to belong_to(:agreement).class_name('BetterTogether::Agreement') }
-  it { is_expected.to belong_to(:person).class_name('BetterTogether::Person') }
+  it { is_expected.to belong_to(:participant) }
 
   it 'has a valid factory' do
-    expect(participant).to be_valid
+    expect(participant_record).to be_valid
   end
 
   it 'captures immutable agreement acceptance audit details on create', :aggregate_failures do
@@ -21,7 +22,7 @@ RSpec.describe BetterTogether::AgreementParticipant do
     participant = create(
       :better_together_agreement_participant,
       agreement:,
-      person:,
+      participant: person,
       acceptance_method: :agreement_review,
       audit_context: { 'source_path' => '/en/agreements/status' }
     )
@@ -42,8 +43,22 @@ RSpec.describe BetterTogether::AgreementParticipant do
   it 'falls back to a humanized identifier when the agreement title is blank' do
     agreement.update!(title: nil)
 
-    participant = create(:better_together_agreement_participant, agreement:, person:)
+    participant = create(:better_together_agreement_participant, agreement:, participant: person)
 
     expect(participant.agreement_title_snapshot).to eq(agreement.identifier.to_s.humanize)
+  end
+
+  it 'backfills the legacy person association when the participant is a person' do
+    participant = create(:better_together_agreement_participant, agreement:, participant: person)
+
+    expect(participant.person).to eq(person)
+    expect(participant.participant).to eq(person)
+  end
+
+  it 'supports robot participants without populating the legacy person column' do
+    participant = create(:better_together_agreement_participant, agreement:, participant: robot)
+
+    expect(participant.participant).to eq(robot)
+    expect(participant.person).to be_nil
   end
 end

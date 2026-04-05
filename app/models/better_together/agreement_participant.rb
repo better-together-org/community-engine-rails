@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # joins people to agreements they have accepted
+  # Joins governed agents to agreements they have accepted, preserving
+  # compatibility with the original person-bound participation model.
   class AgreementParticipant < ApplicationRecord
     belongs_to :agreement, class_name: 'BetterTogether::Agreement'
-    belongs_to :person, class_name: 'BetterTogether::Person'
+    belongs_to :participant, polymorphic: true
+    belongs_to :person, class_name: 'BetterTogether::Person', optional: true
 
     enum :acceptance_method, {
       legacy: 'legacy',
@@ -15,9 +17,11 @@ module BetterTogether
     }, validate: true
 
     before_validation :capture_acceptance_audit, on: :create
+    before_validation :sync_legacy_person_and_participant!
 
     validates :acceptance_method, presence: true
-    validates :agreement_id, uniqueness: { scope: :person_id }
+    validates :participant_type, :participant_id, presence: true
+    validates :agreement_id, uniqueness: { scope: %i[participant_type participant_id] }
     validates :agreement_identifier_snapshot, :agreement_title_snapshot, :agreement_updated_at_snapshot,
               :agreement_content_digest, presence: true
 
@@ -62,6 +66,11 @@ module BetterTogether
 
     def agreement_content_digest_value
       agreement_content_digest.presence || agreement.acceptance_content_digest
+    end
+
+    def sync_legacy_person_and_participant!
+      self.participant ||= person if person.present?
+      self.person ||= participant if participant.is_a?(BetterTogether::Person)
     end
   end
 end

@@ -30,6 +30,14 @@ module BetterTogether
       @current_invitation = find_invitation_by_token
       @invitations = BetterTogether::CommunityInvitation.where(invitable: @community)
                                                         .order(:status, :created_at)
+      @community_pages = policy_scope(@community.pages)
+                         .includes(
+                           :string_translations,
+                           :contributions,
+                           :citations,
+                           :claims,
+                           blocks: { background_image_file_attachment: :blob }
+                         )
 
       # Categorize events for display
       categorize_community_events

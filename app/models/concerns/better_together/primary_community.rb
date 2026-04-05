@@ -39,13 +39,20 @@ module BetterTogether
         name:,
         description: (respond_to?(:description) ? description : "#{name}'s primary community"),
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
-        privacy: (respond_to?(:privacy) ? privacy : 'private'),
+        privacy: primary_community_privacy,
         **primary_community_extra_attrs
       )
     end
 
     def primary_community_extra_attrs
       {}
+    end
+
+    def primary_community_privacy
+      return 'private' if respond_to?(:external?) && external?
+      return privacy if respond_to?(:privacy)
+
+      'private'
     end
 
     # Backwards-compatible accessor used in tests and callers expecting a `primary_community` method

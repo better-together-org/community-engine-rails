@@ -16,6 +16,18 @@ module BetterTogether
 
       attributes :created_at, :updated_at
 
+      class << self
+        # Pundit::Resource prints a show?-related warning every time records() is
+        # called for policies that intentionally expose both controller show? and
+        # resource scope semantics. Preserve the scope-based authorization path
+        # without flooding CI logs.
+        def records(options = {})
+          context = options[:context]
+          context[:policy_used]&.call
+          Pundit.policy_scope!(context[:current_user], _model_class)
+        end
+      end
+
       # Helper method for defining translatable attributes
       # Usage: translatable_attribute :name
       def self.translatable_attribute(attr_name)

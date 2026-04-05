@@ -17,7 +17,13 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
 
   describe 'GET /api/v1/joatu_agreements' do
     let(:url) { '/api/v1/joatu_agreements' }
-    let!(:agreement) { create(:better_together_joatu_agreement, offer: offer, request: request_record) }
+    let!(:participant_private_agreement) do
+      create(:better_together_joatu_agreement, privacy: 'private', offer: offer, request: request_record)
+    end
+    let!(:public_agreement) do
+      create(:better_together_joatu_agreement, privacy: 'private').tap { |agreement_record| agreement_record.update_column(:privacy, 'public') }
+    end
+    let!(:other_private_agreement) { create(:better_together_joatu_agreement, privacy: 'private') }
 
     context 'when authenticated as participant' do
       before { get url, headers: auth_headers }
@@ -35,7 +41,8 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
       it 'includes agreements where user is a participant' do
         json = JSON.parse(response.body)
         ids = json['data'].map { |d| d['id'] }
-        expect(ids).to include(agreement.id)
+        expect(ids).to include(participant_private_agreement.id, public_agreement.id)
+        expect(ids).not_to include(other_private_agreement.id)
       end
     end
 
@@ -49,7 +56,7 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
   end
 
   describe 'GET /api/v1/joatu_agreements/:id' do
-    let(:agreement) { create(:better_together_joatu_agreement, offer: offer, request: request_record) }
+    let(:agreement) { create(:better_together_joatu_agreement, privacy: 'private', offer: offer, request: request_record) }
     let(:url) { "/api/v1/joatu_agreements/#{agreement.id}" }
 
     context 'when authenticated as participant' do
@@ -70,6 +77,16 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
           'terms' => agreement.terms,
           'value' => agreement.value
         )
+      end
+    end
+
+    context 'when authenticated for a different private agreement' do
+      let(:agreement) { create(:better_together_joatu_agreement, privacy: 'private') }
+
+      before { get url, headers: auth_headers }
+
+      it 'returns not found' do
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

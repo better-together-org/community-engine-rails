@@ -66,10 +66,9 @@
                   </div>
                 <% end %>
 
-                <%# Authors — render governed authors truthfully %>
-                <% if @post.respond_to?(:governed_authors) && @post.governed_authors.any? %>
+                <% if @post.respond_to?(:contribution_roles_with_contributors) && @post.contribution_roles_with_contributors.any? %>
                   <div class="ms-sm-3">
-                    <%= render 'better_together/shared/governed_authors', authors: @post.governed_authors, flex_layout: 'flex-row', flex_align_items: 'center' %>
+                    <%= render 'better_together/shared/governed_contributions', record: @post %>
                   </div>
                 <% end %>
 
@@ -96,6 +95,10 @@
           <section class="post-content trix-content mb-4" itemprop="articleBody">
             <%= @post.content %>
           </section>
+
+          <%= render 'better_together/shared/claims_and_evidence', record: @post %>
+          <%= render 'better_together/shared/bibliography', record: @post %>
+          <%= render 'better_together/shared/governance_bundle_links', record: @post if @post.bibliography_entries.any? || @post.claims.any? %>
 
           <%# Footer dates removed as requested; actions live in the header toolbar %>
                </div>

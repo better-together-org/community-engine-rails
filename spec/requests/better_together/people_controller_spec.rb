@@ -27,7 +27,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       )
       participant = create(
         :better_together_agreement_participant,
-        person:,
+        participant: person,
         agreement:,
         accepted_at: Time.zone.parse('2026-03-30 12:00:00'),
         acceptance_method: :agreement_review,
@@ -47,6 +47,42 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       )
       expect(response.body).to include(I18n.t('better_together.agreements.participant.agreement_revision', timestamp: '').strip)
       expect(response.body).to include(participant.agreement_updated_at_snapshot.in_time_zone.strftime('%B %d, %Y'))
+    end
+
+    it 'shows contribution history and linked github identities when present' do
+      page = create(:better_together_page, privacy: 'private')
+      post = create(:better_together_post, creator: person, author: person, privacy: 'private')
+      page.add_governed_contributor(person, role: 'editor')
+      post.add_governed_contributor(person, role: 'reviewer')
+      page.contributions.first.update!(details: {
+                                         'github_handle' => 'octo-person',
+                                         'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                       })
+      post.contributions.first.update!(details: {
+                                         'github_handle' => 'octo-person',
+                                         'github_sources' => [{ 'reference_key' => 'commit_abc123' }]
+                                       })
+
+      create(
+        :better_together_person_platform_integration,
+        :github,
+        person:,
+        user: person.user || create(:better_together_user, person:),
+        platform: create(:better_together_platform, :external, identifier: "github-#{SecureRandom.hex(3)}"),
+        handle: 'octo-person',
+        profile_url: 'https://github.com/octo-person'
+      )
+
+      get better_together.person_path(locale:, id: person.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Contributions')
+      expect(response.body).to include(page.title)
+      expect(response.body).to include(post.title)
+      expect(response.body).to include('Linked GitHub Identities')
+      expect(response.body).to include('octo-person')
+      expect(response.body).to include('GitHub-linked')
+      expect(response.body).to include('GitHub source')
     end
   end
 

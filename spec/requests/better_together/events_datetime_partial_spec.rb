@@ -4,6 +4,9 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::Events datetime fields partial', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   describe 'form rendering' do
     # rubocop:todo RSpec/MultipleExpectations
@@ -50,6 +53,10 @@ RSpec.describe 'BetterTogether::Events datetime fields partial', :as_platform_ma
 
       # Get the platform manager user created by automatic test configuration
       platform_manager_user = BetterTogether::User.find_by(email: 'manager@example.test')
+      create(:better_together_agreement_participant,
+             agreement: content_publishing_agreement,
+             participant: platform_manager_user.person,
+             accepted_at: Time.current)
 
       event_params = {
         event: {

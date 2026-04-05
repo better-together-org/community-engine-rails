@@ -3,12 +3,18 @@
 module BetterTogether
   # Persists platform-aware robot configuration for LLM-driven tasks.
   class Robot < ApplicationRecord
+    include Author
+    include GovernedAgent
+
     self.table_name = 'better_together_robots'
 
     ROBOT_TYPES = %w[translation assistant automation].freeze
 
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     has_many :authorships, as: :author, class_name: 'BetterTogether::Authorship', inverse_of: :author, dependent: :restrict_with_exception
+
+    has_many :agreement_participants, as: :participant, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreements, through: :agreement_participants
 
     validates :name, :identifier, :provider, presence: true
     validates :identifier, format: { with: /\A[a-z0-9][a-z0-9_-]*\z/ }
@@ -49,16 +55,20 @@ module BetterTogether
       default_model.presence || ENV.fetch('BETTER_TOGETHER_LLM_MODEL', 'gpt-4o-mini-2024-07-18')
     end
 
-    def select_option_title
-      "#{name} - robot:#{identifier}"
-    end
-
     def to_s
       name
     end
 
     def embedding_model
       default_embedding_model.presence || ENV.fetch('BETTER_TOGETHER_EMBEDDING_MODEL', 'text-embedding-3-small')
+    end
+
+    def handle
+      identifier
+    end
+
+    def select_option_title
+      "#{name} - @#{identifier} (robot)"
     end
 
     private
