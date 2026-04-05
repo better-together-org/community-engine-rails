@@ -2,27 +2,27 @@
 
 require 'rails_helper'
 
+RELEASE_UPLOAD_IMAGE_FIXTURES = [
+  {
+    name: 'Aurora Banner',
+    asset_path: File.expand_path('../../../app/assets/images/better_together/websiteplanet-dummy-1080X300.png', __dir__),
+    content_type: 'image/png'
+  },
+  {
+    name: 'Community Garden',
+    asset_path: File.expand_path('../../../app/assets/images/better_together/unsplash-community-1.jpeg', __dir__),
+    content_type: 'image/jpeg'
+  },
+  {
+    name: 'Welcome Poster',
+    asset_path: File.expand_path('../../../app/assets/images/cover_images/default_cover_image_generic.jpg', __dir__),
+    content_type: 'image/jpeg'
+  }
+].freeze
+
 RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
                :docs_screenshot, :js, :skip_host_setup, retry: 0, type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
-
-  RELEASE_UPLOAD_IMAGE_FIXTURES = [
-    {
-      name: 'Aurora Banner',
-      asset_path: File.expand_path('../../../app/assets/images/better_together/websiteplanet-dummy-1080X300.png', __dir__),
-      content_type: 'image/png'
-    },
-    {
-      name: 'Community Garden',
-      asset_path: File.expand_path('../../../app/assets/images/better_together/unsplash-community-1.jpeg', __dir__),
-      content_type: 'image/jpeg'
-    },
-    {
-      name: 'Welcome Poster',
-      asset_path: File.expand_path('../../../app/assets/images/cover_images/default_cover_image_generic.jpg', __dir__),
-      content_type: 'image/jpeg'
-    }
-  ].freeze
 
   let(:creator) { BetterTogether::User.find_by!(email: 'manager@example.test').person }
 
