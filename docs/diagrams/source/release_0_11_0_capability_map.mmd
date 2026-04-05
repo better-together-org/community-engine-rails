@@ -1,40 +1,36 @@
-flowchart TD
+flowchart LR
 
   V010["0.10.0 baseline"]
 
-  subgraph RELEASE["0.11.0 release packet structure"]
-    FED["1. Federation, platform connections, and multi-tenant scoping"]
-    PRIV["2. Privacy, member data rights, and consent auditing"]
-    SAFE["3. Safety, reporting, and encrypted messaging"]
-    METRICS["4. Metrics, analytics retention, and reporting hygiene"]
-    CONTENT["5. Content, media, and authoring UX"]
-    SEO["6. SEO, structured data, and native polish"]
-    HARDEN["7. Bug fixes, migrations, dependencies, and hardening"]
+  subgraph MAIN["0.11.0 merged and current mainline"]
+    MT["Multi-tenant platform context"]
+    FED["Federation and mirrored content"]
+    BLOCKS["CMS blocks, JSON:API, and MCP tools"]
+    SAFE["Safety reporting and personal-data stewardship"]
+    GDPR["GDPR deletion audits and purge flows (#1486)"]
+    DISC["Search, events, and discovery improvements"]
+    NAV["Navigation visibility/cache hardening (#1274)"]
+    DEV["CI, migration, and developer-experience hardening"]
+    ADAPTERS["Provider and content adapter architecture (#1490, #1491)"]
+    ROBOTS["Robot configuration resolution docs (#1493)"]
+    EVIDENCE["Tiered PR evidence standard (#1497)"]
+    EMBEDS["Safe iframe embeds and CSP origin controls (#1421)"]
+    SCOPE["Scope keyword-options regression fix (#1456)"]
+    E2EE["E2EE beta-gated rollout posture"]
   end
 
-  subgraph EVIDENCE["Current evidence and remaining release gaps"]
-    DOCS["Current-tip docs and system guides"]
-    DIAGRAMS["Current-tip Mermaid sources and release capability map"]
-    REVIEW["Current-tip review screenshots from PR 1486 and PR 1490"]
-    GAPS["Release-specific screenshots and export/deletion docs still to add"]
-  end
-
-  V010 --> FED
-  V010 --> CONTENT
-  FED --> PRIV
-  FED --> METRICS
-  PRIV --> SAFE
-  CONTENT --> SEO
-  CONTENT --> HARDEN
-  METRICS --> HARDEN
-  SAFE --> HARDEN
-  SEO --> HARDEN
-
-  FED --> DOCS
-  PRIV --> DOCS
-  SAFE --> DIAGRAMS
-  CONTENT --> REVIEW
-  PRIV --> REVIEW
-  METRICS --> GAPS
-  CONTENT --> GAPS
-  SEO --> GAPS
+  V010 --> MT
+  V010 --> BLOCKS
+  MT --> FED
+  FED --> SAFE
+  SAFE --> GDPR
+  BLOCKS --> DISC
+  DISC --> NAV
+  DISC --> ADAPTERS
+  DEV --> ADAPTERS
+  ADAPTERS --> ROBOTS
+  DEV --> EVIDENCE
+  BLOCKS --> EMBEDS
+  SAFE --> SCOPE
+  SAFE --> E2EE
+  DEV --> EMBEDS

@@ -49,6 +49,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 #### Privacy, Consent & Data Rights
 - Member data export workflow with `PersonDataExport` / `PersonDeletionRequest` records for privacy-led self-service and review flows (#1468)
 - Agreement acceptance audit trail with immutable method, identifier/title snapshot, revision timestamp, content digest, and privacy-safe audit context on `AgreementParticipant` (#1469)
+- GDPR-oriented deletion audit inventory, anonymization, manifest, and hard-deletion executor flows, plus account-tab deletion-request cleanup (#1486)
 
 #### Metrics & Reporting
 - Platform-scoped analytics reads and writes across metrics dashboards, reports, summaries, and tracking jobs (#1461)
@@ -87,6 +88,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Elasticsearch 8 gem upgrade validation (#1398)
 - Audit, health reporting, and live ES validation tooling (#1393)
 - Optional full reindex for all searchable models (#1276)
+- `SearchPagesTool` plus a shared AREL content-search helper for page-oriented MCP search paths (#1273)
 
 #### CI / Developer Experience
 - Rails 8.1 informational CI lane (non-blocking) + versioned bundle helpers (#1391)
@@ -94,6 +96,12 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Dual migration path support + FK ordering fixes (#1401)
 - Share Docker services across worktrees for faster local dev (#1279)
 - Repository write-boundary agent instructions
+- Rails branch maintenance workflows plus native Rails lint-lane fixes (#1281)
+- Tiered PR evidence requirements with validator-backed screenshot/diagram/doc enforcement (#1497)
+
+#### AI / Adapter Infrastructure
+- Provider adapter architecture scaffold for pluggable AI and service backends (#1491)
+- Robot configuration system documentation and resolution-flow artefacts for persisted AI-capable robot records (#1493)
 
 ### Fixed
 - **Authoring:** Preload event associations and add pagination to reduce host-side metrics and content list load issues (#1034)
@@ -109,10 +117,14 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Engine:** Use exact match in `append_migrations` to include `spec/dummy` migrations correctly
 - **Migrations:** Fix dual-path support, ordering, and FK bugs in migration loader (#1401)
 - **Cache:** Update `RedisCacheStore` pool options for Rails 8 compatibility (#1353)
+- **Navigation:** Correct header/footer visibility cache keys and helper memoization for access-context-sensitive navigation rendering (#1274)
 - **Routing:** Prevent `URI::InvalidURIError` on non-default locale + accented slug URLs (#1351)
 - **Security:** Extend URI encoding; add Rack::Attack bot/scanner blocklists (#1352)
 - **CI:** Restore main mailer and Rubocop green (#1384)
 - **Performance:** Reduce N+1 queries on platform lookup and person profile pages (#1354)
+- **Settings / Privacy:** Move account deletion requests into the account tab and retire the legacy My Data seed section after the deletion-audit rollout
+- **Auth / UX:** Hide OAuth sign-in buttons when provider credentials are not configured
+- **API:** Remove the stray `created_at` attribute from `InvitationResource`
 
 ### Security
 
