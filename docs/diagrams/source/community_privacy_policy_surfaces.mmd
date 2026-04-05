@@ -1,6 +1,6 @@
 flowchart LR
     A[BetterTogether::Privacy] --> B[ApplicationPolicy helpers]
-    B --> C[Default Scope visibility]
+    B --> C[Resolved community plus membership gate]
 
     C --> D[PagePolicy]
     C --> E[PostPolicy]
@@ -21,7 +21,6 @@ flowchart LR
     K --> S[Platform listing]
     L --> T[Calendar visibility]
 
-    O --> U[Checklist edit form uses shared privacy_field]
+    O --> U[Checklist remains unsupported without scoped community]
     P --> V[Community badge screenshot]
     U --> W[Checklist authoring screenshot]
-

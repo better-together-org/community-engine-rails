@@ -14,9 +14,8 @@ module BetterTogether
       # Deny if author is blocked
       return false if blocked_author?
 
-      # Allow published public posts to everyone and published community posts to
-      # signed-in people.
-      record.published? && public_or_signed_in_community?(record)
+      # Community visibility is limited to members of the platform's primary community.
+      record.published? && public_or_member_scoped_community?(record)
     end
 
     def create?
@@ -41,11 +40,7 @@ module BetterTogether
 
         base = scope.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
-        visible_posts = if agent.present?
-                          posts_table[:privacy].in(%w[public community])
-                        else
-                          posts_table[:privacy].eq('public')
-                        end
+        visible_posts = visible_privacy_query(posts_table)
         return base.where(visible_posts) unless agent
 
         creator_posts = posts_table[:creator_id].eq(agent.id)

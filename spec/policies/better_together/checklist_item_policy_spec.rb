@@ -64,8 +64,15 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
 
     let(:record) { create(:better_together_checklist_item, checklist: checklist) }
 
-    context 'when the parent checklist is community scoped and the user is signed in' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'when the parent checklist is community scoped and the user is a signed-in non-member' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
+      let(:checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'community') }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when the parent checklist is community scoped and the creator is signed in' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { creator_user }
       let(:checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'community') }
 
       it { is_expected.to be true }

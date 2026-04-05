@@ -9,7 +9,7 @@ module BetterTogether
     end
 
     def show?
-      record.privacy_public? || user.present?
+      public_or_member_scoped_community?(record) || can_manage_platform_settings?
     end
 
     def create?
@@ -41,11 +41,7 @@ module BetterTogether
         results = scope.order(:host, :identifier)
 
         unless can_manage_platform_settings?
-          results = if user.present?
-                      results.where(privacy: %w[public community])
-                    else
-                      results.privacy_public
-                    end
+          results = results.where(visible_privacy_query(scope.arel_table))
         end
 
         results

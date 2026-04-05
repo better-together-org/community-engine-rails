@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def show?
-      public_or_signed_in_community?(record) || platform_cfi_manager?
+      public_or_member_scoped_community?(record) || platform_cfi_manager?
     end
 
     def create?

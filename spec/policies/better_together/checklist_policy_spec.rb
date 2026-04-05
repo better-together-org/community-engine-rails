@@ -63,8 +63,15 @@ RSpec.describe BetterTogether::ChecklistPolicy, type: :policy do
   describe '#show?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject { described_class.new(user, record).show? }
 
-    context 'for a community checklist and signed-in user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'for a community checklist and signed-in non-member' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
+      let(:record) { community_checklist }
+
+      it { is_expected.to be false }
+    end
+
+    context 'for a community checklist and creator' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { creator_user }
       let(:record) { community_checklist }
 
       it { is_expected.to be true }
@@ -101,10 +108,22 @@ RSpec.describe BetterTogether::ChecklistPolicy, type: :policy do
   describe 'Scope' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject(:resolved) { described_class::Scope.new(user, BetterTogether::Checklist).resolve }
 
-    context 'signed-in user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    context 'signed-in non-member' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
-      it 'includes community checklists' do
+      it 'excludes unsupported community checklists' do
+        public_checklist
+        community_checklist
+
+        expect(resolved).to include(public_checklist)
+        expect(resolved).not_to include(community_checklist)
+      end
+    end
+
+    context 'creator' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { creator_user }
+
+      it 'includes the creator-owned community checklist' do
         public_checklist
         community_checklist
 

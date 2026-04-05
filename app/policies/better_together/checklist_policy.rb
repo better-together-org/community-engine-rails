@@ -3,9 +3,9 @@
 module BetterTogether
   class ChecklistPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def show?
-      # Allow viewing public checklists to everyone and community checklists to
-      # signed-in people, otherwise fall back to update permissions.
-      public_or_signed_in_community?(record) || update?
+      # Checklists do not currently resolve a scoped community, so community privacy
+      # does not broaden visibility beyond creator/manager access.
+      public_or_member_scoped_community?(record) || update?
     end
 
     def index?

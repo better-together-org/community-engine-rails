@@ -4,10 +4,11 @@
 
 PR `#1150` extends the shared `BetterTogether::Privacy` concern with a third visibility level: `community`.
 
-The goal of this privacy level is to support content that should not be world-readable, but also should not be restricted to only creators, managers, or explicitly invited/private viewers. In the current implementation, `community` means:
+The goal of this privacy level is to support content that should not be world-readable, but also should not be restricted only to creators, managers, or explicitly invited/private viewers. In the corrected implementation, `community` means:
 
 - **guests** only see `public`
-- **signed-in people** can see `public` and `community`
+- **community members** can see `community` records only when the record resolves to a community they belong to
+- **signed-in non-members** do not get blanket `community` visibility
 - **creators, managers, members, hosts, and invitees** keep their existing additive access paths for `private` and special cases
 
 This PR completes the minimum coherent rollout for that contract across the shared privacy concern, primary policy scopes, UI selectors, and reviewer evidence.
@@ -17,10 +18,11 @@ This PR completes the minimum coherent rollout for that contract across the shar
 | Audience | `public` | `community` | `private` |
 | --- | --- | --- | --- |
 | Guest | Yes | No | No |
-| Signed-in person | Yes | Yes | No |
+| Signed-in non-member | Yes | No | No |
+| Member of the scoped community | Yes | Yes, when the record resolves to that community | No |
 | Creator / author | Yes | Yes | Yes, for owned records where policy already grants it |
 | Platform / community manager | Yes | Yes | Yes |
-| Member / invite / host special cases | Existing policy-specific rules still apply | Existing policy-specific rules still apply | Existing policy-specific rules still apply |
+| Invite / host / other special cases | Existing policy-specific rules still apply | Existing policy-specific rules still apply | Existing policy-specific rules still apply |
 
 ## Core Implementation
 
@@ -34,13 +36,13 @@ This PR completes the minimum coherent rollout for that contract across the shar
 ### Shared policy helpers
 
 - `app/policies/better_together/application_policy.rb`
-  - adds shared `public_or_signed_in_community?` record helper
-  - updates the default scope logic so signed-in people can see `privacy IN ('public', 'community')`
+  - resolves the record's scoped community through direct `community`, `primary_community`, `platform`, or `interestable` associations
+  - allows `community` visibility only for members of that resolved community
   - keeps `private` gated behind existing management, ownership, membership, or invitation paths
 
 ### Updated user-facing policy surfaces
 
-This PR extends community visibility on the primary content and community browsing paths:
+This PR extends membership-gated community visibility on the primary content and community browsing paths:
 
 - `PagePolicy`
 - `PostPolicy`
@@ -99,7 +101,8 @@ This PR adds targeted evidence instead of relying only on a broad concern spec:
 The key assertions now prove that:
 
 - guests cannot see community-scoped records on the covered surfaces
-- signed-in users can see community-scoped records
+- signed-in non-members do not automatically gain community-scoped access
+- members of the resolved community can see community-scoped records where the model can resolve that scope
 - creator / manager / invitation rules still work as before
 - the checklist edit form actually renders the `community` option
 
@@ -112,5 +115,5 @@ The key assertions now prove that:
 ## Risks And Boundaries
 
 - This PR intentionally completes the **primary browsing and authoring surfaces** first. Additional specialized privacy-heavy areas can reuse the same shared helpers and contract if they need follow-up.
-- `community` is currently implemented as **signed-in visibility**, not a deeper per-community membership ACL across every model. Where a policy already has stronger member/invite/host logic, that logic stays additive and more specific.
-
+- `community` is implemented as **membership in the resolved community**, not blanket signed-in visibility.
+- Some privacy-bearing models still do not expose a resolvable platform/community scope. Those records do not silently broaden access under `community`; they continue to rely on creator/manager/special-case access until a real scoped-community association exists.

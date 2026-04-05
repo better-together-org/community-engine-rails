@@ -46,13 +46,20 @@ RSpec.describe 'Documentation screenshots for community privacy', :docs_screensh
       :better_together_community,
       privacy: 'community',
       name: 'Community Privacy Circle',
-      description: 'Shared planning space for signed-in members.'
+      description: 'Shared planning space for community members.'
+    )
+    member_role = BetterTogether::Role.find_by!(identifier: 'community_member')
+    user = BetterTogether::User.find_by!(email: 'user@example.test')
+    BetterTogether::PersonCommunityMembership.find_or_create_by!(
+      joinable: community,
+      member: user.person,
+      role: member_role
     )
 
     result = BetterTogether::CapybaraScreenshotEngine.capture(
       'community_privacy_badge',
       device: :both,
-      metadata: screenshot_metadata(flow: 'community_privacy_visibility', role: 'signed_in_user')
+      metadata: screenshot_metadata(flow: 'community_privacy_visibility', role: 'community_member')
     ) do
       capybara_login_as_user
       visit better_together.community_path(community, locale: I18n.default_locale)

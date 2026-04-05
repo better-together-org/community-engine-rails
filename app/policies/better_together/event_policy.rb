@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def show?
-      (public_or_signed_in_community?(record) && record.starts_at.present?) ||
+      (public_or_member_scoped_community?(record) && record.starts_at.present?) ||
         creator_or_platform_steward ||
         event_host_member? ||
         invitation? ||
@@ -82,11 +82,7 @@ module BetterTogether
         events_table = ::BetterTogether::Event.arel_table
         event_hosts_table = ::BetterTogether::EventHost.arel_table
 
-        query = if agent.present?
-                  events_table[:privacy].in(%w[public community])
-                else
-                  events_table[:privacy].eq('public')
-                end
+        query = visible_privacy_query(events_table)
 
         if platform_event_manager?
           query = query.or(events_table[:privacy].eq('private'))

@@ -5,8 +5,12 @@ require 'rails_helper'
 RSpec.describe BetterTogether::PostPolicy do
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:regular_user) { create(:better_together_user, :confirmed) }
+  let(:community_member_user) { create(:better_together_user, :confirmed) }
   let(:creator_user) { create(:better_together_user, :confirmed) }
   let(:editor_user) { create(:better_together_user, :confirmed) }
+  let(:scoped_community) { create(:better_together_community, privacy: 'public') }
+  let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
+  let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
 
   let(:public_published_post) do
     create(
@@ -34,7 +38,8 @@ RSpec.describe BetterTogether::PostPolicy do
       creator: creator_user.person,
       author: creator_user.person,
       privacy: 'community',
-      published_at: 1.minute.ago
+      published_at: 1.minute.ago,
+      platform: scoped_platform
     )
   end
 
@@ -45,6 +50,14 @@ RSpec.describe BetterTogether::PostPolicy do
       author: creator_user.person,
       privacy: 'public',
       published_at: nil
+    )
+  end
+
+  before do
+    BetterTogether::PersonCommunityMembership.find_or_create_by!(
+      joinable: scoped_community,
+      member: community_member_user.person,
+      role: community_member_role
     )
   end
 
@@ -76,8 +89,12 @@ RSpec.describe BetterTogether::PostPolicy do
       expect(described_class.new(regular_user, public_published_post).show?).to be true
     end
 
-    it 'allows published community posts for signed-in users' do
-      expect(described_class.new(regular_user, community_published_post).show?).to be true
+    it 'allows published community posts for community members' do
+      expect(described_class.new(community_member_user, community_published_post).show?).to be true
+    end
+
+    it 'denies published community posts for signed-in non-members' do
+      expect(described_class.new(regular_user, community_published_post).show?).to be false
     end
 
     it 'denies published private posts for other regular users' do
@@ -236,10 +253,17 @@ RSpec.describe BetterTogether::PostPolicy do
       result = scope.resolve
 
       expect(result).to include(creator_public_published)
-      expect(result).to include(creator_community_published)
+      expect(result).not_to include(creator_community_published)
       expect(result).to include(own_published_private)
       expect(result).not_to include(creator_private_published)
       expect(result).not_to include(own_draft_public)
+    end
+
+    it 'returns community-scoped posts for community members' do
+      scope = described_class::Scope.new(community_member_user, BetterTogether::Post)
+
+      expect(scope.resolve).to include(creator_public_published, creator_community_published)
+      expect(scope.resolve).not_to include(creator_private_published)
     end
 
     it 'excludes posts from blocked authors for regular users' do
