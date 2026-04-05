@@ -64,9 +64,22 @@ jobs:
           echo "rails_version=${rails_version}" >> "${GITHUB_OUTPUT}"
           echo "update_coverage_badge=${update_coverage_badge}" >> "${GITHUB_OUTPUT}"
 
+  pr_evidence:
+    if: github.event_name == 'pull_request'
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch base branch
+        run: git fetch origin "${GITHUB_BASE_REF}" --depth=1
+      - name: Validate PR evidence artifacts
+        run: |
+          chmod +x scripts/validate_pr_evidence.sh
+          scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD
+
   rspec:
     name: rspec (3.4.4, ${{ needs.prepare.outputs.rails_version }})
-    needs: prepare
+    needs: [prepare, pr_evidence]
     runs-on: ubuntu-latest
     environment: test
     env:
@@ -212,7 +225,7 @@ jobs:
           file_pattern: coverage.svg
 
   rubocop:
-    needs: prepare
+    needs: [prepare, pr_evidence]
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
@@ -230,7 +243,7 @@ jobs:
       - run: bundle exec rubocop --parallel
 
   security:
-    needs: prepare
+    needs: [prepare, pr_evidence]
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
