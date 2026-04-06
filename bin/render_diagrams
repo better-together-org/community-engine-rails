@@ -29,6 +29,7 @@ Environment Variables:
   HEIGHT                      Standard diagram height (default: 2400)
   HIGH_RES_WIDTH              High resolution width for complex diagrams (default: 4800)
   HIGH_RES_HEIGHT             High resolution height for complex diagrams (default: 3600)
+  ORIENTATION_MODE            Default orientation policy: auto, portrait, or landscape (default: auto)
   MIN_SHORT_SIDE_PX           Minimum required rendered PNG short side in pixels (default: 1500)
   MAX_RESIZE_ATTEMPTS         Maximum rerender attempts to satisfy MIN_SHORT_SIDE_PX for PNG output (default: 4)
   OUTPUT_FORMATS              Space-separated output formats (default: "png svg")
@@ -96,6 +97,7 @@ done
 WIDTH=${WIDTH:-3200}
 HEIGHT=${HEIGHT:-2400}
 OUTPUT_FORMATS=${OUTPUT_FORMATS:-"png svg"}
+ORIENTATION_MODE=${ORIENTATION_MODE:-auto}
 MIN_SHORT_SIDE_PX=${MIN_SHORT_SIDE_PX:-1500}
 MAX_RESIZE_ATTEMPTS=${MAX_RESIZE_ATTEMPTS:-4}
 
@@ -165,6 +167,159 @@ elif path.endswith(".svg"):
     emit(width, height)
 else:
     raise SystemExit(1)
+PY
+}
+
+diagram_orientation_override() {
+  local file="$1"
+  python3 - "$file" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+text = Path(sys.argv[1]).read_text()
+match = re.search(r'^\s*%%\s*render\.orientation\s*:\s*(auto|portrait|landscape)\s*$', text, re.MULTILINE | re.IGNORECASE)
+print(match.group(1).lower() if match else "")
+PY
+}
+
+diagram_direction_hint() {
+  local file="$1"
+  python3 - "$file" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+text = Path(sys.argv[1]).read_text()
+patterns = [
+    r'\bflowchart\s+(TB|BT|LR|RL)\b',
+    r'^\s*direction\s+(TB|BT|LR|RL)\s*$',
+]
+for pattern in patterns:
+    match = re.search(pattern, text, re.MULTILINE)
+    if match:
+        print(match.group(1))
+        raise SystemExit(0)
+print("")
+PY
+}
+
+orientation_dimensions() {
+  local base_width="$1"
+  local base_height="$2"
+  local orientation="$3"
+  local long_side short_side
+
+  if [ "$base_width" -ge "$base_height" ]; then
+    long_side="$base_width"
+    short_side="$base_height"
+  else
+    long_side="$base_height"
+    short_side="$base_width"
+  fi
+
+  if [ "$orientation" = "portrait" ]; then
+    echo "$short_side $long_side"
+  else
+    echo "$long_side $short_side"
+  fi
+}
+
+probe_orientation_dimensions() {
+  local input_file="$1"
+  local render_width="$2"
+  local render_height="$3"
+  local probe_file
+
+  probe_file=$(mktemp --suffix=.png)
+  if ! render_output "png" "$input_file" "$probe_file" "$render_width" "$render_height" 1 >/dev/null 2>&1; then
+    rm -f "$probe_file"
+    return 1
+  fi
+
+  output_dimensions "$probe_file"
+  rm -f "$probe_file"
+}
+
+choose_orientation() {
+  local input_file="$1"
+  local base_width="$2"
+  local base_height="$3"
+  local override direction_hint
+  local landscape_dims portrait_dims
+  local landscape_width landscape_height portrait_width portrait_height
+
+  override="$(diagram_orientation_override "$input_file")"
+  if [ -n "$override" ] && [ "$override" != "auto" ]; then
+    echo "$override"
+    return 0
+  fi
+
+  if [ "$ORIENTATION_MODE" = "portrait" ] || [ "$ORIENTATION_MODE" = "landscape" ]; then
+    echo "$ORIENTATION_MODE"
+    return 0
+  fi
+
+  direction_hint="$(diagram_direction_hint "$input_file")"
+  landscape_dims="$(orientation_dimensions "$base_width" "$base_height" "landscape")"
+  portrait_dims="$(orientation_dimensions "$base_width" "$base_height" "portrait")"
+  read -r landscape_width landscape_height <<< "$landscape_dims"
+  read -r portrait_width portrait_height <<< "$portrait_dims"
+
+  landscape_dims="$(probe_orientation_dimensions "$input_file" "$landscape_width" "$landscape_height" || true)"
+  portrait_dims="$(probe_orientation_dimensions "$input_file" "$portrait_width" "$portrait_height" || true)"
+
+  python3 - "$landscape_dims" "$portrait_dims" "$direction_hint" <<'PY'
+import sys
+
+def parse_dims(raw):
+    parts = raw.split()
+    if len(parts) != 2:
+        return None
+    return tuple(int(part) for part in parts)
+
+landscape = parse_dims(sys.argv[1])
+portrait = parse_dims(sys.argv[2])
+direction = sys.argv[3]
+
+if landscape is None and portrait is None:
+    print("portrait" if direction in {"TB", "BT"} else "landscape")
+    raise SystemExit(0)
+if landscape is None:
+    print("portrait")
+    raise SystemExit(0)
+if portrait is None:
+    print("landscape")
+    raise SystemExit(0)
+
+def ratio(dims):
+    width, height = dims
+    long_side = max(width, height)
+    short_side = max(1, min(width, height))
+    return long_side / short_side
+
+def short_side(dims):
+    return min(dims)
+
+landscape_ratio = ratio(landscape)
+portrait_ratio = ratio(portrait)
+landscape_short = short_side(landscape)
+portrait_short = short_side(portrait)
+
+if portrait_ratio < landscape_ratio * 0.85:
+    print("portrait")
+elif landscape_ratio < portrait_ratio * 0.85:
+    print("landscape")
+elif portrait_short > landscape_short * 1.1:
+    print("portrait")
+elif landscape_short > portrait_short * 1.1:
+    print("landscape")
+elif direction in {"TB", "BT"}:
+    print("portrait")
+elif direction in {"LR", "RL"}:
+    print("landscape")
+else:
+    print("landscape")
 PY
 }
 
@@ -405,15 +560,15 @@ skipped=0
 total_files=0
 
 for f in "${files[@]}"; do
+  orientation="$(choose_orientation "$f" "$WIDTH" "$HEIGHT")"
+
   # Detect diagram complexity once per file
   complexity=$(detect_complexity "$f")
   if [ "$complexity" = "complex" ]; then
-    render_width="$HIGH_RES_WIDTH"
-    render_height="$HIGH_RES_HEIGHT"
+    read -r render_width render_height <<< "$(orientation_dimensions "$HIGH_RES_WIDTH" "$HIGH_RES_HEIGHT" "$orientation")"
     complexity_note=" (high resolution)"
   else
-    render_width="$WIDTH"
-    render_height="$HEIGHT"
+    read -r render_width render_height <<< "$(orientation_dimensions "$WIDTH" "$HEIGHT" "$orientation")"
     complexity_note=""
   fi
   
@@ -426,6 +581,7 @@ for f in "${files[@]}"; do
     [ -z "$arrow_count" ] && arrow_count=0
     echo "File: $f$complexity_note"
     echo "  Complexity factors: $line_count lines, $subgraph_count subgraphs, $arrow_count connections"
+    echo "  Orientation: $orientation (${render_width} x ${render_height})"
   fi
   
   # Process each output format
@@ -451,9 +607,9 @@ for f in "${files[@]}"; do
     
     # Show resolution info for each format
     if [ "$complexity" = "complex" ]; then
-      echo "Generating high resolution $format ($render_width x $render_height)"
+      echo "Generating high resolution $format ($render_width x $render_height, orientation: $orientation)"
     else
-      echo "Generating standard resolution $format ($render_width x $render_height)"
+      echo "Generating standard resolution $format ($render_width x $render_height, orientation: $orientation)"
     fi
     
     if ! render_with_min_short_side "$f" "$out" "$format" "$render_width" "$render_height"; then
