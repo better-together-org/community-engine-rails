@@ -120,6 +120,19 @@ else
   exit 1
 fi
 
+normalize_mermaid_file() {
+  local input_file="$1"
+  local output_file="$2"
+  python3 - "$input_file" "$output_file" <<'PY'
+from pathlib import Path
+import sys
+
+input_path = Path(sys.argv[1])
+output_path = Path(sys.argv[2])
+output_path.write_text(input_path.read_text(encoding="utf-8").replace("\\n", "\n"), encoding="utf-8")
+PY
+}
+
 output_dimensions() {
   local file="$1"
   python3 - "$file" <<'PY'
@@ -560,10 +573,13 @@ skipped=0
 total_files=0
 
 for f in "${files[@]}"; do
-  orientation="$(choose_orientation "$f" "$WIDTH" "$HEIGHT")"
+  normalized_input=$(mktemp --suffix=.mmd)
+  normalize_mermaid_file "$f" "$normalized_input"
+
+  orientation="$(choose_orientation "$normalized_input" "$WIDTH" "$HEIGHT")"
 
   # Detect diagram complexity once per file
-  complexity=$(detect_complexity "$f")
+  complexity=$(detect_complexity "$normalized_input")
   if [ "$complexity" = "complex" ]; then
     read -r render_width render_height <<< "$(orientation_dimensions "$HIGH_RES_WIDTH" "$HIGH_RES_HEIGHT" "$orientation")"
     complexity_note=" (high resolution)"
@@ -574,10 +590,10 @@ for f in "${files[@]}"; do
   
   # Show debug info once per file if requested
   if [ "$complexity" = "complex" ] && [ "${DEBUG:-0}" = "1" ]; then
-    line_count=$(wc -l < "$f")
-    subgraph_count=$(grep -c -E '^\s*subgraph\s+' "$f" 2>/dev/null)
+    line_count=$(wc -l < "$normalized_input")
+    subgraph_count=$(grep -c -E '^\s*subgraph\s+' "$normalized_input" 2>/dev/null)
     [ -z "$subgraph_count" ] && subgraph_count=0
-    arrow_count=$(grep -c -E '\-\-[>|]|==>' "$f" 2>/dev/null)
+    arrow_count=$(grep -c -E '\-\-[>|]|==>' "$normalized_input" 2>/dev/null)
     [ -z "$arrow_count" ] && arrow_count=0
     echo "File: $f$complexity_note"
     echo "  Complexity factors: $line_count lines, $subgraph_count subgraphs, $arrow_count connections"
@@ -612,7 +628,7 @@ for f in "${files[@]}"; do
       echo "Generating standard resolution $format ($render_width x $render_height, orientation: $orientation)"
     fi
     
-    if ! render_with_min_short_side "$f" "$out" "$format" "$render_width" "$render_height"; then
+    if ! render_with_min_short_side "$normalized_input" "$out" "$format" "$render_width" "$render_height"; then
       echo "WARN: Failed to render $f to $format with minimum short side ${MIN_SHORT_SIDE_PX}px; continuing with next file." >&2
       failed=1
       failed_files+=("$f -> $format")
@@ -620,6 +636,8 @@ for f in "${files[@]}"; do
       rendered=$((rendered + 1))
     fi
   done
+
+  rm -f "$normalized_input"
 done
 
 echo "Done. Attempted $total_files output file(s) from ${#files[@]} source diagram(s). Rendered: $rendered, Skipped: $skipped. Force: ${FORCE}."
