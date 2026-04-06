@@ -3,12 +3,15 @@
 require 'capybara'
 require 'fileutils'
 require 'json'
+require 'uri'
 
 module BetterTogether # :nodoc:
   # Captures deterministic desktop and mobile screenshots for documentation specs.
   # rubocop:disable Metrics/ModuleLength
   module CapybaraScreenshotEngine # :nodoc:
     extend self
+
+    class CalloutTargetResolutionError < StandardError; end
 
     SCREENSHOT_ROOT = BetterTogether::Engine.root.join('docs', 'screenshots').freeze
 
@@ -75,13 +78,21 @@ module BetterTogether # :nodoc:
         processed_metadata = default_metadata(name, device).merge(metadata)
         callout_targets = collect_callout_targets(callouts)
         Capybara.page.save_screenshot(image_path.to_s)
+        normalize_artifact_permissions(image_path)
         if callout_targets.any?
-          processed_metadata[:callouts] = BetterTogether::ScreenshotCalloutProcessor.process(
+          processed_callouts = BetterTogether::ScreenshotCalloutProcessor.process(
             image_path,
             callouts: callout_targets
           )
+          if processed_callouts.size != callout_targets.size
+            raise CalloutTargetResolutionError,
+                  "Declared #{callout_targets.size} screenshot callout(s), rendered #{processed_callouts.size}"
+          end
+
+          processed_metadata[:callouts] = processed_callouts
         end
         File.write(json_path, JSON.pretty_generate(processed_metadata))
+        normalize_artifact_permissions(json_path)
       ensure
         restore_sticky_elements
       end
@@ -94,9 +105,8 @@ module BetterTogether # :nodoc:
       {
         name:,
         device: device.to_s,
-        url: safe_page_value { Capybara.page.current_url },
-        title: safe_page_value { Capybara.page.title },
-        captured_at: Time.current.utc.iso8601
+        url: safe_page_value { normalize_page_url(Capybara.page.current_url) },
+        title: safe_page_value { Capybara.page.title }
       }
     end
 
@@ -114,11 +124,18 @@ module BetterTogether # :nodoc:
       nil
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def collect_callout_targets(callouts)
       normalized = Array(callouts).map { |callout| normalize_callout(callout) }.reject { |callout| callout[:selector].blank? }
       return [] if normalized.empty?
 
       geometry_by_selector = fetch_callout_geometry(normalized.map { |callout| callout[:selector] })
+      missing_selectors = normalized.map { |callout| callout[:selector] } - geometry_by_selector.keys
+      if missing_selectors.any?
+        raise CalloutTargetResolutionError,
+              "Could not resolve screenshot callout target(s): #{missing_selectors.join(', ')}"
+      end
+
       normalized.filter_map do |callout|
         geometry = geometry_by_selector[callout[:selector]]
         next unless geometry
@@ -126,6 +143,7 @@ module BetterTogether # :nodoc:
         callout.merge(target: geometry)
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def normalize_callout(callout)
       {
@@ -181,10 +199,26 @@ module BetterTogether # :nodoc:
           }
         ]
       end
-    rescue StandardError
-      {}
+    rescue StandardError => e
+      raise CalloutTargetResolutionError, "Failed to resolve screenshot callout geometry: #{e.message}"
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+    def normalize_page_url(url)
+      return if url.blank?
+
+      uri = URI.parse(url)
+      path = uri.path.presence || '/'
+      uri.query.present? ? "#{path}?#{uri.query}" : path
+    rescue URI::InvalidURIError
+      url.to_s.sub(%r{\Ahttps?://[^/]+}, '')
+    end
+
+    def normalize_artifact_permissions(path)
+      File.chmod(0o644, path.to_s) if File.exist?(path)
+    rescue StandardError
+      nil
+    end
 
     # rubocop:disable Metrics/MethodLength
     def hide_sticky_elements

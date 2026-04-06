@@ -26,6 +26,7 @@ module BetterTogether # :nodoc:
 
           expect(processed.size).to eq(1)
           expect(processed.first[:placement][:side]).to eq('right')
+          expect(File.stat(image_path).mode & 0o777).to eq(0o644)
 
           image = Vips::Image.new_from_file(image_path)
           pixel = image.crop(processed.first[:placement][:x].to_i + 8, processed.first[:placement][:y].to_i + 8, 1, 1).to_a.flatten
