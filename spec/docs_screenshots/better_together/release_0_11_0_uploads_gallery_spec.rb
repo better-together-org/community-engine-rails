@@ -101,6 +101,7 @@ RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
       expect(page).to have_text('Insert')
       expect(page).to have_text('Aurora Banner')
       expect(page).to have_text('Welcome Poster')
+      wait_for_loaded_images('.card-img-top', minimum: 3)
     end
 
     expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{slug}.png")
@@ -123,11 +124,30 @@ RSpec.describe 'Documentation screenshots for 0.11.0 uploads and image library',
 
       expect(page).to have_css('.modal.show', wait: 10)
       expect(page).to have_text('Choose from library')
-      expect(page).to have_css('.modal.show img', minimum: 3)
+      wait_for_loaded_images('.modal.show img', minimum: 3)
     end
 
     expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{slug}.png")
     expect(result[:mobile]).to end_with("docs/screenshots/mobile/#{slug}.png")
   end
   # rubocop:enable Metrics/AbcSize
+
+  def wait_for_loaded_images(selector, minimum:)
+    expect(page).to have_css(selector, minimum:, wait: 10)
+
+    Selenium::WebDriver::Wait.new(timeout: 10).until do
+      page.evaluate_script(<<~JS, selector, minimum)
+        (function(targetSelector, minimumCount) {
+          const images = Array.from(document.querySelectorAll(targetSelector)).filter((image) => {
+            const rect = image.getBoundingClientRect();
+            return rect.width > 0 && rect.height > 0;
+          });
+
+          if (images.length < minimumCount) return false;
+
+          return images.every((image) => image.complete && image.naturalWidth > 0);
+        })(arguments[0], arguments[1]);
+      JS
+    end
+  end
 end
