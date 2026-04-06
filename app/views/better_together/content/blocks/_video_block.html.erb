@@ -1,3 +1,4 @@
+<%# locals: (video_block:) -%>
 <%= cache iframe_embed_cache_key(video_block, video_block.embed_url) do %>
   <%= render layout: 'better_together/content/blocks/block', locals: { block: video_block } do %>
     <% if video_block.video_url.present? %>

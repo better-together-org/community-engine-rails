@@ -1,3 +1,4 @@
+<%# locals: (navigation_area_block:) -%>
 <% nav_area = navigation_area_block.navigation_area %>
 <%= render layout: 'better_together/content/blocks/block', locals: { block: navigation_area_block } do %>
   <% if nav_area.nil? %>

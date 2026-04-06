@@ -1,3 +1,4 @@
+<%# locals: (call_to_action_block:) -%>
 <%= cache call_to_action_block.cache_key_with_version do %>
   <%= render layout: 'better_together/content/blocks/block', locals: { block: call_to_action_block } do %>
     <div class="cta-block cta-block--<%= call_to_action_block.layout %> py-5 text-<%= call_to_action_block.layout == 'left' ? 'start' : call_to_action_block.layout == 'right' ? 'end' : 'center' %>">

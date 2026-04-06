@@ -1,3 +1,4 @@
+<%# locals: (events_block:) -%>
 <%
   order_scope = case events_block.event_scope
                 when 'upcoming' then ->(s) { s.where('starts_at >= ?', Time.current).order(starts_at: :asc) }

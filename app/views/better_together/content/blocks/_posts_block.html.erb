@@ -1,3 +1,4 @@
+<%# locals: (posts_block:) -%>
 <%
   order_scope = if posts_block.posts_scope == 'published'
                   ->(s) { s.where.not(published_at: nil).order(published_at: :desc) }

@@ -2,8 +2,13 @@ flowchart TD
     A[Search request] --> B[SearchController]
     B --> C[Search backend registry]
     C --> D[ElasticsearchBackend]
+    C --> P[PgSearchBackend]
     D --> E[Elasticsearch query execution]
+    P --> Q[pg_search scope execution]
+    P --> R[SQL-backed match scoring]
+    Q --> R
     E --> F[Search results returned]
+    R --> F
     F --> G[TrackSearchQueryJob]
     G --> H[SearchQueryCaptureService]
     H --> I{Platform analytics mode}
@@ -11,3 +16,4 @@ flowchart TD
     I -- hashed --> K[Persist sha256 query digest]
     I -- full --> L[Persist normalized query text]
     D --> M[Live validation and audit-oriented specs]
+    P --> N[Integration specs with pg_search scopes]

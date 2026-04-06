@@ -1,3 +1,4 @@
+<%# locals: (checklist_block:) -%>
 <% checklist = checklist_block.checklist %>
 <%= render layout: 'better_together/content/blocks/block', locals: { block: checklist_block } do %>
   <% if checklist.nil? %>
