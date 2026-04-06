@@ -22,6 +22,14 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
   describe 'CRUD actions as platform manager', :as_platform_manager do
     let(:locale) { I18n.default_locale }
 
+    before do
+      manager_person = BetterTogether::User.find_by(email: 'manager@example.test').person
+      create(:better_together_agreement_participant,
+             agreement: content_publishing_agreement,
+             participant: manager_person,
+             accepted_at: Time.current)
+    end
+
     it 'renders the community privacy option on the edit form' do # rubocop:todo RSpec/MultipleExpectations
       checklist = create(:better_together_checklist,
                          creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
@@ -32,14 +40,6 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('value="community"')
       expect(response.body).to include('Community')
-    end
-
-    before do
-      manager_person = BetterTogether::User.find_by(email: 'manager@example.test').person
-      create(:better_together_agreement_participant,
-             agreement: content_publishing_agreement,
-             participant: manager_person,
-             accepted_at: Time.current)
     end
 
     it 'creates a checklist' do # rubocop:todo RSpec/MultipleExpectations
