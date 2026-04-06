@@ -1,6 +1,34 @@
 # Diagram Rendering System
 
-The `bin/render_diagrams` script automatically renders Mermaid diagrams from `docs/diagrams/source/*.mmd` to both PNG and SVG formats in `docs/diagrams/exports/{png,svg}/` with intelligent resolution selection based on diagram complexity.
+The `bin/render_diagrams` script automatically renders Mermaid diagrams from `docs/diagrams/source/*.mmd` to both PNG and SVG formats in `docs/diagrams/exports/{png,svg}/` with intelligent resolution selection based on diagram complexity and a deterministic portrait/landscape orientation pass.
+
+PNG exports are also re-rendered automatically until their rendered short side reaches the configured minimum, so GitHub comments and other raster embeds stay readable even when Mermaid lays a diagram out very wide. SVG exports remain vector outputs and are rendered once.
+
+## Orientation Selection
+
+The renderer now chooses diagram orientation in a deterministic way before it renders the final exports.
+
+### Orientation modes
+
+- `auto` (default) probes both portrait and landscape candidates, compares their rendered shape, and keeps the option that reduces avoidable stretch
+- `portrait` forces portrait-oriented render dimensions
+- `landscape` forces landscape-oriented render dimensions
+
+### Source override
+
+Any Mermaid source can pin its orientation with a leading comment:
+
+```mermaid
+%% render.orientation: portrait
+```
+
+Supported values are:
+
+- `portrait`
+- `landscape`
+- `auto`
+
+This is the canonical way to mark diagrams whose semantic structure should always stack vertically, such as the CE polymorphic association map.
 
 ## Automatic Complexity Detection
 
@@ -69,6 +97,9 @@ COMPLEXITY_LINE_THRESHOLD=50 bin/render_diagrams
 | `HIGH_RES_WIDTH` | 4800 | High resolution width |
 | `HIGH_RES_HEIGHT` | 3600 | High resolution height |
 | `OUTPUT_FORMATS` | "png svg" | Space-separated output formats |
+| `ORIENTATION_MODE` | auto | Default orientation policy: `auto`, `portrait`, or `landscape` |
+| `MIN_SHORT_SIDE_PX` | 1500 | Minimum rendered PNG short side before the renderer retries with a higher scale |
+| `MAX_RESIZE_ATTEMPTS` | 4 | Maximum PNG rerender attempts to satisfy `MIN_SHORT_SIDE_PX` |
 | `COMPLEXITY_LINE_THRESHOLD` | 80 | Lines threshold for complexity |
 | `COMPLEXITY_NODE_THRESHOLD` | 25 | Nodes threshold for complexity |
 | `COMPLEXITY_SUBGRAPH_THRESHOLD` | 5 | Subgraphs threshold for complexity |
@@ -80,10 +111,12 @@ COMPLEXITY_LINE_THRESHOLD=50 bin/render_diagrams
 1. **Improved Readability**: Complex diagrams with many elements are rendered at higher resolution for better clarity
 2. **Multiple Formats**: Both PNG (raster) and SVG (vector) formats generated automatically
 3. **Scalable Vector Graphics**: SVG files scale perfectly at any zoom level without quality loss
-4. **Optimized Performance**: Simple diagrams use standard resolution to keep file sizes reasonable
-5. **Automatic Detection**: No manual intervention needed - complexity is detected automatically
-6. **Customizable**: All thresholds and resolutions can be adjusted via environment variables
-7. **Informative Output**: Clear indication of which diagrams are rendered at high resolution
+4. **Deterministic Orientation**: Portrait versus landscape is chosen by one canonical rule instead of ad hoc per-diagram guesses
+5. **Readable Raster Exports**: Wide Mermaid layouts are automatically upscaled until PNG embeds reach the minimum short-side floor
+6. **Optimized Performance**: Simple diagrams use standard resolution to keep file sizes reasonable
+7. **Automatic Detection**: No manual intervention needed - complexity is detected automatically
+8. **Customizable**: Thresholds, resolution, and default orientation can be adjusted via environment variables
+9. **Informative Output**: Clear indication of which diagrams are rendered at high resolution
 
 ## File Size Impact
 
