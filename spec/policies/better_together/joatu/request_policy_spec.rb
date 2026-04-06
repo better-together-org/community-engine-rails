@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
   let(:network_admin_user) { create(:better_together_user, :network_admin) }
   let(:normal_user) { create(:better_together_user) }
 
-  let(:request_rec) { create(:better_together_joatu_request, creator: creator_person) }
+  let(:request_rec) { create(:better_together_joatu_request, creator: creator_person, privacy: 'private') }
   let(:connection_request) do
     create(:better_together_joatu_connection_request, creator: creator_person)
   end
@@ -20,8 +20,13 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
   end
 
   describe '#show?' do
-    it { expect(described_class.new(normal_user, request_rec).show?).to be true }
+    it { expect(described_class.new(normal_user, request_rec).show?).to be false }
     it { expect(described_class.new(nil, request_rec).show?).to be false }
+
+    it 'allows viewing a public request' do
+      request_rec.update_column(:privacy, 'public')
+      expect(described_class.new(normal_user, request_rec).show?).to be true
+    end
   end
 
   describe '#create?' do
@@ -75,15 +80,20 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
   describe 'Scope' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject(:resolved) { described_class::Scope.new(user, BetterTogether::Joatu::Request).resolve }
 
-    let!(:req1) { request_rec } # rubocop:todo RSpec/IndexedLet
-    let!(:req2) { create(:better_together_joatu_request) } # rubocop:todo RSpec/IndexedLet
+    let!(:owned_private_request) { request_rec } # rubocop:todo RSpec/IndexedLet
+    let!(:public_request) do # rubocop:todo RSpec/IndexedLet
+      create(:better_together_joatu_request, privacy: 'private').tap { |request| request.update_column(:privacy, 'public') }
+    end
+    let!(:other_private_request) { create(:better_together_joatu_request, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
     context 'authenticated user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
-      it 'includes all requests' do
-        expect(resolved).to include(req1, req2)
+      it 'includes public requests only when the user is unrelated' do
+        expect(resolved).to include(public_request)
+        expect(resolved).not_to include(owned_private_request)
+        expect(resolved).not_to include(other_private_request)
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers

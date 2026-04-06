@@ -162,22 +162,27 @@ module BetterTogether
     end
 
     def settings_attributes
-      scalar_attributes = %i[
+      scalar_settings_attributes + csp_array_attributes
+    end
+
+    def scalar_settings_attributes
+      %i[
         requires_invitation
+        allow_membership_requests
         software_variant
         network_visibility
         connection_bootstrap_state
         federation_protocol
         oauth_issuer_url
       ]
+    end
 
-      array_attributes = %i[
+    def csp_array_attributes
+      %i[
         csp_frame_ancestors_text
         csp_frame_src_text
         csp_img_src_text
       ].map { |attribute| { attribute => [] } }
-
-      scalar_attributes + array_attributes
     end
 
     def resource_class

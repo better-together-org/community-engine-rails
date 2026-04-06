@@ -42,6 +42,10 @@ function initializeTrixEditor(event) {
 function handleTrixAction(event) {
   if (event.actionName === "x-horizontal-rule") {
     insertHorizontalRule(event);
+  } else if (event.actionName === "x-citation") {
+    event.preventDefault();
+    const richText = event.target.richTextExtension;
+    if (richText) richText.openCitationDialog();
   }
 }
 
@@ -59,9 +63,11 @@ function buildHorizontalRule() {
 class RichText {
   constructor(element) {
     this.element = element;
+    this.element.richTextExtension = this;
     this.insertHeadingElements();
     this.insertDividerElements();
     this.insertColorElements();
+    this.insertCitationElements();
   }
 
   insertHeadingElements() {
@@ -112,6 +118,126 @@ class RichText {
     }
   }
 
+  insertCitationElements() {
+    if (!this.toolbarElement.querySelector('.trix-button--icon-citation')) {
+      this.buttonGroupTextTools.insertAdjacentHTML("beforeend", this.citationButtonTemplate);
+    }
+
+    if (!this.dialogsElement.querySelector('.trix-dialog--citation')) {
+      this.dialogsElement.insertAdjacentHTML("beforeend", this.dialogCitationTemplate);
+      this.bindCitationDialog();
+    }
+  }
+
+  bindCitationDialog() {
+    const insertButton = this.dialogsElement.querySelector('.trix-dialog--citation-insert');
+    const cancelButton = this.dialogsElement.querySelector('.trix-dialog--citation-cancel');
+
+    insertButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.insertCitationFromDialog();
+    });
+
+    cancelButton?.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.closeCitationDialog();
+    });
+  }
+
+  openCitationDialog() {
+    const dialog = this.citationDialogElement;
+    if (!dialog) return;
+
+    this.captureSelection();
+    this.populateCitationOptions();
+    this.populateSelectorOptions();
+    dialog.style.display = 'block';
+    this.citationSelectElement?.focus();
+  }
+
+  closeCitationDialog() {
+    if (!this.citationDialogElement) return;
+
+    this.citationDialogElement.style.display = 'none';
+    if (this.citationSelectElement) this.citationSelectElement.selectedIndex = 0;
+    if (this.citationLocatorElement) this.citationLocatorElement.value = '';
+    if (this.citationSelectorElement) this.citationSelectorElement.selectedIndex = 0;
+  }
+
+  populateCitationOptions() {
+    if (!this.citationSelectElement) return;
+
+    const options = this.citationOptions;
+    const currentValue = this.citationSelectElement.value;
+    const optionMarkup = ['<option value="">Select citation</option>']
+      .concat(options.map((option) => `<option value="${escapeHtml(option.referenceKey)}">${escapeHtml(option.label)}</option>`))
+      .join('');
+
+    this.citationSelectElement.innerHTML = optionMarkup;
+    if (currentValue) this.citationSelectElement.value = currentValue;
+  }
+
+  populateSelectorOptions() {
+    if (!this.citationSelectorElement) return;
+
+    const selectedRangeOption = this.selectionRangeOption;
+    const currentValue = this.citationSelectorElement.value;
+    const options = [{ value: '', label: 'No selector metadata' }]
+      .concat(selectedRangeOption ? [selectedRangeOption] : [])
+      .concat(this.selectorOptions);
+
+    this.citationSelectorElement.innerHTML = options
+      .map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`)
+      .join('');
+
+    if (currentValue) {
+      this.citationSelectorElement.value = currentValue;
+    } else if (selectedRangeOption) {
+      this.citationSelectorElement.value = selectedRangeOption.value;
+    }
+  }
+
+  insertCitationFromDialog() {
+    const referenceKey = this.citationSelectElement?.value;
+    if (!referenceKey) return;
+
+    const locator = this.citationLocatorElement?.value?.trim();
+    const selector = this.citationSelectorElement?.value?.trim();
+    const href = `#citation-${referenceKey}`;
+    const selectedText = this.selectedText();
+    const evidenceSelectorAttribute = selector ? ` data-evidence-selector="${escapeHtml(selector)}"` : '';
+
+    this.restoreSelection();
+
+    if (selectedText) {
+      this.element.editor.insertHTML(`<a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}"${evidenceSelectorAttribute}>${escapeHtml(selectedText)}</a>`);
+    } else {
+      const label = locator ? `${referenceKey}, ${locator}` : referenceKey;
+      this.element.editor.insertHTML(`<sup class="citation-reference"><a href="${href}" class="citation-link" data-citation-key="${escapeHtml(referenceKey)}"${evidenceSelectorAttribute}>[${escapeHtml(label)}]</a></sup>`);
+    }
+
+    this.closeCitationDialog();
+  }
+
+  captureSelection() {
+    this.lastSelectionRange = this.element.editor.getSelectedRange();
+    this.lastSelectedText = this.selectedTextFromRange(this.lastSelectionRange);
+  }
+
+  restoreSelection() {
+    if (this.lastSelectionRange) this.element.editor.setSelectedRange(this.lastSelectionRange);
+  }
+
+  selectedText() {
+    return this.lastSelectedText || this.selectedTextFromRange(this.element.editor.getSelectedRange());
+  }
+
+  selectedTextFromRange(range) {
+    if (!range || range[0] === range[1]) return '';
+
+    return this.element.editor.getDocument().toString().slice(range[0], range[1]).trim();
+  }
+
   get buttonGroupBlockTools() {
     return this.toolbarElement.querySelector("[data-trix-button-group=block-tools]");
   }
@@ -122,6 +248,54 @@ class RichText {
 
   get dialogsElement() {
     return this.toolbarElement.querySelector("[data-trix-dialogs]");
+  }
+
+  get citationDialogElement() {
+    return this.dialogsElement.querySelector('.trix-dialog--citation');
+  }
+
+  get citationSelectElement() {
+    return this.dialogsElement.querySelector('[data-trix-citation-select]');
+  }
+
+  get citationLocatorElement() {
+    return this.dialogsElement.querySelector('[data-trix-citation-locator]');
+  }
+
+  get citationSelectorElement() {
+    return this.dialogsElement.querySelector('[data-trix-selector-select]');
+  }
+
+  get citationOptions() {
+    const raw = this.element.dataset.citationOptions;
+    if (!raw) return [];
+
+    try {
+      return JSON.parse(raw);
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  get selectorOptions() {
+    const raw = this.element.dataset.selectorOptions;
+    if (!raw) return [];
+
+    try {
+      return JSON.parse(raw);
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  get selectionRangeOption() {
+    const range = this.lastSelectionRange;
+    if (!range || range[0] === range[1]) return null;
+
+    return {
+      value: `trix-range:${range[0]}:${range[1]}`,
+      label: `Selected text (${range[0]}-${range[1]})`
+    };
   }
 
   get originalHeadingButton() {
@@ -146,6 +320,10 @@ class RichText {
 
   get colorButtonTemplate() {
     return '<button type="button" class="trix-button trix-button--icon trix-button--icon-color" data-trix-action="x-color" title="Color" tabindex="-1">Color</button>';
+  }
+
+  get citationButtonTemplate() {
+    return '<button type="button" class="trix-button trix-button--icon trix-button--icon-citation" data-trix-action="x-citation" title="Citation" tabindex="-1">Citation</button>';
   }
 
   get dialogHeadingTemplate() {
@@ -188,6 +366,34 @@ class RichText {
       </div>
     `;
   }
+
+  get dialogCitationTemplate() {
+    return `
+      <div class="trix-dialog trix-dialog--citation" data-trix-dialog="x-citation" style="display:none;">
+        <div class="trix-dialog__link-fields">
+          <label class="trix-label" for="trix-citation-select">Citation</label>
+          <select id="trix-citation-select" class="trix-input trix-input--dialog" data-trix-citation-select></select>
+          <label class="trix-label" for="trix-citation-locator">Locator</label>
+          <input id="trix-citation-locator" type="text" class="trix-input trix-input--dialog" data-trix-citation-locator placeholder="Optional page, figure, timestamp">
+          <label class="trix-label" for="trix-selector-select">Selector</label>
+          <select id="trix-selector-select" class="trix-input trix-input--dialog" data-trix-selector-select></select>
+          <div class="trix-button-group mt-2">
+            <button type="button" class="trix-button trix-button--dialog trix-dialog--citation-insert">Insert</button>
+            <button type="button" class="trix-button trix-button--dialog trix-dialog--citation-cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function addHeadingAttributes() {

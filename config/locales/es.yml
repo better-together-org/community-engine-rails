@@ -830,7 +830,7 @@ es:
       hint_label: Título corto para el elemento de la lista (requerido).
       hint_parent: 'Opcional: anide este elemento bajo otro. La profundidad máxima
         de anidamiento es 2.'
-      hint_privacy: 'Elija quién puede ver este elemento: Público o Privado.'
+      hint_privacy: 'Elija quién puede ver este elemento: Público, Comunidad o Privado.'
       label: Etiqueta
       move_down: Mover hacia abajo
       move_up: Mover hacia arriba
@@ -852,6 +852,11 @@ es:
         items_title: Elementos
         no_items: No hay elementos para mostrar
     communities:
+      form:
+        allow_membership_requests: Permitir solicitudes de membresía
+        allow_membership_requests_hint: Muestra un formulario público de solicitud
+          de membresía para esta comunidad cuando el modelo de acceso configurado
+          lo permite.
       index:
         new_btn_text: Nueva comunidad
       new:
@@ -1472,6 +1477,8 @@ es:
           title: Asentamientos
     global:
       add: Agregar
+    governance:
+      robot_author: Autor robótico
     host_nav:
       label: Navegación del anfitrión
       toggle: Navegación del anfitrión
@@ -2240,8 +2247,12 @@ es:
         clear_filters: Limpiar filtros
         filter: Filtrar
         new_page: Nueva página
+        new_release_package_draft: Nuevo borrador de paquete de publicación
         search_by_slug: Buscar por slug...
         search_by_title: Buscar por título...
+      release_package_draft:
+        created: 'Se creó un borrador privado del paquete de publicación. Publicación
+          complementaria: %{post_title}'
     people:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:
@@ -2595,6 +2606,10 @@ es:
         pending: Pendiente
     platforms:
       form:
+        allow_membership_requests: Permitir solicitudes de membresía
+        allow_membership_requests_hint: Muestra un formulario público de solicitud
+          de membresía en la pantalla de registro con invitación para la comunidad
+          anfitriona principal de esta plataforma.
         csp_frame_ancestors_text_hint: Quién puede incrustar este sitio de CE. Selecciona
           orígenes de confianza o escribe un nuevo hostname/origen y presiona Enter.
           Déjalo en blanco para mantener frame-ancestors 'none'.
@@ -2640,6 +2655,7 @@ es:
       none_body: No hay publicaciones para mostrar en este momento.
       none_title: Aún no hay publicaciones
       published_on: Publicado %{date}
+      robot_authors: Autores robot
       save_post: Guardar publicación
       updated_on_short: Actualizado
       view_post: Ver publicación
@@ -2840,6 +2856,17 @@ es:
         status: Estado del caso
       index:
         filter: Filtrar
+        local_snapshot_description: Señales locales deterministas construidas a partir
+          de reportes, casos y notas. El análisis remoto es opcional y complementario.
+        local_snapshot_generated_at: Generado %{time}
+        local_snapshot_title: Instantánea local de revisión
+        snapshot:
+          open_cases: Casos abiertos
+          participant_notes: Notas visibles para las personas participantes
+          repeat_reportables: Elementos reportados repetidamente
+          retaliation_risk: Riesgo de represalias
+          unassigned_open: Casos abiertos sin asignar
+          urgent_open: Casos abiertos urgentes
         title: Casos de seguridad
       notices:
         updated: El caso de seguridad fue actualizado.

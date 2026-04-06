@@ -1,0 +1,11 @@
+{
+  "name": "membership_request_review_detail",
+  "device": "mobile",
+  "url": "http://127.0.0.1:46883/en/c/test-host-community/membership_requests/membership-request-from-elmo-kozey",
+  "title": "Test Host Community",
+  "captured_at": "2026-04-05T19:36:22Z",
+  "locale": "en",
+  "role": "community_manager",
+  "feature_set": "membership_request_workflow",
+  "source_spec": "./spec/docs_screenshots/better_together/membership_request_workflow_spec.rb"
+}

@@ -1,0 +1,24 @@
+flowchart TD
+    A[Editor opens record form] --> B[Expand Import GitHub Citation]
+    B --> C[Stimulus controller requests /citations/import/github.json]
+    C --> D[GitHubCitationImportsController]
+    D --> E[GithubCitationImportCatalog]
+    E --> F{Preview cache available?}
+    F -->|Yes| G[Use auth preview citation candidates]
+    F -->|No| H[Query linked GitHub integration]
+    H --> I[Repositories]
+    H --> J[Pull requests]
+    H --> K[Issues]
+    H --> L[Commits]
+    G --> M[Return normalized citation candidates]
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+    M --> N[Browser renders import cards]
+    N --> O[Editor clicks Import Citation]
+    O --> P[Populate local citation row]
+    P --> Q[Store GitHub metadata and provenance]
+    Q --> R[Save record]
+    R --> S[Local bibliography and evidence picker include imported source]
+    S --> T[CSL / APA / MLA / bundle exports stay consistent]

@@ -12,11 +12,11 @@ module BetterTogether # :nodoc:
 
     SCREENSHOT_ROOT = BetterTogether::Engine.root.join('docs', 'screenshots').freeze
 
-    def capture(name, device: :both, metadata: {}, &)
+    def capture(name, device: :both, metadata: {}, callouts: [], &)
       register_drivers
 
       devices_for(device).to_h do |current_device|
-        [current_device, capture_single(name, current_device, metadata:, &)]
+        [current_device, capture_single(name, current_device, metadata:, callouts:, &)]
       end
     end
 
@@ -59,7 +59,7 @@ module BetterTogether # :nodoc:
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def capture_single(name, device, metadata:)
+    def capture_single(name, device, metadata:, callouts:)
       directory = SCREENSHOT_ROOT.join(device.to_s)
       FileUtils.mkdir_p(directory)
 
@@ -72,8 +72,16 @@ module BetterTogether # :nodoc:
 
         yield if block_given?
         hide_sticky_elements
+        processed_metadata = default_metadata(name, device).merge(metadata)
+        callout_targets = collect_callout_targets(callouts)
         Capybara.page.save_screenshot(image_path.to_s)
-        File.write(json_path, JSON.pretty_generate(default_metadata(name, device).merge(metadata)))
+        if callout_targets.any?
+          processed_metadata[:callouts] = BetterTogether::ScreenshotCalloutProcessor.process(
+            image_path,
+            callouts: callout_targets
+          )
+        end
+        File.write(json_path, JSON.pretty_generate(processed_metadata))
       ensure
         restore_sticky_elements
       end
@@ -105,6 +113,78 @@ module BetterTogether # :nodoc:
     rescue StandardError
       nil
     end
+
+    def collect_callout_targets(callouts)
+      normalized = Array(callouts).map { |callout| normalize_callout(callout) }.reject { |callout| callout[:selector].blank? }
+      return [] if normalized.empty?
+
+      geometry_by_selector = fetch_callout_geometry(normalized.map { |callout| callout[:selector] })
+      normalized.filter_map do |callout|
+        geometry = geometry_by_selector[callout[:selector]]
+        next unless geometry
+
+        callout.merge(target: geometry)
+      end
+    end
+
+    def normalize_callout(callout)
+      {
+        selector: callout[:selector] || callout['selector'],
+        title: callout[:title] || callout['title'],
+        bullets: Array(callout[:bullets] || callout['bullets']).map(&:to_s)
+      }
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    def fetch_callout_geometry(selectors)
+      results = Capybara.page.evaluate_script(<<~JS, selectors)
+        (function(targetSelectors) {
+          function firstVisibleTarget(element) {
+            const candidates = [
+              element,
+              element?.nextElementSibling,
+              element?.previousElementSibling,
+              element?.parentElement?.querySelector('.ss-main, .ts-wrapper, [role="combobox"]')
+            ].filter(Boolean);
+
+            return candidates.find((candidate) => {
+              const rect = candidate.getBoundingClientRect();
+              return rect.width > 0 && rect.height > 0;
+            }) || element;
+          }
+
+          return targetSelectors.map((selector) => {
+            const element = document.querySelector(selector);
+            if (!element) return null;
+            const visibleTarget = firstVisibleTarget(element);
+            const rect = visibleTarget.getBoundingClientRect();
+            return {
+              selector,
+              x: rect.left,
+              y: rect.top,
+              width: rect.width,
+              height: rect.height
+            };
+          }).filter(Boolean);
+        })(arguments[0]);
+      JS
+
+      Array(results).to_h do |geometry|
+        selector = geometry['selector'] || geometry[:selector]
+        [
+          selector,
+          {
+            x: geometry['x'] || geometry[:x],
+            y: geometry['y'] || geometry[:y],
+            width: geometry['width'] || geometry[:width],
+            height: geometry['height'] || geometry[:height]
+          }
+        ]
+      end
+    rescue StandardError
+      {}
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     # rubocop:disable Metrics/MethodLength
     def hide_sticky_elements

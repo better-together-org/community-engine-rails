@@ -14,14 +14,21 @@ module BetterTogether
     include Protected
     include Privacy
     include Metrics::Viewable
+    include Searchable
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
                optional: true,
                inverse_of: :created_communities
+    has_one :primary_platform,
+            class_name: '::BetterTogether::Platform',
+            foreign_key: :community_id,
+            inverse_of: :community,
+            dependent: :nullify
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
+    has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
 
     # Community invitations
     has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
@@ -37,6 +44,18 @@ module BetterTogether
     translates :name, type: :string
     translates :description, type: :text
     translates :description_html, backend: :action_text
+
+    settings index: default_elasticsearch_index
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
@@ -76,8 +95,27 @@ module BetterTogether
 
     validates :name, presence: true
 
+    def self.extra_permitted_attributes
+      super + %i[allow_membership_requests]
+    end
+
     def as_community
       becomes(self.class.base_class)
+    end
+
+    def membership_requests_enabled?(platform: primary_platform)
+      allow_membership_requests? || platform&.allow_membership_requests?
+    end
+
+    def as_indexed_json(_options = {})
+      {
+        id:,
+        name:,
+        slug:,
+        identifier:,
+        description:,
+        description_html: description_html.present? ? search_text_value(description_html) : nil
+      }.compact.as_json
     end
 
     # Resize the cover image to specific dimensions

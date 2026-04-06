@@ -5,6 +5,16 @@ require 'rails_helper'
 RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
   include RequestSpecHelper
 
+  def grant_platform_permission(user, permission_identifier)
+    BetterTogether::AccessControlBuilder.seed_data
+
+    role = create(:better_together_role, :platform_role)
+    permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
+    role.assign_resource_permissions([permission.identifier])
+
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+  end
+
   let!(:host_platform) { configure_host_platform }
   let!(:other_platform) { create(:better_together_platform) }
 
@@ -39,8 +49,25 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
       it 'includes only people on the current platform' do
         policy = described_class.new(steward_user, BetterTogether::Conversation.new)
         ids = policy.permitted_participants.pluck(:id)
-        expect(ids).to include(steward_person.id, opted_in_person.id, non_opted_person.id, host_only_opted_in_person.id)
+        expect(ids).to include(steward_person.id, opted_in_person.id, host_only_opted_in_person.id)
+        expect(ids).not_to include(non_opted_person.id)
         expect(ids).not_to include(other_platform_opted_in_person.id)
+      end
+    end
+
+    context 'when agent has explicit directory access' do
+      let!(:directory_admin) { create(:user, :confirmed, password: 'SecureTest123!@#') }
+
+      before do
+        create(:better_together_person_platform_membership, member: directory_admin.person, joinable: host_platform)
+        grant_platform_permission(directory_admin, 'list_person')
+      end
+
+      it 'does not widen conversation participants beyond opted-in and steward paths' do
+        policy = described_class.new(directory_admin, BetterTogether::Conversation.new)
+
+        expect(policy.permitted_participants).to include(steward_person, opted_in_person, host_only_opted_in_person)
+        expect(policy.permitted_participants).not_to include(non_opted_person, other_platform_opted_in_person)
       end
     end
 

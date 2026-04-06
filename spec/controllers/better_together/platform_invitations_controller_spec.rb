@@ -17,6 +17,9 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
 
   before do
     configure_host_platform
+    platform_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                    BetterTogether::Role.find_by(identifier: 'platform_manager')
+    platform.person_platform_memberships.find_or_create_by!(member: user.person, role: platform_role) if platform_role
     sign_in user
   end
 

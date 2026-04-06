@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Robot do
+  it_behaves_like 'an author model'
+
   describe '.resolve' do
     let(:platform) { create(:platform) }
     let!(:global_robot) do
@@ -39,6 +41,65 @@ RSpec.describe BetterTogether::Robot do
 
       expect(robot.settings_hash[:assume_model_exists]).to be(true)
       expect(robot.settings_hash['assume_model_exists']).to be(true)
+    end
+  end
+
+  describe '.available_for_platform' do
+    let(:platform) { create(:platform) }
+    let!(:global_robot) { create(:robot, :global, name: 'Global Robot') }
+    let!(:platform_robot) { create(:robot, platform:, name: 'Platform Robot') }
+
+    it 'returns global and platform-specific active robots' do
+      expect(described_class.available_for_platform(platform)).to include(global_robot, platform_robot)
+    end
+
+    it 'excludes robots from other platforms' do
+      create(:robot, platform: create(:platform), name: 'Other Platform Robot')
+
+      expect(described_class.available_for_platform(platform)).not_to include(
+        described_class.find_by(name: 'Other Platform Robot')
+      )
+    end
+  end
+
+  describe 'community action network identity helpers' do
+    it 'exposes governed agent metadata for robots' do
+      robot = build(:robot, identifier: 'release-bot', name: 'Release Bot')
+
+      expect(robot.governed_agent?).to be(true)
+      expect(robot.governed_agent_type).to eq('robot')
+      expect(robot.governed_agent_identifier).to eq('release-bot')
+      expect(robot.governed_agent_display_name).to eq('Release Bot')
+      expect(robot.governed_agent_key).to eq('robot:release-bot')
+      expect(robot.governed_agent_label).to eq('Release Bot (robot)')
+    end
+
+    it 'can satisfy agreement checks as a governed agent' do
+      robot = create(:robot, identifier: 'release-bot', name: 'Release Bot')
+      agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |record|
+        record.title = 'Content Publishing Agreement'
+        record.privacy = 'public'
+        record.protected = true
+      end
+      create(:better_together_agreement_participant, agreement:, participant: robot, accepted_at: Time.current)
+
+      expect(robot.accepted_agreement?('content_publishing_agreement')).to be(true)
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns the robot name' do
+      robot = build(:robot, name: 'Release Bot')
+
+      expect(robot.to_s).to eq('Release Bot')
+    end
+  end
+
+  describe '#select_option_title' do
+    it 'includes the robot identifier and author type' do
+      robot = build(:robot, identifier: 'release-bot', name: 'Release Bot')
+
+      expect(robot.select_option_title).to eq('Release Bot - @release-bot (robot)')
     end
   end
 end

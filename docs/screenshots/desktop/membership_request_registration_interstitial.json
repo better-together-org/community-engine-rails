@@ -1,0 +1,11 @@
+{
+  "name": "membership_request_registration_interstitial",
+  "device": "desktop",
+  "url": "http://127.0.0.1:46883/en/users/sign-up",
+  "title": "Sign Up | Test Host Community",
+  "captured_at": "2026-04-05T19:36:18Z",
+  "locale": "en",
+  "role": "community_manager",
+  "feature_set": "membership_request_workflow",
+  "source_spec": "./spec/docs_screenshots/better_together/membership_request_workflow_spec.rb"
+}

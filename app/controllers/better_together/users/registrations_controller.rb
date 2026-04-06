@@ -361,16 +361,46 @@ module BetterTogether
         return unless params[:invitation_code].present?
 
         # Find the invitation by token
-        invitation = BetterTogether::Invitation.find_by(token: params[:invitation_code])
-        return unless invitation
+        invitation = find_invitation_by_token(params[:invitation_code])
+        unless invitation
+          clear_all_invitation_session_data
+          return
+        end
 
         # Determine invitation type and store both in session and instance variables
         invitation_type = determine_invitation_type(invitation)
-        return unless invitation_type
+        unless invitation_type
+          clear_all_invitation_session_data
+          return
+        end
 
         store_invitation_token_in_session(invitation, invitation_type)
         # Also directly set the instance variable for immediate use
         store_invitation_instance(invitation_type, invitation)
+      end
+
+      def clear_all_invitation_session_data
+        %i[community event platform].each { |type| clear_invitation_session_data(type) }
+      end
+
+      def find_invitation_by_token(*args)
+        return find_typed_invitation_by_token(*args) if args.length == 2
+
+        token = args.first
+        find_pending_invitation_by_token(token)
+      end
+
+      def find_typed_invitation_by_token(invitation_type, token)
+        invitation_class = invitation_class_for_type(invitation_type)
+        invitation_class.pending.not_expired.find_by(token: token)
+      end
+
+      def find_pending_invitation_by_token(token)
+        [
+          BetterTogether::PlatformInvitation.pending.not_expired,
+          BetterTogether::CommunityInvitation.pending.not_expired,
+          BetterTogether::EventInvitation.pending.not_expired
+        ].lazy.map { |scope| scope.find_by(token: token) }.find(&:present?)
       end
 
       # Check if platform requires invitation and if valid invitation exists

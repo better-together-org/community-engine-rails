@@ -1,0 +1,11 @@
+{
+  "name": "claim_evidence_browser",
+  "device": "desktop",
+  "url": "http://127.0.0.1:45041/en/host/pages/claim-evidence-browser-eac1414a/edit",
+  "title": "Edit Voluptatum et repellat. | Pages | Test Host Community",
+  "captured_at": "2026-04-04T22:43:19Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "claim_evidence_browser",
+  "source_spec": "./spec/docs_screenshots/better_together/claim_evidence_browser_spec.rb"
+}

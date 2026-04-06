@@ -1,0 +1,14 @@
+flowchart TD
+    A[Incoming query] --> B[Read SEARCH_BACKEND]
+    B --> C[Register default search adapters]
+    C --> D{Adapter exists?}
+    D -- Yes --> E[Instantiate backend]
+    D -- No --> F[Fallback to elasticsearch adapter]
+    F --> E
+    E --> G{Backend key}
+    G -- elasticsearch --> H[Query Elasticsearch backend]
+    G -- database --> I[Score records from registry relations]
+    G -- pg_search --> J[Use pg_search scopes or database fallback]
+    H --> K[Return SearchResult]
+    I --> K
+    J --> K

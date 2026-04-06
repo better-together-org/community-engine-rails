@@ -834,7 +834,8 @@ fr:
       hint_label: Titre court pour l'élément de la liste (requis).
       hint_parent: 'Optionnel : imbriquez cet élément sous un autre. La profondeur
         maximale d''imbrication est de 2.'
-      hint_privacy: 'Choisissez qui peut voir cet élément : Public ou Privé.'
+      hint_privacy: 'Choisissez qui peut voir cet élément : Public, Communauté ou
+        Privé.'
       label: Libellé
       move_down: Déplacer vers le bas
       move_up: Déplacer vers le haut
@@ -856,6 +857,10 @@ fr:
         items_title: Éléments
         no_items: Aucun élément à afficher
     communities:
+      form:
+        allow_membership_requests: Autoriser les demandes d'adhésion
+        allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
+          pour cette communauté lorsque la configuration d'accès l'autorise.
       index:
         new_btn_text: Nouvelle communauté
       new:
@@ -1477,6 +1482,8 @@ fr:
           title: Titre
     global:
       add: Ajouter
+    governance:
+      robot_author: Auteur robot
     host_nav:
       label: Navigation de l’hôte
       toggle: Navigation de l’hôte
@@ -2250,8 +2257,12 @@ fr:
         clear_filters: Effacer les filtres
         filter: Filtrer
         new_page: Nouvelle page
+        new_release_package_draft: Nouveau brouillon de paquet de publication
         search_by_slug: Rechercher par slug...
         search_by_title: Rechercher par titre...
+      release_package_draft:
+        created: 'Brouillon privé de paquet de publication créé. Publication associée
+          : %{post_title}'
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
@@ -2608,6 +2619,10 @@ fr:
         pending: En attente
     platforms:
       form:
+        allow_membership_requests: Autoriser les demandes d'adhésion
+        allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
+          sur l'écran d'inscription avec invitation pour la communauté hôte principale
+          de cette plateforme.
         csp_frame_ancestors_text_hint: Qui peut intégrer ce site CE. Sélectionnez
           des origines de confiance ou saisissez un nouveau nom d'hôte/origine puis
           appuyez sur Entrée. Laissez vide pour conserver frame-ancestors 'none'.
@@ -2654,6 +2669,7 @@ fr:
       none_body: Il n'y a pas de publications à afficher pour le moment.
       none_title: Pas encore de publications
       published_on: Publié %{date}
+      robot_authors: Auteurs robots
       save_post: Enregistrer la publication
       updated_on_short: Mis à jour
       view_post: Voir la publication
@@ -2854,6 +2870,18 @@ fr:
         status: Statut du dossier
       index:
         filter: Filtrer
+        local_snapshot_description: Signaux locaux déterministes construits à partir
+          des signalements, des dossiers et des notes. L'analyse distante est facultative
+          et additive.
+        local_snapshot_generated_at: Généré %{time}
+        local_snapshot_title: Instantané local de révision
+        snapshot:
+          open_cases: Dossiers ouverts
+          participant_notes: Notes visibles par les participantes et participants
+          repeat_reportables: Éléments signalés à plusieurs reprises
+          retaliation_risk: Risque de représailles
+          unassigned_open: Dossiers ouverts non attribués
+          urgent_open: Dossiers ouverts urgents
         title: Dossiers de sécurité
       notices:
         updated: Le dossier de sécurité a été mis à jour.

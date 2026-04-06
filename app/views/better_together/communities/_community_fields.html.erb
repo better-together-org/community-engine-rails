@@ -53,6 +53,20 @@
         <%= required_label form, :privacy, class: "form-label" %>
         <%= privacy_field(form:, klass: resource_class) %>
       </div>
+
+      <div class="mb-3">
+        <div class="form-check">
+          <%= form.check_box :allow_membership_requests, class: 'form-check-input', id: "#{dom_id(community)}_allow_membership_requests" %>
+          <%= form.label :allow_membership_requests,
+                         t('better_together.communities.form.allow_membership_requests', default: 'Allow membership requests'),
+                         class: 'form-check-label',
+                         for: "#{dom_id(community)}_allow_membership_requests" %>
+          <div class="form-text text-muted">
+            <%= t('better_together.communities.form.allow_membership_requests_hint',
+                  default: 'When enabled, visitors can submit a membership request for this community from the public membership-request form and the private-platform registration interstitial.') %>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Images Tab -->

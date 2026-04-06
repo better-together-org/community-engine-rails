@@ -19,7 +19,13 @@
 </div>
 
 <div class="mb-3">
-  <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: better_together_calendar, form: form, attribute: 'description' } %>
+  <%= render partial: 'better_together/shared/translated_rich_text_field',
+             locals: {
+               model: better_together_calendar,
+               form: form,
+               attribute: 'description',
+               citation_options: better_together_calendar.citation_reference_options
+             } %>
 </div>
 
 <div class="mb-3">
@@ -30,6 +36,9 @@
   <%= required_label form, :privacy, class: "form-label" %>
   <%= privacy_field(form:, klass: resource_class) %>
 </div>
+
+<%= render 'better_together/shared/citation_fields_section', form:, record: better_together_calendar %>
+<%= render 'better_together/shared/claim_fields_section', form:, record: better_together_calendar %>
 
   <div>
     <%= form.submit %>

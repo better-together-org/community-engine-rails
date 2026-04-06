@@ -48,7 +48,15 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 
 ##### **Systems Documentation** - [`developers/systems/`](developers/systems/)
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
+- [Actor-Safe Creator and Authorship Migration Plan](developers/systems/actor_safe_creator_authorship_migration_plan.md) - Phased path toward governed-agent-safe creator and authorship models
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
+- [Citation and Evidence Chain System](developers/systems/citation_evidence_chain_system.md) - Structured citations, claims, and evidence linking
+- [Community Action Network Governance System](developers/systems/community_action_network_governance_system.md) - Constitutional governance model for people, bots, and shared resources
+- [Contribution Attribution System](developers/systems/contribution_attribution_system.md) - Governed contributor roles, contribution types, and structured attribution details
+- [Public Publishing Agreement Gate System](developers/systems/public_publishing_agreement_gate_system.md) - Enforced agreement acceptance before governed public visibility
+- [PR 1494 Scope Consolidation](developers/systems/pr_1494_scope_consolidation.md) - Cut line for governed publishing, contribution, and evidence scope in PR 1494
+- [Release Package Publishing System](developers/systems/release_package_publishing_system.md) - Proposed CE-native workflow for governed release packages
+- [Robot Author Identity System](developers/systems/robot_author_identity_system.md) - Proposed model for truthful robot authorship on governed content
 - [Community Social System](developers/systems/community_social_system.md) - Social features
 - [Content Management](developers/systems/content_management.md) - Content creation and management
 - [Conversations Messaging System](developers/systems/conversations_messaging_system.md) - Real-time messaging
@@ -61,6 +69,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
+- [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across Elasticsearch, database, and pg_search search modes
+- [Robot Authored Page And Post Publishing](developers/systems/robot_authored_page_post_publishing_system.md) - Narrow workflow for truthful robot bylines on pages and posts
 - [Security Protection System](developers/systems/security_protection_system.md) - Security measures
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
@@ -131,6 +141,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Accounts Flow](diagrams/source/accounts_flow.mmd)
 - [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
 - [⚡ Caching Performance Flow](diagrams/source/caching_performance_flow.mmd)
+- [Community Action Network Governance Flow](diagrams/source/community_action_network_governance_flow.mmd)
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
 - [Content Flow](diagrams/source/content_flow.mmd)
 - [Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
@@ -143,6 +154,10 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Metrics Flow](diagrams/source/metrics_flow.mmd)
 - [Navigation Flow](diagrams/source/navigation_flow.mmd)
 - [Notifications Flow](diagrams/source/notifications_flow.mmd)
+- [PR 1479 Search Backend Architecture](diagrams/source/pr_1479_search_backend_architecture.mmd)
+- [PR 1479 Search Backend Flow](diagrams/source/pr_1479_search_backend_flow.mmd)
+- [PR 1479 Search Backend Process](diagrams/source/pr_1479_search_backend_process.mmd)
+- [PR 1496 Robot Authored Page And Post Flow](diagrams/source/pr_1496_robot_authored_page_post_flow.mmd)
 - [0.11.0 Release Capability Map](diagrams/source/release_0_11_0_capability_map.mmd)
 - [Role Based Access Control Flow](diagrams/source/role_based_access_control_flow.mmd)
 - [Security Protection Flow](diagrams/source/security_protection_flow.mmd)
@@ -182,6 +197,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [README](development/README.md) - Development resources overview
 - [Development Setup](development/dev-setup.md) - Local development guide
 - [♿ Accessibility Testing](development/accessibility_testing.md) - Browser accessibility and screenshot testing guidance
+- [Pull Request Evidence Standard](development/pull_request_evidence_standard.md) - Tiered evidence requirements for PR docs, diagrams, and screenshots
 - [Screenshot And Documentation Tooling Assessment](development/screenshot_and_documentation_tooling_assessment.md) - CE and management-tool tooling assessment
 
 #### **Joatu Exchange System** - [`joatu/`](joatu/)

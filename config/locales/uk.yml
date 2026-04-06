@@ -820,7 +820,8 @@ uk:
       hint_label: Короткий заголовок для елемента чек-листа (обов'язково).
       hint_parent: 'Необов''язково: вкласти цей елемент під інший. Максимальна глибина
         вкладення становить 2.'
-      hint_privacy: 'Виберіть, хто може бачити цей елемент: Публічний або Приватний.'
+      hint_privacy: 'Виберіть, хто може бачити цей елемент: Публічний, Спільнота або
+        Приватний.'
       label: Мітка
       move_down: Перемістити вниз
       move_up: Перемістити вгору
@@ -842,6 +843,10 @@ uk:
         items_title: Елементи
         no_items: Немає елементів для відображення
     communities:
+      form:
+        allow_membership_requests: Дозволити запити на членство
+        allow_membership_requests_hint: Показує публічну форму запиту на членство
+          для цієї спільноти, коли це дозволяє налаштована модель доступу.
       index:
         new_btn_text: Нова спільнота
       new:
@@ -1466,6 +1471,8 @@ uk:
           title: Settlements
     global:
       add: Add
+    governance:
+      robot_author: Автор-робот
     host_nav:
       label: Навігація хоста
       toggle: Навігація хоста
@@ -2227,8 +2234,12 @@ uk:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
+        new_release_package_draft: Новий чернетковий пакет релізу
         search_by_slug: Search by slug...
         search_by_title: Search by title...
+      release_package_draft:
+        created: 'Створено приватну чернетку пакета релізу. Пов’язаний чернетковий
+          допис: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -2579,6 +2590,9 @@ uk:
         pending: Очікує
     platforms:
       form:
+        allow_membership_requests: Дозволити запити на членство
+        allow_membership_requests_hint: Показує публічну форму запиту на членство
+          на екрані реєстрації за запрошенням для основної хост-спільноти цієї платформи.
         csp_frame_ancestors_text_hint: Хто може вбудовувати цей сайт CE. Виберіть
           довірені джерела або введіть новий hostname/джерело й натисніть Enter. Залиште
           порожнім, щоб зберегти frame-ancestors 'none'.
@@ -2624,6 +2638,7 @@ uk:
       none_body: Наразі немає постів для показу.
       none_title: Постів поки що немає
       published_on: Опубліковано %{date}
+      robot_authors: Автори-роботи
       save_post: Зберегти пост
       updated_on_short: Оновлено
       view_post: Переглянути пост
@@ -2822,6 +2837,18 @@ uk:
         status: Статус справи
       index:
         filter: Фільтрувати
+        local_snapshot_description: Детерміновані локальні сигнали, побудовані зі
+          скарг, справ і нотаток. Віддалений аналіз є необов'язковим і лише доповнює
+          їх.
+        local_snapshot_generated_at: Згенеровано %{time}
+        local_snapshot_title: Локальний знімок для перегляду
+        snapshot:
+          open_cases: Відкриті справи
+          participant_notes: Нотатки, видимі учасникам
+          repeat_reportables: Повторно позначені об'єкти
+          retaliation_risk: Ризик помсти
+          unassigned_open: Відкриті без призначення
+          urgent_open: Термінові відкриті
         title: Справи безпеки
       notices:
         updated: Справу безпеки оновлено.

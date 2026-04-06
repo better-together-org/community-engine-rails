@@ -4,6 +4,11 @@
 
 The Better Together Community Engine includes a comprehensive AI integration system primarily focused on automated content translation. The current implementation now routes through CE robots, the adapter registry, and `ruby_llm`, so CE can support audited local and remote model backends without requiring any one external provider in the core gem.
 
+Related system docs:
+
+- [Robot Configuration System](./robot_configuration_system.md)
+- [Adapter Registry Architecture](../../development/adapter_registry_architecture.md)
+
 ## Architecture Status
 
 Current state:
@@ -177,6 +182,10 @@ The AI integration system operates through several interconnected processes:
 # Default robot/model resolution
 bot = ApplicationBot.new(model: 'gpt-4.1-mini')
 ```
+
+See [Robot Configuration System](./robot_configuration_system.md) for the
+persisted robot schema, platform/global fallback order, and runtime metadata
+attached to AI calls.
 
 #### 2. TranslationBot (`app/robots/better_together/translation_bot.rb`)
 

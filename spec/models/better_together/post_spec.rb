@@ -69,6 +69,35 @@ RSpec.describe BetterTogether::Post do
 
       expect(post.authors.reload.map(&:id)).to include(creator.id)
     end
+
+    it 'does not add the creator when an explicit robot author was selected' do
+      creator = create(:better_together_person)
+      platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform)
+      robot = create(:robot, platform:)
+      post = described_class.new(title: 'Robot Post', identifier: 'robot-post', content: 'Body', privacy: 'public',
+                                 platform:, creator:)
+
+      post.robot_authors << robot
+      post.save!
+
+      expect(post.robot_authors).to contain_exactly(robot)
+      expect(post.authors).to be_empty
+      expect(post.governed_authors).to contain_exactly(robot)
+    end
+  end
+
+  describe '#governed_authors' do
+    it 'includes robot authors alongside people authors' do
+      post = create(:better_together_post)
+      person = create(:better_together_person)
+      robot = create(:robot, platform: post.platform)
+
+      post.authorships.create!(author: person, position: 1)
+      post.authorships.create!(author: robot, position: 2)
+
+      expect(post.governed_authors).to eq([post.authorships.first.author, person, robot].uniq)
+      expect(post.robot_authors).to include(robot)
+    end
   end
 
   describe 'federation provenance' do

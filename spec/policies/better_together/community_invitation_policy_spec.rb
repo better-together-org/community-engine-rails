@@ -5,6 +5,17 @@ require 'rails_helper'
 RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_steward do
   subject(:policy) { described_class.new(user, invitation) }
 
+  def grant_platform_permission(user, permission_identifier)
+    BetterTogether::AccessControlBuilder.seed_data
+
+    host_platform = BetterTogether::Platform.find_by(host: true) ||
+                    create(:better_together_platform, :host, community: user.person.community)
+    role = create(:better_together_role, :platform_role)
+    permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
+    role.assign_resource_permissions([permission.identifier])
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+  end
+
   let(:community) { create(:better_together_community) }
   let(:user) { find_or_create_test_user('steward@example.test', 'SecureTest123!@#', :platform_steward) }
   let(:invitation) { create(:better_together_invitation, invitable: community) }
@@ -70,6 +81,18 @@ RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_steward d
       # Don't add user as community member
 
       it 'does not allow creating' do
+        expect(policy.create?).to be false
+      end
+    end
+
+    context 'when user only has broad platform management' do
+      let(:user) { create(:better_together_user) }
+
+      before do
+        grant_platform_permission(user, 'manage_platform')
+      end
+
+      it 'does not allow creating without explicit community invitation authority' do
         expect(policy.create?).to be false
       end
     end

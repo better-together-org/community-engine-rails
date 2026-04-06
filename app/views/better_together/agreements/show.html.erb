@@ -13,6 +13,10 @@
           <p class="card-text"><strong>Creator:</strong> <%= @agreement.creator %></p>
           <p class="card-text"><strong>Privacy:</strong> <%= privacy_display_value(@agreement) %></p>
 
+          <%= render 'better_together/shared/claims_and_evidence', record: @agreement %>
+          <%= render 'better_together/shared/bibliography', record: @agreement %>
+          <%= render 'better_together/shared/governance_bundle_links', record: @agreement if @agreement.bibliography_entries.any? || @agreement.claims.any? %>
+
             <hr>
             <h2 class="h5 mb-3"> <%= t('better_together.agreements.terms', default: 'Terms') %> </h2>
             <%= render partial: 'better_together/agreement_terms/terms_list', locals: { agreement: @agreement } %>
@@ -22,4 +26,3 @@
     <% end %>
   </div>
 </turbo-frame>
-

@@ -67,6 +67,8 @@ module BetterTogether
     end
 
     def available_people
+      skip_policy_scope if can_manage_platform_people?
+
       invited_ids = invited_person_ids
       people = build_available_people_query(invited_ids)
       people = apply_search_filter(people) if params[:search].present?
@@ -378,7 +380,7 @@ module BetterTogether
     def build_available_people_query(invited_ids)
       excluded_ids = @invitation_config.additional_exclusions(@invitable_resource, invited_ids)
 
-      policy_scope(BetterTogether::Person)
+      available_people_scope
         .joins(:user)
         .where.not(id: excluded_ids)
         .where.not(better_together_users: { email: nil })
@@ -397,6 +399,39 @@ module BetterTogether
               "%#{search_term}%",
               %w[name]
             )
+    end
+
+    def available_people_scope
+      return current_platform_people_scope if can_manage_platform_people?
+
+      policy_scope(BetterTogether::Person)
+    end
+
+    def can_manage_platform_people?
+      return false unless helpers.current_person
+
+      %w[manage_platform manage_platform_members manage_platform_roles manage_platform_settings].any? do |permission|
+        helpers.current_person.permitted_to?(permission)
+      end
+    end
+
+    def current_platform_people_scope
+      platform = Current.platform || BetterTogether::Platform.find_by(host: true)
+      return BetterTogether::Person.none unless platform
+
+      person_ids = BetterTogether::PersonPlatformMembership
+                   .active
+                   .where(joinable: platform)
+                   .pluck(:member_id)
+
+      if platform.host? && platform.community.present?
+        person_ids |= BetterTogether::PersonCommunityMembership
+                      .active
+                      .where(joinable: platform.community)
+                      .pluck(:member_id)
+      end
+
+      BetterTogether::Person.where(id: person_ids).includes(:string_translations)
     end
 
     # === Token-based Invitation Access Helpers ===

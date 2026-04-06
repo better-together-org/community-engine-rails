@@ -47,6 +47,7 @@ bin/render_diagrams
 ## Accessibility And Documentation Quality
 
 - [Accessibility Testing](accessibility_testing.md) - Capybara, Selenium, and axe-core guidance for WCAG 2.1 AA coverage
+- [Pull Request Evidence Standard](pull_request_evidence_standard.md) - Tiered evidence requirements for docs, backend, and UI PRs
 - [Screenshot And Documentation Tooling Assessment](screenshot_and_documentation_tooling_assessment.md) - Current-state assessment of CE and management-tool automation
 - [Documentation Accessibility Rubric](../shared/documentation_accessibility_rubric.md) - Canonical rubric for user docs, inline help, and hints
 
