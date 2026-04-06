@@ -104,6 +104,20 @@
     </div>
   </div>
 
+  <div class="mb-3">
+    <div class="form-check">
+      <%= form.check_box :allow_membership_requests, { class: "form-check-input", checked: platform.allow_membership_requests?, id: "#{dom_id(platform)}_allow_membership_requests" } %>
+      <%= form.label :allow_membership_requests,
+                     t('better_together.platforms.form.allow_membership_requests', default: 'Allow membership requests'),
+                     class: "form-check-label",
+                     for: "#{dom_id(platform)}_allow_membership_requests" %>
+      <div class="form-text text-muted">
+        <%= t('better_together.platforms.form.allow_membership_requests_hint',
+              default: 'When enabled, the invitation-required registration screen can expose a request-membership form for the host community, and that host community may accept public membership requests without a direct invitation.') %>
+      </div>
+    </div>
+  </div>
+
   <div class="accordion mb-3" id="<%= dom_id(platform, 'csp_settings') %>">
     <div class="accordion-item">
       <h2 class="accordion-header" id="<%= dom_id(platform, 'csp_settings_header') %>">

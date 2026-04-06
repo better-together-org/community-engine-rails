@@ -23,6 +23,7 @@ module BetterTogether
     skip_before_action :check_platform_privacy
 
     before_action :set_community
+    before_action :ensure_membership_requests_enabled!, only: %i[new create]
     before_action :set_membership_request, only: %i[show destroy approve decline]
     after_action :verify_authorized
 
@@ -192,6 +193,7 @@ module BetterTogether
     def set_membership_request
       @membership_request = policy_scope(BetterTogether::Joatu::MembershipRequest)
                             .where(target: @community)
+                            .friendly
                             .find(params[:id])
     end
 
@@ -201,6 +203,15 @@ module BetterTogether
       return collection.where(status: status) if status.present?
 
       collection.where(status: 'open')
+    end
+
+    def ensure_membership_requests_enabled!
+      return if @community.membership_requests_enabled?
+
+      respond_to do |format|
+        format.html { head :forbidden }
+        format.turbo_stream { head :forbidden }
+      end
     end
 
     def membership_request_params

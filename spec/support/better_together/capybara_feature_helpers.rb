@@ -166,7 +166,7 @@ module BetterTogether # :nodoc:
         check 'user_accept_code_of_conduct'
       end
 
-      click_button 'Sign Up'
+      click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)
       created_user.confirm

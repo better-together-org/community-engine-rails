@@ -51,6 +51,7 @@ module BetterTogether
 
     store_attributes :settings do
       requires_invitation Boolean, default: true
+      allow_membership_requests Boolean, default: false
       software_variant String
       network_visibility String, default: 'private'
       connection_bootstrap_state String
@@ -189,6 +190,10 @@ module BetterTogether
 
     def primary_community_extra_attrs
       { host:, protected: }
+    end
+
+    def membership_requests_enabled_for?(community = primary_community)
+      allow_membership_requests? || community&.allow_membership_requests?
     end
 
     def to_s

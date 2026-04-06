@@ -5,7 +5,7 @@ require 'rails_helper'
 # @tagged hermetic
 RSpec.describe 'BetterTogether::MembershipRequests' do
   let!(:platform)  { BetterTogether::Platform.first || create(:better_together_platform) }
-  let!(:community) { create(:better_together_community) }
+  let!(:community) { create(:better_together_community, :membership_requests_enabled) }
   let(:base_path)  { "/#{I18n.locale}/c/#{community.slug}/membership_requests" }
   let(:new_path)   { "#{base_path}/new" }
 
@@ -34,6 +34,24 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
     it 'renders the membership_request form' do
       get new_path
       expect(response.body).to include('membership_request')
+    end
+  end
+
+  describe 'disabled membership request intake' do
+    let!(:community) { create(:better_together_community, allow_membership_requests: false) }
+
+    it 'does not render the public request form' do
+      get new_path
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'does not create a membership request' do
+      expect do
+        post base_path, params: valid_params
+      end.not_to change(BetterTogether::Joatu::MembershipRequest, :count)
+
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
@@ -118,7 +136,7 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
              role: community_manager_role)
     end
 
-    before { login(manager_user.email, 'SecureTest123!@#') }
+    before { sign_in manager_user }
 
     describe 'GET /c/:community_id/membership_requests' do
       it 'lists open requests' do

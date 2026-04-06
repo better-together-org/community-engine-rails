@@ -7,6 +7,68 @@
 
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+        <div>
+          <h2 class="h5 mb-1"><%= t('better_together.safety_cases.index.local_snapshot_title', default: 'Local review snapshot') %></h2>
+          <p class="text-muted mb-0">
+            <%= t(
+                  'better_together.safety_cases.index.local_snapshot_description',
+                  default: 'Deterministic local signals built from reports, cases, and notes. Remote analysis is optional and additive.'
+                ) %>
+          </p>
+        </div>
+        <small class="text-muted">
+          <%= t(
+                'better_together.safety_cases.index.local_snapshot_generated_at',
+                default: 'Generated %{time}',
+                time: l(@local_review_snapshot[:generated_at], format: :long)
+              ) %>
+        </small>
+      </div>
+
+      <div class="row g-3 row-cols-2 row-cols-lg-3">
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.open_cases', default: 'Open cases') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.urgent_open', default: 'Urgent open') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:urgent_open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.unassigned_open', default: 'Unassigned open') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:unassigned_open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.retaliation_risk', default: 'Retaliation risk') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:retaliation_risk_open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.repeat_reportables', default: 'Repeat reportables') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:repeated_reportables_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.participant_notes', default: 'Participant-visible notes') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:participant_visible_notes_count] %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
       <%= form_with url: safety_cases_path(locale: I18n.locale), method: :get, local: true, class: 'row g-3 align-items-end' do |form| %>
         <div class="col-md-3">
           <%= form.label :status, t('better_together.safety_cases.attributes.status'), class: 'form-label' %>

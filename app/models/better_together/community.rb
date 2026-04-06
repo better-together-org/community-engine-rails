@@ -20,6 +20,11 @@ module BetterTogether
                class_name: '::BetterTogether::Person',
                optional: true,
                inverse_of: :created_communities
+    has_one :primary_platform,
+            class_name: '::BetterTogether::Platform',
+            foreign_key: :community_id,
+            inverse_of: :community,
+            dependent: :nullify
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
@@ -90,8 +95,16 @@ module BetterTogether
 
     validates :name, presence: true
 
+    def self.extra_permitted_attributes
+      super + %i[allow_membership_requests]
+    end
+
     def as_community
       becomes(self.class.base_class)
+    end
+
+    def membership_requests_enabled?(platform: primary_platform)
+      allow_membership_requests? || platform&.allow_membership_requests?
     end
 
     def as_indexed_json(_options = {})

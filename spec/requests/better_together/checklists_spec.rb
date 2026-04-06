@@ -30,6 +30,18 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
              accepted_at: Time.current)
     end
 
+    it 'renders the community privacy option on the edit form' do # rubocop:todo RSpec/MultipleExpectations
+      checklist = create(:better_together_checklist,
+                         creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
+                         privacy: 'community')
+
+      get better_together.edit_checklist_path(checklist, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('value="community"')
+      expect(response.body).to include('Community')
+    end
+
     it 'creates a checklist' do # rubocop:todo RSpec/MultipleExpectations
       params = { checklist: { title_en: 'New Checklist', privacy: 'private' }, locale: locale }
 

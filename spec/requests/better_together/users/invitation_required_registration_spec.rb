@@ -49,6 +49,11 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
     end
 
     context 'without any invitation code' do
+      before do
+        platform.update!(allow_membership_requests: false)
+        platform.primary_community.update!(allow_membership_requests: false)
+      end
+
       it 'blocks registration and shows error' do
         expect do
           post '/en/users', params: {
@@ -72,6 +77,40 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
         expect(response).to have_http_status(:ok)
         expect_html_content(I18n.t('devise.registrations.new.invitation_required'))
         expect_html_content(I18n.t('devise.registrations.new.invitation_code'))
+      end
+
+      it 'does not show the membership request section by default' do
+        get '/en/users/sign-up'
+
+        expect(response.body).not_to include('Request membership instead')
+      end
+    end
+
+    context 'when the platform allows host-community membership requests' do
+      before do
+        platform.update!(allow_membership_requests: true)
+      end
+
+      it 'shows the membership request section below the invitation prompt' do
+        get '/en/users/sign-up'
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content('Request membership instead')
+        expect(response.body).to include('membership_request_form')
+      end
+    end
+
+    context 'when the host community allows membership requests' do
+      before do
+        platform.primary_community.update!(allow_membership_requests: true)
+      end
+
+      it 'shows the membership request section below the invitation prompt' do
+        get '/en/users/sign-up'
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content('Request membership instead')
+        expect(response.body).to include('membership_request_form')
       end
     end
 

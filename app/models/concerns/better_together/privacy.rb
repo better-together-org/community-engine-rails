@@ -7,6 +7,7 @@ module BetterTogether
 
     PRIVACY_LEVELS = {
       public: 'public',
+      community: 'community',
       private: 'private'
     }.freeze
 
@@ -22,6 +23,7 @@ module BetterTogether
       validate :require_publishing_agreement_for_public_visibility
 
       scope :privacy_public, -> { where(privacy: 'public') }
+      scope :privacy_community, -> { where(privacy: 'community') }
       scope :privacy_private, -> { where(privacy: 'private') }
     end
 

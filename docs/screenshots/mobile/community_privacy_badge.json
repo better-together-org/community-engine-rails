@@ -1,0 +1,12 @@
+{
+  "name": "community_privacy_badge",
+  "device": "mobile",
+  "url": "http://127.0.0.1:34631/en/c/community-ffe3917520dd5de71a57",
+  "title": "Community Privacy Circle | Communities | Test Host Community",
+  "captured_at": "2026-04-05T18:00:26Z",
+  "locale": "en",
+  "role": "community_member",
+  "feature_set": "community_privacy_review",
+  "flow": "community_privacy_visibility",
+  "source_spec": "./spec/docs_screenshots/better_together/community_privacy_review_spec.rb"
+}

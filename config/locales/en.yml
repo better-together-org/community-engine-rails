@@ -826,7 +826,7 @@ en:
       hint_label: Short title for the checklist item (required).
       hint_parent: 'Optional: nest this item under another. Maximum nesting depth
         is 2.'
-      hint_privacy: 'Choose who can see this item: Public or Private.'
+      hint_privacy: 'Choose who can see this item: Public, Community, or Private.'
       label: Label
       move_down: Move down
       move_up: Move up
@@ -848,6 +848,10 @@ en:
         items_title: Items
         no_items: No items to display
     communities:
+      form:
+        allow_membership_requests: Allow membership requests
+        allow_membership_requests_hint: Show a public membership request form for
+          this community when the configured access model allows it.
       index:
         new_btn_text: New Community
       new:
@@ -2556,6 +2560,10 @@ en:
         pending: Pending
     platforms:
       form:
+        allow_membership_requests: Allow membership requests
+        allow_membership_requests_hint: Show a public membership request form on the
+          invitation-required registration screen for this platform's primary host
+          community.
         csp_frame_ancestors_text_hint: Who may embed this CE site. Select trusted
           origins or type a new hostname/origin and press Enter. Leave blank to keep
           frame-ancestors 'none'.
@@ -2798,6 +2806,17 @@ en:
         status: Case status
       index:
         filter: Filter
+        local_snapshot_description: Deterministic local signals built from reports,
+          cases, and notes. Remote analysis is optional and additive.
+        local_snapshot_generated_at: Generated %{time}
+        local_snapshot_title: Local review snapshot
+        snapshot:
+          open_cases: Open cases
+          participant_notes: Participant-visible notes
+          repeat_reportables: Repeat reportables
+          retaliation_risk: Retaliation risk
+          unassigned_open: Unassigned open
+          urgent_open: Urgent open
         title: Safety cases
       notices:
         updated: Safety case was updated.

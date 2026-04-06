@@ -1,0 +1,30 @@
+%%{init: {"flowchart": {"diagramPadding": 40, "nodeSpacing": 40, "rankSpacing": 60}}}%%
+flowchart TD
+  subgraph Discovery["Visitor discovery + intake"]
+    A[Private platform sign-up page] --> B{Invitation available?}
+    B -->|No| C[Invitation-required interstitial]
+    C --> D{Platform or host community allows membership requests?}
+    D -->|Yes| E[Embedded host-community membership request form]
+    D -->|No| F[No membership request intake shown]
+    E --> G[Public membership request submission]
+  end
+
+  subgraph Intake["Community membership request intake"]
+    G --> H[Joatu::MembershipRequest created for target community]
+    H --> I[Request appears in community membership request queue]
+  end
+
+  subgraph Review["Community review UI"]
+    I --> J[Community manager opens queue or request detail]
+    J --> K{Decision}
+    K -->|Approve unauthenticated visitor| L[Create community invitation]
+    K -->|Approve logged-in person| M[Create person community membership]
+    K -->|Decline| N[Close membership request]
+  end
+
+  subgraph Followup["Post-review outcome"]
+    L --> O[Visitor receives invitation and can register]
+    M --> P[Membership becomes active immediately]
+    N --> Q[Queue reflects declined state]
+    O --> R[Invitation acceptance creates membership]
+  end
