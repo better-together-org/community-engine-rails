@@ -1,24 +1,33 @@
-# Visual Documentation
+# Diagram exports
 
-System diagrams, process flows, and visual aids for the Better Together Community Engine.
+The subsystem diagram package is generated from live Rails reflections so the exported ERDs and layer maps stay aligned with the current codebase rather than a hand-maintained snapshot.
 
-## Directory Structure
-- `source/` - Mermaid (.mmd) source files (authoritative versions)
-- `exports/png/` - PNG exports for documentation embedding
-- `exports/svg/` - SVG exports for web use and scalability
+## Regenerate subsystem inventories and diagrams
 
-## Diagram Categories
-- **System Flows**: Process workflows and data flows
-- **Architecture**: System relationships and component interactions
-- **User Journeys**: Stakeholder workflows and interactions
-- **Release Maps**: visual summaries for release scope and rollout posture
+```bash
+bin/export_subsystem_diagrams
+```
 
-## Current release maps
+That command:
 
-- [`source/release_0_11_0_capability_map.mmd`](source/release_0_11_0_capability_map.mmd) - `0.11.0` capability coverage and late release-candidate fixes
-- [`source/e2e_encrypted_conversation_flow.mmd`](source/e2e_encrypted_conversation_flow.mmd) - E2EE bootstrap, key backup, and message-path lifecycle
+1. runs `scripts/export_subsystem_diagrams.rb` through the CE container harness
+2. refreshes the generated Mermaid sources in `docs/diagrams/source/`
+3. renders PNG/SVG exports through `bin/render_diagrams`
 
-## Maintenance
-Use `bin/render_diagrams` to regenerate exports from source files. Always edit .mmd source files, never edit exports directly.
+## Generated reference exports
 
-See [Diagram Rendering Guide](../developers/development/diagram_rendering.md) for detailed procedures.
+- `docs/diagrams/reference/ce_subsystem_inventory.md`
+- `docs/diagrams/reference/ce_subsystem_inventory.json`
+- `docs/diagrams/reference/ce_concern_capability_assessment.md`
+
+## Generated Mermaid sources
+
+Each subsystem now has:
+
+- `*_schema_erd.mmd` for database tables, direct foreign-key associations, and external subsystem references
+- `*_rails_layers.mmd` for controller/model/concern layering and weak-link callouts
+
+Cross-cutting exports:
+
+- `ce_subsystem_interaction_map.mmd`
+- `ce_polymorphic_association_map.mmd`
