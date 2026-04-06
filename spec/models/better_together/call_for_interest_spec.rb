@@ -15,21 +15,6 @@ RSpec.describe BetterTogether::CallForInterest do
     expect(call.ends_at).to be_nil
   end
 
-  describe '#as_indexed_json' do
-    it 'includes translated name and description content' do
-      call_for_interest = create(
-        :better_together_call_for_interest,
-        name: 'Borgberry Cooperative Hosting',
-        description: 'Looking for members interested in shared hosting support.'
-      )
-
-      expect(call_for_interest.as_indexed_json).to include(
-        'name' => 'Borgberry Cooperative Hosting',
-        'description' => 'Looking for members interested in shared hosting support.'
-      )
-    end
-  end
-
   it 'creates calls with events' do
     call = create(:call_for_interest, :with_event)
     expect(call.interestable).to be_an(BetterTogether::Event)
@@ -156,6 +141,21 @@ RSpec.describe BetterTogether::CallForInterest do
       citation = create(:citation, citeable: call, reference_key: 'story-1', title: 'Community story')
 
       expect(call.citation_reference_options).to include([citation.reference_key, citation.title])
+    end
+  end
+
+  describe '#as_indexed_json' do
+    it 'includes translated name and description content' do
+      call_for_interest = create(
+        :better_together_call_for_interest,
+        name: 'Borgberry Cooperative Hosting',
+        description: 'Looking for members interested in shared hosting support.'
+      )
+
+      expect(call_for_interest.as_indexed_json).to include(
+        'name' => 'Borgberry Cooperative Hosting',
+        'description' => 'Looking for members interested in shared hosting support.'
+      )
     end
   end
 end

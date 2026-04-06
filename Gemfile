@@ -35,8 +35,9 @@ gem 'redis', '~> 5.4'
 gem 'rswag'
 
 # Sidekiq 8.1 requires Rack >= 3.2, which is incompatible with the 7.2 CI lane.
-gem 'connection_pool', '~> 3.0.2'
 gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.0.4.1').start_with?('7.2.') ? '~> 7.3.9' : '~> 8.1.1'
+# Pin connection_pool to avoid breaking changes in 3.x
+gem 'connection_pool', '~> 3.0.2'
 
 # Error and performance monitoring with Sentry
 gem 'sentry-rails'
