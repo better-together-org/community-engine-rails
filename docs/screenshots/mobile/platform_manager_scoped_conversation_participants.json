@@ -1,9 +1,8 @@
 {
   "name": "platform_manager_scoped_conversation_participants",
   "device": "mobile",
-  "url": "http://127.0.0.1:42417/en/conversations/new",
+  "url": "/en/conversations/new",
   "title": "Test Host Community",
-  "captured_at": "2026-04-06T14:26:20Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_manager_least_privilege_review",
@@ -14,8 +13,8 @@
       "selector": "select[name=\"conversation[participant_ids][]\"]",
       "title": "Scoped conversation discovery for platform managers",
       "bullets": [
-        "Available in picker: Platform Steward - @person-44a0d34200c53f6d8f93, Opted In O'Reilly - @person-7255a29c63d909dc9d34, Host Community Person - @person-9c7c2ed8785aa40bf568",
-        "Withheld from picker: Regular Member - @person-5a698fb3cf5d3fa9760b, Non Opted O'Neil - @person-c4e875269644600bc3f7, Other Platform Person - @person-15d6215f74ada5080640",
+        "Available in picker: self plus opted-in people in-scope for this host fixture (3 shown here).",
+        "Withheld from picker: non-opted-in or out-of-scope people remain unavailable (3 withheld here).",
         "Broad platform-management access does not reopen non-opted-in or other-platform participant discovery."
       ],
       "target": {
@@ -33,7 +32,7 @@
         "x": 115.0,
         "y": 381.19,
         "width": 270.0,
-        "height": 826,
+        "height": 670,
         "score": 899.8125
       }
     }
