@@ -174,7 +174,6 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports

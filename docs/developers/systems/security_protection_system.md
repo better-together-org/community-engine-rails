@@ -212,6 +212,20 @@ See [Membership Request Workflow](./membership_request_workflow.md) for the boun
 
 This keeps private data private by default and ensures that exceptions are auditable, intentional, and role-specific.
 
+##### Review Artifacts For Reduced Platform-Manager Access
+
+- Diagram source: `docs/diagrams/source/platform_manager_least_privilege_surfaces.mmd`
+- Diagram exports:
+  - `docs/diagrams/exports/png/platform_manager_least_privilege_surfaces.png`
+  - `docs/diagrams/exports/svg/platform_manager_least_privilege_surfaces.svg`
+- Screenshot captures:
+  - `docs/screenshots/desktop/platform_manager_user_surface_fallback.png`
+  - `docs/screenshots/mobile/platform_manager_user_surface_fallback.png`
+  - `docs/screenshots/desktop/platform_manager_scoped_conversation_participants.png`
+  - `docs/screenshots/mobile/platform_manager_scoped_conversation_participants.png`
+
+These artifacts document two direct UI proofs of the least-privilege contract: default platform managers do not reach a usable host user-account administration surface without explicit `manage_platform_users`, and the conversation composer still limits participant discovery to opted-in or explicitly steward-visible people instead of reopening broad platform-wide messaging reach.
+
 #### Local-First Safety Review And Graceful Degradation
 - **Local base capability is required**: safety review must remain useful with locally accessible app data alone — reports, safety cases, notes, blocks, and privacy-preserving metrics.
 - **Remote analysis is additive**: remote or model-assisted review may enrich triage, but it must not be the only path to identify urgent, repeated, or retaliation-risk disclosures.

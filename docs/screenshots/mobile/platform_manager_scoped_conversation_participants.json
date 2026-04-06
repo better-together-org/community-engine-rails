@@ -1,0 +1,12 @@
+{
+  "name": "platform_manager_scoped_conversation_participants",
+  "device": "mobile",
+  "url": "http://127.0.0.1:42761/en/conversations/new",
+  "title": "Test Host Community",
+  "captured_at": "2026-04-06T13:49:10Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_manager_least_privilege_review",
+  "flow": "conversation_participant_scope",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_manager_least_privilege_review_spec.rb"
+}
