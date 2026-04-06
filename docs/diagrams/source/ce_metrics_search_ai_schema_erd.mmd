@@ -17,120 +17,120 @@ erDiagram
   EXTERNAL_IDENTITY_ACCESS__PERSON ||--o{ BETTER_TOGETHER_ONE_TIME_PREKEYS : "person / person_id"
 
   BETTER_TOGETHER_AI_LOG_TRANSLATIONS {
-    uuid initiator_id
-    string model
-    string source_locale
-    string status
-    string target_locale
-    text request
-    text response
-    integer completion_tokens
-    integer prompt_tokens
-    integer tokens_used
+    initiator_id uuid
+    model string
+    source_locale string
+    status string
+    target_locale string
+    request text
+    response text
+    completion_tokens integer
+    prompt_tokens integer
+    tokens_used integer
   }
 
   BETTER_TOGETHER_METRICS_DOWNLOADS {
-    uuid downloadable_id
-    uuid platform_id
-    string downloadable_type
-    string file_name
-    string file_type
-    string locale
-    boolean logged_in
-    integer file_size
-    datetime downloaded_at
+    downloadable_id uuid
+    platform_id uuid
+    downloadable_type string
+    file_name string
+    file_type string
+    locale string
+    logged_in boolean
+    file_size integer
+    downloaded_at datetime
   }
 
   BETTER_TOGETHER_METRICS_LINK_CHECKER_REPORTS {
-    uuid creator_id
-    string file_format
-    jsonb filters
-    jsonb report_data
+    creator_id uuid
+    file_format string
+    filters jsonb
+    report_data jsonb
   }
 
   BETTER_TOGETHER_METRICS_LINK_CLICKS {
-    uuid platform_id
-    string locale
-    string page_url
-    string url
-    boolean internal
-    boolean logged_in
-    datetime clicked_at
+    platform_id uuid
+    locale string
+    page_url string
+    url string
+    internal boolean
+    logged_in boolean
+    clicked_at datetime
   }
 
   BETTER_TOGETHER_METRICS_LINK_CLICK_REPORTS {
-    uuid creator_id
-    uuid platform_id
-    string file_format
-    boolean sort_by_total_clicks
-    jsonb filters
-    jsonb report_data
+    creator_id uuid
+    platform_id uuid
+    file_format string
+    sort_by_total_clicks boolean
+    filters jsonb
+    report_data jsonb
   }
 
   BETTER_TOGETHER_METRICS_PAGE_VIEWS {
-    uuid pageable_id
-    uuid platform_id
-    string locale
-    string page_url
-    string pageable_type
-    boolean logged_in
-    datetime viewed_at
+    pageable_id uuid
+    platform_id uuid
+    locale string
+    page_url string
+    pageable_type string
+    logged_in boolean
+    viewed_at datetime
   }
 
   BETTER_TOGETHER_METRICS_PAGE_VIEW_REPORTS {
-    uuid creator_id
-    uuid platform_id
-    string file_format
-    boolean sort_by_total_views
-    jsonb filters
-    jsonb report_data
+    creator_id uuid
+    platform_id uuid
+    file_format string
+    sort_by_total_views boolean
+    filters jsonb
+    report_data jsonb
   }
 
   BETTER_TOGETHER_METRICS_RICH_TEXT_LINKS {
-    uuid link_id
-    uuid rich_text_id
-    uuid rich_text_record_id
-    string host
-    string link_type
-    string locale
-    string rich_text_record_type
-    string url
-    text error_message
-    boolean external
+    link_id uuid
+    rich_text_id uuid
+    rich_text_record_id uuid
+    host string
+    link_type string
+    locale string
+    rich_text_record_type string
+    url string
+    error_message text
+    external boolean
   }
 
   BETTER_TOGETHER_METRICS_SEARCH_QUERIES {
-    uuid platform_id
-    string locale
-    string query
-    boolean logged_in
-    integer results_count
-    datetime searched_at
+    platform_id uuid
+    locale string
+    query string
+    logged_in boolean
+    results_count integer
+    searched_at datetime
   }
 
   BETTER_TOGETHER_METRICS_SHARES {
-    uuid platform_id
-    uuid shareable_id
-    string locale
-    string platform
-    string shareable_type
-    string url
-    boolean logged_in
-    datetime shared_at
+    platform_id uuid
+    shareable_id uuid
+    locale string
+    platform string
+    shareable_type string
+    url string
+    logged_in boolean
+    shared_at datetime
   }
 
   BETTER_TOGETHER_METRICS_USER_ACCOUNT_REPORTS {
-    uuid creator_id
-    string file_format
-    jsonb filters
-    jsonb report_data
+    creator_id uuid
+    file_format string
+    filters jsonb
+    report_data jsonb
   }
 
   BETTER_TOGETHER_ONE_TIME_PREKEYS {
-    integer key_id
-    uuid person_id
-    text public_key
-    boolean consumed
+    key_id integer
+    person_id uuid
+    public_key text
+    consumed boolean
   }
 
   EXTERNAL_IDENTITY_ACCESS__PERSON {

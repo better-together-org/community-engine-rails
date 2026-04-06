@@ -17,81 +17,81 @@ erDiagram
   EXTERNAL_IDENTITY_ACCESS__PERSON ||--o{ BETTER_TOGETHER_SAFETY_NOTES : "author / author_id"
 
   BETTER_TOGETHER_CONVERSATIONS {
-    uuid creator_id
-    string title
-    integer sender_key_version
+    creator_id uuid
+    title string
+    sender_key_version integer
   }
 
   BETTER_TOGETHER_CONVERSATION_PARTICIPANTS {
-    uuid conversation_id
-    uuid person_id
+    conversation_id uuid
+    person_id uuid
   }
 
   BETTER_TOGETHER_MESSAGES {
-    uuid conversation_id
-    uuid sender_id
-    string e2e_protocol
-    text content
-    boolean e2e_encrypted
-    integer e2e_version
+    conversation_id uuid
+    sender_id uuid
+    e2e_protocol string
+    content text
+    e2e_encrypted boolean
+    e2e_version integer
   }
 
   BETTER_TOGETHER_REPORTS {
-    uuid reportable_id
-    uuid reporter_id
-    string category
-    string harm_level
-    string reportable_type
-    string requested_outcome
-    text private_details
-    text reason
-    boolean consent_to_contact
-    boolean consent_to_restorative_process
+    reportable_id uuid
+    reporter_id uuid
+    category string
+    harm_level string
+    reportable_type string
+    requested_outcome string
+    private_details text
+    reason text
+    consent_to_contact boolean
+    consent_to_restorative_process boolean
   }
 
   BETTER_TOGETHER_SAFETY_ACTIONS {
-    uuid actor_id
-    uuid approved_by_id
-    uuid safety_case_id
-    string action_type
-    string status
-    text details
-    text reason
-    text values_review_notes
-    boolean accountability_check
-    boolean care_check
+    actor_id uuid
+    approved_by_id uuid
+    safety_case_id uuid
+    action_type string
+    status string
+    details text
+    reason text
+    values_review_notes text
+    accountability_check boolean
+    care_check boolean
   }
 
   BETTER_TOGETHER_SAFETY_AGREEMENTS {
-    uuid created_by_id
-    uuid safety_case_id
-    string status
-    text commitments
-    text summary
-    boolean harmed_party_consented
-    boolean responsible_party_consented
-    datetime completed_at
-    datetime review_at
+    created_by_id uuid
+    safety_case_id uuid
+    status string
+    commitments text
+    summary text
+    harmed_party_consented boolean
+    responsible_party_consented boolean
+    completed_at datetime
+    review_at datetime
   }
 
   BETTER_TOGETHER_SAFETY_CASES {
-    uuid assigned_reviewer_id
-    uuid report_id
-    string category
-    string closure_type
-    string harm_level
-    string lane
-    string requested_outcome
-    string status
-    text closure_summary
-    boolean consent_to_contact
+    assigned_reviewer_id uuid
+    report_id uuid
+    category string
+    closure_type string
+    harm_level string
+    lane string
+    requested_outcome string
+    status string
+    closure_summary text
+    consent_to_contact boolean
   }
 
   BETTER_TOGETHER_SAFETY_NOTES {
-    uuid author_id
-    uuid safety_case_id
-    string visibility
-    text body
+    author_id uuid
+    safety_case_id uuid
+    visibility string
+    body text
   }
 
   EXTERNAL_IDENTITY_ACCESS__PERSON {

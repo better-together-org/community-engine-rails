@@ -13,253 +13,153 @@ erDiagram
   BETTER_TOGETHER_JOATU_REQUESTS ||--o{ BETTER_TOGETHER_JOATU_AGREEMENTS : "request / request_id"
   EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "creator / creator_id"
-  EXTERNAL_GEOGRAPHY_AND_PLACES__ADDRESS o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "address / address_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "creator / creator_id"
   EXTERNAL_GEOGRAPHY_AND_PLACES__ADDRESS o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "address / address_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_JOATU_OFFERS : "creator / creator_id"
   EXTERNAL_GEOGRAPHY_AND_PLACES__ADDRESS o|--o{ BETTER_TOGETHER_JOATU_OFFERS : "address / address_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "creator / creator_id"
-  EXTERNAL_GEOGRAPHY_AND_PLACES__ADDRESS o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "address / address_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "creator / creator_id"
-  EXTERNAL_GEOGRAPHY_AND_PLACES__ADDRESS o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "address / address_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "creator / creator_id"
-  EXTERNAL_GEOGRAPHY_AND_PLACES__ADDRESS o|--o{ BETTER_TOGETHER_JOATU_REQUESTS : "address / address_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_JOATU_RESPONSE_LINKS : "creator / creator_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_SEEDS : "creator / creator_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_SEED_PLANTINGS : "creator / creator_id"
   BETTER_TOGETHER_SEEDS o|--o{ BETTER_TOGETHER_SEED_PLANTINGS : "seed / seed_id"
 
   BETTER_TOGETHER_AGREEMENTS {
-    uuid creator_id
-    uuid page_id
-    string identifier
-    string privacy
-    boolean collective
-    boolean protected
+    creator_id uuid
+    page_id uuid
+    identifier string
+    privacy string
+    collective boolean
+    protected boolean
   }
 
   BETTER_TOGETHER_AGREEMENT_PARTICIPANTS {
-    uuid agreement_id
-    uuid participant_id
-    uuid person_id
-    string acceptance_method
-    string agreement_content_digest
-    string agreement_identifier_snapshot
-    string agreement_title_snapshot
-    string group_identifier
-    string participant_type
-    datetime accepted_at
+    agreement_id uuid
+    participant_id uuid
+    person_id uuid
+    acceptance_method string
+    agreement_content_digest string
+    agreement_identifier_snapshot string
+    agreement_title_snapshot string
+    group_identifier string
+    participant_type string
+    accepted_at datetime
   }
 
   BETTER_TOGETHER_AGREEMENT_TERMS {
-    uuid agreement_id
-    string identifier
-    boolean protected
-    integer position
+    agreement_id uuid
+    identifier string
+    protected boolean
+    position integer
   }
 
   BETTER_TOGETHER_CHECKLISTS {
-    uuid creator_id
-    string identifier
-    string privacy
-    boolean directional
-    boolean protected
+    creator_id uuid
+    identifier string
+    privacy string
+    directional boolean
+    protected boolean
   }
 
   BETTER_TOGETHER_CHECKLIST_ITEMS {
-    uuid checklist_id
-    uuid creator_id
-    uuid parent_id
-    string identifier
-    string privacy
-    boolean protected
-    integer children_count
-    integer position
+    checklist_id uuid
+    creator_id uuid
+    parent_id uuid
+    identifier string
+    privacy string
+    protected boolean
+    children_count integer
+    position integer
   }
 
   BETTER_TOGETHER_JOATU_AGREEMENTS {
-    uuid offer_id
-    uuid request_id
-    string privacy
-    string status
-    string value
-    text terms
+    offer_id uuid
+    request_id uuid
+    privacy string
+    status string
+    value string
+    terms text
   }
 
   NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
+    record_id uuid
+    record_type string
+    type string
+    notifications_count integer
+    params jsonb
   }
 
   NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
+    event_id uuid
+    platform_id uuid
+    recipient_id uuid
+    recipient_type string
+    type string
+    read_at datetime
+    seen_at datetime
   }
 
   BETTER_TOGETHER_CATEGORIES {
-    string icon
-    string identifier
-    string type
-    boolean protected
-    integer position
+    icon string
+    identifier string
+    type string
+    protected boolean
+    position integer
   }
 
   BETTER_TOGETHER_JOATU_REQUESTS {
-    uuid address_id
-    uuid creator_id
-    uuid target_id
-    string privacy
-    string referral_source
-    string requestor_email
-    string requestor_name
-    string status
-    string target_type
-    string type
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  BETTER_TOGETHER_JOATU_REQUESTS {
-    uuid address_id
-    uuid creator_id
-    uuid target_id
-    string privacy
-    string referral_source
-    string requestor_email
-    string requestor_name
-    string status
-    string target_type
-    string type
+    address_id uuid
+    creator_id uuid
+    target_id uuid
+    privacy string
+    referral_source string
+    requestor_email string
+    requestor_name string
+    status string
+    target_type string
+    type string
   }
 
   BETTER_TOGETHER_JOATU_OFFERS {
-    uuid address_id
-    uuid creator_id
-    uuid target_id
-    string privacy
-    string status
-    string target_type
-    string urgency
-  }
-
-  BETTER_TOGETHER_JOATU_REQUESTS {
-    uuid address_id
-    uuid creator_id
-    uuid target_id
-    string privacy
-    string referral_source
-    string requestor_email
-    string requestor_name
-    string status
-    string target_type
-    string type
-  }
-
-  BETTER_TOGETHER_JOATU_REQUESTS {
-    uuid address_id
-    uuid creator_id
-    uuid target_id
-    string privacy
-    string referral_source
-    string requestor_email
-    string requestor_name
-    string status
-    string target_type
-    string type
-  }
-
-  BETTER_TOGETHER_JOATU_REQUESTS {
-    uuid address_id
-    uuid creator_id
-    uuid target_id
-    string privacy
-    string referral_source
-    string requestor_email
-    string requestor_name
-    string status
-    string target_type
-    string type
+    address_id uuid
+    creator_id uuid
+    target_id uuid
+    privacy string
+    status string
+    target_type string
+    urgency string
   }
 
   BETTER_TOGETHER_JOATU_RESPONSE_LINKS {
-    uuid creator_id
-    uuid response_id
-    uuid source_id
-    string response_type
-    string source_type
+    creator_id uuid
+    response_id uuid
+    source_id uuid
+    response_type string
+    source_type string
   }
 
   BETTER_TOGETHER_SEEDS {
-    uuid creator_id
-    uuid seedable_id
-    string created_by
-    string identifier
-    string privacy
-    string seedable_type
-    string type
-    string version
-    text description
-    datetime seeded_at
+    creator_id uuid
+    seedable_id uuid
+    created_by string
+    identifier string
+    privacy string
+    seedable_type string
+    type string
+    version string
+    description text
+    seeded_at datetime
   }
 
   BETTER_TOGETHER_SEED_PLANTINGS {
-    uuid creator_id
-    uuid seed_id
-    string planting_type
-    string privacy
-    string status
-    text error_message
-    text source
-    datetime completed_at
-    datetime started_at
-    jsonb metadata
+    creator_id uuid
+    seed_id uuid
+    planting_type string
+    privacy string
+    status string
+    error_message text
+    source text
+    completed_at datetime
+    started_at datetime
+    metadata jsonb
   }
 
   EXTERNAL_PLATFORM_NETWORK__PLATFORM {

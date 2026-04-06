@@ -25,9 +25,9 @@ That command:
 Each subsystem now has:
 
 - `*_schema_erd.mmd` for database tables, direct foreign-key associations, and external subsystem references
-- `*_rails_layers.mmd` for controller/model/concern layering and weak-link callouts
+- `*_rails_layers.mmd` for controller/model layering with compact concern and weak-link summaries on each live class node
 
 Cross-cutting exports:
 
 - `ce_subsystem_interaction_map.mmd`
-- `ce_polymorphic_association_map.mmd`
+- `ce_polymorphic_association_map.mmd` for subsystem-level weak-reference summaries grouped by live model family

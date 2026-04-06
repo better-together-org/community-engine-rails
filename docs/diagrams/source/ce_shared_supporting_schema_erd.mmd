@@ -3,12 +3,6 @@ erDiagram
   EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
   BETTER_TOGETHER_CONTACT_DETAILS ||--o{ BETTER_TOGETHER_EMAIL_ADDRESSES : "contact_detail / contact_detail_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_INFRASTRUCTURE_BUILDINGS : "creator / creator_id"
   EXTERNAL_PLATFORM_NETWORK__COMMUNITY ||--o{ BETTER_TOGETHER_INFRASTRUCTURE_BUILDINGS : "community / community_id"
   EXTERNAL_GEOGRAPHY_AND_PLACES__ADDRESS ||--o{ BETTER_TOGETHER_INFRASTRUCTURE_BUILDINGS : "address / address_id"
@@ -19,302 +13,108 @@ erDiagram
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_INFRASTRUCTURE_ROOMS : "creator / creator_id"
   EXTERNAL_PLATFORM_NETWORK__COMMUNITY ||--o{ BETTER_TOGETHER_INFRASTRUCTURE_ROOMS : "community / community_id"
   BETTER_TOGETHER_INFRASTRUCTURE_FLOORS ||--o{ BETTER_TOGETHER_INFRASTRUCTURE_ROOMS : "floor / floor_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
-  EXTERNAL_DEP__NOTICED__EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
-  EXTERNAL_PLATFORM_NETWORK__PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
   BETTER_TOGETHER_CONTACT_DETAILS ||--o{ BETTER_TOGETHER_PHONE_NUMBERS : "contact_detail / contact_detail_id"
   BETTER_TOGETHER_CONTACT_DETAILS ||--o{ BETTER_TOGETHER_SOCIAL_MEDIA_ACCOUNTS : "contact_detail / contact_detail_id"
   BETTER_TOGETHER_CONTACT_DETAILS ||--o{ BETTER_TOGETHER_WEBSITE_LINKS : "contact_detail / contact_detail_id"
 
   NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
+    record_id uuid
+    record_type string
+    type string
+    notifications_count integer
+    params jsonb
   }
 
   NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
+    event_id uuid
+    platform_id uuid
+    recipient_id uuid
+    recipient_type string
+    type string
+    read_at datetime
+    seen_at datetime
   }
 
   BETTER_TOGETHER_CONTACT_DETAILS {
-    uuid contactable_id
-    string contactable_type
-    string name
-    string role
-    string type
+    contactable_id uuid
+    contactable_type string
+    name string
+    role string
+    type string
   }
 
   BETTER_TOGETHER_EMAIL_ADDRESSES {
-    uuid contact_detail_id
-    string email
-    string label
-    string privacy
-    boolean primary_flag
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
+    contact_detail_id uuid
+    email string
+    label string
+    privacy string
+    primary_flag boolean
   }
 
   BETTER_TOGETHER_INFRASTRUCTURE_BUILDINGS {
-    uuid address_id
-    uuid community_id
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    integer floors_count
-    integer rooms_count
+    address_id uuid
+    community_id uuid
+    creator_id uuid
+    identifier string
+    privacy string
+    type string
+    floors_count integer
+    rooms_count integer
   }
 
   BETTER_TOGETHER_INFRASTRUCTURE_BUILDING_CONNECTIONS {
-    uuid building_id
-    uuid connection_id
-    string connection_type
-    boolean primary_flag
-    integer position
+    building_id uuid
+    connection_id uuid
+    connection_type string
+    primary_flag boolean
+    position integer
   }
 
   BETTER_TOGETHER_INFRASTRUCTURE_FLOORS {
-    uuid building_id
-    uuid community_id
-    uuid creator_id
-    string identifier
-    string privacy
-    integer level
-    integer position
-    integer rooms_count
+    building_id uuid
+    community_id uuid
+    creator_id uuid
+    identifier string
+    privacy string
+    level integer
+    position integer
+    rooms_count integer
   }
 
   BETTER_TOGETHER_INFRASTRUCTURE_ROOMS {
-    uuid community_id
-    uuid creator_id
-    uuid floor_id
-    string identifier
-    string privacy
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
+    community_id uuid
+    creator_id uuid
+    floor_id uuid
+    identifier string
+    privacy string
   }
 
   BETTER_TOGETHER_JWT_DENYLISTS {
-    string jti
-    datetime exp
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
-  }
-
-  NOTICED_EVENTS {
-    uuid record_id
-    string record_type
-    string type
-    integer notifications_count
-    jsonb params
-  }
-
-  NOTICED_NOTIFICATIONS {
-    uuid event_id
-    uuid platform_id
-    uuid recipient_id
-    string recipient_type
-    string type
-    datetime read_at
-    datetime seen_at
+    jti string
+    exp datetime
   }
 
   BETTER_TOGETHER_PHONE_NUMBERS {
-    uuid contact_detail_id
-    string label
-    string number
-    string privacy
-    boolean primary_flag
+    contact_detail_id uuid
+    label string
+    number string
+    privacy string
+    primary_flag boolean
   }
 
   BETTER_TOGETHER_SOCIAL_MEDIA_ACCOUNTS {
-    uuid contact_detail_id
-    string handle
-    string platform
-    string privacy
-    string url
+    contact_detail_id uuid
+    handle string
+    platform string
+    privacy string
+    url string
   }
 
   BETTER_TOGETHER_WEBSITE_LINKS {
-    uuid contact_detail_id
-    string label
-    string privacy
-    string url
+    contact_detail_id uuid
+    label string
+    privacy string
+    url string
   }
 
   EXTERNAL_PLATFORM_NETWORK__PLATFORM {

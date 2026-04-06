@@ -5,31 +5,10 @@ erDiagram
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CITATIONS : "creator / creator_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CLAIMS : "creator / creator_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
   BETTER_TOGETHER_PAGES ||--o{ BETTER_TOGETHER_CONTENT_PAGE_BLOCKS : "page / page_id"
   BETTER_TOGETHER_CONTENT_BLOCKS ||--o{ BETTER_TOGETHER_CONTENT_PAGE_BLOCKS : "block / block_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
   EXTERNAL_PLATFORM_NETWORK__PLATFORM ||--o{ BETTER_TOGETHER_CONTENT_PLATFORM_BLOCKS : "platform / platform_id"
   BETTER_TOGETHER_CONTENT_BLOCKS ||--o{ BETTER_TOGETHER_CONTENT_PLATFORM_BLOCKS : "block / block_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_CONTENT_BLOCKS : "creator / creator_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_EVIDENCE_LINKS : "creator / creator_id"
   BETTER_TOGETHER_CLAIMS ||--o{ BETTER_TOGETHER_EVIDENCE_LINKS : "claim / claim_id"
   BETTER_TOGETHER_CITATIONS ||--o{ BETTER_TOGETHER_EVIDENCE_LINKS : "citation / citation_id"
@@ -42,428 +21,155 @@ erDiagram
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_UPLOADS : "creator / creator_id"
 
   BETTER_TOGETHER_AUTHORSHIPS {
-    uuid author_id
-    uuid authorable_id
-    uuid creator_id
-    string author_type
-    string authorable_type
-    string contribution_type
-    string role
-    integer position
-    jsonb details
+    author_id uuid
+    authorable_id uuid
+    creator_id uuid
+    author_type string
+    authorable_type string
+    contribution_type string
+    role string
+    position integer
+    details jsonb
   }
 
   BETTER_TOGETHER_CALLS_FOR_INTEREST {
-    uuid creator_id
-    uuid interestable_id
-    string identifier
-    string interestable_type
-    string privacy
-    string type
-    datetime ends_at
-    datetime starts_at
+    creator_id uuid
+    interestable_id uuid
+    identifier string
+    interestable_type string
+    privacy string
+    type string
+    ends_at datetime
+    starts_at datetime
   }
 
   BETTER_TOGETHER_CATEGORIZATIONS {
-    uuid categorizable_id
-    uuid category_id
-    string categorizable_type
-    string category_type
+    categorizable_id uuid
+    category_id uuid
+    categorizable_type string
+    category_type string
   }
 
   BETTER_TOGETHER_CATEGORIES {
-    string icon
-    string identifier
-    string type
-    boolean protected
-    integer position
+    icon string
+    identifier string
+    type string
+    protected boolean
+    position integer
   }
 
   BETTER_TOGETHER_CITATIONS {
-    uuid citeable_id
-    uuid creator_id
-    string citeable_type
-    string locator
-    string publisher
-    string reference_key
-    string source_author
-    string source_kind
-    string source_url
-    string title
+    citeable_id uuid
+    creator_id uuid
+    citeable_type string
+    locator string
+    publisher string
+    reference_key string
+    source_author string
+    source_kind string
+    source_url string
+    title string
   }
 
   BETTER_TOGETHER_CLAIMS {
-    uuid claimable_id
-    uuid creator_id
-    string claim_key
-    string claimable_type
-    string review_status
-    text selector
-    text statement
-    integer position
-    jsonb metadata
+    claimable_id uuid
+    creator_id uuid
+    claim_key string
+    claimable_type string
+    review_status string
+    selector text
+    statement text
+    position integer
+    metadata jsonb
   }
 
   BETTER_TOGETHER_COMMENTS {
-    uuid commentable_id
-    uuid creator_id
-    string commentable_type
-    text content
+    commentable_id uuid
+    creator_id uuid
+    commentable_type string
+    content text
   }
 
   BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
+    creator_id uuid
+    identifier string
+    privacy string
+    type string
+    protected boolean
+    visible boolean
+    accessibility_attributes jsonb
+    content_area_settings jsonb
+    content_data jsonb
+    content_settings jsonb
   }
 
   BETTER_TOGETHER_CONTENT_LINKS {
-    string host
-    string latest_status_code
-    string link_type
-    string scheme
-    string url
-    text error_message
-    boolean external
-    boolean valid_link
-    datetime last_checked_at
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
+    host string
+    latest_status_code string
+    link_type string
+    scheme string
+    url string
+    error_message text
+    external boolean
+    valid_link boolean
+    last_checked_at datetime
   }
 
   BETTER_TOGETHER_CONTENT_PAGE_BLOCKS {
-    uuid block_id
-    uuid page_id
-    integer position
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
+    block_id uuid
+    page_id uuid
+    position integer
   }
 
   BETTER_TOGETHER_CONTENT_PLATFORM_BLOCKS {
-    uuid block_id
-    uuid platform_id
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
-  }
-
-  BETTER_TOGETHER_CONTENT_BLOCKS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    boolean visible
-    jsonb accessibility_attributes
-    jsonb content_area_settings
-    jsonb content_data
-    jsonb content_settings
+    block_id uuid
+    platform_id uuid
   }
 
   BETTER_TOGETHER_EVIDENCE_LINKS {
-    uuid citation_id
-    uuid claim_id
-    uuid creator_id
-    string locator
-    string relation_type
-    string review_status
-    text editor_note
-    text quoted_text
-    integer position
-    jsonb metadata
+    citation_id uuid
+    claim_id uuid
+    creator_id uuid
+    locator string
+    relation_type string
+    review_status string
+    editor_note text
+    quoted_text text
+    position integer
+    metadata jsonb
   }
 
   BETTER_TOGETHER_PAGES {
-    string source_id
-    uuid community_id
-    uuid creator_id
-    uuid platform_id
-    uuid sidebar_nav_id
-    string identifier
-    string keywords
-    string layout
-    string privacy
-    string template
+    source_id string
+    community_id uuid
+    creator_id uuid
+    platform_id uuid
+    sidebar_nav_id uuid
+    identifier string
+    keywords string
+    layout string
+    privacy string
+    template string
   }
 
   BETTER_TOGETHER_POSTS {
-    string source_id
-    uuid creator_id
-    uuid platform_id
-    string identifier
-    string privacy
-    string type
-    boolean protected
-    datetime last_synced_at
-    datetime published_at
-    datetime source_updated_at
+    source_id string
+    creator_id uuid
+    platform_id uuid
+    identifier string
+    privacy string
+    type string
+    protected boolean
+    last_synced_at datetime
+    published_at datetime
+    source_updated_at datetime
   }
 
   BETTER_TOGETHER_UPLOADS {
-    uuid creator_id
-    string identifier
-    string privacy
-    string type
+    creator_id uuid
+    identifier string
+    privacy string
+    type string
   }
 
   EXTERNAL_PLATFORM_NETWORK__PLATFORM {

@@ -45,240 +45,227 @@ erDiagram
   BETTER_TOGETHER_RESOURCE_PERMISSIONS ||--o{ BETTER_TOGETHER_ROLE_RESOURCE_PERMISSIONS : "resource_permission / resource_permission_id"
 
   BETTER_TOGETHER_PLATFORM_INVITATIONS {
-    uuid community_role_id
-    uuid invitable_id
-    uuid invitee_id
-    uuid inviter_id
-    uuid platform_role_id
-    string invitee_email
-    string locale
-    string status
-    string token
-    string type
+    community_role_id uuid
+    invitable_id uuid
+    invitee_id uuid
+    inviter_id uuid
+    platform_role_id uuid
+    invitee_email string
+    locale string
+    status string
+    token string
+    type string
   }
 
   BETTER_TOGETHER_IDENTIFICATIONS {
-    uuid agent_id
-    uuid identity_id
-    string agent_type
-    string identity_type
-    boolean active
+    agent_id uuid
+    identity_id uuid
+    agent_type string
+    identity_type string
+    active boolean
   }
 
   BETTER_TOGETHER_INVITATIONS {
-    uuid creator_id
-    uuid invitable_id
-    uuid invitee_id
-    uuid inviter_id
-    uuid role_id
-    string invitable_type
-    string invitee_email
-    string invitee_type
-    string inviter_type
-    string locale
+    creator_id uuid
+    invitable_id uuid
+    invitee_id uuid
+    inviter_id uuid
+    role_id uuid
+    invitable_type string
+    invitee_email string
+    invitee_type string
+    inviter_type string
+    locale string
   }
 
   BETTER_TOGETHER_OAUTH_ACCESS_GRANTS {
-    uuid application_id
-    uuid resource_owner_id
-    string scopes
-    string token
-    text redirect_uri
-    integer expires_in
-    datetime revoked_at
+    application_id uuid
+    resource_owner_id uuid
+    scopes string
+    token string
+    redirect_uri text
+    expires_in integer
+    revoked_at datetime
   }
 
   BETTER_TOGETHER_OAUTH_ACCESS_TOKENS {
-    uuid application_id
-    uuid resource_owner_id
-    string previous_refresh_token
-    string refresh_token
-    string scopes
-    string token
-    integer expires_in
-    datetime revoked_at
+    application_id uuid
+    resource_owner_id uuid
+    previous_refresh_token string
+    refresh_token string
+    scopes string
+    token string
+    expires_in integer
+    revoked_at datetime
   }
 
   BETTER_TOGETHER_OAUTH_APPLICATIONS {
-    uuid owner_id
-    string name
-    string scopes
-    string secret
-    string uid
-    text redirect_uri
-    boolean confidential
+    owner_id uuid
+    name string
+    scopes string
+    secret string
+    uid string
+    redirect_uri text
+    confidential boolean
   }
 
   BETTER_TOGETHER_USERS {
-    string confirmation_token
-    string current_sign_in_ip
-    string email
-    string encrypted_password
-    string last_sign_in_ip
-    string reset_password_token
-    string type
-    string unconfirmed_email
-    string unlock_token
-    integer failed_attempts
+    confirmation_token string
+    current_sign_in_ip string
+    email string
+    encrypted_password string
+    last_sign_in_ip string
+    reset_password_token string
+    type string
+    unconfirmed_email string
+    unlock_token string
+    failed_attempts integer
   }
 
   BETTER_TOGETHER_PEOPLE {
-    integer registration_id
-    integer signed_prekey_id
-    uuid community_id
-    string identifier
-    string privacy
-    text identity_key_public
-    text key_backup_blob
-    text key_backup_salt
-    text signed_prekey_public
-    text signed_prekey_sig
+    registration_id integer
+    signed_prekey_id integer
+    community_id uuid
+    identifier string
+    privacy string
+    identity_key_public text
+    key_backup_blob text
+    key_backup_salt text
+    signed_prekey_public text
+    signed_prekey_sig text
   }
 
   BETTER_TOGETHER_PERSON_ACCESS_GRANTS {
-    uuid grantee_person_id
-    uuid grantor_person_id
-    uuid person_link_id
-    string status
-    string sync_cursor
-    text remote_grantee_identifier
-    text remote_grantee_name
-    datetime accepted_at
-    datetime expires_at
-    datetime revoked_at
+    grantee_person_id uuid
+    grantor_person_id uuid
+    person_link_id uuid
+    status string
+    sync_cursor string
+    remote_grantee_identifier text
+    remote_grantee_name text
+    accepted_at datetime
+    expires_at datetime
+    revoked_at datetime
   }
 
   BETTER_TOGETHER_PERSON_BLOCKS {
-    uuid blocked_id
-    uuid blocker_id
+    blocked_id uuid
+    blocker_id uuid
   }
 
   BETTER_TOGETHER_PERSON_CHECKLIST_ITEMS {
-    uuid checklist_id
-    uuid checklist_item_id
-    uuid person_id
-    text notes
-    datetime completed_at
+    checklist_id uuid
+    checklist_item_id uuid
+    person_id uuid
+    notes text
+    completed_at datetime
   }
 
   BETTER_TOGETHER_PERSON_COMMUNITY_MEMBERSHIPS {
-    uuid joinable_id
-    uuid member_id
-    uuid role_id
-    string status
+    joinable_id uuid
+    member_id uuid
+    role_id uuid
+    status string
   }
 
   BETTER_TOGETHER_PERSON_DATA_EXPORTS {
-    uuid person_id
-    string format
-    string status
-    text error_message
-    datetime completed_at
-    datetime requested_at
-    datetime started_at
+    person_id uuid
+    format string
+    status string
+    error_message text
+    completed_at datetime
+    requested_at datetime
+    started_at datetime
   }
 
   BETTER_TOGETHER_PERSON_DELETION_REQUESTS {
-    uuid person_id
-    uuid reviewed_by_id
-    string status
-    text requested_reason
-    text reviewer_notes
-    datetime requested_at
-    datetime resolved_at
+    person_id uuid
+    reviewed_by_id uuid
+    status string
+    requested_reason text
+    reviewer_notes text
+    requested_at datetime
+    resolved_at datetime
   }
 
   BETTER_TOGETHER_PERSON_LINKS {
-    uuid platform_connection_id
-    uuid source_person_id
-    uuid target_person_id
-    string remote_target_identifier
-    string remote_target_name
-    string status
-    datetime revoked_at
-    datetime verified_at
-    jsonb settings
+    platform_connection_id uuid
+    source_person_id uuid
+    target_person_id uuid
+    remote_target_identifier string
+    remote_target_name string
+    status string
+    revoked_at datetime
+    verified_at datetime
+    settings jsonb
   }
 
   BETTER_TOGETHER_PERSON_LINKED_SEEDS {
-    string source_record_id
-    uuid person_access_grant_id
-    uuid recipient_person_id
-    uuid source_platform_id
-    string identifier
-    string privacy
-    string seed_type
-    string source_record_type
-    string version
-    text payload
+    source_record_id string
+    person_access_grant_id uuid
+    recipient_person_id uuid
+    source_platform_id uuid
+    identifier string
+    privacy string
+    seed_type string
+    source_record_type string
+    version string
+    payload text
   }
 
   BETTER_TOGETHER_PERSON_PLATFORM_INTEGRATIONS {
-    uuid person_id
-    uuid platform_id
-    uuid user_id
-    string access_token
-    string access_token_secret
-    string handle
-    string image_url
-    string name
-    string profile_url
-    string provider
+    person_id uuid
+    platform_id uuid
+    user_id uuid
+    access_token string
+    access_token_secret string
+    handle string
+    image_url string
+    name string
+    profile_url string
+    provider string
   }
 
   BETTER_TOGETHER_PERSON_PLATFORM_MEMBERSHIPS {
-    uuid joinable_id
-    uuid member_id
-    uuid role_id
-    string status
+    joinable_id uuid
+    member_id uuid
+    role_id uuid
+    status string
   }
 
   BETTER_TOGETHER_PERSON_PURGE_AUDITS {
-    uuid person_deletion_request_id
-    uuid person_id
-    uuid reviewed_by_id
-    string person_identifier_snapshot
-    string person_name_snapshot
-    string status
-    string user_email_snapshot
-    text error_message
-    text requested_reason_snapshot
-    text reviewer_notes_snapshot
+    person_deletion_request_id uuid
+    person_id uuid
+    reviewed_by_id uuid
+    person_identifier_snapshot string
+    person_name_snapshot string
+    status string
+    user_email_snapshot string
+    error_message text
+    requested_reason_snapshot text
+    reviewer_notes_snapshot text
   }
 
   BETTER_TOGETHER_RESOURCE_PERMISSIONS {
-    string action
-    string identifier
-    string resource_type
-    string target
-    boolean protected
-    integer position
+    action string
+    identifier string
+    resource_type string
+    target string
+    protected boolean
+    position integer
   }
 
   BETTER_TOGETHER_ROLES {
-    string identifier
-    string resource_type
-    string type
-    boolean protected
-    integer position
+    identifier string
+    resource_type string
+    type string
+    protected boolean
+    position integer
   }
 
   BETTER_TOGETHER_ROLE_RESOURCE_PERMISSIONS {
-    uuid resource_permission_id
-    uuid role_id
-  }
-
-  BETTER_TOGETHER_USERS {
-    string confirmation_token
-    string current_sign_in_ip
-    string email
-    string encrypted_password
-    string last_sign_in_ip
-    string reset_password_token
-    string type
-    string unconfirmed_email
-    string unlock_token
-    integer failed_attempts
+    resource_permission_id uuid
+    role_id uuid
   }
 
   EXTERNAL_PLATFORM_NETWORK__PLATFORM {

@@ -2,14 +2,12 @@
 erDiagram
   EXTERNAL_SHARED_SUPPORTING__CONTACTDETAIL o|--o{ BETTER_TOGETHER_ADDRESSES : "contact_detail / contact_detail_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_GEOGRAPHY_MAPS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_GEOGRAPHY_MAPS : "creator / creator_id"
   EXTERNAL_PLATFORM_NETWORK__COMMUNITY ||--o{ BETTER_TOGETHER_GEOGRAPHY_CONTINENTS : "community / community_id"
   EXTERNAL_PLATFORM_NETWORK__COMMUNITY ||--o{ BETTER_TOGETHER_GEOGRAPHY_COUNTRIES : "community / community_id"
   BETTER_TOGETHER_GEOGRAPHY_COUNTRIES ||--o{ BETTER_TOGETHER_GEOGRAPHY_COUNTRY_CONTINENTS : "country / country_id"
   BETTER_TOGETHER_GEOGRAPHY_CONTINENTS ||--o{ BETTER_TOGETHER_GEOGRAPHY_COUNTRY_CONTINENTS : "continent / continent_id"
   BETTER_TOGETHER_GEOGRAPHY_SPACES ||--o{ BETTER_TOGETHER_GEOGRAPHY_GEOSPATIAL_SPACES : "space / space_id"
   EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_GEOGRAPHY_LOCATABLE_LOCATIONS : "creator / creator_id"
-  EXTERNAL_IDENTITY_ACCESS__PERSON o|--o{ BETTER_TOGETHER_GEOGRAPHY_MAPS : "creator / creator_id"
   EXTERNAL_PLATFORM_NETWORK__COMMUNITY ||--o{ BETTER_TOGETHER_GEOGRAPHY_REGIONS : "community / community_id"
   BETTER_TOGETHER_GEOGRAPHY_COUNTRIES o|--o{ BETTER_TOGETHER_GEOGRAPHY_REGIONS : "country / country_id"
   BETTER_TOGETHER_GEOGRAPHY_STATES o|--o{ BETTER_TOGETHER_GEOGRAPHY_REGIONS : "state / state_id"
@@ -26,139 +24,113 @@ erDiagram
   BETTER_TOGETHER_GEOGRAPHY_SPACES ||--o{ BETTER_TOGETHER_PLACES : "space / space_id"
 
   BETTER_TOGETHER_ADDRESSES {
-    uuid contact_detail_id
-    string city_name
-    string country_name
-    string label
-    string line1
-    string line2
-    string postal_code
-    string privacy
-    string state_province_name
-    boolean physical
+    contact_detail_id uuid
+    city_name string
+    country_name string
+    label string
+    line1 string
+    line2 string
+    postal_code string
+    privacy string
+    state_province_name string
+    physical boolean
   }
 
   BETTER_TOGETHER_GEOGRAPHY_MAPS {
-    uuid creator_id
-    uuid mappable_id
-    string identifier
-    string locale
-    string mappable_type
-    string privacy
-    string type
-    boolean protected
-    integer zoom
-    jsonb metadata
-  }
-
-  BETTER_TOGETHER_GEOGRAPHY_MAPS {
-    uuid creator_id
-    uuid mappable_id
-    string identifier
-    string locale
-    string mappable_type
-    string privacy
-    string type
-    boolean protected
-    integer zoom
-    jsonb metadata
+    creator_id uuid
+    mappable_id uuid
+    identifier string
+    locale string
+    mappable_type string
+    privacy string
+    type string
+    protected boolean
+    zoom integer
+    metadata jsonb
   }
 
   BETTER_TOGETHER_GEOGRAPHY_CONTINENTS {
-    uuid community_id
-    string identifier
-    boolean protected
+    community_id uuid
+    identifier string
+    protected boolean
   }
 
   BETTER_TOGETHER_GEOGRAPHY_COUNTRIES {
-    uuid community_id
-    string identifier
-    string iso_code
-    boolean protected
+    community_id uuid
+    identifier string
+    iso_code string
+    protected boolean
   }
 
   BETTER_TOGETHER_GEOGRAPHY_COUNTRY_CONTINENTS {
-    uuid continent_id
-    uuid country_id
+    continent_id uuid
+    country_id uuid
   }
 
   BETTER_TOGETHER_GEOGRAPHY_GEOSPATIAL_SPACES {
-    uuid geospatial_id
-    uuid space_id
-    string geospatial_type
-    boolean primary_flag
-    integer position
+    geospatial_id uuid
+    space_id uuid
+    geospatial_type string
+    primary_flag boolean
+    position integer
   }
 
   BETTER_TOGETHER_GEOGRAPHY_LOCATABLE_LOCATIONS {
-    uuid creator_id
-    uuid locatable_id
-    uuid location_id
-    string locatable_type
-    string location_type
-    string name
-  }
-
-  BETTER_TOGETHER_GEOGRAPHY_MAPS {
-    uuid creator_id
-    uuid mappable_id
-    string identifier
-    string locale
-    string mappable_type
-    string privacy
-    string type
-    boolean protected
-    integer zoom
-    jsonb metadata
+    creator_id uuid
+    locatable_id uuid
+    location_id uuid
+    locatable_type string
+    location_type string
+    name string
   }
 
   BETTER_TOGETHER_GEOGRAPHY_REGIONS {
-    uuid community_id
-    uuid country_id
-    uuid state_id
-    string identifier
-    string type
-    boolean protected
+    community_id uuid
+    country_id uuid
+    state_id uuid
+    identifier string
+    type string
+    protected boolean
   }
 
   BETTER_TOGETHER_GEOGRAPHY_REGION_SETTLEMENTS {
-    uuid region_id
-    uuid settlement_id
-    boolean protected
+    region_id uuid
+    settlement_id uuid
+    protected boolean
   }
 
   BETTER_TOGETHER_GEOGRAPHY_SETTLEMENTS {
-    uuid community_id
-    uuid country_id
-    uuid state_id
-    string identifier
-    boolean protected
+    community_id uuid
+    country_id uuid
+    state_id uuid
+    identifier string
+    protected boolean
   }
 
   BETTER_TOGETHER_GEOGRAPHY_SPACES {
-    uuid creator_id
-    string identifier
-    jsonb metadata
-    jsonb properties
-    float elevation
-    float latitude
-    float longitude
+    creator_id uuid
+    identifier string
+    metadata jsonb
+    properties jsonb
+    elevation float
+    latitude float
+    longitude float
   }
 
   BETTER_TOGETHER_GEOGRAPHY_STATES {
-    uuid community_id
-    uuid country_id
-    string identifier
-    string iso_code
-    boolean protected
+    community_id uuid
+    country_id uuid
+    identifier string
+    iso_code string
+    protected boolean
   }
 
   BETTER_TOGETHER_PLACES {
-    uuid community_id
-    uuid creator_id
-    uuid space_id
-    string identifier
-    string privacy
+    community_id uuid
+    creator_id uuid
+    space_id uuid
+    identifier string
+    privacy string
   }
 
   EXTERNAL_IDENTITY_ACCESS__PERSON {

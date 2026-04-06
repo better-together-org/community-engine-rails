@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-06T17:13:19Z",
+  "generated_at": "2026-04-06T17:50:12Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -631,7 +631,10 @@
             "BetterTogether::Translatable"
           ],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "User",
+          "shared_table_reference_name": "BetterTogether::User",
+          "shared_table_group_size": 2
         },
         {
           "name": "BetterTogether::Person",
@@ -2113,7 +2116,15 @@
             "BetterTogether::Translatable"
           ],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_variants": [
+            "OauthUser"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::OauthUser",
+            "BetterTogether::User"
+          ],
+          "shared_table_group_size": 2
         }
       ],
       "controllers_inventory": [
@@ -6724,7 +6735,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::AlertBlock",
@@ -6826,7 +6840,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::Block",
@@ -6928,7 +6945,55 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_variants": [
+            "Content::AccordionBlock",
+            "Content::AlertBlock",
+            "Content::CallToActionBlock",
+            "Content::ChecklistBlock",
+            "Content::CommunitiesBlock",
+            "Content::Css",
+            "Content::EventsBlock",
+            "Content::Hero",
+            "Content::Html",
+            "Content::IframeBlock",
+            "Content::Image",
+            "Content::Markdown",
+            "Content::MermaidDiagram",
+            "Content::NavigationAreaBlock",
+            "Content::PeopleBlock",
+            "Content::PostsBlock",
+            "Content::QuoteBlock",
+            "Content::RichText",
+            "Content::StatisticsBlock",
+            "Content::Template",
+            "Content::VideoBlock"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::Content::AccordionBlock",
+            "BetterTogether::Content::AlertBlock",
+            "BetterTogether::Content::Block",
+            "BetterTogether::Content::CallToActionBlock",
+            "BetterTogether::Content::ChecklistBlock",
+            "BetterTogether::Content::CommunitiesBlock",
+            "BetterTogether::Content::Css",
+            "BetterTogether::Content::EventsBlock",
+            "BetterTogether::Content::Hero",
+            "BetterTogether::Content::Html",
+            "BetterTogether::Content::IframeBlock",
+            "BetterTogether::Content::Image",
+            "BetterTogether::Content::Markdown",
+            "BetterTogether::Content::MermaidDiagram",
+            "BetterTogether::Content::NavigationAreaBlock",
+            "BetterTogether::Content::PeopleBlock",
+            "BetterTogether::Content::PostsBlock",
+            "BetterTogether::Content::QuoteBlock",
+            "BetterTogether::Content::RichText",
+            "BetterTogether::Content::StatisticsBlock",
+            "BetterTogether::Content::Template",
+            "BetterTogether::Content::VideoBlock"
+          ],
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::CallToActionBlock",
@@ -7030,7 +7095,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::ChecklistBlock",
@@ -7133,7 +7201,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::CommunitiesBlock",
@@ -7236,7 +7307,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::Css",
@@ -7346,7 +7420,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::EventsBlock",
@@ -7449,7 +7526,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::Hero",
@@ -7597,7 +7677,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::Html",
@@ -7707,7 +7790,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::IframeBlock",
@@ -7818,7 +7904,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::Image",
@@ -7936,7 +8025,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::Link",
@@ -8107,7 +8199,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::MermaidDiagram",
@@ -8224,7 +8319,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::NavigationAreaBlock",
@@ -8327,7 +8425,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::PageBlock",
@@ -8483,7 +8584,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::PlatformBlock",
@@ -8640,7 +8744,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::QuoteBlock",
@@ -8742,7 +8849,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::RichText",
@@ -8882,7 +8992,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::StatisticsBlock",
@@ -8984,7 +9097,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::Template",
@@ -9086,7 +9202,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Content::VideoBlock",
@@ -9188,7 +9307,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Content::Block",
+          "shared_table_reference_name": "BetterTogether::Content::Block",
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EvidenceLink",
@@ -11130,7 +11252,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Geography::Map",
+          "shared_table_reference_name": "BetterTogether::Geography::Map",
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Geography::CommunityMap",
@@ -11290,7 +11415,10 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_reference": "Geography::Map",
+          "shared_table_reference_name": "BetterTogether::Geography::Map",
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Geography::Continent",
@@ -11833,7 +11961,17 @@
               "optional": true,
               "target_subsystem": "identity_access"
             }
-          ]
+          ],
+          "shared_table_variants": [
+            "Geography::CommunityCollectionMap",
+            "Geography::CommunityMap"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::Geography::CommunityCollectionMap",
+            "BetterTogether::Geography::CommunityMap",
+            "BetterTogether::Geography::Map"
+          ],
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Geography::Region",
@@ -15754,7 +15892,17 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_variants": [
+            "Joatu::AgreementStatusNotifier",
+            "Joatu::MatchNotifier"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::Joatu::AgreementNotifier",
+            "BetterTogether::Joatu::AgreementStatusNotifier",
+            "BetterTogether::Joatu::MatchNotifier"
+          ],
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Joatu::AgreementNotifier::Notification",
@@ -15825,7 +15973,17 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_variants": [
+            "Joatu::AgreementStatusNotifier::Notification",
+            "Joatu::MatchNotifier::Notification"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::Joatu::AgreementNotifier::Notification",
+            "BetterTogether::Joatu::AgreementStatusNotifier::Notification",
+            "BetterTogether::Joatu::MatchNotifier::Notification"
+          ],
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Joatu::AgreementStatusNotifier",
@@ -15869,7 +16027,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "Joatu::AgreementNotifier",
+          "shared_table_reference_name": "BetterTogether::Joatu::AgreementNotifier",
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Joatu::AgreementStatusNotifier::Notification",
@@ -15940,7 +16101,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "Joatu::AgreementNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::Joatu::AgreementNotifier::Notification",
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Joatu::Category",
@@ -16326,7 +16490,10 @@
               "optional": true,
               "target_subsystem": "geography_and_places"
             }
-          ]
+          ],
+          "shared_table_reference": "Joatu::Request",
+          "shared_table_reference_name": "BetterTogether::Joatu::Request",
+          "shared_table_group_size": 5
         },
         {
           "name": "BetterTogether::Joatu::MatchNotifier",
@@ -16368,7 +16535,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "Joatu::AgreementNotifier",
+          "shared_table_reference_name": "BetterTogether::Joatu::AgreementNotifier",
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Joatu::MatchNotifier::Notification",
@@ -16439,7 +16609,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "Joatu::AgreementNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::Joatu::AgreementNotifier::Notification",
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Joatu::MembershipRequest",
@@ -16698,7 +16871,10 @@
               "optional": true,
               "target_subsystem": "geography_and_places"
             }
-          ]
+          ],
+          "shared_table_reference": "Joatu::Request",
+          "shared_table_reference_name": "BetterTogether::Joatu::Request",
+          "shared_table_group_size": 5
         },
         {
           "name": "BetterTogether::Joatu::Offer",
@@ -17204,7 +17380,10 @@
               "optional": true,
               "target_subsystem": "geography_and_places"
             }
-          ]
+          ],
+          "shared_table_reference": "Joatu::Request",
+          "shared_table_reference_name": "BetterTogether::Joatu::Request",
+          "shared_table_group_size": 5
         },
         {
           "name": "BetterTogether::Joatu::PersonLinkRequest",
@@ -17463,7 +17642,10 @@
               "optional": true,
               "target_subsystem": "geography_and_places"
             }
-          ]
+          ],
+          "shared_table_reference": "Joatu::Request",
+          "shared_table_reference_name": "BetterTogether::Joatu::Request",
+          "shared_table_group_size": 5
         },
         {
           "name": "BetterTogether::Joatu::Request",
@@ -17722,7 +17904,21 @@
               "optional": true,
               "target_subsystem": "geography_and_places"
             }
-          ]
+          ],
+          "shared_table_variants": [
+            "Joatu::ConnectionRequest",
+            "Joatu::MembershipRequest",
+            "Joatu::PersonAccessGrantRequest",
+            "Joatu::PersonLinkRequest"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::Joatu::ConnectionRequest",
+            "BetterTogether::Joatu::MembershipRequest",
+            "BetterTogether::Joatu::PersonAccessGrantRequest",
+            "BetterTogether::Joatu::PersonLinkRequest",
+            "BetterTogether::Joatu::Request"
+          ],
+          "shared_table_group_size": 5
         },
         {
           "name": "BetterTogether::Joatu::ResponseLink",
@@ -20271,7 +20467,33 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_variants": [
+            "EventInvitationNotifier",
+            "EventReminderNotifier",
+            "EventUpdateNotifier",
+            "InvitationNotifierBase",
+            "MembershipCreatedNotifier",
+            "MembershipRemovedNotifier",
+            "MembershipUpdatedNotifier",
+            "NewMessageNotifier",
+            "PageAuthorshipNotifier",
+            "PersonPlatformIntegrationCreatedNotifier"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::CommunityInvitationNotifier",
+            "BetterTogether::EventInvitationNotifier",
+            "BetterTogether::EventReminderNotifier",
+            "BetterTogether::EventUpdateNotifier",
+            "BetterTogether::InvitationNotifierBase",
+            "BetterTogether::MembershipCreatedNotifier",
+            "BetterTogether::MembershipRemovedNotifier",
+            "BetterTogether::MembershipUpdatedNotifier",
+            "BetterTogether::NewMessageNotifier",
+            "BetterTogether::PageAuthorshipNotifier",
+            "BetterTogether::PersonPlatformIntegrationCreatedNotifier"
+          ],
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::CommunityInvitationNotifier::Notification",
@@ -20342,7 +20564,33 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_variants": [
+            "EventInvitationNotifier::Notification",
+            "EventReminderNotifier::Notification",
+            "EventUpdateNotifier::Notification",
+            "InvitationNotifierBase::Notification",
+            "MembershipCreatedNotifier::Notification",
+            "MembershipRemovedNotifier::Notification",
+            "MembershipUpdatedNotifier::Notification",
+            "NewMessageNotifier::Notification",
+            "PageAuthorshipNotifier::Notification",
+            "PersonPlatformIntegrationCreatedNotifier::Notification"
+          ],
+          "shared_table_family_names": [
+            "BetterTogether::CommunityInvitationNotifier::Notification",
+            "BetterTogether::EventInvitationNotifier::Notification",
+            "BetterTogether::EventReminderNotifier::Notification",
+            "BetterTogether::EventUpdateNotifier::Notification",
+            "BetterTogether::InvitationNotifierBase::Notification",
+            "BetterTogether::MembershipCreatedNotifier::Notification",
+            "BetterTogether::MembershipRemovedNotifier::Notification",
+            "BetterTogether::MembershipUpdatedNotifier::Notification",
+            "BetterTogether::NewMessageNotifier::Notification",
+            "BetterTogether::PageAuthorshipNotifier::Notification",
+            "BetterTogether::PersonPlatformIntegrationCreatedNotifier::Notification"
+          ],
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::ContactDetail",
@@ -20497,7 +20745,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::EventInvitationNotifier::Notification",
@@ -20568,7 +20819,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::EventReminderNotifier",
@@ -20612,7 +20866,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::EventReminderNotifier::Notification",
@@ -20683,7 +20940,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::EventUpdateNotifier",
@@ -20725,7 +20985,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::EventUpdateNotifier::Notification",
@@ -20796,7 +21059,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::Infrastructure::Building",
@@ -21449,7 +21715,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::InvitationNotifierBase::Notification",
@@ -21520,7 +21789,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::JwtDenylist",
@@ -21597,7 +21869,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::MembershipCreatedNotifier::Notification",
@@ -21668,7 +21943,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::MembershipRemovedNotifier",
@@ -21710,7 +21988,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::MembershipRemovedNotifier::Notification",
@@ -21781,7 +22062,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::MembershipUpdatedNotifier",
@@ -21825,7 +22109,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::MembershipUpdatedNotifier::Notification",
@@ -21896,7 +22183,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::NewMessageNotifier",
@@ -21940,7 +22230,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::NewMessageNotifier::Notification",
@@ -22011,7 +22304,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::PageAuthorshipNotifier",
@@ -22055,7 +22351,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::PageAuthorshipNotifier::Notification",
@@ -22126,7 +22425,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::PersonPlatformIntegrationCreatedNotifier",
@@ -22170,7 +22472,10 @@
           "translated_attributes": [],
           "concerns": [],
           "concern_notes": [],
-          "cross_subsystem_targets": []
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommunityInvitationNotifier",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::PersonPlatformIntegrationCreatedNotifier::Notification",
@@ -22241,7 +22546,10 @@
               "optional": true,
               "target_subsystem": "platform_network"
             }
-          ]
+          ],
+          "shared_table_reference": "CommunityInvitationNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommunityInvitationNotifier::Notification",
+          "shared_table_group_size": 11
         },
         {
           "name": "BetterTogether::PhoneNumber",

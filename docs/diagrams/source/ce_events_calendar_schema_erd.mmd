@@ -13,78 +13,78 @@ erDiagram
   EXTERNAL_IDENTITY_ACCESS__ROLE o|--o{ BETTER_TOGETHER_INVITATIONS : "role / role_id"
 
   BETTER_TOGETHER_CALENDARS {
-    uuid community_id
-    uuid creator_id
-    string identifier
-    string locale
-    string privacy
-    string subscription_token
-    boolean protected
+    community_id uuid
+    creator_id uuid
+    identifier string
+    locale string
+    privacy string
+    subscription_token string
+    protected boolean
   }
 
   BETTER_TOGETHER_CALENDAR_ENTRIES {
-    uuid calendar_id
-    uuid event_id
-    uuid schedulable_id
-    string schedulable_type
-    datetime ends_at
-    datetime starts_at
-    decimal duration_minutes
+    calendar_id uuid
+    event_id uuid
+    schedulable_id uuid
+    schedulable_type string
+    ends_at datetime
+    starts_at datetime
+    duration_minutes decimal
   }
 
   BETTER_TOGETHER_EVENTS {
-    string source_id
-    uuid creator_id
-    uuid parent_event_id
-    uuid platform_id
-    string identifier
-    string privacy
-    string registration_url
-    string timezone
-    string type
-    text recurrence_rule
+    source_id string
+    creator_id uuid
+    parent_event_id uuid
+    platform_id uuid
+    identifier string
+    privacy string
+    registration_url string
+    timezone string
+    type string
+    recurrence_rule text
   }
 
   BETTER_TOGETHER_EVENT_ATTENDANCES {
-    uuid event_id
-    uuid person_id
-    string status
+    event_id uuid
+    person_id uuid
+    status string
   }
 
   BETTER_TOGETHER_CATEGORIES {
-    string icon
-    string identifier
-    string type
-    boolean protected
-    integer position
+    icon string
+    identifier string
+    type string
+    protected boolean
+    position integer
   }
 
   BETTER_TOGETHER_EVENT_HOSTS {
-    uuid event_id
-    uuid host_id
-    string host_type
+    event_id uuid
+    host_id uuid
+    host_type string
   }
 
   BETTER_TOGETHER_INVITATIONS {
-    uuid creator_id
-    uuid invitable_id
-    uuid invitee_id
-    uuid inviter_id
-    uuid role_id
-    string invitable_type
-    string invitee_email
-    string invitee_type
-    string inviter_type
-    string locale
+    creator_id uuid
+    invitable_id uuid
+    invitee_id uuid
+    inviter_id uuid
+    role_id uuid
+    invitable_type string
+    invitee_email string
+    invitee_type string
+    inviter_type string
+    locale string
   }
 
   BETTER_TOGETHER_RECURRENCES {
-    uuid schedulable_id
-    string frequency
-    string schedulable_type
-    text rule
-    date ends_on
-    date exception_dates
+    schedulable_id uuid
+    frequency string
+    schedulable_type string
+    rule text
+    ends_on date
+    exception_dates date
   }
 
   EXTERNAL_IDENTITY_ACCESS__PERSON {

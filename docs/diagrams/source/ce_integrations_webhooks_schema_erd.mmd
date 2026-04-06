@@ -6,26 +6,26 @@ erDiagram
   EXTERNAL_IDENTITY_ACCESS__OAUTHAPPLICATION o|--o{ BETTER_TOGETHER_WEBHOOK_ENDPOINTS : "oauth_application / oauth_application_id"
 
   BETTER_TOGETHER_WEBHOOK_DELIVERIES {
-    uuid webhook_endpoint_id
-    string event
-    string status
-    text response_body
-    integer attempts
-    integer response_code
-    datetime delivered_at
-    jsonb payload
+    webhook_endpoint_id uuid
+    event string
+    status string
+    response_body text
+    attempts integer
+    response_code integer
+    delivered_at datetime
+    payload jsonb
   }
 
   BETTER_TOGETHER_WEBHOOK_ENDPOINTS {
-    uuid community_id
-    uuid oauth_application_id
-    uuid person_id
-    string events
-    string name
-    string secret
-    string url
-    text description
-    boolean active
+    community_id uuid
+    oauth_application_id uuid
+    person_id uuid
+    events string
+    name string
+    secret string
+    url string
+    description text
+    active boolean
   }
 
   EXTERNAL_IDENTITY_ACCESS__PERSON {
