@@ -16,7 +16,9 @@ RSpec.describe 'BetterTogether::Api::V1::PersonCommunityMemberships', :no_auth d
 
   let(:community) { create(:better_together_community) }
   let(:role) { BetterTogether::Role.find_by(identifier: 'community_member') || create(:better_together_role) }
-  let(:target_person) { regular_user.person }
+  let(:target_person) do
+    regular_user.person.tap { |person| person.update!(privacy: 'community') }
+  end
   let!(:community_manager_membership) { make_community_organizer(manager_user, community) }
 
   describe 'GET /api/v1/person_community_memberships' do

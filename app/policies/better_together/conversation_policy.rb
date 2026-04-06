@@ -42,8 +42,6 @@ module BetterTogether
 
     # Returns the people that the agent is permitted to message
     def permitted_participants
-      return platform_people if admin_participant_access?
-
       admin_and_opted_in_participants
     end
 
@@ -63,10 +61,6 @@ module BetterTogether
     end
 
     private
-
-    def admin_participant_access?
-      can_read_people_directory?
-    end
 
     def platform_steward_ids
       BetterTogether::PersonPlatformMembership

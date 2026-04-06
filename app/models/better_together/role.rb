@@ -32,6 +32,10 @@ module BetterTogether
       save if save_record
     end
 
+    def to_s
+      name
+    end
+
     private
 
     def synchronize_resource_permissions!(permissions)
@@ -49,10 +53,6 @@ module BetterTogether
 
     def position_scope
       :resource_type
-    end
-
-    def to_s
-      name
     end
   end
 end

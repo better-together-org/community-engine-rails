@@ -5,6 +5,13 @@ require 'rails_helper'
 RSpec.describe 'Basic Invitation Creation', :as_platform_manager do
   let(:community) { create(:better_together_community) }
   let(:email) { 'test@example.com' }
+  let(:platform_manager) do
+    find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+  end
+
+  before do
+    make_community_organizer(platform_manager, community)
+  end
 
   describe 'creating invitations' do
     it 'successfully creates an invitation for a new email' do

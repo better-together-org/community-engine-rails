@@ -63,10 +63,11 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
         grant_platform_permission(directory_admin, 'list_person')
       end
 
-      it 'includes non-opted platform people as an explicit disclosure capability' do
+      it 'does not widen conversation participants beyond opted-in and steward paths' do
         policy = described_class.new(directory_admin, BetterTogether::Conversation.new)
 
-        expect(policy.permitted_participants).to include(non_opted_person)
+        expect(policy.permitted_participants).to include(steward_person, opted_in_person, host_only_opted_in_person)
+        expect(policy.permitted_participants).not_to include(non_opted_person, other_platform_opted_in_person)
       end
     end
 

@@ -7,7 +7,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
 
   describe 'GET /:locale/.../host/p/:id' do
-    let!(:person) { create(:better_together_person) }
+    let!(:person) { create(:better_together_person, privacy: 'public') }
 
     it 'renders show' do
       get better_together.person_path(locale:, id: person.slug)
@@ -15,7 +15,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
     end
 
     it 'renders edit' do
-      get better_together.edit_person_path(locale:, id: person.slug)
+      get better_together.edit_person_path(locale:, id: platform_manager.person.slug)
       expect(response).to have_http_status(:ok)
     end
 
@@ -50,8 +50,8 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
     end
 
     it 'shows contribution history and linked github identities when present' do
-      page = create(:better_together_page, privacy: 'private')
-      post = create(:better_together_post, creator: person, author: person, privacy: 'private')
+      page = create(:better_together_page, privacy: 'public')
+      post = create(:better_together_post, creator: person, author: person, privacy: 'public')
       page.add_governed_contributor(person, role: 'editor')
       post.add_governed_contributor(person, role: 'reviewer')
       page.contributions.first.update!(details: {

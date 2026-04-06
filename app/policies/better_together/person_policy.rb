@@ -11,7 +11,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && permitted_to?('create_person')
+      user.present? && (permitted_to?('create_person') || permitted_to?('manage_platform'))
     end
 
     def new?
