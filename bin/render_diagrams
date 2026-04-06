@@ -29,6 +29,8 @@ Environment Variables:
   HEIGHT                      Standard diagram height (default: 2400)
   HIGH_RES_WIDTH              High resolution width for complex diagrams (default: 4800)
   HIGH_RES_HEIGHT             High resolution height for complex diagrams (default: 3600)
+  MIN_SHORT_SIDE_PX           Minimum required rendered PNG short side in pixels (default: 1500)
+  MAX_RESIZE_ATTEMPTS         Maximum rerender attempts to satisfy MIN_SHORT_SIDE_PX for PNG output (default: 4)
   OUTPUT_FORMATS              Space-separated output formats (default: "png svg")
   DEBUG                       Show complexity detection details (set to 1)
   FORCE                       Force re-render all (set to 1)
@@ -94,6 +96,8 @@ done
 WIDTH=${WIDTH:-3200}
 HEIGHT=${HEIGHT:-2400}
 OUTPUT_FORMATS=${OUTPUT_FORMATS:-"png svg"}
+MIN_SHORT_SIDE_PX=${MIN_SHORT_SIDE_PX:-1500}
+MAX_RESIZE_ATTEMPTS=${MAX_RESIZE_ATTEMPTS:-4}
 
 # High-resolution settings for complex diagrams
 HIGH_RES_WIDTH=${HIGH_RES_WIDTH:-4800}
@@ -114,6 +118,224 @@ else
   exit 1
 fi
 
+output_dimensions() {
+  local file="$1"
+  python3 - "$file" <<'PY'
+import re
+import struct
+import sys
+import xml.etree.ElementTree as ET
+
+path = sys.argv[1]
+
+def emit(width, height):
+    if width is None or height is None:
+        raise SystemExit(1)
+    print(f"{int(round(width))} {int(round(height))}")
+
+if path.endswith(".png"):
+    with open(path, "rb") as fh:
+        signature = fh.read(8)
+        if signature != b"\x89PNG\r\n\x1a\n":
+            raise SystemExit(1)
+        fh.read(4)
+        chunk_type = fh.read(4)
+        if chunk_type != b"IHDR":
+            raise SystemExit(1)
+        width, height = struct.unpack(">II", fh.read(8))
+        emit(width, height)
+elif path.endswith(".svg"):
+    root = ET.parse(path).getroot()
+
+    def parse_size(value):
+        if not value:
+            return None
+        match = re.match(r"([0-9]+(?:\.[0-9]+)?)", value)
+        return float(match.group(1)) if match else None
+
+    width = parse_size(root.attrib.get("width"))
+    height = parse_size(root.attrib.get("height"))
+
+    if (width is None or height is None) and root.attrib.get("viewBox"):
+        parts = re.split(r"[\s,]+", root.attrib["viewBox"].strip())
+        if len(parts) == 4:
+            width = width or float(parts[2])
+            height = height or float(parts[3])
+
+    emit(width, height)
+else:
+    raise SystemExit(1)
+PY
+}
+
+dimensions_meet_min_short_side() {
+  local file="$1"
+  local dims short_side width height
+  if ! dims="$(output_dimensions "$file" 2>/dev/null)"; then
+    return 1
+  fi
+  read -r width height <<< "$dims"
+  if [ "$width" -lt "$height" ]; then
+    short_side="$width"
+  else
+    short_side="$height"
+  fi
+  [ "$short_side" -ge "$MIN_SHORT_SIDE_PX" ]
+}
+
+scaled_render_scale() {
+  local render_scale="$1"
+  local short_side="$2"
+  python3 - "$render_scale" "$short_side" "$MIN_SHORT_SIDE_PX" <<'PY'
+import math
+import sys
+
+render_scale = float(sys.argv[1])
+short_side = max(1, int(sys.argv[2]))
+minimum_short_side = int(sys.argv[3])
+factor = max(1.0, (minimum_short_side / short_side) * 1.05)
+
+print(f"{math.ceil(render_scale * factor)}")
+PY
+}
+
+render_svg_output() {
+  local input_file="$1"
+  local output_file="$2"
+  local render_width="$3"
+  local render_height="$4"
+  local render_scale="$5"
+  local svg_config
+  svg_config=$(mktemp)
+  cat > "$svg_config" << 'EOF'
+{
+  "flowchart": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "sequence": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "gantt": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "journey": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "class": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "state": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "er": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "pie": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "quadrantChart": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "xyChart": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "timeline": {
+    "htmlLabels": false,
+    "useMaxWidth": false
+  },
+  "theme": "default",
+  "fontFamily": "trebuchet ms, verdana, arial, sans-serif"
+}
+EOF
+
+  if ! "${RENDERER[@]}" -i "$input_file" -o "$output_file" -w "$render_width" -H "$render_height" --configFile "$svg_config" --scale "$render_scale"; then
+    echo "WARN: Failed to render $input_file to svg with native text; trying minimal config..." >&2
+    echo '{"theme": "default"}' > "$svg_config"
+    if ! "${RENDERER[@]}" -i "$input_file" -o "$output_file" -w "$render_width" -H "$render_height" --configFile "$svg_config" --scale "$render_scale"; then
+      if ! "${RENDERER[@]}" -i "$input_file" -o "$output_file" -w "$render_width" -H "$render_height" --scale "$render_scale"; then
+        rm -f "$svg_config"
+        return 1
+      fi
+    fi
+  fi
+
+  rm -f "$svg_config"
+}
+
+render_output() {
+  local format="$1"
+  local input_file="$2"
+  local output_file="$3"
+  local render_width="$4"
+  local render_height="$5"
+  local render_scale="$6"
+
+  if [ "$format" = "svg" ]; then
+    render_svg_output "$input_file" "$output_file" "$render_width" "$render_height" "$render_scale"
+  else
+    "${RENDERER[@]}" -i "$input_file" -o "$output_file" -w "$render_width" -H "$render_height" --scale "$render_scale"
+  fi
+}
+
+render_with_min_short_side() {
+  local input_file="$1"
+  local output_file="$2"
+  local format="$3"
+  local render_width="$4"
+  local render_height="$5"
+  local attempt=0
+  local dims width height short_side
+  local render_scale=1
+
+  if [ "$format" = "svg" ]; then
+    render_output "$format" "$input_file" "$output_file" "$render_width" "$render_height" "$render_scale"
+    return $?
+  fi
+
+  while [ "$attempt" -lt "$MAX_RESIZE_ATTEMPTS" ]; do
+    if ! render_output "$format" "$input_file" "$output_file" "$render_width" "$render_height" "$render_scale"; then
+      return 1
+    fi
+
+    if ! dims="$(output_dimensions "$output_file" 2>/dev/null)"; then
+      echo "WARN: Unable to inspect rendered dimensions for $output_file; keeping current output." >&2
+      return 0
+    fi
+
+    read -r width height <<< "$dims"
+    if [ "$width" -lt "$height" ]; then
+      short_side="$width"
+    else
+      short_side="$height"
+    fi
+
+    if [ "$short_side" -ge "$MIN_SHORT_SIDE_PX" ]; then
+      return 0
+    fi
+
+    attempt=$((attempt + 1))
+    if [ "$attempt" -ge "$MAX_RESIZE_ATTEMPTS" ]; then
+      echo "WARN: $output_file rendered at ${width}x${height}; minimum short side ${MIN_SHORT_SIDE_PX}px was not reached after ${MAX_RESIZE_ATTEMPTS} attempts (scale=${render_scale})." >&2
+      return 1
+    fi
+
+    render_scale="$(scaled_render_scale "$render_scale" "$short_side")"
+    echo "Re-rendering $output_file to reach minimum short side ${MIN_SHORT_SIDE_PX}px (current: ${width}x${height}, next scale: ${render_scale})"
+  done
+
+  return 1
+}
+
 # Function to detect diagram complexity
 detect_complexity() {
   local file="$1"
@@ -122,7 +344,7 @@ detect_complexity() {
   line_count=$(wc -l < "$file")
   
   # Count different types of mermaid elements with better error handling
-  node_count=$(grep -c -E '^\s*[A-Z0-9_]+\[.*\]|^\s*[A-Z0-9_]+\{.*\}|^\s*[A-Z0-9_]+\(.*\)' "$file" 2>/dev/null)
+  node_count=$(grep -c -E '^\s*class\s+[A-Za-z0-9_]+\[.*\]\s*\{|^\s*[A-Za-z0-9_]+\[.*\]|^\s*[A-Za-z0-9_]+\{.*\}|^\s*[A-Za-z0-9_]+\(.*\)' "$file" 2>/dev/null)
   [ -z "$node_count" ] && node_count=0
   
   subgraph_count=$(grep -c -E '^\s*subgraph\s+' "$file" 2>/dev/null)
@@ -221,7 +443,7 @@ for f in "${files[@]}"; do
     echo "Rendering $f -> $out$complexity_note"
     
     # Check if we need to render (skip if up-to-date and not forced)
-    if [ "$FORCE" != "1" ] && [ -f "$out" ] && [ "$out" -nt "$f" ]; then
+    if [ "$FORCE" != "1" ] && [ -f "$out" ] && [ "$out" -nt "$f" ] && { [ "$format" = "svg" ] || dimensions_meet_min_short_side "$out"; }; then
       echo "Up-to-date (skipping)"
       skipped=$((skipped + 1))
       continue
@@ -234,93 +456,12 @@ for f in "${files[@]}"; do
       echo "Generating standard resolution $format ($render_width x $render_height)"
     fi
     
-    # Add SVG-specific configuration for better text compatibility
-    if [ "$format" = "svg" ]; then
-      # Create temporary config file for SVG rendering with native text
-      svg_config=$(mktemp)
-      cat > "$svg_config" << 'EOF'
-{
-  "flowchart": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "sequence": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "gantt": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "journey": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "class": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "state": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "er": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "pie": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "quadrantChart": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "xyChart": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "timeline": {
-    "htmlLabels": false,
-    "useMaxWidth": false
-  },
-  "theme": "default",
-  "fontFamily": "trebuchet ms, verdana, arial, sans-serif"
-}
-EOF
-      
-      # Use native SVG text instead of foreignObject for better viewer compatibility
-      if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height" --configFile "$svg_config" --scale 1; then
-        echo "WARN: Failed to render $f to $format with native text; trying minimal config..." >&2
-        # Try with minimal configuration
-        echo '{"theme": "default"}' > "$svg_config"
-        if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height" --configFile "$svg_config"; then
-          # Fallback to default rendering if the configuration fails
-          if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height"; then
-            echo "WARN: Failed to render $f to $format; continuing with next file." >&2
-            failed=1
-            failed_files+=("$f -> $format")
-          else
-            rendered=$((rendered + 1))
-          fi
-        else
-          rendered=$((rendered + 1))
-        fi
-      else
-        rendered=$((rendered + 1))
-      fi
-      
-      # Clean up temporary config file
-      rm -f "$svg_config"
+    if ! render_with_min_short_side "$f" "$out" "$format" "$render_width" "$render_height"; then
+      echo "WARN: Failed to render $f to $format with minimum short side ${MIN_SHORT_SIDE_PX}px; continuing with next file." >&2
+      failed=1
+      failed_files+=("$f -> $format")
     else
-      # PNG rendering (standard approach)
-      if ! "${RENDERER[@]}" -i "$f" -o "$out" -w "$render_width" -H "$render_height"; then
-        echo "WARN: Failed to render $f to $format; continuing with next file." >&2
-        failed=1
-        failed_files+=("$f -> $format")
-      else
-        rendered=$((rendered + 1))
-      fi
+      rendered=$((rendered + 1))
     fi
   done
 done

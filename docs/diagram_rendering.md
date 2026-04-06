@@ -2,6 +2,8 @@
 
 The `bin/render_diagrams` script automatically renders Mermaid diagrams from `docs/diagrams/source/*.mmd` to both PNG and SVG formats in `docs/diagrams/exports/{png,svg}/` with intelligent resolution selection based on diagram complexity.
 
+PNG exports are also re-rendered automatically until their rendered short side reaches the configured minimum, so GitHub comments and other raster embeds stay readable even when Mermaid lays a diagram out very wide. SVG exports remain vector outputs and are rendered once.
+
 ## Automatic Complexity Detection
 
 The script analyzes each diagram and automatically selects the appropriate resolution:
@@ -69,6 +71,8 @@ COMPLEXITY_LINE_THRESHOLD=50 bin/render_diagrams
 | `HIGH_RES_WIDTH` | 4800 | High resolution width |
 | `HIGH_RES_HEIGHT` | 3600 | High resolution height |
 | `OUTPUT_FORMATS` | "png svg" | Space-separated output formats |
+| `MIN_SHORT_SIDE_PX` | 1500 | Minimum rendered PNG short side before the renderer retries with a higher scale |
+| `MAX_RESIZE_ATTEMPTS` | 4 | Maximum PNG rerender attempts to satisfy `MIN_SHORT_SIDE_PX` |
 | `COMPLEXITY_LINE_THRESHOLD` | 80 | Lines threshold for complexity |
 | `COMPLEXITY_NODE_THRESHOLD` | 25 | Nodes threshold for complexity |
 | `COMPLEXITY_SUBGRAPH_THRESHOLD` | 5 | Subgraphs threshold for complexity |
@@ -80,10 +84,11 @@ COMPLEXITY_LINE_THRESHOLD=50 bin/render_diagrams
 1. **Improved Readability**: Complex diagrams with many elements are rendered at higher resolution for better clarity
 2. **Multiple Formats**: Both PNG (raster) and SVG (vector) formats generated automatically
 3. **Scalable Vector Graphics**: SVG files scale perfectly at any zoom level without quality loss
-4. **Optimized Performance**: Simple diagrams use standard resolution to keep file sizes reasonable
-5. **Automatic Detection**: No manual intervention needed - complexity is detected automatically
-6. **Customizable**: All thresholds and resolutions can be adjusted via environment variables
-7. **Informative Output**: Clear indication of which diagrams are rendered at high resolution
+4. **Readable Raster Exports**: Wide Mermaid layouts are automatically upscaled until PNG embeds reach the minimum short-side floor
+5. **Optimized Performance**: Simple diagrams use standard resolution to keep file sizes reasonable
+6. **Automatic Detection**: No manual intervention needed - complexity is detected automatically
+7. **Customizable**: All thresholds and resolutions can be adjusted via environment variables
+8. **Informative Output**: Clear indication of which diagrams are rendered at high resolution
 
 ## File Size Impact
 

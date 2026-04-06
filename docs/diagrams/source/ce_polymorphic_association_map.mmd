@@ -2,6 +2,7 @@
 flowchart TB
   subgraph identity_access["Identity, access, and memberships"]
     direction TB
+    identity_access_polymorphic_anchor:::hidden
     BetterTogether__GuestAccess_polymorphic_summary["GuestAccess\nowner: seeds, owner: rich_text_greeting"]
     BetterTogether__Identification_polymorphic_summary["Identification\ntarget: identity, target: agent, owner: seeds"]
     BetterTogether__Invitation_polymorphic_summary["Invitation\ntarget: invitable, target: inviter, target: invitee, owner: seeds"]
@@ -24,10 +25,12 @@ flowchart TB
     BetterTogether__Role_polymorphic_summary["Role\nowner: seeds, owner: slugs, owner: string_translations, owner: text_translations"]
     BetterTogether__RoleResourcePermission_polymorphic_summary["RoleResourcePermission\nowner: seeds"]
     BetterTogether__User_polymorphic_summary["User\nfamily: 2 models\nowner: seeds, owner: slugs, owner: string_translations, owner: person_identification"]
+    identity_access_polymorphic_anchor ~~~ BetterTogether__GuestAccess_polymorphic_summary
   end
 
   subgraph platform_network["Platforms, communities, routing, and federation"]
     direction TB
+    platform_network_polymorphic_anchor:::hidden
     BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +15"]
     BetterTogether__CommunityInvitation_polymorphic_summary["CommunityInvitation\ntarget: invitable, target: inviter, target: invitee, owner: seeds"]
     BetterTogether__FederationAccessToken_polymorphic_summary["FederationAccessToken\nowner: seeds"]
@@ -43,10 +46,12 @@ flowchart TB
     BetterTogether__Wizard_polymorphic_summary["Wizard\nowner: seeds, owner: slugs, owner: string_translations, owner: text_translations"]
     BetterTogether__WizardStep_polymorphic_summary["WizardStep\nowner: seeds"]
     BetterTogether__WizardStepDefinition_polymorphic_summary["WizardStepDefinition\nowner: seeds, owner: slugs, owner: string_translations, owner: text_translations"]
+    platform_network_polymorphic_anchor ~~~ BetterTogether__Community_polymorphic_summary
   end
 
   subgraph content_publishing["Content, publishing, navigation, and claims"]
     direction TB
+    content_publishing_polymorphic_anchor:::hidden
     BetterTogether__Authorship_polymorphic_summary["Authorship\ntarget: author, target: authorable, owner: seeds, owner: citations, owner: claims"]
     BetterTogether__CallForInterest_polymorphic_summary["CallForInterest\ntarget: interestable, owner: seeds, owner: citations, owner: claims, owner: slugs +8"]
     BetterTogether__Categorization_polymorphic_summary["Categorization\ntarget: category, target: categorizable, owner: seeds"]
@@ -62,10 +67,12 @@ flowchart TB
     BetterTogether__Page_polymorphic_summary["Page\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +18"]
     BetterTogether__Post_polymorphic_summary["Post\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +18"]
     BetterTogether__Upload_polymorphic_summary["Upload\nowner: seeds, owner: slugs, owner: file_attachment, owner: string_translations, owner: rich_text_translations +5"]
+    content_publishing_polymorphic_anchor ~~~ BetterTogether__Authorship_polymorphic_summary
   end
 
   subgraph geography_and_places["Geography, addresses, and places"]
     direction TB
+    geography_and_places_polymorphic_anchor:::hidden
     BetterTogether__Address_polymorphic_summary["Address\nowner: seeds, owner: geospatial_space"]
     BetterTogether__Geography__Continent_polymorphic_summary["Geography::Continent\nowner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations, owner: string_translations"]
     BetterTogether__Geography__Country_polymorphic_summary["Geography::Country\nowner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations, owner: string_translations"]
@@ -79,10 +86,12 @@ flowchart TB
     BetterTogether__Geography__Space_polymorphic_summary["Geography::Space\nowner: seeds, owner: slugs, owner: string_translations"]
     BetterTogether__Geography__State_polymorphic_summary["Geography::State\nowner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations, owner: string_translations"]
     BetterTogether__Place_polymorphic_summary["Place\nowner: seeds, owner: slugs, owner: string_translations"]
+    geography_and_places_polymorphic_anchor ~~~ BetterTogether__Address_polymorphic_summary
   end
 
   subgraph events_calendar["Events, calendars, attendance, and invitations"]
     direction TB
+    events_calendar_polymorphic_anchor:::hidden
     BetterTogether__Calendar_polymorphic_summary["Calendar\nowner: seeds, owner: citations, owner: claims, owner: slugs, owner: views +7"]
     BetterTogether__CalendarEntry_polymorphic_summary["CalendarEntry\nowner: seeds"]
     BetterTogether__Event_polymorphic_summary["Event\nowner: seeds, owner: citations, owner: claims, owner: slugs, owner: geospatial_space +13"]
@@ -91,10 +100,12 @@ flowchart TB
     BetterTogether__EventHost_polymorphic_summary["EventHost\ntarget: host, owner: seeds"]
     BetterTogether__EventInvitation_polymorphic_summary["EventInvitation\ntarget: invitable, target: inviter, target: invitee, owner: seeds"]
     BetterTogether__Recurrence_polymorphic_summary["Recurrence\ntarget: schedulable, owner: seeds"]
+    events_calendar_polymorphic_anchor ~~~ BetterTogether__Calendar_polymorphic_summary
   end
 
   subgraph conversations_safety["Conversations, messaging, reports, and safety"]
     direction TB
+    conversations_safety_polymorphic_anchor:::hidden
     BetterTogether__Conversation_polymorphic_summary["Conversation\nowner: seeds"]
     BetterTogether__ConversationParticipant_polymorphic_summary["ConversationParticipant\nowner: seeds"]
     BetterTogether__Message_polymorphic_summary["Message\nowner: seeds, owner: rich_text_content"]
@@ -103,10 +114,12 @@ flowchart TB
     BetterTogether__Safety__Agreement_polymorphic_summary["Safety::Agreement\nowner: seeds"]
     BetterTogether__Safety__Case_polymorphic_summary["Safety::Case\nowner: seeds"]
     BetterTogether__Safety__Note_polymorphic_summary["Safety::Note\nowner: seeds"]
+    conversations_safety_polymorphic_anchor ~~~ BetterTogether__Conversation_polymorphic_summary
   end
 
   subgraph exchange_governance["Agreements, governance, exchange, and checklist flows"]
     direction TB
+    exchange_governance_polymorphic_anchor:::hidden
     BetterTogether__Agreement_polymorphic_summary["Agreement\nowner: seeds, owner: citations, owner: claims, owner: slugs, owner: rich_text_translations +6"]
     BetterTogether__AgreementParticipant_polymorphic_summary["AgreementParticipant\ntarget: participant, owner: seeds"]
     BetterTogether__AgreementTerm_polymorphic_summary["AgreementTerm\nowner: seeds, owner: slugs, owner: string_translations, owner: text_translations, owner: rich_text_translations +5"]
@@ -121,10 +134,12 @@ flowchart TB
     BetterTogether__Joatu__ResponseLink_polymorphic_summary["Joatu::ResponseLink\ntarget: source, target: response, owner: seeds"]
     BetterTogether__Seed_polymorphic_summary["Seed\ntarget: seedable, owner: seeds, owner: slugs, owner: string_translations, owner: yaml_file_attachment"]
     BetterTogether__SeedPlanting_polymorphic_summary["SeedPlanting\nowner: seeds"]
+    exchange_governance_polymorphic_anchor ~~~ BetterTogether__Agreement_polymorphic_summary
   end
 
   subgraph metrics_search_ai["Metrics, search, notifications, and AI support"]
     direction TB
+    metrics_search_ai_polymorphic_anchor:::hidden
     BetterTogether__Ai__Log__Translation_polymorphic_summary["Ai::Log::Translation\nowner: seeds"]
     BetterTogether__Metrics__Download_polymorphic_summary["Metrics::Download\ntarget: downloadable, owner: seeds"]
     BetterTogether__Metrics__LinkCheckerReport_polymorphic_summary["Metrics::LinkCheckerReport\nowner: seeds, owner: report_file_attachment"]
@@ -137,16 +152,20 @@ flowchart TB
     BetterTogether__Metrics__Share_polymorphic_summary["Metrics::Share\ntarget: shareable, owner: seeds"]
     BetterTogether__Metrics__UserAccountReport_polymorphic_summary["Metrics::UserAccountReport\nowner: seeds, owner: report_file_attachment"]
     BetterTogether__OneTimePrekey_polymorphic_summary["OneTimePrekey\nowner: seeds"]
+    metrics_search_ai_polymorphic_anchor ~~~ BetterTogether__Ai__Log__Translation_polymorphic_summary
   end
 
   subgraph integrations_webhooks["Integrations, webhooks, API, and automation"]
     direction TB
+    integrations_webhooks_polymorphic_anchor:::hidden
     BetterTogether__WebhookDelivery_polymorphic_summary["WebhookDelivery\nowner: seeds"]
     BetterTogether__WebhookEndpoint_polymorphic_summary["WebhookEndpoint\nowner: seeds"]
+    integrations_webhooks_polymorphic_anchor ~~~ BetterTogether__WebhookDelivery_polymorphic_summary
   end
 
   subgraph shared_supporting["Shared and supporting runtime surfaces"]
     direction TB
+    shared_supporting_polymorphic_anchor:::hidden
     BetterTogether__CommunityInvitationNotifier_polymorphic_summary["CommunityInvitationNotifier\nfamily: 11 models\ntarget: record"]
     BetterTogether__CommunityInvitationNotifier__Notification_polymorphic_summary["CommunityInvitationNotifier::Notification\nfamily: 11 models\ntarget: recipient"]
     BetterTogether__ContactDetail_polymorphic_summary["ContactDetail\ntarget: contactable, owner: seeds"]
@@ -159,6 +178,17 @@ flowchart TB
     BetterTogether__PhoneNumber_polymorphic_summary["PhoneNumber\nowner: seeds"]
     BetterTogether__SocialMediaAccount_polymorphic_summary["SocialMediaAccount\nowner: seeds"]
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
+    shared_supporting_polymorphic_anchor ~~~ BetterTogether__CommunityInvitationNotifier_polymorphic_summary
   end
 
+  identity_access_polymorphic_anchor ~~~ platform_network_polymorphic_anchor
+  platform_network_polymorphic_anchor ~~~ content_publishing_polymorphic_anchor
+  content_publishing_polymorphic_anchor ~~~ geography_and_places_polymorphic_anchor
+  geography_and_places_polymorphic_anchor ~~~ events_calendar_polymorphic_anchor
+  events_calendar_polymorphic_anchor ~~~ conversations_safety_polymorphic_anchor
+  conversations_safety_polymorphic_anchor ~~~ exchange_governance_polymorphic_anchor
+  exchange_governance_polymorphic_anchor ~~~ metrics_search_ai_polymorphic_anchor
+  metrics_search_ai_polymorphic_anchor ~~~ integrations_webhooks_polymorphic_anchor
+  integrations_webhooks_polymorphic_anchor ~~~ shared_supporting_polymorphic_anchor
+  classDef hidden fill:none,stroke:none,color:transparent;
   RiskNote["Polymorphic edges are flexible integration points, but they do not have strong foreign-key enforcement. Review allowlists, dependent behavior, and authorization around every polymorphic surface."]
