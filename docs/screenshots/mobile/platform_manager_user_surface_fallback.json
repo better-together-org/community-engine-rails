@@ -1,9 +1,8 @@
 {
   "name": "platform_manager_user_surface_fallback",
   "device": "mobile",
-  "url": "http://127.0.0.1:42417/en/host/users",
+  "url": "/en/host/users",
   "title": "404 - Page Not Found | Test Host Community",
-  "captured_at": "2026-04-06T14:26:16Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_manager_least_privilege_review",

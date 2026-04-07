@@ -271,7 +271,9 @@ module BetterTogether # :nodoc:
     def write_processed_image(image, image_path)
       Tempfile.create(['docs-callout', '.png'], File.dirname(image_path.to_s)) do |file|
         image.write_to_file(file.path)
+        File.chmod(0o644, file.path)
         FileUtils.mv(file.path, image_path.to_s)
+        File.chmod(0o644, image_path.to_s)
       end
     end
   end

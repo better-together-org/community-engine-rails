@@ -111,8 +111,8 @@ RSpec.describe 'Documentation screenshots for reduced platform-manager access',
           selector: 'select[name="conversation[participant_ids][]"]',
           title: 'Scoped conversation discovery for platform managers',
           bullets: [
-            "Available in picker: #{expected_allowed_labels.join(', ')}",
-            "Withheld from picker: #{withheld_labels.join(', ')}",
+            "Available in picker: self plus opted-in people in-scope for this host fixture (#{expected_allowed_labels.size} shown here).",
+            "Withheld from picker: non-opted-in or out-of-scope people remain unavailable (#{withheld_labels.size} withheld here).",
             'Broad platform-management access does not reopen non-opted-in or other-platform participant discovery.'
           ]
         }
