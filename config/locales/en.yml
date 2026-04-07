@@ -1783,6 +1783,24 @@ en:
         signature_text: Best regards, The %{joinable_name} Team
         subject: Your %{joinable_type} membership has been updated for %{joinable_name}
         view_joinable: View %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Hello %{name},
+        learn_more: View %{community_name}
+        message: Your request to join %{community_name} was declined.
+        reviewed_by: Reviewed by %{decision_actor_name}.
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject: Your membership request for %{community_name} was declined
+      submitted:
+        greeting: Hello %{name},
+        message: "%{requestor_name} asked to join %{community_name}."
+        request_message_label: Message from the requester
+        requestor_email_label: 'Requester email:'
+        review_request: Review membership request
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject: New membership request for %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1821,6 +1839,13 @@ en:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Signed-in requestors who are approved become
+          members immediately and receive both in-app and email confirmation.
+        decision_notifications_heading: Decision and notifications
+        decline_flow: Declining notifies the requester by email, and signed-in requestors
+          also receive an in-app notification.
+        email_requestor_flow: Email-only requestors who are approved receive an invitation
+          email so they can create an account and join.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2163,6 +2188,12 @@ en:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Your request to join %{community_name} was declined
+        title: Membership request declined for %{community_name}
+      membership_request_submitted:
+        body: "%{requestor_name} asked to join %{community_name}"
+        title: New membership request for %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}
