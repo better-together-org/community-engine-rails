@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'action_cable/engine'
+require 'action_mailbox/engine'
 require 'action_text/engine'
 require 'active_storage/engine'
 require 'active_storage_svg_sanitizer'
@@ -62,6 +63,7 @@ module BetterTogether
 
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/app/mailboxes",
       "#{root}/app/tools",
       "#{root}/app/resources",
       "#{root}/app/middleware"
