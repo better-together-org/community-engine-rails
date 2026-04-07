@@ -680,6 +680,42 @@ en:
       private: Private
       public: Public
   better_together:
+    access_modes:
+      actions:
+        create_account: Create account
+        join_now: Join now
+        request_to_join: Request to join
+        sign_in: Sign in
+      already_member: You are already a member of this community.
+      current_status:
+        active: You are already a member.
+        pending: Your request is pending review.
+      descriptions:
+        generic:
+          invitation: People need an invitation before they can join this space.
+          open: People can join right away without waiting for approval.
+          request: People can ask to join. A coordinator reviews requests before access
+            is granted.
+        platform:
+          invitation: People need an invitation before they can create an account
+            here.
+          open: People can create an account and join without waiting for approval.
+      form:
+        community_help: Choose whether people join right away or ask to join first.
+        community_requests: Require people to request access before becoming members
+        platform_help: Choose whether people can create an account directly or need
+          an invitation first.
+        platform_invitation_help: Invitations can prefill email addresses and assign
+          platform or community roles after acceptance.
+        platform_invitation_only: Require an invitation before someone can register
+      heading: How people join
+      labels:
+        invitation: Invitation only
+        open: Open join
+        request: Request to join
+      membership_joined: You joined this community.
+      membership_request_pending: Your membership request is already pending.
+      membership_requested: Your membership request was submitted.
     addresses:
       add: Add Address
       address: Address

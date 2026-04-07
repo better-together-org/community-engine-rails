@@ -686,6 +686,46 @@ fr:
       private: Privé
       public: Public
   better_together:
+    access_modes:
+      actions:
+        create_account: Créer un compte
+        join_now: Rejoindre maintenant
+        request_to_join: Demander à rejoindre
+        sign_in: Se connecter
+      already_member: Vous êtes déjà membre de cette communauté.
+      current_status:
+        active: Vous êtes déjà membre.
+        pending: Votre demande est en attente d'examen.
+      descriptions:
+        generic:
+          invitation: Les personnes ont besoin d'une invitation avant de rejoindre
+            cet espace.
+          open: Les personnes peuvent rejoindre immédiatement sans attendre d'approbation.
+          request: Les personnes peuvent demander à rejoindre. Une personne responsable
+            examine les demandes avant d'accorder l'accès.
+        platform:
+          invitation: Les personnes ont besoin d'une invitation avant de pouvoir créer
+            un compte ici.
+          open: Les personnes peuvent créer un compte et rejoindre sans attendre d'approbation.
+      form:
+        community_help: Choisissez si les personnes rejoignent immédiatement ou si
+          elles doivent d'abord demander l'accès.
+        community_requests: Exiger une demande d'accès avant qu'une personne devienne
+          membre
+        platform_help: Choisissez si les personnes peuvent créer un compte directement
+          ou si elles ont d'abord besoin d'une invitation.
+        platform_invitation_help: Les invitations peuvent préremplir les adresses
+          e-mail et attribuer des rôles de plateforme ou de communauté après acceptation.
+        platform_invitation_only: Exiger une invitation avant qu'une personne puisse
+          s'inscrire
+      heading: Comment rejoindre
+      labels:
+        invitation: Sur invitation uniquement
+        open: Accès ouvert
+        request: Demander à rejoindre
+      membership_joined: Vous avez rejoint cette communauté.
+      membership_request_pending: Votre demande d'adhésion est déjà en attente.
+      membership_requested: Votre demande d'adhésion a été envoyée.
     addresses:
       add: Ajouter une adresse
       address: Adresse

@@ -685,6 +685,47 @@ es:
       private: Privado
       public: Público
   better_together:
+    access_modes:
+      actions:
+        create_account: Crear cuenta
+        join_now: Unirse ahora
+        request_to_join: Solicitar unirse
+        sign_in: Iniciar sesión
+      already_member: Ya eres miembro de esta comunidad.
+      current_status:
+        active: Ya eres miembro.
+        pending: Tu solicitud está pendiente de revisión.
+      descriptions:
+        generic:
+          invitation: Las personas necesitan una invitación antes de unirse a este
+            espacio.
+          open: Las personas pueden unirse de inmediato sin esperar aprobación.
+          request: Las personas pueden solicitar unirse. Una persona coordinadora
+            revisa las solicitudes antes de conceder el acceso.
+        platform:
+          invitation: Las personas necesitan una invitación antes de poder crear una
+            cuenta aquí.
+          open: Las personas pueden crear una cuenta y unirse sin esperar aprobación.
+      form:
+        community_help: Elige si las personas se unen de inmediato o si primero deben
+          solicitar acceso.
+        community_requests: Exigir que las personas soliciten acceso antes de hacerse
+          miembros
+        platform_help: Elige si las personas pueden crear una cuenta directamente
+          o si primero necesitan una invitación.
+        platform_invitation_help: Las invitaciones pueden completar previamente las
+          direcciones de correo y asignar roles de plataforma o comunidad después
+          de ser aceptadas.
+        platform_invitation_only: Exigir una invitación antes de que alguien pueda
+          registrarse
+      heading: Cómo se une la gente
+      labels:
+        invitation: Solo con invitación
+        open: Unión abierta
+        request: Solicitar unirse
+      membership_joined: Te uniste a esta comunidad.
+      membership_request_pending: Tu solicitud de membresía ya está pendiente.
+      membership_requested: Tu solicitud de membresía fue enviada.
     addresses:
       add: Agregar Dirección
       address: Dirección
