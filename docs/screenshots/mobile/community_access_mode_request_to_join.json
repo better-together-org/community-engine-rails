@@ -1,0 +1,11 @@
+{
+  "name": "community_access_mode_request_to_join",
+  "device": "mobile",
+  "url": "/en/c/community-791d129a2bf84e47c801",
+  "title": "Request Join Community | Communities | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "access_mode_panel_review",
+  "flow": "community_request_join",
+  "source_spec": "./spec/docs_screenshots/better_together/access_mode_panel_spec.rb"
+}

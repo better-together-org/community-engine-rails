@@ -42,6 +42,7 @@
   time_zone_field_id = "#{dom_id(platform)}_time_zone"
   privacy_field_id = "#{dom_id(platform)}_privacy"
   requires_invitation_field_id = "#{dom_id(platform)}_requires_invitation"
+  allow_membership_requests_field_id = "#{dom_id(platform)}_allow_membership_requests"
 %>
 
 <%= form_with(model: platform) do |form| %>
@@ -94,26 +95,57 @@
     <%= privacy_field(form:, klass: resource_class, html_options: { id: privacy_field_id }) %>
   </div>
 
-  <div class="mb-3">
+  <fieldset class="mb-3">
+    <legend class="form-label mb-2">
+      <%= t('better_together.access_modes.heading', default: 'How people join') %>
+    </legend>
+    <p class="form-text text-muted mt-0 mb-2">
+      <%= t('better_together.access_modes.form.platform_help',
+            default: 'Choose whether people can create an account directly or need an invitation first.') %>
+    </p>
     <div class="form-check">
-      <%= form.check_box :requires_invitation, { class: "form-check-input", checked: platform.requires_invitation?, id: requires_invitation_field_id } %>
-      <%= form.label :requires_invitation, class: "form-check-label", for: requires_invitation_field_id %>
+      <%= form.check_box :requires_invitation,
+                         { class: "form-check-input", checked: platform.requires_invitation?, id: requires_invitation_field_id } %>
+      <%= form.label :requires_invitation,
+                     t('better_together.access_modes.form.platform_invitation_only',
+                       default: 'Require an invitation before someone can register'),
+                     class: "form-check-label",
+                     for: requires_invitation_field_id %>
       <div class="form-text text-muted">
-        When enabled, new users must supply a valid invitation code to register. Invitations prefill email and can assign community/platform roles upon acceptance. This is the default behavior.
+        <%= t('better_together.access_modes.form.platform_invitation_help',
+              default: 'Invitations can prefill email addresses and assign platform or community roles after acceptance.') %>
       </div>
     </div>
-  </div>
 
-  <div class="mb-3">
-    <div class="form-check">
-      <%= form.check_box :allow_membership_requests, { class: "form-check-input", checked: platform.allow_membership_requests?, id: "#{dom_id(platform)}_allow_membership_requests" } %>
+    <div class="form-check mt-3">
+      <%= form.check_box :allow_membership_requests,
+                         { class: "form-check-input",
+                           checked: platform.allow_membership_requests?,
+                           id: allow_membership_requests_field_id } %>
       <%= form.label :allow_membership_requests,
-                     t('better_together.platforms.form.allow_membership_requests', default: 'Allow membership requests'),
+                     t('better_together.platforms.form.allow_membership_requests',
+                       default: 'Allow membership requests'),
                      class: "form-check-label",
-                     for: "#{dom_id(platform)}_allow_membership_requests" %>
+                     for: allow_membership_requests_field_id %>
       <div class="form-text text-muted">
         <%= t('better_together.platforms.form.allow_membership_requests_hint',
               default: 'When enabled, the invitation-required registration screen can expose a request-membership form for the host community, and that host community may accept public membership requests without a direct invitation.') %>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="accordion mb-3" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" aria-expanded="false" aria-controls="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse">
+          Custom CSS
+        </button>
+      </h2>
+      <div id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header" data-bs-parent="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles">
+        <div class="accordion-body">
+          <%= render partial: 'better_together/content/blocks/fields/block',
+                    locals: { block: platform.css_block || BetterTogether::Content::Css.new, scope: 'platform[css_block_attributes]' } %>
+        </div>
       </div>
     </div>
   </div>
@@ -210,22 +242,6 @@
               </div>
             <% end %>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="accordion mb-3" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" aria-expanded="false" aria-controls="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse">
-          Custom CSS
-        </button>
-      </h2>
-      <div id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header" data-bs-parent="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles">
-        <div class="accordion-body">
-          <%= render partial: 'better_together/content/blocks/fields/block',
-                    locals: { block: platform.css_block || BetterTogether::Content::Css.new, scope: 'platform[css_block_attributes]' } %>
         </div>
       </div>
     </div>

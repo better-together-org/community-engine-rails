@@ -1,0 +1,11 @@
+{
+  "name": "community_access_mode_open_join",
+  "device": "desktop",
+  "url": "/en/c/community-c4368d60a1283c385c2a",
+  "title": "Open Join Community | Communities | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "access_mode_panel_review",
+  "flow": "community_open_join",
+  "source_spec": "./spec/docs_screenshots/better_together/access_mode_panel_spec.rb"
+}
