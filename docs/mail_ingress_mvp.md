@@ -25,8 +25,9 @@ controllers and mailers:
 - `ApplicationMailer < BetterTogether::ApplicationMailer`
 - `ApplicationMailbox < BetterTogether::ApplicationMailbox`
 
-That keeps the CE routing contract namespaced while still satisfying Rails'
-top-level Action Mailbox entrypoint in each host app.
+CE does **not** define or install a global `::ApplicationMailbox` anymore. The
+host app owns that root constant and opts into inbound mail explicitly by
+subclassing the CE base.
 
 Recipient **domain** is the tenant boundary.
 
@@ -51,6 +52,7 @@ This prevents cross-tenant leakage when two tenants have similar community names
 - the relay endpoint requires HTTP basic auth
 - only `message/rfc822` payloads are accepted
 - inbound mail is recorded once through Action Mailbox rather than parsed by ad hoc controllers
+- the host app must provide `ApplicationMailbox < BetterTogether::ApplicationMailbox` to activate the routing contract
 
 ### Auditable intake records
 

@@ -20,6 +20,7 @@ The current implementation adds a shared CE-side content-security substrate with
 1. **Inbound mail relay and routing**
    - `POST /inbound-email/relay`
    - `ActionMailbox::InboundEmail`
+   - host app `ApplicationMailbox < BetterTogether::ApplicationMailbox`
    - `BetterTogether::InboundEmailRoutingService`
    - `BetterTogether::ContentSecurity::MailScreeningService`
    - `BetterTogether::InboundEmailMessage`
@@ -43,6 +44,7 @@ The new inbound-mail seam gives CE a canonical place to receive mail from the BT
 - requires HTTP basic auth with the configured inbound mail password
 - requires `message/rfc822`
 - stores the raw message in Action Mailbox with `ActionMailbox::InboundEmail.create_and_extract_message_id!`
+- relies on the host app to define `ApplicationMailbox < BetterTogether::ApplicationMailbox`
 
 ### Resolution and routing
 
