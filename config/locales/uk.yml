@@ -1075,6 +1075,13 @@ uk:
         privacy: Політика конфіденційності
         subprocessors: Субпроцесори
         terms_of_service: Умови використання
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Це вкладення
+          message: "%{filename} проходить перевірку перед тим, як його можна буде
+            показати."
+          title: Вкладення на перевірці
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}
@@ -2905,6 +2912,15 @@ uk:
         solidarity_check: Перевірка співпраці та солідарності
         status: Статус справи
       index:
+        content_review_count: "%{count} очікує на перегляд"
+        content_review_description: Завантаження та вбудовані вкладення, які все ще
+          утримуються для безпекової перевірки, з'являються тут до їх випуску.
+        content_review_empty: Наразі немає завантажень або вбудованих вкладень, що
+          очікують на перевірку.
+        content_review_more: Показано %{shown} із %{total} утримуваних елементів вмісту.
+        content_review_surface: 'Джерело: %{surface}'
+        content_review_title: Елементи перевірки безпеки вмісту
+        empty: Жодна справа безпеки не відповідає поточним фільтрам.
         filter: Фільтрувати
         local_snapshot_description: Детерміновані локальні сигнали, побудовані зі
           скарг, справ і нотаток. Віддалений аналіз є необов'язковим і лише доповнює
@@ -2912,6 +2928,7 @@ uk:
         local_snapshot_generated_at: Згенеровано %{time}
         local_snapshot_title: Локальний знімок для перегляду
         snapshot:
+          content_review_items: Утримувані елементи вмісту
           open_cases: Відкриті справи
           participant_notes: Нотатки, видимі учасникам
           repeat_reportables: Повторно позначені об'єкти
@@ -3157,6 +3174,19 @@ uk:
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
     uploads:
+      content_security:
+        badge:
+          clean: Готово
+          restricted: Обмежено
+          review_required: На перевірці
+        form:
+          review_required: Цей файл проходить перевірку, перш ніж його можна буде
+            показувати або завантажувати іншим людям.
+        status:
+          clean: Це завантаження готове до вставлення або поширення.
+          restricted: Це завантаження тимчасово обмежене, поки його перевіряє рецензент.
+          review_required: Це завантаження проходить перевірку, перш ніж його можна
+            буде вставити в розширений текст або поширити.
       index:
         storage_usage: Ви використовуєте %{size} сховища
     validators:

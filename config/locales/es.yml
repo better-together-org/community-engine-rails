@@ -1093,6 +1093,12 @@ es:
         privacy: Política de privacidad
         subprocessors: Subprocesadores
         terms_of_service: Términos de servicio
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Este archivo adjunto
+          message: "%{filename} está en revisión antes de poder mostrarse."
+          title: Archivo adjunto en revisión
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}
@@ -2932,12 +2938,24 @@ es:
         solidarity_check: Verificación de cooperación y solidaridad
         status: Estado del caso
       index:
+        content_review_count: "%{count} pendientes de revisión"
+        content_review_description: Las cargas y los archivos adjuntos incrustados
+          que siguen retenidos para revisión de seguridad aparecen aquí antes de su
+          liberación.
+        content_review_empty: No hay cargas ni archivos adjuntos incrustados esperando
+          revisión en este momento.
+        content_review_more: Mostrando %{shown} de %{total} elementos de contenido
+          retenidos.
+        content_review_surface: 'Origen: %{surface}'
+        content_review_title: Elementos de revisión de seguridad del contenido
+        empty: Ningún caso de seguridad coincide con los filtros actuales.
         filter: Filtrar
         local_snapshot_description: Señales locales deterministas construidas a partir
           de reportes, casos y notas. El análisis remoto es opcional y complementario.
         local_snapshot_generated_at: Generado %{time}
         local_snapshot_title: Instantánea local de revisión
         snapshot:
+          content_review_items: Elementos de contenido retenidos
           open_cases: Casos abiertos
           participant_notes: Notas visibles para las personas participantes
           repeat_reportables: Elementos reportados repetidamente
@@ -3183,6 +3201,20 @@ es:
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
     uploads:
+      content_security:
+        badge:
+          clean: Listo
+          restricted: Restringido
+          review_required: En revisión
+        form:
+          review_required: Este archivo está en revisión antes de poder mostrarse
+            o descargarse por otras personas.
+        status:
+          clean: Esta carga está lista para insertarse o compartirse.
+          restricted: Esta carga está restringida mientras una persona revisora la
+            verifica.
+          review_required: Esta carga está en revisión antes de poder insertarse en
+            texto enriquecido o compartirse.
       index:
         storage_usage: Estás usando %{size} de almacenamiento
     validators:

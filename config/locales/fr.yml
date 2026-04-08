@@ -1096,6 +1096,12 @@ fr:
         privacy: Politique de confidentialité
         subprocessors: Sous-traitants
         terms_of_service: Conditions d'utilisation
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Cette pièce jointe
+          message: "%{filename} est en cours de révision avant de pouvoir être affiché."
+          title: Pièce jointe en cours de révision
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}
@@ -2946,6 +2952,16 @@ fr:
         solidarity_check: Vérification de coopération et de solidarité
         status: Statut du dossier
       index:
+        content_review_count: "%{count} en attente de révision"
+        content_review_description: Les téléversements et pièces jointes intégrées
+          encore retenus pour une révision de sécurité apparaissent ici avant leur
+          diffusion.
+        content_review_empty: Aucun téléversement ni aucune pièce jointe intégrée
+          n'attend actuellement une révision.
+        content_review_more: Affichage de %{shown} éléments retenus sur %{total}.
+        content_review_surface: 'Source : %{surface}'
+        content_review_title: Éléments à réviser pour la sécurité du contenu
+        empty: Aucun dossier de sécurité ne correspond aux filtres actuels.
         filter: Filtrer
         local_snapshot_description: Signaux locaux déterministes construits à partir
           des signalements, des dossiers et des notes. L'analyse distante est facultative
@@ -2953,6 +2969,7 @@ fr:
         local_snapshot_generated_at: Généré %{time}
         local_snapshot_title: Instantané local de révision
         snapshot:
+          content_review_items: Éléments de contenu retenus
           open_cases: Dossiers ouverts
           participant_notes: Notes visibles par les participantes et participants
           repeat_reportables: Éléments signalés à plusieurs reprises
@@ -3198,6 +3215,20 @@ fr:
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
     uploads:
+      content_security:
+        badge:
+          clean: Prêt
+          restricted: Restreint
+          review_required: En révision
+        form:
+          review_required: Ce fichier est en cours de révision avant de pouvoir être
+            affiché ou téléchargé par d'autres personnes.
+        status:
+          clean: Ce téléversement est prêt à être inséré ou partagé.
+          restricted: Ce téléversement est actuellement restreint pendant sa vérification
+            par une personne réviseuse.
+          review_required: Ce téléversement est en cours de révision avant de pouvoir
+            être inséré dans un texte enrichi ou partagé.
       index:
         storage_usage: Vous utilisez %{size} de stockage
     validators:

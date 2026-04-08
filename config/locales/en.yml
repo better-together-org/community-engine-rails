@@ -1076,6 +1076,12 @@ en:
         privacy: Privacy Policy
         subprocessors: Subprocessors
         terms_of_service: Terms of Service
+    content_security:
+      attachments:
+        held:
+          fallback_filename: This attachment
+          message: "%{filename} is being reviewed before it can be displayed."
+          title: Attachment under review
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -2872,12 +2878,22 @@ en:
         solidarity_check: Cooperation and solidarity check
         status: Case status
       index:
+        content_review_count: "%{count} awaiting review"
+        content_review_description: Uploads and embedded attachments that are still
+          held for safety or security review appear here before release.
+        content_review_empty: No uploads or embedded attachments are currently waiting
+          for review.
+        content_review_more: Showing %{shown} of %{total} held content items.
+        content_review_surface: 'Source: %{surface}'
+        content_review_title: Content security review items
+        empty: No safety cases match the current filters.
         filter: Filter
         local_snapshot_description: Deterministic local signals built from reports,
           cases, and notes. Remote analysis is optional and additive.
         local_snapshot_generated_at: Generated %{time}
         local_snapshot_title: Local review snapshot
         snapshot:
+          content_review_items: Held content items
           open_cases: Open cases
           participant_notes: Participant-visible notes
           repeat_reportables: Repeat reportables
@@ -3120,6 +3136,20 @@ en:
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
     uploads:
+      content_security:
+        badge:
+          clean: Ready
+          restricted: Restricted
+          review_required: Under review
+        form:
+          review_required: This file is being reviewed before it can be displayed
+            or downloaded by other people.
+        status:
+          clean: This upload is ready to insert or share.
+          restricted: This upload is currently restricted while a reviewer checks
+            it.
+          review_required: This upload is being reviewed before it can be inserted
+            into rich text or shared.
       index:
         storage_usage: You're using %{size} of storage
     validators:
