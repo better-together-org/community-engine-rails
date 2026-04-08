@@ -7,6 +7,7 @@ RSpec.describe 'BetterTogether reports flow' do
   let(:user) { find_or_create_test_user('reports-user@example.test', 'SecureTest123!@#', :user) }
   let(:target_person) { create(:better_together_person, name: 'Target Person') }
   let(:target_page) { create(:better_together_page, title: 'Shared Page Evidence') }
+  let(:target_block) { create(:better_together_content_rich_text, content_html: '<p>Block evidence</p>') }
 
   before do
     sign_in user
@@ -30,6 +31,14 @@ RSpec.describe 'BetterTogether reports flow' do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Shared Page Evidence')
+    expect(response.body).to include('Reporting')
+  end
+
+  it 'renders the report form for a content block target' do
+    get better_together.new_report_path(locale:, reportable_type: 'BetterTogether::Content::Block', reportable_id: target_block.id)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Report a safety concern')
     expect(response.body).to include('Reporting')
   end
 

@@ -1,0 +1,50 @@
+{
+  "name": "content_reporting_actions_block_menu",
+  "device": "mobile",
+  "url": "/en/shared-kitchen-guide",
+  "title": "Shared Kitchen Guide | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_reporting_actions",
+  "flow": "block_content_actions",
+  "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
+  "callouts": [
+    {
+      "selector": ".bt-content-block__actions",
+      "title": "Each reportable block can surface its own actions",
+      "bullets": [
+        "The shared block wrapper keeps actions attached to the exact section a person wants reviewed.",
+        "Host apps can still add their own block controls through the existing extra-block-components seam without replacing the shared CE structure.",
+        "The same menu can later grow into contribution actions such as correction requests or translation suggestions."
+      ],
+      "target": {
+        "x": 444.0,
+        "y": 229.890625,
+        "width": 36.0,
+        "height": 24.5,
+        "right": 480.0,
+        "bottom": 254.390625,
+        "center_x": 462.0,
+        "center_y": 242.140625
+      },
+      "avoid": {
+        "x": 444.0,
+        "y": 229.890625,
+        "width": 36.0,
+        "height": 24.5,
+        "right": 480.0,
+        "bottom": 254.390625,
+        "center_x": 462.0,
+        "center_y": 242.140625
+      },
+      "placement": {
+        "side": "below",
+        "x": 206.0,
+        "y": 274.39,
+        "width": 270.0,
+        "height": 690,
+        "score": 1006.609375
+      }
+    }
+  ]
+}

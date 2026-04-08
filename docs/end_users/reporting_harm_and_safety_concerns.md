@@ -26,6 +26,7 @@ Current entry points include:
 - person profile pages
 - post pages
 - page views
+- individual reportable page sections or content blocks
 - community pages
 - event pages
 - conversation messages
@@ -96,7 +97,7 @@ The report form also asks:
 
 ## Step-By-Step: How To Submit A Report
 
-1. Open the person, post, page, community, event, message, or upload you need to flag.
+1. Open the person, post, page, page section, community, event, message, or upload you need to flag.
 2. Open **More actions**.
 3. Select **Report safety issue**.
 4. Complete the report form.
@@ -104,6 +105,8 @@ The report form also asks:
 6. Submit the report.
 
 ![Content actions menu showing the report entry from a post.](../screenshots/desktop/content_reporting_actions_post_menu.png)
+
+![Content actions menu showing the report entry from an individual content block on a page.](../screenshots/desktop/content_reporting_actions_block_menu.png)
 
 [Mobile screenshot of the report entry menu](../screenshots/mobile/content_reporting_actions_post_menu.png)
 

@@ -20,11 +20,12 @@ It is the canonical narrative companion to:
 
 ### 1. Community member or participant reporting a content concern
 
-**User story:** As a person reading content, I need a predictable way to flag a post, page, community, event, message, person, or upload without hunting for a page-specific button.
+**User story:** As a person reading content, I need a predictable way to flag a post, page, page section, community, event, message, person, or upload without hunting for a page-specific button.
 
 Current implementation:
 
 - the entry point is the shared ellipsis-style content-actions trigger
+- individual content blocks inherit the same actions seam through the engine-owned block wrapper, so people can flag a specific page section instead of only the whole page
 - the menu is built with `<details><summary>` so it still works without JavaScript
 - the Stimulus controller only enhances keyboard state, outside-click close behavior, and future extension hooks
 - the report form now keeps the originating record visible so the person can confirm they are reporting the intended surface
@@ -32,6 +33,7 @@ Current implementation:
 Primary screenshots:
 
 - `docs/screenshots/desktop/content_reporting_actions_post_menu.png`
+- `docs/screenshots/desktop/content_reporting_actions_block_menu.png`
 - `docs/screenshots/desktop/content_reporting_actions_community_menu.png`
 - `docs/screenshots/desktop/content_reporting_actions_report_form.png`
 - review packet copies under `docs/screenshots/review/pr-1504/`
@@ -78,9 +80,10 @@ Primary screenshots:
 
 Current implementation:
 
-- the same content-actions seam is reused across the main user-facing reporting surfaces
+- the same content-actions seam is reused across the main user-facing reporting surfaces, including individual reportable blocks
 - non-JS behavior is first-class because the menu is based on native disclosure semantics
 - the shared menu keeps an explicit extension container for future actions
+- host apps keep their own `extra_block_components` override seam; CE now wraps that host content inside the shared block-action structure instead of replacing it
 - screenshot guidance now requires callouts to avoid covering the reviewed component when whitespace exists nearby
 
 Supporting evidence:
@@ -111,7 +114,7 @@ Current posture:
 
 | Story | Canonical screenshots |
 | --- | --- |
-| Report from post/community/page surface | `content_reporting_actions_post_menu`, `content_reporting_actions_community_menu`, `content_reporting_actions_report_form` |
+| Report from post/community/page/block surface | `content_reporting_actions_post_menu`, `content_reporting_actions_block_menu`, `content_reporting_actions_community_menu`, `content_reporting_actions_report_form` |
 | Add evidence or appeal | `content_reporting_actions_followup` |
 | Reviewer queue and held-content states | `content_security_review_queue`, `content_security_upload_under_review`, `content_security_upload_restricted`, `content_security_placeholder_under_review`, `content_security_placeholder_restricted` |
 | Legacy general safety flow references | `report_form`, `report_detail`, `report_history` |

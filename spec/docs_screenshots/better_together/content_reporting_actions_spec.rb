@@ -12,7 +12,11 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
 
   let(:locale) { I18n.default_locale }
   let!(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
-  let!(:host_platform) { configure_host_platform.tap { |platform| platform.update!(privacy: 'public') } }
+  let!(:host_platform) do
+    configure_host_platform.tap do |platform|
+      platform.update!(privacy: 'public', host_url: 'http://www.example.com')
+    end
+  end
   let!(:post_record) do
     create(
       :better_together_post,
@@ -29,8 +33,13 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
            slug: 'shared-kitchen-guide',
            identifier: 'shared-kitchen-guide',
            protected: false,
-           published_at: 1.day.ago,
-           platform: host_platform)
+           published_at: 1.day.ago)
+  end
+  let!(:page_block_record) do
+    create(
+      :better_together_content_rich_text,
+      content_html: '<h3>Kitchen safety note</h3><p>Keep walkways clear for mobility devices.</p>'
+    )
   end
   let!(:community_record) { create(:better_together_community, name: 'Harbour Neighbours', privacy: 'public') }
   let!(:report_record) do
@@ -47,6 +56,9 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
+    page_record.page_blocks.find_or_create_by!(block: page_block_record) do |page_block|
+      page_block.position = 0
+    end
   end
 
   after do
@@ -140,6 +152,39 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
     expect(result[:mobile]).to end_with('docs/screenshots/mobile/content_reporting_actions_report_form.png')
   end
 
+  it 'captures the report action from an individual content block' do
+    result = capture_docs_screenshot(
+      'content_reporting_actions_block_menu',
+      flow: 'block_content_actions',
+      callouts: [
+        {
+          selector: '.bt-content-block__actions',
+          avoid_container_selector: '.bt-content-block__actions',
+          title: 'Each reportable block can surface its own actions',
+          bullets: [
+            'The shared block wrapper keeps actions attached to the exact section a person wants reviewed.',
+            <<~TEXT.squish,
+              Host apps can still add their own block controls through the existing
+              extra-block-components seam without replacing the shared CE structure.
+            TEXT
+            'The same menu can later grow into contribution actions such as correction requests or translation suggestions.'
+          ]
+        }
+      ]
+    ) do
+      capybara_login_as_user
+      visit better_together.render_page_path(page_record.slug, locale:)
+
+      expect(page).to have_text('Shared Kitchen Guide')
+      expect(page).to have_text('Kitchen safety note')
+      open_first_content_actions_menu(within: '.bt-content-block__actions')
+      expect(page).to have_link('Report safety issue')
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/content_reporting_actions_block_menu.png')
+    expect(result[:mobile]).to end_with('docs/screenshots/mobile/content_reporting_actions_block_menu.png')
+  end
+
   it 'captures the report detail follow-up and appeal surface' do
     result = capture_docs_screenshot(
       'content_reporting_actions_followup',
@@ -186,8 +231,10 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
     )
   end
 
-  def open_first_content_actions_menu
-    find('summary.bt-content-actions__trigger', match: :first).click
+  def open_first_content_actions_menu(within: nil)
+    scope = within.present? ? find(within) : page
+
+    scope.find('summary.bt-content-actions__trigger', match: :first).click
     expect(page).to have_css('details.bt-content-actions[open]')
   end
 end

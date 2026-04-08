@@ -54,6 +54,7 @@ The current end-user safety feature set includes:
 - personal blocking tools
 - structured safety reporting
 - shared content-surface reporting entry points
+- section-level reporting from supported content blocks
 - report history and report detail pages
 - participant-visible follow-up notes and appeal/evidence entry
 - safety-related consent options in the report form

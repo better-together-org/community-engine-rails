@@ -30,11 +30,12 @@ RSpec.describe BetterTogether::Report do
     expect(report).to be_persisted
   end
 
-  it 'allows pages, communities, and uploads as reportable content surfaces' do
+  it 'allows pages, communities, uploads, and content blocks as reportable content surfaces' do
     reporter = create(:better_together_person)
     page = create(:better_together_page)
     community = create(:better_together_community)
     upload = create(:better_together_upload, creator: create(:better_together_person))
+    content_block = create(:better_together_content_rich_text)
 
     upload.file.attach(
       io: StringIO.new('upload evidence'),
@@ -43,7 +44,7 @@ RSpec.describe BetterTogether::Report do
     )
     upload.save!
 
-    [page, community, upload].each do |reportable|
+    [page, community, upload, content_block].each do |reportable|
       report = described_class.create(
         reporter:,
         reportable:,

@@ -11,6 +11,7 @@ module BetterTogether
       'BetterTogether::Community',
       'BetterTogether::Message',
       'BetterTogether::Upload',
+      'BetterTogether::Content::Block',
       'BetterTogether::Joatu::Offer',
       'BetterTogether::Joatu::Request',
       'BetterTogether::Joatu::Agreement'

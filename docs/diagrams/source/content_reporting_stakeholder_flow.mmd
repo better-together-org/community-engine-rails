@@ -1,6 +1,6 @@
 flowchart LR
     MEMBER[Community member or participant]
-    SURFACE[Post / page / community / event / upload / message]
+    SURFACE[Post / page / page block / community / event / upload / message]
     ACTIONS[Shared content-actions menu]
     FORM[Contextual report form]
     REPORT[BetterTogether::Report]
@@ -16,6 +16,7 @@ flowchart LR
     MEMBER --> SURFACE
     SURFACE --> ACTIONS
     ACTIONS --> FORM
+    SURFACE -->|block wrapper preserves host extras| ACTIONS
     FORM --> REPORT
     REPORT --> CASE
     CASE --> QUEUE
