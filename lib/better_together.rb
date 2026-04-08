@@ -10,6 +10,7 @@ require 'better_together/mcp'
 module BetterTogether # rubocop:disable Metrics/ModuleLength
   mattr_accessor :base_url,
                  :adapter_registry,
+                 :inbound_email_ingress_password,
                  :new_user_password_path,
                  :route_scope_path,
                  :user_class,
@@ -126,6 +127,10 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
 
     def e2ee_messaging_enabled?
       ActiveModel::Type::Boolean.new.cast(ENV.fetch('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil)) == true
+    end
+
+    def inbound_email_password
+      inbound_email_ingress_password.presence || ENV.fetch('RAILS_INBOUND_EMAIL_PASSWORD', nil)
     end
 
     def base_path

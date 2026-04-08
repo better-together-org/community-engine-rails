@@ -10,11 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_05_191500) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_08_012000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
   enable_extension "postgis"
+
+  create_table "action_mailbox_inbound_emails", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.string "message_id", null: false
+    t.string "message_checksum", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_id", "message_checksum"], name: "index_action_mailbox_inbound_emails_uniqueness", unique: true
+  end
 
   create_table "action_text_rich_texts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
@@ -760,6 +769,33 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_05_191500) do
     t.index ["agent_type", "agent_id"], name: "by_agent"
     t.index ["identity_type", "identity_id", "agent_type", "agent_id"], name: "unique_identification", unique: true
     t.index ["identity_type", "identity_id"], name: "by_identity"
+  end
+
+  create_table "better_together_inbound_email_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "inbound_email_id", null: false
+    t.string "route_kind", null: false
+    t.string "status", default: "received", null: false
+    t.string "target_type"
+    t.uuid "target_id"
+    t.string "routed_record_type"
+    t.uuid "routed_record_id"
+    t.string "message_id", null: false
+    t.string "sender_email", null: false
+    t.string "sender_name"
+    t.string "recipient_address", null: false
+    t.string "recipient_local_part", null: false
+    t.string "recipient_domain", null: false
+    t.text "subject"
+    t.text "body_plain"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id"
+    t.index ["inbound_email_id"], name: "idx_on_inbound_email_id_e73eafb6f3"
+    t.index ["message_id"], name: "index_better_together_inbound_email_messages_on_message_id"
+    t.index ["platform_id"], name: "index_better_together_inbound_email_messages_on_platform_id"
+    t.index ["route_kind", "status"], name: "idx_on_route_kind_status_e3f2c6d597"
+    t.index ["routed_record_type", "routed_record_id"], name: "index_better_together_inbound_email_messages_on_routed_record"
+    t.index ["target_type", "target_id"], name: "index_better_together_inbound_email_messages_on_target"
   end
 
   create_table "better_together_infrastructure_building_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2219,6 +2255,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_05_191500) do
   add_foreign_key "better_together_geography_spaces", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_states", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_states", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_inbound_email_messages", "action_mailbox_inbound_emails", column: "inbound_email_id"
+  add_foreign_key "better_together_inbound_email_messages", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_infrastructure_building_connections", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_communities", column: "community_id"
