@@ -4,10 +4,10 @@ module BetterTogether
   # Convenience configurator for the engine
   class Configuration
     attr_reader :base_url,
-                 :adapter_registry,
-                 :new_user_password_path,
-                 :user_class,
-                 :user_confirmation_path
+                :adapter_registry,
+                :new_user_password_path,
+                :user_class,
+                :user_confirmation_path
 
     delegate :base_url=, to: :BetterTogether
 

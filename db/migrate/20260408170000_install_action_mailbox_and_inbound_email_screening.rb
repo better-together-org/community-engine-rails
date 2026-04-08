@@ -59,29 +59,66 @@ class InstallActionMailboxAndInboundEmailScreening < ActiveRecord::Migration[7.2
   def ensure_better_together_inbound_email_message_columns
     return unless table_exists?(:better_together_inbound_email_messages)
 
-    unless column_exists?(:better_together_inbound_email_messages, :platform_id)
-      add_reference :better_together_inbound_email_messages,
-                    :platform,
-                    type: :uuid,
-                    foreign_key: { to_table: :better_together_platforms }
-    end
-
-    add_column :better_together_inbound_email_messages, :screening_state, :string, null: false, default: 'pending' unless column_exists?(:better_together_inbound_email_messages, :screening_state)
-    add_column :better_together_inbound_email_messages, :screening_verdict, :string unless column_exists?(:better_together_inbound_email_messages, :screening_verdict)
-    add_column :better_together_inbound_email_messages, :content_screening_summary, :text unless column_exists?(:better_together_inbound_email_messages, :content_screening_summary)
-    add_column :better_together_inbound_email_messages, :content_security_records_json, :text unless column_exists?(:better_together_inbound_email_messages, :content_security_records_json)
-
-    unless foreign_key_exists?(:better_together_inbound_email_messages, :action_mailbox_inbound_emails, column: :inbound_email_id)
-      add_foreign_key :better_together_inbound_email_messages, :action_mailbox_inbound_emails, column: :inbound_email_id
-    end
+    ensure_platform_reference
+    ensure_screening_columns
+    ensure_inbound_email_foreign_key
   end
 
   def ensure_better_together_inbound_email_message_indexes
     return unless table_exists?(:better_together_inbound_email_messages)
 
     add_index :better_together_inbound_email_messages, :message_id unless index_exists?(:better_together_inbound_email_messages, :message_id)
-    add_index :better_together_inbound_email_messages, %i[route_kind status] unless index_exists?(:better_together_inbound_email_messages, %i[route_kind status])
-    add_index :better_together_inbound_email_messages, :screening_state unless index_exists?(:better_together_inbound_email_messages, :screening_state)
-    add_index :better_together_inbound_email_messages, :screening_verdict unless index_exists?(:better_together_inbound_email_messages, :screening_verdict)
+    add_index :better_together_inbound_email_messages, %i[route_kind status] unless
+      index_exists?(:better_together_inbound_email_messages, %i[route_kind status])
+    add_index :better_together_inbound_email_messages, :screening_state unless
+      index_exists?(:better_together_inbound_email_messages, :screening_state)
+    add_index :better_together_inbound_email_messages, :screening_verdict unless
+      index_exists?(:better_together_inbound_email_messages, :screening_verdict)
+  end
+
+  def ensure_platform_reference
+    return if column_exists?(:better_together_inbound_email_messages, :platform_id)
+
+    add_reference :better_together_inbound_email_messages,
+                  :platform,
+                  type: :uuid,
+                  foreign_key: { to_table: :better_together_platforms }
+  end
+
+  def ensure_screening_columns
+    add_screening_state_column
+    add_screening_verdict_column
+    add_content_screening_summary_column
+    add_content_security_records_column
+  end
+
+  def add_screening_state_column
+    return if column_exists?(:better_together_inbound_email_messages, :screening_state)
+
+    add_column :better_together_inbound_email_messages, :screening_state, :string, null: false, default: 'pending'
+  end
+
+  def add_screening_verdict_column
+    return if column_exists?(:better_together_inbound_email_messages, :screening_verdict)
+
+    add_column :better_together_inbound_email_messages, :screening_verdict, :string
+  end
+
+  def add_content_screening_summary_column
+    return if column_exists?(:better_together_inbound_email_messages, :content_screening_summary)
+
+    add_column :better_together_inbound_email_messages, :content_screening_summary, :text
+  end
+
+  def add_content_security_records_column
+    return if column_exists?(:better_together_inbound_email_messages, :content_security_records_json)
+
+    add_column :better_together_inbound_email_messages, :content_security_records_json, :text
+  end
+
+  def ensure_inbound_email_foreign_key
+    return if foreign_key_exists?(:better_together_inbound_email_messages, :action_mailbox_inbound_emails, column: :inbound_email_id)
+
+    add_foreign_key :better_together_inbound_email_messages, :action_mailbox_inbound_emails, column: :inbound_email_id
   end
 end

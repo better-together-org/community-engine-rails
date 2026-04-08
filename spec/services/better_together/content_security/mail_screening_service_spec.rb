@@ -3,12 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::ContentSecurity::MailScreeningService do
-  class RaisingScannerRunner
-    def call(_payload)
-      raise BetterTogether::ContentSecurity::OrchestratorRunner::Error, 'scanner unavailable'
-    end
-  end
-
   def build_inbound_email(raw_source)
     ActionMailbox::InboundEmail.create_and_extract_message_id!(raw_source)
   end
@@ -27,21 +21,21 @@ RSpec.describe BetterTogether::ContentSecurity::MailScreeningService do
   end
 
   def create_tenant(community:, domain:)
-    platform = BetterTogether::Platform.find_or_initialize_by(url: "https://#{domain}")
-    platform.community = community
-    platform.name = "#{community.name} Platform"
-    platform.identifier ||= "platform-#{SecureRandom.hex(6)}"
-    platform.time_zone = 'UTC'
-    platform.privacy = 'private'
-    platform.external = false
-    platform.save!
-
+    platform = create(:better_together_platform, community:, host_url: "https://#{domain}")
     platform.platform_domains.find_or_create_by!(hostname: domain) do |platform_domain|
       platform_domain.primary = true
       platform_domain.active = true
     end
 
     platform
+  end
+
+  def unavailable_scanner_runner
+    Object.new.tap do |runner|
+      runner.define_singleton_method(:call) do |_payload|
+        raise BetterTogether::ContentSecurity::OrchestratorRunner::Error, 'scanner unavailable'
+      end
+    end
   end
 
   it 'fails closed when the shared scanner is unavailable' do
@@ -69,16 +63,14 @@ RSpec.describe BetterTogether::ContentSecurity::MailScreeningService do
 
     message.save!
 
-    result = described_class
-             .new(
-               inbound_email:,
-               mail: inbound_email.mail,
-               resolution:,
-               sender:,
-               body_plain: 'Plain body',
-               scanner_runner: RaisingScannerRunner.new
-             )
-             .screen!(message)
+    result = described_class.new(
+      inbound_email:,
+      mail: inbound_email.mail,
+      resolution:,
+      sender:,
+      body_plain: 'Plain body',
+      scanner_runner: unavailable_scanner_runner
+    ).screen!(message)
 
     expect(result.allow_routing?).to be(false)
     expect(message.reload).to be_screening_state_error

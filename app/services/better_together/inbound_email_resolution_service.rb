@@ -77,6 +77,7 @@ module BetterTogether
         @address.domain.to_s.downcase
       )
     end
+
     def tenant_robot(identifier, platform)
       return unless defined?(BetterTogether::Robot)
 

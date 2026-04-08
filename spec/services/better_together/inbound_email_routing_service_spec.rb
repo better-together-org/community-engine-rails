@@ -3,20 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::InboundEmailRoutingService do
-  class FakeScannerRunner
-    attr_reader :payloads
-
-    def initialize(results:)
-      @results = results
-      @payloads = []
-    end
-
-    def call(payload)
-      @payloads << payload.deep_dup
-      @results.fetch(@payloads.length - 1, @results.last)
-    end
-  end
-
   def build_inbound_email(raw_source)
     ActionMailbox::InboundEmail.create_and_extract_message_id!(raw_source)
   end
@@ -28,6 +14,15 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
       platform_domain.active = true
     end
     platform
+  end
+
+  def build_scanner_runner(results)
+    Struct.new(:results, :payloads) do
+      def call(payload)
+        payloads << payload.deep_dup
+        results.fetch(payloads.length - 1, results.last)
+      end
+    end.new(results, [])
   end
 
   def raw_mail(to:, from: 'sender@example.test', subject: 'Test subject', body: 'Plain body')
@@ -45,16 +40,7 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
 
   def multipart_mail(to:, attachments:, from: 'sender@example.test', subject: 'Test subject', body: 'Plain body')
     boundary = "BOUNDARY-#{SecureRandom.uuid}"
-    attachment_parts = attachments.map do |attachment|
-      <<~PART
-        --#{boundary}
-        Content-Type: #{attachment.fetch(:content_type)}
-        Content-Disposition: attachment; filename="#{attachment.fetch(:filename)}"
-        Content-Transfer-Encoding: 7bit
-
-        #{attachment.fetch(:body)}
-      PART
-    end.join
+    attachment_parts = attachments.map { |attachment| multipart_attachment_part(boundary, attachment) }.join
 
     <<~MAIL
       From: Sender Example <#{from}>
@@ -73,6 +59,17 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     MAIL
   end
 
+  def multipart_attachment_part(boundary, attachment)
+    <<~PART
+      --#{boundary}
+      Content-Type: #{attachment.fetch(:content_type)}
+      Content-Disposition: attachment; filename="#{attachment.fetch(:filename)}"
+      Content-Transfer-Encoding: 7bit
+
+      #{attachment.fetch(:body)}
+    PART
+  end
+
   def scanner_result(verdict: 'clean', finding_summary: nil)
     finding = finding_summary.present? ? [{ 'summary' => finding_summary }] : []
 
@@ -87,7 +84,7 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     community = create(:better_together_community, name: 'Email Routed Community')
     platform = create_tenant(community:, domain: 'tenant-a.example.test')
     inbound_email = build_inbound_email(raw_mail(to: "requests+#{community.slug}@tenant-a.example.test", body: 'Please let me join'))
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result])
+    scanner_runner = build_scanner_runner([scanner_result])
 
     expect do
       described_class.new(inbound_email, scanner_runner:).route!
@@ -110,7 +107,7 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     community = create(:better_together_community, name: 'Community Inbox')
     platform = create_tenant(community:, domain: 'tenant-b.example.test')
     inbound_email = build_inbound_email(raw_mail(to: "community+#{community.slug}@tenant-b.example.test"))
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result])
+    scanner_runner = build_scanner_runner([scanner_result])
 
     expect do
       described_class.new(inbound_email, scanner_runner:).route!
@@ -130,7 +127,7 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     create(:better_together_robot, :global, identifier: 'helper-bot', name: 'Global Helper Bot')
     robot = create(:better_together_robot, platform:, identifier: 'helper-bot', name: 'Tenant Helper Bot')
     inbound_email = build_inbound_email(raw_mail(to: "agent+#{robot.identifier}@tenant-c.example.test"))
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result])
+    scanner_runner = build_scanner_runner([scanner_result])
 
     described_class.new(inbound_email, scanner_runner:).route!
 
@@ -146,7 +143,7 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     person = create(:better_together_person, identifier: 'member-agent')
     create(:better_together_person_platform_membership, member: person, joinable: platform, status: 'active')
     inbound_email = build_inbound_email(raw_mail(to: 'agent+member-agent@tenant-d.example.test'))
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result])
+    scanner_runner = build_scanner_runner([scanner_result])
 
     described_class.new(inbound_email, scanner_runner:).route!
 
@@ -158,7 +155,7 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
 
   it 'rejects aliases for unmapped recipient domains' do
     inbound_email = build_inbound_email(raw_mail(to: 'unknown@example.test'))
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result])
+    scanner_runner = build_scanner_runner([scanner_result])
 
     expect do
       described_class.new(inbound_email, scanner_runner:).route!
@@ -178,7 +175,7 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     second_community = create(:better_together_community, name: 'Tenant Two')
     create_tenant(community: second_community, domain: 'tenant-two.example.test')
     inbound_email = build_inbound_email(raw_mail(to: "community+#{second_community.slug}@tenant-one.example.test"))
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result])
+    scanner_runner = build_scanner_runner([scanner_result])
 
     described_class.new(inbound_email, scanner_runner:).route!
 
@@ -193,7 +190,9 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     community = create(:better_together_community, name: 'Held Membership Requests')
     create_tenant(community:, domain: 'tenant-hold.example.test')
     inbound_email = build_inbound_email(raw_mail(to: "requests+#{community.slug}@tenant-hold.example.test"))
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result(verdict: 'review_required', finding_summary: 'High-risk attachment detected')])
+    scanner_runner = build_scanner_runner(
+      [scanner_result(verdict: 'review_required', finding_summary: 'High-risk attachment detected')]
+    )
 
     expect do
       described_class.new(inbound_email, scanner_runner:).route!
@@ -215,7 +214,9 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
         attachments: [{ filename: 'dangerous.exe', content_type: 'application/octet-stream', body: 'payload' }]
       )
     )
-    scanner_runner = FakeScannerRunner.new(results: [scanner_result, scanner_result(verdict: 'review_required', finding_summary: 'Executable attachment detected')])
+    scanner_runner = build_scanner_runner(
+      [scanner_result, scanner_result(verdict: 'review_required', finding_summary: 'Executable attachment detected')]
+    )
 
     described_class.new(inbound_email, scanner_runner:).route!
 
