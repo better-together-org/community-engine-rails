@@ -1,0 +1,35 @@
+
+<%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
+
+<div class="accordion mb-3" id="<%= dom_id(block, temp_id) %>-background-image">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="<%= dom_id(block, temp_id) %>-background-image-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(block, temp_id) %>-background-image-collapse" aria-expanded="false" aria-controls="<%= dom_id(block, temp_id) %>-background-image-collapse">
+        <%= block.class.model_name.human %>
+      </button>
+    </h2>
+    <div id="<%= dom_id(block, temp_id) %>-background-image-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(block, temp_id) %>-background-image-header" data-bs-parent="#<%= dom_id(block, temp_id) %>-background-image">
+      <div class="accordion-body">
+
+        <div class="background-image-fields" data-controller="image-preview">
+          <%= hidden_field_tag "#{scope}[id]", block.id %>
+          <%= hidden_field_tag "#{scope}[type]", block.class.to_s %>
+          <%= hidden_field_tag "#{scope}[creator_id]", current_person&.id %>
+
+          <%= label_tag do %>
+            <%= block.class.human_attribute_name('media') %>
+            <% if block.media.attached? %>
+              : <%= block.media.filename %>
+            <% end %>
+          <% end %>
+          <%= file_field_tag "#{scope}[media]", required: false, accept: acceptable_image_file_types, data: { action: "image-preview#preview", image_preview_target: "input" }, class: "form-control" %>
+
+          <!-- Image preview container (empty initially) -->
+          <div class="my-3 text-center" data-image-preview-target="preview" data-url="<%= block.media.url if block.media.attached? %>">
+            <!-- The image preview will be dynamically inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
