@@ -10,6 +10,10 @@ module BetterTogether
 
     delegate :base_url=, to: :BetterTogether
 
+    delegate :content_safety_orchestrator_command=, to: :BetterTogether
+
+    delegate :inbound_email_ingress_password=, to: :BetterTogether
+
     delegate :new_user_password_path=, to: :BetterTogether
 
     delegate :user_class=, to: :BetterTogether

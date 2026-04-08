@@ -8,6 +8,8 @@ require 'better_together/mcp'
 # Convenience setters and getters for the engine
 module BetterTogether
   mattr_accessor :base_url,
+                 :content_safety_orchestrator_command,
+                 :inbound_email_ingress_password,
                  :new_user_password_path,
                  :route_scope_path,
                  :user_class,
@@ -30,6 +32,15 @@ module BetterTogether
   self.swagger_additional_endpoints = []
 
   class << self
+    def inbound_email_password
+      inbound_email_ingress_password.presence || ENV.fetch('RAILS_INBOUND_EMAIL_PASSWORD', nil)
+    end
+
+    def content_safety_orchestrator_command
+      @@content_safety_orchestrator_command.presence ||
+        ENV.fetch('BETTER_TOGETHER_CONTENT_SAFETY_ORCHESTRATOR_COMMAND', nil)
+    end
+
     def base_path
       BetterTogether::Engine.routes.find_script_name({})
     end

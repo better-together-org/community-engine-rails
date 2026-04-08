@@ -10,11 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_08_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
   enable_extension "postgis"
+
+  create_table "action_mailbox_inbound_emails", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.string "message_id", null: false
+    t.string "message_checksum", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_id", "message_checksum"], name: "index_action_mailbox_inbound_emails_uniqueness", unique: true
+  end
 
   create_table "action_text_rich_texts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
@@ -402,6 +411,30 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
     t.index ["platform_id"], name: "index_better_together_content_platform_blocks_on_platform_id"
   end
 
+  create_table "better_together_content_security_subjects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.string "subject_type", null: false
+    t.uuid "subject_id", null: false
+    t.uuid "active_storage_blob_id"
+    t.string "attachment_name", null: false
+    t.string "content_id", null: false
+    t.string "source_surface", null: false
+    t.string "storage_ref", null: false
+    t.string "lifecycle_state", default: "pending_scan", null: false
+    t.string "aggregate_verdict", default: "review_required", null: false
+    t.string "current_visibility_state", default: "private", null: false
+    t.string "current_ai_ingestion_state", default: "pending_review", null: false
+    t.datetime "released_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active_storage_blob_id"], name: "idx_on_active_storage_blob_id_ddf3b8afcc"
+    t.index ["aggregate_verdict"], name: "index_bt_content_security_subjects_on_aggregate_verdict"
+    t.index ["content_id"], name: "index_bt_content_security_subjects_on_content_id", unique: true
+    t.index ["lifecycle_state"], name: "index_bt_content_security_subjects_on_lifecycle_state"
+    t.index ["subject_type", "subject_id", "attachment_name"], name: "index_bt_content_security_subjects_on_subject_attachment", unique: true
+    t.index ["subject_type", "subject_id"], name: "index_better_together_content_security_subjects_on_subject"
+  end
+
   create_table "better_together_conversation_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -597,7 +630,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
     t.index ["privacy"], name: "by_better_together_geography_maps_privacy"
   end
 
-
   create_table "better_together_geography_region_settlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -684,6 +716,39 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
     t.index ["agent_type", "agent_id"], name: "by_agent"
     t.index ["identity_type", "identity_id", "agent_type", "agent_id"], name: "unique_identification", unique: true
     t.index ["identity_type", "identity_id"], name: "by_identity"
+  end
+
+  create_table "better_together_inbound_email_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "inbound_email_id", null: false
+    t.uuid "platform_id"
+    t.string "route_kind", null: false
+    t.string "status", default: "received", null: false
+    t.string "target_type"
+    t.uuid "target_id"
+    t.string "routed_record_type"
+    t.uuid "routed_record_id"
+    t.string "message_id", null: false
+    t.string "sender_email", null: false
+    t.string "sender_name"
+    t.string "recipient_address", null: false
+    t.string "recipient_local_part", null: false
+    t.string "recipient_domain", null: false
+    t.text "subject"
+    t.text "body_plain"
+    t.string "screening_state", default: "pending", null: false
+    t.string "screening_verdict"
+    t.text "content_screening_summary"
+    t.text "content_security_records_json"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["inbound_email_id"], name: "idx_on_inbound_email_id_e73eafb6f3"
+    t.index ["message_id"], name: "index_better_together_inbound_email_messages_on_message_id"
+    t.index ["platform_id"], name: "index_better_together_inbound_email_messages_on_platform_id"
+    t.index ["route_kind", "status"], name: "idx_on_route_kind_status_e3f2c6d597"
+    t.index ["routed_record_type", "routed_record_id"], name: "index_better_together_inbound_email_messages_on_routed_record"
+    t.index ["screening_state"], name: "idx_on_screening_state_36bc8dcb50"
+    t.index ["screening_verdict"], name: "idx_on_screening_verdict_62fce624ab"
+    t.index ["target_type", "target_id"], name: "index_better_together_inbound_email_messages_on_target"
   end
 
   create_table "better_together_infrastructure_building_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2006,6 +2071,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
   add_foreign_key "better_together_content_page_blocks", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_content_platform_blocks", "better_together_content_blocks", column: "block_id"
   add_foreign_key "better_together_content_platform_blocks", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_content_security_subjects", "active_storage_blobs"
   add_foreign_key "better_together_conversation_participants", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"
@@ -2021,8 +2087,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_geography_geospatial_spaces", "better_together_geography_spaces", column: "space_id"
-  add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_regions", column: "region_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_settlements", column: "settlement_id"
   add_foreign_key "better_together_geography_regions", "better_together_communities", column: "community_id"
@@ -2034,6 +2100,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_000004) do
   add_foreign_key "better_together_geography_spaces", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_states", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_states", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_inbound_email_messages", "action_mailbox_inbound_emails", column: "inbound_email_id"
+  add_foreign_key "better_together_inbound_email_messages", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_infrastructure_building_connections", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_communities", column: "community_id"

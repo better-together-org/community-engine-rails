@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'action_cable/engine'
+require 'action_mailbox/engine'
 require 'action_text/engine'
 require 'active_storage/engine'
 require 'active_storage_svg_sanitizer'
