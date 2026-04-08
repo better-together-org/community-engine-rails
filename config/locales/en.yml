@@ -1082,6 +1082,9 @@ en:
           fallback_filename: This attachment
           message: "%{filename} is being reviewed before it can be displayed."
           title: Attachment under review
+        restricted:
+          message: "%{filename} is currently restricted while a reviewer checks it."
+          title: Attachment restricted
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}

@@ -1102,6 +1102,10 @@ fr:
           fallback_filename: Cette pièce jointe
           message: "%{filename} est en cours de révision avant de pouvoir être affiché."
           title: Pièce jointe en cours de révision
+        restricted:
+          message: "%{filename} est actuellement restreint pendant qu'une personne
+            réviseuse le vérifie."
+          title: Pièce jointe restreinte
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}

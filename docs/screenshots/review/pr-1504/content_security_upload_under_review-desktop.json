@@ -1,0 +1,40 @@
+{
+  "name": "content_security_upload_under_review",
+  "device": "desktop",
+  "url": "/en/f",
+  "title": "Uploads | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_security_review_states",
+  "flow": "upload_under_review",
+  "source_spec": "./spec/docs_screenshots/better_together/content_security_review_states_spec.rb",
+  "callouts": [
+    {
+      "selector": ".card .badge.text-bg-warning",
+      "title": "Upload remains held before release",
+      "bullets": [
+        "The visible badge marks the file as under review.",
+        "Insert and copy actions stay disabled until the attachment is released.",
+        "The helper text explains why the file is not yet available in rich text."
+      ],
+      "target": {
+        "x": 261.078125,
+        "y": 231.0,
+        "width": 105.921875,
+        "height": 20.375,
+        "right": 367.0,
+        "bottom": 251.375,
+        "center_x": 314.0390625,
+        "center_y": 241.1875
+      },
+      "placement": {
+        "side": "below",
+        "x": 124.04,
+        "y": 271.38,
+        "width": 380,
+        "height": 320,
+        "score": 1209.625
+      }
+    }
+  ]
+}

@@ -1099,6 +1099,10 @@ es:
           fallback_filename: Este archivo adjunto
           message: "%{filename} está en revisión antes de poder mostrarse."
           title: Archivo adjunto en revisión
+        restricted:
+          message: "%{filename} está actualmente restringido mientras una persona
+            revisora lo verifica."
+          title: Archivo adjunto restringido
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}

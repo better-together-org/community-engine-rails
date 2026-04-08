@@ -1,0 +1,40 @@
+{
+  "name": "content_security_placeholder_under_review",
+  "device": "desktop",
+  "url": "/en/conversations/5f61d058-a259-4198-acb5-b2cbd90b171e?person_id=user",
+  "title": "Mollitia rerum nihil doloribus. | Conversations | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_security_review_states",
+  "flow": "placeholder_under_review",
+  "source_spec": "./spec/docs_screenshots/better_together/content_security_review_states_spec.rb",
+  "callouts": [
+    {
+      "selector": "figure.attachment--held-review",
+      "title": "Embedded attachment placeholder under review",
+      "bullets": [
+        "The rendered message keeps context while withholding the attachment preview.",
+        "The placeholder is announced as a status region for assistive technology.",
+        "No image is rendered until the attachment is approved for release."
+      ],
+      "target": {
+        "x": 830.140625,
+        "y": 405.0,
+        "width": 570.859375,
+        "height": 66.0,
+        "right": 1401.0,
+        "bottom": 471.0,
+        "center_x": 1115.5703125,
+        "center_y": 438.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 925.57,
+        "y": 491.0,
+        "width": 380,
+        "height": 378,
+        "score": 990.0
+      }
+    }
+  ]
+}

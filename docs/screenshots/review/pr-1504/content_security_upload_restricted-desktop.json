@@ -1,0 +1,40 @@
+{
+  "name": "content_security_upload_restricted",
+  "device": "desktop",
+  "url": "/en/f",
+  "title": "Uploads | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_security_review_states",
+  "flow": "upload_restricted",
+  "source_spec": "./spec/docs_screenshots/better_together/content_security_review_states_spec.rb",
+  "callouts": [
+    {
+      "selector": ".card .badge.text-bg-danger",
+      "title": "Restricted uploads stay unavailable",
+      "bullets": [
+        "A blocked or quarantined verdict is surfaced distinctly from general review.",
+        "The helper text tells the uploader the file is restricted pending reviewer action.",
+        "Disabled actions keep the restricted file from being copied or inserted."
+      ],
+      "target": {
+        "x": 281.53125,
+        "y": 231.0,
+        "width": 85.46875,
+        "height": 20.375,
+        "right": 367.0,
+        "bottom": 251.375,
+        "center_x": 324.265625,
+        "center_y": 241.1875
+      },
+      "placement": {
+        "side": "below",
+        "x": 134.27,
+        "y": 271.38,
+        "width": 380,
+        "height": 398,
+        "score": 1209.625
+      }
+    }
+  ]
+}

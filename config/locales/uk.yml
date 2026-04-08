@@ -1082,6 +1082,9 @@ uk:
           message: "%{filename} проходить перевірку перед тим, як його можна буде
             показати."
           title: Вкладення на перевірці
+        restricted:
+          message: "%{filename} наразі обмежено, поки його перевіряє рецензент."
+          title: Вкладення обмежено
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}

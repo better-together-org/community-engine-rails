@@ -1,0 +1,40 @@
+{
+  "name": "content_security_placeholder_restricted",
+  "device": "desktop",
+  "url": "/en/conversations/2267796d-d4ee-4b5b-884b-106105cc2e00?person_id=user",
+  "title": "Qui animi eum voluptatem. | Conversations | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_security_review_states",
+  "flow": "placeholder_restricted",
+  "source_spec": "./spec/docs_screenshots/better_together/content_security_review_states_spec.rb",
+  "callouts": [
+    {
+      "selector": "figure.attachment--content-restricted",
+      "title": "Restricted embedded attachment placeholder",
+      "bullets": [
+        "Restricted attachments now render a distinct placeholder state.",
+        "The copy makes it clear the file is unavailable while reviewer action is pending.",
+        "The message body remains readable without exposing the attachment."
+      ],
+      "target": {
+        "x": 757.96875,
+        "y": 405.0,
+        "width": 643.03125,
+        "height": 66.0,
+        "right": 1401.0,
+        "bottom": 471.0,
+        "center_x": 1079.484375,
+        "center_y": 438.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 889.48,
+        "y": 491.0,
+        "width": 380,
+        "height": 346,
+        "score": 990.0
+      }
+    }
+  ]
+}

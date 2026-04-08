@@ -47,4 +47,20 @@ RSpec.describe BetterTogether::Message do
 
     expect(rendered).to have_css("img[src*='/content-security/active-storage/representations/proxy/']")
   end
+
+  it 'renders blocked embedded attachments with a restricted placeholder' do
+    BetterTogether::ContentSecurity::Subject.find_by!(subject: message, attachment_name: "content:embed:#{blob.id}").update!(
+      lifecycle_state: 'blocked_rejected',
+      aggregate_verdict: 'blocked',
+      current_visibility_state: 'private',
+      current_ai_ingestion_state: 'excluded',
+      released_at: nil
+    )
+
+    rendered = Capybara.string(message.reload.content.to_s)
+
+    expect(rendered).to have_css('figure.attachment--content-restricted')
+    expect(rendered).to have_text('Attachment restricted')
+    expect(rendered).not_to have_css('img')
+  end
 end
