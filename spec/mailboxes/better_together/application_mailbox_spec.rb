@@ -2,16 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe ApplicationMailbox do
+RSpec.describe BetterTogether::ApplicationMailbox do
   def build_inbound_email(raw_source)
     ActionMailbox::InboundEmail.create_and_extract_message_id!(raw_source)
   end
 
-  it 'inherits the CE mailbox interface for host apps' do
-    expect(described_class.superclass).to eq(BetterTogether::ApplicationMailbox)
-  end
-
-  it 'routes inbound emails to the CE router mailbox' do
+  it 'uses the CE router mailbox by default' do
     inbound_email = build_inbound_email(<<~MAIL)
       From: sender@example.test
       To: community+demo@tenant.example.test

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 unless defined?(ApplicationMailbox)
-  # Root Action Mailbox router used by the engine for inbound email processing.
-  class ::ApplicationMailbox < ActionMailbox::Base
-    routing all: 'BetterTogether::Router'
+  # Backward-compatible root mailbox for apps that have not yet defined their
+  # own ApplicationMailbox subclass.
+  class ::ApplicationMailbox < BetterTogether::ApplicationMailbox
   end
 end

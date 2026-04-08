@@ -8,6 +8,7 @@ It is intentionally designed to **fail closed**. The goal is not to accept every
 
 - a CE relay endpoint at `/inbound-email/relay`
 - Action Mailbox ingestion inside the engine
+- a namespaced `BetterTogether::ApplicationMailbox` base for host apps
 - deterministic alias routing for:
   - `requests+community-slug@tenant-domain`
   - `community+community-slug@tenant-domain`
@@ -16,6 +17,16 @@ It is intentionally designed to **fail closed**. The goal is not to accept every
 - tenant-aware routing through `BetterTogether::PlatformDomain`
 
 ## Multi-tenant routing model
+
+Host apps should follow the same inheritance pattern they already use for
+controllers and mailers:
+
+- `ApplicationController < BetterTogether::ApplicationController`
+- `ApplicationMailer < BetterTogether::ApplicationMailer`
+- `ApplicationMailbox < BetterTogether::ApplicationMailbox`
+
+That keeps the CE routing contract namespaced while still satisfying Rails'
+top-level Action Mailbox entrypoint in each host app.
 
 Recipient **domain** is the tenant boundary.
 

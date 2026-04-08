@@ -3,7 +3,8 @@ flowchart LR
   smtp["Public mail router / MX entrypoint"]
   relay["CE /inbound-email/relay\nHTTP basic auth + message/rfc822"]
   action_mailbox["Action Mailbox inbound email"]
-  app_mailbox["ApplicationMailbox"]
+  ce_mailbox["BetterTogether::ApplicationMailbox"]
+  app_mailbox["Host app ApplicationMailbox"]
   router_mailbox["BetterTogether::RouterMailbox"]
   routing["InboundEmailRoutingService"]
   domain["PlatformDomain.resolve(recipient domain)"]
@@ -13,7 +14,7 @@ flowchart LR
   agent["Tenant robot / tenant person target"]
   reject["Rejected / unresolved record"]
 
-  smtp --> relay --> action_mailbox --> app_mailbox --> router_mailbox --> routing
+  smtp --> relay --> action_mailbox --> ce_mailbox --> app_mailbox --> router_mailbox --> routing
   routing --> domain
   domain -->|"tenant matched"| audit
   domain -->|"unknown domain"| reject
