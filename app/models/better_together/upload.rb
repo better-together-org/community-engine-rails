@@ -36,6 +36,10 @@ module BetterTogether
       file_content_security_subject.nil? || file_content_security_subject.released_for_human_access?
     end
 
+    def file_content_security_held?
+      file_content_security_subject.present? && file_content_security_subject.held_for_review?
+    end
+
     private
 
     def sync_file_content_security_subject

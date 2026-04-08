@@ -9,8 +9,11 @@ RSpec.describe BetterTogether::Safety::LocalReviewSnapshotService do
     let!(:repeat_report_a) { create(:report, reportable: repeat_reportable) }
     let!(:repeat_report_b) { create(:report, reportable: repeat_reportable) }
     let!(:resolved_report) { create(:report) }
+    let!(:held_upload) { create(:better_together_upload) }
 
     before do
+      held_upload.file.attach(io: StringIO.new('held upload'), filename: 'held.txt', content_type: 'text/plain')
+      held_upload.save!
       resolved_report.safety_case.update!(status: 'resolved')
       BetterTogether::Safety::Note.create!(
         safety_case: urgent_report.safety_case,
@@ -28,6 +31,7 @@ RSpec.describe BetterTogether::Safety::LocalReviewSnapshotService do
       expect(snapshot[:unassigned_open_cases_count]).to eq(3)
       expect(snapshot[:retaliation_risk_open_cases_count]).to eq(1)
       expect(snapshot[:repeated_reportables_count]).to eq(1)
+      expect(snapshot[:content_review_items_count]).to eq(1)
       expect(snapshot[:participant_visible_notes_count]).to eq(1)
       expect(snapshot[:generated_at]).to be_a(Time)
     end

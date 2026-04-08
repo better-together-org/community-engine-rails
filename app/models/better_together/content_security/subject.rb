@@ -40,6 +40,13 @@ module BetterTogether
 
       RELEASED_LIFECYCLE_STATES = %w[approved_private approved_public approved_ai_excluded].freeze
       RELEASED_VERDICTS = %w[clean override_released false_positive].freeze
+      REVIEW_QUEUE_LIFECYCLE_STATES = %w[
+        pending_scan
+        pending_private_review
+        awaiting_lane_review
+        quarantined
+        blocked_rejected
+      ].freeze
 
       belongs_to :subject, polymorphic: true
       belongs_to :active_storage_blob, class_name: '::ActiveStorage::Blob', optional: true
@@ -58,9 +65,18 @@ module BetterTogether
       before_validation :ensure_storage_ref
 
       scope :for_blob, ->(blob) { where(active_storage_blob_id: blob.is_a?(::ActiveStorage::Blob) ? blob.id : blob) }
+      scope :review_queue, lambda {
+        where(lifecycle_state: REVIEW_QUEUE_LIFECYCLE_STATES)
+          .where.not(aggregate_verdict: RELEASED_VERDICTS)
+          .order(created_at: :desc)
+      }
 
       def released_for_human_access?
         lifecycle_state.in?(RELEASED_LIFECYCLE_STATES) && aggregate_verdict.in?(RELEASED_VERDICTS)
+      end
+
+      def held_for_review?
+        !released_for_human_access?
       end
 
       def publicly_serving_allowed?

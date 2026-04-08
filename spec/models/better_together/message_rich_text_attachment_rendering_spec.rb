@@ -25,11 +25,12 @@ RSpec.describe BetterTogether::Message do
     )
   end
 
-  it 'excludes pending embedded attachments from rendered output' do
+  it 'replaces pending embedded attachments with an accessible review placeholder' do
     rendered = Capybara.string(message.reload.content.to_s)
 
     expect(rendered).to have_text('hello')
-    expect(rendered).not_to have_css('figure.attachment')
+    expect(rendered).to have_css('figure.attachment--held-review')
+    expect(rendered).to have_text('Attachment under review')
     expect(rendered).not_to have_css('img')
   end
 
