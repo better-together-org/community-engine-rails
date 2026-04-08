@@ -11,6 +11,7 @@ RSpec.describe BetterTogether::InboundEmailMessage do
 
   describe 'associations' do
     it { is_expected.to belong_to(:inbound_email).class_name('ActionMailbox::InboundEmail') }
+    it { is_expected.to belong_to(:platform).class_name('BetterTogether::Platform').optional }
     it { is_expected.to belong_to(:target).optional }
     it { is_expected.to belong_to(:routed_record).optional }
   end

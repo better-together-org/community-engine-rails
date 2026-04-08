@@ -5,6 +5,7 @@ FactoryBot.define do
           class: 'BetterTogether::InboundEmailMessage',
           aliases: %i[better_together_inbound_email_message inbound_email_message]) do
     association :inbound_email, factory: :action_mailbox_inbound_email
+    association :platform, factory: :better_together_platform
     route_kind { 'community' }
     status { 'received' }
     association :target, factory: :better_together_community

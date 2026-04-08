@@ -11,6 +11,7 @@ module BetterTogether
     belongs_to :inbound_email,
                class_name: 'ActionMailbox::InboundEmail',
                inverse_of: false
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :target, polymorphic: true, optional: true
     belongs_to :routed_record, polymorphic: true, optional: true
 
