@@ -4,7 +4,9 @@
 module BetterTogether
   module Metrics
     class SharesController < ApplicationController # rubocop:todo Style/Documentation
-      def create # rubocop:todo Metrics/AbcSize
+      include PlatformContext
+
+      def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         platform = params[:platform]
         url = params[:url]
         shareable_type = params[:shareable_type]
@@ -17,7 +19,15 @@ module BetterTogether
         end
 
         # Enqueue the TrackShareJob
-        BetterTogether::Metrics::TrackShareJob.perform_later(platform, url, locale, shareable_type, shareable_id)
+        BetterTogether::Metrics::TrackShareJob.perform_later(
+          platform,
+          url,
+          locale,
+          shareable_type,
+          shareable_id,
+          metrics_platform.id,
+          metrics_logged_in?
+        )
 
         # Respond with success
         render json: { success: true }, status: :ok

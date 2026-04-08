@@ -19,7 +19,7 @@ Technical documentation for developers working on the Better Together Community 
 - [Content Security Ingress System](systems/content_security_ingress_system.md) - Inbound mail, upload release gating, and Action Text attachment controls
 - [Events System](systems/events_system.md) - Event management system
 - [Agreements System](systems/agreements_system.md) - Platform legal agreements and exchange agreements
-- [AI Integration System](systems/ai_integration_system.md) - OpenAI-powered translation features
+- [AI Integration System](systems/ai_integration_system.md) - Robot-based LLM translation and embeddings architecture
 - [Interactive Mapping System](systems/mapping_system.md) - Leaflet.js maps with PostGIS spatial data
 - [All Systems →](systems/) - Complete system documentation
 

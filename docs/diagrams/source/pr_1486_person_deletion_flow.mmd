@@ -1,0 +1,23 @@
+flowchart LR
+    subgraph Request["Request path"]
+      A[RegistrationsController#destroy] --> B[find_or_create_deletion_request]
+      B --> C[Redirect to settings_my_data]
+      D[PersonDeletionRequestsController#create] --> E[pending request]
+    end
+
+    subgraph Review["Review + execution path"]
+      E --> F[PersonDeletionExecutor.call]
+      F --> G[PersonDeletionInventory.call]
+      G --> H[Manifest entries grouped by action]
+      H --> I[destroy linked records]
+      H --> J[retain request + audit rows]
+      F --> K[PersonDeletionAnonymizer.call]
+      F --> L[scrub request text]
+      F --> M[complete PersonPurgeAudit snapshot]
+    end
+
+    C --> D
+    I --> M
+    J --> M
+    K --> M
+    L --> M

@@ -1,0 +1,203 @@
+<% citation_option_groups = record.respond_to?(:available_evidence_citation_option_groups) ? record.available_evidence_citation_option_groups : {} %>
+<% citation_browser_groups = record.respond_to?(:available_evidence_citation_browser_groups) ? record.available_evidence_citation_browser_groups : [] %>
+<% origins = citation_browser_groups.map { |group| group[:origin] }.compact.uniq %>
+<% record_types = citation_browser_groups.map { |group| group[:record_type] }.compact.uniq %>
+<% contribution_roles = citation_browser_groups.map { |group| group[:contribution_role] }.compact.uniq %>
+<% contribution_types = citation_browser_groups.map { |group| group[:contribution_type] }.compact.uniq %>
+<%
+  signed_in_user = begin
+    current_user
+  rescue StandardError
+    nil
+  end
+%>
+<% github_import_url = signed_in_user.present? ? better_together.github_citation_imports_path(locale: I18n.locale, format: :json) : nil %>
+<% github_create_url = if signed_in_user.present? && record.persisted? && record.respond_to?(:citation_export_key)
+  better_together.import_github_citation_path(citeable_key: record.citation_export_key, id: record.to_param, locale: I18n.locale, format: :json)
+end %>
+
+<div class="border rounded p-2 mb-2"
+     data-controller="better_together--evidence-browser"
+     data-better_together--evidence-browser-github-url-value="<%= github_import_url %>"
+     data-better_together--evidence-browser-github-import-url-value="<%= github_create_url %>">
+  <div class="row row-cols-1 row-cols-md-2">
+    <div class="col mb-2">
+      <%= evidence_link_fields.label :citation_id, 'Citation' %>
+      <%= evidence_link_fields.select :citation_id,
+                                      grouped_options_for_select(citation_option_groups, evidence_link_fields.object.citation_id),
+                                      { include_blank: true },
+                                      class: 'form-select',
+                                      data: { better_together__evidence_browser_target: 'citationSelect' } %>
+      <small class="form-text text-muted">
+        Evidence links can reference citations on this record and linked contribution records.
+      </small>
+    </div>
+
+    <div class="col mb-2">
+      <%= evidence_link_fields.label :relation_type %>
+      <%= evidence_link_fields.select :relation_type,
+                                      options_for_select(BetterTogether::EvidenceLink::RELATION_TYPES.map { |type| [type.humanize, type] }, evidence_link_fields.object.relation_type),
+                                      {},
+                                      class: 'form-select' %>
+    </div>
+
+    <div class="col-12 mb-2">
+      <%= evidence_link_fields.label :locator %>
+      <%= evidence_link_fields.text_field :locator,
+                                          class: 'form-control',
+                                          placeholder: 'p. 10, fig. 2, 00:03:12',
+                                          data: { better_together__evidence_browser_target: 'locatorInput' } %>
+    </div>
+
+    <div class="col-12 mb-2">
+      <%= evidence_link_fields.label :quoted_text %>
+      <%= evidence_link_fields.text_area :quoted_text,
+                                         class: 'form-control',
+                                         rows: 2,
+                                         data: { better_together__evidence_browser_target: 'quotedTextInput' } %>
+    </div>
+
+    <div class="col-12 mb-2">
+      <%= evidence_link_fields.label :editor_note %>
+      <%= evidence_link_fields.text_area :editor_note, class: 'form-control', rows: 2 %>
+    </div>
+  </div>
+
+  <% if citation_browser_groups.any? %>
+    <details class="mt-2">
+      <summary class="small fw-semibold">Browse Evidence Sources</summary>
+      <div class="mt-3">
+        <div class="border rounded p-2 bg-light mb-3">
+          <div class="row row-cols-1 row-cols-md-4 g-2">
+            <div class="col">
+              <label class="form-label small">Source Origin</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="originFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All origins</option>
+                <% origins.each do |origin| %>
+                  <option value="<%= origin %>"><%= origin.humanize %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="form-label small">Record Type</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="recordTypeFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All record types</option>
+                <% record_types.each do |record_type| %>
+                  <option value="<%= record_type %>"><%= record_type %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="form-label small">Contribution Role</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="roleFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All roles</option>
+                <% contribution_roles.each do |role| %>
+                  <option value="<%= role %>"><%= role.humanize %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="col">
+              <label class="form-label small">Contribution Type</label>
+              <select class="form-select form-select-sm"
+                      data-better_together--evidence-browser-target="contributionTypeFilter"
+                      data-action="change->better_together--evidence-browser#filter">
+                <option value="">All contribution types</option>
+                <% contribution_types.each do |contribution_type| %>
+                  <option value="<%= contribution_type %>"><%= contribution_type.humanize %></option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <% citation_browser_groups.each do |group| %>
+          <div class="mb-3"
+               data-better_together--evidence-browser-target="group"
+               data-origin="<%= group[:origin] %>"
+               data-record-type="<%= group[:record_type] %>"
+               data-role="<%= group[:contribution_role] %>"
+               data-contribution-type="<%= group[:contribution_type] %>">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <h5 class="h6 mb-0"><%= group[:label] %></h5>
+              <% if group[:origin].present? %>
+                <span class="badge text-bg-secondary"><%= group[:origin].humanize %></span>
+              <% end %>
+              <% if group[:record_type].present? %>
+                <span class="badge text-bg-light border"><%= group[:record_type] %></span>
+              <% end %>
+              <% if group[:contribution_role].present? %>
+                <span class="badge text-bg-info"><%= group[:contribution_role].humanize %></span>
+              <% end %>
+              <% if group[:contribution_type].present? %>
+                <span class="badge text-bg-warning"><%= group[:contribution_type].humanize %></span>
+              <% end %>
+            </div>
+            <div class="d-grid gap-2">
+              <% group[:citations].each do |citation| %>
+                <div class="border rounded p-2 bg-light-subtle">
+                  <div class="d-flex justify-content-between gap-2 align-items-start">
+                    <div>
+                      <div class="fw-semibold"><%= citation[:reference_key] %>: <%= citation[:title] %></div>
+                      <div class="small text-muted">
+                        <%= [citation[:source_kind]&.humanize, citation[:source_author], citation[:publisher]].compact.join(' | ') %>
+                      </div>
+                    </div>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-primary"
+                            data-action="click->better_together--evidence-browser#chooseCitation"
+                            data-citation-id="<%= citation[:id] %>"
+                            data-locator="<%= citation[:locator] %>"
+                            data-excerpt="<%= citation[:excerpt] %>">
+                      Use Citation
+                    </button>
+                  </div>
+                  <% if citation[:locator].present? %>
+                    <div class="small mt-2"><strong>Locator:</strong> <%= citation[:locator] %></div>
+                  <% end %>
+                  <% if citation[:excerpt].present? %>
+                    <div class="small mt-1"><strong>Excerpt:</strong> <%= truncate(citation[:excerpt], length: 180) %></div>
+                  <% end %>
+                  <% if citation[:source_url].present? %>
+                    <div class="small mt-1">
+                      <%= link_to citation[:source_url], citation[:source_url], target: '_blank', rel: 'noopener' %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+
+  <% if github_import_url.present? && github_create_url.present? %>
+    <details class="mt-2" data-action="toggle->better_together--evidence-browser#loadGithubSources">
+      <summary class="small fw-semibold">Import GitHub Evidence</summary>
+      <div class="mt-3">
+        <p class="text-muted small">
+          Load GitHub repository, pull request, issue, and commit sources, import them into this record's bibliography, and attach them to this claim in one step.
+        </p>
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+          <button type="button"
+                  class="btn btn-sm btn-outline-dark"
+                  data-action="click->better_together--evidence-browser#loadGithubSources"
+                  data-better_together--evidence-browser-target="githubLoadButton">
+            Load GitHub Evidence
+          </button>
+          <span class="small text-muted" data-better_together--evidence-browser-target="githubStatus"></span>
+        </div>
+        <div class="d-grid gap-3" data-better_together--evidence-browser-target="githubGroups"></div>
+      </div>
+    </details>
+  <% end %>
+</div>

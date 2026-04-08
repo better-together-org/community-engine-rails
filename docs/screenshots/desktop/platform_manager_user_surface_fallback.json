@@ -1,0 +1,40 @@
+{
+  "name": "platform_manager_user_surface_fallback",
+  "device": "desktop",
+  "url": "/en/host/users",
+  "title": "404 - Page Not Found | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_manager_least_privilege_review",
+  "flow": "user_account_surface_fallback",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_manager_least_privilege_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "main h1",
+      "title": "User-account surface stays unavailable by default",
+      "bullets": [
+        "Default platform-management access does not expose a usable host user directory.",
+        "Without explicit account-admin authority, the user surface falls back to a not-found page in this flow.",
+        "A broader user-account surface still requires an explicit manage_platform_users grant."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 128.0,
+        "width": 1296.0,
+        "height": 48.0,
+        "right": 1368.0,
+        "bottom": 176.0,
+        "center_x": 720.0,
+        "center_y": 152.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 196.0,
+        "width": 380,
+        "height": 430,
+        "score": 1285.0
+      }
+    }
+  ]
+}

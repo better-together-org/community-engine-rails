@@ -27,6 +27,14 @@ RSpec.shared_examples 'a seedable model' do
         expect(seed_hash.keys).to include(BetterTogether::Seed::DEFAULT_ROOT_KEY)
       end
 
+      it 'includes canonical seed metadata' do
+        seed_hash = record.export_as_seed
+        root_key = seed_hash.keys.first
+
+        expect(seed_hash[root_key][:seed]).to include(:type, :identifier, :created_by, :created_at, :origin)
+        expect(seed_hash[root_key][:seed][:origin][:profile]).to eq('manual_export')
+      end
+
       it 'includes the record data under :record (or your chosen key)' do
         seed_hash = record.export_as_seed
         root_key = seed_hash.keys.first
@@ -46,6 +54,17 @@ RSpec.shared_examples 'a seedable model' do
         creator = create(:better_together_person)
         record.export_as_seed(creator_id: creator.id)
         expect(BetterTogether::Seed.last.creator_id).to eq(creator.id)
+      end
+
+      it 'only marks person self-export with the personal_export profile' do
+        record.export_as_seed(creator_id: record.id)
+        if record.is_a?(BetterTogether::Person)
+          expect(BetterTogether::Seed.last.origin[:profile]).to eq('personal_export')
+          expect(BetterTogether::Seed.last.creator_id).to eq(record.id)
+        else
+          expect(BetterTogether::Seed.last.origin[:profile]).to eq('manual_export')
+          expect(BetterTogether::Seed.last.creator_id).to be_nil
+        end
       end
     end
 

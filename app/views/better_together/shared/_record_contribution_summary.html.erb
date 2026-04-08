@@ -1,0 +1,23 @@
+<%# locals: (record:) %>
+<% return unless record.respond_to?(:contributions) %>
+<% contribution_count = record.contributions.size %>
+<% github_contribution_count = record.respond_to?(:github_backed_contribution_count) ? record.github_backed_contribution_count : 0 %>
+<% github_source_count = record.respond_to?(:github_backed_source_count) ? record.github_backed_source_count : 0 %>
+<% github_handles = record.respond_to?(:github_contributor_handles) ? record.github_contributor_handles : [] %>
+<% return if contribution_count.zero? && github_contribution_count.zero? && github_source_count.zero? %>
+
+<div class="small text-muted record-contribution-summary">
+  <span><strong>Contributors:</strong></span>
+  <% summary_parts = [] %>
+  <% summary_parts << "#{contribution_count} governed" if contribution_count.positive? %>
+  <% summary_parts << "#{github_contribution_count} GitHub-linked" if github_contribution_count.positive? %>
+  <% summary_parts << "#{github_source_count} GitHub source#{'s' unless github_source_count == 1}" if github_source_count.positive? %>
+  <%= summary_parts.join(' · ') %>
+  <% if github_handles.any? %>
+    <span class="d-block mt-1">
+      <% github_handles.each do |handle| %>
+        <span class="badge text-bg-dark me-1">GitHub: @<%= handle %></span>
+      <% end %>
+    </span>
+  <% end %>
+</div>

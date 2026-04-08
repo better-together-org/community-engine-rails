@@ -316,6 +316,8 @@ fr:
         conversations: Conversations
         created_conversations: Conversations créées
         description: Description
+        federate_content: Autoriser cette plateforme à inclure vos publications, pages
+          et événements publics dans des flux de fédération approuvés.
         identifications: Identifications
         identifier: Identifiant
         locale: Langue
@@ -598,16 +600,31 @@ fr:
       better_together/category: Catégorie
       better_together/checklist: Liste de Contrôle
       better_together/community: Communauté
+      better_together/content/accordion_block: Accordéon
+      better_together/content/alert_block: Alerte
       better_together/content/block: Bloc
+      better_together/content/call_to_action_block: Appel à l'action
+      better_together/content/checklist_block: Liste de contrôle
+      better_together/content/communities_block: Communautés
       better_together/content/css: CSS Personnalisé
+      better_together/content/events_block: Événements
       better_together/content/hero: Héros
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/link: Lien
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagramme Mermaid
+      better_together/content/navigation_area_block: Zone de navigation
       better_together/content/page_block: Blocage de Pages
+      better_together/content/people_block: Personnes
+      better_together/content/platform_block: Plateforme
+      better_together/content/posts_block: Publications
+      better_together/content/quote_block: Citation
       better_together/content/rich_text: Texte Enrichi
+      better_together/content/statistics_block: Statistiques
       better_together/content/template: Fichier de Modèle
+      better_together/content/video_block: Vidéo
       better_together/conversation: Conversation
       better_together/conversation_participant: Participant à la Conversation
       better_together/event: Événement
@@ -669,6 +686,46 @@ fr:
       private: Privé
       public: Public
   better_together:
+    access_modes:
+      actions:
+        create_account: Créer un compte
+        join_now: Rejoindre maintenant
+        request_to_join: Demander à rejoindre
+        sign_in: Se connecter
+      already_member: Vous êtes déjà membre de cette communauté.
+      current_status:
+        active: Vous êtes déjà membre.
+        pending: Votre demande est en attente d'examen.
+      descriptions:
+        generic:
+          invitation: Les personnes ont besoin d'une invitation avant de rejoindre
+            cet espace.
+          open: Les personnes peuvent rejoindre immédiatement sans attendre d'approbation.
+          request: Les personnes peuvent demander à rejoindre. Une personne responsable
+            examine les demandes avant d'accorder l'accès.
+        platform:
+          invitation: Les personnes ont besoin d'une invitation avant de pouvoir créer
+            un compte ici.
+          open: Les personnes peuvent créer un compte et rejoindre sans attendre d'approbation.
+      form:
+        community_help: Choisissez si les personnes rejoignent immédiatement ou si
+          elles doivent d'abord demander l'accès.
+        community_requests: Exiger une demande d'accès avant qu'une personne devienne
+          membre
+        platform_help: Choisissez si les personnes peuvent créer un compte directement
+          ou si elles ont d'abord besoin d'une invitation.
+        platform_invitation_help: Les invitations peuvent préremplir les adresses
+          e-mail et attribuer des rôles de plateforme ou de communauté après acceptation.
+        platform_invitation_only: Exiger une invitation avant qu'une personne puisse
+          s'inscrire
+      heading: Comment rejoindre
+      labels:
+        invitation: Sur invitation uniquement
+        open: Accès ouvert
+        request: Demander à rejoindre
+      membership_joined: Vous avez rejoint cette communauté.
+      membership_request_pending: Votre demande d'adhésion est déjà en attente.
+      membership_requested: Votre demande d'adhésion a été envoyée.
     addresses:
       add: Ajouter une adresse
       address: Adresse
@@ -708,6 +765,14 @@ fr:
         close: Fermer
         title: Afficher l'accord requis
       participant:
+        acceptance_methods:
+          agreement_review: examen de l’accord
+          api: API
+          legacy: enregistrement hérité
+          sign_up: inscription
+          system: système
+        accepted_via: Accepté via %{method}
+        agreement_revision: Révision de l’accord %{timestamp}
         pending: en attente
       show:
         title: Accord
@@ -809,7 +874,8 @@ fr:
       hint_label: Titre court pour l'élément de la liste (requis).
       hint_parent: 'Optionnel : imbriquez cet élément sous un autre. La profondeur
         maximale d''imbrication est de 2.'
-      hint_privacy: 'Choisissez qui peut voir cet élément : Public ou Privé.'
+      hint_privacy: 'Choisissez qui peut voir cet élément : Public, Communauté ou
+        Privé.'
       label: Libellé
       move_down: Déplacer vers le bas
       move_up: Déplacer vers le haut
@@ -831,6 +897,10 @@ fr:
         items_title: Éléments
         no_items: Aucun élément à afficher
     communities:
+      form:
+        allow_membership_requests: Autoriser les demandes d'adhésion
+        allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
+          pour cette communauté lorsque la configuration d'accès l'autorise.
       index:
         new_btn_text: Nouvelle communauté
       new:
@@ -906,8 +976,38 @@ fr:
           select_prompt: "— Sélectionner une liste de vérification —"
         communities_block:
           empty: Aucune communauté à afficher.
+        embeds:
+          blocked_body: "%{title} n'a pas pu être affiché ici parce que cette plateforme
+            n'a pas autorisé cette origine d'iframe dans les paramètres de la politique
+            de sécurité du contenu."
+          blocked_instructions: Ajoutez %{origin} dans Hôte > Plateforme > Sécurité
+            / intégrations CSP > Origines d'iframe sortantes autorisées, puis rechargez
+            cette page.
+          blocked_origin_label: 'Origine bloquée :'
+          blocked_title: Ce contenu intégré est actuellement bloqué
+          invalid_url_body: Vérifiez l'URL de l'iframe et assurez-vous qu'il s'agit
+            d'une adresse HTTPS complète.
+          invalid_url_title: Ce contenu intégré possède une URL invalide
+          open_in_new_tab: Ouvrir le contenu intégré dans un nouvel onglet
         events_block:
           empty: Aucun événement à afficher.
+        hero:
+          editor:
+            background: Arrière-plan
+            cta_button: Bouton d’appel à l’action
+            cta_url_invalid: Veuillez fournir une URL valide commençant par http://
+              ou https://.
+            heading_color: Couleur du titre
+            overlay_color: Couleur de superposition
+            paragraph_color: Couleur du paragraphe
+        iframe_block:
+          csp_help: Si cette intégration n'est pas autorisée pour la plateforme actuelle,
+            Community Engine affichera un message d'aide visible au lieu d'une iframe
+            vide.
+          default_title: Contenu intégré
+          missing_url: Aucune URL d'iframe configurée.
+          url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
+            ou une autre intégration de confiance d'un espace communautaire.
         markdown:
           fields:
             auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
@@ -1422,6 +1522,8 @@ fr:
           title: Titre
     global:
       add: Ajouter
+    governance:
+      robot_author: Auteur robot
     host_nav:
       label: Navigation de l’hôte
       toggle: Navigation de l’hôte
@@ -1720,6 +1822,28 @@ fr:
         signature_text: Cordialement, L'équipe de %{joinable_name}
         subject: Votre adhésion %{joinable_type} a été mise à jour pour %{joinable_name}
         view_joinable: Voir %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Bonjour %{name},
+        learn_more: Voir %{community_name}
+        message: Votre demande pour rejoindre %{community_name} a été refusée.
+        reviewed_by: Examinée par %{decision_actor_name}.
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{community_name}
+        signature_text: Cordialement, L'équipe de %{community_name}
+        subject: Votre demande d'adhésion à %{community_name} a été refusée
+      submitted:
+        greeting: Bonjour %{name},
+        message: "%{requestor_name} a demandé à rejoindre %{community_name}."
+        request_message_label: Message de la personne demandeuse
+        requestor_email_label: 'Courriel de la personne demandeuse :'
+        review_request: Examiner la demande d'adhésion
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{community_name}
+        signature_text: Cordialement, L'équipe de %{community_name}
+        subject: Nouvelle demande d'adhésion pour %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1758,6 +1882,15 @@ fr:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Les personnes connectées dont la demande est
+          approuvée deviennent immédiatement membres et reçoivent une confirmation
+          dans l'application et par courriel.
+        decision_notifications_heading: Décision et notifications
+        decline_flow: Refuser informe la personne demandeuse par courriel, et les
+          personnes connectées reçoivent aussi une notification dans l'application.
+        email_requestor_flow: Les personnes qui demandent l'accès uniquement par courriel
+          reçoivent un courriel d'invitation pour créer un compte et rejoindre la
+          communauté.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2104,6 +2237,12 @@ fr:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Votre demande pour rejoindre %{community_name} a été refusée
+        title: Demande d'adhésion refusée pour %{community_name}
+      membership_request_submitted:
+        body: "%{requestor_name} a demandé à rejoindre %{community_name}"
+        title: Nouvelle demande d'adhésion pour %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}
@@ -2195,8 +2334,12 @@ fr:
         clear_filters: Effacer les filtres
         filter: Filtrer
         new_page: Nouvelle page
+        new_release_package_draft: Nouveau brouillon de paquet de publication
         search_by_slug: Rechercher par slug...
         search_by_title: Rechercher par titre...
+      release_package_draft:
+        created: 'Brouillon privé de paquet de publication créé. Publication associée
+          : %{post_title}'
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
@@ -2211,12 +2354,15 @@ fr:
         recent_events: Événements Récents
         title: Calendrier Personnel
         upcoming_events: Événements à Venir
+      deleted_name: Personne supprimée
       device_permissions:
         camera: Caméra
         location: Localisation
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Groupe de permissions
+      federate_content: Autoriser cette plateforme à inclure vos publications, pages
+        et événements publics dans des flux de fédération approuvés.
       index:
         new_person: Nouvelle personne
       notification_preferences: Préférences de notification des messages
@@ -2550,6 +2696,23 @@ fr:
         pending: En attente
     platforms:
       form:
+        allow_membership_requests: Autoriser les demandes d'adhésion
+        allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
+          sur l'écran d'inscription avec invitation pour la communauté hôte principale
+          de cette plateforme.
+        csp_frame_ancestors_text_hint: Qui peut intégrer ce site CE. Sélectionnez
+          des origines de confiance ou saisissez un nouveau nom d'hôte/origine puis
+          appuyez sur Entrée. Laissez vide pour conserver frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Origines autorisées pour l'intégration entrante
+        csp_frame_src_text_hint: Ce que ce site CE peut intégrer dans des iframes,
+          comme Formbricks ou d'autres intégrations communautaires de confiance. Sélectionnez
+          des origines de confiance ou saisissez un nouveau nom d'hôte/origine puis
+          appuyez sur Entrée.
+        csp_frame_src_text_label: Origines autorisées pour les iframes sortantes
+        csp_img_src_text_hint: Hôtes d'images supplémentaires que ce site CE peut
+          charger. Sélectionnez des origines de confiance ou saisissez un nouveau
+          nom d'hôte/origine puis appuyez sur Entrée.
+        csp_img_src_text_label: Origines externes d'images autorisées
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
@@ -2583,6 +2746,7 @@ fr:
       none_body: Il n'y a pas de publications à afficher pour le moment.
       none_title: Pas encore de publications
       published_on: Publié %{date}
+      robot_authors: Auteurs robots
       save_post: Enregistrer la publication
       updated_on_short: Mis à jour
       view_post: Voir la publication
@@ -2783,6 +2947,18 @@ fr:
         status: Statut du dossier
       index:
         filter: Filtrer
+        local_snapshot_description: Signaux locaux déterministes construits à partir
+          des signalements, des dossiers et des notes. L'analyse distante est facultative
+          et additive.
+        local_snapshot_generated_at: Généré %{time}
+        local_snapshot_title: Instantané local de révision
+        snapshot:
+          open_cases: Dossiers ouverts
+          participant_notes: Notes visibles par les participantes et participants
+          repeat_reportables: Éléments signalés à plusieurs reprises
+          retaliation_risk: Risque de représailles
+          unassigned_open: Dossiers ouverts non attribués
+          urgent_open: Dossiers ouverts urgents
         title: Dossiers de sécurité
       notices:
         updated: Le dossier de sécurité a été mis à jour.
@@ -2848,8 +3024,43 @@ fr:
           description: Connectez et gérez vos comptes de plateformes externes.
           title: Comptes Connectés
         my_data:
-          description: View, download, or delete your personal data exports.
-          title: My Data
+          deletion:
+            actions: Actions
+            cancel: Cancel request
+            description: Deletion requests are queued for human review so safety,
+              legal, and community obligations can be handled carefully.
+            reason: Reason for deletion request
+            requested_at: Requested
+            status: Status
+            submit: Request account deletion
+            title: Account deletion requests
+          deletion_request_cancelled: Your deletion request has been cancelled.
+          deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
+          deletion_request_failed: We could not create your deletion request.
+          description: Voir, télécharger ou supprimer vos exportations de données
+            personnelles.
+          export_not_ready: Your export is not ready yet.
+          export_requested: Your data export has been requested.
+          exports:
+            actions: Actions
+            description: Generate a portable JSON export of your profile, memberships,
+              agreements, and other account-linked records.
+            download: Download
+            empty: You have not requested any account exports yet.
+            pending: Export in progress
+            request: Request export
+            requested_at: Requested
+            requesting: Requesting export...
+            status: Status
+            title: Downloadable account exports
+          seeds:
+            description: Earlier personal exports remain available here for advanced
+              portability and interoperability workflows.
+            empty: No legacy portable seed exports are available.
+            title: Existing portable seed exports
+            view: View
+          title: Mes données
         navigation_aria_label: Navigation des paramètres
         personal:
           coming_soon: Les paramètres personnels arrivent bientôt.
@@ -2875,13 +3086,15 @@ fr:
           developer: Développeur
           device_permissions: Autorisations de l'Appareil
           integrations: Intégrations
-          my_data: My Data
+          my_data: Mes données
           personal: Personnel
           platform: Plateforme
           preferences: Préférences
           privacy: Confidentialité
         title: Paramètres
     setup_wizard_steps:
+      already_completed: Cette plateforme a déjà été configurée. Veuillez vous connecter
+        pour gérer votre plateforme.
       create_admin:
         flash:
           please_address_errors: Veuillez corriger les erreurs ci-dessous.
@@ -2984,6 +3197,9 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+    uploads:
+      index:
+        storage_usage: Vous utilisez %{size} de stockage
     validators:
       safe_federation_url:
         credentials_in_url: ne doit pas contenir d'identifiants (utilisateur:motdepasse@)
@@ -3494,6 +3710,8 @@ fr:
       unlocked: Votre compte a bien été déverrouillé. Veuillez vous connecter.
   devise_omniauth_callbacks:
     failure: Il y a eu un problème lors de votre connexion via %{kind}. %{reason}
+    generic_failure: Un problème est survenu lors de votre connexion. Veuillez vous
+      inscrire ou réessayer plus tard.
     success: Authentification réussie depuis le compte %{kind}.
   doorkeeper:
     errors:
@@ -3697,9 +3915,11 @@ fr:
         cover_image: Cover image
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
-          personnes autres que les gestionnaires de la plateforme.
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
         description: Fournissez une brève description ou biographie.
+        federate_content: Choisir d'autoriser cette plateforme à partager vos publications,
+          pages et événements publics avec des plateformes connectées approuvées.
+          personnes autres que les gestionnaires de la plateforme.
         locale: Sélectionnez la langue préférée pour la personne.
         name: Entrez le nom complet de la personne.
         notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message
@@ -3769,6 +3989,13 @@ fr:
     uk: Українська
   meta:
     default_description: Bienvenue sur %{platform_name}
+    descriptions:
+      communities:
+        index: Découvrir les communautés sur %{platform_name}.
+        show: En savoir plus sur %{community_name} sur %{platform_name}.
+      conversations:
+        index: Parcourez vos conversations sur %{platform_name}.
+        show: Voir la conversation %{conversation_subject} sur %{platform_name}.
     page:
       description_fallback: Lire %{title} sur %{platform_name}
   metrics:
@@ -3894,19 +4121,20 @@ fr:
     show:
       title: Détails d'adhésion à la plateforme
   person_seeds:
-    confirm_destroy: Delete this data export? This cannot be undone.
-    export_failed: Your data export could not be completed. Please try again.
-    export_queued: Your data export has been requested. A download link will appear
-      below once it is ready.
-    export_too_soon: You requested an export recently. Please wait before requesting
-      another.
-    export_unavailable: Your account does not have a person profile to export.
+    confirm_destroy: Supprimer cette exportation de données ? Cette action est irréversible.
+    export_failed: Votre exportation de données n'a pas pu être terminée. Veuillez
+      réessayer.
+    export_queued: Votre exportation de données a été demandée. Un lien de téléchargement
+      apparaîtra ci-dessous lorsqu'elle sera prête.
+    export_too_soon: Vous avez demandé une exportation récemment. Veuillez attendre
+      avant d'en demander une autre.
+    export_unavailable: Votre compte ne possède pas de profil de personne à exporter.
     index:
-      empty: You have no data exports yet.
-      exporting: Requesting…
-      new_export: Request Data Export
-      new_export_hint: Generate a portable export of your personal data.
-      title: My Data
+      empty: Vous n'avez pas encore d'exportations de données.
+      exporting: Demande en cours…
+      new_export: Demander une exportation de données
+      new_export_hint: Générez une exportation portable de vos données personnelles.
+      title: Mes données
   platform_invitations:
     confirm_delete: Confirmer la suppression
   platforms:
@@ -3961,10 +4189,11 @@ fr:
     placeholder: Rechercher...
   seeds:
     actions:
-      destroy: Destroy seed
+      destroy: Supprimer la graine
       edit: Edit seed
-      show: Show seed
-    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+      show: Voir la graine
+    confirm_destroy: Êtes-vous sûr de vouloir supprimer cette graine ? Cette action
+      est irréversible.
     edit:
       title: 'Editing: %{identifier}'
     errors:
@@ -3975,16 +4204,16 @@ fr:
     index:
       empty: No seeds found.
       new_seed: New seed
-      title: Seeds
+      title: Graines
     new:
-      title: New Seed
-    seeded_by: Seeded by %{created_by}
+      title: Nouvelle graine
+    seeded_by: Générée par %{created_by}
     show:
-      download_yaml: Download YAML
-      origin: Origin
-      payload: Payload
-      plantings: Planting History
-      yaml_export: YAML Export
+      download_yaml: Télécharger le YAML
+      origin: Origine
+      payload: Contenu
+      plantings: Historique de plantation
+      yaml_export: Export YAML
   shared:
     by: par
     links:

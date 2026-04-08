@@ -50,7 +50,6 @@ module BetterTogether
     validates :recipient_local_part, presence: true
     validates :recipient_domain, presence: true
     validates :message_id, presence: true
-
     def content_security_records
       JSON.parse(content_security_records_json.presence || '[]')
     rescue JSON::ParserError

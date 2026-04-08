@@ -39,7 +39,7 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
       {
         page: {
           title: 'New Test Page',
-          privacy: 'public'
+          privacy: 'private'
         },
         locale: I18n.default_locale
       }
@@ -49,13 +49,48 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
       {
         page: {
           title: '',
-          privacy: 'public'
+          privacy: 'private'
         },
         locale: I18n.default_locale
       }
     end
 
     context 'with valid parameters' do
+      it 'persists selected robot authorships' do
+        robot = create(:better_together_robot, platform: BetterTogether::Platform.find_by(host: true))
+
+        post better_together.pages_path, params: {
+          page: {
+            title: 'Robot Authored Page',
+            privacy: 'private',
+            robot_author_ids: [robot.id]
+          },
+          locale: I18n.default_locale
+        }
+
+        created_page = BetterTogether::Page.last
+        expect(created_page.robot_authors).to include(robot)
+      end
+
+      it 'persists selected editor contributions for people and robots' do
+        editor = create(:better_together_person)
+        robot_editor = create(:better_together_robot, platform: BetterTogether::Platform.find_by(host: true))
+
+        post better_together.pages_path, params: {
+          page: {
+            title: 'Collaboratively Edited Page',
+            privacy: 'private',
+            editor_ids: [editor.id],
+            robot_editor_ids: [robot_editor.id]
+          },
+          locale: I18n.default_locale
+        }
+
+        created_page = BetterTogether::Page.last
+        expect(created_page.editors).to include(editor)
+        expect(created_page.robot_editors).to include(robot_editor)
+      end
+
       it 'sets the creator from current_person' do
         platform_manager_user = BetterTogether::User.find_by(email: 'manager@example.test')
 
@@ -122,11 +157,32 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
       it 'returns 404 because route is not available' do
         expect do
           post better_together.pages_path, params: {
-            page: { title: 'Test', privacy: 'public' },
+            page: { title: 'Test', privacy: 'private' },
             locale: I18n.default_locale
           }
         end.to raise_error(ActionController::RoutingError, /No route matches/)
       end
+    end
+  end
+
+  describe 'POST /host/pages/create_release_package_draft' do
+    it 'creates a private draft page and companion post' do
+      expect do
+        post better_together.create_release_package_draft_pages_path,
+             params: { title: 'Community Engine 0.11.0 Release Package' }
+      end.to change(BetterTogether::Page, :count).by(1)
+                                                 .and change(BetterTogether::Post, :count).by(1)
+
+      created_page = BetterTogether::Page.order(created_at: :desc).first
+      created_post = BetterTogether::Post.order(created_at: :desc).first
+
+      expect(created_page.title).to eq('Community Engine 0.11.0 Release Package')
+      expect(created_post.title).to eq('Community Engine 0.11.0 Release Package')
+      expect(created_page.privacy).to eq('private')
+      expect(created_post.privacy).to eq('private')
+      expect(created_page.published_at).to be_nil
+      expect(created_post.published_at).to be_nil
+      expect(response).to redirect_to(edit_page_path(created_page))
     end
   end
 end

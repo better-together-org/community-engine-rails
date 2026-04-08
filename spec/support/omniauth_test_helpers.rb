@@ -2,6 +2,10 @@
 
 # Helpers for testing OmniAuth authentication flows in isolation
 module OmniauthTestHelpers # :nodoc:
+  def self.reset_failure_handler!
+    OmniAuth.config.on_failure = BetterTogether::Users::OmniauthCallbacksController.omniauth_failure_handler
+  end
+
   # Provides RSpec configuration for isolating OmniAuth state
   # Must be called at describe/context level using metadata tag :omniauth
   #
@@ -18,15 +22,13 @@ module OmniauthTestHelpers # :nodoc:
       # Save original OmniAuth state
       original_test_mode = OmniAuth.config.test_mode
       original_mocks = OmniAuth.config.mock_auth.to_hash.dup
-      original_on_failure = OmniAuth.config.on_failure
-
       # Run the example
       example.run
 
       # Restore original state
       OmniAuth.config.test_mode = original_test_mode
       OmniAuth.config.mock_auth = OmniAuth::AuthHash.new(original_mocks)
-      OmniAuth.config.on_failure = original_on_failure
+      OmniauthTestHelpers.reset_failure_handler!
     end
   end
   # rubocop:enable Metrics/AbcSize

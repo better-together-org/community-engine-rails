@@ -1,0 +1,32 @@
+flowchart TD
+    A[Create or update JOATU request/offer/agreement] --> B[Default privacy private]
+    B --> C{Actor chooses public visibility?}
+    C -- No --> D[Remain private or participant-scoped]
+    C -- Yes --> E[Run public publishing agreement gate]
+    E --> F{Agreement + authorization valid?}
+    F -- No --> G[Reject public transition]
+    F -- Yes --> H[Persist public JOATU record]
+
+    D --> I[Policy scope allows creator or participant access]
+    H --> J[Policy scope allows public discovery]
+
+    subgraph JOATU Records
+      RQ[Request]
+      OF[Offer]
+      AG[Agreement]
+    end
+
+    RQ --> A
+    OF --> A
+    AG --> A
+
+    subgraph Read Rules
+      K[Unrelated authenticated users]
+      L[Creators and participants]
+      M[Stewards and managers]
+    end
+
+    J --> K
+    I --> L
+    I --> M
+    J --> M

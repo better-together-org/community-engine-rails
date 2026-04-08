@@ -33,6 +33,30 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe '.latest_first' do
+    it 'orders newer published posts before older published posts' do
+      older_post = create(:better_together_post, published_at: 3.days.ago, created_at: 4.days.ago)
+      newer_post = create(:better_together_post, published_at: 1.day.ago, created_at: 2.days.ago)
+
+      expect(described_class.latest_first).to eq([newer_post, older_post])
+    end
+
+    it 'falls back to created_at when published_at is nil' do
+      older_draft = create(:better_together_post, published_at: nil, created_at: 3.days.ago)
+      newer_draft = create(:better_together_post, published_at: nil, created_at: 1.day.ago)
+
+      expect(described_class.latest_first).to eq([newer_draft, older_draft])
+    end
+
+    it 'remains valid when chained with translation joins' do
+      older_post = create(:better_together_post, published_at: 3.days.ago, created_at: 4.days.ago)
+      newer_post = create(:better_together_post, published_at: 1.day.ago, created_at: 2.days.ago)
+
+      expect { described_class.i18n.latest_first.load }.not_to raise_error
+      expect(described_class.i18n.latest_first.where(id: [older_post.id, newer_post.id]).to_a).to eq([newer_post, older_post])
+    end
+  end
+
   describe 'after_create #add_creator_as_author' do
     it 'creates an authorship for the creator_id' do
       creator = create(:better_together_person)
@@ -44,6 +68,35 @@ RSpec.describe BetterTogether::Post do
       post.save!
 
       expect(post.authors.reload.map(&:id)).to include(creator.id)
+    end
+
+    it 'does not add the creator when an explicit robot author was selected' do
+      creator = create(:better_together_person)
+      platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform)
+      robot = create(:robot, platform:)
+      post = described_class.new(title: 'Robot Post', identifier: 'robot-post', content: 'Body', privacy: 'public',
+                                 platform:, creator:)
+
+      post.robot_authors << robot
+      post.save!
+
+      expect(post.robot_authors).to contain_exactly(robot)
+      expect(post.authors).to be_empty
+      expect(post.governed_authors).to contain_exactly(robot)
+    end
+  end
+
+  describe '#governed_authors' do
+    it 'includes robot authors alongside people authors' do
+      post = create(:better_together_post)
+      person = create(:better_together_person)
+      robot = create(:robot, platform: post.platform)
+
+      post.authorships.create!(author: person, position: 1)
+      post.authorships.create!(author: robot, position: 2)
+
+      expect(post.governed_authors).to eq([post.authorships.first.author, person, robot].uniq)
+      expect(post.robot_authors).to include(robot)
     end
   end
 

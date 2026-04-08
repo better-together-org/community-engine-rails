@@ -21,8 +21,10 @@ module BetterTogether
 
     scope :positioned, -> { order(:resource_type, :position) }
 
-    def assign_resource_permissions(permission_identifiers, save_record: true)
+    def assign_resource_permissions(permission_identifiers, save_record: true, sync: false)
       permissions = ::BetterTogether::ResourcePermission.where(identifier: permission_identifiers)
+      synchronize_resource_permissions!(permissions) if sync
+
       # Avoid duplicate join records when called multiple times
       new_permissions = permissions.where.not(id: resource_permissions.select(:id))
       resource_permissions << new_permissions if new_permissions.any?
@@ -30,12 +32,27 @@ module BetterTogether
       save if save_record
     end
 
-    def position_scope
-      :resource_type
-    end
-
     def to_s
       name
+    end
+
+    private
+
+    def synchronize_resource_permissions!(permissions)
+      resource_types = permissions.distinct.pluck(:resource_type)
+      return if resource_types.empty?
+
+      stale_permission_ids = resource_permissions
+                             .where(resource_type: resource_types)
+                             .where.not(id: permissions.select(:id))
+                             .pluck(:id)
+      return if stale_permission_ids.empty?
+
+      role_resource_permissions.where(resource_permission_id: stale_permission_ids).delete_all
+    end
+
+    def position_scope
+      :resource_type
     end
   end
 end

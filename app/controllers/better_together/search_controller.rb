@@ -3,6 +3,8 @@
 module BetterTogether
   # Handles dispatching search queries to elasticsearch and displaying the results
   class SearchController < ApplicationController
+    include Metrics::PlatformContext
+
     def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       @query = params[:q]
       search_results = perform_search
@@ -31,16 +33,23 @@ module BetterTogether
     end
 
     def track_search_query(search_results)
+      query = BetterTogether::Metrics::SearchQueryCaptureService.new.call(@query)
+      return if query.blank?
+
       BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
-        @query,
+        query,
         search_results.records.length,
-        I18n.locale.to_s
+        I18n.locale.to_s,
+        metrics_platform.id,
+        metrics_logged_in?
       )
     end
 
     def assign_search_results(search_results)
-      @results = Kaminari.paginate_array(search_results.records).page(params[:page]).per(10)
-      @suggestions = search_results.suggestions
+      @results = Kaminari.paginate_array(visible_search_records(search_results.records)).page(params[:page]).per(10)
+      # Backend term suggestions are not privacy-aware and can leak unpublished or
+      # private titles. Keep them disabled until the search backend can scope them.
+      @suggestions = []
       @search_backend = search_results.backend
       @search_status = search_results.status
     end
@@ -49,6 +58,32 @@ module BetterTogether
       return unless search_results.status == :unreachable
 
       Rails.logger.warn("Search error: #{search_results.error}")
+    end
+
+    def visible_search_records(records)
+      Array(records).group_by(&:class).flat_map do |model_class, model_records|
+        visible_records_for(model_class, model_records)
+      end
+    end
+
+    def search_record_visible?(record)
+      policy(record).show?
+    rescue Pundit::Error, NoMethodError
+      public_search_record?(record)
+    end
+
+    def visible_records_for(model_class, records)
+      visible_ids = policy_scope(model_class).where(id: records.map(&:id)).pluck(:id)
+      records.select { |record| visible_ids.include?(record.id) }
+    rescue Pundit::Error, NoMethodError
+      records.select { |record| search_record_visible?(record) }
+    end
+
+    def public_search_record?(record)
+      privacy_visible = !record.respond_to?(:privacy_public?) || record.privacy_public?
+      publish_visible = !record.respond_to?(:published?) || record.published?
+
+      privacy_visible && publish_visible
     end
   end
 end

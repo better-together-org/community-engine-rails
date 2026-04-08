@@ -10,11 +10,16 @@ module BetterTogether
     end
 
     include Author
+    include Communicator
     include Contactable
+    include CreatedRecords
     include FriendlySlug
+    include GovernanceParticipant
+    include GovernedAgent
     include HostsEvents
     include Identifier
     include Identity
+    include InvitationParticipant
     include Member
     include PrimaryCommunity
     include Privacy
@@ -33,9 +38,13 @@ module BetterTogether
     has_many :conversation_participants, dependent: :destroy
     has_many :one_time_prekeys, dependent: :destroy, class_name: 'BetterTogether::OneTimePrekey'
     has_many :conversations, through: :conversation_participants
-    has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
+    has_many :created_conversations,
+             foreign_key: :creator_id,
+             class_name: 'BetterTogether::Conversation',
+             dependent: :destroy,
+             inverse_of: :creator
 
-    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreement_participants, as: :participant, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 
     has_many :person_blocks, foreign_key: :blocker_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
@@ -86,6 +95,16 @@ module BetterTogether
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
     has_many :event_invitations, class_name: 'BetterTogether::EventInvitation', as: :invitee, dependent: :destroy
 
+    has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
+    has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
+    has_many :person_purge_audits, class_name: 'BetterTogether::PersonPurgeAudit', inverse_of: :person
+    has_many :person_checklist_items, class_name: 'BetterTogether::PersonChecklistItem', dependent: :destroy, inverse_of: :person
+    has_many :ai_translation_logs,
+             class_name: 'BetterTogether::Ai::Log::Translation',
+             foreign_key: :initiator_id,
+             inverse_of: :initiator,
+             dependent: :destroy
+
     has_one :user_identification,
             lambda {
               where(
@@ -124,6 +143,7 @@ module BetterTogether
       locale String, default: I18n.default_locale.to_s
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
       receive_messages_from_members Boolean, default: false
+      federate_content Boolean, default: false
     end
 
     store_attributes :notification_preferences do
@@ -147,6 +167,12 @@ module BetterTogether
     def receive_messages_from_members=(value)
       prefs = (preferences || {}).dup
       prefs['receive_messages_from_members'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.preferences = prefs
+    end
+
+    def federate_content=(value)
+      prefs = (preferences || {}).dup
+      prefs['federate_content'] = ActiveModel::Type::Boolean.new.cast(value)
       self.preferences = prefs
     end
 
@@ -182,6 +208,8 @@ module BetterTogether
     has_one_attached :profile_image
     has_one_attached :cover_image
 
+    scope :anonymized, -> { where.not(anonymized_at: nil) }
+
     # Resize the profile image before rendering (non-blocking version)
     def profile_image_variant(size)
       return profile_image.variant(resize_to_fill: [size, size]) unless Rails.env.production?
@@ -190,14 +218,13 @@ module BetterTogether
       profile_image.variant(resize_to_fill: [size, size])
     end
 
-    # Get optimized profile image variant without blocking rendering
+    # Return a same-origin proxy path so image requests stay compatible with CSP.
     def profile_image_url(size: 300)
       return nil unless profile_image.attached?
 
       variant = profile_image.variant(resize_to_fill: [size, size])
 
-      # For better performance, use Rails URL helpers for variant
-      Rails.application.routes.url_helpers.url_for(variant)
+      Rails.application.routes.url_helpers.rails_storage_proxy_path(variant, only_path: true)
     rescue ActiveStorage::FileNotFoundError
       nil
     end
@@ -213,6 +240,26 @@ module BetterTogether
 
     def valid_event_host_ids
       [id] + member_communities.pluck(:id)
+    end
+
+    def github_integrations
+      person_platform_integrations.github
+    end
+
+    def github_handles
+      github_integrations.order(:handle).pluck(:handle).compact_blank.uniq
+    end
+
+    def github_profile_urls
+      github_integrations.order(:handle).pluck(:profile_url).compact_blank.uniq
+    end
+
+    def contribution_records
+      contributions.includes(:authorable).order(created_at: :desc)
+    end
+
+    def content_contribution_records
+      contribution_records.where(authorable_type: ['BetterTogether::Page', 'BetterTogether::Post'])
     end
 
     def handle
@@ -232,21 +279,28 @@ module BetterTogether
     end
 
     def primary_calendar
-      @primary_calendar ||= calendars.find_or_create_by(
-        identifier: "#{identifier}-personal-calendar",
-        community:
-      ) do |calendar|
-        calendar.name = I18n.t('better_together.calendars.personal_calendar_name', name: name)
-        calendar.privacy = 'private'
-        calendar.protected = true
+      @primary_calendar ||= begin
+        calendar_identifier = "#{identifier}-personal-calendar"
+
+        calendars.find_or_create_by!(
+          identifier: calendar_identifier,
+          community:
+        ) do |calendar|
+          calendar.name = I18n.t('better_together.calendars.personal_calendar_name', name: name)
+          calendar.privacy = 'private'
+          calendar.protected = true
+        end
+      rescue ActiveRecord::RecordNotUnique
+        calendars.find_by!(identifier: calendar_identifier, community:)
       end
     end
 
     def after_record_created
       return unless community
 
-      community.reload
-      community.update!(creator_id: id)
+      BetterTogether::Community.where(id: community_id)
+                               .where.not(creator_id: id)
+                               .update_all(creator_id: id, updated_at: Time.current)
     end
 
     # Returns all events relevant to this person's calendar view

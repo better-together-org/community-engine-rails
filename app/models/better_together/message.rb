@@ -4,7 +4,7 @@ module BetterTogether
   # allows for communication between people
   class Message < ApplicationRecord
     belongs_to :conversation, touch: true
-    belongs_to :sender, class_name: 'BetterTogether::Person'
+    belongs_to :sender, class_name: 'BetterTogether::Person', inverse_of: :sent_messages
 
     has_rich_text :content, encrypted: true
 

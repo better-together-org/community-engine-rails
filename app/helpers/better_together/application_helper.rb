@@ -6,6 +6,15 @@ module BetterTogether
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
     include MetricsHelper
+    include StructuredDataHelper
+
+    # Returns the page title for the current page, combining any page-specific title with the platform name
+    def page_title(title = nil)
+      title_parts = []
+      title_parts << title if title.present?
+      title_parts << host_platform.name if host_platform.present? && !turbo_native_app?
+      title_parts.compact.join(' | ')
+    end
 
     # Returns the base URL configured for BetterTogether.
     def base_url
@@ -53,6 +62,14 @@ module BetterTogether
       # Devise::MissingWarden is raised in view specs where the Warden
       # middleware is not present in the stack.
       nil
+    end
+
+    def e2ee_messaging_enabled?
+      ::BetterTogether.e2ee_messaging_enabled?
+    end
+
+    def e2ee_messaging_enabled_for?(person = current_person)
+      e2ee_messaging_enabled? && person.present?
     end
 
     def default_url_options
@@ -112,6 +129,17 @@ module BetterTogether
                    end
 
       rails_storage_proxy_url(attachment)
+    end
+
+    # Sets a translated meta description for the current view. Provide the
+    # translation scope without the `meta.descriptions` prefix.
+    #
+    #   set_meta_description('communities.show', community_name: @resource.name)
+    #
+    # @param scope [String] translation scope under meta.descriptions
+    # @param options [Hash] interpolation values for the translation
+    def set_meta_description(scope, **)
+      content_for(:meta_description, t("meta.descriptions.#{scope}", **))
     end
 
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
@@ -534,6 +562,10 @@ module BetterTogether
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
+    end
+
+    def turbo_native_app?
+      request.user_agent.to_s.include?('Turbo Native')
     end
 
     # Returns the appropriate icon and color for an event based on the person's relationship to it

@@ -21,9 +21,10 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
   describe 'GET /:locale/pages/:slug' do
     let(:page) do
+      slug = "test-page-spec-#{SecureRandom.hex(4)}"
       create(:better_together_page,
-             slug: 'test-page-spec',
-             identifier: 'test-page-spec',
+             slug:,
+             identifier: slug,
              protected: false,
              published_at: 1.day.ago,
              privacy: 'public')
@@ -38,6 +39,43 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       get better_together.page_path(page.slug, locale:)
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include('data-evidence-selector="block:markdown:')
+    end
+
+    it 'renders a bibliography for structured citations' do
+      create(:better_together_citation,
+             citeable: page,
+             title: 'Page Evidence Record',
+             reference_key: 'page_evidence_record')
+
+      get better_together.page_path(page.slug, locale:)
+
+      expect(response.body).to include('Evidence and Citations')
+      expect(response.body).to include('Page Evidence Record')
+      expect(response.body).to include('citation-page_evidence_record')
+    end
+
+    it 'renders claims and supporting evidence when present' do
+      citation = create(:better_together_citation,
+                        citeable: page,
+                        title: 'Claim Support Record',
+                        reference_key: 'claim_support_record')
+      claim = create(:better_together_claim,
+                     claimable: page,
+                     claim_key: 'supported_publication_claim',
+                     statement: 'Public claims should stay tied to auditable evidence.')
+      create(:better_together_evidence_link,
+             claim:,
+             citation:,
+             relation_type: 'supports',
+             locator: 'p. 3')
+
+      get better_together.page_path(page.slug, locale:)
+
+      expect(response.body).to include('Claims and Supporting Evidence')
+      expect(response.body).to include('Public claims should stay tied to auditable evidence.')
+      expect(response.body).to include('Claim Support Record')
+      expect(response.body).to include('claim-supported_publication_claim')
     end
 
     context 'when the page contains a Content::Template block (no string_translations association)' do
@@ -58,9 +96,10 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
   describe 'GET /:locale/pages/:slug/edit' do
     let(:page) do
+      slug = "test-page-edit-spec-#{SecureRandom.hex(4)}"
       create(:better_together_page,
-             slug: 'test-page-edit-spec',
-             identifier: 'test-page-edit-spec',
+             slug:,
+             identifier: slug,
              protected: false,
              published_at: 1.day.ago)
     end

@@ -8,15 +8,7 @@ RSpec.describe BetterTogether::InboundEmailResolutionService do
   end
 
   def create_tenant(community:, domain:)
-    platform = BetterTogether::Platform.find_or_initialize_by(url: "https://#{domain}")
-    platform.community = community
-    platform.name = "#{community.name} Platform"
-    platform.identifier ||= "platform-#{SecureRandom.hex(6)}"
-    platform.time_zone = 'UTC'
-    platform.privacy = 'private'
-    platform.external = false
-    platform.save!
-
+    platform = create(:better_together_platform, community:, host_url: "https://#{domain}")
     platform.platform_domains.find_or_create_by!(hostname: domain) do |platform_domain|
       platform_domain.primary = true
       platform_domain.active = true

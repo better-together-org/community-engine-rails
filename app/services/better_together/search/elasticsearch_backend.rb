@@ -3,7 +3,7 @@
 module BetterTogether
   module Search
     # Elasticsearch-backed search operations.
-    class ElasticsearchBackend < BaseBackend
+    class ElasticsearchBackend < BaseBackend # rubocop:todo Metrics/ClassLength
       def backend_key
         :elasticsearch
       end
@@ -48,6 +48,10 @@ module BetterTogether
         return unless index_exists?(entry)
 
         entry.model_class.delete_elastic_index!
+      rescue StandardError => e
+        raise unless missing_index_error?(e)
+
+        nil
       end
 
       def refresh_index(entry)
@@ -102,7 +106,7 @@ module BetterTogether
       end
 
       def build_response(query)
-        Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.global_search_models)
+        Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.models)
       end
 
       def search_result(response)
@@ -126,6 +130,10 @@ module BetterTogether
 
       def empty_result(status:)
         SearchResult.new(records: [], suggestions: [], status:, backend: backend_key)
+      end
+
+      def missing_index_error?(error)
+        error.class.name.end_with?('NotFound') || error.message.include?('index_not_found_exception')
       end
     end
   end

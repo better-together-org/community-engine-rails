@@ -84,7 +84,6 @@ module BetterTogether
         )
         .screen!(message)
     end
-
     def route_to_target(resolution, sender:, body_plain:)
       resolution.route_kind == 'membership_request' ? create_membership_request!(resolution.target, sender:, body_plain:) : nil
     end

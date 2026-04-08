@@ -7,11 +7,13 @@ module BetterTogether
       # Provides aggregated metrics data for dashboard display
       # Requires manage_platform permission
       class MetricsSummaryController < BetterTogether::Api::ApplicationController
+        include BetterTogether::Metrics::PlatformContext
+
         skip_after_action :enforce_policy_use
 
         # GET /api/v1/metrics/summary
         def show # rubocop:disable Metrics/MethodLength
-          unless current_user&.person&.permitted_to?('manage_platform')
+          unless current_user&.person&.permitted_to?('manage_platform', metrics_platform)
             return render json: { errors: [{ status: '404', title: 'Not Found' }] }, status: :not_found
           end
 
@@ -40,7 +42,7 @@ module BetterTogether
         end
 
         def build_scope(from_date, to_date)
-          scope = BetterTogether::Metrics::PageView.all
+          scope = BetterTogether::Metrics::PageView.for_platform(metrics_platform)
           scope = scope.where('viewed_at >= ?', from_date) if from_date
           scope = scope.where('viewed_at <= ?', to_date) if to_date
           scope
@@ -51,6 +53,10 @@ module BetterTogether
             total_page_views: scope.count,
             unique_pages: scope.distinct.count(:page_url),
             views_by_locale: scope.group(:locale).count,
+            views_by_logged_in_state: {
+              logged_in: scope.where(logged_in: true).count,
+              anonymous: scope.where(logged_in: false).count
+            },
             top_pages: top_pages(scope),
             period_start: (from_date || scope.minimum(:viewed_at))&.to_s,
             period_end: (to_date || scope.maximum(:viewed_at))&.to_s

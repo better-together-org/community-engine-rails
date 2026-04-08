@@ -72,6 +72,12 @@ FactoryBot.define do
     aspect_ratio { '16x9' }
   end
 
+  factory :content_iframe_block, class: 'BetterTogether::Content::IframeBlock' do
+    iframe_url { 'https://forms.btsdev.ca/s/example' }
+    aspect_ratio { '16x9' }
+    title_en { 'Community survey' }
+  end
+
   factory :content_accordion_block, class: 'BetterTogether::Content::AccordionBlock' do
     heading { 'FAQ' }
     accordion_items_json { '[{"question":"What is this?","answer":"A community platform."}]' }

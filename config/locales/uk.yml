@@ -316,6 +316,8 @@ uk:
         conversations: Розмови
         created_conversations: Створені розмови
         description: Опис
+        federate_content: Дозволити цій платформі включати ваші публічні дописи, сторінки
+          та події до схвалених федеративних стрічок.
         identifications: Ідентифікації
         identifier: Ідентифікатор
         locale: Мова
@@ -587,16 +589,31 @@ uk:
       better_together/category: Категорія
       better_together/checklist: Контрольний список
       better_together/community: Спільнота
+      better_together/content/accordion_block: Акордеон
+      better_together/content/alert_block: Сповіщення
       better_together/content/block: Блок
+      better_together/content/call_to_action_block: Заклик до дії
+      better_together/content/checklist_block: Контрольний список
+      better_together/content/communities_block: Спільноти
       better_together/content/css: Користувацький CSS
+      better_together/content/events_block: Події
       better_together/content/hero: Герой
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Зображення
+      better_together/content/link: Посилання
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Діаграма Mermaid
+      better_together/content/navigation_area_block: Область навігації
       better_together/content/page_block: Блок сторінки
+      better_together/content/people_block: Люди
+      better_together/content/platform_block: Платформа
+      better_together/content/posts_block: Публікації
+      better_together/content/quote_block: Цитата
       better_together/content/rich_text: Багатий текст
+      better_together/content/statistics_block: Статистика
       better_together/content/template: Файл шаблону
+      better_together/content/video_block: Відео
       better_together/conversation: Розмова
       better_together/conversation_participant: Учасник розмови
       better_together/event: Подія
@@ -657,6 +674,43 @@ uk:
       private: Приватний
       public: Публічний
   better_together:
+    access_modes:
+      actions:
+        create_account: Створити обліковий запис
+        join_now: Приєднатися зараз
+        request_to_join: Подати запит на вступ
+        sign_in: Увійти
+      already_member: Ви вже є учасником цієї спільноти.
+      current_status:
+        active: Ви вже є учасником.
+        pending: Ваш запит очікує на розгляд.
+      descriptions:
+        generic:
+          invitation: Людям потрібне запрошення, щоб приєднатися до цього простору.
+          open: Люди можуть приєднатися одразу без очікування схвалення.
+          request: Люди можуть подати запит на вступ. Координатор або координаторка
+            переглядає запити перед наданням доступу.
+        platform:
+          invitation: Людям потрібне запрошення, щоб створити тут обліковий запис.
+          open: Люди можуть створити обліковий запис і приєднатися без очікування
+            схвалення.
+      form:
+        community_help: Виберіть, чи люди приєднуються одразу, чи спочатку мають подати
+          запит.
+        community_requests: Вимагати запит на доступ перед тим, як людина стане учасником
+        platform_help: Виберіть, чи люди можуть створити обліковий запис одразу, чи
+          спочатку їм потрібне запрошення.
+        platform_invitation_help: Запрошення можуть заздалегідь заповнювати адресу
+          електронної пошти та призначати ролі платформи або спільноти після прийняття.
+        platform_invitation_only: Вимагати запрошення перед тим, як людина зможе зареєструватися
+      heading: Як люди приєднуються
+      labels:
+        invitation: Лише за запрошенням
+        open: Відкритий вступ
+        request: Запит на вступ
+      membership_joined: Ви приєдналися до цієї спільноти.
+      membership_request_pending: Ваш запит на членство вже очікує на розгляд.
+      membership_requested: Ваш запит на членство надіслано.
     addresses:
       add: Додати адресу
       address: Адреса
@@ -696,6 +750,14 @@ uk:
         close: Закрити
         title: Переглянути обов'язкову угоду
       participant:
+        acceptance_methods:
+          agreement_review: перегляд угоди
+          api: API
+          legacy: застарілий запис
+          sign_up: реєстрація
+          system: система
+        accepted_via: Прийнято через %{method}
+        agreement_revision: Редакція угоди %{timestamp}
         pending: очікує
       show:
         title: Угода
@@ -795,7 +857,8 @@ uk:
       hint_label: Короткий заголовок для елемента чек-листа (обов'язково).
       hint_parent: 'Необов''язково: вкласти цей елемент під інший. Максимальна глибина
         вкладення становить 2.'
-      hint_privacy: 'Виберіть, хто може бачити цей елемент: Публічний або Приватний.'
+      hint_privacy: 'Виберіть, хто може бачити цей елемент: Публічний, Спільнота або
+        Приватний.'
       label: Мітка
       move_down: Перемістити вниз
       move_up: Перемістити вгору
@@ -817,6 +880,10 @@ uk:
         items_title: Елементи
         no_items: Немає елементів для відображення
     communities:
+      form:
+        allow_membership_requests: Дозволити запити на членство
+        allow_membership_requests_hint: Показує публічну форму запиту на членство
+          для цієї спільноти, коли це дозволяє налаштована модель доступу.
       index:
         new_btn_text: Нова спільнота
       new:
@@ -891,8 +958,35 @@ uk:
           select_prompt: "— Виберіть контрольний список —"
         communities_block:
           empty: Немає спільнот для відображення.
+        embeds:
+          blocked_body: "%{title} не вдалося показати тут, оскільки ця платформа не
+            внесла це джерело iframe до дозволених у налаштуваннях політики безпеки
+            вмісту."
+          blocked_instructions: Додайте %{origin} у Хост > Платформа > Безпека / вбудовування
+            CSP > Дозволені джерела вихідних iframe, а потім перезавантажте цю сторінку.
+          blocked_origin_label: 'Заблоковане джерело:'
+          blocked_title: Цей вбудований вміст зараз заблоковано
+          invalid_url_body: Перевірте URL iframe і переконайтеся, що це повна HTTPS-адреса.
+          invalid_url_title: Цей вбудований вміст має недійсний URL
+          open_in_new_tab: Відкрити вбудований вміст у новій вкладці
         events_block:
           empty: Немає подій для відображення.
+        hero:
+          editor:
+            background: Тло
+            cta_button: Кнопка заклику до дії
+            cta_url_invalid: Укажіть дійсну URL-адресу, що починається з http:// або
+              https://.
+            heading_color: Колір заголовка
+            overlay_color: Колір накладання
+            paragraph_color: Колір абзацу
+        iframe_block:
+          csp_help: Якщо це вбудовування не дозволене для поточної платформи, Community
+            Engine покаже видиме повідомлення з підказкою замість порожнього iframe.
+          default_title: Вбудований вміст
+          missing_url: URL iframe не налаштовано.
+          url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
+            або інше довірене вбудовування зі спільнотного простору.
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -1414,6 +1508,8 @@ uk:
           title: Settlements
     global:
       add: Add
+    governance:
+      robot_author: Автор-робот
     host_nav:
       label: Навігація хоста
       toggle: Навігація хоста
@@ -1704,6 +1800,24 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Вітаємо, %{name}!
+        learn_more: Переглянути %{community_name}
+        message: Ваш запит на приєднання до %{community_name} відхилено.
+        reviewed_by: Розглянув(ла) %{decision_actor_name}.
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject: Ваш запит на членство в %{community_name} відхилено
+      submitted:
+        greeting: Вітаємо, %{name}!
+        message: "%{requestor_name} попросив(ла) приєднатися до %{community_name}."
+        request_message_label: Повідомлення від заявника або заявниці
+        requestor_email_label: 'Електронна адреса заявника або заявниці:'
+        review_request: Переглянути запит на членство
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject: Новий запит на членство в %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1742,6 +1856,14 @@ uk:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Користувачі, які увійшли в систему й отримали
+          схвалення, одразу стають учасниками та отримують підтвердження і в застосунку,
+          і електронною поштою.
+        decision_notifications_heading: Рішення та сповіщення
+        decline_flow: Відхилення надсилає заявникові або заявниці лист, а користувачі,
+          які увійшли в систему, також отримують сповіщення в застосунку.
+        email_requestor_flow: Заявники й заявниці лише з електронною поштою після
+          схвалення отримують лист-запрошення, щоб створити обліковий запис і приєднатися.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2086,6 +2208,12 @@ uk:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Ваш запит на приєднання до %{community_name} відхилено
+        title: Запит на членство в %{community_name} відхилено
+      membership_request_submitted:
+        body: "%{requestor_name} попросив(ла) приєднатися до %{community_name}"
+        title: Новий запит на членство в %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}
@@ -2175,8 +2303,12 @@ uk:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
+        new_release_package_draft: Новий чернетковий пакет релізу
         search_by_slug: Search by slug...
         search_by_title: Search by title...
+      release_package_draft:
+        created: 'Створено приватну чернетку пакета релізу. Пов’язаний чернетковий
+          допис: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -2191,12 +2323,15 @@ uk:
         recent_events: Нещодавні Події
         title: Особистий Календар
         upcoming_events: Майбутні Події
+      deleted_name: Видалена особа
       device_permissions:
         camera: Camera
         location: Location
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      federate_content: Дозволити цій платформі включати ваші публічні дописи, сторінки
+        та події до схвалених федеративних стрічок.
       index:
         new_person: New person
       notification_preferences: Message notification preferences
@@ -2524,6 +2659,21 @@ uk:
         pending: Очікує
     platforms:
       form:
+        allow_membership_requests: Дозволити запити на членство
+        allow_membership_requests_hint: Показує публічну форму запиту на членство
+          на екрані реєстрації за запрошенням для основної хост-спільноти цієї платформи.
+        csp_frame_ancestors_text_hint: Хто може вбудовувати цей сайт CE. Виберіть
+          довірені джерела або введіть новий hostname/джерело й натисніть Enter. Залиште
+          порожнім, щоб зберегти frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Дозволені джерела для вхідного вбудовування
+        csp_frame_src_text_hint: Що цей сайт CE може вбудовувати в iframe, наприклад
+          Formbricks або інші довірені вбудовування зі спільнот. Виберіть довірені
+          джерела або введіть новий hostname/джерело й натисніть Enter.
+        csp_frame_src_text_label: Дозволені джерела для вихідних iframe
+        csp_img_src_text_hint: Додаткові хости зображень, з яких цей сайт CE може
+          завантажувати зображення. Виберіть довірені джерела або введіть новий hostname/джерело
+          й натисніть Enter.
+        csp_img_src_text_label: Дозволені зовнішні джерела зображень
         host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
           Використовується для її ідентифікації у федерації та генерації URL-адрес
           OAuth-ендпоінту. Для production має бути HTTPS.
@@ -2557,6 +2707,7 @@ uk:
       none_body: Наразі немає постів для показу.
       none_title: Постів поки що немає
       published_on: Опубліковано %{date}
+      robot_authors: Автори-роботи
       save_post: Зберегти пост
       updated_on_short: Оновлено
       view_post: Переглянути пост
@@ -2755,6 +2906,18 @@ uk:
         status: Статус справи
       index:
         filter: Фільтрувати
+        local_snapshot_description: Детерміновані локальні сигнали, побудовані зі
+          скарг, справ і нотаток. Віддалений аналіз є необов'язковим і лише доповнює
+          їх.
+        local_snapshot_generated_at: Згенеровано %{time}
+        local_snapshot_title: Локальний знімок для перегляду
+        snapshot:
+          open_cases: Відкриті справи
+          participant_notes: Нотатки, видимі учасникам
+          repeat_reportables: Повторно позначені об'єкти
+          retaliation_risk: Ризик помсти
+          unassigned_open: Відкриті без призначення
+          urgent_open: Термінові відкриті
         title: Справи безпеки
       notices:
         updated: Справу безпеки оновлено.
@@ -2820,8 +2983,43 @@ uk:
           description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
           title: Підключені облікові записи
         my_data:
-          description: View, download, or delete your personal data exports.
-          title: My Data
+          deletion:
+            actions: Actions
+            cancel: Cancel request
+            description: Deletion requests are queued for human review so safety,
+              legal, and community obligations can be handled carefully.
+            reason: Reason for deletion request
+            requested_at: Requested
+            status: Status
+            submit: Request account deletion
+            title: Account deletion requests
+          deletion_request_cancelled: Your deletion request has been cancelled.
+          deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
+          deletion_request_failed: We could not create your deletion request.
+          description: Переглядайте, завантажуйте або видаляйте свої експорти персональних
+            даних.
+          export_not_ready: Your export is not ready yet.
+          export_requested: Your data export has been requested.
+          exports:
+            actions: Actions
+            description: Generate a portable JSON export of your profile, memberships,
+              agreements, and other account-linked records.
+            download: Download
+            empty: You have not requested any account exports yet.
+            pending: Export in progress
+            request: Request export
+            requested_at: Requested
+            requesting: Requesting export...
+            status: Status
+            title: Downloadable account exports
+          seeds:
+            description: Earlier personal exports remain available here for advanced
+              portability and interoperability workflows.
+            empty: No legacy portable seed exports are available.
+            title: Existing portable seed exports
+            view: View
+          title: Мої дані
         navigation_aria_label: Навігація налаштувань
         personal:
           coming_soon: Особисті налаштування з'являться незабаром.
@@ -2846,13 +3044,15 @@ uk:
           developer: Розробник
           device_permissions: Дозволи пристрою
           integrations: Інтеграції
-          my_data: My Data
+          my_data: Мої дані
           personal: Особисті
           platform: Платформа
           preferences: Налаштування
           privacy: Конфіденційність
         title: Settings
     setup_wizard_steps:
+      already_completed: Цю платформу вже налаштовано. Будь ласка, увійдіть, щоб керувати
+        своєю платформою.
       create_admin:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.
@@ -2956,6 +3156,9 @@ uk:
         translation_failed: 'Переклад не вдався: %{message}'
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
+    uploads:
+      index:
+        storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:
         credentials_in_url: не повинен містити облікові дані (користувач:пароль@)
@@ -3474,6 +3677,8 @@ uk:
         для продовження.
   devise_omniauth_callbacks:
     failure: Виникла проблема з входом через %{kind}. %{reason}
+    generic_failure: Виникла проблема під час входу. Будь ласка, зареєструйтеся або
+      спробуйте ще раз пізніше.
     success: Успішно автентифіковано з облікового запису %{kind}.
   doorkeeper:
     errors:
@@ -3685,10 +3890,12 @@ uk:
         cover_image: Зображення обкладинки
       person:
         allow_messages_from_members: Дозволити отримувати повідомлення від людей,
-          окрім менеджерів платформи.
         cover_image: Завантажте зображення обкладинки для відображення у верхній частині
           профілю.
         description: Надайте короткий опис або біографію.
+        federate_content: Дозволити цій платформі ділитися вашими публічними дописами,
+          сторінками та подіями зі схваленими підключеними платформами. окрім менеджерів
+          платформи.
         locale: Виберіть бажану мову для особи.
         name: Введіть повне ім'я особи.
         notify_by_email: Надсилати електронний лист, коли в розмові є непрочитане
@@ -3757,6 +3964,13 @@ uk:
     uk: Українська
   meta:
     default_description: Ласкаво просимо на %{platform_name}
+    descriptions:
+      communities:
+        index: Відкривайте спільноти на %{platform_name}.
+        show: Дізнайтеся більше про %{community_name} на %{platform_name}.
+      conversations:
+        index: Переглядайте свої розмови на %{platform_name}.
+        show: Переглянути розмову %{conversation_subject} на %{platform_name}.
     page:
       description_fallback: Читайте %{title} на %{platform_name}
   metrics:
@@ -3882,19 +4096,19 @@ uk:
     show:
       title: Деталі членства на платформі
   person_seeds:
-    confirm_destroy: Delete this data export? This cannot be undone.
-    export_failed: Your data export could not be completed. Please try again.
-    export_queued: Your data export has been requested. A download link will appear
-      below once it is ready.
-    export_too_soon: You requested an export recently. Please wait before requesting
-      another.
-    export_unavailable: Your account does not have a person profile to export.
+    confirm_destroy: Видалити цей експорт даних? Цю дію не можна скасувати.
+    export_failed: Не вдалося завершити експорт ваших даних. Спробуйте ще раз.
+    export_queued: Ваш експорт даних запитано. Посилання для завантаження з'явиться
+      нижче, щойно він буде готовий.
+    export_too_soon: Ви нещодавно вже запитували експорт. Зачекайте перед повторним
+      запитом.
+    export_unavailable: У вашого облікового запису немає профілю особи для експорту.
     index:
-      empty: You have no data exports yet.
-      exporting: Requesting…
-      new_export: Request Data Export
-      new_export_hint: Generate a portable export of your personal data.
-      title: My Data
+      empty: У вас ще немає експортів даних.
+      exporting: Запит надсилається…
+      new_export: Запросити експорт даних
+      new_export_hint: Створіть переносний експорт своїх персональних даних.
+      title: Мої дані
   platform_invitations:
     confirm_delete: Підтвердіть видалення
   platforms:
@@ -3949,10 +4163,10 @@ uk:
     placeholder: Пошук...
   seeds:
     actions:
-      destroy: Destroy seed
+      destroy: Видалити seed
       edit: Edit seed
-      show: Show seed
-    confirm_destroy: Are you sure you want to destroy this seed? This cannot be undone.
+      show: Переглянути seed
+    confirm_destroy: Ви впевнені, що хочете видалити цей seed? Цю дію не можна скасувати.
     edit:
       title: 'Editing: %{identifier}'
     errors:
@@ -3965,14 +4179,14 @@ uk:
       new_seed: New seed
       title: Seeds
     new:
-      title: New Seed
-    seeded_by: Seeded by %{created_by}
+      title: Новий seed
+    seeded_by: Створено %{created_by}
     show:
-      download_yaml: Download YAML
-      origin: Origin
-      payload: Payload
-      plantings: Planting History
-      yaml_export: YAML Export
+      download_yaml: Завантажити YAML
+      origin: Походження
+      payload: Вміст
+      plantings: Історія висадження
+      yaml_export: Експорт YAML
   shared:
     by: автор
     links:

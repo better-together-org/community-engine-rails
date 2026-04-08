@@ -45,12 +45,33 @@ module BetterTogether
         end
       end
 
+      def embed_title
+        caption.presence || I18n.t('better_together.content.blocks.video_block.title')
+      end
+
       def self.content_addable?
         true
       end
 
       def self.extra_permitted_attributes
         super + %i[video_url caption aspect_ratio]
+      end
+
+      def evidence_selector_options
+        super + [
+          {
+            value: "#{evidence_selector}:video",
+            label: "Video embed: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:caption",
+            label: "Video caption: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:timestamp:*",
+            label: 'Video timestamp selector'
+          }
+        ]
       end
     end
   end

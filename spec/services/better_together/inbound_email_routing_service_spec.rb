@@ -22,20 +22,11 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
   end
 
   def create_tenant(community:, domain:)
-    platform = BetterTogether::Platform.find_or_initialize_by(url: "https://#{domain}")
-    platform.community = community
-    platform.name = "#{community.name} Platform"
-    platform.identifier ||= "platform-#{SecureRandom.hex(6)}"
-    platform.time_zone = 'UTC'
-    platform.privacy = 'private'
-    platform.external = false
-    platform.save!
-
+    platform = create(:better_together_platform, community:, host_url: "https://#{domain}")
     platform.platform_domains.find_or_create_by!(hostname: domain) do |platform_domain|
       platform_domain.primary = true
       platform_domain.active = true
     end
-
     platform
   end
 
@@ -131,6 +122,22 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     expect(message).to be_screening_state_passed
     expect(message.platform).to eq(platform)
     expect(message.target).to eq(community)
+  end
+
+  it 'stores agent aliases against tenant-scoped robots before global fallbacks' do
+    tenant_community = create(:better_together_community, name: 'Tenant Scoped Agents')
+    platform = create_tenant(community: tenant_community, domain: 'tenant-c.example.test')
+    create(:better_together_robot, :global, identifier: 'helper-bot', name: 'Global Helper Bot')
+    robot = create(:better_together_robot, platform:, identifier: 'helper-bot', name: 'Tenant Helper Bot')
+    inbound_email = build_inbound_email(raw_mail(to: "agent+#{robot.identifier}@tenant-c.example.test"))
+    scanner_runner = FakeScannerRunner.new(results: [scanner_result])
+
+    described_class.new(inbound_email, scanner_runner:).route!
+
+    message = BetterTogether::InboundEmailMessage.last
+    expect(message).to be_route_kind_agent
+    expect(message.platform).to eq(platform)
+    expect(message.target).to eq(robot)
   end
 
   it 'routes agent aliases to people only when they belong to the tenant platform' do

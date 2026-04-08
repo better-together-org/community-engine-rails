@@ -43,6 +43,10 @@ FactoryBot.define do
       privacy { 'public' }
     end
 
+    trait :membership_requests_enabled do
+      allow_membership_requests { true }
+    end
+
     trait :community_engine_peer do
       external { true }
       host { false }

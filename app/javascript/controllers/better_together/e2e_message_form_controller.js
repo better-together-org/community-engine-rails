@@ -22,7 +22,7 @@ import {
 } from "community_engine_js"
 
 export default class extends Controller {
-  static targets = ["content", "status"]
+  static targets = ["content", "status", "submit"]
   static values = {
     conversationId:    String,
     personId:         String,
@@ -39,8 +39,11 @@ export default class extends Controller {
   #senderKeysReady = false
   // Guard flag: true while we are submitting the encrypted form to prevent re-entry
   #submitting = false
+  // The local E2EE identity/bootstrap flow must finish before we allow any send.
+  #sessionReady = false
   // Stable bound reference so addEventListener/removeEventListener receive the same instance
   #boundHandleSubmit = this.#handleSubmit.bind(this)
+  #boundSessionState = this.#handleSessionState.bind(this)
 
   // Read the Devise JWT from the meta tag injected by the layout.
   // The token authorises /api/v1/* calls.
@@ -51,6 +54,10 @@ export default class extends Controller {
   async connect() {
     if (!this.conversationIdValue || !this.personIdValue) return
     this.element.addEventListener('submit', this.#boundHandleSubmit)
+    document.addEventListener('e2e:session-state', this.#boundSessionState)
+    this.#syncSessionStateFromBootstrap()
+
+    if (!this.#sessionReady) return
 
     try {
       await this.#setupSessions()
@@ -78,9 +85,15 @@ export default class extends Controller {
 
   disconnect() {
     this.element.removeEventListener('submit', this.#boundHandleSubmit)
+    document.removeEventListener('e2e:session-state', this.#boundSessionState)
   }
 
   async #setupSessions() {
+    if (!this.#sessionReady) {
+      this.#setStatus('waiting')
+      return
+    }
+
     // Clear stale bundles before re-fetching so departed members are not retained
     this.#participantBundles = {}
     const bundles = await fetchParticipantBundles(
@@ -117,6 +130,11 @@ export default class extends Controller {
     if (!this.hasContentTarget) return
     // Re-entry guard: skip encryption on the submit we fire ourselves after encoding
     if (this.#submitting) return
+    if (!this.#sessionReady) {
+      event.preventDefault()
+      this.#setStatus('waiting')
+      return
+    }
     const participants = Object.keys(this.#participantBundles)
     if (participants.length === 0) return  // No sessions: send unencrypted
 
@@ -198,6 +216,44 @@ export default class extends Controller {
     }
     this.statusTarget.textContent = labels[state] ?? ''
     this.statusTarget.dataset.state = state
+  }
+
+  async #handleSessionState(event) {
+    if (String(event.detail?.personId) !== String(this.personIdValue)) return
+
+    const state = event.detail?.state ?? 'initializing'
+    this.#sessionReady = state === 'ready'
+    this.#setSubmitEnabled(this.#sessionReady)
+
+    if (!this.#sessionReady) {
+      this.#participantBundles = {}
+      this.#senderKeysReady = false
+      this.#setStatus(state === 'error' ? 'error' : 'waiting')
+      return
+    }
+
+    try {
+      await this.#setupSessions()
+    } catch (err) {
+      console.error('[E2E Form] Session setup error:', err)
+      this.#setStatus('error')
+    }
+  }
+
+  #syncSessionStateFromBootstrap() {
+    const bootstrap = Array.from(document.querySelectorAll('[data-controller~="better-together--e2e-session"]'))
+      .find(element => String(element.dataset.betterTogetherE2eSessionPersonIdValue) === String(this.personIdValue))
+    const state = bootstrap?.dataset.e2eSessionState ?? 'initializing'
+
+    this.#sessionReady = state === 'ready'
+    this.#setSubmitEnabled(this.#sessionReady)
+    this.#setStatus(this.#sessionReady ? 'active' : (state === 'error' ? 'error' : 'waiting'))
+  }
+
+  #setSubmitEnabled(enabled) {
+    if (!this.hasSubmitTarget) return
+
+    this.submitTarget.disabled = !enabled
   }
 
   #setHiddenField(name, value) {

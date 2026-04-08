@@ -1,0 +1,30 @@
+<% return unless record.respond_to?(:bibliography_entries) && record.bibliography_entries.any? %>
+
+<section class="mt-5 bibliography" aria-labelledby="<%= dom_id(record, :bibliography) %>">
+  <h2 id="<%= dom_id(record, :bibliography) %>" class="h4">Evidence and Citations</h2>
+  <ol class="ps-3">
+    <% record.bibliography_entries.each do |citation| %>
+      <li id="<%= citation.anchor_id %>" class="mb-3">
+        <div><strong><%= citation.title %></strong></div>
+        <div class="small text-muted"><%= citation.accessible_reference %></div>
+        <% if citation.imported_from_linked_record? %>
+          <div class="small text-muted">
+            <strong>Imported from linked citation:</strong> <%= citation.import_audit_summary %>
+          </div>
+        <% end %>
+        <div class="small"><strong>APA:</strong> <%= citation.apa_citation %></div>
+        <div class="small"><strong>MLA:</strong> <%= citation.mla_citation %></div>
+        <% if citation.source_url.present? %>
+          <div class="small">
+            <%= link_to citation.source_url, citation.source_url, target: '_blank', rel: 'noopener noreferrer' %>
+          </div>
+        <% end %>
+        <% if citation.excerpt.present? %>
+          <blockquote class="blockquote small mt-2 mb-0">
+            <%= simple_format(citation.excerpt) %>
+          </blockquote>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</section>

@@ -7,6 +7,7 @@ module BetterTogether # :nodoc:
   module CapybaraFeatureHelpers # :nodoc:
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
     include BetterTogether::Engine.routes.url_helpers
 
     # Setup or update a single host platform and return a platform-steward user
@@ -165,7 +166,7 @@ module BetterTogether # :nodoc:
         check 'user_accept_code_of_conduct'
       end
 
-      click_button 'Sign Up'
+      click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)
       created_user.confirm

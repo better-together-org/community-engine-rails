@@ -46,9 +46,9 @@ module BetterTogether
       Rails.logger.debug "[AGREEMENTS DEBUG] Unaccepted IDs: #{@unaccepted_agreements.pluck(:identifier)}"
     end
 
-    def load_all_required_agreements
-      required_identifiers = %w[privacy_policy terms_of_service]
-      required_identifiers << 'code_of_conduct' if Agreement.exists?(identifier: 'code_of_conduct')
+    def load_all_required_agreements # rubocop:todo Metrics/AbcSize
+      required_identifiers = BetterTogether::ChecksRequiredAgreements.required_agreement_identifiers
+      required_identifiers |= requested_agreement_identifiers
 
       all_required = Agreement.where(identifier: required_identifiers)
       # Only count accepted participants (accepted_at not null)
@@ -82,11 +82,21 @@ module BetterTogether
         param_name = "#{agreement.identifier}_agreement"
         next unless params[param_name] == '1'
 
-        BetterTogether::AgreementParticipant.create!(
+        BetterTogether::AgreementAcceptanceRecorder.record!(
           agreement: agreement,
-          person: current_user.person,
-          accepted_at: Time.current
+          participant: current_user.person,
+          acceptance_method: :agreement_review,
+          accepted_at: Time.current,
+          context: { request: }
         )
+      end
+    end
+
+    def requested_agreement_identifiers
+      return [] unless params[:agreement].present?
+
+      Array(params[:agreement]).map(&:to_s).select do |identifier|
+        identifier == BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER
       end
     end
 

@@ -1,0 +1,11 @@
+{
+  "name": "pr_1486_my_data_after",
+  "device": "desktop",
+  "url": "http://127.0.0.1:35933/en/settings/my_data",
+  "title": "",
+  "captured_at": "2026-04-03T00:31:33Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "person_deletion_review",
+  "source_spec": "./spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
+}

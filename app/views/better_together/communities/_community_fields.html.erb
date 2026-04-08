@@ -53,6 +53,25 @@
         <%= required_label form, :privacy, class: "form-label" %>
         <%= privacy_field(form:, klass: resource_class) %>
       </div>
+
+      <fieldset class="mb-3">
+        <legend class="form-label mb-2">
+          <%= t('better_together.access_modes.heading', default: 'How people join') %>
+        </legend>
+        <p class="form-text text-muted mt-0 mb-2">
+          <%= t('better_together.access_modes.form.community_help',
+                default: 'Choose whether people join right away or ask to join first.') %>
+        </p>
+        <div class="form-check">
+          <%= form.check_box :allow_membership_requests,
+                             class: "form-check-input",
+                             checked: community.allow_membership_requests? %>
+          <%= form.label :allow_membership_requests,
+                         t('better_together.access_modes.form.community_requests',
+                           default: 'Require people to request access before becoming members'),
+                         class: "form-check-label" %>
+        </div>
+      </fieldset>
     </div>
 
     <!-- Images Tab -->

@@ -316,6 +316,8 @@ en:
         conversations: Conversations
         created_conversations: Created conversations
         description: Description
+        federate_content: Allow this platform to include your public posts, pages,
+          and events in approved federation feeds.
         identifications: Identifications
         identifier: Identifier
         locale: Language
@@ -593,16 +595,31 @@ en:
       better_together/category: Category
       better_together/checklist: Checklist
       better_together/community: Community
+      better_together/content/accordion_block: Accordion
+      better_together/content/alert_block: Alert
       better_together/content/block: Block
+      better_together/content/call_to_action_block: Call to Action
+      better_together/content/checklist_block: Checklist
+      better_together/content/communities_block: Communities
       better_together/content/css: Custom CSS
+      better_together/content/events_block: Events
       better_together/content/hero: Hero
       better_together/content/html: HTML
+      better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/link: Link
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
+      better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
+      better_together/content/people_block: People
+      better_together/content/platform_block: Platform
+      better_together/content/posts_block: Posts
+      better_together/content/quote_block: Quote
       better_together/content/rich_text: Rich Text
+      better_together/content/statistics_block: Statistics
       better_together/content/template: Template File
+      better_together/content/video_block: Video
       better_together/conversation: Conversation
       better_together/conversation_participant: Conversation Participant
       better_together/event: Event
@@ -663,6 +680,42 @@ en:
       private: Private
       public: Public
   better_together:
+    access_modes:
+      actions:
+        create_account: Create account
+        join_now: Join now
+        request_to_join: Request to join
+        sign_in: Sign in
+      already_member: You are already a member of this community.
+      current_status:
+        active: You are already a member.
+        pending: Your request is pending review.
+      descriptions:
+        generic:
+          invitation: People need an invitation before they can join this space.
+          open: People can join right away without waiting for approval.
+          request: People can ask to join. A coordinator reviews requests before access
+            is granted.
+        platform:
+          invitation: People need an invitation before they can create an account
+            here.
+          open: People can create an account and join without waiting for approval.
+      form:
+        community_help: Choose whether people join right away or ask to join first.
+        community_requests: Require people to request access before becoming members
+        platform_help: Choose whether people can create an account directly or need
+          an invitation first.
+        platform_invitation_help: Invitations can prefill email addresses and assign
+          platform or community roles after acceptance.
+        platform_invitation_only: Require an invitation before someone can register
+      heading: How people join
+      labels:
+        invitation: Invitation only
+        open: Open join
+        request: Request to join
+      membership_joined: You joined this community.
+      membership_request_pending: Your membership request is already pending.
+      membership_requested: Your membership request was submitted.
     addresses:
       add: Add Address
       address: Address
@@ -702,6 +755,14 @@ en:
         close: Close
         title: View required agreement
       participant:
+        acceptance_methods:
+          agreement_review: agreement review
+          api: API
+          legacy: legacy record
+          sign_up: sign up
+          system: system
+        accepted_via: Accepted via %{method}
+        agreement_revision: Agreement revision %{timestamp}
         pending: pending
       show:
         title: Agreement
@@ -801,7 +862,7 @@ en:
       hint_label: Short title for the checklist item (required).
       hint_parent: 'Optional: nest this item under another. Maximum nesting depth
         is 2.'
-      hint_privacy: 'Choose who can see this item: Public or Private.'
+      hint_privacy: 'Choose who can see this item: Public, Community, or Private.'
       label: Label
       move_down: Move down
       move_up: Move up
@@ -823,6 +884,10 @@ en:
         items_title: Items
         no_items: No items to display
     communities:
+      form:
+        allow_membership_requests: Allow membership requests
+        allow_membership_requests_hint: Show a public membership request form for
+          this community when the configured access model allows it.
       index:
         new_btn_text: New Community
       new:
@@ -897,8 +962,34 @@ en:
           select_prompt: "— Select a checklist —"
         communities_block:
           empty: No communities to display.
+        embeds:
+          blocked_body: "%{title} could not be shown here because this platform has
+            not allowlisted that iframe origin in Content Security Policy settings."
+          blocked_instructions: Add %{origin} under Host > Platform > Security / CSP
+            embeds > Allowed outbound iframe origins, then reload this page.
+          blocked_origin_label: 'Blocked origin:'
+          blocked_title: This embedded content is currently blocked
+          invalid_url_body: Check the iframe URL and make sure it is a full HTTPS
+            address.
+          invalid_url_title: This embedded content has an invalid URL
+          open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        hero:
+          editor:
+            background: Background
+            cta_button: CTA Button
+            cta_url_invalid: Please provide a valid URL starting with http:// or https://.
+            heading_color: Heading Color
+            overlay_color: Overlay Color
+            paragraph_color: Paragraph Color
+        iframe_block:
+          csp_help: If this embed is not allowlisted for the current platform, Community
+            Engine shows a visible guidance message instead of a blank iframe.
+          default_title: Embedded content
+          missing_url: No iframe URL configured.
+          url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
+            another trusted community-space embed.
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -1400,6 +1491,8 @@ en:
           title: Settlements
     global:
       add: Add
+    governance:
+      robot_author: Robot author
     host_nav:
       label: Host navigation
       toggle: Host navigation
@@ -1690,6 +1783,24 @@ en:
         signature_text: Best regards, The %{joinable_name} Team
         subject: Your %{joinable_type} membership has been updated for %{joinable_name}
         view_joinable: View %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Hello %{name},
+        learn_more: View %{community_name}
+        message: Your request to join %{community_name} was declined.
+        reviewed_by: Reviewed by %{decision_actor_name}.
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject: Your membership request for %{community_name} was declined
+      submitted:
+        greeting: Hello %{name},
+        message: "%{requestor_name} asked to join %{community_name}."
+        request_message_label: Message from the requester
+        requestor_email_label: 'Requester email:'
+        review_request: Review membership request
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject: New membership request for %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1728,6 +1839,13 @@ en:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Signed-in requestors who are approved become
+          members immediately and receive both in-app and email confirmation.
+        decision_notifications_heading: Decision and notifications
+        decline_flow: Declining notifies the requester by email, and signed-in requestors
+          also receive an in-app notification.
+        email_requestor_flow: Email-only requestors who are approved receive an invitation
+          email so they can create an account and join.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2070,6 +2188,12 @@ en:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Your request to join %{community_name} was declined
+        title: Membership request declined for %{community_name}
+      membership_request_submitted:
+        body: "%{requestor_name} asked to join %{community_name}"
+        title: New membership request for %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}
@@ -2159,8 +2283,11 @@ en:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
+        new_release_package_draft: New Release Package Draft
         search_by_slug: Search by slug...
         search_by_title: Search by title...
+      release_package_draft:
+        created: 'Private release package draft created. Companion draft post: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -2175,12 +2302,15 @@ en:
         recent_events: Recent Events
         title: Personal Calendar
         upcoming_events: Upcoming Events
+      deleted_name: Deleted person
       device_permissions:
         camera: Camera
         location: Location
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      federate_content: Allow this platform to include your public posts, pages, and
+        events in approved federation feeds.
       index:
         new_person: New person
       notification_preferences: Message notification preferences
@@ -2497,6 +2627,21 @@ en:
         pending: Pending
     platforms:
       form:
+        allow_membership_requests: Allow membership requests
+        allow_membership_requests_hint: Show a public membership request form on the
+          invitation-required registration screen for this platform's primary host
+          community.
+        csp_frame_ancestors_text_hint: Who may embed this CE site. Select trusted
+          origins or type a new hostname/origin and press Enter. Leave blank to keep
+          frame-ancestors 'none'.
+        csp_frame_ancestors_text_label: Allowed inbound framing origins
+        csp_frame_src_text_hint: What this CE site may embed in iframes, such as Formbricks
+          or other trusted community embeds. Select trusted origins or type a new
+          hostname/origin and press Enter.
+        csp_frame_src_text_label: Allowed outbound iframe origins
+        csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
+          trusted origins or type a new hostname/origin and press Enter.
+        csp_img_src_text_label: Allowed external image origins
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
@@ -2531,6 +2676,7 @@ en:
       none_body: There are no posts to show right now.
       none_title: No posts yet
       published_on: Published %{date}
+      robot_authors: Robot Authors
       save_post: Save Post
       updated_on_short: Updated
       view_post: View Post
@@ -2727,6 +2873,17 @@ en:
         status: Case status
       index:
         filter: Filter
+        local_snapshot_description: Deterministic local signals built from reports,
+          cases, and notes. Remote analysis is optional and additive.
+        local_snapshot_generated_at: Generated %{time}
+        local_snapshot_title: Local review snapshot
+        snapshot:
+          open_cases: Open cases
+          participant_notes: Participant-visible notes
+          repeat_reportables: Repeat reportables
+          retaliation_risk: Retaliation risk
+          unassigned_open: Unassigned open
+          urgent_open: Urgent open
         title: Safety cases
       notices:
         updated: Safety case was updated.
@@ -2791,7 +2948,41 @@ en:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
         my_data:
+          deletion:
+            actions: Actions
+            cancel: Cancel request
+            description: Deletion requests are queued for human review so safety,
+              legal, and community obligations can be handled carefully.
+            reason: Reason for deletion request
+            requested_at: Requested
+            status: Status
+            submit: Request account deletion
+            title: Account deletion requests
+          deletion_request_cancelled: Your deletion request has been cancelled.
+          deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
+          deletion_request_failed: We could not create your deletion request.
           description: View, download, or delete your personal data exports.
+          export_not_ready: Your export is not ready yet.
+          export_requested: Your data export has been requested.
+          exports:
+            actions: Actions
+            description: Generate a portable JSON export of your profile, memberships,
+              agreements, and other account-linked records.
+            download: Download
+            empty: You have not requested any account exports yet.
+            pending: Export in progress
+            request: Request export
+            requested_at: Requested
+            requesting: Requesting export...
+            status: Status
+            title: Downloadable account exports
+          seeds:
+            description: Earlier personal exports remain available here for advanced
+              portability and interoperability workflows.
+            empty: No legacy portable seed exports are available.
+            title: Existing portable seed exports
+            view: View
           title: My Data
         navigation_aria_label: Settings navigation
         personal:
@@ -2824,6 +3015,8 @@ en:
           privacy: Privacy
         title: Settings
     setup_wizard_steps:
+      already_completed: This platform has already been set up. Please sign in to
+        manage your platform.
       create_admin:
         flash:
           please_address_errors: Please address the errors below.
@@ -2926,6 +3119,9 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+    uploads:
+      index:
+        storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:
         credentials_in_url: must not include credentials (user:password@)
@@ -3417,6 +3613,8 @@ en:
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   devise_omniauth_callbacks:
     failure: There was a problem signing you in through %{kind}. %{reason}
+    generic_failure: There was a problem signing you in. Please register or try signing
+      in later.
     success: Successfully authenticated from %{kind} account.
   doorkeeper:
     errors:
@@ -3621,6 +3819,8 @@ en:
           than platform managers.
         cover_image: Upload a cover image to display at the top of the profile.
         description: Provide a brief description or biography.
+        federate_content: Opt-in to let this platform share your public posts, pages,
+          and events with approved connected platforms.
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
@@ -3687,6 +3887,13 @@ en:
     uk: Українська
   meta:
     default_description: Welcome to %{platform_name}
+    descriptions:
+      communities:
+        index: Discover communities on %{platform_name}.
+        show: Learn about %{community_name} on %{platform_name}.
+      conversations:
+        index: Browse conversations on %{platform_name}.
+        show: View conversation %{conversation_subject} on %{platform_name}.
     page:
       description_fallback: Read %{title} on %{platform_name}
   metrics:

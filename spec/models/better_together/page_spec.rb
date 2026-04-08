@@ -81,6 +81,44 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#governed_authors' do
+        it 'includes both person and robot authors in authorship order' do
+          page = create(:better_together_page)
+          person = create(:better_together_person)
+          robot = create(:robot, platform: page.platform)
+
+          page.authorships.create!(author: person, position: 1)
+          page.authorships.create!(author: robot, position: 2)
+
+          expect(page.governed_authors).to eq([person, robot])
+          expect(page.authors).to eq([person])
+          expect(page.robot_authors).to eq([robot])
+        end
+      end
+
+      describe 'creator fallback authorship' do
+        it 'adds the creator as author when no explicit authors were selected' do
+          creator = create(:better_together_person)
+          page = create(:better_together_page, creator:)
+
+          expect(page.authors).to include(creator)
+        end
+
+        it 'does not add the creator when an explicit robot author was selected' do
+          creator = create(:better_together_person)
+          platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform)
+          robot = create(:robot, platform:)
+          page = described_class.new(title: 'Robot Page', privacy: 'public', platform:, creator:)
+
+          page.robot_authors << robot
+          page.save!
+
+          expect(page.robot_authors).to contain_exactly(robot)
+          expect(page.authors).to be_empty
+          expect(page.governed_authors).to contain_exactly(robot)
+        end
+      end
+
       describe '#url' do
         it 'returns the full URL of the page' do
           expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")
@@ -134,6 +172,83 @@ module BetterTogether # :nodoc:
           expect(mirrored_page).to be_mirrored
           expect(mirrored_page).to be_preserved_remote_uuid
           expect(mirrored_page.source_identifier).to eq(mirrored_page.id)
+        end
+      end
+
+      describe 'evidence selector options' do
+        it 'includes media-specific selectors from page content blocks' do
+          page = create(:better_together_page)
+          image_block = create(:better_together_content_image, identifier: 'launch-image')
+          video_block = create(:content_video_block, identifier: 'launch-video')
+          page.page_blocks.create!(block: image_block, position: 0)
+          page.page_blocks.create!(block: video_block, position: 1)
+
+          expect(page.evidence_selector_options).to include(
+            include(value: 'block:image:launch-image:media'),
+            include(value: 'block:image:launch-image:region:*'),
+            include(value: 'block:video_block:launch-video:timestamp:*')
+          )
+        end
+
+        it 'includes linked contribution citations in grouped evidence source options' do
+          page = create(:better_together_page)
+          local_citation = create(:citation, citeable: page, reference_key: 'local_record', title: 'Local Record Citation')
+          contributor = create(:person, name: 'Evidence Keeper')
+          contribution = BetterTogether::Authorship.create!(
+            authorable: page,
+            author: contributor,
+            role: 'reviewer'
+          )
+          linked_citation = create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
+
+          groups = page.available_evidence_citation_option_groups
+
+          expect(groups['Current record']).to include(["#{local_citation.reference_key}: #{local_citation.title}", local_citation.id])
+          expect(groups['Evidence Keeper: Reviewer']).to include(["#{linked_citation.reference_key}: #{linked_citation.title}",
+                                                                  linked_citation.id])
+        end
+
+        it 'builds evidence browser groups with preview metadata' do
+          page = create(:better_together_page)
+          create(:citation,
+                 citeable: page,
+                 reference_key: 'local_record',
+                 title: 'Local Record Citation',
+                 locator: 'p. 10',
+                 excerpt: 'Shared reality requires traceable evidence.')
+
+          browser_groups = page.available_evidence_citation_browser_groups
+
+          expect(browser_groups.first[:label]).to eq('Current record')
+          expect(browser_groups.first[:citations].first).to include(
+            reference_key: 'local_record',
+            title: 'Local Record Citation',
+            locator: 'p. 10',
+            excerpt: 'Shared reality requires traceable evidence.'
+          )
+          expect(browser_groups.first[:origin]).to eq('current_record')
+          expect(browser_groups.first[:record_type]).to eq('Page')
+        end
+
+        it 'includes contribution metadata in linked evidence browser groups' do
+          page = create(:better_together_page)
+          contributor = create(:person, name: 'Doc Reviewer')
+          contribution = BetterTogether::Authorship.create!(
+            authorable: page,
+            author: contributor,
+            role: 'reviewer',
+            contribution_type: 'documentation'
+          )
+          create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
+
+          contribution_group = page.available_evidence_citation_browser_groups.find { |group| group[:origin] == 'contribution' }
+
+          expect(contribution_group).to include(
+            origin: 'contribution',
+            record_type: 'Authorship',
+            contribution_role: 'reviewer',
+            contribution_type: 'documentation'
+          )
         end
       end
 
@@ -315,6 +430,25 @@ module BetterTogether # :nodoc:
             expect(localized_value).to include('File Search')
             expect(localized_value).to include('File body content that should be indexed.')
             expect(localized_value).not_to include('#')
+          end
+        end
+
+        context 'with translated page content' do
+          let(:token) { 'pagecontentsignal1006' }
+          let(:page) do
+            create(
+              :better_together_page,
+              title: 'Contentful Page',
+              slug: 'contentful-page',
+              privacy: 'public',
+              content: "<p>#{token}</p>"
+            )
+          end
+
+          it 'includes localized page content for Elasticsearch indexing' do
+            result = page.as_indexed_json
+
+            expect(result.values.flatten.compact.join(' ')).to include(token)
           end
         end
 

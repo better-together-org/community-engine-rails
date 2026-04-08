@@ -3,8 +3,7 @@
 module BetterTogether
   class ChecklistItemPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def show?
-      # If parent checklist is public or user can update checklist
-      record.checklist.privacy_public? || ChecklistPolicy.new(user, record.checklist).update?
+      ChecklistPolicy.new(user, record.checklist).show?
     end
 
     def create?
@@ -31,7 +30,7 @@ module BetterTogether
         table = scope.arel_table
 
         if scope.ancestors.include?(BetterTogether::Privacy)
-          query = table[:privacy].eq('public')
+          query = visible_privacy_query(table)
 
           if permitted_to?('manage_platform')
             query = query.or(table[:privacy].eq('private'))

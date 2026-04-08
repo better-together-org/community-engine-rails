@@ -2,6 +2,10 @@
   <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
+<% content_for :structured_data do %>
+  <%= structured_data_tag(event_structured_data(@event)) %>
+<% end %>
+
 <div id="<%= dom_id(@event) %>" class="container-fluid mb-3 px-0">
   <div class="event-header position-relative">
     <!-- Cover Image Section -->
@@ -43,6 +47,12 @@
           <% if policy(@event).ics? %>
             <%= link_to ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' do %>
               <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i><%= t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)') %>
+            <% end %>
+          <% end %>
+          <% if current_user.present? %>
+            <%= link_to new_report_path(locale: I18n.locale, reportable_type: @event.class.name, reportable_id: @event.id),
+                        class: 'btn btn-outline-danger btn-sm ms-2' do %>
+              <i class="fas fa-flag"></i> <%= t('better_together.reports.actions.report', default: 'Report') %>
             <% end %>
           <% end %>
         <% end %>
@@ -118,6 +128,10 @@
                 <p class="card-text mt-3 text-muted">
                   <%= @resource.description.presence || t('better_together.events.no_description_available') %>
                 </p>
+
+                <%= render 'better_together/shared/claims_and_evidence', record: @event %>
+                <%= render 'better_together/shared/bibliography', record: @event %>
+                <%= render 'better_together/shared/governance_bundle_links', record: @event if @event.bibliography_entries.any? || @event.claims.any? %>
 
                 <%= render 'better_together/events/event_hosts', event: @event %>
               </div>

@@ -14,8 +14,8 @@ module BetterTogether
       # Deny if author is blocked
       return false if blocked_author?
 
-      # Allow if published and public
-      record.published? && record.privacy_public?
+      # Community visibility is limited to members of the platform's primary community.
+      record.published? && public_or_member_scoped_community?(record)
     end
 
     def create?
@@ -24,7 +24,7 @@ module BetterTogether
     alias new? create?
 
     def update?
-      creator_or_platform_steward?
+      creator_platform_steward_or_editor?
     end
     alias edit? update?
 
@@ -36,15 +36,15 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        return scope.all if platform_content_manager?
+        return scope.latest_first if platform_content_manager?
 
-        base = scope.published
+        base = scope.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
-        public_posts = posts_table[:privacy].eq('public')
-        return base.where(public_posts) unless agent
+        visible_posts = visible_privacy_query(posts_table)
+        return base.where(visible_posts) unless agent
 
         creator_posts = posts_table[:creator_id].eq(agent.id)
-        base.where(public_posts.or(creator_posts))
+        base.where(visible_posts.or(creator_posts))
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -69,11 +69,20 @@ module BetterTogether
       record.creator == agent || platform_content_manager?
     end
 
+    def creator_platform_steward_or_editor?
+      creator_or_platform_steward? || (agent.present? && record.editable_contributors.include?(agent))
+    end
+
     def post_author_ids
       @post_author_ids ||= if record.authorships.loaded?
-                             record.authorships.map(&:author_id)
+                             record.authorships.select do |authorship|
+                               authorship.author_type == 'BetterTogether::Person' &&
+                                 authorship.role == BetterTogether::Authorship::AUTHOR_ROLE
+                             end
+                                               .map(&:author_id)
                            else
-                             record.authorships.pluck(:author_id)
+                             record.authorships.where(author_type: 'BetterTogether::Person',
+                                                      role: BetterTogether::Authorship::AUTHOR_ROLE).pluck(:author_id)
                            end
     end
 

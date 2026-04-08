@@ -2,7 +2,7 @@
 
 module BetterTogether
   # A gathering
-  class Community < ApplicationRecord
+  class Community < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Contactable
     include HostsEvents
     include Identifier
@@ -14,13 +14,21 @@ module BetterTogether
     include Protected
     include Privacy
     include Metrics::Viewable
+    include Searchable
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
-               optional: true
+               optional: true,
+               inverse_of: :created_communities
+    has_one :primary_platform,
+            class_name: '::BetterTogether::Platform',
+            foreign_key: :community_id,
+            inverse_of: :community,
+            dependent: :nullify
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
+    has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
 
     # Community invitations
     has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
@@ -36,6 +44,18 @@ module BetterTogether
     translates :name, type: :string
     translates :description, type: :text
     translates :description_html, backend: :action_text
+
+    settings index: default_elasticsearch_index
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
@@ -75,8 +95,27 @@ module BetterTogether
 
     validates :name, presence: true
 
+    def self.extra_permitted_attributes
+      super + %i[allow_membership_requests]
+    end
+
     def as_community
       becomes(self.class.base_class)
+    end
+
+    def membership_requests_enabled?(platform: primary_platform)
+      allow_membership_requests? || platform&.allow_membership_requests?
+    end
+
+    def as_indexed_json(_options = {})
+      {
+        id:,
+        name:,
+        slug:,
+        identifier:,
+        description:,
+        description_html: description_html.present? ? search_text_value(description_html) : nil
+      }.compact.as_json
     end
 
     # Resize the cover image to specific dimensions
@@ -127,13 +166,35 @@ module BetterTogether
     private
 
     def create_default_calendar
-      # Ensure identifiers remain unique across calendars by namespacing with the community identifier
-      calendars.create!(
-        identifier: "default-#{identifier}",
-        name: 'Default',
-        description: I18n.t('better_together.calendars.default_description',
-                            community_name: name,
-                            default: 'Default calendar for %<community_name>s')
+      calendar_identifier = "default-#{identifier}"
+      calendar = build_default_calendar(calendar_identifier)
+      calendar.save! if calendar.new_record? || calendar.changed?
+    rescue ActiveRecord::RecordInvalid => e
+      log_default_calendar_seed_error(e.record, calendar_identifier)
+      raise
+    end
+
+    def build_default_calendar(calendar_identifier)
+      calendars.find_or_initialize_by(identifier: calendar_identifier).tap do |calendar|
+        # Calendar slugs are globally unique, so the default calendar also needs
+        # a deterministic unique slug rather than the shared "default" slug.
+        calendar.slug = calendar_identifier if calendar.slug.blank?
+        calendar.name = 'Default' if calendar.name.blank?
+        calendar.description = I18n.t(
+          'better_together.calendars.default_description',
+          community_name: name,
+          default: 'Default calendar for %<community_name>s'
+        )
+      end
+    end
+
+    def log_default_calendar_seed_error(record, calendar_identifier)
+      Rails.logger.error(
+        '[BetterTogether::Community#create_default_calendar] ' \
+        "community_id=#{id} identifier=#{identifier} " \
+        "calendar_identifier=#{calendar_identifier} errors=#{record.errors.full_messages.join(' | ')} " \
+        "attrs=#{record.attributes.slice('id', 'community_id', 'identifier', 'locale', 'privacy', 'protected').inspect} " \
+        "slug=#{record.try(:slug).inspect} name=#{record.try(:name).inspect}"
       )
     end
 

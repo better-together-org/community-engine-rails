@@ -20,15 +20,19 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
     end
 
     it 'exports local-origin public content for allowed content types' do
-      post = create(:better_together_post, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
-      page = create(:better_together_page, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
-      event = create(:event, platform: source_platform, privacy: 'public', starts_at: 2.days.from_now, ends_at: 2.days.from_now + 1.hour)
+      creator = create(:better_together_person, federate_content: true)
+      post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
+      page = create(:better_together_page, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
+      event = create(:event, creator:, platform: source_platform, privacy: 'public', starts_at: 2.days.from_now,
+                             ends_at: 2.days.from_now + 1.hour)
 
       result = described_class.call(connection:, limit: 10)
       payloads = result.seeds.map { |seed| seed['better_together'][:payload] }
+      origins = result.seeds.map { |seed| seed['better_together'][:seed][:origin] }
 
       expect(payloads.map { |payload| payload[:type] }).to include('post', 'page', 'event')
       expect(payloads.map { |payload| payload[:id] }).to include(post.id, page.id, event.id)
+      expect(origins).to all(include(profile: 'platform_shared', lane: 'platform_shared'))
       expect(result.next_cursor).to be_present
     end
 
@@ -47,8 +51,11 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
     end
 
     it 'respects the cursor and limit' do
-      first_post = create(:better_together_post, platform: source_platform, privacy: 'public', published_at: 2.days.ago, updated_at: 2.days.ago)
-      second_post = create(:better_together_post, platform: source_platform, privacy: 'public', published_at: 1.day.ago, updated_at: 1.day.ago)
+      creator = create(:better_together_person, federate_content: true)
+      first_post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 2.days.ago,
+                                                 updated_at: 2.days.ago)
+      second_post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago,
+                                                  updated_at: 1.day.ago)
 
       first_result = described_class.call(connection:, limit: 1)
       second_result = described_class.call(connection:, cursor: first_result.next_cursor, limit: 10)
@@ -56,6 +63,15 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
       expect(first_result.seeds.length).to eq(1)
       expect(first_result.seeds.first['better_together'][:payload][:id]).to eq(first_post.id)
       expect(second_result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(second_post.id)
+    end
+
+    it 'excludes person-authored content when the creator has not opted into federation' do
+      creator = create(:better_together_person, federate_content: false)
+      create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago)
+
+      result = described_class.call(connection:, limit: 10)
+
+      expect(result.seeds).to be_empty
     end
   end
 end

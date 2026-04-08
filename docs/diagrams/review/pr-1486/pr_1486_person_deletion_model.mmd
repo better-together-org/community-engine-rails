@@ -1,0 +1,47 @@
+classDiagram
+    class User {
+      +email
+      +destroy()
+    }
+
+    class Person {
+      +name
+      +identifier
+      +anonymize()
+    }
+
+    class PersonDeletionRequest {
+      +requested_at
+      +requested_reason
+      +status
+      +approve()
+      +cancel()
+    }
+
+    class PersonPurgeAudit {
+      +inventory_snapshot
+      +execution_snapshot
+      +status
+    }
+
+    class PersonDeletionInventory {
+      +call(person)
+      +entries[]
+    }
+
+    class PersonDeletionManifest {
+      +entries from YAML
+    }
+
+    class PersonDeletionExecutor {
+      +call(person_deletion_request)
+    }
+
+    User --> Person : owns
+    Person --> PersonDeletionRequest : submits
+    PersonDeletionRequest --> PersonPurgeAudit : retained in audit trail
+    PersonDeletionExecutor --> PersonDeletionInventory : builds inventory
+    PersonDeletionInventory --> PersonDeletionManifest : reads manifest rules
+    PersonDeletionExecutor --> Person : anonymizes
+    PersonDeletionExecutor --> User : destroys
+    PersonDeletionExecutor --> PersonPurgeAudit : records snapshots

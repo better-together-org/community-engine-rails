@@ -3,6 +3,7 @@
 require 'capybara'
 require 'fileutils'
 require 'json'
+require 'uri'
 
 module BetterTogether # :nodoc:
   # Captures deterministic desktop and mobile screenshots for documentation specs.
@@ -10,13 +11,15 @@ module BetterTogether # :nodoc:
   module CapybaraScreenshotEngine # :nodoc:
     extend self
 
+    class CalloutTargetResolutionError < StandardError; end
+
     SCREENSHOT_ROOT = BetterTogether::Engine.root.join('docs', 'screenshots').freeze
 
-    def capture(name, device: :both, metadata: {}, &)
+    def capture(name, device: :both, metadata: {}, callouts: [], &)
       register_drivers
 
       devices_for(device).to_h do |current_device|
-        [current_device, capture_single(name, current_device, metadata:, &)]
+        [current_device, capture_single(name, current_device, metadata:, callouts:, &)]
       end
     end
 
@@ -59,7 +62,7 @@ module BetterTogether # :nodoc:
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def capture_single(name, device, metadata:)
+    def capture_single(name, device, metadata:, callouts:)
       directory = SCREENSHOT_ROOT.join(device.to_s)
       FileUtils.mkdir_p(directory)
 
@@ -72,8 +75,24 @@ module BetterTogether # :nodoc:
 
         yield if block_given?
         hide_sticky_elements
+        processed_metadata = default_metadata(name, device).merge(metadata)
+        callout_targets = collect_callout_targets(callouts)
         Capybara.page.save_screenshot(image_path.to_s)
-        File.write(json_path, JSON.pretty_generate(default_metadata(name, device).merge(metadata)))
+        normalize_artifact_permissions(image_path)
+        if callout_targets.any?
+          processed_callouts = BetterTogether::ScreenshotCalloutProcessor.process(
+            image_path,
+            callouts: callout_targets
+          )
+          if processed_callouts.size != callout_targets.size
+            raise CalloutTargetResolutionError,
+                  "Declared #{callout_targets.size} screenshot callout(s), rendered #{processed_callouts.size}"
+          end
+
+          processed_metadata[:callouts] = processed_callouts
+        end
+        File.write(json_path, JSON.pretty_generate(processed_metadata))
+        normalize_artifact_permissions(json_path)
       ensure
         restore_sticky_elements
       end
@@ -86,9 +105,8 @@ module BetterTogether # :nodoc:
       {
         name:,
         device: device.to_s,
-        url: safe_page_value { Capybara.page.current_url },
-        title: safe_page_value { Capybara.page.title },
-        captured_at: Time.current.utc.iso8601
+        url: safe_page_value { normalize_page_url(Capybara.page.current_url) },
+        title: safe_page_value { Capybara.page.title }
       }
     end
 
@@ -102,6 +120,102 @@ module BetterTogether # :nodoc:
 
     def safe_page_value
       yield
+    rescue StandardError
+      nil
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def collect_callout_targets(callouts)
+      normalized = Array(callouts).map { |callout| normalize_callout(callout) }.reject { |callout| callout[:selector].blank? }
+      return [] if normalized.empty?
+
+      geometry_by_selector = fetch_callout_geometry(normalized.map { |callout| callout[:selector] })
+      missing_selectors = normalized.map { |callout| callout[:selector] } - geometry_by_selector.keys
+      if missing_selectors.any?
+        raise CalloutTargetResolutionError,
+              "Could not resolve screenshot callout target(s): #{missing_selectors.join(', ')}"
+      end
+
+      normalized.filter_map do |callout|
+        geometry = geometry_by_selector[callout[:selector]]
+        next unless geometry
+
+        callout.merge(target: geometry)
+      end
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def normalize_callout(callout)
+      {
+        selector: callout[:selector] || callout['selector'],
+        title: callout[:title] || callout['title'],
+        bullets: Array(callout[:bullets] || callout['bullets']).map(&:to_s)
+      }
+    end
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    def fetch_callout_geometry(selectors)
+      results = Capybara.page.evaluate_script(<<~JS, selectors)
+        (function(targetSelectors) {
+          function firstVisibleTarget(element) {
+            const candidates = [
+              element,
+              element?.nextElementSibling,
+              element?.previousElementSibling,
+              element?.parentElement?.querySelector('.ss-main, .ts-wrapper, [role="combobox"]')
+            ].filter(Boolean);
+
+            return candidates.find((candidate) => {
+              const rect = candidate.getBoundingClientRect();
+              return rect.width > 0 && rect.height > 0;
+            }) || element;
+          }
+
+          return targetSelectors.map((selector) => {
+            const element = document.querySelector(selector);
+            if (!element) return null;
+            const visibleTarget = firstVisibleTarget(element);
+            const rect = visibleTarget.getBoundingClientRect();
+            return {
+              selector,
+              x: rect.left,
+              y: rect.top,
+              width: rect.width,
+              height: rect.height
+            };
+          }).filter(Boolean);
+        })(arguments[0]);
+      JS
+
+      Array(results).to_h do |geometry|
+        selector = geometry['selector'] || geometry[:selector]
+        [
+          selector,
+          {
+            x: geometry['x'] || geometry[:x],
+            y: geometry['y'] || geometry[:y],
+            width: geometry['width'] || geometry[:width],
+            height: geometry['height'] || geometry[:height]
+          }
+        ]
+      end
+    rescue StandardError => e
+      raise CalloutTargetResolutionError, "Failed to resolve screenshot callout geometry: #{e.message}"
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+    def normalize_page_url(url)
+      return if url.blank?
+
+      uri = URI.parse(url)
+      path = uri.path.presence || '/'
+      uri.query.present? ? "#{path}?#{uri.query}" : path
+    rescue URI::InvalidURIError
+      url.to_s.sub(%r{\Ahttps?://[^/]+}, '')
+    end
+
+    def normalize_artifact_permissions(path)
+      File.chmod(0o644, path.to_s) if File.exist?(path)
     rescue StandardError
       nil
     end

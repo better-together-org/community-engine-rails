@@ -6,7 +6,7 @@ module BetterTogether
   class WizardStep < ApplicationRecord
     belongs_to :wizard
     belongs_to :wizard_step_definition
-    belongs_to :creator, class_name: '::BetterTogether::Person', optional: true
+    belongs_to :creator, class_name: '::BetterTogether::Person', optional: true, inverse_of: :created_wizard_steps
 
     # Delegate success_message and success_path to the wizard_step_definition
     delegate :message, to: :wizard_step_definition

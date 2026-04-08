@@ -4,6 +4,13 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::EventsController', :as_user do
   let(:locale) { I18n.default_locale }
+  let!(:publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |agreement|
+      agreement.title = 'Content Publishing Agreement'
+      agreement.privacy = 'public'
+      agreement.protected = true
+    end
+  end
 
   describe 'GET /events/:id.ics' do
     let(:test_event) do
@@ -165,6 +172,24 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(response.body).not_to include('id="attendees-tab"')
       end
     end
+
+    context 'with evidence records', :as_user do
+      before do
+        citation = create(:citation, citeable: event, title: 'Event agenda', reference_key: 'agenda-1')
+        claim = create(:claim, claimable: event, statement: 'This event is community-led.')
+        create(:evidence_link, claim:, citation:, relation_type: 'supports')
+      end
+
+      it 'renders claims and bibliography on the show page' do
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Claims and Supporting Evidence')
+        expect(response.body).to include('Evidence and Citations')
+        expect(response.body).to include('This event is community-led.')
+        expect(response.body).to include('Event agenda')
+      end
+    end
   end
 
   describe 'RSVP actions' do
@@ -237,6 +262,19 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     let(:locale) { I18n.default_locale }
 
     context 'as platform manager', :as_platform_manager do
+      let(:manager_user) do
+        BetterTogether::User.find_by(email: 'manager@example.test') ||
+          create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
+      end
+
+      before do
+        create(:better_together_agreement_participant,
+               agreement: publishing_agreement,
+               participant: manager_user.person,
+               accepted_at: Time.current)
+        login(manager_user.email, 'SecureTest123!@#')
+      end
+
       # rubocop:todo RSpec/MultipleExpectations
       it 'creates an event with a simple (name) location' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
@@ -296,8 +334,6 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       # rubocop:todo RSpec/MultipleExpectations
       it 'creates an event with a Building location' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
-        manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
-                       create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
         building = create(:better_together_infrastructure_building, creator: manager_user.person, privacy: 'private')
 
         params = {
@@ -352,6 +388,15 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
   describe 'timezone-aware datetime handling', :as_platform_manager do
     let(:locale) { I18n.default_locale }
+
+    before do
+      manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
+                     create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
+      create(:better_together_agreement_participant,
+             agreement: publishing_agreement,
+             participant: manager_user.person,
+             accepted_at: Time.current)
+    end
 
     context 'when creating an event with Eastern timezone while user is in Newfoundland timezone' do
       # rubocop:disable RSpec/MultipleExpectations
@@ -487,6 +532,16 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
   end
 
   describe 'GET /:locale/events', :as_platform_manager do
+    let(:manager_user) do
+      BetterTogether::User.find_by(email: 'manager@example.test') ||
+        create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
+    end
+
+    before do
+      login(manager_user.email, 'SecureTest123!@#')
+      allow_any_instance_of(BetterTogether::EventPolicy).to receive(:create?).and_return(false) # rubocop:disable RSpec/AnyInstance
+    end
+
     it 'renders index without N+1 on categories association' do
       events = create_list(:event, 3)
       category = create(:event_category)
@@ -495,6 +550,19 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       get better_together.events_path(locale:)
 
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'paginates draft, upcoming, and past event groups independently' do # rubocop:todo RSpec/MultipleExpectations
+      create_list(:event, 3, :draft)
+      create_list(:event, 3, starts_at: 2.days.from_now)
+      create_list(:event, 3, starts_at: 2.days.ago)
+
+      get better_together.events_path(locale:, draft_page: 2, upcoming_page: 2, past_page: 2, per: 2)
+
+      expect(response).to have_http_status(:ok)
+      expect(assigns(:draft_events).current_page).to eq(2)
+      expect(assigns(:upcoming_events).current_page).to eq(2)
+      expect(assigns(:past_events).current_page).to eq(2)
     end
   end
 end

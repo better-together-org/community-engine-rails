@@ -35,12 +35,13 @@ require 'importmap-rails'
 require 'kaminari'
 require 'noticed'
 require 'premailer/rails'
+require 'pg_search'
 require 'rack/attack'
 require 'redcarpet'
 require 'omniauth/rails_csrf_protection'
 require 'omniauth-github'
 require 'reform/rails'
-require 'ruby/openai'
+require 'ruby_llm'
 require 'sidekiq-scheduler'
 require 'simple_calendar'
 require 'sprockets/railtie'
@@ -62,6 +63,7 @@ module BetterTogether
 
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/app/mailboxes",
       "#{root}/app/tools",
       "#{root}/app/resources",
       "#{root}/app/middleware"

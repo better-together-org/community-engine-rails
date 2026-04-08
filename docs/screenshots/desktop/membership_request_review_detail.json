@@ -1,0 +1,10 @@
+{
+  "name": "membership_request_review_detail",
+  "device": "desktop",
+  "url": "/en/c/test-host-community/membership_requests/membership-request-from-mrs-hortencia-cremin",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "community_manager",
+  "feature_set": "membership_request_workflow",
+  "source_spec": "./spec/docs_screenshots/better_together/membership_request_workflow_spec.rb"
+}
