@@ -33,6 +33,32 @@ module BetterTogether # :nodoc:
           expect(pixel).not_to eq([255.0, 255.0, 255.0, 255.0])
         end
       end
+
+      it 'avoids covering the broader target container when provided' do
+        Dir.mktmpdir do |dir|
+          image_path = File.join(dir, 'callout-avoid-container.png')
+          Vips::Image.black(1440, 900).new_from_image([255, 255, 255]).write_to_file(image_path)
+
+          processed = described_class.process(
+            image_path,
+            callouts: [
+              {
+                selector: '.card .badge.text-bg-warning',
+                title: 'Upload remains held before release',
+                bullets: ['Place the note in adjacent whitespace instead of over the upload card.'],
+                target: { x: 180, y: 130, width: 96, height: 36 },
+                avoid: { x: 120, y: 80, width: 540, height: 320 }
+              }
+            ]
+          )
+
+          placement = processed.first[:placement]
+          avoid = processed.first[:avoid]
+
+          expect(placement[:x]).to be > avoid[:right]
+          expect(placement[:side]).to eq('right')
+        end
+      end
     end
   end
 end

@@ -1,8 +1,8 @@
 {
   "name": "content_security_placeholder_under_review",
   "device": "desktop",
-  "url": "/en/conversations/5f61d058-a259-4198-acb5-b2cbd90b171e?person_id=user",
-  "title": "Mollitia rerum nihil doloribus. | Conversations | Test Host Community",
+  "url": "/en/conversations/fbdbfcb9-535e-47fb-b63f-21f1fc7f376e?person_id=user",
+  "title": "Occaecati quaerat tempore iste. | Conversations | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "content_security_review_states",
@@ -18,6 +18,16 @@
         "No image is rendered until the attachment is approved for release."
       ],
       "target": {
+        "x": 830.140625,
+        "y": 405.0,
+        "width": 570.859375,
+        "height": 66.0,
+        "right": 1401.0,
+        "bottom": 471.0,
+        "center_x": 1115.5703125,
+        "center_y": 438.0
+      },
+      "avoid": {
         "x": 830.140625,
         "y": 405.0,
         "width": 570.859375,

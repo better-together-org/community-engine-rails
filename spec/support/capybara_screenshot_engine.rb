@@ -129,7 +129,7 @@ module BetterTogether # :nodoc:
       normalized = Array(callouts).map { |callout| normalize_callout(callout) }.reject { |callout| callout[:selector].blank? }
       return [] if normalized.empty?
 
-      geometry_by_selector = fetch_callout_geometry(normalized.map { |callout| callout[:selector] })
+      geometry_by_selector = fetch_callout_geometry(normalized)
       missing_selectors = normalized.map { |callout| callout[:selector] } - geometry_by_selector.keys
       if missing_selectors.any?
         raise CalloutTargetResolutionError,
@@ -140,7 +140,7 @@ module BetterTogether # :nodoc:
         geometry = geometry_by_selector[callout[:selector]]
         next unless geometry
 
-        callout.merge(target: geometry)
+        callout.merge(target: geometry[:target], avoid: geometry[:avoid])
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -149,14 +149,15 @@ module BetterTogether # :nodoc:
       {
         selector: callout[:selector] || callout['selector'],
         title: callout[:title] || callout['title'],
-        bullets: Array(callout[:bullets] || callout['bullets']).map(&:to_s)
+        bullets: Array(callout[:bullets] || callout['bullets']).map(&:to_s),
+        avoid_container_selector: callout[:avoid_container_selector] || callout['avoid_container_selector']
       }
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-    def fetch_callout_geometry(selectors)
-      results = Capybara.page.evaluate_script(<<~JS, selectors)
-        (function(targetSelectors) {
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    def fetch_callout_geometry(callouts)
+      results = Capybara.page.evaluate_script(<<~JS, callouts)
+        (function(targetCallouts) {
           function firstVisibleTarget(element) {
             const candidates = [
               element,
@@ -171,17 +172,29 @@ module BetterTogether # :nodoc:
             }) || element;
           }
 
-          return targetSelectors.map((selector) => {
-            const element = document.querySelector(selector);
+          return targetCallouts.map((callout) => {
+            const element = document.querySelector(callout.selector);
             if (!element) return null;
             const visibleTarget = firstVisibleTarget(element);
             const rect = visibleTarget.getBoundingClientRect();
+            const avoidContainer = callout.avoid_container_selector
+              ? visibleTarget.closest(callout.avoid_container_selector)
+              : null;
+            const avoidRect = (avoidContainer || visibleTarget).getBoundingClientRect();
             return {
-              selector,
-              x: rect.left,
-              y: rect.top,
-              width: rect.width,
-              height: rect.height
+              selector: callout.selector,
+              target: {
+                x: rect.left,
+                y: rect.top,
+                width: rect.width,
+                height: rect.height
+              },
+              avoid: {
+                x: avoidRect.left,
+                y: avoidRect.top,
+                width: avoidRect.width,
+                height: avoidRect.height
+              }
             };
           }).filter(Boolean);
         })(arguments[0]);
@@ -192,17 +205,25 @@ module BetterTogether # :nodoc:
         [
           selector,
           {
-            x: geometry['x'] || geometry[:x],
-            y: geometry['y'] || geometry[:y],
-            width: geometry['width'] || geometry[:width],
-            height: geometry['height'] || geometry[:height]
+            target: {
+              x: geometry.dig('target', 'x') || geometry.dig(:target, :x),
+              y: geometry.dig('target', 'y') || geometry.dig(:target, :y),
+              width: geometry.dig('target', 'width') || geometry.dig(:target, :width),
+              height: geometry.dig('target', 'height') || geometry.dig(:target, :height)
+            },
+            avoid: {
+              x: geometry.dig('avoid', 'x') || geometry.dig(:avoid, :x),
+              y: geometry.dig('avoid', 'y') || geometry.dig(:avoid, :y),
+              width: geometry.dig('avoid', 'width') || geometry.dig(:avoid, :width),
+              height: geometry.dig('avoid', 'height') || geometry.dig(:avoid, :height)
+            }
           }
         ]
       end
     rescue StandardError => e
       raise CalloutTargetResolutionError, "Failed to resolve screenshot callout geometry: #{e.message}"
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def normalize_page_url(url)
       return if url.blank?

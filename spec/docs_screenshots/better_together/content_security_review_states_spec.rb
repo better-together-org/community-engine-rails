@@ -35,6 +35,7 @@ RSpec.describe 'Documentation screenshots for content security review states',
       callouts: [
         {
           selector: '.card .badge.text-bg-warning',
+          avoid_container_selector: '.card',
           title: 'Upload remains held before release',
           bullets: [
             'The visible badge marks the file as under review.',
@@ -68,6 +69,7 @@ RSpec.describe 'Documentation screenshots for content security review states',
       callouts: [
         {
           selector: '.card .badge.text-bg-danger',
+          avoid_container_selector: '.card',
           title: 'Restricted uploads stay unavailable',
           bullets: [
             'A blocked or quarantined verdict is surfaced distinctly from general review.',

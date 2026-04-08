@@ -1,8 +1,8 @@
 {
   "name": "content_security_placeholder_restricted",
   "device": "desktop",
-  "url": "/en/conversations/2267796d-d4ee-4b5b-884b-106105cc2e00?person_id=user",
-  "title": "Qui animi eum voluptatem. | Conversations | Test Host Community",
+  "url": "/en/conversations/5f41fafe-637b-4d9b-8ef3-995109a7b878?person_id=user",
+  "title": "A officia quasi qui. | Conversations | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "content_security_review_states",
@@ -18,6 +18,16 @@
         "The message body remains readable without exposing the attachment."
       ],
       "target": {
+        "x": 757.96875,
+        "y": 405.0,
+        "width": 643.03125,
+        "height": 66.0,
+        "right": 1401.0,
+        "bottom": 471.0,
+        "center_x": 1079.484375,
+        "center_y": 438.0
+      },
+      "avoid": {
         "x": 757.96875,
         "y": 405.0,
         "width": 643.03125,

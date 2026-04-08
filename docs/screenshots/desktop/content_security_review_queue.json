@@ -27,6 +27,16 @@
         "center_x": 720.0,
         "center_y": 724.09375
       },
+      "avoid": {
+        "x": 88.0,
+        "y": 690.59375,
+        "width": 1264.0,
+        "height": 67.0,
+        "right": 1352.0,
+        "bottom": 757.59375,
+        "center_x": 720.0,
+        "center_y": 724.09375
+      },
       "placement": {
         "side": "below",
         "x": 530.0,
