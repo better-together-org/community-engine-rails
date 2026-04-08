@@ -38,6 +38,7 @@ module BetterTogether
                            :claims,
                            blocks: { background_image_file_attachment: :blob }
                          )
+      set_current_person_community_membership
 
       # Categorize events for display
       categorize_community_events
@@ -131,9 +132,18 @@ module BetterTogether
 
     def permitted_attributes
       %i[
+        allow_membership_requests
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
         .concat(resource_class.extra_permitted_attributes)
+    end
+
+    def set_current_person_community_membership
+      return unless helpers.current_person
+
+      @current_person_community_membership = @community.person_community_memberships.find_by(
+        member: helpers.current_person
+      )
     end
 
     def resource_class

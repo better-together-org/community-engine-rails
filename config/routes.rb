@@ -7,6 +7,7 @@ require 'rswag/api'
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
+  post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
 
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,

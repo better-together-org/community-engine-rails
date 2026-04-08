@@ -60,6 +60,27 @@
         <dt class="col-sm-3"><%= t('globals.submitted_at', default: 'Submitted') %></dt>
         <dd class="col-sm-9"><%= l(@membership_request.created_at, format: :long) %></dd>
       </dl>
+
+      <div class="alert alert-info mt-4 mb-0" role="status">
+        <h3 class="h6 mb-2">
+          <%= t('better_together.membership_requests.show.decision_notifications_heading',
+                default: 'Decision and notifications') %>
+        </h3>
+        <ul class="mb-0">
+          <li>
+            <%= t('better_together.membership_requests.show.authenticated_requestor_flow',
+                  default: 'Signed-in requestors who are approved become members immediately and receive both in-app and email confirmation.') %>
+          </li>
+          <li>
+            <%= t('better_together.membership_requests.show.email_requestor_flow',
+                  default: 'Email-only requestors who are approved receive an invitation email so they can create an account and join.') %>
+          </li>
+          <li>
+            <%= t('better_together.membership_requests.show.decline_flow',
+                  default: 'Declining notifies the requester by email, and signed-in requestors also receive an in-app notification.') %>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <% if @membership_request.status_open? %>

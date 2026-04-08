@@ -1,0 +1,13 @@
+<%= t('.greeting', name: @recipient_name) %>
+
+<%= t('.message', community_name: @community_name) %>
+
+<% if @decision_actor_name.present? %>
+<%= t('.reviewed_by', decision_actor_name: @decision_actor_name) %>
+<% end %>
+
+<% if @review_url.present? %>
+<%= t('.learn_more') %>: <%= @review_url %>
+<% end %>
+
+<%= t('.signature_text', community_name: @community_name) %>

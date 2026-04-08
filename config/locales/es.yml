@@ -685,6 +685,47 @@ es:
       private: Privado
       public: Público
   better_together:
+    access_modes:
+      actions:
+        create_account: Crear cuenta
+        join_now: Unirse ahora
+        request_to_join: Solicitar unirse
+        sign_in: Iniciar sesión
+      already_member: Ya eres miembro de esta comunidad.
+      current_status:
+        active: Ya eres miembro.
+        pending: Tu solicitud está pendiente de revisión.
+      descriptions:
+        generic:
+          invitation: Las personas necesitan una invitación antes de unirse a este
+            espacio.
+          open: Las personas pueden unirse de inmediato sin esperar aprobación.
+          request: Las personas pueden solicitar unirse. Una persona coordinadora
+            revisa las solicitudes antes de conceder el acceso.
+        platform:
+          invitation: Las personas necesitan una invitación antes de poder crear una
+            cuenta aquí.
+          open: Las personas pueden crear una cuenta y unirse sin esperar aprobación.
+      form:
+        community_help: Elige si las personas se unen de inmediato o si primero deben
+          solicitar acceso.
+        community_requests: Exigir que las personas soliciten acceso antes de hacerse
+          miembros
+        platform_help: Elige si las personas pueden crear una cuenta directamente
+          o si primero necesitan una invitación.
+        platform_invitation_help: Las invitaciones pueden completar previamente las
+          direcciones de correo y asignar roles de plataforma o comunidad después
+          de ser aceptadas.
+        platform_invitation_only: Exigir una invitación antes de que alguien pueda
+          registrarse
+      heading: Cómo se une la gente
+      labels:
+        invitation: Solo con invitación
+        open: Unión abierta
+        request: Solicitar unirse
+      membership_joined: Te uniste a esta comunidad.
+      membership_request_pending: Tu solicitud de membresía ya está pendiente.
+      membership_requested: Tu solicitud de membresía fue enviada.
     addresses:
       add: Agregar Dirección
       address: Dirección
@@ -1775,6 +1816,28 @@ es:
         signature_text: Saludos cordiales, El equipo de %{joinable_name}
         subject: Tu membresía de %{joinable_type} ha sido actualizada en %{joinable_name}
         view_joinable: Ver %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Hola %{name},
+        learn_more: Ver %{community_name}
+        message: Tu solicitud para unirte a %{community_name} fue rechazada.
+        reviewed_by: Revisado por %{decision_actor_name}.
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{community_name}
+        signature_text: Saludos cordiales, El equipo de %{community_name}
+        subject: Tu solicitud de membresía para %{community_name} fue rechazada
+      submitted:
+        greeting: Hola %{name},
+        message: "%{requestor_name} solicitó unirse a %{community_name}."
+        request_message_label: Mensaje de la persona solicitante
+        requestor_email_label: 'Correo de la persona solicitante:'
+        review_request: Revisar solicitud de membresía
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{community_name}
+        signature_text: Saludos cordiales, El equipo de %{community_name}
+        subject: Nueva solicitud de membresía para %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1813,6 +1876,14 @@ es:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Las personas solicitantes con sesión iniciada
+          que sean aprobadas se convierten en miembros de inmediato y reciben confirmación
+          en la aplicación y por correo.
+        decision_notifications_heading: Decisión y notificaciones
+        decline_flow: Rechazar notifica a la persona solicitante por correo, y las
+          personas con sesión iniciada también reciben una notificación en la aplicación.
+        email_requestor_flow: Las personas solicitantes solo por correo que sean aprobadas
+          reciben un correo de invitación para crear una cuenta y unirse.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2157,6 +2228,12 @@ es:
       membership_removed:
         body: Tu membresía de %{role_name} en %{joinable_name} ha sido eliminada
         title: 'Membresía eliminada: %{role_name} en %{joinable_name}'
+      membership_request_declined:
+        body: Tu solicitud para unirte a %{community_name} fue rechazada
+        title: Solicitud de membresía rechazada para %{community_name}
+      membership_request_submitted:
+        body: "%{requestor_name} solicitó unirse a %{community_name}"
+        title: Nueva solicitud de membresía para %{community_name}
       membership_updated:
         body: Tu rol ha cambiado de %{old_role_name} a %{new_role_name} en %{joinable_name}
         role_change_detail: Tu rol cambió de %{old_role_name} a %{new_role_name}

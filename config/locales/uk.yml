@@ -674,6 +674,43 @@ uk:
       private: Приватний
       public: Публічний
   better_together:
+    access_modes:
+      actions:
+        create_account: Створити обліковий запис
+        join_now: Приєднатися зараз
+        request_to_join: Подати запит на вступ
+        sign_in: Увійти
+      already_member: Ви вже є учасником цієї спільноти.
+      current_status:
+        active: Ви вже є учасником.
+        pending: Ваш запит очікує на розгляд.
+      descriptions:
+        generic:
+          invitation: Людям потрібне запрошення, щоб приєднатися до цього простору.
+          open: Люди можуть приєднатися одразу без очікування схвалення.
+          request: Люди можуть подати запит на вступ. Координатор або координаторка
+            переглядає запити перед наданням доступу.
+        platform:
+          invitation: Людям потрібне запрошення, щоб створити тут обліковий запис.
+          open: Люди можуть створити обліковий запис і приєднатися без очікування
+            схвалення.
+      form:
+        community_help: Виберіть, чи люди приєднуються одразу, чи спочатку мають подати
+          запит.
+        community_requests: Вимагати запит на доступ перед тим, як людина стане учасником
+        platform_help: Виберіть, чи люди можуть створити обліковий запис одразу, чи
+          спочатку їм потрібне запрошення.
+        platform_invitation_help: Запрошення можуть заздалегідь заповнювати адресу
+          електронної пошти та призначати ролі платформи або спільноти після прийняття.
+        platform_invitation_only: Вимагати запрошення перед тим, як людина зможе зареєструватися
+      heading: Як люди приєднуються
+      labels:
+        invitation: Лише за запрошенням
+        open: Відкритий вступ
+        request: Запит на вступ
+      membership_joined: Ви приєдналися до цієї спільноти.
+      membership_request_pending: Ваш запит на членство вже очікує на розгляд.
+      membership_requested: Ваш запит на членство надіслано.
     addresses:
       add: Додати адресу
       address: Адреса
@@ -1763,6 +1800,24 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Вітаємо, %{name}!
+        learn_more: Переглянути %{community_name}
+        message: Ваш запит на приєднання до %{community_name} відхилено.
+        reviewed_by: Розглянув(ла) %{decision_actor_name}.
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject: Ваш запит на членство в %{community_name} відхилено
+      submitted:
+        greeting: Вітаємо, %{name}!
+        message: "%{requestor_name} попросив(ла) приєднатися до %{community_name}."
+        request_message_label: Повідомлення від заявника або заявниці
+        requestor_email_label: 'Електронна адреса заявника або заявниці:'
+        review_request: Переглянути запит на членство
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject: Новий запит на членство в %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1801,6 +1856,14 @@ uk:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Користувачі, які увійшли в систему й отримали
+          схвалення, одразу стають учасниками та отримують підтвердження і в застосунку,
+          і електронною поштою.
+        decision_notifications_heading: Рішення та сповіщення
+        decline_flow: Відхилення надсилає заявникові або заявниці лист, а користувачі,
+          які увійшли в систему, також отримують сповіщення в застосунку.
+        email_requestor_flow: Заявники й заявниці лише з електронною поштою після
+          схвалення отримують лист-запрошення, щоб створити обліковий запис і приєднатися.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2145,6 +2208,12 @@ uk:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Ваш запит на приєднання до %{community_name} відхилено
+        title: Запит на членство в %{community_name} відхилено
+      membership_request_submitted:
+        body: "%{requestor_name} попросив(ла) приєднатися до %{community_name}"
+        title: Новий запит на членство в %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}

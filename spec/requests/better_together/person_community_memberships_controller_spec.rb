@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 # rubocop:todo Metrics/BlockLength
+# rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
 
@@ -64,4 +65,52 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platf
     end
   end
 end
+
+RSpec.describe 'BetterTogether::PersonCommunityMembershipsController self-service' do
+  let(:locale) { I18n.default_locale }
+  let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+  describe 'POST /:locale/.../host/communities/:community_id/person_community_memberships', :as_user do
+    # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'creates an active membership when direct join is allowed' do
+      community = create(:better_together_community, allow_membership_requests: false)
+
+      expect do
+        post better_together.community_person_community_memberships_path(locale:, community_id: community.id), params: {
+          person_community_membership: {
+            self_service: '1'
+          }
+        }
+      end.to change(BetterTogether::PersonCommunityMembership, :count).by(1)
+
+      membership = BetterTogether::PersonCommunityMembership.order(:created_at).last
+      expect(membership.joinable).to eq(community)
+      expect(membership.member).to eq(BetterTogether::User.find_by(email: 'user@example.test').person)
+      expect(membership.role).to eq(community_member_role)
+      expect(membership.status).to eq('active')
+      expect(response).to redirect_to(community)
+    end
+    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
+
+    # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+    it 'creates a pending membership when request mode is enabled' do
+      community = create(:better_together_community, allow_membership_requests: true)
+
+      expect do
+        post better_together.community_person_community_memberships_path(locale:, community_id: community.id), params: {
+          person_community_membership: {
+            self_service: '1'
+          }
+        }
+      end.to change(BetterTogether::PersonCommunityMembership, :count).by(1)
+
+      membership = BetterTogether::PersonCommunityMembership.order(:created_at).last
+      expect(membership.joinable).to eq(community)
+      expect(membership.status).to eq('pending')
+      expect(response).to redirect_to(community)
+    end
+    # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
+  end
+end
+# rubocop:enable RSpec/MultipleDescribes
 # rubocop:enable Metrics/BlockLength

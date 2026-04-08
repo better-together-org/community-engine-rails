@@ -5,6 +5,12 @@ module BetterTogether
   module Joinable
     extend ActiveSupport::Concern
 
+    ACCESS_MODES = {
+      open: :open,
+      request: :request,
+      invitation: :invitation
+    }.freeze
+
     included do
       class_attribute :member_role_associations, :joinable_type, :membership_class
       self.member_role_associations = []
@@ -37,6 +43,54 @@ module BetterTogether
         # Register the association name for role retrieval
         member_role_associations << member_roles_association
       end
+    end
+
+    def access_mode
+      return ACCESS_MODES[:invitation] if invitation_required_for_access?
+      return ACCESS_MODES[:request] if membership_requests_enabled?
+
+      ACCESS_MODES[:open]
+    end
+
+    def invitation_required_for_access?
+      respond_to?(:requires_invitation?) && requires_invitation?
+    end
+
+    def membership_requests_enabled?
+      return false unless has_attribute?(:allow_membership_requests)
+
+      ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests])
+    end
+
+    def allows_direct_join?
+      access_mode == ACCESS_MODES[:open]
+    end
+
+    def request_to_join_only?
+      access_mode == ACCESS_MODES[:request]
+    end
+
+    def invitation_only?
+      access_mode == ACCESS_MODES[:invitation]
+    end
+
+    def default_member_role_identifier
+      "#{self.class.joinable_type}_member"
+    end
+
+    def default_member_role
+      BetterTogether::Role.find_by(
+        resource_type: self.class.name,
+        identifier: default_member_role_identifier
+      )
+    end
+
+    def supports_self_service_membership?
+      default_member_role.present? && !invitation_only?
+    end
+
+    def self_service_membership_status
+      allows_direct_join? ? 'active' : 'pending'
     end
   end
 end

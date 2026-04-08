@@ -47,6 +47,10 @@
       <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
     <% end %>
 
+    <%= render 'better_together/shared/access_mode_panel',
+               resource: @community,
+               membership: @current_person_community_membership %>
+
     <!-- Community tabbed section with members -->
     <section class="card tabbed-section">
       <div class="card-header">
