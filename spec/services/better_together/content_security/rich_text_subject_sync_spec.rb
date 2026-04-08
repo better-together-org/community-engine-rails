@@ -16,7 +16,15 @@ RSpec.describe BetterTogether::ContentSecurity::RichTextSubjectSync, type: :serv
       content_type: 'image/png'
     )
   end
+  let(:second_blob) do
+    ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(png_data),
+      filename: 'embedded-2.png',
+      content_type: 'image/png'
+    )
+  end
   let(:attachment_html) { ActionText::Attachment.from_attachable(blob).to_html }
+  let(:second_attachment_html) { ActionText::Attachment.from_attachable(second_blob).to_html }
 
   it 'creates held subject rows for embedded blobs and prunes removed embeds' do
     message = BetterTogether::Message.create!(
@@ -41,5 +49,18 @@ RSpec.describe BetterTogether::ContentSecurity::RichTextSubjectSync, type: :serv
     expect(
       BetterTogether::ContentSecurity::Subject.find_by(subject: message, attachment_name: "content:embed:#{blob.id}")
     ).to be_nil
+  end
+
+  it 'allows multiple embedded blobs in the same rich text locale' do
+    expect do
+      BetterTogether::Message.create!(
+        conversation: create(:conversation),
+        sender: create(:person),
+        content: "<p>hello</p>#{attachment_html}#{second_attachment_html}"
+      )
+    end.not_to raise_error
+
+    expect(BetterTogether::ContentSecurity::Subject.find_by(attachment_name: "content:embed:#{blob.id}")).to be_present
+    expect(BetterTogether::ContentSecurity::Subject.find_by(attachment_name: "content:embed:#{second_blob.id}")).to be_present
   end
 end

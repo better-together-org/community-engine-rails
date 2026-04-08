@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_08_170000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_08_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -44,8 +44,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_170000) do
     t.datetime "created_at", null: false
     t.string "locale", default: "en", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
-    t.index ["record_type", "record_id", "name", "locale"], name: "index_active_storage_attachments_on_record_and_name_and_locale", unique: true
+    t.index ["record_type", "record_id", "name", "blob_id", "locale"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
