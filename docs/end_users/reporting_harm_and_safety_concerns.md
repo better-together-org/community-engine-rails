@@ -19,7 +19,7 @@ The current reporting interface supports a structured report with:
 
 ## Where Reporting Starts
 
-In the current interface, reporting starts from a shared **feedback area** on supported content and profile surfaces.
+In the current interface, reporting starts from a consistent action area on supported content and profile surfaces.
 
 Current entry points include:
 
@@ -32,7 +32,7 @@ Current entry points include:
 - conversation messages
 - upload listings when a reportable upload is visible
 
-The same entry pattern is used so you do not need to learn a different reporting location for each surface. The label changes to match scope, such as **Page feedback**, **Post feedback**, **Community feedback**, or **Section feedback**.
+Most surfaces keep the familiar **ellipsis actions menu**. Page views also include a separate **Feedback** bar at the bottom of the page, below the share tools. This keeps page reporting easy to find without adding a large panel above the content.
 
 When you choose **Report safety issue**, the report goes to the **platform safety team**. It is not automatically shared with the content owner, profile owner, or community/page stewards.
 
@@ -111,7 +111,7 @@ This keeps safety disclosures private. Future non-safety feedback, such as corre
 ## Step-By-Step: How To Submit A Report
 
 1. Open the person, post, page, page section, community, event, message, or upload you need to flag.
-2. Find the visible feedback area for that surface.
+2. Open the actions menu for that surface, or use the page-bottom **Feedback** bar on a page view.
 3. Select **Report safety issue**.
 4. Complete the report form.
 5. Review your answers.
@@ -121,7 +121,11 @@ This keeps safety disclosures private. Future non-safety feedback, such as corre
 
 ![Feedback area showing the report entry from an individual content block on a page.](../screenshots/desktop/content_reporting_actions_block_menu.png)
 
+![Page-bottom feedback bar shown below the share tools.](../screenshots/desktop/content_reporting_actions_page_feedback_bar.png)
+
 [Mobile screenshot of the feedback area with the report entry](../screenshots/mobile/content_reporting_actions_post_menu.png)
+
+[Mobile screenshot of the page-bottom feedback bar](../screenshots/mobile/content_reporting_actions_page_feedback_bar.png)
 
 ![Report form showing the structured safety fields, help text, and contextual record details.](../screenshots/desktop/content_reporting_actions_report_form.png)
 

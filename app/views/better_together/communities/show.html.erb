@@ -35,10 +35,7 @@
                    destroy_path: policy(@resource).destroy? ? community_path(@resource) : nil,
                    destroy_confirm: t('partners.confirm_delete'),
                    destroy_aria_label: 'Delete Partner' do %>
-          <%= render 'shared/feedback_surface',
-                     record: @resource,
-                     presentation: :compact,
-                     surface_scope: :community if feedback_surface_visible_for?(@resource) %>
+          <%= render 'shared/content_actions', record: @resource %>
         <% end %>
       </div>
     </div>

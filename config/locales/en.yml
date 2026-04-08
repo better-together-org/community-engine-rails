@@ -1532,6 +1532,9 @@ en:
       aria_label: "%{surface} for %{resource}"
       description: Use this area to raise safety concerns now and to host editor-reviewed
         feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
       report:
         description: Privately flag this content for moderator review.
         label: Report safety issue

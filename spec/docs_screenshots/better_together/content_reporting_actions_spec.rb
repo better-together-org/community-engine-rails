@@ -71,12 +71,13 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       flow: 'post_content_actions',
       callouts: [
         {
-          selector: '.bt-feedback-surface',
-          title: 'Report entry stays within a shared feedback surface',
+          selector: '.bt-content-actions[open]',
+          avoid_selectors: ['.bt-content-actions__menu'],
+          title: 'Post reporting stays in the familiar actions menu',
           bullets: [
-            'The feedback area stays visible on the page instead of hiding behind an ellipsis menu.',
-            'The safety-report action can share the same surface with future governed feedback options.',
-            'The action remains reachable directly from the content surface in no more than a few clicks.'
+            'Existing post surfaces keep the legacy ellipsis affordance instead of adding a new card above the content.',
+            'Opening the menu still exposes the reporting path in context.',
+            'The dropdown remains fully visible in the screenshot review state.'
           ]
         }
       ]
@@ -85,6 +86,7 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       visit better_together.post_path(post_record, locale:)
 
       expect(page).to have_text('Community Garden Update')
+      find('.bt-content-actions summary').click
       expect(page).to have_link('Report safety issue')
     end
 
@@ -98,11 +100,12 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       flow: 'community_content_actions',
       callouts: [
         {
-          selector: '.bt-feedback-surface',
-          title: 'Community reporting uses the same shared feedback surface',
+          selector: '.bt-content-actions[open]',
+          avoid_selectors: ['.bt-content-actions__menu'],
+          title: 'Community surfaces keep the existing ellipsis menu',
           bullets: [
-            'People encounter the same reporting pattern across community and content surfaces.',
-            'The shared contract keeps extension points in one predictable place for future governance actions.'
+            'The shared report action stays available without replacing the established toolbar layout.',
+            'The correction keeps the community view aligned with other non-page surfaces.'
           ]
         }
       ]
@@ -111,6 +114,7 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       visit better_together.community_path(community_record, locale:)
 
       expect(page).to have_text('Harbour Neighbours')
+      find('.bt-content-actions summary').click
       expect(page).to have_link('Report safety issue')
     end
 
@@ -156,16 +160,16 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       flow: 'block_content_actions',
       callouts: [
         {
-          selector: '.bt-content-block__actions .bt-feedback-surface',
-          avoid_container_selector: '.bt-content-block__actions',
-          title: 'Each reportable block can surface its own feedback area',
+          selector: '.bt-content-block__actions .bt-content-actions[open]',
+          avoid_selectors: ['.bt-content-block__actions .bt-content-actions__menu'],
+          title: 'Each reportable block keeps its scoped ellipsis menu',
           bullets: [
-            'The shared block wrapper keeps feedback attached to the exact section a person wants reviewed.',
+            'The shared block wrapper still anchors reporting to the exact section a person wants reviewed.',
             <<~TEXT.squish,
               Host apps can still add their own block controls through the existing
               extra-block-components seam without replacing the shared CE structure.
             TEXT
-            'The same surface can later grow into contribution actions such as correction requests or translation suggestions.'
+            'The screenshot callout now avoids covering the open dropdown and its related evidence.'
           ]
         }
       ]
@@ -175,11 +179,41 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
 
       expect(page).to have_text('Shared Kitchen Guide')
       expect(page).to have_text('Kitchen safety note')
+      find('.bt-content-block__actions .bt-content-actions summary').click
       expect(page).to have_link('Report safety issue')
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/content_reporting_actions_block_menu.png')
     expect(result[:mobile]).to end_with('docs/screenshots/mobile/content_reporting_actions_block_menu.png')
+  end
+
+  it 'captures the page-bottom feedback bar' do
+    result = capture_docs_screenshot(
+      'content_reporting_actions_page_feedback_bar',
+      flow: 'page_feedback_bar',
+      callouts: [
+        {
+          selector: '.bt-page-feedback-bar',
+          avoid_container_selector: '.bt-page-feedback-bar',
+          title: 'Pages now add a separate bottom feedback bar below sharing',
+          bullets: [
+            'The page-specific feedback entry sits beside the existing share pattern instead of above the content.',
+            'The report action stays explicit and accessible without changing the legacy ellipsis menus elsewhere.'
+          ]
+        }
+      ]
+    ) do
+      capybara_login_as_user
+      visit better_together.render_page_path(page_record.slug, locale:)
+
+      expect(page).to have_text('Shared Kitchen Guide')
+      expect(page).to have_css('.social-share-buttons', minimum: 1)
+      expect(page).to have_css('.bt-page-feedback-bar')
+      expect(page).to have_link('Report safety issue')
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/content_reporting_actions_page_feedback_bar.png')
+    expect(result[:mobile]).to end_with('docs/screenshots/mobile/content_reporting_actions_page_feedback_bar.png')
   end
 
   it 'captures the report detail follow-up and appeal surface' do

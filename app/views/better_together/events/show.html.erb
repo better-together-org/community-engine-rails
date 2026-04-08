@@ -49,10 +49,7 @@
               <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i><%= t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)') %>
             <% end %>
           <% end %>
-          <%= render 'shared/feedback_surface',
-                     record: @event,
-                     presentation: :compact,
-                     surface_scope: :event if feedback_surface_visible_for?(@event) %>
+          <%= render 'shared/content_actions', record: @event %>
         <% end %>
       </div>
     </div>
