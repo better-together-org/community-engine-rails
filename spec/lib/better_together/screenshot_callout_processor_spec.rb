@@ -59,6 +59,32 @@ module BetterTogether # :nodoc:
           expect(placement[:side]).to eq('right')
         end
       end
+
+      it 'avoids expanded related UI when the protected rect includes an open menu' do
+        Dir.mktmpdir do |dir|
+          image_path = File.join(dir, 'callout-avoid-expanded-menu.png')
+          Vips::Image.black(1440, 900).new_from_image([255, 255, 255]).write_to_file(image_path)
+
+          processed = described_class.process(
+            image_path,
+            callouts: [
+              {
+                selector: '.bt-content-block__actions',
+                title: 'Each reportable block can surface its own actions',
+                bullets: ['Keep the annotation away from both the trigger cluster and the expanded menu.'],
+                target: { x: 1080, y: 110, width: 72, height: 44 },
+                avoid: { x: 1010, y: 90, width: 250, height: 260 }
+              }
+            ]
+          )
+
+          placement = processed.first[:placement]
+          avoid = processed.first[:avoid]
+
+          expect(placement[:side]).to eq('left')
+          expect(placement[:x] + placement[:width]).to be < avoid[:x]
+        end
+      end
     end
   end
 end

@@ -28,22 +28,22 @@
         "center_y": 292.75
       },
       "avoid": {
-        "x": 1324.0,
+        "x": 1072.0,
         "y": 280.5,
-        "width": 36.0,
-        "height": 24.5,
+        "width": 288.0,
+        "height": 117.5,
         "right": 1360.0,
-        "bottom": 305.0,
-        "center_x": 1342.0,
-        "center_y": 292.75
+        "bottom": 398.0,
+        "center_x": 1216.0,
+        "center_y": 339.25
       },
       "placement": {
         "side": "left",
-        "x": 924.0,
+        "x": 672.0,
         "y": 25.75,
         "width": 380,
         "height": 534,
-        "score": 1324.0
+        "score": 1072.0
       }
     }
   ]

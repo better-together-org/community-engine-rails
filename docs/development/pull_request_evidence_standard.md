@@ -53,6 +53,7 @@ Quality rules for UI screenshots:
 
 - annotations and callouts must not cover the UI element or container being reviewed when surrounding whitespace is available
 - when the highlighted selector is only part of a larger card, panel, or toolbar, the screenshot spec should provide a broader container-avoidance selector so callout placement protects the whole component
+- when the highlighted control opens related UI such as a dropdown or popover, the screenshot spec should also protect that revealed UI with `avoid_selectors`
 - generated screenshots should be visually spot-checked before PR publication to confirm that callouts, overlays, and labels do not hide the evidence they are supposed to explain
 
 ## Significant PR Packet Rule

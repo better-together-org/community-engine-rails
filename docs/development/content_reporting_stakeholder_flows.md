@@ -84,7 +84,7 @@ Current implementation:
 - non-JS behavior is first-class because the menu is based on native disclosure semantics
 - the shared menu keeps an explicit extension container for future actions
 - host apps keep their own `extra_block_components` override seam; CE now wraps that host content inside the shared block-action structure instead of replacing it
-- screenshot guidance now requires callouts to avoid covering the reviewed component when whitespace exists nearby
+- screenshot guidance now requires callouts to avoid covering the reviewed component and any related revealed UI, such as the opened reporting menu, when whitespace exists nearby
 
 Supporting evidence:
 

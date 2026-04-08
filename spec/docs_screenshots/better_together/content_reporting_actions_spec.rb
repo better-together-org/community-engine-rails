@@ -160,6 +160,7 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
         {
           selector: '.bt-content-block__actions',
           avoid_container_selector: '.bt-content-block__actions',
+          avoid_selectors: ['details.bt-content-actions[open] .bt-content-actions__menu'],
           title: 'Each reportable block can surface its own actions',
           bullets: [
             'The shared block wrapper keeps actions attached to the exact section a person wants reviewed.',
