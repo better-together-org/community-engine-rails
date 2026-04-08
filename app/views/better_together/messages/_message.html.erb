@@ -13,14 +13,12 @@
  				<small class="text-muted">
  					<%= l(message.created_at, format: :short) %>
  				</small>
-				<% if current_user.present? && current_person != message.sender %>
-					<%= link_to new_report_path(locale: I18n.locale, reportable_type: message.class.name, reportable_id: message.id),
-						class: 'btn btn-outline-danger btn-sm ms-auto py-0 px-2',
-						'aria-label' => t('better_together.reports.new.title', default: 'Report a safety concern') do %>
-						<i class="fas fa-flag"></i>
-					<% end %>
-				<% end %>
- 			</div>
+				<div class="ms-auto">
+					<%= render 'shared/content_actions',
+					           record: message,
+					           trigger_classes: 'btn btn-outline-secondary btn-sm py-0 px-2' %>
+				</div>
+			</div>
 			<% if message.e2e? %>
 				<div class="message-bubble p-3 rounded e2e-message"
 					data-controller="better-together--e2e-message-decrypt"

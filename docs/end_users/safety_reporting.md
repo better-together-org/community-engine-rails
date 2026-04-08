@@ -2,7 +2,7 @@
 
 **Target Audience:** All community members  
 **Document Type:** User Guide  
-**Last Updated:** March 9, 2026
+**Last Updated:** April 8, 2026
 
 ## Overview
 
@@ -35,7 +35,7 @@ Use reporting when you want the platform or safety team to review behavior, cont
 
 Read [After You Report](after_you_report.md).
 
-This explains what you can currently see in the report history and report detail pages, and what follow-up may happen.
+This explains what you can currently see in the report history and report detail pages, and how to add follow-up evidence or appeal context from the report page.
 
 ### If you need help understanding privacy or consent choices
 
@@ -53,7 +53,9 @@ The current end-user safety feature set includes:
 
 - personal blocking tools
 - structured safety reporting
+- shared content-surface reporting entry points
 - report history and report detail pages
+- participant-visible follow-up notes and appeal/evidence entry
 - safety-related consent options in the report form
 - privacy controls in some user-facing areas
 

@@ -30,6 +30,33 @@ RSpec.describe BetterTogether::Report do
     expect(report).to be_persisted
   end
 
+  it 'allows pages, communities, and uploads as reportable content surfaces' do
+    reporter = create(:better_together_person)
+    page = create(:better_together_page)
+    community = create(:better_together_community)
+    upload = create(:better_together_upload, creator: create(:better_together_person))
+
+    upload.file.attach(
+      io: StringIO.new('upload evidence'),
+      filename: 'evidence.txt',
+      content_type: 'text/plain'
+    )
+    upload.save!
+
+    [page, community, upload].each do |reportable|
+      report = described_class.create(
+        reporter:,
+        reportable:,
+        reason: 'Needs moderator review',
+        category: 'other',
+        harm_level: 'medium',
+        requested_outcome: 'content_review'
+      )
+
+      expect(report).to be_persisted
+    end
+  end
+
   it 'creates a safety case after intake is saved' do
     report = create(
       :report,

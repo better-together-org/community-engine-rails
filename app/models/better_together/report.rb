@@ -7,7 +7,10 @@ module BetterTogether
       'BetterTogether::Person',
       'BetterTogether::Post',
       'BetterTogether::Event',
+      'BetterTogether::Page',
+      'BetterTogether::Community',
       'BetterTogether::Message',
+      'BetterTogether::Upload',
       'BetterTogether::Joatu::Offer',
       'BetterTogether::Joatu::Request',
       'BetterTogether::Joatu::Agreement'

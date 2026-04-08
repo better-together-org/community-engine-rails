@@ -1,0 +1,49 @@
+{
+  "name": "content_reporting_actions_community_menu",
+  "device": "desktop",
+  "url": "/en/c/community-acc59408f2b9d53081ff",
+  "title": "Harbour Neighbours | Communities | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_reporting_actions",
+  "flow": "community_content_actions",
+  "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
+  "callouts": [
+    {
+      "selector": ".bt-content-actions__menu",
+      "title": "Community reporting uses the same shared interface",
+      "bullets": [
+        "People encounter the same reporting pattern across community and content surfaces.",
+        "The shared contract keeps extension points in one predictable place for future governance actions."
+      ],
+      "target": {
+        "x": 1080.0,
+        "y": 548.0,
+        "width": 288.0,
+        "height": 85.0,
+        "right": 1368.0,
+        "bottom": 633.0,
+        "center_x": 1224.0,
+        "center_y": 590.5
+      },
+      "avoid": {
+        "x": 1080.0,
+        "y": 548.0,
+        "width": 288.0,
+        "height": 85.0,
+        "right": 1368.0,
+        "bottom": 633.0,
+        "center_x": 1224.0,
+        "center_y": 590.5
+      },
+      "placement": {
+        "side": "left",
+        "x": 680.0,
+        "y": 414.5,
+        "width": 380,
+        "height": 352,
+        "score": 1080.0
+      }
+    }
+  ]
+}

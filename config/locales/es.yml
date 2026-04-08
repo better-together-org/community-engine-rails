@@ -1093,6 +1093,13 @@ es:
         privacy: Política de privacidad
         subprocessors: Subprocesadores
         terms_of_service: Términos de servicio
+    content_actions:
+      menu_label: Acciones para %{resource}
+      report:
+        description: Marca este contenido para revisión de moderación.
+        label: Reportar problema de seguridad
+      trigger_label: Más acciones para %{resource}
+      trigger_text: Acciones
     content_security:
       attachments:
         held:
@@ -2792,6 +2799,10 @@ es:
           que deba permanecer con el equipo de revisión de seguridad.
         reason_help: Explica brevemente qué pasó. Enfócate primero en la preocupación
           principal.
+        reporting_help: Este reporte permanece conectado con el registro específico
+          desde el que lo abriste para que el equipo revisor pueda seguir el mismo
+          contexto.
+        reporting_label: Reportando
         requested_outcome_help: Elige qué tipo de apoyo quieres del equipo de seguridad.
           Puedes pedir apoyo aunque no estés segura o seguro.
         retaliation_risk: Me preocupa una represalia o una escalada
@@ -2803,10 +2814,20 @@ es:
         urgent_title: 'Si estás en peligro inmediato:'
       notices:
         created: El reporte se envió correctamente.
+        followup_created: Tu seguimiento se agregó al reporte.
       show:
         back: Volver a los reportes
+        followup_empty: Aún no se han agregado notas de seguimiento a este reporte.
+        followup_field_help: Comparte cualquier contexto actualizado, aclaración o
+          evidencia que quieras que una persona revisora considere.
+        followup_help: Usa este espacio para agregar evidencia autenticada de seguimiento,
+          contexto o una solicitud de nueva revisión sin salir del historial del reporte.
+        followup_label: Evidencia adicional o nota de apelación
+        followup_submit: Agregar seguimiento
+        followup_title: Más información o apelación
         pending_copy: Este caso sigue en curso. Una persona moderadora puede comunicarse
           contigo según tus preferencias de consentimiento.
+        reported_record: Registro reportado
         status: Estado actual
         summary: Resumen del caso
         title: Reporte de seguridad

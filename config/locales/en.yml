@@ -1076,6 +1076,13 @@ en:
         privacy: Privacy Policy
         subprocessors: Subprocessors
         terms_of_service: Terms of Service
+    content_actions:
+      menu_label: Actions for %{resource}
+      report:
+        description: Flag this content for moderator review.
+        label: Report safety issue
+      trigger_label: More actions for %{resource}
+      trigger_text: Actions
     content_security:
       attachments:
         held:
@@ -2732,6 +2739,9 @@ en:
           stay with the safety review team.
         reason_help: Tell us what happened in a short summary. Focus on the main concern
           first.
+        reporting_help: This report stays connected to the specific record you opened
+          from so reviewers can follow the same context.
+        reporting_label: Reporting
         requested_outcome_help: Choose what kind of support you want from the safety
           team. You can ask for support even if you are unsure.
         retaliation_risk: I am worried about retaliation or escalation
@@ -2742,10 +2752,20 @@ en:
         urgent_title: 'If you are in immediate danger:'
       notices:
         created: Report was successfully submitted.
+        followup_created: Your follow-up was added to the report.
       show:
         back: Back to reports
+        followup_empty: No follow-up notes have been added to this report yet.
+        followup_field_help: Share any updated context, clarifications, or evidence
+          you want a reviewer to consider.
+        followup_help: Use this space to add authenticated follow-up evidence, context,
+          or a request for another review without leaving your report history.
+        followup_label: Additional evidence or appeal note
+        followup_submit: Add follow-up
+        followup_title: More information or appeal
         pending_copy: This case is still in progress. A moderator may follow up based
           on your consent settings.
+        reported_record: Reported record
         status: Current status
         summary: Case summary
         title: Safety report

@@ -171,7 +171,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :reports, only: %i[index show new create]
+        resources :reports, only: %i[index show new create] do
+          resource :followup, only: :create, controller: 'report_followups'
+        end
 
         resources :platform_connections, only: %i[index show new create edit update] do
           member do

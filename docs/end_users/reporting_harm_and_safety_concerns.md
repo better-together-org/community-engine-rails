@@ -2,7 +2,7 @@
 
 **Target Audience:** All community members  
 **Document Type:** User Guide  
-**Last Updated:** March 9, 2026
+**Last Updated:** April 8, 2026
 
 ## Overview
 
@@ -19,12 +19,19 @@ The current reporting interface supports a structured report with:
 
 ## Where Reporting Starts
 
-In the current interface, report links are available from:
+In the current interface, reporting starts from the shared **More actions** menu on supported content and profile surfaces.
+
+Current entry points include:
 
 - person profile pages
 - post pages
+- page views
+- community pages
+- event pages
+- conversation messages
+- upload listings when a reportable upload is visible
 
-The reporting system can support additional reportable types internally, but user-facing entry points currently focus on profiles and posts.
+The same entry pattern is used so you do not need to learn a different reporting location for each surface.
 
 ## What The Report Form Asks
 
@@ -89,15 +96,20 @@ The report form also asks:
 
 ## Step-By-Step: How To Submit A Report
 
-1. Open a profile or post that has a **Report** action.
-2. Select **Report**.
-3. Complete the report form.
-4. Review your answers.
-5. Submit the report.
+1. Open the person, post, page, community, event, message, or upload you need to flag.
+2. Open **More actions**.
+3. Select **Report safety issue**.
+4. Complete the report form.
+5. Review your answers.
+6. Submit the report.
 
-![Report form showing the structured safety fields and help text.](../screenshots/desktop/report_form.png)
+![Content actions menu showing the report entry from a post.](../screenshots/desktop/content_reporting_actions_post_menu.png)
 
-[Mobile screenshot of the report form](../screenshots/mobile/report_form.png)
+[Mobile screenshot of the report entry menu](../screenshots/mobile/content_reporting_actions_post_menu.png)
+
+![Report form showing the structured safety fields, help text, and contextual record details.](../screenshots/desktop/content_reporting_actions_report_form.png)
+
+[Mobile screenshot of the contextual report form](../screenshots/mobile/content_reporting_actions_report_form.png)
 
 ## Writing A Helpful Report
 
@@ -127,6 +139,15 @@ Include:
 - whether you want follow-up contact
 
 You can also preserve your own evidence, such as screenshots or notes, in case you need it later.
+
+## After You Submit
+
+After submission, the report detail page remains the main place to:
+
+- confirm what record you reported
+- review your submitted information
+- see participant-visible follow-up notes
+- add additional evidence or an appeal note if the situation changes
 
 ## What Reporting Does Not Replace
 
