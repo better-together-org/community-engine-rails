@@ -1,7 +1,7 @@
 {
   "name": "content_reporting_actions_community_menu",
   "device": "mobile",
-  "url": "/en/c/community-5e2f910fc4532e2ec573",
+  "url": "/en/c/community-eef1639d07608d1c7340",
   "title": "Harbour Neighbours | Communities | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -10,39 +10,39 @@
   "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
   "callouts": [
     {
-      "selector": ".bt-content-actions__menu",
-      "title": "Community reporting uses the same shared interface",
+      "selector": ".bt-feedback-surface",
+      "title": "Community reporting uses the same shared feedback surface",
       "bullets": [
         "People encounter the same reporting pattern across community and content surfaces.",
         "The shared contract keeps extension points in one predictable place for future governance actions."
       ],
       "target": {
-        "x": 185.0,
-        "y": 437.390625,
-        "width": 288.0,
-        "height": 85.0,
+        "x": 279.78125,
+        "y": 434.1875,
+        "width": 193.21875,
+        "height": 54.59375,
         "right": 473.0,
-        "bottom": 522.390625,
-        "center_x": 329.0,
-        "center_y": 479.890625
+        "bottom": 488.78125,
+        "center_x": 376.390625,
+        "center_y": 461.484375
       },
       "avoid": {
-        "x": 185.0,
-        "y": 437.390625,
-        "width": 288.0,
-        "height": 85.0,
+        "x": 279.78125,
+        "y": 434.1875,
+        "width": 193.21875,
+        "height": 54.59375,
         "right": 473.0,
-        "bottom": 522.390625,
-        "center_x": 329.0,
-        "center_y": 479.890625
+        "bottom": 488.78125,
+        "center_x": 376.390625,
+        "center_y": 461.484375
       },
       "placement": {
         "side": "below",
-        "x": 194.0,
-        "y": 542.39,
+        "x": 206.0,
+        "y": 508.78,
         "width": 270.0,
         "height": 462,
-        "score": 738.609375
+        "score": 772.21875
       }
     }
   ]

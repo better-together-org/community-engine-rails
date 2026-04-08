@@ -32,6 +32,9 @@ RSpec.describe 'BetterTogether reports flow' do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Shared Page Evidence')
     expect(response.body).to include('Reporting')
+    expect(response.body).to include('Who can see and act on this report')
+    expect(response.body).to include('Sent privately to the platform safety team')
+    expect(response.body).to include('Visible after submission only to you and platform safety reviewers.')
   end
 
   it 'renders the report form for a content block target' do

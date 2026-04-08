@@ -10,40 +10,40 @@
   "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
   "callouts": [
     {
-      "selector": ".bt-content-block__actions",
-      "title": "Each reportable block can surface its own actions",
+      "selector": ".bt-content-block__actions .bt-feedback-surface",
+      "title": "Each reportable block can surface its own feedback area",
       "bullets": [
-        "The shared block wrapper keeps actions attached to the exact section a person wants reviewed.",
+        "The shared block wrapper keeps feedback attached to the exact section a person wants reviewed.",
         "Host apps can still add their own block controls through the existing extra-block-components seam without replacing the shared CE structure.",
-        "The same menu can later grow into contribution actions such as correction requests or translation suggestions."
+        "The same surface can later grow into contribution actions such as correction requests or translation suggestions."
       ],
       "target": {
-        "x": 444.0,
-        "y": 229.890625,
-        "width": 36.0,
-        "height": 24.5,
+        "x": 286.78125,
+        "y": 450.765625,
+        "width": 193.21875,
+        "height": 54.59375,
         "right": 480.0,
-        "bottom": 254.390625,
-        "center_x": 462.0,
-        "center_y": 242.140625
+        "bottom": 505.359375,
+        "center_x": 383.390625,
+        "center_y": 478.0625
       },
       "avoid": {
-        "x": 192.0,
-        "y": 229.890625,
-        "width": 288.0,
-        "height": 117.5,
+        "x": 286.78125,
+        "y": 450.765625,
+        "width": 193.21875,
+        "height": 54.59375,
         "right": 480.0,
-        "bottom": 347.390625,
-        "center_x": 336.0,
-        "center_y": 288.640625
+        "bottom": 505.359375,
+        "center_x": 383.390625,
+        "center_y": 478.0625
       },
       "placement": {
         "side": "below",
-        "x": 201.0,
-        "y": 367.39,
+        "x": 206.0,
+        "y": 515,
         "width": 270.0,
-        "height": 690,
-        "score": 913.609375
+        "height": 722,
+        "score": 755.640625
       }
     }
   ]

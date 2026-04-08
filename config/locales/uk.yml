@@ -1513,6 +1513,81 @@ uk:
         many: неправильна довжина (точно %{count} символів)
         one: неправильна довжина (точно %{count} символ)
         other: неправильна довжина (точно %{count} символів)
+    feedback_routing:
+      audience:
+        community_stewards: відповідальні за вміст спільноти
+        platform_content_stewards: відповідальні за вміст платформи
+        platform_safety_team: команда безпеки платформи
+        profile_stewards: відповідальні за профіль
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Надсилається приватно до %{audience}.
+        suggest_improvement:
+          community_stewards: Надсилається до %{audience} на перевірку.
+          platform_content_stewards: Надсилається до %{audience} на перевірку.
+          profile_stewards: Надсилається до %{audience} на перевірку.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: власники вмісту, власники профілів, а також відповідальні
+            за спільноту чи платформу не отримують це повідомлення автоматично.
+      reviewers:
+        community_stewards: відповідальні за спільноту з доступом до перевірки вмісту
+        platform_content_stewards: відповідальні за вміст платформи
+        platform_safety_team: рецензенти безпеки платформи
+        profile_stewards: відповідальні за профіль і платформу
+      summary_labels:
+        not_shared_with: Не ділиться автоматично з
+        reviewers: Хто може переглядати й діяти
+        sent_to: Надсилається до
+        visibility: Видимо після надсилання
+      visibility:
+        private_to_reporter_and_platform_safety: Після надсилання його бачите лише
+          ви та рецензенти безпеки платформи.
+        private_to_submitter_and_stewards: Після надсилання його бачите ви та відповідальні
+          за цей вміст.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -2778,6 +2853,7 @@ uk:
         requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди
           безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
         retaliation_risk: Я хвилююся щодо помсти або ескалації
+        routing_title: Хто може бачити це повідомлення і діяти за ним
         submit: Надіслати звіт
         title: Повідомити про проблему безпеки
         urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця

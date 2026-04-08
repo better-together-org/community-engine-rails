@@ -1,10 +1,10 @@
 # Content Reporting Stakeholder Flows
 
-This document describes the current Community Engine reporting and content-safety workflow for the main stakeholder stories affected by the shared content-actions work in the `0.11.0` line.
+This document describes the current Community Engine reporting and content-safety workflow for the main stakeholder stories affected by the shared feedback-surface work in the `0.11.0` line.
 
 It is the canonical narrative companion to:
 
-- the shared actions UI in `shared/_content_actions`
+- the shared feedback surface in `shared/_feedback_surface`
 - the reporter follow-up / appeal path on `ReportsController#show`
 - the held-content reviewer queue and content-security release states
 - the screenshot and diagram evidence generated for PR review
@@ -24,10 +24,10 @@ It is the canonical narrative companion to:
 
 Current implementation:
 
-- the entry point is the shared ellipsis-style content-actions trigger
-- individual content blocks inherit the same actions seam through the engine-owned block wrapper, so people can flag a specific page section instead of only the whole page
-- the menu is built with `<details><summary>` so it still works without JavaScript
-- the Stimulus controller only enhances keyboard state, outside-click close behavior, and future extension hooks
+- the entry point is the shared feedback surface with an explicit scope label such as `Page feedback`, `Community feedback`, or `Section feedback`
+- individual content blocks inherit the same surface through the engine-owned block wrapper, so people can flag a specific page section instead of only the whole page
+- the live action stays visible on the page instead of hiding behind a second ellipsis menu
+- the surface is intentionally designed as a reusable contribution area so future reviewed actions can be added without inventing another page-level affordance
 - the report form now keeps the originating record visible so the person can confirm they are reporting the intended surface
 
 Primary screenshots:
@@ -80,16 +80,17 @@ Primary screenshots:
 
 Current implementation:
 
-- the same content-actions seam is reused across the main user-facing reporting surfaces, including individual reportable blocks
-- non-JS behavior is first-class because the menu is based on native disclosure semantics
-- the shared menu keeps an explicit extension container for future actions
+- the same feedback-surface contract is reused across the main user-facing reporting surfaces, including individual reportable blocks
+- non-JS behavior is first-class because the live report action is rendered directly as a normal link/button, not as a JS-only control
+- the shared surface keeps a clear seam for future governed actions without shipping them live yet
 - host apps keep their own `extra_block_components` override seam; CE now wraps that host content inside the shared block-action structure instead of replacing it
-- screenshot guidance now requires callouts to avoid covering the reviewed component and any related revealed UI, such as the opened reporting menu, when whitespace exists nearby
+- screenshot guidance now requires callouts to avoid covering the reviewed component and its nearby evidence, and the surface no longer depends on a hidden menu state to be reviewable
 
 Supporting evidence:
 
 - `docs/development/pull_request_evidence_standard.md`
 - `docs/development/screenshot_and_documentation_tooling_assessment.md`
+- `docs/development/feedback_surface_policy_matrix.md`
 - `skills/ce-visual-review/SKILL.md`
 
 ### 5. Future audit and revision-history work
@@ -105,7 +106,7 @@ Current posture:
 
 ## Accessibility and navigation expectations
 
-- The reporting trigger should be reachable directly from the content surface.
+- The reporting action should be reachable directly from the visible feedback surface on the content page.
 - The report form should preserve enough context that a person can confirm what they are flagging.
 - The report detail page should remain the canonical place for participant-visible follow-up and appeal evidence.
 - Reviewer evidence should keep held-state and decision-state UI visible in screenshots instead of hiding it beneath annotations.
@@ -121,8 +122,9 @@ Current posture:
 
 ## Related implementation files
 
-- `app/views/shared/_content_actions.html.erb`
-- `app/javascript/controllers/better_together/content_actions_controller.js`
+- `app/views/shared/_feedback_surface.html.erb`
+- `app/helpers/better_together/feedback_surface_helper.rb`
+- `app/policies/better_together/feedback_policy.rb`
 - `app/controllers/better_together/report_followups_controller.rb`
 - `app/controllers/better_together/reports_controller.rb`
 - `app/policies/better_together/report_policy.rb`

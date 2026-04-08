@@ -30,6 +30,25 @@
                 </div>
               </div>
             </div>
+
+            <div class="alert alert-info" role="note" aria-labelledby="report-routing-title">
+              <h2 id="report-routing-title" class="h6 mb-2">
+                <%= t('better_together.reports.new.routing_title', default: 'Who can see and act on this report') %>
+              </h2>
+              <dl class="mb-0">
+                <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.sent_to', default: 'Sent to') %></dt>
+                <dd><%= feedback_route_delivery_note(@report.reportable, action_kind: :report_safety_issue) %></dd>
+                <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.reviewers', default: 'Reviewers who can act') %></dt>
+                <dd><%= feedback_route_reviewer_label(@report.reportable, action_kind: :report_safety_issue) %></dd>
+                <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.visibility', default: 'Visible after submission') %></dt>
+                <dd><%= feedback_route_visibility_note(@report.reportable, action_kind: :report_safety_issue) %></dd>
+                <% exclusion_note = feedback_route_exclusion_note(@report.reportable, action_kind: :report_safety_issue) %>
+                <% if exclusion_note.present? %>
+                  <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.not_shared_with', default: 'Not automatically shared with') %></dt>
+                  <dd class="mb-0"><%= exclusion_note %></dd>
+                <% end %>
+              </dl>
+            </div>
           <% end %>
           <div class="alert alert-warning" role="note">
             <strong><%= t('better_together.reports.new.urgent_title') %></strong>

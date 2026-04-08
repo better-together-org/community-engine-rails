@@ -1,7 +1,7 @@
 
 <% host_extra_block_components = capture { render partial: 'better_together/content/blocks/extra_block_components', locals: { block: } } %>
 <% has_host_extra_block_components = host_extra_block_components.to_s.strip.present? %>
-<% show_content_actions = content_actions_visible_for?(block) %>
+<% show_feedback_surface = feedback_surface_visible_for?(block) %>
 
 <div id="<%= dom_id(block) %>"
      class="content-block <%= dom_class(block) %><%= block.inline_classes %>"
@@ -9,12 +9,13 @@
      data-evidence-selector="<%= block.evidence_selector %>"
      data-block-type="<%= block.block_name %>"
      style="<%= block.inline_block_styles %>">
-  <% if show_content_actions || has_host_extra_block_components %>
+  <% if show_feedback_surface || has_host_extra_block_components %>
     <div class="bt-content-block__actions">
-      <% if show_content_actions %>
-        <%= render 'shared/content_actions',
+      <% if show_feedback_surface %>
+        <%= render 'shared/feedback_surface',
                    record: block,
-                   trigger_classes: 'bt-content-actions__trigger btn btn-light btn-sm' %>
+                   presentation: :compact,
+                   surface_scope: :section %>
       <% end %>
 
       <% if has_host_extra_block_components %>

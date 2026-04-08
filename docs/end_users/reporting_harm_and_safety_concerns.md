@@ -19,7 +19,7 @@ The current reporting interface supports a structured report with:
 
 ## Where Reporting Starts
 
-In the current interface, reporting starts from the shared **More actions** menu on supported content and profile surfaces.
+In the current interface, reporting starts from a shared **feedback area** on supported content and profile surfaces.
 
 Current entry points include:
 
@@ -32,7 +32,9 @@ Current entry points include:
 - conversation messages
 - upload listings when a reportable upload is visible
 
-The same entry pattern is used so you do not need to learn a different reporting location for each surface.
+The same entry pattern is used so you do not need to learn a different reporting location for each surface. The label changes to match scope, such as **Page feedback**, **Post feedback**, **Community feedback**, or **Section feedback**.
+
+When you choose **Report safety issue**, the report goes to the **platform safety team**. It is not automatically shared with the content owner, profile owner, or community/page stewards.
 
 ## What The Report Form Asks
 
@@ -95,20 +97,31 @@ The report form also asks:
 - whether restorative options may be considered if appropriate
 - whether you are worried about retaliation or escalation
 
+## Who Can See And Act On A Safety Report
+
+For the current reporting flow:
+
+- the report is sent privately to the platform safety team
+- the people who can review and act on it are platform safety reviewers
+- after submission, it stays visible to you and platform safety reviewers
+- content owners and stewards do not automatically receive the report
+
+This keeps safety disclosures private. Future non-safety feedback, such as correction suggestions or contribution ideas, will use a separate steward-routed workflow.
+
 ## Step-By-Step: How To Submit A Report
 
 1. Open the person, post, page, page section, community, event, message, or upload you need to flag.
-2. Open **More actions**.
+2. Find the visible feedback area for that surface.
 3. Select **Report safety issue**.
 4. Complete the report form.
 5. Review your answers.
 6. Submit the report.
 
-![Content actions menu showing the report entry from a post.](../screenshots/desktop/content_reporting_actions_post_menu.png)
+![Feedback area showing the report entry from a post.](../screenshots/desktop/content_reporting_actions_post_menu.png)
 
-![Content actions menu showing the report entry from an individual content block on a page.](../screenshots/desktop/content_reporting_actions_block_menu.png)
+![Feedback area showing the report entry from an individual content block on a page.](../screenshots/desktop/content_reporting_actions_block_menu.png)
 
-[Mobile screenshot of the report entry menu](../screenshots/mobile/content_reporting_actions_post_menu.png)
+[Mobile screenshot of the feedback area with the report entry](../screenshots/mobile/content_reporting_actions_post_menu.png)
 
 ![Report form showing the structured safety fields, help text, and contextual record details.](../screenshots/desktop/content_reporting_actions_report_form.png)
 

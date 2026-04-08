@@ -71,11 +71,11 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       flow: 'post_content_actions',
       callouts: [
         {
-          selector: '.bt-content-actions__menu',
-          title: 'Report entry stays within the shared actions surface',
+          selector: '.bt-feedback-surface',
+          title: 'Report entry stays within a shared feedback surface',
           bullets: [
-            'A single accessible menu opens from the ellipsis trigger instead of scattering report buttons across the page.',
-            'The safety-report entry can be reused alongside future actions like correction suggestions or citation requests.',
+            'The feedback area stays visible on the page instead of hiding behind an ellipsis menu.',
+            'The safety-report action can share the same surface with future governed feedback options.',
             'The action remains reachable directly from the content surface in no more than a few clicks.'
           ]
         }
@@ -85,7 +85,6 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       visit better_together.post_path(post_record, locale:)
 
       expect(page).to have_text('Community Garden Update')
-      open_first_content_actions_menu
       expect(page).to have_link('Report safety issue')
     end
 
@@ -99,8 +98,8 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       flow: 'community_content_actions',
       callouts: [
         {
-          selector: '.bt-content-actions__menu',
-          title: 'Community reporting uses the same shared interface',
+          selector: '.bt-feedback-surface',
+          title: 'Community reporting uses the same shared feedback surface',
           bullets: [
             'People encounter the same reporting pattern across community and content surfaces.',
             'The shared contract keeps extension points in one predictable place for future governance actions.'
@@ -112,7 +111,6 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       visit better_together.community_path(community_record, locale:)
 
       expect(page).to have_text('Harbour Neighbours')
-      open_first_content_actions_menu
       expect(page).to have_link('Report safety issue')
     end
 
@@ -158,17 +156,16 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       flow: 'block_content_actions',
       callouts: [
         {
-          selector: '.bt-content-block__actions',
+          selector: '.bt-content-block__actions .bt-feedback-surface',
           avoid_container_selector: '.bt-content-block__actions',
-          avoid_selectors: ['details.bt-content-actions[open] .bt-content-actions__menu'],
-          title: 'Each reportable block can surface its own actions',
+          title: 'Each reportable block can surface its own feedback area',
           bullets: [
-            'The shared block wrapper keeps actions attached to the exact section a person wants reviewed.',
+            'The shared block wrapper keeps feedback attached to the exact section a person wants reviewed.',
             <<~TEXT.squish,
               Host apps can still add their own block controls through the existing
               extra-block-components seam without replacing the shared CE structure.
             TEXT
-            'The same menu can later grow into contribution actions such as correction requests or translation suggestions.'
+            'The same surface can later grow into contribution actions such as correction requests or translation suggestions.'
           ]
         }
       ]
@@ -178,7 +175,6 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
 
       expect(page).to have_text('Shared Kitchen Guide')
       expect(page).to have_text('Kitchen safety note')
-      open_first_content_actions_menu(within: '.bt-content-block__actions')
       expect(page).to have_link('Report safety issue')
     end
 
@@ -230,12 +226,5 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       callouts:,
       &
     )
-  end
-
-  def open_first_content_actions_menu(within: nil)
-    scope = within.present? ? find(within) : page
-
-    scope.find('summary.bt-content-actions__trigger', match: :first).click
-    expect(page).to have_css('details.bt-content-actions[open]')
   end
 end

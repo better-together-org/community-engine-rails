@@ -42,11 +42,12 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).to include('data-evidence-selector="block:markdown:')
     end
 
-    it 'renders shared content actions for reportable blocks inside the block wrapper' do
+    it 'renders the shared feedback surface for reportable blocks inside the block wrapper' do
       get better_together.page_path(page.slug, locale:)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('bt-content-block__actions')
+      expect(response.body).to include('Section feedback')
       expect(response.body).to include("reportable_id=#{block.id}")
       expect(response.body).to include('reportable_type=BetterTogether%3A%3AContent%3A%3ABlock')
     end

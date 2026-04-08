@@ -83,7 +83,10 @@
                          destroy_path: policy(@post).destroy? ? post_path(@post) : nil,
                          destroy_confirm: t('globals.confirm_delete'),
                          destroy_aria_label: t('better_together.posts.delete', default: 'Delete Record') do %>
-                <%= render 'shared/content_actions', record: @post %>
+                <%= render 'shared/feedback_surface',
+                           record: @post,
+                           presentation: :compact,
+                           surface_scope: :post if feedback_surface_visible_for?(@post) %>
               <% end %>
               </div>
             </header>

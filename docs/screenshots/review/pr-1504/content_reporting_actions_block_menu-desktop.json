@@ -10,40 +10,40 @@
   "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
   "callouts": [
     {
-      "selector": ".bt-content-block__actions",
-      "title": "Each reportable block can surface its own actions",
+      "selector": ".bt-content-block__actions .bt-feedback-surface",
+      "title": "Each reportable block can surface its own feedback area",
       "bullets": [
-        "The shared block wrapper keeps actions attached to the exact section a person wants reviewed.",
+        "The shared block wrapper keeps feedback attached to the exact section a person wants reviewed.",
         "Host apps can still add their own block controls through the existing extra-block-components seam without replacing the shared CE structure.",
-        "The same menu can later grow into contribution actions such as correction requests or translation suggestions."
+        "The same surface can later grow into contribution actions such as correction requests or translation suggestions."
       ],
       "target": {
-        "x": 1324.0,
-        "y": 280.5,
-        "width": 36.0,
-        "height": 24.5,
+        "x": 1166.78125,
+        "y": 459.375,
+        "width": 193.21875,
+        "height": 54.59375,
         "right": 1360.0,
-        "bottom": 305.0,
-        "center_x": 1342.0,
-        "center_y": 292.75
+        "bottom": 513.96875,
+        "center_x": 1263.390625,
+        "center_y": 486.671875
       },
       "avoid": {
-        "x": 1072.0,
-        "y": 280.5,
-        "width": 288.0,
-        "height": 117.5,
+        "x": 1166.78125,
+        "y": 459.375,
+        "width": 193.21875,
+        "height": 54.59375,
         "right": 1360.0,
-        "bottom": 398.0,
-        "center_x": 1216.0,
-        "center_y": 339.25
+        "bottom": 513.96875,
+        "center_x": 1263.390625,
+        "center_y": 486.671875
       },
       "placement": {
         "side": "left",
-        "x": 672.0,
-        "y": 25.75,
+        "x": 766.78,
+        "y": 219.67,
         "width": 380,
         "height": 534,
-        "score": 1072.0
+        "score": 1166.78125
       }
     }
   ]

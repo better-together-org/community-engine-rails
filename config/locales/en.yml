@@ -1495,6 +1495,81 @@ en:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feedback_routing:
+      audience:
+        community_stewards: responsible community stewards
+        platform_content_stewards: responsible platform content stewards
+        platform_safety_team: platform safety team
+        profile_stewards: responsible profile stewards
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Sent privately to the %{audience}.
+        suggest_improvement:
+          community_stewards: Sent to the %{audience} for review.
+          platform_content_stewards: Sent to the %{audience} for review.
+          profile_stewards: Sent to the %{audience} for review.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: content owners, profile owners, and community or platform
+            stewards do not receive this report automatically.
+      reviewers:
+        community_stewards: community stewards with content review access
+        platform_content_stewards: platform content stewards
+        platform_safety_team: platform safety reviewers
+        profile_stewards: profile and platform stewards
+      summary_labels:
+        not_shared_with: Not automatically shared with
+        reviewers: Reviewers who can act
+        sent_to: Sent to
+        visibility: Visible after submission
+      visibility:
+        private_to_reporter_and_platform_safety: Visible after submission only to
+          you and platform safety reviewers.
+        private_to_submitter_and_stewards: Visible after submission to you and the
+          responsible stewards for this content.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -2745,6 +2820,7 @@ en:
         requested_outcome_help: Choose what kind of support you want from the safety
           team. You can ask for support even if you are unsure.
         retaliation_risk: I am worried about retaliation or escalation
+        routing_title: Who can see and act on this report
         submit: Submit report
         title: Report a safety concern
         urgent_help: Contact local emergency services first. This form is for community

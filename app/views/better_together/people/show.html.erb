@@ -39,7 +39,11 @@
             <% end %>
           <% end %>
         <% end %>
-        <%= render 'shared/content_actions', record: @person, container_classes: 'me-2' %>
+        <%= render 'shared/feedback_surface',
+                   record: @person,
+                   presentation: :compact,
+                   surface_scope: :profile,
+                   container_classes: 'me-2' if feedback_surface_visible_for?(@person) %>
       </div>
     </div>
   </div>

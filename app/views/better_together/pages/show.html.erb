@@ -84,10 +84,10 @@
           <%= render 'better_together/shared/governed_contributions', record: @page %>
         </div>
       <% end %>
-      <% if content_actions_visible_for?(@page) %>
+      <% if feedback_surface_visible_for?(@page) %>
         <% content_actions_wrapper_classes = @page.layout&.include?('full_width') ? 'my-3 px-3' : 'container my-3' %>
-        <div class="<%= content_actions_wrapper_classes %> d-flex justify-content-end">
-          <%= render 'shared/content_actions', record: @page %>
+        <div class="<%= content_actions_wrapper_classes %>">
+          <%= render 'shared/feedback_surface', record: @page, presentation: :panel, surface_scope: :page %>
         </div>
       <% end %>
       <% if @page.sidebar_nav.present? %>

@@ -1,7 +1,7 @@
 {
   "name": "content_reporting_actions_post_menu",
   "device": "mobile",
-  "url": "/en/posts/sample-post-4",
+  "url": "/en/posts/sample-post-5",
   "title": "Community Garden Update | Posts | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -10,40 +10,40 @@
   "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
   "callouts": [
     {
-      "selector": ".bt-content-actions__menu",
-      "title": "Report entry stays within the shared actions surface",
+      "selector": ".bt-feedback-surface",
+      "title": "Report entry stays within a shared feedback surface",
       "bullets": [
-        "A single accessible menu opens from the ellipsis trigger instead of scattering report buttons across the page.",
-        "The safety-report entry can be reused alongside future actions like correction suggestions or citation requests.",
+        "The feedback area stays visible on the page instead of hiding behind an ellipsis menu.",
+        "The safety-report action can share the same surface with future governed feedback options.",
         "The action remains reachable directly from the content surface in no more than a few clicks."
       ],
       "target": {
-        "x": 168.0,
-        "y": 697.640625,
-        "width": 288.0,
-        "height": 85.0,
+        "x": 353.34375,
+        "y": 651.390625,
+        "width": 102.65625,
+        "height": 114.59375,
         "right": 456.0,
-        "bottom": 782.640625,
-        "center_x": 312.0,
-        "center_y": 740.140625
+        "bottom": 765.984375,
+        "center_x": 404.671875,
+        "center_y": 708.6875
       },
       "avoid": {
-        "x": 168.0,
-        "y": 697.640625,
-        "width": 288.0,
-        "height": 85.0,
+        "x": 353.34375,
+        "y": 651.390625,
+        "width": 102.65625,
+        "height": 114.59375,
         "right": 456.0,
-        "bottom": 782.640625,
-        "center_x": 312.0,
-        "center_y": 740.140625
+        "bottom": 765.984375,
+        "center_x": 404.671875,
+        "center_y": 708.6875
       },
       "placement": {
         "side": "above",
-        "x": 177.0,
-        "y": 24,
+        "x": 206.0,
+        "y": 97.39,
         "width": 270.0,
-        "height": 664,
-        "score": 697.640625
+        "height": 534,
+        "score": 651.390625
       }
     }
   ]

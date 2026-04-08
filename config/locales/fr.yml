@@ -1527,6 +1527,84 @@ fr:
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
         other: ne fait pas la longueur correcte (%{count} caractères)
+    feedback_routing:
+      audience:
+        community_stewards: responsables du contenu de la communauté
+        platform_content_stewards: responsables du contenu de la plateforme
+        platform_safety_team: équipe de sécurité de la plateforme
+        profile_stewards: responsables du profil
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Envoyé en privé à l'%{audience}.
+        suggest_improvement:
+          community_stewards: Envoyé à l'%{audience} pour révision.
+          platform_content_stewards: Envoyé à l'%{audience} pour révision.
+          profile_stewards: Envoyé à l'%{audience} pour révision.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: les propriétaires du contenu, du profil ainsi que
+            les responsables communautaires ou de la plateforme ne reçoivent pas automatiquement
+            ce signalement.
+      reviewers:
+        community_stewards: responsables communautaires avec accès à la révision du
+          contenu
+        platform_content_stewards: responsables du contenu de la plateforme
+        platform_safety_team: personnes chargées de la révision sécurité de la plateforme
+        profile_stewards: responsables du profil et de la plateforme
+      summary_labels:
+        not_shared_with: Non partagé automatiquement avec
+        reviewers: Personnes pouvant examiner et agir
+        sent_to: Envoyé à
+        visibility: Visible après l'envoi
+      visibility:
+        private_to_reporter_and_platform_safety: Après l'envoi, ce signalement est
+          visible uniquement par vous et les personnes chargées de la sécurité de
+          la plateforme.
+        private_to_submitter_and_stewards: Après l'envoi, ce retour est visible par
+          vous et les responsables de ce contenu.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -2821,6 +2899,7 @@ fr:
           la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si
           vous hésitez.
         retaliation_risk: Je crains des représailles ou une escalade
+        routing_title: Qui peut voir et agir sur ce signalement
         submit: Envoyer le signalement
         title: Signaler un problème de sécurité
         urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire
