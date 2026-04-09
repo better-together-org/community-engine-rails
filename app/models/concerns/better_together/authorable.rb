@@ -112,10 +112,16 @@ module BetterTogether
     end
 
     def contribution_roles_with_contributors
-      contributions.includes(:author)
-                   .group_by(&:role)
-                   .transform_values { |role_contributions| role_contributions.map(&:author).compact.uniq }
-                   .reject { |_role, actors| actors.empty? }
+      contribution_records = if association(:contributions).loaded?
+                               contributions.to_a
+                             else
+                               contributions.includes(:author).to_a
+                             end
+
+      contribution_records
+        .group_by(&:role)
+        .transform_values { |role_contributions| role_contributions.map(&:author).compact.uniq }
+        .reject { |_role, actors| actors.empty? }
     end
 
     def github_backed_contributions

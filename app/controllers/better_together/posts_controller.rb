@@ -9,6 +9,13 @@ module BetterTogether
       ::BetterTogether::Post
     end
 
+    def resource_collection
+      @resources ||= policy_scope(resource_class)
+                     .includes(*resource_class.card_render_includes)
+
+      instance_variable_set("@#{resource_name(plural: true)}", @resources)
+    end
+
     def resource_params
       super.tap do |attrs|
         attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'

@@ -58,6 +58,20 @@ module BetterTogether
       )
     }
 
+    def self.card_render_includes
+      includes = [
+        :string_translations,
+        { cover_image_attachment: :blob },
+        { contributions: :author },
+        { categories: { cover_image_attachment: :blob } }
+      ]
+
+      rich_text_association = reflect_on_association(:rich_text_content)&.name
+      includes << rich_text_association if rich_text_association
+
+      includes
+    end
+
     before_validation :assign_current_platform_if_available
 
     # Automatically grant the post creator an authorship record only when no

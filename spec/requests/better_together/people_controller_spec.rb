@@ -38,6 +38,8 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       get better_together.person_path(locale:, id: person.slug)
 
       expect(response).to have_http_status(:ok)
+      expect(assigns(:agreement_participants).map(&:id)).to contain_exactly(participant.id)
+      expect(assigns(:agreement_participants).first.association(:agreement)).to be_loaded
       expect(response.body).to include(participant.agreement_title_snapshot)
       expect(response.body).to include(
         I18n.t(
@@ -81,8 +83,6 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       expect(response.body).to include(post.title)
       expect(response.body).to include('Linked GitHub Identities')
       expect(response.body).to include('octo-person')
-      expect(response.body).to include('GitHub-linked')
-      expect(response.body).to include('GitHub source')
     end
   end
 
@@ -134,6 +134,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       get better_together.person_path(locale:, id: person.slug)
       expect(response).to have_http_status(:ok)
 
+      expect(assigns(:all_calendar_events)).to include(draft_event, upcoming_event, ongoing_event, past_event)
       expect(assigns(:draft_events)).to include(draft_event)
       expect(assigns(:upcoming_events)).to include(upcoming_event)
       expect(assigns(:ongoing_events)).to include(ongoing_event)

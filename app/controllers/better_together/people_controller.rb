@@ -11,25 +11,9 @@ module BetterTogether
 
     # GET /people/1
     def show
-      # Preload authored pages for the profile's Pages tab, with translations and background images
-      @authored_pages = policy_scope(@person.authored_pages)
-                        .includes(
-                          :string_translations,
-                          blocks: { background_image_file_attachment: :blob }
-                        )
-      @contributed_pages = policy_scope(BetterTogether::Page.where(id: @person.contributed_pages.select(:id)))
-                           .includes(
-                             :string_translations,
-                             blocks: { background_image_file_attachment: :blob }
-                           )
-      @contributed_posts = policy_scope(BetterTogether::Post.where(id: @person.contributed_posts.select(:id)))
+      load_profile_content_collections
       @github_integrations = @person.github_integrations.order(:handle)
-
-      # Preload calendar associations to avoid N+1 queries
-      @person.preload_calendar_associations!
-
-      # Categorize person's calendar events for display
-      categorize_person_events
+      load_calendar_collections
     end
 
     # GET /people/new
@@ -159,7 +143,7 @@ module BetterTogether
             joinable: [:string_translations, { profile_image_attachment: :blob }],
             role: [:string_translations]
           },
-          agreement_participants: {},
+          agreement_participants: :agreement,
           contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts]
         }
       ).call
@@ -207,12 +191,33 @@ module BetterTogether
                    ))
     end
 
-    def categorize_person_events
-      all_events = @person.all_calendar_events
+    def categorize_person_events(all_events = @person.all_calendar_events)
       @draft_events = all_events.select(&:draft?)
       @upcoming_events = all_events.select(&:upcoming?)
       @ongoing_events = all_events.select(&:ongoing?)
       @past_events = all_events.select(&:past?)
+    end
+
+    def load_profile_content_collections
+      @authored_pages = policy_scope(@person.authored_pages)
+                        .includes(
+                          :string_translations,
+                          blocks: { background_image_file_attachment: :blob }
+                        )
+      @contributed_pages = policy_scope(BetterTogether::Page.where(id: @person.contributed_pages.select(:id)))
+                           .includes(
+                             :string_translations,
+                             blocks: { background_image_file_attachment: :blob }
+                           )
+      @contributed_posts = policy_scope(BetterTogether::Post.where(id: @person.contributed_posts.select(:id)))
+                           .includes(*BetterTogether::Post.card_render_includes)
+      @agreement_participants = @person.agreement_participants.to_a
+    end
+
+    def load_calendar_collections
+      @person.preload_calendar_associations!
+      @all_calendar_events = @person.all_calendar_events
+      categorize_person_events(@all_calendar_events)
     end
   end
 end
