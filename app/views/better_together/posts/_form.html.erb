@@ -67,10 +67,6 @@
   <% end %>
 
   <div class="mb-3">
-    <%= render 'better_together/shared/github_contribution_import_panel', record: post %>
-  </div>
-
-  <div class="mb-3">
     <%= form.label :published_at %>
     <%= form.datetime_field :published_at, include_seconds: false, class: 'form-control' %>
   </div>
@@ -84,9 +80,6 @@
                  citation_options: post.citation_reference_options
                } %>
   </div>
-
-  <%= render 'better_together/shared/citation_fields_section', form:, record: post %>
-  <%= render 'better_together/shared/claim_fields_section', form:, record: post %>
 
   <div class="mb-3">
     <%= render 'better_together/shared/fields/attachments/cover_image', form: form %>
