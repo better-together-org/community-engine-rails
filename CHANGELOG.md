@@ -66,6 +66,17 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Public JSONAPI endpoint: `POST /api/v1/membership_requests`
 - Pundit policy enforcement; 404-not-403 leak prevention
 
+#### Access Modes & Review Flow
+- Community access-mode surfaces now distinguish open-join and request-to-join states consistently across public community pages, registration interstitials, and organizer review flows (#1500)
+- Membership request review queue/detail evidence and related docs/diagrams now reflect the shipped organizer moderation path instead of leaving that flow implicit (#1500)
+
+#### Inbound Mail Relay
+- Action Mailbox-powered inbound email relay MVP with Better Together router mailboxes, tenant-safe resolution/routing, and persisted inbound message records (#1501)
+
+#### Content Security & Reporting
+- Content-security ingress workflow for uploads and rich-text attachments with under-review/restricted states and a review queue for release decisions (#1504)
+- Refreshed reporting surfaces and guidance: non-page report menus remain in place, page views gain a bottom feedback bar, and safety-routing copy is clearer for reporters and reviewers (#1504)
+
 #### Posts Index — Search, Filter & Pagination
 - New `PostsSearchFilter` service: ILIKE text search (Mobility joins), category filter, privacy filter, order-by, Kaminari pagination (#1409)
 - Sidebar `_list_form` partial (GET, bookmarkable filters)
@@ -116,6 +127,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Federation:** Pass `I18n.locale` to `federation_oauth_token_path` for correct locale-prefixed URLs
 - **Engine:** Use exact match in `append_migrations` to include `spec/dummy` migrations correctly
 - **Migrations:** Fix dual-path support, ordering, and FK bugs in migration loader (#1401)
+- **Migrations:** Avoid platform permission position collisions during the `0.11.0` release-upgrade path
 - **Cache:** Update `RedisCacheStore` pool options for Rails 8 compatibility (#1353)
 - **Navigation:** Correct header/footer visibility cache keys and helper memoization for access-context-sensitive navigation rendering (#1274)
 - **Routing:** Prevent `URI::InvalidURIError` on non-default locale + accented slug URLs (#1351)
