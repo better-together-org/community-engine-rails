@@ -20,7 +20,7 @@ gem 'fog-aws'
 # Database adapter for PostgreSQL
 gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
-gem 'puma', '~> 7.2'
+gem 'puma', '~> 8.0'
 
 # Pundit for authorization, custom fork for Better Together
 gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources', branch: 'fix/rails-8-1-upper-bound-20260320'
