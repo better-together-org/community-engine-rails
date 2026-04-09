@@ -180,14 +180,14 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         create(:evidence_link, claim:, citation:, relation_type: 'supports')
       end
 
-      it 'renders claims and bibliography on the show page' do
+      it 'keeps claims and bibliography out of the public show page' do
         get better_together.event_path(event, locale:)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('Claims and Supporting Evidence')
-        expect(response.body).to include('Evidence and Citations')
-        expect(response.body).to include('This event is community-led.')
-        expect(response.body).to include('Event agenda')
+        expect(response.body).not_to include('Claims and Supporting Evidence')
+        expect(response.body).not_to include('Evidence and Citations')
+        expect(response.body).not_to include('This event is community-led.')
+        expect(response.body).not_to include('Event agenda')
       end
     end
   end

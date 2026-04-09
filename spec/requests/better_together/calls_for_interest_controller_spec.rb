@@ -16,14 +16,14 @@ RSpec.describe 'BetterTogether::CallsForInterestController', :as_user do
       create(:evidence_link, claim:, citation:, relation_type: 'documents')
     end
 
-    it 'renders claims and bibliography on the show page' do
+    it 'keeps claims and bibliography out of the public show page' do
       get better_together.call_for_interest_path(call_for_interest, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Claims and Supporting Evidence')
-      expect(response.body).to include('Evidence and Citations')
-      expect(response.body).to include('The call is backed by community outreach.')
-      expect(response.body).to include('Outreach brief')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('The call is backed by community outreach.')
+      expect(response.body).not_to include('Outreach brief')
     end
   end
 end

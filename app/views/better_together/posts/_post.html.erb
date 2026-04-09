@@ -1,14 +1,6 @@
 <%= render 'better_together/shared/card', entity: post, link_target: post, col_classes: 'col mb-4', card_classes: 'h-100', title_classes: '' do %>
   <p class="card-text text-muted mb-4"><%= truncate(strip_tags(post.content.to_plain_text), length: 150) %></p>
 
-  <% if post.respond_to?(:contribution_roles_with_contributors) && post.contribution_roles_with_contributors.any? %>
-    <div class="mb-3">
-      <div class="d-flex align-items-center flex-wrap">
-        <%= render 'better_together/shared/governed_contributions', record: post %>
-      </div>
-    </div>
-  <% end %>
-
   <div class="mt-auto">
     <small class="text-muted">
       <% if post.respond_to?(:published_at) && post.published_at.present? %>

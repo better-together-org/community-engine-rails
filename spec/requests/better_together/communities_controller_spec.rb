@@ -593,13 +593,13 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
         get better_together.community_path(locale:, id: community.slug)
 
-        expect(response.body).to include('Evidence:')
-        expect(response.body).to include('1 claim')
-        expect(response.body).to include('1 citation')
-        expect(response.body).to include('1 imported')
+        expect(response.body).not_to include('Evidence:')
+        expect(response.body).not_to include('1 claim')
+        expect(response.body).not_to include('1 citation')
+        expect(response.body).not_to include('1 imported')
       end
 
-      it 'shows community page contribution and evidence summaries when pages are scoped to the community' do
+      it 'keeps community page contribution and evidence summaries out of public cards' do
         page = create(:better_together_page,
                       community: community,
                       privacy: 'public',
@@ -617,10 +617,10 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
         expect(response.body).to include('pages-tab')
         expect(response.body).to include(page.title)
-        expect(response.body).to include('Contributors:')
-        expect(response.body).to include('GitHub-linked')
-        expect(response.body).to include('GitHub: @community-maintainer')
-        expect(response.body).to include('Evidence:')
+        expect(response.body).not_to include('Contributors:')
+        expect(response.body).not_to include('GitHub-linked')
+        expect(response.body).not_to include('GitHub: @community-maintainer')
+        expect(response.body).not_to include('Evidence:')
       end
 
       it 'does not show create event button' do

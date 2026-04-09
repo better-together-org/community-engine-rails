@@ -54,7 +54,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).to include("reportable_id=#{page.id}")
     end
 
-    it 'renders a bibliography for structured citations' do
+    it 'keeps bibliography out of the public page view' do
       create(:better_together_citation,
              citeable: page,
              title: 'Page Evidence Record',
@@ -62,12 +62,12 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       get better_together.page_path(page.slug, locale:)
 
-      expect(response.body).to include('Evidence and Citations')
-      expect(response.body).to include('Page Evidence Record')
-      expect(response.body).to include('citation-page_evidence_record')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('Page Evidence Record')
+      expect(response.body).not_to include('citation-page_evidence_record')
     end
 
-    it 'renders claims and supporting evidence when present' do
+    it 'keeps claims and supporting evidence out of the public page view' do
       citation = create(:better_together_citation,
                         citeable: page,
                         title: 'Claim Support Record',
@@ -84,10 +84,10 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       get better_together.page_path(page.slug, locale:)
 
-      expect(response.body).to include('Claims and Supporting Evidence')
-      expect(response.body).to include('Public claims should stay tied to auditable evidence.')
-      expect(response.body).to include('Claim Support Record')
-      expect(response.body).to include('claim-supported_publication_claim')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Public claims should stay tied to auditable evidence.')
+      expect(response.body).not_to include('Claim Support Record')
+      expect(response.body).not_to include('claim-supported_publication_claim')
     end
 
     context 'when the page contains a Content::Template block (no string_translations association)' do

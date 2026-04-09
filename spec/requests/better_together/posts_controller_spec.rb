@@ -41,4 +41,23 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     rich_text_association = loaded_post.class.reflect_on_association(:rich_text_content)&.name
     expect(loaded_post.association(rich_text_association)).to be_loaded if rich_text_association
   end
+
+  it 'keeps contribution and evidence references out of the public show page' do
+    citation = create(:citation, citeable: post_record, title: 'Post review notes', reference_key: 'post-review-notes')
+    claim = create(:claim, claimable: post_record, statement: 'This post was reviewed against the release checklist.')
+    create(:evidence_link, claim:, citation:, relation_type: 'supports')
+    post_record.contributions.first.update!(details: {
+                                              'github_handle' => 'post-maintainer',
+                                              'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                            })
+
+    get better_together.post_path(post_record, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('Contributors:')
+    expect(response.body).not_to include('GitHub-linked')
+    expect(response.body).not_to include('Claims and Supporting Evidence')
+    expect(response.body).not_to include('Evidence and Citations')
+    expect(response.body).not_to include('Post review notes')
+  end
 end

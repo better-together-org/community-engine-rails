@@ -14,13 +14,13 @@ RSpec.describe 'BetterTogether::AgreementsController', :as_user do
       create(:evidence_link, claim:, citation:, relation_type: 'documents')
     end
 
-    it 'renders claims and bibliography on the show page' do
+    it 'keeps claims and bibliography out of the public show page' do
       get better_together.agreement_path(agreement, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Claims and Supporting Evidence')
-      expect(response.body).to include('Evidence and Citations')
-      expect(response.body).to include('Governance memo')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('Governance memo')
     end
   end
 end
