@@ -674,6 +674,43 @@ uk:
       private: Приватний
       public: Публічний
   better_together:
+    access_modes:
+      actions:
+        create_account: Створити обліковий запис
+        join_now: Приєднатися зараз
+        request_to_join: Подати запит на вступ
+        sign_in: Увійти
+      already_member: Ви вже є учасником цієї спільноти.
+      current_status:
+        active: Ви вже є учасником.
+        pending: Ваш запит очікує на розгляд.
+      descriptions:
+        generic:
+          invitation: Людям потрібне запрошення, щоб приєднатися до цього простору.
+          open: Люди можуть приєднатися одразу без очікування схвалення.
+          request: Люди можуть подати запит на вступ. Координатор або координаторка
+            переглядає запити перед наданням доступу.
+        platform:
+          invitation: Людям потрібне запрошення, щоб створити тут обліковий запис.
+          open: Люди можуть створити обліковий запис і приєднатися без очікування
+            схвалення.
+      form:
+        community_help: Виберіть, чи люди приєднуються одразу, чи спочатку мають подати
+          запит.
+        community_requests: Вимагати запит на доступ перед тим, як людина стане учасником
+        platform_help: Виберіть, чи люди можуть створити обліковий запис одразу, чи
+          спочатку їм потрібне запрошення.
+        platform_invitation_help: Запрошення можуть заздалегідь заповнювати адресу
+          електронної пошти та призначати ролі платформи або спільноти після прийняття.
+        platform_invitation_only: Вимагати запрошення перед тим, як людина зможе зареєструватися
+      heading: Як люди приєднуються
+      labels:
+        invitation: Лише за запрошенням
+        open: Відкритий вступ
+        request: Запит на вступ
+      membership_joined: Ви приєдналися до цієї спільноти.
+      membership_request_pending: Ваш запит на членство вже очікує на розгляд.
+      membership_requested: Ваш запит на членство надіслано.
     addresses:
       add: Додати адресу
       address: Адреса
@@ -1038,6 +1075,23 @@ uk:
         privacy: Політика конфіденційності
         subprocessors: Субпроцесори
         terms_of_service: Умови використання
+    content_actions:
+      menu_label: Дії для %{resource}
+      report:
+        description: Позначте цей вміст для перевірки модератором.
+        label: Повідомити про проблему безпеки
+      trigger_label: Більше дій для %{resource}
+      trigger_text: Дії
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Це вкладення
+          message: "%{filename} проходить перевірку перед тим, як його можна буде
+            показати."
+          title: Вкладення на перевірці
+        restricted:
+          message: "%{filename} наразі обмежено, поки його перевіряє рецензент."
+          title: Вкладення обмежено
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}
@@ -1459,6 +1513,84 @@ uk:
         many: неправильна довжина (точно %{count} символів)
         one: неправильна довжина (точно %{count} символ)
         other: неправильна довжина (точно %{count} символів)
+    feedback_routing:
+      audience:
+        community_stewards: відповідальні за вміст спільноти
+        platform_content_stewards: відповідальні за вміст платформи
+        platform_safety_team: команда безпеки платформи
+        profile_stewards: відповідальні за профіль
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Надсилається приватно до %{audience}.
+        suggest_improvement:
+          community_stewards: Надсилається до %{audience} на перевірку.
+          platform_content_stewards: Надсилається до %{audience} на перевірку.
+          profile_stewards: Надсилається до %{audience} на перевірку.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: власники вмісту, власники профілів, а також відповідальні
+            за спільноту чи платформу не отримують це повідомлення автоматично.
+      reviewers:
+        community_stewards: відповідальні за спільноту з доступом до перевірки вмісту
+        platform_content_stewards: відповідальні за вміст платформи
+        platform_safety_team: рецензенти безпеки платформи
+        profile_stewards: відповідальні за профіль і платформу
+      summary_labels:
+        not_shared_with: Не ділиться автоматично з
+        reviewers: Хто може переглядати й діяти
+        sent_to: Надсилається до
+        visibility: Видимо після надсилання
+      visibility:
+        private_to_reporter_and_platform_safety: Після надсилання його бачите лише
+          ви та рецензенти безпеки платформи.
+        private_to_submitter_and_stewards: Після надсилання його бачите ви та відповідальні
+          за цей вміст.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -1763,6 +1895,24 @@ uk:
         signature_text: З найкращими побажаннями, Команда %{joinable_name}
         subject: Ваше членство у %{joinable_type} було оновлено для %{joinable_name}
         view_joinable: Переглянути %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Вітаємо, %{name}!
+        learn_more: Переглянути %{community_name}
+        message: Ваш запит на приєднання до %{community_name} відхилено.
+        reviewed_by: Розглянув(ла) %{decision_actor_name}.
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject: Ваш запит на членство в %{community_name} відхилено
+      submitted:
+        greeting: Вітаємо, %{name}!
+        message: "%{requestor_name} попросив(ла) приєднатися до %{community_name}."
+        request_message_label: Повідомлення від заявника або заявниці
+        requestor_email_label: 'Електронна адреса заявника або заявниці:'
+        review_request: Переглянути запит на членство
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject: Новий запит на членство в %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1801,6 +1951,14 @@ uk:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Користувачі, які увійшли в систему й отримали
+          схвалення, одразу стають учасниками та отримують підтвердження і в застосунку,
+          і електронною поштою.
+        decision_notifications_heading: Рішення та сповіщення
+        decline_flow: Відхилення надсилає заявникові або заявниці лист, а користувачі,
+          які увійшли в систему, також отримують сповіщення в застосунку.
+        email_requestor_flow: Заявники й заявниці лише з електронною поштою після
+          схвалення отримують лист-запрошення, щоб створити обліковий запис і приєднатися.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2145,6 +2303,12 @@ uk:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Ваш запит на приєднання до %{community_name} відхилено
+        title: Запит на членство в %{community_name} відхилено
+      membership_request_submitted:
+        body: "%{requestor_name} попросив(ла) приєднатися до %{community_name}"
+        title: Новий запит на членство в %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}
@@ -2686,9 +2850,13 @@ uk:
         private_details_help: Додайте будь-який контекст, повторювану поведінку, дати
           або докази, які мають залишитися в команди безпеки.
         reason_help: Коротко опишіть, що сталося. Спочатку зосередьтеся на головному.
+        reporting_help: Цей звіт залишається пов'язаним із конкретним записом, з якого
+          ви його відкрили, щоб команда рецензування могла бачити той самий контекст.
+        reporting_label: Повідомлення
         requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди
           безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
         retaliation_risk: Я хвилююся щодо помсти або ескалації
+        routing_title: Хто може бачити це повідомлення і діяти за ним
         submit: Надіслати звіт
         title: Повідомити про проблему безпеки
         urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця
@@ -2697,10 +2865,20 @@ uk:
         urgent_title: 'Якщо ви перебуваєте в безпосередній небезпеці:'
       notices:
         created: Звіт успішно надіслано.
+        followup_created: Ваше доповнення додано до звіту.
       show:
         back: Назад до звітів
+        followup_empty: До цього звіту ще не додано жодних приміток із доповненнями.
+        followup_field_help: Поділіться будь-яким оновленим контекстом, уточненнями
+          або доказами, які ви хочете передати рецензенту.
+        followup_help: Використовуйте цей простір, щоб додати автентифіковані докази,
+          контекст або запит на повторний розгляд, не залишаючи історію звіту.
+        followup_label: Додаткові докази або примітка щодо апеляції
+        followup_submit: Додати доповнення
+        followup_title: Додаткова інформація або апеляція
         pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з
           вами залежно від ваших параметрів згоди.
+        reported_record: Повідомлений запис
         status: Поточний статус
         summary: Підсумок справи
         title: Звіт про безпеку
@@ -2836,6 +3014,15 @@ uk:
         solidarity_check: Перевірка співпраці та солідарності
         status: Статус справи
       index:
+        content_review_count: "%{count} очікує на перегляд"
+        content_review_description: Завантаження та вбудовані вкладення, які все ще
+          утримуються для безпекової перевірки, з'являються тут до їх випуску.
+        content_review_empty: Наразі немає завантажень або вбудованих вкладень, що
+          очікують на перевірку.
+        content_review_more: Показано %{shown} із %{total} утримуваних елементів вмісту.
+        content_review_surface: 'Джерело: %{surface}'
+        content_review_title: Елементи перевірки безпеки вмісту
+        empty: Жодна справа безпеки не відповідає поточним фільтрам.
         filter: Фільтрувати
         local_snapshot_description: Детерміновані локальні сигнали, побудовані зі
           скарг, справ і нотаток. Віддалений аналіз є необов'язковим і лише доповнює
@@ -2843,6 +3030,7 @@ uk:
         local_snapshot_generated_at: Згенеровано %{time}
         local_snapshot_title: Локальний знімок для перегляду
         snapshot:
+          content_review_items: Утримувані елементи вмісту
           open_cases: Відкриті справи
           participant_notes: Нотатки, видимі учасникам
           repeat_reportables: Повторно позначені об'єкти
@@ -3088,6 +3276,19 @@ uk:
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
     uploads:
+      content_security:
+        badge:
+          clean: Готово
+          restricted: Обмежено
+          review_required: На перевірці
+        form:
+          review_required: Цей файл проходить перевірку, перш ніж його можна буде
+            показувати або завантажувати іншим людям.
+        status:
+          clean: Це завантаження готове до вставлення або поширення.
+          restricted: Це завантаження тимчасово обмежене, поки його перевіряє рецензент.
+          review_required: Це завантаження проходить перевірку, перш ніж його можна
+            буде вставити в розширений текст або поширити.
       index:
         storage_usage: Ви використовуєте %{size} сховища
     validators:

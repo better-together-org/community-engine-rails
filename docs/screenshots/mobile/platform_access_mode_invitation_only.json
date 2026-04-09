@@ -1,0 +1,11 @@
+{
+  "name": "platform_access_mode_invitation_only",
+  "device": "mobile",
+  "url": "/en/platforms/platform-3ee618cedb6f760a83d4",
+  "title": "Invitation Only Platform | Platforms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "access_mode_panel_review",
+  "flow": "platform_invitation_only",
+  "source_spec": "./spec/docs_screenshots/better_together/access_mode_panel_spec.rb"
+}

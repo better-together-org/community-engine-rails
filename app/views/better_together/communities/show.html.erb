@@ -34,7 +34,9 @@
                    edit_aria_label: 'Edit Partner',
                    destroy_path: policy(@resource).destroy? ? community_path(@resource) : nil,
                    destroy_confirm: t('partners.confirm_delete'),
-                   destroy_aria_label: 'Delete Partner' %>
+                   destroy_aria_label: 'Delete Partner' do %>
+          <%= render 'shared/content_actions', record: @resource %>
+        <% end %>
       </div>
     </div>
   </div>
@@ -46,6 +48,10 @@
     <% if @current_invitation %>
       <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
     <% end %>
+
+    <%= render 'better_together/shared/access_mode_panel',
+               resource: @community,
+               membership: @current_person_community_membership %>
 
     <!-- Community tabbed section with members -->
     <section class="card tabbed-section">

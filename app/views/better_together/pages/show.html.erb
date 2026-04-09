@@ -84,6 +84,12 @@
           <%= render 'better_together/shared/governed_contributions', record: @page %>
         </div>
       <% end %>
+      <% if content_actions_visible_for?(@page) %>
+        <% content_actions_wrapper_classes = @page.layout&.include?('full_width') ? 'my-3 px-3' : 'container my-3' %>
+        <div class="<%= content_actions_wrapper_classes %> d-flex justify-content-end">
+          <%= render 'shared/content_actions', record: @page %>
+        </div>
+      <% end %>
       <% if @page.sidebar_nav.present? %>
         <%= render layout: 'better_together/pages/sidebar_layout', locals: { nav: @page.sidebar_nav, current_page: @page } do %>
           <%= yield :page_content %>
@@ -97,6 +103,7 @@
       <%= render 'better_together/shared/governance_bundle_links', record: @page if @page.bibliography_entries.any? || @page.claims.any? %>
 
       <%= share_buttons(shareable: @page) if @page.privacy_public? %>
+      <%= render 'shared/page_feedback_bar', record: @page if content_actions_visible_for?(@page) %>
     <% end %>
   <% end %>
 <% end %>

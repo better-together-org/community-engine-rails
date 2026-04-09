@@ -12,10 +12,12 @@ flowchart TD
   subgraph Intake["Community membership request intake"]
     G --> H[Joatu::MembershipRequest created for target community]
     H --> I[Request appears in community membership request queue]
+    H --> I1[Reviewer receives in-app and email request notification]
   end
 
   subgraph Review["Community review UI"]
     I --> J[Community manager opens queue or request detail]
+    I1 --> J
     J --> K{Decision}
     K -->|Approve unauthenticated visitor| L[Create community invitation]
     K -->|Approve logged-in person| M[Create person community membership]
@@ -23,8 +25,11 @@ flowchart TD
   end
 
   subgraph Followup["Post-review outcome"]
-    L --> O[Visitor receives invitation and can register]
-    M --> P[Membership becomes active immediately]
-    N --> Q[Queue reflects declined state]
-    O --> R[Invitation acceptance creates membership]
+    L --> O[Community invitation email sent to visitor]
+    O --> P[Visitor registers from invitation]
+    P --> Q[Invitation acceptance creates membership]
+    M --> R[Membership becomes active immediately]
+    R --> R1[Member receives canonical membership notification and email]
+    N --> S[Requester receives decline notification and email]
+    S --> T[Queue reflects declined state]
   end

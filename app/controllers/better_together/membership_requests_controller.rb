@@ -161,7 +161,7 @@ module BetterTogether
     # POST /c/:community_id/membership_requests/:id/decline
     def decline # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       authorize @membership_request
-      @membership_request.decline!
+      @membership_request.decline!(approver: helpers.current_person)
       flash.now[:notice] = t('better_together.membership_requests.flash.declined',
                              default: 'Membership request declined.')
       respond_to do |format|

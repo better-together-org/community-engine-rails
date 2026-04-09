@@ -17,8 +17,11 @@ RSpec.describe 'BetterTogether::Safety::Cases' do
   let(:locale) { I18n.default_locale }
   let(:platform_manager) { find_or_create_test_user('safety-manager@example.test', 'SecureTest123!@#', :platform_manager) }
   let!(:safety_case) { create(:report, category: 'harassment', harm_level: 'high', requested_outcome: 'temporary_protection').safety_case }
+  let!(:held_upload) { create(:better_together_upload, creator: platform_manager.person, name: 'Held upload') }
 
   before do
+    held_upload.file.attach(io: StringIO.new('held upload'), filename: 'held.txt', content_type: 'text/plain')
+    held_upload.save!
     grant_platform_permission(platform_manager, 'manage_platform_safety')
     sign_in platform_manager
   end
@@ -29,8 +32,11 @@ RSpec.describe 'BetterTogether::Safety::Cases' do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Safety cases')
     expect(response.body).to include('Local review snapshot')
+    expect(response.body).to include('Content security review items')
+    expect(response.body).to include('held.txt')
     expect(response.body).to include('harassment'.humanize)
     expect(assigns(:local_review_snapshot)[:open_cases_count]).to eq(1)
+    expect(assigns(:local_review_snapshot)[:content_review_items_count]).to eq(1)
   end
 
   it 'allows a platform manager to update the case status' do

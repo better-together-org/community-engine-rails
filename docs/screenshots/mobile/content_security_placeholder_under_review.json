@@ -1,0 +1,50 @@
+{
+  "name": "content_security_placeholder_under_review",
+  "device": "mobile",
+  "url": "/en/conversations/fbdbfcb9-535e-47fb-b63f-21f1fc7f376e?person_id=user",
+  "title": "Occaecati quaerat tempore iste. | Conversations | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_security_review_states",
+  "flow": "placeholder_under_review",
+  "source_spec": "./spec/docs_screenshots/better_together/content_security_review_states_spec.rb",
+  "callouts": [
+    {
+      "selector": "figure.attachment--held-review",
+      "title": "Embedded attachment placeholder under review",
+      "bullets": [
+        "The rendered message keeps context while withholding the attachment preview.",
+        "The placeholder is announced as a status region for assistive technology.",
+        "No image is rendered until the attachment is approved for release."
+      ],
+      "target": {
+        "x": 155.5,
+        "y": 457.0,
+        "width": 305.5,
+        "height": 98.0,
+        "right": 461.0,
+        "bottom": 555.0,
+        "center_x": 308.25,
+        "center_y": 506.0
+      },
+      "avoid": {
+        "x": 155.5,
+        "y": 457.0,
+        "width": 305.5,
+        "height": 98.0,
+        "right": 461.0,
+        "bottom": 555.0,
+        "center_x": 308.25,
+        "center_y": 506.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 173.25,
+        "y": 575.0,
+        "width": 270.0,
+        "height": 566,
+        "score": 706.0
+      }
+    }
+  ]
+}

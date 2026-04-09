@@ -686,6 +686,46 @@ fr:
       private: Privé
       public: Public
   better_together:
+    access_modes:
+      actions:
+        create_account: Créer un compte
+        join_now: Rejoindre maintenant
+        request_to_join: Demander à rejoindre
+        sign_in: Se connecter
+      already_member: Vous êtes déjà membre de cette communauté.
+      current_status:
+        active: Vous êtes déjà membre.
+        pending: Votre demande est en attente d'examen.
+      descriptions:
+        generic:
+          invitation: Les personnes ont besoin d'une invitation avant de rejoindre
+            cet espace.
+          open: Les personnes peuvent rejoindre immédiatement sans attendre d'approbation.
+          request: Les personnes peuvent demander à rejoindre. Une personne responsable
+            examine les demandes avant d'accorder l'accès.
+        platform:
+          invitation: Les personnes ont besoin d'une invitation avant de pouvoir créer
+            un compte ici.
+          open: Les personnes peuvent créer un compte et rejoindre sans attendre d'approbation.
+      form:
+        community_help: Choisissez si les personnes rejoignent immédiatement ou si
+          elles doivent d'abord demander l'accès.
+        community_requests: Exiger une demande d'accès avant qu'une personne devienne
+          membre
+        platform_help: Choisissez si les personnes peuvent créer un compte directement
+          ou si elles ont d'abord besoin d'une invitation.
+        platform_invitation_help: Les invitations peuvent préremplir les adresses
+          e-mail et attribuer des rôles de plateforme ou de communauté après acceptation.
+        platform_invitation_only: Exiger une invitation avant qu'une personne puisse
+          s'inscrire
+      heading: Comment rejoindre
+      labels:
+        invitation: Sur invitation uniquement
+        open: Accès ouvert
+        request: Demander à rejoindre
+      membership_joined: Vous avez rejoint cette communauté.
+      membership_request_pending: Votre demande d'adhésion est déjà en attente.
+      membership_requested: Votre demande d'adhésion a été envoyée.
     addresses:
       add: Ajouter une adresse
       address: Adresse
@@ -1056,6 +1096,23 @@ fr:
         privacy: Politique de confidentialité
         subprocessors: Sous-traitants
         terms_of_service: Conditions d'utilisation
+    content_actions:
+      menu_label: Actions pour %{resource}
+      report:
+        description: Signalez ce contenu pour une révision de modération.
+        label: Signaler un problème de sécurité
+      trigger_label: Plus d'actions pour %{resource}
+      trigger_text: Actions
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Cette pièce jointe
+          message: "%{filename} est en cours de révision avant de pouvoir être affiché."
+          title: Pièce jointe en cours de révision
+        restricted:
+          message: "%{filename} est actuellement restreint pendant qu'une personne
+            réviseuse le vérifie."
+          title: Pièce jointe restreinte
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}
@@ -1470,6 +1527,87 @@ fr:
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
         other: ne fait pas la longueur correcte (%{count} caractères)
+    feedback_routing:
+      audience:
+        community_stewards: responsables du contenu de la communauté
+        platform_content_stewards: responsables du contenu de la plateforme
+        platform_safety_team: équipe de sécurité de la plateforme
+        profile_stewards: responsables du profil
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Envoyé en privé à l'%{audience}.
+        suggest_improvement:
+          community_stewards: Envoyé à l'%{audience} pour révision.
+          platform_content_stewards: Envoyé à l'%{audience} pour révision.
+          profile_stewards: Envoyé à l'%{audience} pour révision.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: les propriétaires du contenu, du profil ainsi que
+            les responsables communautaires ou de la plateforme ne reçoivent pas automatiquement
+            ce signalement.
+      reviewers:
+        community_stewards: responsables communautaires avec accès à la révision du
+          contenu
+        platform_content_stewards: responsables du contenu de la plateforme
+        platform_safety_team: personnes chargées de la révision sécurité de la plateforme
+        profile_stewards: responsables du profil et de la plateforme
+      summary_labels:
+        not_shared_with: Non partagé automatiquement avec
+        reviewers: Personnes pouvant examiner et agir
+        sent_to: Envoyé à
+        visibility: Visible après l'envoi
+      visibility:
+        private_to_reporter_and_platform_safety: Après l'envoi, ce signalement est
+          visible uniquement par vous et les personnes chargées de la sécurité de
+          la plateforme.
+        private_to_submitter_and_stewards: Après l'envoi, ce retour est visible par
+          vous et les responsables de ce contenu.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -1782,6 +1920,28 @@ fr:
         signature_text: Cordialement, L'équipe de %{joinable_name}
         subject: Votre adhésion %{joinable_type} a été mise à jour pour %{joinable_name}
         view_joinable: Voir %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Bonjour %{name},
+        learn_more: Voir %{community_name}
+        message: Votre demande pour rejoindre %{community_name} a été refusée.
+        reviewed_by: Examinée par %{decision_actor_name}.
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{community_name}
+        signature_text: Cordialement, L'équipe de %{community_name}
+        subject: Votre demande d'adhésion à %{community_name} a été refusée
+      submitted:
+        greeting: Bonjour %{name},
+        message: "%{requestor_name} a demandé à rejoindre %{community_name}."
+        request_message_label: Message de la personne demandeuse
+        requestor_email_label: 'Courriel de la personne demandeuse :'
+        review_request: Examiner la demande d'adhésion
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{community_name}
+        signature_text: Cordialement, L'équipe de %{community_name}
+        subject: Nouvelle demande d'adhésion pour %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1820,6 +1980,15 @@ fr:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Les personnes connectées dont la demande est
+          approuvée deviennent immédiatement membres et reçoivent une confirmation
+          dans l'application et par courriel.
+        decision_notifications_heading: Décision et notifications
+        decline_flow: Refuser informe la personne demandeuse par courriel, et les
+          personnes connectées reçoivent aussi une notification dans l'application.
+        email_requestor_flow: Les personnes qui demandent l'accès uniquement par courriel
+          reçoivent un courriel d'invitation pour créer un compte et rejoindre la
+          communauté.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -2166,6 +2335,12 @@ fr:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Votre demande pour rejoindre %{community_name} a été refusée
+        title: Demande d'adhésion refusée pour %{community_name}
+      membership_request_submitted:
+        body: "%{requestor_name} a demandé à rejoindre %{community_name}"
+        title: Nouvelle demande d'adhésion pour %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}
@@ -2719,10 +2894,15 @@ fr:
           qui doit rester au sein de l'équipe de sécurité.
         reason_help: Décrivez brièvement ce qui s'est passé. Commencez par le point
           principal.
+        reporting_help: Ce signalement reste lié à l'enregistrement précis depuis
+          lequel vous l'avez ouvert afin que l'équipe de révision puisse suivre le
+          même contexte.
+        reporting_label: Signalement
         requested_outcome_help: Choisissez le type de soutien que vous souhaitez de
           la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si
           vous hésitez.
         retaliation_risk: Je crains des représailles ou une escalade
+        routing_title: Qui peut voir et agir sur ce signalement
         submit: Envoyer le signalement
         title: Signaler un problème de sécurité
         urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire
@@ -2730,10 +2910,22 @@ fr:
         urgent_title: 'Si vous êtes en danger immédiat :'
       notices:
         created: Le signalement a bien été envoyé.
+        followup_created: Votre suivi a été ajouté au signalement.
       show:
         back: Retour aux signalements
+        followup_empty: Aucun suivi n'a encore été ajouté à ce signalement.
+        followup_field_help: Partagez tout contexte mis à jour, toute précision ou
+          toute preuve que vous souhaitez voir prise en compte par une personne chargée
+          de la révision.
+        followup_help: Utilisez cet espace pour ajouter des éléments de suivi authentifiés,
+          du contexte ou une demande de nouvelle révision sans quitter l'historique
+          du signalement.
+        followup_label: Preuve supplémentaire ou note d'appel
+        followup_submit: Ajouter un suivi
+        followup_title: Plus d'informations ou appel
         pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter
           selon vos préférences de consentement.
+        reported_record: Enregistrement signalé
         status: Statut actuel
         summary: Résumé du dossier
         title: Signalement de sécurité
@@ -2869,6 +3061,16 @@ fr:
         solidarity_check: Vérification de coopération et de solidarité
         status: Statut du dossier
       index:
+        content_review_count: "%{count} en attente de révision"
+        content_review_description: Les téléversements et pièces jointes intégrées
+          encore retenus pour une révision de sécurité apparaissent ici avant leur
+          diffusion.
+        content_review_empty: Aucun téléversement ni aucune pièce jointe intégrée
+          n'attend actuellement une révision.
+        content_review_more: Affichage de %{shown} éléments retenus sur %{total}.
+        content_review_surface: 'Source : %{surface}'
+        content_review_title: Éléments à réviser pour la sécurité du contenu
+        empty: Aucun dossier de sécurité ne correspond aux filtres actuels.
         filter: Filtrer
         local_snapshot_description: Signaux locaux déterministes construits à partir
           des signalements, des dossiers et des notes. L'analyse distante est facultative
@@ -2876,6 +3078,7 @@ fr:
         local_snapshot_generated_at: Généré %{time}
         local_snapshot_title: Instantané local de révision
         snapshot:
+          content_review_items: Éléments de contenu retenus
           open_cases: Dossiers ouverts
           participant_notes: Notes visibles par les participantes et participants
           repeat_reportables: Éléments signalés à plusieurs reprises
@@ -3121,6 +3324,20 @@ fr:
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
     uploads:
+      content_security:
+        badge:
+          clean: Prêt
+          restricted: Restreint
+          review_required: En révision
+        form:
+          review_required: Ce fichier est en cours de révision avant de pouvoir être
+            affiché ou téléchargé par d'autres personnes.
+        status:
+          clean: Ce téléversement est prêt à être inséré ou partagé.
+          restricted: Ce téléversement est actuellement restreint pendant sa vérification
+            par une personne réviseuse.
+          review_required: Ce téléversement est en cours de révision avant de pouvoir
+            être inséré dans un texte enrichi ou partagé.
       index:
         storage_usage: Vous utilisez %{size} de stockage
     validators:
