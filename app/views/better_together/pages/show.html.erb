@@ -62,7 +62,7 @@
       <% cache ['page-hero', @page.id, @page.hero_block&.updated_at, I18n.locale] do %>
         <%= render @page.hero_block if @page.hero_block %>
       <% end %>
-      <% if @page.show_title || (@page.respond_to?(:contribution_roles_with_contributors) && @page.contribution_roles_with_contributors.any?) %>
+      <% if @page.show_title %>
         <% title_wrapper_classes = @page.layout&.include?('full_width') ? 'my-4' : 'container my-4' %>
         <div class="<%= title_wrapper_classes %>">
           <% unless @page.hero_block %>
@@ -70,18 +70,6 @@
               <h1 class="page-title"><%= @page.title %></h1>
             <% end %>
           <% end %>
-
-          <% if @page.respond_to?(:contribution_roles_with_contributors) && @page.contribution_roles_with_contributors.any? %>
-            <div class="<%= 'mt-3' unless @page.hero_block %>">
-              <%= render 'better_together/shared/governed_contributions', record: @page %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-      <% if @page.hero_block && @page.respond_to?(:contribution_roles_with_contributors) && @page.contribution_roles_with_contributors.any? %>
-        <% contribution_wrapper_classes = @page.layout&.include?('full_width') ? 'my-3 px-3' : 'container my-3' %>
-        <div class="<%= contribution_wrapper_classes %>">
-          <%= render 'better_together/shared/governed_contributions', record: @page %>
         </div>
       <% end %>
       <% if content_actions_visible_for?(@page) %>
@@ -97,10 +85,6 @@
       <% else %>
         <%= yield :page_content %>
       <% end %>
-
-      <%= render 'better_together/shared/claims_and_evidence', record: @page %>
-      <%= render 'better_together/shared/bibliography', record: @page %>
-      <%= render 'better_together/shared/governance_bundle_links', record: @page if @page.bibliography_entries.any? || @page.claims.any? %>
 
       <%= share_buttons(shareable: @page) if @page.privacy_public? %>
       <%= render 'shared/page_feedback_bar', record: @page if content_actions_visible_for?(@page) %>
