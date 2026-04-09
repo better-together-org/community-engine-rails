@@ -126,5 +126,24 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       expect(response).to have_http_status(:ok)
     end
+
+    it 'renders the unified governed contributions form section' do
+      page.add_governed_contributor(create(:better_together_person, name: 'Page Editor'), role: 'editor')
+
+      get better_together.edit_page_path(page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      doc = Nokogiri::HTML.parse(response.body)
+      section = doc.at_css('[data-controller="better_together--contribution-assignments"]')
+      container = doc.at_css('[data-better_together--contribution-assignments-target="container"].row.g-3')
+      entry = doc.at_css('[data-better_together--contribution-assignments-target="entry"].col-12.col-lg-6.nested-fields')
+
+      expect(section).to be_present
+      expect(container).to be_present
+      expect(entry).to be_present
+      expect(response.body).to include('page[contributions_attributes]')
+      expect(response.body).not_to include('page[author_ids]')
+      expect(response.body).not_to include('page[editor_ids]')
+    end
   end
 end

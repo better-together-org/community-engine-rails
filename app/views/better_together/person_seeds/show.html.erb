@@ -11,7 +11,7 @@
       </h1>
       <div class="btn-toolbar" role="toolbar" aria-label="<%= t('globals.actions') %>">
         <% if @seed.yaml_file.attached? %>
-          <%= link_to rails_blob_path(@seed.yaml_file, disposition: 'attachment'),
+          <%= link_to storage_proxy_url_for(@seed.yaml_file, disposition: 'attachment'),
                       class: 'btn btn-outline-secondary me-2' do %>
             <i class="fas fa-download" aria-hidden="true"></i>
             <%= t('seeds.show.download_yaml') %>

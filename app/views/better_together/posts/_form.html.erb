@@ -54,17 +54,9 @@
     <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
   </div>
 
-  <% BetterTogether::Authorable::CONTRIBUTION_ROLE_CONFIG.each_key do |role_name| %>
-    <div class="mb-3">
-      <%= render partial: 'better_together/shared/governed_contribution_role_fields',
-                 locals: {
-                   form:,
-                   record: post,
-                   role_name:,
-                   role_label: post.contribution_role_label(role_name)
-                  } %>
-    </div>
-  <% end %>
+  <div class="mb-3">
+    <%= governed_contributions_fieldset(form:, record: post) %>
+  </div>
 
   <div class="mb-3">
     <%= form.label :published_at %>

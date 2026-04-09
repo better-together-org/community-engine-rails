@@ -26,11 +26,15 @@ module BetterTogether
       build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
-    def storage_proxy_url_for(attachment)
+    def storage_proxy_url_for(attachment, **)
       return unless attachment.present?
 
-      proxy_path = rails_storage_proxy_path(attachment, only_path: true)
-      request&.base_url.present? ? build_url_for_path(request.base_url, proxy_path) : rails_storage_proxy_url(attachment)
+      proxy_path = rails_storage_proxy_path(attachment, only_path: true, **)
+      if request&.base_url.present?
+        build_url_for_path(request.base_url, proxy_path)
+      else
+        rails_storage_proxy_url(attachment, **)
+      end
     end
 
     # Returns the base path configured for BetterTogether.

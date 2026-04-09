@@ -1092,6 +1092,21 @@ en:
         restricted:
           message: "%{filename} is currently restricted while a reviewer checks it."
           title: Attachment restricted
+    contributions:
+      form:
+        add: Add contributor
+        contributor: Contributor
+        contributor_type: Contributor type
+        description: Assign people or robots to this record with explicit contribution
+          roles.
+        entry_help: Choose a contributor type, contributor, and role.
+        heading: Contributors
+        new_entry: New contributor
+        person: Person
+        remove: Remove contributor
+        robot: Robot
+        role: Role
+        select_contributor: Select contributor
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}

@@ -1110,6 +1110,21 @@ es:
           message: "%{filename} está actualmente restringido mientras una persona
             revisora lo verifica."
           title: Archivo adjunto restringido
+    contributions:
+      form:
+        add: Agregar colaborador
+        contributor: Colaborador
+        contributor_type: Tipo de colaborador
+        description: Asigna personas o robots a este registro con roles de contribución
+          explícitos.
+        entry_help: Elige un tipo de colaborador, el colaborador y el rol.
+        heading: Colaboradores
+        new_entry: Nuevo colaborador
+        person: Persona
+        remove: Quitar colaborador
+        robot: Robot
+        role: Rol
+        select_contributor: Seleccionar colaborador
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}

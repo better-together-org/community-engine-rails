@@ -19,6 +19,29 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'uses proxied attachment URLs in the edit form' do
+      platform_manager.person.profile_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'person-profile.svg',
+        content_type: 'image/svg+xml'
+      )
+      platform_manager.person.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'person-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get better_together.edit_person_path(locale:, id: platform_manager.person.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(
+        Rails.application.routes.url_helpers.rails_storage_proxy_path(platform_manager.person.profile_image, only_path: true)
+      )
+      expect(response.body).to include(
+        Rails.application.routes.url_helpers.rails_storage_proxy_path(platform_manager.person.cover_image, only_path: true)
+      )
+    end
+
     it 'shows agreement acceptance audit details when present', :aggregate_failures do
       agreement = create(
         :better_together_agreement,

@@ -154,14 +154,14 @@ module BetterTogether
 
     def render_single_image(image, name)
       content_tag(:div, class: 'col col-12') do
-        image_tag(image.media, alt: name, class: 'img-fluid rounded mb-3')
+        image_tag(storage_proxy_url_for(image.media), alt: name, class: 'img-fluid rounded mb-3')
       end
     end
 
     def render_image_grid(images, name)
       safe_join(images.map do |image|
         content_tag(:div, class: 'col align-content-center col-md-4') do
-          image_tag(image.media, alt: name, class: 'img-fluid rounded')
+          image_tag(storage_proxy_url_for(image.media), alt: name, class: 'img-fluid rounded')
         end
       end)
     end

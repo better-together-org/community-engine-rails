@@ -277,6 +277,31 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       get better_together.edit_community_path(locale:, id: community.slug)
       expect(response).to have_http_status(:ok)
     end
+
+    it 'uses proxied attachment URLs for existing image previews' do
+      community.profile_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-profile.svg',
+        content_type: 'image/svg+xml'
+      )
+      community.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+      community.logo.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-logo.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get better_together.edit_community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.profile_image, only_path: true))
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.cover_image, only_path: true))
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.logo, only_path: true))
+    end
   end
 
   describe 'PATCH /:locale/c/:slug', :as_platform_manager do

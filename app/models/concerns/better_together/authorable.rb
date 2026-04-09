@@ -52,6 +52,8 @@ module BetterTogether
                through: :contributions,
                source: :author
 
+      accepts_nested_attributes_for :contributions, allow_destroy: true
+
       CONTRIBUTION_ROLE_CONFIG.each do |association_name, role_value|
         plural_name = association_name.to_s.pluralize
         contribution_assoc = :"#{association_name}_contributions"
@@ -78,6 +80,14 @@ module BetterTogether
     end
 
     class_methods do
+      def permitted_attributes(id: false, destroy: false, exclude_extra: false)
+        super + [
+          {
+            contributions_attributes: BetterTogether::Authorship.permitted_attributes(id:, destroy:)
+          }
+        ]
+      end
+
       def extra_permitted_attributes
         super + [
           *CONTRIBUTION_ROLE_CONFIG.keys.flat_map do |role_name|
@@ -148,6 +158,11 @@ module BetterTogether
 
     def contribution_role_label(role)
       CONTRIBUTION_ROLE_LABELS.fetch(role.to_s, role.to_s.humanize)
+    end
+
+    def contribution_records_for_form
+      contribution_records = association(:contributions).loaded? ? contributions.to_a : contributions.includes(:author).to_a
+      contribution_records.sort_by { |contribution| [contribution.position || Float::INFINITY, contribution.id.to_s] }
     end
 
     def add_governed_contributor(actor, role: BetterTogether::Authorship::AUTHOR_ROLE,

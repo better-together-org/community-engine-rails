@@ -1092,6 +1092,21 @@ uk:
         restricted:
           message: "%{filename} наразі обмежено, поки його перевіряє рецензент."
           title: Вкладення обмежено
+    contributions:
+      form:
+        add: Додати учасника
+        contributor: Учасник
+        contributor_type: Тип учасника
+        description: Призначайте людей або роботів для цього запису з чітко визначеними
+          ролями внеску.
+        entry_help: Виберіть тип учасника, самого учасника та роль.
+        heading: Учасники внеску
+        new_entry: Новий учасник
+        person: Людина
+        remove: Видалити учасника
+        robot: Робот
+        role: Роль
+        select_contributor: Виберіть учасника
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}

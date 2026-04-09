@@ -212,6 +212,7 @@ module BetterTogether
 
     # Resize the profile image before rendering (non-blocking version)
     def profile_image_variant(size)
+      return profile_image if profile_image.content_type == 'image/svg+xml'
       return profile_image.variant(resize_to_fill: [size, size]) unless Rails.env.production?
 
       # In production, avoid blocking .processed calls
@@ -222,7 +223,11 @@ module BetterTogether
     def profile_image_url(size: 300)
       return nil unless profile_image.attached?
 
-      variant = profile_image.variant(resize_to_fill: [size, size])
+      variant = if profile_image.content_type == 'image/svg+xml'
+                  profile_image
+                else
+                  profile_image.variant(resize_to_fill: [size, size])
+                end
 
       Rails.application.routes.url_helpers.rails_storage_proxy_path(variant, only_path: true)
     rescue ActiveStorage::FileNotFoundError

@@ -1113,6 +1113,21 @@ fr:
           message: "%{filename} est actuellement restreint pendant qu'une personne
             réviseuse le vérifie."
           title: Pièce jointe restreinte
+    contributions:
+      form:
+        add: Ajouter un contributeur
+        contributor: Contributeur
+        contributor_type: Type de contributeur
+        description: Assignez des personnes ou des robots à cet enregistrement avec
+          des rôles de contribution explicites.
+        entry_help: Choisissez un type de contributeur, un contributeur et un rôle.
+        heading: Contributeurs
+        new_entry: Nouveau contributeur
+        person: Personne
+        remove: Retirer le contributeur
+        robot: Robot
+        role: Rôle
+        select_contributor: Sélectionner un contributeur
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}

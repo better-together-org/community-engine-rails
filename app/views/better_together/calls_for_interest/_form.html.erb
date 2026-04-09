@@ -144,7 +144,7 @@
 
             <small class="form-text text-muted"><%= t('helpers.hint.call_for_interest.cover_image') %></small>
 
-            <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= call_for_interest.cover_image.url if call_for_interest.cover_image.attached? %>">
+            <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= storage_proxy_url_for(call_for_interest.cover_image) if call_for_interest.cover_image.attached? %>">
             </div>
           </div>
         </div>

@@ -131,16 +131,12 @@
         </div>
       <% end %>
     </div>
+  </div>
 
-    <% BetterTogether::Authorable::CONTRIBUTION_ROLE_CONFIG.each_key do |role_name| %>
-      <%= render partial: 'better_together/shared/governed_contribution_role_fields',
-                 locals: {
-                    form:,
-                    record: page,
-                    role_name:,
-                    role_label: page.contribution_role_label(role_name)
-                  } %>
-    <% end %>
+  <div class="row my-3">
+    <div class="col-12 mb-3 pb-3 border-bottom">
+      <%= governed_contributions_fieldset(form:, record: page) %>
+    </div>
   </div>
 
   <!-- Host app can extend the page form via this partial -->
