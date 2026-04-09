@@ -9,6 +9,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
   post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
 
+  get '/content-security/active-storage/blobs/proxy/:signed_id/*filename',
+      to: 'content_security/active_storage/blobs/proxy#show',
+      as: :content_security_service_blob_proxy
+  get '/content-security/active-storage/representations/proxy/:signed_blob_id/:variation_key/*filename',
+      to: 'content_security/active_storage/representations/proxy#show',
+      as: :content_security_blob_representation_proxy
+
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
                      only: :omniauth_callbacks,
@@ -164,7 +171,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :reports, only: %i[index show new create]
+        resources :reports, only: %i[index show new create] do
+          resource :followup, only: :create, controller: 'report_followups'
+        end
 
         resources :platform_connections, only: %i[index show new create edit update] do
           member do

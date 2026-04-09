@@ -1,0 +1,28 @@
+<%# locals: (record:) %>
+<% note_id = "#{dom_id(record)}_feedback_note" %>
+
+<section class="social-share-buttons bt-page-feedback-bar"
+         aria-labelledby="<%= "#{dom_id(record)}_feedback_heading" %>">
+  <div>
+    <h5 id="<%= "#{dom_id(record)}_feedback_heading" %>">
+      <%= t('better_together.feedback_surface.page_bar.heading', default: 'Feedback') %>
+    </h5>
+  </div>
+
+  <div class="bt-page-feedback-bar__actions">
+    <%= link_to new_report_path(
+                  locale: I18n.locale,
+                  reportable_type: record.class.base_class.name,
+                  reportable_id: record.id
+                ),
+                class: 'btn btn-outline-danger btn-sm rounded-pill bt-page-feedback-bar__button',
+                aria: { describedby: note_id } do %>
+      <i class="fas fa-flag" aria-hidden="true"></i>
+      <span><%= t('better_together.feedback_surface.page_bar.action', default: 'Report safety issue') %></span>
+    <% end %>
+  </div>
+
+  <p id="<%= note_id %>" class="bt-page-feedback-bar__note text-muted">
+    <%= feedback_route_delivery_note(record, action_kind: :report_safety_issue) %>
+  </p>
+</section>

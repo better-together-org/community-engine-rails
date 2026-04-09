@@ -3,9 +3,10 @@
 module BetterTogether
   # Resolves inbound email aliases into CE community, membership-request, or agent targets.
   class InboundEmailRoutingService
-    def initialize(inbound_email)
+    def initialize(inbound_email, scanner_runner: nil)
       @inbound_email = inbound_email
       @mail = inbound_email.mail
+      @scanner_runner = scanner_runner
     end
 
     def route!
@@ -16,6 +17,8 @@ module BetterTogether
       Current.set(platform: resolution.platform) do
         BetterTogether::InboundEmailMessage.transaction do
           message = BetterTogether::InboundEmailMessage.create!(message_attributes_for(resolution, sender:, body_plain:))
+          screening_result = screen_message!(message, resolution:, sender:, body_plain:)
+          next message unless screening_result.allow_routing?
 
           routed_record = route_to_target(resolution, sender:, body_plain:)
           message.update!(routed_record:, status: 'routed') if routed_record.present?
@@ -68,6 +71,19 @@ module BetterTogether
     end
 
     def initial_status_for(resolution) = resolution.route_kind == 'unresolved' ? 'rejected' : 'received'
+
+    def screen_message!(message, resolution:, sender:, body_plain:)
+      BetterTogether::ContentSecurity::MailScreeningService
+        .new(
+          inbound_email: @inbound_email,
+          mail: @mail,
+          resolution:,
+          sender:,
+          body_plain:,
+          scanner_runner: @scanner_runner
+        )
+        .screen!(message)
+    end
 
     def route_to_target(resolution, sender:, body_plain:)
       resolution.route_kind == 'membership_request' ? create_membership_request!(resolution.target, sender:, body_plain:) : nil

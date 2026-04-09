@@ -9,6 +9,14 @@ RSpec.describe 'BetterTogether::Api::V1::Uploads', :no_auth do
   let(:auth_headers) { api_auth_headers(user, token: token) }
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
 
+  before do
+    stub_const('BetterTogether::PlatformDomain', Class.new do
+      def self.resolve(_hostname)
+        nil
+      end
+    end)
+  end
+
   describe 'GET /api/v1/uploads' do
     let(:url) { '/api/v1/uploads' }
     let!(:my_upload) { create(:better_together_upload, creator: person) }
@@ -62,6 +70,18 @@ RSpec.describe 'BetterTogether::Api::V1::Uploads', :no_auth do
           'id' => upload.id
         )
         expect(json['data']['attributes']).to include('name')
+      end
+    end
+
+    context 'when the file is still pending review' do
+      before do
+        upload.file.attach(io: StringIO.new('pending file'), filename: 'pending.txt', content_type: 'text/plain')
+        get url, headers: auth_headers
+      end
+
+      it 'does not expose a file URL' do
+        json = JSON.parse(response.body)
+        expect(json['data']['attributes']['file-url']).to be_nil
       end
     end
   end

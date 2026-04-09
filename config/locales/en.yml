@@ -1076,6 +1076,22 @@ en:
         privacy: Privacy Policy
         subprocessors: Subprocessors
         terms_of_service: Terms of Service
+    content_actions:
+      menu_label: Actions for %{resource}
+      report:
+        description: Flag this content for moderator review.
+        label: Report safety issue
+      trigger_label: More actions for %{resource}
+      trigger_text: Actions
+    content_security:
+      attachments:
+        held:
+          fallback_filename: This attachment
+          message: "%{filename} is being reviewed before it can be displayed."
+          title: Attachment under review
+        restricted:
+          message: "%{filename} is currently restricted while a reviewer checks it."
+          title: Attachment restricted
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -1479,6 +1495,84 @@ en:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feedback_routing:
+      audience:
+        community_stewards: responsible community stewards
+        platform_content_stewards: responsible platform content stewards
+        platform_safety_team: platform safety team
+        profile_stewards: responsible profile stewards
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Sent privately to the %{audience}.
+        suggest_improvement:
+          community_stewards: Sent to the %{audience} for review.
+          platform_content_stewards: Sent to the %{audience} for review.
+          profile_stewards: Sent to the %{audience} for review.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: content owners, profile owners, and community or platform
+            stewards do not receive this report automatically.
+      reviewers:
+        community_stewards: community stewards with content review access
+        platform_content_stewards: platform content stewards
+        platform_safety_team: platform safety reviewers
+        profile_stewards: profile and platform stewards
+      summary_labels:
+        not_shared_with: Not automatically shared with
+        reviewers: Reviewers who can act
+        sent_to: Sent to
+        visibility: Visible after submission
+      visibility:
+        private_to_reporter_and_platform_safety: Visible after submission only to
+          you and platform safety reviewers.
+        private_to_submitter_and_stewards: Visible after submission to you and the
+          responsible stewards for this content.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -2723,9 +2817,13 @@ en:
           stay with the safety review team.
         reason_help: Tell us what happened in a short summary. Focus on the main concern
           first.
+        reporting_help: This report stays connected to the specific record you opened
+          from so reviewers can follow the same context.
+        reporting_label: Reporting
         requested_outcome_help: Choose what kind of support you want from the safety
           team. You can ask for support even if you are unsure.
         retaliation_risk: I am worried about retaliation or escalation
+        routing_title: Who can see and act on this report
         submit: Submit report
         title: Report a safety concern
         urgent_help: Contact local emergency services first. This form is for community
@@ -2733,10 +2831,20 @@ en:
         urgent_title: 'If you are in immediate danger:'
       notices:
         created: Report was successfully submitted.
+        followup_created: Your follow-up was added to the report.
       show:
         back: Back to reports
+        followup_empty: No follow-up notes have been added to this report yet.
+        followup_field_help: Share any updated context, clarifications, or evidence
+          you want a reviewer to consider.
+        followup_help: Use this space to add authenticated follow-up evidence, context,
+          or a request for another review without leaving your report history.
+        followup_label: Additional evidence or appeal note
+        followup_submit: Add follow-up
+        followup_title: More information or appeal
         pending_copy: This case is still in progress. A moderator may follow up based
           on your consent settings.
+        reported_record: Reported record
         status: Current status
         summary: Case summary
         title: Safety report
@@ -2872,12 +2980,22 @@ en:
         solidarity_check: Cooperation and solidarity check
         status: Case status
       index:
+        content_review_count: "%{count} awaiting review"
+        content_review_description: Uploads and embedded attachments that are still
+          held for safety or security review appear here before release.
+        content_review_empty: No uploads or embedded attachments are currently waiting
+          for review.
+        content_review_more: Showing %{shown} of %{total} held content items.
+        content_review_surface: 'Source: %{surface}'
+        content_review_title: Content security review items
+        empty: No safety cases match the current filters.
         filter: Filter
         local_snapshot_description: Deterministic local signals built from reports,
           cases, and notes. Remote analysis is optional and additive.
         local_snapshot_generated_at: Generated %{time}
         local_snapshot_title: Local review snapshot
         snapshot:
+          content_review_items: Held content items
           open_cases: Open cases
           participant_notes: Participant-visible notes
           repeat_reportables: Repeat reportables
@@ -3120,6 +3238,20 @@ en:
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
     uploads:
+      content_security:
+        badge:
+          clean: Ready
+          restricted: Restricted
+          review_required: Under review
+        form:
+          review_required: This file is being reviewed before it can be displayed
+            or downloaded by other people.
+        status:
+          clean: This upload is ready to insert or share.
+          restricted: This upload is currently restricted while a reviewer checks
+            it.
+          review_required: This upload is being reviewed before it can be inserted
+            into rich text or shared.
       index:
         storage_usage: You're using %{size} of storage
     validators:

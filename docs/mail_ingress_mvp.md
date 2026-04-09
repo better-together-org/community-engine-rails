@@ -8,6 +8,7 @@ It is intentionally designed to **fail closed**. The goal is not to accept every
 
 - a CE relay endpoint at `/inbound-email/relay`
 - Action Mailbox ingestion inside the engine
+- a namespaced `BetterTogether::ApplicationMailbox` base for host apps
 - deterministic alias routing for:
   - `requests+community-slug@tenant-domain`
   - `community+community-slug@tenant-domain`
@@ -16,6 +17,17 @@ It is intentionally designed to **fail closed**. The goal is not to accept every
 - tenant-aware routing through `BetterTogether::PlatformDomain`
 
 ## Multi-tenant routing model
+
+Host apps should follow the same inheritance pattern they already use for
+controllers and mailers:
+
+- `ApplicationController < BetterTogether::ApplicationController`
+- `ApplicationMailer < BetterTogether::ApplicationMailer`
+- `ApplicationMailbox < BetterTogether::ApplicationMailbox`
+
+CE does **not** define or install a global `::ApplicationMailbox` anymore. The
+host app owns that root constant and opts into inbound mail explicitly by
+subclassing the CE base.
 
 Recipient **domain** is the tenant boundary.
 
@@ -40,6 +52,7 @@ This prevents cross-tenant leakage when two tenants have similar community names
 - the relay endpoint requires HTTP basic auth
 - only `message/rfc822` payloads are accepted
 - inbound mail is recorded once through Action Mailbox rather than parsed by ad hoc controllers
+- the host app must provide `ApplicationMailbox < BetterTogether::ApplicationMailbox` to activate the routing contract
 
 ### Auditable intake records
 

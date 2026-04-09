@@ -8,7 +8,13 @@ RSpec.describe BetterTogether::InboundEmailResolutionService do
   end
 
   def create_tenant(community:, domain:)
-    create(:better_together_platform, community:, host_url: "https://#{domain}")
+    platform = create(:better_together_platform, community:, host_url: "https://#{domain}")
+    platform.platform_domains.find_or_create_by!(hostname: domain) do |platform_domain|
+      platform_domain.primary = true
+      platform_domain.active = true
+    end
+
+    platform
   end
 
   it 'returns a tenant-scoped community resolution for mapped domains' do

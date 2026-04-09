@@ -11,6 +11,9 @@ module BetterTogether
 
     delegate :base_url=, to: :BetterTogether
 
+    delegate :content_safety_orchestrator_command=, to: :BetterTogether
+
+    delegate :inbound_email_ingress_password=, to: :BetterTogether
     delegate :adapters_for, :clear_adapters!, :clear_error_reporters!, :dispatch_to_adapters,
              :register_adapter, :register_error_reporter, to: :BetterTogether
 

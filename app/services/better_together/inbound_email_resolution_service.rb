@@ -25,7 +25,11 @@ module BetterTogether
 
     private
 
-    def platform_for = BetterTogether::PlatformDomain.resolve(@address.domain.to_s.downcase)&.platform
+    def platform_for
+      hostname = BetterTogether::PlatformDomain.normalize_hostname(@address.domain.to_s.downcase)
+
+      BetterTogether::PlatformDomain.resolve(hostname)&.platform || platform_from_host_url(hostname)
+    end
 
     def route_target_for(platform)
       return ['unresolved', nil] if platform.blank?
@@ -46,14 +50,17 @@ module BetterTogether
     end
 
     def community_by_slug(slug, platform)
-      community = BetterTogether::Community.friendly.find_by(slug:)
-      return community if community&.primary_platform == platform
+      community = BetterTogether::Community.find_by(identifier: slug)
+      community ||= BetterTogether::Community.friendly.find(slug)
+      return community if community.present? && platform.community == community
 
+      nil
+    rescue ActiveRecord::RecordNotFound
       nil
     end
 
     def agent_by_identifier(identifier, platform)
-      BetterTogether::Robot.resolve(identifier:, platform:) ||
+      tenant_robot(identifier, platform) ||
         BetterTogether::Person
           .joins(:person_platform_memberships)
           .merge(BetterTogether::PersonPlatformMembership.active.where(joinable: platform))
@@ -69,6 +76,24 @@ module BetterTogether
         @address.local.downcase,
         @address.domain.to_s.downcase
       )
+    end
+
+    def tenant_robot(identifier, platform)
+      return unless defined?(BetterTogether::Robot)
+
+      BetterTogether::Robot.resolve(identifier:, platform:)
+    end
+
+    def platform_from_host_url(hostname)
+      BetterTogether::Platform.internal.find_each.find do |platform|
+        platform_hostname(platform) == hostname
+      end
+    end
+
+    def platform_hostname(platform)
+      BetterTogether::PlatformDomain.normalize_hostname(URI.parse(platform.host_url.to_s).host)
+    rescue URI::InvalidURIError
+      nil
     end
   end
 end

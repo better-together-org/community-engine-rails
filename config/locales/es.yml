@@ -1093,6 +1093,23 @@ es:
         privacy: Política de privacidad
         subprocessors: Subprocesadores
         terms_of_service: Términos de servicio
+    content_actions:
+      menu_label: Acciones para %{resource}
+      report:
+        description: Marca este contenido para revisión de moderación.
+        label: Reportar problema de seguridad
+      trigger_label: Más acciones para %{resource}
+      trigger_text: Acciones
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Este archivo adjunto
+          message: "%{filename} está en revisión antes de poder mostrarse."
+          title: Archivo adjunto en revisión
+        restricted:
+          message: "%{filename} está actualmente restringido mientras una persona
+            revisora lo verifica."
+          title: Archivo adjunto restringido
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}
@@ -1506,6 +1523,85 @@ es:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feedback_routing:
+      audience:
+        community_stewards: responsables de contenido de la comunidad
+        platform_content_stewards: responsables de contenido de la plataforma
+        platform_safety_team: equipo de seguridad de la plataforma
+        profile_stewards: responsables del perfil
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Se envía en privado al %{audience}.
+        suggest_improvement:
+          community_stewards: Se envía al %{audience} para revisión.
+          platform_content_stewards: Se envía al %{audience} para revisión.
+          profile_stewards: Se envía al %{audience} para revisión.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: las personas propietarias del contenido, del perfil
+            y las personas responsables comunitarias o de la plataforma no reciben
+            este reporte automáticamente.
+      reviewers:
+        community_stewards: responsables comunitarias con acceso de revisión de contenido
+        platform_content_stewards: responsables de contenido de la plataforma
+        platform_safety_team: personas revisoras de seguridad de la plataforma
+        profile_stewards: responsables del perfil y de la plataforma
+      summary_labels:
+        not_shared_with: No se comparte automáticamente con
+        reviewers: Quienes pueden revisar y actuar
+        sent_to: Se envía a
+        visibility: Visible después del envío
+      visibility:
+        private_to_reporter_and_platform_safety: Después del envío, solo tú y las
+          personas revisoras de seguridad de la plataforma pueden verlo.
+        private_to_submitter_and_stewards: Después del envío, tú y las personas responsables
+          de este contenido pueden verlo.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -2782,9 +2878,14 @@ es:
           que deba permanecer con el equipo de revisión de seguridad.
         reason_help: Explica brevemente qué pasó. Enfócate primero en la preocupación
           principal.
+        reporting_help: Este reporte permanece conectado con el registro específico
+          desde el que lo abriste para que el equipo revisor pueda seguir el mismo
+          contexto.
+        reporting_label: Reportando
         requested_outcome_help: Elige qué tipo de apoyo quieres del equipo de seguridad.
           Puedes pedir apoyo aunque no estés segura o seguro.
         retaliation_risk: Me preocupa una represalia o una escalada
+        routing_title: Quién puede ver y actuar sobre este reporte
         submit: Enviar reporte
         title: Reportar una preocupación de seguridad
         urgent_help: Contacta primero a los servicios de emergencia locales. Este
@@ -2793,10 +2894,20 @@ es:
         urgent_title: 'Si estás en peligro inmediato:'
       notices:
         created: El reporte se envió correctamente.
+        followup_created: Tu seguimiento se agregó al reporte.
       show:
         back: Volver a los reportes
+        followup_empty: Aún no se han agregado notas de seguimiento a este reporte.
+        followup_field_help: Comparte cualquier contexto actualizado, aclaración o
+          evidencia que quieras que una persona revisora considere.
+        followup_help: Usa este espacio para agregar evidencia autenticada de seguimiento,
+          contexto o una solicitud de nueva revisión sin salir del historial del reporte.
+        followup_label: Evidencia adicional o nota de apelación
+        followup_submit: Agregar seguimiento
+        followup_title: Más información o apelación
         pending_copy: Este caso sigue en curso. Una persona moderadora puede comunicarse
           contigo según tus preferencias de consentimiento.
+        reported_record: Registro reportado
         status: Estado actual
         summary: Resumen del caso
         title: Reporte de seguridad
@@ -2932,12 +3043,24 @@ es:
         solidarity_check: Verificación de cooperación y solidaridad
         status: Estado del caso
       index:
+        content_review_count: "%{count} pendientes de revisión"
+        content_review_description: Las cargas y los archivos adjuntos incrustados
+          que siguen retenidos para revisión de seguridad aparecen aquí antes de su
+          liberación.
+        content_review_empty: No hay cargas ni archivos adjuntos incrustados esperando
+          revisión en este momento.
+        content_review_more: Mostrando %{shown} de %{total} elementos de contenido
+          retenidos.
+        content_review_surface: 'Origen: %{surface}'
+        content_review_title: Elementos de revisión de seguridad del contenido
+        empty: Ningún caso de seguridad coincide con los filtros actuales.
         filter: Filtrar
         local_snapshot_description: Señales locales deterministas construidas a partir
           de reportes, casos y notas. El análisis remoto es opcional y complementario.
         local_snapshot_generated_at: Generado %{time}
         local_snapshot_title: Instantánea local de revisión
         snapshot:
+          content_review_items: Elementos de contenido retenidos
           open_cases: Casos abiertos
           participant_notes: Notas visibles para las personas participantes
           repeat_reportables: Elementos reportados repetidamente
@@ -3183,6 +3306,20 @@ es:
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
     uploads:
+      content_security:
+        badge:
+          clean: Listo
+          restricted: Restringido
+          review_required: En revisión
+        form:
+          review_required: Este archivo está en revisión antes de poder mostrarse
+            o descargarse por otras personas.
+        status:
+          clean: Esta carga está lista para insertarse o compartirse.
+          restricted: Esta carga está restringida mientras una persona revisora la
+            verifica.
+          review_required: Esta carga está en revisión antes de poder insertarse en
+            texto enriquecido o compartirse.
       index:
         storage_usage: Estás usando %{size} de almacenamiento
     validators:

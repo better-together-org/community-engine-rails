@@ -29,9 +29,9 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
              published_at: 1.day.ago,
              privacy: 'public')
     end
+    let(:block) { create(:content_markdown, markdown_source: '## Content block') }
 
     before do
-      block = create(:content_markdown, markdown_source: '## Content block')
       page.page_blocks.create!(block:, position: 0)
     end
 
@@ -40,6 +40,18 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('data-evidence-selector="block:markdown:')
+    end
+
+    it 'renders the legacy block actions menu and the page feedback bar' do
+      get better_together.page_path(page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('bt-content-block__actions')
+      expect(response.body).to include('bt-content-actions__trigger')
+      expect(response.body).to include("reportable_id=#{block.id}")
+      expect(response.body).to include('reportable_type=BetterTogether%3A%3AContent%3A%3ABlock')
+      expect(response.body).to include('bt-page-feedback-bar')
+      expect(response.body).to include("reportable_id=#{page.id}")
     end
 
     it 'renders a bibliography for structured citations' do

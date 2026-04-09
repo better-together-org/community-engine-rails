@@ -1096,6 +1096,23 @@ fr:
         privacy: Politique de confidentialité
         subprocessors: Sous-traitants
         terms_of_service: Conditions d'utilisation
+    content_actions:
+      menu_label: Actions pour %{resource}
+      report:
+        description: Signalez ce contenu pour une révision de modération.
+        label: Signaler un problème de sécurité
+      trigger_label: Plus d'actions pour %{resource}
+      trigger_text: Actions
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Cette pièce jointe
+          message: "%{filename} est en cours de révision avant de pouvoir être affiché."
+          title: Pièce jointe en cours de révision
+        restricted:
+          message: "%{filename} est actuellement restreint pendant qu'une personne
+            réviseuse le vérifie."
+          title: Pièce jointe restreinte
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}
@@ -1510,6 +1527,87 @@ fr:
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
         other: ne fait pas la longueur correcte (%{count} caractères)
+    feedback_routing:
+      audience:
+        community_stewards: responsables du contenu de la communauté
+        platform_content_stewards: responsables du contenu de la plateforme
+        platform_safety_team: équipe de sécurité de la plateforme
+        profile_stewards: responsables du profil
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Envoyé en privé à l'%{audience}.
+        suggest_improvement:
+          community_stewards: Envoyé à l'%{audience} pour révision.
+          platform_content_stewards: Envoyé à l'%{audience} pour révision.
+          profile_stewards: Envoyé à l'%{audience} pour révision.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: les propriétaires du contenu, du profil ainsi que
+            les responsables communautaires ou de la plateforme ne reçoivent pas automatiquement
+            ce signalement.
+      reviewers:
+        community_stewards: responsables communautaires avec accès à la révision du
+          contenu
+        platform_content_stewards: responsables du contenu de la plateforme
+        platform_safety_team: personnes chargées de la révision sécurité de la plateforme
+        profile_stewards: responsables du profil et de la plateforme
+      summary_labels:
+        not_shared_with: Non partagé automatiquement avec
+        reviewers: Personnes pouvant examiner et agir
+        sent_to: Envoyé à
+        visibility: Visible après l'envoi
+      visibility:
+        private_to_reporter_and_platform_safety: Après l'envoi, ce signalement est
+          visible uniquement par vous et les personnes chargées de la sécurité de
+          la plateforme.
+        private_to_submitter_and_stewards: Après l'envoi, ce retour est visible par
+          vous et les responsables de ce contenu.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -2796,10 +2894,15 @@ fr:
           qui doit rester au sein de l'équipe de sécurité.
         reason_help: Décrivez brièvement ce qui s'est passé. Commencez par le point
           principal.
+        reporting_help: Ce signalement reste lié à l'enregistrement précis depuis
+          lequel vous l'avez ouvert afin que l'équipe de révision puisse suivre le
+          même contexte.
+        reporting_label: Signalement
         requested_outcome_help: Choisissez le type de soutien que vous souhaitez de
           la part de l'équipe de sécurité. Vous pouvez demander de l'aide même si
           vous hésitez.
         retaliation_risk: Je crains des représailles ou une escalade
+        routing_title: Qui peut voir et agir sur ce signalement
         submit: Envoyer le signalement
         title: Signaler un problème de sécurité
         urgent_help: Contactez d'abord les services d'urgence locaux. Ce formulaire
@@ -2807,10 +2910,22 @@ fr:
         urgent_title: 'Si vous êtes en danger immédiat :'
       notices:
         created: Le signalement a bien été envoyé.
+        followup_created: Votre suivi a été ajouté au signalement.
       show:
         back: Retour aux signalements
+        followup_empty: Aucun suivi n'a encore été ajouté à ce signalement.
+        followup_field_help: Partagez tout contexte mis à jour, toute précision ou
+          toute preuve que vous souhaitez voir prise en compte par une personne chargée
+          de la révision.
+        followup_help: Utilisez cet espace pour ajouter des éléments de suivi authentifiés,
+          du contexte ou une demande de nouvelle révision sans quitter l'historique
+          du signalement.
+        followup_label: Preuve supplémentaire ou note d'appel
+        followup_submit: Ajouter un suivi
+        followup_title: Plus d'informations ou appel
         pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter
           selon vos préférences de consentement.
+        reported_record: Enregistrement signalé
         status: Statut actuel
         summary: Résumé du dossier
         title: Signalement de sécurité
@@ -2946,6 +3061,16 @@ fr:
         solidarity_check: Vérification de coopération et de solidarité
         status: Statut du dossier
       index:
+        content_review_count: "%{count} en attente de révision"
+        content_review_description: Les téléversements et pièces jointes intégrées
+          encore retenus pour une révision de sécurité apparaissent ici avant leur
+          diffusion.
+        content_review_empty: Aucun téléversement ni aucune pièce jointe intégrée
+          n'attend actuellement une révision.
+        content_review_more: Affichage de %{shown} éléments retenus sur %{total}.
+        content_review_surface: 'Source : %{surface}'
+        content_review_title: Éléments à réviser pour la sécurité du contenu
+        empty: Aucun dossier de sécurité ne correspond aux filtres actuels.
         filter: Filtrer
         local_snapshot_description: Signaux locaux déterministes construits à partir
           des signalements, des dossiers et des notes. L'analyse distante est facultative
@@ -2953,6 +3078,7 @@ fr:
         local_snapshot_generated_at: Généré %{time}
         local_snapshot_title: Instantané local de révision
         snapshot:
+          content_review_items: Éléments de contenu retenus
           open_cases: Dossiers ouverts
           participant_notes: Notes visibles par les participantes et participants
           repeat_reportables: Éléments signalés à plusieurs reprises
@@ -3198,6 +3324,20 @@ fr:
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
     uploads:
+      content_security:
+        badge:
+          clean: Prêt
+          restricted: Restreint
+          review_required: En révision
+        form:
+          review_required: Ce fichier est en cours de révision avant de pouvoir être
+            affiché ou téléchargé par d'autres personnes.
+        status:
+          clean: Ce téléversement est prêt à être inséré ou partagé.
+          restricted: Ce téléversement est actuellement restreint pendant sa vérification
+            par une personne réviseuse.
+          review_required: Ce téléversement est en cours de révision avant de pouvoir
+            être inséré dans un texte enrichi ou partagé.
       index:
         storage_usage: Vous utilisez %{size} de stockage
     validators:

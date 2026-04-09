@@ -34,7 +34,9 @@
                    edit_aria_label: 'Edit Partner',
                    destroy_path: policy(@resource).destroy? ? community_path(@resource) : nil,
                    destroy_confirm: t('partners.confirm_delete'),
-                   destroy_aria_label: 'Delete Partner' %>
+                   destroy_aria_label: 'Delete Partner' do %>
+          <%= render 'shared/content_actions', record: @resource %>
+        <% end %>
       </div>
     </div>
   </div>

@@ -1,10 +1,29 @@
 
+<% host_extra_block_components = capture { render partial: 'better_together/content/blocks/extra_block_components', locals: { block: } } %>
+<% has_host_extra_block_components = host_extra_block_components.to_s.strip.present? %>
+<% show_content_actions = content_actions_visible_for?(block) %>
+
 <div id="<%= dom_id(block) %>"
      class="content-block <%= dom_class(block) %><%= block.inline_classes %>"
      data-citation-target="<%= block.citation_target_key %>"
      data-evidence-selector="<%= block.evidence_selector %>"
      data-block-type="<%= block.block_name %>"
      style="<%= block.inline_block_styles %>">
-  <%= render partial: 'better_together/content/blocks/extra_block_components', locals: { block: } %>
+  <% if show_content_actions || has_host_extra_block_components %>
+    <div class="bt-content-block__actions">
+      <% if show_content_actions %>
+        <%= render 'shared/content_actions',
+                   record: block,
+                   trigger_classes: 'bt-content-actions__trigger btn btn-light btn-sm' %>
+      <% end %>
+
+      <% if has_host_extra_block_components %>
+        <div class="bt-content-block__actions-extra">
+          <%= host_extra_block_components %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
   <%= yield %>
 </div>

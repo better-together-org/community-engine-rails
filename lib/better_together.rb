@@ -10,6 +10,7 @@ require 'better_together/mcp'
 module BetterTogether # rubocop:disable Metrics/ModuleLength
   mattr_accessor :base_url,
                  :adapter_registry,
+                 :content_safety_orchestrator_command,
                  :inbound_email_ingress_password,
                  :new_user_password_path,
                  :route_scope_path,
@@ -131,6 +132,11 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
 
     def inbound_email_password
       inbound_email_ingress_password.presence || ENV.fetch('RAILS_INBOUND_EMAIL_PASSWORD', nil)
+    end
+
+    def content_safety_orchestrator_command
+      @@content_safety_orchestrator_command.presence ||
+        ENV.fetch('BETTER_TOGETHER_CONTENT_SAFETY_ORCHESTRATOR_COMMAND', nil)
     end
 
     def base_path

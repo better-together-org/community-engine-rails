@@ -1,0 +1,42 @@
+flowchart LR
+    MEMBER[Community member or participant]
+    SURFACE[Post / page / page block / community / event / upload / message]
+    ACTIONS[Shared content-actions menu]
+    FORM[Contextual report form]
+    REPORT[BetterTogether::Report]
+    CASE[Safety case]
+    REVIEWER[Safety reviewer]
+    QUEUE[Review queue and held-content states]
+    DECISION[Decision and participant-visible notes]
+    FOLLOWUP[Reporter follow-up or appeal note]
+    GOV[Governance, accessibility, and product review]
+    AUDIT[PublicActivity audit seam]
+    FUTURE[Future revision-history work]
+
+    MEMBER --> SURFACE
+    SURFACE --> ACTIONS
+    ACTIONS --> FORM
+    SURFACE -->|block wrapper preserves host extras| ACTIONS
+    FORM --> REPORT
+    REPORT --> CASE
+    CASE --> QUEUE
+    REVIEWER --> QUEUE
+    QUEUE --> DECISION
+    DECISION --> FOLLOWUP
+    FOLLOWUP --> CASE
+
+    ACTIONS --> GOV
+    QUEUE --> GOV
+    DECISION --> GOV
+    CASE --> AUDIT
+    AUDIT --> FUTURE
+
+    classDef participant fill:#e3f2fd
+    classDef workflow fill:#fff3e0
+    classDef review fill:#ffebee
+    classDef governance fill:#e8f5e8
+
+    class MEMBER,SURFACE,ACTIONS,FORM,FOLLOWUP participant
+    class REPORT,CASE,AUDIT workflow
+    class REVIEWER,QUEUE,DECISION review
+    class GOV,FUTURE governance

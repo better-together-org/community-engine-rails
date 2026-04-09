@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_08_012000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_08_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -44,8 +44,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_012000) do
     t.datetime "created_at", null: false
     t.string "locale", default: "en", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
-    t.index ["record_type", "record_id", "name", "locale"], name: "index_active_storage_attachments_on_record_and_name_and_locale", unique: true
+    t.index ["record_type", "record_id", "name", "blob_id", "locale"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -469,6 +468,30 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_012000) do
     t.index ["platform_id"], name: "index_better_together_content_platform_blocks_on_platform_id"
   end
 
+  create_table "better_together_content_security_subjects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.string "subject_type", null: false
+    t.uuid "subject_id", null: false
+    t.uuid "active_storage_blob_id"
+    t.string "attachment_name", null: false
+    t.string "content_id", null: false
+    t.string "source_surface", null: false
+    t.string "storage_ref", null: false
+    t.string "lifecycle_state", default: "pending_scan", null: false
+    t.string "aggregate_verdict", default: "review_required", null: false
+    t.string "current_visibility_state", default: "private", null: false
+    t.string "current_ai_ingestion_state", default: "pending_review", null: false
+    t.datetime "released_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active_storage_blob_id"], name: "idx_on_active_storage_blob_id_ddf3b8afcc"
+    t.index ["aggregate_verdict"], name: "index_bt_content_security_subjects_on_aggregate_verdict"
+    t.index ["content_id"], name: "index_bt_content_security_subjects_on_content_id", unique: true
+    t.index ["lifecycle_state"], name: "index_bt_content_security_subjects_on_lifecycle_state"
+    t.index ["subject_type", "subject_id", "attachment_name"], name: "index_bt_content_security_subjects_on_subject_attachment", unique: true
+    t.index ["subject_type", "subject_id"], name: "index_better_together_content_security_subjects_on_subject"
+  end
+
   create_table "better_together_conversation_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -773,6 +796,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_012000) do
 
   create_table "better_together_inbound_email_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "inbound_email_id", null: false
+    t.uuid "platform_id"
     t.string "route_kind", null: false
     t.string "status", default: "received", null: false
     t.string "target_type"
@@ -787,14 +811,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_012000) do
     t.string "recipient_domain", null: false
     t.text "subject"
     t.text "body_plain"
+    t.string "screening_state", default: "pending", null: false
+    t.string "screening_verdict"
+    t.text "content_screening_summary"
+    t.text "content_security_records_json"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "platform_id"
     t.index ["inbound_email_id"], name: "idx_on_inbound_email_id_e73eafb6f3"
     t.index ["message_id"], name: "index_better_together_inbound_email_messages_on_message_id"
     t.index ["platform_id"], name: "index_better_together_inbound_email_messages_on_platform_id"
     t.index ["route_kind", "status"], name: "idx_on_route_kind_status_e3f2c6d597"
     t.index ["routed_record_type", "routed_record_id"], name: "index_better_together_inbound_email_messages_on_routed_record"
+    t.index ["screening_state"], name: "idx_on_screening_state_36bc8dcb50"
+    t.index ["screening_verdict"], name: "idx_on_screening_verdict_62fce624ab"
     t.index ["target_type", "target_id"], name: "index_better_together_inbound_email_messages_on_target"
   end
 
@@ -2224,6 +2253,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_012000) do
   add_foreign_key "better_together_content_page_blocks", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_content_platform_blocks", "better_together_content_blocks", column: "block_id"
   add_foreign_key "better_together_content_platform_blocks", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_content_security_subjects", "active_storage_blobs"
   add_foreign_key "better_together_conversation_participants", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_conversations", "better_together_people", column: "creator_id"

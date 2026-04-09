@@ -7,6 +7,8 @@ module BetterTogether
 
     encrypts :subject
     encrypts :body_plain
+    encrypts :content_screening_summary
+    encrypts :content_security_records_json
 
     belongs_to :inbound_email,
                class_name: 'ActionMailbox::InboundEmail',
@@ -29,15 +31,33 @@ module BetterTogether
       failed: 'failed'
     }.freeze
 
+    SCREENING_STATES = {
+      pending: 'pending',
+      passed: 'passed',
+      held: 'held',
+      error: 'error'
+    }.freeze
+
     enum :route_kind, ROUTE_KINDS, prefix: true
     enum :status, STATUSES, prefix: true
+    enum :screening_state, SCREENING_STATES, prefix: true
 
     validates :route_kind, inclusion: { in: route_kinds.values }
     validates :status, inclusion: { in: statuses.values }
+    validates :screening_state, inclusion: { in: screening_states.values }
     validates :sender_email, presence: true
     validates :recipient_address, presence: true
     validates :recipient_local_part, presence: true
     validates :recipient_domain, presence: true
     validates :message_id, presence: true
+    def content_security_records
+      JSON.parse(content_security_records_json.presence || '[]')
+    rescue JSON::ParserError
+      []
+    end
+
+    def content_security_records=(records)
+      self.content_security_records_json = Array(records).to_json
+    end
   end
 end

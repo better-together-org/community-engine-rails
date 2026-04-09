@@ -71,6 +71,20 @@ RSpec.describe BetterTogether::ReportPolicy do
     expect(described_class.new(user, record).create?).to be false
   end
 
+  it 'denies create when the reportable record belongs to the reporter' do
+    post = create(:better_together_post, author: agent)
+    record = BetterTogether::Report.new(
+      reporter: agent,
+      reportable: post,
+      reason: 'spam',
+      category: 'spam_or_scam',
+      harm_level: 'medium',
+      requested_outcome: 'content_review'
+    )
+
+    expect(described_class.new(user, record).create?).to be false
+  end
+
   describe '#show?' do
     let(:submitted_report) { create(:report, reporter: user.person, reportable: other) }
 
@@ -84,6 +98,18 @@ RSpec.describe BetterTogether::ReportPolicy do
 
     it 'allows explicit safety reviewers' do
       expect(described_class.new(safety_reviewer, submitted_report).show?).to be true
+    end
+  end
+
+  describe '#add_followup?' do
+    let(:submitted_report) { create(:report, reporter: user.person, reportable: other) }
+
+    it 'allows the reporting person to add followup notes' do
+      expect(described_class.new(user, submitted_report).add_followup?).to be true
+    end
+
+    it 'denies safety reviewers through the reporter followup path' do
+      expect(described_class.new(safety_reviewer, submitted_report).add_followup?).to be false
     end
   end
 

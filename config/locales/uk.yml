@@ -1075,6 +1075,23 @@ uk:
         privacy: Політика конфіденційності
         subprocessors: Субпроцесори
         terms_of_service: Умови використання
+    content_actions:
+      menu_label: Дії для %{resource}
+      report:
+        description: Позначте цей вміст для перевірки модератором.
+        label: Повідомити про проблему безпеки
+      trigger_label: Більше дій для %{resource}
+      trigger_text: Дії
+    content_security:
+      attachments:
+        held:
+          fallback_filename: Це вкладення
+          message: "%{filename} проходить перевірку перед тим, як його можна буде
+            показати."
+          title: Вкладення на перевірці
+        restricted:
+          message: "%{filename} наразі обмежено, поки його перевіряє рецензент."
+          title: Вкладення обмежено
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}
@@ -1496,6 +1513,84 @@ uk:
         many: неправильна довжина (точно %{count} символів)
         one: неправильна довжина (точно %{count} символ)
         other: неправильна довжина (точно %{count} символів)
+    feedback_routing:
+      audience:
+        community_stewards: відповідальні за вміст спільноти
+        platform_content_stewards: відповідальні за вміст платформи
+        platform_safety_team: команда безпеки платформи
+        profile_stewards: відповідальні за профіль
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Надсилається приватно до %{audience}.
+        suggest_improvement:
+          community_stewards: Надсилається до %{audience} на перевірку.
+          platform_content_stewards: Надсилається до %{audience} на перевірку.
+          profile_stewards: Надсилається до %{audience} на перевірку.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: власники вмісту, власники профілів, а також відповідальні
+            за спільноту чи платформу не отримують це повідомлення автоматично.
+      reviewers:
+        community_stewards: відповідальні за спільноту з доступом до перевірки вмісту
+        platform_content_stewards: відповідальні за вміст платформи
+        platform_safety_team: рецензенти безпеки платформи
+        profile_stewards: відповідальні за профіль і платформу
+      summary_labels:
+        not_shared_with: Не ділиться автоматично з
+        reviewers: Хто може переглядати й діяти
+        sent_to: Надсилається до
+        visibility: Видимо після надсилання
+      visibility:
+        private_to_reporter_and_platform_safety: Після надсилання його бачите лише
+          ви та рецензенти безпеки платформи.
+        private_to_submitter_and_stewards: Після надсилання його бачите ви та відповідальні
+          за цей вміст.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -2755,9 +2850,13 @@ uk:
         private_details_help: Додайте будь-який контекст, повторювану поведінку, дати
           або докази, які мають залишитися в команди безпеки.
         reason_help: Коротко опишіть, що сталося. Спочатку зосередьтеся на головному.
+        reporting_help: Цей звіт залишається пов'язаним із конкретним записом, з якого
+          ви його відкрили, щоб команда рецензування могла бачити той самий контекст.
+        reporting_label: Повідомлення
         requested_outcome_help: Виберіть, яку підтримку ви хочете отримати від команди
           безпеки. Ви можете попросити про підтримку, навіть якщо не впевнені.
         retaliation_risk: Я хвилююся щодо помсти або ескалації
+        routing_title: Хто може бачити це повідомлення і діяти за ним
         submit: Надіслати звіт
         title: Повідомити про проблему безпеки
         urgent_help: Спочатку зверніться до місцевих служб екстреної допомоги. Ця
@@ -2766,10 +2865,20 @@ uk:
         urgent_title: 'Якщо ви перебуваєте в безпосередній небезпеці:'
       notices:
         created: Звіт успішно надіслано.
+        followup_created: Ваше доповнення додано до звіту.
       show:
         back: Назад до звітів
+        followup_empty: До цього звіту ще не додано жодних приміток із доповненнями.
+        followup_field_help: Поділіться будь-яким оновленим контекстом, уточненнями
+          або доказами, які ви хочете передати рецензенту.
+        followup_help: Використовуйте цей простір, щоб додати автентифіковані докази,
+          контекст або запит на повторний розгляд, не залишаючи історію звіту.
+        followup_label: Додаткові докази або примітка щодо апеляції
+        followup_submit: Додати доповнення
+        followup_title: Додаткова інформація або апеляція
         pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з
           вами залежно від ваших параметрів згоди.
+        reported_record: Повідомлений запис
         status: Поточний статус
         summary: Підсумок справи
         title: Звіт про безпеку
@@ -2905,6 +3014,15 @@ uk:
         solidarity_check: Перевірка співпраці та солідарності
         status: Статус справи
       index:
+        content_review_count: "%{count} очікує на перегляд"
+        content_review_description: Завантаження та вбудовані вкладення, які все ще
+          утримуються для безпекової перевірки, з'являються тут до їх випуску.
+        content_review_empty: Наразі немає завантажень або вбудованих вкладень, що
+          очікують на перевірку.
+        content_review_more: Показано %{shown} із %{total} утримуваних елементів вмісту.
+        content_review_surface: 'Джерело: %{surface}'
+        content_review_title: Елементи перевірки безпеки вмісту
+        empty: Жодна справа безпеки не відповідає поточним фільтрам.
         filter: Фільтрувати
         local_snapshot_description: Детерміновані локальні сигнали, побудовані зі
           скарг, справ і нотаток. Віддалений аналіз є необов'язковим і лише доповнює
@@ -2912,6 +3030,7 @@ uk:
         local_snapshot_generated_at: Згенеровано %{time}
         local_snapshot_title: Локальний знімок для перегляду
         snapshot:
+          content_review_items: Утримувані елементи вмісту
           open_cases: Відкриті справи
           participant_notes: Нотатки, видимі учасникам
           repeat_reportables: Повторно позначені об'єкти
@@ -3157,6 +3276,19 @@ uk:
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
     uploads:
+      content_security:
+        badge:
+          clean: Готово
+          restricted: Обмежено
+          review_required: На перевірці
+        form:
+          review_required: Цей файл проходить перевірку, перш ніж його можна буде
+            показувати або завантажувати іншим людям.
+        status:
+          clean: Це завантаження готове до вставлення або поширення.
+          restricted: Це завантаження тимчасово обмежене, поки його перевіряє рецензент.
+          review_required: Це завантаження проходить перевірку, перш ніж його можна
+            буде вставити в розширений текст або поширити.
       index:
         storage_usage: Ви використовуєте %{size} сховища
     validators:

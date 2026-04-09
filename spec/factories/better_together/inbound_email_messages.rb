@@ -17,6 +17,10 @@ FactoryBot.define do
     recipient_domain { 'example.test' }
     subject { 'Hello' }
     body_plain { 'Plain text body' }
+    screening_state { 'pending' }
+    screening_verdict { nil }
+    content_screening_summary { nil }
+    content_security_records_json { nil }
   end
 
   factory :action_mailbox_inbound_email, class: 'ActionMailbox::InboundEmail' do

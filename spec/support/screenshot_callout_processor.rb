@@ -32,25 +32,30 @@ module BetterTogether # :nodoc:
 
     private
 
+    # rubocop:disable Metrics/AbcSize
     def prepare_callouts(callouts, image_path:)
       image = Vips::Image.new_from_file(image_path.to_s, access: :sequential)
       Array(callouts).filter_map do |callout|
         normalized = normalize_callout(callout)
-        target = clip_target(normalized[:target], image.width, image.height)
+        target = clip_rect(normalized[:target], image.width, image.height)
         next unless target
 
-        placement = best_placement(target, image.width, image.height, normalized[:title], normalized[:bullets])
-        normalized.merge(target:, placement:)
+        avoid = clip_rect(normalized[:avoid], image.width, image.height) || target
+        placement = best_placement(target, avoid, image.width, image.height, normalized[:title], normalized[:bullets])
+        normalized.merge(target:, avoid:, placement:)
       end
     end
+    # rubocop:enable Metrics/AbcSize
 
     def normalize_callout(callout)
       target = symbolize_hash(callout[:target] || callout['target'])
+      avoid = symbolize_hash(callout[:avoid] || callout['avoid'])
       {
         selector: callout[:selector] || callout['selector'],
         title: callout[:title] || callout['title'],
         bullets: Array(callout[:bullets] || callout['bullets']).map(&:to_s),
-        target:
+        target:,
+        avoid:
       }
     end
 
@@ -59,11 +64,13 @@ module BetterTogether # :nodoc:
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def clip_target(target, image_width, image_height)
-      x = [target[:x].to_f, 0].max
-      y = [target[:y].to_f, 0].max
-      width = [target[:width].to_f, image_width - x].min
-      height = [target[:height].to_f, image_height - y].min
+    def clip_rect(rect, image_width, image_height)
+      return if rect.blank?
+
+      x = [rect[:x].to_f, 0].max
+      y = [rect[:y].to_f, 0].max
+      width = [rect[:width].to_f, image_width - x].min
+      height = [rect[:height].to_f, image_height - y].min
       return if width <= 0 || height <= 0
 
       {
@@ -80,56 +87,59 @@ module BetterTogether # :nodoc:
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def best_placement(target, image_width, image_height, title, bullets)
+    # rubocop:disable Metrics/ParameterLists
+    def best_placement(target, avoid, image_width, image_height, title, bullets)
       box_width = (image_width * (image_width < 700 ? 0.54 : 0.28)).clamp(MIN_BOX_WIDTH, MAX_BOX_WIDTH)
       box_height = estimate_box_height(box_width, title, bullets)
 
       candidates = [
         placement_candidate(
           side: :right,
-          position: { x: target[:right] + TARGET_GAP, y: target[:center_y] - (box_height / 2.0) },
+          position: { x: avoid[:right] + TARGET_GAP, y: target[:center_y] - (box_height / 2.0) },
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
-          target:,
-          free_space: image_width - target[:right]
+          avoid:,
+          free_space: image_width - avoid[:right]
         ),
         placement_candidate(
           side: :left,
-          position: { x: target[:x] - box_width - TARGET_GAP, y: target[:center_y] - (box_height / 2.0) },
+          position: { x: avoid[:x] - box_width - TARGET_GAP, y: target[:center_y] - (box_height / 2.0) },
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
-          target:,
-          free_space: target[:x]
+          avoid:,
+          free_space: avoid[:x]
         ),
         placement_candidate(
           side: :below,
-          position: { x: target[:center_x] - (box_width / 2.0), y: target[:bottom] + TARGET_GAP },
+          position: { x: avoid[:center_x] - (box_width / 2.0), y: avoid[:bottom] + TARGET_GAP },
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
-          target:,
-          free_space: image_height - target[:bottom]
+          avoid:,
+          free_space: image_height - avoid[:bottom]
         ),
         placement_candidate(
           side: :above,
-          position: { x: target[:center_x] - (box_width / 2.0), y: target[:y] - box_height - TARGET_GAP },
+          position: { x: avoid[:center_x] - (box_width / 2.0), y: avoid[:y] - box_height - TARGET_GAP },
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
-          target:,
-          free_space: target[:y]
+          avoid:,
+          free_space: avoid[:y]
         )
       ].compact
 
-      candidates.max_by { |candidate| candidate[:score] } || fallback_placement(box_width, box_height, image_width, image_height, target)
+      candidates.max_by { |candidate| candidate[:score] } ||
+        fallback_placement(box_width, box_height, image_width, image_height, target, avoid)
     end
+    # rubocop:enable Metrics/ParameterLists
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
-    def placement_candidate(side:, position:, box:, image:, target:, free_space:)
+    def placement_candidate(side:, position:, box:, image:, avoid:, free_space:)
       clamped_x = clamp(position[:x], BOX_MARGIN, image[:width] - box[:width] - BOX_MARGIN)
       clamped_y = clamp(position[:y], BOX_MARGIN, image[:height] - box[:height] - BOX_MARGIN)
       overlap = rect_overlap?(
         { x: clamped_x, y: clamped_y, width: box[:width], height: box[:height] },
-        { x: target[:x] - 8, y: target[:y] - 8, width: target[:width] + 16, height: target[:height] + 16 }
+        { x: avoid[:x] - 8, y: avoid[:y] - 8, width: avoid[:width] + 16, height: avoid[:height] + 16 }
       )
       return if overlap
 
@@ -144,7 +154,28 @@ module BetterTogether # :nodoc:
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
-    def fallback_placement(width, height, image_width, image_height, target)
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+    def fallback_placement(width, height, image_width, image_height, target, avoid)
+      placements = [
+        { side: 'right', x: avoid[:right] + TARGET_GAP, y: BOX_MARGIN },
+        { side: 'left', x: avoid[:x] - width - TARGET_GAP, y: BOX_MARGIN },
+        { side: 'below', x: BOX_MARGIN, y: avoid[:bottom] + TARGET_GAP },
+        { side: 'above', x: BOX_MARGIN, y: avoid[:y] - height - TARGET_GAP },
+        { side: 'floating', x: target[:right] + TARGET_GAP, y: target[:bottom] + TARGET_GAP }
+      ]
+
+      placements.each do |placement|
+        candidate = placement_candidate(
+          side: placement[:side],
+          position: { x: placement[:x], y: placement[:y] },
+          box: { width:, height: },
+          image: { width: image_width, height: image_height },
+          avoid:,
+          free_space: 0
+        )
+        return candidate if candidate
+      end
+
       {
         side: 'floating',
         x: clamp(target[:right] + TARGET_GAP, BOX_MARGIN, image_width - width - BOX_MARGIN).round(2),
@@ -153,6 +184,7 @@ module BetterTogether # :nodoc:
         height: height.round(2)
       }
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
     # rubocop:disable Metrics/AbcSize
     def rect_overlap?(source_rect, target_rect)

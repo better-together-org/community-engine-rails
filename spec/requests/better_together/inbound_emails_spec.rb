@@ -47,6 +47,14 @@ RSpec.describe 'BetterTogether::InboundEmails' do
     expect(response).to have_http_status(:unauthorized)
   end
 
+  it 'fails closed when the ingress password is not configured' do
+    BetterTogether.inbound_email_ingress_password = nil
+
+    post BetterTogether::Engine.routes.url_helpers.inbound_email_relay_path, params: raw_email, headers: headers
+
+    expect(response).to have_http_status(:unauthorized)
+  end
+
   it 'rejects unsupported content types' do
     post BetterTogether::Engine.routes.url_helpers.inbound_email_relay_path,
          params: raw_email,
