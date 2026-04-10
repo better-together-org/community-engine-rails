@@ -49,10 +49,12 @@
   <% end %>
 <% end %>
 
-<!-- Cache the page content for better performance -->
-<% cache page_show_cache_key(@page) do %>
-  <% content_for :page_content do %>
-    <%= render @content_blocks if @content_blocks.size > 0 %>
+  <!-- Cache the page content for better performance -->
+  <% cache page_show_cache_key(@page) do %>
+    <% content_for :page_content do %>
+    <% @content_blocks.each do |content_block| %>
+      <%= render content_block %>
+    <% end %>
   <% end %>
 
   <%= render layout: @layout do %>
