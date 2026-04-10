@@ -104,6 +104,20 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
         expect(response).to have_http_status(:ok)
       end
     end
+
+    context 'when the page mixes markdown and collection-backed blocks' do
+      before do
+        create(:better_together_post, published_at: 1.day.ago, platform: page.platform, title: 'Rendered News Post')
+        page.page_blocks.create!(block: create(:content_posts_block), position: 1)
+      end
+
+      it 'renders without leaking collection locals between block partials' do
+        get better_together.page_path(page.slug, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Rendered News Post')
+      end
+    end
   end
 
   describe 'GET /:locale/pages/:slug/edit' do
