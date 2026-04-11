@@ -5,6 +5,27 @@ module BetterTogether
     # Database-backed fallback search used when Elasticsearch is unavailable
     # or intentionally disabled for a host app.
     class DatabaseBackend < BaseBackend # rubocop:todo Metrics/ClassLength, Naming/PredicateMethod
+      def audit_report_labels
+        {
+          collection: 'Scopes',
+          identifier: 'Scope',
+          documents: 'Searchable Records',
+          size: 'Store Size'
+        }
+      end
+
+      def audit_store_identifier(_entry)
+        'database_fallback'
+      end
+
+      def audit_search_mode(_entry)
+        'database_fallback'
+      end
+
+      def audit_store_exists?(_entry)
+        true
+      end
+
       def backend_key
         :database
       end

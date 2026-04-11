@@ -56,7 +56,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="downloadsChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-data="<%= @downloads_by_file_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.downloads_by_file') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.file') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.downloads') %>">
@@ -65,7 +65,8 @@
           <%= render 'datetime_filter',
               chart_type: 'downloadsChart',
               data_url: downloads_by_file_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:downloads] %>
+              min_date: @min_dates[:downloads],
+              initial_data_loaded: true %>
         </div>
       </div>
 

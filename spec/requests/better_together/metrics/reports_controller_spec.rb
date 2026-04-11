@@ -78,6 +78,25 @@ RSpec.describe BetterTogether::Metrics::ReportsController do
       expect(response).to have_http_status(:success)
     end
 
+    it 'preloads chart payloads into the rendered canvases' do
+      document = Nokogiri::HTML(response.body)
+      page_views_canvas = document.at_css('canvas[data-better_together--metrics-charts-target="pageViewsChart"]')
+      downloads_canvas = document.at_css('canvas[data-better_together--metrics-charts-target="downloadsChart"]')
+      page_views_filter = document.at_css('[data-better-together--metrics-datetime-filter-chart-type-value="pageViewsChart"]')
+
+      expect(page_views_canvas).to be_present
+      expect(downloads_canvas).to be_present
+      expect(page_views_filter['data-better-together--metrics-datetime-filter-initial-data-loaded-value']).to eq('true')
+
+      page_views_data = JSON.parse(page_views_canvas['data-chart-data'])
+      downloads_data = JSON.parse(downloads_canvas['data-chart-data'])
+
+      expect(page_views_data['labels']).to include('/page1', '/page2')
+      expect(page_views_data['datasets']).not_to be_empty
+      expect(downloads_data['labels']).to include('document.pdf')
+      expect(downloads_data['values']).to include(1)
+    end
+
     it 'assigns page views grouped by URL' do
       expect(assigns(:page_views_by_url)).to be_present
       expect(assigns(:page_views_by_url)['/page1']).to eq(2)

@@ -5,6 +5,18 @@ module BetterTogether
     # Postgres-native search backend backed by pg_search scopes where available,
     # with a database fallback for models that have not been upgraded yet.
     class PgSearchBackend < DatabaseBackend
+      def audit_store_identifier(entry)
+        return entry.search_scope_name.to_s if entry.pg_search_enabled?
+
+        super
+      end
+
+      def audit_search_mode(entry)
+        return 'pg_search' if entry.pg_search_enabled?
+
+        super
+      end
+
       def backend_key
         :pg_search
       end
