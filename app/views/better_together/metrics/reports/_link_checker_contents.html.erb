@@ -56,7 +56,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="linksByHostChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-data="<%= @links_by_host_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.links_by_host') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.host') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.links') %>">
@@ -65,7 +65,8 @@
           <%= render 'datetime_filter',
               chart_type: 'linksByHostChart',
               data_url: links_by_host_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:link_checker] %>
+              min_date: @min_dates[:link_checker],
+              initial_data_loaded: true %>
         </div>
 
         <div class="metrics-chart-block">
@@ -75,7 +76,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="invalidByHostChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-data="<%= @invalid_by_host_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.invalid_links_by_host') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.host') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.invalid_links') %>">
@@ -84,7 +85,8 @@
           <%= render 'datetime_filter',
               chart_type: 'invalidByHostChart',
               data_url: invalid_by_host_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates[:link_checker] %>
+              min_date: @min_dates[:link_checker],
+              initial_data_loaded: true %>
         </div>
 
         <div class="metrics-chart-block">
@@ -94,7 +96,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="failuresDailyChart"
-                  data-chart-data="<%= {labels: [], values: []}.to_json %>"
+                  data-chart-data="<%= @failures_daily_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.invalid_links_over_time') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.invalid_links') %>">
@@ -102,7 +104,9 @@
 
           <%= render 'datetime_filter',
               chart_type: 'failuresDailyChart',
-              data_url: failures_daily_data_metrics_reports_path(locale: I18n.locale) %>
+              data_url: failures_daily_data_metrics_reports_path(locale: I18n.locale),
+              min_date: @min_dates[:link_checker],
+              initial_data_loaded: true %>
         </div>
       </div>
 

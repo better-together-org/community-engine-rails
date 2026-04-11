@@ -4,6 +4,30 @@ module BetterTogether
   module Search
     # Elasticsearch-backed search operations.
     class ElasticsearchBackend < BaseBackend # rubocop:todo Metrics/ClassLength
+      def audit_report_labels
+        {
+          collection: 'Indices',
+          identifier: 'Index',
+          documents: 'Indexed Documents',
+          size: 'Store Size'
+        }
+      end
+
+      def audit_capabilities
+        {
+          store_size: true,
+          existence_checks: true
+        }
+      end
+
+      def audit_store_identifier(entry)
+        entry.index_name
+      end
+
+      def audit_search_mode(_entry)
+        'elasticsearch'
+      end
+
       def backend_key
         :elasticsearch
       end

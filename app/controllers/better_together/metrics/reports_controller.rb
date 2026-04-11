@@ -33,86 +33,32 @@ module BetterTogether
 
       # JSON endpoint for page views grouped by URL and pageable_type (stacked bar chart)
       def page_views_by_url_data # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::PageView), :viewed_at)
-        views_by_url_and_type = scope.group(:page_url, :pageable_type).count
-
-        pageable_types = scope.distinct.pluck(:pageable_type).compact
-        urls = views_by_url_and_type.keys.map { |(url, _type)| url }.uniq.sort_by do |url|
-          -views_by_url_and_type.select do |(u, _t), _count|
-            u == url
-          end.values.sum
-        end.take(20)
-
-        datasets = pageable_types.map do |pageable_type|
-          {
-            label: localized_model_name(pageable_type),
-            backgroundColor: viewable_type_color(pageable_type),
-            data: urls.map { |url| views_by_url_and_type.fetch([url, pageable_type], 0) }
-          }
-        end
-
-        render json: { labels: urls, datasets: datasets }
+        render json: page_views_by_url_payload(filtered_metrics_scope(BetterTogether::Metrics::PageView, :viewed_at))
       end
 
       # JSON endpoint for daily page views grouped by pageable_type (stacked line chart)
       def page_views_daily_data # rubocop:disable Metrics/AbcSize
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::PageView), :viewed_at)
-        views_by_day_and_type = scope.group_by_day(:viewed_at).group(:pageable_type).count
-
-        pageable_types = scope.distinct.pluck(:pageable_type).compact
-        days = views_by_day_and_type.keys.map { |(day, _type)| day }.uniq.sort
-
-        datasets = pageable_types.map do |pageable_type|
-          {
-            label: localized_model_name(pageable_type),
-            backgroundColor: viewable_type_color(pageable_type),
-            borderColor: viewable_type_color(pageable_type, border: true),
-            data: days.map { |day| views_by_day_and_type.fetch([day, pageable_type], 0) },
-            fill: true
-          }
-        end
-
-        render json: { labels: days.map(&:to_s), datasets: datasets }
+        render json: page_views_daily_payload(filtered_metrics_scope(BetterTogether::Metrics::PageView, :viewed_at))
       end
 
       # JSON endpoint for link clicks grouped by URL
       def link_clicks_by_url_data
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::LinkClick), :clicked_at)
-        data = scope.group(:url).order('count_all DESC').limit(20).count
-
-        render json: { labels: data.keys, values: data.values }
+        render json: labeled_values_payload(filtered_metrics_scope(BetterTogether::Metrics::LinkClick, :clicked_at), :url)
       end
 
       # JSON endpoint for daily link clicks
       def link_clicks_daily_data
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::LinkClick), :clicked_at)
-        data = scope.group_by_day(:clicked_at).count
-
-        render json: { labels: data.keys.map(&:to_s), values: data.values }
+        render json: daily_values_payload(filtered_metrics_scope(BetterTogether::Metrics::LinkClick, :clicked_at), :clicked_at)
       end
 
       # JSON endpoint for top search queries by term
       def search_queries_by_term_data
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::SearchQuery), :searched_at)
-        search_counts = scope.group(:query).order('count_all DESC').limit(20).count
-        avg_results = calculate_average_results(scope, search_counts.keys)
-        avg_results_array = search_counts.keys.map { |query| avg_results[query] || 0 }
-        thresholds = BetterTogether::Metrics.generate_result_levels(avg_results_array)
-
-        render json: {
-          labels: search_counts.keys,
-          values: search_counts.values,
-          avgResults: avg_results_array,
-          thresholds: thresholds
-        }
+        render json: search_queries_by_term_payload(filtered_metrics_scope(BetterTogether::Metrics::SearchQuery, :searched_at))
       end
 
       # JSON endpoint for daily search queries
       def search_queries_daily_data
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::SearchQuery), :searched_at)
-        data = scope.group_by_day(:searched_at).count
-
-        render json: { labels: data.keys.map(&:to_s), values: data.values }
+        render json: daily_values_payload(filtered_metrics_scope(BetterTogether::Metrics::SearchQuery, :searched_at), :searched_at)
       end
 
       # JSON endpoint for search index drift by model
@@ -123,222 +69,60 @@ module BetterTogether
           labels: audit.entries.map { |entry| entry.model_name.demodulize },
           values: audit.entries.map(&:drift_count),
           backend: audit.backend,
-          status: audit.status
+          status: audit.status,
+          report_labels: audit.report_labels,
+          capabilities: audit.capabilities
         }
       end
 
       # JSON endpoint for daily user account creation and confirmation
       def user_accounts_daily_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
-
-        created_by_day = users_scope.group_by_day(:created_at).count
-        confirmed_by_day = users_scope.where.not(confirmed_at: nil)
-                                      .group_by_day(:confirmed_at)
-                                      .count
-
-        days = (@start_date.to_date..@end_date.to_date).to_a
-
-        datasets = [
-          {
-            label: I18n.t('better_together.metrics.reports.charts.accounts_created', default: 'Accounts Created'),
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            data: days.map { |day| created_by_day.fetch(day, 0) },
-            fill: true
-          },
-          {
-            label: I18n.t('better_together.metrics.reports.charts.accounts_confirmed', default: 'Accounts Confirmed'),
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            data: days.map { |day| confirmed_by_day.fetch(day, 0) },
-            fill: true
-          }
-        ]
-
-        render json: { labels: days.map(&:to_s), datasets: datasets }
+        render json: user_accounts_daily_payload(filter_by_datetime(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for confirmation rate trend
       def user_confirmation_rate_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
-
-        days = (@start_date.to_date..@end_date.to_date).to_a
-        confirmation_rates = days.map do |day|
-          day_range = day.beginning_of_day..day.end_of_day
-          created_count = users_scope.where(created_at: day_range).count
-
-          if created_count.zero?
-            0
-          else
-            confirmed_count = users_scope.where(created_at: day_range)
-                                         .where.not(confirmed_at: nil)
-                                         .count
-            ((confirmed_count.to_f / created_count) * 100).round(2)
-          end
-        end
-
-        render json: {
-          labels: days.map(&:to_s),
-          values: confirmation_rates
-        }
+        render json: user_confirmation_rate_payload(filter_by_datetime(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for registration sources breakdown
       def user_registration_sources_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
-
-        # Get all user IDs in scope
-        all_user_ids = users_scope.pluck(:id)
-
-        # Find users who accepted invitations (via person's invitee relationship)
-        identifications = BetterTogether::Identification.arel_table
-        invitations = BetterTogether::Invitation.arel_table
-
-        invitation_user_ids = BetterTogether::Identification
-                              .where(active: true)
-                              .where(agent_type: 'BetterTogether::User')
-                              .where(agent_id: all_user_ids)
-                              .where(identity_type: 'BetterTogether::Person')
-                              .joins(
-                                Arel::Nodes::InnerJoin.new(
-                                  invitations,
-                                  Arel::Nodes::On.new(
-                                    invitations[:invitee_id].eq(identifications[:identity_id])
-                                    .and(invitations[:invitee_type].eq('BetterTogether::Person'))
-                                    .and(invitations[:status].eq('accepted'))
-                                  )
-                                )
-                              )
-                              .pluck(:agent_id)
-                              .uniq
-
-        # Find users with OAuth integrations (via person's platform integrations)
-        platform_integrations = BetterTogether::PersonPlatformIntegration.arel_table
-
-        oauth_user_ids = BetterTogether::Identification
-                         .where(active: true)
-                         .where(agent_type: 'BetterTogether::User')
-                         .where(agent_id: all_user_ids)
-                         .where(identity_type: 'BetterTogether::Person')
-                         .joins(
-                           Arel::Nodes::InnerJoin.new(
-                             platform_integrations,
-                             Arel::Nodes::On.new(
-                               platform_integrations[:person_id].eq(identifications[:identity_id])
-                             )
-                           )
-                         )
-                         .pluck(:agent_id)
-                         .uniq
-
-        invitation_users = invitation_user_ids.length
-        oauth_users = oauth_user_ids.length
-
-        # Users without invitations or OAuth are open registration
-        special_user_ids = (invitation_user_ids + oauth_user_ids).uniq
-        open_registration_users = (all_user_ids - special_user_ids).count
-
-        labels = [
-          I18n.t('better_together.metrics.reports.charts.open_registration', default: 'Open Registration'),
-          I18n.t('better_together.metrics.reports.charts.invitation', default: 'Invitation'),
-          I18n.t('better_together.metrics.reports.charts.oauth', default: 'OAuth/Social')
-        ]
-
-        values = [open_registration_users, invitation_users, oauth_users]
-
-        render json: {
-          labels: labels,
-          values: values
-        }
+        render json: user_registration_sources_payload(filter_by_datetime(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for cumulative user growth
       def user_cumulative_growth_data # rubocop:disable Metrics/AbcSize
-        users_scope = filter_by_datetime(BetterTogether::User, :created_at)
-        created_by_day = users_scope.group_by_day(:created_at).count
-
-        days = (@start_date.to_date..@end_date.to_date).to_a
-        cumulative_total = 0
-        cumulative_data = days.map do |day|
-          cumulative_total += created_by_day.fetch(day, 0)
-          cumulative_total
-        end
-
-        render json: {
-          labels: days.map(&:to_s),
-          values: cumulative_data
-        }
+        render json: user_cumulative_growth_payload(filter_by_datetime(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for downloads grouped by file name
       def downloads_by_file_data
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::Download), :downloaded_at)
-        data = scope.group(:file_name).count
-
-        render json: { labels: data.keys, values: data.values }
+        render json: labeled_values_payload(filtered_metrics_scope(BetterTogether::Metrics::Download, :downloaded_at), :file_name, limit: nil)
       end
 
       # JSON endpoint for shares grouped by platform
       def shares_by_platform_data
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::Share), :shared_at)
-        data = scope.group(:platform).count
-
-        # Build datasets with colors for Chart.js pie chart
-        datasets = [{
-          label: 'Shares by Platform',
-          data: data.values,
-          backgroundColor: data.keys.map { |platform| platform_color(platform) },
-          borderColor: data.keys.map { |platform| platform_color(platform, border: true) },
-          borderWidth: 1
-        }]
-
-        render json: { labels: data.keys, datasets: datasets }
+        render json: shares_by_platform_payload(filtered_metrics_scope(BetterTogether::Metrics::Share, :shared_at))
       end
 
       # JSON endpoint for shares grouped by URL and platform (stacked bar chart)
       def shares_by_url_and_platform_data # rubocop:todo Metrics/AbcSize
-        scope = filter_by_datetime(metrics_scope(BetterTogether::Metrics::Share), :shared_at)
-        shares_by_url_and_platform = scope.group(:url, :platform).count
-
-        platforms = scope.distinct.pluck(:platform)
-        urls = shares_by_url_and_platform.keys.map { |(url, _platform)| url }.uniq
-
-        datasets = platforms.map do |platform|
-          {
-            label: platform.capitalize,
-            backgroundColor: platform_color(platform),
-            data: urls.map { |url| shares_by_url_and_platform.fetch([url, platform], 0) }
-          }
-        end
-
-        render json: { labels: urls, datasets: datasets }
+        render json: shares_by_url_and_platform_payload(filtered_metrics_scope(BetterTogether::Metrics::Share, :shared_at))
       end
 
       # JSON endpoint for links grouped by host
       def links_by_host_data
-        scope = BetterTogether::Content::Link.all
-        scope = scope.where(created_at: @start_date..@end_date) if @start_date && @end_date
-        data = scope.group(:host).count
-
-        render json: { labels: data.keys, values: data.values }
+        render json: labeled_values_payload(link_checker_scope(:created_at), :host, limit: nil)
       end
 
       # JSON endpoint for invalid links grouped by host
       def invalid_by_host_data
-        scope = BetterTogether::Content::Link.where(valid_link: false)
-        scope = scope.where(created_at: @start_date..@end_date) if @start_date && @end_date
-        data = scope.group(:host).count
-
-        render json: { labels: data.keys, values: data.values }
+        render json: labeled_values_payload(link_checker_scope(:created_at, valid_only: false), :host, limit: nil)
       end
 
       # JSON endpoint for daily invalid links
       def failures_daily_data
-        scope = BetterTogether::Content::Link.where(valid_link: false)
-        scope = scope.where(last_checked_at: @start_date..@end_date) if @start_date && @end_date
-        data = scope.group_by_day(:last_checked_at).count
-
-        render json: { labels: data.keys.map(&:to_s), values: data.values }
+        render json: daily_values_payload(link_checker_scope(:last_checked_at, valid_only: false), :last_checked_at)
       end
 
       # Helper method to generate consistent colors for platforms
@@ -383,45 +167,54 @@ module BetterTogether
       # Set metrics data for index action
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def set_metrics_data
-        # Page views
-        @page_view_scope = metrics_scope(BetterTogether::Metrics::PageView)
+        initialize_default_datetime_range
+
+        @page_view_scope = filtered_metrics_scope(BetterTogether::Metrics::PageView, :viewed_at)
         @page_views_by_url = @page_view_scope.group(:page_url).count
         @page_views_daily = @page_view_scope.group_by_day(:viewed_at).count
+        @page_views_by_url_chart_data = page_views_by_url_payload(@page_view_scope)
+        @page_views_daily_chart_data = page_views_daily_payload(@page_view_scope)
 
-        # Link clicks
-        @link_click_scope = metrics_scope(BetterTogether::Metrics::LinkClick)
+        @link_click_scope = filtered_metrics_scope(BetterTogether::Metrics::LinkClick, :clicked_at)
         @link_clicks_by_url = @link_click_scope.group(:url).count
         @link_clicks_daily = @link_click_scope.group_by_day(:clicked_at).count
         @internal_vs_external = @link_click_scope.group(:internal).count
         @link_clicks_by_page = @link_click_scope.group(:page_url).count
+        @link_clicks_by_url_chart_data = labeled_values_payload(@link_click_scope, :url)
+        @link_clicks_daily_chart_data = daily_values_payload(@link_click_scope, :clicked_at)
 
-        # Downloads
-        @downloads_by_file = metrics_scope(BetterTogether::Metrics::Download).group(:file_name).count
+        @download_scope = filtered_metrics_scope(BetterTogether::Metrics::Download, :downloaded_at)
+        @downloads_by_file = @download_scope.group(:file_name).count
+        @downloads_by_file_chart_data = labeled_values_payload(@download_scope, :file_name, limit: nil)
 
-        # Shares
-        @share_scope = metrics_scope(BetterTogether::Metrics::Share)
+        @share_scope = filtered_metrics_scope(BetterTogether::Metrics::Share, :shared_at)
         @shares_by_platform = @share_scope.group(:platform).count
         @shares_by_url_and_platform = @share_scope.group(:url, :platform).count
+        @shares_by_platform_chart_data = shares_by_platform_payload(@share_scope)
+        @shares_data = shares_by_url_and_platform_payload(@share_scope)
 
-        # Prepare shares data for Chart.js
-        urls = @shares_by_url_and_platform.keys.map(&:first).uniq
-        platforms = @shares_by_url_and_platform.keys.map(&:last).uniq
+        @link_checker_scope = link_checker_scope(:created_at)
+        @links_by_host = @link_checker_scope.group(:host).count
+        @links_by_host_chart_data = labeled_values_payload(@link_checker_scope, :host, limit: nil)
 
-        @shares_data = {
-          labels: urls,
-          datasets: platforms.map do |platform|
-            {
-              label: platform.titleize,
-              backgroundColor: platform_color(platform),
-              data: urls.map { |url| @shares_by_url_and_platform[[url, platform]] || 0 }
-            }
-          end
-        }
+        @invalid_link_scope = link_checker_scope(:created_at, valid_only: false)
+        @invalid_by_host = @invalid_link_scope.group(:host).count
+        @invalid_by_host_chart_data = labeled_values_payload(@invalid_link_scope, :host, limit: nil)
 
-        # Links
-        @links_by_host = BetterTogether::Content::Link.group(:host).count
-        @invalid_by_host = BetterTogether::Content::Link.where(valid_link: false).group(:host).count
-        @failures_daily = BetterTogether::Content::Link.where(valid_link: false).group_by_day(:last_checked_at).count
+        @failures_scope = link_checker_scope(:last_checked_at, valid_only: false)
+        @failures_daily = @failures_scope.group_by_day(:last_checked_at).count
+        @failures_daily_chart_data = daily_values_payload(@failures_scope, :last_checked_at)
+
+        @search_query_scope = filtered_metrics_scope(BetterTogether::Metrics::SearchQuery, :searched_at)
+        @search_queries_by_term_chart_data = search_queries_by_term_payload(@search_query_scope)
+        @search_queries_daily_chart_data = daily_values_payload(@search_query_scope, :searched_at)
+
+        @user_scope = filter_by_datetime(BetterTogether::User, :created_at)
+        @user_accounts_daily_chart_data = user_accounts_daily_payload(@user_scope)
+        @user_confirmation_rate_chart_data = user_confirmation_rate_payload(@user_scope)
+        @user_registration_sources_chart_data = user_registration_sources_payload(@user_scope)
+        @user_cumulative_growth_chart_data = user_cumulative_growth_payload(@user_scope)
+
         @search_health_report = BetterTogether::Search::AuditService.new.call
       end
       # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
@@ -432,6 +225,266 @@ module BetterTogether
              .group(:query)
              .average(:results_count)
              .transform_values { |v| v.to_f.round(1) }
+      end
+
+      def initialize_default_datetime_range
+        @start_date ||= 30.days.ago.beginning_of_day
+        @end_date ||= Time.current.end_of_day
+        @locale_filter = nil
+        @pageable_type_filter = nil
+        @hour_of_day_filter = nil
+        @day_of_week_filter = nil
+      end
+
+      def filtered_metrics_scope(model, column_name)
+        filter_by_datetime(metrics_scope(model), column_name)
+      end
+
+      def link_checker_scope(column_name, valid_only: nil)
+        scope = BetterTogether::Content::Link.all
+        scope = scope.where(valid_link: valid_only) unless valid_only.nil?
+        scope.where(column_name => @start_date..@end_date)
+      end
+
+      def page_views_by_url_payload(scope)
+        grouped_counts = scope.group(:page_url, :pageable_type).count
+        pageable_types = grouped_counts.keys.map(&:last).uniq
+        urls = top_labels(grouped_counts).take(20)
+
+        {
+          labels: urls,
+          datasets: pageable_types.map do |pageable_type|
+            {
+              label: localized_model_name(pageable_type),
+              backgroundColor: viewable_type_color(pageable_type),
+              data: urls.map { |url| grouped_counts.fetch([url, pageable_type], 0) }
+            }
+          end
+        }
+      end
+
+      def page_views_daily_payload(scope)
+        grouped_counts = scope.group_by_day(:viewed_at).group(:pageable_type).count
+        pageable_types = grouped_counts.keys.map(&:last).uniq
+        days = grouped_counts.keys.map(&:first).uniq.sort
+
+        {
+          labels: days.map(&:to_s),
+          datasets: page_view_daily_datasets(pageable_types, days, grouped_counts)
+        }
+      end
+
+      def labeled_values_payload(scope, column_name, limit: 20)
+        grouped_counts = scope.group(column_name).count
+        labels = limit.nil? ? grouped_counts.keys : top_labels(grouped_counts).take(limit)
+
+        {
+          labels: labels,
+          values: labels.map { |label| grouped_counts[label] || 0 }
+        }
+      end
+
+      def daily_values_payload(scope, column_name)
+        grouped_counts = scope.group_by_day(column_name).count
+
+        {
+          labels: grouped_counts.keys.map(&:to_s),
+          values: grouped_counts.values
+        }
+      end
+
+      def search_queries_by_term_payload(scope)
+        search_counts = labeled_values_payload(scope, :query)
+        avg_results = calculate_average_results(scope, search_counts[:labels])
+        avg_results_array = search_counts[:labels].map { |query| avg_results[query] || 0 }
+
+        search_counts.merge(
+          avgResults: avg_results_array,
+          thresholds: BetterTogether::Metrics.generate_result_levels(avg_results_array)
+        )
+      end
+
+      def user_accounts_daily_payload(users_scope)
+        created_by_day = users_scope.group_by_day(:created_at).count
+        confirmed_by_day = users_scope.where.not(confirmed_at: nil).group_by_day(:confirmed_at).count
+
+        {
+          labels: date_range_labels,
+          datasets: [
+            user_accounts_dataset('accounts_created', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)', created_by_day),
+            user_accounts_dataset('accounts_confirmed', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)', confirmed_by_day)
+          ]
+        }
+      end
+
+      def user_confirmation_rate_payload(users_scope)
+        created_by_day = users_scope.group_by_day(:created_at).count
+        confirmed_by_day = users_scope.where.not(confirmed_at: nil).group_by_day(:confirmed_at).count
+
+        {
+          labels: date_range_labels,
+          values: date_range_days.map do |day|
+            created_count = created_by_day.fetch(day, 0)
+            next 0 if created_count.zero?
+
+            ((confirmed_by_day.fetch(day, 0).to_f / created_count) * 100).round(2)
+          end
+        }
+      end
+
+      def user_registration_sources_payload(users_scope)
+        all_user_ids = users_scope.ids
+        invitation_user_ids = invitation_user_ids_for(all_user_ids)
+        oauth_user_ids = oauth_user_ids_for(all_user_ids)
+        special_user_ids = (invitation_user_ids + oauth_user_ids).uniq
+
+        {
+          labels: user_registration_source_labels,
+          values: [
+            (all_user_ids - special_user_ids).count,
+            invitation_user_ids.length,
+            oauth_user_ids.length
+          ]
+        }
+      end
+
+      def user_cumulative_growth_payload(users_scope)
+        created_by_day = users_scope.group_by_day(:created_at).count
+        cumulative_total = 0
+
+        {
+          labels: date_range_labels,
+          values: date_range_days.map do |day|
+            cumulative_total += created_by_day.fetch(day, 0)
+            cumulative_total
+          end
+        }
+      end
+
+      def shares_by_platform_payload(scope)
+        data = scope.group(:platform).count
+
+        {
+          labels: data.keys,
+          datasets: [{
+            label: 'Shares by Platform',
+            data: data.values,
+            backgroundColor: data.keys.map { |platform| platform_color(platform) },
+            borderColor: data.keys.map { |platform| platform_color(platform, border: true) },
+            borderWidth: 1
+          }]
+        }
+      end
+
+      def shares_by_url_and_platform_payload(scope)
+        grouped_counts = scope.group(:url, :platform).count
+        platforms = grouped_counts.keys.map(&:last).uniq
+        urls = grouped_counts.keys.map(&:first).uniq
+
+        {
+          labels: urls,
+          datasets: platforms.map do |platform|
+            {
+              label: platform.capitalize,
+              backgroundColor: platform_color(platform),
+              data: urls.map { |url| grouped_counts.fetch([url, platform], 0) }
+            }
+          end
+        }
+      end
+
+      def top_labels(grouped_counts)
+        totals = grouped_counts.each_with_object(Hash.new(0)) do |(key, count), memo|
+          label = key.is_a?(Array) ? key.first : key
+          memo[label] += count
+        end
+
+        totals.sort_by { |_label, count| -count }.map(&:first)
+      end
+
+      def date_range_days
+        (@start_date.to_date..@end_date.to_date).to_a
+      end
+
+      def date_range_labels
+        date_range_days.map(&:to_s)
+      end
+
+      def invitation_user_ids_for(user_ids) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        return [] if user_ids.empty?
+
+        identifications = BetterTogether::Identification.arel_table
+        invitations = BetterTogether::Invitation.arel_table
+
+        scoped_user_identifications(user_ids)
+          .joins(
+            Arel::Nodes::InnerJoin.new(
+              invitations,
+              Arel::Nodes::On.new(
+                invitations[:invitee_id].eq(identifications[:identity_id])
+                  .and(invitations[:invitee_type].eq('BetterTogether::Person'))
+                  .and(invitations[:status].eq('accepted'))
+              )
+            )
+          )
+          .pluck(:agent_id)
+          .uniq
+      end
+
+      def oauth_user_ids_for(user_ids)
+        return [] if user_ids.empty?
+
+        identifications = BetterTogether::Identification.arel_table
+        platform_integrations = BetterTogether::PersonPlatformIntegration.arel_table
+
+        scoped_user_identifications(user_ids)
+          .joins(
+            Arel::Nodes::InnerJoin.new(
+              platform_integrations,
+              Arel::Nodes::On.new(platform_integrations[:person_id].eq(identifications[:identity_id]))
+            )
+          )
+          .pluck(:agent_id)
+          .uniq
+      end
+
+      def page_view_daily_datasets(pageable_types, days, grouped_counts)
+        pageable_types.map do |pageable_type|
+          {
+            label: localized_model_name(pageable_type),
+            backgroundColor: viewable_type_color(pageable_type),
+            borderColor: viewable_type_color(pageable_type, border: true),
+            data: days.map { |day| grouped_counts.fetch([day, pageable_type], 0) },
+            fill: true
+          }
+        end
+      end
+
+      def user_accounts_dataset(label_key, background_color, border_color, grouped_counts)
+        {
+          label: I18n.t("better_together.metrics.reports.charts.#{label_key}", default: label_key.humanize),
+          backgroundColor: background_color,
+          borderColor: border_color,
+          data: date_range_days.map { |day| grouped_counts.fetch(day, 0) },
+          fill: true
+        }
+      end
+
+      def user_registration_source_labels
+        [
+          I18n.t('better_together.metrics.reports.charts.open_registration', default: 'Open Registration'),
+          I18n.t('better_together.metrics.reports.charts.invitation', default: 'Invitation'),
+          I18n.t('better_together.metrics.reports.charts.oauth', default: 'OAuth/Social')
+        ]
+      end
+
+      def scoped_user_identifications(user_ids)
+        BetterTogether::Identification.where(
+          active: true,
+          agent_type: 'BetterTogether::User',
+          agent_id: user_ids,
+          identity_type: 'BetterTogether::Person'
+        )
       end
 
       def metrics_scope(model)

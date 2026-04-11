@@ -32,7 +32,7 @@
     <div class="col-lg-3 col-md-6">
       <div class="card h-100">
         <div class="card-body">
-          <div class="text-muted small"><%= t('better_together.metrics.reports.search_health.index_documents', default: 'Indexed Documents') %></div>
+          <div class="text-muted small"><%= audit.documents_label %></div>
           <div class="fs-5"><%= audit.total_document_count %></div>
         </div>
       </div>
@@ -46,6 +46,12 @@
       </div>
     </div>
   </div>
+
+  <% unless audit.supports_existence_checks? %>
+    <div class="alert alert-info" role="alert">
+      This backend reports search readiness from app-level scopes rather than an external index.
+    </div>
+  <% end %>
 
   <% if audit.unmanaged_model_names.any? %>
     <div class="alert alert-warning" role="alert">
@@ -80,7 +86,7 @@
   <div class="card">
     <div class="card-body">
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-        <h3 class="h5 mb-0"><%= t('better_together.metrics.reports.search_health.indices', default: 'Indices') %></h3>
+        <h3 class="h5 mb-0"><%= audit.collection_label %></h3>
         <span class="small text-muted">
           <%= t('better_together.metrics.reports.search_health.generated_at', default: 'Generated at') %>:
           <%= l(audit.generated_at, format: :long) %>
@@ -92,12 +98,14 @@
           <thead>
             <tr>
               <th><%= t('better_together.metrics.reports.search_health.model', default: 'Model') %></th>
-              <th><%= t('better_together.metrics.reports.search_health.index_name', default: 'Index') %></th>
+              <th><%= audit.identifier_label %></th>
               <th><%= t('better_together.metrics.reports.search_health.status_label', default: 'Status') %></th>
               <th><%= t('better_together.metrics.reports.search_health.db_count', default: 'DB Count') %></th>
-              <th><%= t('better_together.metrics.reports.search_health.index_count', default: 'Index Count') %></th>
+              <th><%= audit.documents_label %></th>
               <th><%= t('better_together.metrics.reports.search_health.drift', default: 'Drift') %></th>
-              <th><%= t('better_together.metrics.reports.search_health.store_size', default: 'Store Size') %></th>
+              <% if audit.supports_store_size? %>
+                <th><%= audit.size_label %></th>
+              <% end %>
             </tr>
           </thead>
           <tbody>
@@ -111,12 +119,14 @@
                                   end %>
               <tr>
                 <td><%= entry.model_name %></td>
-                <td><code><%= entry.index_name %></code></td>
+                <td><code><%= entry.store_identifier %></code></td>
                 <td><span class="badge <%= row_badge_class %>"><%= entry.status %></span></td>
                 <td><%= entry.db_count %></td>
                 <td><%= entry.document_count %></td>
                 <td><%= entry.drift_count %></td>
-                <td><%= entry.store_size_human %></td>
+                <% if audit.supports_store_size? %>
+                  <td><%= entry.store_size_human %></td>
+                <% end %>
               </tr>
             <% end %>
           </tbody>

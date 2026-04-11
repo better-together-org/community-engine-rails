@@ -14,6 +14,10 @@ module BetterTogether
           model_class.__elasticsearch__.index_name
         end
 
+        def search_scope_name
+          model_class.search_scope_name
+        end
+
         def relation
           model_class.search_relation
         end
