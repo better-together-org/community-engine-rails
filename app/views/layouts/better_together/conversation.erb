@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <% if ENV["SENTRY_CLIENT_KEY"] %>
-      <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
-    <% end %>
-
     <!-- Custom Head Javascript from Host App -->
     <%= render 'layouts/better_together/custom_head_javascript' %>
 

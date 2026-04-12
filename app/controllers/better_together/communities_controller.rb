@@ -132,6 +132,7 @@ module BetterTogether
 
     def permitted_attributes
       %i[
+        requires_invitation
         allow_membership_requests
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)

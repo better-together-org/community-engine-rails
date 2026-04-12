@@ -211,7 +211,7 @@
   </div>
 </div>
 
-<script type="text/javascript">
+<%= javascript_tag nonce: true do %>
   document.addEventListener("DOMContentLoaded", function() {
     // Check if URL hash is present and corresponds to a tab
     var hash = window.location.hash;
@@ -231,4 +231,4 @@
       });
     });
   });
-</script>
+<% end %>

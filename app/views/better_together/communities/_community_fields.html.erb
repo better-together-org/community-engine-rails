@@ -60,19 +60,32 @@
         </legend>
         <p class="form-text text-muted mt-0 mb-2">
           <%= t('better_together.access_modes.form.community_help',
-                default: 'Choose whether people join right away or ask to join first.') %>
+                default: 'Choose whether this community is invitation-only or may allow membership requests.') %>
         </p>
+        <div class="form-check">
+          <%= form.check_box :requires_invitation,
+                             class: "form-check-input",
+                             checked: community.requires_invitation? %>
+          <%= form.label :requires_invitation,
+                         t('better_together.access_modes.form.community_invitation_only',
+                           default: 'Require an invitation before someone can join this community'),
+                         class: "form-check-label" %>
+          <div class="form-text text-muted">
+            <%= t('better_together.access_modes.form.community_invitation_help',
+                  default: 'Communities default to invitation-only. Turn this off only when you intentionally want self-service joins or membership requests.') %>
+          </div>
+        </div>
         <div class="form-check">
           <%= form.check_box :allow_membership_requests,
                              class: "form-check-input",
                              checked: community.allow_membership_requests? %>
           <%= form.label :allow_membership_requests,
-                          t('better_together.access_modes.form.community_requests',
-                            default: 'Require people to request access before becoming members'),
-                          class: "form-check-label" %>
+                           t('better_together.access_modes.form.community_requests',
+                             default: 'Require people to request access before becoming members'),
+                           class: "form-check-label" %>
           <div class="form-text text-muted">
             <%= t('better_together.access_modes.form.community_requests_hint',
-                  default: 'Community membership requests stay closed unless both this community and the platform allow requests.') %>
+                  default: 'Community membership requests stay closed unless both this community and the platform allow requests, and invitation-only access is turned off.') %>
           </div>
         </div>
       </fieldset>

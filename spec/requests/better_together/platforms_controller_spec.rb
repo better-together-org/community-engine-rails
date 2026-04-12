@@ -35,7 +35,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
         settings: host_platform.settings.merge(
           'csp_frame_ancestors' => [],
           'csp_frame_src' => [],
-          'csp_img_src' => []
+          'csp_img_src' => [],
+          'csp_script_src' => [],
+          'csp_connect_src' => []
         )
       )
 
@@ -45,11 +47,17 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       frame_src_select = page.find("select[name='platform[csp_frame_src_text][]']", visible: false)
       frame_ancestor_select = page.find("select[name='platform[csp_frame_ancestors_text][]']", visible: false)
       img_src_select = page.find("select[name='platform[csp_img_src_text][]']", visible: false)
+      script_src_select = page.find("select[name='platform[csp_script_src_text][]']", visible: false)
+      connect_src_select = page.find("select[name='platform[csp_connect_src_text][]']", visible: false)
 
       expect(response).to have_http_status(:ok)
       expect(frame_src_select).to have_css("option[value='https://forms.btsdev.ca']", visible: false)
       expect(frame_ancestor_select).to have_css("option[value='https://bebettertogether.ca']", visible: false)
       expect(img_src_select).to have_css("option[value='https://communityengine.app']", visible: false)
+      expect(img_src_select).to have_css("option[value='https://unpkg.com']", visible: false)
+      expect(img_src_select).to have_css("option[value='https://*.tile.openstreetmap.org']", visible: false)
+      expect(script_src_select).not_to have_css('option', visible: false)
+      expect(connect_src_select).not_to have_css('option', visible: false)
       expect(frame_src_select).not_to have_css("option[value='https://www.youtube.com']", visible: false)
       expect(frame_src_select).not_to have_css("option[value='https://player.vimeo.com']", visible: false)
       expect(img_src_select).not_to have_css("option[value='https://images.ctfassets.net']", visible: false)
@@ -77,7 +85,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
           time_zone: host_platform.time_zone,
           csp_frame_ancestors_text: ['bebettertogether.ca'],
           csp_frame_src_text: ['forms.btsdev.ca', 'https://www.youtube.com'],
-          csp_img_src_text: ['images.example.com']
+          csp_img_src_text: ['images.example.com'],
+          csp_script_src_text: ['scripts.example.com'],
+          csp_connect_src_text: ['collector.example.com']
         }
       }
 
@@ -85,6 +95,8 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(host_platform.reload.csp_frame_ancestors).to eq(['https://bebettertogether.ca'])
       expect(host_platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
       expect(host_platform.csp_img_src).to eq(['https://images.example.com'])
+      expect(host_platform.csp_script_src).to eq(['https://scripts.example.com'])
+      expect(host_platform.csp_connect_src).to eq(['https://collector.example.com'])
     end
 
     it 'applies platform-specific CSP origins to response headers' do # rubocop:disable RSpec/MultipleExpectations
@@ -92,7 +104,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
         settings: host_platform.settings.merge(
           'csp_frame_ancestors' => ['https://bebettertogether.ca'],
           'csp_frame_src' => ['https://forms.btsdev.ca'],
-          'csp_img_src' => ['https://images.example.com']
+          'csp_img_src' => ['https://images.example.com'],
+          'csp_script_src' => ['https://scripts.example.com'],
+          'csp_connect_src' => ['https://collector.example.com']
         )
       )
 
@@ -102,7 +116,18 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
       expect(csp).to include('frame-ancestors https://bebettertogether.ca')
       expect(csp).to include("frame-src 'self' https://forms.btsdev.ca")
-      expect(csp).to include("img-src 'self' data: blob: https://*.tile.openstreetmap.org https://images.example.com")
+      expect(csp).to include("img-src 'self' data: blob: https://unpkg.com https://*.tile.openstreetmap.org https://images.example.com")
+      expected_script_src = [
+        "script-src 'self' blob:",
+        'https://cdn.jsdelivr.net',
+        'https://cdnjs.cloudflare.com',
+        'https://unpkg.com',
+        'https://ga.jspm.io',
+        'https://scripts.example.com'
+      ].join(' ')
+
+      expect(csp).to include(expected_script_src)
+      expect(csp).to include("connect-src 'self' wss: https://collector.example.com")
     end
 
     context 'when updating CSS block' do

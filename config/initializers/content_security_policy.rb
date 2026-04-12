@@ -18,8 +18,7 @@ Rails.application.configure do
     p.img_src(*BetterTogether::ContentSecurityPolicySources.img_sources)
     p.font_src(*BetterTogether::ContentSecurityPolicySources.font_sources)
     p.frame_src(*BetterTogether::ContentSecurityPolicySources.frame_sources)
-    p.connect_src :self,
-                  :wss # ActionCable WebSocket connections
+    p.connect_src(*BetterTogether::ContentSecurityPolicySources.connect_sources)
     p.form_action :self
     p.frame_ancestors(*BetterTogether::ContentSecurityPolicySources.frame_ancestor_sources)
     p.object_src :none

@@ -11,6 +11,7 @@ FactoryBot.define do
     host { false }
     protected { false }
     identifier { "community-#{SecureRandom.hex(10)}" }
+    requires_invitation { true }
 
     trait :creator do
       association :creator, factory: :person
@@ -21,7 +22,13 @@ FactoryBot.define do
     end
 
     trait :membership_requests_enabled do
+      requires_invitation { false }
       allow_membership_requests { true }
+    end
+
+    trait :open_access do
+      requires_invitation { false }
+      allow_membership_requests { false }
     end
   end
 end
