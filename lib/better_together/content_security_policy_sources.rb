@@ -33,6 +33,7 @@ module BetterTogether
       :self,
       :data,
       :blob,
+      'https://unpkg.com',
       'https://*.tile.openstreetmap.org'
     ].freeze
 

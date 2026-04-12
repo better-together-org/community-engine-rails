@@ -74,6 +74,26 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
     end
   end
 
+  describe '.img_sources' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+
+    it 'includes CE bundled Leaflet image origins and platform-configured image origins' do
+      host_platform.update!(
+        settings: host_platform.settings.merge('csp_img_src' => ['https://images.example.com'])
+      )
+
+      context = Struct.new(:host).new('communityengine.app')
+
+      sources = context.instance_exec do
+        BetterTogether::ContentSecurityPolicySources.img_sources(nil, nil).flat_map do |source|
+          source.respond_to?(:call) ? instance_exec(&source) : source
+        end
+      end
+
+      expect(sources).to include('https://unpkg.com', 'https://*.tile.openstreetmap.org', 'https://images.example.com')
+    end
+  end
+
   describe '.connect_sources' do
     let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
 
