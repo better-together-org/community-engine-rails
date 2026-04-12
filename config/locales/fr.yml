@@ -712,6 +712,9 @@ fr:
           elles doivent d'abord demander l'accès.
         community_requests: Exiger une demande d'accès avant qu'une personne devienne
           membre
+        community_requests_hint: Les demandes d'adhésion à la communauté restent fermées
+          à moins que cette communauté et la plateforme n'autorisent toutes deux les
+          demandes.
         platform_help: Choisissez si les personnes peuvent créer un compte directement
           ou si elles ont d'abord besoin d'une invitation.
         platform_invitation_help: Les invitations peuvent préremplir les adresses
