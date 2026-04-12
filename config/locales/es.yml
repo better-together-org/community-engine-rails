@@ -711,6 +711,8 @@ es:
           solicitar acceso.
         community_requests: Exigir que las personas soliciten acceso antes de hacerse
           miembros
+        community_requests_hint: Las solicitudes de membresía de la comunidad permanecen
+          cerradas a menos que tanto esta comunidad como la plataforma permitan solicitudes.
         platform_help: Elige si las personas pueden crear una cuenta directamente
           o si primero necesitan una invitación.
         platform_invitation_help: Las invitaciones pueden completar previamente las
