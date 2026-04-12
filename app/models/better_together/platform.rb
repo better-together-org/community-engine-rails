@@ -193,7 +193,7 @@ module BetterTogether
     end
 
     def membership_requests_enabled_for?(community = primary_community)
-      allow_membership_requests? || community&.allow_membership_requests?
+      allow_membership_requests? && (community&.membership_requests_enabled?(platform: self) || false)
     end
 
     def to_s

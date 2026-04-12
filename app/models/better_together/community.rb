@@ -104,7 +104,8 @@ module BetterTogether
     end
 
     def membership_requests_enabled?(platform: primary_platform)
-      allow_membership_requests? || platform&.allow_membership_requests?
+      ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
+        ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
     end
 
     def as_indexed_json(_options = {})

@@ -15,10 +15,28 @@ RSpec.describe BetterTogether::Community do
   end
 
   it 'switches to request mode when membership requests are enabled' do
-    community = build(:better_together_community, :membership_requests_enabled)
+    community = create(:better_together_community, :membership_requests_enabled)
+    platform = create(:better_together_platform, community:, allow_membership_requests: true)
 
+    expect(community.membership_requests_enabled?(platform:)).to be(true)
     expect(community.access_mode).to eq(:request)
     expect(community.request_to_join_only?).to be(true)
     expect(community.self_service_membership_status).to eq('pending')
+  end
+
+  it 'keeps membership requests closed unless the community opts in' do
+    community = create(:better_together_community, allow_membership_requests: false)
+    platform = create(:better_together_platform, community:, allow_membership_requests: true)
+
+    expect(community.membership_requests_enabled?(platform:)).to be(false)
+    expect(community.access_mode).to eq(:open)
+  end
+
+  it 'keeps membership requests closed unless the platform also opts in' do
+    community = create(:better_together_community, allow_membership_requests: true)
+    platform = create(:better_together_platform, community:, allow_membership_requests: false)
+
+    expect(community.membership_requests_enabled?(platform:)).to be(false)
+    expect(community.access_mode).to eq(:open)
   end
 end
