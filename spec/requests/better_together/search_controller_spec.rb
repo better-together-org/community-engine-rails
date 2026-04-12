@@ -182,6 +182,41 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
     end
 
+    context 'when a policy scope includes a polymorphic category preload', :no_auth do
+      let!(:event) do
+        create(
+          :better_together_event,
+          name: 'Community Gathering',
+          privacy: 'public',
+          starts_at: 1.day.from_now,
+          ends_at: 1.day.from_now + 2.hours
+        )
+      end
+      let!(:event_category) { create(:event_category, name: 'Community Events') }
+
+      before do
+        create(:categorization, categorizable: event, category: event_category)
+
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [event],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+      end
+
+      it 'renders visible results without raising on the policy scope preload' do
+        get better_together.search_path(locale:), params: { q: 'community' }
+
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
+        expect(response).to have_http_status(:ok)
+        expect(visible_titles).to include('Community Gathering')
+      end
+    end
+
     context 'when the backend returns the current user private content', :as_user do
       let(:user) { BetterTogether::User.find_by!(email: 'user@example.test') }
       let!(:own_private_post) do
