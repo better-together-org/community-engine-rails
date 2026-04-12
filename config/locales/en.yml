@@ -701,10 +701,16 @@ en:
             here.
           open: People can create an account and join without waiting for approval.
       form:
-        community_help: Choose whether people join right away or ask to join first.
+        community_help: Choose whether this community is invitation-only or may allow
+          membership requests.
+        community_invitation_help: Communities default to invitation-only. Turn this
+          off only when you intentionally want self-service joins or membership requests.
+        community_invitation_only: Require an invitation before someone can join this
+          community
         community_requests: Require people to request access before becoming members
         community_requests_hint: Community membership requests stay closed unless
-          both this community and the platform allow requests.
+          both this community and the platform allow requests, and invitation-only
+          access is turned off.
         platform_help: Choose whether people can create an account directly or need
           an invitation first.
         platform_invitation_help: Invitations can prefill email addresses and assign

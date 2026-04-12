@@ -265,12 +265,13 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(community.identifier).to eq(identifier)
     end
 
-    it 'defaults membership requests to closed when the checkbox is not submitted' do
+    it 'defaults new communities to invitation-only with membership requests closed' do
       post better_together.communities_path(locale:), params: valid_params
 
       identifier = response.location.match(%r{/c/([^/?]+)})[1]
       community = BetterTogether::Community.find_by!(identifier:)
 
+      expect(community.requires_invitation).to be(true)
       expect(community.allow_membership_requests).to be(false)
     end
   end

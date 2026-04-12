@@ -89,20 +89,29 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
         :better_together_platform,
         csp_frame_ancestors_text: "bebettertogether.ca\nhttps://forms.btsdev.ca",
         csp_frame_src_text: "forms.btsdev.ca\nwww.youtube.com",
-        csp_img_src_text: 'images.example.com'
+        csp_img_src_text: 'images.example.com',
+        csp_script_src_text: 'scripts.example.com',
+        csp_connect_src_text: 'collector.example.com'
       )
 
       expect(platform).to be_valid
       expect(platform.csp_frame_ancestors).to eq(['https://bebettertogether.ca', 'https://forms.btsdev.ca'])
       expect(platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
       expect(platform.csp_img_src).to eq(['https://images.example.com'])
+      expect(platform.csp_script_src).to eq(['https://scripts.example.com'])
+      expect(platform.csp_connect_src).to eq(['https://collector.example.com'])
     end
 
     it 'adds validation errors for invalid CSP origin entries' do
-      platform = build(:better_together_platform, csp_frame_src_text: "https://forms.btsdev.ca/embed\nhttp://bad.example.com")
+      platform = build(
+        :better_together_platform,
+        csp_frame_src_text: "https://forms.btsdev.ca/embed\nhttp://bad.example.com",
+        csp_script_src_text: 'javascript:alert(1)'
+      )
 
       expect(platform).not_to be_valid
       expect(platform.errors[:csp_frame_src_text]).to be_present
+      expect(platform.errors[:csp_script_src_text]).to be_present
     end
   end
 

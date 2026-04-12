@@ -29,7 +29,9 @@ module BetterTogether
     CSP_SETTING_KEYS = {
       csp_frame_ancestors_text: 'csp_frame_ancestors',
       csp_frame_src_text: 'csp_frame_src',
-      csp_img_src_text: 'csp_img_src'
+      csp_img_src_text: 'csp_img_src',
+      csp_script_src_text: 'csp_script_src',
+      csp_connect_src_text: 'csp_connect_src'
     }.freeze
 
     has_community
@@ -128,7 +130,8 @@ module BetterTogether
 
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image
-    attr_writer :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text
+    attr_writer :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text, :csp_script_src_text,
+                :csp_connect_src_text
 
     # Callbacks to remove images if necessary
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
@@ -154,6 +157,14 @@ module BetterTogether
       csp_setting_values('csp_img_src')
     end
 
+    def csp_script_src
+      csp_setting_values('csp_script_src')
+    end
+
+    def csp_connect_src
+      csp_setting_values('csp_connect_src')
+    end
+
     def csp_frame_ancestors_text
       @csp_frame_ancestors_text || csp_frame_ancestors.join("\n")
     end
@@ -164,6 +175,14 @@ module BetterTogether
 
     def csp_img_src_text
       @csp_img_src_text || csp_img_src.join("\n")
+    end
+
+    def csp_script_src_text
+      @csp_script_src_text || csp_script_src.join("\n")
+    end
+
+    def csp_connect_src_text
+      @csp_connect_src_text || csp_connect_src.join("\n")
     end
 
     def cache_key

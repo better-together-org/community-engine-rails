@@ -96,7 +96,7 @@ module BetterTogether
     validates :name, presence: true
 
     def self.extra_permitted_attributes
-      super + %i[allow_membership_requests]
+      super + %i[requires_invitation allow_membership_requests]
     end
 
     def as_community

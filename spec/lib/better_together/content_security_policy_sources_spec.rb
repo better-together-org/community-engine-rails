@@ -55,4 +55,40 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
       expect(described_class.platform_sources_for_context(context, :csp_frame_src)).to eq(['https://forms.btsdev.ca'])
     end
   end
+
+  describe '.script_sources' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+
+    it 'includes platform-configured script origins for the current host app' do
+      host_platform.update!(settings: host_platform.settings.merge('csp_script_src' => ['https://scripts.example.com']))
+
+      context = Struct.new(:host).new('communityengine.app')
+
+      sources = context.instance_exec do
+        BetterTogether::ContentSecurityPolicySources.script_sources(nil, nil).flat_map do |source|
+          source.respond_to?(:call) ? instance_exec(&source) : source
+        end
+      end
+
+      expect(sources).to include('https://scripts.example.com')
+    end
+  end
+
+  describe '.connect_sources' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+
+    it 'includes platform-configured connection origins for the current host app' do
+      host_platform.update!(settings: host_platform.settings.merge('csp_connect_src' => ['https://collector.example.com']))
+
+      context = Struct.new(:host).new('communityengine.app')
+
+      sources = context.instance_exec do
+        BetterTogether::ContentSecurityPolicySources.connect_sources(nil).flat_map do |source|
+          source.respond_to?(:call) ? instance_exec(&source) : source
+        end
+      end
+
+      expect(sources).to include('https://collector.example.com')
+    end
+  end
 end

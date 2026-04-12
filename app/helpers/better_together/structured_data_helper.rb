@@ -6,7 +6,7 @@ module BetterTogether
     def structured_data_tag(data)
       return if data.blank?
 
-      tag.script(type: 'application/ld+json') do
+      tag.script(type: 'application/ld+json', nonce: content_security_policy_nonce) do
         raw(Array.wrap(data).to_json)
       end
     end

@@ -34,6 +34,9 @@
     'https://newcomernavigatornl.ca',
     'https://app.nlvenues.com'
   ] + platform.csp_img_src).uniq
+
+  script_src_options = platform.csp_script_src
+  connect_src_options = platform.csp_connect_src
 %>
 
 <%
@@ -239,6 +242,52 @@
             <% if platform.errors[:csp_img_src_text].any? %>
               <div class="invalid-feedback d-block">
                 <%= platform.errors[:csp_img_src_text].join(', ') %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :csp_script_src_text, 'Allowed external script origins', class: 'form-label' %>
+            <%= form.select :csp_script_src_text,
+                            options_for_select(script_src_options, platform.csp_script_src),
+                            {},
+                            {
+                              multiple: true,
+                              class: "form-select#{' is-invalid' if platform.errors[:csp_script_src_text].any?}",
+                              data: {
+                                controller: 'better_together--slim-select',
+                                'better_together--slim-select-options-value': csp_slim_select_options
+                              }
+                            } %>
+            <div class="form-text text-muted">
+              Add trusted third-party script origins that this host app is allowed to load, such as analytics or error-monitoring CDNs.
+            </div>
+            <% if platform.errors[:csp_script_src_text].any? %>
+              <div class="invalid-feedback d-block">
+                <%= platform.errors[:csp_script_src_text].join(', ') %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :csp_connect_src_text, 'Allowed external connection origins', class: 'form-label' %>
+            <%= form.select :csp_connect_src_text,
+                            options_for_select(connect_src_options, platform.csp_connect_src),
+                            {},
+                            {
+                              multiple: true,
+                              class: "form-select#{' is-invalid' if platform.errors[:csp_connect_src_text].any?}",
+                              data: {
+                                controller: 'better_together--slim-select',
+                                'better_together--slim-select-options-value': csp_slim_select_options
+                              }
+                            } %>
+            <div class="form-text text-muted">
+              Add trusted origins for browser connections initiated by approved third-party scripts, such as analytics collection or error-reporting APIs.
+            </div>
+            <% if platform.errors[:csp_connect_src_text].any? %>
+              <div class="invalid-feedback d-block">
+                <%= platform.errors[:csp_connect_src_text].join(', ') %>
               </div>
             <% end %>
           </div>

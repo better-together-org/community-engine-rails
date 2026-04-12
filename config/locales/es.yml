@@ -707,12 +707,18 @@ es:
             cuenta aquí.
           open: Las personas pueden crear una cuenta y unirse sin esperar aprobación.
       form:
-        community_help: Elige si las personas se unen de inmediato o si primero deben
-          solicitar acceso.
+        community_help: Elige si esta comunidad es solo por invitación o si puede
+          permitir solicitudes de membresía.
+        community_invitation_help: Las comunidades son solo por invitación de forma
+          predeterminada. Desactiva esto solo cuando quieras permitir ingresos de
+          autoservicio o solicitudes de membresía.
+        community_invitation_only: Exigir una invitación antes de que alguien pueda
+          unirse a esta comunidad
         community_requests: Exigir que las personas soliciten acceso antes de hacerse
           miembros
         community_requests_hint: Las solicitudes de membresía de la comunidad permanecen
-          cerradas a menos que tanto esta comunidad como la plataforma permitan solicitudes.
+          cerradas a menos que tanto esta comunidad como la plataforma permitan
+          solicitudes y se haya desactivado el acceso solo por invitación.
         platform_help: Elige si las personas pueden crear una cuenta directamente
           o si primero necesitan una invitación.
         platform_invitation_help: Las invitaciones pueden completar previamente las

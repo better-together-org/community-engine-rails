@@ -19,6 +19,8 @@ module BetterTogether
       'https://ga.jspm.io'
     ].freeze
 
+    CONNECT_SOURCES = %i[self wss].freeze
+
     STYLE_SOURCES = [
       :self,
       :unsafe_inline,
@@ -36,8 +38,11 @@ module BetterTogether
 
     FONT_SOURCES = %i[self data].freeze
 
-    def script_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
-      with_asset_host(SCRIPT_SOURCES, raw_asset_host)
+    def script_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil), raw_script_src = ENV.fetch('CSP_SCRIPT_SRC', nil))
+      env_sources = parse_origin_list(raw_script_src)
+      dynamic_sources = dynamic_platform_sources(:csp_script_src)
+
+      with_asset_host(SCRIPT_SOURCES + env_sources + dynamic_sources, raw_asset_host)
     end
 
     def style_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
@@ -53,6 +58,13 @@ module BetterTogether
 
     def font_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
       with_asset_host(FONT_SOURCES, raw_asset_host)
+    end
+
+    def connect_sources(raw_connect_src = ENV.fetch('CSP_CONNECT_SRC', nil))
+      env_sources = parse_origin_list(raw_connect_src)
+      dynamic_sources = dynamic_platform_sources(:csp_connect_src)
+
+      CONNECT_SOURCES + env_sources + dynamic_sources
     end
 
     def frame_sources(raw_frame_src = ENV.fetch('CSP_FRAME_SRC', nil))

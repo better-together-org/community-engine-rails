@@ -187,6 +187,8 @@ module BetterTogether
         csp_frame_ancestors_text
         csp_frame_src_text
         csp_img_src_text
+        csp_script_src_text
+        csp_connect_src_text
       ].map { |attribute| { attribute => [] } }
     end
 
