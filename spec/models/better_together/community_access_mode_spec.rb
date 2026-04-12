@@ -37,7 +37,8 @@ RSpec.describe BetterTogether::Community do
     platform = create(:better_together_platform, community:, allow_membership_requests: true)
 
     expect(community.membership_requests_enabled?(platform:)).to be(false)
-    expect(community.access_mode).to eq(:open)
+    expect(community.access_mode).to eq(:invitation)
+    expect(community.invitation_only?).to be(true)
   end
 
   it 'keeps membership requests closed unless the platform also opts in' do
@@ -45,6 +46,7 @@ RSpec.describe BetterTogether::Community do
     platform = create(:better_together_platform, community:, allow_membership_requests: false)
 
     expect(community.membership_requests_enabled?(platform:)).to be(false)
-    expect(community.access_mode).to eq(:open)
+    expect(community.access_mode).to eq(:invitation)
+    expect(community.invitation_only?).to be(true)
   end
 end
