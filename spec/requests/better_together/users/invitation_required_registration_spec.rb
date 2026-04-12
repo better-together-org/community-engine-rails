@@ -86,22 +86,37 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
       end
     end
 
-    context 'when the platform allows host-community membership requests' do
+    context 'when only the platform allows host-community membership requests' do
       before do
         platform.update!(allow_membership_requests: true)
       end
 
-      it 'shows the membership request section below the invitation prompt' do
+      it 'keeps the membership request section hidden until the community opts in' do
         get '/en/users/sign-up'
 
         expect(response).to have_http_status(:ok)
-        expect_html_content('Request membership instead')
-        expect(response.body).to include('membership_request_form')
+        expect(response.body).not_to include('Request membership instead')
+        expect(response.body).not_to include('membership_request_form')
       end
     end
 
-    context 'when the host community allows membership requests' do
+    context 'when only the host community allows membership requests' do
       before do
+        platform.primary_community.update!(allow_membership_requests: true)
+      end
+
+      it 'keeps the membership request section hidden until the platform also opts in' do
+        get '/en/users/sign-up'
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('Request membership instead')
+        expect(response.body).not_to include('membership_request_form')
+      end
+    end
+
+    context 'when both the platform and host community allow membership requests' do
+      before do
+        platform.update!(allow_membership_requests: true)
         platform.primary_community.update!(allow_membership_requests: true)
       end
 
