@@ -2,11 +2,12 @@
 
 module BetterTogether
   class ApplicationPolicy # rubocop:todo Style/Documentation
-    attr_reader :user, :record, :agent, :invitation_token
+    attr_reader :user, :record, :agent, :robot, :invitation_token
 
     def initialize(user, record, invitation_token: nil)
-      @user = user
-      @agent = user&.person
+      @robot = user if user.is_a?(BetterTogether::Robot)
+      @user = @robot.present? ? nil : user
+      @agent = @user&.person
       @record = record
       @invitation_token = invitation_token
     end
@@ -39,12 +40,13 @@ module BetterTogether
       false
     end
 
-    class Scope # rubocop:todo Style/Documentation
-      attr_reader :user, :scope, :agent, :invitation_token, :options
+    class Scope # rubocop:todo Style/Documentation, Metrics/ClassLength
+      attr_reader :user, :scope, :agent, :robot, :invitation_token, :options
 
       def initialize(user, scope, invitation_token: nil, **options)
-        @user = user
-        @agent = user&.person
+        @robot = user if user.is_a?(BetterTogether::Robot)
+        @user = @robot.present? ? nil : user
+        @agent = @user&.person
         @scope = scope
         @invitation_token = invitation_token
         @options = options
@@ -95,6 +97,13 @@ module BetterTogether
       private
 
       def visible_privacy_query(table)
+        if robot.present?
+          robot_query = robot_visible_privacy_query(table)
+          return robot_query if robot_query.present?
+
+          return table[:id].eq(nil)
+        end
+
         query = table[:privacy].eq('public')
         return query unless agent
 
@@ -167,12 +176,29 @@ module BetterTogether
 
         @scoped_calendar_ids ||= BetterTogether::Calendar.where(community_id: scoped_community_ids).pluck(:id)
       end
+
+      def robot_visible_privacy_query(table)
+        clauses = []
+        clauses << table[:privacy].eq('public') if robot_allows_scope?('read_public_content')
+        clauses << table[:privacy].eq('community') if robot_allows_scope?('read_community_content')
+        clauses << table[:privacy].eq('private') if robot_allows_scope?('read_private_content')
+
+        clauses.compact.reduce { |query, clause| query.or(clause) }
+      end
+
+      def robot_allows_scope?(scope_name)
+        robot&.allows_bot_scope?(scope_name) || false
+      end
     end
 
     protected
 
     def permitted_to?(permission_identifier, record = nil)
       !!agent&.permitted_to?(permission_identifier, record)
+    end
+
+    def robot_can_access_record?(target = record)
+      robot.present? && target.respond_to?(:privacy) && robot.allows_content_privacy?(target.privacy)
     end
 
     def can_read_people_directory?(target = nil)
@@ -208,6 +234,8 @@ module BetterTogether
     end
 
     def public_or_member_scoped_community?(target = record)
+      return robot_can_access_record?(target) if robot.present?
+
       privacy_public?(target) || (privacy_community?(target) && member_of_resolved_community?(target))
     end
 

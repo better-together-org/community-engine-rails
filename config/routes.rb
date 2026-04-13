@@ -8,6 +8,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
   post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
+  get '/bot-defense/challenges/:form_id',
+      to: 'bot_defense/challenges#show',
+      as: :bot_defense_challenge,
+      defaults: { format: :json }
 
   get '/content-security/active-storage/blobs/proxy/:signed_id/*filename',
       to: 'content_security/active_storage/blobs/proxy#show',

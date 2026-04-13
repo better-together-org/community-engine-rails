@@ -144,6 +144,7 @@
       <% end %>
 
       <!-- Host App Extensible Content (e.g., CAPTCHA, additional fields) -->
+      <%= bot_defense_fields(:registration) %>
       <%= render partial: 'devise/registrations/extra_registration_fields', locals: { form: f, resource: resource } %>
 
       <!-- Submit Button -->

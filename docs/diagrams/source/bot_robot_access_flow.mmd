@@ -1,0 +1,13 @@
+%% render.orientation: portrait
+flowchart TD
+  A[Robot sends request] --> B[X-Better-Together-Robot-Token header]
+  B --> C[ApplicationController authenticates BetterTogether::Robot]
+  C --> D{Token digest matches enabled robot?}
+  D -->|No| E[Reject as unauthenticated request]
+  D -->|Yes| F[Pundit receives robot principal]
+  F --> G{Requested content fits granted scope?}
+  G -->|Public only| H[Allow public content]
+  G -->|Community scope| I[Allow community and public content]
+  G -->|Private scope| J[Allow private community and public content]
+  G -->|No matching scope| K[Authorization failure]
+

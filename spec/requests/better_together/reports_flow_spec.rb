@@ -9,6 +9,19 @@ RSpec.describe 'BetterTogether reports flow' do
   let(:target_page) { create(:better_together_page, title: 'Shared Page Evidence') }
   let(:target_block) { create(:better_together_content_rich_text, content_html: '<p>Block evidence</p>') }
 
+  def bot_defense_payload(form_id)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
+    {
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
+      }
+    }
+  end
+
   before do
     sign_in user
   end
@@ -60,7 +73,7 @@ RSpec.describe 'BetterTogether reports flow' do
           consent_to_restorative_process: '0',
           retaliation_risk: '1'
         }
-      }
+      }.merge(bot_defense_payload(:safety_report))
     end.to(change(BetterTogether::Report, :count).by(1)
       .and(change(BetterTogether::Safety::Case, :count).by(1)))
 
@@ -79,9 +92,26 @@ RSpec.describe 'BetterTogether reports flow' do
         requested_outcome: 'boundary_support',
         reason: 'Need help setting a boundary'
       }
-    }
+    }.merge(bot_defense_payload(:safety_report))
 
     expect(response).to have_http_status(:not_found)
+  end
+
+  it 'rejects report creation without bot defense proof' do
+    expect do
+      post better_together.reports_path(locale:), params: {
+        report: {
+          reportable_type: 'BetterTogether::Person',
+          reportable_id: target_person.id,
+          category: 'boundary_violation',
+          harm_level: 'medium',
+          requested_outcome: 'boundary_support',
+          reason: 'Need help setting a boundary'
+        }
+      }
+    end.not_to change(BetterTogether::Report, :count)
+
+    expect(response).to have_http_status(:unprocessable_content)
   end
 
   it 'allows the reporter to add follow-up evidence from the report page' do

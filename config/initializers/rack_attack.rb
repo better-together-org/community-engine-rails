@@ -72,6 +72,12 @@ module Rack
       req.ip if req.path.start_with?('/mcp')
     end
 
+    # Challenge issuance is lightweight but public. Keep it available while preventing
+    # challenge-spam from becoming a cache amplification path.
+    throttle('bot_defense/challenges/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.path.include?('/bot-defense/challenges/') && req.get?
+    end
+
     # Throttle MCP tool call POSTs more aggressively (30 per minute)
     throttle('mcp/tool-calls/ip', limit: 30, period: 1.minute) do |req|
       req.ip if req.path == '/mcp/messages' && req.post?

@@ -71,6 +71,7 @@
           <%= form_with model: @report, url: reports_path(locale: I18n.locale), local: true do |form| %>
             <%= form.hidden_field :reportable_id %>
             <%= form.hidden_field :reportable_type %>
+            <%= bot_defense_fields(:safety_report) %>
 
             <div class="mb-3">
               <%= form.label :category,
