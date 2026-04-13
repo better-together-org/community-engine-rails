@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require_relative '../../rails_helper'
 
 RSpec.describe BetterTogether::ElasticsearchIndexJob do
   let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend) }
-  let(:record) { create(:better_together_page) }
+  let(:record) { instance_double(BetterTogether::Page) }
 
   before do
     allow(BetterTogether::Search).to receive(:backend).and_return(backend)

@@ -15,8 +15,6 @@ module BetterTogether
 
     translates :title, type: :string
 
-    settings index: default_elasticsearch_index
-
     slugged :title
 
     searchable pg_search: {
@@ -56,13 +54,5 @@ module BetterTogether
       slug
     end
 
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        title:,
-        slug:,
-        identifier:
-      }.compact.as_json
-    end
   end
 end

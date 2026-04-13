@@ -57,18 +57,6 @@ module BetterTogether
         BetterTogether::MarkdownRendererService.new(content, {}).render_plain_text
       end
 
-      # Provide indexed JSON representation for search
-      def as_indexed_json(_options = {})
-        {
-          id:,
-          localized_content: I18n.available_locales.index_with do |locale|
-            I18n.with_locale(locale) do
-              rendered_plain_text
-            end
-          end
-        }
-      end
-
       # Check if content contains mermaid diagrams
       def contains_mermaid?
         return false if content.blank?

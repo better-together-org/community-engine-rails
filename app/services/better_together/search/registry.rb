@@ -10,10 +10,6 @@ module BetterTogether
           model_name.constantize
         end
 
-        def index_name
-          model_class.__elasticsearch__.index_name
-        end
-
         def search_scope_name
           model_class.search_scope_name
         end

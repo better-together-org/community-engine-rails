@@ -29,8 +29,6 @@ module BetterTogether
     alias name title
     translates :content, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     slugged :title
 
     searchable pg_search: {
@@ -106,16 +104,6 @@ module BetterTogether
     end
 
     configure_attachment_cleanup
-
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {})
-      as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug', 'content')
-        end]
-      )
-    end
 
     private
 

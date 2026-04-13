@@ -26,18 +26,6 @@ module BetterTogether
 
       validates :template_path, presence: true, inclusion: { in: ->(template) { template.class.available_templates } }
 
-      # Provide indexed JSON representation like RichText does
-      def as_indexed_json(_options = {})
-        {
-          id:,
-          localized_content: indexed_localized_content
-        }
-      end
-
-      # Extract text content from the template for search indexing
-      def indexed_localized_content
-        BetterTogether::TemplateRendererService.new(template_path).render_for_all_locales
-      end
     end
   end
 end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require_relative '../../../rails_helper'
 
-RSpec.describe 'Real Elasticsearch search matching', type: :integration do
-  let(:backend_url) { ENV.fetch('ELASTICSEARCH_URL', 'http://host.docker.internal:9200') }
+RSpec.describe 'Elasticsearch search matching', type: :integration do
+  let(:backend_url) { ENV.fetch('ELASTICSEARCH_URL', 'http://elasticsearch:9200') }
   let(:backend_uri) { URI.parse(backend_url) }
   let(:page_index_name) { "better_together-pages-search-spec-#{SecureRandom.hex(6)}" }
   let(:post_index_name) { "better_together-posts-search-spec-#{SecureRandom.hex(6)}" }
@@ -74,27 +74,28 @@ RSpec.describe 'Real Elasticsearch search matching', type: :integration do
   around do |example|
     original_elasticsearch_url = ENV.fetch('ELASTICSEARCH_URL', nil)
     original_enable_tests = ENV.fetch('ENABLE_ELASTICSEARCH_TESTS', nil)
+    original_search_backend = ENV.fetch('SEARCH_BACKEND', nil)
     original_page_index_name = BetterTogether::Page.__elasticsearch__.index_name
     original_post_index_name = BetterTogether::Post.__elasticsearch__.index_name
 
     ENV['ELASTICSEARCH_URL'] = backend_url
     ENV['ENABLE_ELASTICSEARCH_TESTS'] = 'true'
+    ENV['SEARCH_BACKEND'] = 'elasticsearch'
     BetterTogether::Page.__elasticsearch__.index_name = page_index_name
     BetterTogether::Post.__elasticsearch__.index_name = post_index_name
     WebMock.disable_net_connect!(allow_localhost: true, allow: allowed_elasticsearch_request?)
     BetterTogether::Search.reset_backend!
 
-    unless BetterTogether::Search.backend.available?
-      skip "Elasticsearch is unavailable at #{backend_url}"
-    end
+    skip "Elasticsearch is unavailable at #{backend_url}" unless BetterTogether::Search.backend.available?
 
     recreate_search_indices
     example.run
   ensure
     recreate_search_indices if BetterTogether::Search.backend.available?
-    WebMock.disable_net_connect!(allow_localhost: true, allow: allowed_elasticsearch_request?)
+    WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
     ENV['ELASTICSEARCH_URL'] = original_elasticsearch_url
     ENV['ENABLE_ELASTICSEARCH_TESTS'] = original_enable_tests
+    ENV['SEARCH_BACKEND'] = original_search_backend
     BetterTogether::Page.__elasticsearch__.index_name = original_page_index_name
     BetterTogether::Post.__elasticsearch__.index_name = original_post_index_name
     BetterTogether::Search.reset_backend!
@@ -111,44 +112,32 @@ RSpec.describe 'Real Elasticsearch search matching', type: :integration do
 
   def allowed_elasticsearch_request?
     lambda do |uri|
-      allowed_hosts = [
+      [
         [backend_uri.host, backend_uri.port],
         ['elasticsearch', 9200],
         ['host.docker.internal', 9200]
-      ]
-
-      allowed_hosts.include?([uri.host, uri.port])
+      ].include?([uri.host, uri.port])
     end
   end
 
   it 'matches a page only by markdown block content' do
-    results = search_records(markdown_token)
-
-    expect(results).to contain_exactly(markdown_page)
+    expect(search_records(markdown_token)).to contain_exactly(markdown_page)
   end
 
   it 'matches a page only by rich text block content' do
-    results = search_records(rich_text_token)
-
-    expect(results).to contain_exactly(rich_text_page)
+    expect(search_records(rich_text_token)).to contain_exactly(rich_text_page)
   end
 
   it 'matches a post only by title content' do
-    results = search_records(post_title_token)
-
-    expect(results).to contain_exactly(title_post)
+    expect(search_records(post_title_token)).to contain_exactly(title_post)
   end
 
   it 'matches a post only by body content' do
-    results = search_records(post_content_token)
-
-    expect(results).to contain_exactly(content_post)
+    expect(search_records(post_content_token)).to contain_exactly(content_post)
   end
 
   it 'returns the expected mixed set for a shared token' do
-    results = search_records(shared_token)
-
-    expect(results).to contain_exactly(markdown_page, content_post)
+    expect(search_records(shared_token)).to contain_exactly(markdown_page, content_post)
   end
 
   it 'returns no records for a nonsense token' do

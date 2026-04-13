@@ -222,6 +222,34 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
                status: 'pending')
       end
 
+      before do
+        platform.update!(allow_membership_requests: true)
+        platform.primary_community.update!(allow_membership_requests: true)
+      end
+
+      it 'shows the registration form on GET new with a community invitation' do
+        get "/en/users/sign-up?invitation_code=#{invitation.token}"
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content(I18n.t('devise.registrations.new.sign_up'))
+        expect(response.body).to include('invitation-code-field')
+        expect(response.body).to include(invitation.token)
+        expect(response.body).not_to include('Request membership instead')
+      end
+
+      it 'keeps the registration form available when the community invitation is stored in session' do
+        get "/en/users/sign-up?invitation_code=#{invitation.token}"
+        expect(response).to have_http_status(:ok)
+
+        get '/en/users/sign-up'
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content(I18n.t('devise.registrations.new.sign_up'))
+        expect(response.body).to include('invitation-code-field')
+        expect(response.body).to include(invitation.token)
+        expect(response.body).not_to include('Request membership instead')
+      end
+
       it 'allows registration with community invitation code' do
         expect do
           post '/en/users', params: {
@@ -252,6 +280,15 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
                invitable: event,
                invitee_email: invitee_email,
                status: 'pending')
+      end
+
+      it 'shows the registration form on GET new with an event invitation' do
+        get "/en/users/sign-up?invitation_code=#{invitation.token}"
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content(I18n.t('devise.registrations.new.sign_up'))
+        expect(response.body).to include('invitation-code-field')
+        expect(response.body).to include(invitation.token)
       end
 
       it 'allows registration with event invitation code' do

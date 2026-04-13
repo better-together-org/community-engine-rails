@@ -14,8 +14,6 @@ module BetterTogether
 
       categorizable class_name: '::BetterTogether::Joatu::Category'
 
-      settings index: default_elasticsearch_index
-
       searchable pg_search: {
         against: %i[status urgency],
         using: {
@@ -33,16 +31,6 @@ module BetterTogether
         super + response_link_permitted_attributes
       end
 
-      def as_indexed_json(_options = {})
-        {
-          id:,
-          name:,
-          slug:,
-          description: description.present? ? search_text_value(description) : nil,
-          status:,
-          urgency:
-        }.compact.as_json
-      end
     end
   end
 end

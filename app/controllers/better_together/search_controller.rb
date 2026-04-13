@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Handles dispatching search queries to elasticsearch and displaying the results
+  # Handles dispatching search queries to the active backend and displaying the results
   class SearchController < ApplicationController
     include Metrics::PlatformContext
 

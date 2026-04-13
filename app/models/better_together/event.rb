@@ -48,8 +48,6 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     slugged :name
 
     searchable pg_search: {
@@ -96,16 +94,6 @@ module BetterTogether
       return nil if ends_at.nil?
 
       ends_at.in_time_zone(timezone)
-    end
-
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        name:,
-        slug:,
-        identifier:,
-        description: description.present? ? search_text_value(description) : nil
-      }.compact.as_json
     end
 
     # Returns starts_at in a specified timezone

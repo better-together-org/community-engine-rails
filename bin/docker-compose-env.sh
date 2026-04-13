@@ -26,9 +26,15 @@ export DB_HOST="${DB_HOST:-db}"
 export DB_PORT="${DB_PORT:-5432}"
 export DB_USERNAME="${DB_USERNAME:-postgres}"
 export DB_PASSWORD="${DB_PASSWORD:-postgres}"
+export SEARCH_BACKEND="${SEARCH_BACKEND:-pg_search}"
 export ES_HOST="${ES_HOST:-http://elasticsearch:9200}"
 export ELASTICSEARCH_URL="${ELASTICSEARCH_URL:-http://elasticsearch:9200}"
 export REDIS_URL="${REDIS_URL:-redis://redis:6379}"
 export RACK_ATTACK_REDIS_URL="${RACK_ATTACK_REDIS_URL:-redis://redis-rack-attack:6379}"
 export RACK_ATTACK_REDIS_POOL_SIZE="${RACK_ATTACK_REDIS_POOL_SIZE:-5}"
 export RACK_ATTACK_REDIS_POOL_TIMEOUT="${RACK_ATTACK_REDIS_POOL_TIMEOUT:-5}"
+
+if [[ "${SEARCH_BACKEND}" != "elasticsearch" ]]; then
+  unset ES_HOST
+  unset ELASTICSEARCH_URL
+fi

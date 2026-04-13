@@ -6,11 +6,11 @@ RSpec.describe BetterTogether::Search::AuditService do
   subject(:audit_result) { described_class.new(backend:).call }
 
   let(:backend) do
-    instance_double(
-      BetterTogether::Search::ElasticsearchBackend,
-      backend_key: :elasticsearch,
-      configured?: true,
-      available?: true,
+      instance_double(
+        BetterTogether::Search::BaseBackend,
+        backend_key: :elasticsearch,
+        configured?: true,
+        available?: true,
       audit_report_labels: {
         collection: 'Indices',
         identifier: 'Index',
@@ -23,8 +23,8 @@ RSpec.describe BetterTogether::Search::AuditService do
       }
     )
   end
-  let(:page_entry) { instance_double(BetterTogether::Search::Registry::Entry, model_name: 'BetterTogether::Page', index_name: 'better_together-pages', db_count: 3) }
-  let(:post_entry) { instance_double(BetterTogether::Search::Registry::Entry, model_name: 'BetterTogether::Post', index_name: 'better_together-posts', db_count: 5) }
+  let(:page_entry) { instance_double(BetterTogether::Search::Registry::Entry, model_name: 'BetterTogether::Page', db_count: 3) }
+  let(:post_entry) { instance_double(BetterTogether::Search::Registry::Entry, model_name: 'BetterTogether::Post', db_count: 5) }
 
   before do
     allow(backend).to receive_messages(
@@ -94,7 +94,7 @@ RSpec.describe BetterTogether::Search::AuditService do
   context 'when using pg_search' do
     let(:backend) do
       instance_double(
-        BetterTogether::Search::PgSearchBackend,
+        BetterTogether::Search::BaseBackend,
         backend_key: :pg_search,
         configured?: true,
         available?: true,
@@ -115,7 +115,6 @@ RSpec.describe BetterTogether::Search::AuditService do
       instance_double(
         BetterTogether::Search::Registry::Entry,
         model_name: 'BetterTogether::Page',
-        index_name: 'better_together-pages',
         db_count: 3
       )
     end

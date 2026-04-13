@@ -2,8 +2,7 @@
 
 module BetterTogether
   module Search
-    # Database-backed fallback search used when Elasticsearch is unavailable
-    # or intentionally disabled for a host app.
+    # Database-backed fallback search used when no external search adapter is active.
     class DatabaseBackend < BaseBackend # rubocop:todo Metrics/ClassLength, Naming/PredicateMethod
       def audit_report_labels
         {

@@ -45,8 +45,6 @@ module BetterTogether
     translates :description, type: :text
     translates :description_html, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     searchable pg_search: {
       against: [:identifier],
       using: {
@@ -106,17 +104,6 @@ module BetterTogether
     def membership_requests_enabled?(platform: primary_platform)
       ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
         ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
-    end
-
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        name:,
-        slug:,
-        identifier:,
-        description:,
-        description_html: description_html.present? ? search_text_value(description_html) : nil
-      }.compact.as_json
     end
 
     # Resize the cover image to specific dimensions

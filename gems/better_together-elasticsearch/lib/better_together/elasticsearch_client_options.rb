@@ -3,9 +3,12 @@
 require 'uri'
 
 module BetterTogether
-  # Builds Elasticsearch client options from environment variables.
   module ElasticsearchClientOptions
     module_function
+
+    def enabled?(env = ENV)
+      explicit_elasticsearch_backend?(env) || elasticsearch_env_configured?(env)
+    end
 
     def build(env = ENV)
       base_options(env).tap do |options|
@@ -84,6 +87,29 @@ module BetterTogether
       end
 
       nil
+    end
+
+    def explicit_elasticsearch_backend?(env)
+      env_value(env, 'SEARCH_BACKEND') == 'elasticsearch'
+    end
+
+    def elasticsearch_env_configured?(env)
+      env_value(
+        env,
+        'ELASTICSEARCH_URL',
+        'ES_HOST',
+        'ES_PORT',
+        'ELASTICSEARCH_USERNAME',
+        'ELASTICSEARCH_PASSWORD',
+        'ES_USERNAME',
+        'ES_PASSWORD',
+        'ELASTICSEARCH_CA_CERT_FILE',
+        'ELASTICSEARCH_CA_CERTS',
+        'ES_CA_CERT_FILE',
+        'ES_CA_CERTS',
+        'ELASTICSEARCH_CA_FINGERPRINT',
+        'ES_CA_FINGERPRINT'
+      ).present?
     end
 
     def truthy?(value)

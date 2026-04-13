@@ -61,41 +61,6 @@ RSpec.describe BetterTogether::Content::Template do
     end
   end
 
-  describe '#as_indexed_json' do
-    let(:template) do
-      described_class.create!(
-        template_path: 'better_together/static_pages/privacy'
-      )
-    end
-
-    it 'returns a hash with id and localized_content' do
-      result = template.as_indexed_json
-
-      expect(result).to be_a(Hash)
-      expect(result.keys).to contain_exactly(:id, :localized_content)
-    end
-
-    it 'includes the template id' do
-      result = template.as_indexed_json
-
-      expect(result[:id]).to eq(template.id)
-    end
-
-    it 'includes localized content' do
-      result = template.as_indexed_json
-
-      expect(result[:localized_content]).to be_a(Hash)
-      expect(result[:localized_content].keys).to match_array(I18n.available_locales)
-    end
-  end
-
-  describe '#indexed_localized_content' do
-    let(:template) do
-      described_class.create!(
-        template_path: 'better_together/static_pages/privacy'
-      )
-    end
-
     it 'returns a hash of locale to rendered content' do
       result = template.indexed_localized_content
 

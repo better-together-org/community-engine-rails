@@ -2,7 +2,6 @@
 
 module BetterTogether
   module Search
-    # Builds Elasticsearch search and suggestion payloads.
     module ElasticsearchQuery
       module_function
 

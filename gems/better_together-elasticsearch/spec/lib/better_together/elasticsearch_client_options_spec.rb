@@ -1,8 +1,22 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require_relative '../../rails_helper'
 
 RSpec.describe BetterTogether::ElasticsearchClientOptions do
+  describe '.enabled?' do
+    it 'returns true when the elasticsearch backend is selected explicitly' do
+      expect(described_class.enabled?('SEARCH_BACKEND' => 'elasticsearch')).to be(true)
+    end
+
+    it 'returns true when elasticsearch connection settings are present' do
+      expect(described_class.enabled?('ELASTICSEARCH_URL' => 'http://example.test:9200')).to be(true)
+    end
+
+    it 'returns false when neither backend selection nor connection settings are present' do
+      expect(described_class.enabled?({})).to be(false)
+    end
+  end
+
   describe '.build' do
     it 'builds a client config from a single URL' do
       env = { 'ELASTICSEARCH_URL' => 'http://example.test:9200' }

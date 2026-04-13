@@ -71,8 +71,6 @@ module BetterTogether
 
     translates :content, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     slugged :title, min_length: 1
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
@@ -109,37 +107,6 @@ module BetterTogether
 
     def content_blocks
       @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
-    end
-
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
-      json = as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug', 'content')
-        end],
-        include: {
-          markdown_blocks: {
-            only: %i[id],
-            methods: [:as_indexed_json]
-          },
-          rich_text_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          },
-          template_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          }
-        }
-      )
-
-      # Include rendered template content if page has template attribute
-      if template.present?
-        json['template_content'] = BetterTogether::TemplateRendererService.new(template).render_for_all_locales
-      end
-
-      json
     end
 
     def primary_image

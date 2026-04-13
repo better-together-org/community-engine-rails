@@ -5,8 +5,6 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Community, :skip_host_setup do
   subject(:community) { build(:better_together_community) }
 
-  it_behaves_like 'an indexed searchable model', :better_together_community
-
   describe 'Factory' do
     it 'has a valid factory' do
       expect(community).to be_valid

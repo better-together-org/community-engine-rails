@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::SearchController', :as_user do
   let(:locale) { I18n.default_locale }
-  let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
+  let(:backend) { instance_double(BetterTogether::Search::BaseBackend, backend_key: :elasticsearch) }
   let(:capture_service) { instance_double(BetterTogether::Metrics::SearchQueryCaptureService, call: captured_query) }
   let(:captured_query) { 'test query' }
   let!(:host_platform) { configure_host_platform }

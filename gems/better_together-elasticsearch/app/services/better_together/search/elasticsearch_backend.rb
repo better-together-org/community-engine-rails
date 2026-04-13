@@ -2,7 +2,6 @@
 
 module BetterTogether
   module Search
-    # Elasticsearch-backed search operations.
     class ElasticsearchBackend < BaseBackend # rubocop:todo Metrics/ClassLength
       def audit_report_labels
         {
@@ -21,7 +20,7 @@ module BetterTogether
       end
 
       def audit_store_identifier(entry)
-        entry.index_name
+        index_name_for(entry)
       end
 
       def audit_search_mode(_entry)
@@ -33,6 +32,8 @@ module BetterTogether
       end
 
       def configured?
+        return false unless BetterTogether::ElasticsearchClientOptions.enabled?
+
         client.present?
       rescue StandardError
         false
@@ -56,7 +57,7 @@ module BetterTogether
         return false unless configured?
         return true if index_exists?(entry)
 
-        entry.model_class.create_elastic_index!
+        entry.model_class.__elasticsearch__.create_index!
         true
       rescue StandardError
         false
@@ -71,7 +72,7 @@ module BetterTogether
       def delete_index(entry)
         return unless index_exists?(entry)
 
-        entry.model_class.delete_elastic_index!
+        entry.model_class.__elasticsearch__.delete_index!
       rescue StandardError => e
         raise unless missing_index_error?(e)
 
@@ -81,18 +82,19 @@ module BetterTogether
       def refresh_index(entry)
         return unless index_exists?(entry)
 
-        entry.model_class.refresh_elastic_index!
+        entry.model_class.__elasticsearch__.refresh_index!
       end
 
       def import_model(entry, args = {})
         ensure_index(entry)
-        entry.model_class.elastic_import(args)
+        entry.model_class.__elasticsearch__.import(args)
       end
 
       def index_exists?(entry)
         return false unless available?
+        return false unless index_name_for(entry)
 
-        client.indices.exists(index: entry.index_name)
+        client.indices.exists(index: index_name_for(entry))
       rescue StandardError
         false
       end
@@ -100,7 +102,7 @@ module BetterTogether
       def document_count(entry)
         return 0 unless index_exists?(entry)
 
-        client.count(index: entry.index_name).fetch('count', 0)
+        client.count(index: index_name_for(entry)).fetch('count', 0)
       rescue StandardError
         0
       end
@@ -108,29 +110,33 @@ module BetterTogether
       def index_stats(entry)
         return {} unless index_exists?(entry)
 
-        index_stats = client.indices.stats(index: entry.index_name)
+        index_stats = client.indices.stats(index: index_name_for(entry))
         indices_hash = index_stats.fetch('indices', {})
-        indices_hash[entry.index_name] || {}
+        indices_hash[index_name_for(entry)] || {}
       rescue StandardError
         {}
       end
 
       def index_record(record)
+        return log_skipped_write(record, :index) unless available?
+
         record.__elasticsearch__.index_document
       end
 
       def delete_record(record)
+        return log_skipped_write(record, :delete) unless available?
+
         record.__elasticsearch__.delete_document
       end
 
       private
 
       def client
-        Elasticsearch::Model.client
+        ::Elasticsearch::Model.client
       end
 
       def build_response(query)
-        Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.models)
+        ::Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.models.select { |model| BetterTogether::Elasticsearch.integrated_model?(model) })
       end
 
       def search_result(response)
@@ -156,8 +162,22 @@ module BetterTogether
         SearchResult.new(records: [], suggestions: [], status:, backend: backend_key)
       end
 
+      def log_skipped_write(record, action)
+        Rails.logger.warn(
+          "[BetterTogether::Search::ElasticsearchBackend] Skipping #{action} for " \
+          "#{record.class.name}##{record.id || 'new'} because Elasticsearch is unavailable"
+        )
+        false
+      end
+
       def missing_index_error?(error)
         error.class.name.end_with?('NotFound') || error.message.include?('index_not_found_exception')
+      end
+
+      def index_name_for(entry)
+        return unless BetterTogether::Elasticsearch.integrated_model?(entry.model_class)
+
+        entry.model_class.__elasticsearch__.index_name
       end
     end
   end

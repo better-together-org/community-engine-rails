@@ -288,39 +288,6 @@ RSpec.describe BetterTogether::Content::Markdown do
     end
   end
 
-  describe '#as_indexed_json' do
-    let(:markdown_source) { '# Searchable Content' }
-    let(:markdown) { described_class.create!(markdown_source: markdown_source) }
-
-    it 'returns a hash with id and localized_content' do
-      result = markdown.as_indexed_json
-
-      expect(result).to be_a(Hash)
-      expect(result.keys).to contain_exactly(:id, :localized_content)
-    end
-
-    it 'includes the markdown id' do
-      result = markdown.as_indexed_json
-      expect(result[:id]).to eq(markdown.id)
-    end
-
-    it 'includes localized content' do
-      result = markdown.as_indexed_json
-
-      expect(result[:localized_content]).to be_a(Hash)
-      expect(result[:localized_content].keys).to match_array(I18n.available_locales)
-    end
-
-    it 'includes plain text content for each locale' do
-      result = markdown.as_indexed_json
-
-      I18n.available_locales.each do |locale|
-        expect(result[:localized_content][locale]).to be_a(String)
-        expect(result[:localized_content][locale]).to include('Searchable Content')
-      end
-    end
-  end
-
   describe 'integration with Page model' do
     let(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform) }
     let(:page) do

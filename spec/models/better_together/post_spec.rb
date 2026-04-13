@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Post do
   it_behaves_like 'an authorable model'
-  it_behaves_like 'an indexed searchable model', :better_together_post
 
   it 'has a valid factory' do
     expect(build(:better_together_post)).to be_valid
@@ -21,15 +20,6 @@ RSpec.describe BetterTogether::Post do
     it 'returns the title' do
       post = build(:better_together_post, title: 'Example')
       expect(post.to_s).to eq 'Example'
-    end
-  end
-
-  describe '#as_indexed_json' do
-    it 'includes localized search fields as string keys' do
-      post = create(:better_together_post, title_en: 'English Title', title_fr: 'Titre Francais')
-      indexed_json = post.as_indexed_json
-
-      expect(indexed_json).to include('title_en', 'title_fr')
     end
   end
 

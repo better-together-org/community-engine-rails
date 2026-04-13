@@ -97,10 +97,12 @@ module BetterTogether
       end
 
       def entry_base_attributes(entry)
+        store_identifier = @backend.audit_store_identifier(entry)
+
         {
           model_name: entry.model_name,
-          store_identifier: @backend.audit_store_identifier(entry),
-          index_name: entry.index_name,
+          store_identifier:,
+          index_name: store_identifier,
           db_count: entry.db_count,
           search_mode: @backend.audit_search_mode(entry)
         }
