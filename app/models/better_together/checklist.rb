@@ -53,6 +53,5 @@ module BetterTogether
     def to_param
       slug
     end
-
   end
 end

@@ -4,6 +4,7 @@ module BetterTogether
   module Elasticsearch
     module Documents
       module Content
+        # Elasticsearch document mapping for rich-text blocks.
         module RichText
           extend ActiveSupport::Concern
 

@@ -8,7 +8,6 @@ module BetterTogether # :nodoc:
   RSpec.describe Page do
     subject(:page) { build(:better_together_page) }
 
-
     describe 'Factory' do
       it 'has a valid factory' do
         expect(page).to be_valid
@@ -250,7 +249,6 @@ module BetterTogether # :nodoc:
           )
         end
       end
-
     end
   end
 end

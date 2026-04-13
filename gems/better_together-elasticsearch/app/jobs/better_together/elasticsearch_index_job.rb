@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Dispatches asynchronous Elasticsearch writes for integrated records.
   class ElasticsearchIndexJob < ApplicationJob
     queue_as :es_indexing
 

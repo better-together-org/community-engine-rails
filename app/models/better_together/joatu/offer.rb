@@ -30,7 +30,6 @@ module BetterTogether
       def self.permitted_attributes(id: true, destroy: false)
         super + response_link_permitted_attributes
       end
-
     end
   end
 end

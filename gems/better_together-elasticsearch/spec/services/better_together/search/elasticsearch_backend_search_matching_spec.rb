@@ -2,7 +2,7 @@
 
 require_relative '../../../rails_helper'
 
-RSpec.describe 'Elasticsearch search matching', type: :integration do
+RSpec.describe BetterTogether::Search::ElasticsearchBackend, type: :integration do
   let(:backend_url) { ENV.fetch('ELASTICSEARCH_URL', 'http://elasticsearch:9200') }
   let(:backend_uri) { URI.parse(backend_url) }
   let(:page_index_name) { "better_together-pages-search-spec-#{SecureRandom.hex(6)}" }

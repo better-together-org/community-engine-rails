@@ -3,8 +3,25 @@
 require 'uri'
 
 module BetterTogether
+  # Resolves Elasticsearch client settings from host-app environment variables.
   module ElasticsearchClientOptions
     module_function
+
+    ELASTICSEARCH_ENV_KEYS = %w[
+      ELASTICSEARCH_URL
+      ES_HOST
+      ES_PORT
+      ELASTICSEARCH_USERNAME
+      ELASTICSEARCH_PASSWORD
+      ES_USERNAME
+      ES_PASSWORD
+      ELASTICSEARCH_CA_CERT_FILE
+      ELASTICSEARCH_CA_CERTS
+      ES_CA_CERT_FILE
+      ES_CA_CERTS
+      ELASTICSEARCH_CA_FINGERPRINT
+      ES_CA_FINGERPRINT
+    ].freeze
 
     def enabled?(env = ENV)
       explicit_elasticsearch_backend?(env) || elasticsearch_env_configured?(env)
@@ -94,22 +111,7 @@ module BetterTogether
     end
 
     def elasticsearch_env_configured?(env)
-      env_value(
-        env,
-        'ELASTICSEARCH_URL',
-        'ES_HOST',
-        'ES_PORT',
-        'ELASTICSEARCH_USERNAME',
-        'ELASTICSEARCH_PASSWORD',
-        'ES_USERNAME',
-        'ES_PASSWORD',
-        'ELASTICSEARCH_CA_CERT_FILE',
-        'ELASTICSEARCH_CA_CERTS',
-        'ES_CA_CERT_FILE',
-        'ES_CA_CERTS',
-        'ELASTICSEARCH_CA_FINGERPRINT',
-        'ES_CA_FINGERPRINT'
-      ).present?
+      env_value(env, *ELASTICSEARCH_ENV_KEYS).present?
     end
 
     def truthy?(value)

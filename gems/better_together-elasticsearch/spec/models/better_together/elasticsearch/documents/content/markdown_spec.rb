@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../rails_helper'
+require_relative '../../../../../rails_helper'
 
 RSpec.describe BetterTogether::Elasticsearch::Documents::Content::Markdown do
   describe '#indexed_elasticsearch_content' do

@@ -59,6 +59,7 @@ module BetterTogether
           global_search: global_searchable?
         )
       end
+
       private
 
       def normalize_pg_search_options(pg_search)

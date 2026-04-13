@@ -6,11 +6,11 @@ RSpec.describe BetterTogether::Search::AuditService do
   subject(:audit_result) { described_class.new(backend:).call }
 
   let(:backend) do
-      instance_double(
-        BetterTogether::Search::BaseBackend,
-        backend_key: :elasticsearch,
-        configured?: true,
-        available?: true,
+    instance_double(
+      BetterTogether::Search::BaseBackend,
+      backend_key: :elasticsearch,
+      configured?: true,
+      available?: true,
       audit_report_labels: {
         collection: 'Indices',
         identifier: 'Index',

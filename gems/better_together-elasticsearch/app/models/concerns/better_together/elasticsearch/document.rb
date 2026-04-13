@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Elasticsearch
+    # Shared Elasticsearch document behavior for CE and host-app records.
     module Document
       extend ActiveSupport::Concern
 
@@ -15,7 +16,7 @@ module BetterTogether
                                                              unless: -> { Rails.env.test? }
       end
 
-      class_methods do
+      class_methods do # rubocop:disable Metrics/BlockLength
         def elasticsearch_runtime_enabled?
           !Rails.env.test? || ENV['ENABLE_ELASTICSEARCH_TESTS'] == 'true'
         end
@@ -81,8 +82,8 @@ module BetterTogether
         BetterTogether::ElasticsearchIndexJob.perform_later(self, :delete)
       end
 
-      alias_method :enqueue_index_document, :enqueue_elasticsearch_index_document
-      alias_method :enqueue_delete_document, :enqueue_elasticsearch_delete_document
+      alias enqueue_index_document enqueue_elasticsearch_index_document
+      alias enqueue_delete_document enqueue_elasticsearch_delete_document
 
       def search_text_value(value)
         if value.respond_to?(:body) && value.body.respond_to?(:to_plain_text)

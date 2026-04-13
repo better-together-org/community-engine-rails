@@ -4,6 +4,7 @@ module BetterTogether
   module Elasticsearch
     module Documents
       module Content
+        # Elasticsearch document mapping for template blocks.
         module Template
           extend ActiveSupport::Concern
 

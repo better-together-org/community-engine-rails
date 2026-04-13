@@ -3,6 +3,7 @@
 module BetterTogether
   module Elasticsearch
     module Documents
+      # Elasticsearch document mapping for page records.
       module Page
         extend ActiveSupport::Concern
         include BetterTogether::Elasticsearch::Document

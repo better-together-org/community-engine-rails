@@ -4,6 +4,7 @@ module BetterTogether
   module Elasticsearch
     module Documents
       module Content
+        # Elasticsearch document mapping for markdown blocks.
         module Markdown
           extend ActiveSupport::Concern
 

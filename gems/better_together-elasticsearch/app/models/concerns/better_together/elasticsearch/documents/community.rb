@@ -3,6 +3,7 @@
 module BetterTogether
   module Elasticsearch
     module Documents
+      # Elasticsearch document mapping for community records.
       module Community
         extend ActiveSupport::Concern
         include BetterTogether::Elasticsearch::Document

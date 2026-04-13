@@ -3,6 +3,7 @@
 module BetterTogether
   module Elasticsearch
     module Documents
+      # Elasticsearch document mapping for call-for-interest records.
       module CallForInterest
         extend ActiveSupport::Concern
         include BetterTogether::Elasticsearch::Document

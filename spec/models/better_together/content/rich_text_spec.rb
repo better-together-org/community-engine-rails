@@ -106,7 +106,6 @@ module BetterTogether # :nodoc:
             expect(localized_content.first).to include('Bold')
           end
         end
-
       end
     end
   end

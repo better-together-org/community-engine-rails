@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Search
+    # Elasticsearch-backed search adapter for CE and extension-owned models.
     class ElasticsearchBackend < BaseBackend # rubocop:todo Metrics/ClassLength
       def audit_report_labels
         {
@@ -118,13 +119,13 @@ module BetterTogether
       end
 
       def index_record(record)
-        return log_skipped_write(record, :index) unless available?
+        return handle_skipped_write(record, :index) unless available?
 
         record.__elasticsearch__.index_document
       end
 
       def delete_record(record)
-        return log_skipped_write(record, :delete) unless available?
+        return handle_skipped_write(record, :delete) unless available?
 
         record.__elasticsearch__.delete_document
       end
@@ -136,7 +137,11 @@ module BetterTogether
       end
 
       def build_response(query)
-        ::Elasticsearch::Model.search(ElasticsearchQuery.build(query), Registry.models.select { |model| BetterTogether::Elasticsearch.integrated_model?(model) })
+        integrated_models = Registry.models.select do |model|
+          BetterTogether::Elasticsearch.integrated_model?(model)
+        end
+
+        ::Elasticsearch::Model.search(ElasticsearchQuery.build(query), integrated_models)
       end
 
       def search_result(response)
@@ -162,13 +167,15 @@ module BetterTogether
         SearchResult.new(records: [], suggestions: [], status:, backend: backend_key)
       end
 
-      def log_skipped_write(record, action)
+      # rubocop:disable Naming/PredicateMethod
+      def handle_skipped_write(record, action)
         Rails.logger.warn(
           "[BetterTogether::Search::ElasticsearchBackend] Skipping #{action} for " \
           "#{record.class.name}##{record.id || 'new'} because Elasticsearch is unavailable"
         )
         false
       end
+      # rubocop:enable Naming/PredicateMethod
 
       def missing_index_error?(error)
         error.class.name.end_with?('NotFound') || error.message.include?('index_not_found_exception')

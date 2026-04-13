@@ -5,10 +5,13 @@ require_relative '../../../rails_helper'
 RSpec.describe BetterTogether::Search::ElasticsearchBackend do
   subject(:backend) { described_class.new }
 
+  let(:document_proxy_class) { stub_const('SpecElasticsearchModelProxy', Class.new) }
+  let(:response_class) { stub_const('SpecElasticsearchResponse', Class.new) }
+  let(:record_proxy_class) { stub_const('SpecElasticsearchRecordProxy', Class.new) }
   let(:model_class) { class_double(BetterTogether::Page) }
   let(:document_proxy) do
     instance_double(
-      'ElasticsearchModelProxy',
+      document_proxy_class,
       index_name: 'better_together-pages',
       create_index!: true,
       delete_index!: true,
@@ -57,7 +60,7 @@ RSpec.describe BetterTogether::Search::ElasticsearchBackend do
     let(:page) { instance_double(BetterTogether::Page) }
     let(:response) do
       instance_double(
-        'ElasticsearchResponse',
+        response_class,
         records: [page],
         response: {
           'suggest' => {
@@ -148,7 +151,7 @@ RSpec.describe BetterTogether::Search::ElasticsearchBackend do
   end
 
   describe '#index_record' do
-    let(:record_proxy) { instance_double('ElasticsearchRecordProxy', index_document: true, delete_document: true) }
+    let(:record_proxy) { instance_double(record_proxy_class, index_document: true, delete_document: true) }
     let(:record) { instance_double(BetterTogether::Page, id: 'record-id', __elasticsearch__: record_proxy) }
 
     it 'delegates indexing to the elasticsearch document proxy when available' do

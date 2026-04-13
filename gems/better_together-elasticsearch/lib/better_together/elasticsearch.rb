@@ -7,3 +7,9 @@ require 'better_together/elasticsearch/version'
 require 'better_together/elasticsearch_client_options'
 require 'better_together/elasticsearch/model_registry'
 require 'better_together/elasticsearch/engine'
+
+module BetterTogether
+  # Entry point for the optional Better Together Elasticsearch extension.
+  module Elasticsearch
+  end
+end

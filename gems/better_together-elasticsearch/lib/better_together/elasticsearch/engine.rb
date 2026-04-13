@@ -2,6 +2,7 @@
 
 module BetterTogether
   module Elasticsearch
+    # Boots the optional Elasticsearch extension inside a CE host app.
     class Engine < ::Rails::Engine
       engine_name 'better_together_elasticsearch'
 

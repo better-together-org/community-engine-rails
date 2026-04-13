@@ -4,6 +4,7 @@ module BetterTogether
   module Elasticsearch
     module Documents
       module Joatu
+        # Elasticsearch document mapping for JOATU offers.
         module Offer
           extend ActiveSupport::Concern
           include BetterTogether::Elasticsearch::Document

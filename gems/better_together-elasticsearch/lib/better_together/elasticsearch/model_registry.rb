@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
+  # Registry helpers for model-to-document integrations owned by the ES extension.
   module Elasticsearch
+    # Tracks model document concerns owned by the Elasticsearch extension.
     DEFAULT_MODEL_DOCUMENTS = {
       'BetterTogether::CallForInterest' => 'BetterTogether::Elasticsearch::Documents::CallForInterest',
       'BetterTogether::Checklist' => 'BetterTogether::Elasticsearch::Documents::Checklist',
@@ -27,7 +29,7 @@ module BetterTogether
     end
 
     def register_model_document(model_name:, concern_name:)
-      self.model_documents = self.model_documents.merge(model_name => concern_name)
+      self.model_documents = model_documents.merge(model_name => concern_name)
     end
 
     def apply_model_documents!
