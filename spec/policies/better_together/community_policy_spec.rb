@@ -131,6 +131,24 @@ RSpec.describe BetterTogether::CommunityPolicy do
       end
     end
 
+    context 'when community is private and an authorized robot has private-content scope' do
+      let(:community) { create(:better_together_community, privacy: 'private') }
+      let(:user) do
+        create(
+          :robot,
+          settings: {
+            bot_access_enabled: true,
+            bot_access_scopes: %w[read_private_content],
+            bot_access_token_digest: BetterTogether::Robot.bot_access_token_digest('token')
+          }
+        )
+      end
+
+      it 'allows viewing' do
+        expect(policy.show?).to be true
+      end
+    end
+
     context 'when community is private and user is the creator' do
       let(:user) { create(:better_together_user) }
       let(:community) { create(:better_together_community, privacy: 'private', creator: user.person) }
@@ -209,6 +227,22 @@ RSpec.describe BetterTogether::CommunityPolicy do
 
       expect(resolved).to include(public_community)
       expect(resolved).not_to include(community_scoped_community)
+    end
+
+    it 'includes private and community-scoped communities for a private-scope robot' do
+      private_community = create(:better_together_community, privacy: 'private')
+      robot = create(
+        :robot,
+        settings: {
+          bot_access_enabled: true,
+          bot_access_scopes: %w[read_private_content],
+          bot_access_token_digest: BetterTogether::Robot.bot_access_token_digest('token')
+        }
+      )
+
+      resolved = described_class::Scope.new(robot, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community, community_scoped_community, private_community)
     end
   end
 end

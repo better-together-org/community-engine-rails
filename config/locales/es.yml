@@ -834,6 +834,18 @@ es:
         subject_removed_by: "%{actor_name} eliminó tu autoría de %{page}"
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
+    bot_defense:
+      errors:
+        expired_challenge: La verificación de seguridad venció. Recarga el formulario
+          e inténtalo de nuevo.
+        generic: La verificación de seguridad falló. Inténtalo de nuevo.
+        honeypot_triggered: La verificación de seguridad falló. Inténtalo de nuevo.
+        invalid_challenge: La verificación de seguridad venció. Recarga el formulario
+          e inténtalo de nuevo.
+        replayed_challenge: Esta verificación de seguridad ya se usó. Recarga el formulario
+          e inténtalo de nuevo.
+        submitted_too_quickly: Tómate un momento para revisar tu envío antes de enviarlo.
+      trap_label: Deja este campo en blanco
     buildings:
       add: Agregar
       title: Edificios

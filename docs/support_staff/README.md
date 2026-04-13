@@ -8,6 +8,7 @@ Documentation for team members who help users with platform issues, onboarding, 
 - [Help Banners](../ui/help-banners.md) - In-app help system
 
 ## Procedures and Escalation
+- [Bot Safety Troubleshooting](bot_safety_troubleshooting.md) - How to respond when protected form submissions fail
 - [Escalation Procedures](../shared/escalation_matrix.md) - When and how to escalate issues
 
 ## Understanding the Platform

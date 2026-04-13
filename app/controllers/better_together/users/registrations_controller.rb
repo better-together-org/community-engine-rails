@@ -4,6 +4,7 @@ module BetterTogether
   module Users
     # Override default Devise registrations controller
     class RegistrationsController < ::Devise::RegistrationsController # rubocop:todo Metrics/ClassLength
+      include BotProtectedSubmissions
       include DeviseLocales
       include InvitationSessionManagement
 
@@ -104,9 +105,15 @@ module BetterTogether
           return
         end
 
+        build_resource(sign_up_params)
+
+        unless bot_protected_submission_valid?(form_id: :registration, resource:)
+          respond_with resource
+          return
+        end
+
         # Validate captcha if enabled by host application
         unless validate_captcha_if_enabled?
-          build_resource(sign_up_params)
           handle_captcha_validation_failure(resource)
           return
         end

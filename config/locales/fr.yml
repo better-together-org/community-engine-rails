@@ -837,6 +837,18 @@ fr:
         subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
+    bot_defense:
+      errors:
+        expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
+          puis réessayez.
+        generic: La vérification de sécurité a échoué. Veuillez réessayer.
+        honeypot_triggered: La vérification de sécurité a échoué. Veuillez réessayer.
+        invalid_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
+          puis réessayez.
+        replayed_challenge: Cette vérification de sécurité a déjà été utilisée. Rechargez
+          le formulaire puis réessayez.
+        submitted_too_quickly: Prenez un moment pour relire votre envoi avant de l'envoyer.
+      trap_label: Laissez ce champ vide
     buildings:
       add: Ajouter
       title: Bâtiments

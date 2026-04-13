@@ -825,6 +825,19 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    bot_defense:
+      errors:
+        expired_challenge: Security verification expired. Please reload the form and
+          try again.
+        generic: Security verification failed. Please try again.
+        honeypot_triggered: Security verification failed. Please try again.
+        invalid_challenge: Security verification expired. Please reload the form and
+          try again.
+        replayed_challenge: This security check has already been used. Please reload
+          the form and try again.
+        submitted_too_quickly: Please take a moment to review your submission before
+          sending it.
+      trap_label: Leave this field blank
     buildings:
       add: Add
       title: Buildings
