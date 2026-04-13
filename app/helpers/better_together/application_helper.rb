@@ -50,7 +50,7 @@ module BetterTogether
     # Returns the current active identity for the user.
     # This is a placeholder and should be updated to support active identity features.
     def current_identity
-      @current_identity ||= current_person
+      @current_identity ||= current_person || (respond_to?(:current_robot) ? current_robot : nil)
     end
 
     # Retrieves the current person associated with the signed-in user.
