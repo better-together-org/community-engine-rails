@@ -69,4 +69,12 @@ RSpec.describe 'layouts/better_together/application' do
     expect(rendered).not_to include('better-together--e2e-session')
     expect(rendered).not_to include('e2ePassphraseModal')
   end
+
+  it 'does not include remote CDN stylesheet links' do
+    render template: 'layouts/better_together/application'
+
+    expect(rendered).not_to include('https://unpkg.com/trix')
+    expect(rendered).not_to include('https://cdnjs.cloudflare.com/ajax/libs/slim-select')
+    expect(rendered).not_to include('https://unpkg.com/leaflet')
+  end
 end

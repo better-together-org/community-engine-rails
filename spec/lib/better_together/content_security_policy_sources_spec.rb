@@ -71,6 +71,14 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
       end
 
       expect(sources).to include('https://scripts.example.com')
+      expect(sources).not_to include('https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com', 'https://unpkg.com',
+                                     'https://ga.jspm.io')
+    end
+  end
+
+  describe '.style_sources' do
+    it 'keeps the core style allowlist local by default' do
+      expect(described_class.style_sources(nil)).to eq(%i[self unsafe_inline])
     end
   end
 
@@ -90,7 +98,8 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
         end
       end
 
-      expect(sources).to include('https://unpkg.com', 'https://*.tile.openstreetmap.org', 'https://images.example.com')
+      expect(sources).to include('https://*.tile.openstreetmap.org', 'https://images.example.com')
+      expect(sources).not_to include('https://unpkg.com')
     end
   end
 

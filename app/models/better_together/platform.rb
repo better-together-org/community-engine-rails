@@ -27,7 +27,6 @@ module BetterTogether
     SOFTWARE_VARIANTS = %w[community_engine generic].freeze
     SEARCH_QUERY_ANALYTICS_MODES = %w[full hashed].freeze
     DEFAULT_LOCAL_CSP_IMG_SOURCES = [
-      'https://unpkg.com',
       'https://*.tile.openstreetmap.org'
     ].freeze
     CSP_SETTING_KEYS = {

@@ -10,30 +10,16 @@ module BetterTogether
 
     ORIGIN_SPLIT_PATTERN = /[\s,]+/
 
-    SCRIPT_SOURCES = [
-      :self,
-      :blob,
-      'https://cdn.jsdelivr.net',
-      'https://cdnjs.cloudflare.com',
-      'https://unpkg.com',
-      'https://ga.jspm.io'
-    ].freeze
+    SCRIPT_SOURCES = %i[self blob].freeze
 
     CONNECT_SOURCES = %i[self wss].freeze
 
-    STYLE_SOURCES = [
-      :self,
-      :unsafe_inline,
-      'https://cdn.jsdelivr.net',
-      'https://cdnjs.cloudflare.com',
-      'https://unpkg.com'
-    ].freeze
+    STYLE_SOURCES = %i[self unsafe_inline].freeze
 
     IMG_SOURCES = [
       :self,
       :data,
       :blob,
-      'https://unpkg.com',
       'https://*.tile.openstreetmap.org'
     ].freeze
 

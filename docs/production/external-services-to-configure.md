@@ -69,15 +69,15 @@ References:
 - `app/models/better_together/robot.rb`
 - `app/helpers/better_together/translatable_fields_helper.rb`
 
-## Sentry (Backend + Browser)
+## Sentry (Backend + Optional Host-App Browser Integration)
 
 Backend error reporting and performance traces:
 - `SENTRY_DSN`: Server DSN for the Ruby SDK.
 - `GIT_REV`: Git SHA/version for release tagging.
 - Optional sampling: `SENTRY_TRACES_SAMPLE_RATE`, `SENTRY_PROFILES_SAMPLE_RATE`.
 
-Browser (frontend) error reporting:
-- `SENTRY_CLIENT_KEY`: Public key used by the Sentry browser SDK loaded in layouts.
+Browser (frontend) error reporting, if a host app or optional integration adds the Sentry browser SDK:
+- `SENTRY_CLIENT_KEY`: Public key used by the host app or optional browser integration.
 
 Example environment:
 ```bash
@@ -91,8 +91,7 @@ GIT_REV=$(git rev-parse --short HEAD)
 
 References:
 - `spec/dummy/config/initializers/sentry.rb:3`
-- `app/views/layouts/better_together/application.html.erb:5`
-- `app/views/layouts/better_together/turbo_native.html.erb:5`
+- Host-app or optional integration-specific browser initializer/template
 
 ## Email (SMTP / SendGrid)
 
@@ -205,7 +204,7 @@ SECRET_KEY_BASE=<generated-secret>
 
 - S3/CDN: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `FOG_DIRECTORY`, `FOG_REGION`, `ASSET_HOST`
 - LLM provider credentials: `BETTER_TOGETHER_LLM_PROVIDER`, `BETTER_TOGETHER_LLM_MODEL`, plus provider-specific secrets such as `OPENAI_API_KEY` (optional)
-- Sentry: `SENTRY_DSN`, `SENTRY_CLIENT_KEY`, `GIT_REV`
+- Sentry: `SENTRY_DSN`, `SENTRY_CLIENT_KEY` (only when a host app/browser integration uses it), `GIT_REV`
 - Email: `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`
 - Elasticsearch: `ELASTICSEARCH_URL` or `ES_HOST` + `ES_PORT`
 - Redis: `REDIS_URL` (+ `RACK_ATTACK_REDIS_URL` optional)

@@ -6,7 +6,6 @@ class SeedDefaultLocalPlatformCspImageOrigins < ActiveRecord::Migration[7.1]
   end
 
   DEFAULT_CSP_IMG_SOURCES = [
-    'https://unpkg.com',
     'https://*.tile.openstreetmap.org'
   ].freeze
 
