@@ -54,7 +54,6 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(frame_src_select).to have_css("option[value='https://forms.btsdev.ca']", visible: false)
       expect(frame_ancestor_select).to have_css("option[value='https://bebettertogether.ca']", visible: false)
       expect(img_src_select).to have_css("option[value='https://communityengine.app']", visible: false)
-      expect(img_src_select).to have_css("option[value='https://unpkg.com']", visible: false)
       expect(img_src_select).to have_css("option[value='https://*.tile.openstreetmap.org']", visible: false)
       expect(script_src_select).not_to have_css('option', visible: false)
       expect(connect_src_select).not_to have_css('option', visible: false)
@@ -116,13 +115,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
       expect(csp).to include('frame-ancestors https://bebettertogether.ca')
       expect(csp).to include("frame-src 'self' https://forms.btsdev.ca")
-      expect(csp).to include("img-src 'self' data: blob: https://unpkg.com https://*.tile.openstreetmap.org https://images.example.com")
+      expect(csp).to include("img-src 'self' data: blob: https://*.tile.openstreetmap.org https://images.example.com")
       expected_script_src = [
         "script-src 'self' blob:",
-        'https://cdn.jsdelivr.net',
-        'https://cdnjs.cloudflare.com',
-        'https://unpkg.com',
-        'https://ga.jspm.io',
         'https://scripts.example.com'
       ].join(' ')
 

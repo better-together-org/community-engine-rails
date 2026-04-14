@@ -147,7 +147,8 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     it 'seeds local platform CSP image origins for bundled Leaflet assets' do
       platform = create(:better_together_platform)
 
-      expect(platform.csp_img_src).to include('https://unpkg.com', 'https://*.tile.openstreetmap.org')
+      expect(platform.csp_img_src).to include('https://*.tile.openstreetmap.org')
+      expect(platform.csp_img_src).not_to include('https://unpkg.com')
     end
 
     it 'does not seed bundled Leaflet image origins for external platforms' do

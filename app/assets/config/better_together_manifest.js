@@ -2,6 +2,7 @@
 
 //= link_tree ../../javascript .js
 //= link_tree ../stylesheets .css
+//= link_tree ../../../vendor/javascript .js
 //= link_tree ../../../vendor/stylesheets .css
 //= link_tree ../stylesheets .scss
 //= link better_together/mailer.css
