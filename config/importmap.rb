@@ -33,7 +33,8 @@ pin 'bootstrap', to: 'bootstrap.min.js', preload: true
 pin 'chart.js', to: 'chart.js', preload: true # @4.5.1
 pin 'slim-select', to: 'slim-select.js', preload: true # @2.13.1
 pin 'trix', to: 'trix.js', preload: true # @2.1.18
-pin 'mermaid', to: 'mermaid/index.js', preload: true # @10.9.5
+pin 'mermaid_umd', to: 'mermaid/mermaid.min.js', preload: true # @10.9.5
+pin 'mermaid', to: 'mermaid_shim.js', preload: true
 
 pin 'masonry', to: 'masonry.min.js' # @4.2.2
 pin 'imagesloaded', to: 'imagesloaded.min.js' # @5.0.0
