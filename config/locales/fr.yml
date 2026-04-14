@@ -2209,7 +2209,6 @@ fr:
       shares_controller:
         error_tracking: 'Erreur lors du suivi du partage :'
         failed_tracking: Impossible de suivre le partage.
-        ga_not_initialized: Google Analytics n'est pas initialisé.
         unsupported_platform: 'Plateforme non supportée : %{platform}'
       user_account_reports_controller:
         create:

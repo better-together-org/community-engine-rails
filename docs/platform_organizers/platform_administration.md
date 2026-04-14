@@ -574,8 +574,8 @@ See [Compliance and Legal](compliance_legal.md) for compliance requirements.
 Manage external service integrations:
 
 **Optional services:**
-- Google Analytics (with consent)
-- Error tracking (Sentry, etc.)
+- Host-added telemetry or analytics services
+- Error tracking or monitoring services
 - Email delivery (SMTP, SendGrid)
 - File storage (S3, MinIO)
 - Search (Elasticsearch)

@@ -183,8 +183,17 @@ module BetterTogether
                        content_for(:meta_robots)
                      else
                        content
-                     end
+      end
       tag.meta(name: 'robots', content: meta_content)
+    end
+
+    def render_provider_head_tags
+      fragments = ::BetterTogether.head_tag_providers.values.filter_map do |provider|
+        fragment = provider.call(self)
+        fragment.presence
+      end
+
+      safe_join(fragments, "\n")
     end
 
     # Builds Open Graph meta tags for the current view using content blocks when

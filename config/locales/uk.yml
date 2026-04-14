@@ -2179,7 +2179,6 @@ uk:
       shares_controller:
         error_tracking: 'Помилка відстеження поширення:'
         failed_tracking: Не вдалося відстежити поширення.
-        ga_not_initialized: Google Analytics не ініціалізовано.
         unsupported_platform: 'Непідтримувана платформа: %{platform}'
       user_account_reports_controller:
         create:
