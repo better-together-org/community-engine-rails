@@ -28,9 +28,7 @@ module BetterTogether
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
 
-    before_action do
-      Rack::MiniProfiler.authorize_request if current_user&.permitted_to?('manage_platform')
-    end
+    before_action :authorize_mini_profiler_if_enabled
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     rescue_from ActionController::RoutingError, with: :render_not_found
@@ -63,6 +61,14 @@ module BetterTogether
       ]
 
       bots.any? { |bot| user_agent&.include?(bot) }
+    end
+
+    def authorize_mini_profiler_if_enabled
+      return unless BetterTogether::Profiling.enabled?
+      return unless defined?(Rack::MiniProfiler)
+      return unless current_user&.permitted_to?('manage_platform')
+
+      Rack::MiniProfiler.authorize_request
     end
 
     def check_platform_setup

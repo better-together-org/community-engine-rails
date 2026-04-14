@@ -46,9 +46,9 @@ require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
 require 'turbo-rails'
-require 'rack-mini-profiler'
-require 'memory_profiler'
-require 'stackprof'
+require 'rack-mini-profiler' if BetterTogether::Profiling.enabled?
+require 'memory_profiler' if BetterTogether::Profiling.enabled?
+require 'stackprof' if BetterTogether::Profiling.enabled?
 
 module BetterTogether
   # Engine configuration for BetterTogether

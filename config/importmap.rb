@@ -33,7 +33,7 @@ pin 'bootstrap', to: 'bootstrap.min.js', preload: true
 pin 'chart.js', to: 'chart.js', preload: true # @4.5.1
 pin 'slim-select', to: 'slim-select.js', preload: true # @2.13.1
 pin 'trix', to: 'trix.js', preload: true # @2.1.18
-pin 'mermaid_umd', to: 'mermaid/mermaid.min.js', preload: true # @10.9.5
+pin 'mermaid_umd', to: 'mermaid/mermaid.min.js', preload: true # @11.14.0
 pin 'mermaid', to: 'mermaid_shim.js', preload: true
 
 pin 'masonry', to: 'masonry.min.js' # @4.2.2
@@ -44,7 +44,7 @@ pin 'leaflet-gesture-handling', to: 'leaflet-gesture-handling.js', preload: true
 pin 'leaflet-providers', preload: true # @2.0.0
 
 # Optional: Module shims
-pin 'es-module-shims', to: 'es-module-shims.js', preload: true # @1.10.1
+pin 'es-module-shims', to: 'es-module-shims.js', preload: true # @2.8.0
 
 # Application entry point
 pin 'application', preload: true

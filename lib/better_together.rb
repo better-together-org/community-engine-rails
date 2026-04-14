@@ -2,6 +2,7 @@
 
 require 'better_together/version'
 require 'better_together/adapter_registry'
+require 'better_together/profiling'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
 require 'better_together/mcp'
