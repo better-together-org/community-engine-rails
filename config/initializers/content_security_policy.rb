@@ -9,7 +9,7 @@ Rails.application.configure do
     p.default_src :self
     p.base_uri    :self
 
-    # Allow JS from self (importmap), blob for ES module shims, CDN sources used by importmap pins,
+    # Allow JS from self (importmap), blob for trusted module/runtime use, CDN sources used by importmap pins,
     # and the configured asset host when host apps serve digested assets from a separate CDN domain.
     p.script_src(*BetterTogether::ContentSecurityPolicySources.script_sources)
     p.style_src(*BetterTogether::ContentSecurityPolicySources.style_sources)

@@ -43,9 +43,6 @@ pin 'leaflet', preload: true # @1.9.4
 pin 'leaflet-gesture-handling', to: 'leaflet-gesture-handling.js', preload: true # Ensure it is preloaded # @1.2.2
 pin 'leaflet-providers', preload: true # @2.0.0
 
-# Optional: Module shims
-pin 'es-module-shims', to: 'es-module-shims.js', preload: true # @2.8.0
-
 # Application entry point
 pin 'application', preload: true
 
