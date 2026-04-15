@@ -116,6 +116,13 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           # Redirects to stored location or default (base path), not person profile
           expect(response.location).to include('/en')
         end
+
+        it 'ignores an unsafe external return_to param' do
+          get better_together.agreements_status_path(locale: I18n.locale, return_to: 'https://evil.example/phish')
+
+          expect(response).to have_http_status(:redirect)
+          expect(response).not_to redirect_to('https://evil.example/phish')
+        end
       end
     end
   end

@@ -251,7 +251,10 @@ RSpec.describe 'Documentation screenshots for 0.11.0 federation, platform, and s
       expect(page).to have_text('Identifier:')
       expect(page).to have_text('Time Zone:')
       expect(page).to have_text('Platform operations')
-      expect(page).to have_link('Manage storage', href: better_together.platform_storage_configurations_path(host_platform, locale: I18n.default_locale))
+      expect(page).to have_link(
+        'Manage storage',
+        href: better_together.platform_storage_configurations_path(host_platform, locale: I18n.default_locale)
+      )
       scroll_heading_into_view(host_platform.name)
     end
   end

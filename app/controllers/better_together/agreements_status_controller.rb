@@ -14,7 +14,7 @@ module BetterTogether
     def index
       # If no unaccepted agreements, redirect to stored location or root
       if @unaccepted_agreements.empty?
-        redirect_to safe_return_to_path || stored_location_for(:user) || after_sign_in_path_for(current_user),
+        redirect_to resolved_return_path(fallback: after_sign_in_path_for(current_user)),
                     notice: t('.all_accepted')
         return
       end
@@ -125,10 +125,12 @@ module BetterTogether
     def safe_return_to_path
       path = params[:return_to].to_s
       return if path.blank?
-      return unless path.start_with?('/')
-      return if path.start_with?('//')
 
-      path
+      url_from(path)
+    end
+
+    def resolved_return_path(fallback:)
+      safe_return_to_path || url_from(stored_location_for(:user)) || fallback
     end
   end
 end
