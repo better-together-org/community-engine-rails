@@ -18,6 +18,23 @@ module BetterTogether
       skip_before_action :set_platform_invitation
       skip_before_action :check_platform_privacy
       skip_before_action :check_platform_setup
+
+      private
+
+      # Shared bearer-token helpers for subcontrollers that use FederationAccessToken auth.
+      # Subcontrollers override `connection` to add per-endpoint platform direction checks.
+
+      def access_token
+        @access_token ||= ::BetterTogether::FederationAccessToken.find_active_by_plaintext(bearer_token)
+      end
+
+      def bearer_token
+        authorization = request.authorization.to_s
+        scheme, token = authorization.split(' ', 2)
+        return unless scheme&.casecmp('Bearer')&.zero?
+
+        token.to_s
+      end
     end
   end
 end
