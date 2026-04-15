@@ -750,13 +750,20 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      accept: I agree
+      accept_error: Unable to record agreement acceptance right now.
+      accepted: Accepted
+      accepting: Saving...
       create:
         acceptance_required: You must accept all required agreements to continue.
         successfully_accepted: Thank you for accepting the required agreements.
       form:
+        active_for_consent: Active for consent
+        agreement_kind: Agreement kind
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
         page_label: Linked Page (optional)
+        required_for: Required for
       no_terms: No terms defined.
       notice:
         body: Please view the full agreement before accepting.
@@ -1734,6 +1741,9 @@ en:
         request: Request
         request_creator: Request Creator
         show:
+          agreement_family: Agreement Family
+          agreement_type: Agreement Type
+          decision_made_at: Decision Recorded
           details: Details
           open_platform_connections: Open Platform Connections
           platform_connection: Platform Connection
@@ -3966,6 +3976,7 @@ en:
     visible: Visible
     'yes': 'Yes'
   helpers:
+    cancel: Cancel
     close: Close
     errors:
       heading: Form Errors

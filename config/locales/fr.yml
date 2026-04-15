@@ -760,13 +760,20 @@ fr:
       add: Ajouter
       title: Conditions de l'accord
     agreements:
+      accept: J'accepte
+      accept_error: Impossible d'enregistrer l'acceptation de l'accord pour le moment.
+      accepted: Accepté
+      accepting: Enregistrement...
       create:
         acceptance_required: Vous devez accepter tous les accords requis pour continuer.
         successfully_accepted: Merci d'avoir accepté les accords requis.
       form:
+        active_for_consent: Actif pour le consentement
+        agreement_kind: Type d'accord
         page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
           des conditions de l'accord.
         page_label: Page liée (optionnel)
+        required_for: Requis pour
       no_terms: Aucune condition définie.
       notice:
         body: Veuillez lire l'accord complet avant de l'accepter.
@@ -1769,6 +1776,9 @@ fr:
         request: Demande
         request_creator: Créateur de la demande
         show:
+          agreement_family: Famille d'accord
+          agreement_type: Type d'accord
+          decision_made_at: Décision enregistrée
           details: Détails
           open_platform_connections: Ouvrir les connexions de plateforme
           platform_connection: Connexion de plateforme
@@ -4072,6 +4082,7 @@ fr:
     visible: Visible
     'yes': Oui
   helpers:
+    cancel: Annuler
     close: Fermer
     errors:
       heading: Titre

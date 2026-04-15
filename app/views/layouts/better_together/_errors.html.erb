@@ -1,5 +1,6 @@
 
 <% if object.errors.any? %>
+  <% publishing_agreement = BetterTogether::ChecksRequiredAgreements.public_publishing_agreement %>
   <div id="form_errors" class="alert alert-danger" role="alert">
     <h4 class="alert-heading">The following errors occurred:</h4>
     <ul>
@@ -7,15 +8,17 @@
         <li><%= message %></li>
       <% end %>
     </ul>
-    <% if missing_publishing_agreement_error_for?(object) %>
+    <% if missing_publishing_agreement_error_for?(object) && publishing_agreement.present? %>
       <div class="mt-3">
         <%= link_to 'Review and accept the content publishing agreement',
-                    better_together.agreements_status_path(
-                      locale: I18n.locale,
-                      agreement: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER,
-                      return_to: request.fullpath
-                    ),
-                    class: 'btn btn-sm btn-outline-danger' %>
+                    better_together.agreement_path(publishing_agreement, locale: I18n.locale),
+                    class: 'btn btn-sm btn-outline-danger agreement-modal-link',
+                    role: 'button',
+                    data: {
+                      agreement_identifier: publishing_agreement.identifier,
+                      agreement_mode: 'direct_accept',
+                      agreement_accept_url: better_together.accept_agreement_path(publishing_agreement, locale: I18n.locale)
+                    } %>
       </div>
     <% end %>
   </div>

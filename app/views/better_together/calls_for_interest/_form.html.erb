@@ -18,16 +18,7 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if call_for_interest.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% call_for_interest.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: call_for_interest if call_for_interest.errors.any? %>
 
   <div class="row">
     <!-- Vertical Pills Navigation -->

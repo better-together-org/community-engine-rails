@@ -92,7 +92,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
-        resources :agreements
+        resources :agreements do
+          member do
+            post :accept
+          end
+        end
 
         resources :calendars
         resources :calls_for_interest, except: %i[index show]

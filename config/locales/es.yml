@@ -760,13 +760,20 @@ es:
       add: Agregar
       title: Acuerdos
     agreements:
+      accept: Acepto
+      accept_error: No se puede registrar la aceptación del acuerdo en este momento.
+      accepted: Aceptado
+      accepting: Guardando...
       create:
         acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
         successfully_accepted: Gracias por aceptar los acuerdos requeridos.
       form:
+        active_for_consent: Activo para consentimiento
+        agreement_kind: Tipo de acuerdo
         page_help: Cuando se establezca, el contenido de la página vinculada se mostrará
           en lugar de los términos del acuerdo.
         page_label: Página vinculada (opcional)
+        required_for: Requerido para
       no_terms: No hay términos definidos.
       notice:
         body: Por favor, lea el acuerdo completo antes de aceptarlo.
@@ -1763,6 +1770,9 @@ es:
         request: Solicitud
         request_creator: Creador de la solicitud
         show:
+          agreement_family: Familia de acuerdo
+          agreement_type: Tipo de acuerdo
+          decision_made_at: Decisión registrada
           details: Detalles
           open_platform_connections: Abrir conexiones de plataforma
           platform_connection: Conexión de plataforma
@@ -4045,6 +4055,7 @@ es:
     visible: Visible
     'yes': Sí
   helpers:
+    cancel: Cancelar
     close: Cerrar
     errors:
       heading: Form Errors

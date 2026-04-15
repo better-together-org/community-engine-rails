@@ -23,16 +23,7 @@
 
   <%= turbo_frame_tag 'form_errors' %>
 
-  <% if page.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('views.labels.please_correct') %></h4>
-      <ul>
-        <% page.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: page if page.errors.any? %>
 
   <% if page.protected %>
     <div class="row">

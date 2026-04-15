@@ -1,7 +1,8 @@
 import { Controller } from '@hotwired/stimulus'
 
-// Controls the modal turbo-frame and enables the corresponding checkbox when
-// the user has scrolled to the bottom of the agreement content.
+// Controls agreement review completion inside the shared modal. It can either
+// unlock a page checkbox or signal a direct-accept modal action once the user
+// has scrolled through the agreement content.
 export default class extends Controller {
   static values = {
     // Selector for agreement checkboxes
@@ -75,8 +76,6 @@ export default class extends Controller {
     if (!frame || frame !== this.element) return
 
     // Wait for content to render inside the frame
-    const frameDocument = this.element.contentDocument || this.element.querySelector('iframe')?.contentDocument
-
     // Turbo frame is inside the modal; use the modal's scrollable body as
     // the scroll container so we observe the real scrolling element.
     // Prefer closest('.modal-body') (ancestor) rather than searching inside the frame.
@@ -170,15 +169,23 @@ export default class extends Controller {
     const agreementId = this.element.dataset.agreementIdentifier || this.element.getAttribute('data-agreement-identifier')
     if (!agreementId) return
 
-    const checkbox = document.querySelector(`${this.checkboxSelectorValue}[data-agreement-identifier="${agreementId}"]`)
-    if (!checkbox) return
-
     // If the content doesn't scroll, treat it as already read and allow
     // immediate enabling. Otherwise require that the user actually scrolled
     // and reached the bottom.
     const userHasSeen = !contentScrollable || this._userScrolled
 
     if (atBottom && userHasSeen) {
+      if (this.reviewMode() === 'direct_accept') {
+        document.dispatchEvent(new CustomEvent('better_together:agreement-review-complete', {
+          detail: { agreementIdentifier: agreementId },
+          bubbles: true
+        }))
+        return
+      }
+
+      const checkbox = document.querySelector(`${this.checkboxSelectorValue}[data-agreement-identifier="${agreementId}"]`)
+      if (!checkbox) return
+
       // Enable the checkbox and ensure it is NOT readonly so form validators
       // don't treat it as a read-only (and therefore already-valid) input.
       checkbox.disabled = false
@@ -194,6 +201,10 @@ export default class extends Controller {
       // Optionally focus the checkbox to signal it's now actionable
       checkbox.focus()
     }
+  }
+
+  reviewMode () {
+    return this.element.dataset.agreementMode || this.element.getAttribute('data-agreement-mode') || 'checkbox_unlock'
   }
 
   showNotice (agreementId) {
