@@ -137,7 +137,7 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
       ]
     ) do
       login_as(platform_manager, scope: :user)
-      visit better_together.host_dashboard_path(locale:)
+      visit better_together.host_dashboard_platform_connection_review_path(locale:)
       page.execute_script <<~JS
         document
           .querySelector('section[aria-labelledby="platform-connection-review-heading"]')
@@ -161,7 +161,7 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
       metadata: screenshot_metadata(role: 'platform_manager_safety_reviewer', flow: 'host_dashboard_safety_queue')
     ) do
       login_as(platform_manager, scope: :user)
-      visit better_together.host_dashboard_path(locale:)
+      visit better_together.host_dashboard_safety_review_path(locale:)
       page.execute_script <<~JS
         document
           .querySelector('section[aria-labelledby="safety-review-heading"]')

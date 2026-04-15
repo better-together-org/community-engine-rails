@@ -9,7 +9,33 @@ module BetterTogether
     def index # rubocop:todo Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
       # rubocop:enable Lint/CopDirectiveSyntax
       authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
+      build_overview_resources
+      build_membership_review_cards
+    end
 
+    def safety_review
+      authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
+      authorize ::BetterTogether::Safety::Case, :index?
+
+      build_safety_review_cards
+      render :safety_review
+    end
+
+    def platform_connection_review
+      authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
+      authorize ::BetterTogether::PlatformConnection, :index?
+
+      build_platform_connection_review_cards
+      render :platform_connection_review
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/PerceivedComplexity
+
+    protected
+
+    # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    def build_overview_resources
       root_classes = [
         Community, NavigationArea, Page, Platform, Role, ResourcePermission, Category
       ]
@@ -95,15 +121,8 @@ module BetterTogether
       end
 
       build_sensitive_directory_cards
-      build_membership_review_cards
-      build_safety_review_cards
-      build_platform_connection_review_cards
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/PerceivedComplexity
-
-    protected
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def set_resource_variables(klass, prefix: nil)
       variable_name = klass.model_name.name.demodulize.underscore

@@ -5,6 +5,13 @@ require 'digest'
 module BetterTogether
   # rubocop:todo Metrics/ModuleLength
   module NavigationItemsHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
+    HOST_DASHBOARD_TURBO_FRAME_ID = 'host-dashboard-tab-content'
+    HOST_DASHBOARD_TAB_IDENTIFIERS = %w[
+      host-dashboard
+      host-dashboard-platform-connection-review
+      host-dashboard-safety-review
+    ].freeze
+
     NAV_TREE_PRELOADS = [
       :string_translations,
       { linkable: [:string_translations] },
@@ -70,6 +77,10 @@ module BetterTogether
                             'bs-target' => "##{dom_id(navigation_item, navigation_item.slug)}" })
       end
 
+      if (turbo_frame_target = navigation_item_turbo_frame_target(navigation_item))
+        data = data.merge({ turbo_frame: turbo_frame_target, turbo_action: 'advance' })
+      end
+
       data
     end
 
@@ -110,6 +121,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:todo Metrics/AbcSize
     def navigation_item_visible_for?(navigation_item, platform: host_platform)
       return false unless navigation_item
 
@@ -117,12 +129,14 @@ module BetterTogether
       cache_key = [navigation_item.id, platform&.id, current_user&.id]
       return @navigation_item_visibility_cache[cache_key] if @navigation_item_visibility_cache.key?(cache_key)
 
-      visible = navigation_item.visible_to?(current_user, platform:) ||
+      visible = special_navigation_item_visible?(navigation_item) ||
+                navigation_item.visible_to?(current_user, platform:) ||
                 (navigation_item.dropdown? &&
                   navigation_item.children.any? { |child| navigation_item_visible_for?(child, platform:) })
 
       @navigation_item_visibility_cache[cache_key] = visible
     end
+    # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def navigation_item_children_for(navigation_item, platform: host_platform)
@@ -141,7 +155,7 @@ module BetterTogether
       return [] unless host_nav
 
       children = host_nav.children.visible
-      children.select { |child| child.visible_to?(current_user, platform: host_platform) }
+      children.select { |child| navigation_item_visible_for?(child, platform: host_platform) }
     end
 
     def render_platform_host_sidebar_nav
@@ -229,6 +243,25 @@ module BetterTogether
         end,
         nav_item&.route_name
       )
+    end
+
+    def navigation_item_turbo_frame_target(navigation_item)
+      return unless params[:controller] == 'better_together/host_dashboard'
+      return unless HOST_DASHBOARD_TAB_IDENTIFIERS.include?(navigation_item.identifier)
+
+      HOST_DASHBOARD_TURBO_FRAME_ID
+    end
+
+    def special_navigation_item_visible?(navigation_item)
+      case navigation_item.identifier
+      when 'host-dashboard-platform-connection-review'
+        current_person&.permitted_to?('manage_network_connections') ||
+          current_person&.permitted_to?('approve_network_connections')
+      when 'host-dashboard-safety-review'
+        current_person&.permitted_to?('manage_platform_safety')
+      else
+        false
+      end
     end
 
     # Renders a navigation items list with optional navigation area styling

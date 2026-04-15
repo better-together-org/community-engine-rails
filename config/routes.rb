@@ -362,6 +362,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+            get 'safety-review', to: 'host_dashboard#safety_review', as: 'host_dashboard_safety_review'
+            get 'federation-review',
+                to: 'host_dashboard#platform_connection_review',
+                as: 'host_dashboard_platform_connection_review'
 
             resources :categories
 

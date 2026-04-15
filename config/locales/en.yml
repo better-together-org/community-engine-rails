@@ -2316,6 +2316,8 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_platform_connection_review: Federation Review
+        host_dashboard_safety_review: Safety Review
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
@@ -3363,7 +3365,7 @@ en:
         table_aria: Storage configurations
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
-      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
       new:
         subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
@@ -4197,6 +4199,7 @@ en:
         outgoing: Outgoing from the host platform
       heading: Federation review queue
       no_connections: No host-platform federation connections need review yet.
+      page_title: Federation review
       pending_badge:
         one: 1 pending request
         other: "%{count} pending requests"
@@ -4222,6 +4225,7 @@ en:
       open_cases_badge:
         one: 1 open case
         other: "%{count} open cases"
+      page_title: Safety review
       review_queue_link: Open review queue
       summary:
         content_review_items: Content review items

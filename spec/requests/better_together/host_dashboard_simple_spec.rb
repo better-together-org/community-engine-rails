@@ -15,7 +15,9 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
   end
 
   let(:locale) { I18n.default_locale }
-  let(:platform_manager) { BetterTogether::User.find_by!(email: 'manager@example.test') }
+  let(:platform_manager) do
+    find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+  end
 
   describe 'GET /host/dashboard' do
     it 'renders the host dashboard successfully' do
@@ -58,7 +60,20 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
       expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
     end
 
-    it 'surfaces a federation review queue when the manager can review platform connections' do
+    it 'keeps the overview focused on dashboard resources and membership review' do
+      grant_platform_permission(platform_manager, 'manage_network_connections')
+      grant_platform_permission(platform_manager, 'manage_platform_safety')
+
+      get better_together.host_dashboard_path(locale: locale)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Membership review queue')
+      expect(response.body).not_to include('Federation review queue')
+      expect(response.body).not_to include('Safety review queue')
+      expect(response.body).to include('host-dashboard-tab-content')
+    end
+
+    it 'surfaces a federation review queue in its own host dashboard tab' do
       grant_platform_permission(platform_manager, 'manage_network_connections')
       host_platform = BetterTogether::Platform.find_by!(host: true)
       remote_platform = create(:better_together_platform, name: 'Neighbourhood Commons')
@@ -68,7 +83,7 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
              status: 'pending',
              updated_at: 4.minutes.ago)
 
-      get better_together.host_dashboard_path(locale: locale)
+      get better_together.host_dashboard_platform_connection_review_path(locale: locale)
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include('Federation review queue')
@@ -77,7 +92,7 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
       expect(response.body).to include(better_together.platform_connection_path(BetterTogether::PlatformConnection.last, locale: locale))
     end
 
-    it 'surfaces a safety review queue when the manager can review safety cases' do
+    it 'surfaces a safety review queue in its own host dashboard tab' do
       grant_platform_permission(platform_manager, 'manage_platform_safety')
       report = create(:report,
                       reporter: create(:better_together_person),
@@ -100,7 +115,7 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
         body: 'Participant follow-up added for review.'
       )
 
-      get better_together.host_dashboard_path(locale: locale)
+      get better_together.host_dashboard_safety_review_path(locale: locale)
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include('Safety review queue')
@@ -108,6 +123,17 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
       expect(response.body).to include('Review submitted reports')
       expect(response.body).to include(better_together.safety_cases_path(locale: locale))
       expect(response.body).to include(better_together.reports_path(locale: locale))
+    end
+
+    it 'renders host dashboard review tabs into the shared turbo frame' do
+      grant_platform_permission(platform_manager, 'manage_platform_safety')
+
+      get better_together.host_dashboard_safety_review_path(locale: locale),
+          headers: { 'Turbo-Frame' => 'host-dashboard-tab-content' }
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('turbo-frame id="host-dashboard-tab-content"')
+      expect(response.body).to include('Safety review queue')
     end
   end
 end
