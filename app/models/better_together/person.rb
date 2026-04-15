@@ -151,6 +151,11 @@ module BetterTogether
       show_conversation_details Boolean, default: false
     end
 
+    # Borgberry fleet identity — set via USB key enrollment or fleet registration
+    # borgberry_did: W3C DID derived from operator GPG key (e.g. did:key:z6Mk...)
+    # borgberry_node_id: borgberry fleet node this person operates (e.g. bts-0)
+    attr_accessor :borgberry_did_raw # used during enrollment only
+
     # Ensure proper coercion and persistence for preferences store attributes
     def locale=(value)
       prefs = (preferences || {}).dup
