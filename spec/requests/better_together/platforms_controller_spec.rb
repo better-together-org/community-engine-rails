@@ -23,6 +23,15 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'renders platform rows in the host table view' do
+      platform = create(:better_together_platform, identifier: "row-platform-#{SecureRandom.hex(4)}")
+
+      get better_together.platforms_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(<tr id="#{ActionView::RecordIdentifier.dom_id(platform)}"))
+    end
+
     it 'renders show for host platform' do
       host_platform = BetterTogether::Platform.find_by(host: true)
       get better_together.platform_path(locale:, id: host_platform.slug)

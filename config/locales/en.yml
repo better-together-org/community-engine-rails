@@ -918,6 +918,16 @@ en:
           this community when the configured access model allows it.
       index:
         new_btn_text: New Community
+      membership_review:
+        description:
+          one: "%{community_name} has 1 open membership request ready for review."
+          other: "%{community_name} has %{count} open membership requests ready for
+            review."
+        heading: Membership request review
+        open_requests_badge:
+          one: 1 open request
+          other: "%{count} open requests"
+        review_link: Review requests
       new:
         title: Communities
       none-yet: None-yet
@@ -1932,6 +1942,18 @@ en:
         signature_html: Best regards,<br /> The %{community_name} Team
         signature_text: Best regards, The %{community_name} Team
         subject: Your membership request for %{community_name} was declined
+      digest:
+        greeting: Hello %{name},
+        message:
+          one: 1 new membership request now needs review for %{community_name}.
+          other: "%{count} new membership requests now need review for %{community_name}."
+        requestors_label: Recent applicants
+        review_requests: Review membership requests
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject:
+          one: 1 membership request needs review for %{community_name}
+          other: "%{count} membership requests need review for %{community_name}"
       submitted:
         greeting: Hello %{name},
         message: "%{requestor_name} asked to join %{community_name}."
@@ -2330,6 +2352,11 @@ en:
       membership_request_declined:
         body: Your request to join %{community_name} was declined
         title: Membership request declined for %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} asked to join %{community_name}"
         title: New membership request for %{community_name}
@@ -4050,6 +4077,34 @@ en:
       infrastructure: Infrastructure
       page_title: Host Dashboard
       title: Host Dashboard
+    membership_review:
+      anonymous_requester: Anonymous requester
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet

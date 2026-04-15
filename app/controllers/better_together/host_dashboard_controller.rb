@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation
+  class HostDashboardController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/AbcSize
     # rubocop:todo Metrics/CyclomaticComplexity
@@ -95,6 +95,7 @@ module BetterTogether
       end
 
       build_sensitive_directory_cards
+      build_membership_review_cards
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/AbcSize
@@ -115,6 +116,44 @@ module BetterTogether
 
       set_resource_variables(Person) if @show_people_card
       set_resource_variables(User) if @show_user_card
+    end
+
+    def build_membership_review_cards
+      communities = sorted_review_communities
+      @membership_review_cards = []
+      @membership_review_total_open_count = 0
+      @membership_review_open_community_count = 0
+      return if communities.empty?
+
+      open_requests = open_membership_requests_for(communities)
+      requests_by_community = open_requests.group_by(&:target_id)
+
+      @membership_review_total_open_count = open_requests.size
+      @membership_review_open_community_count = requests_by_community.count { |_id, requests| requests.any? }
+      @membership_review_cards = communities.map { |community| membership_review_card(community, requests_by_community) }
+    end
+
+    def sorted_review_communities
+      Community.with_translations.to_a.sort_by { |community| community.name.to_s.downcase }
+    end
+
+    def open_membership_requests_for(communities)
+      BetterTogether::Joatu::MembershipRequest
+        .includes(:creator, :target)
+        .where(target_type: 'BetterTogether::Community', target_id: communities.map(&:id), status: 'open')
+        .order(created_at: :desc)
+        .to_a
+    end
+
+    def membership_review_card(community, requests_by_community)
+      community_requests = requests_by_community.fetch(community.id, [])
+
+      {
+        community:,
+        open_count: community_requests.size,
+        requests_enabled: community.membership_requests_enabled?,
+        latest_requests: community_requests.first(3)
+      }
     end
   end
 end

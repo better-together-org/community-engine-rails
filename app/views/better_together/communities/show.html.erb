@@ -53,6 +53,12 @@
                resource: @community,
                membership: @current_person_community_membership %>
 
+    <% if @membership_request_review_allowed %>
+      <%= render 'better_together/communities/membership_review_panel',
+                 community: @community,
+                 open_membership_request_count: @open_membership_request_count %>
+    <% end %>
+
     <!-- Community tabbed section with members -->
     <section class="card tabbed-section">
       <div class="card-header">

@@ -49,7 +49,20 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
       params[:code_of_conduct_agreement] = '1'
     end
     params[:invitation_code] = invitation_code if invitation_code.present?
-    params.merge(bot_defense_payload(:registration))
+    params.merge(bot_defense_payload)
+  end
+
+  def bot_defense_payload(form_id = :registration)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
+    {
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
+      }
+    }
   end
 
   describe 'when platform requires_invitation is true' do
@@ -148,9 +161,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
       it 'allows registration and accepts invitation' do
         expect(invitation.reload.status).to eq('pending')
 
-        post '/en/users', params: {
-          **registration_params(invitation_code: invitation.token)
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token)
 
         user = BetterTogether::User.find_by(email: invitee_email)
         expect(user).to be_present

@@ -54,7 +54,20 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
       params[:code_of_conduct_agreement] = '1'
     end
     params[:invitation_code] = invitation_code if invitation_code.present?
-    params.merge(bot_defense_payload(:registration))
+    params.merge(bot_defense_payload)
+  end
+
+  def bot_defense_payload(form_id = :registration)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
+    {
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
+      }
+    }
   end
 
   describe 'Community Invitation Registration' do

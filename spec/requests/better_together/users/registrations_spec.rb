@@ -47,6 +47,19 @@ RSpec.describe 'User Registration', :no_auth, :skip_host_setup do
       end
     end
 
+    let(:bot_defense_payload) do
+      challenge = travel_to(3.seconds.ago) do
+        BetterTogether::BotDefense::Challenge.issue(form_id: :registration)
+      end
+
+      {
+        bot_defense: {
+          token: challenge.token,
+          trap_values: { challenge.trap_field => '' }
+        }
+      }
+    end
+
     context 'when creating a user with person attributes' do
       it 'creates user, person, and community membership successfully' do
         expect do
@@ -55,7 +68,7 @@ RSpec.describe 'User Registration', :no_auth, :skip_host_setup do
             terms_of_service_agreement: '1',
             privacy_policy_agreement: '1',
             code_of_conduct_agreement: '1'
-          }.merge(bot_defense_payload(:registration))
+          }.merge(bot_defense_payload)
         end.to change(BetterTogether::User, :count).by(1)
                                                    .and change(BetterTogether::Person, :count).by(1)
                                                                                               .and change(
@@ -90,7 +103,7 @@ RSpec.describe 'User Registration', :no_auth, :skip_host_setup do
             terms_of_service_agreement: '1',
             privacy_policy_agreement: '1',
             code_of_conduct_agreement: '1'
-          }.merge(bot_defense_payload(:registration))
+          }.merge(bot_defense_payload)
         end.not_to change(BetterTogether::User, :count) # User not created due to invalid person
 
         expect(response).to have_http_status(:unprocessable_content) # Validation failed
@@ -104,7 +117,7 @@ RSpec.describe 'User Registration', :no_auth, :skip_host_setup do
           post '/en/users', params: {
             user: valid_user_params
             # No agreement checkboxes
-          }
+          }.merge(bot_defense_payload)
         end.not_to change(BetterTogether::User, :count)
 
         expect(response).to have_http_status(:unprocessable_content) # Unprocessable entity

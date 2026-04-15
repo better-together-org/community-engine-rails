@@ -124,6 +124,49 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(response).to have_http_status(:ok)
       expect(assigns(:community)).to eq(community)
     end
+
+    it 'shows a membership review shortcut for reviewers' do
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Taylor Reviewer')
+
+      get better_together.community_path(locale:, id: community.slug)
+
+      expect(response.body).to include('Membership request review')
+      expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
+    end
+  end
+
+  describe 'GET /:locale/c/:slug (show) membership review access', :as_user do
+    let(:community_manager_role) do
+      BetterTogether::Role.find_by(identifier: 'community_manager',
+                                   resource_type: 'BetterTogether::Community') ||
+        create(:better_together_role,
+               identifier: 'community_manager',
+               name: 'Community Manager',
+               resource_type: 'BetterTogether::Community')
+    end
+    let(:community) do
+      create(:better_together_community,
+             name: 'Managed Community',
+             privacy: 'public',
+             creator: platform_manager.person)
+    end
+
+    before do
+      create(:better_together_person_community_membership,
+             :active,
+             member: regular_user.person,
+             joinable: community,
+             role: community_manager_role)
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Pat Applicant')
+    end
+
+    it 'shows the review shortcut to community managers' do
+      get better_together.community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Membership request review')
+      expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
+    end
   end
 
   describe 'GET /:locale/c/:slug (show) - access control' do

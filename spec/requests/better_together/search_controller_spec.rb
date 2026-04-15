@@ -217,6 +217,36 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
     end
 
+    context 'when the backend returns a platform result', :no_auth do
+      let!(:platform_result) do
+        create(
+          :better_together_platform,
+          name: 'Community Engine Platform',
+          host_url: 'https://communityengine.app',
+          privacy: 'public'
+        )
+      end
+
+      it 'renders the default platform card instead of a table row partial' do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [platform_result],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+
+        get better_together.search_path(locale:), params: { q: 'community engine' }
+
+        platform_dom_id = ActionView::RecordIdentifier.dom_id(platform_result)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(%(div id="#{platform_dom_id}"))
+        expect(response.body).not_to include(%(<tr id="#{platform_dom_id}"))
+      end
+    end
+
     context 'when the backend returns the current user private content', :as_user do
       let(:user) { BetterTogether::User.find_by!(email: 'user@example.test') }
       let!(:own_private_post) do
