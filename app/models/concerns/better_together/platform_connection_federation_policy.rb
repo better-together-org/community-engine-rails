@@ -57,6 +57,15 @@ module BetterTogether
       federation_auth_policy == 'api_write' && allows_federation_scope?('content_write')
     end
 
+    # Returns true when both ends have opted in to C3 token exchange
+    def allows_c3_exchange?
+      allow_c3_exchange? && api_read_enabled?
+    end
+
+    def c3_exchange_rate_value
+      c3_exchange_rate.to_f.then { |r| r.positive? ? r : 1.0 }
+    end
+
     private
 
     def normalize_content_policy_settings!
