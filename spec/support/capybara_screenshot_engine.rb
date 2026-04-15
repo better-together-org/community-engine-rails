@@ -280,9 +280,16 @@ module BetterTogether # :nodoc:
           style.innerHTML = '.__bt_docs_screenshot_hidden__ { visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
           document.head.appendChild(style);
 
+          const preserveFixedElement = (element) => {
+            if (!element || !element.matches) return false;
+
+            return element.matches('.modal.show, .modal-backdrop.show, .modal-backdrop.fade.show') ||
+              !!element.closest('.modal.show');
+          };
+
           document.querySelectorAll('*').forEach((element) => {
             const computed = window.getComputedStyle(element);
-            if (computed.position === 'fixed' || computed.position === 'sticky') {
+            if ((computed.position === 'fixed' || computed.position === 'sticky') && !preserveFixedElement(element)) {
               element.classList.add('__bt_docs_screenshot_hidden__');
             }
           });
