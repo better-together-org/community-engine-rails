@@ -920,6 +920,17 @@ es:
           lo permite.
       index:
         new_btn_text: Nueva comunidad
+      membership_review:
+        description:
+          one: "%{community_name} tiene 1 solicitud de membresía abierta lista para
+            revisión."
+          other: "%{community_name} tiene %{count} solicitudes de membresía abiertas
+            listas para revisión."
+        heading: Revisión de solicitudes de membresía
+        open_requests_badge:
+          one: 1 solicitud abierta
+          other: "%{count} solicitudes abiertas"
+        review_link: Revisar solicitudes
       new:
         title: Comunidades
       none-yet: None-yet
@@ -1958,6 +1969,21 @@ es:
           El equipo de %{community_name}
         signature_text: Saludos cordiales, El equipo de %{community_name}
         subject: Tu solicitud de membresía para %{community_name} fue rechazada
+      digest:
+        greeting: Hola %{name},
+        message:
+          one: 1 nueva solicitud de membresía ahora necesita revisión para %{community_name}.
+          other: "%{count} nuevas solicitudes de membresía ahora necesitan revisión
+            para %{community_name}."
+        requestors_label: Solicitantes recientes
+        review_requests: Revisar solicitudes de membresía
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{community_name}
+        signature_text: Saludos cordiales, El equipo de %{community_name}
+        subject:
+          one: 1 solicitud de membresía necesita revisión para %{community_name}
+          other: "%{count} solicitudes de membresía necesitan revisión para %{community_name}"
       submitted:
         greeting: Hola %{name},
         message: "%{requestor_name} solicitó unirse a %{community_name}."
@@ -2362,6 +2388,11 @@ es:
       membership_request_declined:
         body: Tu solicitud para unirte a %{community_name} fue rechazada
         title: Solicitud de membresía rechazada para %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} solicitó unirse a %{community_name}"
         title: Nueva solicitud de membresía para %{community_name}
@@ -4122,6 +4153,34 @@ es:
       infrastructure: Infraestructura
       page_title: Panel de control del anfitrión
       title: Panel de control del anfitrión
+    membership_review:
+      anonymous_requester: Persona solicitante anónima
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
     resource_card:
       new_resource: Nuevo %{resource}
       none_yet: Ninguno aún

@@ -46,6 +46,19 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
     end
   end
 
+  def bot_defense_payload(form_id = :registration)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
+    {
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
+      }
+    }
+  end
+
   describe 'Community Invitation Registration' do
     let!(:community) { create(:better_together_community, identifier: "test-community-#{SecureRandom.hex(4)}") }
     let!(:invitation) do
@@ -65,7 +78,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
           privacy_policy_agreement: '1',
           code_of_conduct_agreement: '1',
           invitation_code: invitation.token
-        }
+        }.merge(bot_defense_payload)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
@@ -97,7 +110,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
           privacy_policy_agreement: '1',
           code_of_conduct_agreement: '1',
           invitation_code: invitation.token
-        }
+        }.merge(bot_defense_payload)
       end.to change(BetterTogether::User, :count).by(1)
 
       user = BetterTogether::User.find_by(email: invitee_email)
@@ -128,7 +141,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
           privacy_policy_agreement: '1',
           code_of_conduct_agreement: '1',
           invitation_code: invitation.token
-        }
+        }.merge(bot_defense_payload)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
                                                  .and change(BetterTogether::EventAttendance, :count).by(1)
@@ -168,7 +181,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
           privacy_policy_agreement: '1',
           code_of_conduct_agreement: '1',
           invitation_code: invitation.token
-        }
+        }.merge(bot_defense_payload)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
@@ -206,7 +219,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
           terms_of_service_agreement: '1',
           privacy_policy_agreement: '1',
           code_of_conduct_agreement: '1'
-        }
+        }.merge(bot_defense_payload)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
@@ -234,7 +247,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
           user: valid_user_params,
           invitation_code: invitation.token
           # No agreement checkboxes
-        }
+        }.merge(bot_defense_payload)
       end.not_to change(BetterTogether::User, :count)
 
       # Invitation should remain pending
@@ -275,7 +288,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
           privacy_policy_agreement: '1',
           code_of_conduct_agreement: '1',
           invitation_code: community_invitation.token # Primary invitation
-        }
+        }.merge(bot_defense_payload)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 

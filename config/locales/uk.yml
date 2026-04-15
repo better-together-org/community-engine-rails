@@ -907,6 +907,22 @@ uk:
           для цієї спільноти, коли це дозволяє налаштована модель доступу.
       index:
         new_btn_text: Нова спільнота
+      membership_review:
+        description:
+          few: "%{community_name} має %{count} відкриті запити на членство, готові
+            до розгляду."
+          many: "%{community_name} має %{count} відкритих запитів на членство, готових
+            до розгляду."
+          one: "%{community_name} має 1 відкритий запит на членство, готовий до розгляду."
+          other: "%{community_name} має %{count} відкритого запиту на членство, готового
+            до розгляду."
+        heading: Розгляд запитів на членство
+        open_requests_badge:
+          few: "%{count} відкриті запити"
+          many: "%{count} відкритих запитів"
+          one: 1 відкритий запит
+          other: "%{count} відкритого запиту"
+        review_link: Переглянути запити
       new:
         title: Спільноти
       none-yet: Поки що немає
@@ -1940,6 +1956,23 @@ uk:
         signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
         signature_text: З найкращими побажаннями, Команда %{community_name}
         subject: Ваш запит на членство в %{community_name} відхилено
+      digest:
+        greeting: Вітаємо, %{name}!
+        message:
+          few: "%{count} нові запити на членство тепер потребують розгляду для %{community_name}."
+          many: "%{count} нових запитів на членство тепер потребують розгляду для
+            %{community_name}."
+          one: 1 новий запит на членство тепер потребує розгляду для %{community_name}.
+          other: "%{count} нового запиту на членство тепер потребує розгляду для %{community_name}."
+        requestors_label: Нещодавні заявники й заявниці
+        review_requests: Переглянути запити на членство
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject:
+          few: "%{count} запити на членство потребують розгляду для %{community_name}"
+          many: "%{count} запитів на членство потребують розгляду для %{community_name}"
+          one: 1 запит на членство потребує розгляду для %{community_name}
+          other: "%{count} запиту на членство потребує розгляду для %{community_name}"
       submitted:
         greeting: Вітаємо, %{name}!
         message: "%{requestor_name} попросив(ла) приєднатися до %{community_name}."
@@ -2342,6 +2375,11 @@ uk:
       membership_request_declined:
         body: Ваш запит на приєднання до %{community_name} відхилено
         title: Запит на членство в %{community_name} відхилено
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} попросив(ла) приєднатися до %{community_name}"
         title: Новий запит на членство в %{community_name}
@@ -4117,6 +4155,40 @@ uk:
       infrastructure: Інфраструктура
       page_title: Панель керування хоста
       title: Панель керування хоста
+    membership_review:
+      anonymous_requester: Анонімний запитувач
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        few: "%{count} communities with open requests"
+        many: "%{count} communities with open requests"
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        few: "%{count} open requests"
+        many: "%{count} open requests"
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        few: "%{count} open requests"
+        many: "%{count} open requests"
+        one: 1 open request
+        other: "%{count} open requests"
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
     resource_card:
       new_resource: Новий %{resource}
       none_yet: Поки що немає

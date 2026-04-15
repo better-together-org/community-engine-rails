@@ -1,0 +1,16 @@
+<%= t('.greeting', name: @recipient_name) %>
+
+<%= t('.message', count: @request_count, community_name: @community_name) %>
+
+<% if @requestor_names.any? %>
+<%= t('.requestors_label') %>
+<% @requestor_names.each do |requestor_name| %>
+- <%= requestor_name %>
+<% end %>
+<% end %>
+
+<% if @review_url.present? %>
+<%= t('.review_requests') %>: <%= @review_url %>
+<% end %>
+
+<%= t('.signature_text', community_name: @community_name) %>

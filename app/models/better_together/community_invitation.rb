@@ -41,11 +41,13 @@ module BetterTogether
       # Use the role specified in the invitation, or default to community_member
       target_role = role || BetterTogether::Role.find_by(identifier: 'community_member')
 
-      # Create community membership for the invitee
-      community.person_community_memberships.find_or_create_by!(
+      membership = community.person_community_memberships.find_or_initialize_by(
         member: person,
         role: target_role
       )
+
+      membership.status = 'active' if membership.new_record? || membership.status == 'pending'
+      membership.save! if membership.new_record? || membership.changed?
     end
 
     def check_duplicate_person_invitation

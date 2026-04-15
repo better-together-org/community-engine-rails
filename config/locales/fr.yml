@@ -923,6 +923,15 @@ fr:
           pour cette communauté lorsque la configuration d'accès l'autorise.
       index:
         new_btn_text: Nouvelle communauté
+      membership_review:
+        description:
+          one: "%{community_name} a 1 demande d'adhésion ouverte à examiner."
+          other: "%{community_name} a %{count} demandes d'adhésion ouvertes à examiner."
+        heading: Revue des demandes d'adhésion
+        open_requests_badge:
+          one: 1 demande ouverte
+          other: "%{count} demandes ouvertes"
+        review_link: Examiner les demandes
       new:
         title: Nouvelle communauté
       none-yet: Aucune communauté pour l'instant
@@ -1966,6 +1975,21 @@ fr:
           L'équipe de %{community_name}
         signature_text: Cordialement, L'équipe de %{community_name}
         subject: Votre demande d'adhésion à %{community_name} a été refusée
+      digest:
+        greeting: Bonjour %{name},
+        message:
+          one: 1 nouvelle demande d'adhésion doit maintenant être examinée pour %{community_name}.
+          other: "%{count} nouvelles demandes d'adhésion doivent maintenant être examinées
+            pour %{community_name}."
+        requestors_label: Personnes demandeuses récentes
+        review_requests: Examiner les demandes d'adhésion
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{community_name}
+        signature_text: Cordialement, L'équipe de %{community_name}
+        subject:
+          one: 1 demande d'adhésion doit être examinée pour %{community_name}
+          other: "%{count} demandes d'adhésion doivent être examinées pour %{community_name}"
       submitted:
         greeting: Bonjour %{name},
         message: "%{requestor_name} a demandé à rejoindre %{community_name}."
@@ -2373,6 +2397,11 @@ fr:
       membership_request_declined:
         body: Votre demande pour rejoindre %{community_name} a été refusée
         title: Demande d'adhésion refusée pour %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} a demandé à rejoindre %{community_name}"
         title: Nouvelle demande d'adhésion pour %{community_name}
@@ -4149,6 +4178,34 @@ fr:
       infrastructure: Infrastructure
       page_title: Tableau de bord de l'hôte
       title: Tableau de bord de l'hôte
+    membership_review:
+      anonymous_requester: Personne anonyme
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
     resource_card:
       new_resource: Nouveau %{resource}
       none_yet: Aucun pour l'instant

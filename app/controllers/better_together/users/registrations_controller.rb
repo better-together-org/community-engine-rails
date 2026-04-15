@@ -311,17 +311,19 @@ module BetterTogether
         false
       end
 
-      def setup_community_membership(user, person_param = nil) # rubocop:todo Metrics/MethodLength
+      def setup_community_membership(user, person_param = nil) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
         person = person_param || user.person
         community_role = determine_community_role_from_invitations
+        desired_status = registration_community_membership_status
 
         begin
-          helpers.host_community.person_community_memberships.find_or_create_by!(
+          membership = helpers.host_community.person_community_memberships.find_or_initialize_by(
             member: person,
             role: community_role
-          ) do |membership|
-            membership.status = 'pending' # Explicitly set to pending during registration
-          end
+          )
+
+          membership.status = desired_status if membership.new_record? || (membership.status == 'pending' && desired_status == 'active')
+          membership.save! if membership.new_record? || membership.changed?
         rescue ActiveRecord::InvalidForeignKey => e
           Rails.logger.error "Foreign key violation creating community membership: #{e.message}"
           raise e
@@ -329,6 +331,14 @@ module BetterTogether
           Rails.logger.error "Unexpected error creating community membership: #{e.message}"
           raise e
         end
+      end
+
+      def registration_community_membership_status
+        return 'active' if [@community_invitation, @event_invitation, @platform_invitation].any?(&:present?)
+
+        return 'pending' if helpers.host_platform&.membership_requests_enabled_for?(helpers.host_community)
+
+        'active'
       end
 
       def after_inactive_sign_up_path_for(resource)

@@ -33,5 +33,17 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
         content.include?('people')
       ).to be true
     end
+
+    it 'surfaces a membership review queue with direct review links' do
+      community = create(:better_together_community, name: 'Reviewable Community')
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Alex Applicant')
+
+      get better_together.host_dashboard_path(locale: locale)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Membership review queue')
+      expect(response.body).to include('Reviewable Community')
+      expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
+    end
   end
 end
