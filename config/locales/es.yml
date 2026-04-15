@@ -1844,7 +1844,7 @@ es:
         title: Coincidencias potenciales
       nav:
         agreements: Acuerdos
-        hub: Hub
+        hub: Ayuda mutua
         manage_categories: Gestionar categorías
         offers: Ofertas
         requests: Solicitudes
@@ -1917,7 +1917,7 @@ es:
           El equipo de %{platform}
         subject: Se ha creado un nuevo acuerdo
       new_match:
-        subject: Nueva coincidencia de Joatu
+        subject: Nueva coincidencia de ayuda mutua
     labelable:
       custom-label-placeholder: Tu etiqueta personalizada
     loading: Cargando...

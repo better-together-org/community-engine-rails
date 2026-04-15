@@ -24,7 +24,9 @@ module BetterTogether
     def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       resource_instance(resource_params)
       authorize_resource
+
       return if performed?
+
       record_optional_agreement_acceptances
 
       respond_to do |format|

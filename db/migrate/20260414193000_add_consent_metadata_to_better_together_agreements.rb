@@ -24,10 +24,10 @@ class AddConsentMetadataToBetterTogetherAgreements < ActiveRecord::Migration[7.2
 
   private
 
-  def add_column_unless_exists(column_name, type, **options)
+  def add_column_unless_exists(column_name, type, **)
     return if column_exists?(:better_together_agreements, column_name)
 
-    add_column :better_together_agreements, column_name, type, **options
+    add_column :better_together_agreements, column_name, type, **
   end
 
   def backfill_existing_agreement_metadata

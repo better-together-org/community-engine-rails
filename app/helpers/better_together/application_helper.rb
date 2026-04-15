@@ -158,7 +158,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
-                content_for(:meta_description) # rubocop:todo Layout/IndentationWidth
+                      content_for(:meta_description)
                     elsif content_for?(:og_description)
                       content_for(:og_description)
                     else
@@ -183,7 +183,7 @@ module BetterTogether
                        content_for(:meta_robots)
                      else
                        content
-      end
+                     end
       tag.meta(name: 'robots', content: meta_content)
     end
 
@@ -202,7 +202,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
-             content_for(:og_title) # rubocop:todo Layout/IndentationWidth
+                   content_for(:og_title)
                  elsif content_for?(:page_title)
                    t('og.page.title', title: content_for(:page_title), platform_name: host_platform.name)
                  else

@@ -1849,7 +1849,7 @@ fr:
         title: Correspondances potentielles
       nav:
         agreements: Accords
-        hub: Hub
+        hub: Entraide
         manage_categories: Gérer les catégories
         offers: Offres
         requests: Demandes
@@ -1922,7 +1922,7 @@ fr:
           L'équipe de %{platform}
         subject: Un nouvel accord a été créé
       new_match:
-        subject: Nouvelle correspondance Joatu
+        subject: Nouvelle correspondance d'entraide
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...

@@ -1839,7 +1839,7 @@ uk:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Взаємодопомога
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1912,7 +1912,7 @@ uk:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: Нова відповідність Joatu
+        subject: Нова відповідність взаємодопомоги
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...

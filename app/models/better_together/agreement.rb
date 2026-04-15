@@ -84,7 +84,7 @@ module BetterTogether
 
     private
 
-    def apply_default_consent_metadata
+    def apply_default_consent_metadata # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       self.active_for_consent = true if active_for_consent.nil?
 
       case identifier.to_s

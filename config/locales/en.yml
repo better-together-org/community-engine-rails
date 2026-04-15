@@ -1815,7 +1815,7 @@ en:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Mutual Aid
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1888,7 +1888,7 @@ en:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: New Joatu match
+        subject: New mutual aid match
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...

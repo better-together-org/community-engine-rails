@@ -45,7 +45,7 @@ module BetterTogether
           render json: { errors: [{ detail: e.message }] }, status: :unprocessable_entity
         end
 
-        def serialize_agreement(agreement)
+        def serialize_agreement(agreement) # rubocop:todo Metrics/MethodLength
           {
             data: {
               id: agreement.id,
