@@ -17,7 +17,7 @@ RSpec.describe 'BetterTogether::Api::V1::Pages', :no_auth do
     let!(:unpublished_page) { create(:better_together_page, :unpublished) }
 
     context 'when authenticated' do
-      before { get url, headers: auth_headers }
+      before { get url, params: { page: { size: 100 } }, headers: auth_headers }
 
       it 'returns success status' do
         expect(response).to have_http_status(:ok)
@@ -30,6 +30,8 @@ RSpec.describe 'BetterTogether::Api::V1::Pages', :no_auth do
       end
 
       it 'includes published pages' do
+        get url, params: { filter: { slug: published_page.slug } }, headers: auth_headers
+
         json = JSON.parse(response.body)
         page_ids = json['data'].map { |p| p['id'] }
         expect(page_ids).to include(published_page.id)

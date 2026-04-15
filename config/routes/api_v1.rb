@@ -68,6 +68,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :authorships
   jsonapi_resources :page_blocks
 
   # Content Blocks (all STI types — filter by page_id or type)
@@ -76,6 +77,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
   jsonapi_resources :navigation_items
+  jsonapi_resources :robots, only: %i[index show create update]
 
   # Geography (read-only)
   jsonapi_resources :geography_continents, only: %i[index show]
