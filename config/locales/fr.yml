@@ -3267,18 +3267,22 @@ fr:
               access_grants:
                 description: Consultez les permissions que vous avez accordées aux
                   personnes liées et celles qu'elles vous ont accordées en retour.
+                open_link: Ouvrir les autorisations d'accès
                 title: Autorisations d'accès
               linked_seeds:
                 description: Parcourez les données synchronisées partagées via vos
                   liens de plateforme approuvés.
+                open_link: Ouvrir les seeds liés
                 title: Seeds liés
               person_links:
                 description: Consultez les personnes et connexions fédérées actuellement
                   liées à votre compte.
+                open_link: Ouvrir les personnes liées
                 title: Personnes liées
               person_seeds:
                 description: Ouvrez vos exports seed portables pour les flux avancés
                   de portabilité et d'interopérabilité.
+                open_link: Ouvrir les exports seed portables
                 title: Exports seed portables
             description: Accédez à vos personnes liées, autorisations d'accès, données
               synchronisées et exports portables depuis un seul endroit.
@@ -3308,11 +3312,19 @@ fr:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: Cet export n'a pas pu être préparé. Veuillez demander un
+              nouvel export.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Terminé
+              failed: Échoué
+              pending: En attente
+              processing: En cours
+            table_caption: Demandes récentes d'export de compte
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced

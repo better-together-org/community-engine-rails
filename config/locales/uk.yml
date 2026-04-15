@@ -3229,18 +3229,22 @@ uk:
               access_grants:
                 description: Перегляньте дозволи, які ви надали пов'язаним людям,
                   і ті, які вони надали вам у відповідь.
+                open_link: Відкрити дозволи доступу
                 title: Дозволи доступу
               linked_seeds:
                 description: Переглядайте синхронізовані дані, поширені через ваші
                   підтверджені платформні зв'язки.
+                open_link: Відкрити пов'язані seeds
                 title: Пов'язані seeds
               person_links:
                 description: Перегляньте людей і федеративні зв'язки, які зараз пов'язані
                   з вашим обліковим записом.
+                open_link: Відкрити пов'язаних людей
                 title: Пов'язані люди
               person_seeds:
                 description: Відкрийте переносні seed-експорти для розширених сценаріїв
                   портативності та взаємодії.
+                open_link: Відкрити переносні seed-експорти
                 title: Переносні seed-експорти
             description: Отримуйте доступ до пов'язаних людей, дозволів доступу, синхронізованих
               даних та переносних експортів з одного місця.
@@ -3270,11 +3274,19 @@ uk:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: Цей експорт не вдалося підготувати. Будь ласка, запросіть
+              новий експорт.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Завершено
+              failed: Помилка
+              pending: Очікується
+              processing: Обробляється
+            table_caption: Останні запити на експорт облікового запису
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
