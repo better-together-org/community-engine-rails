@@ -68,6 +68,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :authorships
   jsonapi_resources :page_blocks
 
   # Content Blocks (all STI types — filter by page_id or type)
@@ -76,6 +77,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
   jsonapi_resources :navigation_items
+  jsonapi_resources :robots, only: %i[index show create update]
 
   # Geography (read-only)
   jsonapi_resources :geography_continents, only: %i[index show]
@@ -96,6 +98,22 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Membership requests — create is public (unauthenticated); read/manage require auth
   jsonapi_resources :membership_requests, only: %i[index show create destroy]
+
+  # C3 Community Contribution Token (borgberry fleet integration)
+  namespace :c3 do
+    post 'contributions', to: 'contributions#create'
+    get 'contributions', to: 'contributions#index'
+    get 'balance', to: 'contributions#balance'
+  end
+
+  # Fleet node registry (borgberry fleet agent registration + heartbeat)
+  namespace :fleet do
+    resources :nodes, param: :node_id, only: %i[index show create] do
+      member do
+        post :heartbeat
+      end
+    end
+  end
 
   # Webhook management (outbound subscriptions)
   jsonapi_resources :webhook_endpoints
