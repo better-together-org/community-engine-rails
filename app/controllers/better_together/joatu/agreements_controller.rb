@@ -68,6 +68,9 @@ module BetterTogether
           @joatu_agreement.accept!
           redirect_to joatu_agreement_path(@joatu_agreement),
                       notice: t('flash.joatu.agreement.accepted')
+        rescue BetterTogether::C3::Balance::InsufficientBalance
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: insufficient_c3_alert(@joatu_agreement)
         rescue ActiveRecord::RecordInvalid => e
           redirect_to joatu_agreement_path(@joatu_agreement),
                       alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to accept agreement'
@@ -102,6 +105,23 @@ module BetterTogether
       end
 
       private
+
+      # Build a plain-language flash message when a payer has insufficient C3 balance.
+      # Uses Tree Seeds amounts rather than raw numbers or technical identifiers.
+      def insufficient_c3_alert(agreement)
+        payer_balance = BetterTogether::C3::Balance.find_by(
+          holder: current_person, community: nil
+        )
+        current_millitokens = payer_balance&.available_millitokens.to_i
+        price_millitokens = agreement.try(:offer)&.try(:c3_price_millitokens).to_i
+
+        # rubocop:disable Style/FormatStringToken -- i18n %{key} interpolation, not Ruby format
+        t('flash.joatu.agreement.insufficient_c3',
+          needed: helpers.tree_seeds_display(price_millitokens),
+          current: helpers.tree_seeds_display(current_millitokens),
+          default: 'You need %{needed} to accept this offer. Your current balance is %{current}.')
+        # rubocop:enable Style/FormatStringToken
+      end
 
       def resource_class
         BetterTogether::Joatu::Agreement

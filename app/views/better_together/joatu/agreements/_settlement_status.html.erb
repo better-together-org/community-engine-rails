@@ -1,0 +1,48 @@
+<%# Settlement status panel for a Joatu agreement.
+  # Locals:
+  #   agreement (BetterTogether::Joatu::Agreement) — must have #settlement association loaded
+  # Only renders if the agreement has a non-nil settlement.
+-%>
+<% settlement = agreement.settlement %>
+<% return unless settlement %>
+
+<div class="bt-settlement-status mt-3"
+     role="status"
+     aria-live="polite"
+     aria-label="<%= t('better_together.joatu.settlement.status_label', default: 'Agreement Tree Seeds status') %>">
+
+  <% case settlement.status %>
+  <% when 'pending' %>
+    <div class="alert alert-info d-flex align-items-center gap-2 mb-0">
+      <span aria-hidden="true">🌱</span>
+      <span>
+        <%= t('better_together.joatu.settlement.pending_html',
+              amount: content_tag(:strong, tree_seeds_display(settlement.c3_millitokens)),
+              default: '%{amount} are reserved, waiting for the exchange to complete.'.html_safe) %>
+      </span>
+    </div>
+
+  <% when 'completed' %>
+    <div class="alert alert-success d-flex align-items-center gap-2 mb-0">
+      <span aria-hidden="true">✓</span>
+      <span>
+        <%= t('better_together.joatu.settlement.completed_html',
+              amount: content_tag(:strong, tree_seeds_display(settlement.c3_millitokens)),
+              date: content_tag(:time,
+                                l(settlement.completed_at.to_date, format: :long),
+                                datetime: settlement.completed_at&.iso8601),
+              default: '%{amount} were exchanged on %{date}.'.html_safe) %>
+      </span>
+    </div>
+
+  <% when 'cancelled' %>
+    <div class="alert alert-secondary d-flex align-items-center gap-2 mb-0">
+      <span aria-hidden="true">↩</span>
+      <span>
+        <%= t('better_together.joatu.settlement.cancelled_html',
+              amount: content_tag(:strong, tree_seeds_display(settlement.c3_millitokens)),
+              default: 'The %{amount} reservation was released back to your balance.'.html_safe) %>
+      </span>
+    </div>
+  <% end %>
+</div>
