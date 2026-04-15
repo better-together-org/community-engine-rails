@@ -12,6 +12,7 @@ module BetterTogether
     #
     # Returns:
     #   201 { status: 'ok', seed_id: ..., applied: true }
+    #   202 { status: 'pending', seed_id: ..., applied: false, reason: :symbol }
     #   409 { status: 'duplicate', message: ... }    — seed already applied
     #   403 { error: 'c3_exchange not enabled' }     — connection not opted in
     #   401                                          — bad / missing token
@@ -32,9 +33,14 @@ module BetterTogether
         seed = BetterTogether::C3::TokenSeed.from_wire_params(seed_params, source_platform: connection.source_platform)
         seed.save!
 
-        applied = seed.apply_to_recipient_balance!(origin_platform: connection.source_platform)
+        result = seed.apply_to_recipient_balance!(origin_platform: connection.source_platform)
 
-        render json: { status: 'ok', seed_id: seed.id, applied: }, status: :created
+        if result.applied
+          render json: { status: 'ok', seed_id: seed.id, applied: true }, status: :created
+        else
+          render json: { status: 'pending', seed_id: seed.id, applied: false,
+                         reason: result.reason }, status: :accepted
+        end
       rescue ActiveRecord::RecordNotUnique
         # Lost a race with a concurrent identical request — seed already applied.
         render json: { status: 'duplicate', message: 'token seed already applied' }, status: :conflict
@@ -58,7 +64,7 @@ module BetterTogether
         params.require(:c3_token_seed).permit(
           :token_id, :earner_did, :payer_did, :lock_ref,
           :contribution_type, :c3_millitokens,
-          :source_ref, :source_system, :emitted_at
+          :source_ref, :source_ref_hash, :source_system, :emitted_at
         )
       end
     end
