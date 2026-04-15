@@ -1,0 +1,93 @@
+<%# C3 balance card — shows a person's Tree Seeds balance in accessible, plain language.
+  # Locals:
+  #   balance (BetterTogether::C3::Balance, optional) — nil if no balance exists yet
+  #   person  (BetterTogether::Person)
+  #   show_federated (Boolean, default: false) — whether to show the cross-platform toggle
+-%>
+<% balance ||= nil %>
+<% show_federated ||= false %>
+
+<section class="bt-c3-balance-card card mb-4"
+         aria-label="<%= t('better_together.c3.balance_card.title', default: 'Your Tree Seeds balance') %>">
+  <div class="card-body">
+    <h2 class="card-title h5">
+      <%= t('better_together.c3.balance_card.title', default: 'Your Tree Seeds') %>
+    </h2>
+
+    <%# Live region so screen readers announce balance updates (e.g. after an agreement) %>
+    <div aria-live="polite" aria-atomic="true">
+      <dl class="bt-c3-balance-list row g-2 mb-3">
+        <div class="col-12 col-sm-4">
+          <dt class="text-muted small">
+            <%= t('better_together.c3.balance_card.available', default: 'Available') %>
+          </dt>
+          <dd class="h4 mb-0">
+            <%= tree_seeds_display(balance&.available_millitokens.to_i) %>
+          </dd>
+        </div>
+
+        <div class="col-12 col-sm-4">
+          <dt class="text-muted small">
+            <%= t('better_together.c3.balance_card.reserved', default: 'Reserved for agreements') %>
+          </dt>
+          <dd class="h4 mb-0 text-secondary">
+            <%= tree_seeds_display(balance&.locked_millitokens.to_i) %>
+          </dd>
+        </div>
+
+        <div class="col-12 col-sm-4">
+          <dt class="text-muted small">
+            <%= t('better_together.c3.balance_card.lifetime', default: 'Lifetime earned') %>
+          </dt>
+          <dd class="h4 mb-0 text-muted">
+            <%= tree_seeds_display(balance&.lifetime_earned_millitokens.to_i) %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <%# Cross-platform total — privacy-sensitive, off by default %>
+    <% if show_federated %>
+      <% all_balances = BetterTogether::C3::Balance.where(holder: person) %>
+      <details class="bt-c3-federated-toggle mt-2">
+        <summary class="btn btn-sm btn-outline-secondary">
+          <%= t('better_together.c3.balance_card.show_network_total',
+                default: 'Show my cross-platform Tree Seeds total') %>
+        </summary>
+
+        <div class="mt-2 p-2 border rounded" aria-live="polite">
+          <p class="text-muted small mb-2">
+            <%= t('better_together.c3.balance_card.network_description',
+                  default: 'Tree Seeds earned or received across all connected platforms.') %>
+          </p>
+          <dl class="row g-1 mb-0">
+            <div class="col-12 col-sm-6">
+              <dt class="text-muted small">
+                <%= t('better_together.c3.balance_card.network_available',
+                      default: 'Network available') %>
+              </dt>
+              <dd class="mb-0">
+                <%= tree_seeds_display(all_balances.sum(:available_millitokens)) %>
+              </dd>
+            </div>
+            <div class="col-12 col-sm-6">
+              <dt class="text-muted small">
+                <%= t('better_together.c3.balance_card.network_lifetime',
+                      default: 'Network lifetime earned') %>
+              </dt>
+              <dd class="mb-0">
+                <%= tree_seeds_display(all_balances.sum(:lifetime_earned_millitokens)) %>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </details>
+    <% end %>
+
+    <%# Help text explaining what Tree Seeds are %>
+    <p class="text-muted small mt-3 mb-0">
+      <%= t('better_together.c3.balance_card.explainer',
+            default: 'Tree Seeds are community contribution credits you earn by sharing your time, skills, and resources. They can be exchanged for services offered by other community members.') %>
+    </p>
+  </div>
+</section>
