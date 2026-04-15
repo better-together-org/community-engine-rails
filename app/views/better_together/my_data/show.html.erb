@@ -26,23 +26,28 @@
         <% else %>
           <div class="table-responsive">
             <table class="table align-middle">
+              <caption class="visually-hidden"><%= t('better_together.settings.index.my_data.exports.table_caption') %></caption>
               <thead>
                 <tr>
-                  <th><%= t('better_together.settings.index.my_data.exports.requested_at') %></th>
-                  <th><%= t('better_together.settings.index.my_data.exports.status') %></th>
-                  <th><%= t('better_together.settings.index.my_data.exports.actions') %></th>
+                  <th scope="col"><%= t('better_together.settings.index.my_data.exports.requested_at') %></th>
+                  <th scope="col"><%= t('better_together.settings.index.my_data.exports.status') %></th>
+                  <th scope="col"><%= t('better_together.settings.index.my_data.exports.actions') %></th>
                 </tr>
               </thead>
               <tbody>
                 <% @person_data_exports.each do |export| %>
                   <tr id="person_data_export_<%= export.id %>">
-                    <td><%= l(export.requested_at, format: :long) %></td>
-                    <td><span class="badge text-bg-secondary"><%= export.status.humanize %></span></td>
+                    <th scope="row"><%= l(export.requested_at, format: :long) %></th>
+                    <td>
+                      <span class="badge text-bg-secondary">
+                        <%= t("better_together.settings.index.my_data.exports.status_values.#{export.status}") %>
+                      </span>
+                    </td>
                     <td>
                       <% if export.completed? && export.export_file.attached? %>
                         <%= link_to t('better_together.settings.index.my_data.exports.download'), person_data_export_path(export, locale: locale), class: 'btn btn-sm btn-outline-primary' %>
                       <% elsif export.failed? %>
-                        <span class="text-danger small"><%= export.error_message %></span>
+                        <span class="text-danger small"><%= t('better_together.settings.index.my_data.exports.failed_help') %></span>
                       <% else %>
                         <span class="text-muted small"><%= t('better_together.settings.index.my_data.exports.pending') %></span>
                       <% end %>
@@ -71,7 +76,7 @@
                   <div class="card-body d-flex flex-column">
                     <h4 class="h6"><%= t('better_together.settings.index.my_data.connections.cards.person_links.title') %></h4>
                     <p class="text-muted small flex-grow-1 mb-3"><%= t('better_together.settings.index.my_data.connections.cards.person_links.description') %></p>
-                    <%= link_to t('better_together.settings.index.my_data.connections.open_link'),
+                    <%= link_to t('better_together.settings.index.my_data.connections.cards.person_links.open_link'),
                                 person_links_path(locale: locale),
                                 class: 'btn btn-outline-primary btn-sm align-self-start',
                                 data: { turbo_frame: '_top' } %>
@@ -86,7 +91,7 @@
                   <div class="card-body d-flex flex-column">
                     <h4 class="h6"><%= t('better_together.settings.index.my_data.connections.cards.access_grants.title') %></h4>
                     <p class="text-muted small flex-grow-1 mb-3"><%= t('better_together.settings.index.my_data.connections.cards.access_grants.description') %></p>
-                    <%= link_to t('better_together.settings.index.my_data.connections.open_link'),
+                    <%= link_to t('better_together.settings.index.my_data.connections.cards.access_grants.open_link'),
                                 person_access_grants_path(locale: locale),
                                 class: 'btn btn-outline-primary btn-sm align-self-start',
                                 data: { turbo_frame: '_top' } %>
@@ -101,7 +106,7 @@
                   <div class="card-body d-flex flex-column">
                     <h4 class="h6"><%= t('better_together.settings.index.my_data.connections.cards.linked_seeds.title') %></h4>
                     <p class="text-muted small flex-grow-1 mb-3"><%= t('better_together.settings.index.my_data.connections.cards.linked_seeds.description') %></p>
-                    <%= link_to t('better_together.settings.index.my_data.connections.open_link'),
+                    <%= link_to t('better_together.settings.index.my_data.connections.cards.linked_seeds.open_link'),
                                 person_linked_seeds_path(locale: locale),
                                 class: 'btn btn-outline-primary btn-sm align-self-start',
                                 data: { turbo_frame: '_top' } %>
@@ -116,7 +121,7 @@
                   <div class="card-body d-flex flex-column">
                     <h4 class="h6"><%= t('better_together.settings.index.my_data.connections.cards.person_seeds.title') %></h4>
                     <p class="text-muted small flex-grow-1 mb-3"><%= t('better_together.settings.index.my_data.connections.cards.person_seeds.description') %></p>
-                    <%= link_to t('better_together.settings.index.my_data.connections.open_link'),
+                    <%= link_to t('better_together.settings.index.my_data.connections.cards.person_seeds.open_link'),
                                 person_seeds_path(locale: locale),
                                 class: 'btn btn-outline-primary btn-sm align-self-start',
                                 data: { turbo_frame: '_top' } %>

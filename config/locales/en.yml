@@ -3182,18 +3182,22 @@ en:
               access_grants:
                 description: Review the permissions you have granted to linked people,
                   and the permissions they have granted back to you.
+                open_link: Open access grants
                 title: Access grants
               linked_seeds:
                 description: Browse synchronized data shared through your approved
                   platform links.
+                open_link: Open linked seeds
                 title: Linked seeds
               person_links:
                 description: Review the people and federated connections currently
                   linked to your account.
+                open_link: Open linked people
                 title: Linked people
               person_seeds:
                 description: Open your portable seed exports for advanced portability
                   and interoperability workflows.
+                open_link: Open portable seed exports
                 title: Portable seed exports
             description: Reach your linked people, access grants, synchronized data,
               and portable exports from one place.
@@ -3222,11 +3226,18 @@ en:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: This export could not be prepared. Please request a new export.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Completed
+              failed: Failed
+              pending: Pending
+              processing: Processing
+            table_caption: Recent account export requests
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
