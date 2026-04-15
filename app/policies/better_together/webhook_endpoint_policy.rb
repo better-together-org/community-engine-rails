@@ -68,7 +68,7 @@ module BetterTogether
         BetterTogether::Community
           .select(:id)
           .joins(:person_community_memberships)
-          .where(better_together_person_community_memberships: { member_id: user.person.id })
+          .where(better_together_person_community_memberships: { member_id: user.person.id, status: 'active' })
           .filter_map do |community|
             community.id if user.person.permitted_to?('update_community', community)
           end

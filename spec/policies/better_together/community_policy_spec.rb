@@ -33,12 +33,31 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: member_role
+          role: member_role,
+          status: 'active'
         )
       end
 
       it 'allows viewing members' do
         expect(policy.view_members?).to be true
+      end
+    end
+
+    context 'when the membership is pending' do
+      let(:user) { create(:better_together_user) }
+      let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+      before do
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community,
+          member: user.person,
+          role: member_role,
+          status: 'pending'
+        )
+      end
+
+      it 'does not allow viewing members' do
+        expect(policy.view_members?).to be false
       end
     end
 
@@ -64,11 +83,13 @@ RSpec.describe BetterTogether::CommunityPolicy do
         manager = find_or_create_test_user('steward@example.test', 'SecureTest123!@#', :platform_steward)
 
         if platform && role && manager.person
-          BetterTogether::PersonPlatformMembership.find_or_create_by!(
+          membership = BetterTogether::PersonPlatformMembership.find_or_initialize_by(
             member: manager.person,
             joinable: platform,
             role: role
           )
+          membership.status = 'active'
+          membership.save!
         end
       end
 
@@ -85,7 +106,8 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: coordinator_role
+          role: coordinator_role,
+          status: 'active'
         )
       end
 
@@ -122,12 +144,32 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: member_role
+          role: member_role,
+          status: 'active'
         )
       end
 
       it 'allows viewing' do
         expect(policy.show?).to be true
+      end
+    end
+
+    context 'when community is private and user only has a pending membership' do
+      let(:community) { create(:better_together_community, privacy: 'private') }
+      let(:user) { create(:better_together_user) }
+      let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+      before do
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community,
+          member: user.person,
+          role: member_role,
+          status: 'pending'
+        )
+      end
+
+      it 'does not allow viewing' do
+        expect(policy.show?).to be false
       end
     end
 
@@ -167,7 +209,8 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: member_role
+          role: member_role,
+          status: 'active'
         )
       end
 
@@ -205,12 +248,29 @@ RSpec.describe BetterTogether::CommunityPolicy do
       BetterTogether::PersonCommunityMembership.create!(
         joinable: community_scoped_community,
         member: user.person,
-        role: member_role
+        role: member_role,
+        status: 'active'
       )
 
       resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
 
       expect(resolved).to include(public_community, community_scoped_community)
+    end
+
+    it 'excludes community-scoped communities for pending members' do
+      user = create(:better_together_user)
+      member_role = BetterTogether::Role.find_by(identifier: 'community_member')
+      BetterTogether::PersonCommunityMembership.create!(
+        joinable: community_scoped_community,
+        member: user.person,
+        role: member_role,
+        status: 'pending'
+      )
+
+      resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community)
+      expect(resolved).not_to include(community_scoped_community)
     end
 
     it 'excludes community-scoped communities for signed-in non-members' do

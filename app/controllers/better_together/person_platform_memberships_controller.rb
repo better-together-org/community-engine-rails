@@ -185,9 +185,7 @@ module BetterTogether
 
     # Sets up data needed for the form
     def set_form_data
-      @available_people = @platform.community.person_members.where.not(
-        id: @platform.person_platform_memberships.pluck(:member_id)
-      )
+      @available_people = @platform.community.person_members.distinct
       @available_roles = ::BetterTogether::Role.where(resource_type: 'BetterTogether::Platform')
     end
   end

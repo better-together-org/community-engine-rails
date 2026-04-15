@@ -72,6 +72,7 @@ module BetterTogether
                   membership_table
                     .where(membership_table[:member_id]
                     .eq(agent.id))
+                    .where(membership_table[:status].eq('active'))
                     .project(:joinable_id)
                 )
               )
@@ -148,7 +149,7 @@ module BetterTogether
       def scoped_community_ids
         return [] unless agent.present?
 
-        @scoped_community_ids ||= agent.person_community_memberships.pluck(:joinable_id)
+        @scoped_community_ids ||= agent.person_community_memberships.active.pluck(:joinable_id)
       end
 
       def scoped_platform_ids
@@ -253,7 +254,7 @@ module BetterTogether
       community = resolved_community_for(target)
       return false unless community.present?
 
-      agent.person_community_memberships.exists?(joinable: community)
+      agent.person_community_memberships.active.exists?(joinable: community)
     end
 
     def resolved_community_for(target)

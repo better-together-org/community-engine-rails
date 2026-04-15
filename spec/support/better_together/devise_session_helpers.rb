@@ -68,6 +68,7 @@ module BetterTogether # :nodoc:
       if platform_steward_role
         membership = host_platform.person_platform_memberships.find_or_initialize_by(member: platform_steward.person)
         membership.role ||= platform_steward_role
+        membership.status = 'active'
         membership.save! if membership.new_record? || membership.changed?
       end
 

@@ -24,22 +24,15 @@ module BetterTogether
       @platform_memberships = policy_scope(@platform.memberships_with_associations)
       load_platform_connections if policy(::BetterTogether::PlatformConnection).index?
       load_safety_review_summary if show_safety_review?
-      return unless helpers.current_person
-
-      @current_person_platform_membership = @platform.person_platform_memberships.find_by(
-        member: helpers.current_person
-      )
+      load_current_person_platform_memberships
     end
 
     # GET /platforms/:id/available_people
     def available_people # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize @platform
 
-      # Exclude people who are already members
-      excluded_ids = @platform.person_platform_memberships.pluck(:member_id)
       people = ::BetterTogether::Person
                .joins(:user)
-               .where.not(id: excluded_ids)
                .where.not(better_together_users: { email: nil })
                .where.not(better_together_users: { confirmed_at: nil })
                .i18n
@@ -156,6 +149,15 @@ module BetterTogether
     # Adds a policy check for the platform
     def authorize_platform
       authorize @platform
+    end
+
+    def load_current_person_platform_memberships
+      return unless helpers.current_person
+
+      memberships = @platform.person_platform_memberships.includes(:role)
+      @current_person_platform_memberships = memberships.where(member: helpers.current_person)
+                                                        .order(Arel.sql("CASE WHEN status = 'active' THEN 0 ELSE 1 END"),
+                                                               :created_at)
     end
 
     def locale_attributes

@@ -77,6 +77,7 @@ module BetterTogether
           ::BetterTogether::PersonCommunityMembership
             .joins(:role)
             .where(member_id: person.id)
+            .active
             .where(better_together_roles: { identifier: %w[community_manager community_administrator] })
             .pluck(:joinable_id)
         end
@@ -94,6 +95,7 @@ module BetterTogether
         record.target.person_community_memberships
               .joins(:role)
               .where(member_id: agent&.id)
+              .active
               .where(better_together_roles: { identifier: %w[community_manager community_administrator] })
               .exists?
       end

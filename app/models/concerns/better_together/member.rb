@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Concern that when included allows model to become a member of joinables via memberships
-  module Member
+  module Member # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
     included do # rubocop:todo Metrics/BlockLength
@@ -39,7 +39,7 @@ module BetterTogether
       def roles
         Rails.cache.fetch(cache_key_for(:roles), expires_in: 12.hours) do
           ::BetterTogether::Role.joins(:role_resource_permissions).where(
-            id: self.class.joinable_role_associations.flat_map { |assoc| send(assoc).pluck(:id) }
+            id: active_role_ids
           ).to_a
         end
       end
@@ -102,7 +102,7 @@ module BetterTogether
         return false unless membership_class
 
         # Check if the member has a membership tied explicitly to the record
-        memberships = membership_class.where(
+        memberships = active_membership_relation_for(membership_class).where(
           member: self,
           joinable_id: record.id
         ).includes(:role)
@@ -120,6 +120,19 @@ module BetterTogether
         end
 
         membership_class_name&.to_s&.classify&.constantize # rubocop:todo Style/SafeNavigationChainLength
+      end
+
+      def active_role_ids
+        self.class.joinable_membership_classes.flat_map do |membership_class_name|
+          membership_class = membership_class_name.to_s.classify.constantize
+          active_membership_relation_for(membership_class).pluck(:role_id)
+        end.uniq
+      end
+
+      def active_membership_relation_for(membership_class)
+        relation = membership_class.where(member: self)
+        relation = relation.active if membership_class.respond_to?(:active)
+        relation
       end
 
       # Generate a unique cache key for each instance and method

@@ -42,7 +42,7 @@ module BetterTogether
       end
 
       def community_address_ids(component_scope)
-        community_ids = agent.person_community_memberships.pluck(:joinable_id)
+        community_ids = agent.person_community_memberships.active.pluck(:joinable_id)
         return [] if community_ids.empty?
 
         community_cd_ids = BetterTogether::ContactDetail

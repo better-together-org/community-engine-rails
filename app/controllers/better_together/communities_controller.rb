@@ -143,9 +143,11 @@ module BetterTogether
     def set_current_person_community_membership
       return unless helpers.current_person
 
-      @current_person_community_membership = @community.person_community_memberships.find_by(
-        member: helpers.current_person
-      )
+      @current_person_community_memberships = @community.person_community_memberships
+                                                      .includes(:role)
+                                                      .where(member: helpers.current_person)
+                                                      .order(Arel.sql("CASE WHEN status = 'active' THEN 0 ELSE 1 END"),
+                                                             :created_at)
     end
 
     def set_membership_request_review_state

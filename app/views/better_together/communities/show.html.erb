@@ -51,7 +51,7 @@
 
     <%= render 'better_together/shared/access_mode_panel',
                resource: @community,
-               membership: @current_person_community_membership %>
+               memberships: @current_person_community_memberships %>
 
     <% if @membership_request_review_allowed %>
       <%= render 'better_together/communities/membership_review_panel',
@@ -142,7 +142,7 @@
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, t('better_together.communities.show.members.add_member_modal.select_person'), class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).where.not(id: @resource.person_community_memberships.pluck(:member_id)), :id, :select_option_title, { prompt: t('better_together.communities.show.members.add_member_modal.select_person_prompt') }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).distinct, :id, :select_option_title, { prompt: t('better_together.communities.show.members.add_member_modal.select_person_prompt') }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
