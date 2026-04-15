@@ -13,6 +13,11 @@ module BetterTogether
 
       belongs_to :holder, polymorphic: true
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
+      belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true
+
+      # local: earned on this platform; federated: received via C3 cross-platform exchange
+      scope :local,     -> { where(origin_platform_id: nil) }
+      scope :federated, -> { where.not(origin_platform_id: nil) }
 
       validates :holder, presence: true
       validates :available_millitokens, :locked_millitokens, :lifetime_earned_millitokens,

@@ -35,6 +35,9 @@ module BetterTogether
         applied = seed.apply_to_recipient_balance!(origin_platform: connection.source_platform)
 
         render json: { status: 'ok', seed_id: seed.id, applied: }, status: :created
+      rescue ActiveRecord::RecordNotUnique
+        # Lost a race with a concurrent identical request — seed already applied.
+        render json: { status: 'duplicate', message: 'token seed already applied' }, status: :conflict
       rescue ActiveRecord::RecordInvalid, BetterTogether::C3::Balance::InsufficientBalance => e
         render json: { error: e.message }, status: :unprocessable_entity
       end
