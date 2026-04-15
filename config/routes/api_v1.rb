@@ -101,9 +101,10 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # C3 Community Contribution Token (borgberry fleet integration)
   namespace :c3 do
-    post 'contributions', to: 'contributions#create'
-    get 'contributions', to: 'contributions#index'
-    get 'balance', to: 'contributions#balance'
+    post 'contributions',   to: 'contributions#create'
+    get  'contributions',   to: 'contributions#index'
+    get  'balance',         to: 'contributions#balance'
+    get  'network_balance', to: 'contributions#network_balance'
   end
 
   # Fleet node registry (borgberry fleet agent registration + heartbeat)
