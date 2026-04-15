@@ -14,7 +14,8 @@ module BetterTogether
       STATUS_VALUES = {
         pending: 'pending',
         accepted: 'accepted',
-        rejected: 'rejected'
+        rejected: 'rejected',
+        fulfilled: 'fulfilled'
       }.freeze
 
       # Use UUID id to generate a stable, unique slug without touching
@@ -23,6 +24,8 @@ module BetterTogether
 
       belongs_to :offer, class_name: 'BetterTogether::Joatu::Offer'
       belongs_to :request, class_name: 'BetterTogether::Joatu::Request'
+      has_one :settlement, class_name: 'BetterTogether::Joatu::Settlement',
+                           dependent: :destroy
 
       validates :offer, :request, presence: true
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
@@ -56,7 +59,7 @@ module BetterTogether
         super + %i[offer_id request_id terms value status privacy]
       end
 
-      def accept!
+      def accept! # rubocop:todo Metrics/MethodLength
         ensure_accept_allowed!
 
         transaction do
@@ -64,6 +67,25 @@ module BetterTogether
           offer.status_closed!
           request.status_closed!
           request.after_agreement_acceptance!(offer:)
+          create_settlement_if_c3_priced!
+        end
+      end
+
+      # Mark the agreement fulfilled and complete the C3 settlement transfer.
+      # Requires an accepted agreement with a pending settlement.
+      def fulfill! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        unless status_accepted?
+          errors.add(:base, 'Agreement must be accepted before it can be fulfilled')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        transaction do
+          if settlement&.status == 'pending' && settlement.c3_millitokens.positive?
+            payer_balance = BetterTogether::C3::Balance.find_by!(holder: settlement.payer)
+            recipient_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: settlement.recipient)
+            settlement.complete!(payer_balance:, recipient_balance:)
+          end
+          update!(status: :fulfilled)
         end
       end
 
@@ -160,8 +182,11 @@ module BetterTogether
             errors.add(:offer, 'is already closed') if offer.respond_to?(:status_closed?) && offer.status_closed?
             errors.add(:request, 'is already closed') if request.respond_to?(:status_closed?) && request.status_closed?
           end
-        when STATUS_VALUES[:accepted], STATUS_VALUES[:rejected]
-          errors.add(:status, 'cannot change once accepted or rejected')
+        when STATUS_VALUES[:accepted]
+          # Accepted can only move forward to fulfilled
+          errors.add(:status, 'can only move from accepted to fulfilled') unless to == STATUS_VALUES[:fulfilled]
+        when STATUS_VALUES[:rejected], STATUS_VALUES[:fulfilled]
+          errors.add(:status, 'cannot change once rejected or fulfilled')
         else
           errors.add(:status, 'has an invalid transition')
         end
@@ -230,6 +255,26 @@ module BetterTogether
             contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
           )
         end
+      end
+
+      # Create a pending Settlement and lock C3 from the payer (request creator)
+      # when the offer carries a C3 price. No-op if the offer has no C3 price.
+      def create_settlement_if_c3_priced!
+        price_millitokens = offer.try(:c3_price_millitokens).to_i
+        return unless price_millitokens.positive?
+
+        payer = request.creator
+        return unless payer
+
+        payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: payer)
+        payer_balance.lock!(price_millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE)
+
+        create_settlement!(
+          payer: payer,
+          recipient: offer.creator,
+          c3_millitokens: price_millitokens,
+          status: 'pending'
+        )
       end
     end
   end
