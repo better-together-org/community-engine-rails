@@ -17,9 +17,15 @@
     <%= l(joatu_agreement.created_at, format: :long) if joatu_agreement.created_at %>
   </div>
 
+  <div class="small text-muted mb-2">
+    Mutual aid agreement for one matched offer and one matched request.
+  </div>
+
   <% if joatu_agreement.terms.present? %>
     <% terms_preview = joatu_agreement.terms.respond_to?(:to_plain_text) ? joatu_agreement.terms.to_plain_text : joatu_agreement.terms.to_s %>
     <p class="mb-0"><%= truncate(terms_preview, length: 100) %></p>
+  <% else %>
+    <p class="mb-0 text-muted">No additional terms recorded.</p>
   <% end %>
 
   <div class="mt-2">

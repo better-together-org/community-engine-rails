@@ -26,11 +26,10 @@ module BetterTogether
     def self.accepted_agreement?(participant, identifier:)
       return false unless participant.present?
 
-      participant.agreement_participants
-                 .joins(:agreement)
-                 .where.not(accepted_at: nil)
-                 .where(better_together_agreements: { identifier: })
-                 .exists?
+      agreement = BetterTogether::Agreement.find_by(identifier:)
+      return false unless agreement
+
+      agreement.accepted_by?(participant)
     end
 
     def self.public_publishing_agreement
@@ -49,20 +48,17 @@ module BetterTogether
     # @param person [BetterTogether::Person] the person to check
     # @return [ActiveRecord::Relation<BetterTogether::Agreement>] unaccepted required agreements
     def self.unaccepted_required_agreements(person)
-      # Only count accepted participants (accepted_at not null)
-      accepted_agreement_ids = person.agreement_participants.where.not(accepted_at: nil).pluck(:agreement_id)
-
       BetterTogether::Agreement
         .required_for_registration
-        .where.not(id: accepted_agreement_ids)
         .ordered_for_consent
+        .reject { |agreement| agreement.accepted_by?(person) }
     end
 
     # Returns true if a person has unaccepted required agreements
     # @param person [BetterTogether::Person] the person to check
     # @return [Boolean]
     def self.person_has_unaccepted_required_agreements?(person)
-      unaccepted_required_agreements(person).exists?
+      unaccepted_required_agreements(person).any?
     end
 
     protected

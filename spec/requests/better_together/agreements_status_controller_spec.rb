@@ -56,6 +56,13 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           # Verify we have 3 agreement cards
           expect_element_count('.card.mb-3', 3)
         end
+
+        it 'shows agreement center sections for current obligations and history' do
+          get better_together.agreements_status_path(locale: I18n.locale)
+
+          expect(response.body).to include('Current obligations')
+          expect(response.body).to include('Acceptance history')
+        end
       end
 
       context 'when user has accepted some agreements' do # rubocop:todo RSpec/NestedGroups
@@ -75,6 +82,23 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           expect(card_titles).not_to include(match(/Privacy Policy/))
           # Verify we have only 2 agreement cards
           expect_element_count('.card.mb-3', 2)
+        end
+      end
+
+      context 'when a required agreement was updated and needs re-consent' do # rubocop:todo RSpec/NestedGroups
+        before do
+          privacy_policy.update!(requires_reacceptance: true, change_summary: 'Clarified how consent updates are handled.')
+          create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: 2.days.ago)
+          privacy_policy.update!(title: 'Privacy Policy (Updated)')
+        end
+
+        it 'shows the stale agreement as pending again with the update summary' do
+          get better_together.agreements_status_path(locale: I18n.locale)
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include('Needs review again')
+          expect(response.body).to include('Clarified how consent updates are handled.')
+          expect(response.body).to include('Privacy Policy (Updated)')
         end
       end
 

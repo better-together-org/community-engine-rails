@@ -4,61 +4,107 @@
 
 <div class="container my-4">
   <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-lg-10">
       <h2 class="mb-4"><%= t('.title') %></h2>
-      
+
       <div class="alert alert-info" role="alert">
         <%= t('.description_html') %>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="text-muted small text-uppercase mb-2">Pending review</div>
+              <div class="display-6 mb-0"><%= @unaccepted_agreements.count %></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="text-muted small text-uppercase mb-2">Current acceptances</div>
+              <div class="display-6 mb-0"><%= @current_acceptances.count %></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="text-muted small text-uppercase mb-2">Needs review again</div>
+              <div class="display-6 mb-0"><%= @stale_acceptances.count %></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <%= form_tag agreements_status_path(locale: I18n.locale), method: :post, class: 'needs-validation', novalidate: true, data: { controller: 'better_together--form-validation' } do %>
         <%= hidden_field_tag :return_to, params[:return_to] if params[:return_to].present? %>
 
-        <% @display_agreements.each do |entry| %>
-          <% agreement = entry[:agreement] %>
-          <% accepted = entry[:accepted] %>
-          <% next if accepted %>
-          <% param_name = agreement_acceptance_param_name(agreement) %>
-          <% checkbox_id = agreement_acceptance_checkbox_id(agreement) %>
-          <% help_id = "#{agreement.identifier.dasherize}-help" %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="h5 mb-0">Required now</h3>
+          </div>
+          <div class="card-body">
+            <% @display_agreements.each do |entry| %>
+              <% agreement = entry[:agreement] %>
+              <% accepted = entry[:accepted] %>
+              <% stale = entry[:stale] %>
+              <% next if accepted %>
+              <% param_name = agreement_acceptance_param_name(agreement) %>
+              <% checkbox_id = agreement_acceptance_checkbox_id(agreement) %>
+              <% help_id = "#{agreement.identifier.dasherize}-help" %>
 
-          <div class="card mb-3">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start">
-                <div class="flex-grow-1">
-                  <h5 class="card-title">
-                    <%= agreement.title %>
-                    <span class="badge bg-warning ms-2"><%= t('.not_accepted') %></span>
-                  </h5>
-                  <p class="card-text text-muted"><%= agreement.description %></p>
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div class="flex-grow-1">
+                      <h5 class="card-title">
+                        <%= agreement.title %>
+                        <span class="badge <%= stale ? 'bg-warning text-dark' : 'bg-warning' %> ms-2">
+                          <%= stale ? 'Needs review again' : t('.not_accepted') %>
+                        </span>
+                      </h5>
+                      <p class="card-text text-muted"><%= agreement.description %></p>
+                      <div class="small text-muted">
+                        <span class="me-3">Lifecycle: <%= agreement.lifecycle_display_name %></span>
+                        <span>Required in: <%= agreement.required_for_display_name %></span>
+                      </div>
+                      <% if agreement.change_summary.present? %>
+                        <div class="alert alert-warning mt-3 mb-0">
+                          <strong>Update summary:</strong> <%= agreement.change_summary %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+
+                  <div class="mt-3">
+                    <%= link_to t('.view_agreement'),
+                                agreement_path(agreement, locale: I18n.locale),
+                                class: 'btn btn-sm btn-outline-primary agreement-modal-link',
+                                role: 'button',
+                                data: { agreement_identifier: agreement.identifier } %>
+                  </div>
+
+                  <div class="form-check mt-3">
+                    <%= check_box_tag param_name, '1', false,
+                                      class: 'form-check-input agreement-checkbox',
+                                      data: { agreement_identifier: agreement.identifier },
+                                      required: true,
+                                      aria: { describedby: help_id, disabled: 'true' },
+                                      id: checkbox_id %>
+                    <%= label_tag param_name, t('.i_accept'),
+                                  class: 'form-check-label',
+                                  for: checkbox_id %>
+                    <small id="<%= help_id %>" class="form-text text-muted d-block">
+                      <%= t('.must_view_to_accept') %>
+                    </small>
+                  </div>
                 </div>
               </div>
-
-              <div class="mt-3">
-                <%= link_to t('.view_agreement'),
-                            agreement_path(agreement, locale: I18n.locale),
-                            class: 'btn btn-sm btn-outline-primary agreement-modal-link',
-                            role: 'button',
-                            data: { agreement_identifier: agreement.identifier } %>
-              </div>
-
-              <div class="form-check mt-3">
-                <%= check_box_tag param_name, '1', false,
-                                  class: 'form-check-input agreement-checkbox',
-                                  data: { agreement_identifier: agreement.identifier },
-                                  required: true,
-                                  aria: { describedby: help_id, disabled: 'true' },
-                                  id: checkbox_id %>
-                <%= label_tag param_name, t('.i_accept'),
-                              class: 'form-check-label',
-                              for: checkbox_id %>
-                <small id="<%= help_id %>" class="form-text text-muted d-block">
-                  <%= t('.must_view_to_accept') %>
-                </small>
-              </div>
-            </div>
+            <% end %>
           </div>
-        <% end %>
+        </div>
 
         <% if @unaccepted_agreements.any? %>
           <div class="text-center mt-4">
@@ -66,6 +112,49 @@
           </div>
         <% end %>
       <% end %>
+
+      <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+          <div class="card h-100">
+            <div class="card-header">
+              <h3 class="h5 mb-0">Current obligations</h3>
+            </div>
+            <div class="card-body">
+              <% if @current_acceptances.any? %>
+                <% @current_acceptances.each do |acceptance| %>
+                  <div class="border rounded p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                      <div>
+                        <h4 class="h6 mb-1"><%= acceptance.agreement_title_snapshot %></h4>
+                        <div class="text-muted small">
+                          Accepted <%= l(acceptance.accepted_at, format: :long) %> via <%= acceptance.acceptance_method.to_s.humanize.downcase %>
+                        </div>
+                      </div>
+                      <span class="badge <%= agreement_acceptance_badge_class(acceptance) %>">
+                        <%= agreement_acceptance_state_label(acceptance) %>
+                      </span>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <p class="text-muted mb-0">No accepted agreements recorded yet.</p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card h-100">
+            <div class="card-header">
+              <h3 class="h5 mb-0">Acceptance history</h3>
+            </div>
+            <div class="card-body">
+              <%= render 'better_together/agreements/acceptance_history',
+                         agreement: nil,
+                         acceptance_records: @acceptance_history %>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

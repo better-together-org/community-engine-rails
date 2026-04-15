@@ -108,6 +108,30 @@ module BetterTogether
       render('better_together/shared/help_banner', id:, i18n_key:, text:, **)
     end
 
+    def agreement_lifecycle_badge_class(agreement)
+      return 'bg-secondary' unless agreement.respond_to?(:lifecycle_state)
+
+      case agreement.lifecycle_state
+      when 'draft' then 'bg-warning text-dark'
+      when 'retired' then 'bg-secondary'
+      else 'bg-success'
+      end
+    end
+
+    def agreement_acceptance_badge_class(agreement_participant)
+      return 'bg-secondary' unless agreement_participant.present?
+      return 'bg-warning text-dark' if agreement_participant.stale_for_agreement?
+
+      'bg-success'
+    end
+
+    def agreement_acceptance_state_label(agreement_participant)
+      return 'Pending' unless agreement_participant.present?
+      return 'Needs review' if agreement_participant.stale_for_agreement?
+
+      'Accepted'
+    end
+
     # Finds the platform marked as host or returns a new default host platform instance.
     # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
     # check_platform_privacy, SEO helpers, and layout partials on every request).

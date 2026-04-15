@@ -5,9 +5,10 @@ module BetterTogether
   # Displays unaccepted required agreements and allows users to accept them
   # NOTE: This controller does NOT include ChecksRequiredAgreements to avoid redirect loops.
   # It is the destination controller for the required agreements check.
-  class AgreementsStatusController < ApplicationController
+  class AgreementsStatusController < ApplicationController # rubocop:todo Metrics/ClassLength
     before_action :authenticate_user!
     before_action :load_unaccepted_agreements, only: %i[index create]
+    before_action :load_agreement_center, only: %i[index create]
 
     # GET /agreements/status
     def index
@@ -18,7 +19,6 @@ module BetterTogether
         return
       end
 
-      # Load all required agreements for display (both accepted and unaccepted)
       load_all_required_agreements
     end
 
@@ -51,23 +51,41 @@ module BetterTogether
       required_identifiers |= requested_agreement_identifiers
 
       all_required = Agreement.where(identifier: required_identifiers).ordered_for_consent
-      # Only count accepted participants (accepted_at not null)
-      accepted_ids = current_user.person.agreement_participants.where.not(accepted_at: nil).pluck(:agreement_id)
-
       @display_agreements = all_required.map do |agreement|
-        { agreement:, accepted: accepted_ids.include?(agreement.id) }
+        acceptance_record = agreement.latest_acceptance_for(current_user.person)
+        {
+          agreement:,
+          acceptance_record:,
+          accepted: agreement.accepted_by?(current_user.person),
+          stale: agreement.stale_acceptance_for(current_user.person).present?
+        }
       end
 
       all_required.each do |agreement|
+        acceptance_record = agreement.latest_acceptance_for(current_user.person)
         instance_variable_set(
           "@#{agreement.identifier}_agreement",
           agreement
         )
         instance_variable_set(
           "@#{agreement.identifier}_accepted",
-          accepted_ids.include?(agreement.id)
+          agreement.accepted_by?(current_user.person)
+        )
+        instance_variable_set(
+          "@#{agreement.identifier}_stale",
+          agreement.stale_acceptance_for(current_user.person).present?
+        )
+        instance_variable_set(
+          "@#{agreement.identifier}_acceptance_record",
+          acceptance_record
         )
       end
+    end
+
+    def load_agreement_center
+      @acceptance_history = current_user.person.accepted_agreement_participants
+      @current_acceptances = @acceptance_history.select(&:current_for_agreement?)
+      @stale_acceptances = @acceptance_history.select(&:stale_for_agreement?)
     end
 
     def agreements_accepted?
