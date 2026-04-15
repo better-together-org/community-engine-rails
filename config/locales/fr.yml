@@ -936,7 +936,24 @@ fr:
         title: Nouvelle communauté
       none-yet: Aucune communauté pour l'instant
       show:
+        about:
+          no_description: Aucune description disponible.
+        actions:
+          destroy_aria: Supprimer la communauté
+          edit_aria: Modifier la communauté
         create_event: Créer un événement
+        events:
+          create_event: Créer un événement
+          draft_heading: Brouillon
+        members:
+          add_member_modal:
+            close: Fermer
+            select_person: Sélectionner une personne *
+            select_person_prompt: Sélectionner une personne
+            select_role: Sélectionner un rôle *
+            submit: Ajouter
+            title: Ajouter un nouveau membre
+        sections_aria: Sections de la communauté
       tabs:
         buildings: Bâtiments
         contact_details: Détails de contact
@@ -3236,6 +3253,28 @@ fr:
           description: Connectez et gérez vos comptes de plateformes externes.
           title: Comptes Connectés
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Consultez les permissions que vous avez accordées aux
+                  personnes liées et celles qu'elles vous ont accordées en retour.
+                title: Autorisations d'accès
+              linked_seeds:
+                description: Parcourez les données synchronisées partagées via vos
+                  liens de plateforme approuvés.
+                title: Seeds liés
+              person_links:
+                description: Consultez les personnes et connexions fédérées actuellement
+                  liées à votre compte.
+                title: Personnes liées
+              person_seeds:
+                description: Ouvrez vos exports seed portables pour les flux avancés
+                  de portabilité et d'interopérabilité.
+                title: Exports seed portables
+            description: Accédez à vos personnes liées, autorisations d'accès, données
+              synchronisées et exports portables depuis un seul endroit.
+            open_link: Ouvrir
+            title: Partage et portabilité des données
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -4266,8 +4305,35 @@ fr:
       none_yet: Aucun pour l'instant
       total_resources: Total des ressources
       view_all: Voir tout
+    safety_review:
+      description: Consultez la file de sécurité depuis le tableau de bord hôte. Il
+        y a %{open_cases} dossiers ouverts et %{visible_reports} signalements visibles
+        dans le périmètre.
+      heading: File de revue de sécurité
+      open_cases_badge:
+        one: 1 dossier ouvert
+        other: "%{count} dossiers ouverts"
+      review_queue_link: Ouvrir la file de revue
+      summary:
+        content_review_items: Éléments de revue de contenu
+        participant_updates: Mises à jour participant·e
+        retaliation_risk: Risque de représailles
+        unassigned_cases: À attribuer
+      summary_label: Résumé de la revue de sécurité
+      urgent_cases_badge:
+        one: 1 dossier urgent
+        other: "%{count} dossiers urgents"
+      view_reports_link: Consulter les signalements
+      visible_reports_badge:
+        one: 1 signalement visible
+        other: "%{count} signalements visibles"
   invitations:
     calculating: Calcul en cours
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Retour en haut
+        copyright: "%{community_name} © %{year}. Tous droits réservés."
   locale_name: Français
   locales:
     en: English
@@ -4429,6 +4495,18 @@ fr:
       host_dashboard: Tableau de Bord Hôte
     confirm_delete: Confirmer la suppression
     show:
+      about:
+        access: 'Accès :'
+        identifier: 'Identifiant :'
+        protected: 'Protégée :'
+        protected_no: Non
+        protected_yes: Oui
+        time_zone: 'Fuseau horaire :'
+        url: 'URL :'
+      actions:
+        destroy_aria: Supprimer la plateforme
+        edit_aria: Modifier la plateforme
+        view_host_dashboard_aria: Voir le tableau de bord hôte
       federation:
         connection_status: Statut
         description: Passez en revue les connexions de fédération et de plateforme
@@ -4445,6 +4523,20 @@ fr:
           total: Connexions totales
         title: Connexions de fédération
         view_connection: Voir la connexion
+      members:
+        add_member_modal:
+          close: Fermer
+          search_placeholder: Rechercher des personnes...
+          select_person: Sélectionner une personne *
+          select_role: Sélectionner un rôle de plateforme *
+          submit: Ajouter
+          title: Ajouter un nouveau membre de la plateforme
+      operations:
+        description: Ouvrez les opérations de niveau hôte pour cette plateforme sans
+          dépendre uniquement d'une URL directe.
+        host_dashboard: Tableau de bord hôte
+        storage_configurations: Gérer le stockage
+        title: Opérations de la plateforme
       safety:
         description: Consultez les signalements entrants, les dossiers de sécurité
           actifs et les suivis visibles par les participant·e·s pour %{platform}.
@@ -4460,6 +4552,7 @@ fr:
           visible_reports: Signalements visibles
         title: Revue de sécurité
         view_reports: Consulter les signalements
+      sections_aria: Sections de la plateforme
   pundit:
     errors:
       create: Vous n'êtes pas autorisé à créer ce %{resource}.

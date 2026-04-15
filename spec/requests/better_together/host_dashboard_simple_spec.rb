@@ -76,5 +76,38 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
       expect(response.body).to include(better_together.platform_connections_path(locale: locale))
       expect(response.body).to include(better_together.platform_connection_path(BetterTogether::PlatformConnection.last, locale: locale))
     end
+
+    it 'surfaces a safety review queue when the manager can review safety cases' do
+      grant_platform_permission(platform_manager, 'manage_platform_safety')
+      report = create(:report,
+                      reporter: create(:better_together_person),
+                      reportable: create(:better_together_person),
+                      harm_level: 'urgent',
+                      retaliation_risk: true)
+      safety_case = BetterTogether::Safety::Case.create!(
+        report:,
+        category: report.category,
+        harm_level: report.harm_level,
+        requested_outcome: report.requested_outcome,
+        retaliation_risk: report.retaliation_risk,
+        consent_to_contact: report.consent_to_contact,
+        consent_to_restorative_process: report.consent_to_restorative_process
+      )
+      BetterTogether::Safety::Note.create!(
+        safety_case:,
+        author: platform_manager.person,
+        visibility: 'participant_visible',
+        body: 'Participant follow-up added for review.'
+      )
+
+      get better_together.host_dashboard_path(locale: locale)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Safety review queue')
+      expect(response.body).to include('Open review queue')
+      expect(response.body).to include('Review submitted reports')
+      expect(response.body).to include(better_together.safety_cases_path(locale: locale))
+      expect(response.body).to include(better_together.reports_path(locale: locale))
+    end
   end
 end

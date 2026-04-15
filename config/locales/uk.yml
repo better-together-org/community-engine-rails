@@ -927,7 +927,24 @@ uk:
         title: Спільноти
       none-yet: Поки що немає
       show:
+        about:
+          no_description: Опис відсутній.
+        actions:
+          destroy_aria: Видалити спільноту
+          edit_aria: Редагувати спільноту
         create_event: Створити подію
+        events:
+          create_event: Створити подію
+          draft_heading: Чернетка
+        members:
+          add_member_modal:
+            close: Закрити
+            select_person: Вибрати особу *
+            select_person_prompt: Вибрати особу
+            select_role: Вибрати роль *
+            submit: Додати
+            title: Додати нового учасника
+        sections_aria: Розділи спільноти
       tabs:
         buildings: Будівлі
         contact_details: Контактні деталі
@@ -3198,6 +3215,28 @@ uk:
           description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
           title: Підключені облікові записи
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Перегляньте дозволи, які ви надали пов'язаним людям,
+                  і ті, які вони надали вам у відповідь.
+                title: Дозволи доступу
+              linked_seeds:
+                description: Переглядайте синхронізовані дані, поширені через ваші
+                  підтверджені платформні зв'язки.
+                title: Пов'язані seeds
+              person_links:
+                description: Перегляньте людей і федеративні зв'язки, які зараз пов'язані
+                  з вашим обліковим записом.
+                title: Пов'язані люди
+              person_seeds:
+                description: Відкрийте переносні seed-експорти для розширених сценаріїв
+                  портативності та взаємодії.
+                title: Переносні seed-експорти
+            description: Отримуйте доступ до пов'язаних людей, дозволів доступу, синхронізованих
+              даних та переносних експортів з одного місця.
+            open_link: Відкрити
+            title: Обмін і портативність даних
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -4255,8 +4294,40 @@ uk:
       none_yet: Поки що немає
       total_resources: Всього ресурсів
       view_all: Переглянути всі
+    safety_review:
+      description: Переглядайте чергу безпеки з панелі хоста. У межах видимості є
+        %{open_cases} відкритих кейсів і %{visible_reports} видимих звітів.
+      heading: Черга огляду безпеки
+      open_cases_badge:
+        few: "%{count} відкриті кейси"
+        many: "%{count} відкритих кейсів"
+        one: 1 відкритий кейс
+        other: "%{count} відкритого кейсу"
+      review_queue_link: Відкрити чергу огляду
+      summary:
+        content_review_items: Елементи перевірки контенту
+        participant_updates: Оновлення для учасників
+        retaliation_risk: Ризик помсти
+        unassigned_cases: Потребують призначення
+      summary_label: Підсумок огляду безпеки
+      urgent_cases_badge:
+        few: "%{count} термінові кейси"
+        many: "%{count} термінових кейсів"
+        one: 1 терміновий кейс
+        other: "%{count} термінового кейсу"
+      view_reports_link: Переглянути надіслані звіти
+      visible_reports_badge:
+        few: "%{count} видимі звіти"
+        many: "%{count} видимих звітів"
+        one: 1 видимий звіт
+        other: "%{count} видимого звіту"
   invitations:
     calculating: Обчислення
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Повернутися вгору
+        copyright: "%{community_name} © %{year}. Усі права захищено."
   locale_name: Українська
   locales:
     en: English
@@ -4417,6 +4488,18 @@ uk:
       host_dashboard: Панель Керування Хоста
     confirm_delete: Підтвердіть видалення
     show:
+      about:
+        access: 'Доступ:'
+        identifier: 'Ідентифікатор:'
+        protected: 'Захищена:'
+        protected_no: Ні
+        protected_yes: Так
+        time_zone: 'Часовий пояс:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Видалити платформу
+        edit_aria: Редагувати платформу
+        view_host_dashboard_aria: Переглянути панель хоста
       federation:
         connection_status: Статус
         description: Перегляньте федеративні та платформні з'єднання, які зараз пов'язані
@@ -4433,6 +4516,20 @@ uk:
           total: Усього з'єднань
         title: Федеративні з'єднання
         view_connection: Переглянути з'єднання
+      members:
+        add_member_modal:
+          close: Закрити
+          search_placeholder: Шукати людей...
+          select_person: Вибрати особу *
+          select_role: Вибрати роль платформи *
+          submit: Додати
+          title: Додати нового учасника платформи
+      operations:
+        description: Відкривайте операції рівня хоста для цієї платформи без потреби
+          знати точну URL-адресу.
+        host_dashboard: Панель хоста
+        storage_configurations: Керувати сховищем
+        title: Операції платформи
       safety:
         description: Переглядайте нові звіти, активні кейси безпеки та видимі для
           учасників подальші кроки для %{platform}.
@@ -4448,6 +4545,7 @@ uk:
           visible_reports: Видимі звіти
         title: Огляд безпеки
         view_reports: Переглянути надіслані звіти
+      sections_aria: Розділи платформи
   pundit:
     errors:
       create: Вам не дозволено створювати цей %{resource}.

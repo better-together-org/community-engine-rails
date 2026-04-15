@@ -62,7 +62,11 @@ RSpec.describe 'Documentation screenshots for full settings tab flows', :docs_sc
     ) do
       expect(page).to have_text(I18n.t('better_together.settings.index.my_data.title'))
       expect(page).to have_text(I18n.t('better_together.settings.index.my_data.exports.title'))
+      expect(page).to have_text(I18n.t('better_together.settings.index.my_data.connections.title'))
+      expect(page).to have_text(I18n.t('better_together.settings.index.my_data.connections.cards.person_links.title'))
       expect(page).to have_link(I18n.t('better_together.settings.index.my_data.exports.download'))
+      expect(page).to have_link(I18n.t('better_together.settings.index.my_data.connections.open_link'),
+                                href: person_links_path(locale: I18n.default_locale))
     end
 
     expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{slug}.png")

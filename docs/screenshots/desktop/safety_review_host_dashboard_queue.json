@@ -1,0 +1,11 @@
+{
+  "name": "safety_review_host_dashboard_queue",
+  "device": "desktop",
+  "url": "/en/host",
+  "title": "Host Dashboard | Community Engine Host",
+  "locale": "en",
+  "role": "platform_manager_safety_reviewer",
+  "feature_set": "safety_and_federation_review_operations",
+  "flow": "host_dashboard_safety_queue",
+  "source_spec": "./spec/docs_screenshots/better_together/review_operations_access_spec.rb"
+}
