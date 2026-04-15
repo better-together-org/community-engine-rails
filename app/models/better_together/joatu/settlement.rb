@@ -21,7 +21,10 @@ module BetterTogether
       belongs_to :c3_token, class_name: 'BetterTogether::C3::Token', optional: true
 
       validates :status, presence: true, inclusion: { in: STATUSES }
-      validates :c3_millitokens, numericality: { greater_than_or_equal_to: 0 }
+      validates :c3_millitokens, numericality: {
+        greater_than_or_equal_to: 0,
+        less_than_or_equal_to: BetterTogether::C3::Token::MAX_SINGLE_TRANSACTION_MILLITOKENS
+      }
       validates :agreement_id, uniqueness: { message: 'already has a settlement record' }
 
       scope :pending,   -> { where(status: 'pending') }

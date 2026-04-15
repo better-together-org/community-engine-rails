@@ -12,6 +12,10 @@ module BetterTogether
 
       MILLITOKEN_SCALE = 10_000 # 1 C3 = 10_000 millitokens
 
+      # Maximum millitokens in a single transaction (10,000 C3 / Tree Seeds).
+      # Prevents overflow and limits blast radius of malformed or malicious payloads.
+      MAX_SINGLE_TRANSACTION_MILLITOKENS = 10_000 * MILLITOKEN_SCALE
+
       CONTRIBUTION_TYPES = BetterTogether::C3::ExchangeRate::CONTRIBUTION_TYPES
       TOKEN_STATUSES = %w[pending confirmed disputed settled].freeze
 
@@ -23,7 +27,10 @@ module BetterTogether
       belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true
 
       validates :earner, :contribution_type, :source_ref, :source_system, presence: true
-      validates :c3_millitokens, numericality: { greater_than_or_equal_to: 0 }
+      validates :c3_millitokens, numericality: {
+        greater_than_or_equal_to: 0,
+        less_than_or_equal_to: MAX_SINGLE_TRANSACTION_MILLITOKENS
+      }
       validates :status, inclusion: { in: TOKEN_STATUSES }
 
       scope :confirmed,  -> { where(status: 'confirmed') }

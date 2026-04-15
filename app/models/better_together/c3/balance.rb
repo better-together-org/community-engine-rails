@@ -15,6 +15,9 @@ module BetterTogether
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
       belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true
 
+      has_many :balance_locks, class_name: 'BetterTogether::C3::BalanceLock',
+                               foreign_key: :balance_id, dependent: :destroy
+
       # local: earned on this platform; federated: received via C3 cross-platform exchange
       scope :local,     -> { where(origin_platform_id: nil) }
       scope :federated, -> { where.not(origin_platform_id: nil) }
@@ -30,27 +33,55 @@ module BetterTogether
         increment!(:lifetime_earned_millitokens, millitokens)
       end
 
-      # Lock C3 for a pending Joatu exchange
-      def lock!(c3_amount)
+      # Lock C3 for a pending exchange.
+      # Creates a BalanceLock audit record and returns its lock_ref.
+      #
+      # Optional kwargs:
+      #   agreement_ref: (string) — caller-supplied agreement identifier
+      #   source_platform: (Platform) — which platform requested this lock (nil = local)
+      #   expires_in: (ActiveSupport::Duration) — override default 24h TTL
+      def lock!(c3_amount, agreement_ref: nil, source_platform: nil, expires_in: nil) # rubocop:todo Metrics/MethodLength
         millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
         raise InsufficientBalance, "Only #{available_c3} C3 available" if millitokens > available_millitokens
 
-        decrement!(:available_millitokens, millitokens)
-        increment!(:locked_millitokens, millitokens)
+        lock_record = nil
+        transaction do
+          decrement!(:available_millitokens, millitokens)
+          increment!(:locked_millitokens, millitokens)
+          lock_record = balance_locks.create!(
+            millitokens: millitokens,
+            agreement_ref: agreement_ref,
+            source_platform: source_platform,
+            expires_at: expires_in&.from_now
+          )
+        end
+        lock_record.lock_ref
       end
 
-      # Release locked C3 back to available (exchange cancelled)
-      def unlock!(c3_amount)
+      # Release locked C3 back to available (exchange cancelled or lock expired).
+      # If lock_ref is provided, marks the corresponding BalanceLock as released.
+      def unlock!(c3_amount, lock_ref: nil)
         millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
-        decrement!(:locked_millitokens, millitokens)
-        increment!(:available_millitokens, millitokens)
+        transaction do
+          decrement!(:locked_millitokens, millitokens)
+          increment!(:available_millitokens, millitokens)
+          if lock_ref.present?
+            balance_locks.pending.find_by(lock_ref: lock_ref)&.release!
+          end
+        end
       end
 
-      # Settle locked C3 to another balance (exchange fulfilled)
-      def settle_to!(recipient_balance, c3_amount)
+      # Settle locked C3 to another balance (exchange fulfilled).
+      # Marks the corresponding BalanceLock as settled if lock_ref is provided.
+      def settle_to!(recipient_balance, c3_amount, lock_ref: nil)
         millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
-        decrement!(:locked_millitokens, millitokens)
-        recipient_balance.credit!(c3_amount)
+        transaction do
+          decrement!(:locked_millitokens, millitokens)
+          recipient_balance.credit!(c3_amount)
+          if lock_ref.present?
+            balance_locks.pending.find_by(lock_ref: lock_ref)&.settle!
+          end
+        end
       end
 
       def available_c3
