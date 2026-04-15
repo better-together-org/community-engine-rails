@@ -56,7 +56,7 @@ module BetterTogether
 
       def seed_params
         params.require(:c3_token_seed).permit(
-          :token_id, :earner_did, :payer_did,
+          :token_id, :earner_did, :payer_did, :lock_ref,
           :contribution_type, :c3_millitokens,
           :source_ref, :source_system, :emitted_at
         )
