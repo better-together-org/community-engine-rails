@@ -1,0 +1,50 @@
+{
+  "name": "membership_review_host_dashboard_queue",
+  "device": "desktop",
+  "url": "/en/host",
+  "title": "Host Dashboard | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "membership_review_access_remediation",
+  "flow": "host_dashboard_review_queue",
+  "source_spec": "./spec/docs_screenshots/better_together/membership_review_access_remediation_spec.rb",
+  "callouts": [
+    {
+      "selector": "section[aria-labelledby=\"membership-review-heading\"] .table-responsive",
+      "title": "Host dashboard now exposes a review queue",
+      "bullets": [
+        "Platform managers can reach membership review from the normal dashboard without typing a URL.",
+        "Each row shows open-request counts, recent requester activity, and a direct review action.",
+        "The queue works even when membership requests are currently closed, so stale review work stays discoverable."
+      ],
+      "target": {
+        "x": 423.5,
+        "y": 325.796875,
+        "width": 908.0,
+        "height": 1135.203125,
+        "right": 1331.5,
+        "bottom": 1461.0,
+        "center_x": 877.5,
+        "center_y": 893.3984375
+      },
+      "avoid": {
+        "x": 423.5,
+        "y": 325.796875,
+        "width": 908.0,
+        "height": 1135.203125,
+        "right": 1331.5,
+        "bottom": 1461.0,
+        "center_x": 877.5,
+        "center_y": 893.3984375
+      },
+      "placement": {
+        "side": "left",
+        "x": 24,
+        "y": 668.4,
+        "width": 380,
+        "height": 450,
+        "score": 423.5
+      }
+    }
+  ]
+}
