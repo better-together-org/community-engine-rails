@@ -6,6 +6,7 @@ Community Engine now exposes the two review surfaces introduced during the `0.11
 
 - **Safety review** now has two discoverable operator paths: the host platform profile Safety tab and the host dashboard safety review queue for reviewers who also have dashboard access.
 - **Federation review** now has a host-dashboard queue for operators who already have both host-dashboard access and network-connection authority, while approval-only network stewards still act from the platform profile, platform-connections index, and direct notifications.
+- The **host dashboard overview** now stays summary-oriented: authorized review work appears through dedicated host-nav entries that swap the shared dashboard tab-content frame.
 
 ## Clearly labeled review-and-notification diagram
 
@@ -19,7 +20,7 @@ flowchart TB
     SR5["Send immediate safety review notification"]
     SR6["Collapse burst into one safety digest notification"]
     SR7["Cooldown suppresses duplicate digests for 30 minutes"]
-    SR8["Reviewer opens host platform Safety tab or the safety-case queue"]
+    SR8["Reviewer opens the host platform Safety tab or the host dashboard safety-review nav entry"]
     SR1 --> SR2 --> SR3 --> SR4
     SR4 -->|No| SR5 --> SR8
     SR4 -->|Yes| SR6 --> SR7 --> SR8
@@ -32,7 +33,7 @@ flowchart TB
     FR4["Send immediate pending-connection notification"]
     FR5["Collapse burst into one federation digest notification"]
     FR6["Active, suspended, and blocked transitions send status notifications"]
-    FR7["Operator opens the host dashboard federation queue or the platform-connections index"]
+    FR7["Operator opens the host dashboard federation-review nav entry or the platform-connections index"]
     FR1 --> FR2 --> FR3
     FR3 -->|No| FR4 --> FR7
     FR3 -->|Yes| FR5 --> FR7
@@ -67,6 +68,8 @@ Together they summarize:
 
 **Screenshot artifacts**
 
+- `docs/screenshots/desktop/host_dashboard_review_overview.png`
+- `docs/screenshots/mobile/host_dashboard_review_overview.png`
 - `docs/screenshots/desktop/safety_review_host_platform_panel.png`
 - `docs/screenshots/mobile/safety_review_host_platform_panel.png`
 - `docs/screenshots/desktop/safety_review_host_dashboard_queue.png`
@@ -90,6 +93,8 @@ The dashboard queue is intentionally summary-oriented. It exposes:
 
 **Screenshot artifacts**
 
+- `docs/screenshots/desktop/host_dashboard_review_overview.png`
+- `docs/screenshots/mobile/host_dashboard_review_overview.png`
 - `docs/screenshots/desktop/federation_review_host_dashboard_queue.png`
 - `docs/screenshots/mobile/federation_review_host_dashboard_queue.png`
 - `docs/screenshots/desktop/release_0_11_0_platform_connections_index.png`

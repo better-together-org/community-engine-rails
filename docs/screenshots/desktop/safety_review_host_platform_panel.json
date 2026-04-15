@@ -1,8 +1,8 @@
 {
   "name": "safety_review_host_platform_panel",
   "device": "desktop",
-  "url": "/en/platforms/community-engine-host",
-  "title": "Community Engine Host | Platforms | Community Engine Host",
+  "url": "/en/platforms/test-host-community",
+  "title": "Test Host Community | Platforms | Test Host Community",
   "locale": "en",
   "role": "safety_reviewer",
   "feature_set": "safety_and_federation_review_operations",

@@ -58,9 +58,11 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
     Current.platform = host_platform
     BetterTogether::AccessControlBuilder.seed_data
 
+    grant_platform_permission(platform_manager, 'view_metrics_dashboard')
     grant_platform_permission(safety_reviewer, 'manage_platform_safety')
     grant_platform_permission(platform_manager, 'manage_platform_safety')
     grant_platform_permission(platform_manager, 'manage_network_connections')
+    ensure_host_review_nav_items!
 
     BetterTogether::Safety::Note.create!(
       safety_case:,
@@ -116,6 +118,36 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/safety_review_host_platform_panel.png')
     expect(result[:mobile]).to end_with('docs/screenshots/mobile/safety_review_host_platform_panel.png')
+  end
+
+  it 'captures the host dashboard overview with review nav entry points' do
+    result = BetterTogether::CapybaraScreenshotEngine.capture(
+      'host_dashboard_review_overview',
+      device: :both,
+      metadata: screenshot_metadata(role: 'platform_manager', flow: 'host_dashboard_review_overview'),
+      callouts: [
+        {
+          selector: 'turbo-frame#host-dashboard-tab-content',
+          title: 'The dashboard overview stays focused on the shared host workspace',
+          bullets: [
+            'The overview remains focused on operational cards and membership review.',
+            'Federation and safety review move into dedicated host navigation entries instead of stretching the overview page.',
+            'Selecting a review nav item swaps the frame content without leaving the host dashboard shell.',
+            'This keeps the host sidebar stable while the review surface changes.',
+            'The same permission rules apply to both the sidebar and dropdown navigation.'
+          ]
+        }
+      ]
+    ) do
+      login_as(platform_manager, scope: :user)
+      visit better_together.host_dashboard_path(locale:)
+
+      expect(page).to have_text('Host Dashboard')
+      expect(page).to have_css('turbo-frame#host-dashboard-tab-content')
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/host_dashboard_review_overview.png')
+    expect(result[:mobile]).to end_with('docs/screenshots/mobile/host_dashboard_review_overview.png')
   end
 
   it 'captures the host dashboard federation review queue' do
@@ -185,6 +217,90 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
     role.assign_resource_permissions([permission.identifier])
     host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
   end
+
+  # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
+  def ensure_host_review_nav_items!
+    navigation_area = ensure_platform_host_navigation_area!
+    host_nav = ensure_platform_host_nav!(navigation_area)
+
+    ensure_host_review_nav_item!(
+      navigation_area:,
+      host_nav:,
+      identifier: 'host-dashboard-platform-connection-review',
+      title: 'Federation Review',
+      slug: 'host-dashboard-platform-connection-review',
+      position: 20,
+      route_name: 'host_dashboard_platform_connection_review_url',
+      permission_identifier: 'manage_network_connections'
+    )
+
+    ensure_host_review_nav_item!(
+      navigation_area:,
+      host_nav:,
+      identifier: 'host-dashboard-safety-review',
+      title: 'Safety Review',
+      slug: 'host-dashboard-safety-review',
+      position: 21,
+      route_name: 'host_dashboard_safety_review_url',
+      permission_identifier: 'manage_platform_safety'
+    )
+  end
+
+  def ensure_platform_host_navigation_area!
+    BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-host') do |area|
+      area.name = 'Platform Host'
+      area.slug = 'platform-host'
+      area.visible = true
+      area.protected = true
+    end
+  end
+
+  def ensure_platform_host_nav!(navigation_area)
+    host_nav = BetterTogether::NavigationItem.find_or_create_by!(
+      identifier: 'host-nav',
+      navigation_area: navigation_area,
+      parent_id: nil
+    ) do |item|
+      item.title = 'Host'
+      item.slug = 'host-nav'
+      item.position = 0
+      item.visible = true
+      item.protected = true
+      item.item_type = 'dropdown'
+      item.url = '#'
+    end
+
+    host_nav.update!(
+      privacy: 'private',
+      visibility_strategy: 'permission',
+      permission_identifier: 'view_metrics_dashboard',
+      visible: true
+    )
+
+    host_nav
+  end
+
+  def ensure_host_review_nav_item!(navigation_area:, host_nav:, identifier:, title:, slug:, position:, route_name:,
+                                   permission_identifier:)
+    item = BetterTogether::NavigationItem.find_or_initialize_by(
+      identifier:,
+      navigation_area:,
+      parent: host_nav
+    )
+    item.update!(
+      title:,
+      slug:,
+      position:,
+      visible: true,
+      protected: true,
+      item_type: 'link',
+      route_name:,
+      privacy: 'private',
+      visibility_strategy: 'permission',
+      permission_identifier:
+    )
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
 
   def screenshot_metadata(role:, flow:)
     {

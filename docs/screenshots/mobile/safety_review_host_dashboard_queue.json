@@ -1,8 +1,8 @@
 {
   "name": "safety_review_host_dashboard_queue",
   "device": "mobile",
-  "url": "/en/host",
-  "title": "Host Dashboard | Community Engine Host",
+  "url": "/en/host/safety-review",
+  "title": "Safety review | Test Host Community",
   "locale": "en",
   "role": "platform_manager_safety_reviewer",
   "feature_set": "safety_and_federation_review_operations",
