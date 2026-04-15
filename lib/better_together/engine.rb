@@ -185,11 +185,11 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      # Skip if this IS the engine (avoids double-loading in development).
-      # Use exact match so spec/dummy (a subdirectory of the engine) is not
-      # incorrectly excluded — spec/dummy is a distinct app root and needs the
-      # engine's migration path appended just like any external host app.
-      next if app.root.to_s == root.to_s
+      # Skip if this is the engine itself or the in-repo dummy app used for
+      # engine specs. The dummy app already sees the engine migrations through
+      # the normal boot path, and appending them here causes duplicate runtime
+      # migration paths during app:db:test:* tasks.
+      next if app.root.to_s == root.to_s || app.root.to_s.start_with?(root.join('spec/dummy').to_s)
 
       # Skip if the host app has already installed CE migrations via
       # `rails better_together:install:migrations`. Installed migrations carry
@@ -198,8 +198,13 @@ module BetterTogether
       # independently and does not need the engine path appended.
       next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
 
+      existing_paths = app.config.paths['db/migrate'].expanded.to_set
+
       config.paths['db/migrate'].expanded.each do |expanded_path|
-        app.config.paths['db/migrate'] << expanded_path unless app.config.paths['db/migrate'].include?(expanded_path)
+        next if existing_paths.include?(expanded_path)
+
+        app.config.paths['db/migrate'] << expanded_path
+        existing_paths << expanded_path
       end
     end
 

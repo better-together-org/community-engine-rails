@@ -20,9 +20,7 @@ module BetterTogether
     end
 
     def self.required_agreement_identifiers
-      identifiers = %w[privacy_policy terms_of_service]
-      identifiers << 'code_of_conduct' if BetterTogether::Agreement.exists?(identifier: 'code_of_conduct')
-      identifiers
+      BetterTogether::Agreement.registration_consent_records.map(&:identifier)
     end
 
     def self.accepted_agreement?(participant, identifier:)
@@ -36,7 +34,7 @@ module BetterTogether
     end
 
     def self.public_publishing_agreement
-      BetterTogether::Agreement.find_by(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+      BetterTogether::Agreement.first_publish_consent_record
     end
 
     def self.accepted_public_publishing_agreement?(participant)
@@ -55,8 +53,9 @@ module BetterTogether
       accepted_agreement_ids = person.agreement_participants.where.not(accepted_at: nil).pluck(:agreement_id)
 
       BetterTogether::Agreement
-        .where(identifier: required_agreement_identifiers)
+        .required_for_registration
         .where.not(id: accepted_agreement_ids)
+        .ordered_for_consent
     end
 
     # Returns true if a person has unaccepted required agreements

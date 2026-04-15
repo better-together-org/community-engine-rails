@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_12_223000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_14_193000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -150,6 +150,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_12_223000) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "collective", default: false, null: false
     t.uuid "page_id"
+    t.string "agreement_kind", default: "policy_consent", null: false
+    t.string "required_for", default: "none", null: false
+    t.boolean "active_for_consent", default: true, null: false
     t.index ["creator_id"], name: "by_better_together_agreements_creator"
     t.index ["identifier"], name: "index_better_together_agreements_on_identifier", unique: true
     t.index ["page_id"], name: "index_better_together_agreements_on_page_id"

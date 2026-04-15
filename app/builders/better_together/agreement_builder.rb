@@ -26,7 +26,12 @@ module BetterTogether
           a.title = 'Privacy Policy'
           a.description = 'Summary of how we handle your data.'
           a.privacy = 'public'
+          a.agreement_kind = 'policy_consent'
+          a.required_for = 'registration'
+          a.active_for_consent = true
         end
+
+        agreement.update!(agreement_kind: 'policy_consent', required_for: 'registration', active_for_consent: true)
 
         agreement.agreement_terms.find_or_create_by!(identifier: 'privacy_policy_summary') do |term|
           term.protected = true
@@ -48,7 +53,12 @@ module BetterTogether
           a.title = 'Terms of Service'
           a.description = 'Rules you agree to when using the platform.'
           a.privacy = 'public'
+          a.agreement_kind = 'policy_consent'
+          a.required_for = 'registration'
+          a.active_for_consent = true
         end
+
+        agreement.update!(agreement_kind: 'policy_consent', required_for: 'registration', active_for_consent: true)
 
         agreement.agreement_terms.find_or_create_by!(identifier: 'terms_of_service_summary') do |term|
           term.protected = true
@@ -69,7 +79,12 @@ module BetterTogether
           a.title = 'Code of Conduct'
           a.description = 'Community code of conduct and expectations.'
           a.privacy = 'public'
+          a.agreement_kind = 'policy_consent'
+          a.required_for = 'registration'
+          a.active_for_consent = true
         end
+
+        agreement.update!(agreement_kind: 'policy_consent', required_for: 'registration', active_for_consent: true)
 
         agreement.agreement_terms.find_or_create_by!(identifier: 'code_of_conduct_summary') do |term|
           term.protected = true
@@ -89,7 +104,12 @@ module BetterTogether
           a.title = 'Content Publishing Agreement'
           a.description = 'Consent requirement for making content or identity information publicly visible.'
           a.privacy = 'public'
+          a.agreement_kind = 'publishing_consent'
+          a.required_for = 'first_publish'
+          a.active_for_consent = true
         end
+
+        agreement.update!(agreement_kind: 'publishing_consent', required_for: 'first_publish', active_for_consent: true)
 
         agreement.agreement_terms.find_or_create_by!(identifier: 'content_publishing_agreement_summary') do |term|
           term.protected = true
@@ -100,6 +120,9 @@ module BetterTogether
             and must not expose other people or communities without authorization.
           CONTENT
         end
+
+        page = BetterTogether::Page.find_by(identifier: 'content_contributor_agreement')
+        agreement.update!(page: page) if page.present?
       end
     end
   end

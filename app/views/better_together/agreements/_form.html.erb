@@ -56,6 +56,18 @@
           <%= form.collection_select :page_id, BetterTogether::Page.all.i18n.order(:title), :id, :title, { include_blank: true }, { class: 'form-select', data: { controller: 'better_together--slim-select' } } %>
           <div class="form-text text-muted"><%= t('better_together.agreements.form.page_help', default: 'When set, the linked page content will be shown instead of the agreement terms.') %></div>
         </div>
+        <div class="mb-3">
+          <%= form.label :agreement_kind, t('better_together.agreements.form.agreement_kind', default: 'Agreement Type'), class: 'form-label' %>
+          <%= form.select :agreement_kind, BetterTogether::Agreement::AGREEMENT_KINDS.keys.map { |value| [value.to_s.humanize, value] }, {}, class: 'form-select' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :required_for, t('better_together.agreements.form.required_for', default: 'Required In Flow'), class: 'form-label' %>
+          <%= form.select :required_for, BetterTogether::Agreement::REQUIRED_FOR_VALUES.keys.map { |value| [value.to_s.humanize, value] }, {}, class: 'form-select' %>
+        </div>
+        <div class="mb-3 form-check">
+          <%= form.check_box :active_for_consent, class: 'form-check-input' %>
+          <%= form.label :active_for_consent, t('better_together.agreements.form.active_for_consent', default: 'Active for consent collection'), class: 'form-check-label' %>
+        </div>
 
         <%= render 'better_together/shared/citation_fields_section', form:, record: agreement %>
         <%= render 'better_together/shared/claim_fields_section', form:, record: agreement %>

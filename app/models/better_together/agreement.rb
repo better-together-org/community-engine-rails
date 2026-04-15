@@ -21,8 +21,41 @@ module BetterTogether
 
     accepts_nested_attributes_for :agreement_terms, reject_if: :all_blank, allow_destroy: true
 
+    before_validation :apply_default_consent_metadata
+
+    AGREEMENT_KINDS = {
+      policy_consent: 'policy_consent',
+      publishing_consent: 'publishing_consent',
+      transactional_agreement: 'transactional_agreement'
+    }.freeze
+
+    REQUIRED_FOR_VALUES = {
+      none: 'none',
+      registration: 'registration',
+      first_publish: 'first_publish'
+    }.freeze
+
     translates :title, type: :string
     translates :description, backend: :action_text
+
+    enum :agreement_kind, AGREEMENT_KINDS, prefix: true
+    enum :required_for, REQUIRED_FOR_VALUES, prefix: true
+
+    validates :agreement_kind, presence: true, inclusion: { in: AGREEMENT_KINDS.values }
+    validates :required_for, presence: true, inclusion: { in: REQUIRED_FOR_VALUES.values }
+
+    scope :active_for_consent, -> { where(active_for_consent: true) }
+    scope :required_for_registration, -> { active_for_consent.where(required_for: REQUIRED_FOR_VALUES[:registration]) }
+    scope :required_for_first_publish, -> { active_for_consent.where(required_for: REQUIRED_FOR_VALUES[:first_publish]) }
+    scope :ordered_for_consent, lambda {
+      order(Arel.sql("CASE identifier
+                        WHEN 'terms_of_service' THEN 0
+                        WHEN 'privacy_policy' THEN 1
+                        WHEN 'code_of_conduct' THEN 2
+                        WHEN 'content_publishing_agreement' THEN 3
+                        ELSE 99
+                      END"), :created_at)
+    }
 
     def acceptance_audit_snapshot
       snapshot_attributes.merge('terms' => agreement_term_snapshots)
@@ -33,12 +66,39 @@ module BetterTogether
     end
 
     def self.permitted_attributes(id: false, destroy: false)
-      super + [:page_id]
+      super + %i[page_id agreement_kind required_for active_for_consent]
+    end
+
+    def self.registration_consent_records
+      agreements = required_for_registration.ordered_for_consent.to_a
+      return agreements if agreements.present?
+
+      where(identifier: %w[terms_of_service privacy_policy code_of_conduct]).ordered_for_consent.to_a
+    end
+
+    def self.first_publish_consent_record
+      required_for_first_publish.ordered_for_consent.first || find_by(identifier: 'content_publishing_agreement')
     end
 
     slugged :title
 
     private
+
+    def apply_default_consent_metadata
+      self.active_for_consent = true if active_for_consent.nil?
+
+      case identifier.to_s
+      when 'privacy_policy', 'terms_of_service', 'code_of_conduct'
+        self.agreement_kind ||= AGREEMENT_KINDS[:policy_consent]
+        self.required_for ||= REQUIRED_FOR_VALUES[:registration]
+      when 'content_publishing_agreement'
+        self.agreement_kind ||= AGREEMENT_KINDS[:publishing_consent]
+        self.required_for ||= REQUIRED_FOR_VALUES[:first_publish]
+      else
+        self.agreement_kind ||= AGREEMENT_KINDS[:policy_consent]
+        self.required_for ||= REQUIRED_FOR_VALUES[:none]
+      end
+    end
 
     def snapshot_attributes
       {

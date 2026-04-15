@@ -13,7 +13,7 @@ module BetterTogether
     def index
       # If no unaccepted agreements, redirect to stored location or root
       if @unaccepted_agreements.empty?
-        redirect_to stored_location_for(:user) || after_sign_in_path_for(current_user),
+        redirect_to safe_return_to_path || stored_location_for(:user) || after_sign_in_path_for(current_user),
                     notice: t('.all_accepted')
         return
       end
@@ -26,7 +26,7 @@ module BetterTogether
     def create
       if agreements_accepted?
         create_agreement_participants
-        redirect_to person_path(current_user.person, locale: I18n.locale),
+        redirect_to safe_return_to_path || person_path(current_user.person, locale: I18n.locale),
                     notice: t('.successfully_accepted')
       else
         flash.now[:alert] = t('.acceptance_required')
@@ -50,9 +50,13 @@ module BetterTogether
       required_identifiers = BetterTogether::ChecksRequiredAgreements.required_agreement_identifiers
       required_identifiers |= requested_agreement_identifiers
 
-      all_required = Agreement.where(identifier: required_identifiers)
+      all_required = Agreement.where(identifier: required_identifiers).ordered_for_consent
       # Only count accepted participants (accepted_at not null)
       accepted_ids = current_user.person.agreement_participants.where.not(accepted_at: nil).pluck(:agreement_id)
+
+      @display_agreements = all_required.map do |agreement|
+        { agreement:, accepted: accepted_ids.include?(agreement.id) }
+      end
 
       all_required.each do |agreement|
         instance_variable_set(
@@ -67,19 +71,14 @@ module BetterTogether
     end
 
     def agreements_accepted?
-      required = []
-
-      @unaccepted_agreements.each do |agreement|
-        param_name = "#{agreement.identifier}_agreement"
-        required << params[param_name]
+      @unaccepted_agreements.all? do |agreement|
+        params[helpers.agreement_acceptance_param_name(agreement)] == '1'
       end
-
-      required.all? { |v| v == '1' }
     end
 
     def create_agreement_participants
       @unaccepted_agreements.each do |agreement|
-        param_name = "#{agreement.identifier}_agreement"
+        param_name = helpers.agreement_acceptance_param_name(agreement)
         next unless params[param_name] == '1'
 
         BetterTogether::AgreementAcceptanceRecorder.record!(
@@ -87,7 +86,7 @@ module BetterTogether
           participant: current_user.person,
           acceptance_method: :agreement_review,
           accepted_at: Time.current,
-          context: { request: }
+          context: { request:, flow: 'agreements_status' }
         )
       end
     end
@@ -103,6 +102,15 @@ module BetterTogether
     # Override default after_sign_in_path to respect stored location
     def after_sign_in_path_for(resource)
       stored_location_for(resource) || super
+    end
+
+    def safe_return_to_path
+      path = params[:return_to].to_s
+      return if path.blank?
+      return unless path.start_with?('/')
+      return if path.start_with?('//')
+
+      path
     end
   end
 end

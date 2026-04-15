@@ -55,7 +55,7 @@ RSpec.describe 'User Registration', :no_auth, :skip_host_setup do
             terms_of_service_agreement: '1',
             privacy_policy_agreement: '1',
             code_of_conduct_agreement: '1'
-          }
+          }.merge(bot_defense_payload(:registration))
         end.to change(BetterTogether::User, :count).by(1)
                                                    .and change(BetterTogether::Person, :count).by(1)
                                                                                               .and change(
@@ -90,7 +90,7 @@ RSpec.describe 'User Registration', :no_auth, :skip_host_setup do
             terms_of_service_agreement: '1',
             privacy_policy_agreement: '1',
             code_of_conduct_agreement: '1'
-          }
+          }.merge(bot_defense_payload(:registration))
         end.not_to change(BetterTogether::User, :count) # User not created due to invalid person
 
         expect(response).to have_http_status(:unprocessable_content) # Validation failed
