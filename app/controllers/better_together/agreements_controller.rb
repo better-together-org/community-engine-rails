@@ -4,7 +4,6 @@ module BetterTogether
   # CRUD for Agreements
   class AgreementsController < FriendlyResourceController
     skip_before_action :check_platform_privacy, only: :show
-    before_action :authorize_resource, only: :show
     before_action :authenticate_user!, only: :accept
     before_action :set_resource_instance, only: :accept
     before_action :authorize_resource, only: :accept
@@ -13,7 +12,9 @@ module BetterTogether
     # return only the fragment wrapped in the expected <turbo-frame id="agreement_modal_frame">...</turbo-frame>
     # so Turbo can swap it into the frame. For normal requests, fall back to the
     # default rendering (with layout).
-    def show # rubocop:todo Metrics/MethodLength
+    def show # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      set_resource_instance unless @resource&.persisted?
+      @agreement = @resource || resource_instance
       authorize @agreement
 
       if @agreement.page

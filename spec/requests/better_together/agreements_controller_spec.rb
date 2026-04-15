@@ -71,4 +71,21 @@ RSpec.describe BetterTogether::AgreementsController do
       end
     end
   end
+
+  describe 'GET /agreements/:id' do
+    it 'renders linked content contributor agreement page content inside the turbo frame', :aggregate_failures do
+      BetterTogether::AgreementBuilder.seed_data
+
+      seeded_agreement = BetterTogether::Agreement.find_by!(identifier: 'content_publishing_agreement')
+      expect(seeded_agreement.page).to be_present
+
+      get better_together.agreement_path(seeded_agreement.id, locale: I18n.locale),
+          headers: { 'Turbo-Frame' => 'agreement_modal_frame' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Content Contributor Agreement')
+      expect(response.body).to include('This Content Contributor Agreement')
+      expect(response.body).not_to include('<strong>Description:</strong>')
+    end
+  end
 end
