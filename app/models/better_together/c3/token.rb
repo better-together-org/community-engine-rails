@@ -19,6 +19,10 @@ module BetterTogether
       CONTRIBUTION_TYPES = BetterTogether::C3::ExchangeRate::CONTRIBUTION_TYPES
       TOKEN_STATUSES = %w[pending confirmed disputed settled].freeze
 
+      # Deterministic encryption so the for_source scope and duplicate-check in
+      # ContributionsController (Token.exists?(source_ref: ...)) continue to work.
+      encrypts :source_ref, deterministic: true
+
       enum :contribution_type, CONTRIBUTION_TYPES
 
       belongs_to :earner, polymorphic: true
