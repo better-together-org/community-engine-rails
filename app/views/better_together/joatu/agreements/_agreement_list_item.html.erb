@@ -9,11 +9,10 @@
     <span class="badge bg-secondary ms-2"><%= joatu_agreement.status %></span>
   </h4>
 
-  <% participant_names = [joatu_agreement.offer&.creator, joatu_agreement.request&.creator].compact.uniq.map { |participant| participant.name.presence || participant.to_s } %>
   <div class="text-muted small mb-1">
-    <% if participant_names.any? %>
+    <% if joatu_agreement.participant_names.any? %>
       <%= t('better_together.joatu.by', default: 'by') %>
-      <%= participant_names.join(' ↔ ') %> |
+      <%= joatu_agreement.participant_names.join(' ↔ ') %> |
     <% end %>
     <%= l(joatu_agreement.created_at, format: :long) if joatu_agreement.created_at %>
   </div>

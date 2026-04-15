@@ -50,7 +50,15 @@ module BetterTogether
             data: {
               id: agreement.id,
               type: 'joatu_agreements',
-              attributes: { status: agreement.status, terms: agreement.terms, value: agreement.value },
+              attributes: {
+                status: agreement.status,
+                terms: agreement.terms,
+                value: agreement.value,
+                agreement_family: agreement.agreement_family,
+                agreement_type: agreement.agreement_type,
+                participant_ids: agreement.participant_ids,
+                decision_made_at: agreement.decision_made_at&.iso8601
+              },
               relationships: {
                 offer: { data: { type: 'joatu_offers', id: agreement.offer_id } },
                 request: { data: { type: 'joatu_requests', id: agreement.request_id } }

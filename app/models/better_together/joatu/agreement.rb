@@ -56,6 +56,53 @@ module BetterTogether
         super + %i[offer_id request_id terms value status privacy]
       end
 
+      def agreement_family
+        'transactional_agreement'
+      end
+
+      def agreement_type
+        return 'network_connection_agreement' if connection_request?
+        return 'person_link_agreement' if request.is_a?(BetterTogether::Joatu::PersonLinkRequest)
+        return 'person_access_grant_agreement' if request.is_a?(BetterTogether::Joatu::PersonAccessGrantRequest)
+
+        agreement_family
+      end
+
+      def participant_people
+        [offer&.creator, request&.creator].compact.uniq
+      end
+
+      def participant_ids
+        participant_people.map(&:id)
+      end
+
+      def participant_for?(person_or_user)
+        person = if person_or_user.is_a?(BetterTogether::User)
+                   person_or_user.person
+                 else
+                   person_or_user
+                 end
+
+        participant_ids.include?(person&.id)
+      end
+
+      def participant_roles
+        {
+          offer_creator: offer&.creator,
+          request_creator: request&.creator
+        }.compact
+      end
+
+      def participant_names
+        participant_people.map { |participant| participant.name.presence || participant.to_s }
+      end
+
+      def decision_made_at
+        return unless status_accepted? || status_rejected?
+
+        updated_at
+      end
+
       def accept!
         ensure_accept_allowed!
 

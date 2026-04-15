@@ -19,6 +19,12 @@
           <h2 class="h5 mb-0"><%= t('better_together.joatu.agreements.show.details', default: 'Details') %></h2>
         </div>
         <div class="panel-body">
+          <p class="mb-1"><strong><%= t('better_together.joatu.agreements.show.agreement_family', default: 'Agreement Family') %>:</strong>
+            <%= @joatu_agreement.agreement_family.humanize %>
+          </p>
+          <p class="mb-1"><strong><%= t('better_together.joatu.agreements.show.agreement_type', default: 'Agreement Type') %>:</strong>
+            <%= @joatu_agreement.agreement_type.humanize %>
+          </p>
           <p class="mb-1"><strong><%= t('better_together.joatu.agreements.offer', default: 'Offer') %>:</strong>
             <%= link_to @joatu_agreement.offer.name, joatu_offer_path(@joatu_agreement.offer), class: 'text-decoration-none' %>
           </p>
@@ -30,6 +36,11 @@
               <%= @joatu_agreement.status %>
             </span>
           </p>
+          <% if @joatu_agreement.decision_made_at.present? %>
+            <p class="mb-0"><strong><%= t('better_together.joatu.agreements.show.decision_made_at', default: 'Decision Recorded') %>:</strong>
+              <%= l(@joatu_agreement.decision_made_at, format: :long) %>
+            </p>
+          <% end %>
 
           <% if @joatu_agreement.connection_request? %>
             <hr>
@@ -76,12 +87,12 @@
           <h2 class="h5 mb-0"><%= t('better_together.joatu.agreements.participants', default: 'Participants') %></h2>
         </div>
         <div class="panel-body">
-          <p class="mb-1"><strong><%= t('better_together.joatu.agreements.offer_creator', default: 'Offer Creator') %>:</strong>
-            <%= @joatu_agreement.offer.creator&.name || @joatu_agreement.offer.creator&.to_s %>
-          </p>
-          <p class="mb-0"><strong><%= t('better_together.joatu.agreements.request_creator', default: 'Request Creator') %>:</strong>
-            <%= @joatu_agreement.request.creator&.name || @joatu_agreement.request.creator&.to_s %>
-          </p>
+          <% @joatu_agreement.participant_roles.each do |role, participant| %>
+            <p class="<%= role == @joatu_agreement.participant_roles.keys.last ? 'mb-0' : 'mb-1' %>">
+              <strong><%= t("better_together.joatu.agreements.#{role}", default: role.to_s.humanize) %>:</strong>
+              <%= participant.name.presence || participant.to_s %>
+            </p>
+          <% end %>
         </div>
       </div>
     </div>

@@ -41,9 +41,9 @@ module BetterTogether
       end
 
       def participant?
-        return false unless record&.offer && record.request
+        return false unless record.present?
 
-        [record.offer.creator_id, record.request.creator_id].compact.include?(agent&.id)
+        record.participant_for?(agent)
       end
 
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation

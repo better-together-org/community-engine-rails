@@ -9,6 +9,19 @@ RSpec.describe BetterTogether::Joatu::Agreement do
   let(:request)   { create(:better_together_joatu_request, creator: creator_b) }
 
   describe 'status transitions' do
+    it 'exposes explicit participant and agreement metadata helpers' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+
+      expect(agreement.agreement_family).to eq('transactional_agreement')
+      expect(agreement.agreement_type).to eq('transactional_agreement')
+      expect(agreement.participant_people).to contain_exactly(creator_a, creator_b)
+      expect(agreement.participant_ids).to contain_exactly(creator_a.id, creator_b.id)
+      expect(agreement.participant_names).to contain_exactly(creator_a.name, creator_b.name)
+      expect(agreement.participant_for?(creator_a)).to be(true)
+      expect(agreement.participant_for?(create(:better_together_person))).to be(false)
+      expect(agreement.decision_made_at).to be_nil
+    end
+
     it 'records both creators as exchange participants' do
       agreement = create(:better_together_joatu_agreement, offer:, request:)
 
@@ -99,6 +112,8 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       connection = BetterTogether::PlatformConnection.find_by(source_platform:, target_platform:)
       expect(connection).to be_present
       expect(connection).to be_active
+      expect(agreement.agreement_type).to eq('network_connection_agreement')
+      expect(agreement.decision_made_at).to be_present
     end
 
     it 'creates a person link when accepting a person link request agreement' do

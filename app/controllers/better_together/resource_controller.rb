@@ -169,7 +169,8 @@ module BetterTogether
     end
 
     def record_optional_agreement_acceptances
-      return unless current_person.present?
+      person = helpers.current_person
+      return unless person.present?
 
       agreement = BetterTogether::ChecksRequiredAgreements.public_publishing_agreement
       return unless agreement.present?
@@ -179,7 +180,7 @@ module BetterTogether
 
       BetterTogether::AgreementAcceptanceRecorder.record!(
         agreement: agreement,
-        participant: current_person,
+        participant: person,
         acceptance_method: :action_gate,
         accepted_at: Time.current,
         context: { request:, flow: action_name }
