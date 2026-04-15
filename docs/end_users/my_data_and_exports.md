@@ -6,13 +6,14 @@
 
 ## Overview
 
-The **My Data** area gives you a self-service way to request an export of the data your account can currently download from the platform.
+The **My Data** area gives you a self-service way to manage the data and portability tools attached to your account.
 
 In `0.11.0`, this flow is centered on:
 
 - requesting a new export package
 - seeing whether an export is pending, completed, or failed
 - downloading a completed export
+- reaching your linked people, access grants, synchronized linked data, and portable seed exports from the same settings surface
 
 The current release also stores export packages as structured seed-backed files so the platform can support portability and audit trails more consistently.
 
@@ -35,6 +36,7 @@ The page currently includes:
 - a table of recent export requests
 - status badges for each request
 - a download action when an export is complete
+- a **Data sharing and portability** section with direct links to linked people, access grants, linked seeds, and portable seed exports
 
 ![My Data settings tab showing the normal settings layout, the active My Data tab, the export request button, and the current export history table.](../screenshots/desktop/release_0_11_0_settings_my_data_tab.png)
 
@@ -48,6 +50,19 @@ The page currently includes:
 4. Wait for the request to appear in the export table.
 
 The export may take a short time to finish. While it is processing, the table shows a pending state instead of a download link.
+
+## Data Sharing And Portability Shortcuts
+
+The same page now also surfaces the account-level portability tools that were previously easy to miss if you did not already know the direct routes.
+
+Depending on your permissions and the data connected to your account, you may see links for:
+
+- **Linked people** to review identity and federation links connected to you
+- **Access grants** to review what linked people can access and what they have granted back
+- **Linked seeds** to browse synchronized data made available through approved links
+- **Portable seed exports** to open your portable seed-backed export records directly
+
+These links only appear when the platform policies allow your account to use them.
 
 ## Understanding Export Statuses
 

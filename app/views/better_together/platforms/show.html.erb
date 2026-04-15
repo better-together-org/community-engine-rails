@@ -27,13 +27,13 @@
         <div class="d-flex gap-2">
           <%= render 'shared/resource_toolbar',
                      edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
-                     edit_aria_label: 'Edit Platform',
+                     edit_aria_label: t('platforms.show.actions.edit_aria'),
                      destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
                      destroy_confirm: t('platforms.confirm_delete'),
-                     destroy_aria_label: 'Delete Platform' do %>
+                     destroy_aria_label: t('platforms.show.actions.destroy_aria') do %>
 
             <% if @platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show? %>
-              <%= link_to host_dashboard_path, class: 'btn btn-outline-info btn-sm', aria: { label: 'View Host Dashboard' } do %>
+              <%= link_to host_dashboard_path, class: 'btn btn-outline-info btn-sm', aria: { label: t('platforms.show.actions.view_host_dashboard_aria') } do %>
                 <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
                 <%= t('platforms.actions.host_dashboard') %>
               <% end %>
@@ -55,7 +55,7 @@
       <div class="card-header">
         <!-- Navigation tabs -->
         <%# Initialize the active tab state with accessible attributes %>
-        <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
+        <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: t('platforms.show.sections_aria') do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
           <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
           <% if @show_safety_review %>
@@ -79,25 +79,48 @@
 
             <!-- Platform Details -->
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Identifier:</strong></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.identifier') %></strong></div>
               <div class="col-md-9"><%= @platform.identifier %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>URL:</strong></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.url') %></strong></div>
               <div class="col-md-9"><%= link_to @platform.host_url, @platform.host_url, target: "_blank", rel: "noopener noreferrer" %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Time Zone:</strong></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.time_zone') %></strong></div>
               <div class="col-md-9"><%= @platform.time_zone %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Protected:</strong></div>
-              <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.protected') %></strong></div>
+              <div class="col-md-9"><%= @platform.protected ? t('platforms.show.about.protected_yes') : t('platforms.show.about.protected_no') %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Access:</strong></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.access') %></strong></div>
               <div class="col-md-9"><%= access_mode_label(@platform) %></div>
             </div>
+
+            <% show_platform_operations = (@platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show?) || policy(::BetterTogether::StorageConfiguration).index? %>
+            <% if show_platform_operations %>
+              <div class="card border-0 bg-body-tertiary mt-4">
+                <div class="card-body">
+                  <h2 class="h5 mb-1"><%= t('platforms.show.operations.title') %></h2>
+                  <p class="text-muted mb-3"><%= t('platforms.show.operations.description') %></p>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <% if @platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show? %>
+                      <%= link_to t('platforms.show.operations.host_dashboard'),
+                                  host_dashboard_path,
+                                  class: 'btn btn-outline-info btn-sm' %>
+                    <% end %>
+                    <% if policy(::BetterTogether::StorageConfiguration).index? %>
+                      <%= link_to t('platforms.show.operations.storage_configurations'),
+                                  platform_storage_configurations_path(@platform),
+                                  class: 'btn btn-outline-primary btn-sm' %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           </div>
         </section>
 
@@ -115,8 +138,8 @@
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="addPlatformMemberModalLabel">Add New Platform Member</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+                      <h5 class="modal-title" id="addPlatformMemberModalLabel"><%= t('platforms.show.members.add_member_modal.title') %></h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('platforms.show.members.add_member_modal.close') %>" tabindex="-1"></button>
                     </div>
                     <div class="modal-body">
                       <%= form_with model: [ @platform, ::BetterTogether::PersonPlatformMembership.new ], url: platform_person_platform_memberships_path(@platform.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
@@ -126,9 +149,9 @@
                         <%= form.hidden_field :joinable_id, value: @platform.id %>
 
                         <div class="mb-3" id="member_select">
-                          <%= form.label :member_id, "Select Person *", class: "form-label" %>
+                          <%= form.label :member_id, t('platforms.show.members.add_member_modal.select_person'), class: "form-label" %>
                           <%= form.select :member_id, [], 
-                              { prompt: "Search for people..." }, 
+                              { prompt: t('platforms.show.members.add_member_modal.search_placeholder') }, 
                               { 
                                 class: "form-select", 
                                 required: true,
@@ -140,7 +163,7 @@
                                       url: available_people_platform_path(@platform)
                                     },
                                     settings: {
-                                      searchPlaceholder: 'Search for people...',
+                                      searchPlaceholder: t('platforms.show.members.add_member_modal.search_placeholder'),
                                       searchHighlight: true,
                                       closeOnSelect: true,
                                       allowDeselect: true,
@@ -152,11 +175,11 @@
                         </div>
 
                         <div class="mb-3">
-                          <%= form.label :role_id, "Select Platform Role *", class: "form-label" %>
+                          <%= form.label :role_id, t('platforms.show.members.add_member_modal.select_role'), class: "form-label" %>
                           <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @platform.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
-                          <%= form.submit "Add", class: "btn btn-primary" %>
+                          <%= form.submit t('platforms.show.members.add_member_modal.submit'), class: "btn btn-primary" %>
                         </div>
                       <% end %>
                     </div>

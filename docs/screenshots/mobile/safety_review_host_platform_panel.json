@@ -1,8 +1,8 @@
 {
   "name": "safety_review_host_platform_panel",
   "device": "mobile",
-  "url": "/en/platforms/test-host-community",
-  "title": "Test Host Community | Platforms | Test Host Community",
+  "url": "/en/platforms/community-engine-host",
+  "title": "Community Engine Host | Platforms | Community Engine Host",
   "locale": "en",
   "role": "safety_reviewer",
   "feature_set": "safety_and_federation_review_operations",
@@ -19,23 +19,23 @@
       ],
       "target": {
         "x": 28.0,
-        "y": 372.5625,
+        "y": 407.359375,
         "width": 429.0,
         "height": 781.03125,
         "right": 457.0,
-        "bottom": 1153.59375,
+        "bottom": 1188.390625,
         "center_x": 242.5,
-        "center_y": 763.078125
+        "center_y": 797.875
       },
       "avoid": {
         "x": 28.0,
-        "y": 372.5625,
+        "y": 407.359375,
         "width": 429.0,
         "height": 781.03125,
         "right": 457.0,
-        "bottom": 1153.59375,
+        "bottom": 1188.390625,
         "center_x": 242.5,
-        "center_y": 763.078125
+        "center_y": 797.875
       },
       "placement": {
         "side": "floating",

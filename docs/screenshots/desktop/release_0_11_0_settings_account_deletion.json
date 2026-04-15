@@ -1,9 +1,8 @@
 {
   "name": "release_0_11_0_settings_account_deletion",
   "device": "desktop",
-  "url": "http://127.0.0.1:33159/en/settings#account",
-  "title": "Settings | Halvorson-Grimes",
-  "captured_at": "2026-04-04T15:28:57Z",
+  "url": "/en/settings",
+  "title": "Settings | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "settings_embed_review",

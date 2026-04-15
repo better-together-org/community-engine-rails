@@ -2,7 +2,7 @@
   "name": "federation_review_host_dashboard_queue",
   "device": "mobile",
   "url": "/en/host",
-  "title": "Host Dashboard | Test Host Community",
+  "title": "Host Dashboard | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "safety_and_federation_review_operations",
@@ -19,31 +19,30 @@
       ],
       "target": {
         "x": 41.0,
-        "y": 1075.046875,
+        "y": 358.140625,
         "width": 403.0,
         "height": 26.28125,
         "right": 444.0,
-        "bottom": 1101.328125,
+        "bottom": 384.421875,
         "center_x": 242.5,
-        "center_y": 1088.1875
+        "center_y": 371.28125
       },
       "avoid": {
         "x": 24.0,
-        "y": 1058.046875,
+        "y": 341.140625,
         "width": 437.0,
-        "height": 202.953125,
+        "height": 578.65625,
         "right": 461.0,
-        "bottom": 1261.0,
+        "bottom": 919.796875,
         "center_x": 242.5,
-        "center_y": 1159.5234375
+        "center_y": 630.46875
       },
       "placement": {
-        "side": "above",
-        "x": 107.5,
-        "y": 368.05,
+        "side": "floating",
+        "x": 206.0,
+        "y": 404.42,
         "width": 270.0,
-        "height": 670,
-        "score": 1058.046875
+        "height": 670
       }
     }
   ]

@@ -935,7 +935,24 @@ es:
         title: Comunidades
       none-yet: None-yet
       show:
+        about:
+          no_description: No hay descripción disponible.
+        actions:
+          destroy_aria: Eliminar la comunidad
+          edit_aria: Editar la comunidad
         create_event: Crear un evento
+        events:
+          create_event: Crear un evento
+          draft_heading: Borrador
+        members:
+          add_member_modal:
+            close: Cerrar
+            select_person: Seleccionar persona *
+            select_person_prompt: Seleccionar una persona
+            select_role: Seleccionar rol *
+            submit: Agregar
+            title: Agregar nuevo miembro
+        sections_aria: Secciones de la comunidad
       tabs:
         buildings: Edificios
         contact_details: Detalles de contacto
@@ -3220,6 +3237,28 @@ es:
           description: Conecte y gestione sus cuentas de plataformas externas.
           title: Cuentas Conectadas
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Revise los permisos que ha otorgado a personas vinculadas
+                  y los que ellas le han otorgado de vuelta.
+                title: Permisos de acceso
+              linked_seeds:
+                description: Explore los datos sincronizados compartidos a través
+                  de sus enlaces de plataforma aprobados.
+                title: Seeds vinculados
+              person_links:
+                description: Revise las personas y conexiones federadas vinculadas
+                  actualmente a su cuenta.
+                title: Personas vinculadas
+              person_seeds:
+                description: Abra sus exportaciones seed portables para flujos avanzados
+                  de portabilidad e interoperabilidad.
+                title: Exportaciones seed portables
+            description: Acceda a sus personas vinculadas, permisos de acceso, datos
+              sincronizados y exportaciones portables desde un solo lugar.
+            open_link: Abrir
+            title: Intercambio y portabilidad de datos
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -4241,8 +4280,34 @@ es:
       none_yet: Ninguno aún
       total_resources: Total de recursos
       view_all: Ver todo
+    safety_review:
+      description: Revise la cola de seguridad desde el panel del anfitrión. Hay %{open_cases}
+        casos abiertos y %{visible_reports} informes visibles dentro del alcance.
+      heading: Cola de revisión de seguridad
+      open_cases_badge:
+        one: 1 caso abierto
+        other: "%{count} casos abiertos"
+      review_queue_link: Abrir cola de revisión
+      summary:
+        content_review_items: Elementos de revisión de contenido
+        participant_updates: Actualizaciones para participantes
+        retaliation_risk: Riesgo de represalias
+        unassigned_cases: Necesitan asignación
+      summary_label: Resumen de la revisión de seguridad
+      urgent_cases_badge:
+        one: 1 caso urgente
+        other: "%{count} casos urgentes"
+      view_reports_link: Revisar informes enviados
+      visible_reports_badge:
+        one: 1 informe visible
+        other: "%{count} informes visibles"
   invitations:
     calculating: Calculando
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Volver arriba
+        copyright: "%{community_name} © %{year}. Todos los derechos reservados."
   locale_name: Español
   locales:
     en: English
@@ -4406,6 +4471,18 @@ es:
       host_dashboard: Panel de Control del Anfitrión
     confirm_delete: Confirmar eliminación
     show:
+      about:
+        access: 'Acceso:'
+        identifier: 'Identificador:'
+        protected: 'Protegida:'
+        protected_no: 'No'
+        protected_yes: Sí
+        time_zone: 'Zona horaria:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Eliminar la plataforma
+        edit_aria: Editar la plataforma
+        view_host_dashboard_aria: Ver el panel del anfitrión
       federation:
         connection_status: Estado
         description: Revise las conexiones de federación y de plataforma vinculadas
@@ -4422,6 +4499,20 @@ es:
           total: Conexiones totales
         title: Conexiones de federación
         view_connection: Ver conexión
+      members:
+        add_member_modal:
+          close: Cerrar
+          search_placeholder: Buscar personas...
+          select_person: Seleccionar persona *
+          select_role: Seleccionar rol de plataforma *
+          submit: Agregar
+          title: Agregar nuevo miembro de la plataforma
+      operations:
+        description: Abra las operaciones de nivel anfitrión para esta plataforma
+          sin depender solo del conocimiento de la URL.
+        host_dashboard: Panel del anfitrión
+        storage_configurations: Gestionar almacenamiento
+        title: Operaciones de la plataforma
       safety:
         description: Revise los informes entrantes, los casos de seguridad activos
           y los seguimientos visibles para participantes de %{platform}.
@@ -4437,6 +4528,7 @@ es:
           visible_reports: Informes visibles
         title: Revisión de seguridad
         view_reports: Revisar informes enviados
+      sections_aria: Secciones de la plataforma
   pundit:
     errors:
       create: No está autorizado para crear este %{resource}.

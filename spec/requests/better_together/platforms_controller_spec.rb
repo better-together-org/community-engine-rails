@@ -150,6 +150,17 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(response.body).to include('Participant Updates')
     end
 
+    it 'shows platform operations entry points to platform managers' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('platforms.show.operations.title'))
+      expect(response.body).to include(I18n.t('platforms.show.operations.storage_configurations'))
+      expect(response.body).to include(better_together.platform_storage_configurations_path(host_platform, locale: locale))
+    end
+
     it 'keeps safety review controls hidden for platform managers without safety permissions' do
       host_platform = BetterTogether::Platform.find_by(host: true)
 

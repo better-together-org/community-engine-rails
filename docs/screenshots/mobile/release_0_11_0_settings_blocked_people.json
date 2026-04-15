@@ -1,9 +1,8 @@
 {
   "name": "release_0_11_0_settings_blocked_people",
   "device": "mobile",
-  "url": "http://127.0.0.1:33159/en/settings#blocked-people",
-  "title": "Settings | Halvorson-Grimes",
-  "captured_at": "2026-04-04T15:29:04Z",
+  "url": "/en/settings",
+  "title": "Settings | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "settings_embed_review",

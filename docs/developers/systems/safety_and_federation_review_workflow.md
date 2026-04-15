@@ -4,7 +4,7 @@
 
 Community Engine now exposes the two review surfaces introduced during the `0.11.0` rollout through stable operator entry points and a shared digest-style notification contract.
 
-- **Safety review** stays centered on the host platform profile and the safety-case queue for reviewers with `manage_platform_safety`.
+- **Safety review** now has two discoverable operator paths: the host platform profile Safety tab and the host dashboard safety review queue for reviewers who also have dashboard access.
 - **Federation review** now has a host-dashboard queue for operators who already have both host-dashboard access and network-connection authority, while approval-only network stewards still act from the platform profile, platform-connections index, and direct notifications.
 
 ## Clearly labeled review-and-notification diagram
@@ -52,7 +52,12 @@ flowchart TB
 
 Safety reviewers should not need a direct URL to discover their work.
 
-The primary reviewer surface is now the **host platform profile Safety tab**, which summarizes:
+Safety review now has two complementary reviewer surfaces:
+
+1. the **host platform profile Safety tab**
+2. the **host dashboard safety review queue**
+
+Together they summarize:
 
 - open cases
 - urgent cases
@@ -64,6 +69,8 @@ The primary reviewer surface is now the **host platform profile Safety tab**, wh
 
 - `docs/screenshots/desktop/safety_review_host_platform_panel.png`
 - `docs/screenshots/mobile/safety_review_host_platform_panel.png`
+- `docs/screenshots/desktop/safety_review_host_dashboard_queue.png`
+- `docs/screenshots/mobile/safety_review_host_dashboard_queue.png`
 
 ### Federation operators and network stewards
 

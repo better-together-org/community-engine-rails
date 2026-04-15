@@ -925,7 +925,24 @@ en:
         title: Communities
       none-yet: None-yet
       show:
+        about:
+          no_description: No description available.
+        actions:
+          destroy_aria: Delete community
+          edit_aria: Edit community
         create_event: Create an Event
+        events:
+          create_event: Create an Event
+          draft_heading: Draft
+        members:
+          add_member_modal:
+            close: Close
+            select_person: Select Person *
+            select_person_prompt: Select a person
+            select_role: Select Role *
+            submit: Add
+            title: Add New Member
+        sections_aria: Community sections
       tabs:
         buildings: Buildings
         contact_details: Contact details
@@ -3151,6 +3168,28 @@ en:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Review the permissions you have granted to linked people,
+                  and the permissions they have granted back to you.
+                title: Access grants
+              linked_seeds:
+                description: Browse synchronized data shared through your approved
+                  platform links.
+                title: Linked seeds
+              person_links:
+                description: Review the people and federated connections currently
+                  linked to your account.
+                title: Linked people
+              person_seeds:
+                description: Open your portable seed exports for advanced portability
+                  and interoperability workflows.
+                title: Portable seed exports
+            description: Reach your linked people, access grants, synchronized data,
+              and portable exports from one place.
+            open_link: Open
+            title: Data sharing and portability
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -4155,8 +4194,34 @@ en:
       none_yet: None yet
       total_resources: Total resources
       view_all: View All
+    safety_review:
+      description: Review the current safety queue from the host dashboard. There
+        are %{open_cases} open cases and %{visible_reports} visible reports in scope.
+      heading: Safety review queue
+      open_cases_badge:
+        one: 1 open case
+        other: "%{count} open cases"
+      review_queue_link: Open review queue
+      summary:
+        content_review_items: Content review items
+        participant_updates: Participant updates
+        retaliation_risk: Retaliation risk
+        unassigned_cases: Needs assignment
+      summary_label: Safety review summary
+      urgent_cases_badge:
+        one: 1 urgent case
+        other: "%{count} urgent cases"
+      view_reports_link: Review submitted reports
+      visible_reports_badge:
+        one: 1 visible report
+        other: "%{count} visible reports"
   invitations:
     calculating: Calculating
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Back to top
+        copyright: "%{community_name} © %{year}. All rights reserved."
   locale_name: English
   locales:
     en: English
@@ -4315,6 +4380,18 @@ en:
       host_dashboard: Host Dashboard
     confirm_delete: Confirm delete
     show:
+      about:
+        access: 'Access:'
+        identifier: 'Identifier:'
+        protected: 'Protected:'
+        protected_no: 'No'
+        protected_yes: 'Yes'
+        time_zone: 'Time Zone:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Delete platform
+        edit_aria: Edit platform
+        view_host_dashboard_aria: View host dashboard
       federation:
         connection_status: Status
         description: Review the federation and platform connections currently linked
@@ -4331,6 +4408,20 @@ en:
           total: Total Connections
         title: Federation Connections
         view_connection: View Connection
+      members:
+        add_member_modal:
+          close: Close
+          search_placeholder: Search for people...
+          select_person: Select Person *
+          select_role: Select Platform Role *
+          submit: Add
+          title: Add New Platform Member
+      operations:
+        description: Open host-level operations for this platform without relying
+          on route knowledge alone.
+        host_dashboard: Host Dashboard
+        storage_configurations: Manage storage
+        title: Platform operations
       safety:
         description: Review incoming reports, active safety cases, and participant-visible
           follow-ups for %{platform}.
@@ -4346,6 +4437,7 @@ en:
           visible_reports: Visible Reports
         title: Safety Review
         view_reports: Review Submitted Reports
+      sections_aria: Platform sections
   pundit:
     errors:
       create: You are not authorized to create this %{resource}.

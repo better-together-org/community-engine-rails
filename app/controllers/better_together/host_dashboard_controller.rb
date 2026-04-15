@@ -96,6 +96,7 @@ module BetterTogether
 
       build_sensitive_directory_cards
       build_membership_review_cards
+      build_safety_review_cards
       build_platform_connection_review_cards
     end
     # rubocop:enable Metrics/CyclomaticComplexity
@@ -192,6 +193,36 @@ module BetterTogether
       @platform_connection_review_total_count = 0
       @platform_connection_review_pending_count = 0
       @platform_connection_review_active_count = 0
+    end
+
+    def build_safety_review_cards
+      @show_safety_review_section = safety_review_visible?
+      reset_safety_review_state
+      return unless @show_safety_review_section
+
+      report_scope = policy_scope(::BetterTogether::Report)
+      @safety_review_snapshot = ::BetterTogether::Safety::LocalReviewSnapshotService.new(
+        case_scope: policy_scope(::BetterTogether::Safety::Case),
+        report_scope:
+      ).call
+      @safety_review_report_count = report_scope.count
+    end
+
+    def safety_review_visible?
+      host_platform.present? && policy(::BetterTogether::Safety::Case).index?
+    end
+
+    def reset_safety_review_state
+      @safety_review_snapshot = {
+        open_cases_count: 0,
+        urgent_open_cases_count: 0,
+        unassigned_open_cases_count: 0,
+        retaliation_risk_open_cases_count: 0,
+        repeated_reportables_count: 0,
+        content_review_items_count: 0,
+        participant_visible_notes_count: 0
+      }
+      @safety_review_report_count = 0
     end
 
     def platform_connection_review_connections

@@ -59,6 +59,7 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
     BetterTogether::AccessControlBuilder.seed_data
 
     grant_platform_permission(safety_reviewer, 'manage_platform_safety')
+    grant_platform_permission(platform_manager, 'manage_platform_safety')
     grant_platform_permission(platform_manager, 'manage_network_connections')
 
     BetterTogether::Safety::Note.create!(
@@ -151,6 +152,29 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/federation_review_host_dashboard_queue.png')
     expect(result[:mobile]).to end_with('docs/screenshots/mobile/federation_review_host_dashboard_queue.png')
+  end
+
+  it 'captures the host dashboard safety review queue' do
+    result = BetterTogether::CapybaraScreenshotEngine.capture(
+      'safety_review_host_dashboard_queue',
+      device: :both,
+      metadata: screenshot_metadata(role: 'platform_manager_safety_reviewer', flow: 'host_dashboard_safety_queue')
+    ) do
+      login_as(platform_manager, scope: :user)
+      visit better_together.host_dashboard_path(locale:)
+      page.execute_script <<~JS
+        document
+          .querySelector('section[aria-labelledby="safety-review-heading"]')
+          ?.scrollIntoView({ block: 'center' });
+      JS
+
+      expect(page).to have_text('Safety review queue')
+      expect(page).to have_link('Open review queue', href: better_together.safety_cases_path(locale:))
+      expect(page).to have_link('Review submitted reports', href: better_together.reports_path(locale:))
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/safety_review_host_dashboard_queue.png')
+    expect(result[:mobile]).to end_with('docs/screenshots/mobile/safety_review_host_dashboard_queue.png')
   end
 
   private
