@@ -25,19 +25,25 @@ module BetterTogether
 
         payer = BetterTogether::Person.find_by(borgberry_did: lock_params[:payer_did])
         unless payer
-          return render json: { error: "payer with DID '#{lock_params[:payer_did]}' not found on this platform" },
-                        status: :not_found
+          # Return a generic 422 — do not confirm or deny whether the DID exists
+          # on this platform (prevents cross-platform user enumeration).
+          return render json: { error: 'lock request could not be processed' },
+                        status: :unprocessable_entity
         end
 
         millitokens = lock_params[:c3_millitokens].to_i
         c3_amount = millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE
 
         payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: payer, community: nil)
-        payer_balance.lock!(c3_amount)
+        lock_ref = payer_balance.lock!(
+          c3_amount,
+          agreement_ref: lock_params[:agreement_ref],
+          source_platform: connection.source_platform
+        )
 
         render json: {
           locked: true,
-          lock_ref: SecureRandom.uuid,
+          lock_ref: lock_ref,
           locked_c3: c3_amount,
           payer_did: lock_params[:payer_did],
           agreement_ref: lock_params[:agreement_ref]
