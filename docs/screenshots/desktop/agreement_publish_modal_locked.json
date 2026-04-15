@@ -1,0 +1,10 @@
+{
+  "name": "agreement_publish_modal_locked",
+  "device": "desktop",
+  "url": "/en/communities/new",
+  "title": "Communities | Communities | Test Host Community",
+  "locale": "en",
+  "role": "publisher",
+  "flow": "first_publish",
+  "source_spec": "./spec/docs_screenshots/better_together/agreement_flows_spec.rb"
+}

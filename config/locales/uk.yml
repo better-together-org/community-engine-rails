@@ -745,13 +745,20 @@ uk:
       add: Додати
       title: Умови угоди
     agreements:
+      accept: Я погоджуюся
+      accept_error: Зараз неможливо зафіксувати прийняття угоди.
+      accepted: Погоджено
+      accepting: Збереження...
       create:
         acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
         successfully_accepted: Дякуємо за прийняття обов'язкових угод.
       form:
+        active_for_consent: Активний для згоди
+        agreement_kind: Тип угоди
         page_help: Якщо встановлено, буде відображено вміст пов'язаної сторінки замість
           умов угоди.
         page_label: Пов'язана сторінка (необов'язково)
+        required_for: Обов’язково для
       no_terms: Умови не визначено.
       notice:
         body: Будь ласка, перегляньте повну угоду перед прийняттям.
@@ -1785,6 +1792,9 @@ uk:
         request: Request
         request_creator: Request Creator
         show:
+          agreement_family: Сімейство угод
+          agreement_type: Тип угоди
+          decision_made_at: Час фіксації рішення
           details: Details
           open_platform_connections: Відкрити з'єднання платформ
           platform_connection: Підключення платформи
@@ -1846,7 +1856,7 @@ uk:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Взаємодопомога
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1919,7 +1929,7 @@ uk:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: Нова відповідність Joatu
+        subject: Нова відповідність взаємодопомоги
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
@@ -2229,7 +2239,6 @@ uk:
       shares_controller:
         error_tracking: 'Помилка відстеження поширення:'
         failed_tracking: Не вдалося відстежити поширення.
-        ga_not_initialized: Google Analytics не ініціалізовано.
         unsupported_platform: 'Непідтримувана платформа: %{platform}'
       user_account_reports_controller:
         create:
@@ -4142,6 +4151,7 @@ uk:
     visible: Видимий
     'yes': Так
   helpers:
+    cancel: Скасувати
     close: Закрити
     errors:
       heading: Помилки форми

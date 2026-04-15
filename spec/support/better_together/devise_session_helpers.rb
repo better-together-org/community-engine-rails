@@ -163,6 +163,7 @@ module BetterTogether # :nodoc:
         check 'user_accept_code_of_conduct'
       end
 
+      satisfy_bot_defense_minimum_wait(:registration)
       click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)

@@ -60,7 +60,8 @@ module BetterTogether
     end
 
     def set_metric_viewable
-      self.metric_viewable = resource_instance
+      set_resource_instance unless @resource&.persisted?
+      self.metric_viewable = @resource if @resource&.persisted?
     end
   end
 end

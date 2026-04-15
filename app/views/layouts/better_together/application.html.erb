@@ -2,6 +2,8 @@
 <html lang="<%= I18n.locale %>">
   <head>
     <meta charset="utf-8">
+    <%= render_provider_head_tags %>
+
     <!-- Custom Head Javascript from Host App -->
     <%= render 'layouts/better_together/custom_head_javascript' %>
 
@@ -64,6 +66,8 @@
       <main class="content">
         <%= yield %>
       </main>
+
+      <%= render 'layouts/better_together/agreement_modal_shell' %>
 
       <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
 

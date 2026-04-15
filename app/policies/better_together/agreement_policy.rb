@@ -11,6 +11,10 @@ module BetterTogether
       true
     end
 
+    def accept?
+      show?
+    end
+
     def update?
       agreement_manager?
     end

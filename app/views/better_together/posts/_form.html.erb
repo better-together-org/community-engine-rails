@@ -18,16 +18,7 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if post.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% post.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: post if post.errors.any? %>
 
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_string_field', locals: { model: post, form: form, attribute: 'title' } %>

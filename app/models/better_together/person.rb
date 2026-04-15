@@ -121,6 +121,18 @@ module BetterTogether
       BetterTogether::ChecksRequiredAgreements.unaccepted_required_agreements(self)
     end
 
+    def accepted_agreement_participants
+      agreement_participants.accepted.includes(:agreement).order(accepted_at: :desc)
+    end
+
+    def current_agreement_participants
+      accepted_agreement_participants.select(&:current_for_agreement?)
+    end
+
+    def stale_agreement_participants
+      accepted_agreement_participants.select(&:stale_for_agreement?)
+    end
+
     # Returns true if this person has unaccepted required agreements
     # @return [Boolean]
     def unaccepted_required_agreements?

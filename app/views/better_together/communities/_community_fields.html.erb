@@ -1,14 +1,5 @@
 <div id="form_errors">
-  <% if community.errors.any? %>
-    <div class="alert alert-danger mt-3" role="alert">
-      <h2><%= pluralize(community.errors.count, "error") %> prohibited this community from being saved:</h2>
-      <ul>
-        <% community.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: community if community.errors.any? %>
 </div>
 
 <div class="row">

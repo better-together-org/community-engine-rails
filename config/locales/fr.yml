@@ -760,13 +760,20 @@ fr:
       add: Ajouter
       title: Conditions de l'accord
     agreements:
+      accept: J'accepte
+      accept_error: Impossible d'enregistrer l'acceptation de l'accord pour le moment.
+      accepted: Accepté
+      accepting: Enregistrement...
       create:
         acceptance_required: Vous devez accepter tous les accords requis pour continuer.
         successfully_accepted: Merci d'avoir accepté les accords requis.
       form:
+        active_for_consent: Actif pour le consentement
+        agreement_kind: Type d'accord
         page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
           des conditions de l'accord.
         page_label: Page liée (optionnel)
+        required_for: Requis pour
       no_terms: Aucune condition définie.
       notice:
         body: Veuillez lire l'accord complet avant de l'accepter.
@@ -1795,6 +1802,9 @@ fr:
         request: Demande
         request_creator: Créateur de la demande
         show:
+          agreement_family: Famille d'accord
+          agreement_type: Type d'accord
+          decision_made_at: Décision enregistrée
           details: Détails
           open_platform_connections: Ouvrir les connexions de plateforme
           platform_connection: Connexion de plateforme
@@ -1856,7 +1866,7 @@ fr:
         title: Correspondances potentielles
       nav:
         agreements: Accords
-        hub: Hub
+        hub: Entraide
         manage_categories: Gérer les catégories
         offers: Offres
         requests: Demandes
@@ -1929,7 +1939,7 @@ fr:
           L'équipe de %{platform}
         subject: Un nouvel accord a été créé
       new_match:
-        subject: Nouvelle correspondance Joatu
+        subject: Nouvelle correspondance d'entraide
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
@@ -2250,7 +2260,6 @@ fr:
       shares_controller:
         error_tracking: 'Erreur lors du suivi du partage :'
         failed_tracking: Impossible de suivre le partage.
-        ga_not_initialized: Google Analytics n'est pas initialisé.
         unsupported_platform: 'Plateforme non supportée : %{platform}'
       user_account_reports_controller:
         create:
@@ -4165,6 +4174,7 @@ fr:
     visible: Visible
     'yes': Oui
   helpers:
+    cancel: Annuler
     close: Fermer
     errors:
       heading: Titre

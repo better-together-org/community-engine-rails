@@ -750,13 +750,20 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      accept: I agree
+      accept_error: Unable to record agreement acceptance right now.
+      accepted: Accepted
+      accepting: Saving...
       create:
         acceptance_required: You must accept all required agreements to continue.
         successfully_accepted: Thank you for accepting the required agreements.
       form:
+        active_for_consent: Active for consent
+        agreement_kind: Agreement kind
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
         page_label: Linked Page (optional)
+        required_for: Required for
       no_terms: No terms defined.
       notice:
         body: Please view the full agreement before accepting.
@@ -1761,6 +1768,9 @@ en:
         request: Request
         request_creator: Request Creator
         show:
+          agreement_family: Agreement Family
+          agreement_type: Agreement Type
+          decision_made_at: Decision Recorded
           details: Details
           open_platform_connections: Open Platform Connections
           platform_connection: Platform Connection
@@ -1822,7 +1832,7 @@ en:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Mutual Aid
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1895,7 +1905,7 @@ en:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: New Joatu match
+        subject: New mutual aid match
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
@@ -2198,7 +2208,6 @@ en:
       shares_controller:
         error_tracking: 'Error tracking share:'
         failed_tracking: Failed to track share.
-        ga_not_initialized: Google Analytics not initialized.
         unsupported_platform: 'Unsupported platform: %{platform}'
       user_account_reports_controller:
         create:
@@ -4057,6 +4066,7 @@ en:
     visible: Visible
     'yes': 'Yes'
   helpers:
+    cancel: Cancel
     close: Close
     errors:
       heading: Form Errors
