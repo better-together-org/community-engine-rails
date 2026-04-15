@@ -19,15 +19,19 @@ module BetterTogether
 
       belongs_to :earner, polymorphic: true
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
+      # origin_platform_id is nil for tokens minted locally; set for tokens received via federation
+      belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true
 
       validates :earner, :contribution_type, :source_ref, :source_system, presence: true
       validates :source_ref, uniqueness: { scope: :source_system }
       validates :c3_millitokens, numericality: { greater_than_or_equal_to: 0 }
       validates :status, inclusion: { in: TOKEN_STATUSES }
 
-      scope :confirmed, -> { where(status: 'confirmed') }
-      scope :pending, -> { where(status: 'pending') }
+      scope :confirmed,  -> { where(status: 'confirmed') }
+      scope :pending,    -> { where(status: 'pending') }
       scope :for_source, ->(system, ref) { where(source_system: system, source_ref: ref) }
+      scope :local,      -> { where(federated: false) }
+      scope :federated,  -> { where(federated: true) }
 
       # Convert to/from C3 decimal amount
       def c3_amount
