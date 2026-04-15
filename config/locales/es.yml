@@ -2341,9 +2341,12 @@ es:
         navigation_areas: Áreas de navegación
         pages: Páginas
         people: Personas
+        platform_connections: Conexiones de plataforma
         platforms: Plataformas
+        reports: Informes
         resource_permissions: Permisos de recursos
         roles: Roles
+        safety_cases: Revisión de seguridad
         users: Usuarios
       visibility_strategies:
         authenticated: Usuarios autenticados
@@ -2410,6 +2413,25 @@ es:
         body: Una nueva integración de cuenta %{provider} fue conectada el %{created_at}
         message: Nueva integración %{provider} conectada el %{created_at}
         title: Nueva integración %{provider} conectada
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: hace %{time}
     oauth:
       applications:
@@ -4065,8 +4087,10 @@ es:
       attendees: Asistentes
       contact: Contacto
       events: Eventos
+      federation: Federación
       invitations: Invitaciones
       members: Miembros
+      safety: Seguridad
     to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
@@ -4181,6 +4205,37 @@ es:
       review_link: Review queue
       summary_label: Membership review summary
       table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: Nuevo %{resource}
       none_yet: Ninguno aún
@@ -4350,6 +4405,38 @@ es:
     actions:
       host_dashboard: Panel de Control del Anfitrión
     confirm_delete: Confirmar eliminación
+    show:
+      federation:
+        connection_status: Estado
+        description: Revise las conexiones de federación y de plataforma vinculadas
+          actualmente a %{platform}.
+        direction:
+          incoming: Conexión entrante
+          outgoing: Conexión saliente
+        empty_state: Todavía no hay conexiones de federación que involucren esta plataforma.
+        new_connection: Nueva conexión
+        open_connections: Abrir conexiones
+        summary:
+          active: Activas
+          pending: Pendientes
+          total: Conexiones totales
+        title: Conexiones de federación
+        view_connection: Ver conexión
+      safety:
+        description: Revise los informes entrantes, los casos de seguridad activos
+          y los seguimientos visibles para participantes de %{platform}.
+        review_queue: Abrir cola de revisión
+        summary:
+          content_review_items: Elementos de revisión de contenido
+          open_cases: Casos abiertos
+          participant_updates: Actualizaciones para participantes
+          repeated_reports: Reportables repetidos
+          retaliation_risk_cases: Riesgo de represalias
+          unassigned_cases: Necesitan asignación
+          urgent_cases: Urgentes
+          visible_reports: Informes visibles
+        title: Revisión de seguridad
+        view_reports: Revisar informes enviados
   pundit:
     errors:
       create: No está autorizado para crear este %{resource}.

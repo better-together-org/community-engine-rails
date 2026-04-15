@@ -82,6 +82,8 @@ module BetterTogether
 
     before_validation :apply_connection_policy_defaults
     before_validation :ensure_oauth_client_credentials
+    after_create_commit :notify_reviewers_of_submission, if: :pending?
+    after_update_commit :notify_reviewers_of_status_change, if: :saved_change_to_status?
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
     scope :for_platform, lambda { |platform|
@@ -132,6 +134,17 @@ module BetterTogether
 
       normalize_content_policy_settings!
       normalize_federation_policy_settings!
+    end
+
+    def notify_reviewers_of_submission
+      ::BetterTogether::PlatformConnectionNotificationService.new(self).notify_submission
+    end
+
+    def notify_reviewers_of_status_change
+      previous_status, = previous_changes['status']
+      ::BetterTogether::PlatformConnectionNotificationService.new(self).notify_status_change(
+        previous_status:
+      )
     end
   end
 end

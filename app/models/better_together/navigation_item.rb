@@ -39,8 +39,11 @@ module BetterTogether
       people: 'people_url',
       posts: 'posts_url',
       platforms: 'platforms_url',
+      platform_connections: 'platform_connections_url',
+      reports: 'reports_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
+      safety_cases: 'safety_cases_url',
       users: 'users_url',
       webhook_endpoints: 'webhook_endpoints_url'
     }

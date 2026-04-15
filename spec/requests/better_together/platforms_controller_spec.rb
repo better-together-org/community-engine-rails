@@ -8,6 +8,15 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
   let!(:content_publishing_agreement) do
     BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
   end
+  let(:network_admin) do
+    create(:better_together_user, :confirmed, :network_admin, email: 'platform-network-admin@example.test')
+  end
+  let(:approval_operator) do
+    create(:better_together_user, :confirmed, email: 'platform-approver@example.test')
+  end
+  let(:safety_reviewer) do
+    create(:better_together_user, :confirmed, email: 'platform-safety-reviewer@example.test')
+  end
 
   before do
     manager_person = BetterTogether::User.find_by(email: 'manager@example.test').person
@@ -15,6 +24,20 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
            agreement: content_publishing_agreement,
            participant: manager_person,
            accepted_at: Time.current)
+    permission = BetterTogether::ResourcePermission.find_by(identifier: 'approve_network_connections')
+    next unless permission
+
+    role = create(:better_together_role, :platform_role)
+    BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
+    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+    host_platform.person_platform_memberships.find_or_create_by!(member: approval_operator.person, role:)
+
+    safety_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform_safety')
+    next unless safety_permission
+
+    safety_role = create(:better_together_role, :platform_role)
+    BetterTogether::RoleResourcePermission.create!(role: safety_role, resource_permission: safety_permission)
+    host_platform.person_platform_memberships.find_or_create_by!(member: safety_reviewer.person, role: safety_role)
   end
 
   describe 'GET /:locale/.../host/platforms' do
@@ -36,6 +59,105 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       host_platform = BetterTogether::Platform.find_by(host: true)
       get better_together.platform_path(locale:, id: host_platform.slug)
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'shows federation access from the platform profile to network admins' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      remote_platform = create(:better_together_platform,
+                               name: 'Neighbourhood Commons',
+                               identifier: "neighbourhood-commons-#{SecureRandom.hex(4)}")
+      unrelated_platform = create(:better_together_platform,
+                                  name: 'Unrelated Platform',
+                                  identifier: "unrelated-platform-#{SecureRandom.hex(4)}")
+      create(:better_together_platform_connection,
+             :active,
+             source_platform: host_platform,
+             target_platform: remote_platform)
+      create(:better_together_platform_connection,
+             :active,
+             source_platform: unrelated_platform,
+             target_platform: create(:better_together_platform))
+
+      sign_in network_admin
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Federation')
+      expect(response.body).to include('Federation Connections')
+      expect(response.body).to include('Open Connections')
+      expect(response.body).to include('Neighbourhood Commons')
+      expect(response.body).not_to include('Unrelated Platform')
+    end
+
+    it 'shows federation access to approval-only operators without creation controls' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      create(:better_together_platform_connection, source_platform: host_platform)
+
+      sign_in approval_operator
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Federation')
+      expect(response.body).to include('Open Connections')
+      expect(response.body).not_to include('New Connection')
+    end
+
+    it 'keeps federation controls hidden for platform managers without connection permissions' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('Federation Connections')
+      expect(response.body).not_to include('Open Connections')
+    end
+
+    it 'shows safety review access from the host platform profile to safety reviewers' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      report = create(:report,
+                      reporter: create(:better_together_person),
+                      reportable: create(:better_together_person),
+                      harm_level: 'urgent',
+                      retaliation_risk: true)
+      safety_case = BetterTogether::Safety::Case.create!(
+        report:,
+        category: report.category,
+        harm_level: report.harm_level,
+        requested_outcome: report.requested_outcome,
+        retaliation_risk: report.retaliation_risk,
+        consent_to_contact: report.consent_to_contact,
+        consent_to_restorative_process: report.consent_to_restorative_process
+      )
+      BetterTogether::Safety::Note.create!(
+        safety_case:,
+        author: safety_reviewer.person,
+        visibility: 'participant_visible',
+        body: 'Participant follow-up added for review.'
+      )
+
+      sign_in safety_reviewer
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Safety')
+      expect(response.body).to include('Safety Review')
+      expect(response.body).to include('Open Review Queue')
+      expect(response.body).to include('Review Submitted Reports')
+      expect(response.body).to include('Retaliation Risk')
+      expect(response.body).to include('Participant Updates')
+    end
+
+    it 'keeps safety review controls hidden for platform managers without safety permissions' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('Safety Review')
+      expect(response.body).not_to include('Open Review Queue')
     end
 
     it 'shows values-aligned CSP preset options instead of corporate defaults' do

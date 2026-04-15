@@ -96,6 +96,7 @@ module BetterTogether
 
       build_sensitive_directory_cards
       build_membership_review_cards
+      build_platform_connection_review_cards
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/AbcSize
@@ -154,6 +155,57 @@ module BetterTogether
         requests_enabled: community.membership_requests_enabled?,
         latest_requests: community_requests.first(3)
       }
+    end
+
+    def build_platform_connection_review_cards
+      @show_platform_connection_review_section = platform_connection_review_visible?
+      reset_platform_connection_review_state
+      return unless @show_platform_connection_review_section
+      return unless host_platform
+
+      connections = platform_connection_review_connections
+      assign_platform_connection_review_counts(connections)
+      @platform_connection_review_cards = connections.first(5).map { |connection| platform_connection_review_card(connection) }
+    end
+
+    def platform_connection_review_card(connection)
+      {
+        connection:,
+        counterparty: connection.peer_for(host_platform),
+        direction: connection.source_platform_id == host_platform.id ? 'outgoing' : 'incoming'
+      }
+    end
+
+    def host_platform
+      @host_platform ||= BetterTogether::Platform.find_by(host: true)
+    end
+
+    def platform_connection_review_visible?
+      current_person = helpers.current_person
+      current_person&.permitted_to?('manage_network_connections') ||
+        current_person&.permitted_to?('approve_network_connections') ||
+        false
+    end
+
+    def reset_platform_connection_review_state
+      @platform_connection_review_cards = []
+      @platform_connection_review_total_count = 0
+      @platform_connection_review_pending_count = 0
+      @platform_connection_review_active_count = 0
+    end
+
+    def platform_connection_review_connections
+      BetterTogether::PlatformConnection
+        .includes(:source_platform, :target_platform)
+        .for_platform(host_platform)
+        .order(updated_at: :desc)
+        .to_a
+    end
+
+    def assign_platform_connection_review_counts(connections)
+      @platform_connection_review_total_count = connections.size
+      @platform_connection_review_pending_count = connections.count(&:pending?)
+      @platform_connection_review_active_count = connections.count(&:active?)
     end
   end
 end

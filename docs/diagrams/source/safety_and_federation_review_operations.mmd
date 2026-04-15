@@ -1,0 +1,29 @@
+%% render.orientation: portrait
+flowchart TB
+  subgraph SAFETY["Safety review operations"]
+    SR1["Reporter submits a safety report"]
+    SR2["Report creates or updates an open safety case"]
+    SR3["Safety reviewers with manage_platform_safety are resolved on the host platform"]
+    SR4{"3+ open reports in 15 minutes?"}
+    SR5["Send immediate safety review notification"]
+    SR6["Collapse burst into one safety digest notification"]
+    SR7["Cooldown suppresses duplicate digests for 30 minutes"]
+    SR8["Reviewer opens host platform Safety tab or the safety-case queue"]
+    SR1 --> SR2 --> SR3 --> SR4
+    SR4 -->|No| SR5 --> SR8
+    SR4 -->|Yes| SR6 --> SR7 --> SR8
+  end
+
+  subgraph FEDERATION["Federation review operations"]
+    FR1["Operator creates a pending platform connection or changes its state"]
+    FR2["Network stewards with manage or approve connection authority are resolved"]
+    FR3{"3+ pending connections in 15 minutes?"}
+    FR4["Send immediate pending-connection notification"]
+    FR5["Collapse burst into one federation digest notification"]
+    FR6["Active, suspended, and blocked transitions send status notifications"]
+    FR7["Operator opens the host dashboard federation queue or the platform-connections index"]
+    FR1 --> FR2 --> FR3
+    FR3 -->|No| FR4 --> FR7
+    FR3 -->|Yes| FR5 --> FR7
+    FR1 --> FR6 --> FR7
+  end

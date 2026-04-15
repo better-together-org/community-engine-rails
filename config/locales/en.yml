@@ -2296,9 +2296,12 @@ en:
         navigation_areas: Navigation Areas
         pages: Pages
         people: People
+        platform_connections: Platform Connections
         platforms: Platforms
+        reports: Reports
         resource_permissions: Resource Permissions
         roles: Roles
+        safety_cases: Safety Review
         users: Users
       visibility_strategies:
         authenticated: Signed-in users
@@ -2366,6 +2369,25 @@ en:
         body: A new %{provider} account integration was connected on %{created_at}
         message: New %{provider} integration connected on %{created_at}
         title: New %{provider} integration connected
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: "%{time} ago"
     oauth:
       applications:
@@ -3982,8 +4004,10 @@ en:
       attendees: Attendees
       contact: Contact
       events: Events
+      federation: Federation
       invitations: Invitations
       members: Members
+      safety: Safety
     to: To
     'true': true
     undo_clear: Undo Clear
@@ -4095,6 +4119,37 @@ en:
       review_link: Review queue
       summary_label: Membership review summary
       table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
@@ -4259,6 +4314,38 @@ en:
     actions:
       host_dashboard: Host Dashboard
     confirm_delete: Confirm delete
+    show:
+      federation:
+        connection_status: Status
+        description: Review the federation and platform connections currently linked
+          to %{platform}.
+        direction:
+          incoming: Incoming connection
+          outgoing: Outgoing connection
+        empty_state: No federation connections involve this platform yet.
+        new_connection: New Connection
+        open_connections: Open Connections
+        summary:
+          active: Active
+          pending: Pending
+          total: Total Connections
+        title: Federation Connections
+        view_connection: View Connection
+      safety:
+        description: Review incoming reports, active safety cases, and participant-visible
+          follow-ups for %{platform}.
+        review_queue: Open Review Queue
+        summary:
+          content_review_items: Content Review Items
+          open_cases: Open Cases
+          participant_updates: Participant Updates
+          repeated_reports: Repeated Reportables
+          retaliation_risk_cases: Retaliation Risk
+          unassigned_cases: Needs Assignment
+          urgent_cases: Urgent
+          visible_reports: Visible Reports
+        title: Safety Review
+        view_reports: Review Submitted Reports
   pundit:
     errors:
       create: You are not authorized to create this %{resource}.

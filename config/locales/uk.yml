@@ -2328,9 +2328,12 @@ uk:
         navigation_areas: Navigation Areas
         pages: Pages
         people: People
+        platform_connections: Підключення платформ
         platforms: Platforms
+        reports: Звіти
         resource_permissions: Resource Permissions
         roles: Roles
+        safety_cases: Огляд безпеки
         users: Users
       visibility_strategies:
         authenticated: Авторизовані користувачі
@@ -2398,6 +2401,25 @@ uk:
         body: Нову інтеграцію облікового запису %{provider} підключено %{created_at}
         message: Нову інтеграцію %{provider} підключено %{created_at}
         title: Підключено нову інтеграцію %{provider}
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: "%{time} ago"
     oauth:
       applications:
@@ -4067,8 +4089,10 @@ uk:
       attendees: Учасники
       contact: Контакт
       events: Події
+      federation: Федерація
       invitations: Запрошення
       members: Учасники
+      safety: Безпека
     to: До
     'true': так
     undo_clear: Скасувати очищення
@@ -4189,6 +4213,43 @@ uk:
       review_link: Review queue
       summary_label: Membership review summary
       table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        few: "%{count} active connections"
+        many: "%{count} active connections"
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      pending_badge:
+        few: "%{count} pending requests"
+        many: "%{count} pending requests"
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        few: "%{count} total connections"
+        many: "%{count} total connections"
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: Новий %{resource}
       none_yet: Поки що немає
@@ -4355,6 +4416,38 @@ uk:
     actions:
       host_dashboard: Панель Керування Хоста
     confirm_delete: Підтвердіть видалення
+    show:
+      federation:
+        connection_status: Статус
+        description: Перегляньте федеративні та платформні з'єднання, які зараз пов'язані
+          з %{platform}.
+        direction:
+          incoming: Вхідне з'єднання
+          outgoing: Вихідне з'єднання
+        empty_state: Ця платформа ще не має федеративних з'єднань.
+        new_connection: Нове з'єднання
+        open_connections: Відкрити з'єднання
+        summary:
+          active: Активні
+          pending: У черзі
+          total: Усього з'єднань
+        title: Федеративні з'єднання
+        view_connection: Переглянути з'єднання
+      safety:
+        description: Переглядайте нові звіти, активні кейси безпеки та видимі для
+          учасників подальші кроки для %{platform}.
+        review_queue: Відкрити чергу перевірки
+        summary:
+          content_review_items: Елементи перевірки контенту
+          open_cases: Відкриті кейси
+          participant_updates: Оновлення для учасників
+          repeated_reports: Повторні об'єкти скарг
+          retaliation_risk_cases: Ризик помсти
+          unassigned_cases: Потребують призначення
+          urgent_cases: Термінові
+          visible_reports: Видимі звіти
+        title: Огляд безпеки
+        view_reports: Переглянути надіслані звіти
   pundit:
     errors:
       create: Вам не дозволено створювати цей %{resource}.

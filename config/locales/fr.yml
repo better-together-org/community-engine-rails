@@ -2350,9 +2350,12 @@ fr:
         navigation_areas: Zones de navigation
         pages: Pages
         people: Personnes
+        platform_connections: Connexions de plateforme
         platforms: Plateformes
+        reports: Signalements
         resource_permissions: Permissions des ressources
         roles: Rôles
+        safety_cases: Revue de sécurité
         users: Utilisateurs
       visibility_strategies:
         authenticated: Utilisateurs connectés
@@ -2420,6 +2423,25 @@ fr:
         body: Une nouvelle intégration de compte %{provider} a été connectée le %{created_at}
         message: Nouvelle intégration %{provider} connectée le %{created_at}
         title: Nouvelle intégration %{provider} connectée
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: il y a %{time}
     oauth:
       applications:
@@ -4090,8 +4112,10 @@ fr:
       attendees: Participants
       contact: Contact
       events: Événements
+      federation: Fédération
       invitations: Invitations
       members: Membres
+      safety: Sécurité
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement
@@ -4206,6 +4230,37 @@ fr:
       review_link: Review queue
       summary_label: Membership review summary
       table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: Nouveau %{resource}
       none_yet: Aucun pour l'instant
@@ -4373,6 +4428,38 @@ fr:
     actions:
       host_dashboard: Tableau de Bord Hôte
     confirm_delete: Confirmer la suppression
+    show:
+      federation:
+        connection_status: Statut
+        description: Passez en revue les connexions de fédération et de plateforme
+          actuellement liées à %{platform}.
+        direction:
+          incoming: Connexion entrante
+          outgoing: Connexion sortante
+        empty_state: Aucune connexion de fédération n'implique encore cette plateforme.
+        new_connection: Nouvelle connexion
+        open_connections: Ouvrir les connexions
+        summary:
+          active: Actives
+          pending: En attente
+          total: Connexions totales
+        title: Connexions de fédération
+        view_connection: Voir la connexion
+      safety:
+        description: Consultez les signalements entrants, les dossiers de sécurité
+          actifs et les suivis visibles par les participant·e·s pour %{platform}.
+        review_queue: Ouvrir la file de révision
+        summary:
+          content_review_items: Éléments de révision de contenu
+          open_cases: Dossiers ouverts
+          participant_updates: Mises à jour participant·e
+          repeated_reports: Signalements répétés
+          retaliation_risk_cases: Risque de représailles
+          unassigned_cases: À attribuer
+          urgent_cases: Urgents
+          visible_reports: Signalements visibles
+        title: Revue de sécurité
+        view_reports: Consulter les signalements
   pundit:
     errors:
       create: Vous n'êtes pas autorisé à créer ce %{resource}.

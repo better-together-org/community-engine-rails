@@ -22,6 +22,8 @@ module BetterTogether
       # Preload memberships with policy scope applied to prevent N+1 queries in view
       # Include comprehensive associations for members and roles to eliminate N+1 queries
       @platform_memberships = policy_scope(@platform.memberships_with_associations)
+      load_platform_connections if policy(::BetterTogether::PlatformConnection).index?
+      load_safety_review_summary if show_safety_review?
       return unless helpers.current_person
 
       @current_person_platform_membership = @platform.person_platform_memberships.find_by(
@@ -238,6 +240,36 @@ module BetterTogether
           }
         ]
       )
+    end
+
+    def load_platform_connections
+      @show_platform_connections = true
+      @platform_connections = platform_connection_scope
+      @platform_connection_status_counts = Hash.new(0).merge(@platform_connections.unscope(:order).group(:status).count)
+    end
+
+    def show_safety_review?
+      @platform.host? && policy(::BetterTogether::Safety::Case).index?
+    end
+
+    def load_safety_review_summary
+      @show_safety_review = true
+      report_scope = policy_scope(::BetterTogether::Report)
+
+      @safety_review_snapshot = ::BetterTogether::Safety::LocalReviewSnapshotService.new(
+        case_scope: policy_scope(::BetterTogether::Safety::Case),
+        report_scope:
+      ).call
+      @safety_review_report_count = report_scope.count
+    end
+
+    def platform_connection_scope
+      base_scope = policy_scope(::BetterTogether::PlatformConnection)
+
+      base_scope.where(source_platform: @platform)
+                .or(base_scope.where(target_platform: @platform))
+                .includes(:source_platform, :target_platform)
+                .order(updated_at: :desc)
     end
   end
 end
