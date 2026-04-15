@@ -20,7 +20,7 @@ module BetterTogether
     #
     # On receipt, `apply_to_recipient_balance!` credits the earner's local balance,
     # settling from the payer's locked balance if `payer_did` is present and found locally.
-    class TokenSeed < BetterTogether::Seed
+    class TokenSeed < BetterTogether::Seed # rubocop:todo Metrics/ClassLength
       LANE = 'c3_transfer'
       VERSION = '1.0'
 
@@ -77,39 +77,109 @@ module BetterTogether
             source_system: params[:source_system] || 'federation'
           },
           payload: params.slice(
-            :token_id, :earner_did, :payer_did, :contribution_type,
+            :token_id, :earner_did, :payer_did, :lock_ref, :contribution_type,
             :c3_millitokens, :source_ref, :source_system, :emitted_at
           ).to_h
         )
       end
 
       # Apply this seed's payload to the recipient's C3 balance.
-      # If payer_did is present and the payer is found locally, settles from their
-      # locked balance. Otherwise credits the recipient directly (simple inbound transfer).
+      #
+      # If payer_did is present, the settlement MUST also carry a lock_ref that
+      # matches a pending C3::BalanceLock on the payer's local balance.  If the
+      # lock cannot be verified the seed is saved (audit trail) but not applied —
+      # returns false so the caller can respond 202 Accepted.
+      #
+      # If payer_did is absent (simple inbound transfer) the earner's balance is
+      # credited directly without a lock check.
+      #
+      # Returns true if value was transferred, false if deferred/unverifiable.
       def apply_to_recipient_balance!(origin_platform: nil) # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Naming/PredicateMethod
         data = payload_data.with_indifferent_access
-        earner_did = data[:earner_did].to_s
-        payer_did  = data[:payer_did].to_s
+        earner_did  = data[:earner_did].to_s
+        payer_did   = data[:payer_did].to_s
+        lock_ref    = data[:lock_ref].to_s
         millitokens = data[:c3_millitokens].to_i
 
         return false if earner_did.blank? || millitokens <= 0
 
         recipient = BetterTogether::Person.find_by(borgberry_did: earner_did)
-        return false unless recipient
+        unless recipient
+          Rails.logger.warn("[C3::TokenSeed] earner DID not found locally: #{earner_did.first(16)}…")
+          return false
+        end
 
         # Federated balances are tracked per origin platform for cross-platform accounting.
         recipient_balance = BetterTogether::C3::Balance.find_or_create_by!(
           holder: recipient, community: nil, origin_platform: origin_platform
         )
-        payer = payer_did.present? ? BetterTogether::Person.find_by(borgberry_did: payer_did) : nil
+
+        if payer_did.present?
+          return apply_locked_settlement!(data, payer_did, lock_ref, recipient_balance, millitokens, origin_platform)
+        end
+
+        # Simple inbound transfer — no payer lock required.
+        apply_direct_credit!(data, recipient, recipient_balance, millitokens, origin_platform)
+        true
+      end
+
+      private
+
+      # Settle from payer's locked balance to recipient; requires a matching pending lock.
+      def apply_locked_settlement!(data, payer_did, lock_ref, recipient_balance, millitokens, origin_platform) # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/ParameterLists, Metrics/PerceivedComplexity, Naming/PredicateMethod
+        payer = BetterTogether::Person.find_by(borgberry_did: payer_did)
+        unless payer
+          Rails.logger.warn("[C3::TokenSeed] payer_did not found locally: #{payer_did.first(16)}…")
+          return false
+        end
+
+        payer_balance = BetterTogether::C3::Balance.find_by(holder: payer, community: nil)
+        unless payer_balance
+          Rails.logger.warn("[C3::TokenSeed] no local balance found for payer #{payer.id}")
+          return false
+        end
+
+        if lock_ref.blank?
+          Rails.logger.warn('[C3::TokenSeed] payer_did present but lock_ref missing — refusing settlement')
+          return false
+        end
+
+        # Verify the lock belongs to this payer and is still pending.
+        lock = payer_balance.balance_locks.pending.find_by(lock_ref: lock_ref)
+        unless lock
+          Rails.logger.warn("[C3::TokenSeed] lock_ref #{lock_ref.first(8)}… not found or not pending for payer #{payer.id}")
+          return false
+        end
+
+        c3_amount = millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE
 
         transaction do
-          if payer
-            payer_balance = BetterTogether::C3::Balance.find_by!(holder: payer, community: nil)
-            payer_balance.settle_to!(recipient_balance, millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE)
-          else
-            recipient_balance.credit!(millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE)
-          end
+          payer_balance.settle_to!(recipient_balance, c3_amount, lock_ref: lock_ref)
+
+          BetterTogether::C3::Token.create!(
+            earner: recipient_balance.holder,
+            contribution_type: data[:contribution_type] || :volunteer,
+            contribution_type_name: data[:contribution_type] || 'federated_transfer',
+            c3_millitokens: millitokens,
+            source_ref: data[:source_ref] || "token_seed:#{id}",
+            source_system: data[:source_system] || 'federation',
+            status: 'confirmed',
+            federated: true,
+            origin_platform: origin_platform,
+            emitted_at: self.class.send(:safe_parse_time, data[:emitted_at]) || Time.current,
+            confirmed_at: Time.current
+          )
+        end
+
+        true
+      end
+
+      # Credit recipient directly (no payer lock — simple inbound transfer).
+      def apply_direct_credit!(data, recipient, recipient_balance, millitokens, origin_platform) # rubocop:todo Metrics/MethodLength
+        c3_amount = millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE
+
+        transaction do
+          recipient_balance.credit!(c3_amount)
 
           BetterTogether::C3::Token.create!(
             earner: recipient,
@@ -121,15 +191,11 @@ module BetterTogether
             status: 'confirmed',
             federated: true,
             origin_platform: origin_platform,
-            emitted_at: safe_parse_time(data[:emitted_at]) || Time.current,
+            emitted_at: self.class.send(:safe_parse_time, data[:emitted_at]) || Time.current,
             confirmed_at: Time.current
           )
         end
-
-        true
       end
-
-      private
 
       def self.safe_parse_time(value)
         Time.iso8601(value.to_s)
