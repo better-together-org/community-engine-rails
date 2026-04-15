@@ -123,7 +123,7 @@ RSpec.describe 'Documentation screenshots for agreement flows',
       open_blocked_publish_modal
 
       expect(page).to have_css('#agreementModal.show', wait: 10)
-      expect(page).to have_button('I agree', wait: 10)
+      expect(page).to have_button('I agree', disabled: true, wait: 10)
       expect(page).to have_button('Cancel', wait: 10)
     end
   end
@@ -133,7 +133,7 @@ RSpec.describe 'Documentation screenshots for agreement flows',
       open_blocked_publish_modal
       scroll_agreement_modal_to_end
 
-      expect(page).to have_button('I agree', wait: 10)
+      expect(page).to have_button('I agree', disabled: false, wait: 10)
       expect(page).to have_text('Agreement', wait: 10)
     end
   end
@@ -220,7 +220,7 @@ RSpec.describe 'Documentation screenshots for agreement flows',
     expect(page).to have_css('#agreementModal.show', wait: 10)
     expect(page).to have_css('#agreement_modal_frame', wait: 10)
     expect(page).to have_text('Agreement', wait: 10)
-    expect(page).to have_button('I agree', wait: 10)
+    expect(page).to have_button('I agree', disabled: true, wait: 10)
   end
   # rubocop:enable Metrics/AbcSize
 

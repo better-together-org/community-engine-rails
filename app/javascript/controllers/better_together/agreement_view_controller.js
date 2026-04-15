@@ -12,6 +12,7 @@ export default class extends Controller {
   connect () {
     this.onFrameLoad = this.onFrameLoad.bind(this)
     this.onScroll = this.onScroll.bind(this)
+    this._scheduledChecks = []
 
     // debounce handle for the scroll event
     this._scrollDebounce = null
@@ -39,6 +40,7 @@ export default class extends Controller {
   disconnect () {
     document.removeEventListener('turbo:frame-load', this.onFrameLoad)
     if (this.frameBody) this.frameBody.removeEventListener('scroll', this.onScroll)
+    this.clearScheduledChecks()
 
     // clear any pending debounce timer
     if (this._scrollDebounce) {
@@ -69,6 +71,9 @@ export default class extends Controller {
 
     // reset scroll state
     this._userScrolled = false
+    this._reviewComplete = false
+    this.frameLoadedAt = null
+    this.clearScheduledChecks()
   }
 
   onFrameLoad (event) {
@@ -85,8 +90,13 @@ export default class extends Controller {
     // perform a scroll interaction before we enable the checkbox (unless the
     // content doesn't scroll at all, see checkScrollPosition).
     this._userScrolled = false
+    this._reviewComplete = false
+    this.frameLoadedAt = Date.now()
+    this.clearScheduledChecks()
 
     if (this.frameBody) {
+      this.frameBody.removeEventListener('scroll', this.onScroll)
+
       // Ensure the frame starts scrolled at the top
       try {
         // small timeout to allow content layout (images, fonts)
@@ -103,10 +113,13 @@ export default class extends Controller {
 
       // attach debounced scroll handler
       this.frameBody.addEventListener('scroll', this.onScroll)
-      // Also check immediately in case content is small or already at bottom,
-      // but do NOT enable the checkbox unless the user has scrolled (handled
-      // inside checkScrollPosition). Short content is treated as already-read.
+      // Check immediately and then re-check after layout settles. Turbo frame
+      // content can grow after the first load tick, which would otherwise make
+      // a long agreement look non-scrollable and unlock acceptance too early.
       this.checkScrollPosition()
+      this.scheduleCheckScrollPosition(80)
+      this.scheduleCheckScrollPosition(220)
+      this.scheduleCheckScrollPosition(450)
     }
   }
 
@@ -157,11 +170,13 @@ export default class extends Controller {
     if (!this.frameBody) return
 
     const scrollTop = this.frameBody.scrollTop
-    const scrollHeight = this.frameBody.scrollHeight
     const clientHeight = this.frameBody.clientHeight
+    const frameHeight = this.element.scrollHeight
+    const firstChildHeight = this.element.firstElementChild?.scrollHeight || 0
+    const scrollHeight = Math.max(this.frameBody.scrollHeight, frameHeight, firstChildHeight)
 
     // Determine whether the content actually requires scrolling
-    const contentScrollable = scrollHeight > clientHeight
+    const contentScrollable = scrollHeight > (clientHeight + 8)
 
     // Consider the user has reached bottom when within 48px of the end
     const atBottom = (scrollTop + clientHeight) >= (scrollHeight - 48)
@@ -169,12 +184,17 @@ export default class extends Controller {
     const agreementId = this.element.dataset.agreementIdentifier || this.element.getAttribute('data-agreement-identifier')
     if (!agreementId) return
 
-    // If the content doesn't scroll, treat it as already read and allow
-    // immediate enabling. Otherwise require that the user actually scrolled
-    // and reached the bottom.
+    // If the content doesn't scroll, treat it as already read only after the
+    // frame has had a moment to settle. Otherwise require that the user
+    // actually scrolled and reached the bottom.
+    if (!contentScrollable && !this._userScrolled && !this.readyToAutoApproveShortContent()) return
+
     const userHasSeen = !contentScrollable || this._userScrolled
 
     if (atBottom && userHasSeen) {
+      if (this._reviewComplete) return
+      this._reviewComplete = true
+
       if (this.reviewMode() === 'direct_accept') {
         document.dispatchEvent(new CustomEvent('better_together:agreement-review-complete', {
           detail: { agreementIdentifier: agreementId },
@@ -201,6 +221,24 @@ export default class extends Controller {
       // Optionally focus the checkbox to signal it's now actionable
       checkbox.focus()
     }
+  }
+
+  scheduleCheckScrollPosition (delay) {
+    const timer = setTimeout(() => {
+      this._scheduledChecks = this._scheduledChecks.filter((scheduled) => scheduled !== timer)
+      this.checkScrollPosition()
+    }, delay)
+
+    this._scheduledChecks.push(timer)
+  }
+
+  clearScheduledChecks () {
+    this._scheduledChecks.forEach((timer) => clearTimeout(timer))
+    this._scheduledChecks = []
+  }
+
+  readyToAutoApproveShortContent () {
+    return !!this.frameLoadedAt && (Date.now() - this.frameLoadedAt) >= 350
   }
 
   reviewMode () {
