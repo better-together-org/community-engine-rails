@@ -83,6 +83,24 @@ module BetterTogether
                     notice: t('flash.joatu.agreement.rejected')
       end
 
+      # POST /joatu/agreements/:id/fulfill
+      def fulfill
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        begin
+          @joatu_agreement.fulfill!
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.fulfilled',
+                                default: 'Agreement fulfilled — C3 transferred to offer creator.')
+        rescue ActiveRecord::RecordInvalid => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to fulfill agreement'
+        rescue BetterTogether::C3::Balance::InsufficientBalance => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.message
+        end
+      end
+
       private
 
       def resource_class
