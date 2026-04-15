@@ -57,8 +57,9 @@ class CreateBetterTogetherC3Tables < ActiveRecord::Migration[7.2]
         t.datetime :confirmed_at
       end
 
-      add_index :better_together_c3_tokens, :source_ref,
-                name: 'idx_bt_c3_tokens_source_ref'
+      add_index :better_together_c3_tokens, %i[source_system source_ref],
+                unique: true,
+                name: 'idx_bt_c3_tokens_source_system_ref'
       add_index :better_together_c3_tokens, :status,
                 name: 'idx_bt_c3_tokens_status'
       add_index :better_together_c3_tokens, :contribution_type,

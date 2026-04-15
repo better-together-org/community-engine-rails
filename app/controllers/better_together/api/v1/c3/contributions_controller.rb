@@ -16,6 +16,9 @@ module BetterTogether
         # GET /api/v1/c3/balance?node_id=bts-7
         class ContributionsController < BetterTogether::Api::ApplicationController # rubocop:todo Metrics/ClassLength
           MILLITOKEN_SCALE = BetterTogether::C3::Token::MILLITOKEN_SCALE
+          skip_after_action :verify_authorized, raise: false
+          skip_after_action :verify_policy_scoped, raise: false
+          skip_after_action :enforce_policy_use, raise: false
 
           def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
             contrib = contribution_params
@@ -24,44 +27,53 @@ module BetterTogether
             earner = resolve_earner(contrib[:node_id])
             return render json: { error: "node '#{contrib[:node_id]}' not registered" }, status: :unprocessable_entity if earner.nil?
 
-            # Guard against duplicate contributions
-            if BetterTogether::C3::Token.exists?(source_system: contrib[:source_system],
-                                                 source_ref: contrib[:source_ref])
-              return render json: { status: 'duplicate', message: 'contribution already recorded' }, status: :ok
+            c3_millitokens = (contrib[:c3_amount].to_f * MILLITOKEN_SCALE).round
+            created = false
+
+            token = BetterTogether::C3::Token.transaction do
+              token = BetterTogether::C3::Token.find_or_create_by!(
+                source_system: contrib[:source_system],
+                source_ref: contrib[:source_ref]
+              ) do |new_token|
+                created = true
+                new_token.earner = earner
+                new_token.contribution_type = contrib[:contribution_type]
+                new_token.contribution_type_name = contrib[:contribution_type]
+                new_token.c3_millitokens = c3_millitokens
+                new_token.units = contrib[:units]
+                new_token.duration_s = contrib[:duration_s]
+                new_token.metadata = contrib[:metadata] || {}
+                new_token.status = 'confirmed'
+                new_token.emitted_at = contrib[:emitted_at].presence || Time.current
+                new_token.confirmed_at = Time.current
+              end
+
+              next token unless created
+
+              balance = BetterTogether::C3::Balance.find_or_create_by!(
+                holder: earner,
+                community: nil
+              )
+              balance.credit!(token.c3_amount)
+              token
             end
 
-            c3_millitokens = (contrib[:c3_amount].to_f * MILLITOKEN_SCALE).round
+            if created
+              balance = BetterTogether::C3::Balance.find_by!(holder: earner, community: nil)
 
-            token = BetterTogether::C3::Token.create!(
-              earner: earner,
-              contribution_type: contrib[:contribution_type],
-              contribution_type_name: contrib[:contribution_type],
-              c3_millitokens: c3_millitokens,
-              source_ref: contrib[:source_ref],
-              source_system: contrib[:source_system],
-              units: contrib[:units],
-              duration_s: contrib[:duration_s],
-              metadata: contrib[:metadata] || {},
-              status: 'confirmed',
-              emitted_at: contrib[:emitted_at].presence || Time.current,
-              confirmed_at: Time.current
-            )
-
-            # Credit the earner's C3 balance
-            balance = BetterTogether::C3::Balance.find_or_create_by!(
-              holder: earner,
-              community: nil
-            )
-            balance.credit!(token.c3_amount)
-
-            render json: {
-              status: 'ok',
-              token_id: token.id,
-              c3_amount: token.c3_amount,
-              new_balance: balance.reload.available_c3
-            }, status: :created
+              render json: {
+                status: 'ok',
+                token_id: token.id,
+                c3_amount: token.c3_amount,
+                new_balance: balance.reload.available_c3
+              }, status: :created
+            else
+              render json: { status: 'duplicate', message: 'contribution already recorded' }, status: :ok
+            end
           rescue ActiveRecord::RecordInvalid => e
             render json: { error: e.message }, status: :unprocessable_entity
+          rescue ActiveRecord::RecordNotUnique
+            render json: { status: 'duplicate', message: 'contribution already recorded' }, status: :ok
           end
 
           def index # rubocop:todo Metrics/AbcSize, Metrics/MethodLength

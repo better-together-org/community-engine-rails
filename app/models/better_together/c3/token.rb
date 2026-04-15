@@ -21,6 +21,7 @@ module BetterTogether
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
       validates :earner, :contribution_type, :source_ref, :source_system, presence: true
+      validates :source_ref, uniqueness: { scope: :source_system }
       validates :c3_millitokens, numericality: { greater_than_or_equal_to: 0 }
       validates :status, inclusion: { in: TOKEN_STATUSES }
 

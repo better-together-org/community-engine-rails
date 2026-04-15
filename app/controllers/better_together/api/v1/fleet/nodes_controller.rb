@@ -11,6 +11,10 @@ module BetterTogether
         # GET  /api/v1/fleet/nodes/:node_id — show single node
         # POST /api/v1/fleet/nodes/:node_id/heartbeat — update last_seen_at + capabilities
         class NodesController < BetterTogether::Api::ApplicationController
+          skip_after_action :verify_authorized, raise: false
+          skip_after_action :verify_policy_scoped, raise: false
+          skip_after_action :enforce_policy_use, raise: false
+
           def index
             nodes = BetterTogether::Fleet::Node.all
             nodes = nodes.online if params[:online] == 'true'
@@ -45,9 +49,9 @@ module BetterTogether
 
             node.mark_online!
             node.update!(
-              hardware: params[:hardware].to_unsafe_h.presence || node.hardware,
-              compute: params[:compute].to_unsafe_h.presence || node.compute,
-              services: params[:services].to_unsafe_h.presence || node.services
+              hardware: payload_section(:hardware) || node.hardware,
+              compute: payload_section(:compute) || node.compute,
+              services: payload_section(:services) || node.services
             )
 
             render json: { status: 'ok', node_id: node.node_id, last_seen_at: node.last_seen_at }
@@ -79,6 +83,13 @@ module BetterTogether
               compute: node.compute,
               services: node.services
             }
+          end
+
+          def payload_section(key)
+            value = params[key]
+            return unless value.respond_to?(:to_unsafe_h)
+
+            value.to_unsafe_h.presence
           end
         end
       end

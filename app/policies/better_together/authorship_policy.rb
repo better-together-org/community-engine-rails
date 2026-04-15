@@ -26,9 +26,16 @@ module BetterTogether
     # Scope for authorship records that may be managed through the API.
     class Scope < ApplicationPolicy::Scope
       def resolve
-        return scope.none unless user&.person&.permitted_to?('manage_platform')
+        return scope.none unless platform_content_manager?
 
         scope.all
+      end
+
+      private
+
+      def platform_content_manager?
+        user&.person&.permitted_to?('manage_platform_settings') ||
+          user&.person&.permitted_to?('manage_platform')
       end
     end
 
