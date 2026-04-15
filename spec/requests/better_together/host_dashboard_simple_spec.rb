@@ -48,11 +48,11 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
       ).to be true
     end
 
-    it 'surfaces a membership review queue with direct review links' do
+    it 'surfaces a membership review queue in its own host dashboard tab' do
       community = create(:better_together_community, name: 'Reviewable Community')
       create(:better_together_joatu_membership_request, target: community, requestor_name: 'Alex Applicant')
 
-      get better_together.host_dashboard_path(locale: locale)
+      get better_together.host_dashboard_membership_review_path(locale: locale)
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include('Membership review queue')
@@ -60,14 +60,14 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
       expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
     end
 
-    it 'keeps the overview focused on dashboard resources and membership review' do
+    it 'keeps the overview focused on dashboard resources only' do
       grant_platform_permission(platform_manager, 'manage_network_connections')
       grant_platform_permission(platform_manager, 'manage_platform_safety')
 
       get better_together.host_dashboard_path(locale: locale)
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include('Membership review queue')
+      expect(response.body).not_to include('Membership review queue')
       expect(response.body).not_to include('Federation review queue')
       expect(response.body).not_to include('Safety review queue')
       expect(response.body).to include('host-dashboard-tab-content')
@@ -134,6 +134,18 @@ RSpec.describe 'Host Dashboard Content', :as_platform_manager do
       expect(response).to have_http_status(:success)
       expect(response.body).to include('turbo-frame id="host-dashboard-tab-content"')
       expect(response.body).to include('Safety review queue')
+    end
+
+    it 'renders membership review into the shared turbo frame' do
+      community = create(:better_together_community, name: 'Reviewable Community')
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Alex Applicant')
+
+      get better_together.host_dashboard_membership_review_path(locale: locale),
+          headers: { 'Turbo-Frame' => 'host-dashboard-tab-content' }
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('turbo-frame id="host-dashboard-tab-content"')
+      expect(response.body).to include('Membership review queue')
     end
   end
 end

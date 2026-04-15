@@ -201,6 +201,20 @@ namespace :better_together do
           permission_identifier: 'manage_platform'
         },
         {
+          identifier: 'host-dashboard-membership-review',
+          title: 'Membership Review',
+          slug: 'host-dashboard-membership-review',
+          position: 15,
+          item_type: 'link',
+          route_name: 'host_dashboard_membership_review_url',
+          icon: 'user-check',
+          visible: true,
+          protected: true,
+          privacy: 'private',
+          visibility_strategy: 'permission',
+          permission_identifier: 'manage_platform'
+        },
+        {
           identifier: 'host-dashboard-platform-connection-review',
           title: 'Federation Review',
           slug: 'host-dashboard-platform-connection-review',

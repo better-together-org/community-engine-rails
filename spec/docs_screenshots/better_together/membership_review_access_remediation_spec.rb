@@ -87,21 +87,21 @@ RSpec.describe 'Documentation screenshots for membership review remediation',
     result = BetterTogether::CapybaraScreenshotEngine.capture(
       'membership_review_host_dashboard_queue',
       device: :both,
-      metadata: screenshot_metadata(role: 'platform_manager', flow: 'host_dashboard_review_queue'),
+      metadata: screenshot_metadata(role: 'platform_manager', flow: 'host_dashboard_membership_review_tab'),
       callouts: [
         {
           selector: 'section[aria-labelledby="membership-review-heading"] .table-responsive',
-          title: 'Host dashboard now exposes a review queue',
+          title: 'Membership review now lives in its own host dashboard tab',
           bullets: [
-            'Platform managers can reach membership review from the normal dashboard without typing a URL.',
+            'Platform managers can reach membership review from a dedicated host-nav entry without stretching the overview tab.',
             'Each row shows open-request counts, recent requester activity, and a direct review action.',
-            'The queue works even when membership requests are currently closed, so stale review work stays discoverable.'
+            'The queue still works when membership intake is currently closed, so stale review work stays discoverable.'
           ]
         }
       ]
     ) do
       login_as(platform_manager, scope: :user)
-      visit better_together.host_dashboard_path(locale:)
+      visit better_together.host_dashboard_membership_review_path(locale:)
 
       expect(page).to have_text('Membership review queue')
       expect(page).to have_text('Harbour Gardeners')

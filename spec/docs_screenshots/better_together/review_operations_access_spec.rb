@@ -130,8 +130,8 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
           selector: 'turbo-frame#host-dashboard-tab-content',
           title: 'The dashboard overview stays focused on the shared host workspace',
           bullets: [
-            'The overview remains focused on operational cards and membership review.',
-            'Federation and safety review move into dedicated host navigation entries instead of stretching the overview page.',
+            'The overview remains focused on shared host operations instead of mixing in review queues.',
+            'Membership, federation, and safety review now live in dedicated host navigation entries instead of stretching the overview page.',
             'Selecting a review nav item swaps the frame content without leaving the host dashboard shell.',
             'This keeps the host sidebar stable while the review surface changes.',
             'The same permission rules apply to both the sidebar and dropdown navigation.'
@@ -222,6 +222,17 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
   def ensure_host_review_nav_items!
     navigation_area = ensure_platform_host_navigation_area!
     host_nav = ensure_platform_host_nav!(navigation_area)
+
+    ensure_host_review_nav_item!(
+      navigation_area:,
+      host_nav:,
+      identifier: 'host-dashboard-membership-review',
+      title: 'Membership Review',
+      slug: 'host-dashboard-membership-review',
+      position: 15,
+      route_name: 'host_dashboard_membership_review_url',
+      permission_identifier: 'manage_platform'
+    )
 
     ensure_host_review_nav_item!(
       navigation_area:,

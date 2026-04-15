@@ -135,6 +135,11 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(dashboard_nav_item.visibility_strategy).to eq('permission')
     expect(dashboard_nav_item.privacy).to eq('private')
 
+    membership_review_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'host-dashboard-membership-review')
+    expect(membership_review_nav_item.permission_identifier).to eq('manage_platform')
+    expect(membership_review_nav_item.visibility_strategy).to eq('permission')
+    expect(membership_review_nav_item.privacy).to eq('private')
+
     federation_review_nav_item = BetterTogether::NavigationItem.find_by(
       identifier: 'host-dashboard-platform-connection-review'
     )

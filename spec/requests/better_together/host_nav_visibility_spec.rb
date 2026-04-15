@@ -78,6 +78,23 @@ RSpec.describe 'Host nav visibility for analytics viewer', :no_auth do
 
   it 'does not expose host dashboard review entries without matching permissions' do
     BetterTogether::NavigationItem.find_or_create_by!(
+      identifier: 'host-dashboard-membership-review',
+      navigation_area: navigation_area,
+      parent: host_nav
+    ) do |item|
+      item.title = 'Membership Review'
+      item.slug = 'host-dashboard-membership-review'
+      item.position = 15
+      item.visible = true
+      item.protected = true
+      item.item_type = 'link'
+      item.route_name = 'host_dashboard_membership_review_url'
+      item.privacy = 'private'
+      item.visibility_strategy = 'permission'
+      item.permission_identifier = 'manage_platform'
+    end
+
+    BetterTogether::NavigationItem.find_or_create_by!(
       identifier: 'host-dashboard-safety-review',
       navigation_area: navigation_area,
       parent: host_nav
@@ -114,6 +131,7 @@ RSpec.describe 'Host nav visibility for analytics viewer', :no_auth do
     get better_together.home_page_path(locale:)
 
     expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('Membership Review')
     expect(response.body).not_to include('Safety Review')
     expect(response.body).not_to include('Federation Review')
   end
@@ -145,6 +163,35 @@ RSpec.describe 'Host nav visibility for analytics viewer', :no_auth do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Safety Review')
+  end
+
+  it 'shows the membership review nav entry when the user can manage the platform' do
+    manage_platform_permission = BetterTogether::ResourcePermission.find_by!(identifier: 'manage_platform')
+    manage_platform_role = create(:better_together_role, :platform_role)
+    manage_platform_role.assign_resource_permissions([manage_platform_permission.identifier])
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role: manage_platform_role)
+
+    BetterTogether::NavigationItem.find_or_create_by!(
+      identifier: 'host-dashboard-membership-review',
+      navigation_area: navigation_area,
+      parent: host_nav
+    ) do |item|
+      item.title = 'Membership Review'
+      item.slug = 'host-dashboard-membership-review'
+      item.position = 15
+      item.visible = true
+      item.protected = true
+      item.item_type = 'link'
+      item.route_name = 'host_dashboard_membership_review_url'
+      item.privacy = 'private'
+      item.visibility_strategy = 'permission'
+      item.permission_identifier = 'manage_platform'
+    end
+
+    get better_together.home_page_path(locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Membership Review')
   end
 
   it 'shows the federation review nav entry when the user can review network connections' do

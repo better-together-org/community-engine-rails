@@ -10,7 +10,12 @@ module BetterTogether
       # rubocop:enable Lint/CopDirectiveSyntax
       authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
       build_overview_resources
+    end
+
+    def membership_review
+      authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
       build_membership_review_cards
+      render :membership_review
     end
 
     def safety_review

@@ -2361,6 +2361,7 @@ es:
         geography_settlements: Asentamientos
         geography_states: Estados
         host_dashboard: Panel de control del anfitrión
+        host_dashboard_membership_review: Revisión de membresías
         host_dashboard_platform_connection_review: Revisión de federación
         host_dashboard_safety_review: Revisión de seguridad
         joatu_offers: Ofertas
@@ -4262,6 +4263,7 @@ es:
       open_requests_count:
         one: 1 open request
         other: "%{count} open requests"
+      page_title: Revisión de membresías
       request_mode_closed: Intake closed
       request_mode_open: Intake open
       requested_at: requested %{time} ago

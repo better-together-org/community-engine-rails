@@ -86,13 +86,13 @@ Mobile captures are generated alongside the desktop variants in `docs/screenshot
 
 The original `0.11.0` workflow added the request queue and detail view, but the later remediation work made those review surfaces easier to find from normal stewardship screens.
 
-### Host dashboard review queue
+### Host dashboard membership review tab
 
 ![Host dashboard membership review queue](../../screenshots/desktop/membership_review_host_dashboard_queue.png)
 
-- platform managers can now reach membership review from the host dashboard
+- platform managers can now reach membership review from its own host dashboard tab
 - the queue summarizes open-request counts, recent requester activity, and a direct review action
-- this closes the “known URL only” gap that left review work hard to discover
+- this closes the “known URL only” gap without forcing review work into the overview tab
 
 ### Community page review shortcut
 

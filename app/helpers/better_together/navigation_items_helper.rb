@@ -8,9 +8,18 @@ module BetterTogether
     HOST_DASHBOARD_TURBO_FRAME_ID = 'host-dashboard-tab-content'
     HOST_DASHBOARD_TAB_IDENTIFIERS = %w[
       host-dashboard
+      host-dashboard-membership-review
       host-dashboard-platform-connection-review
       host-dashboard-safety-review
     ].freeze
+    SPECIAL_HOST_DASHBOARD_NAV_VISIBILITY = {
+      'host-dashboard-membership-review' => ['manage_platform'],
+      'host-dashboard-platform-connection-review' => %w[
+        manage_network_connections
+        approve_network_connections
+      ],
+      'host-dashboard-safety-review' => ['manage_platform_safety']
+    }.freeze
 
     NAV_TREE_PRELOADS = [
       :string_translations,
@@ -253,15 +262,10 @@ module BetterTogether
     end
 
     def special_navigation_item_visible?(navigation_item)
-      case navigation_item.identifier
-      when 'host-dashboard-platform-connection-review'
-        current_person&.permitted_to?('manage_network_connections') ||
-          current_person&.permitted_to?('approve_network_connections')
-      when 'host-dashboard-safety-review'
-        current_person&.permitted_to?('manage_platform_safety')
-      else
-        false
-      end
+      permissions = SPECIAL_HOST_DASHBOARD_NAV_VISIBILITY[navigation_item.identifier]
+      return false if permissions.blank?
+
+      permissions.any? { |permission| current_person&.permitted_to?(permission) }
     end
 
     # Renders a navigation items list with optional navigation area styling

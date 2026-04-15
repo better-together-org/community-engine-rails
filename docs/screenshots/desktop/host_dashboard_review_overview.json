@@ -13,8 +13,8 @@
       "selector": "turbo-frame#host-dashboard-tab-content",
       "title": "The dashboard overview stays focused on the shared host workspace",
       "bullets": [
-        "The overview remains focused on operational cards and membership review.",
-        "Federation and safety review move into dedicated host navigation entries instead of stretching the overview page.",
+        "The overview remains focused on shared host operations instead of mixing in review queues.",
+        "Membership, federation, and safety review now live in dedicated host navigation entries instead of stretching the overview page.",
         "Selecting a review nav item swaps the frame content without leaving the host dashboard shell.",
         "This keeps the host sidebar stable while the review surface changes.",
         "The same permission rules apply to both the sidebar and dropdown navigation."
@@ -42,9 +42,9 @@
       "placement": {
         "side": "floating",
         "x": 1036,
-        "y": 825,
+        "y": 799,
         "width": 380,
-        "height": 612
+        "height": 638
       }
     }
   ]

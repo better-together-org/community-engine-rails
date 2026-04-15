@@ -1,48 +1,48 @@
 {
   "name": "membership_review_host_dashboard_queue",
   "device": "mobile",
-  "url": "/en/host",
-  "title": "Host Dashboard | Test Host Community",
+  "url": "/en/host/membership-review",
+  "title": "Membership Review | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "membership_review_access_remediation",
-  "flow": "host_dashboard_review_queue",
+  "flow": "host_dashboard_membership_review_tab",
   "source_spec": "./spec/docs_screenshots/better_together/membership_review_access_remediation_spec.rb",
   "callouts": [
     {
       "selector": "section[aria-labelledby=\"membership-review-heading\"] .table-responsive",
-      "title": "Host dashboard now exposes a review queue",
+      "title": "Membership review now lives in its own host dashboard tab",
       "bullets": [
-        "Platform managers can reach membership review from the normal dashboard without typing a URL.",
+        "Platform managers can reach membership review from a dedicated host-nav entry without stretching the overview tab.",
         "Each row shows open-request counts, recent requester activity, and a direct review action.",
-        "The queue works even when membership requests are currently closed, so stale review work stays discoverable."
+        "The queue still works when membership intake is currently closed, so stale review work stays discoverable."
       ],
       "target": {
         "x": 41.0,
-        "y": 493.046875,
+        "y": 441.65625,
         "width": 403.0,
-        "height": 767.953125,
+        "height": 819.34375,
         "right": 444.0,
         "bottom": 1261.0,
         "center_x": 242.5,
-        "center_y": 877.0234375
+        "center_y": 851.328125
       },
       "avoid": {
         "x": 41.0,
-        "y": 493.046875,
+        "y": 441.65625,
         "width": 403.0,
-        "height": 767.953125,
+        "height": 819.34375,
         "right": 444.0,
         "bottom": 1261.0,
         "center_x": 242.5,
-        "center_y": 877.0234375
+        "center_y": 851.328125
       },
       "placement": {
         "side": "floating",
         "x": 206.0,
-        "y": 625,
+        "y": 567,
         "width": 270.0,
-        "height": 612
+        "height": 670
       }
     }
   ]

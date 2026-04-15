@@ -2370,6 +2370,7 @@ fr:
         geography_settlements: Implantations
         geography_states: États
         host_dashboard: Tableau de bord de l'hôte
+        host_dashboard_membership_review: Revue des adhésions
         host_dashboard_platform_connection_review: Revue de fédération
         host_dashboard_safety_review: Revue de sécurité
         joatu_offers: Offres
@@ -4287,6 +4288,7 @@ fr:
       open_requests_count:
         one: 1 open request
         other: "%{count} open requests"
+      page_title: Revue des adhésions
       request_mode_closed: Intake closed
       request_mode_open: Intake open
       requested_at: requested %{time} ago

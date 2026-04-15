@@ -2348,6 +2348,7 @@ uk:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_membership_review: Membership Review
         host_dashboard_platform_connection_review: Federation Review
         host_dashboard_safety_review: Safety Review
         joatu_offers: Offers
@@ -4270,6 +4271,7 @@ uk:
         many: "%{count} open requests"
         one: 1 open request
         other: "%{count} open requests"
+      page_title: Membership Review
       request_mode_closed: Intake closed
       request_mode_open: Intake open
       requested_at: requested %{time} ago
