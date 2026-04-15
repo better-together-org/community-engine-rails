@@ -97,7 +97,10 @@ module BetterTogether
         recipient = BetterTogether::Person.find_by(borgberry_did: earner_did)
         return false unless recipient
 
-        recipient_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: recipient, community: nil)
+        # Federated balances are tracked per origin platform for cross-platform accounting.
+        recipient_balance = BetterTogether::C3::Balance.find_or_create_by!(
+          holder: recipient, community: nil, origin_platform: origin_platform
+        )
         payer = payer_did.present? ? BetterTogether::Person.find_by(borgberry_did: payer_did) : nil
 
         transaction do
