@@ -105,7 +105,47 @@ module BetterTogether
             }
           end
 
+          # GET /api/v1/c3/network_balance?borgberry_did=did:key:z6Mk...
+          # Returns the aggregated C3 balance across all platforms where a person
+          # has earned or received C3, identified by their portable borgberry DID.
+          def network_balance # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+            did = params.require(:borgberry_did)
+            person = BetterTogether::Person.find_by(borgberry_did: did)
+
+            unless person
+              return render json: { error: "no person found with borgberry_did '#{did}'" },
+                            status: :not_found
+            end
+
+            balances = BetterTogether::C3::Balance.where(holder: person)
+
+            local     = balances.where(origin_platform_id: nil)
+            federated = balances.where.not(origin_platform_id: nil)
+
+            render json: {
+              borgberry_did: did,
+              network_available_c3: balances.sum(:available_millitokens).to_f / MILLITOKEN_SCALE,
+              network_locked_c3: balances.sum(:locked_millitokens).to_f / MILLITOKEN_SCALE,
+              network_lifetime_c3: balances.sum(:lifetime_earned_millitokens).to_f / MILLITOKEN_SCALE,
+              local_available_c3: local.sum(:available_millitokens).to_f / MILLITOKEN_SCALE,
+              federated_received_c3: federated.sum(:available_millitokens).to_f / MILLITOKEN_SCALE,
+              platform_breakdown: balance_breakdown(balances)
+            }
+          end
+
           private
+
+          def balance_breakdown(balances)
+            balances.map do |b|
+              {
+                origin_platform_id: b.origin_platform_id,
+                available_c3: b.available_c3,
+                locked_c3: b.locked_c3,
+                lifetime_earned_c3: b.lifetime_earned_c3,
+                federated: b.origin_platform_id.present?
+              }
+            end
+          end
 
           def contribution_params
             params.require(:contribution).permit(
