@@ -107,6 +107,11 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
     get  'network_balance', to: 'contributions#network_balance'
   end
 
+  # Borgberry identity — returns this node's borgberry DID and person identity
+  namespace :borgberry do
+    get 'profile', to: 'profile#show'
+  end
+
   # Fleet node registry (borgberry fleet agent registration + heartbeat)
   namespace :fleet do
     resources :nodes, param: :node_id, only: %i[index show create] do
