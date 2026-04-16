@@ -57,6 +57,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     get better_together.post_path(post_record, locale:)
 
     expect(response).to have_http_status(:ok)
+    expect(response.body).to include(platform_manager.person.name)
     expect(response.body).not_to include('Contributors:')
     expect(response.body).not_to include('GitHub-linked')
     expect(response.body).not_to include('Claims and Supporting Evidence')
