@@ -122,6 +122,22 @@ module BetterTogether
       }, {}, options
     end
 
+    def contributor_display_visibility_field(form:, include_inherit:, label:, hint:, html_options: {})
+      values = contributor_display_visibility_values(include_inherit:)
+      options = contributor_display_visibility_html_options(html_options)
+
+      content_tag(:div) do
+        concat form.label(:contributors_display_visibility, label)
+        concat form.select(
+          :contributors_display_visibility,
+          contributor_display_visibility_select_options(form:, values:),
+          {},
+          options
+        )
+        concat content_tag(:small, hint, class: 'form-text text-muted mt-2')
+      end
+    end
+
     # rubocop:todo Metrics/MethodLength
     # Accepts an optional label_text override which, when provided, will be used
     # instead of the model's human_attribute_name for the field. This is useful
@@ -224,6 +240,37 @@ module BetterTogether
       html_opts = { class: 'form-select', name: "invitation[#{field_name}]" }.merge(html_options)
 
       form.collection_select(field_name, roles, :id, :name, {}, html_opts)
+    end
+
+    private
+
+    def contributor_display_visibility_values(include_inherit:)
+      if include_inherit
+        BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES
+      else
+        BetterTogether::Authorable::EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES
+      end
+    end
+
+    def contributor_display_visibility_html_options(html_options)
+      options = { class: 'form-select' }
+      return options.merge(html_options) unless html_options[:class].present?
+
+      options[:class] = "#{options[:class]} #{html_options[:class]}".strip
+      options.merge(html_options.except(:class))
+    end
+
+    def contributor_display_visibility_select_options(form:, values:)
+      selected_value = if form.object.respond_to?(:contributors_display_visibility)
+                         form.object.contributors_display_visibility
+                       end
+
+      options_for_select(
+        values.map do |value|
+          [t("better_together.authorable_contributor_visibility.options.#{value}"), value]
+        end,
+        selected_value
+      )
     end
   end
 end

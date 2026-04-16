@@ -827,6 +827,24 @@ es:
         view_agreement: Ver Acuerdo
     application:
       name: Mejores Juntos
+    authorable_contributor_visibility:
+      hints:
+        community: Anula el valor predeterminado de la plataforma para las páginas
+          de esta comunidad, o hereda la configuración de la plataforma.
+        page: Elige si esta página muestra las firmas de colaboradores en las vistas
+          públicas, o si hereda la configuración de la comunidad o la plataforma.
+        platform: Establece la visibilidad predeterminada de las firmas para páginas
+          y publicaciones, a menos que una comunidad o un registro la anule.
+        post: Elige si esta publicación muestra las firmas de colaboradores en las
+          vistas públicas, o si hereda la configuración de la plataforma.
+      labels:
+        community: Visibilidad de colaboradores de la comunidad
+        platform: Visibilidad predeterminada de colaboradores
+        record: Visibilidad de colaboradores
+      options:
+        'false': Ocultar firmas de colaboradores
+        inherit: Heredar
+        'true': Mostrar firmas de colaboradores
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hola %{recipient_name},

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # Represents a blog post
   class Post < ApplicationRecord
@@ -18,12 +20,17 @@ module BetterTogether
     include Searchable
     include Seedable
     include TrackedActivity
+    include ::Storext.model
 
     attachable_cover_image
 
     categorizable
 
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+
+    store_attributes :display_settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
 
     translates :title, type: :string
     alias name title
@@ -48,6 +55,8 @@ module BetterTogether
               presence: true
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     scope :latest_first, lambda {
       order(
@@ -75,6 +84,10 @@ module BetterTogether
     # Automatically grant the post creator an authorship record only when no
     # explicit human or robot authors were selected during creation.
     after_commit :add_creator_as_author, on: :create
+
+    def self.extra_permitted_attributes
+      super + %i[contributors_display_visibility]
+    end
 
     def to_s
       title

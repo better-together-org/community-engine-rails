@@ -5,6 +5,9 @@ module BetterTogether
   module Authorable # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
+    CONTRIBUTOR_DISPLAY_VISIBILITIES = %w[inherit on off].freeze
+    EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES = %w[on off].freeze
+
     CONTRIBUTION_ROLE_CONFIG = {
       author: BetterTogether::Authorship::AUTHOR_ROLE,
       editor: BetterTogether::Authorship::EDITOR_ROLE,
@@ -185,6 +188,42 @@ module BetterTogether
         role: BetterTogether::Authorship::AUTHOR_ROLE,
         contribution_type: BetterTogether::Authorship::CONTENT_CONTRIBUTION
       )
+    end
+
+    def contributors_display_visible?
+      resolved_contributors_display_visibility != 'off'
+    end
+
+    def resolved_contributors_display_visibility
+      record_setting = normalize_contributors_display_visibility(
+        respond_to?(:contributors_display_visibility) ? contributors_display_visibility : nil
+      )
+      return record_setting if EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(record_setting)
+
+      community_setting = normalize_contributors_display_visibility(contributor_visibility_community&.contributors_display_visibility)
+      return community_setting if EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(community_setting)
+
+      platform_setting = normalize_contributors_display_visibility(contributor_visibility_platform&.contributors_display_visibility)
+      return platform_setting if EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(platform_setting)
+
+      'on'
+    end
+
+    private
+
+    def contributor_visibility_platform
+      platform if respond_to?(:platform)
+    end
+
+    def contributor_visibility_community
+      community if respond_to?(:community)
+    end
+
+    def normalize_contributors_display_visibility(value)
+      normalized = value.to_s.presence
+      return 'inherit' unless normalized
+
+      CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(normalized) ? normalized : 'inherit'
     end
   end
 end

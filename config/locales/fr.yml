@@ -828,6 +828,25 @@ fr:
         view_agreement: Voir l'accord
     application:
       name: Better Together
+    authorable_contributor_visibility:
+      hints:
+        community: Remplace le réglage par défaut de la plateforme pour les pages
+          de cette communauté, ou hérite du réglage de la plateforme.
+        page: Choisissez si cette page affiche les signatures des contributeurs dans
+          les vues publiques, ou si elle hérite du réglage de la communauté ou de
+          la plateforme.
+        platform: Définit la visibilité par défaut des signatures pour les pages et
+          les publications, sauf si une communauté ou un enregistrement la remplace.
+        post: Choisissez si cette publication affiche les signatures des contributeurs
+          dans les vues publiques, ou si elle hérite du réglage de la plateforme.
+      labels:
+        community: Affichage des contributeurs de la communauté
+        platform: Affichage des contributeurs par défaut
+        record: Affichage des contributeurs
+      options:
+        'false': Masquer les signatures des contributeurs
+        inherit: Hériter
+        'true': Afficher les signatures des contributeurs
     authorship_mailer:
       authorship_changed_notification:
         greeting: Bonjour %{recipient_name},

@@ -178,6 +178,7 @@ module BetterTogether
       %i[
         requires_invitation
         allow_membership_requests
+        contributors_display_visibility
         software_variant
         network_visibility
         connection_bootstrap_state

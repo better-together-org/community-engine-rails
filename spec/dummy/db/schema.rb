@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_15_180000) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_16_214500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -390,6 +390,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_15_180000) do
     t.string "type", default: "BetterTogether::Community", null: false
     t.boolean "requires_invitation", default: true, null: false
     t.boolean "allow_membership_requests", default: false, null: false
+    t.jsonb "settings", default: {}, null: false
     t.index ["creator_id"], name: "by_creator"
     t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
@@ -1702,6 +1703,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_15_180000) do
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
+    t.jsonb "display_settings", default: {}, null: false
     t.index ["creator_id"], name: "by_better_together_posts_creator"
     t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
     t.index ["platform_id", "source_id"], name: "index_bt_posts_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"

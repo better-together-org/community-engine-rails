@@ -203,6 +203,15 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(frame_src_select).not_to have_css("option[value='https://player.vimeo.com']", visible: false)
       expect(img_src_select).not_to have_css("option[value='https://images.ctfassets.net']", visible: false)
     end
+
+    it 'renders the platform contributor display setting on edit' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.edit_platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('platform[contributors_display_visibility]')
+    end
   end
 
   describe 'PATCH /:locale/.../host/platforms/:id' do
@@ -238,6 +247,18 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(host_platform.csp_img_src).to eq(['https://images.example.com'])
       expect(host_platform.csp_script_src).to eq(['https://scripts.example.com'])
       expect(host_platform.csp_connect_src).to eq(['https://collector.example.com'])
+    end
+
+    it 'persists the platform contributor display setting' do
+      patch better_together.platform_path(locale:, id: host_platform.slug), params: {
+        platform: {
+          host_url: host_platform.host_url,
+          time_zone: host_platform.time_zone,
+          contributors_display_visibility: 'off'
+        }
+      }
+
+      expect(host_platform.reload.contributors_display_visibility).to eq('off')
     end
 
     it 'applies platform-specific CSP origins to response headers' do # rubocop:disable RSpec/MultipleExpectations

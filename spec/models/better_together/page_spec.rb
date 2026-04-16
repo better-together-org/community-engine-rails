@@ -94,6 +94,32 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#resolved_contributors_display_visibility' do
+        it 'uses the community override before the platform default' do
+          platform = create(:better_together_platform)
+          community = create(:better_together_community)
+          page = create(:better_together_page, platform:, community:)
+
+          platform.update!(contributors_display_visibility: 'on')
+          community.update!(contributors_display_visibility: 'off')
+
+          expect(page.resolved_contributors_display_visibility).to eq('off')
+          expect(page).not_to be_contributors_display_visible
+        end
+
+        it 'uses the record override before the community setting' do
+          platform = create(:better_together_platform)
+          community = create(:better_together_community)
+          page = create(:better_together_page, platform:, community:, contributors_display_visibility: 'on')
+
+          platform.update!(contributors_display_visibility: 'on')
+          community.update!(contributors_display_visibility: 'off')
+
+          expect(page.resolved_contributors_display_visibility).to eq('on')
+          expect(page).to be_contributors_display_visible
+        end
+      end
+
       describe 'creator fallback authorship' do
         it 'adds the creator as author when no explicit authors were selected' do
           creator = create(:better_together_person)

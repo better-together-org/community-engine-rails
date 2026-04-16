@@ -80,6 +80,15 @@
           </div>
         </div>
       </fieldset>
+
+      <div class="mb-3">
+        <%= contributor_display_visibility_field(
+              form:,
+              include_inherit: true,
+              label: t('better_together.authorable_contributor_visibility.labels.community', default: 'Community contributor display'),
+              hint: t('better_together.authorable_contributor_visibility.hints.community', default: 'Override the platform default for pages in this community, or inherit the platform setting.')
+            ) %>
+      </div>
     </div>
 
     <!-- Images Tab -->
