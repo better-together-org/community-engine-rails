@@ -310,7 +310,7 @@ module BetterTogether
       # The lock_ref returned by Balance#lock! is stored on the Settlement so that
       # Settlement#complete! and Settlement#cancel! can finalise the BalanceLock record
       # (marking it settled or released) rather than leaving it pending until expiry.
-      def create_settlement_if_c3_priced! # rubocop:todo Metrics/MethodLength
+      def create_settlement_if_c3_priced! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         price_millitokens = offer.try(:c3_price_millitokens).to_i
         return unless price_millitokens.positive?
 
@@ -323,13 +323,17 @@ module BetterTogether
           agreement_ref: identifier
         )
 
-        create_settlement!(
+        new_settlement = create_settlement!(
           payer: payer,
           recipient: offer.creator,
           c3_millitokens: price_millitokens,
           lock_ref: captured_lock_ref,
           status: 'pending'
         )
+
+        BetterTogether::C3::SettlementNotifier
+          .with(settlement: new_settlement, event_type: :c3_locked)
+          .deliver_later([payer, offer.creator].compact.uniq)
       end
     end
   end

@@ -2380,6 +2380,17 @@ en:
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
+      c3:
+        settlement:
+          locked:
+            title: Tree Seeds reserved
+            body: "%{amount} Tree Seeds have been reserved for your agreement. They will be released if the agreement is cancelled."
+          settled:
+            title: Tree Seeds exchanged
+            body: "%{amount} Tree Seeds have been exchanged. Your balance has been updated."
+          released:
+            title: Tree Seeds reservation released
+            body: "%{amount} Tree Seeds have been returned to your balance."
       joatu:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.
@@ -2750,6 +2761,13 @@ en:
           request in OAuth tokens. Only enable scopes matching your agreed data-sharing
           terms.
         federation_scopes_legend: Federation Scopes
+        allow_c3_exchange: Allow Tree Seeds exchange with this platform
+        c3_exchange_hint: When enabled, participants on this platform can send and receive
+          Tree Seeds with %{platform}. Both platforms must opt in for exchange to work.
+        c3_exchange_legend: Tree Seeds exchange
+        c3_exchange_rate_hint: How many Tree Seeds here equal 1 Tree Seed on %{platform}?
+          Leave at 1.0 for equal value.
+        c3_exchange_rate_label: Exchange rate
         save: Save Changes
         shared_content_types_hint: Select which content types to include when syncing
           with this connection.
