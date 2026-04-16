@@ -306,7 +306,11 @@ module BetterTogether
 
       # Create a pending Settlement and lock C3 from the payer (request creator)
       # when the offer carries a C3 price. No-op if the offer has no C3 price.
-      def create_settlement_if_c3_priced!
+      #
+      # The lock_ref returned by Balance#lock! is stored on the Settlement so that
+      # Settlement#complete! and Settlement#cancel! can finalise the BalanceLock record
+      # (marking it settled or released) rather than leaving it pending until expiry.
+      def create_settlement_if_c3_priced! # rubocop:todo Metrics/MethodLength
         price_millitokens = offer.try(:c3_price_millitokens).to_i
         return unless price_millitokens.positive?
 
@@ -314,12 +318,16 @@ module BetterTogether
         return unless payer
 
         payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: payer)
-        payer_balance.lock!(price_millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE)
+        captured_lock_ref = payer_balance.lock!(
+          price_millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE,
+          agreement_ref: identifier
+        )
 
         create_settlement!(
           payer: payer,
           recipient: offer.creator,
           c3_millitokens: price_millitokens,
+          lock_ref: captured_lock_ref,
           status: 'pending'
         )
       end

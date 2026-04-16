@@ -36,13 +36,15 @@ module BetterTogether
 
       # Complete the settlement: transfer locked C3 from payer to recipient and mint a Token.
       # Called from Agreement#fulfill! inside a transaction.
+      # lock_ref is read from the settlement record (stored when the lock was created
+      # in Agreement#create_settlement_if_c3_priced!) so the BalanceLock is marked settled.
       def complete!(payer_balance:, recipient_balance:) # rubocop:todo Metrics/MethodLength
         raise ActiveRecord::RecordInvalid, self unless status == 'pending'
 
         token = nil
 
         transaction do
-          payer_balance.settle_to!(recipient_balance, c3_amount)
+          payer_balance.settle_to!(recipient_balance, c3_amount, lock_ref: lock_ref)
 
           token = BetterTogether::C3::Token.create!(
             earner: recipient,
@@ -64,11 +66,12 @@ module BetterTogether
 
       # Cancel the settlement: return locked C3 to payer.
       # Called when an accepted agreement is cancelled.
+      # lock_ref is used to mark the corresponding BalanceLock as released.
       def cancel!(payer_balance:)
         raise ActiveRecord::RecordInvalid, self unless status == 'pending'
 
         transaction do
-          payer_balance.unlock!(c3_amount) if c3_millitokens.positive?
+          payer_balance.unlock!(c3_amount, lock_ref: lock_ref) if c3_millitokens.positive?
           update!(status: 'cancelled', completed_at: Time.current)
         end
       end
