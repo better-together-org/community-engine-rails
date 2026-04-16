@@ -135,6 +135,7 @@ module BetterTogether
       %i[
         requires_invitation
         allow_membership_requests
+        contributors_display_visibility
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
         .concat(resource_class.extra_permitted_attributes)

@@ -14,6 +14,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       author: platform_manager.person,
       creator: platform_manager.person,
       privacy: 'public',
+      published_at: 1.day.ago,
       slug: "contribution-post-#{unique_token}",
       identifier: "contribution-post-#{unique_token}"
     )
@@ -65,6 +66,16 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     expect(response.body).not_to include('Post review notes')
   end
 
+  it 'hides post contributor bylines on public views when the platform default is off' do
+    logout
+    post_record.platform.update!(contributors_display_visibility: 'off')
+
+    get better_together.post_path(post_record, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include(platform_manager.person.name)
+  end
+
   it 'renders the unified governed contributions form section on edit' do
     get better_together.edit_post_path(post_record, locale:)
 
@@ -80,5 +91,12 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     expect(response.body).to include('post[contributions_attributes]')
     expect(response.body).not_to include('post[author_ids]')
     expect(response.body).not_to include('post[editor_ids]')
+  end
+
+  it 'renders the contributor display visibility field on edit' do
+    get better_together.edit_post_path(post_record, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('post[contributors_display_visibility]')
   end
 end

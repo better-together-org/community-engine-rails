@@ -93,6 +93,15 @@ module BetterTogether
       current_person.permitted_to?(permission_identifier)
     end
 
+    def contributor_display_visible_for?(record)
+      return false unless record.respond_to?(:contributors_display_visible?)
+      return true if record.contributors_display_visible?
+
+      policy(record).edit?
+    rescue Pundit::NotDefinedError, NoMethodError
+      false
+    end
+
     def help_banner_hidden?(banner_id)
       return false unless current_person.respond_to?(:preferences)
 

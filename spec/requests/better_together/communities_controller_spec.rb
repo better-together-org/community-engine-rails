@@ -355,6 +355,13 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.cover_image, only_path: true))
       expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.logo, only_path: true))
     end
+
+    it 'renders the community contributor display setting on edit' do
+      get better_together.edit_community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('community[contributors_display_visibility]')
+    end
   end
 
   describe 'PATCH /:locale/c/:slug', :as_platform_manager do
@@ -405,6 +412,18 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       community.reload
       expect(community.slug).to eq(original_slug)
       expect(community.name).to eq('Updated Name')
+    end
+
+    it 'persists the community contributor display setting' do
+      patch better_together.community_path(locale:, id: community.slug), params: {
+        community: {
+          name_en: 'Updated Name',
+          contributors_display_visibility: 'off'
+        }
+      }
+
+      expect(response).to have_http_status(:found)
+      expect(community.reload.contributors_display_visibility).to eq('off')
     end
 
     it 'updates slug when explicitly set' do

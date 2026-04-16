@@ -27,4 +27,30 @@ RSpec.describe BetterTogether::ApplicationHelper do
     expect(rendered).to eq('')
     expect(rendered).to be_html_safe
   end
+
+  describe '#contributor_display_visible_for?' do
+    let(:page) { build(:better_together_page) }
+    let(:policy) { instance_double(BetterTogether::PagePolicy, edit?: editable) }
+    let(:editable) { false }
+
+    before do
+      policy_double = policy
+      allow(page).to receive(:contributors_display_visible?).and_return(false)
+      helper.define_singleton_method(:policy) do |_record|
+        policy_double
+      end
+    end
+
+    it 'returns false when contributor display is disabled for non-editors' do
+      expect(helper.contributor_display_visible_for?(page)).to be(false)
+    end
+
+    context 'when the current viewer can edit the record' do
+      let(:editable) { true }
+
+      it 'keeps contributor display visible for editors' do
+        expect(helper.contributor_display_visible_for?(page)).to be(true)
+      end
+    end
+  end
 end

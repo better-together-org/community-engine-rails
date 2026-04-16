@@ -177,5 +177,12 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).not_to include('page[author_ids]')
       expect(response.body).not_to include('page[editor_ids]')
     end
+
+    it 'renders the contributor display visibility field' do
+      get better_together.edit_page_path(page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('page[contributors_display_visibility]')
+    end
   end
 end

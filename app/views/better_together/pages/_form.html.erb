@@ -63,6 +63,15 @@
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">
+      <%= contributor_display_visibility_field(
+            form:,
+            include_inherit: true,
+            label: t('better_together.authorable_contributor_visibility.labels.record', default: 'Contributor display'),
+            hint: t('better_together.authorable_contributor_visibility.hints.page', default: 'Choose whether this page shows contributor bylines on public-facing views, or inherits the community/platform setting.')
+          ) %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :published_at %>
       <%= form.datetime_field :published_at, include_seconds: false, class: "form-control#{' is-invalid' if page.errors[:published_at].any?}" %>
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # A gathering
   class Community < ApplicationRecord # rubocop:todo Metrics/ClassLength
@@ -15,6 +17,7 @@ module BetterTogether
     include Privacy
     include Metrics::Viewable
     include Searchable
+    include ::Storext.model
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -29,6 +32,10 @@ module BetterTogether
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
+
+    store_attributes :settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
 
     # Community invitations
     has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
@@ -92,9 +99,11 @@ module BetterTogether
     after_create :create_default_calendar
 
     validates :name, presence: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     def self.extra_permitted_attributes
-      super + %i[requires_invitation allow_membership_requests]
+      super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
     end
 
     def as_community

@@ -50,6 +50,15 @@
   </div>
 
   <div class="mb-3">
+    <%= contributor_display_visibility_field(
+          form:,
+          include_inherit: true,
+          label: t('better_together.authorable_contributor_visibility.labels.record', default: 'Contributor display'),
+          hint: t('better_together.authorable_contributor_visibility.hints.post', default: 'Choose whether this post shows contributor bylines on public-facing views, or inherits the platform setting.')
+        ) %>
+  </div>
+
+  <div class="mb-3">
     <%= form.label :published_at %>
     <%= form.datetime_field :published_at, include_seconds: false, class: 'form-control' %>
   </div>

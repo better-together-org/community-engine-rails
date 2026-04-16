@@ -40,6 +40,7 @@ module BetterTogether
 
     store_attributes :display_settings do
       show_title Boolean, default: true
+      contributors_display_visibility String, default: 'inherit'
     end
 
     has_many :page_blocks, -> { positioned }, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
@@ -82,6 +83,8 @@ module BetterTogether
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     # Automatically grant the page creator an authorship record only when no
     # explicit human or robot authors were selected during creation.

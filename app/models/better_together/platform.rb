@@ -57,6 +57,7 @@ module BetterTogether
     store_attributes :settings do
       requires_invitation Boolean, default: true
       allow_membership_requests Boolean, default: false
+      contributors_display_visibility String, default: 'on'
       software_variant String
       network_visibility String, default: 'private'
       connection_bootstrap_state String
@@ -84,6 +85,8 @@ module BetterTogether
     validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
     validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
     validates :search_query_analytics_mode, inclusion: { in: SEARCH_QUERY_ANALYTICS_MODES }
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES }
     validates :oauth_issuer_url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
     validate :validate_csp_origin_text_fields

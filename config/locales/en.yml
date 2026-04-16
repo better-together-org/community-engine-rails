@@ -818,6 +818,24 @@ en:
         view_agreement: View Agreement
     application:
       name: Better Together
+    authorable_contributor_visibility:
+      hints:
+        community: Override the platform default for pages in this community, or inherit
+          the platform setting.
+        page: Choose whether this page shows contributor bylines on public-facing
+          views, or inherits the community/platform setting.
+        platform: Sets the default byline visibility for pages and posts unless a
+          community or record overrides it.
+        post: Choose whether this post shows contributor bylines on public-facing
+          views, or inherits the platform setting.
+      labels:
+        community: Community contributor display
+        platform: Default contributor display
+        record: Contributor display
+      options:
+        'false': Hide contributor bylines
+        inherit: Inherit
+        'true': Show contributor bylines
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},

@@ -90,6 +90,24 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe '#resolved_contributors_display_visibility' do
+    it 'inherits the platform default for posts' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:)
+
+      expect(post.resolved_contributors_display_visibility).to eq('off')
+      expect(post).not_to be_contributors_display_visible
+    end
+
+    it 'lets the post override the platform default' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:, contributors_display_visibility: 'on')
+
+      expect(post.resolved_contributors_display_visibility).to eq('on')
+      expect(post).to be_contributors_display_visible
+    end
+  end
+
   describe 'federation provenance' do
     it 'assigns Current.platform when available' do
       platform = create(:better_together_platform)
