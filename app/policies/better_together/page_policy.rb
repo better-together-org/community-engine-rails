@@ -22,10 +22,6 @@ module BetterTogether
       create?
     end
 
-    def create_release_package_draft?
-      create?
-    end
-
     def update?
       platform_content_manager? || (agent.present? && record.editable_contributors.include?(agent))
     end

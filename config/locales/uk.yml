@@ -2523,12 +2523,8 @@ uk:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
-        new_release_package_draft: Новий чернетковий пакет релізу
         search_by_slug: Search by slug...
         search_by_title: Search by title...
-      release_package_draft:
-        created: 'Створено приватну чернетку пакета релізу. Пов’язаний чернетковий
-          допис: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:

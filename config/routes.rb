@@ -386,10 +386,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Content Management
             resources :pages do
-              collection do
-                post :create_release_package_draft
-              end
-
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end

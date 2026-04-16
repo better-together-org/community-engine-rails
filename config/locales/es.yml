@@ -2537,12 +2537,8 @@ es:
         clear_filters: Limpiar filtros
         filter: Filtrar
         new_page: Nueva página
-        new_release_package_draft: Nuevo borrador de paquete de publicación
         search_by_slug: Buscar por slug...
         search_by_title: Buscar por título...
-      release_package_draft:
-        created: 'Se creó un borrador privado del paquete de publicación. Publicación
-          complementaria: %{post_title}'
     people:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:

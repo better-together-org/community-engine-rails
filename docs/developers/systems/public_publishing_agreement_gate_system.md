@@ -63,7 +63,6 @@ Remaining work includes:
 
 - governed-agent acceptance UI beyond current person-led agreement flows
 - fully truthful robot-authored page/post rendering in the public UI
-- a dedicated release-package draft workflow on top of governed authorship
 - broader audit of all public internet surfaces beyond the currently patched publishing paths
 - comment publication review before comments are ever allowed to become public-facing
 
