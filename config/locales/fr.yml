@@ -2224,6 +2224,7 @@ fr:
           medium_results: Moyen
           no_results: Aucun résultat
           result_quality: Moyenne des résultats par recherche
+        loading: Chargement...
         search_health:
           backend: Backend
           db_count: Nombre BD

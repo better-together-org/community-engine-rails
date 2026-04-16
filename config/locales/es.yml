@@ -2216,6 +2216,7 @@ es:
           medium_results: Medio
           no_results: Sin resultados
           result_quality: Promedio de resultados por búsqueda
+        loading: Cargando...
         search_health:
           backend: Backend
           db_count: Conteo BD
