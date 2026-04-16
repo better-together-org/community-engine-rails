@@ -347,6 +347,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   get :search_queries_by_term_data
                   get :search_queries_daily_data
                   get :search_health_data
+                  get :search_health_panel
                   get :user_accounts_daily_data
                   get :user_confirmation_rate_data
                   get :user_registration_sources_data
@@ -386,10 +387,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Content Management
             resources :pages do
-              collection do
-                post :create_release_package_draft
-              end
-
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end

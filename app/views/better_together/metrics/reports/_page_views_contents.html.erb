@@ -66,7 +66,7 @@
               chart_type: 'pageViewsChart',
               data_url: page_views_by_url_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:page_views],
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
 
           <%= render 'additional_filters',
               chart_type: 'pageViewsChart',
@@ -90,7 +90,7 @@
               chart_type: 'dailyPageViewsChart',
               data_url: page_views_daily_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:page_views],
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
 
           <%= render 'additional_filters',
               chart_type: 'dailyPageViewsChart',

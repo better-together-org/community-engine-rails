@@ -2243,6 +2243,7 @@ fr:
           medium_results: Moyen
           no_results: Aucun résultat
           result_quality: Moyenne des résultats par recherche
+        loading: Chargement...
         search_health:
           backend: Backend
           db_count: Nombre BD
@@ -2566,12 +2567,8 @@ fr:
         clear_filters: Effacer les filtres
         filter: Filtrer
         new_page: Nouvelle page
-        new_release_package_draft: Nouveau brouillon de paquet de publication
         search_by_slug: Rechercher par slug...
         search_by_title: Rechercher par titre...
-      release_package_draft:
-        created: 'Brouillon privé de paquet de publication créé. Publication associée
-          : %{post_title}'
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:

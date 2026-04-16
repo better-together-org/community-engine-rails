@@ -67,7 +67,7 @@
               chart_type: 'linkClicksChart',
               data_url: link_clicks_by_url_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:link_clicks],
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
 
         <div class="metrics-chart-block">
@@ -87,7 +87,7 @@
               chart_type: 'dailyLinkClicksChart',
               data_url: link_clicks_daily_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:link_clicks],
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
       </div>
       <div class="tab-pane fade bt-tab-pane bt-tab-pane--action bt-tab-accent--neutral"

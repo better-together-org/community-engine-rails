@@ -163,15 +163,21 @@ module BetterTogether
       host_nav = platform_host_nav_item
       return [] unless host_nav
 
-      children = host_nav.children.visible
-      children.select { |child| navigation_item_visible_for?(child, platform: host_platform) }
+      navigation_item_children_for(host_nav, platform: host_platform)
     end
 
     def render_platform_host_sidebar_nav
+      return unless platform_host_nav_area
+
+      host_nav = platform_host_nav_item
+      return unless host_nav
+
       host_nav_items = platform_host_nav_children
       return if host_nav_items.blank?
 
-      render 'layouts/better_together/host_sidebar_nav', host_nav_items: host_nav_items
+      Rails.cache.fetch(cache_key_for_nav_item_children(host_nav)) do
+        render 'layouts/better_together/host_sidebar_nav', host_nav_items: host_nav_items
+      end
     end
 
     def platform_footer_nav_area
@@ -262,7 +268,8 @@ module BetterTogether
     end
 
     def special_navigation_item_visible?(navigation_item)
-      permissions = SPECIAL_HOST_DASHBOARD_NAV_VISIBILITY[navigation_item.identifier]
+      identifier = navigation_item.respond_to?(:identifier) ? navigation_item.identifier : nil
+      permissions = SPECIAL_HOST_DASHBOARD_NAV_VISIBILITY[identifier]
       return false if permissions.blank?
 
       permissions.any? { |permission| current_person&.permitted_to?(permission) }
@@ -460,6 +467,10 @@ module BetterTogether
 
     def visible_nav_items_cache_key(nav_area)
       [nav_area.id, nav_area.cache_key_with_version, nav_visibility_context_key]
+    end
+
+    def cache_key_for_nav_item_children(navigation_item)
+      ['nav_item_children', navigation_item.cache_key_with_version, nav_visibility_context_key]
     end
 
     def load_nav_items_for(nav_area)

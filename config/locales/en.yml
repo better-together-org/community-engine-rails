@@ -2190,6 +2190,7 @@ en:
           medium_results: Medium
           no_results: No results
           result_quality: Avg results per search
+        loading: Loading...
         search_health:
           backend: Backend
           db_count: DB Count
@@ -2509,11 +2510,8 @@ en:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
-        new_release_package_draft: New Release Package Draft
         search_by_slug: Search by slug...
         search_by_title: Search by title...
-      release_package_draft:
-        created: 'Private release package draft created. Companion draft post: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:

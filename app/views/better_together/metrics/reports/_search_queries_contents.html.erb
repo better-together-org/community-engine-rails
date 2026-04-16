@@ -85,7 +85,7 @@
               chart_type: 'searchQueriesChart',
               data_url: search_queries_by_term_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:search_queries],
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
 
         <div class="metrics-chart-block">
@@ -105,7 +105,7 @@
               chart_type: 'dailySearchQueriesChart',
               data_url: search_queries_daily_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates[:search_queries],
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
       </div>
 
