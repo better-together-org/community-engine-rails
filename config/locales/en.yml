@@ -548,6 +548,10 @@ en:
           attributes:
             event_hosts:
               too_short: Events must have at least one host
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: already has a settlement record
         better_together/joatu/connection_request:
           attributes:
             base:
