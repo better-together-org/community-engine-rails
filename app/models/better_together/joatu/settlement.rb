@@ -38,7 +38,7 @@ module BetterTogether
       # Called from Agreement#fulfill! inside a transaction.
       # lock_ref is read from the settlement record (stored when the lock was created
       # in Agreement#create_settlement_if_c3_priced!) so the BalanceLock is marked settled.
-      def complete!(payer_balance:, recipient_balance:) # rubocop:todo Metrics/MethodLength
+      def complete!(payer_balance:, recipient_balance:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         raise ActiveRecord::RecordInvalid, self unless status == 'pending'
 
         token = nil
@@ -61,6 +61,10 @@ module BetterTogether
           update!(status: 'completed', c3_token: token, completed_at: Time.current)
         end
 
+        BetterTogether::C3::SettlementNotifier
+          .with(settlement: self, event_type: :c3_settled)
+          .deliver_later([payer, recipient].compact.uniq)
+
         token
       end
 
@@ -74,6 +78,10 @@ module BetterTogether
           payer_balance.unlock!(c3_amount, lock_ref: lock_ref) if c3_millitokens.positive?
           update!(status: 'cancelled', completed_at: Time.current)
         end
+
+        BetterTogether::C3::SettlementNotifier
+          .with(settlement: self, event_type: :c3_lock_released)
+          .deliver_later([payer, recipient].compact.uniq)
       end
 
       def to_s
