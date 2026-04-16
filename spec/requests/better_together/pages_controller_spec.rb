@@ -67,6 +67,24 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).not_to include('citation-page_evidence_record')
     end
 
+    it 'keeps the governed page byline visible while broader evidence UI stays hidden' do
+      robot = create(:better_together_robot,
+                     platform: page.platform,
+                     name: 'BTS Publishing Robot',
+                     identifier: "bts-page-robot-#{SecureRandom.hex(4)}")
+
+      page.authorships.destroy_all
+      page.authorships.create!(author: robot)
+
+      get better_together.page_path(page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('BTS Publishing Robot')
+      expect(response.body).to include('Robot')
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+    end
+
     it 'keeps claims and supporting evidence out of the public page view' do
       citation = create(:better_together_citation,
                         citeable: page,

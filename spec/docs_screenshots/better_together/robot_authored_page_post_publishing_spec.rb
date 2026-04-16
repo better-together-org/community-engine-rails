@@ -52,7 +52,7 @@ RSpec.describe 'Documentation screenshots for robot-authored page and post publi
       visit better_together.edit_page_path(page_record, locale: I18n.default_locale)
 
       expect(page).to have_text('Authors')
-      expect(page).to have_text('Robot Authors')
+      expect(page).to have_text('Contributors')
       expect(page).to have_text('BTS Publishing Robot')
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe 'Documentation screenshots for robot-authored page and post publi
       visit better_together.edit_post_path(post_record, locale: I18n.default_locale)
 
       expect(page).to have_text('Authors')
-      expect(page).to have_text('Robot Authors')
+      expect(page).to have_text('Contributors')
       expect(page).to have_text('BTS Publishing Robot')
     end
   end
