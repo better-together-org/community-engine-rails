@@ -2203,6 +2203,7 @@ uk:
           medium_results: Середня
           no_results: Без результатів
           result_quality: Середня кількість результатів на пошук
+        loading: Завантаження...
         search_health:
           backend: Backend
           db_count: Кількість у БД

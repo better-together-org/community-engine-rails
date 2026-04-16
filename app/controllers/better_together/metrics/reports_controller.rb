@@ -23,10 +23,31 @@ module BetterTogether
         'BetterTogether::Category' => { r: 46, g: 125, b: 50 },        # Dark Green
         'BetterTogether::Checklist' => { r: 216, g: 67, b: 21 }        # Deep Orange
       }.freeze
+      EMPTY_REPORT_PAYLOADS = {
+        empty_stacked_payload: %i[
+          @page_views_by_url_chart_data
+          @page_views_daily_chart_data
+          @shares_by_platform_chart_data
+          @shares_data
+          @user_accounts_daily_chart_data
+        ],
+        empty_values_payload: %i[
+          @link_clicks_by_url_chart_data
+          @link_clicks_daily_chart_data
+          @downloads_by_file_chart_data
+          @links_by_host_chart_data
+          @invalid_by_host_chart_data
+          @failures_daily_chart_data
+          @search_queries_daily_chart_data
+          @user_confirmation_rate_chart_data
+          @user_registration_sources_chart_data
+          @user_cumulative_growth_chart_data
+        ]
+      }.freeze
 
       before_action :authorize_metrics_access
       before_action :set_min_dates, only: :index
-      before_action :set_metrics_data, only: :index
+      before_action :set_initial_metrics_data, only: :index
 
       # Main dashboard view - loads initial state with default date range
       def index; end
@@ -73,6 +94,11 @@ module BetterTogether
           report_labels: audit.report_labels,
           capabilities: audit.capabilities
         }
+      end
+
+      def search_health_panel
+        @search_health_report = BetterTogether::Search::AuditService.new.call
+        render partial: 'better_together/metrics/reports/search_health_contents'
       end
 
       # JSON endpoint for daily user account creation and confirmation
@@ -164,60 +190,11 @@ module BetterTogether
       end
       # rubocop:enable Metrics/AbcSize
 
-      # Set metrics data for index action
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      def set_metrics_data
+      def set_initial_metrics_data
         initialize_default_datetime_range
-
-        @page_view_scope = filtered_metrics_scope(BetterTogether::Metrics::PageView, :viewed_at)
-        @page_views_by_url = @page_view_scope.group(:page_url).count
-        @page_views_daily = @page_view_scope.group_by_day(:viewed_at).count
-        @page_views_by_url_chart_data = page_views_by_url_payload(@page_view_scope)
-        @page_views_daily_chart_data = page_views_daily_payload(@page_view_scope)
-
-        @link_click_scope = filtered_metrics_scope(BetterTogether::Metrics::LinkClick, :clicked_at)
-        @link_clicks_by_url = @link_click_scope.group(:url).count
-        @link_clicks_daily = @link_click_scope.group_by_day(:clicked_at).count
-        @internal_vs_external = @link_click_scope.group(:internal).count
-        @link_clicks_by_page = @link_click_scope.group(:page_url).count
-        @link_clicks_by_url_chart_data = labeled_values_payload(@link_click_scope, :url)
-        @link_clicks_daily_chart_data = daily_values_payload(@link_click_scope, :clicked_at)
-
-        @download_scope = filtered_metrics_scope(BetterTogether::Metrics::Download, :downloaded_at)
-        @downloads_by_file = @download_scope.group(:file_name).count
-        @downloads_by_file_chart_data = labeled_values_payload(@download_scope, :file_name, limit: nil)
-
-        @share_scope = filtered_metrics_scope(BetterTogether::Metrics::Share, :shared_at)
-        @shares_by_platform = @share_scope.group(:platform).count
-        @shares_by_url_and_platform = @share_scope.group(:url, :platform).count
-        @shares_by_platform_chart_data = shares_by_platform_payload(@share_scope)
-        @shares_data = shares_by_url_and_platform_payload(@share_scope)
-
-        @link_checker_scope = link_checker_scope(:created_at)
-        @links_by_host = @link_checker_scope.group(:host).count
-        @links_by_host_chart_data = labeled_values_payload(@link_checker_scope, :host, limit: nil)
-
-        @invalid_link_scope = link_checker_scope(:created_at, valid_only: false)
-        @invalid_by_host = @invalid_link_scope.group(:host).count
-        @invalid_by_host_chart_data = labeled_values_payload(@invalid_link_scope, :host, limit: nil)
-
-        @failures_scope = link_checker_scope(:last_checked_at, valid_only: false)
-        @failures_daily = @failures_scope.group_by_day(:last_checked_at).count
-        @failures_daily_chart_data = daily_values_payload(@failures_scope, :last_checked_at)
-
-        @search_query_scope = filtered_metrics_scope(BetterTogether::Metrics::SearchQuery, :searched_at)
-        @search_queries_by_term_chart_data = search_queries_by_term_payload(@search_query_scope)
-        @search_queries_daily_chart_data = daily_values_payload(@search_query_scope, :searched_at)
-
-        @user_scope = filter_by_datetime(BetterTogether::User, :created_at)
-        @user_accounts_daily_chart_data = user_accounts_daily_payload(@user_scope)
-        @user_confirmation_rate_chart_data = user_confirmation_rate_payload(@user_scope)
-        @user_registration_sources_chart_data = user_registration_sources_payload(@user_scope)
-        @user_cumulative_growth_chart_data = user_cumulative_growth_payload(@user_scope)
-
-        @search_health_report = BetterTogether::Search::AuditService.new.call
+        assign_empty_metric_payloads
+        @result_levels = BetterTogether::Metrics::DEFAULT_RESULT_LEVELS
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       # Calculate average results for search queries
       def calculate_average_results(scope, queries)
@@ -236,8 +213,31 @@ module BetterTogether
         @day_of_week_filter = nil
       end
 
+      def assign_empty_metric_payloads
+        EMPTY_REPORT_PAYLOADS.each do |payload_method, instance_variables|
+          assign_payloads(public_send(payload_method), *instance_variables)
+        end
+        @search_queries_by_term_chart_data = empty_search_query_payload
+      end
+
+      def assign_payloads(payload, *instance_variables)
+        instance_variables.each { |name| instance_variable_set(name, payload.deep_dup) }
+      end
+
       def filtered_metrics_scope(model, column_name)
         filter_by_datetime(metrics_scope(model), column_name)
+      end
+
+      def empty_stacked_payload
+        { labels: [], datasets: [] }
+      end
+
+      def empty_values_payload
+        { labels: [], values: [] }
+      end
+
+      def empty_search_query_payload
+        empty_values_payload.merge(avgResults: [], thresholds: BetterTogether::Metrics.generate_result_levels([]))
       end
 
       def link_checker_scope(column_name, valid_only: nil)

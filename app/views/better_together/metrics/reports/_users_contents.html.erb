@@ -66,7 +66,7 @@
               chart_type: 'userAccountsOverviewChart',
               data_url: user_accounts_daily_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
 
         <div id="chart-user-confirmations" class="metrics-chart-block">
@@ -86,7 +86,7 @@
               chart_type: 'userConfirmationsChart',
               data_url: user_confirmation_rate_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
 
         <div id="chart-registration-sources" class="metrics-chart-block">
@@ -106,7 +106,7 @@
               chart_type: 'registrationSourcesChart',
               data_url: user_registration_sources_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
 
         <div id="chart-cumulative-growth" class="metrics-chart-block">
@@ -126,7 +126,7 @@
               chart_type: 'cumulativeGrowthChart',
               data_url: user_cumulative_growth_data_metrics_reports_path(locale: I18n.locale),
               min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
-              initial_data_loaded: true %>
+              initial_data_loaded: false %>
         </div>
       </div>
 

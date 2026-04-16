@@ -2172,6 +2172,7 @@ en:
           medium_results: Medium
           no_results: No results
           result_quality: Avg results per search
+        loading: Loading...
         search_health:
           backend: Backend
           db_count: DB Count

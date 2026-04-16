@@ -12,7 +12,7 @@ module BetterTogether
     # GET /people/1
     def show
       load_profile_content_collections
-      @github_integrations = @person.github_integrations.order(:handle)
+      @github_integrations = @person.github_integrations.order(:handle).load
       load_calendar_collections
     end
 
@@ -144,7 +144,8 @@ module BetterTogether
             role: [:string_translations]
           },
           agreement_participants: :agreement,
-          contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts]
+          contact_detail: %i[phone_numbers email_addresses website_links addresses social_media_accounts],
+          person_platform_integrations: :platform
         }
       ).call
     end
@@ -199,25 +200,31 @@ module BetterTogether
     end
 
     def load_profile_content_collections
-      @authored_pages = policy_scope(@person.authored_pages)
-                        .includes(
-                          :string_translations,
-                          blocks: { background_image_file_attachment: :blob }
-                        )
-      @contributed_pages = policy_scope(BetterTogether::Page.where(id: @person.contributed_pages.select(:id)))
-                           .includes(
-                             :string_translations,
-                             blocks: { background_image_file_attachment: :blob }
-                           )
-      @contributed_posts = policy_scope(BetterTogether::Post.where(id: @person.contributed_posts.select(:id)))
-                           .includes(*BetterTogether::Post.card_render_includes)
-      @agreement_participants = @person.agreement_participants.to_a
+      @authored_pages = pages_for_profile(@person.authored_pages)
+      @contributed_pages = pages_for_profile(BetterTogether::Page.where(id: @person.contributed_pages.select(:id)))
+      @contributed_posts = posts_for_profile(BetterTogether::Post.where(id: @person.contributed_posts.select(:id)))
+      @agreement_participants = @person.agreement_participants.includes(:agreement).to_a
     end
 
     def load_calendar_collections
       @person.preload_calendar_associations!
       @all_calendar_events = @person.all_calendar_events
       categorize_person_events(@all_calendar_events)
+    end
+
+    def pages_for_profile(scope)
+      policy_scope(scope)
+        .includes(
+          :string_translations,
+          blocks: { background_image_file_attachment: :blob }
+        )
+        .to_a
+    end
+
+    def posts_for_profile(scope)
+      policy_scope(scope)
+        .includes(*BetterTogether::Post.card_render_includes)
+        .to_a
     end
   end
 end
