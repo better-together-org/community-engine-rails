@@ -25,7 +25,7 @@ module BetterTogether
         greater_than_or_equal_to: 0,
         less_than_or_equal_to: BetterTogether::C3::Token::MAX_SINGLE_TRANSACTION_MILLITOKENS
       }
-      validates :agreement_id, uniqueness: { message: 'already has a settlement record' }
+      validates :agreement_id, uniqueness: { message: :already_settled }
 
       scope :pending,   -> { where(status: 'pending') }
       scope :completed, -> { where(status: 'completed') }
