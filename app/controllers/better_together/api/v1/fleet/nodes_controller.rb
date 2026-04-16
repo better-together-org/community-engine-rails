@@ -25,13 +25,21 @@ module BetterTogether
             render json: { error: "node '#{params[:node_id]}' not found" }, status: :not_found
           end
 
-          def create
+          def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
             node_data = node_params
+            noise_key = node_data.delete(:borgberry_noise_public_key_base64)
+
             node = BetterTogether::Fleet::Node.find_or_initialize_by(node_id: node_data[:node_id])
             node.assign_attributes(node_data)
             node.registered_at ||= Time.current
             node.last_seen_at = Time.current
             node.online = true
+
+            # Store INEM public key inside services JSONB — no schema change required.
+            if noise_key.present?
+              node.services = (node.services || {}).merge('inem' => { 'noise_public_key_base64' => noise_key })
+            end
+
             node.save!
 
             render json: { status: 'ok', node: node_json(node) }, status: node.previously_new_record? ? :created : :ok
@@ -59,6 +67,9 @@ module BetterTogether
             params.require(:node).permit(
               :node_id, :node_category, :headscale_ip, :lan_ip, :borgberry_port,
               :safety_tier, :online,
+              # borgberry_noise_public_key_base64: Noise X25519 public key for INEM peer verification.
+              # Stored inside services JSONB under key "inem" so no schema change is needed.
+              :borgberry_noise_public_key_base64,
               hardware: {}, compute: {}, services: {}
             )
           end
@@ -77,7 +88,8 @@ module BetterTogether
               safety_tier: node.safety_tier,
               hardware: node.hardware,
               compute: node.compute,
-              services: node.services
+              services: node.services,
+              borgberry_noise_public_key_base64: node.services&.dig('inem', 'noise_public_key_base64')
             }
           end
         end
