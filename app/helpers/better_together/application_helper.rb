@@ -162,6 +162,17 @@ module BetterTogether
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 
+    # Returns the preferred public email for the host community, if any.
+    def host_community_primary_email
+      contact_detail = host_community.contact_detail
+      return unless contact_detail
+
+      public_emails = contact_detail.email_addresses.privacy_public.to_a
+      primary = public_emails.find(&:primary_flag?)
+
+      primary&.email || public_emails.first&.email
+    end
+
     # Returns the proxied URL for the host community logo if attached.
     def host_community_logo_url
       return unless host_community.logo.attached?
