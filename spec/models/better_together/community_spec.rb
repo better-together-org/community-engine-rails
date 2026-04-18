@@ -94,6 +94,48 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
     end
   end
 
+  describe '#optimized_cover_image' do
+    let(:community) { described_class.allocate }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:cover_image) { double('cover_image', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      community.define_singleton_method(:cover_image) { cover_image }
+    end
+
+    context 'when the cover image is a PNG' do
+      let(:content_type) { 'image/png' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(cover_image).to receive(:variant).with(:optimized_png).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(community.optimized_cover_image).to eq(attachment_variant)
+      end
+    end
+  end
+
+  describe '#optimized_logo' do
+    let(:community) { described_class.allocate }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:logo) { double('logo', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      community.define_singleton_method(:logo) { logo }
+    end
+
+    context 'when the logo is a JPEG' do
+      let(:content_type) { 'image/jpeg' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(logo).to receive(:variant).with(:optimized_jpeg).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(community.optimized_logo).to eq(attachment_variant)
+      end
+    end
+  end
+
   describe 'callbacks' do
     describe '#create_default_calendar' do
       it 'creates uniquely slugged default calendars for different communities' do
