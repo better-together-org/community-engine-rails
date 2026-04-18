@@ -60,6 +60,17 @@ bin/render_diagrams
 5. **Verify**: Run tests and quality checks
 6. **Commit**: Submit pull request
 
+## Repo-local session wrappers
+
+This repository now includes repo-local wrappers so session logs and linked worktree metadata stay attached to the canonical repository root instead of disposable worktrees.
+
+Useful commands:
+
+```bash
+./scripts/session_command_log.sh init
+./scripts/session_worktree.sh ensure --repo . --agent local --session-id example --storage-mode local
+```
+
 ## Related Documentation
 
 - [Architecture](../developers/architecture/) - System architecture

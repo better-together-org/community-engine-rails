@@ -8,9 +8,11 @@ Welcome! This guide helps community members use Better Together platform feature
 
 ## Community Features
 - [Exchange Process](exchange_process.md) - Participating in exchanges and offers
+- [Search and Filter Guide](search_and_filter_guide.md) - How to find posts, pages, and current event listings
 - See also: [Community Management](../community_organizers/community_management.md) for how communities operate
 
 ## Safety and Privacy
+- [Personal Data Export Guide](personal_data_export_guide.md) - How to request, download, and delete your personal export
 - [Safety and Reporting Tools](safety_reporting.md) - Main safety guide and navigation hub
 - [Submission Protection and Security Checks](submission_protection_and_bot_checks.md) - What background anti-bot checks protect public forms
 - [Blocking and Boundaries](blocking_and_boundaries.md) - How to block, unblock, and decide when to block
