@@ -44,6 +44,9 @@ module BetterTogether
     translates :title, type: :string
     translates :description, backend: :action_text
 
+    attribute :agreement_kind, :string, default: AGREEMENT_KINDS[:policy_consent]
+    attribute :required_for, :string, default: REQUIRED_FOR_VALUES[:none]
+    attribute :active_for_consent, :boolean, default: true
     attribute :lifecycle_state, :string, default: LIFECYCLE_STATES[:active]
     attribute :requires_reacceptance, :boolean, default: false
     attribute :change_summary, :string
