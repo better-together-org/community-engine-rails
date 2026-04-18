@@ -14,6 +14,20 @@ fi
 
 primary_test_db="community_engine_test${CE_WORKTREE_DB_SUFFIX}"
 
+db_has_required_test_schema() {
+  local database_name="$1"
+  local result
+  result="$(docker exec community-engine-db psql -U postgres -d "$database_name" -tAc \
+    "SELECT
+       to_regclass('public.better_together_users') IS NOT NULL
+       AND EXISTS (
+         SELECT 1
+         FROM ar_internal_metadata
+         WHERE key = 'environment' AND value = 'test'
+       );" 2>/dev/null || true)"
+  [[ "$result" == "t" ]]
+}
+
 sync_schema_migrations_versions() {
   local database_name="$1"
   docker exec community-engine-db psql -U postgres -d "$database_name" -v ON_ERROR_STOP=1 \
@@ -30,24 +44,38 @@ sync_schema_migrations_versions() {
 
 if docker exec community-engine-db psql -U postgres -tAc \
   "SELECT 1 FROM pg_database WHERE datname='${primary_test_db}'" | grep -q 1; then
+  if db_has_required_test_schema "$primary_test_db"; then
+    while IFS= read -r existing_db; do
+      sync_schema_migrations_versions "$existing_db"
+    done < <(
+      docker exec community-engine-db psql -U postgres -tA -c \
+        "SELECT datname FROM pg_database WHERE datname LIKE '${primary_test_db}%';"
+    )
+    exit 0
+  fi
+
+  echo "Rebuilding incomplete worktree test DB ${primary_test_db}..."
+  docker exec community-engine-db psql -U postgres -d postgres -v ON_ERROR_STOP=1 \
+    -c "DROP DATABASE IF EXISTS \"${primary_test_db}\" WITH (FORCE);" >/dev/null
   while IFS= read -r existing_db; do
-    sync_schema_migrations_versions "$existing_db"
+    docker exec community-engine-db psql -U postgres -d postgres -v ON_ERROR_STOP=1 \
+      -c "DROP DATABASE IF EXISTS \"${existing_db}\" WITH (FORCE);" >/dev/null
   done < <(
     docker exec community-engine-db psql -U postgres -tA -c \
-      "SELECT datname FROM pg_database WHERE datname LIKE '${primary_test_db}%';"
+      "SELECT datname FROM pg_database WHERE datname LIKE '${primary_test_db}%' AND datname <> '${primary_test_db}';"
   )
-  exit 0
 fi
 
 echo "Preparing worktree test databases for suffix ${CE_WORKTREE_DB_SUFFIX}..."
 
 # Rebuild the primary test DB from schema in the dummy app context.
 ./bin/dc run --rm --no-deps app env RAILS_ENV=test ./bin/dummy rails db:drop db:create db:schema:load >/dev/null
+./bin/dc run --rm --no-deps app env RAILS_ENV=test ./bin/dummy rails db:environment:set >/dev/null
 sync_schema_migrations_versions "$primary_test_db"
 
 # Prepare the parallel test DBs for prspec-style runs in the same worktree.
 ./bin/dc run --rm --no-deps app env RAILS_ENV=test ./bin/dummy bundle exec rake \
-  db:parallel:purge db:parallel:create db:parallel:prepare >/dev/null
+  db:parallel:purge db:parallel:prepare >/dev/null
 
 while IFS= read -r parallel_db; do
   sync_schema_migrations_versions "$parallel_db"

@@ -223,7 +223,10 @@ module BetterTogether
     end
 
     has_one_attached :profile_image
-    has_one_attached :cover_image
+    has_one_attached :cover_image do |attachable|
+      attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600], preprocessed: true
+      attachable.variant :optimized_png, resize_to_limit: [2400, 600], preprocessed: true
+    end
 
     scope :anonymized, -> { where.not(anonymized_at: nil) }
 
@@ -253,7 +256,18 @@ module BetterTogether
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
+    end
+
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        cover_image
+      elsif cover_image.content_type == 'image/png'
+        cover_image.variant(:optimized_png)
+      else
+        cover_image.variant(:optimized_jpeg)
+      end
     end
 
     def description_html(locale: I18n.locale)
