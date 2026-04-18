@@ -3,6 +3,7 @@
 # Common route helpers included in request specs.
 module RequestSpecHelper # :nodoc:
   include Rails.application.routes.url_helpers
+  include Rails.application.routes.mounted_helpers
   include BetterTogether::Engine.routes.url_helpers
 
   # Ensure route helpers use default locale
@@ -32,20 +33,11 @@ module RequestSpecHelper # :nodoc:
       raise "Cannot login as #{email} - user does not exist or is not confirmed"
     end
 
-    begin
-      post better_together.user_session_path(locale: locale), params: {
-        user: { email: email, password: password }
-      }
-      # Ensure session cookie is stored by following Devise redirect in request specs
-      follow_redirect! if respond_to?(:follow_redirect!) && response&.redirect?
-    rescue ActionController::RoutingError => e
-      # Fallback: try with explicit engine route if the helper fails
-      Rails.logger.warn "Route helper failed: #{e.message}. Using fallback route."
-      post "/#{locale}/users/sign-in", params: {
-        user: { email: email, password: password }
-      }
-      follow_redirect! if respond_to?(:follow_redirect!) && response&.redirect?
-    end
+    post "/#{locale}/users/sign-in", params: {
+      user: { email: email, password: password }
+    }
+    # Ensure session cookie is stored by following Devise redirect in request specs
+    follow_redirect! if respond_to?(:follow_redirect!) && response&.redirect?
 
     # Verify login was successful
     return if response.status == 200 || session[:warden_user_key]
@@ -62,10 +54,7 @@ module RequestSpecHelper # :nodoc:
   # rubocop:todo Metrics/PerceivedComplexity
   def logout
     # Clear session data completely
-    if respond_to?(:reset_session!)
-      # For feature specs (Capybara)
-      reset_session!
-    elsif respond_to?(:reset_session)
+    if respond_to?(:reset_session)
       # For request specs
       reset_session
     end
@@ -73,14 +62,14 @@ module RequestSpecHelper # :nodoc:
     # Clear any Warden authentication data
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
 
+    # Only issue an HTTP sign-out request in request specs. Controller/feature specs
+    # should rely on session + Warden cleanup above to avoid route-helper flake.
+    return unless respond_to?(:delete) && !respond_to?(:controller) && !respond_to?(:visit)
+
     # Ensure we have a valid locale for the route
     locale = (I18n.locale || I18n.default_locale).to_s
 
     begin
-      delete better_together.destroy_user_session_path(locale: locale)
-    rescue ActionController::RoutingError => e
-      # Fallback: try with explicit engine route if the helper fails
-      Rails.logger.warn "Route helper failed for logout: #{e.message}. Using fallback route."
       delete "/#{locale}/users/sign-out"
     rescue StandardError => e
       # Ignore errors during logout as session may already be clean

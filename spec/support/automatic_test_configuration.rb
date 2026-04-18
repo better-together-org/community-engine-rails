@@ -259,8 +259,13 @@ module AutomaticTestConfiguration # :nodoc:
 
   # Use the appropriate authentication method based on the spec type
   def use_auth_method_for_spec_type(example, user_type)
-    # Avoid HTTP logout for request specs to prevent creating a response object
-    logout if (feature_spec_type?(example) || controller_spec_type?(example)) && respond_to?(:logout)
+    if controller_spec_type?(example)
+      sign_out(:user) if respond_to?(:sign_out)
+    elsif feature_spec_type?(example)
+      Capybara.reset_session! if defined?(Capybara)
+    elsif respond_to?(:logout)
+      logout
+    end
 
     if controller_spec_type?(example)
       # Use Devise test helpers for controller specs
@@ -326,12 +331,50 @@ module AutomaticTestConfiguration # :nodoc:
 
   def find_or_create_test_user(email, password, role_type = :user)
     user = BetterTogether::User.find_by(email: email)
+
     user ||= if %i[platform_manager platform_steward].include?(role_type)
                FactoryBot.create(:better_together_user, :confirmed, :platform_steward, email: email, password: password)
              else
                FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
              end
+
+    if user.person.blank?
+      user.build_person(attributes_for(:better_together_person))
+    end
+
+    if user.confirmed_at.blank?
+      user.confirmed_at = Time.zone.now
+      user.confirmation_sent_at ||= user.confirmed_at
+      user.confirmation_token ||= Faker::Alphanumeric.alphanumeric(number: 20)
+    end
+
+    user.password = password if user.encrypted_password.blank?
+    user.save! if user.changed? || user.person&.new_record?
+
+    ensure_test_user_role!(user, role_type) if %i[platform_manager platform_steward].include?(role_type)
+
     user
+  end
+
+  def ensure_test_user_role!(user, role_type)
+    host_platform = BetterTogether::Platform.find_by(host: true) ||
+                    create(:better_together_platform, :host, community: user.person.community)
+
+    role_identifier = role_type == :platform_manager ? 'platform_manager' : 'platform_steward'
+    role = BetterTogether::Role.find_by(identifier: role_identifier)
+
+    unless role
+      BetterTogether::AccessControlBuilder.seed_data
+      role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+             BetterTogether::Role.find_by(identifier: role_identifier)
+    end
+
+    return unless role
+
+    host_platform.person_platform_memberships.find_or_create_by!(
+      member: user.person,
+      role: role
+    )
   end
 
   def ensure_clean_session
@@ -365,10 +408,14 @@ module AutomaticTestConfiguration # :nodoc:
     # Clear any Warden authentication data
     @request&.env&.delete('warden') if respond_to?(:request) && defined?(@request)
 
-    # Force logout for all spec types to ensure clean authentication state
+    # Request specs still need an HTTP logout path to clear request-managed auth state.
+    # Controller and feature specs should rely on the session + Warden cleanup above.
     # But avoid HTTP logout for Example Automatic Configuration tests to prevent response object creation
     current_example_description = RSpec.current_example&.example_group&.description || ''
-    if respond_to?(:logout) && !current_example_description.include?('Example Automatic Configuration')
+    current_example_type = RSpec.current_example&.metadata&.[](:type)
+    if respond_to?(:logout) &&
+       current_example_type == :request &&
+       !current_example_description.include?('Example Automatic Configuration')
       begin
         logout
       rescue StandardError => e
