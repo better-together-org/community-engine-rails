@@ -4,6 +4,40 @@ require 'rails_helper'
 require 'nokogiri'
 
 RSpec.describe BetterTogether::ApplicationHelper do
+  describe '#host_community_primary_email' do
+    it 'returns the primary public host community email address' do
+      community = create(:community, :host)
+      contact_detail = create(:contact_detail, contactable: community)
+      create(:email_address, contact_detail:, email: 'secondary@example.test', primary_flag: false, privacy: 'public')
+      create(:email_address, contact_detail:, email: 'primary@example.test', primary_flag: true, privacy: 'public')
+
+      allow(helper).to receive(:host_community).and_return(community)
+
+      expect(helper.host_community_primary_email).to eq('primary@example.test')
+    end
+
+    it 'falls back to the first public email when no primary public email exists' do
+      community = create(:community, :host)
+      contact_detail = create(:contact_detail, contactable: community)
+      create(:email_address, contact_detail:, email: 'fallback@example.test', primary_flag: false, privacy: 'public')
+      create(:email_address, contact_detail:, email: 'private@example.test', primary_flag: true, privacy: 'private')
+
+      allow(helper).to receive(:host_community).and_return(community)
+
+      expect(helper.host_community_primary_email).to eq('fallback@example.test')
+    end
+
+    it 'returns nil when the host community has no public email addresses' do
+      community = create(:community, :host)
+      contact_detail = create(:contact_detail, contactable: community)
+      create(:email_address, contact_detail:, email: 'private@example.test', primary_flag: true, privacy: 'private')
+
+      allow(helper).to receive(:host_community).and_return(community)
+
+      expect(helper.host_community_primary_email).to be_nil
+    end
+  end
+
   describe '#base_url' do
     it 'uses the resolved platform primary domain when available' do
       platform_domain = instance_double(BetterTogether::PlatformDomain, url: 'https://primary.example.test')
