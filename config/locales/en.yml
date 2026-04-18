@@ -3400,6 +3400,39 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+    host:
+      translation_management:
+        show:
+          ai_translation_label: AI translation endpoint
+          next_body: The stale PR dashboard will be rebuilt here in smaller, readonly slices instead of reviving the old controller takeover.
+          next_heading: Next recovery step
+          overview:
+            backend_heading: Translation records by backend
+            backends:
+              file: File attachments
+              rich_text: Rich text
+              string: String translations
+              text: Text translations
+            locale_heading: Locale coverage snapshot
+            locales_tracked: Locales tracked
+            models: Models
+            no_data: No translation data is available yet.
+            records: Records
+            total_records: Total translation records
+            translated_models: Translated models
+            type_heading: Top translated model types
+          readonly_badge: Readonly recovery namespace
+          recovery_heading: Recovery slices
+          separation_body: Translation observability now has its own host admin namespace so it can evolve independently from the AI translation request endpoint.
+          separation_heading: Surface separation
+          slices:
+            dashboard-namespace: Namespace the dashboard under host admin routes
+            dashboard-tests: Restore request and helper coverage around the recovered surface
+            locale-normalization: Extract locale normalization into current ApplicationController
+            readonly-dashboard: Rebuild the readonly translation observability UI
+            translation-indexes: Add lookup indexes for translation coverage queries
+          subtitle: Recovery home for the stale translation-management work from PR #1123.
+          title: Translation Management
     uploads:
       content_security:
         badge:

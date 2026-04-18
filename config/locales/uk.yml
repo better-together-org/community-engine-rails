@@ -3449,6 +3449,39 @@ uk:
         translation_failed: 'Переклад не вдався: %{message}'
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
+    host:
+      translation_management:
+        show:
+          ai_translation_label: Кінцева точка перекладу ШІ
+          next_body: Панель зі застарілого PR буде відновлена тут невеликими кроками лише для читання замість повернення до старого захоплення контролера.
+          next_heading: Наступний крок відновлення
+          overview:
+            backend_heading: Записи перекладів за бекендом
+            backends:
+              file: Вкладення файлів
+              rich_text: Форматований текст
+              string: Рядкові переклади
+              text: Текстові переклади
+            locale_heading: Огляд покриття за locale
+            locales_tracked: Відстежувані locale
+            models: Моделі
+            no_data: Дані перекладів ще недоступні.
+            records: Записи
+            total_records: Загальна кількість записів перекладу
+            translated_models: Перекладені моделі
+            type_heading: Найпоширеніші типи перекладених моделей
+          readonly_badge: Простір відновлення лише для читання
+          recovery_heading: Кроки відновлення
+          separation_body: Спостереження за перекладами тепер має власний простір адміністрування хоста й розвивається окремо від кінцевої точки запитів на переклад ШІ.
+          separation_heading: Розділення поверхонь
+          slices:
+            dashboard-namespace: Розмістити панель під маршрутами адміністрування хоста
+            dashboard-tests: Відновити покриття запитів і helper-методів навколо відновленої поверхні
+            locale-normalization: Винести нормалізацію locale до поточного ApplicationController
+            readonly-dashboard: Перебудувати інтерфейс спостереження за перекладами лише для читання
+            translation-indexes: Додати індекси пошуку для запитів покриття перекладів
+          subtitle: Простір відновлення для застарілої роботи з керування перекладами з PR #1123.
+          title: Керування перекладами
     uploads:
       content_security:
         badge:

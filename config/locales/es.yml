@@ -3471,6 +3471,39 @@ es:
         translation_failed: 'La traducción falló: %{message}'
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
+    host:
+      translation_management:
+        show:
+          ai_translation_label: Punto final de traducción con IA
+          next_body: El panel del PR obsoleto se reconstruirá aquí en porciones más pequeñas y de solo lectura en lugar de revivir la antigua sustitución del controlador.
+          next_heading: Siguiente paso de recuperación
+          overview:
+            backend_heading: Registros de traducción por backend
+            backends:
+              file: Archivos adjuntos
+              rich_text: Texto enriquecido
+              string: Traducciones de cadenas
+              text: Traducciones de texto
+            locale_heading: Resumen de cobertura por locale
+            locales_tracked: Locales rastreados
+            models: Modelos
+            no_data: Todavía no hay datos de traducción disponibles.
+            records: Registros
+            total_records: Total de registros de traducción
+            translated_models: Modelos traducidos
+            type_heading: Tipos de modelo más traducidos
+          readonly_badge: Espacio de recuperación de solo lectura
+          recovery_heading: Porciones de recuperación
+          separation_body: La observabilidad de traducciones ahora tiene su propio espacio de administración del host para evolucionar por separado del punto final de solicitudes de traducción con IA.
+          separation_heading: Separación de superficies
+          slices:
+            dashboard-namespace: Ubicar el panel bajo las rutas de administración del host
+            dashboard-tests: Restaurar cobertura de solicitudes y helpers para la superficie recuperada
+            locale-normalization: Extraer la normalización de locale al ApplicationController actual
+            readonly-dashboard: Reconstruir la interfaz de observabilidad de traducciones de solo lectura
+            translation-indexes: Agregar índices de búsqueda para consultas de cobertura de traducciones
+          subtitle: Hogar de recuperación para el trabajo obsoleto de gestión de traducciones del PR #1123.
+          title: Gestión de traducciones
     uploads:
       content_security:
         badge:

@@ -3488,6 +3488,39 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+    host:
+      translation_management:
+        show:
+          ai_translation_label: Point de terminaison de traduction IA
+          next_body: Le tableau de bord de l'ancienne PR sera reconstruit ici par petites tranches en lecture seule au lieu de ressusciter l'ancien détournement du contrôleur.
+          next_heading: Prochaine étape de récupération
+          overview:
+            backend_heading: Enregistrements de traduction par backend
+            backends:
+              file: Fichiers joints
+              rich_text: Texte enrichi
+              string: Traductions de chaînes
+              text: Traductions de texte
+            locale_heading: Aperçu de la couverture par locale
+            locales_tracked: Locales suivies
+            models: Modèles
+            no_data: Aucune donnée de traduction n'est encore disponible.
+            records: Enregistrements
+            total_records: Total des enregistrements de traduction
+            translated_models: Modèles traduits
+            type_heading: Types de modèles les plus traduits
+          readonly_badge: Espace de récupération en lecture seule
+          recovery_heading: Tranches de récupération
+          separation_body: L'observabilité des traductions dispose maintenant de son propre espace d'administration hôte afin d'évoluer séparément du point de terminaison des demandes de traduction IA.
+          separation_heading: Séparation des surfaces
+          slices:
+            dashboard-namespace: Placer le tableau de bord sous les routes d'administration hôte
+            dashboard-tests: Rétablir la couverture des requêtes et helpers autour de la surface récupérée
+            locale-normalization: Extraire la normalisation de locale dans l'ApplicationController actuel
+            readonly-dashboard: Reconstruire l'interface d'observabilité des traductions en lecture seule
+            translation-indexes: Ajouter des index de recherche pour les requêtes de couverture des traductions
+          subtitle: Point de récupération pour le travail de gestion des traductions obsolète du PR #1123.
+          title: Gestion des traductions
     uploads:
       content_security:
         badge:
