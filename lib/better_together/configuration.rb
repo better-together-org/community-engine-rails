@@ -19,6 +19,8 @@ module BetterTogether
 
     delegate :adapter_registry=, to: :BetterTogether
 
+    delegate :content_safety_orchestrator_command=, to: :BetterTogether
+
     delegate :new_user_password_path=, to: :BetterTogether
 
     delegate :user_class=, to: :BetterTogether
