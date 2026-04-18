@@ -96,6 +96,9 @@ module BetterTogether
       # rubocop:enable Metrics/AbcSize
 
       def build_footer # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+        previous_skip_navigation_touches = BetterTogether.skip_navigation_touches
+        BetterTogether.skip_navigation_touches = true
+
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Footer Pages
           footer_pages = ::BetterTogether::Page.create!(
@@ -287,9 +290,14 @@ module BetterTogether
 
           area.save!
         end
+      ensure
+        BetterTogether.skip_navigation_touches = previous_skip_navigation_touches
       end
 
       def build_header # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+        previous_skip_navigation_touches = BetterTogether.skip_navigation_touches
+        BetterTogether.skip_navigation_touches = true
+
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create platform header pages
           header_pages = ::BetterTogether::Page.create(
@@ -394,6 +402,8 @@ module BetterTogether
 
           area.save!
         end
+      ensure
+        BetterTogether.skip_navigation_touches = previous_skip_navigation_touches
       end
 
       # rubocop:todo Metrics/MethodLength
