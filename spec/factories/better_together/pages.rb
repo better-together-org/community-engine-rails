@@ -15,27 +15,13 @@ FactoryBot.define do
     privacy { 'public' } # Default to public so tests work for non-managers
     protected { Faker::Boolean.boolean }
     show_title { true }
-
-    # Use after(:create) to set community after the page is saved
-    # This ensures the host community exists and the association is persisted
-    before(:create) do |page|
-      unless page.platform_id.present?
-        page.platform = Current.platform ||
-                        BetterTogether::Platform.find_by(host: true) ||
-                        create(:better_together_platform)
-      end
+    platform do
+      Current.platform&.internal? ? Current.platform : create(:better_together_platform)
     end
-
-    after(:create) do |page|
-      if page.community_id.blank?
-        host_community = BetterTogether::Community.find_by(host: true)
-        page.update_column(:community_id, host_community&.id) if host_community
-      end
-    end
+    community { platform.primary_community }
 
     trait :with_community do
-      # This trait is now a no-op since the model auto-assigns the host community
-      # Kept for backward compatibility with existing tests
+      community { platform.primary_community }
     end
 
     trait :published_public do

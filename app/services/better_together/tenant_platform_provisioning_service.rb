@@ -1,37 +1,13 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Provisions a new tenant Platform end-to-end in a single transaction.
-  #
-  # Model callbacks on Platform handle:
-  #   - primary PlatformDomain (sync_primary_platform_domain! after_commit)
-  #   - primary Community (create_primary_community before_validation)
-  #   - federation registry defaults (apply_platform_registry_defaults before_validation)
-  #
-  # This service adds:
-  #   - Optional admin User + PersonPlatformMembership (platform_steward)
-  #   - Optional admin PersonCommunityMembership (community_governance_council)
-  #   - Transactional wrapper so partial failures roll back completely
-  #
+  # Provisions a platform registry record and its shared-schema bootstrap data.
+  # Model callbacks handle primary domain/community creation and registry defaults.
+  # This service adds admin bootstrap, transactional rollback, and internal-first
+  # semantics while keeping the legacy external column.
   # Idempotent: uses find_or_initialize_by(host_url:) — safe to re-run.
-  #
-  # Usage:
-  #   result = BetterTogether::TenantPlatformProvisioningService.call(
-  #     name: 'My Tenant',
-  #     host_url: 'https://tenant.example.com',
-  #     time_zone: 'America/Toronto',
-  #     admin: { email: 'admin@example.com', password: 'SecurePass1!' }
-  #   )
-  #   result.success? # => true
-  #   result.platform # => BetterTogether::Platform instance
   class TenantPlatformProvisioningService
-    Result = Struct.new(
-      :platform,
-      :community,
-      :domain,
-      :admin_user,
-      :errors
-    ) do
+    Result = Struct.new(:platform, :community, :domain, :admin_user, :errors) do
       def success?
         errors.blank?
       end
@@ -41,12 +17,14 @@ module BetterTogether
       new(**).call
     end
 
-    def initialize(name:, host_url:, time_zone: 'UTC', host: false, admin: nil)
+    def initialize(name:, host_url:, **platform_options)
       @name      = name
       @host_url  = host_url
-      @time_zone = time_zone
-      @host      = host
-      @admin     = admin
+      @time_zone = platform_options.fetch(:time_zone, 'UTC')
+      @host      = platform_options.fetch(:host, false)
+      @admin     = platform_options[:admin]
+      @internal = resolved_internal_flag(platform_options)
+      @tenant_schema = platform_options[:tenant_schema]
     end
 
     def call # rubocop:disable Metrics/AbcSize
@@ -92,9 +70,10 @@ module BetterTogether
       platform.assign_attributes(
         name: @name,
         time_zone: @time_zone,
-        external: false,
+        external: !@internal,
         host: @host,
-        privacy: 'public'
+        privacy: 'public',
+        tenant_schema: @internal ? @tenant_schema : nil
       )
 
       platform.save!
@@ -143,6 +122,12 @@ module BetterTogether
 
     def community_governance_role
       ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
+    end
+
+    def resolved_internal_flag(platform_options)
+      return ActiveModel::Type::Boolean.new.cast(platform_options.fetch(:internal, true)) unless platform_options.key?(:external)
+
+      !ActiveModel::Type::Boolean.new.cast(platform_options[:external])
     end
   end
 end

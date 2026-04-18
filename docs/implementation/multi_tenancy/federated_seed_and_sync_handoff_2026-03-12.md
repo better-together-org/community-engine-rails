@@ -22,6 +22,7 @@ The current planning baseline is spread across these documents:
 
 - `docs/implementation/multi_tenancy/tenant_data_ownership_matrix.md`
 - `docs/implementation/multi_tenancy/tenant_runtime_contract.md`
+- `docs/implementation/multi_tenancy/federation_registry_and_tenant_boundary.md`
 - `docs/implementation/multi_tenancy/schema_per_tenant_implementation_plan.md`
 - `docs/implementation/multi_tenancy/governance_bodies_and_mandates.md`
 - `docs/implementation/multi_tenancy/federated_rbac_reassessment_and_coverage_plan.md`

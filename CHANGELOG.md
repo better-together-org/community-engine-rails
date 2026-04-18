@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Multi-Tenant Platform Architecture & Federation MVP
-- Full multi-tenant platform support: isolated `CurrentPlatform` context, per-tenant scoping across all models (#1215)
+- Platform-aware multi-tenancy groundwork: isolated platform context, public platform-registry/domain routing groundwork, and partial platform-scoped records toward the intended schema-per-platform design (#1215)
 - Federation MVP: `PlatformConnection` model, OAuth-based cross-platform trust, `FederatedSeedAttributes` for content syndication
 - `LinkedSeedIngestService`: receive and persist federated content (posts, pages, events) as local mirrors
 - `PlatformConnectionsController` with full CRUD and federation OAuth token exchange flow
@@ -62,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MembershipRequest` STI model with `pending`/`approved`/`declined` states (#1356)
 - Public JSONAPI endpoint: `POST /api/v1/membership_requests`
 - Pundit policy enforcement; 404-not-403 leak prevention
+- invitation-required registration can expose a bounded membership-request interstitial when the platform or community allows requests
 
 #### Posts Index — Search, Filter & Pagination
 - New `PostsSearchFilter` service: ILIKE text search (Mobility joins), category filter, privacy filter, order-by, Kaminari pagination (#1409)
@@ -77,6 +78,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Safety Reporting Workflow
 - Accessible safety reporting workflow with documentation (#1277)
 - Report targets validated before auth to prevent enumeration
+
+#### Privacy hardening
+- membership-gated community privacy and least-privilege policy tightening across sensitive review/admin surfaces
+- local safety snapshot and membership-request workflow documentation/evidence added for reviewer and operator visibility
 
 #### Rack::Attack
 - Configurable Redis connection pool size and timeout for Rack::Attack rate limiting

@@ -302,5 +302,7 @@ Acceptance criteria:
 ## Related Documents
 
 - `docs/assessments/multi_tenancy_gap_assessment_2026-03-11.md`
+- `docs/implementation/multi_tenancy/platform_registry_and_schema_boundary.md`
+- `docs/implementation/multi_tenancy/platform_schema_migration_map.md`
 - `docs/implementation/multi_tenancy/tenant_data_ownership_matrix.md`
 - `docs/implementation/multi_tenancy/tenant_runtime_contract.md`

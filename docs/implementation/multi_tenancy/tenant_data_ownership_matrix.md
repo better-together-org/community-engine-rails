@@ -11,6 +11,7 @@
 This document defines target ownership for major CE domains under the new architecture:
 
 - each hosted CE platform on this server keeps its own tenant schema
+- `public` keeps the platform registry/gateway layer and only the platform metadata required for management, manifest participation, and routing
 - remote CE and non-CE platforms can exist as external platform records
 - each platform keeps its own local `User`, `Person`, memberships, onboarding, and private spaces
 - cross-platform sign-in and API access use OAuth between platforms
@@ -31,7 +32,7 @@ This matrix is the source of truth for:
 
 | Class | Meaning |
 |-------|---------|
-| `public-global` | Lives in `public`; shared across the host CE instance for routing, peer platform metadata, or fleet administration |
+| `public-global` | Lives in `public`; shared across the host CE instance for routing, platform registry/gateway metadata, peer platform metadata, or fleet administration |
 | `tenant-global` | Lives in one local tenant schema and is visible across that platform |
 | `community-scoped` | Lives in one local tenant schema and resolves to a community |
 | `personal-community-scoped` | Lives in one local tenant schema and is anchored to a person’s personal community |
@@ -44,8 +45,10 @@ This matrix is the source of truth for:
 
 | Domain / Model Family | Current Shape | Target Ownership | Notes |
 |-----------------------|---------------|------------------|-------|
-| Local hosted `Platform` | Shared-schema platform table | `public-global` | Source of routing, schema name, provisioning state, privacy defaults, peer metadata |
+| Local hosted `Platform` | Shared-schema platform table | `public-global` | Source of routing, schema name, provisioning state, privacy defaults, platform-management metadata, and peer metadata |
 | External peer `Platform` | `external` flag already exists | `public-global` | Represents remote CE or non-CE platforms known to the host app |
+| Platform translated attributes required for management / routing / manifest | Mixed with platform record today | `public-global` | Keep only the translated fields needed to manage the platform and route domains; do not treat this as a home for platform-private content |
+| Platform localized domain manifest | Partially modeled by `PlatformDomain` today | `public-global` | Must cover primary domains, localized primary-domain variants, and permitted vanity/campaign domains |
 | Platform provisioning state | Not implemented | `public-global` | Tracks schema lifecycle for locally hosted platforms only |
 | Platform network trust / visibility settings | Not implemented | `public-global` | Controls default privacy, sharing opt-in, peer/member platform relationships |
 | Host CE platform default connection request | Not implemented | `public-global` | Pre-seeded outbound request from the BTS/CE host platform to new private platforms |
@@ -115,6 +118,11 @@ This draft chooses:
 - agreement-backed consent for shared authentication, sync, and publishing
 
 Any implementation that diverges from these defaults should introduce an ADR first.
+
+Current implementation note:
+
+- the released code does not yet provide tenant-schema switching
+- `PlatformDomain` currently models active hostname routing only; locale-aware primary-domain routing and vanity/campaign domain classes remain future work
 
 ---
 

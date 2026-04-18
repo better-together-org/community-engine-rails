@@ -23,6 +23,8 @@ module BetterTogether
       end
 
       def track_search_query
+        return unless metrics_platform.present?
+
         BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
           tracked_query,
           params[:results_count].to_i,

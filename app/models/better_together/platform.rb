@@ -53,6 +53,7 @@ module BetterTogether
       requires_invitation Boolean, default: true
       allow_membership_requests Boolean, default: false
       software_variant String
+      tenant_schema String
       network_visibility String, default: 'private'
       connection_bootstrap_state String
       federation_protocol String
@@ -81,6 +82,7 @@ module BetterTogether
     validates :search_query_analytics_mode, inclusion: { in: SEARCH_QUERY_ANALYTICS_MODES }
     validates :oauth_issuer_url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
+    validate :tenant_schema_for_internal_platforms_only
     validate :validate_csp_origin_text_fields
     validate :require_publishing_agreement_for_public_network_visibility
 
@@ -196,6 +198,20 @@ module BetterTogether
       allow_membership_requests? || community&.allow_membership_requests?
     end
 
+    def internal=(value)
+      self.external = !ActiveModel::Type::Boolean.new.cast(value)
+    end
+
+    def internal?
+      !external?
+    end
+
+    alias internal internal?
+
+    def tenant_schema?
+      tenant_schema.present?
+    end
+
     def to_s
       name
     end
@@ -214,6 +230,12 @@ module BetterTogether
       BetterTogether::SafeFederationUrlValidator
         .new(attributes: [:oauth_issuer_url])
         .validate_each(self, :oauth_issuer_url, oauth_issuer_url)
+    end
+
+    def tenant_schema_for_internal_platforms_only
+      return if tenant_schema.blank? || internal?
+
+      errors.add(:tenant_schema, 'must be blank for external platforms')
     end
 
     def require_publishing_agreement_for_public_network_visibility

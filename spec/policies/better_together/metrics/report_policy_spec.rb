@@ -19,12 +19,20 @@ RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
   let(:report_creator) { create(:user) }
   let(:report_downloader) { create(:user) }
   let(:manage_only_user) { create(:user) }
+  let(:platform) { BetterTogether::Platform.find_by(host: true) || configure_host_platform }
 
   before do
     grant_platform_permission(metrics_viewer, 'view_metrics_dashboard')
     grant_platform_permission(report_creator, 'create_metrics_reports')
     grant_platform_permission(report_downloader, 'download_metrics_reports')
     grant_platform_permission(manage_only_user, 'manage_platform')
+  end
+
+  around do |example|
+    previous_platform = Current.platform
+    Current.platform = platform
+    example.run
+    Current.platform = previous_platform
   end
 
   it 'requires explicit dashboard permission to view metrics' do

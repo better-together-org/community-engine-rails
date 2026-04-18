@@ -84,6 +84,14 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         end.not_to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
       end
 
+      it 'gracefully skips search analytics without internal metrics platform context' do
+        allow(Current).to receive(:platform).and_return(nil)
+
+        expect do
+          get better_together.search_path(locale:), params: { q: 'test query' }
+        end.not_to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+      end
+
       it 'filters private linked seed models out of the global search set' do
         # PersonLinkedSeed.global_searchable? returns false so Registry excludes it from
         # global_search_models. The registry_spec covers this at unit level; here we confirm

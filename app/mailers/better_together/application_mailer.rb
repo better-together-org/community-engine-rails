@@ -35,10 +35,12 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/AbcSize
     def set_locale_and_time_zone(&) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+      context = resolve_mailer_platform_context
       # Use Current.platform (set by middleware for web/API requests) with
-      # fallback to host platform for background job mailer sends.
+      # host-platform fallback only when no explicit platform context was provided.
       # Set @platform ivar so mailer templates can reference it (e.g. @platform.name).
-      @platform ||= ::Current.platform || BetterTogether::Platform.find_by(host: true)
+      @platform ||= context.platform
+      ::Current.tenant_schema ||= context.tenant_schema
 
       self.time_zone ||= time_zone || @platform&.time_zone || Rails.application.config.time_zone
       self.locale ||= locale || I18n.locale || @platform&.locale || I18n.default_locale
@@ -47,6 +49,8 @@ module BetterTogether
       Time.use_zone(time_zone) do
         I18n.with_locale(locale, &)
       end
+    ensure
+      ::Current.tenant_schema = nil
     end
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/PerceivedComplexity
@@ -67,6 +71,16 @@ module BetterTogether
 
     def default_port?(scheme, port)
       (scheme == 'https' && port == 443) || (scheme == 'http' && port == 80)
+    end
+
+    def resolve_mailer_platform_context
+      if @platform.present?
+        ::BetterTogether::PlatformRuntimeContextResolver.for_platform(@platform)
+      elsif ::Current.platform.present?
+        ::BetterTogether::PlatformRuntimeContextResolver.for_platform(::Current.platform)
+      else
+        ::BetterTogether::PlatformRuntimeContextResolver.for_platform(nil, fallback_to_host: true)
+      end
     end
   end
 end

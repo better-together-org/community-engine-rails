@@ -35,6 +35,7 @@ module BetterTogether
     def track_search_query(search_results)
       query = BetterTogether::Metrics::SearchQueryCaptureService.new.call(@query)
       return if query.blank?
+      return unless metrics_platform.present?
 
       BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
         query,

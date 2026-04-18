@@ -60,6 +60,31 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     end
   end
 
+  describe 'internal/external semantics' do
+    it 'treats the default platform factory as internal' do
+      platform = build(:better_together_platform)
+
+      expect(platform).to be_internal
+      expect(platform.external).to be(false)
+    end
+
+    it 'allows internal assignment as the canonical inverse of external' do
+      platform = build(:better_together_platform, :external)
+
+      platform.internal = true
+
+      expect(platform).to be_internal
+      expect(platform.external).to be(false)
+    end
+
+    it 'rejects tenant_schema on external peer platforms' do
+      platform = build(:better_together_platform, :external, tenant_schema: 'peer_schema')
+
+      expect(platform).not_to be_valid
+      expect(platform.errors[:tenant_schema]).to include('must be blank for external platforms')
+    end
+  end
+
   describe 'validations' do
     subject(:platform) { build(:better_together_platform, host_url:) }
 

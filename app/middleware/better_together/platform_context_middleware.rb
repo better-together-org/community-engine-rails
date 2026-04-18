@@ -23,11 +23,13 @@ module BetterTogether
 
     def call(env)
       hostname = ActionDispatch::Request.new(env).host
-      domain   = BetterTogether::PlatformDomain.resolve(hostname)
-      platform = domain&.platform || cached_host_platform
+      context = ::BetterTogether::PlatformRuntimeContextResolver.for_host(hostname)
 
-      ::Current.platform_domain = domain
-      ::Current.platform        = platform
+      return external_platform_response if external_platform_route?(context)
+
+      ::Current.platform_domain = context.platform_domain
+      ::Current.platform = context.platform
+      ::Current.tenant_schema = context.tenant_schema
 
       @app.call(env)
     ensure
@@ -37,16 +39,12 @@ module BetterTogether
 
     private
 
-    def cached_host_platform
-      # Cache only the UUID to avoid serializing an AR object into the cache store.
-      # Caching a full ActiveRecord object as YAML triggers Psych::DisallowedClass on
-      # read when Psych safe-load mode is active (Psych 4 / Ruby 3.1+), causing every
-      # request to 500 after the first cache write. Storing only the UUID is safe and
-      # still eliminates the DB query on the hot path.
-      id = Rails.cache.fetch('better_together/host_platform_id', expires_in: 5.minutes) do
-        BetterTogether::Platform.where(host: true).pick(:id)
-      end
-      id ? BetterTogether::Platform.find_by(id: id) : nil
+    def external_platform_route?(context)
+      context.domain_matched? && context.platform&.external?
+    end
+
+    def external_platform_response
+      [404, { 'Content-Type' => 'text/plain; charset=utf-8' }, ['Not Found']]
     end
   end
 end

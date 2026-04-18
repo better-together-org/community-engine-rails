@@ -8,7 +8,23 @@
 
 ## Overview
 
-This branch adds a multi-tenant platform architecture, federation MVP, and BCrypt-digested OAuth secrets. Deploying it to an existing CE instance requires the migration sequence below. All steps must be executed in order.
+This branch adds platform-aware groundwork for multi-tenancy, federation MVP, and BCrypt-digested OAuth secrets. It does **not** yet deliver the full intended schema-per-platform runtime described in the implementation architecture docs.
+
+Today this branch provides:
+
+- public platform-registry groundwork
+- hostname-to-platform resolution
+- selected `platform_id` backfills and platform-scoped records
+- federation connection and mirrored-content primitives
+
+It does **not yet** provide:
+
+- request-time tenant schema switching
+- tenant schema provisioning/lifecycle
+- tenant-aware job or mailer execution
+- localized primary-domain routing or permission-gated vanity/campaign domain handling
+
+Treat the migration sequence below as preparation for the current platform-aware/federation slice, not as proof that full hosted-platform schema isolation is already complete.
 
 **What changes at the database level:**
 
@@ -151,3 +167,11 @@ The following features require a federation peer to be registered and approved b
 - Federation OAuth token exchange — requires a configured `PlatformConnection`
 
 These are expected for a fresh deployment with no federation peers.
+
+## Architecture note
+
+For the current intended boundary between the public platform registry and tenant schemas, see:
+
+- `../implementation/multi_tenancy/platform_registry_and_schema_boundary.md`
+- `../implementation/multi_tenancy/tenant_runtime_contract.md`
+- `../production/platform_provisioning_and_routing_runbook.md`

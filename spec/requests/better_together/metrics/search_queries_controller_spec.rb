@@ -66,4 +66,16 @@ RSpec.describe 'BetterTogether::Metrics::SearchQueriesController' do
     post better_together.metrics_search_queries_path(locale:), params: { query: '', results_count: '' }
     expect(response).to have_http_status(:unprocessable_content)
   end
+
+  it 'gracefully skips tracking without internal metrics platform context' do
+    allow(capture_service).to receive(:call).with('test').and_return('test')
+    allow(Current).to receive(:platform).and_return(nil)
+
+    expect do
+      post better_together.metrics_search_queries_path(locale:), params: {
+        query: 'test',
+        results_count: 3
+      }
+    end.not_to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+  end
 end

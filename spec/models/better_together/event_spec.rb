@@ -449,6 +449,28 @@ module BetterTogether # :nodoc:
         expect(event.platform).to eq(local_platform)
       end
 
+      it 'does not silently fall back to the host platform when Current.platform is missing' do
+        previous_platform = Current.platform
+        Current.platform = nil
+        BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+        event = described_class.new(
+          name: 'No Context Event',
+          identifier: SecureRandom.uuid,
+          starts_at: 1.day.from_now,
+          ends_at: 1.day.from_now + 1.hour,
+          privacy: 'public',
+          timezone: 'America/New_York',
+          creator: create(:person)
+        )
+
+        event.valid?
+
+        expect(event.platform).to be_nil
+        expect(event.errors[:platform_id]).to be_present
+      ensure
+        Current.platform = previous_platform
+      end
+
       it 'treats a current-platform event as local' do
         event.valid?
 

@@ -147,16 +147,26 @@ module BetterTogether
     end
 
     def set_current_platform_context
-      Current.platform_domain = BetterTogether::PlatformDomain.resolve(request.host)
-      Current.platform = Current.platform_domain&.platform || BetterTogether::Platform.find_by(host: true)
-      Current.person = current_user&.person
-      Current.governed_agent = Current.person
+      context = ::BetterTogether::PlatformRuntimeContextResolver.for_host(request.host)
+      assign_current_platform_context(context)
+      assign_current_actor_context
       ActiveStorage::Current.url_options = resolved_url_options
     end
 
     def reset_current_platform_context
       Current.reset
       ActiveStorage::Current.reset
+    end
+
+    def assign_current_platform_context(context)
+      Current.platform_domain = context.platform_domain
+      Current.platform = context.platform
+      Current.tenant_schema = context.tenant_schema
+    end
+
+    def assign_current_actor_context
+      Current.person = current_user&.person
+      Current.governed_agent = Current.person
     end
 
     def resolved_url_options

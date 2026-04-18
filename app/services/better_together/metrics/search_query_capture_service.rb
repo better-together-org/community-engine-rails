@@ -8,8 +8,8 @@ module BetterTogether
     class SearchQueryCaptureService
       HASH_PREFIX = 'sha256:'
 
-      def initialize(platform: Current.platform || BetterTogether::Platform.find_by(host: true))
-        @platform = platform
+      def initialize(platform: Current.platform)
+        @platform = platform if platform&.internal?
       end
 
       def call(query)
@@ -23,7 +23,7 @@ module BetterTogether
       private
 
       def analytics_enabled?
-        return true if @platform.nil?
+        return false if @platform.nil?
 
         @platform.search_query_analytics_enabled != false
       end

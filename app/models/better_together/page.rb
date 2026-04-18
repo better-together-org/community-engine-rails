@@ -200,25 +200,14 @@ module BetterTogether
       return unless has_attribute?(:platform_id)
       return if platform_id.present?
 
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
+      self.platform = Current.platform if Current.platform&.internal?
     end
 
     def assign_host_community
       return unless has_attribute?(:community_id)
       return if community.present?
 
-      self.community ||= BetterTogether::Community.find_by(host: true)
-      self.community ||= host_platform_community
-    end
-
-    def host_platform_community
-      host_platform_community_id = BetterTogether::Platform.where(host: true).limit(1).pluck(:community_id).first
-      return unless host_platform_community_id
-
-      BetterTogether::Community.find_by(id: host_platform_community_id)
+      self.community = platform&.primary_community
     end
 
     # Touch navigation areas for all navigation items that link to this page

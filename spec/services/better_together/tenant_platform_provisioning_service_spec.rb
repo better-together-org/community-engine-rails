@@ -21,6 +21,7 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
         expect(result.errors).to be_blank
         expect(result.platform).to be_persisted
         expect(result.platform.name).to eq('Test Tenant')
+        expect(result.platform).to be_internal
         expect(result.platform.host).to be(false)
         expect(result.community).to be_present
         expect(result.admin_user).to be_nil
@@ -67,6 +68,26 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
 
         expect(second).to be_success
         expect(second.platform.id).to eq(first.platform.id)
+      end
+    end
+
+    context 'with tenant schema metadata' do
+      it 'persists tenant_schema on the platform registry record' do
+        result = described_class.call(**base_params, tenant_schema: 'tenant_test_tenant')
+
+        expect(result).to be_success
+        expect(result.platform.tenant_schema).to eq('tenant_test_tenant')
+      end
+    end
+
+    context 'with external compatibility params' do
+      it 'treats external: true as a non-internal registry record and clears tenant_schema' do
+        result = described_class.call(**base_params, external: true, tenant_schema: 'tenant_should_not_persist')
+
+        expect(result).to be_success
+        expect(result.platform).not_to be_internal
+        expect(result.platform.external).to be(true)
+        expect(result.platform.tenant_schema).to be_nil
       end
     end
 

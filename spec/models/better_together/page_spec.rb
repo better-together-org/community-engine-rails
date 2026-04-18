@@ -140,6 +140,7 @@ module BetterTogether # :nodoc:
           page.valid?
 
           expect(page.platform).to eq(local_platform)
+          expect(page.community).to eq(local_platform.primary_community)
         end
 
         it 'treats a current-platform page as local' do
@@ -172,6 +173,21 @@ module BetterTogether # :nodoc:
           expect(mirrored_page).to be_mirrored
           expect(mirrored_page).to be_preserved_remote_uuid
           expect(mirrored_page.source_identifier).to eq(mirrored_page.id)
+        end
+
+        it 'does not silently fall back to the host platform when Current.platform is missing' do
+          previous_platform = Current.platform
+          Current.platform = nil
+          BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+          page = described_class.new(title: 'No Context', content: 'Body', privacy: 'public')
+
+          page.valid?
+
+          expect(page.platform).to be_nil
+          expect(page.community).to be_nil
+          expect(page.errors[:platform_id]).to be_present
+        ensure
+          Current.platform = previous_platform
         end
       end
 

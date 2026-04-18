@@ -94,7 +94,7 @@ module BetterTogether
     end
 
     def platform
-      Current.platform || BetterTogether::Platform.find_by(host: true)
+      Current.platform if Current.platform&.internal?
     end
 
     def platform_people
@@ -105,6 +105,8 @@ module BetterTogether
     end
 
     def current_platform_person_ids
+      return [] unless platform
+
       ids = BetterTogether::PersonPlatformMembership
             .active
             .where(joinable: platform)

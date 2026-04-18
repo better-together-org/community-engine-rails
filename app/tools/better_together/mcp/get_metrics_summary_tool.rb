@@ -22,6 +22,7 @@ module BetterTogether
       # @param to_date [String, nil] Optional end date filter
       # @return [String] JSON metrics summary
       def call(from_date: nil, to_date: nil)
+        return platform_context_required_response unless metrics_platform.present?
         return auth_required_response unless current_user&.person&.permitted_to?('manage_platform', metrics_platform)
 
         with_timezone_scope do
@@ -37,6 +38,10 @@ module BetterTogether
 
       def auth_required_response
         JSON.generate({ error: 'Platform manager access required' })
+      end
+
+      def platform_context_required_response
+        JSON.generate({ error: 'Internal platform context required' })
       end
 
       def build_scope(from_date, to_date)
@@ -83,7 +88,7 @@ module BetterTogether
       end
 
       def metrics_platform
-        Current.platform || BetterTogether::Platform.find_by(host: true)
+        Current.platform if Current.platform&.internal?
       end
     end
   end

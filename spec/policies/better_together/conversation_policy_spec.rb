@@ -33,6 +33,13 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
     create(:better_together_person, preferences: { receive_messages_from_members: true })
   end
 
+  around do |example|
+    previous_platform = Current.platform
+    Current.platform = host_platform
+    example.run
+    Current.platform = previous_platform
+  end
+
   before do
     manage_platform_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform')
     steward_role = create(:better_together_role, :platform_role)
@@ -42,6 +49,19 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
     create(:better_together_person_platform_membership, member: non_opted_person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: other_platform_opted_in_person, joinable: other_platform)
     create(:better_together_person_community_membership, member: host_only_opted_in_person, joinable: host_platform.community)
+  end
+
+  describe 'without explicit current platform context' do
+    it 'returns no permitted participants' do
+      previous_platform = Current.platform
+      Current.platform = nil
+
+      policy = described_class.new(steward_user, BetterTogether::Conversation.new)
+
+      expect(policy.permitted_participants).to be_empty
+    ensure
+      Current.platform = previous_platform
+    end
   end
 
   describe '#permitted_participants' do

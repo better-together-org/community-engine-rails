@@ -13,6 +13,13 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
     BetterTogether::AccessControlBuilder.seed_data
   end
 
+  around do |example|
+    previous_platform = Current.platform
+    Current.platform = platform
+    example.run
+    Current.platform = previous_platform
+  end
+
   describe '#index?' do
     context 'when user is analytics viewer' do
       before do
@@ -131,5 +138,14 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
         expect(policy.destroy?).to be false
       end
     end
+  end
+
+  it 'denies access without explicit current platform context' do
+    previous_platform = Current.platform
+    Current.platform = nil
+
+    expect(policy.index?).to be false
+  ensure
+    Current.platform = previous_platform
   end
 end

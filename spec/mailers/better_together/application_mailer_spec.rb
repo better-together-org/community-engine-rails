@@ -77,9 +77,20 @@ RSpec.describe BetterTogether::ApplicationMailer do
 
     context 'when no platform exists at all' do
       it 'raises an error when the template accesses @platform.name' do
-        # Stub both resolution paths so this test is DB-state-independent.
-        # better_together_platforms is ESSENTIAL_TABLES and persists across workers.
-        allow(BetterTogether::Platform).to receive(:find_by).with(host: true).and_return(nil)
+        # Stub the runtime resolver so this test is DB-state-independent even
+        # though the mailer now resolves host fallback through the shared
+        # runtime context service instead of calling Platform.find_by(host: true)
+        # directly.
+        allow(BetterTogether::PlatformRuntimeContextResolver).to receive(:for_platform)
+          .with(nil, fallback_to_host: true)
+          .and_return(
+            BetterTogether::PlatformRuntimeContextResolver::Result.new(
+              platform: nil,
+              platform_domain: nil,
+              tenant_schema: nil,
+              source: :none
+            )
+          )
         allow(Current).to receive(:platform).and_return(nil)
         # This is the correct fail-loud behaviour: a misconfigured deployment
         # (no host platform seeded) must not silently send broken emails.

@@ -11,12 +11,16 @@
 This document defines how CE should behave at runtime under the revised architecture:
 
 - locally hosted platforms still use schema-per-platform tenancy
+- `public` retains the platform registry/gateway layer, including direct platform-management and routing metadata
 - each platform keeps its own local accounts, people, memberships, and onboarding
 - CE-powered platforms can authenticate against one another via OAuth
 - linked accounts and configured platform connections form a network graph
 - authorized remote content can be mirrored locally for feed/search/display and refreshed regularly
 
 It assumes the ownership rules in `tenant_data_ownership_matrix.md` and the authorization cleanup in `federated_rbac_reassessment_and_coverage_plan.md`.
+
+See also: `platform_registry_and_schema_boundary.md`.
+See also: `platform_runtime_execution_contract.md`.
 
 ---
 
@@ -32,12 +36,26 @@ Each request is resolved from:
 
 ### Resolution Rules For Locally Hosted Platforms
 
-1. Look up the request host in `public.better_together_platforms`.
-2. Match exact custom domain first.
-3. Match known subdomain + base domain second.
-4. Load the local hosted platform metadata from `public`.
-5. Resolve the tenant schema name.
-6. Switch to that schema before controller logic runs.
+1. Look up the request host through the public platform registry and domain manifest.
+2. Match an active permitted domain for the platform:
+   - primary domain
+   - localized primary-domain variant
+   - authorized campaign/vanity domain
+3. Load the local hosted platform metadata from `public`.
+4. Resolve the tenant schema name from the platform registry record.
+5. Switch to that schema before controller logic runs.
+
+### What stays in `public`
+
+`public` remains the shared registry and routing layer. It may contain:
+
+- direct platform metadata required for platform management
+- translated platform attributes required for manifest/routing
+- domain-manifest records
+- platform registry and connection records
+- cross-tenant operational metadata
+
+`public` is **not** the intended home for a platform's local/private working data.
 
 ### External Platform Records
 
@@ -55,6 +73,12 @@ The following flows run in `public` without switching to a local tenant schema:
 - provisioning flows before a tenant exists
 - fleet-admin and support routes spanning local tenants
 - peer platform discovery, trust bootstrap, and local routing fallbacks
+
+Current implementation note:
+
+- the released code currently resolves `Current.platform` from hostname
+- it does **not yet** switch into tenant schemas
+- locale-aware primary-domain routing and vanity/campaign-domain policy remain planned, not fully implemented
 
 Unknown hosts must fail closed.
 
@@ -78,6 +102,11 @@ Unknown hosts must fail closed.
 - `Current.user` and `Current.person` are local to the active platform.
 - Cross-platform OAuth does not replace local accounts; it is an authentication and authorization bridge into local account creation, login, and sync flows.
 - If a federated sign-in succeeds but the local platform requires invitation or onboarding, the request must enter a join/onboarding gate before the user can participate in private spaces.
+
+Execution note:
+
+- requests, jobs, and mailers that touch tenant-local data must all carry this same platform/schema contract
+- host-platform fallback is incompatible with final tenant-local execution except for explicitly public-registry/host-global surfaces
 
 ---
 

@@ -20,9 +20,7 @@ module BetterTogether
         return if platform_id.present?
 
         resolved = platform_from_parent_record ||
-                   Current.platform ||
-                   BetterTogether::Platform.find_by(host: true) ||
-                   BetterTogether::Platform.first
+                   (Current.platform if Current.platform&.internal?)
         self.platform = resolved if resolved
       end
 

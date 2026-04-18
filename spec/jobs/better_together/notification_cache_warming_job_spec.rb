@@ -47,6 +47,19 @@ RSpec.describe BetterTogether::NotificationCacheWarmingJob do
     it 'handles missing notifications gracefully' do
       expect { described_class.new.perform([999_999]) }.not_to raise_error
     end
+
+    it 'sets Current.tenant_schema from the platform runtime context when provided' do
+      platform = create(:better_together_platform, tenant_schema: 'tenant_notifications')
+      job = described_class.new
+
+      allow(job).to receive(:should_warm_cache?).with(notification) do
+        expect(Current.platform).to eq(platform)
+        expect(Current.tenant_schema).to eq('tenant_notifications')
+        false
+      end
+
+      job.perform(notification_ids, platform_id: platform.id, tenant_schema: 'tenant_notifications')
+    end
   end
 
   describe '#warm_notification_fragments' do
@@ -182,6 +195,16 @@ RSpec.describe BetterTogether::NotificationCacheWarmingJob do
       expect do
         described_class.perform_later([1, 2, 3])
       end.to have_enqueued_job(described_class).with([1, 2, 3])
+    end
+
+    it 'can be enqueued with platform runtime metadata' do
+      expect do
+        described_class.perform_later([1, 2, 3], platform_id: 'platform-1', tenant_schema: 'tenant_platform_1')
+      end.to have_enqueued_job(described_class).with(
+        [1, 2, 3],
+        platform_id: 'platform-1',
+        tenant_schema: 'tenant_platform_1'
+      )
     end
   end
 end

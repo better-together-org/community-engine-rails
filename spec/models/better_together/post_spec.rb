@@ -112,6 +112,17 @@ RSpec.describe BetterTogether::Post do
       Current.reset
     end
 
+    it 'does not silently fall back to the host platform when Current.platform is missing' do
+      host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+      post = described_class.new(title: 'No Context', identifier: 'no-context', content: 'Body', privacy: 'public')
+
+      post.valid?
+
+      expect(post.platform).to be_nil
+      expect(host_platform).to be_present
+      expect(post.errors[:platform_id]).to be_present
+    end
+
     it 'distinguishes local and remote mirrored origin' do
       local_platform = create(:better_together_platform)
       remote_platform = create(:better_together_platform)

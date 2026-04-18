@@ -9,7 +9,7 @@ module BetterTogether
       private
 
       def metrics_platform
-        Current.platform || BetterTogether::Platform.find_by(host: true)
+        Current.platform if Current.platform&.internal?
       end
 
       def metrics_logged_in?

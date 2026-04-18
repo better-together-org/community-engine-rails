@@ -99,10 +99,7 @@ module BetterTogether
       return unless has_attribute?(:platform_id)
       return if platform_id.present?
 
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
+      self.platform = Current.platform if Current.platform&.internal?
     end
   end
 end

@@ -7,6 +7,13 @@ RSpec.describe BetterTogether::Metrics::SearchQueryCaptureService do
     let(:platform) { create(:better_together_platform, settings: settings) }
     let(:settings) { {} }
 
+    around do |example|
+      previous_platform = Current.platform
+      Current.reset
+      example.run
+      Current.platform = previous_platform
+    end
+
     it 'keeps normalized queries in full mode' do
       result = described_class.new(platform: platform).call("  Housing  Support \n")
 
@@ -32,6 +39,18 @@ RSpec.describe BetterTogether::Metrics::SearchQueryCaptureService do
         expect(result).to start_with('sha256:')
         expect(result).to eq("sha256:#{Digest::SHA256.hexdigest('housing support')}")
       end
+    end
+
+    it 'returns nil without explicit internal platform context' do
+      result = described_class.new.call('housing support')
+
+      expect(result).to be_nil
+    end
+
+    it 'returns nil for external platform context' do
+      result = described_class.new(platform: create(:better_together_platform, external: true)).call('housing support')
+
+      expect(result).to be_nil
     end
   end
 end
