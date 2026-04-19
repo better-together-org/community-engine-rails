@@ -2,7 +2,14 @@
 
 module BetterTogether
   # Builds a fully destructive inventory for prelaunch account cleanup.
+  # rubocop:disable Metrics/ClassLength
   class PersonHardDeletionInventory
+    DELETE_ONLY_MODELS = [
+      'BetterTogether::ConversationParticipant',
+      'BetterTogether::PersonCommunityMembership',
+      'BetterTogether::PersonPlatformMembership'
+    ].freeze
+
     class << self
       def call(person:)
         new(person:).call
@@ -19,13 +26,14 @@ module BetterTogether
     def call
       explicit_entries = transform_explicit_entries(BetterTogether::PersonDeletionInventory.call(person:).fetch(:entries))
       reflection_entries = reflected_owner_entries
+      owned_entries = [owned_primary_community_entry].compact
 
       {
         generated_at: Time.current.iso8601,
         deletion_mode: 'hard_delete',
         person_id: person.id,
         user_id: user&.id,
-        entries: deduplicate_entries(explicit_entries + reflection_entries)
+        entries: deduplicate_entries(explicit_entries + reflection_entries + owned_entries)
       }
     end
 
@@ -41,7 +49,7 @@ module BetterTogether
     def transform_explicit_entries(entries)
       entries.map do |entry|
         entry.merge(
-          action: 'destroy',
+          action: hard_delete_action_for_model(entry.fetch(:model)),
           original_action: entry.fetch(:action)
         )
       end
@@ -59,7 +67,7 @@ module BetterTogether
 
         {
           key: "#{owner_label}.#{reflection.name}",
-          action: 'destroy',
+          action: hard_delete_action_for_model(records.first.class.name),
           original_action: 'destroy',
           kind: 'owner_reflection',
           model: records.first.class.name,
@@ -89,12 +97,35 @@ module BetterTogether
       []
     end
 
+    def owned_primary_community_entry
+      return unless person.community_id.present?
+
+      community = BetterTogether::Community.find_by(id: person.community_id, creator_id: person.id)
+      return unless community
+
+      {
+        key: 'person.owned_primary_community',
+        action: 'destroy',
+        original_action: 'destroy',
+        kind: 'owned_primary_community',
+        model: community.class.name,
+        count: 1,
+        ids: [community.id.to_s]
+      }
+    end
+
+    def hard_delete_action_for_model(model_name)
+      return 'delete' if DELETE_ONLY_MODELS.include?(model_name)
+
+      'destroy'
+    end
+
     def deduplicate_entries(entries)
       seen = {}
 
       entries.each_with_object([]) do |entry, deduped|
         normalized_ids = Array(entry.fetch(:ids)).map(&:to_s).sort
-        identity = [entry.fetch(:model), normalized_ids]
+        identity = [entry.fetch(:key), entry.fetch(:model), normalized_ids]
         next if normalized_ids.empty? || seen[identity]
 
         seen[identity] = true
@@ -102,4 +133,5 @@ module BetterTogether
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
