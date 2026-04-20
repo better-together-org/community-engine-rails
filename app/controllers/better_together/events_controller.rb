@@ -356,6 +356,7 @@ module BetterTogether
       @event.event_attendances.includes(:person).load
 
       # Preload current person's attendance for RSVP buttons
+      current_person = helpers.current_person
       if current_person
         @current_attendance = @event.event_attendances.find do |a|
           a.person_id == current_person.id

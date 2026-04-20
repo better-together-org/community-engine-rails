@@ -80,6 +80,15 @@ RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager
         follow_redirect!
         expect(response).to have_http_status(:ok)
       end
+
+      it 'keeps protected navigation areas from being destroyed', :aggregate_failures do
+        protected_area = create(:better_together_navigation_area, protected: true)
+
+        delete better_together.navigation_area_path(locale:, id: protected_area.slug)
+
+        expect(response).to have_http_status(:not_found)
+        expect(BetterTogether::NavigationArea.exists?(protected_area.id)).to be(true)
+      end
     end
   end
 end

@@ -185,4 +185,80 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).to include('page[contributors_display_visibility]')
     end
   end
+
+  describe 'manager CRUD flows' do
+    let(:page) do
+      create(:better_together_page,
+             :private,
+             protected: false,
+             title: 'Coverage Source Page',
+             content: 'Initial content')
+    end
+
+    it 'creates a private page' do
+      expect do
+        post better_together.pages_path(locale:), params: {
+          page: {
+            title_en: 'Coverage Created Page',
+            content_en: 'Created during CRUD coverage',
+            privacy: 'private',
+            show_title: true
+          }
+        }
+      end.to change(BetterTogether::Page, :count).by(1)
+
+      created_page = BetterTogether::Page.order(:created_at).last
+
+      expect(response).to be_redirect
+      expect(created_page.title).to eq('Coverage Created Page')
+      expect(created_page.content.to_plain_text).to include('Created during CRUD coverage')
+      expect(created_page.privacy).to eq('private')
+    end
+
+    it 'renders new when create params are invalid' do
+      expect do
+        post better_together.pages_path(locale:), params: {
+          page: {
+            title_en: '',
+            content_en: '',
+            privacy: 'private'
+          }
+        }
+      end.not_to change(BetterTogether::Page, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'updates an existing page' do
+      patch better_together.page_path(page, locale:), params: {
+        page: {
+          title_en: 'Updated Coverage Page',
+          content_en: 'Updated coverage body'
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(page.reload.title).to eq('Updated Coverage Page')
+      expect(page.content.to_plain_text).to include('Updated coverage body')
+    end
+
+    it 'renders edit when update params are invalid' do
+      patch better_together.page_path(page, locale:), params: {
+        page: {
+          title_en: '',
+          content_en: ''
+        }
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(page.reload.title).to eq('Coverage Source Page')
+    end
+
+    it 'destroys an unprotected page' do
+      delete better_together.page_path(page, locale:)
+
+      expect(response).to be_redirect
+      expect(BetterTogether::Page.exists?(page.id)).to be(false)
+    end
+  end
 end

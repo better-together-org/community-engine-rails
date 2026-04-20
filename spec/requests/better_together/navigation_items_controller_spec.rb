@@ -114,5 +114,20 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
       follow_redirect!
       expect(response).to have_http_status(:ok)
     end
+
+    it 'keeps protected navigation items from being destroyed', :aggregate_failures do
+      protected_item = create(:better_together_navigation_item,
+                              navigation_area: navigation_area,
+                              protected: true)
+
+      delete better_together.navigation_area_navigation_item_path(
+        locale:,
+        navigation_area_id: navigation_area.slug,
+        id: protected_item.slug
+      )
+
+      expect(response).to have_http_status(:not_found)
+      expect(BetterTogether::NavigationItem.exists?(protected_item.id)).to be(true)
+    end
   end
 end
