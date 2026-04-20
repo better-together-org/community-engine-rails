@@ -97,7 +97,10 @@ module BetterTogether
 
     has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
     has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
-    has_many :person_purge_audits, class_name: 'BetterTogether::PersonPurgeAudit', inverse_of: :person
+    has_many :person_purge_audits,
+             class_name: 'BetterTogether::PersonPurgeAudit',
+             dependent: :nullify,
+             inverse_of: :person
     has_many :person_checklist_items, class_name: 'BetterTogether::PersonChecklistItem', dependent: :destroy, inverse_of: :person
     has_many :ai_translation_logs,
              class_name: 'BetterTogether::Ai::Log::Translation',

@@ -30,10 +30,12 @@ module BetterTogether
       has_many :reviewed_person_deletion_requests,
                foreign_key: :reviewed_by_id,
                class_name: 'BetterTogether::PersonDeletionRequest',
+               dependent: :nullify,
                inverse_of: :reviewed_by
       has_many :reviewed_person_purge_audits,
                foreign_key: :reviewed_by_id,
                class_name: 'BetterTogether::PersonPurgeAudit',
+               dependent: :nullify,
                inverse_of: :reviewed_by
     end
     # rubocop:enable Metrics/BlockLength
