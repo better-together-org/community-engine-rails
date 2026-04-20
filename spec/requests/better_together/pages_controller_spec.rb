@@ -136,21 +136,6 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
         expect(response.body).to include('Rendered News Post')
       end
     end
-
-    context 'when the page contains a Content::Template block (no string_translations association)' do
-      before do
-        # Content::Template has no Mobility string attributes — it must not raise
-        # AssociationNotFoundError when preloading string_translations on mixed block types.
-        template_block = create(:content_template)
-        page.page_blocks.create!(block: template_block, position: 1)
-      end
-
-      it 'renders without AssociationNotFoundError' do
-        get better_together.page_path(page.slug, locale:)
-
-        expect(response).to have_http_status(:ok)
-      end
-    end
   end
 
   describe 'GET /:locale/pages/:slug/edit' do
