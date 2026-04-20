@@ -33,5 +33,15 @@ module BetterTogether
         attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
       end
     end
+
+    def permitted_attributes
+      [
+        :privacy,
+        :published_at,
+        :contributors_display_visibility,
+        *resource_class.localized_attribute_list,
+        *resource_class.extra_permitted_attributes
+      ]
+    end
   end
 end

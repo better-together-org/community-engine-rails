@@ -317,6 +317,20 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(community.requires_invitation).to be(true)
       expect(community.allow_membership_requests).to be(false)
     end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.communities_path(locale:), params: {
+          community: {
+            name_en: '',
+            description_en: '',
+            privacy: 'public'
+          }
+        }
+      end.not_to change(BetterTogether::Community, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'GET /:locale/c/:slug/edit', :as_platform_manager do
@@ -437,6 +451,18 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       patch better_together.community_path(locale:, id: community.slug), params: params_with_slug
       community.reload
       expect(community.slug).to eq(custom_slug)
+    end
+
+    it 'renders new when update params are invalid', :aggregate_failures do
+      patch better_together.community_path(locale:, id: community.slug), params: {
+        community: {
+          name_en: '',
+          privacy: 'public'
+        }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(community.reload.name).to eq('Original Name')
     end
   end
 
