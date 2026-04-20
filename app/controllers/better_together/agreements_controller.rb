@@ -34,6 +34,17 @@ module BetterTogether
       end
     end
 
+    def new
+      @agreement = resource_instance
+      authorize @agreement unless pundit_policy_authorized?
+    end
+
+    def edit
+      set_resource_instance unless @resource&.persisted?
+      @agreement = @resource || resource_instance
+      authorize @agreement unless pundit_policy_authorized?
+    end
+
     # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
     def accept
       unless current_user.person.present?
@@ -70,6 +81,14 @@ module BetterTogether
     end
 
     private
+
+    def resource_instance(attrs = {})
+      super.tap { |agreement| @agreement = agreement }
+    end
+
+    def set_resource_instance
+      super.tap { |agreement| @agreement = agreement }
+    end
 
     def direct_accept_eligible?(agreement)
       agreement.active_for_consent? && agreement.required_for_first_publish?

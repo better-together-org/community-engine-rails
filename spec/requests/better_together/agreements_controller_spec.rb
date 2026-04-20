@@ -25,6 +25,36 @@ RSpec.describe BetterTogether::AgreementsController do
     configure_host_platform
   end
 
+  describe 'GET /agreements/new', :as_platform_manager do
+    it 'renders the new form with an agreement model' do
+      get better_together.new_agreement_path(locale: I18n.locale)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('New Agreement')
+      expect(response.body).to include('agreement[title_')
+    end
+  end
+
+  describe 'GET /agreements/:id/edit', :as_platform_manager do
+    let(:agreement) { create(:agreement, slug: "agreement-edit-#{SecureRandom.hex(4)}") }
+
+    it 'renders the edit form with the existing agreement model' do
+      get better_together.edit_agreement_path(agreement, locale: I18n.locale)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Edit Agreement')
+      expect(response.body).to include(agreement.title.to_s)
+    end
+
+    it 'rerenders edit when update validation fails' do
+      patch better_together.agreement_path(agreement, locale: I18n.locale),
+            params: { agreement: { privacy: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('Edit Agreement')
+    end
+  end
+
   describe 'POST /agreements/:id/accept' do
     context 'when authenticated', :as_user do
       let(:person) { BetterTogether::User.find_by!(email: 'user@example.test').person }
