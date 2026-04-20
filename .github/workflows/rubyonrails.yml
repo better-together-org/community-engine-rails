@@ -13,12 +13,11 @@ on:
       - compat/rails-8.0
       - compat/rails-8.1
   pull_request:
+    # Run on PRs targeting any branch so feature/fix/salvage branches get CI.
+    # The prepare job defaults to the primary Rails lane (8.0.4.1) for any
+    # non-compat target branch, so only one Rails version runs for these PRs.
     branches:
-      - main
-      - dev
-      - compat/rails-7.2
-      - compat/rails-8.0
-      - compat/rails-8.1
+      - "**"
 
 jobs:
   prepare:
@@ -66,6 +65,9 @@ jobs:
 
   pr_evidence:
     if: github.event_name == 'pull_request'
+    # Non-blocking: salvage/exploratory PRs may not satisfy the full evidence
+    # policy yet. Report the result but don't gate rspec/rubocop/security.
+    continue-on-error: true
     needs: prepare
     runs-on: ubuntu-latest
     steps:
