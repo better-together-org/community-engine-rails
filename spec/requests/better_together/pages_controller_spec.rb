@@ -136,6 +136,21 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
         expect(response.body).to include('Rendered News Post')
       end
     end
+
+    it 'renders not found for guests requesting a private unpublished page' do
+      hidden_page = create(:better_together_page,
+                           :private,
+                           protected: false,
+                           published_at: nil,
+                           title: 'Hidden Coverage Page',
+                           content: 'Hidden coverage body')
+
+      logout
+
+      get better_together.page_path(hidden_page.slug, locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe 'GET /:locale/pages/:slug/edit' do
@@ -259,6 +274,19 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       expect(response).to be_redirect
       expect(BetterTogether::Page.exists?(page.id)).to be(false)
+    end
+
+    it 'renders not found and keeps protected pages from being destroyed', :aggregate_failures do
+      protected_page = create(:better_together_page,
+                              :private,
+                              protected: true,
+                              title: 'Protected Coverage Page',
+                              content: 'Protected coverage body')
+
+      delete better_together.page_path(protected_page, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(BetterTogether::Page.exists?(protected_page.id)).to be(true)
     end
   end
 end

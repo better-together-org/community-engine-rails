@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
   let!(:navigation_area) { create(:better_together_navigation_area) }
 
   describe 'GET /:locale/.../navigation_areas/:navigation_area_id/navigation_items' do
@@ -15,6 +16,17 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
       )
 
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'renders not found for signed-in non-managers on new' do
+      sign_in regular_user
+
+      get better_together.new_navigation_area_navigation_item_path(
+        locale:,
+        navigation_area_id: navigation_area.slug
+      )
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -100,6 +112,18 @@ RSpec.describe 'BetterTogether::NavigationItemsController', :as_platform_manager
       ), params: { navigation_item: { "title_#{locale}": '' } }
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'renders not found for signed-in non-managers on edit' do
+      sign_in regular_user
+
+      get better_together.edit_navigation_area_navigation_item_path(
+        locale:,
+        navigation_area_id: navigation_area.slug,
+        id: item.slug
+      )
+
+      expect(response).to have_http_status(:not_found)
     end
 
     # rubocop:todo RSpec/MultipleExpectations

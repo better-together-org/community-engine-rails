@@ -5,6 +5,24 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
+  let(:people_reviewer) { create(:better_together_user, :confirmed, email: 'people-reviewer@example.test') }
+
+  # rubocop:disable Metrics/AbcSize
+  def grant_platform_permission(user, permission_identifier)
+    BetterTogether::AccessControlBuilder.seed_data
+
+    host_platform = BetterTogether::Platform.find_by(host: true) ||
+                    create(:better_together_platform, :host, community: user.person.community)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+    membership.role ||= create(:better_together_role, :platform_role)
+    role = membership.role
+    permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
+    role.assign_resource_permissions([permission.identifier])
+    membership.status = :active
+    membership.save!
+    user.person.touch
+  end
+  # rubocop:enable Metrics/AbcSize
 
   describe 'GET /:locale/.../host/p/:id' do
     let!(:person) { create(:better_together_person, privacy: 'public') }
@@ -106,6 +124,35 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       expect(response.body).to include(post.title)
       expect(response.body).to include('Linked GitHub Identities')
       expect(response.body).to include('octo-person')
+    end
+  end
+
+  describe 'directory visibility' do
+    let!(:public_person) { create(:better_together_person, name: 'Public Directory Person', privacy: 'public') }
+    let!(:private_person) { create(:better_together_person, name: 'Private Directory Person', privacy: 'private') }
+
+    it 'hides unrelated private people from the directory scope for platform managers without directory permission' do
+      get better_together.people_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(assigns(:people)).to include(platform_manager.person, public_person)
+      expect(assigns(:people)).not_to include(private_person)
+    end
+
+    it 'renders private profiles as not found without explicit directory permission' do
+      get better_together.person_path(locale:, id: private_person.slug)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'renders private profiles for explicit directory reviewers' do
+      grant_platform_permission(people_reviewer, 'read_person')
+      sign_in people_reviewer
+
+      get better_together.person_path(locale:, id: private_person.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(private_person.name)
     end
   end
 

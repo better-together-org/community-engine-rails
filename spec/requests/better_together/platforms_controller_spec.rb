@@ -18,26 +18,28 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
     create(:better_together_user, :confirmed, email: 'platform-safety-reviewer@example.test')
   end
 
+  def grant_platform_permission(user, permission_identifier)
+    permission = BetterTogether::ResourcePermission.find_by(identifier: permission_identifier)
+    return unless permission
+
+    role = create(:better_together_role, :platform_role)
+    BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
+    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+    membership.role = role
+    membership.status = :active
+    membership.save!
+    user.person.touch
+  end
+
   before do
     manager_person = BetterTogether::User.find_by(email: 'manager@example.test').person
     create(:better_together_agreement_participant,
            agreement: content_publishing_agreement,
            participant: manager_person,
            accepted_at: Time.current)
-    permission = BetterTogether::ResourcePermission.find_by(identifier: 'approve_network_connections')
-    next unless permission
-
-    role = create(:better_together_role, :platform_role)
-    BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
-    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
-    host_platform.person_platform_memberships.find_or_create_by!(member: approval_operator.person, role:)
-
-    safety_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform_safety')
-    next unless safety_permission
-
-    safety_role = create(:better_together_role, :platform_role)
-    BetterTogether::RoleResourcePermission.create!(role: safety_role, resource_permission: safety_permission)
-    host_platform.person_platform_memberships.find_or_create_by!(member: safety_reviewer.person, role: safety_role)
+    grant_platform_permission(approval_operator, 'approve_network_connections')
+    grant_platform_permission(safety_reviewer, 'manage_platform_safety')
   end
 
   describe 'GET /:locale/.../host/platforms' do

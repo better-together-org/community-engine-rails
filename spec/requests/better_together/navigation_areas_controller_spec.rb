@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
 
   context 'with platform manager role' do
     describe 'GET /:locale/.../navigation_areas' do
@@ -15,6 +16,14 @@ RSpec.describe 'BetterTogether::NavigationAreasController', :as_platform_manager
       it 'renders new' do
         get better_together.new_navigation_area_path(locale:)
         expect(response).to have_http_status(:ok)
+      end
+
+      it 'renders not found for signed-in non-managers on new' do
+        sign_in regular_user
+
+        get better_together.new_navigation_area_path(locale:)
+
+        expect(response).to have_http_status(:not_found)
       end
     end
 

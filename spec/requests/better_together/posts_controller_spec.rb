@@ -30,6 +30,42 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     post_record.add_governed_contributor(platform_manager.person, role: 'editor')
   end
 
+  it 'renders not found for guests requesting a private unpublished post' do
+    hidden_post = create(
+      :better_together_post,
+      author: platform_manager.person,
+      creator: platform_manager.person,
+      privacy: 'private',
+      published_at: nil,
+      slug: "hidden-post-#{SecureRandom.hex(4)}",
+      identifier: "hidden-post-#{SecureRandom.hex(4)}"
+    )
+
+    logout
+
+    get better_together.post_path(hidden_post, locale:)
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'renders a private unpublished post for its creator' do
+    hidden_post = create(
+      :better_together_post,
+      author: platform_manager.person,
+      creator: platform_manager.person,
+      privacy: 'private',
+      published_at: nil,
+      title: 'Creator Hidden Post',
+      slug: "creator-hidden-post-#{SecureRandom.hex(4)}",
+      identifier: "creator-hidden-post-#{SecureRandom.hex(4)}"
+    )
+
+    get better_together.post_path(hidden_post, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Creator Hidden Post')
+  end
+
   it 'preloads post card associations for index rendering', :aggregate_failures do
     get better_together.posts_path(locale:)
 
