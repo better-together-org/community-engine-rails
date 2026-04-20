@@ -214,9 +214,14 @@ module BetterTogether
       end
 
       def assign_empty_metric_payloads
-        EMPTY_REPORT_PAYLOADS.each do |payload_method, instance_variables|
-          assign_payloads(public_send(payload_method), *instance_variables)
-        end
+        assign_payloads(
+          empty_stacked_payload,
+          *EMPTY_REPORT_PAYLOADS.fetch(:empty_stacked_payload)
+        )
+        assign_payloads(
+          empty_values_payload,
+          *EMPTY_REPORT_PAYLOADS.fetch(:empty_values_payload)
+        )
         @search_queries_by_term_chart_data = empty_search_query_payload
       end
 
