@@ -5,9 +5,15 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   let(:locale) { I18n.default_locale }
 
-  it 'renders index' do
+  it 'keeps evidence summaries out of the public index when present' do
+    calendar = create('better_together/calendar', privacy: 'public')
+    create(:claim, claimable: calendar, statement: 'Calendars can expose evidence on listing surfaces.')
+    create(:citation, citeable: calendar, reference_key: 'calendar_index_summary', title: 'Calendar Index Summary')
+
     get better_together.calendars_path(locale:)
     expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('Evidence:')
+    expect(response.body).not_to include('Governance Bundle')
   end
 
   context 'when viewing calendar show page' do
@@ -30,12 +36,19 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
     before do
       BetterTogether::CalendarEntry.create!(calendar:, event: upcoming_event, starts_at: upcoming_event.starts_at)
       BetterTogether::CalendarEntry.create!(calendar:, event: past_event, starts_at: past_event.starts_at)
+
+      citation = create(:citation, citeable: calendar, title: 'Calendar charter', reference_key: 'calendar-charter')
+      claim = create(:claim, claimable: calendar, statement: 'This calendar reflects the community schedule.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
     end
 
-    it 'renders successfully' do
+    it 'renders successfully without evidence sections' do
       get better_together.calendar_path(calendar, locale:)
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('Calendar charter')
     end
   end
 

@@ -14,17 +14,21 @@ Technical documentation for developers working on the Better Together Community 
 - [Democratic by Design](../shared/democratic_by_design.md) - Cooperative governance architecture
 
 ## System Documentation
+- [Bot Safety System](systems/bot_safety_system.md) - Built-in protected form flow, robot scopes, and optional Turnstile seam
+- [Turnstile Host-App Adapter](systems/turnstile_host_app_adapter.md) - Where optional stronger human verification fits without replacing the engine baseline
 - [Community Social System](systems/community_social_system.md) - Community management implementation
 - [Conversations Messaging System](systems/conversations_messaging_system.md) - Real-time communication features
+- [Content Security Ingress System](systems/content_security_ingress_system.md) - Inbound mail, upload release gating, and Action Text attachment controls
 - [Events System](systems/events_system.md) - Event management system
 - [Agreements System](systems/agreements_system.md) - Platform legal agreements and exchange agreements
-- [AI Integration System](systems/ai_integration_system.md) - OpenAI-powered translation features
+- [AI Integration System](systems/ai_integration_system.md) - Robot-based LLM translation and embeddings architecture
 - [Interactive Mapping System](systems/mapping_system.md) - Leaflet.js maps with PostGIS spatial data
 - [All Systems →](systems/) - Complete system documentation
 
 ## Development Standards
 - [Automatic Test Configuration](development/automatic_test_configuration.md) - Automated test setup and authentication
 - [Diagram Rendering](development/diagram_rendering.md) - Documentation diagrams
+- [Bot Safety Baseline](../security/bot_safety_baseline.md) - Security posture of the local-first anti-bot layer
 - [I18n TODOs](development/i18n_todo.md) - Internationalization tasks
 - [Deployment (Dokku)](../production/deployment-dokku.md) - Production deployment
 - [Privacy Principles](../shared/privacy_principles.md) - Security & privacy guidelines

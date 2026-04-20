@@ -8,8 +8,6 @@ module BetterTogether # :nodoc:
   RSpec.describe Page do
     subject(:page) { build(:better_together_page) }
 
-    it_behaves_like 'an indexed searchable model', :better_together_page
-
     describe 'Factory' do
       it 'has a valid factory' do
         expect(page).to be_valid
@@ -81,6 +79,70 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#governed_authors' do
+        it 'includes both person and robot authors in authorship order' do
+          page = create(:better_together_page)
+          person = create(:better_together_person)
+          robot = create(:robot, platform: page.platform)
+
+          page.authorships.create!(author: person, position: 1)
+          page.authorships.create!(author: robot, position: 2)
+
+          expect(page.governed_authors).to eq([person, robot])
+          expect(page.authors).to eq([person])
+          expect(page.robot_authors).to eq([robot])
+        end
+      end
+
+      describe '#resolved_contributors_display_visibility' do
+        it 'uses the community override before the platform default' do
+          platform = create(:better_together_platform)
+          community = create(:better_together_community)
+          page = create(:better_together_page, platform:, community:)
+
+          platform.update!(contributors_display_visibility: 'on')
+          community.update!(contributors_display_visibility: 'off')
+
+          expect(page.resolved_contributors_display_visibility).to eq('off')
+          expect(page).not_to be_contributors_display_visible
+        end
+
+        it 'uses the record override before the community setting' do
+          platform = create(:better_together_platform)
+          community = create(:better_together_community)
+          page = create(:better_together_page, platform:, community:, contributors_display_visibility: 'on')
+
+          platform.update!(contributors_display_visibility: 'on')
+          community.update!(contributors_display_visibility: 'off')
+
+          expect(page.resolved_contributors_display_visibility).to eq('on')
+          expect(page).to be_contributors_display_visible
+        end
+      end
+
+      describe 'creator fallback authorship' do
+        it 'adds the creator as author when no explicit authors were selected' do
+          creator = create(:better_together_person)
+          page = create(:better_together_page, creator:)
+
+          expect(page.authors).to include(creator)
+        end
+
+        it 'does not add the creator when an explicit robot author was selected' do
+          creator = create(:better_together_person)
+          platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform)
+          robot = create(:robot, platform:)
+          page = described_class.new(title: 'Robot Page', privacy: 'public', platform:, creator:)
+
+          page.robot_authors << robot
+          page.save!
+
+          expect(page.robot_authors).to contain_exactly(robot)
+          expect(page.authors).to be_empty
+          expect(page.governed_authors).to contain_exactly(robot)
+        end
+      end
+
       describe '#url' do
         it 'returns the full URL of the page' do
           expect(page.url).to eq("#{::BetterTogether.base_url_with_locale}/#{page.slug}")
@@ -137,241 +199,80 @@ module BetterTogether # :nodoc:
         end
       end
 
-      describe '#as_indexed_json' do
-        context 'with template blocks' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Template Block Page',
-                   slug: 'template-block-page',
-                   privacy: 'public',
-                   page_blocks_attributes: [
-                     {
-                       block_attributes: {
-                         type: 'BetterTogether::Content::Template',
-                         template_path: 'better_together/static_pages/privacy'
-                       }
-                     }
-                   ])
-          end
+      describe 'evidence selector options' do
+        it 'includes media-specific selectors from page content blocks' do
+          page = create(:better_together_page)
+          image_block = create(:better_together_content_image, identifier: 'launch-image')
+          video_block = create(:content_video_block, identifier: 'launch-video')
+          page.page_blocks.create!(block: image_block, position: 0)
+          page.page_blocks.create!(block: video_block, position: 1)
 
-          it 'includes template_blocks in indexed data' do
-            result = page.as_indexed_json
-
-            expect(result['template_blocks']).to be_present
-            expect(result['template_blocks']).to be_an(Array)
-          end
-
-          it 'includes indexed_localized_content for each template block' do
-            result = page.as_indexed_json
-
-            template_block = result['template_blocks'].first
-            expect(template_block['indexed_localized_content']).to be_present
-            expect(template_block['indexed_localized_content']).to be_a(Hash)
-          end
-
-          it 'includes content for all locales in template blocks' do
-            result = page.as_indexed_json
-
-            content = result['template_blocks'].first['indexed_localized_content']
-            expect(content.keys.map(&:to_sym)).to match_array(I18n.available_locales)
-          end
-
-          it 'includes template block id' do
-            result = page.as_indexed_json
-
-            template_block = result['template_blocks'].first
-            expect(template_block['id']).to be_present
-          end
+          expect(page.evidence_selector_options).to include(
+            include(value: 'block:image:launch-image:media'),
+            include(value: 'block:image:launch-image:region:*'),
+            include(value: 'block:video_block:launch-video:timestamp:*')
+          )
         end
 
-        context 'with template attribute' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Template Attribute Page',
-                   slug: 'template-attribute-page',
-                   privacy: 'public',
-                   template: 'better_together/static_pages/privacy')
-          end
+        it 'includes linked contribution citations in grouped evidence source options' do
+          page = create(:better_together_page)
+          local_citation = create(:citation, citeable: page, reference_key: 'local_record', title: 'Local Record Citation')
+          contributor = create(:person, name: 'Evidence Keeper')
+          contribution = BetterTogether::Authorship.create!(
+            authorable: page,
+            author: contributor,
+            role: 'reviewer'
+          )
+          linked_citation = create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
 
-          it 'includes template_content in indexed data' do
-            result = page.as_indexed_json
+          groups = page.available_evidence_citation_option_groups
 
-            expect(result['template_content']).to be_present
-            expect(result['template_content']).to be_a(Hash)
-          end
-
-          it 'renders template content for all locales' do
-            result = page.as_indexed_json
-
-            content = result['template_content']
-            expect(content.keys.map(&:to_sym)).to match_array(I18n.available_locales)
-          end
-
-          it 'includes plain text content without HTML' do
-            result = page.as_indexed_json
-
-            I18n.available_locales.each do |locale|
-              expect(result['template_content'][locale.to_s]).not_to match(/<[^>]+>/)
-            end
-          end
-
-          it 'uses TemplateRendererService for rendering' do
-            expect(BetterTogether::TemplateRendererService).to receive(:new)
-              .with(page.template)
-              .and_call_original
-
-            page.as_indexed_json
-          end
+          expect(groups['Current record']).to include(["#{local_citation.reference_key}: #{local_citation.title}", local_citation.id])
+          expect(groups['Evidence Keeper: Reviewer']).to include(["#{linked_citation.reference_key}: #{linked_citation.title}",
+                                                                  linked_citation.id])
         end
 
-        context 'with rich text blocks' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Rich Text Page',
-                   slug: 'rich-text-page',
-                   privacy: 'public',
-                   page_blocks_attributes: [
-                     {
-                       block_attributes: {
-                         type: 'BetterTogether::Content::RichText',
-                         content: 'Test content'
-                       }
-                     }
-                   ])
-          end
+        it 'builds evidence browser groups with preview metadata' do
+          page = create(:better_together_page)
+          create(:citation,
+                 citeable: page,
+                 reference_key: 'local_record',
+                 title: 'Local Record Citation',
+                 locator: 'p. 10',
+                 excerpt: 'Shared reality requires traceable evidence.')
 
-          it 'includes rich_text_blocks in indexed data' do
-            result = page.as_indexed_json
+          browser_groups = page.available_evidence_citation_browser_groups
 
-            expect(result['rich_text_blocks']).to be_present
-            expect(result['rich_text_blocks']).to be_an(Array)
-          end
+          expect(browser_groups.first[:label]).to eq('Current record')
+          expect(browser_groups.first[:citations].first).to include(
+            reference_key: 'local_record',
+            title: 'Local Record Citation',
+            locator: 'p. 10',
+            excerpt: 'Shared reality requires traceable evidence.'
+          )
+          expect(browser_groups.first[:origin]).to eq('current_record')
+          expect(browser_groups.first[:record_type]).to eq('Page')
         end
 
-        context 'with markdown blocks' do
-          let(:page) do
-            create(
-              :better_together_page,
-              title: 'Markdown Index Page',
-              slug: 'markdown-index-page',
-              privacy: 'public',
-              page_blocks_attributes: [
-                {
-                  block_attributes: {
-                    type: 'BetterTogether::Content::Markdown',
-                    markdown_source: "# Heading\n\nSearchable paragraph with **formatting**."
-                  }
-                }
-              ]
-            )
-          end
+        it 'includes contribution metadata in linked evidence browser groups' do
+          page = create(:better_together_page)
+          contributor = create(:person, name: 'Doc Reviewer')
+          contribution = BetterTogether::Authorship.create!(
+            authorable: page,
+            author: contributor,
+            role: 'reviewer',
+            contribution_type: 'documentation'
+          )
+          create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
 
-          it 'indexes plain text from inline markdown content' do
-            result = page.as_indexed_json
-            markdown_block = result['markdown_blocks'].first['as_indexed_json']
-            localized_content = markdown_block[:localized_content] || markdown_block['localized_content']
-            localized_value = localized_content[I18n.default_locale] || localized_content[I18n.default_locale.to_s]
+          contribution_group = page.available_evidence_citation_browser_groups.find { |group| group[:origin] == 'contribution' }
 
-            expect(localized_value).to include('Heading')
-            expect(localized_value).to include('Searchable paragraph with formatting.')
-            expect(localized_value).not_to include('#')
-            expect(localized_value).not_to include('<strong>')
-          end
-        end
-
-        context 'with file-based markdown blocks' do
-          let(:markdown_file_path) { Rails.root.join('spec/fixtures/files/page_markdown_index.md') }
-          let(:page) do
-            FileUtils.mkdir_p(markdown_file_path.dirname)
-            File.write(markdown_file_path, "# File Search\n\nFile body content that should be indexed.")
-
-            create(
-              :better_together_page,
-              title: 'Markdown File Index Page',
-              slug: 'markdown-file-index-page',
-              privacy: 'public',
-              page_blocks_attributes: [
-                {
-                  block_attributes: {
-                    type: 'BetterTogether::Content::Markdown',
-                    markdown_source: nil,
-                    markdown_file_path: markdown_file_path.to_s
-                  }
-                }
-              ]
-            )
-          end
-
-          after do
-            FileUtils.rm_f(markdown_file_path)
-          end
-
-          it 'indexes plain text extracted from markdown files' do
-            result = page.as_indexed_json
-            markdown_block = result['markdown_blocks'].first['as_indexed_json']
-            localized_content = markdown_block[:localized_content] || markdown_block['localized_content']
-            localized_value = localized_content[I18n.default_locale] || localized_content[I18n.default_locale.to_s]
-
-            expect(localized_value).to include('File Search')
-            expect(localized_value).to include('File body content that should be indexed.')
-            expect(localized_value).not_to include('#')
-          end
-        end
-
-        context 'without template blocks or attribute' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Simple Page',
-                   slug: 'simple-page',
-                   privacy: 'public')
-          end
-
-          it 'does not include template_content' do
-            result = page.as_indexed_json
-
-            expect(result['template_content']).to be_nil
-          end
-
-          it 'includes basic page attributes' do
-            result = page.as_indexed_json
-
-            expect(result['id']).to eq(page.id)
-            expect(result['title']).to eq(page.title)
-            expect(result['slug']).to eq(page.slug)
-          end
-        end
-
-        context 'with both template blocks and template attribute' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Mixed Template Page',
-                   slug: 'mixed-template-page',
-                   privacy: 'public',
-                   template: 'better_together/static_pages/terms_of_service',
-                   page_blocks_attributes: [
-                     {
-                       block_attributes: {
-                         type: 'BetterTogether::Content::Template',
-                         template_path: 'better_together/static_pages/privacy'
-                       }
-                     }
-                   ])
-          end
-
-          it 'includes both template_blocks and template_content' do
-            result = page.as_indexed_json
-
-            expect(result['template_blocks']).to be_present
-            expect(result['template_content']).to be_present
-          end
-
-          it 'renders different content for each' do
-            result = page.as_indexed_json
-
-            # Both should be present (either as Hash with string keys or symbolized)
-            expect(result['template_blocks'] || result[:template_blocks]).to be_present
-            expect(result['template_content'] || result[:template_content]).to be_present
-          end
+          expect(contribution_group).to include(
+            origin: 'contribution',
+            record_type: 'Authorship',
+            contribution_role: 'reviewer',
+            contribution_type: 'documentation'
+          )
         end
       end
     end

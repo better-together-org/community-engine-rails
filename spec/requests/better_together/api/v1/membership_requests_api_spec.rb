@@ -7,22 +7,36 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
     { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' }
   end
 
-  let(:community) { create(:better_together_community) }
+  let(:community) { create(:better_together_community, :membership_requests_enabled) }
+  let!(:community_platform) { create(:better_together_platform, :membership_requests_enabled, community: community) }
 
   let(:valid_payload) do
+    JSON.generate(bot_defense_payload(:membership_request_api).merge(
+                    data: {
+                      type: 'membership_requests',
+                      attributes: {
+                        requestor_name: 'Alice Example',
+                        requestor_email: 'alice@example.test',
+                        referral_source: 'a friend',
+                        description: 'I would love to join the community and contribute.',
+                        target_type: 'BetterTogether::Community',
+                        target_id: community.id
+                      }
+                    }
+                  ))
+  end
+
+  def bot_defense_payload(form_id)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
     {
-      data: {
-        type: 'membership_requests',
-        attributes: {
-          requestor_name: 'Alice Example',
-          requestor_email: 'alice@example.test',
-          referral_source: 'a friend',
-          description: 'I would love to join the community and contribute.',
-          target_type: 'BetterTogether::Community',
-          target_id: community.id
-        }
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
       }
-    }.to_json
+    }
   end
 
   describe 'POST /api/v1/membership_requests' do
@@ -57,17 +71,17 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
 
     context 'with missing requestor_email' do
       let(:invalid_payload) do
-        {
-          data: {
-            type: 'membership_requests',
-            attributes: {
-              requestor_name: 'Bob Example',
-              description: 'I would like to join.',
-              target_type: 'BetterTogether::Community',
-              target_id: community.id
-            }
-          }
-        }.to_json
+        JSON.generate(bot_defense_payload(:membership_request_api).merge(
+                        data: {
+                          type: 'membership_requests',
+                          attributes: {
+                            requestor_name: 'Bob Example',
+                            description: 'I would like to join.',
+                            target_type: 'BetterTogether::Community',
+                            target_id: community.id
+                          }
+                        }
+                      ))
       end
 
       before { post url, params: invalid_payload, headers: jsonapi_headers }
@@ -79,18 +93,18 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
 
     context 'with invalid email format' do
       let(:bad_email_payload) do
-        {
-          data: {
-            type: 'membership_requests',
-            attributes: {
-              requestor_name: 'Carol Example',
-              requestor_email: 'not-valid',
-              description: 'Please let me join.',
-              target_type: 'BetterTogether::Community',
-              target_id: community.id
-            }
-          }
-        }.to_json
+        JSON.generate(bot_defense_payload(:membership_request_api).merge(
+                        data: {
+                          type: 'membership_requests',
+                          attributes: {
+                            requestor_name: 'Carol Example',
+                            requestor_email: 'not-valid',
+                            description: 'Please let me join.',
+                            target_type: 'BetterTogether::Community',
+                            target_id: community.id
+                          }
+                        }
+                      ))
       end
 
       before { post url, params: bad_email_payload, headers: jsonapi_headers }
@@ -103,24 +117,24 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
     context 'with non-community target type' do
       let(:platform) { create(:better_together_platform) }
       let(:platform_payload) do
-        {
-          data: {
-            type: 'membership_requests',
-            attributes: {
-              requestor_name: 'Dave Example',
-              requestor_email: 'dave@example.test',
-              description: 'Requesting platform membership.',
-              target_type: 'BetterTogether::Platform',
-              target_id: platform.id
-            }
-          }
-        }.to_json
+        JSON.generate(bot_defense_payload(:membership_request_api).merge(
+                        data: {
+                          type: 'membership_requests',
+                          attributes: {
+                            requestor_name: 'Dave Example',
+                            requestor_email: 'dave@example.test',
+                            description: 'Requesting platform membership.',
+                            target_type: 'BetterTogether::Platform',
+                            target_id: platform.id
+                          }
+                        }
+                      ))
       end
 
       before { post url, params: platform_payload, headers: jsonapi_headers }
 
-      it 'returns 422 unprocessable entity' do
-        expect(response).to have_http_status(:unprocessable_content)
+      it 'returns not found for an unsupported target type' do
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -129,16 +143,16 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
       let(:token) { api_sign_in_and_get_token(user) }
       let(:auth_headers) { api_auth_headers(user, token: token) }
       let(:authenticated_payload) do
-        {
-          data: {
-            type: 'membership_requests',
-            attributes: {
-              description: 'I am an existing user requesting community membership.',
-              target_type: 'BetterTogether::Community',
-              target_id: community.id
-            }
-          }
-        }.to_json
+        JSON.generate(bot_defense_payload(:membership_request_api).merge(
+                        data: {
+                          type: 'membership_requests',
+                          attributes: {
+                            description: 'I am an existing user requesting community membership.',
+                            target_type: 'BetterTogether::Community',
+                            target_id: community.id
+                          }
+                        }
+                      ))
       end
 
       before { post url, params: authenticated_payload, headers: auth_headers }
@@ -150,6 +164,29 @@ RSpec.describe 'BetterTogether::Api::V1::MembershipRequests', :no_auth do
       it 'sets the creator to the authenticated person' do
         mr = BetterTogether::Joatu::MembershipRequest.last
         expect(mr.creator).to eq(user.person)
+      end
+    end
+
+    context 'without bot defense proof' do
+      let(:unsafe_payload) do
+        JSON.generate(
+          data: {
+            type: 'membership_requests',
+            attributes: {
+              requestor_name: 'Alice Example',
+              requestor_email: 'alice@example.test',
+              description: 'I would love to join the community and contribute.',
+              target_type: 'BetterTogether::Community',
+              target_id: community.id
+            }
+          }
+        )
+      end
+
+      it 'returns 422 unprocessable entity' do
+        post url, params: unsafe_payload, headers: jsonapi_headers
+
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

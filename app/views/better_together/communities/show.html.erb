@@ -31,10 +31,12 @@
       <div class="col-auto">
         <%= render 'shared/resource_toolbar',
                    edit_path: policy(@resource).edit? ? edit_community_path(@resource) : nil,
-                   edit_aria_label: 'Edit Partner',
+                   edit_aria_label: t('better_together.communities.show.actions.edit_aria'),
                    destroy_path: policy(@resource).destroy? ? community_path(@resource) : nil,
                    destroy_confirm: t('partners.confirm_delete'),
-                   destroy_aria_label: 'Delete Partner' %>
+                   destroy_aria_label: t('better_together.communities.show.actions.destroy_aria') do %>
+          <%= render 'shared/content_actions', record: @resource %>
+        <% end %>
       </div>
     </div>
   </div>
@@ -47,15 +49,28 @@
       <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
     <% end %>
 
+    <%= render 'better_together/shared/access_mode_panel',
+               resource: @community,
+               memberships: @current_person_community_memberships %>
+
+    <% if @membership_request_review_allowed %>
+      <%= render 'better_together/communities/membership_review_panel',
+                 community: @community,
+                 open_membership_request_count: @open_membership_request_count %>
+    <% end %>
+
     <!-- Community tabbed section with members -->
     <section class="card tabbed-section">
       <div class="card-header">
         <!-- Navigation tabs -->
         <%# Initialize the active tab state with accessible attributes %>
-        <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Community Sections' do %>
+        <%= content_tag :div, id: 'communityTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: t('better_together.communities.show.sections_aria') do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
           <% if policy(@resource).view_members? %>
             <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
+          <% end %>
+          <% if @community_pages.any? %>
+            <%= link_to BetterTogether::Page.model_name.human.pluralize, '#pages', class: 'nav-link', id: 'pages-tab', data: { bs_toggle: 'tab', bs_target: '#pages', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'pages', aria_selected: 'false', tabindex: '-1' %>
           <% end %>
           <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'events', aria_selected: 'true', tabindex: '0' %>
         <% end %>
@@ -69,7 +84,7 @@
 
             <!-- Description Section -->
             <p class="card-text text-muted">
-              <%= @resource.description_html.presence || @resource.description.presence || 'No description available.' %>
+              <%= @resource.description_html.presence || @resource.description.presence || t('better_together.communities.show.about.no_description') %>
             </p>
 
             <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
@@ -116,8 +131,8 @@
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="addMemberModalLabel">Add New Member</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      <h5 class="modal-title" id="addMemberModalLabel"><%= t('better_together.communities.show.members.add_member_modal.title') %></h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('better_together.communities.show.members.add_member_modal.close') %>"></button>
                     </div>
                     <div class="modal-body">
                       <!-- Your form or other modal content here -->
@@ -126,16 +141,16 @@
                         <%= turbo_frame_tag 'form_errors' %>
 
                         <div class="mb-3" id="member_select">
-                          <%= form.label :member_id, "Select Person *", class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).where.not(id: @resource.person_community_memberships.pluck(:member_id)), :id, :select_option_title, { prompt: "Select a person" }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.label :member_id, t('better_together.communities.show.members.add_member_modal.select_person'), class: "form-label" %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).distinct, :id, :select_option_title, { prompt: t('better_together.communities.show.members.add_member_modal.select_person_prompt') }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
-                          <%= form.label :role_id, "Select Role *", class: "form-label" %>
+                          <%= form.label :role_id, t('better_together.communities.show.members.add_member_modal.select_role'), class: "form-label" %>
                           <%= form.collection_select :role_id, ::BetterTogether::Role.includes(:string_translations).where(resource_type: @resource.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
-                          <%= form.submit "Add", class: "btn btn-primary" %>
+                          <%= form.submit t('better_together.communities.show.members.add_member_modal.submit'), class: "btn btn-primary" %>
                         </div>
                       <% end %>
                     </div>
@@ -150,13 +165,21 @@
           </div>
         <% end %>
 
+        <% if @community_pages.any? %>
+          <div id="pages" class="collapse" aria-labelledby="pages-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+            <div id="community_pages_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render partial: 'better_together/pages/page', collection: @community_pages, as: :page %>
+            </div>
+          </div>
+        <% end %>
+
         <div id="events" class="collapse" aria-labelledby="events-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <% if policy(@resource).create_events? %>
-            <%= link_to t('.create_event', default: 'Create an Event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary mb-3' %>
+            <%= link_to t('better_together.communities.show.events.create_event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary mb-3' %>
           <% end %>
           
           <% if policy(@resource).create_events? && @draft_events.any? %>
-            <h3>Draft</h3>
+            <h3><%= t('better_together.communities.show.events.draft_heading') %></h3>
             <div id="draft_events_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
               <%= render(@draft_events) %>
             </div>
@@ -194,7 +217,7 @@
   </div>
 </div>
 
-<script type="text/javascript">
+<%= javascript_tag nonce: true do %>
   document.addEventListener("DOMContentLoaded", function() {
     // Check if URL hash is present and corresponds to a tab
     var hash = window.location.hash;
@@ -214,4 +237,4 @@
       });
     });
   });
-</script>
+<% end %>

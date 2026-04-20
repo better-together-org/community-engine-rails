@@ -1,0 +1,49 @@
+{
+  "name": "content_reporting_actions_community_menu",
+  "device": "desktop",
+  "url": "/en/c/community-663d9eb24971f2c5adfb",
+  "title": "Harbour Neighbours | Communities | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_reporting_actions",
+  "flow": "community_content_actions",
+  "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
+  "callouts": [
+    {
+      "selector": ".bt-content-actions[open]",
+      "title": "Community surfaces keep the existing ellipsis menu",
+      "bullets": [
+        "The shared report action stays available without replacing the established toolbar layout.",
+        "The correction keeps the community view aligned with other non-page surfaces."
+      ],
+      "target": {
+        "x": 1332.0,
+        "y": 515.5,
+        "width": 36.0,
+        "height": 24.5,
+        "right": 1368.0,
+        "bottom": 540.0,
+        "center_x": 1350.0,
+        "center_y": 527.75
+      },
+      "avoid": {
+        "x": 1080.0,
+        "y": 515.5,
+        "width": 288.0,
+        "height": 117.5,
+        "right": 1368.0,
+        "bottom": 633.0,
+        "center_x": 1224.0,
+        "center_y": 574.25
+      },
+      "placement": {
+        "side": "left",
+        "x": 680.0,
+        "y": 364.75,
+        "width": 380,
+        "height": 326,
+        "score": 1080.0
+      }
+    }
+  ]
+}

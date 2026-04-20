@@ -14,7 +14,7 @@ module BetterTogether
       validates :quote_text, presence: true
 
       def self.content_addable?
-        true
+        false
       end
 
       def self.extra_permitted_attributes

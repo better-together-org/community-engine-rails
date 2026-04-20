@@ -23,16 +23,7 @@
 
   <%= turbo_frame_tag 'form_errors' %>
 
-  <% if page.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('views.labels.please_correct') %></h4>
-      <ul>
-        <% page.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: page if page.errors.any? %>
 
   <% if page.protected %>
     <div class="row">
@@ -69,6 +60,15 @@
       <%= form.label :show_title %>
       <%= render partial: 'better_together/shared/fields/toggle_switch', locals: { form: form, attr: :show_title } %>
       <small class="form-text text-muted mt-2">Display the page title when there is no hero block.</small>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= contributor_display_visibility_field(
+            form:,
+            include_inherit: true,
+            label: t('better_together.authorable_contributor_visibility.labels.record', default: 'Contributor display'),
+            hint: t('better_together.authorable_contributor_visibility.hints.page', default: 'Choose whether this page shows contributor bylines on public-facing views, or inherits the community/platform setting.')
+          ) %>
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">
@@ -131,23 +131,11 @@
         </div>
       <% end %>
     </div>
+  </div>
 
-    <!-- Authors: assign one or more People as page authors -->
-    <div class="col mb-3 pb-3 border-bottom">
-      <%= form.label :author_ids, 'Authors' %>
-      <%= form.collection_select :author_ids,
-        BetterTogether::Person.all,
-        :id,
-        :select_option_title,
-        {},
-        { multiple: true,
-          class: "form-select#{' is-invalid' if page.errors[:author_ids].any?}",
-          data: { controller: "better_together--slim-select" } } %>
-      <% if page.errors[:author_ids].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:author_ids].join(', ') %>
-        </div>
-      <% end %>
+  <div class="row my-3">
+    <div class="col-12 mb-3 pb-3 border-bottom">
+      <%= governed_contributions_fieldset(form:, record: page) %>
     </div>
   </div>
 

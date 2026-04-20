@@ -29,7 +29,7 @@
       
       <p><strong>"You"</strong> or <strong>"Your"</strong> means the individual or entity contributing content to the platform.</p>
       
-      <p><strong>"We"</strong>, <strong>"Us"</strong>, or <strong>"Our"</strong> means <%= host_platform.name %> and Better Together Solutions.</p>
+      <p><strong>"We"</strong>, <strong>"Us"</strong>, or <strong>"Our"</strong> means the operator of <%= host_platform.name %>.</p>
       
       <p><strong>"Content"</strong> means any text, images, videos, audio, data, information, or other materials that you submit, upload, post, or otherwise make available on or through the platform, including but not limited to:</p>
       <ul>
@@ -63,7 +63,7 @@
       <ul>
         <li>Use, copy, reproduce, process, adapt, modify, publish, transmit, display, and distribute your content in any and all media or distribution methods (now known or later developed)</li>
         <li>Make your content available to the rest of the platform community and to the public in accordance with your privacy settings</li>
-        <li>Provide your content to service providers we work with to provide platform functionality (such as search indexing, content delivery networks, and backup services)</li>
+        <li>Provide your content to service providers we work with to provide platform functionality (such as storage, search, delivery, moderation, or backup services)</li>
         <li>Create derivative works for the purpose of platform operation, improvement, and promotion</li>
       </ul>
 
@@ -73,7 +73,7 @@
         <li>Store and transmit your content to deliver it to intended recipients</li>
         <li>Make backup copies for security and disaster recovery purposes</li>
         <li>Process your content as necessary to provide platform functionality (such as search within your own content)</li>
-        <li>Share with service providers strictly necessary for platform operation (cloud storage, database hosting)</li>
+        <li>Share with service providers strictly necessary for platform operation</li>
       </ul>
       <p>We will not make your private content publicly available or use it for promotional purposes without your explicit consent.</p>
 
@@ -189,7 +189,7 @@
 
       <h2 id="indemnification">10. Indemnification</h2>
 
-      <p>You agree to indemnify, defend, and hold harmless <%= host_platform.name %>, Better Together Solutions, and our affiliates, officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including reasonable legal fees and costs, arising out of or in any way connected with:</p>
+      <p>You agree to indemnify, defend, and hold harmless <%= host_platform.name %>, the operator of the platform, and our affiliates, officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including reasonable legal fees and costs, arising out of or in any way connected with:</p>
       <ul>
         <li>Your content or your violation of this agreement</li>
         <li>Your violation of any third-party rights, including intellectual property, publicity, confidentiality, property, or privacy rights</li>
@@ -228,7 +228,9 @@
 
       <address>
         <strong><%= host_platform.name %></strong><br>
-        Email: <%= mail_to host_community.primary_email if host_community.has_contact_details? %><br>
+        <% if (host_email = host_community_primary_email).present? %>
+          Email: <%= mail_to host_email %><br>
+        <% end %>
         <%= link_to 'Contact Page', better_together.render_page_path('contact', locale: I18n.locale) %>
       </address>
 

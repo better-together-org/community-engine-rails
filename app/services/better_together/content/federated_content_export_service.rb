@@ -41,11 +41,13 @@ module BetterTogether
 
       def serialized_seeds
         @serialized_seeds ||= selected_records.map do |record|
-          ::BetterTogether::Seeds::FederatedSeedBuilder.call(
-            record:,
-            connection:,
-            lane: 'platform_shared'
-          )
+          ::BetterTogether::Seeds::Builder.call(
+            subject: record,
+            profile: :platform_shared,
+            context: { connection: connection },
+            lane: 'platform_shared',
+            persist: false
+          ).seed_hash
         end
       end
 

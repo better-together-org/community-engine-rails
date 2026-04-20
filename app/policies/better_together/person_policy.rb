@@ -3,15 +3,15 @@
 module BetterTogether
   class PersonPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present? && permitted_to?('list_person')
+      user.present?
     end
 
     def show?
-      user.present? && (me? || permitted_to?('read_person'))
+      me? || can_read_private_people? || visible_in_scope?
     end
 
     def create?
-      user.present? && permitted_to?('create_person')
+      user.present? && (permitted_to?('create_person') || permitted_to?('manage_platform'))
     end
 
     def new?
@@ -31,14 +31,14 @@ module BetterTogether
     end
 
     def me?
-      record === user.person # rubocop:todo Style/CaseEquality
+      user.present? && record === user.person # rubocop:todo Style/CaseEquality
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         base_scope = scope.with_translations
 
-        # Users with the people-directory permission can see all people
+        # Explicit directory access can still see all people.
         return base_scope if permitted_to?('list_person')
 
         # Unauthenticated users can only see public profiles
@@ -85,9 +85,10 @@ module BetterTogether
 
         @shared_community_member_ids = if agent.present?
                                          # Get people who are members of communities that the current person is also a member of # rubocop:disable Layout/LineLength
-                                         agent_community_ids = agent.person_community_memberships.pluck(:joinable_id)
+                                         agent_community_ids = agent.person_community_memberships.active.pluck(:joinable_id)
                                          if agent_community_ids.any?
                                            BetterTogether::PersonCommunityMembership
+                                             .active
                                              .where(joinable_id: agent_community_ids)
                                              .where.not(member_id: agent.id)
                                              .pluck(:member_id)
@@ -125,6 +126,12 @@ module BetterTogether
                                     []
                                   end
       end
+    end
+
+    private
+
+    def visible_in_scope?
+      self.class::Scope.new(user, BetterTogether::Person).resolve.where(id: record.id).exists?
     end
   end
 end

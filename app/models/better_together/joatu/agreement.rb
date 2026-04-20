@@ -4,7 +4,11 @@ module BetterTogether
   module Joatu
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
+      include BetterTogether::Authorable
+      include BetterTogether::Citable
+      include BetterTogether::Claimable
       include FriendlySlug
+      include BetterTogether::Privacy
       include Metrics::Viewable
 
       STATUS_VALUES = {
@@ -30,6 +34,7 @@ module BetterTogether
 
       # When an agreement is created, mark the paired offer/request as matched
       after_create :mark_associated_matched
+      after_create :add_participant_contributions
 
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
 
@@ -48,7 +53,54 @@ module BetterTogether
       }, if: :status_accepted?
 
       def self.permitted_attributes(id: false, destroy: false)
-        super + %i[offer_id request_id terms value status]
+        super + %i[offer_id request_id terms value status privacy]
+      end
+
+      def agreement_family
+        'transactional_agreement'
+      end
+
+      def agreement_type
+        return 'network_connection_agreement' if connection_request?
+        return 'person_link_agreement' if request.is_a?(BetterTogether::Joatu::PersonLinkRequest)
+        return 'person_access_grant_agreement' if request.is_a?(BetterTogether::Joatu::PersonAccessGrantRequest)
+
+        agreement_family
+      end
+
+      def participant_people
+        [offer&.creator, request&.creator].compact.uniq
+      end
+
+      def participant_ids
+        participant_people.map(&:id)
+      end
+
+      def participant_for?(person_or_user)
+        person = if person_or_user.is_a?(BetterTogether::User)
+                   person_or_user.person
+                 else
+                   person_or_user
+                 end
+
+        participant_ids.include?(person&.id)
+      end
+
+      def participant_roles
+        {
+          offer_creator: offer&.creator,
+          request_creator: request&.creator
+        }.compact
+      end
+
+      def participant_names
+        participant_people.map { |participant| participant.name.presence || participant.to_s }
+      end
+
+      def decision_made_at
+        return unless status_accepted? || status_rejected?
+
+        updated_at
       end
 
       def accept!
@@ -215,6 +267,16 @@ module BetterTogether
         notifier = BetterTogether::Joatu::AgreementStatusNotifier.with(record: self)
         notifier.deliver_later(offer.creator) if offer&.creator
         notifier.deliver_later(request.creator) if request&.creator
+      end
+
+      def add_participant_contributions
+        [offer&.creator, request&.creator].compact.uniq.each do |participant|
+          add_governed_contributor(
+            participant,
+            role: BetterTogether::Authorship::EXCHANGE_PARTICIPANT_ROLE,
+            contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
+          )
+        end
       end
     end
   end

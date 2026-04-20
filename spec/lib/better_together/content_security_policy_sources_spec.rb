@@ -55,4 +55,69 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
       expect(described_class.platform_sources_for_context(context, :csp_frame_src)).to eq(['https://forms.btsdev.ca'])
     end
   end
+
+  describe '.script_sources' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+
+    it 'includes platform-configured script origins for the current host app' do
+      host_platform.update!(settings: host_platform.settings.merge('csp_script_src' => ['https://scripts.example.com']))
+
+      context = Struct.new(:host).new('communityengine.app')
+
+      sources = context.instance_exec do
+        BetterTogether::ContentSecurityPolicySources.script_sources(nil, nil).flat_map do |source|
+          source.respond_to?(:call) ? instance_exec(&source) : source
+        end
+      end
+
+      expect(sources).to include('https://scripts.example.com')
+      expect(sources).not_to include('https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com', 'https://unpkg.com',
+                                     'https://ga.jspm.io')
+    end
+  end
+
+  describe '.style_sources' do
+    it 'keeps the core style allowlist local by default' do
+      expect(described_class.style_sources(nil)).to eq(%i[self unsafe_inline])
+    end
+  end
+
+  describe '.img_sources' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+
+    it 'includes CE bundled Leaflet image origins and platform-configured image origins' do
+      host_platform.update!(
+        settings: host_platform.settings.merge('csp_img_src' => ['https://images.example.com'])
+      )
+
+      context = Struct.new(:host).new('communityengine.app')
+
+      sources = context.instance_exec do
+        BetterTogether::ContentSecurityPolicySources.img_sources(nil, nil).flat_map do |source|
+          source.respond_to?(:call) ? instance_exec(&source) : source
+        end
+      end
+
+      expect(sources).to include('https://*.tile.openstreetmap.org', 'https://images.example.com')
+      expect(sources).not_to include('https://unpkg.com')
+    end
+  end
+
+  describe '.connect_sources' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+
+    it 'includes platform-configured connection origins for the current host app' do
+      host_platform.update!(settings: host_platform.settings.merge('csp_connect_src' => ['https://collector.example.com']))
+
+      context = Struct.new(:host).new('communityengine.app')
+
+      sources = context.instance_exec do
+        BetterTogether::ContentSecurityPolicySources.connect_sources(nil).flat_map do |source|
+          source.respond_to?(:call) ? instance_exec(&source) : source
+        end
+      end
+
+      expect(sources).to include('https://collector.example.com')
+    end
+  end
 end

@@ -6,6 +6,8 @@ module BetterTogether
   class Event < ApplicationRecord
     include Attachments::Images
     include Categorizable
+    include Citable
+    include Claimable
     include Creatable
     include FriendlySlug
     include Identifier
@@ -15,6 +17,7 @@ module BetterTogether
     include Metrics::Viewable
     include Privacy
     include RecurringSchedulable
+    include Searchable
     include Seedable
     include TimezoneAttributeAliasing
     include TrackedActivity
@@ -46,6 +49,16 @@ module BetterTogether
     translates :description, backend: :action_text
 
     slugged :name
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     validates :name, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,

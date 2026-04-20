@@ -42,8 +42,6 @@ module BetterTogether
 
     # Returns the people that the agent is permitted to message
     def permitted_participants
-      return platform_people if admin_participant_access?
-
       admin_and_opted_in_participants
     end
 
@@ -63,12 +61,6 @@ module BetterTogether
     end
 
     private
-
-    def admin_participant_access?
-      permitted_to?('list_person') ||
-        permitted_to?('manage_platform_members') ||
-        permitted_to?('manage_platform')
-    end
 
     def platform_steward_ids
       BetterTogether::PersonPlatformMembership
@@ -115,6 +107,7 @@ module BetterTogether
       return ids unless platform&.host? && platform.community.present?
 
       host_community_ids = BetterTogether::PersonCommunityMembership
+                           .active
                            .where(joinable: platform.community)
                            .pluck(:member_id)
 

@@ -30,16 +30,20 @@ RSpec.describe BetterTogether::Seeds::LinkedSeedIngestService do
     let(:seed_data) do
       record = create(:better_together_post, creator: grant.grantor_person, privacy: 'private', platform: connection.source_platform)
 
-      BetterTogether::Seeds::FederatedSeedBuilder.call(
-        record:,
-        connection:,
+      BetterTogether::Seeds::Builder.call(
+        subject: record,
+        profile: :private_linked,
+        context: {
+          connection: connection,
+          origin_metadata: {
+            person_access_grant_id: grant.id,
+            recipient_identifier: grant.grantee_person.identifier,
+            required_scope: 'private_posts'
+          }
+        },
         lane: 'private_linked',
-        origin_metadata: {
-          person_access_grant_id: grant.id,
-          recipient_identifier: grant.grantee_person.identifier,
-          required_scope: 'private_posts'
-        }
-      )
+        persist: false
+      ).seed_hash
     end
 
     it 'imports private linked seeds into the recipient-scoped cache' do

@@ -49,6 +49,7 @@ module BetterTogether
 
       render_not_found && return if @resource.nil?
 
+      instance_variable_set("@#{resource_name}", @resource)
       @resource
     end
     # rubocop:enable Metrics/AbcSize
@@ -60,7 +61,8 @@ module BetterTogether
     end
 
     def set_metric_viewable
-      self.metric_viewable = resource_instance
+      set_resource_instance unless @resource&.persisted?
+      self.metric_viewable = @resource if @resource&.persisted?
     end
   end
 end

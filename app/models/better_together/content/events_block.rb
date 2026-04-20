@@ -15,7 +15,7 @@ module BetterTogether
       validates :event_scope, inclusion: { in: EVENT_SCOPES }
 
       def self.content_addable?
-        true
+        false
       end
 
       def self.extra_permitted_attributes

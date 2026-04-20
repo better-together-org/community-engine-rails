@@ -22,24 +22,40 @@ class AddLocaleToActiveStorageAttachments < ActiveRecord::Migration[7.1]
     # Step 3: make column not null
     change_column_null :active_storage_attachments, :locale, false, I18n.default_locale.to_s
 
-    # Step 4: add unique index to enforce one attachment per record/name/locale
+    # Step 4: replace the stock uniqueness index with a locale-aware variant that
+    # still allows multiple blobs per Action Text rich text.
+    remove_index :active_storage_attachments, name: :index_active_storage_attachments_uniqueness if
+      index_exists?(:active_storage_attachments,
+                    %i[record_type record_id name blob_id],
+                    name: :index_active_storage_attachments_uniqueness)
+
     unless index_exists?(:active_storage_attachments,
-                         %i[record_type record_id name locale],
-                         name: :index_active_storage_attachments_on_record_and_name_and_locale)
+                         %i[record_type record_id name blob_id locale],
+                         name: :index_active_storage_attachments_uniqueness)
       add_index :active_storage_attachments,
-                %i[record_type record_id name locale],
+                %i[record_type record_id name blob_id locale],
                 unique: true,
-                name: :index_active_storage_attachments_on_record_and_name_and_locale
+                name: :index_active_storage_attachments_uniqueness
     end
   end
 
   # rubocop:enable Metrics/MethodLength
 
   def down
-    if index_exists?(:active_storage_attachments, %i[record_type record_id name locale],
-                     name: :index_active_storage_attachments_on_record_and_name_and_locale)
-      remove_index :active_storage_attachments, name: :index_active_storage_attachments_on_record_and_name_and_locale
+    remove_index :active_storage_attachments, name: :index_active_storage_attachments_uniqueness if
+      index_exists?(:active_storage_attachments,
+                    %i[record_type record_id name blob_id locale],
+                    name: :index_active_storage_attachments_uniqueness)
+
+    unless index_exists?(:active_storage_attachments,
+                         %i[record_type record_id name blob_id],
+                         name: :index_active_storage_attachments_uniqueness)
+      add_index :active_storage_attachments,
+                %i[record_type record_id name blob_id],
+                unique: true,
+                name: :index_active_storage_attachments_uniqueness
     end
+
     remove_column :active_storage_attachments, :locale if column_exists?(:active_storage_attachments, :locale)
   end
 end

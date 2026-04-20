@@ -10,28 +10,35 @@ module BetterTogether
           model_name.constantize
         end
 
-        def index_name
-          model_class.__elasticsearch__.index_name
+        def search_scope_name
+          model_class.search_scope_name
         end
 
         def relation
-          model_class.all
+          model_class.search_relation
         end
 
         def db_count
           relation.count
         end
-      end
 
-      ENTRIES = [
-        Entry.new(model_name: 'BetterTogether::Page', global_search: true),
-        Entry.new(model_name: 'BetterTogether::Post', global_search: true)
-      ].freeze
+        def search_relation(query)
+          model_class.search_backend_query(query)
+        end
+
+        def pg_search_enabled?
+          model_class.pg_search_enabled?
+        end
+      end
 
       module_function
 
       def entries
-        ENTRIES
+        searchable_models = BetterTogether::Searchable.included_in_models.select do |model|
+          model.respond_to?(:search_registry_entry) && model.base_class == model
+        end
+
+        searchable_models.map(&:search_registry_entry).sort_by(&:model_name)
       end
 
       def models
@@ -43,7 +50,7 @@ module BetterTogether
       end
 
       def unmanaged_searchable_models
-        BetterTogether::Searchable.included_in_models - models
+        BetterTogether::Searchable.included_in_models.reject { |model| model.respond_to?(:search_registry_entry) }
       end
     end
   end

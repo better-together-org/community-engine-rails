@@ -30,7 +30,7 @@ module BetterTogether
 
         # Relationships
         has_one :user
-        has_many :communities
+        has_many :communities, relation_name: :member_communities
         has_many :person_community_memberships
         # TODO: Enable when corresponding resources are created
         # has_many :conversations

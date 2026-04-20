@@ -124,6 +124,49 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(response).to have_http_status(:ok)
       expect(assigns(:community)).to eq(community)
     end
+
+    it 'shows a membership review shortcut for reviewers' do
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Taylor Reviewer')
+
+      get better_together.community_path(locale:, id: community.slug)
+
+      expect(response.body).to include('Membership request review')
+      expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
+    end
+  end
+
+  describe 'GET /:locale/c/:slug (show) membership review access', :as_user do
+    let(:community_manager_role) do
+      BetterTogether::Role.find_by(identifier: 'community_manager',
+                                   resource_type: 'BetterTogether::Community') ||
+        create(:better_together_role,
+               identifier: 'community_manager',
+               name: 'Community Manager',
+               resource_type: 'BetterTogether::Community')
+    end
+    let(:community) do
+      create(:better_together_community,
+             name: 'Managed Community',
+             privacy: 'public',
+             creator: platform_manager.person)
+    end
+
+    before do
+      create(:better_together_person_community_membership,
+             :active,
+             member: regular_user.person,
+             joinable: community,
+             role: community_manager_role)
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Pat Applicant')
+    end
+
+    it 'shows the review shortcut to community managers' do
+      get better_together.community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Membership request review')
+      expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
+    end
   end
 
   describe 'GET /:locale/c/:slug (show) - access control' do
@@ -211,6 +254,9 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
   end
 
   describe 'POST /:locale/c', :as_platform_manager do
+    let!(:content_publishing_agreement) do
+      BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+    end
     let(:community_name) { "New Community #{SecureRandom.hex(4)}" }
     let(:valid_params) do
       {
@@ -220,6 +266,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
           privacy: 'public'
         }
       }
+    end
+
+    before do
+      BetterTogether::AgreementParticipant.find_or_create_by!(
+        participant: platform_manager.person,
+        agreement: content_publishing_agreement
+      ) do |participant|
+        participant.person = platform_manager.person
+        participant.accepted_at = Time.current
+      end
     end
 
     it 'creates a new community' do
@@ -251,6 +307,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(community.identifier).to match(/^[a-z0-9-]+$/)
       expect(community.identifier).to eq(identifier)
     end
+
+    it 'defaults new communities to invitation-only with membership requests closed' do
+      post better_together.communities_path(locale:), params: valid_params
+
+      identifier = response.location.match(%r{/c/([^/?]+)})[1]
+      community = BetterTogether::Community.find_by!(identifier:)
+
+      expect(community.requires_invitation).to be(true)
+      expect(community.allow_membership_requests).to be(false)
+    end
   end
 
   describe 'GET /:locale/c/:slug/edit', :as_platform_manager do
@@ -264,9 +330,44 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       get better_together.edit_community_path(locale:, id: community.slug)
       expect(response).to have_http_status(:ok)
     end
+
+    it 'uses proxied attachment URLs for existing image previews' do
+      community.profile_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-profile.svg',
+        content_type: 'image/svg+xml'
+      )
+      community.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+      community.logo.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-logo.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get better_together.edit_community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.profile_image, only_path: true))
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.cover_image, only_path: true))
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.logo, only_path: true))
+    end
+
+    it 'renders the community contributor display setting on edit' do
+      get better_together.edit_community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('community[contributors_display_visibility]')
+    end
   end
 
   describe 'PATCH /:locale/c/:slug', :as_platform_manager do
+    let!(:content_publishing_agreement) do
+      BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+    end
     let(:community) do
       create(:better_together_community,
              name: 'Original Name',
@@ -281,6 +382,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
           privacy: 'public'
         }
       }
+    end
+
+    before do
+      BetterTogether::AgreementParticipant.find_or_create_by!(
+        participant: platform_manager.person,
+        agreement: content_publishing_agreement
+      ) do |participant|
+        participant.person = platform_manager.person
+        participant.accepted_at = Time.current
+      end
     end
 
     it 'updates the community using slug' do
@@ -301,6 +412,18 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       community.reload
       expect(community.slug).to eq(original_slug)
       expect(community.name).to eq('Updated Name')
+    end
+
+    it 'persists the community contributor display setting' do
+      patch better_together.community_path(locale:, id: community.slug), params: {
+        community: {
+          name_en: 'Updated Name',
+          contributors_display_visibility: 'off'
+        }
+      }
+
+      expect(response).to have_http_status(:found)
+      expect(community.reload.contributors_display_visibility).to eq('off')
     end
 
     it 'updates slug when explicitly set' do
@@ -551,6 +674,50 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
         get better_together.community_path(locale:, id: community.slug)
         expect_html_content('Past Event')
         expect(response.body).to include('past_events_list')
+      end
+
+      it 'shows evidence summary metadata on community event cards' do
+        create(:claim, claimable: upcoming_event, statement: 'Upcoming events need traceable evidence.')
+        create(:citation,
+               citeable: upcoming_event,
+               reference_key: 'community_event_source',
+               title: 'Community Event Source',
+               metadata: {
+                 'imported_from_reference_key' => 'review_notes',
+                 'imported_from_record_label' => 'Consensus Reviewer: Reviewer',
+                 'imported_from_citation_id' => 'source-citation-id'
+               })
+
+        get better_together.community_path(locale:, id: community.slug)
+
+        expect(response.body).not_to include('Evidence:')
+        expect(response.body).not_to include('1 claim')
+        expect(response.body).not_to include('1 citation')
+        expect(response.body).not_to include('1 imported')
+      end
+
+      it 'keeps community page contribution and evidence summaries out of public cards' do
+        page = create(:better_together_page,
+                      community: community,
+                      privacy: 'public',
+                      published_at: 1.day.ago)
+        contributor = create(:better_together_person, name: 'Community Page Maintainer')
+        page.add_governed_contributor(contributor, role: 'editor')
+        page.contributions.first.update!(details: {
+                                           'github_handle' => 'community-maintainer',
+                                           'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                         })
+        create(:claim, claimable: page, statement: 'Community pages should expose evidence summaries.')
+        create(:citation, citeable: page, reference_key: 'community_page_source', title: 'Community Page Source')
+
+        get better_together.community_path(locale:, id: community.slug)
+
+        expect(response.body).to include('pages-tab')
+        expect(response.body).to include(page.title)
+        expect(response.body).not_to include('Contributors:')
+        expect(response.body).not_to include('GitHub-linked')
+        expect(response.body).not_to include('GitHub: @community-maintainer')
+        expect(response.body).not_to include('Evidence:')
       end
 
       it 'does not show create event button' do

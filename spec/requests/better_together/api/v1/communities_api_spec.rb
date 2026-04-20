@@ -11,6 +11,9 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
   let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
   let(:platform_manager_headers) { api_auth_headers(platform_manager_user, token: platform_manager_token) }
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   describe 'GET /api/v1/communities' do
     let(:url) { '/api/v1/communities' }
@@ -124,7 +127,14 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
     end
 
     context 'when authenticated with permission' do
-      before { post url, params: valid_params.to_json, headers: platform_manager_headers }
+      before do
+        create(:better_together_agreement_participant,
+               agreement: content_publishing_agreement,
+               participant: platform_manager_user.person,
+               accepted_at: Time.current)
+
+        post url, params: valid_params.to_json, headers: platform_manager_headers
+      end
 
       it 'verifies platform manager permissions' do
         expect(platform_manager_token).to be_present

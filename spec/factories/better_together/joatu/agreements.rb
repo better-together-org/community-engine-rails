@@ -8,5 +8,6 @@ FactoryBot.define do
     request
     terms { 'Standard terms' }
     value { '10 tokens' }
+    privacy { 'private' }
   end
 end

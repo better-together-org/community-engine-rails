@@ -2,9 +2,7 @@
 <html lang="<%= I18n.locale %>">
   <head>
     <meta charset="utf-8">
-    <% if ENV["SENTRY_CLIENT_KEY"] %>
-      <script src="https://js-de.sentry-cdn.com/<%= ENV["SENTRY_CLIENT_KEY"] %>.min.js" crossorigin="anonymous"></script>
-    <% end %>
+    <%= render_provider_head_tags %>
 
     <!-- Custom Head Javascript from Host App -->
     <%= render 'layouts/better_together/custom_head_javascript' %>
@@ -27,8 +25,10 @@
     <%= csrf_meta_tags %>
     <% if current_user&.person %>
       <%= tag.meta name: "current-person-id", content: current_user.person.id %>
-      <%# Short-lived JWT for in-browser API calls (e.g. E2E key backup). Never log or expose this value. %>
-      <%= tag.meta name: "current-user-token", content: current_user_api_token %>
+      <% if e2ee_messaging_enabled? %>
+        <%# Short-lived JWT for in-browser API calls (e.g. E2E key backup). Never log or expose this value. %>
+        <%= tag.meta name: "current-user-token", content: current_user_api_token %>
+      <% end %>
     <% end %>
     <%= csp_meta_tag %>
     <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
@@ -44,12 +44,6 @@
       <link rel="alternate" type="application/xml" hreflang="<%= locale %>" href="<%= sitemap_path(locale: locale) %>">
     <% end %>
 
-    <!-- Default Stylesheets -->
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.9.2/slimselect.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
     <%= stylesheet_link_tag 'better_together/application', media: 'all', 'data-turbo-track': 'reload' %>
 
     <!-- Custom Stylesheets from Host App -->
@@ -73,6 +67,8 @@
         <%= yield %>
       </main>
 
+      <%= render 'layouts/better_together/agreement_modal_shell' %>
+
       <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
 
       <!-- Custom Footer from Host App -->
@@ -80,23 +76,6 @@
 
       <!-- Custom Mobile Bar from Host App -->
       <%= content_for?(:custom_mobile_bar) ? yield(:custom_mobile_bar) : render('layouts/better_together/mobile_bar') %>
-
-      <!-- E2E session initialiser (conversation-enabled users only; skipped in test env to prevent modal interference) -->
-      <% unless Rails.env.test? %>
-        <% if current_user&.person %>
-          <div data-controller="better-together--e2e-session"
-               data-better-together--e2e-session-person-id-value="<%= current_user.person.id %>"
-               data-better-together--e2e-session-passphrase-backup-message-value="<%= t('better_together.e2e.session.passphrase_backup_message') %>"
-               data-better-together--e2e-session-passphrase-restore-message-value="<%= t('better_together.e2e.session.passphrase_restore_message') %>"
-               data-better-together--e2e-session-confirm-fresh-identity-message-value="<%= t('better_together.e2e.session.confirm_fresh_identity_message') %>"
-               data-better-together--e2e-session-server-error-message-value="<%= t('better_together.e2e.session.server_error_message') %>"
-               hidden></div>
-        <% end %>
-      <% end %>
-
-      <!-- E2E passphrase modal (Bootstrap-based, replaces window.prompt) -->
-      <%= render 'better_together/e2e/passphrase_modal' %>
-
       <!-- Custom Scripts from Host App -->
       <%= render 'layouts/better_together/custom_body_javascript' %>
     </div>

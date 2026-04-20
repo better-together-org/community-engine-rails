@@ -22,6 +22,8 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
         expect(result.platform).to be_persisted
         expect(result.platform.name).to eq('Test Tenant')
         expect(result.platform.host).to be(false)
+        expect(result.platform.csp_img_src).to include('https://*.tile.openstreetmap.org')
+        expect(result.platform.csp_img_src).not_to include('https://unpkg.com')
         expect(result.community).to be_present
         expect(result.admin_user).to be_nil
       end

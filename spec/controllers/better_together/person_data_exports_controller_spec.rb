@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonDataExportsController, :as_user do
   include Devise::Test::ControllerHelpers
-  include Rails.application.routes.url_helpers
+  include BetterTogether::Engine.routes.url_helpers
   include AutomaticTestConfiguration
 
   routes { BetterTogether::Engine.routes }
@@ -20,7 +20,7 @@ RSpec.describe BetterTogether::PersonDataExportsController, :as_user do
         post :create, params: { locale: locale }
       end.to change(BetterTogether::PersonDataExport, :count).by(1)
 
-      expect(response).to redirect_to(settings_my_data_path(locale: locale))
+      expect(response).to redirect_to(BetterTogether::Engine.routes.url_helpers.settings_my_data_path(locale: locale))
     end
   end
 

@@ -28,6 +28,9 @@ module BetterTogether
       geography_regions: 'geography_regions_url',
       geography_settlements: 'geography_settlements_url',
       host_dashboard: 'host_dashboard_url',
+      host_dashboard_membership_review: 'host_dashboard_membership_review_url',
+      host_dashboard_platform_connection_review: 'host_dashboard_platform_connection_review_url',
+      host_dashboard_safety_review: 'host_dashboard_safety_review_url',
       hub: 'hub_url',
       joatu_hub: 'joatu_hub_url',
       joatu_offers: 'joatu_offers_url',
@@ -39,8 +42,11 @@ module BetterTogether
       people: 'people_url',
       posts: 'posts_url',
       platforms: 'platforms_url',
+      platform_connections: 'platform_connections_url',
+      reports: 'reports_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
+      safety_cases: 'safety_cases_url',
       users: 'users_url',
       webhook_endpoints: 'webhook_endpoints_url'
     }

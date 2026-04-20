@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # A gathering
-  class Community < ApplicationRecord
+  class Community < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Contactable
     include HostsEvents
     include Identifier
@@ -14,13 +16,26 @@ module BetterTogether
     include Protected
     include Privacy
     include Metrics::Viewable
+    include Searchable
+    include ::Storext.model
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
-               optional: true
+               optional: true,
+               inverse_of: :created_communities
+    has_one :primary_platform,
+            class_name: '::BetterTogether::Platform',
+            foreign_key: :community_id,
+            inverse_of: :community,
+            dependent: :nullify
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
+    has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
+
+    store_attributes :settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
 
     # Community invitations
     has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
@@ -37,31 +52,53 @@ module BetterTogether
     translates :description, type: :text
     translates :description_html, backend: :action_text
 
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
+
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [2400, 600],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     has_one_attached :logo do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     # Virtual attributes to track removal
@@ -74,14 +111,40 @@ module BetterTogether
     after_create :create_default_calendar
 
     validates :name, presence: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
+
+    def self.extra_permitted_attributes
+      super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
+    end
 
     def as_community
       becomes(self.class.base_class)
     end
 
+    def membership_requests_enabled?(platform: primary_platform)
+      ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
+        ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
+    end
+
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
+    end
+
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        cover_image
+
+      # For other formats, analyze to determine transparency
+      elsif cover_image.content_type == 'image/png'
+        # If PNG with transparency, return the optimized PNG variant
+        cover_image.variant(:optimized_png)
+      else
+        # Otherwise, use the optimized JPG variant
+        cover_image.variant(:optimized_jpeg)
+      end
     end
 
     def optimized_logo
@@ -92,10 +155,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif logo.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        logo.variant(:optimized_png).processed
+        logo.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        logo.variant(:optimized_jpeg).processed
+        logo.variant(:optimized_jpeg)
       end
     end
 
@@ -107,10 +170,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif profile_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        profile_image.variant(:optimized_png).processed
+        profile_image.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        profile_image.variant(:optimized_jpeg).processed
+        profile_image.variant(:optimized_jpeg)
       end
     end
 
@@ -127,13 +190,35 @@ module BetterTogether
     private
 
     def create_default_calendar
-      # Ensure identifiers remain unique across calendars by namespacing with the community identifier
-      calendars.create!(
-        identifier: "default-#{identifier}",
-        name: 'Default',
-        description: I18n.t('better_together.calendars.default_description',
-                            community_name: name,
-                            default: 'Default calendar for %<community_name>s')
+      calendar_identifier = "default-#{identifier}"
+      calendar = build_default_calendar(calendar_identifier)
+      calendar.save! if calendar.new_record? || calendar.changed?
+    rescue ActiveRecord::RecordInvalid => e
+      log_default_calendar_seed_error(e.record, calendar_identifier)
+      raise
+    end
+
+    def build_default_calendar(calendar_identifier)
+      calendars.find_or_initialize_by(identifier: calendar_identifier).tap do |calendar|
+        # Calendar slugs are globally unique, so the default calendar also needs
+        # a deterministic unique slug rather than the shared "default" slug.
+        calendar.slug = calendar_identifier if calendar.slug.blank?
+        calendar.name = 'Default' if calendar.name.blank?
+        calendar.description = I18n.t(
+          'better_together.calendars.default_description',
+          community_name: name,
+          default: 'Default calendar for %<community_name>s'
+        )
+      end
+    end
+
+    def log_default_calendar_seed_error(record, calendar_identifier)
+      Rails.logger.error(
+        '[BetterTogether::Community#create_default_calendar] ' \
+        "community_id=#{id} identifier=#{identifier} " \
+        "calendar_identifier=#{calendar_identifier} errors=#{record.errors.full_messages.join(' | ')} " \
+        "attrs=#{record.attributes.slice('id', 'community_id', 'identifier', 'locale', 'privacy', 'protected').inspect} " \
+        "slug=#{record.try(:slug).inspect} name=#{record.try(:name).inspect}"
       )
     end
 

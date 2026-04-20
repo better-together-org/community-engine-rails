@@ -96,6 +96,9 @@ module BetterTogether
       # rubocop:enable Metrics/AbcSize
 
       def build_footer # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+        previous_skip_navigation_touches = BetterTogether.skip_navigation_touches
+        BetterTogether.skip_navigation_touches = true
+
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create Platform Footer Pages
           footer_pages = ::BetterTogether::Page.create!(
@@ -232,44 +235,20 @@ module BetterTogether
           )
 
           # Create contributor agreement pages separately for nested navigation
-          contributor_agreement_pages = ::BetterTogether::Page.create!(
-            [
-              {
-                title_en: 'Code Contributor Agreement',
-                slug_en: 'code-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                show_title: false,
-                page_blocks_attributes: [
-                  {
-                    block_attributes: {
-                      type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/code_contributor_agreement',
-                      css_settings: { container_class: '', css_classes: 'my-4' }
-                    }
-                  }
-                ]
-              },
-              {
-                title_en: 'Content Contributor Agreement',
-                slug_en: 'content-contributor-agreement',
-                published_at: Time.zone.now,
-                privacy: 'public',
-                protected: true,
-                show_title: false,
-                page_blocks_attributes: [
-                  {
-                    block_attributes: {
-                      type: 'BetterTogether::Content::Template',
-                      template_path: 'better_together/static_pages/content_contributor_agreement',
-                      css_settings: { container_class: '', css_classes: 'my-4' }
-                    }
-                  }
-                ]
-              }
-            ]
-          )
+          contributor_agreement_pages = [
+            ensure_static_page!(
+              identifier: 'code_contributor_agreement',
+              title: 'Code Contributor Agreement',
+              slug: 'code-contributor-agreement',
+              template_path: 'better_together/static_pages/code_contributor_agreement'
+            ),
+            ensure_static_page!(
+              identifier: 'content_contributor_agreement',
+              title: 'Content Contributor Agreement',
+              slug: 'content-contributor-agreement',
+              template_path: 'better_together/static_pages/content_contributor_agreement'
+            )
+          ]
 
           # Create Platform Footer Navigation Area and its Navigation Items
           area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-footer') do |area|
@@ -311,9 +290,14 @@ module BetterTogether
 
           area.save!
         end
+      ensure
+        BetterTogether.skip_navigation_touches = previous_skip_navigation_touches
       end
 
       def build_header # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
+        previous_skip_navigation_touches = BetterTogether.skip_navigation_touches
+        BetterTogether.skip_navigation_touches = true
+
         I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
           # Create platform header pages
           header_pages = ::BetterTogether::Page.create(
@@ -418,6 +402,8 @@ module BetterTogether
 
           area.save!
         end
+      ensure
+        BetterTogether.skip_navigation_touches = previous_skip_navigation_touches
       end
 
       # rubocop:todo Metrics/MethodLength
@@ -742,6 +728,36 @@ module BetterTogether
             ]
           )
         end
+      end
+
+      def ensure_static_page!(identifier:, title:, slug:, template_path:) # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+        page = ::BetterTogether::Page.find_by(identifier:) ||
+               ::BetterTogether::Page.i18n.find_by(slug:) ||
+               ::BetterTogether::Page.i18n.find_by(title:)
+
+        page ||= ::BetterTogether::Page.new(identifier:)
+        page.assign_attributes(
+          platform: Current.platform || ::BetterTogether::Platform.find_by(host: true) || ::BetterTogether::Platform.first,
+          title_en: title,
+          slug_en: slug,
+          published_at: Time.zone.now,
+          privacy: 'public',
+          protected: true,
+          show_title: false
+        )
+        page.save! if page.new_record? || page.changed?
+
+        template_block = page.template_blocks.detect { |block| block.template_path == template_path }
+        return page if template_block.present?
+
+        page.page_blocks.create!(
+          block: ::BetterTogether::Content::Template.create!(
+            template_path:,
+            css_settings: { container_class: '', css_classes: 'my-4' }
+          )
+        )
+
+        page
       end
 
       def delete_pages

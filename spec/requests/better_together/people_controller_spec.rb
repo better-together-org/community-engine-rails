@@ -7,7 +7,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
 
   describe 'GET /:locale/.../host/p/:id' do
-    let!(:person) { create(:better_together_person) }
+    let!(:person) { create(:better_together_person, privacy: 'public') }
 
     it 'renders show' do
       get better_together.person_path(locale:, id: person.slug)
@@ -15,8 +15,31 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
     end
 
     it 'renders edit' do
-      get better_together.edit_person_path(locale:, id: person.slug)
+      get better_together.edit_person_path(locale:, id: platform_manager.person.slug)
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'uses proxied attachment URLs in the edit form' do
+      platform_manager.person.profile_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'person-profile.svg',
+        content_type: 'image/svg+xml'
+      )
+      platform_manager.person.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'person-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get better_together.edit_person_path(locale:, id: platform_manager.person.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(
+        Rails.application.routes.url_helpers.rails_storage_proxy_path(platform_manager.person.profile_image, only_path: true)
+      )
+      expect(response.body).to include(
+        Rails.application.routes.url_helpers.rails_storage_proxy_path(platform_manager.person.cover_image, only_path: true)
+      )
     end
 
     it 'shows agreement acceptance audit details when present', :aggregate_failures do
@@ -27,7 +50,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       )
       participant = create(
         :better_together_agreement_participant,
-        person:,
+        participant: person,
         agreement:,
         accepted_at: Time.zone.parse('2026-03-30 12:00:00'),
         acceptance_method: :agreement_review,
@@ -38,6 +61,8 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       get better_together.person_path(locale:, id: person.slug)
 
       expect(response).to have_http_status(:ok)
+      expect(assigns(:agreement_participants).map(&:id)).to contain_exactly(participant.id)
+      expect(assigns(:agreement_participants).first.association(:agreement)).to be_loaded
       expect(response.body).to include(participant.agreement_title_snapshot)
       expect(response.body).to include(
         I18n.t(
@@ -47,6 +72,40 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       )
       expect(response.body).to include(I18n.t('better_together.agreements.participant.agreement_revision', timestamp: '').strip)
       expect(response.body).to include(participant.agreement_updated_at_snapshot.in_time_zone.strftime('%B %d, %Y'))
+    end
+
+    it 'shows contribution history and linked github identities when present' do
+      page = create(:better_together_page, privacy: 'public')
+      post = create(:better_together_post, creator: person, author: person, privacy: 'public')
+      page.add_governed_contributor(person, role: 'editor')
+      post.add_governed_contributor(person, role: 'reviewer')
+      page.contributions.first.update!(details: {
+                                         'github_handle' => 'octo-person',
+                                         'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                       })
+      post.contributions.first.update!(details: {
+                                         'github_handle' => 'octo-person',
+                                         'github_sources' => [{ 'reference_key' => 'commit_abc123' }]
+                                       })
+
+      create(
+        :better_together_person_platform_integration,
+        :github,
+        person:,
+        user: person.user || create(:better_together_user, person:),
+        platform: create(:better_together_platform, :external, identifier: "github-#{SecureRandom.hex(3)}"),
+        handle: 'octo-person',
+        profile_url: 'https://github.com/octo-person'
+      )
+
+      get better_together.person_path(locale:, id: person.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Contributions')
+      expect(response.body).to include(page.title)
+      expect(response.body).to include(post.title)
+      expect(response.body).to include('Linked GitHub Identities')
+      expect(response.body).to include('octo-person')
     end
   end
 
@@ -98,6 +157,7 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       get better_together.person_path(locale:, id: person.slug)
       expect(response).to have_http_status(:ok)
 
+      expect(assigns(:all_calendar_events)).to include(draft_event, upcoming_event, ongoing_event, past_event)
       expect(assigns(:draft_events)).to include(draft_event)
       expect(assigns(:upcoming_events)).to include(upcoming_event)
       expect(assigns(:ongoing_events)).to include(ongoing_event)

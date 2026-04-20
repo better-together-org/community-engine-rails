@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::SearchController', :as_user do
   let(:locale) { I18n.default_locale }
-  let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
+  let(:backend) { instance_double(BetterTogether::Search::BaseBackend, backend_key: :elasticsearch) }
   let(:capture_service) { instance_double(BetterTogether::Metrics::SearchQueryCaptureService, call: captured_query) }
   let(:captured_query) { 'test query' }
   let!(:host_platform) { configure_host_platform }
@@ -102,6 +102,193 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         expect do
           get better_together.search_path(locale:), params: { q: '' }
         end.not_to have_enqueued_job(BetterTogether::Metrics::TrackSearchQueryJob)
+      end
+    end
+
+    context 'when the backend returns mixed-visibility records', :no_auth do
+      let!(:public_post) do
+        create(
+          :better_together_post,
+          title: 'Borgberry Public Post',
+          privacy: 'public',
+          published_at: 1.day.ago
+        )
+      end
+
+      let!(:private_post) do
+        create(
+          :better_together_post,
+          title: 'Borgberry Private Post',
+          privacy: 'private',
+          published_at: 1.day.ago
+        )
+      end
+
+      let!(:scheduled_page) do
+        create(
+          :better_together_page,
+          title: 'Borgberry Scheduled Page',
+          privacy: 'public',
+          published_at: 1.day.from_now
+        )
+      end
+
+      before do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [public_post, private_post, scheduled_page],
+            suggestions: ['borgberry private post'],
+            status: :ok,
+            backend: :elasticsearch
+          )
+        )
+      end
+
+      it 'renders only records visible to the current visitor and suppresses suggestions' do
+        get better_together.search_path(locale:), params: { q: 'borgberry' }
+
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
+        expect(response).to have_http_status(:ok)
+        expect(visible_titles).to include('Borgberry Public Post')
+        expect(visible_titles).not_to include('Borgberry Private Post')
+        expect(visible_titles).not_to include('Borgberry Scheduled Page')
+        expect(response.body).not_to include('Did you mean?')
+        expect(response.body).not_to include('borgberry private post')
+      end
+    end
+
+    context 'when the backend returns records that require authentication', :no_auth do
+      let!(:offer) { create(:better_together_joatu_offer, name: 'Borgberry Mutual Aid Offer') }
+
+      before do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [offer],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+      end
+
+      it 'filters records whose policy denies guest access' do
+        get better_together.search_path(locale:), params: { q: 'borgberry' }
+
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
+        expect(response).to have_http_status(:ok)
+        expect(visible_titles).not_to include('Borgberry Mutual Aid Offer')
+      end
+    end
+
+    context 'when a policy scope includes a polymorphic category preload', :no_auth do
+      let!(:event) do
+        create(
+          :better_together_event,
+          name: 'Community Gathering',
+          privacy: 'public',
+          starts_at: 1.day.from_now,
+          ends_at: 1.day.from_now + 2.hours
+        )
+      end
+      let!(:event_category) { create(:event_category, name: 'Community Events') }
+
+      before do
+        create(:categorization, categorizable: event, category: event_category)
+
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [event],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+      end
+
+      it 'renders visible results without raising on the policy scope preload' do
+        get better_together.search_path(locale:), params: { q: 'community' }
+
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
+        expect(response).to have_http_status(:ok)
+        expect(visible_titles).to include('Community Gathering')
+      end
+    end
+
+    context 'when the backend returns a platform result', :no_auth do
+      let!(:platform_result) do
+        create(
+          :better_together_platform,
+          name: 'Community Engine Platform',
+          host_url: 'https://communityengine.app',
+          privacy: 'public'
+        )
+      end
+
+      it 'renders the default platform card instead of a table row partial' do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [platform_result],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+
+        get better_together.search_path(locale:), params: { q: 'community engine' }
+
+        platform_dom_id = ActionView::RecordIdentifier.dom_id(platform_result)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(%(div id="#{platform_dom_id}"))
+        expect(response.body).not_to include(%(<tr id="#{platform_dom_id}"))
+      end
+    end
+
+    context 'when the backend returns the current user private content', :as_user do
+      let(:user) { BetterTogether::User.find_by!(email: 'user@example.test') }
+      let!(:own_private_post) do
+        create(
+          :better_together_post,
+          title: 'My Borgberry Draft',
+          privacy: 'private',
+          published_at: 1.day.ago,
+          creator: user.person,
+          author: user.person
+        )
+      end
+
+      let!(:other_private_post) do
+        create(
+          :better_together_post,
+          title: 'Someone Else Borgberry Draft',
+          privacy: 'private',
+          published_at: 1.day.ago
+        )
+      end
+
+      before do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [own_private_post, other_private_post],
+            suggestions: ['someone else borgberry draft'],
+            status: :ok,
+            backend: :elasticsearch
+          )
+        )
+      end
+
+      it 'keeps authorized private records while filtering unauthorized ones' do
+        get better_together.search_path(locale:), params: { q: 'borgberry' }
+
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
+        expect(response).to have_http_status(:ok)
+        expect(visible_titles).to include('My Borgberry Draft')
+        expect(visible_titles).not_to include('Someone Else Borgberry Draft')
+        expect(response.body).not_to include('Did you mean?')
       end
     end
 

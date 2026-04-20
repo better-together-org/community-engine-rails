@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_host_platform_profile",
+  "device": "desktop",
+  "url": "/en/platforms/community-engine-host",
+  "title": "Community Engine Host | Platforms | Community Engine Host",
+  "locale": "en",
+  "feature_set": "release_0_11_0_federation_platform",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}

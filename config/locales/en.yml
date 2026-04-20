@@ -595,17 +595,31 @@ en:
       better_together/category: Category
       better_together/checklist: Checklist
       better_together/community: Community
+      better_together/content/accordion_block: Accordion
+      better_together/content/alert_block: Alert
       better_together/content/block: Block
+      better_together/content/call_to_action_block: Call to Action
+      better_together/content/checklist_block: Checklist
+      better_together/content/communities_block: Communities
       better_together/content/css: Custom CSS
+      better_together/content/events_block: Events
       better_together/content/hero: Hero
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/link: Link
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Mermaid Diagram
+      better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
+      better_together/content/people_block: People
+      better_together/content/platform_block: Platform
+      better_together/content/posts_block: Posts
+      better_together/content/quote_block: Quote
       better_together/content/rich_text: Rich Text
+      better_together/content/statistics_block: Statistics
       better_together/content/template: Template File
+      better_together/content/video_block: Video
       better_together/conversation: Conversation
       better_together/conversation_participant: Conversation Participant
       better_together/event: Event
@@ -666,6 +680,50 @@ en:
       private: Private
       public: Public
   better_together:
+    access_modes:
+      actions:
+        create_account: Create account
+        join_now: Join now
+        request_to_join: Request to join
+        sign_in: Sign in
+      already_member: You are already a member of this community.
+      current_status:
+        active: You are already a member.
+        pending: Your request is pending review.
+      descriptions:
+        generic:
+          invitation: People need an invitation before they can join this space.
+          open: People can join right away without waiting for approval.
+          request: People can ask to join. A coordinator reviews requests before access
+            is granted.
+        platform:
+          invitation: People need an invitation before they can create an account
+            here.
+          open: People can create an account and join without waiting for approval.
+      form:
+        community_help: Choose whether this community is invitation-only or may allow
+          membership requests.
+        community_invitation_help: Communities default to invitation-only. Turn this
+          off only when you intentionally want self-service joins or membership requests.
+        community_invitation_only: Require an invitation before someone can join this
+          community
+        community_requests: Require people to request access before becoming members
+        community_requests_hint: Community membership requests stay closed unless
+          both this community and the platform allow requests, and invitation-only
+          access is turned off.
+        platform_help: Choose whether people can create an account directly or need
+          an invitation first.
+        platform_invitation_help: Invitations can prefill email addresses and assign
+          platform or community roles after acceptance.
+        platform_invitation_only: Require an invitation before someone can register
+      heading: How people join
+      labels:
+        invitation: Invitation only
+        open: Open join
+        request: Request to join
+      membership_joined: You joined this community.
+      membership_request_pending: Your membership request is already pending.
+      membership_requested: Your membership request was submitted.
     addresses:
       add: Add Address
       address: Address
@@ -692,13 +750,20 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      accept: I agree
+      accept_error: Unable to record agreement acceptance right now.
+      accepted: Accepted
+      accepting: Saving...
       create:
         acceptance_required: You must accept all required agreements to continue.
         successfully_accepted: Thank you for accepting the required agreements.
       form:
+        active_for_consent: Active for consent
+        agreement_kind: Agreement kind
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
         page_label: Linked Page (optional)
+        required_for: Required for
       no_terms: No terms defined.
       notice:
         body: Please view the full agreement before accepting.
@@ -753,6 +818,24 @@ en:
         view_agreement: View Agreement
     application:
       name: Better Together
+    authorable_contributor_visibility:
+      hints:
+        community: Override the platform default for pages in this community, or inherit
+          the platform setting.
+        page: Choose whether this page shows contributor bylines on public-facing
+          views, or inherits the community/platform setting.
+        platform: Sets the default byline visibility for pages and posts unless a
+          community or record overrides it.
+        post: Choose whether this post shows contributor bylines on public-facing
+          views, or inherits the platform setting.
+      labels:
+        community: Community contributor display
+        platform: Default contributor display
+        record: Contributor display
+      options:
+        'false': Hide contributor bylines
+        inherit: Inherit
+        'true': Show contributor bylines
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -767,6 +850,19 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    bot_defense:
+      errors:
+        expired_challenge: Security verification expired. Please reload the form and
+          try again.
+        generic: Security verification failed. Please try again.
+        honeypot_triggered: Security verification failed. Please try again.
+        invalid_challenge: Security verification expired. Please reload the form and
+          try again.
+        replayed_challenge: This security check has already been used. Please reload
+          the form and try again.
+        submitted_too_quickly: Please take a moment to review your submission before
+          sending it.
+      trap_label: Leave this field blank
     buildings:
       add: Add
       title: Buildings
@@ -812,7 +908,7 @@ en:
       hint_label: Short title for the checklist item (required).
       hint_parent: 'Optional: nest this item under another. Maximum nesting depth
         is 2.'
-      hint_privacy: 'Choose who can see this item: Public or Private.'
+      hint_privacy: 'Choose who can see this item: Public, Community, or Private.'
       label: Label
       move_down: Move down
       move_up: Move up
@@ -834,13 +930,44 @@ en:
         items_title: Items
         no_items: No items to display
     communities:
+      form:
+        allow_membership_requests: Allow membership requests
+        allow_membership_requests_hint: Show a public membership request form for
+          this community when the configured access model allows it.
       index:
         new_btn_text: New Community
+      membership_review:
+        description:
+          one: "%{community_name} has 1 open membership request ready for review."
+          other: "%{community_name} has %{count} open membership requests ready for
+            review."
+        heading: Membership request review
+        open_requests_badge:
+          one: 1 open request
+          other: "%{count} open requests"
+        review_link: Review requests
       new:
         title: Communities
       none-yet: None-yet
       show:
+        about:
+          no_description: No description available.
+        actions:
+          destroy_aria: Delete community
+          edit_aria: Edit community
         create_event: Create an Event
+        events:
+          create_event: Create an Event
+          draft_heading: Draft
+        members:
+          add_member_modal:
+            close: Close
+            select_person: Select Person *
+            select_person_prompt: Select a person
+            select_role: Select Role *
+            submit: Add
+            title: Add New Member
+        sections_aria: Community sections
       tabs:
         buildings: Buildings
         contact_details: Contact details
@@ -921,6 +1048,14 @@ en:
           open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        hero:
+          editor:
+            background: Background
+            cta_button: CTA Button
+            cta_url_invalid: Please provide a valid URL starting with http:// or https://.
+            heading_color: Heading Color
+            overlay_color: Overlay Color
+            paragraph_color: Paragraph Color
         iframe_block:
           csp_help: If this embed is not allowlisted for the current platform, Community
             Engine shows a visible guidance message instead of a blank iframe.
@@ -1014,6 +1149,37 @@ en:
         privacy: Privacy Policy
         subprocessors: Subprocessors
         terms_of_service: Terms of Service
+    content_actions:
+      menu_label: Actions for %{resource}
+      report:
+        description: Flag this content for moderator review.
+        label: Report safety issue
+      trigger_label: More actions for %{resource}
+      trigger_text: Actions
+    content_security:
+      attachments:
+        held:
+          fallback_filename: This attachment
+          message: "%{filename} is being reviewed before it can be displayed."
+          title: Attachment under review
+        restricted:
+          message: "%{filename} is currently restricted while a reviewer checks it."
+          title: Attachment restricted
+    contributions:
+      form:
+        add: Add contributor
+        contributor: Contributor
+        contributor_type: Contributor type
+        description: Assign people or robots to this record with explicit contribution
+          roles.
+        entry_help: Choose a contributor type, contributor, and role.
+        heading: Contributors
+        new_entry: New contributor
+        person: Person
+        remove: Remove contributor
+        robot: Robot
+        role: Role
+        select_contributor: Select contributor
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -1417,6 +1583,84 @@ en:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feedback_routing:
+      audience:
+        community_stewards: responsible community stewards
+        platform_content_stewards: responsible platform content stewards
+        platform_safety_team: platform safety team
+        profile_stewards: responsible profile stewards
+      delivery:
+        report_safety_issue:
+          platform_safety_team: Sent privately to the %{audience}.
+        suggest_improvement:
+          community_stewards: Sent to the %{audience} for review.
+          platform_content_stewards: Sent to the %{audience} for review.
+          profile_stewards: Sent to the %{audience} for review.
+      exclusions:
+        report_safety_issue:
+          platform_safety_team: content owners, profile owners, and community or platform
+            stewards do not receive this report automatically.
+      reviewers:
+        community_stewards: community stewards with content review access
+        platform_content_stewards: platform content stewards
+        platform_safety_team: platform safety reviewers
+        profile_stewards: profile and platform stewards
+      summary_labels:
+        not_shared_with: Not automatically shared with
+        reviewers: Reviewers who can act
+        sent_to: Sent to
+        visibility: Visible after submission
+      visibility:
+        private_to_reporter_and_platform_safety: Visible after submission only to
+          you and platform safety reviewers.
+        private_to_submitter_and_stewards: Visible after submission to you and the
+          responsible stewards for this content.
+    feedback_surface:
+      actions_label: "%{surface} actions for %{resource}"
+      aria_label: "%{surface} for %{resource}"
+      description: Use this area to raise safety concerns now and to host editor-reviewed
+        feedback pathways later.
+      page_bar:
+        action: Report safety issue
+        heading: Feedback
+      report:
+        description: Privately flag this content for moderator review.
+        label: Report safety issue
+      scope:
+        community:
+          description: Help moderators review issues affecting this community while
+            leaving room for future governed feedback options.
+          heading: Community feedback
+          label: Community feedback
+        content:
+          description: Help moderators review safety concerns and future governed
+            feedback for this content.
+          heading: Feedback
+          label: Feedback
+        event:
+          description: Raise safety concerns about this event and reserve space for
+            future reviewed participation feedback.
+          heading: Event feedback
+          label: Event feedback
+        page:
+          description: Raise a safety concern about this page now. Future reviewed
+            replies and correction pathways can grow here later.
+          heading: Page feedback
+          label: Page feedback
+        post:
+          description: Raise a safety concern about this post while keeping space
+            for future editor-reviewed discussion tools.
+          heading: Post feedback
+          label: Post feedback
+        profile:
+          description: Raise safety concerns about this profile through a private
+            moderation path.
+          heading: Profile feedback
+          label: Profile feedback
+        section:
+          description: Raise a safety concern about this section of the page.
+          heading: Section feedback
+          label: Section feedback
     geography:
       locatable_location:
         errors:
@@ -1429,6 +1673,8 @@ en:
           title: Settlements
     global:
       add: Add
+    governance:
+      robot_author: Robot author
     host_nav:
       label: Host navigation
       toggle: Host navigation
@@ -1540,6 +1786,9 @@ en:
         request: Request
         request_creator: Request Creator
         show:
+          agreement_family: Agreement Family
+          agreement_type: Agreement Type
+          decision_made_at: Decision Recorded
           details: Details
           open_platform_connections: Open Platform Connections
           platform_connection: Platform Connection
@@ -1601,7 +1850,7 @@ en:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Mutual Aid
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1674,7 +1923,7 @@ en:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: New Joatu match
+        subject: New mutual aid match
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
@@ -1719,6 +1968,36 @@ en:
         signature_text: Best regards, The %{joinable_name} Team
         subject: Your %{joinable_type} membership has been updated for %{joinable_name}
         view_joinable: View %{joinable_type}
+    membership_request_mailer:
+      declined:
+        greeting: Hello %{name},
+        learn_more: View %{community_name}
+        message: Your request to join %{community_name} was declined.
+        reviewed_by: Reviewed by %{decision_actor_name}.
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject: Your membership request for %{community_name} was declined
+      digest:
+        greeting: Hello %{name},
+        message:
+          one: 1 new membership request now needs review for %{community_name}.
+          other: "%{count} new membership requests now need review for %{community_name}."
+        requestors_label: Recent applicants
+        review_requests: Review membership requests
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject:
+          one: 1 membership request needs review for %{community_name}
+          other: "%{count} membership requests need review for %{community_name}"
+      submitted:
+        greeting: Hello %{name},
+        message: "%{requestor_name} asked to join %{community_name}."
+        request_message_label: Message from the requester
+        requestor_email_label: 'Requester email:'
+        review_request: Review membership request
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject: New membership request for %{community_name}
     membership_requests:
       actions:
         approve: Approve
@@ -1757,6 +2036,13 @@ en:
         heading: Request Membership
         intro: Fill in the form below to request membership. We'll be in touch!
       show:
+        authenticated_requestor_flow: Signed-in requestors who are approved become
+          members immediately and receive both in-app and email confirmation.
+        decision_notifications_heading: Decision and notifications
+        decline_flow: Declining notifies the requester by email, and signed-in requestors
+          also receive an in-app notification.
+        email_requestor_flow: Email-only requestors who are approved receive an invitation
+          email so they can create an account and join.
         title: Membership Request
       success:
         body: Thank you! We've received your membership request and will be in touch
@@ -1904,6 +2190,7 @@ en:
           medium_results: Medium
           no_results: No results
           result_quality: Avg results per search
+        loading: Loading...
         search_health:
           backend: Backend
           db_count: DB Count
@@ -1940,7 +2227,6 @@ en:
       shares_controller:
         error_tracking: 'Error tracking share:'
         failed_tracking: Failed to track share.
-        ga_not_initialized: Google Analytics not initialized.
         unsupported_platform: 'Unsupported platform: %{platform}'
       user_account_reports_controller:
         create:
@@ -2049,15 +2335,21 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_membership_review: Membership Review
+        host_dashboard_platform_connection_review: Federation Review
+        host_dashboard_safety_review: Safety Review
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
         pages: Pages
         people: People
+        platform_connections: Platform Connections
         platforms: Platforms
+        reports: Reports
         resource_permissions: Resource Permissions
         roles: Roles
+        safety_cases: Safety Review
         users: Users
       visibility_strategies:
         authenticated: Signed-in users
@@ -2099,6 +2391,17 @@ en:
       membership_removed:
         body: Your %{role_name} membership in %{joinable_name} has been removed
         title: 'Membership removed: %{role_name} in %{joinable_name}'
+      membership_request_declined:
+        body: Your request to join %{community_name} was declined
+        title: Membership request declined for %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
+      membership_request_submitted:
+        body: "%{requestor_name} asked to join %{community_name}"
+        title: New membership request for %{community_name}
       membership_updated:
         body: Your role has been changed from %{old_role_name} to %{new_role_name}
           in %{joinable_name}
@@ -2114,6 +2417,25 @@ en:
         body: A new %{provider} account integration was connected on %{created_at}
         message: New %{provider} integration connected on %{created_at}
         title: New %{provider} integration connected
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: "%{time} ago"
     oauth:
       applications:
@@ -2204,6 +2526,7 @@ en:
         recent_events: Recent Events
         title: Personal Calendar
         upcoming_events: Upcoming Events
+      deleted_name: Deleted person
       device_permissions:
         camera: Camera
         location: Location
@@ -2528,6 +2851,10 @@ en:
         pending: Pending
     platforms:
       form:
+        allow_membership_requests: Allow membership requests
+        allow_membership_requests_hint: Show a public membership request form on the
+          invitation-required registration screen for this platform's primary host
+          community.
         csp_frame_ancestors_text_hint: Who may embed this CE site. Select trusted
           origins or type a new hostname/origin and press Enter. Leave blank to keep
           frame-ancestors 'none'.
@@ -2573,6 +2900,7 @@ en:
       none_body: There are no posts to show right now.
       none_title: No posts yet
       published_on: Published %{date}
+      robot_authors: Robot Authors
       save_post: Save Post
       updated_on_short: Updated
       view_post: View Post
@@ -2619,9 +2947,13 @@ en:
           stay with the safety review team.
         reason_help: Tell us what happened in a short summary. Focus on the main concern
           first.
+        reporting_help: This report stays connected to the specific record you opened
+          from so reviewers can follow the same context.
+        reporting_label: Reporting
         requested_outcome_help: Choose what kind of support you want from the safety
           team. You can ask for support even if you are unsure.
         retaliation_risk: I am worried about retaliation or escalation
+        routing_title: Who can see and act on this report
         submit: Submit report
         title: Report a safety concern
         urgent_help: Contact local emergency services first. This form is for community
@@ -2629,10 +2961,20 @@ en:
         urgent_title: 'If you are in immediate danger:'
       notices:
         created: Report was successfully submitted.
+        followup_created: Your follow-up was added to the report.
       show:
         back: Back to reports
+        followup_empty: No follow-up notes have been added to this report yet.
+        followup_field_help: Share any updated context, clarifications, or evidence
+          you want a reviewer to consider.
+        followup_help: Use this space to add authenticated follow-up evidence, context,
+          or a request for another review without leaving your report history.
+        followup_label: Additional evidence or appeal note
+        followup_submit: Add follow-up
+        followup_title: More information or appeal
         pending_copy: This case is still in progress. A moderator may follow up based
           on your consent settings.
+        reported_record: Reported record
         status: Current status
         summary: Case summary
         title: Safety report
@@ -2768,7 +3110,28 @@ en:
         solidarity_check: Cooperation and solidarity check
         status: Case status
       index:
+        content_review_count: "%{count} awaiting review"
+        content_review_description: Uploads and embedded attachments that are still
+          held for safety or security review appear here before release.
+        content_review_empty: No uploads or embedded attachments are currently waiting
+          for review.
+        content_review_more: Showing %{shown} of %{total} held content items.
+        content_review_surface: 'Source: %{surface}'
+        content_review_title: Content security review items
+        empty: No safety cases match the current filters.
         filter: Filter
+        local_snapshot_description: Deterministic local signals built from reports,
+          cases, and notes. Remote analysis is optional and additive.
+        local_snapshot_generated_at: Generated %{time}
+        local_snapshot_title: Local review snapshot
+        snapshot:
+          content_review_items: Held content items
+          open_cases: Open cases
+          participant_notes: Participant-visible notes
+          repeat_reportables: Repeat reportables
+          retaliation_risk: Retaliation risk
+          unassigned_open: Unassigned open
+          urgent_open: Urgent open
         title: Safety cases
       notices:
         updated: Safety case was updated.
@@ -2833,6 +3196,32 @@ en:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Review the permissions you have granted to linked people,
+                  and the permissions they have granted back to you.
+                open_link: Open access grants
+                title: Access grants
+              linked_seeds:
+                description: Browse synchronized data shared through your approved
+                  platform links.
+                open_link: Open linked seeds
+                title: Linked seeds
+              person_links:
+                description: Review the people and federated connections currently
+                  linked to your account.
+                open_link: Open linked people
+                title: Linked people
+              person_seeds:
+                description: Open your portable seed exports for advanced portability
+                  and interoperability workflows.
+                open_link: Open portable seed exports
+                title: Portable seed exports
+            description: Reach your linked people, access grants, synchronized data,
+              and portable exports from one place.
+            open_link: Open
+            title: Data sharing and portability
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -2845,6 +3234,7 @@ en:
             title: Account deletion requests
           deletion_request_cancelled: Your deletion request has been cancelled.
           deletion_request_created: Your deletion request has been submitted.
+          deletion_request_exists: Your deletion request is already pending review.
           deletion_request_failed: We could not create your deletion request.
           description: View, download, or delete your personal data exports.
           export_not_ready: Your export is not ready yet.
@@ -2855,11 +3245,18 @@ en:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: This export could not be prepared. Please request a new export.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Completed
+              failed: Failed
+              pending: Pending
+              processing: Processing
+            table_caption: Recent account export requests
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
@@ -2985,7 +3382,7 @@ en:
         table_aria: Storage configurations
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
-      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
       new:
         subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
@@ -3004,6 +3401,20 @@ en:
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
     uploads:
+      content_security:
+        badge:
+          clean: Ready
+          restricted: Restricted
+          review_required: Under review
+        form:
+          review_required: This file is being reviewed before it can be displayed
+            or downloaded by other people.
+        status:
+          clean: This upload is ready to insert or share.
+          restricted: This upload is currently restricted while a reviewer checks
+            it.
+          review_required: This upload is being reviewed before it can be inserted
+            into rich text or shared.
       index:
         storage_usage: You're using %{size} of storage
     validators:
@@ -3497,6 +3908,8 @@ en:
       unlocked: Your account has been unlocked successfully. Please sign in to continue.
   devise_omniauth_callbacks:
     failure: There was a problem signing you in through %{kind}. %{reason}
+    generic_failure: There was a problem signing you in. Please register or try signing
+      in later.
     success: Successfully authenticated from %{kind} account.
   doorkeeper:
     errors:
@@ -3669,8 +4082,10 @@ en:
       attendees: Attendees
       contact: Contact
       events: Events
+      federation: Federation
       invitations: Invitations
       members: Members
+      safety: Safety
     to: To
     'true': true
     undo_clear: Undo Clear
@@ -3681,6 +4096,7 @@ en:
     visible: Visible
     'yes': 'Yes'
   helpers:
+    cancel: Cancel
     close: Close
     errors:
       heading: Form Errors
@@ -3754,13 +4170,101 @@ en:
       infrastructure: Infrastructure
       page_title: Host Dashboard
       title: Host Dashboard
+    membership_review:
+      anonymous_requester: Anonymous requester
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      page_title: Membership Review
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      page_title: Federation review
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
       total_resources: Total resources
       view_all: View All
+    safety_review:
+      description: Review the current safety queue from the host dashboard. There
+        are %{open_cases} open cases and %{visible_reports} visible reports in scope.
+      heading: Safety review queue
+      open_cases_badge:
+        one: 1 open case
+        other: "%{count} open cases"
+      page_title: Safety review
+      review_queue_link: Open review queue
+      summary:
+        content_review_items: Content review items
+        participant_updates: Participant updates
+        retaliation_risk: Retaliation risk
+        unassigned_cases: Needs assignment
+      summary_label: Safety review summary
+      urgent_cases_badge:
+        one: 1 urgent case
+        other: "%{count} urgent cases"
+      view_reports_link: Review submitted reports
+      visible_reports_badge:
+        one: 1 visible report
+        other: "%{count} visible reports"
   invitations:
     calculating: Calculating
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Back to top
+        copyright: "%{community_name} © %{year}. All rights reserved."
   locale_name: English
   locales:
     en: English
@@ -3918,6 +4422,65 @@ en:
     actions:
       host_dashboard: Host Dashboard
     confirm_delete: Confirm delete
+    show:
+      about:
+        access: 'Access:'
+        identifier: 'Identifier:'
+        protected: 'Protected:'
+        protected_no: 'No'
+        protected_yes: 'Yes'
+        time_zone: 'Time Zone:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Delete platform
+        edit_aria: Edit platform
+        view_host_dashboard_aria: View host dashboard
+      federation:
+        connection_status: Status
+        description: Review the federation and platform connections currently linked
+          to %{platform}.
+        direction:
+          incoming: Incoming connection
+          outgoing: Outgoing connection
+        empty_state: No federation connections involve this platform yet.
+        new_connection: New Connection
+        open_connections: Open Connections
+        summary:
+          active: Active
+          pending: Pending
+          total: Total Connections
+        title: Federation Connections
+        view_connection: View Connection
+      members:
+        add_member_modal:
+          close: Close
+          search_placeholder: Search for people...
+          select_person: Select Person *
+          select_role: Select Platform Role *
+          submit: Add
+          title: Add New Platform Member
+      operations:
+        description: Open host-level operations for this platform without relying
+          on route knowledge alone.
+        host_dashboard: Host Dashboard
+        storage_configurations: Manage storage
+        title: Platform operations
+      safety:
+        description: Review incoming reports, active safety cases, and participant-visible
+          follow-ups for %{platform}.
+        review_queue: Open Review Queue
+        summary:
+          content_review_items: Content Review Items
+          open_cases: Open Cases
+          participant_updates: Participant Updates
+          repeated_reports: Repeated Reportables
+          retaliation_risk_cases: Retaliation Risk
+          unassigned_cases: Needs Assignment
+          urgent_cases: Urgent
+          visible_reports: Visible Reports
+        title: Safety Review
+        view_reports: Review Submitted Reports
+      sections_aria: Platform sections
   pundit:
     errors:
       create: You are not authorized to create this %{resource}.

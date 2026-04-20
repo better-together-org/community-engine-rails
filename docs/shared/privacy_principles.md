@@ -15,18 +15,12 @@ The Community Engine is designed with privacy as a first principle. Features, de
 - Downloads capture: the filename/content type/size of exported reports, timestamp, and locale.
 - Search queries capture: the query string, count of results, timestamp, and locale.
 
-## Federation: Disabled by Default, Scoped When Enabled
-- Federation is a platform-to-platform trust feature, not a background default.
-- Cross-platform sharing should stay disabled until the participating platforms have agreed on what content and scopes are permitted.
-- Current federation controls are primarily operator-managed through `PlatformConnection` policies and scopes.
-- Until person-level federation consent is fully implemented, production hosts should treat federation activation as a high-trust, fail-closed decision.
-
 ## No Third‑Party Tracking by Default
-- By default, the platform ships without Google Analytics or similar trackers. Error reporting is kept minimal and server‑side.
-- Platform Managers may integrate additional tooling (e.g., Google Analytics, Sentry, Hotjar) per their own privacy policy and consent framework. Hosts are responsible for:
-  - Updating privacy notices and cookie banners.
+- By default, the platform ships without third-party analytics trackers, advertising pixels, or similar browser-based telemetry.
+- Hosts may add external services to their own deployment, but those services are outside the default Community Engine privacy model. Hosts that do so are responsible for:
+  - Updating privacy notices and cookie disclosures.
   - Obtaining consent where required.
-  - Configuring data retention and IP anonymization as applicable.
+  - Configuring retention, minimization, and any provider-specific privacy controls.
 
 ## Data Minimization & Retention
 - Collect only attributes necessary for aggregate insights (counts, trends, breakdowns by locale/page).
@@ -36,4 +30,3 @@ The Community Engine is designed with privacy as a first principle. Features, de
 ## Transparency & Control
 - Make privacy‑relevant settings explicit in admin UIs (e.g., invite‑only, page privacy, metrics/report exports).
 - Keep documentation clear about what is captured and why; give maintainers predictable knobs to disable or scope features.
-- Document any federation relationship in operator runbooks so communities understand what may cross platform boundaries.

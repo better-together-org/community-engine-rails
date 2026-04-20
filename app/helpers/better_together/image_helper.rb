@@ -30,8 +30,7 @@ module BetterTogether
                      end
 
         image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
-      elsif entity.respond_to?(:categories) && entity.categories.with_cover_images.any?
-        category = entity.categories.with_cover_images.first
+      elsif (category = first_category_with_cover_image(entity))
 
         attachment = if category.respond_to?(:optimized_cover_image)
                        category.optimized_cover_image
@@ -70,8 +69,7 @@ module BetterTogether
                      end
 
         image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
-      elsif entity.respond_to?(:categories) && entity.categories.with_cover_images.any?
-        category = entity.categories.with_cover_images.first
+      elsif (category = first_category_with_cover_image(entity))
 
         attachment = if category.respond_to?(:optimized_cover_image)
                        category.optimized_cover_image
@@ -129,7 +127,7 @@ module BetterTogether
                       rails_storage_proxy_url(entity.profile_image_variant(image_size))
                     end
 
-        image_tag(image_url, **image_tag_attributes) if image_url
+        image_tag(same_origin_image_url(image_url), **image_tag_attributes) if image_url
       else
         # Use a default image based on the entity type
         default_image = default_profile_image(entity, image_format)
@@ -156,19 +154,52 @@ module BetterTogether
 
     def render_single_image(image, name)
       content_tag(:div, class: 'col col-12') do
-        image_tag(image.media, alt: name, class: 'img-fluid rounded mb-3')
+        image_tag(storage_proxy_url_for(image.media), alt: name, class: 'img-fluid rounded mb-3')
       end
     end
 
     def render_image_grid(images, name)
       safe_join(images.map do |image|
         content_tag(:div, class: 'col align-content-center col-md-4') do
-          image_tag(image.media, alt: name, class: 'img-fluid rounded')
+          image_tag(storage_proxy_url_for(image.media), alt: name, class: 'img-fluid rounded')
         end
       end)
     end
 
     private
+
+    def first_category_with_cover_image(entity)
+      return unless entity.respond_to?(:categories)
+
+      categories_association = association_for(entity, :categories)
+
+      if categories_association&.loaded?
+        entity.categories.find { |category| attachment_present?(category, :cover_image_attachment, :cover_image) }
+      else
+        entity.categories.with_cover_images.first
+      end
+    end
+
+    def attachment_present?(record, attachment_association, attachment_name)
+      attachment_association_reflection = association_for(record, attachment_association)
+      return attachment_association_reflection.target.present? if attachment_association_reflection&.loaded?
+
+      record.respond_to?(attachment_name) && record.public_send(attachment_name).attached?
+    end
+
+    def association_for(record, association_name)
+      return unless record.respond_to?(:association)
+      return unless record.class.reflect_on_association(association_name)
+
+      record.association(association_name)
+    end
+
+    def same_origin_image_url(image_url)
+      return image_url unless image_url.to_s.start_with?('/')
+      return image_url unless respond_to?(:request) && request
+
+      "#{request.base_url}#{image_url}"
+    end
 
     def default_cover_image(entity, image_format)
       case entity.class.name

@@ -9,12 +9,9 @@
              id: 'joatu-agreements-index',
              i18n_key: 'better_together.joatu.help.agreements.index' %>
   <h1 class="mb-3"><%= t('better_together.joatu.agreements.index.title', default: 'Agreements') %></h1>
-  <ul class="list-group">
-    <% @joatu_agreements.each do |agreement| %>
-      <li class="list-group-item">
-        <%= link_to "#{agreement.offer.name} ↔ #{agreement.request.name}", joatu_agreement_path(agreement) %>
-        <span class="badge bg-secondary float-end"><%= agreement.status %></span>
-      </li>
-    <% end %>
-  </ul>
+  <div class="list-group">
+    <%= render partial: 'better_together/joatu/agreements/agreement_list_item',
+               collection: @joatu_agreements,
+               as: :agreement_list_item %>
+  </div>
 </div>

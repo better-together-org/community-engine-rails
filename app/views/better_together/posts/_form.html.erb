@@ -18,16 +18,7 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if post.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% post.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: post if post.errors.any? %>
 
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_string_field', locals: { model: post, form: form, attribute: 'title' } %>
@@ -55,21 +46,16 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :author_ids, t('better_together.posts.authors', default: 'Authors') %>
-    <%= form.collection_select :author_ids,
-      BetterTogether::Person.all,
-      :id,
-      :select_option_title,
-      {},
-      { multiple: true,
-        class: "form-select#{' is-invalid' if post.errors[:author_ids].any?}",
-        data: { controller: 'better_together--slim-select' } } %>
-    <% if post.errors[:author_ids].any? %>
-      <div class="invalid-feedback">
-        <%= post.errors[:author_ids].join(', ') %>
-      </div>
-    <% end %>
-    <small class="form-text text-muted"><%= t('hints.authors.select_multiple', default: 'Select one or more authors') %></small>
+    <%= governed_contributions_fieldset(form:, record: post) %>
+  </div>
+
+  <div class="mb-3">
+    <%= contributor_display_visibility_field(
+          form:,
+          include_inherit: true,
+          label: t('better_together.authorable_contributor_visibility.labels.record', default: 'Contributor display'),
+          hint: t('better_together.authorable_contributor_visibility.hints.post', default: 'Choose whether this post shows contributor bylines on public-facing views, or inherits the platform setting.')
+        ) %>
   </div>
 
   <div class="mb-3">
@@ -78,7 +64,13 @@
   </div>
 
   <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: post, form: form, attribute: 'content' } %>
+    <%= render partial: 'better_together/shared/translated_rich_text_field',
+               locals: {
+                 model: post,
+                 form: form,
+                 attribute: 'content',
+                 citation_options: post.citation_reference_options
+               } %>
   </div>
 
   <div class="mb-3">

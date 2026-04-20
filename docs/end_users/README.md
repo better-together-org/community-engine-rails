@@ -12,6 +12,7 @@ Welcome! This guide helps community members use Better Together platform feature
 
 ## Safety and Privacy
 - [Safety and Reporting Tools](safety_reporting.md) - Main safety guide and navigation hub
+- [Submission Protection and Security Checks](submission_protection_and_bot_checks.md) - What background anti-bot checks protect public forms
 - [Blocking and Boundaries](blocking_and_boundaries.md) - How to block, unblock, and decide when to block
 - [Reporting Harm and Safety Concerns](reporting_harm_and_safety_concerns.md) - How to use the report flow
 - [After You Report](after_you_report.md) - What you can currently see after submitting a report

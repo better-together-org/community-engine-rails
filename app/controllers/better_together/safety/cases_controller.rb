@@ -12,6 +12,16 @@ module BetterTogether
         authorize BetterTogether::Safety::Case
 
         @safety_cases = filtered_safety_cases
+        @content_security_review_items = BetterTogether::ContentSecurity::Subject
+                                         .review_queue
+                                         .includes(:active_storage_blob)
+                                         .limit(10)
+        @local_review_snapshot = Rails.cache.fetch(
+          BetterTogether::Safety::LocalReviewSnapshotService::CACHE_KEY,
+          expires_in: 15.minutes
+        ) do
+          BetterTogether::Safety::LocalReviewSnapshotService.new.call
+        end
       end
 
       def show

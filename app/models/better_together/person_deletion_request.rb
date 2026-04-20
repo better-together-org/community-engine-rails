@@ -13,7 +13,15 @@ module BetterTogether
     }.freeze
 
     belongs_to :person, class_name: 'BetterTogether::Person', inverse_of: :person_deletion_requests
-    belongs_to :reviewed_by, class_name: 'BetterTogether::Person', optional: true
+    belongs_to :reviewed_by,
+               class_name: 'BetterTogether::Person',
+               optional: true,
+               inverse_of: :reviewed_person_deletion_requests
+
+    has_many :person_purge_audits,
+             class_name: 'BetterTogether::PersonPurgeAudit',
+             dependent: :nullify,
+             inverse_of: :person_deletion_request
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
 
@@ -26,6 +34,24 @@ module BetterTogether
 
     def cancel!
       update!(status: :cancelled, resolved_at: Time.current)
+    end
+
+    def approve!(reviewed_by:, reviewer_notes: nil)
+      update!(
+        status: :approved,
+        reviewed_by:,
+        reviewer_notes:,
+        resolved_at: Time.current
+      )
+    end
+
+    def reject!(reviewed_by:, reviewer_notes: nil)
+      update!(
+        status: :rejected,
+        reviewed_by:,
+        reviewer_notes:,
+        resolved_at: Time.current
+      )
     end
 
     private

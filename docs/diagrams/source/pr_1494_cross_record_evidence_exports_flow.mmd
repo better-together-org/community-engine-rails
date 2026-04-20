@@ -1,0 +1,13 @@
+flowchart TD
+  A[Evidence-bearing record] --> B{Record type}
+  B --> C[Page / Post / Event]
+  B --> D[JOATU Request / Offer / Agreement]
+  B --> E[Agreement / Calendar]
+  C --> F[Shared governance bundle links]
+  D --> F
+  E --> F
+  F --> G[CSL export]
+  F --> H[Governance bundle export]
+  H --> I[Citations with raw platform metadata]
+  H --> J[Claims and evidence links]
+  H --> K[Contributions and GitHub-linked identities]

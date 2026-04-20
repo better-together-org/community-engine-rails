@@ -5,11 +5,54 @@ require 'capybara/rspec'
 
 RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
+  let(:network_admin) do
+    create(:better_together_user, :confirmed, :network_admin, email: 'platform-network-admin@example.test')
+  end
+  let(:approval_operator) do
+    create(:better_together_user, :confirmed, email: 'platform-approver@example.test')
+  end
+  let(:safety_reviewer) do
+    create(:better_together_user, :confirmed, email: 'platform-safety-reviewer@example.test')
+  end
+
+  before do
+    manager_person = BetterTogether::User.find_by(email: 'manager@example.test').person
+    create(:better_together_agreement_participant,
+           agreement: content_publishing_agreement,
+           participant: manager_person,
+           accepted_at: Time.current)
+    permission = BetterTogether::ResourcePermission.find_by(identifier: 'approve_network_connections')
+    next unless permission
+
+    role = create(:better_together_role, :platform_role)
+    BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
+    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+    host_platform.person_platform_memberships.find_or_create_by!(member: approval_operator.person, role:)
+
+    safety_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform_safety')
+    next unless safety_permission
+
+    safety_role = create(:better_together_role, :platform_role)
+    BetterTogether::RoleResourcePermission.create!(role: safety_role, resource_permission: safety_permission)
+    host_platform.person_platform_memberships.find_or_create_by!(member: safety_reviewer.person, role: safety_role)
+  end
 
   describe 'GET /:locale/.../host/platforms' do
     it 'renders index' do
       get better_together.platforms_path(locale:)
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'renders platform rows in the host table view' do
+      platform = create(:better_together_platform, identifier: "row-platform-#{SecureRandom.hex(4)}")
+
+      get better_together.platforms_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(<tr id="#{ActionView::RecordIdentifier.dom_id(platform)}"))
     end
 
     it 'renders show for host platform' do
@@ -18,13 +61,125 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'shows federation access from the platform profile to network admins' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      remote_platform = create(:better_together_platform,
+                               name: 'Neighbourhood Commons',
+                               identifier: "neighbourhood-commons-#{SecureRandom.hex(4)}")
+      unrelated_platform = create(:better_together_platform,
+                                  name: 'Unrelated Platform',
+                                  identifier: "unrelated-platform-#{SecureRandom.hex(4)}")
+      create(:better_together_platform_connection,
+             :active,
+             source_platform: host_platform,
+             target_platform: remote_platform)
+      create(:better_together_platform_connection,
+             :active,
+             source_platform: unrelated_platform,
+             target_platform: create(:better_together_platform))
+
+      sign_in network_admin
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Federation')
+      expect(response.body).to include('Federation Connections')
+      expect(response.body).to include('Open Connections')
+      expect(response.body).to include('Neighbourhood Commons')
+      expect(response.body).not_to include('Unrelated Platform')
+    end
+
+    it 'shows federation access to approval-only operators without creation controls' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      create(:better_together_platform_connection, source_platform: host_platform)
+
+      sign_in approval_operator
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Federation')
+      expect(response.body).to include('Open Connections')
+      expect(response.body).not_to include('New Connection')
+    end
+
+    it 'keeps federation controls hidden for platform managers without connection permissions' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('Federation Connections')
+      expect(response.body).not_to include('Open Connections')
+    end
+
+    it 'shows safety review access from the host platform profile to safety reviewers' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      report = create(:report,
+                      reporter: create(:better_together_person),
+                      reportable: create(:better_together_person),
+                      harm_level: 'urgent',
+                      retaliation_risk: true)
+      safety_case = BetterTogether::Safety::Case.create!(
+        report:,
+        category: report.category,
+        harm_level: report.harm_level,
+        requested_outcome: report.requested_outcome,
+        retaliation_risk: report.retaliation_risk,
+        consent_to_contact: report.consent_to_contact,
+        consent_to_restorative_process: report.consent_to_restorative_process
+      )
+      BetterTogether::Safety::Note.create!(
+        safety_case:,
+        author: safety_reviewer.person,
+        visibility: 'participant_visible',
+        body: 'Participant follow-up added for review.'
+      )
+
+      sign_in safety_reviewer
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Safety')
+      expect(response.body).to include('Safety Review')
+      expect(response.body).to include('Open Review Queue')
+      expect(response.body).to include('Review Submitted Reports')
+      expect(response.body).to include('Retaliation Risk')
+      expect(response.body).to include('Participant Updates')
+    end
+
+    it 'shows platform operations entry points to platform managers' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('platforms.show.operations.title'))
+      expect(response.body).to include(I18n.t('platforms.show.operations.storage_configurations'))
+      expect(response.body).to include(better_together.platform_storage_configurations_path(host_platform, locale: locale))
+    end
+
+    it 'keeps safety review controls hidden for platform managers without safety permissions' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('Safety Review')
+      expect(response.body).not_to include('Open Review Queue')
+    end
+
     it 'shows values-aligned CSP preset options instead of corporate defaults' do
       host_platform = BetterTogether::Platform.find_by(host: true)
       host_platform.update!(
         settings: host_platform.settings.merge(
           'csp_frame_ancestors' => [],
           'csp_frame_src' => [],
-          'csp_img_src' => []
+          'csp_img_src' => [],
+          'csp_script_src' => [],
+          'csp_connect_src' => []
         )
       )
 
@@ -34,14 +189,28 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       frame_src_select = page.find("select[name='platform[csp_frame_src_text][]']", visible: false)
       frame_ancestor_select = page.find("select[name='platform[csp_frame_ancestors_text][]']", visible: false)
       img_src_select = page.find("select[name='platform[csp_img_src_text][]']", visible: false)
+      script_src_select = page.find("select[name='platform[csp_script_src_text][]']", visible: false)
+      connect_src_select = page.find("select[name='platform[csp_connect_src_text][]']", visible: false)
 
       expect(response).to have_http_status(:ok)
       expect(frame_src_select).to have_css("option[value='https://forms.btsdev.ca']", visible: false)
       expect(frame_ancestor_select).to have_css("option[value='https://bebettertogether.ca']", visible: false)
       expect(img_src_select).to have_css("option[value='https://communityengine.app']", visible: false)
+      expect(img_src_select).to have_css("option[value='https://*.tile.openstreetmap.org']", visible: false)
+      expect(script_src_select).not_to have_css('option', visible: false)
+      expect(connect_src_select).not_to have_css('option', visible: false)
       expect(frame_src_select).not_to have_css("option[value='https://www.youtube.com']", visible: false)
       expect(frame_src_select).not_to have_css("option[value='https://player.vimeo.com']", visible: false)
       expect(img_src_select).not_to have_css("option[value='https://images.ctfassets.net']", visible: false)
+    end
+
+    it 'renders the platform contributor display setting on edit' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.edit_platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('platform[contributors_display_visibility]')
     end
   end
 
@@ -66,7 +235,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
           time_zone: host_platform.time_zone,
           csp_frame_ancestors_text: ['bebettertogether.ca'],
           csp_frame_src_text: ['forms.btsdev.ca', 'https://www.youtube.com'],
-          csp_img_src_text: ['images.example.com']
+          csp_img_src_text: ['images.example.com'],
+          csp_script_src_text: ['scripts.example.com'],
+          csp_connect_src_text: ['collector.example.com']
         }
       }
 
@@ -74,6 +245,20 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(host_platform.reload.csp_frame_ancestors).to eq(['https://bebettertogether.ca'])
       expect(host_platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
       expect(host_platform.csp_img_src).to eq(['https://images.example.com'])
+      expect(host_platform.csp_script_src).to eq(['https://scripts.example.com'])
+      expect(host_platform.csp_connect_src).to eq(['https://collector.example.com'])
+    end
+
+    it 'persists the platform contributor display setting' do
+      patch better_together.platform_path(locale:, id: host_platform.slug), params: {
+        platform: {
+          host_url: host_platform.host_url,
+          time_zone: host_platform.time_zone,
+          contributors_display_visibility: 'off'
+        }
+      }
+
+      expect(host_platform.reload.contributors_display_visibility).to eq('off')
     end
 
     it 'applies platform-specific CSP origins to response headers' do # rubocop:disable RSpec/MultipleExpectations
@@ -81,7 +266,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
         settings: host_platform.settings.merge(
           'csp_frame_ancestors' => ['https://bebettertogether.ca'],
           'csp_frame_src' => ['https://forms.btsdev.ca'],
-          'csp_img_src' => ['https://images.example.com']
+          'csp_img_src' => ['https://images.example.com'],
+          'csp_script_src' => ['https://scripts.example.com'],
+          'csp_connect_src' => ['https://collector.example.com']
         )
       )
 
@@ -92,6 +279,13 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(csp).to include('frame-ancestors https://bebettertogether.ca')
       expect(csp).to include("frame-src 'self' https://forms.btsdev.ca")
       expect(csp).to include("img-src 'self' data: blob: https://*.tile.openstreetmap.org https://images.example.com")
+      expected_script_src = [
+        "script-src 'self' blob:",
+        'https://scripts.example.com'
+      ].join(' ')
+
+      expect(csp).to include(expected_script_src)
+      expect(csp).to include("connect-src 'self' wss: https://collector.example.com")
     end
 
     context 'when updating CSS block' do

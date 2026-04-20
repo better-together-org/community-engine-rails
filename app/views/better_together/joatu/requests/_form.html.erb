@@ -59,23 +59,20 @@
     </div>
   <% end %>
 
-  <% if joatu_request.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% joatu_request.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: joatu_request if joatu_request.errors.any? %>
 
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_string_field', locals: { model: joatu_request, form: form, attribute: 'name' } %>
   </div>
 
   <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: joatu_request, form: form, attribute: 'description' } %>
+    <%= render partial: 'better_together/shared/translated_rich_text_field',
+               locals: {
+                 model: joatu_request,
+                 form: form,
+                 attribute: 'description',
+                 citation_options: joatu_request.citation_reference_options
+               } %>
   </div>
 
   <div class="row">
@@ -87,6 +84,11 @@
       <%= required_label form, :urgency %>
       <%= form.select :urgency, BetterTogether::Joatu::Exchange::URGENCY_VALUES.values.map { |v| [v.humanize, v] }, {}, class: 'form-select', data: { controller: 'better_together--slim_select' } %>
     </div>
+  </div>
+
+  <div class="mb-3">
+    <%= required_label form, :privacy, class: 'form-label' %>
+    <%= privacy_field(form:, klass: joatu_request.class) %>
   </div>
 
   <div class="mb-3">

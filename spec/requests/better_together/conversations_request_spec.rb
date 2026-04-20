@@ -29,8 +29,10 @@ RSpec.describe 'BetterTogether::Conversations' do
 
   before do
     manage_platform_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform')
+    list_person_permission = BetterTogether::ResourcePermission.find_by(identifier: 'list_person')
     steward_role = create(:better_together_role, :platform_role)
     BetterTogether::RoleResourcePermission.create!(role: steward_role, resource_permission: manage_platform_permission)
+    BetterTogether::RoleResourcePermission.create!(role: steward_role, resource_permission: list_person_permission)
 
     create(:better_together_person_platform_membership, member: regular_user.person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: manager_user.person, joinable: host_platform, role: steward_role)
@@ -38,6 +40,9 @@ RSpec.describe 'BetterTogether::Conversations' do
     create(:better_together_person_platform_membership, member: non_opted_person, joinable: host_platform)
     create(:better_together_person_platform_membership, member: other_platform_opted_in_person, joinable: other_platform)
     create(:better_together_person_community_membership, member: host_only_opted_in_person, joinable: host_platform.community)
+    Rails.cache.delete_matched("better_together/member/#{manager_user.person.class.name}/#{manager_user.person.id}/*")
+    manager_user.reload
+    manager_user.person.reload
   end
 
   describe 'GET /conversations/new' do
@@ -63,17 +68,17 @@ RSpec.describe 'BetterTogether::Conversations' do
     context 'as a platform manager' do
       let(:current_user) { manager_user }
 
-      it 'lists all current-platform people but excludes other-platform members' do
+      it 'still limits participants to opted-in and steward-visible people' do
         get better_together.new_conversation_path(locale: I18n.default_locale)
 
         expect(response).to have_http_status(:ok)
         expect(participant_option_labels).to include(
           manager_user.person.select_option_title,
-          regular_user.person.select_option_title,
           opted_in_person.select_option_title,
-          non_opted_person.select_option_title,
           host_only_opted_in_person.select_option_title
         )
+        expect(participant_option_labels).not_to include(regular_user.person.select_option_title)
+        expect(participant_option_labels).not_to include(non_opted_person.select_option_title)
         expect(participant_option_labels).not_to include(other_platform_opted_in_person.select_option_title)
       end
     end

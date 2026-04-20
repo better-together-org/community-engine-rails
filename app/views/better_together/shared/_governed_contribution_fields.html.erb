@@ -1,0 +1,105 @@
+<% selected_author_type = form.object.author_type.presence_in([BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE,
+                                                               BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE]) ||
+                          BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE %>
+<% selected_author_id = form.object.author_id&.to_s %>
+<% contributor_options = selected_author_type == BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE ? robot_options : person_options %>
+<% input_id_prefix = form.object_name.to_s.gsub(/[^a-zA-Z0-9]+/, '_').gsub(/_+\z/, '') %>
+
+<div class="col-12 col-lg-6 nested-fields"
+     data-new-record="<%= form.object.new_record? %>"
+     data-better_together--contribution-assignments-target="entry">
+  <div class="card border-0 bg-light shadow-sm h-100">
+    <div class="card-body">
+    <%= form.hidden_field :id unless form.object.new_record? %>
+    <%= form.hidden_field :_destroy %>
+    <%= form.hidden_field :author_type,
+                          value: selected_author_type,
+                          data: { 'better_together--contribution-assignments-target': 'authorTypeInput' } %>
+    <%= form.hidden_field :contribution_type,
+                          value: form.object.contribution_type.presence || BetterTogether::Authorship::CONTENT_CONTRIBUTION %>
+    <%= form.hidden_field :position %>
+
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+      <div>
+        <h6 class="mb-1">
+          <%= form.object.author&.to_s.presence || t('better_together.contributions.form.new_entry', default: 'New contributor') %>
+        </h6>
+        <p class="text-muted small mb-0">
+          <%= t('better_together.contributions.form.entry_help', default: 'Choose a contributor type, contributor, and role.') %>
+        </p>
+      </div>
+
+      <button type="button"
+              class="btn btn-outline-danger btn-sm"
+              data-action="click->better_together--contribution-assignments#remove"
+              data-better_together--contribution-assignments-target="removeButton"
+              aria-label="<%= t('better_together.contributions.form.remove', default: 'Remove contributor') %>">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12">
+        <fieldset>
+          <legend class="form-label mb-2"><%= t('better_together.contributions.form.contributor_type', default: 'Contributor type') %></legend>
+
+          <div class="form-check form-check-inline">
+            <input type="radio"
+                   class="form-check-input"
+                   name="<%= "#{form.object_name}[author_type_selector]" %>"
+                   id="<%= "#{input_id_prefix}_author_type_person" %>"
+                   value="<%= BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE %>"
+                   <%= 'checked="checked"' if selected_author_type == BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE %>
+                   data-action="change->better_together--contribution-assignments#contributorTypeChanged"
+                   data-better_together--contribution-assignments-target="contributorTypeRadio">
+            <label class="form-check-label" for="<%= "#{input_id_prefix}_author_type_person" %>">
+              <%= t('better_together.contributions.form.person', default: 'Person') %>
+            </label>
+          </div>
+
+          <div class="form-check form-check-inline">
+            <input type="radio"
+                   class="form-check-input"
+                   name="<%= "#{form.object_name}[author_type_selector]" %>"
+                   id="<%= "#{input_id_prefix}_author_type_robot" %>"
+                   value="<%= BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE %>"
+                   <%= 'checked="checked"' if selected_author_type == BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE %>
+                   data-action="change->better_together--contribution-assignments#contributorTypeChanged"
+                   data-better_together--contribution-assignments-target="contributorTypeRadio">
+            <label class="form-check-label" for="<%= "#{input_id_prefix}_author_type_robot" %>">
+              <%= t('better_together.contributions.form.robot', default: 'Robot') %>
+            </label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :author_id, t('better_together.contributions.form.contributor', default: 'Contributor'), class: 'form-label' %>
+        <%= form.select :author_id,
+                        options_for_select(contributor_options, selected_author_id),
+                        { include_blank: t('better_together.contributions.form.select_contributor', default: 'Select contributor') },
+                        class: "form-select#{' is-invalid' if form.object.errors[:author_id].any?}",
+                        data: { 'better_together--contribution-assignments-target': 'contributorSelect' } %>
+        <% if form.object.errors[:author_id].any? %>
+          <div class="invalid-feedback d-block">
+            <%= form.object.errors[:author_id].join(', ') %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :role, t('better_together.contributions.form.role', default: 'Role'), class: 'form-label' %>
+        <%= form.select :role,
+                        options_for_select(role_options, form.object.role.presence || BetterTogether::Authorship::AUTHOR_ROLE),
+                        {},
+                        class: "form-select#{' is-invalid' if form.object.errors[:role].any?}" %>
+        <% if form.object.errors[:role].any? %>
+          <div class="invalid-feedback d-block">
+            <%= form.object.errors[:role].join(', ') %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

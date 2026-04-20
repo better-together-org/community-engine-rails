@@ -30,9 +30,9 @@ pin '@rails/actiontext', to: 'actiontext.js', preload: true
 
 # Frontend libraries
 pin 'bootstrap', to: 'bootstrap.min.js', preload: true
-pin 'chart.js', to: 'https://cdn.jsdelivr.net/npm/chart.js', preload: true
-pin 'slim-select', to: 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.9.2/slimselect.umd.min.js', preload: true
-pin 'trix', to: 'https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js', preload: true
+pin 'chart.js', to: 'chart.js', preload: true # @4.5.1
+pin 'slim-select', to: 'slim-select.js', preload: true # @2.13.1
+pin 'trix', to: 'trix.js', preload: true # @2.1.18
 pin 'mermaid', to: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs', preload: true
 
 pin 'masonry', to: 'masonry.min.js' # @4.2.2
@@ -41,7 +41,6 @@ pin 'imagesloaded', to: 'imagesloaded.min.js' # @5.0.0
 pin 'leaflet', preload: true # @1.9.4
 pin 'leaflet-gesture-handling', to: 'leaflet-gesture-handling.js', preload: true # Ensure it is preloaded # @1.2.2
 pin 'leaflet-providers', preload: true # @2.0.0
-# pin "trix" # @2.1.13
 
 # Optional: Module shims
 pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js', preload: true

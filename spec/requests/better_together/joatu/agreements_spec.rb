@@ -19,9 +19,15 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', :as_user do
   end
 
   describe 'GET /index' do
-    it 'returns success' do
+    it 'returns success without contribution and evidence summaries' do
+      create(:claim, claimable: agreement, statement: 'Agreements can expose evidence on list views.')
+      create(:citation, citeable: agreement, reference_key: 'joatu_agreement_summary', title: 'JOATU Agreement Summary')
+
       get better_together.joatu_agreements_path(locale: I18n.locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('Evidence:')
+      expect(response.body).not_to include('Governance Bundle')
     end
   end
 
@@ -34,9 +40,17 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', :as_user do
   end
 
   describe 'GET /show' do
-    it 'returns success' do
+    it 'returns success without contribution and evidence references' do
+      citation = create(:citation, citeable: agreement, title: 'JOATU Agreement Notes', reference_key: 'joatu-agreement-notes')
+      claim = create(:claim, claimable: agreement, statement: 'This agreement is backed by review notes.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
+
       get better_together.joatu_agreement_path(agreement, locale: I18n.locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('JOATU Agreement Notes')
     end
   end
 

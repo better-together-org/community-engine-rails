@@ -119,9 +119,17 @@ export default class extends AppController {
   handleDataUpdate(event) {
     // Only respond to events for our chart type
     if (event.detail.chartType !== this.chartTypeValue) return
+    if (!this.anyFiltersActive()) return
     
     // Re-apply our filters when datetime changes
     this.fetchData()
+  }
+
+  anyFiltersActive() {
+    return (this.hasLocaleTarget && this.localeTarget.value !== '') ||
+      (this.hasPageableTypeTarget && this.pageableTypeTarget.value !== '') ||
+      (this.hasHourOfDayTarget && this.hourOfDayTarget.value !== '') ||
+      (this.hasDayOfWeekTarget && this.dayOfWeekTarget.value !== '')
   }
 
   // Set loading state on button

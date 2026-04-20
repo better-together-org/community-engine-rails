@@ -18,7 +18,7 @@ The Community Engine is built to empower communities to operate in line with the
 
 ## 4) Autonomy and Independence
 - Self‑hosting and modularity: Communities can run their own stack and keep control over data and policies.
-- No third‑party trackers by default: Hosts may opt‑in to tools like GA or Sentry in line with their privacy policy and consent.
+- No third‑party trackers by default: Hosts may add external telemetry or monitoring services only if they choose to disclose and govern them under their own privacy policy and consent practices.
 - Open formats: Reports export to CSV for portability and community accountability.
 
 ## 5) Education, Training, and Information

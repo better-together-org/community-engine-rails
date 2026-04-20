@@ -17,12 +17,15 @@ module BetterTogether
   # Host apps may override +validate_captcha_if_enabled?+ to add Turnstile or
   # other captcha validation (same pattern as UsersRegistrationsController).
   class MembershipRequestsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    include BotProtectedSubmissions
+
     class_attribute :captcha_validation_proc, default: nil
 
     skip_before_action :authenticate_user!, only: %i[new create], raise: false
     skip_before_action :check_platform_privacy
 
     before_action :set_community
+    before_action :ensure_membership_requests_enabled!, only: %i[new create]
     before_action :set_membership_request, only: %i[show destroy approve decline]
     after_action :verify_authorized
 
@@ -58,6 +61,20 @@ module BetterTogether
       )
       @membership_request.creator = helpers.current_person if helpers.current_person.present?
       authorize @membership_request
+
+      unless bot_protected_submission_valid?(form_id: :membership_request, resource: @membership_request)
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_entity }
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              'membership_request_form',
+              partial: 'better_together/membership_requests/form',
+              locals: { membership_request: @membership_request, community: @community }
+            ), status: :unprocessable_entity
+          end
+        end
+        return
+      end
 
       unless validate_captcha_if_enabled?
         handle_captcha_validation_failure(@membership_request)
@@ -160,7 +177,7 @@ module BetterTogether
     # POST /c/:community_id/membership_requests/:id/decline
     def decline # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       authorize @membership_request
-      @membership_request.decline!
+      @membership_request.decline!(approver: helpers.current_person)
       flash.now[:notice] = t('better_together.membership_requests.flash.declined',
                              default: 'Membership request declined.')
       respond_to do |format|
@@ -192,6 +209,7 @@ module BetterTogether
     def set_membership_request
       @membership_request = policy_scope(BetterTogether::Joatu::MembershipRequest)
                             .where(target: @community)
+                            .friendly
                             .find(params[:id])
     end
 
@@ -201,6 +219,15 @@ module BetterTogether
       return collection.where(status: status) if status.present?
 
       collection.where(status: 'open')
+    end
+
+    def ensure_membership_requests_enabled!
+      return if @community.membership_requests_enabled?
+
+      respond_to do |format|
+        format.html { head :forbidden }
+        format.turbo_stream { head :forbidden }
+      end
     end
 
     def membership_request_params

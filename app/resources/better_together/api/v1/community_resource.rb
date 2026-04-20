@@ -20,7 +20,7 @@ module BetterTogether
 
         # Relationships
         has_one :creator, class_name: 'Person'
-        has_many :members, class_name: 'Person'
+        has_many :members, relation_name: :person_members, class_name: 'Person'
         has_many :person_community_memberships
         # TODO: Enable when corresponding resources are created
         # has_many :calendars
@@ -29,6 +29,10 @@ module BetterTogether
         filter :privacy
         filter :protected
         filter :host
+        filter :slug, apply: lambda { |records, value, _options|
+          matching_ids = records.i18n.where(slug: Array(value)).pluck(:id)
+          records.where(id: matching_ids)
+        }
         filter :creator_id
 
         # Custom attribute methods

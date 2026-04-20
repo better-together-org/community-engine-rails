@@ -8,6 +8,7 @@ module BetterTogether
     include Metrics::Viewable
     include Protected
     include Privacy
+    include Searchable
 
     has_many :checklist_items, -> { positioned }, class_name: '::BetterTogether::ChecklistItem', dependent: :destroy
     has_many :person_checklist_items, class_name: '::BetterTogether::PersonChecklistItem', dependent: :destroy
@@ -15,6 +16,16 @@ module BetterTogether
     translates :title, type: :string
 
     slugged :title
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     validates :title, presence: true
 

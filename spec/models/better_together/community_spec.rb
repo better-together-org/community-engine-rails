@@ -94,7 +94,73 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
     end
   end
 
+  describe '#optimized_cover_image' do
+    let(:community) { described_class.allocate }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:cover_image) { double('cover_image', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      community.define_singleton_method(:cover_image) { cover_image }
+    end
+
+    context 'when the cover image is a PNG' do
+      let(:content_type) { 'image/png' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(cover_image).to receive(:variant).with(:optimized_png).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(community.optimized_cover_image).to eq(attachment_variant)
+      end
+    end
+  end
+
+  describe '#optimized_logo' do
+    let(:community) { described_class.allocate }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:logo) { double('logo', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      community.define_singleton_method(:logo) { logo }
+    end
+
+    context 'when the logo is a JPEG' do
+      let(:content_type) { 'image/jpeg' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(logo).to receive(:variant).with(:optimized_jpeg).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(community.optimized_logo).to eq(attachment_variant)
+      end
+    end
+  end
+
   describe 'callbacks' do
+    describe '#create_default_calendar' do
+      it 'creates uniquely slugged default calendars for different communities' do
+        first = create(:better_together_community, name: 'Alpha Community')
+        second = create(:better_together_community, name: 'Beta Community')
+        first_calendar = first.calendars.find_by!(identifier: "default-#{first.identifier}")
+        second_calendar = second.calendars.find_by!(identifier: "default-#{second.identifier}")
+
+        expect(first_calendar.slug).to eq("default-#{first.identifier}")
+        expect(second_calendar.slug).to eq("default-#{second.identifier}")
+        expect(first_calendar.slug).not_to eq(second_calendar.slug)
+      end
+
+      it 'is idempotent when invoked again for the same community' do
+        record = create(:better_together_community, name: 'Gamma Community')
+
+        expect do
+          record.send(:create_default_calendar)
+        end.not_to(change { record.calendars.count })
+
+        calendar = record.calendars.find_by!(identifier: "default-#{record.identifier}")
+        expect(calendar.slug).to eq("default-#{record.identifier}")
+      end
+    end
+
     describe '#single_host_record' do
       it 'adds an error if host is set and another host community exists' do
         relation = double('ActiveRecord::Relation', exists?: true) # rubocop:todo RSpec/VerifiedDoubles

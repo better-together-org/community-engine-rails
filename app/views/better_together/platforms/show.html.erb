@@ -27,13 +27,13 @@
         <div class="d-flex gap-2">
           <%= render 'shared/resource_toolbar',
                      edit_path: policy(@platform).edit? ? edit_platform_path(@platform) : nil,
-                     edit_aria_label: 'Edit Platform',
+                     edit_aria_label: t('platforms.show.actions.edit_aria'),
                      destroy_path: policy(@platform).destroy? ? platform_path(@platform) : nil,
                      destroy_confirm: t('platforms.confirm_delete'),
-                     destroy_aria_label: 'Delete Platform' do %>
+                     destroy_aria_label: t('platforms.show.actions.destroy_aria') do %>
 
             <% if @platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show? %>
-              <%= link_to host_dashboard_path, class: 'btn btn-outline-info btn-sm', aria: { label: 'View Host Dashboard' } do %>
+              <%= link_to host_dashboard_path, class: 'btn btn-outline-info btn-sm', aria: { label: t('platforms.show.actions.view_host_dashboard_aria') } do %>
                 <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
                 <%= t('platforms.actions.host_dashboard') %>
               <% end %>
@@ -45,15 +45,25 @@
   </div>
 
   <div class="container mt-4">
+    <%= render 'better_together/shared/access_mode_panel',
+               resource: @platform,
+               memberships: @current_person_platform_memberships %>
+
     <!-- Platform tabbed section -->
     <section class="card tabbed-section shadow-sm border-0">
 
       <div class="card-header">
         <!-- Navigation tabs -->
         <%# Initialize the active tab state with accessible attributes %>
-        <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Platform Sections' do %>
+        <%= content_tag :div, id: 'platformTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: t('platforms.show.sections_aria') do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about' }, role: 'tab', aria_controls: 'about', aria_selected: 'true', tabindex: '0' %>
           <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
+          <% if @show_safety_review %>
+            <%= link_to t('globals.tabs.safety'), '#safety', class: 'nav-link', id: 'safety-tab', data: { bs_toggle: 'tab', bs_target: '#safety' }, role: 'tab', aria_controls: 'safety', aria_selected: 'false', tabindex: '-1' %>
+          <% end %>
+          <% if @show_platform_connections %>
+            <%= link_to t('globals.tabs.federation'), '#federation', class: 'nav-link', id: 'federation-tab', data: { bs_toggle: 'tab', bs_target: '#federation' }, role: 'tab', aria_controls: 'federation', aria_selected: 'false', tabindex: '-1' %>
+          <% end %>
           <% if policy(BetterTogether::PlatformInvitation).index? %>
             <%= link_to t('globals.tabs.invitations'), '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations' }, role: 'tab', aria_controls: 'invitations', aria_selected: 'false', tabindex: '2' %>
           <% end %>
@@ -69,25 +79,48 @@
 
             <!-- Platform Details -->
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Identifier:</strong></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.identifier') %></strong></div>
               <div class="col-md-9"><%= @platform.identifier %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>URL:</strong></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.url') %></strong></div>
               <div class="col-md-9"><%= link_to @platform.host_url, @platform.host_url, target: "_blank", rel: "noopener noreferrer" %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Time Zone:</strong></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.time_zone') %></strong></div>
               <div class="col-md-9"><%= @platform.time_zone %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Protected:</strong></div>
-              <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.protected') %></strong></div>
+              <div class="col-md-9"><%= @platform.protected ? t('platforms.show.about.protected_yes') : t('platforms.show.about.protected_no') %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Requires Invitation:</strong></div>
-              <div class="col-md-9"><%= @platform.requires_invitation ? 'Yes' : 'No' %></div>
+              <div class="col-md-3"><strong><%= t('platforms.show.about.access') %></strong></div>
+              <div class="col-md-9"><%= access_mode_label(@platform) %></div>
             </div>
+
+            <% show_platform_operations = (@platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show?) || policy(::BetterTogether::StorageConfiguration).index? %>
+            <% if show_platform_operations %>
+              <div class="card border-0 bg-body-tertiary mt-4">
+                <div class="card-body">
+                  <h2 class="h5 mb-1"><%= t('platforms.show.operations.title') %></h2>
+                  <p class="text-muted mb-3"><%= t('platforms.show.operations.description') %></p>
+
+                  <div class="d-flex flex-wrap gap-2">
+                    <% if @platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show? %>
+                      <%= link_to t('platforms.show.operations.host_dashboard'),
+                                  host_dashboard_path,
+                                  class: 'btn btn-outline-info btn-sm' %>
+                    <% end %>
+                    <% if policy(::BetterTogether::StorageConfiguration).index? %>
+                      <%= link_to t('platforms.show.operations.storage_configurations'),
+                                  platform_storage_configurations_path(@platform),
+                                  class: 'btn btn-outline-primary btn-sm' %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           </div>
         </section>
 
@@ -105,8 +138,8 @@
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="addPlatformMemberModalLabel">Add New Platform Member</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+                      <h5 class="modal-title" id="addPlatformMemberModalLabel"><%= t('platforms.show.members.add_member_modal.title') %></h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('platforms.show.members.add_member_modal.close') %>" tabindex="-1"></button>
                     </div>
                     <div class="modal-body">
                       <%= form_with model: [ @platform, ::BetterTogether::PersonPlatformMembership.new ], url: platform_person_platform_memberships_path(@platform.id), data: { turbo_frame: "modal_form" }, local: true do |form| %>
@@ -116,9 +149,9 @@
                         <%= form.hidden_field :joinable_id, value: @platform.id %>
 
                         <div class="mb-3" id="member_select">
-                          <%= form.label :member_id, "Select Person *", class: "form-label" %>
+                          <%= form.label :member_id, t('platforms.show.members.add_member_modal.select_person'), class: "form-label" %>
                           <%= form.select :member_id, [], 
-                              { prompt: "Search for people..." }, 
+                              { prompt: t('platforms.show.members.add_member_modal.search_placeholder') }, 
                               { 
                                 class: "form-select", 
                                 required: true,
@@ -130,7 +163,7 @@
                                       url: available_people_platform_path(@platform)
                                     },
                                     settings: {
-                                      searchPlaceholder: 'Search for people...',
+                                      searchPlaceholder: t('platforms.show.members.add_member_modal.search_placeholder'),
                                       searchHighlight: true,
                                       closeOnSelect: true,
                                       allowDeselect: true,
@@ -142,11 +175,11 @@
                         </div>
 
                         <div class="mb-3">
-                          <%= form.label :role_id, "Select Platform Role *", class: "form-label" %>
+                          <%= form.label :role_id, t('platforms.show.members.add_member_modal.select_role'), class: "form-label" %>
                           <%= form.collection_select :role_id, ::BetterTogether::Role.where(resource_type: @platform.class.to_s).order(:position), :id, :name, {}, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
                         <div class="mb-3">
-                          <%= form.submit "Add", class: "btn btn-primary" %>
+                          <%= form.submit t('platforms.show.members.add_member_modal.submit'), class: "btn btn-primary" %>
                         </div>
                       <% end %>
                     </div>
@@ -159,6 +192,167 @@
             <%= render partial: 'better_together/person_platform_memberships/person_platform_membership_member', collection: @platform_memberships, as: :person_platform_membership %>
           </div>
         </section>
+
+        <% if @show_safety_review %>
+          <section id="safety" class="collapse" aria-labelledby="safety-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+              <div>
+                <h2 class="h4 mb-1"><%= t('platforms.show.safety.title') %></h2>
+                <p class="text-muted mb-0"><%= t('platforms.show.safety.description', platform: @platform.name) %></p>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                <%= link_to t('platforms.show.safety.review_queue'),
+                            safety_cases_path,
+                            class: 'btn btn-primary btn-sm' %>
+                <%= link_to t('platforms.show.safety.view_reports'),
+                            reports_path,
+                            class: 'btn btn-outline-primary btn-sm' %>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-3">
+                <div class="card h-100 border-0 bg-body-tertiary">
+                  <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('platforms.show.safety.summary.open_cases') %></div>
+                    <div class="fs-3 fw-bold"><%= @safety_review_snapshot[:open_cases_count] %></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card h-100 border-0 bg-body-tertiary">
+                  <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('platforms.show.safety.summary.urgent_cases') %></div>
+                    <div class="fs-3 fw-bold"><%= @safety_review_snapshot[:urgent_open_cases_count] %></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card h-100 border-0 bg-body-tertiary">
+                  <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('platforms.show.safety.summary.unassigned_cases') %></div>
+                    <div class="fs-3 fw-bold"><%= @safety_review_snapshot[:unassigned_open_cases_count] %></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="card h-100 border-0 bg-body-tertiary">
+                  <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('platforms.show.safety.summary.participant_updates') %></div>
+                    <div class="fs-3 fw-bold"><%= @safety_review_snapshot[:participant_visible_notes_count] %></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="list-group">
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= t('platforms.show.safety.summary.visible_reports') %></span>
+                <span class="badge text-bg-secondary rounded-pill"><%= @safety_review_report_count %></span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= t('platforms.show.safety.summary.content_review_items') %></span>
+                <span class="badge text-bg-secondary rounded-pill"><%= @safety_review_snapshot[:content_review_items_count] %></span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= t('platforms.show.safety.summary.retaliation_risk_cases') %></span>
+                <span class="badge text-bg-secondary rounded-pill"><%= @safety_review_snapshot[:retaliation_risk_open_cases_count] %></span>
+              </div>
+              <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span><%= t('platforms.show.safety.summary.repeated_reports') %></span>
+                <span class="badge text-bg-secondary rounded-pill"><%= @safety_review_snapshot[:repeated_reportables_count] %></span>
+              </div>
+            </div>
+          </section>
+        <% end %>
+
+        <% if @show_platform_connections %>
+          <section id="federation" class="collapse" aria-labelledby="federation-tab" aria-expanded="false" data-bs-parent="#platformTabs">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+              <div>
+                <h2 class="h4 mb-1"><%= t('platforms.show.federation.title') %></h2>
+                <p class="text-muted mb-0"><%= t('platforms.show.federation.description', platform: @platform.name) %></p>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2">
+                <%= link_to t('platforms.show.federation.open_connections'),
+                            platform_connections_path,
+                            class: 'btn btn-outline-primary btn-sm' %>
+                <% if policy(BetterTogether::PlatformConnection).create? %>
+                  <%= link_to t('platforms.show.federation.new_connection'),
+                              new_platform_connection_path,
+                              class: 'btn btn-primary btn-sm' %>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <div class="card h-100 border-0 bg-body-tertiary">
+                  <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('platforms.show.federation.summary.total') %></div>
+                    <div class="fs-3 fw-bold"><%= @platform_connections.size %></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card h-100 border-0 bg-body-tertiary">
+                  <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('platforms.show.federation.summary.active') %></div>
+                    <div class="fs-3 fw-bold"><%= @platform_connection_status_counts['active'] %></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card h-100 border-0 bg-body-tertiary">
+                  <div class="card-body">
+                    <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('platforms.show.federation.summary.pending') %></div>
+                    <div class="fs-3 fw-bold"><%= @platform_connection_status_counts['pending'] %></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <% if @platform_connections.any? %>
+              <div class="list-group">
+                <% @platform_connections.each do |platform_connection| %>
+                  <% counterparty = platform_connection.source_platform == @platform ? platform_connection.target_platform : platform_connection.source_platform %>
+                  <% direction_key = platform_connection.source_platform == @platform ? 'outgoing' : 'incoming' %>
+                  <div class="list-group-item">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                      <div>
+                        <h3 class="h6 mb-1"><%= counterparty.name %></h3>
+                        <p class="mb-1 text-muted">
+                          <%= t("platforms.show.federation.direction.#{direction_key}") %>
+                          <span aria-hidden="true">·</span>
+                          <%= t("better_together.enums.platform_connection.connection_kind.#{platform_connection.connection_kind}") %>
+                        </p>
+                        <p class="mb-0 small text-muted">
+                          <%= t('platforms.show.federation.connection_status') %>:
+                          <%= t("better_together.enums.platform_connection.status.#{platform_connection.status}") %>
+                        </p>
+                      </div>
+
+                      <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="badge text-bg-secondary">
+                          <%= t("better_together.enums.platform_connection.status.#{platform_connection.status}") %>
+                        </span>
+                        <%= link_to t('platforms.show.federation.view_connection'),
+                                    platform_connection_path(platform_connection),
+                                    class: 'btn btn-outline-secondary btn-sm' %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="alert alert-light border mb-0" role="status">
+                <%= t('platforms.show.federation.empty_state') %>
+              </div>
+            <% end %>
+          </section>
+        <% end %>
 
         <% if policy(BetterTogether::PlatformInvitation).index? %>
           <!-- Platform Invitations Section -->
@@ -180,7 +374,7 @@
   </div>
 </div>
 
-<script type="text/javascript">
+<%= javascript_tag nonce: true do %>
 
   document.addEventListener("DOMContentLoaded", function() {
     // Check if URL hash is present and corresponds to a tab
@@ -201,4 +395,4 @@
       });
     });
   });
-</script>
+<% end %>

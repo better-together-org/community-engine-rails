@@ -89,20 +89,72 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
         :better_together_platform,
         csp_frame_ancestors_text: "bebettertogether.ca\nhttps://forms.btsdev.ca",
         csp_frame_src_text: "forms.btsdev.ca\nwww.youtube.com",
-        csp_img_src_text: 'images.example.com'
+        csp_img_src_text: 'images.example.com',
+        csp_script_src_text: 'scripts.example.com',
+        csp_connect_src_text: 'collector.example.com'
       )
 
       expect(platform).to be_valid
       expect(platform.csp_frame_ancestors).to eq(['https://bebettertogether.ca', 'https://forms.btsdev.ca'])
       expect(platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
       expect(platform.csp_img_src).to eq(['https://images.example.com'])
+      expect(platform.csp_script_src).to eq(['https://scripts.example.com'])
+      expect(platform.csp_connect_src).to eq(['https://collector.example.com'])
     end
 
     it 'adds validation errors for invalid CSP origin entries' do
-      platform = build(:better_together_platform, csp_frame_src_text: "https://forms.btsdev.ca/embed\nhttp://bad.example.com")
+      platform = build(
+        :better_together_platform,
+        csp_frame_src_text: "https://forms.btsdev.ca/embed\nhttp://bad.example.com",
+        csp_script_src_text: 'javascript:alert(1)'
+      )
 
       expect(platform).not_to be_valid
       expect(platform.errors[:csp_frame_src_text]).to be_present
+      expect(platform.errors[:csp_script_src_text]).to be_present
+    end
+  end
+
+  describe 'host URL storage' do
+    it 'keeps the persisted url column available as the host url' do
+      host_url = "https://host-#{SecureRandom.hex(4)}.example.test"
+      platform = create(:better_together_platform, host_url:)
+
+      expect(platform.url).to eq(host_url)
+      expect(platform.host_url).to eq(host_url)
+    end
+
+    it 'exposes a separate route_url helper for the internal platform route' do
+      platform = create(:better_together_platform, host_url: "https://host-#{SecureRandom.hex(4)}.example.test")
+
+      expect(platform.route_url).to include("/platforms/#{platform.to_param}")
+    end
+  end
+
+  describe 'settings defaults' do
+    it 'defaults raw new platforms to requiring invitations immediately' do
+      platform = described_class.new(host_url: 'https://example.test', time_zone: 'UTC', privacy: 'private', protected: true)
+
+      expect(platform.requires_invitation).to be(true)
+    end
+
+    it 'defaults new platforms to requiring invitations' do
+      platform = build(:better_together_platform)
+
+      expect(platform.requires_invitation).to be(true)
+    end
+
+    it 'seeds local platform CSP image origins for bundled Leaflet assets' do
+      platform = create(:better_together_platform)
+
+      expect(platform.csp_img_src).to include('https://*.tile.openstreetmap.org')
+      expect(platform.csp_img_src).not_to include('https://unpkg.com')
+    end
+
+    it 'does not seed bundled Leaflet image origins for external platforms' do
+      platform = create(:better_together_platform, :external)
+
+      expect(platform.csp_img_src).to be_empty
     end
   end
 

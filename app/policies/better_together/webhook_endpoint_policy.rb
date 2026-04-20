@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Policy for WebhookEndpoint — only platform managers can manage webhooks.
+  # Policy for WebhookEndpoint — explicit API managers can manage platform webhooks.
   # Owners can view/manage their own endpoints.
   class WebhookEndpointPolicy < ApplicationPolicy
     def index?
@@ -44,14 +44,14 @@ module BetterTogether
     end
 
     def platform_manager?
-      user&.person&.permitted_to?('manage_platform')
+      can_manage_webhook_endpoints?
     end
 
     # Scope: platform managers see all, others see their own + community endpoints they admin
     class Scope < ApplicationPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        if user&.person&.permitted_to?('manage_platform')
+        if user&.person&.permitted_to?('manage_platform_api')
           scope.all
         elsif user&.person
           scope.where(person: user.person)
@@ -68,7 +68,7 @@ module BetterTogether
         BetterTogether::Community
           .select(:id)
           .joins(:person_community_memberships)
-          .where(better_together_person_community_memberships: { member_id: user.person.id })
+          .where(better_together_person_community_memberships: { member_id: user.person.id, status: 'active' })
           .filter_map do |community|
             community.id if user.person.permitted_to?('update_community', community)
           end

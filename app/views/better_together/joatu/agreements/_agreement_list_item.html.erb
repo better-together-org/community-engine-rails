@@ -1,0 +1,33 @@
+<% joatu_agreement ||= agreement_list_item || agreement %>
+<div class="list-group-item">
+  <h4 class="mb-1 d-flex justify-content-between align-items-start">
+    <span class="me-2 flex-grow-1">
+      <%= link_to "#{joatu_agreement.offer.name} ↔ #{joatu_agreement.request.name}",
+                  joatu_agreement_path(joatu_agreement),
+                  class: 'text-decoration-none' %>
+    </span>
+    <span class="badge bg-secondary ms-2"><%= joatu_agreement.status %></span>
+  </h4>
+
+  <div class="text-muted small mb-1">
+    <% if joatu_agreement.participant_names.any? %>
+      <%= t('better_together.joatu.by', default: 'by') %>
+      <%= joatu_agreement.participant_names.join(' ↔ ') %> |
+    <% end %>
+    <%= l(joatu_agreement.created_at, format: :long) if joatu_agreement.created_at %>
+  </div>
+
+  <div class="small text-muted mb-2">
+    Mutual aid agreement for one matched offer and one matched request.
+  </div>
+
+  <% if joatu_agreement.terms.present? %>
+    <% terms_preview = joatu_agreement.terms.respond_to?(:to_plain_text) ? joatu_agreement.terms.to_plain_text : joatu_agreement.terms.to_s %>
+    <p class="mb-0"><%= truncate(terms_preview, length: 100) %></p>
+  <% else %>
+    <p class="mb-0 text-muted">No additional terms recorded.</p>
+  <% end %>
+
+  <div class="mt-2">
+  </div>
+</div>

@@ -5,14 +5,27 @@ module BetterTogether
   class CallForInterest < ApplicationRecord
     self.table_name = :better_together_calls_for_interest
 
+    include Citable
+    include Claimable
     include Creatable
     include Identifier
     include Privacy
+    include Searchable
 
     translates :name, type: :string
     translates :description, backend: :action_text
 
     slugged :name
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     belongs_to :interestable, polymorphic: true, optional: true
 
@@ -73,10 +86,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif card_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        card_image.variant(:optimized_card_png).processed
+        card_image.variant(:optimized_card_png)
       else
         # Otherwise, use the optimized JPG variant
-        card_image.variant(:optimized_card_jpeg).processed
+        card_image.variant(:optimized_card_jpeg)
       end
     end
 
@@ -88,10 +101,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif cover_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        cover_image.variant(:optimized_png).processed
+        cover_image.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        cover_image.variant(:optimized_jpeg).processed
+        cover_image.variant(:optimized_jpeg)
       end
     end
 

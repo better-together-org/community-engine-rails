@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
 require 'better_together/version'
+require 'better_together/adapter_registry'
+require 'better_together/profiling'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
 require 'better_together/mcp'
 
 # Convenience setters and getters for the engine
-module BetterTogether
+module BetterTogether # rubocop:disable Metrics/ModuleLength
   mattr_accessor :base_url,
+                 :adapter_registry,
+                 :content_safety_orchestrator_command,
+                 :inbound_email_ingress_password,
                  :new_user_password_path,
                  :route_scope_path,
                  :user_class,
@@ -27,9 +32,118 @@ module BetterTogether
   # Additional OpenAPI/Swagger endpoints to register in the rswag UI.
   # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
   mattr_accessor :swagger_additional_endpoints
+  mattr_accessor :head_tag_providers
+  mattr_accessor :registered_content_security_policy_sources
   self.swagger_additional_endpoints = []
+  self.head_tag_providers = {}
+  self.registered_content_security_policy_sources = Hash.new { |hash, key| hash[key] = [] }
+  self.adapter_registry = BetterTogether::AdapterRegistry.new
 
-  class << self
+  ADAPTER_GROUPS = %i[
+    error_reporting
+    queue
+    cache
+    throttling
+    storage
+    smtp
+    search
+    metrics
+    publishing
+    spatial
+    tenancy
+    llm
+    embeddings
+    translation
+    mapping
+    federation
+  ].freeze
+
+  class << self # rubocop:disable Metrics/ClassLength
+    def register_adapter(group, name = nil, adapter = nil, &)
+      adapter_registry.register(group, name, adapter, &)
+    end
+
+    def adapters_for(group)
+      adapter_registry.adapters_for(group)
+    end
+
+    def adapter_for(group, name = nil)
+      adapter_registry.adapter_for(group, name)
+    end
+
+    def clear_adapters!(group = nil)
+      adapter_registry.clear!(group)
+    end
+
+    def dispatch_to_adapters(group, *, **)
+      adapter_registry.dispatch(group, *, **)
+    end
+
+    def register_error_reporter(name = nil, reporter = nil, &block)
+      adapter = reporter || block
+      register_adapter(:error_reporting, name, adapter)
+    end
+
+    def register_llm_adapter(name = nil, adapter = nil, &)
+      register_adapter(:llm, name, adapter, &)
+    end
+
+    def clear_llm_adapters!
+      clear_adapters!(:llm)
+    end
+
+    def register_embedding_adapter(name = nil, adapter = nil, &)
+      register_adapter(:embeddings, name, adapter, &)
+    end
+
+    def clear_embedding_adapters!
+      clear_adapters!(:embeddings)
+    end
+
+    def clear_error_reporters!
+      clear_adapters!(:error_reporting)
+    end
+
+    def report_error(exception, context: {})
+      return default_error_reporter(exception, context:) if adapters_for(:error_reporting).blank?
+
+      dispatch_to_adapters(:error_reporting, exception, context:)
+    end
+
+    def llm_chat(prompt:, adapter_name: nil, **options)
+      entry = adapter_for(:llm, adapter_name || options[:provider])
+      return entry.fetch(:adapter).call(prompt:, **options) if entry.present?
+
+      BetterTogether::Llm::DefaultAdapter.new.call(prompt:, **options)
+    end
+
+    def embed_text(text, adapter_name: nil, **options)
+      entry = adapter_for(:embeddings, adapter_name || options[:provider])
+      return entry.fetch(:adapter).call(text, **options) if entry.present?
+
+      BetterTogether::Embeddings::DefaultAdapter.new.call(text, **options)
+    end
+
+    def llm_available?(identifier: nil, platform: Current.platform)
+      return true if adapters_for(:llm).any?
+
+      robot = resolve_llm_robot(identifier:, platform:)
+      llm_provider_available?(robot)
+    end
+
+    def e2ee_messaging_enabled?
+      ActiveModel::Type::Boolean.new.cast(ENV.fetch('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil)) == true
+    end
+
+    def inbound_email_password
+      inbound_email_ingress_password.presence || ENV.fetch('RAILS_INBOUND_EMAIL_PASSWORD', nil)
+    end
+
+    def content_safety_orchestrator_command
+      @@content_safety_orchestrator_command.presence ||
+        ENV.fetch('BETTER_TOGETHER_CONTENT_SAFETY_ORCHESTRATOR_COMMAND', nil)
+    end
+
     def base_path
       BetterTogether::Engine.routes.find_script_name({})
     end
@@ -68,6 +182,47 @@ module BetterTogether
 
     def user_confirmation_url
       base_url + user_confirmation_path
+    end
+
+    def register_head_tag_provider(key, callable = nil, &block)
+      provider = callable || block
+      raise ArgumentError, 'provider must respond to call' unless provider.respond_to?(:call)
+
+      head_tag_providers[key.to_sym] = provider
+    end
+
+    def register_content_security_policy_sources(directive, *sources)
+      directive_sources = registered_content_security_policy_sources[directive.to_sym]
+
+      sources.flatten.compact.each do |source|
+        directive_sources << source unless directive_sources.include?(source)
+      end
+    end
+
+    private
+
+    def default_error_reporter(exception, context: {})
+      return unless defined?(Rails) && Rails.respond_to?(:error) && Rails.error.respond_to?(:report)
+
+      Rails.error.report(exception, handled: true, severity: :error, context:)
+    end
+
+    def resolve_llm_robot(identifier:, platform:)
+      return unless identifier.present? && defined?(BetterTogether::Robot)
+
+      BetterTogether::Robot.resolve(identifier:, platform:)
+    end
+
+    def llm_provider_available?(robot)
+      provider = robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
+      return openai_llm_available? if provider == 'openai'
+      return true if provider == 'ollama'
+
+      robot.present?
+    end
+
+    def openai_llm_available?
+      ENV.fetch('OPENAI_API_KEY', nil).present? || ENV.fetch('OPENAI_ACCESS_TOKEN', nil).present?
     end
   end
 end

@@ -23,24 +23,59 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
   end
 
   describe 'GET /index' do
-    it 'returns success' do
+    it 'returns success without contribution and evidence summaries' do
+      request_record.add_governed_contributor(person, role: 'reviewer')
+      request_record.contributions.first.update!(details: {
+                                                   'github_handle' => 'joatu-request-reviewer',
+                                                   'github_sources' => [{ 'reference_key' => 'issue_1494' }]
+                                                 })
+      create(:claim, claimable: request_record, statement: 'Requests can carry evidence summaries in list views.')
+      create(:citation, citeable: request_record, reference_key: 'joatu_request_summary', title: 'JOATU Request Summary')
+
       get better_together.joatu_requests_path(locale: locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Evidence:')
+      expect(response.body).not_to include('Governance Bundle')
     end
   end
 
   describe 'POST /create' do
     it 'creates a request' do
+      created_request = nil
+
       expect do
         post better_together.joatu_requests_path(locale: locale), params: { joatu_request: valid_attributes }
+        created_request = BetterTogether::Joatu::Request.order(:created_at).last
       end.to change(BetterTogether::Joatu::Request, :count).by(1)
+
+      expect(response).to redirect_to(
+        better_together.joatu_request_path(created_request, locale:)
+      )
+      expect(created_request.creator).to eq(person)
+      expect(created_request.categories).to contain_exactly(category)
     end
   end
 
   describe 'GET /show' do
-    it 'returns success' do
+    it 'returns success without contribution and evidence references' do
+      citation = create(:citation, citeable: request_record, title: 'JOATU Request Notes', reference_key: 'joatu-request-notes')
+      claim = create(:claim, claimable: request_record, statement: 'This request is backed by review notes.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
+      request_record.add_governed_contributor(person, role: 'reviewer')
+      request_record.contributions.first.update!(details: {
+                                                   'github_handle' => 'joatu-request-reviewer',
+                                                   'github_sources' => [{ 'reference_key' => 'issue_1494' }]
+                                                 })
+
       get better_together.joatu_request_path(request_record, locale: locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('JOATU Request Notes')
     end
   end
 

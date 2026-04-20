@@ -1,0 +1,14 @@
+flowchart TD
+    A[Anonymous visitor or first operator] --> B[setup_wizard entry]
+    B --> C[SetupWizardController]
+    C --> D{Host setup wizard completed?}
+    D -- no --> E[Redirect to platform_details step]
+    E --> F[Render host platform form]
+    F --> G[SetupWizardStepsController#create_host_platform]
+    G --> H[find_or_initialize_by host:true]
+    H --> I[Update existing host platform or create first one]
+    I --> J[Mark step complete]
+    J --> K[Proceed to admin creation]
+    D -- yes --> L{Signed in?}
+    L -- yes --> M[Redirect to root with already completed alert]
+    L -- no --> N[Redirect to sign in with already completed alert]
