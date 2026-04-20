@@ -3,20 +3,29 @@
 require 'rails_helper'
 
 RSpec.describe 'Host Dashboard Content', :as_platform_manager do
+  # rubocop:disable Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
 
     host_platform = BetterTogether::Platform.find_by(host: true) ||
                     create(:better_together_platform, :host, community: user.person.community)
-    role = create(:better_together_role, :platform_role)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+    membership.role ||= create(:better_together_role, :platform_role)
+    role = membership.role
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership.status = :active
+    membership.save!
   end
+  # rubocop:enable Metrics/AbcSize
 
   let(:locale) { I18n.default_locale }
   let(:platform_manager) do
     find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+  end
+
+  before do
+    Rails.cache.clear
   end
 
   describe 'GET /host/dashboard' do

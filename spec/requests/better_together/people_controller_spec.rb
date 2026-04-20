@@ -187,15 +187,81 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   describe 'PATCH /:locale/.../host/p/:id' do
     let!(:person) { platform_manager.person }
 
-    # rubocop:todo RSpec/MultipleExpectations
-    it 'updates name and redirects' do # rubocop:todo RSpec/MultipleExpectations
-      # rubocop:enable RSpec/MultipleExpectations
+    it 'updates name and redirects' do
       patch better_together.person_path(locale:, id: person.slug), params: {
         person: { name: 'Updated Name' }
       }
+
       expect(response).to have_http_status(:see_other)
+
       follow_redirect!
       expect(response).to have_http_status(:ok)
+      expect(person.reload.name).to eq('Updated Name')
+    end
+
+    it 'updates nested contact details and persists the changes', :aggregate_failures do
+      existing_email = person.contact_detail.email_addresses.first ||
+                       create(:better_together_email_address, contact_detail: person.contact_detail)
+
+      patch better_together.person_path(locale:, id: person.slug), params: {
+        person: {
+          name: 'Updated Name',
+          contact_detail_attributes: {
+            id: person.contact_detail.id,
+            email_addresses_attributes: {
+              '0' => {
+                id: existing_email.id,
+                email: 'updated@example.test',
+                label: 'primary',
+                primary_flag: '1'
+              }
+            },
+            phone_numbers_attributes: {
+              '0' => {
+                number: '7095551212',
+                label: 'mobile',
+                primary_flag: '1'
+              }
+            },
+            addresses_attributes: {
+              '0' => {
+                name: 'Home',
+                line1: '12 Main Street',
+                city_name: 'Corner Brook',
+                state_province_name: 'NL',
+                country_name: 'Canada',
+                postal_code: 'A2H 1C4',
+                physical: '1',
+                postal: '1'
+              }
+            }
+          }
+        }
+      }
+
+      expect(response).to have_http_status(:see_other)
+
+      person.reload
+      expect(person.name).to eq('Updated Name')
+      expect(person.contact_detail.email_addresses.pluck(:email)).to include('updated@example.test')
+      expect(person.contact_detail.phone_numbers.pluck(:number)).to include('7095551212')
+
+      address = person.contact_detail.addresses.order(:created_at).last
+      expect(address.line1).to eq('12 Main Street')
+      expect(address.city_name).to eq('Corner Brook')
+      expect(address.country_name).to eq('Canada')
+    end
+
+    it 'rerenders edit when the update is invalid' do
+      original_name = person.name
+
+      patch better_together.person_path(locale:, id: person.slug), params: {
+        person: { name: '' }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('Please address the errors below.')
+      expect(person.reload.name).to eq(original_name)
     end
   end
 end
