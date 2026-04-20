@@ -43,9 +43,18 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
 
   describe 'POST /create' do
     it 'creates a request' do
+      created_request = nil
+
       expect do
         post better_together.joatu_requests_path(locale: locale), params: { joatu_request: valid_attributes }
+        created_request = BetterTogether::Joatu::Request.order(:created_at).last
       end.to change(BetterTogether::Joatu::Request, :count).by(1)
+
+      expect(response).to redirect_to(
+        better_together.joatu_request_path(created_request, locale:)
+      )
+      expect(created_request.creator).to eq(person)
+      expect(created_request.categories).to contain_exactly(category)
     end
   end
 

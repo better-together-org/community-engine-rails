@@ -40,9 +40,18 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
 
   describe 'POST /create' do
     it 'creates an offer' do
+      created_offer = nil
+
       expect do
         post better_together.joatu_offers_path(locale: I18n.locale), params: { joatu_offer: valid_attributes }
+        created_offer = BetterTogether::Joatu::Offer.order(:created_at).last
       end.to change(BetterTogether::Joatu::Offer, :count).by(1)
+
+      expect(response).to redirect_to(
+        better_together.joatu_offer_path(created_offer, locale: I18n.locale)
+      )
+      expect(created_offer.creator).to eq(person)
+      expect(created_offer.categories).to contain_exactly(category)
     end
 
     it 'preserves a platform target when responding to a connection request' do
@@ -59,6 +68,9 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       }
 
       created_offer = BetterTogether::Joatu::Offer.order(:created_at).last
+      expect(response).to redirect_to(
+        better_together.joatu_offer_path(created_offer, locale: I18n.locale)
+      )
       expect(created_offer.target).to eq(target_platform)
     end
   end
