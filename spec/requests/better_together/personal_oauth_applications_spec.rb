@@ -163,6 +163,14 @@ RSpec.describe 'Personal OAuth Applications (/settings/applications)' do
         expect(response).to have_http_status(:not_found)
       end
 
+      it 'cannot update another user\'s app' do
+        patch better_together.personal_oauth_application_path(locale:, id: other_app.id),
+              params: { oauth_application: { name: 'Hijacked Name' } }
+
+        expect(response).to have_http_status(:not_found)
+        expect(other_app.reload.name).to eq("Other's App")
+      end
+
       it 'cannot delete another user\'s app' do
         delete better_together.personal_oauth_application_path(locale:, id: other_app.id)
         expect(response).to have_http_status(:not_found)

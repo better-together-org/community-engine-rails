@@ -36,14 +36,14 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
     end
 
     it 'renders show without N+1 on content block string_translations' do
-      get better_together.page_path(page.slug, locale:)
+      get better_together.render_page_path(path: page.slug, locale:)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('data-evidence-selector="block:markdown:')
     end
 
     it 'renders the legacy block actions menu and the page feedback bar' do
-      get better_together.page_path(page.slug, locale:)
+      get better_together.render_page_path(path: page.slug, locale:)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('bt-content-block__actions')
@@ -60,7 +60,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
              title: 'Page Evidence Record',
              reference_key: 'page_evidence_record')
 
-      get better_together.page_path(page.slug, locale:)
+      get better_together.render_page_path(path: page.slug, locale:)
 
       expect(response.body).not_to include('Evidence and Citations')
       expect(response.body).not_to include('Page Evidence Record')
@@ -76,7 +76,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       page.authorships.destroy_all
       page.authorships.create!(author: robot)
 
-      get better_together.page_path(page.slug, locale:)
+      get better_together.render_page_path(path: page.slug, locale:)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('BTS Publishing Robot')
@@ -100,7 +100,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
              relation_type: 'supports',
              locator: 'p. 3')
 
-      get better_together.page_path(page.slug, locale:)
+      get better_together.render_page_path(path: page.slug, locale:)
 
       expect(response.body).not_to include('Claims and Supporting Evidence')
       expect(response.body).not_to include('Public claims should stay tied to auditable evidence.')
@@ -117,7 +117,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       end
 
       it 'renders without AssociationNotFoundError' do
-        get better_together.page_path(page.slug, locale:)
+        get better_together.render_page_path(path: page.slug, locale:)
 
         expect(response).to have_http_status(:ok)
       end
@@ -130,7 +130,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       end
 
       it 'renders without leaking collection locals between block partials' do
-        get better_together.page_path(page.slug, locale:)
+        get better_together.render_page_path(path: page.slug, locale:)
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to include('Rendered News Post')
@@ -147,9 +147,27 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       logout
 
-      get better_together.page_path(hidden_page.slug, locale:)
+      get better_together.render_page_path(path: hidden_page.slug, locale:)
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 'renders a private unpublished page for an editor contributor on the public route' do
+      editor_user = create(:better_together_user, :confirmed)
+      hidden_page = create(:better_together_page,
+                           :private,
+                           protected: false,
+                           published_at: nil,
+                           title: 'Editor Hidden Coverage Page',
+                           content: 'Editor hidden coverage body')
+      hidden_page.add_governed_contributor(editor_user.person, role: 'editor')
+
+      sign_in editor_user
+
+      get better_together.render_page_path(path: hidden_page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Editor Hidden Coverage Page')
     end
   end
 
