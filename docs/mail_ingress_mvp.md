@@ -40,6 +40,21 @@ This prevents cross-tenant leakage when two tenants have similar community names
 
 ## Privacy and security posture
 
+### Shared content-security intake and hold gate
+
+- every inbound email now enters a **content-security screening gate** before any downstream membership-request creation or future routing action
+- the gate builds shared-contract payloads for:
+  - the email body + metadata (`from`, `to`, `subject`, `Message-ID`, attachment manifest)
+  - each attachment as its own content item with tenant-scoped metadata
+- CE stores the returned contract records on `BetterTogether::InboundEmailMessage` and only allows downstream routing when the aggregate verdict is `clean` or `monitor`
+- when the scanner returns `review_required`, `restricted`, `quarantined`, `blocked`, or raises an error/unconfigured condition, CE **holds** the message and does not create downstream records
+
+### Shared orchestrator dependency
+
+- the prototype expects a stable command in `BETTER_TOGETHER_CONTENT_SAFETY_ORCHESTRATOR_COMMAND`
+- that command should point at the shared management-tool orchestrator entrypoint, for example a checked-in wrapper around `scripts/content_safety_scanner_orchestrator.py`
+- if the command is absent or fails, this prototype intentionally **fails closed** and keeps the inbound message held for review
+
 ### Fail-closed routing
 
 - unknown domains are rejected
@@ -92,5 +107,17 @@ The diagrams are paired with text so stakeholders who prefer screen readers, low
 - no end-user alias management UI yet
 - no automatic outbound acknowledgements yet
 - no external delivery integration beyond the relay endpoint contract
+- no stable mainline home for the shared scanner command yet; this prototype stores contract records and holds mail, but merge/mainline work still needs the shared scanner path to become a supported dependency
 
 Those are intentionally deferred until the tenant-safe intake substrate is in place.
+
+## Mainline merge requirements
+
+This implementation currently lives only in `tmp/worktrees/ce-mail-ingress-mvp/...`, because the inspected CE main tree still does not expose a canonical `app/mailboxes/` / Action Mailbox ingress seam.
+
+To merge/mainline it honestly, CE still needs:
+
+1. the Action Mailbox controller, mailbox classes, model, migrations, and specs from this prototype promoted into the canonical CE tree
+2. a **stable shared scanner entrypoint** for `BETTER_TOGETHER_CONTENT_SAFETY_ORCHESTRATOR_COMMAND` (vendored wrapper, gem, engine integration, or another supported dependency) instead of a worktree-only path
+3. host-app install/upgrade guidance for the new inbound-email and screening migrations
+4. a reviewer-facing queue or admin workflow that can release held mail after screening, because this tranche only implements intake + hold, not the full moderation UI
