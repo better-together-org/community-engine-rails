@@ -56,6 +56,16 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
       expect(created_request.creator).to eq(person)
       expect(created_request.categories).to contain_exactly(category)
     end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.joatu_requests_path(locale: locale), params: {
+          joatu_request: valid_attributes.merge(name: '', description: '')
+        }
+      end.not_to change(BetterTogether::Joatu::Request, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'GET /show' do
@@ -90,6 +100,14 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
       )
       expect(request_record.reload.status).to eq('closed')
     end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      patch better_together.joatu_request_path(request_record, locale: locale),
+            params: { joatu_request: { name: '', description: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(request_record.reload.name).not_to be_blank
+    end
   end
 
   describe 'DELETE /destroy' do
@@ -98,6 +116,20 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
       expect do
         delete better_together.joatu_request_path(to_delete, locale: locale)
       end.to change(BetterTogether::Joatu::Request, :count).by(-1)
+    end
+  end
+
+  describe 'GET /respond_with_offer' do
+    it 'redirects to a prefilled offer form for the request' do
+      get "/#{locale}/exchange/requests/#{request_record.id}/respond_with_offer"
+
+      expect(response).to redirect_to(
+        better_together.new_joatu_offer_path(
+          locale:,
+          source_type: 'BetterTogether::Joatu::Request',
+          source_id: request_record.id
+        )
+      )
     end
   end
   # rubocop:enable Metrics/BlockLength

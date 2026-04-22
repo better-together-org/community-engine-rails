@@ -30,6 +30,42 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     post_record.add_governed_contributor(platform_manager.person, role: 'editor')
   end
 
+  it 'renders not found for guests requesting a private unpublished post' do
+    hidden_post = create(
+      :better_together_post,
+      author: platform_manager.person,
+      creator: platform_manager.person,
+      privacy: 'private',
+      published_at: nil,
+      slug: "hidden-post-#{SecureRandom.hex(4)}",
+      identifier: "hidden-post-#{SecureRandom.hex(4)}"
+    )
+
+    logout
+
+    get better_together.post_path(hidden_post, locale:)
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'renders a private unpublished post for its creator' do
+    hidden_post = create(
+      :better_together_post,
+      author: platform_manager.person,
+      creator: platform_manager.person,
+      privacy: 'private',
+      published_at: nil,
+      title: 'Creator Hidden Post',
+      slug: "creator-hidden-post-#{SecureRandom.hex(4)}",
+      identifier: "creator-hidden-post-#{SecureRandom.hex(4)}"
+    )
+
+    get better_together.post_path(hidden_post, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Creator Hidden Post')
+  end
+
   it 'preloads post card associations for index rendering', :aggregate_failures do
     get better_together.posts_path(locale:)
 
@@ -98,5 +134,73 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('post[contributors_display_visibility]')
+  end
+
+  describe 'manager CRUD flows' do
+    it 'creates a post' do
+      expect do
+        post better_together.posts_path(locale:), params: {
+          post: {
+            title_en: 'Coverage Created Post',
+            content_en: 'Created during CRUD coverage',
+            privacy: 'private',
+            category_ids: [category.id]
+          }
+        }
+      end.to change(BetterTogether::Post, :count).by(1)
+
+      created_post = BetterTogether::Post.order(:created_at).last
+      expect(response).to redirect_to(better_together.post_path(created_post, locale:))
+      expect(created_post.title).to eq('Coverage Created Post')
+    end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.posts_path(locale:), params: {
+          post: {
+            title_en: '',
+            content_en: '',
+            privacy: 'private'
+          }
+        }
+      end.not_to change(BetterTogether::Post, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'updates an existing post', :aggregate_failures do
+      patch better_together.post_path(post_record, locale:), params: {
+        post: {
+          title_en: 'Updated Coverage Post',
+          content_en: 'Updated coverage body',
+          privacy: 'private',
+          contributors_display_visibility: 'off'
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(post_record.reload.title).to eq('Updated Coverage Post')
+      expect(post_record.reload.content.to_plain_text).to include('Updated coverage body')
+    end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      patch better_together.post_path(post_record, locale:), params: {
+        post: {
+          title_en: '',
+          content_en: ''
+        }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(post_record.reload.title).not_to be_blank
+    end
+
+    it 'destroys an unprotected post' do
+      doomed_post = create(:better_together_post, creator: platform_manager.person, author: platform_manager.person)
+
+      expect do
+        delete better_together.post_path(doomed_post, locale:)
+      end.to change(BetterTogether::Post, :count).by(-1)
+    end
   end
 end

@@ -18,26 +18,28 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
     create(:better_together_user, :confirmed, email: 'platform-safety-reviewer@example.test')
   end
 
+  def grant_platform_permission(user, permission_identifier)
+    permission = BetterTogether::ResourcePermission.find_by(identifier: permission_identifier)
+    return unless permission
+
+    role = create(:better_together_role, :platform_role)
+    BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
+    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+    membership.role = role
+    membership.status = :active
+    membership.save!
+    user.person.touch
+  end
+
   before do
     manager_person = BetterTogether::User.find_by(email: 'manager@example.test').person
     create(:better_together_agreement_participant,
            agreement: content_publishing_agreement,
            participant: manager_person,
            accepted_at: Time.current)
-    permission = BetterTogether::ResourcePermission.find_by(identifier: 'approve_network_connections')
-    next unless permission
-
-    role = create(:better_together_role, :platform_role)
-    BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
-    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
-    host_platform.person_platform_memberships.find_or_create_by!(member: approval_operator.person, role:)
-
-    safety_permission = BetterTogether::ResourcePermission.find_by(identifier: 'manage_platform_safety')
-    next unless safety_permission
-
-    safety_role = create(:better_together_role, :platform_role)
-    BetterTogether::RoleResourcePermission.create!(role: safety_role, resource_permission: safety_permission)
-    host_platform.person_platform_memberships.find_or_create_by!(member: safety_reviewer.person, role: safety_role)
+    grant_platform_permission(approval_operator, 'approve_network_connections')
+    grant_platform_permission(safety_reviewer, 'manage_platform_safety')
   end
 
   describe 'GET /:locale/.../host/platforms' do
@@ -214,6 +216,29 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
     end
   end
 
+  describe 'GET /:locale/.../host/platforms/:id/available_people' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+
+    it 'filters confirmed people by the search term' do
+      matching_user = create(:better_together_user, :confirmed)
+      matching_user.person.update!(name: 'Platform Matching Person')
+
+      other_user = create(:better_together_user, :confirmed)
+      other_user.person.update!(name: 'Different Person')
+
+      get better_together.available_people_platform_path(host_platform, locale:, format: :json),
+          params: { search: 'Matching' }
+
+      expect(response).to have_http_status(:ok)
+
+      results = JSON.parse(response.body)
+      labels = results.pluck('text')
+
+      expect(labels.any? { |text| text.include?('Platform Matching Person') }).to be(true)
+      expect(labels.none? { |text| text.include?('Different Person') }).to be(true)
+    end
+  end
+
   describe 'PATCH /:locale/.../host/platforms/:id' do
     let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
 
@@ -259,6 +284,20 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       }
 
       expect(host_platform.reload.contributors_display_visibility).to eq('off')
+    end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      original_host_url = host_platform.host_url
+
+      patch better_together.platform_path(locale:, id: host_platform.slug), params: {
+        platform: {
+          host_url: '',
+          time_zone: host_platform.time_zone
+        }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(host_platform.reload.host_url).to eq(original_host_url)
     end
 
     it 'applies platform-specific CSP origins to response headers' do # rubocop:disable RSpec/MultipleExpectations

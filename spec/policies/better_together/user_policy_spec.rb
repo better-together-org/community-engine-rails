@@ -3,16 +3,22 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::UserPolicy do
+  # rubocop:disable Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
 
     host_platform = BetterTogether::Platform.find_by(host: true) ||
                     create(:better_together_platform, :host, community: user.person.community)
-    role = create(:better_together_role, :platform_role)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+    membership.role ||= create(:better_together_role, :platform_role)
+    role = membership.role
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership.status = :active
+    membership.save!
+    user.person.touch
   end
+  # rubocop:enable Metrics/AbcSize
 
   let(:platform_manager) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:user_admin) { create(:better_together_user, :confirmed) }
@@ -38,5 +44,11 @@ RSpec.describe BetterTogether::UserPolicy do
     scope = described_class::Scope.new(platform_manager, BetterTogether::User).resolve
 
     expect(scope).to contain_exactly(platform_manager)
+  end
+
+  it 'scopes explicit user-account admins to all users' do
+    scope = described_class::Scope.new(user_admin, BetterTogether::User).resolve
+
+    expect(scope).to include(user_admin, target_user, platform_manager)
   end
 end

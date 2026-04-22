@@ -5,6 +5,24 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
+  let(:people_reviewer) { create(:better_together_user, :confirmed, email: 'people-reviewer@example.test') }
+
+  # rubocop:disable Metrics/AbcSize
+  def grant_platform_permission(user, permission_identifier)
+    BetterTogether::AccessControlBuilder.seed_data
+
+    host_platform = BetterTogether::Platform.find_by(host: true) ||
+                    create(:better_together_platform, :host, community: user.person.community)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+    membership.role ||= create(:better_together_role, :platform_role)
+    role = membership.role
+    permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
+    role.assign_resource_permissions([permission.identifier])
+    membership.status = :active
+    membership.save!
+    user.person.touch
+  end
+  # rubocop:enable Metrics/AbcSize
 
   describe 'GET /:locale/.../host/p/:id' do
     let!(:person) { create(:better_together_person, privacy: 'public') }
@@ -109,6 +127,35 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
     end
   end
 
+  describe 'directory visibility' do
+    let!(:public_person) { create(:better_together_person, name: 'Public Directory Person', privacy: 'public') }
+    let!(:private_person) { create(:better_together_person, name: 'Private Directory Person', privacy: 'private') }
+
+    it 'hides unrelated private people from the directory scope for platform managers without directory permission' do
+      get better_together.people_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(assigns(:people)).to include(platform_manager.person, public_person)
+      expect(assigns(:people)).not_to include(private_person)
+    end
+
+    it 'renders private profiles as not found without explicit directory permission' do
+      get better_together.person_path(locale:, id: private_person.slug)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'renders private profiles for explicit directory reviewers' do
+      grant_platform_permission(people_reviewer, 'read_person')
+      sign_in people_reviewer
+
+      get better_together.person_path(locale:, id: private_person.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(private_person.name)
+    end
+  end
+
   describe 'GET /:locale/.../host/p/:id (show) - calendar tab' do
     let!(:person) { platform_manager.person }
     let!(:community) { create(:better_together_community, creator: person) }
@@ -187,15 +234,81 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
   describe 'PATCH /:locale/.../host/p/:id' do
     let!(:person) { platform_manager.person }
 
-    # rubocop:todo RSpec/MultipleExpectations
-    it 'updates name and redirects' do # rubocop:todo RSpec/MultipleExpectations
-      # rubocop:enable RSpec/MultipleExpectations
+    it 'updates name and redirects' do
       patch better_together.person_path(locale:, id: person.slug), params: {
         person: { name: 'Updated Name' }
       }
+
       expect(response).to have_http_status(:see_other)
+
       follow_redirect!
       expect(response).to have_http_status(:ok)
+      expect(person.reload.name).to eq('Updated Name')
+    end
+
+    it 'updates nested contact details and persists the changes', :aggregate_failures do
+      existing_email = person.contact_detail.email_addresses.first ||
+                       create(:better_together_email_address, contact_detail: person.contact_detail)
+
+      patch better_together.person_path(locale:, id: person.slug), params: {
+        person: {
+          name: 'Updated Name',
+          contact_detail_attributes: {
+            id: person.contact_detail.id,
+            email_addresses_attributes: {
+              '0' => {
+                id: existing_email.id,
+                email: 'updated@example.test',
+                label: 'primary',
+                primary_flag: '1'
+              }
+            },
+            phone_numbers_attributes: {
+              '0' => {
+                number: '7095551212',
+                label: 'mobile',
+                primary_flag: '1'
+              }
+            },
+            addresses_attributes: {
+              '0' => {
+                name: 'Home',
+                line1: '12 Main Street',
+                city_name: 'Corner Brook',
+                state_province_name: 'NL',
+                country_name: 'Canada',
+                postal_code: 'A2H 1C4',
+                physical: '1',
+                postal: '1'
+              }
+            }
+          }
+        }
+      }
+
+      expect(response).to have_http_status(:see_other)
+
+      person.reload
+      expect(person.name).to eq('Updated Name')
+      expect(person.contact_detail.email_addresses.pluck(:email)).to include('updated@example.test')
+      expect(person.contact_detail.phone_numbers.pluck(:number)).to include('7095551212')
+
+      address = person.contact_detail.addresses.order(:created_at).last
+      expect(address.line1).to eq('12 Main Street')
+      expect(address.city_name).to eq('Corner Brook')
+      expect(address.country_name).to eq('Canada')
+    end
+
+    it 'rerenders edit when the update is invalid' do
+      original_name = person.name
+
+      patch better_together.person_path(locale:, id: person.slug), params: {
+        person: { name: '' }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('Please address the errors below.')
+      expect(person.reload.name).to eq(original_name)
     end
   end
 end

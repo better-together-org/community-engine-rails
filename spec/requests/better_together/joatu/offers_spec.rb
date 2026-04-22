@@ -73,6 +73,16 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       )
       expect(created_offer.target).to eq(target_platform)
     end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.joatu_offers_path(locale: I18n.locale), params: {
+          joatu_offer: valid_attributes.merge(name: '', description: '')
+        }
+      end.not_to change(BetterTogether::Joatu::Offer, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'GET /show' do
@@ -107,6 +117,14 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       )
       expect(offer.reload.status).to eq('closed')
     end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      patch better_together.joatu_offer_path(offer, locale: I18n.locale),
+            params: { joatu_offer: { name: '', description: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(offer.reload.name).not_to be_blank
+    end
   end
 
   describe 'DELETE /destroy' do
@@ -115,6 +133,20 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       expect do
         delete better_together.joatu_offer_path(offer_to_delete, locale: I18n.locale)
       end.to change(BetterTogether::Joatu::Offer, :count).by(-1)
+    end
+  end
+
+  describe 'GET /respond_with_request' do
+    it 'redirects to a prefilled request form for the offer' do
+      get "/#{I18n.locale}/exchange/offers/#{offer.id}/respond_with_request"
+
+      expect(response).to redirect_to(
+        better_together.new_joatu_request_path(
+          locale: I18n.locale,
+          source_type: 'BetterTogether::Joatu::Offer',
+          source_id: offer.id
+        )
+      )
     end
   end
   # rubocop:enable Metrics/BlockLength

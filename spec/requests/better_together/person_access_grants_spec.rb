@@ -16,6 +16,12 @@ RSpec.describe 'BetterTogether::PersonAccessGrants', :no_auth do
   end
 
   describe 'GET /access-grants' do
+    it 'returns 404 for unauthenticated users' do
+      get better_together.person_access_grants_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'allows the grantor to list their grants' do
       login(grantor_user.email, password)
 
@@ -82,6 +88,12 @@ RSpec.describe 'BetterTogether::PersonAccessGrants', :no_auth do
   end
 
   describe 'POST /access-grants/:id/revoke' do
+    it 'raises a routing error when unauthenticated because the route is constrained' do
+      expect do
+        post better_together.revoke_person_access_grant_path(grant, locale:)
+      end.to raise_error(ActionController::RoutingError)
+    end
+
     it 'allows the grantor to revoke the grant and soft-hide cached linked seeds' do
       login(grantor_user.email, password)
 

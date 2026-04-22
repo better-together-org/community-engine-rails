@@ -26,6 +26,15 @@ RSpec.describe BetterTogether::Infrastructure::Floor do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:level) }
     it { is_expected.to validate_numericality_of(:level).only_integer }
+
+    it 'validates level uniqueness within a building' do
+      building = create(:better_together_infrastructure_building)
+      existing_floor = create(:better_together_infrastructure_floor, building:, level: 3)
+      duplicate_floor = build(:better_together_infrastructure_floor, building:, level: existing_floor.level)
+
+      expect(duplicate_floor).not_to be_valid
+      expect(duplicate_floor.errors[:level]).to be_present
+    end
   end
 
   describe 'Attributes' do
@@ -48,6 +57,15 @@ RSpec.describe BetterTogether::Infrastructure::Floor do
         room = floor_no_rooms.ensure_room
         expect(floor_no_rooms.rooms.size).to eq(1)
         expect(room).to be_persisted
+      end
+
+      it 'does not create another room when one already exists' do
+        floor = create(:better_together_infrastructure_floor)
+        existing_room = floor.rooms.first
+
+        expect(floor.ensure_room).to be_nil
+        expect(floor.rooms.count).to eq(1)
+        expect(floor.rooms.first).to eq(existing_room)
       end
     end
   end

@@ -7,6 +7,7 @@ require 'rails_helper'
 # All actions require manage_platform permission (enforced via route constraint + Pundit).
 RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:platform) do
     create(:better_together_platform,
            identifier: "platform-#{SecureRandom.hex(6)}",
@@ -57,6 +58,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       get index_path
       expect(response.body).not_to include(other_config.name)
     end
+
+    it 'redirects signed-in non-managers away from index' do
+      sign_in regular_user
+
+      get index_path
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   # ---------------------------------------------------------------------------
@@ -76,6 +85,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
     it 'includes the service_type field' do
       get new_path
       expect(response.body).to include('storage_configuration[service_type]')
+    end
+
+    it 'redirects signed-in non-managers away from new' do
+      sign_in regular_user
+
+      get new_path
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 

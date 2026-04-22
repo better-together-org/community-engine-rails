@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether reports flow' do
   let(:locale) { I18n.default_locale }
   let(:user) { find_or_create_test_user('reports-user@example.test', 'SecureTest123!@#', :user) }
+  let(:other_user) { find_or_create_test_user('reports-other-user@example.test', 'SecureTest123!@#', :user) }
   let(:target_person) { create(:better_together_person, name: 'Target Person') }
   let(:target_page) { create(:better_together_page, title: 'Shared Page Evidence') }
   let(:target_block) { create(:better_together_content_rich_text, content_html: '<p>Block evidence</p>') }
@@ -82,6 +83,42 @@ RSpec.describe 'BetterTogether reports flow' do
     expect(response.body).to include('Current status')
   end
 
+  it 'shows only the signed-in reporter reports in history' do
+    own_report = create(:report,
+                        reporter: user.person,
+                        reportable: target_person,
+                        reason: 'My own report history entry')
+    create(:report,
+           reporter: other_user.person,
+           reportable: target_person,
+           reason: 'Someone else history entry')
+
+    get better_together.reports_path(locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(own_report.reason)
+    expect(response.body).not_to include('Someone else history entry')
+  end
+
+  it 'allows the reporter to view their own report' do
+    report = create(:report, reporter: user.person, reportable: target_person)
+
+    get better_together.report_path(report, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Current status')
+    expect(response.body).to include('More information or appeal')
+  end
+
+  it 'returns not found when another signed-in user tries to view the report' do
+    report = create(:report, reporter: user.person, reportable: target_person)
+    sign_in other_user
+
+    get better_together.report_path(report, locale:)
+
+    expect(response).to have_http_status(:not_found)
+  end
+
   it 'returns not found for an invalid reportable type on create' do
     post better_together.reports_path(locale:), params: {
       report: {
@@ -129,5 +166,20 @@ RSpec.describe 'BetterTogether reports flow' do
     follow_redirect!
     expect(response.body).to include('More information or appeal')
     expect(response.body).to include('I have screenshots and dates to add to the report.')
+  end
+
+  it 'returns not found when another signed-in user tries to add follow-up evidence' do
+    report = create(:report, reporter: user.person, reportable: target_person)
+    sign_in other_user
+
+    expect do
+      post better_together.report_followup_path(report, locale:), params: {
+        report_followup: {
+          body: 'I should not be able to append evidence here.'
+        }
+      }
+    end.not_to change(BetterTogether::Safety::Note, :count)
+
+    expect(response).to have_http_status(:not_found)
   end
 end

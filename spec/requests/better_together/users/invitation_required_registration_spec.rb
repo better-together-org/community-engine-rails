@@ -186,6 +186,17 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
         expect(response.body).to include('invitation-code-field')
         expect(response.body).to include(invitation.token)
       end
+
+      it 'rejects registration when the required agreements are missing' do
+        expect do
+          post '/en/users',
+               params: registration_params(invitation_code: invitation.token, with_agreements: false)
+        end.not_to change(BetterTogether::User, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(invitation.reload.status).to eq('pending')
+        expect_html_content(I18n.t('devise.registrations.new.agreements_required'))
+      end
     end
 
     context 'with valid platform invitation in session' do
