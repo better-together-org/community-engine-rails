@@ -96,8 +96,8 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Configurable Redis connection pool size and timeout for Rack::Attack rate limiting
 
 #### Search
-- Elasticsearch 8 gem upgrade validation (#1398)
-- Audit, health reporting, and live ES validation tooling (#1393)
+- `pg_search`-backed default search backend with database fallback for models that have not yet been upgraded to dedicated `pg_search` scopes
+- Audit and backend-visibility tooling for the registry-backed search lane (#1393)
 - Optional full reindex for all searchable models (#1276)
 - `SearchPagesTool` plus a shared AREL content-search helper for page-oriented MCP search paths (#1273)
 
