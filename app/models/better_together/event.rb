@@ -255,7 +255,7 @@ module BetterTogether
 
     # Callbacks for notifications and reminders
     after_update :send_update_notifications
-    after_update :schedule_reminder_notifications, if: :requires_reminder_scheduling?
+    after_update :schedule_reminder_notifications, if: :should_schedule_reminders_after_save?
     after_update :sync_calendar_entry_times, if: :saved_change_to_temporal_fields?
 
     # Get the host community for calendar functionality
@@ -437,7 +437,7 @@ module BetterTogether
 
     # Check if we should schedule reminders after save (for updates)
     def should_schedule_reminders_after_save?
-      !new_record? && requires_reminder_scheduling?
+      saved_change_to_temporal_fields? && requires_reminder_scheduling?
     end
 
     # Check if we should schedule reminders after commit (for creates with attendees)
