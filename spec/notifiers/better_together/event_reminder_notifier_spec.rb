@@ -69,5 +69,22 @@ module BetterTogether # :nodoc:
       notifier_without_type = described_class.new(record: event, params: {})
       expect(notifier_without_type.reminder_type).to eq('24_hours')
     end
+
+    describe 'delivered notifications' do
+      let(:recipient) { create(:person) }
+      let(:event) { create(:event, :upcoming) }
+
+      it 'delegates target_event-dependent methods through the noticed event' do
+        expect do
+          described_class.with(record: event, reminder_type: '1_hour').deliver(recipient)
+        end.to change { recipient.notifications.count }.by(1)
+
+        notification = recipient.notifications.order(created_at: :desc).first
+
+        expect(notification.target_event).to eq(event)
+        expect(notification.reminder_type).to eq('1_hour')
+        expect(notification.should_notify?).to be(true)
+      end
+    end
   end
 end
