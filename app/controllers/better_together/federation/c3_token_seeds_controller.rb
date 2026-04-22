@@ -11,13 +11,13 @@ module BetterTogether
     #                            source_ref, source_system, emitted_at } }
     #
     # Returns:
-    #   201 { status: 'ok', seed_id: ..., applied: true }
+    #   200 { status: 'ok', seed_id: ..., applied: true } — replay of an existing seed
+    #   201 { status: 'ok', seed_id: ..., applied: true } — first successful import
     #   202 { status: 'pending', seed_id: ..., applied: false, reason: :symbol }
-    #   409 { status: 'duplicate', message: ... }    — seed already applied
-    #   403 { error: 'c3_exchange not enabled' }     — connection not opted in
-    #   401                                          — bad / missing token
+    #   403 { error: 'c3_exchange not enabled' }          — connection not opted in
+    #   401                                               — bad / missing token
     class C3TokenSeedsController < ::BetterTogether::Federation::ApiController
-      def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def create # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
         return head :unauthorized unless connection
 
         unless connection.allows_c3_exchange?
@@ -26,24 +26,36 @@ module BetterTogether
         end
 
         identifier = "c3_token:#{seed_params[:token_id]}"
-        if BetterTogether::Seed.exists?(type: 'BetterTogether::C3::TokenSeed', identifier:)
-          return render json: { status: 'duplicate', message: 'token seed already applied' }, status: :conflict
-        end
+        seed = BetterTogether::C3::TokenSeed.find_by(
+          type: 'BetterTogether::C3::TokenSeed',
+          identifier: identifier
+        )
 
-        seed = BetterTogether::C3::TokenSeed.from_wire_params(seed_params, source_platform: connection.source_platform)
-        seed.save!
+        created = seed.nil?
+        if created
+          seed = BetterTogether::C3::TokenSeed.from_wire_params(
+            seed_params,
+            source_platform: connection.source_platform
+          )
+          begin
+            seed.save!
+          rescue ActiveRecord::RecordNotUnique
+            seed = BetterTogether::C3::TokenSeed.find_by!(
+              type: 'BetterTogether::C3::TokenSeed',
+              identifier: identifier
+            )
+            created = false
+          end
+        end
 
         result = seed.apply_to_recipient_balance!(origin_platform: connection.source_platform)
 
         if result.applied
-          render json: { status: 'ok', seed_id: seed.id, applied: true }, status: :created
+          render json: { status: 'ok', seed_id: seed.id, applied: true }, status: created ? :created : :ok
         else
           render json: { status: 'pending', seed_id: seed.id, applied: false,
                          reason: result.reason }, status: :accepted
         end
-      rescue ActiveRecord::RecordNotUnique
-        # Lost a race with a concurrent identical request — seed already applied.
-        render json: { status: 'duplicate', message: 'token seed already applied' }, status: :conflict
       rescue ActiveRecord::RecordInvalid, BetterTogether::C3::Balance::InsufficientBalance => e
         render json: { error: e.message }, status: :unprocessable_entity
       end
@@ -51,13 +63,7 @@ module BetterTogether
       private
 
       def connection
-        @connection ||= begin
-          token = access_token
-          if token.present? && token.platform_connection.target_platform == Current.platform
-            token.touch_last_used!
-            token.platform_connection
-          end
-        end
+        @connection ||= connection_for_scope('c3.exchange')
       end
 
       def seed_params

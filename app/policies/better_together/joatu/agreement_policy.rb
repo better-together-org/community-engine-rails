@@ -31,6 +31,7 @@ module BetterTogether
       end
       alias accept? update?
       alias reject? update?
+      alias fulfill? update?
 
       def destroy?
         return false unless user.present?

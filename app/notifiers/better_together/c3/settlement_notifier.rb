@@ -79,7 +79,7 @@ module BetterTogether
       end
 
       def email_params(_notification)
-        { settlement: settlement, event_type: event_type }
+        { settlement: settlement, event_type: event_type, recipient: recipient }
       end
 
       private

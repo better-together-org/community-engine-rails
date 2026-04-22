@@ -25,8 +25,8 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
     create(
       :c3_balance,
       holder: earner_user.person,
-      available_millitokens: 12_500,  # 12.5 Tree Seeds
-      locked_millitokens: 3_000,       # 3.0 Tree Seeds (reserved)
+      available_millitokens: 12_500, # 12.5 Tree Seeds
+      locked_millitokens: 3_000, # 3.0 Tree Seeds (reserved)
       lifetime_earned_millitokens: 55_000 # 55.0 Tree Seeds earned total
     )
   end

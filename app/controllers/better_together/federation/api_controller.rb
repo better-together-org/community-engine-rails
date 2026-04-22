@@ -35,6 +35,17 @@ module BetterTogether
 
         token.to_s
       end
+
+      def connection_for_scope(required_scope)
+        token = access_token
+        return unless token.present? && token.includes_scope?(required_scope)
+
+        connection = token.platform_connection
+        return unless connection.target_platform == Current.platform
+
+        token.touch_last_used!
+        connection
+      end
     end
   end
 end

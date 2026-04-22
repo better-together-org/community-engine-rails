@@ -61,13 +61,7 @@ module BetterTogether
       private
 
       def connection
-        @connection ||= begin
-          token = access_token
-          if token.present? && token.platform_connection.target_platform == Current.platform
-            token.touch_last_used!
-            token.platform_connection
-          end
-        end
+        @connection ||= connection_for_scope('c3.exchange')
       end
 
       def lock_params

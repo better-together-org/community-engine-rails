@@ -105,6 +105,22 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
       end
     end
 
+    context 'with a token missing c3.exchange scope' do
+      it 'returns 401 unauthorized' do
+        wrong_scope_token = BetterTogether::FederationAccessTokenIssuer.call(
+          connection: connection,
+          requested_scopes: 'content.feed.read'
+        ).access_token
+
+        post better_together.c3_lock_request_path,
+             params: valid_payload,
+             headers: { 'Authorization' => "Bearer #{wrong_scope_token}" },
+             as: :json
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
     context 'when c3_exchange is not enabled on the connection' do
       let(:connection) do
         create(
@@ -118,7 +134,7 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
         )
       end
 
-      it 'returns 401 or 403' do
+      it 'returns 401 unauthorized' do
         non_c3_token = BetterTogether::FederationAccessTokenIssuer.call(
           connection: connection,
           requested_scopes: 'content.feed.read'
@@ -129,7 +145,7 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
              headers: { 'Authorization' => "Bearer #{non_c3_token}" },
              as: :json
 
-        expect(response.status).to be_in([401, 403])
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end

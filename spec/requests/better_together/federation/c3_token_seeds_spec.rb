@@ -72,21 +72,68 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
     end
 
     context 'with a duplicate token_id' do
-      it 'returns 409 conflict on second submission' do
-        post better_together.c3_token_seed_path,
-             params: valid_payload, headers: auth_headers, as: :json
+      it 'returns 200 and does not duplicate the applied transfer on second submission' do
         post better_together.c3_token_seed_path,
              params: valid_payload, headers: auth_headers, as: :json
 
-        expect(response).to have_http_status(:conflict)
+        expect do
+          post better_together.c3_token_seed_path,
+               params: valid_payload, headers: auth_headers, as: :json
+        end.not_to change(BetterTogether::C3::Token, :count)
+
+        expect(response).to have_http_status(:ok)
         body = JSON.parse(response.body)
-        expect(body['status']).to eq('duplicate')
+        expect(body['status']).to eq('ok')
+        expect(body['applied']).to be(true)
+      end
+    end
+
+    context 'when the first submission is deferred' do
+      let(:deferred_did) { "did:key:z6Mk#{SecureRandom.hex(16)}" }
+
+      it 'replays the existing seed after the earner enrolls locally' do
+        deferred_payload = valid_payload.deep_merge(c3_token_seed: { earner_did: deferred_did })
+
+        expect do
+          post better_together.c3_token_seed_path,
+               params: deferred_payload, headers: auth_headers, as: :json
+        end.to change(BetterTogether::C3::TokenSeed, :count).by(1)
+
+        expect(response).to have_http_status(:accepted)
+
+        create(:better_together_person, borgberry_did: deferred_did)
+
+        expect do
+          post better_together.c3_token_seed_path,
+               params: deferred_payload, headers: auth_headers, as: :json
+        end.to change(BetterTogether::C3::Token, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body['status']).to eq('ok')
+        expect(body['applied']).to be(true)
       end
     end
 
     context 'without an auth token' do
       it 'returns 401' do
         post better_together.c3_token_seed_path, params: valid_payload, as: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'with a token missing c3.exchange scope' do
+      it 'returns 401 unauthorized' do
+        wrong_scope_token = BetterTogether::FederationAccessTokenIssuer.call(
+          connection: connection,
+          requested_scopes: 'content.feed.read'
+        ).access_token
+
+        post better_together.c3_token_seed_path,
+             params: valid_payload,
+             headers: { 'Authorization' => "Bearer #{wrong_scope_token}" },
+             as: :json
+
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -104,7 +151,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
         )
       end
 
-      it 'returns 403 forbidden' do
+      it 'returns 401 unauthorized' do
         # Issue token with content.feed.read scope (only non-c3 scope available on this connection)
         non_c3_token = BetterTogether::FederationAccessTokenIssuer.call(
           connection: connection,
@@ -116,8 +163,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
              headers: { 'Authorization' => "Bearer #{non_c3_token}" },
              as: :json
 
-        # Either 401 (scope rejected by issuer) or 403 (controller gate) — both acceptable
-        expect(response.status).to be_in([401, 403])
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 

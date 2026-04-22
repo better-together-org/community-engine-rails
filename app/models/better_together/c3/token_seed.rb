@@ -122,6 +122,7 @@ module BetterTogether
         millitokens = data[:c3_millitokens].to_i
 
         return Result.new(false, :invalid_payload) if earner_did.blank? || millitokens <= 0
+        return Result.new(true, :already_applied) if already_applied?(data)
 
         recipient = BetterTogether::Person.find_by(borgberry_did: earner_did)
         unless recipient
@@ -247,6 +248,21 @@ module BetterTogether
             confirmed_at: Time.current
           )
         end
+      end
+
+      def already_applied?(data)
+        BetterTogether::C3::Token.exists?(
+          source_system: token_source_system(data),
+          source_ref: token_source_ref(data)
+        )
+      end
+
+      def token_source_ref(data)
+        data[:source_ref_hash].presence || data[:source_ref].presence || "token_seed:#{id}"
+      end
+
+      def token_source_system(data)
+        data[:source_system].presence || 'federation'
       end
 
       # One-way SHA-256 hash of a source_ref bound to the originating platform.
