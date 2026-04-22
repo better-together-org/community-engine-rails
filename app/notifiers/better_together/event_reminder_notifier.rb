@@ -59,10 +59,10 @@ module BetterTogether
       }
     end
 
-    def email_params(_notification)
+    def email_params(notification)
       {
         event: target_event,
-        person: recipient,
+        person: notification.recipient,
         reminder_type: reminder_type
       }
     end
