@@ -52,13 +52,13 @@ module BetterTogether
         return
       end
 
-      unless direct_accept_eligible?(resource_instance)
+      unless direct_accept_eligible?(@agreement)
         render json: { error: t('better_together.agreements.accept_action.ineligible_flow') }, status: :unprocessable_entity
         return
       end
 
       acceptance = BetterTogether::AgreementAcceptanceRecorder.record!(
-        agreement: resource_instance,
+        agreement: @agreement,
         participant: current_user.person,
         acceptance_method: :agreement_review,
         accepted_at: Time.current,
@@ -67,7 +67,7 @@ module BetterTogether
 
       render json: {
         status: 'accepted',
-        agreement_identifier: resource_instance.identifier,
+        agreement_identifier: @agreement.identifier,
         accepted_at: acceptance.accepted_at&.utc&.iso8601(6),
         message: t('better_together.agreements.accept_action.accepted')
       }

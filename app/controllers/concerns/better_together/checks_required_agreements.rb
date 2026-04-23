@@ -44,14 +44,21 @@ module BetterTogether
       !accepted_public_publishing_agreement?(participant)
     end
 
-    # Returns required agreements that a person has not yet accepted
+    # Returns required agreements that a person has not yet accepted.
+    # Acceptance is evaluated via +Agreement#accepted_by?+ (which respects staleness) so the
+    # accepted IDs are resolved in Ruby; the result is then returned as an
+    # ActiveRecord::Relation so callers may chain further scopes or use relation methods.
     # @param person [BetterTogether::Person] the person to check
     # @return [ActiveRecord::Relation<BetterTogether::Agreement>] unaccepted required agreements
     def self.unaccepted_required_agreements(person)
-      BetterTogether::Agreement
-        .required_for_registration
-        .ordered_for_consent
-        .reject { |agreement| agreement.accepted_by?(person) }
+      base = BetterTogether::Agreement
+             .required_for_registration
+             .ordered_for_consent
+
+      return base if person.blank?
+
+      accepted_ids = base.select { |agreement| agreement.accepted_by?(person) }.map(&:id)
+      accepted_ids.empty? ? base : base.where.not(id: accepted_ids)
     end
 
     # Returns true if a person has unaccepted required agreements
