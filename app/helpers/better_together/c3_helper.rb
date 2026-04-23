@@ -25,9 +25,28 @@ module BetterTogether
       c3 = (millitokens.to_f / MILLITOKEN_SCALE).round(4)
       # Strip trailing zeros beyond 2 decimal places for readability
       c3_formatted = c3 == c3.to_i ? c3.to_i.to_s : format('%g', c3)
-      label = millitokens.to_i == MILLITOKEN_SCALE ? 'Tree Seed' : 'Tree Seeds'
-      emoji = include_emoji ? ' 🌱' : ''
-      "#{c3_formatted} #{label}#{emoji}"
+      unit_count = millitokens.to_i == MILLITOKEN_SCALE ? 1 : 2
+      label = I18n.t(
+        'better_together.c3.tree_seed',
+        count: unit_count,
+        default: {
+          one: 'Tree Seed',
+          other: 'Tree Seeds'
+        }
+      )
+      emoji = if include_emoji
+                I18n.t('better_together.c3.tree_seed_emoji', default: ' 🌱')
+              else
+                ''
+              end
+
+      I18n.t(
+        'better_together.c3.tree_seed_display',
+        amount: c3_formatted,
+        unit: label,
+        emoji: emoji,
+        default: '%{amount} %{unit}%{emoji}'
+      )
     end
   end
 end
