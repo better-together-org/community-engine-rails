@@ -8,7 +8,7 @@ module BetterTogether
     # has not arrived (e.g. peer platform went offline, agreement was abandoned).
     # Expiry releases the locked C3 back to the payer — no value is ever lost.
     #
-    # Scheduled every 15 minutes via solid_queue's recurring tasks config.
+    # Scheduled every 15 minutes via config/sidekiq_scheduler.yml.
     # Each run processes all expired-but-not-yet-released locks in one pass.
     class ExpireBalanceLocksJob < BetterTogether::ApplicationJob
       queue_as :default
