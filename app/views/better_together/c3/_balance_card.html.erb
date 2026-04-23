@@ -1,11 +1,18 @@
 <%# C3 balance card — shows a person's Tree Seeds balance in accessible, plain language.
   # Locals:
   #   balance (BetterTogether::C3::Balance, optional) — nil if no balance exists yet
-  #   person  (BetterTogether::Person)
   #   show_federated (Boolean, default: false) — whether to show the cross-platform toggle
+  #   federated_available_millitokens (Integer, optional) — pre-computed network-wide
+  #     available total; required (and only used) when show_federated is true.
+  #     Callers MUST pass this value — do not rely on in-view DB queries.
+  #   federated_lifetime_millitokens (Integer, optional) — pre-computed network-wide
+  #     lifetime-earned total; required (and only used) when show_federated is true.
+  #     Callers MUST pass this value — do not rely on in-view DB queries.
 -%>
 <% balance ||= nil %>
 <% show_federated ||= false %>
+<% federated_available_millitokens ||= 0 %>
+<% federated_lifetime_millitokens  ||= 0 %>
 
 <section class="bt-c3-balance-card card mb-4"
          aria-label="<%= t('better_together.c3.balance_card.title', default: 'Your Tree Seeds balance') %>">
@@ -47,8 +54,9 @@
     </div>
 
     <%# Cross-platform total — privacy-sensitive, off by default %>
+    <%# federated_available_millitokens and federated_lifetime_millitokens are expected
+        to be pre-computed by the caller to avoid N+1 queries in list views. %>
     <% if show_federated %>
-      <% all_balances = BetterTogether::C3::Balance.where(holder: person) %>
       <details class="bt-c3-federated-toggle mt-2">
         <summary class="btn btn-sm btn-outline-secondary">
           <%= t('better_together.c3.balance_card.show_network_total',
@@ -67,7 +75,7 @@
                       default: 'Network available') %>
               </dt>
               <dd class="mb-0">
-                <%= tree_seeds_display(all_balances.sum(:available_millitokens)) %>
+                <%= tree_seeds_display(federated_available_millitokens) %>
               </dd>
             </div>
             <div class="col-12 col-sm-6">
@@ -76,7 +84,7 @@
                       default: 'Network lifetime earned') %>
               </dt>
               <dd class="mb-0">
-                <%= tree_seeds_display(all_balances.sum(:lifetime_earned_millitokens)) %>
+                <%= tree_seeds_display(federated_lifetime_millitokens) %>
               </dd>
             </div>
           </dl>
