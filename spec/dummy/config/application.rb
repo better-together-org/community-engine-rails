@@ -38,6 +38,9 @@ module Dummy # :nodoc:
       g.test_framework :rspec
     end
 
+    engine_migrations = BetterTogether::Engine.root.join('db/migrate').to_s
+    config.paths['db/migrate'] << engine_migrations unless config.paths['db/migrate'].include?(engine_migrations)
+
     # Opt-in to Rails 8.1 to_time behavior: preserve receiver timezone
     # See deprecation: `to_time` will always preserve receiver timezone
     config.active_support.to_time_preserves_timezone = :zone

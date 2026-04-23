@@ -1,0 +1,8 @@
+<%= t('better_together.notifications.c3.settlement.mailer.activity_header',
+     amount: @tree_seeds_amount,
+     default: '%{amount} Tree Seeds have activity on your agreement.') %>
+
+<%= @event_copy %>
+
+<%= t('better_together.notifications.c3.settlement.mailer.view_agreement',
+     default: 'View agreement') %>: <%= @agreement_url %>

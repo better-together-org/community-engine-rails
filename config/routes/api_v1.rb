@@ -94,6 +94,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_requests
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
+  post 'joatu_agreements/:id/cancel', to: 'joatu_agreements#cancel'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
 
   # Membership requests — create is public (unauthenticated); read/manage require auth
@@ -101,9 +102,15 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # C3 Community Contribution Token (borgberry fleet integration)
   namespace :c3 do
-    post 'contributions', to: 'contributions#create'
-    get 'contributions', to: 'contributions#index'
-    get 'balance', to: 'contributions#balance'
+    post 'contributions',   to: 'contributions#create'
+    get  'contributions',   to: 'contributions#index'
+    get  'balance',         to: 'contributions#balance'
+    get  'network_balance', to: 'contributions#network_balance'
+  end
+
+  # Borgberry identity — returns this node's borgberry DID and person identity
+  namespace :borgberry do
+    get 'profile', to: 'profile#show'
   end
 
   # Fleet node registry (borgberry fleet agent registration + heartbeat)

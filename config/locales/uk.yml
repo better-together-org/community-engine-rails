@@ -562,6 +562,10 @@ uk:
                 особи, цільової особи та активного підключення платформи
             target:
               must_be_person: повинна бути особою
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: вже має запис про розрахунок
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -2408,6 +2412,20 @@ uk:
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
+      c3:
+        settlement:
+          locked:
+            title: Насіння дерева зарезервовано
+            body: "%{amount} Насіння дерева зарезервовано для вашої угоди. Вони будуть звільнені, якщо угоду скасують."
+          settled:
+            title: Насіння дерева обміняно
+            body: "%{amount} Насіння дерева обміняно. Ваш баланс оновлено."
+          released:
+            title: Резервування Насіння дерева звільнено
+            body: "%{amount} Насіння дерева повернено на ваш баланс."
+          mailer:
+            activity_header: "%{amount} Насіння дерева мають активність у вашій угоді."
+            view_agreement: Переглянути угоду
       joatu:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.
@@ -2789,6 +2807,14 @@ uk:
           запитувати у токенах OAuth. Вмикайте лише ті обсяги, що відповідають вашим
           узгодженим умовам обміну даними.
         federation_scopes_legend: Обсяги федерації
+        allow_c3_exchange: Дозволити обмін Насінням дерева з цією платформою
+        c3_exchange_hint: Коли увімкнено, учасники цієї платформи можуть надсилати
+          та отримувати Насіння дерева з %{platform}. Обидві платформи повинні це
+          увімкнути для роботи обміну.
+        c3_exchange_legend: Обмін Насінням дерева
+        c3_exchange_rate_hint: "Скільки Насіння дерева тут дорівнює 1 Насінню дерева
+          на %{platform}? Залиште 1.0 для рівної вартості."
+        c3_exchange_rate_label: Курс обміну
         save: Зберегти зміни
         shared_content_types_hint: Оберіть типи вмісту для включення під час синхронізації
           з цим з'єднанням.

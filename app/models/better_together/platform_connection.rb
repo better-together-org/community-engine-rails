@@ -61,6 +61,9 @@ module BetterTogether
       allow_content_read_scope Boolean, default: false
       allow_linked_content_read_scope Boolean, default: false
       allow_content_write_scope Boolean, default: false
+      # C3 community contribution token exchange (borgberry federation)
+      allow_c3_exchange Boolean, default: false
+      c3_exchange_rate String, default: '1.0' # bilateral rate string, e.g. '1.5' = 1 C3 here = 1.5 C3 there
       sync_cursor String, default: ''
       last_sync_status String, default: 'idle'
       last_sync_started_at String, default: ''

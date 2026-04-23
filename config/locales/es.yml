@@ -563,6 +563,10 @@ es:
                 activa
             target:
               must_be_person: debe ser una persona
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: ya tiene un registro de liquidación
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -2421,6 +2425,20 @@ es:
       index:
         no_notifications: No tienes notificaciones.
         notifications: Notificaciones
+      c3:
+        settlement:
+          locked:
+            title: Semillas de árbol reservadas
+            body: "%{amount} Semillas de árbol han sido reservadas para tu acuerdo. Se liberarán si el acuerdo se cancela."
+          settled:
+            title: Semillas de árbol intercambiadas
+            body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha sido actualizado."
+          released:
+            title: Reserva de Semillas de árbol liberada
+            body: "%{amount} Semillas de árbol han sido devueltas a tu saldo."
+          mailer:
+            activity_header: "%{amount} Semillas de árbol tienen actividad en tu acuerdo."
+            view_agreement: Ver acuerdo
       joatu:
         agreement_created:
           content: Se ha creado un acuerdo entre "%{offer}" y "%{request}".
@@ -2803,6 +2821,14 @@ es:
           plataforma remota en los tokens OAuth. Solo habilite los ámbitos que coincidan
           con sus términos de intercambio de datos acordados.
         federation_scopes_legend: Ámbitos de federación
+        allow_c3_exchange: Permitir el intercambio de Semillas de árbol con esta plataforma
+        c3_exchange_hint: Cuando está habilitado, los participantes de esta plataforma
+          pueden enviar y recibir Semillas de árbol con %{platform}. Ambas plataformas
+          deben habilitarlo para que el intercambio funcione.
+        c3_exchange_legend: Intercambio de Semillas de árbol
+        c3_exchange_rate_hint: "¿Cuántas Semillas de árbol aquí equivalen a 1 Semilla
+          de árbol en %{platform}? Deja en 1.0 para valor igual."
+        c3_exchange_rate_label: Tasa de intercambio
         save: Guardar cambios
         shared_content_types_hint: Seleccione qué tipos de contenido incluir al sincronizar
           con esta conexión.

@@ -83,6 +83,20 @@ module BetterTogether
         Current.reset
       end
 
+      def current_platform_manager?
+        current_user&.permitted_to?('manage_platform', Current.platform)
+      end
+
+      def trusted_oauth_application?
+        oauth2_authenticated? && doorkeeper_token&.application&.trusted?
+      end
+
+      def require_trusted_oauth_application_or_platform_manager!
+        return if trusted_oauth_application? || current_platform_manager?
+
+        render json: { error: 'forbidden' }, status: :forbidden
+      end
+
       # Check if this is a Devise controller (auth endpoints)
       def devise_controller?
         is_a?(Devise::SessionsController) ||

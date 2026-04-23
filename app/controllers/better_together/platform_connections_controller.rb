@@ -123,7 +123,9 @@ module BetterTogether
         :allow_profile_read_scope,
         :allow_content_read_scope,
         :allow_linked_content_read_scope,
-        :allow_content_write_scope
+        :allow_content_write_scope,
+        :allow_c3_exchange,
+        :c3_exchange_rate
       )
     end
 

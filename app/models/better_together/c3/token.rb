@@ -12,22 +12,37 @@ module BetterTogether
 
       MILLITOKEN_SCALE = 10_000 # 1 C3 = 10_000 millitokens
 
+      # Maximum millitokens in a single transaction (10,000 C3 / Tree Seeds).
+      # Prevents overflow and limits blast radius of malformed or malicious payloads.
+      MAX_SINGLE_TRANSACTION_MILLITOKENS = 10_000 * MILLITOKEN_SCALE
+
       CONTRIBUTION_TYPES = BetterTogether::C3::ExchangeRate::CONTRIBUTION_TYPES
       TOKEN_STATUSES = %w[pending confirmed disputed settled].freeze
+
+      # Deterministic encryption so the for_source scope and duplicate-check in
+      # ContributionsController (Token.exists?(source_ref: ...)) continue to work.
+      encrypts :source_ref, deterministic: true
 
       enum :contribution_type, CONTRIBUTION_TYPES
 
       belongs_to :earner, polymorphic: true
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
+      # origin_platform_id is nil for tokens minted locally; set for tokens received via federation
+      belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true
 
       validates :earner, :contribution_type, :source_ref, :source_system, presence: true
       validates :source_ref, uniqueness: { scope: :source_system }
-      validates :c3_millitokens, numericality: { greater_than_or_equal_to: 0 }
+      validates :c3_millitokens, numericality: {
+        greater_than_or_equal_to: 0,
+        less_than_or_equal_to: MAX_SINGLE_TRANSACTION_MILLITOKENS
+      }
       validates :status, inclusion: { in: TOKEN_STATUSES }
 
-      scope :confirmed, -> { where(status: 'confirmed') }
-      scope :pending, -> { where(status: 'pending') }
+      scope :confirmed,  -> { where(status: 'confirmed') }
+      scope :pending,    -> { where(status: 'pending') }
       scope :for_source, ->(system, ref) { where(source_system: system, source_ref: ref) }
+      scope :local,      -> { where(federated: false) }
+      scope :federated,  -> { where(federated: true) }
 
       # Convert to/from C3 decimal amount
       def c3_amount
