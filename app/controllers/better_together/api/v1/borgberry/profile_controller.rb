@@ -17,8 +17,10 @@ module BetterTogether
         # Used by `borgberry did show` to fetch and cache this node's DID.
         # Requires standard API authentication (JWT or OAuth2 bearer token).
         class ProfileController < BetterTogether::Api::ApplicationController
+          require_oauth_scopes :read, only: :show
+
           def show
-            person = current_person
+            person = current_user&.person
             return head :unauthorized unless person
 
             did = person.borgberry_did

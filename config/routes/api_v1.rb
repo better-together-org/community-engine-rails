@@ -94,6 +94,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_requests
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
+  post 'joatu_agreements/:id/cancel', to: 'joatu_agreements#cancel'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
 
   # Membership requests — create is public (unauthenticated); read/manage require auth

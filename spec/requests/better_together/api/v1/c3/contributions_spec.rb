@@ -56,7 +56,7 @@ RSpec.describe 'BetterTogether::Api::V1::C3::Contributions network_balance', :no
         expect(response).to have_http_status(:ok)
         body = JSON.parse(response.body)
         expect(body['borgberry_did']).to eq(earner.borgberry_did)
-        expect(body['available_c3']).to be >= 0
+        expect(body['network_available_c3']).to be >= 0
       end
     end
 

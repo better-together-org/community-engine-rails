@@ -10,19 +10,29 @@ module BetterTogether
     # Plain-language messages use Tree Seeds (not millitokens) to avoid technical jargon.
     # DID values, UUIDs, and internal identifiers are never included in message bodies.
     class SettlementNotifier < ApplicationNotifier
+      include BetterTogether::C3Helper
+
       deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
                                 queue: :notifications
       deliver_by :email,
                  mailer: 'BetterTogether::C3::SettlementMailer',
                  method: :settlement_notification,
                  params: :email_params, queue: :mailers do |config|
-        config.if = -> { recipient.email.present? && recipient.notification_preferences['notify_by_email'] }
+        config.if = -> { recipient_has_email? }
       end
 
-      param :settlement
-      param :event_type # :c3_locked | :c3_settled | :c3_lock_released
+      required_param :settlement
+      required_param :event_type # :c3_locked | :c3_settled | :c3_lock_released
 
       validates :settlement, :event_type, presence: true
+
+      def settlement
+        params[:settlement]
+      end
+
+      def event_type
+        params[:event_type]&.to_sym
+      end
 
       def title
         case event_type
@@ -78,14 +88,24 @@ module BetterTogether
         }
       end
 
-      def email_params(_notification)
-        { settlement: settlement, event_type: event_type, recipient: recipient }
+      def email_params(notification)
+        { settlement: settlement, event_type: event_type, recipient: notification.recipient }
+      end
+
+      notification_methods do
+        delegate :settlement, :event_type, :title, :body, :identifier, :url, to: :event
+
+        def recipient_has_email?
+          recipient.respond_to?(:email) && recipient.email.present? &&
+            (!recipient.respond_to?(:notification_preferences) ||
+             recipient.notification_preferences.fetch('notify_by_email', true))
+        end
       end
 
       private
 
       def helpers
-        ActionController::Base.helpers
+        @helpers ||= Object.new.extend(BetterTogether::C3Helper)
       end
     end
   end

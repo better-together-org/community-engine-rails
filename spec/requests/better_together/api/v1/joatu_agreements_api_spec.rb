@@ -139,4 +139,31 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
       end
     end
   end
+
+  describe 'POST /api/v1/joatu_agreements/:id/cancel' do
+    let(:priced_offer) { create(:better_together_joatu_offer, creator: person, c3_price_millitokens: 20_000) }
+    let(:other_user) { create(:better_together_user, :confirmed) }
+    let(:other_request) { create(:better_together_joatu_request, creator: other_user.person) }
+    let(:agreement) { create(:better_together_joatu_agreement, offer: priced_offer, request: other_request) }
+    let(:url) { "/api/v1/joatu_agreements/#{agreement.id}/cancel" }
+
+    before do
+      BetterTogether::C3::Balance.find_or_create_by!(holder: other_user.person).credit!(5.0)
+      agreement.accept!
+    end
+
+    context 'when authenticated as participant' do
+      before { post url, headers: auth_headers }
+
+      it 'returns success status' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'cancels the agreement' do
+        json = JSON.parse(response.body)
+        expect(json['data']['attributes']['status']).to eq('cancelled')
+        expect(json['data']['attributes']['decision_made_at']).to be_present
+      end
+    end
+  end
 end

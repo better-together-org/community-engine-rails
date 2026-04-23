@@ -21,7 +21,7 @@ class CreateBetterTogetherC3BalanceLocks < ActiveRecord::Migration[7.2]
 
       # Opaque reference returned to the locking party (peer platform or local caller)
       t.string :lock_ref, null: false
-      index :lock_ref, unique: true, name: 'idx_bt_c3_balance_locks_ref'
+      t.index :lock_ref, unique: true, name: 'idx_bt_c3_balance_locks_ref'
 
       # Amount locked (stored as millitokens to avoid float rounding)
       t.bigint :millitokens, null: false

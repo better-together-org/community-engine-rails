@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::C3::SettlementNotifier do
+  include ActiveJob::TestHelper
+
   let(:payer)     { create(:better_together_person) }
   let(:recipient) { create(:better_together_person) }
   let(:offer)     { create(:better_together_joatu_offer,   creator: recipient) }
@@ -78,9 +80,12 @@ RSpec.describe BetterTogether::C3::SettlementNotifier do
   describe '#deliver_later' do
     it 'enqueues notification for each recipient' do
       notifier = described_class.with(settlement: settlement, event_type: :c3_locked)
+
       expect do
-        notifier.deliver_later([payer, recipient])
-      end.to change(BetterTogether::Notification, :count).by(2)
+        perform_enqueued_jobs do
+          notifier.deliver_later([payer, recipient])
+        end
+      end.to change { payer.notifications.count + recipient.notifications.count }.by(2)
     end
   end
 end

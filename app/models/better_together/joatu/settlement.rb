@@ -39,12 +39,14 @@ module BetterTogether
       # lock_ref is read from the settlement record (stored when the lock was created
       # in Agreement#create_settlement_if_c3_priced!) so the BalanceLock is marked settled.
       def complete!(payer_balance:, recipient_balance:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        raise ActiveRecord::RecordInvalid, self unless status == 'pending'
+        assert_pending_with_required_lock!
 
         token = nil
 
         transaction do
-          payer_balance.settle_to!(recipient_balance, c3_amount, lock_ref: lock_ref)
+          with_lock_invariant_errors do
+            payer_balance.settle_to!(recipient_balance, c3_amount, lock_ref: lock_ref)
+          end
 
           token = BetterTogether::C3::Token.create!(
             earner: recipient,
@@ -72,10 +74,12 @@ module BetterTogether
       # Called when an accepted agreement is cancelled.
       # lock_ref is used to mark the corresponding BalanceLock as released.
       def cancel!(payer_balance:)
-        raise ActiveRecord::RecordInvalid, self unless status == 'pending'
+        assert_pending_with_required_lock!
 
         transaction do
-          payer_balance.unlock!(c3_amount, lock_ref: lock_ref) if c3_millitokens.positive?
+          with_lock_invariant_errors do
+            payer_balance.unlock!(c3_amount, lock_ref: lock_ref) if c3_millitokens.positive?
+          end
           update!(status: 'cancelled', completed_at: Time.current)
         end
 
@@ -86,6 +90,23 @@ module BetterTogether
 
       def to_s
         "Settlement #{id&.first(8)} #{status} #{c3_amount} C3"
+      end
+
+      private
+
+      def assert_pending_with_required_lock!
+        return if status == 'pending' && (c3_millitokens.zero? || lock_ref.present?)
+
+        errors.add(:base, 'Settlement must be pending before it can transition') unless status == 'pending'
+        errors.add(:lock_ref, 'must be present for locked C3 settlements') if c3_millitokens.positive? && lock_ref.blank?
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      def with_lock_invariant_errors
+        yield
+      rescue BetterTogether::C3::Balance::LockError => e
+        errors.add(:lock_ref, e.message)
+        raise ActiveRecord::RecordInvalid, self
       end
     end
   end

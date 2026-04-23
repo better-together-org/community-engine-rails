@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::Joatu::Settlement do
   end
 
   let(:lock_ref) do
-    payer_balance.lock!(2.0, agreement_ref: agreement.identifier)
+    payer_balance.lock!(2.0, agreement_ref: agreement.id)
   end
 
   let(:settlement) do
@@ -106,6 +106,26 @@ RSpec.describe BetterTogether::Joatu::Settlement do
       end.to raise_error(ActiveRecord::RecordInvalid)
     end
 
+    it 'raises when the lock_ref is missing for locked C3 settlements' do
+      settlement.update_columns(lock_ref: nil)
+
+      expect do
+        settlement.complete!(payer_balance: payer_balance.reload, recipient_balance: recipient_balance.reload)
+      end.to raise_error(ActiveRecord::RecordInvalid)
+
+      expect(settlement.errors[:lock_ref]).to include('must be present for locked C3 settlements')
+    end
+
+    it 'raises when the referenced lock has already been consumed' do
+      payer_balance.unlock!(2.0, lock_ref: lock_ref)
+
+      expect do
+        settlement.complete!(payer_balance: payer_balance.reload, recipient_balance: recipient_balance.reload)
+      end.to raise_error(ActiveRecord::RecordInvalid)
+
+      expect(settlement.errors[:lock_ref]).to include("pending lock '#{lock_ref}' not found")
+    end
+
     it 'delivers a c3_settled notification' do
       allow(BetterTogether::C3::SettlementNotifier).to receive(:with).and_call_original
       settlement.complete!(payer_balance: payer_balance.reload, recipient_balance: recipient_balance.reload)
@@ -118,8 +138,7 @@ RSpec.describe BetterTogether::Joatu::Settlement do
     it 'returns locked C3 to payer' do
       available_before = payer_balance.reload.available_millitokens
       settlement.cancel!(payer_balance: payer_balance.reload)
-      # locked amount returned to available
-      expect(payer_balance.reload.available_millitokens).to eq(available_before + 20_000)
+      expect(payer_balance.reload.available_millitokens).to eq(available_before)
     end
 
     it 'marks the BalanceLock as released' do
@@ -133,6 +152,16 @@ RSpec.describe BetterTogether::Joatu::Settlement do
       expect do
         settlement.cancel!(payer_balance: payer_balance.reload)
       end.to raise_error(ActiveRecord::RecordInvalid)
+    end
+
+    it 'raises when the referenced lock has already been consumed' do
+      payer_balance.unlock!(2.0, lock_ref: lock_ref)
+
+      expect do
+        settlement.cancel!(payer_balance: payer_balance.reload)
+      end.to raise_error(ActiveRecord::RecordInvalid)
+
+      expect(settlement.errors[:lock_ref]).to include("pending lock '#{lock_ref}' not found")
     end
 
     it 'delivers a c3_lock_released notification' do

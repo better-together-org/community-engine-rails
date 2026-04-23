@@ -14,6 +14,7 @@ module BetterTogether
       STATUS_VALUES = {
         pending: 'pending',
         accepted: 'accepted',
+        cancelled: 'cancelled',
         rejected: 'rejected',
         fulfilled: 'fulfilled'
       }.freeze
@@ -101,7 +102,7 @@ module BetterTogether
       end
 
       def decision_made_at
-        return unless status_accepted? || status_rejected?
+        return unless status_accepted? || status_rejected? || status_cancelled?
 
         updated_at
       end
@@ -139,6 +140,20 @@ module BetterTogether
       def reject!
         ensure_reject_allowed!
         update!(status: :rejected)
+      end
+
+      def cancel! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        ensure_cancel_allowed!
+
+        transaction do
+          if settlement&.status == 'pending'
+            payer_balance = BetterTogether::C3::Balance.find_by!(holder: settlement.payer)
+            settlement.cancel!(payer_balance: payer_balance)
+          end
+
+          update!(status: :cancelled)
+          reopen_associated_exchanges!
+        end
       end
 
       def to_s
@@ -204,6 +219,13 @@ module BetterTogether
         raise ActiveRecord::RecordInvalid, self
       end
 
+      def ensure_cancel_allowed!
+        return if status_accepted?
+
+        errors.add(:base, 'Agreement must be accepted before it can be cancelled')
+        raise ActiveRecord::RecordInvalid, self
+      end
+
       def validate_status_transition # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
         return unless will_save_change_to_status?
 
@@ -230,10 +252,12 @@ module BetterTogether
             errors.add(:request, 'is already closed') if request.respond_to?(:status_closed?) && request.status_closed?
           end
         when STATUS_VALUES[:accepted]
-          # Accepted can only move forward to fulfilled
-          errors.add(:status, 'can only move from accepted to fulfilled') unless to == STATUS_VALUES[:fulfilled]
-        when STATUS_VALUES[:rejected], STATUS_VALUES[:fulfilled]
-          errors.add(:status, 'cannot change once rejected or fulfilled')
+          # Accepted can only move forward to fulfilled or cancelled
+          unless [STATUS_VALUES[:fulfilled], STATUS_VALUES[:cancelled]].include?(to)
+            errors.add(:status, 'can only move from accepted to fulfilled or cancelled')
+          end
+        when STATUS_VALUES[:rejected], STATUS_VALUES[:fulfilled], STATUS_VALUES[:cancelled]
+          errors.add(:status, 'cannot change once rejected, cancelled, or fulfilled')
         else
           errors.add(:status, 'has an invalid transition')
         end
@@ -320,7 +344,7 @@ module BetterTogether
         payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: payer)
         captured_lock_ref = payer_balance.lock!(
           price_millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE,
-          agreement_ref: identifier
+          agreement_ref: id
         )
 
         new_settlement = create_settlement!(
@@ -334,6 +358,24 @@ module BetterTogether
         BetterTogether::C3::SettlementNotifier
           .with(settlement: new_settlement, event_type: :c3_locked)
           .deliver_later([payer, offer.creator].compact.uniq)
+      end
+
+      def reopen_associated_exchanges!
+        reopen_exchange!(offer)
+        reopen_exchange!(request)
+      end
+
+      def reopen_exchange!(record)
+        return unless record.respond_to?(:status) && record.status_closed?
+
+        next_status =
+          if record.agreements.where.not(id: id).where(status: STATUS_VALUES[:pending]).exists?
+            :matched
+          else
+            :open
+          end
+
+        record.public_send(:"status_#{next_status}!")
       end
     end
   end

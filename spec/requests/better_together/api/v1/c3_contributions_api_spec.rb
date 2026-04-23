@@ -6,7 +6,28 @@ RSpec.describe 'BetterTogether::Api::V1::C3::Contributions', :no_auth do
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
   let(:platform_manager_headers) { api_auth_headers(platform_manager_user, token: platform_manager_token) }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
+  let(:regular_headers) do
+    api_auth_headers(regular_user)
+      .merge('CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json')
+  end
   let(:json_headers) { platform_manager_headers.merge('CONTENT_TYPE' => 'application/json', 'ACCEPT' => 'application/json') }
+  let(:service_application) do
+    create(:better_together_oauth_application, owner: platform_manager_user.person, scopes: 'read write admin')
+  end
+  let(:service_token) do
+    create(:better_together_oauth_access_token,
+           :client_credentials,
+           application: service_application,
+           scopes: 'read write admin')
+  end
+  let(:service_headers) do
+    {
+      'Authorization' => "Bearer #{service_token.token}",
+      'CONTENT_TYPE' => 'application/json',
+      'ACCEPT' => 'application/json'
+    }
+  end
   let(:fake_token_class) do
     Struct.new(
       :id, :earner, :contribution_type, :contribution_type_name, :c3_millitokens,
@@ -98,6 +119,40 @@ RSpec.describe 'BetterTogether::Api::V1::C3::Contributions', :no_auth do
       expect(JSON.parse(response.body)).to include('status' => 'duplicate')
       expect(BetterTogether::C3::Token.create_calls).to eq(2)
       expect(BetterTogether::C3::Balance.find_by!(holder: platform_manager_user.person, community: nil).reload.available_c3).to eq(1.5)
+    end
+
+    it 'rejects contributions for nodes without a configured owner' do
+      allow(BetterTogether::Fleet::Node).to receive(:find_by)
+        .with(node_id: 'test-node-1')
+        .and_return(Struct.new(:owner, keyword_init: true).new(owner: nil))
+
+      post '/api/v1/c3/contributions', params: params.to_json, headers: json_headers
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(JSON.parse(response.body)).to include('error' => "node 'test-node-1' has no current owner")
+    end
+
+    it 'allows trusted OAuth service tokens to record contributions' do
+      post '/api/v1/c3/contributions', params: params.to_json, headers: service_headers
+
+      expect(response).to have_http_status(:created)
+      expect(BetterTogether::C3::Balance.find_by!(holder: platform_manager_user.person, community: nil).available_c3).to eq(1.5)
+    end
+
+    it 'rejects regular authenticated users from recording contributions' do
+      post '/api/v1/c3/contributions', params: params.to_json, headers: regular_headers
+
+      expect(response).to have_http_status(:forbidden)
+      expect(JSON.parse(response.body)).to include('error' => 'forbidden')
+    end
+  end
+
+  describe 'GET /api/v1/c3/balance' do
+    it 'rejects regular authenticated users from reading node balances' do
+      get '/api/v1/c3/balance', params: { node_id: 'test-node-1' }, headers: regular_headers
+
+      expect(response).to have_http_status(:forbidden)
+      expect(JSON.parse(response.body)).to include('error' => 'forbidden')
     end
   end
 end

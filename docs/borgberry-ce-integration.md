@@ -1,21 +1,25 @@
 # Borgberry CE Integration — Fleet Mesh + C3 Community Contribution Token
 
-> **Branch**: `feat/borgberry-c3-ce-integration`
-> **Base**: `release/0.11.0-notes`
-> **Commit**: `a4f265499` — 715 insertions, 0 deletions, 15 files
-
 ---
 
 ## What This Is
 
-This branch adds the Community Engine-side infrastructure that lets CE act as a **coordination layer for the borgberry fleet mesh** and the **C3 Community Contribution Token (🌱 Tree Seed)**. It is purely additive — new tables, models, controllers, and routes that don't change any existing behaviour.
+This branch adds the Community Engine-side infrastructure that lets CE act as a **coordination layer for the borgberry fleet mesh** and the **C3 Community Contribution Token (🌱 Tree Seed)**.
+
+The current release-bound scope is:
+
+- CE stores fleet node registration and heartbeat state.
+- each fleet node has **one current owner** via `Fleet::NodeOwnership`; owners can currently be a `Person` or `Community`.
+- Borgberry contribution events credit the **node owner’s** C3 balance, not the node record itself.
+- fleet-write and contribution-write endpoints are restricted to a **trusted OAuth application or a platform manager**.
+- self-service reads remain available for a person’s own DID-based balance and Borgberry profile.
 
 Three concerns are wired together:
 
 | Concern | What it enables |
 |---------|----------------|
-| **Fleet mesh** | Borgberry nodes register with a CE platform and send heartbeats — CE becomes the authoritative registry for online/offline node state and hardware capabilities |
-| **Job tracking** | Fleet job outputs (transcription, inference, embedding runs) are stored in CE as `AgentJobResult` records, Seedable for GDPR portability |
+| **Fleet mesh** | Borgberry nodes register with a CE platform, send heartbeats, and expose a current owner for settlement and payout flows |
+| **Job tracking** | Fleet job outputs can be stored in CE as `AgentJobResult` records and linked back to the node that ran them |
 | **C3 tokens** | Compute contributions earn C3 millitokens; balances are tracked per holder; Joatu offers/requests can optionally price in C3 |
 
 ---
@@ -26,7 +30,6 @@ Three concerns are wired together:
 erDiagram
     Person {
         string borgberry_did "W3C DID (did:key:z6Mk...) — unique, nullable"
-        string borgberry_node_id "fleet node this person operates"
     }
 
     PlatformConnection {
@@ -48,8 +51,14 @@ erDiagram
         boolean online "live heartbeat status"
         datetime last_seen_at
         datetime registered_at
-        uuid owner_id FK "polymorphic — Person or future AgentActor"
         uuid platform_id FK
+    }
+
+    Fleet__NodeOwnership {
+        uuid id PK
+        uuid node_id FK "single current ownership row per node"
+        uuid owner_id FK "polymorphic — Person, Community, or future owner"
+        string owner_type
     }
 
     AgentJobResult {
@@ -114,7 +123,9 @@ erDiagram
 
     Fleet__Node ||--o{ AgentJobResult : "ran"
     Fleet__Node }o--|| C3__Token : "earner (polymorphic)"
-    Person ||--o| Fleet__Node : "owner (polymorphic)"
+    Fleet__Node ||--|| Fleet__NodeOwnership : "has current owner"
+    Person ||--o{ Fleet__NodeOwnership : "owns"
+    Community ||--o{ Fleet__NodeOwnership : "owns"
     Person ||--o{ C3__Token : "earner (polymorphic)"
     Person ||--o{ C3__Balance : "holder (polymorphic)"
     C3__Token }o--|| C3__ExchangeRate : "contribution_type"
@@ -135,8 +146,19 @@ POST /api/v1/fleet/nodes/:node_id/heartbeat   update last_seen_at + capabilities
 
 GET  /api/v1/c3/contributions                 list earned C3 token records
 POST /api/v1/c3/contributions                 record a new contribution event
-GET  /api/v1/c3/balance                       get current balance for authenticated user
+GET  /api/v1/c3/balance                       get current balance for a node owner
+GET  /api/v1/c3/network_balance               aggregate balances for a borgberry DID
+GET  /api/v1/borgberry/profile                return the authenticated person's Borgberry DID profile
+POST /api/v1/joatu_agreements/:id/cancel      unwind a pending C3 settlement for an accepted agreement
 ```
+
+### Effective auth contract
+
+| Endpoint family | Allowed callers |
+|---|---|
+| `POST /api/v1/fleet/nodes*`, `POST /api/v1/c3/contributions`, `GET /api/v1/c3/balance`, `GET /api/v1/c3/contributions` | Trusted OAuth application with the required read/write scope, or a platform manager |
+| `GET /api/v1/c3/network_balance` | The person who owns the queried DID, or a platform manager |
+| `GET /api/v1/borgberry/profile` | Any authenticated user with a linked person; OAuth bearer calls also need `read` scope |
 
 ---
 
@@ -162,8 +184,8 @@ sequenceDiagram
     end
 
     J->>A: POST /c3/contributions { contribution_type: "compute_gpu", units: 12.5, source_ref: "job:abc123" }
-    A->>DB: C3::Token.create! (status: pending)
-    A->>DB: C3::Balance.credit! (available += earned)
+    A->>DB: C3::Token.find_or_create_by! (status: confirmed, idempotent by source_system + source_ref)
+    A->>DB: C3::Balance.credit! (available += earned owner balance)
     DB-->>A: token + balance
     A-->>J: { status: "ok", c3_amount: 18.75 }
 ```
@@ -174,9 +196,8 @@ sequenceDiagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> pending : borgberry job completes\nPOST /c3/contributions
-
-    pending --> confirmed : operator or\nautomated confirmation
+    [*] --> confirmed : borgberry contribution accepted\nPOST /c3/contributions
+    [*] --> pending : other provisional source\n(optional model state)
     pending --> disputed : contributor flags\ndiscrepancy
 
     confirmed --> settled : Joatu exchange\ncompleted
@@ -187,14 +208,9 @@ stateDiagram-v2
     confirmed --> [*]
     settled --> [*]
 
-    note right of pending
-        C3::Balance.available NOT yet credited
-        awaiting job result validation
-    end note
-
     note right of confirmed
-        C3::Balance.available credited
-        spendable in Joatu exchange
+        Borgberry contributions land here directly
+        and immediately credit available balance
     end note
 
     note right of settled
@@ -202,6 +218,13 @@ stateDiagram-v2
         Joatu agreement finalised
     end note
 ```
+
+### Settlement / unwind contract
+
+- accepting a C3-priced agreement creates a pending `Joatu::Settlement` tied to a `C3::BalanceLock`;
+- fulfilling that agreement consumes the exact pending lock and marks the settlement `completed`;
+- cancelling an accepted agreement consumes the exact pending lock via `unlock!` and marks the settlement `cancelled`;
+- missing, stale, or mismatched `lock_ref` values now fail closed instead of silently no-oping.
 
 ---
 
@@ -219,9 +242,10 @@ graph TD
     end
 
     subgraph "CE Models"
-        Person["Person\n+ borgberry_did\n+ borgberry_node_id\n+ borgberry_did_raw accessor"]
+        Person["Person\n+ borgberry_did\n+ borgberry_did_raw accessor"]
         Robot["Robot\n.resolve / .authenticate_access_token\n.available_for_platform\n#governed_agent_key"]
         FleetNode["Fleet::Node\nnode registry\nheartbeat + capabilities"]
+        FleetNodeOwnership["Fleet::NodeOwnership\nsingle current polymorphic owner"]
         C3Token["C3::Token\nearned contribution event"]
         C3Balance["C3::Balance\nrunning millitoken totals"]
         AgentJobResult["AgentJobResult\nSeedable job output record"]
@@ -237,6 +261,7 @@ graph TD
     M --> Person
     B --> Person
     B --> FleetNode
+    B --> FleetNodeOwnership
     B --> C3Token
     B --> C3Balance
     B --> AgentJobResult

@@ -30,6 +30,7 @@ module BetterTogether
         participant? || can_manage_joatu?
       end
       alias accept? update?
+      alias cancel? update?
       alias reject? update?
       alias fulfill? update?
 

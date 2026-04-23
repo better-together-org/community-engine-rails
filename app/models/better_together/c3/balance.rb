@@ -63,11 +63,14 @@ module BetterTogether
       def unlock!(c3_amount, lock_ref: nil)
         millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
         transaction do
+          lock = pending_lock_for!(lock_ref, millitokens) if lock_ref.present?
+          if lock_ref.blank? && millitokens > locked_millitokens
+            raise LockError, "Only #{locked_c3} C3 locked"
+          end
+
           decrement!(:locked_millitokens, millitokens)
           increment!(:available_millitokens, millitokens)
-          if lock_ref.present?
-            balance_locks.pending.find_by(lock_ref: lock_ref)&.release!
-          end
+          lock&.release!
         end
       end
 
@@ -76,11 +79,14 @@ module BetterTogether
       def settle_to!(recipient_balance, c3_amount, lock_ref: nil)
         millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
         transaction do
+          lock = pending_lock_for!(lock_ref, millitokens) if lock_ref.present?
+          if lock_ref.blank? && millitokens > locked_millitokens
+            raise LockError, "Only #{locked_c3} C3 locked"
+          end
+
           decrement!(:locked_millitokens, millitokens)
           recipient_balance.credit!(c3_amount)
-          if lock_ref.present?
-            balance_locks.pending.find_by(lock_ref: lock_ref)&.settle!
-          end
+          lock&.settle!
         end
       end
 
@@ -97,6 +103,17 @@ module BetterTogether
       end
 
       class InsufficientBalance < StandardError; end
+      class LockError < StandardError; end
+
+      private
+
+      def pending_lock_for!(lock_ref, expected_millitokens)
+        lock = balance_locks.pending.find_by(lock_ref: lock_ref)
+        raise LockError, "pending lock '#{lock_ref}' not found" if lock.nil?
+        raise LockError, "pending lock '#{lock_ref}' amount does not match settlement" if lock.millitokens != expected_millitokens
+
+        lock
+      end
     end
   end
 end

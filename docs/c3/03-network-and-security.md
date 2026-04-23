@@ -108,9 +108,11 @@ INEM uses application-layer encryption (Noise_X) **on top of** transport-layer T
 |---|---|---|---|
 | `POST /federation/c3/token_seeds` | FederationAccessToken | `c3.exchange` | `PlatformConnection.allow_c3_exchange?` |
 | `POST /federation/c3/lock_requests` | FederationAccessToken | `c3.exchange` | `PlatformConnection.allow_c3_exchange?` |
-| `GET /api/v1/c3/network_balance` | FederationAccessToken | (own DID or admin) | Own borgberry_did OR platform admin role |
-| `POST /api/v1/c3/contributions` | borgberry service token | (contribution scope) | Rate validation |
-| `POST /api/v1/fleet/nodes` | FederationAccessToken | (fleet scope) | Valid node_id |
+| `GET /api/v1/c3/network_balance` | JWT user session or OAuth bearer | `read` for OAuth calls | Own `borgberry_did` OR platform admin role |
+| `POST /api/v1/c3/contributions` | Trusted OAuth app or platform manager | `write` for OAuth calls | Node must exist and have a current owner |
+| `GET /api/v1/c3/contributions` / `GET /api/v1/c3/balance` | Trusted OAuth app or platform manager | `read` for OAuth calls | `balance` requires a valid `node_id` |
+| `POST /api/v1/fleet/nodes` / `POST /api/v1/fleet/nodes/:node_id/heartbeat` | Trusted OAuth app or platform manager | `write` for OAuth calls | Valid node payload; self-claim limited to current operator |
+| `GET /api/v1/borgberry/profile` | JWT user session or OAuth bearer | `read` for OAuth calls | Authenticated user must have a linked person |
 
 ### borgberry INEM Endpoints
 
@@ -158,7 +160,7 @@ Every C3 event produces an immutable record. No C3 record is ever destructively 
 | Cross-platform credit | `C3::TokenSeed` + `C3::Token` (federated) | exchange rate, origin platform |
 | INEM relay | Relay log (age-encrypted) | anonymised: segment, relay_count, avg_latency_ms (no payload, no identities) |
 | Public internet routing | Incident log JSONL | timestamp, host, operation |
-| Fleet node registration | `FleetNode` | node_id, IPs, Noise public key |
+| Fleet node registration | `FleetNode` + `Fleet::NodeOwnership` | node_id, IPs, Noise public key, current owner |
 
 ---
 
