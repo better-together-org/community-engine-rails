@@ -51,12 +51,24 @@ module BetterTogether
       def expire!
         return unless status == 'pending'
 
-        balance.unlock_millitokens!(millitokens)
+        unlock_exact_millitokens!
         update!(status: 'expired', settled_at: Time.current)
       end
 
       private
 
+      def unlock_exact_millitokens!
+        unlock_method = balance.method(:unlock_millitokens!)
+        keyword_parameters = unlock_method.parameters.select { |kind, _name| %i[key keyreq keyrest].include?(kind) }
+        accepts_lock_ref = keyword_parameters.any? { |_kind, name| name == :lock_ref } ||
+                           keyword_parameters.any? { |kind, _name| kind == :keyrest }
+
+        if accepts_lock_ref
+          balance.unlock_millitokens!(millitokens, lock_ref: lock_ref)
+        else
+          balance.unlock_millitokens!(millitokens)
+        end
+      end
       def generate_lock_ref
         self.lock_ref ||= SecureRandom.uuid
       end
