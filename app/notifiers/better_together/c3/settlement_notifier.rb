@@ -55,16 +55,16 @@ module BetterTogether
         when :c3_locked
           I18n.t('better_together.notifications.c3.settlement.locked.body',
                  amount: amount,
-                 default: '%{amount} Tree Seeds have been reserved for your agreement. ' \
+                 default: '%{amount} have been reserved for your agreement. ' \
                           'They will be released if the agreement is cancelled.')
         when :c3_settled
           I18n.t('better_together.notifications.c3.settlement.settled.body',
                  amount: amount,
-                 default: '%{amount} Tree Seeds have been exchanged. Your balance has been updated.')
+                 default: '%{amount} have been exchanged. Your balance has been updated.')
         when :c3_lock_released
           I18n.t('better_together.notifications.c3.settlement.released.body',
                  amount: amount,
-                 default: '%{amount} Tree Seeds have been returned to your balance.')
+                 default: '%{amount} have been returned to your balance.')
         end
       end
       # rubocop:enable Style/FormatStringToken
