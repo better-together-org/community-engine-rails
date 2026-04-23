@@ -565,6 +565,10 @@ fr:
                 active
             target:
               must_be_person: doit être une personne
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: a déjà un enregistrement de règlement
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -2830,6 +2834,14 @@ fr:
           distante peut demander dans les jetons OAuth. N'activez que les portées
           correspondant à vos termes de partage convenus.
         federation_scopes_legend: Portées de fédération
+        allow_c3_exchange: Autoriser l'échange de Graines d'arbre avec cette plateforme
+        c3_exchange_hint: Lorsqu'il est activé, les participants de cette plateforme
+          peuvent envoyer et recevoir des Graines d'arbre avec %{platform}. Les deux
+          plateformes doivent l'activer pour que l'échange fonctionne.
+        c3_exchange_legend: Échange de Graines d'arbre
+        c3_exchange_rate_hint: "Combien de Graines d'arbre ici valent 1 Graine d'arbre
+          sur %{platform} ? Laissez à 1.0 pour une valeur égale."
+        c3_exchange_rate_label: Taux d'échange
         save: Enregistrer les modifications
         shared_content_types_hint: Sélectionnez les types de contenu à inclure lors
           de la synchronisation avec cette connexion.
