@@ -2,7 +2,7 @@
 
 # Add optional C3 pricing to Joatu Offers and Requests.
 # C3 pricing is optional — exchanges can still be direct barter via Joatu.
-# When c3_price_cents is set on an Offer, it means "I want X C3 for this service".
+# When c3_price_millitokens is set on an Offer, it means "I want X C3 for this service".
 # When c3_budget_millitokens is set on a Request, it means "I'll pay up to X C3".
 class AddC3PricingToJoatuOffersRequests < ActiveRecord::Migration[7.2]
   def change
