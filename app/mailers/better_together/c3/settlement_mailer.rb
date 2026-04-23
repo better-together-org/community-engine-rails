@@ -30,11 +30,20 @@ module BetterTogether
       def event_copy
         case @event_type
         when :c3_locked
-          'Tree Seeds have been reserved for your agreement. They will be released if the agreement is cancelled.'
+          I18n.t(
+            'better_together.notifications.c3.settlement.locked.body',
+            default: 'Tree Seeds have been reserved for your agreement. They will be released if the agreement is cancelled.'
+          )
         when :c3_lock_released
-          'Tree Seeds have been returned to your balance.'
+          I18n.t(
+            'better_together.notifications.c3.settlement.released.body',
+            default: 'Tree Seeds have been returned to your balance.'
+          )
         else
-          'Tree Seeds have been exchanged. Your balance has been updated.'
+          I18n.t(
+            'better_together.notifications.c3.settlement.settled.body',
+            default: 'Tree Seeds have been exchanged. Your balance has been updated.'
+          )
         end
       end
 
