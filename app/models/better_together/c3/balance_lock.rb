@@ -51,7 +51,7 @@ module BetterTogether
       def expire!
         return unless status == 'pending'
 
-        balance.unlock!(millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE)
+        balance.unlock_millitokens!(millitokens)
         update!(status: 'expired', settled_at: Time.current)
       end
 

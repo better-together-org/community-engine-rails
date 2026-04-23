@@ -58,6 +58,18 @@ module BetterTogether
         lock_record.lock_ref
       end
 
+      # Release locked C3 back to available using exact integer millitokens.
+      # Avoids float-rounding risk — prefer this method when the raw millitoken
+      # count is already available (e.g. expiring a BalanceLock record).
+      def unlock_millitokens!(amount_millitokens)
+        transaction do
+          raise LockError, "Only #{locked_millitokens} millitokens locked" if amount_millitokens > locked_millitokens
+
+          decrement!(:locked_millitokens, amount_millitokens)
+          increment!(:available_millitokens, amount_millitokens)
+        end
+      end
+
       # Release locked C3 back to available (exchange cancelled or lock expired).
       # If lock_ref is provided, marks the corresponding BalanceLock as released.
       def unlock!(c3_amount, lock_ref: nil)
