@@ -44,8 +44,8 @@ module BetterTogether
       # the federation but not reversible.  Stored locally as source_ref_hash.
       def self.from_token(token, source_platform:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         identifier = "c3_token:#{token.id}"
-        description = "C3 #{token.contribution_type_name} #{token.c3_amount} C3 (#{token.source_ref})"
         source_ref_hash = hash_source_ref(token.source_ref, source_platform.identifier)
+        description = "C3 #{token.contribution_type_name} #{token.c3_amount} C3 (#{source_ref_hash})"
 
         new(
           type: name,
