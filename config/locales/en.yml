@@ -751,6 +751,10 @@ en:
       title: Agreement Terms
     agreements:
       accept: I agree
+      accept_action:
+        accepted: Agreement accepted.
+        ineligible_flow: This agreement cannot be accepted from this flow.
+        no_participant: No participant is available for agreement acceptance.
       accept_error: Unable to record agreement acceptance right now.
       accepted: Accepted
       accepting: Saving...

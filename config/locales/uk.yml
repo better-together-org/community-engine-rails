@@ -746,6 +746,10 @@ uk:
       title: Умови угоди
     agreements:
       accept: Я погоджуюся
+      accept_action:
+        accepted: Угоду прийнято.
+        ineligible_flow: Цю угоду неможливо прийняти через цей потік.
+        no_participant: Немає учасника, доступного для прийняття угоди.
       accept_error: Зараз неможливо зафіксувати прийняття угоди.
       accepted: Погоджено
       accepting: Збереження...

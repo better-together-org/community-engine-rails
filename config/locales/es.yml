@@ -761,6 +761,10 @@ es:
       title: Acuerdos
     agreements:
       accept: Acepto
+      accept_action:
+        accepted: Acuerdo aceptado.
+        ineligible_flow: Este acuerdo no puede aceptarse desde este flujo.
+        no_participant: No hay ningún participante disponible para aceptar el acuerdo.
       accept_error: No se puede registrar la aceptación del acuerdo en este momento.
       accepted: Aceptado
       accepting: Guardando...

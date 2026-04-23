@@ -48,12 +48,12 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
     def accept
       unless current_user.person.present?
-        render json: { error: 'No participant is available for agreement acceptance.' }, status: :unprocessable_entity
+        render json: { error: t('better_together.agreements.accept_action.no_participant') }, status: :unprocessable_entity
         return
       end
 
       unless direct_accept_eligible?(resource_instance)
-        render json: { error: 'This agreement cannot be accepted from this flow.' }, status: :unprocessable_entity
+        render json: { error: t('better_together.agreements.accept_action.ineligible_flow') }, status: :unprocessable_entity
         return
       end
 
@@ -69,7 +69,7 @@ module BetterTogether
         status: 'accepted',
         agreement_identifier: resource_instance.identifier,
         accepted_at: acceptance.accepted_at&.utc&.iso8601(6),
-        message: 'Agreement accepted.'
+        message: t('better_together.agreements.accept_action.accepted')
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

@@ -761,6 +761,10 @@ fr:
       title: Conditions de l'accord
     agreements:
       accept: J'accepte
+      accept_action:
+        accepted: Accord accepté.
+        ineligible_flow: Cet accord ne peut pas être accepté depuis ce flux.
+        no_participant: Aucun participant n'est disponible pour accepter l'accord.
       accept_error: Impossible d'enregistrer l'acceptation de l'accord pour le moment.
       accepted: Accepté
       accepting: Enregistrement...
