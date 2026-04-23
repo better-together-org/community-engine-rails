@@ -53,7 +53,11 @@ module BetterTogether
             BetterTogether::Fleet::Node.transaction do
               # Store INEM public key inside services JSONB — no schema change required.
               if noise_key.present?
-                node.services = (node.services || {}).merge('inem' => { 'noise_public_key_base64' => noise_key })
+                services = node.services || {}
+                inem_services = services['inem'].is_a?(Hash) ? services['inem'] : {}
+                node.services = services.merge(
+                  'inem' => inem_services.merge('noise_public_key_base64' => noise_key)
+                )
               end
 
               node.save!
