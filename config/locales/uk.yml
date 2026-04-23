@@ -2408,6 +2408,20 @@ uk:
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
+      c3:
+        settlement:
+          locked:
+            title: Насіння дерева зарезервовано
+            body: "%{amount} Насіння дерева зарезервовано для вашої угоди. Вони будуть звільнені, якщо угоду скасують."
+          settled:
+            title: Насіння дерева обміняно
+            body: "%{amount} Насіння дерева обміняно. Ваш баланс оновлено."
+          released:
+            title: Резервування Насіння дерева звільнено
+            body: "%{amount} Насіння дерева повернено на ваш баланс."
+          mailer:
+            activity_header: "%{amount} Насіння дерева мають активність у вашій угоді."
+            view_agreement: Переглянути угоду
       joatu:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.

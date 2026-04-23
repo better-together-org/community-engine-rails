@@ -2431,6 +2431,20 @@ fr:
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications
+      c3:
+        settlement:
+          locked:
+            title: Graines d'arbre réservées
+            body: "%{amount} Graines d'arbre ont été réservées pour votre accord. Elles seront libérées si l'accord est annulé."
+          settled:
+            title: Graines d'arbre échangées
+            body: "%{amount} Graines d'arbre ont été échangées. Votre solde a été mis à jour."
+          released:
+            title: Réservation de Graines d'arbre libérée
+            body: "%{amount} Graines d'arbre ont été restituées à votre solde."
+          mailer:
+            activity_header: "%{amount} Graines d'arbre ont de l'activité sur votre accord."
+            view_agreement: Voir l'accord
       joatu:
         agreement_created:
           content: Un accord entre "%{offer}" et "%{request}" a été créé.

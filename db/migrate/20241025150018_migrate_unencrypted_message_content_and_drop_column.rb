@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
-# Runs the message content migration inline so fresh installs do not depend on
-# the Rake task registry being available during migration execution.
+# Runs rake task to migrate existing message contents to encrypted message contents as encrypted rich texts
 class MigrateUnencryptedMessageContentAndDropColumn < ActiveRecord::Migration[7.1]
-  def up
-    BetterTogether::Message.reset_column_information
-
-    BetterTogether::Message.find_each do |message|
-      next if message.content.persisted? || message[:content].nil?
-
-      message.content = message[:content]
-      message.save!
+  def change
+    reversible do |dir|
+      dir.up do
+        load 'tasks/data_migration.rake'
+        Rake::Task['better_together:migrate_data:unencrypted_messages'].invoke
+      end
     end
   end
-
-  def down; end
 end

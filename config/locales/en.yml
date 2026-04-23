@@ -2391,6 +2391,9 @@ en:
           released:
             title: Tree Seeds reservation released
             body: "%{amount} Tree Seeds have been returned to your balance."
+          mailer:
+            activity_header: "%{amount} Tree Seeds have activity on your agreement."
+            view_agreement: View agreement
       joatu:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.

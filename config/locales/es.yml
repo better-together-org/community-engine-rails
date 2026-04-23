@@ -2421,6 +2421,20 @@ es:
       index:
         no_notifications: No tienes notificaciones.
         notifications: Notificaciones
+      c3:
+        settlement:
+          locked:
+            title: Semillas de árbol reservadas
+            body: "%{amount} Semillas de árbol han sido reservadas para tu acuerdo. Se liberarán si el acuerdo se cancela."
+          settled:
+            title: Semillas de árbol intercambiadas
+            body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha sido actualizado."
+          released:
+            title: Reserva de Semillas de árbol liberada
+            body: "%{amount} Semillas de árbol han sido devueltas a tu saldo."
+          mailer:
+            activity_header: "%{amount} Semillas de árbol tienen actividad en tu acuerdo."
+            view_agreement: Ver acuerdo
       joatu:
         agreement_created:
           content: Se ha creado un acuerdo entre "%{offer}" y "%{request}".
