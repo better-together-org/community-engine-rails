@@ -101,6 +101,36 @@ RSpec.describe BetterTogether::Sitemap do
     end
   end
 
+  describe '#attach_file_if_changed?' do
+    let(:sitemap) { create(:better_together_sitemap) }
+
+    it 'skips reattaching when the content checksum is unchanged' do
+      original_blob_id = sitemap.file.blob.id
+
+      changed = sitemap.attach_file_if_changed?(
+        io: StringIO.new(sitemap.file.download),
+        filename: sitemap.file.filename.to_s,
+        content_type: sitemap.file.content_type
+      )
+
+      expect(changed).to be(false)
+      expect(sitemap.file.blob.id).to eq(original_blob_id)
+    end
+
+    it 'reattaches when the content checksum changes' do
+      original_blob_id = sitemap.file.blob.id
+
+      changed = sitemap.attach_file_if_changed?(
+        io: StringIO.new('new sitemap content'),
+        filename: sitemap.file.filename.to_s,
+        content_type: sitemap.file.content_type
+      )
+
+      expect(changed).to be(true)
+      expect(sitemap.file.blob.id).not_to eq(original_blob_id)
+    end
+  end
+
   describe 'factory' do
     it 'has a valid default factory' do
       sitemap = build(:better_together_sitemap)

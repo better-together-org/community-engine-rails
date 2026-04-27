@@ -29,7 +29,7 @@ namespace :sitemap do
 
       sitemap_record = BetterTogether::Sitemap.find_or_initialize_by(platform: platform, locale: locale.to_s)
       File.open(file_path, 'rb') do |io|
-        sitemap_record.file.attach(
+        sitemap_record.attach_file_if_changed?(
           io: io,
           filename: "sitemap_#{locale}.xml.gz",
           content_type: 'application/gzip'
@@ -43,7 +43,7 @@ namespace :sitemap do
     if File.exist?(index_path)
       index_record = BetterTogether::Sitemap.find_or_initialize_by(platform: platform, locale: 'index')
       File.open(index_path, 'rb') do |io|
-        index_record.file.attach(
+        index_record.attach_file_if_changed?(
           io: io,
           filename: 'sitemap_index.xml.gz',
           content_type: 'application/gzip'
