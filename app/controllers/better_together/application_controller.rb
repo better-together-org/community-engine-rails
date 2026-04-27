@@ -342,11 +342,9 @@ module BetterTogether
     end
 
     def set_locale
-      locale = params[:locale] || # Request parameter
-               session[:locale] || # Session stored locale
-               helpers.current_person&.locale || # Model saved configuration
-               extract_locale_from_accept_language_header || # Language header - browser config
-               I18n.default_locale # Set in your config files, english by super-default
+      locale = locale_candidates.lazy.filter_map do |candidate|
+        normalize_locale(candidate, fallback: nil)
+      end.first || I18n.default_locale.to_s
 
       I18n.locale = locale
       session[:locale] = locale # Store the locale in the session
@@ -448,6 +446,43 @@ module BetterTogether
 
     def turbo_native_app?
       request.user_agent.to_s.include?('Turbo Native')
+    end
+
+    def normalize_locale(raw_locale, fallback: I18n.default_locale.to_s)
+      return fallback if raw_locale.nil?
+
+      candidate_locale = raw_locale.to_s.strip.downcase.tr('_', '-')
+      return fallback if candidate_locale.blank?
+
+      normalized_available_locales[candidate_locale] ||
+        normalized_partial_locale_match(candidate_locale) ||
+        unsupported_locale_fallback(raw_locale, fallback)
+    end
+
+    def locale_candidates
+      [
+        params[:locale], # Request parameter
+        session[:locale], # Session stored locale
+        helpers.current_person&.locale, # Model saved configuration
+        extract_locale_from_accept_language_header, # Language header - browser config
+        I18n.default_locale # Set in your config files, english by super-default
+      ]
+    end
+
+    def normalized_available_locales
+      @normalized_available_locales ||= I18n.available_locales.to_h do |locale|
+        [locale.to_s.downcase.tr('_', '-'), locale.to_s]
+      end
+    end
+
+    def normalized_partial_locale_match(candidate_locale)
+      partial_match = normalized_available_locales.keys.find { |locale| candidate_locale.start_with?("#{locale}-") }
+      normalized_available_locales[partial_match]
+    end
+
+    def unsupported_locale_fallback(raw_locale, fallback)
+      Rails.logger.warn("Unsupported locale '#{raw_locale}', falling back") if fallback
+      fallback
     end
   end
 end

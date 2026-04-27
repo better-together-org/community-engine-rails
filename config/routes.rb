@@ -368,6 +368,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             get 'federation-review',
                 to: 'host_dashboard#platform_connection_review',
                 as: 'host_dashboard_platform_connection_review'
+            resource :translation_management,
+                     only: :show,
+                     path: 'translation-management',
+                     controller: 'host/translation_management'
 
             resources :categories
 
