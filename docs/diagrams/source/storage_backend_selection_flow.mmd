@@ -1,0 +1,17 @@
+flowchart TD
+  A[Need active storage backend] --> B[StorageResolver]
+  B --> C{Active platform storage config?}
+  C -->|Yes| D[Use StorageConfiguration]
+  C -->|No| E{ACTIVE_STORAGE_SERVICE set?}
+  E -->|Yes| F[Use env-based config]
+  E -->|No| G[Fall back to local disk]
+  D --> H{service_type}
+  H -->|local| I[Disk service]
+  H -->|amazon| J[S3 service with AWS region and bucket]
+  H -->|s3_compatible| K[S3 service with endpoint + force_path_style]
+  F --> L[Build env-based Active Storage config]
+  I --> M[Active service key resolved]
+  J --> M
+  K --> M
+  G --> M
+  L --> M

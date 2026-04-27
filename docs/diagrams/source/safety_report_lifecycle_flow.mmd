@@ -1,0 +1,24 @@
+        flowchart TD
+            ReportLink[Report link on profile or post] --> ReportForm[Structured report form]
+            ReportForm --> ReportCreate[ReportsController#create]
+            ReportCreate --> ReportModel[BetterTogether::Report]
+            ReportModel --> AutoCase[after_create_commit
+ensure_safety_case!]
+
+            AutoCase --> LaneCheck{Default lane}
+            LaneCheck -->|urgent or retaliation risk| Immediate[immediate_safety]
+            LaneCheck -->|spam scam fraud impersonation misinformation| Administrative[administrative]
+            LaneCheck -->|all other categories| Restorative[restorative]
+
+            Immediate --> CaseQueue[Safety case queue]
+            Administrative --> CaseQueue
+            Restorative --> CaseQueue
+
+            CaseQueue --> Filters[Filter by status lane harm level]
+            Filters --> Manage[Update case status lane closure summary review_at]
+            Manage --> Actions[Protective or accountability actions]
+            Manage --> Notes[Internal or participant-visible notes]
+            Manage --> Agreements[Restorative agreements]
+
+            Manage --> ReporterView[Reporter sees reduced status
+and optional closure summary]

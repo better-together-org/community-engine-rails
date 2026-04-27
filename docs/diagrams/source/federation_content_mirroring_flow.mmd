@@ -1,0 +1,19 @@
+flowchart TD
+  A[Remote platform exports seeds] --> B[FederatedContentPullJob]
+  B --> C[Mark PlatformConnection sync started]
+  C --> D[FederatedContentPullService fetches paginated batch]
+  D --> E[FederatedContentIngestService]
+  E --> F[Set Current.platform to target platform]
+  F --> G[FederatedSeedIngestor]
+  G --> H{Seed type}
+  H -->|post| I[FederatedPostMirrorService]
+  H -->|page| J[FederatedPageMirrorService]
+  H -->|event| K[FederatedEventMirrorService]
+  I --> L[Create or update mirrored record]
+  J --> L
+  K --> L
+  L --> M[Record processed count and sync cursor]
+  M --> N{next_cursor present?}
+  N -->|Yes| O[Enqueue next pull job]
+  N -->|No| P[Mark sync succeeded]
+

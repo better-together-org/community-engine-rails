@@ -147,6 +147,7 @@ ELASTICSEARCH_URL=http://elasticsearch:9200
 
 Reference:
 - `config/initializers/elasticsearch.rb:6`
+- See also: [Elasticsearch Upgrade to 8 Guide](../platform_organizers/elasticsearch_upgrade_to_8_guide.md)
 
 ## Redis
 
@@ -165,6 +166,7 @@ REDIS_URL=redis://redis:6379/0
 
 Reference:
 - `config/initializers/rack_attack.rb:15`
+- See also: [Rack Attack Tuning](../platform_organizers/rack_attack_tuning.md)
 
 ## PostgreSQL (PostGIS)
 
