@@ -6,6 +6,12 @@ module BetterTogether
     class Engine < ::Rails::Engine
       engine_name 'better_together_elasticsearch'
 
+      class << self
+        def model_document_integration_enabled?(env = ENV)
+          BetterTogether::ElasticsearchClientOptions.enabled?(env)
+        end
+      end
+
       initializer 'better_together_elasticsearch.search_adapter' do
         next if BetterTogether.adapter_for(:search, :elasticsearch).present?
 
@@ -13,6 +19,8 @@ module BetterTogether
       end
 
       initializer 'better_together_elasticsearch.model_documents' do
+        next unless self.class.model_document_integration_enabled?
+
         BetterTogether::Elasticsearch.register_default_documents!
 
         config.to_prepare do
@@ -21,7 +29,7 @@ module BetterTogether
       end
 
       initializer 'better_together_elasticsearch.client' do
-        next unless BetterTogether::ElasticsearchClientOptions.enabled?
+        next unless self.class.model_document_integration_enabled?
 
         ::Elasticsearch::Model.client = ::Elasticsearch::Client.new(
           **BetterTogether::ElasticsearchClientOptions.build

@@ -8,8 +8,8 @@ RSpec.describe BetterTogether::ElasticsearchClientOptions do
       expect(described_class.enabled?('SEARCH_BACKEND' => 'elasticsearch')).to be(true)
     end
 
-    it 'returns true when elasticsearch connection settings are present' do
-      expect(described_class.enabled?('ELASTICSEARCH_URL' => 'http://example.test:9200')).to be(true)
+    it 'returns false when only elasticsearch connection settings are present' do
+      expect(described_class.enabled?('ELASTICSEARCH_URL' => 'http://example.test:9200')).to be(false)
     end
 
     it 'returns false when neither backend selection nor connection settings are present' do
