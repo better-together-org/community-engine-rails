@@ -4438,6 +4438,7 @@ en:
       actions:
         destroy_aria: Delete platform
         edit_aria: Edit platform
+        show_aria: Show platform
         view_host_dashboard_aria: View host dashboard
       federation:
         connection_status: Status

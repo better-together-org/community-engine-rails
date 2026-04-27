@@ -4546,6 +4546,7 @@ uk:
       actions:
         destroy_aria: Видалити платформу
         edit_aria: Редагувати платформу
+        show_aria: Переглянути платформу
         view_host_dashboard_aria: Переглянути панель хоста
       federation:
         connection_status: Статус

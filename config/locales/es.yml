@@ -4529,6 +4529,7 @@ es:
       actions:
         destroy_aria: Eliminar la plataforma
         edit_aria: Editar la plataforma
+        show_aria: Mostrar la plataforma
         view_host_dashboard_aria: Ver el panel del anfitrión
       federation:
         connection_status: Estado

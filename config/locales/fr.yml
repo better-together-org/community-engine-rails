@@ -4554,6 +4554,7 @@ fr:
       actions:
         destroy_aria: Supprimer la plateforme
         edit_aria: Modifier la plateforme
+        show_aria: Afficher la plateforme
         view_host_dashboard_aria: Voir le tableau de bord hôte
       federation:
         connection_status: Statut
