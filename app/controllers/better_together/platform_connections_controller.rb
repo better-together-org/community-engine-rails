@@ -119,6 +119,7 @@ module BetterTogether
         :share_posts,
         :share_pages,
         :share_events,
+        :sync_depth,
         :allow_identity_scope,
         :allow_profile_read_scope,
         :allow_content_read_scope,

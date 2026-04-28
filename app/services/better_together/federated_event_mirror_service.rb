@@ -79,12 +79,18 @@ module BetterTogether
         description: remote_attributes[:description],
         identifier: normalized_identifier(record),
         privacy: remote_attributes[:privacy].presence || 'public',
-        creator_id: remote_attributes[:creator_id],
+        creator_id: resolve_local_creator(remote_attributes[:creator_id]),
         platform: connection.target_platform,
         source_id: effective_preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
       }
+    end
+
+    def resolve_local_creator(remote_id)
+      return nil if remote_id.blank?
+
+      ::BetterTogether::Person.where(id: remote_id).pick(:id)
     end
 
     def ensure_source_platform_host(event)

@@ -43,6 +43,12 @@ module BetterTogether
       failed: 'failed'
     }.freeze
 
+    SYNC_DEPTH_VALUES = {
+      metadata: 'metadata',
+      standard: 'standard',
+      full: 'full'
+    }.freeze
+
     belongs_to :source_platform, class_name: '::BetterTogether::Platform'
     belongs_to :target_platform, class_name: '::BetterTogether::Platform'
     has_many :person_links, class_name: '::BetterTogether::PersonLink', dependent: :destroy
@@ -61,6 +67,7 @@ module BetterTogether
       allow_content_read_scope Boolean, default: false
       allow_linked_content_read_scope Boolean, default: false
       allow_content_write_scope Boolean, default: false
+      sync_depth String, default: 'standard'
       sync_cursor String, default: ''
       last_sync_status String, default: 'idle'
       last_sync_started_at String, default: ''
@@ -78,6 +85,7 @@ module BetterTogether
     validates :content_sharing_policy, inclusion: { in: CONTENT_SHARING_POLICIES.values }
     validates :federation_auth_policy, inclusion: { in: FEDERATION_AUTH_POLICIES.values }
     validates :last_sync_status, inclusion: { in: SYNC_STATUS_VALUES.values }
+    validates :sync_depth, inclusion: { in: SYNC_DEPTH_VALUES.values }
     validate :source_and_target_must_differ
 
     before_validation :apply_connection_policy_defaults

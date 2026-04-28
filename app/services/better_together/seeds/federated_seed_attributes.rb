@@ -3,24 +3,28 @@
 module BetterTogether
   module Seeds
     # Maps CE content records to federated seed attribute hashes.
+    # sync_depth controls payload richness:
+    #   'metadata' — identifiers and dates only, no content bodies
+    #   'standard' — flat attributes + ActionText HTML bodies (default)
+    #   'full'     — standard + block layout (pages only, when implemented)
     module FederatedSeedAttributes
       module_function
 
-      def post_attributes(record)
-        {
+      def post_attributes(record, sync_depth: 'standard')
+        attrs = {
           title: record.title,
-          content: record.content&.body&.to_plain_text.to_s,
           identifier: record.identifier,
           privacy: record.privacy,
           published_at: record.published_at,
           updated_at: record.updated_at
         }
+        attrs[:content] = record.content&.body&.to_s.to_s unless sync_depth == 'metadata'
+        attrs
       end
 
-      def page_attributes(record)
-        {
+      def page_attributes(record, sync_depth: 'standard')
+        attrs = {
           title: record.title,
-          content: record.content&.body&.to_plain_text.to_s,
           identifier: record.identifier,
           privacy: record.privacy,
           published_at: record.published_at,
@@ -30,12 +34,14 @@ module BetterTogether
           meta_description: record.meta_description,
           keywords: record.keywords
         }
+        # blocks key populated by FederatedPageBlockSerializer when sync_depth is 'full'
+        attrs[:blocks] = [] if sync_depth == 'full'
+        attrs
       end
 
-      def event_attributes(record)
-        {
+      def event_attributes(record, sync_depth: 'standard')
+        attrs = {
           name: record.name,
-          description: record.description&.body&.to_plain_text.to_s,
           identifier: record.identifier,
           privacy: record.privacy,
           updated_at: record.updated_at,
@@ -45,6 +51,8 @@ module BetterTogether
           registration_url: record.registration_url,
           timezone: record.timezone
         }
+        attrs[:description] = record.description&.body&.to_s.to_s unless sync_depth == 'metadata'
+        attrs
       end
     end
   end
