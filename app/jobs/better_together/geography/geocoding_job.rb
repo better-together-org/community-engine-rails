@@ -6,8 +6,8 @@ module BetterTogether
       queue_as :geocoding
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
 
-      # Don't retry on deserialization errors - the record no longer exists
       discard_on ActiveJob::DeserializationError
+      discard_on Geocoder::ResponseParseError
 
       def perform(geocodable)
         coords = geocodable.geocode

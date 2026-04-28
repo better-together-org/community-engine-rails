@@ -2,5 +2,6 @@
 
 module BetterTogether
   class ApplicationJob < ActiveJob::Base
+    discard_on ActiveStorage::FileNotFoundError
   end
 end
