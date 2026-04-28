@@ -68,6 +68,7 @@ module BetterTogether
       allow_linked_content_read_scope Boolean, default: false
       allow_content_write_scope Boolean, default: false
       sync_depth String, default: 'standard'
+      min_sync_interval_seconds Integer, default: 0
       sync_cursor String, default: ''
       last_sync_status String, default: 'idle'
       last_sync_started_at String, default: ''
@@ -113,6 +114,19 @@ module BetterTogether
       # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
       tbl = quoted_table_name
       where(Arel.sql("#{tbl}.settings->>'last_sync_status' != 'running' OR #{tbl}.settings->>'last_sync_status' IS NULL"))
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
+    }
+    scope :due_for_sync, lambda {
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB interval arithmetic has no Arel equivalent
+      tbl = quoted_table_name
+      where(Arel.sql(<<~SQL.squish))
+        (#{tbl}.settings->>'min_sync_interval_seconds') IS NULL
+        OR (#{tbl}.settings->>'min_sync_interval_seconds')::integer = 0
+        OR (#{tbl}.settings->>'last_synced_at') = ''
+        OR (#{tbl}.settings->>'last_synced_at')::timestamptz
+             + make_interval(secs => (#{tbl}.settings->>'min_sync_interval_seconds')::integer)
+             <= NOW()
+      SQL
       # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
 

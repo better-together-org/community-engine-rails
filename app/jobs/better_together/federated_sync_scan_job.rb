@@ -42,6 +42,7 @@ module BetterTogether
       ::BetterTogether::PlatformConnection.active
                                           .content_read_capable
                                           .not_syncing
+                                          .due_for_sync
                                           .where(sharing_policies)
     end
 

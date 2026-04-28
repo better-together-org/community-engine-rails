@@ -120,6 +120,7 @@ module BetterTogether
         :share_pages,
         :share_events,
         :sync_depth,
+        :min_sync_interval_seconds,
         :allow_identity_scope,
         :allow_profile_read_scope,
         :allow_content_read_scope,
