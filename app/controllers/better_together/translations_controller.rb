@@ -16,7 +16,7 @@ module BetterTogether
     # This limits token consumption and prevents abuse.
     MAX_CONTENT_SIZE = 50.kilobytes
 
-    def translate # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def translate # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       content = params[:content]
       source_locale = params[:source_locale]
       target_locale = params[:target_locale]
@@ -45,6 +45,11 @@ module BetterTogether
       unless available.include?(source_locale.to_s)
         return render json: { error: t('better_together.translations.errors.invalid_source_locale') },
                       status: :unprocessable_content
+      end
+
+      unless BetterTogether.translation_available?(platform: Current.platform)
+        return render json: { error: t('better_together.translations.errors.translation_unavailable') },
+                      status: :service_unavailable
       end
 
       initiator = helpers.current_person

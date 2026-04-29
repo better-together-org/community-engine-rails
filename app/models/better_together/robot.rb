@@ -8,7 +8,12 @@ module BetterTogether
 
     self.table_name = 'better_together_robots'
 
+    DEFAULT_PROVIDER = 'openai'
+    DEFAULT_CHAT_MODEL = 'gpt-4o-mini-2024-07-18'
+    DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small'
+
     ROBOT_TYPES = %w[translation assistant automation].freeze
+    PROVIDERS = %w[openai ollama].freeze
     BOT_ACCESS_SCOPES = %w[
       read_public_content
       read_community_content
@@ -55,11 +60,11 @@ module BetterTogether
     end
 
     def llm_provider
-      provider.presence || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
+      provider.presence || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', DEFAULT_PROVIDER)
     end
 
     def chat_model
-      default_model.presence || ENV.fetch('BETTER_TOGETHER_LLM_MODEL', 'gpt-4o-mini-2024-07-18')
+      default_model.presence || ENV.fetch('BETTER_TOGETHER_LLM_MODEL', DEFAULT_CHAT_MODEL)
     end
 
     def to_s
@@ -67,7 +72,7 @@ module BetterTogether
     end
 
     def embedding_model
-      default_embedding_model.presence || ENV.fetch('BETTER_TOGETHER_EMBEDDING_MODEL', 'text-embedding-3-small')
+      default_embedding_model.presence || ENV.fetch('BETTER_TOGETHER_EMBEDDING_MODEL', DEFAULT_EMBEDDING_MODEL)
     end
 
     def handle
@@ -158,6 +163,18 @@ module BetterTogether
 
     def select_option_title
       "#{name} - @#{identifier} (robot)"
+    end
+
+    def managed_by_platform?(candidate_platform)
+      platform_id.present? && candidate_platform.present? && platform_id == candidate_platform.id
+    end
+
+    def global_fallback?
+      platform_id.nil?
+    end
+
+    def translation_robot?
+      identifier == 'translation' || robot_type == 'translation'
     end
 
     private

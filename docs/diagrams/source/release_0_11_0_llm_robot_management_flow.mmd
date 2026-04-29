@@ -1,0 +1,31 @@
+flowchart TB
+    PM[Platform manager opens host platform] --> OPS[Operations card on platform profile]
+    OPS --> LINK[Robot management link]
+    OPS --> READY[Readiness summary]
+
+    subgraph READINESS["Readiness checks"]
+        READY --> CREDS{OpenAI env credentials present?}
+        READY --> ROBOT{Translation robot resolves for platform?}
+        ROBOT --> RESOLVE[Platform override first<br/>global fallback second]
+        RESOLVE --> PROVIDER{Resolved provider available?}
+        CREDS -->|yes| PROVIDER
+        CREDS -->|no| PROVIDER
+        PROVIDER -->|yes| UION[Translation UI shown]
+        PROVIDER -->|no| UIOFF[Translation UI hidden]
+    end
+
+    subgraph MANAGEMENT["Platform-scoped robot CRUD"]
+        LINK --> INDEX[RobotsController#index]
+        INDEX --> SCOPE[RobotPolicy scope limited to manageable platforms]
+        SCOPE --> LIST[Show platform overrides<br/>plus global fallback robots]
+        LIST --> FORM[New or edit robot form]
+        FORM --> FIELDS[Provider, models, prompt,<br/>active, assume_model_exists]
+        FIELDS --> SAVE[Persist BetterTogether::Robot]
+    end
+
+    subgraph RUNTIME["Translation runtime path"]
+        SAVE --> BOT[TranslationBot]
+        BOT --> CHAT[BetterTogether.llm_chat]
+        CHAT --> ADAPTER[Adapterized provider or RubyLLM default adapter]
+        ADAPTER --> OPENAI[OpenAI via OPENAI_API_KEY<br/>or OPENAI_ACCESS_TOKEN]
+    end

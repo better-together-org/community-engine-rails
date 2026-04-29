@@ -78,9 +78,9 @@ module BetterTogether
         name: remote_attributes[:name],
         description: remote_attributes[:description],
         identifier: normalized_identifier(record),
-        privacy: remote_attributes[:privacy].presence || 'public',
-        creator_id: resolve_local_creator(remote_attributes[:creator_id]),
-        platform: connection.target_platform,
+        privacy: normalized_privacy,
+        creator_id: local_creator_id,
+        platform: target_platform,
         source_id: effective_preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
@@ -121,6 +121,18 @@ module BetterTogether
       return remote_attributes[:updated_at] if remote_attributes[:updated_at].present?
 
       Time.current
+    end
+
+    def normalized_privacy
+      remote_attributes[:privacy].presence || 'public'
+    end
+
+    def local_creator_id
+      resolve_local_creator(remote_attributes[:creator_id])
+    end
+
+    def target_platform
+      connection.target_platform
     end
 
     def preserve_remote_uuid?

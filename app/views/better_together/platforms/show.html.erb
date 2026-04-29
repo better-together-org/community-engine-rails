@@ -117,6 +117,40 @@
                                   platform_storage_configurations_path(@platform),
                                   class: 'btn btn-outline-primary btn-sm' %>
                     <% end %>
+                    <% if policy(BetterTogether::Robot).index? %>
+                      <%= link_to t('platforms.show.operations.robot_management'),
+                                  platform_robots_path(@platform),
+                                  class: 'btn btn-outline-primary btn-sm' %>
+                    <% end %>
+                  </div>
+
+                  <% if policy(BetterTogether::Robot).index? %>
+                    <% translation_robot = BetterTogether::Robot.resolve(identifier: 'translation', platform: @platform) %>
+                    <% translation_available = BetterTogether.translation_available?(platform: @platform) %>
+                    <div class="row g-3 mt-2">
+                      <div class="col-md-4">
+                        <div class="small text-muted text-uppercase fw-semibold"><%= t('better_together.robots.readiness.openai_credentials') %></div>
+                        <div class="<%= BetterTogether.openai_credentials_present? ? 'text-success' : 'text-danger' %>">
+                          <%= t("better_together.robots.readiness.#{BetterTogether.openai_credentials_present? ? 'configured' : 'missing'}") %>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="small text-muted text-uppercase fw-semibold"><%= t('better_together.robots.readiness.translation_provider') %></div>
+                        <div class="<%= translation_available ? 'text-success' : 'text-danger' %>">
+                          <%= t("better_together.robots.readiness.#{translation_available ? 'ready' : 'unavailable'}") %>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="small text-muted text-uppercase fw-semibold"><%= t('better_together.robots.readiness.translation_ui') %></div>
+                        <div class="<%= translation_available ? 'text-success' : 'text-danger' %>">
+                          <%= t("better_together.robots.readiness.#{translation_available ? 'shown' : 'hidden'}") %>
+                        </div>
+                        <div class="small text-muted">
+                          <%= translation_robot&.name || t('better_together.robots.readiness.no_translation_robot') %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
                   </div>
                 </div>
               </div>

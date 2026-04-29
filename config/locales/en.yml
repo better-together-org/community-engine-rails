@@ -3395,6 +3395,56 @@ en:
       secret_key_hint: Leave blank to keep the existing value when editing.
       secret_key_placeholder: "••••••••"
       updated: Storage configuration was successfully updated.
+    robots:
+      created: Robot was successfully created.
+      destroyed: Robot was successfully deleted.
+      edit:
+        subtitle: Adjust provider, model, prompt, and runtime flags for this platform robot.
+        title: Edit %{name} for %{platform_name}
+      form:
+        assume_model_exists: Assume model exists
+        assume_model_exists_help: Keep this enabled only when the provider/model path is known to exist.
+        cancel: Cancel
+      index:
+        back_to_platform: Back to Platform
+        delete: Delete
+        delete_confirm: Delete %{name}?
+        edit: Edit
+        global_read_only: Global fallback
+        new_robot: Add Robot
+        scope: Scope
+        status: Status
+        subtitle: Manage platform-specific robots and inherited global fallbacks from one place.
+        title: LLM Robots for %{platform_name}
+      new:
+        subtitle: Create a platform-scoped robot override. Credentials stay in environment configuration.
+        title: New Robot for %{platform_name}
+      readiness:
+        configured: Configured
+        credentials_help: OpenAI-backed robots continue to use the deployment environment for credentials.
+        hidden: Hidden
+        missing: Missing
+        no_translation_robot: No translation robot resolves for this platform.
+        openai_credentials: OpenAI Credentials
+        ready: Ready
+        shown: Shown
+        translation_provider: Translation Provider
+        translation_ui: Translation UI
+        translation_ui_help: Translation controls render only when the resolved translation robot has an available provider.
+        unavailable: Unavailable
+      scope_labels:
+        global_fallback: Global fallback
+        platform_override: Platform override
+      statuses:
+        active: Active
+        inactive: Inactive
+        inactive_translation: Inactive translation robot
+        provider_ready: Provider available
+        provider_unavailable: Provider unavailable
+        translation_not_selected: Not the effective translation robot for this platform
+        translation_ui_disabled: Translation UI hidden for this platform
+        translation_ui_enabled: Translation UI enabled for this platform
+      updated: Robot was successfully updated.
     translations:
       errors:
         content_blank: Content cannot be blank
@@ -3404,6 +3454,7 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+        translation_unavailable: Translation is not currently available for this platform.
     uploads:
       content_security:
         badge:
@@ -4468,6 +4519,7 @@ en:
         description: Open host-level operations for this platform without relying
           on route knowledge alone.
         host_dashboard: Host Dashboard
+        robot_management: Manage LLM robots
         storage_configurations: Manage storage
         title: Platform operations
       safety:
@@ -4517,6 +4569,7 @@ en:
     person_link: Person link
     person_platform_membership: Person platform membership
     platform: Platform
+    robot: Robot
     profile: Profile
     region: Region
     region_settlement: Region settlement

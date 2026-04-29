@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_llm_robot_management_index",
+  "device": "desktop",
+  "url": "/en/host/platforms/sanford_cole/robots",
+  "title": "LLM Robots for Veum-Paucek | Veum-Paucek",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_llm_robot_management",
+  "flow": "robot_index",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_llm_robot_management_spec.rb"
+}

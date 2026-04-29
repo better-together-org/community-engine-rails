@@ -3443,6 +3443,56 @@ uk:
       secret_key_hint: Leave blank to keep the existing value when editing.
       secret_key_placeholder: "••••••••"
       updated: Storage configuration was successfully updated.
+    robots:
+      created: Робота успішно створено.
+      destroyed: Робота успішно видалено.
+      edit:
+        subtitle: Налаштуйте провайдера, модель, prompt і параметри виконання для цього робота платформи.
+        title: Редагувати %{name} для %{platform_name}
+      form:
+        assume_model_exists: Вважати, що модель існує
+        assume_model_exists_help: Увімкніть лише тоді, коли ви знаєте, що шлях провайдер/модель існує.
+        cancel: Скасувати
+      index:
+        back_to_platform: Назад до платформи
+        delete: Видалити
+        delete_confirm: Видалити %{name}?
+        edit: Редагувати
+        global_read_only: Глобальний резерв
+        new_robot: Додати робота
+        scope: Обсяг
+        status: Статус
+        subtitle: Керуйте роботами платформи та успадкованими глобальними резервами з одного місця.
+        title: LLM-роботи для %{platform_name}
+      new:
+        subtitle: Створіть перевизначення робота для цієї платформи. Облікові дані залишаються в конфігурації середовища.
+        title: Новий робот для %{platform_name}
+      readiness:
+        configured: Налаштовано
+        credentials_help: Роботи на базі OpenAI і далі використовують середовище розгортання для облікових даних.
+        hidden: Прихована
+        missing: Відсутні
+        no_translation_robot: Для цієї платформи не визначено робота перекладу.
+        openai_credentials: Облікові дані OpenAI
+        ready: Готово
+        shown: Показана
+        translation_provider: Провайдер перекладу
+        translation_ui: Інтерфейс перекладу
+        translation_ui_help: Керування перекладом з'являється лише тоді, коли визначений робот перекладу має доступного провайдера.
+        unavailable: Недоступно
+      scope_labels:
+        global_fallback: Глобальний резерв
+        platform_override: Перевизначення платформи
+      statuses:
+        active: Активний
+        inactive: Неактивний
+        inactive_translation: Неактивний робот перекладу
+        provider_ready: Провайдер доступний
+        provider_unavailable: Провайдер недоступний
+        translation_not_selected: Це не ефективний робот перекладу для цієї платформи
+        translation_ui_disabled: Інтерфейс перекладу приховано для цієї платформи
+        translation_ui_enabled: Інтерфейс перекладу увімкнено для цієї платформи
+      updated: Робота успішно оновлено.
     translations:
       errors:
         content_blank: Вміст не може бути порожнім
@@ -3453,6 +3503,7 @@ uk:
         translation_failed: 'Переклад не вдався: %{message}'
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
+        translation_unavailable: Переклад наразі недоступний для цієї платформи.
     uploads:
       content_security:
         badge:
@@ -4576,6 +4627,7 @@ uk:
         description: Відкривайте операції рівня хоста для цієї платформи без потреби
           знати точну URL-адресу.
         host_dashboard: Панель хоста
+        robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи
       safety:
@@ -4625,6 +4677,7 @@ uk:
     person_link: Посилання особи
     person_platform_membership: Членство особи на платформі
     platform: Платформа
+    robot: Робот
     profile: Профіль
     region: Регіон
     region_settlement: Регіональне поселення

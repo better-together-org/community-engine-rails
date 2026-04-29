@@ -3,6 +3,8 @@
 module BetterTogether
   module Content
     # Imports or updates a mirrored Post record from a connected remote platform.
+    # rubocop:disable Metrics/ClassLength -- Mirror service keeps identifier, source, and
+    #   remote UUID handling in one place to match the event mirror flow.
     class FederatedPostMirrorService
       include ::BetterTogether::Federation::MirroredIdentifierResolution
 
@@ -66,10 +68,10 @@ module BetterTogether
           title: remote_attributes[:title],
           content: remote_attributes[:content],
           identifier: normalized_identifier(post),
-          privacy: remote_attributes[:privacy].presence || 'public',
+          privacy: normalized_privacy,
           published_at: remote_attributes[:published_at],
-          creator_id: resolve_local_creator(remote_attributes[:creator_id]),
-          platform: connection.target_platform
+          creator_id: local_creator_id,
+          platform: target_platform
         }.merge(post_sync_attributes)
       end
 
@@ -103,6 +105,18 @@ module BetterTogether
         Time.current
       end
 
+      def normalized_privacy
+        remote_attributes[:privacy].presence || 'public'
+      end
+
+      def local_creator_id
+        resolve_local_creator(remote_attributes[:creator_id])
+      end
+
+      def target_platform
+        connection.target_platform
+      end
+
       def preserve_remote_uuid?
         preserve_remote_uuid
       end
@@ -127,5 +141,6 @@ module BetterTogether
         /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end
