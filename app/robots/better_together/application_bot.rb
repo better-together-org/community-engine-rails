@@ -50,11 +50,11 @@ module BetterTogether
     end
 
     def default_model
-      @robot&.chat_model || ENV.fetch('BETTER_TOGETHER_LLM_MODEL', 'gpt-4o-mini-2024-07-18')
+      @robot&.chat_model || ENV.fetch('BETTER_TOGETHER_LLM_MODEL', BetterTogether::Robot::DEFAULT_CHAT_MODEL)
     end
 
     def default_provider
-      @robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
+      @robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', BetterTogether::Robot::DEFAULT_PROVIDER)
     end
 
     def assume_model_exists?

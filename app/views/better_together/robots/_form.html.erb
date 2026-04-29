@@ -1,0 +1,69 @@
+<%= form_with model: [@platform, @robot], local: true do |form| %>
+  <%= render 'layouts/better_together/errors', object: @robot %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= form.label :name, class: 'form-label' %>
+      <%= form.text_field :name, class: 'form-control', required: true %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :identifier, class: 'form-label' %>
+      <%= form.text_field :identifier, class: 'form-control', required: true %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :robot_type, class: 'form-label' %>
+      <%= form.select :robot_type, @robot_type_options, {}, class: 'form-select' %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :provider, class: 'form-label' %>
+      <%= form.select :provider, @provider_options, {}, class: 'form-select' %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :default_model, class: 'form-label' %>
+      <%= form.text_field :default_model, class: 'form-control', placeholder: BetterTogether::Robot::DEFAULT_CHAT_MODEL %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :default_embedding_model, class: 'form-label' %>
+      <%= form.text_field :default_embedding_model,
+                          class: 'form-control',
+                          placeholder: BetterTogether::Robot::DEFAULT_EMBEDDING_MODEL %>
+    </div>
+
+    <div class="col-12">
+      <%= form.label :system_prompt, class: 'form-label' %>
+      <%= form.text_area :system_prompt, rows: 6, class: 'form-control' %>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-check mt-2">
+        <%= form.check_box :active, class: 'form-check-input' %>
+        <%= form.label :active, class: 'form-check-label' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-check mt-2">
+        <%= hidden_field_tag 'robot[settings][assume_model_exists]', false %>
+        <%= check_box_tag 'robot[settings][assume_model_exists]',
+                          true,
+                          @robot.settings_hash[:assume_model_exists] == true,
+                          class: 'form-check-input',
+                          id: 'robot_settings_assume_model_exists' %>
+        <%= label_tag 'robot_settings_assume_model_exists',
+                      t('better_together.robots.form.assume_model_exists'),
+                      class: 'form-check-label' %>
+      </div>
+      <div class="form-text"><%= t('better_together.robots.form.assume_model_exists_help') %></div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= form.submit class: 'btn btn-primary' %>
+    <%= link_to t('better_together.robots.form.cancel'), platform_robots_path(@platform), class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

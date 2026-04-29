@@ -3483,6 +3483,56 @@ fr:
       secret_key_hint: Leave blank to keep the existing value when editing.
       secret_key_placeholder: "••••••••"
       updated: Storage configuration was successfully updated.
+    robots:
+      created: Le robot a été créé avec succès.
+      destroyed: Le robot a été supprimé avec succès.
+      edit:
+        subtitle: Ajustez le fournisseur, le modèle, le prompt et les options d'exécution de ce robot de plateforme.
+        title: Modifier %{name} pour %{platform_name}
+      form:
+        assume_model_exists: Supposer que le modèle existe
+        assume_model_exists_help: N'activez ceci que si vous savez que la combinaison fournisseur/modèle existe.
+        cancel: Annuler
+      index:
+        back_to_platform: Retour à la plateforme
+        delete: Supprimer
+        delete_confirm: Supprimer %{name} ?
+        edit: Modifier
+        global_read_only: Repli global
+        new_robot: Ajouter un robot
+        scope: Portée
+        status: Statut
+        subtitle: Gérez les robots propres à la plateforme et les replis globaux hérités depuis un seul endroit.
+        title: Robots LLM pour %{platform_name}
+      new:
+        subtitle: Créez une surcharge de robot limitée à la plateforme. Les identifiants restent gérés par l'environnement.
+        title: Nouveau robot pour %{platform_name}
+      readiness:
+        configured: Configuré
+        credentials_help: Les robots adossés à OpenAI continuent d'utiliser l'environnement de déploiement pour les identifiants.
+        hidden: Masquée
+        missing: Manquants
+        no_translation_robot: Aucun robot de traduction ne se résout pour cette plateforme.
+        openai_credentials: Identifiants OpenAI
+        ready: Prêt
+        shown: Affichée
+        translation_provider: Fournisseur de traduction
+        translation_ui: Interface de traduction
+        translation_ui_help: Les contrôles de traduction ne s'affichent que lorsque le robot de traduction résolu dispose d'un fournisseur disponible.
+        unavailable: Indisponible
+      scope_labels:
+        global_fallback: Repli global
+        platform_override: Surcharge de plateforme
+      statuses:
+        active: Actif
+        inactive: Inactif
+        inactive_translation: Robot de traduction inactif
+        provider_ready: Fournisseur disponible
+        provider_unavailable: Fournisseur indisponible
+        translation_not_selected: Ce n'est pas le robot de traduction effectif pour cette plateforme
+        translation_ui_disabled: L'interface de traduction est masquée pour cette plateforme
+        translation_ui_enabled: L'interface de traduction est activée pour cette plateforme
+      updated: Le robot a été mis à jour avec succès.
     translations:
       errors:
         content_blank: Le contenu ne peut pas être vide
@@ -3492,6 +3542,7 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+        translation_unavailable: La traduction n'est pas disponible actuellement pour cette plateforme.
     uploads:
       content_security:
         badge:
@@ -4585,6 +4636,7 @@ fr:
           dépendre uniquement d'une URL directe.
         host_dashboard: Tableau de bord hôte
         storage_configurations: Gérer le stockage
+        robot_management: Gérer les robots LLM
         title: Opérations de la plateforme
       safety:
         description: Consultez les signalements entrants, les dossiers de sécurité
@@ -4633,6 +4685,7 @@ fr:
     person_link: Lien de la personne
     person_platform_membership: Adhésion à la plateforme de la personne
     platform: Plateforme
+    robot: Robot
     profile: Profil
     region: Région
     region_settlement: Region settlement

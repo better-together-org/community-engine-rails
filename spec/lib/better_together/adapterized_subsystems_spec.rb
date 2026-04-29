@@ -84,5 +84,29 @@ RSpec.describe BetterTogether do
       expect(adapter).to have_received(:call).with('hello', provider: 'borgberry', model: 'embed-small')
     end
   end
+
+  describe '.llm_available?' do
+    let(:platform) { create(:platform) }
+
+    before do
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch).with('BETTER_TOGETHER_LLM_PROVIDER', 'openai').and_return('openai')
+      create(:robot, :global, identifier: 'translation', provider: 'openai', default_model: nil)
+    end
+
+    it 'returns true for the translation robot when OpenAI credentials are present' do
+      allow(ENV).to receive(:fetch).with('OPENAI_API_KEY', nil).and_return('test-openai-key')
+      allow(ENV).to receive(:fetch).with('OPENAI_ACCESS_TOKEN', nil).and_return(nil)
+
+      expect(described_class.llm_available?(identifier: 'translation', platform:)).to be(true)
+    end
+
+    it 'returns false for the translation robot when OpenAI credentials are absent' do
+      allow(ENV).to receive(:fetch).with('OPENAI_API_KEY', nil).and_return(nil)
+      allow(ENV).to receive(:fetch).with('OPENAI_ACCESS_TOKEN', nil).and_return(nil)
+
+      expect(described_class.llm_available?(identifier: 'translation', platform:)).to be(false)
+    end
+  end
 end
 # rubocop:enable RSpec/SpecFilePathFormat
