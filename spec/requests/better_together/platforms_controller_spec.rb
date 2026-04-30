@@ -154,13 +154,20 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
     it 'shows platform operations entry points to platform managers' do
       host_platform = BetterTogether::Platform.find_by(host: true)
+      create(:robot, :global, identifier: 'translation', name: 'Global Translation Bot')
+      allow(BetterTogether).to receive(:openai_credentials_present?).and_return(true)
+      allow(BetterTogether).to receive(:translation_available?).with(platform: host_platform).and_return(true)
 
       get better_together.platform_path(locale:, id: host_platform.slug)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t('platforms.show.operations.title'))
       expect(response.body).to include(I18n.t('platforms.show.operations.storage_configurations'))
+      expect(response.body).to include(I18n.t('platforms.show.operations.robot_management'))
+      expect(response.body).to include(I18n.t('better_together.robots.readiness.translation_ui'))
+      expect(response.body).to include(I18n.t('better_together.robots.readiness.shown'))
       expect(response.body).to include(better_together.platform_storage_configurations_path(host_platform, locale: locale))
+      expect(response.body).to include(better_together.platform_robots_path(host_platform, locale: locale))
     end
 
     it 'keeps safety review controls hidden for platform managers without safety permissions' do

@@ -3464,6 +3464,56 @@ es:
       secret_key_hint: Leave blank to keep the existing value when editing.
       secret_key_placeholder: "••••••••"
       updated: Storage configuration was successfully updated.
+    robots:
+      created: El robot se creó correctamente.
+      destroyed: El robot se eliminó correctamente.
+      edit:
+        subtitle: Ajuste el proveedor, el modelo, el prompt y las opciones de ejecución de este robot de plataforma.
+        title: Editar %{name} para %{platform_name}
+      form:
+        assume_model_exists: Asumir que el modelo existe
+        assume_model_exists_help: Actívelo solo cuando sepa que la ruta proveedor/modelo existe.
+        cancel: Cancelar
+      index:
+        back_to_platform: Volver a la plataforma
+        delete: Eliminar
+        delete_confirm: "¿Eliminar %{name}?"
+        edit: Editar
+        global_read_only: Respaldo global
+        new_robot: Añadir robot
+        scope: Alcance
+        status: Estado
+        subtitle: Gestione los robots específicos de la plataforma y los respaldos globales heredados desde un solo lugar.
+        title: Robots LLM para %{platform_name}
+      new:
+        subtitle: Cree una anulación de robot con alcance de plataforma. Las credenciales siguen en la configuración del entorno.
+        title: Nuevo robot para %{platform_name}
+      readiness:
+        configured: Configurado
+        credentials_help: Los robots respaldados por OpenAI siguen usando el entorno de despliegue para las credenciales.
+        hidden: Oculta
+        missing: Faltan
+        no_translation_robot: No hay un robot de traducción resuelto para esta plataforma.
+        openai_credentials: Credenciales de OpenAI
+        ready: Disponible
+        shown: Visible
+        translation_provider: Proveedor de traducción
+        translation_ui: Interfaz de traducción
+        translation_ui_help: Los controles de traducción solo se muestran cuando el robot de traducción resuelto tiene un proveedor disponible.
+        unavailable: No disponible
+      scope_labels:
+        global_fallback: Respaldo global
+        platform_override: Anulación de plataforma
+      statuses:
+        active: Activo
+        inactive: Inactivo
+        inactive_translation: Robot de traducción inactivo
+        provider_ready: Proveedor disponible
+        provider_unavailable: Proveedor no disponible
+        translation_not_selected: No es el robot de traducción efectivo para esta plataforma
+        translation_ui_disabled: La interfaz de traducción está oculta para esta plataforma
+        translation_ui_enabled: La interfaz de traducción está habilitada para esta plataforma
+      updated: El robot se actualizó correctamente.
     translations:
       errors:
         content_blank: El contenido no puede estar en blanco
@@ -3475,6 +3525,7 @@ es:
         translation_failed: 'La traducción falló: %{message}'
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
+        translation_unavailable: La traducción no está disponible actualmente para esta plataforma.
     uploads:
       content_security:
         badge:
@@ -4559,6 +4610,7 @@ es:
         description: Abra las operaciones de nivel anfitrión para esta plataforma
           sin depender solo del conocimiento de la URL.
         host_dashboard: Panel del anfitrión
+        robot_management: Gestionar robots LLM
         storage_configurations: Gestionar almacenamiento
         title: Operaciones de la plataforma
       safety:
@@ -4608,6 +4660,7 @@ es:
     person_link: Enlace de persona
     person_platform_membership: Membresía de plataforma de persona
     platform: Plataforma
+    robot: Robot
     profile: Perfil
     region: Región
     region_settlement: Region settlement

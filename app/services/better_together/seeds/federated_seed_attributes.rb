@@ -18,7 +18,7 @@ module BetterTogether
           published_at: record.published_at,
           updated_at: record.updated_at
         }
-        attrs[:content] = record.content&.body&.to_s.to_s unless sync_depth == 'metadata'
+        attrs[:content] = record.content&.body&.to_s unless sync_depth == 'metadata'
         attrs
       end
 
@@ -51,7 +51,7 @@ module BetterTogether
           registration_url: record.registration_url,
           timezone: record.timezone
         }
-        attrs[:description] = record.description&.body&.to_s.to_s unless sync_depth == 'metadata'
+        attrs[:description] = record.description&.body&.to_s unless sync_depth == 'metadata'
         attrs
       end
     end
