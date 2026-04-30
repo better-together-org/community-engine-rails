@@ -21,6 +21,7 @@
 //= link masonry.min.js
 //= link imagesloaded.min.js
 
+//= link leaflet-src.esm.js
 //= link leaflet.js
 //= link leaflet-gesture-handling.js
 //= link leaflet-providers.js

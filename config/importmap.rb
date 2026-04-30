@@ -38,6 +38,7 @@ pin 'mermaid', to: 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min
 pin 'masonry', to: 'masonry.min.js' # @4.2.2
 pin 'imagesloaded', to: 'imagesloaded.min.js' # @5.0.0
 
+pin 'leaflet-esm', to: 'leaflet-src.esm.js' # @1.9.4
 pin 'leaflet', preload: true # @1.9.4
 pin 'leaflet-gesture-handling', to: 'leaflet-gesture-handling.js', preload: true # Ensure it is preloaded # @1.2.2
 pin 'leaflet-providers', preload: true # @2.0.0

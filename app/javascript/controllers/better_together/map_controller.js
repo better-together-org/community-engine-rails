@@ -2,7 +2,7 @@
 
 // app/javascript/controllers/better_together/map_controller.js
 import { Controller } from '@hotwired/stimulus'
-import L from 'leaflet'
+import * as L from 'leaflet'
 import 'leaflet-gesture-handling' // Import the library to ensure it is loaded globally
 
 export default class extends Controller {
