@@ -21,8 +21,8 @@ RSpec.describe BetterTogether::C3Helper do
     end
 
     it 'formats fractional amounts without trailing zeros' do
-      # 5000 millitokens = 0.5 C3
-      result = helper.tree_seeds_display(5_000)
+      # 500 millitokens = 0.5 C3 (with MILLITOKEN_SCALE = 1000)
+      result = helper.tree_seeds_display(500)
       expect(result).to eq('0.5 Tree Seeds 🌱')
     end
 

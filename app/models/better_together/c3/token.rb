@@ -44,13 +44,58 @@ module BetterTogether
       scope :local,      -> { where(federated: false) }
       scope :federated,  -> { where(federated: true) }
 
+      # Safe conversion: C3 Tree Seed amount (as string/decimal) → millitokens (integer)
+      # Uses BigDecimal to avoid floating-point precision loss during conversion.
+      # Returns exact integer millitokens value, safe for ledger operations.
+      #
+      # @param c3_amount [String, Numeric] Tree Seed amount (e.g., "1.5", 1.5, 1)
+      # @return [Integer] Millitokens value
+      # @raise [ArgumentError] if amount is negative or exceeds MAX_SINGLE_TRANSACTION_MILLITOKENS
+      def self.c3_to_millitokens(c3_amount)
+        decimal_amount = BigDecimal(c3_amount.to_s)
+        raise ArgumentError, 'C3 amount must be non-negative' if decimal_amount.negative?
+
+        millitokens = (decimal_amount * MILLITOKEN_SCALE).to_i
+        if millitokens > MAX_SINGLE_TRANSACTION_MILLITOKENS
+          raise ArgumentError,
+                "C3 amount exceeds maximum (#{millitokens} > #{MAX_SINGLE_TRANSACTION_MILLITOKENS} millitokens)"
+        end
+
+        millitokens
+      rescue ArgumentError
+        raise
+      rescue StandardError => e
+        raise ArgumentError, "Invalid C3 amount '#{c3_amount}': #{e.message}"
+      end
+
+      # Safe conversion: millitokens (integer) → C3 Tree Seed amount (float, for display only)
+      # Returns float representation rounded to 4 decimal places for UI display.
+      # NEVER use this result for subsequent calculations; use millitokens directly.
+      #
+      # @param millitokens [Integer] Millitokens value
+      # @return [Float] Tree Seed amount, rounded to 4 decimals
+      def self.millitokens_to_c3(millitokens)
+        (millitokens.to_f / MILLITOKEN_SCALE).round(4)
+      end
+
+      # Safe conversion: millitokens (integer) → C3 Tree Seed amount (BigDecimal, for precise API responses)
+      # Returns exact BigDecimal representation, suitable for JSON serialization with precision.
+      #
+      # @param millitokens [Integer] Millitokens value
+      # @return [BigDecimal] Tree Seed amount as exact decimal
+      def self.millitokens_to_c3_decimal(millitokens)
+        BigDecimal(millitokens.to_s) / MILLITOKEN_SCALE
+      end
+
       # Convert to/from C3 decimal amount
+      # NOTE: Deprecated for new code. Use c3_to_millitokens class method for precision.
       def c3_amount
         c3_millitokens.to_f / MILLITOKEN_SCALE
       end
 
       def c3_amount=(amount)
-        self.c3_millitokens = (amount.to_f * MILLITOKEN_SCALE).round
+        # Use BigDecimal internally to avoid float precision loss
+        self.c3_millitokens = self.class.c3_to_millitokens(amount)
       end
 
       def confirm!

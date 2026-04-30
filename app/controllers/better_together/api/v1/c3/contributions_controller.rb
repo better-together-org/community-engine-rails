@@ -28,13 +28,22 @@ module BetterTogether
           def create # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
             contrib = contribution_params
 
+            # Validate c3_amount precision (max 4 decimal places = 0.1 millitokens)
+            c3_amount_str = contrib[:c3_amount].to_s
+            unless c3_amount_str.match?(/^\d+(\.\d{1,4})?$/)
+              return render json: {
+                error: 'c3_amount must have at most 4 decimal places (precision: 0.1 millitokens)'
+              }, status: :unprocessable_entity
+            end
+
             fleet_node = BetterTogether::Fleet::Node.find_by(node_id: contrib[:node_id])
             return render json: { error: "node '#{contrib[:node_id]}' not registered" }, status: :unprocessable_entity if fleet_node.nil?
 
             earner = fleet_node.owner
             return render_owner_not_configured(contrib[:node_id]) if earner.nil?
 
-            c3_millitokens = (contrib[:c3_amount].to_f * MILLITOKEN_SCALE).round
+            # Use safe conversion to avoid floating-point precision loss
+            c3_millitokens = BetterTogether::C3::Token.c3_to_millitokens(contrib[:c3_amount])
             created = false
 
             token = BetterTogether::C3::Token.transaction do
@@ -61,7 +70,8 @@ module BetterTogether
                 holder: earner,
                 community: nil
               )
-              balance.credit!(token.c3_amount)
+              # Use credit_millitokens! to avoid round-trip float conversion
+              balance.credit_millitokens!(c3_millitokens)
               token
             end
 
@@ -71,13 +81,16 @@ module BetterTogether
               render json: {
                 status: 'ok',
                 token_id: token.id,
-                c3_amount: token.c3_amount,
-                new_balance: balance.reload.available_c3
+                c3_amount: BetterTogether::C3::Token.millitokens_to_c3(token.c3_millitokens),
+                new_balance: BetterTogether::C3::Token.millitokens_to_c3(balance.reload.available_millitokens)
               }, status: :created
             else
               render json: { status: 'duplicate', message: 'contribution already recorded' }, status: :ok
             end
-          rescue ActiveRecord::RecordInvalid => e
+          rescue BetterTogether::C3::Token::ArgumentError => e
+            render json: { error: "invalid c3_amount: #{e.message}" }, status: :unprocessable_entity
+          rescue ArgumentError => e
+            render json: { error: e.message }, status: :unprocessable_entity
             render json: { error: e.message }, status: :unprocessable_entity
           rescue ActiveRecord::RecordNotUnique
             render json: { status: 'duplicate', message: 'contribution already recorded' }, status: :ok
@@ -147,11 +160,11 @@ module BetterTogether
 
             response_body = {
               borgberry_did: did,
-              network_available_c3: balances.sum(:available_millitokens).to_f / MILLITOKEN_SCALE,
-              network_locked_c3: balances.sum(:locked_millitokens).to_f / MILLITOKEN_SCALE,
-              network_lifetime_c3: balances.sum(:lifetime_earned_millitokens).to_f / MILLITOKEN_SCALE,
-              local_available_c3: balances.local.sum(:available_millitokens).to_f / MILLITOKEN_SCALE,
-              federated_received_c3: balances.federated.sum(:available_millitokens).to_f / MILLITOKEN_SCALE
+              network_available_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.sum(:available_millitokens)),
+              network_locked_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.sum(:locked_millitokens)),
+              network_lifetime_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.sum(:lifetime_earned_millitokens)),
+              local_available_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.local.sum(:available_millitokens)),
+              federated_received_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.federated.sum(:available_millitokens))
             }
 
             # Platform breakdown is opt-in and admin-only to protect cross-platform presence data.
