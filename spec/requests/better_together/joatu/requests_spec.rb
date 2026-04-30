@@ -23,7 +23,7 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
   end
 
   describe 'GET /index' do
-    it 'returns success with contribution and evidence summaries' do
+    it 'returns success without contribution and evidence summaries' do
       request_record.add_governed_contributor(person, role: 'reviewer')
       request_record.contributions.first.update!(details: {
                                                    'github_handle' => 'joatu-request-reviewer',
@@ -34,25 +34,58 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
 
       get better_together.joatu_requests_path(locale: locale)
       expect(response).to be_successful
-      expect(response.body).to include('Contributors:')
-      expect(response.body).to include('GitHub-linked')
-      expect(response.body).to include('Evidence:')
-      expect(response.body).to include('Governance Bundle')
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Evidence:')
+      expect(response.body).not_to include('Governance Bundle')
     end
   end
 
   describe 'POST /create' do
     it 'creates a request' do
+      created_request = nil
+
       expect do
         post better_together.joatu_requests_path(locale: locale), params: { joatu_request: valid_attributes }
+        created_request = BetterTogether::Joatu::Request.order(:created_at).last
       end.to change(BetterTogether::Joatu::Request, :count).by(1)
+
+      expect(response).to redirect_to(
+        better_together.joatu_request_path(created_request, locale:)
+      )
+      expect(created_request.creator).to eq(person)
+      expect(created_request.categories).to contain_exactly(category)
+    end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.joatu_requests_path(locale: locale), params: {
+          joatu_request: valid_attributes.merge(name: '', description: '')
+        }
+      end.not_to change(BetterTogether::Joatu::Request, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
   describe 'GET /show' do
-    it 'returns success' do
+    it 'returns success without contribution and evidence references' do
+      citation = create(:citation, citeable: request_record, title: 'JOATU Request Notes', reference_key: 'joatu-request-notes')
+      claim = create(:claim, claimable: request_record, statement: 'This request is backed by review notes.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
+      request_record.add_governed_contributor(person, role: 'reviewer')
+      request_record.contributions.first.update!(details: {
+                                                   'github_handle' => 'joatu-request-reviewer',
+                                                   'github_sources' => [{ 'reference_key' => 'issue_1494' }]
+                                                 })
+
       get better_together.joatu_request_path(request_record, locale: locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('JOATU Request Notes')
     end
   end
 
@@ -67,6 +100,14 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
       )
       expect(request_record.reload.status).to eq('closed')
     end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      patch better_together.joatu_request_path(request_record, locale: locale),
+            params: { joatu_request: { name: '', description: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(request_record.reload.name).not_to be_blank
+    end
   end
 
   describe 'DELETE /destroy' do
@@ -75,6 +116,20 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
       expect do
         delete better_together.joatu_request_path(to_delete, locale: locale)
       end.to change(BetterTogether::Joatu::Request, :count).by(-1)
+    end
+  end
+
+  describe 'GET /respond_with_offer' do
+    it 'redirects to a prefilled offer form for the request' do
+      get "/#{locale}/exchange/requests/#{request_record.id}/respond_with_offer"
+
+      expect(response).to redirect_to(
+        better_together.new_joatu_offer_path(
+          locale:,
+          source_type: 'BetterTogether::Joatu::Request',
+          source_id: request_record.id
+        )
+      )
     end
   end
   # rubocop:enable Metrics/BlockLength

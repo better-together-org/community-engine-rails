@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
 
   describe 'GET /:locale/.../host/permissions' do
     it 'renders index' do
@@ -59,6 +60,14 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
       expect(response.body).to include('data-turbo-prefetch="false"')
     end
 
+    it 'redirects signed-in non-managers away from index' do
+      sign_in regular_user
+
+      get better_together.resource_permissions_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'renders show for a permission' do
       permission = create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform')
       get better_together.resource_permission_path(locale:, id: permission.slug)
@@ -82,6 +91,15 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
         'Platform Manager',
         I18n.t('better_together.resource_permissions.roles.count', count: 1)
       )
+    end
+
+    it 'redirects signed-in non-managers away from show' do
+      permission = create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform')
+      sign_in regular_user
+
+      get better_together.resource_permission_path(locale:, id: permission.slug)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

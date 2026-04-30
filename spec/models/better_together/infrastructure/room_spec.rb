@@ -31,5 +31,22 @@ RSpec.describe BetterTogether::Infrastructure::Room do
         expect(room.to_s).to eq(room.name)
       end
     end
+
+    describe '#level' do
+      it 'delegates to the floor' do
+        room = create(:better_together_infrastructure_room, floor: create(:better_together_infrastructure_floor, level: 3))
+
+        expect(room.level).to eq(3)
+      end
+    end
+
+    describe '#building' do
+      it 'resolves the room building through the floor' do
+        building = create(:better_together_infrastructure_building)
+        room = building.reload.floors.first.rooms.first
+
+        expect(room.building).to eq(building)
+      end
+    end
   end
 end

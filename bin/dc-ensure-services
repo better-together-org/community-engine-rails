@@ -8,7 +8,11 @@ cd "$repo_root"
 # shellcheck source=./docker-compose-env.sh
 source "$repo_root/bin/docker-compose-env.sh"
 
-services=(db redis redis-rack-attack elasticsearch)
+services=(db redis redis-rack-attack)
+
+if [[ "${SEARCH_BACKEND:-pg_search}" == "elasticsearch" ]]; then
+  services+=(elasticsearch)
+fi
 
 ./bin/dc up -d "${services[@]}" >/dev/null
 
@@ -61,4 +65,7 @@ wait_for_tcp "127.0.0.1" "5440" "Postgres"
 wait_for_postgres "community-engine-db"
 wait_for_tcp "127.0.0.1" "6380" "Redis"
 wait_for_tcp "127.0.0.1" "6381" "RackAttack Redis"
-wait_for_http "http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=1s" "Elasticsearch"
+
+if [[ "${SEARCH_BACKEND:-pg_search}" == "elasticsearch" ]]; then
+  wait_for_http "http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=1s" "Elasticsearch"
+fi

@@ -44,7 +44,7 @@ module BetterTogether
           ::BetterTogether::Seeds::Builder.call(
             subject: record,
             profile: :platform_shared,
-            context: { connection: connection },
+            context: { connection: connection, sync_depth: connection.sync_depth },
             lane: 'platform_shared',
             persist: false
           ).seed_hash

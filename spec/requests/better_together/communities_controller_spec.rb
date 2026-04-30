@@ -124,6 +124,49 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(response).to have_http_status(:ok)
       expect(assigns(:community)).to eq(community)
     end
+
+    it 'shows a membership review shortcut for reviewers' do
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Taylor Reviewer')
+
+      get better_together.community_path(locale:, id: community.slug)
+
+      expect(response.body).to include('Membership request review')
+      expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
+    end
+  end
+
+  describe 'GET /:locale/c/:slug (show) membership review access', :as_user do
+    let(:community_manager_role) do
+      BetterTogether::Role.find_by(identifier: 'community_manager',
+                                   resource_type: 'BetterTogether::Community') ||
+        create(:better_together_role,
+               identifier: 'community_manager',
+               name: 'Community Manager',
+               resource_type: 'BetterTogether::Community')
+    end
+    let(:community) do
+      create(:better_together_community,
+             name: 'Managed Community',
+             privacy: 'public',
+             creator: platform_manager.person)
+    end
+
+    before do
+      create(:better_together_person_community_membership,
+             :active,
+             member: regular_user.person,
+             joinable: community,
+             role: community_manager_role)
+      create(:better_together_joatu_membership_request, target: community, requestor_name: 'Pat Applicant')
+    end
+
+    it 'shows the review shortcut to community managers' do
+      get better_together.community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Membership request review')
+      expect(response.body).to include(better_together.community_membership_requests_path(community, locale: locale))
+    end
   end
 
   describe 'GET /:locale/c/:slug (show) - access control' do
@@ -264,6 +307,30 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(community.identifier).to match(/^[a-z0-9-]+$/)
       expect(community.identifier).to eq(identifier)
     end
+
+    it 'defaults new communities to invitation-only with membership requests closed' do
+      post better_together.communities_path(locale:), params: valid_params
+
+      identifier = response.location.match(%r{/c/([^/?]+)})[1]
+      community = BetterTogether::Community.find_by!(identifier:)
+
+      expect(community.requires_invitation).to be(true)
+      expect(community.allow_membership_requests).to be(false)
+    end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.communities_path(locale:), params: {
+          community: {
+            name_en: '',
+            description_en: '',
+            privacy: 'public'
+          }
+        }
+      end.not_to change(BetterTogether::Community, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'GET /:locale/c/:slug/edit', :as_platform_manager do
@@ -276,6 +343,38 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     it 'renders edit form using slug' do
       get better_together.edit_community_path(locale:, id: community.slug)
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'uses proxied attachment URLs for existing image previews' do
+      community.profile_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-profile.svg',
+        content_type: 'image/svg+xml'
+      )
+      community.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+      community.logo.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'community-logo.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get better_together.edit_community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.profile_image, only_path: true))
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.cover_image, only_path: true))
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(community.logo, only_path: true))
+    end
+
+    it 'renders the community contributor display setting on edit' do
+      get better_together.edit_community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('community[contributors_display_visibility]')
     end
   end
 
@@ -329,6 +428,18 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(community.name).to eq('Updated Name')
     end
 
+    it 'persists the community contributor display setting' do
+      patch better_together.community_path(locale:, id: community.slug), params: {
+        community: {
+          name_en: 'Updated Name',
+          contributors_display_visibility: 'off'
+        }
+      }
+
+      expect(response).to have_http_status(:found)
+      expect(community.reload.contributors_display_visibility).to eq('off')
+    end
+
     it 'updates slug when explicitly set' do
       custom_slug = "custom-slug-#{SecureRandom.hex(4)}"
       params_with_slug = {
@@ -340,6 +451,18 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       patch better_together.community_path(locale:, id: community.slug), params: params_with_slug
       community.reload
       expect(community.slug).to eq(custom_slug)
+    end
+
+    it 'renders new when update params are invalid', :aggregate_failures do
+      patch better_together.community_path(locale:, id: community.slug), params: {
+        community: {
+          name_en: '',
+          privacy: 'public'
+        }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(community.reload.name).to eq('Original Name')
     end
   end
 
@@ -593,13 +716,13 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
         get better_together.community_path(locale:, id: community.slug)
 
-        expect(response.body).to include('Evidence:')
-        expect(response.body).to include('1 claim')
-        expect(response.body).to include('1 citation')
-        expect(response.body).to include('1 imported')
+        expect(response.body).not_to include('Evidence:')
+        expect(response.body).not_to include('1 claim')
+        expect(response.body).not_to include('1 citation')
+        expect(response.body).not_to include('1 imported')
       end
 
-      it 'shows community page contribution and evidence summaries when pages are scoped to the community' do
+      it 'keeps community page contribution and evidence summaries out of public cards' do
         page = create(:better_together_page,
                       community: community,
                       privacy: 'public',
@@ -617,10 +740,10 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
 
         expect(response.body).to include('pages-tab')
         expect(response.body).to include(page.title)
-        expect(response.body).to include('Contributors:')
-        expect(response.body).to include('GitHub-linked')
-        expect(response.body).to include('GitHub: @community-maintainer')
-        expect(response.body).to include('Evidence:')
+        expect(response.body).not_to include('Contributors:')
+        expect(response.body).not_to include('GitHub-linked')
+        expect(response.body).not_to include('GitHub: @community-maintainer')
+        expect(response.body).not_to include('Evidence:')
       end
 
       it 'does not show create event button' do

@@ -1,0 +1,12 @@
+import * as Leaflet from 'leaflet-esm'
+
+Leaflet.Icon.Default.mergeOptions({
+  iconUrl: '<%= asset_path "better_together/leaflet/marker-icon.png" %>',
+  iconRetinaUrl: '<%= asset_path "better_together/leaflet/marker-icon-2x.png" %>',
+  shadowUrl: '<%= asset_path "better_together/leaflet/marker-shadow.png" %>'
+})
+
+globalThis.L = Leaflet
+
+export default Leaflet
+export * from 'leaflet-esm'

@@ -10,22 +10,11 @@ module BetterTogether
 
     ORIGIN_SPLIT_PATTERN = /[\s,]+/
 
-    SCRIPT_SOURCES = [
-      :self,
-      :blob,
-      'https://cdn.jsdelivr.net',
-      'https://cdnjs.cloudflare.com',
-      'https://unpkg.com',
-      'https://ga.jspm.io'
-    ].freeze
+    SCRIPT_SOURCES = %i[self blob].freeze
 
-    STYLE_SOURCES = [
-      :self,
-      :unsafe_inline,
-      'https://cdn.jsdelivr.net',
-      'https://cdnjs.cloudflare.com',
-      'https://unpkg.com'
-    ].freeze
+    CONNECT_SOURCES = %i[self wss].freeze
+
+    STYLE_SOURCES = %i[self unsafe_inline].freeze
 
     IMG_SOURCES = [
       :self,
@@ -36,8 +25,12 @@ module BetterTogether
 
     FONT_SOURCES = %i[self data].freeze
 
-    def script_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
-      with_asset_host(SCRIPT_SOURCES, raw_asset_host)
+    def script_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil), raw_script_src = ENV.fetch('CSP_SCRIPT_SRC', nil))
+      env_sources = parse_origin_list(raw_script_src)
+      dynamic_sources = dynamic_platform_sources(:csp_script_src)
+      registered_sources = BetterTogether.registered_content_security_policy_sources[:script_src]
+
+      with_asset_host(SCRIPT_SOURCES + env_sources + dynamic_sources + registered_sources, raw_asset_host)
     end
 
     def style_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
@@ -47,12 +40,21 @@ module BetterTogether
     def img_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil), raw_img_src = ENV.fetch('CSP_IMG_SRC', nil))
       env_sources = parse_origin_list(raw_img_src)
       dynamic_sources = dynamic_platform_sources(:csp_img_src)
+      registered_sources = BetterTogether.registered_content_security_policy_sources[:img_src]
 
-      with_asset_host(IMG_SOURCES + env_sources + dynamic_sources, raw_asset_host)
+      with_asset_host(IMG_SOURCES + env_sources + dynamic_sources + registered_sources, raw_asset_host)
     end
 
     def font_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
       with_asset_host(FONT_SOURCES, raw_asset_host)
+    end
+
+    def connect_sources(raw_connect_src = ENV.fetch('CSP_CONNECT_SRC', nil))
+      env_sources = parse_origin_list(raw_connect_src)
+      dynamic_sources = dynamic_platform_sources(:csp_connect_src)
+      registered_sources = BetterTogether.registered_content_security_policy_sources[:connect_src]
+
+      CONNECT_SOURCES + env_sources + dynamic_sources + registered_sources
     end
 
     def frame_sources(raw_frame_src = ENV.fetch('CSP_FRAME_SRC', nil))

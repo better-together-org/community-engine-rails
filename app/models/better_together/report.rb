@@ -66,6 +66,7 @@ module BetterTogether
     }
 
     after_create_commit :ensure_safety_case!
+    after_create_commit :notify_safety_reviewers
 
     def case_status
       safety_case&.status || 'submitted'
@@ -84,6 +85,10 @@ module BetterTogether
         consent_to_contact: consent_to_contact.nil? || consent_to_contact,
         consent_to_restorative_process: consent_to_restorative_process || false
       )
+    end
+
+    def notify_safety_reviewers
+      ::BetterTogether::SafetyReportNotificationService.new(self).notify_submission
     end
   end
 end

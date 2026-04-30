@@ -218,10 +218,11 @@ module BetterTogether
       end
 
       def serialized_attributes
+        depth = context[:sync_depth].presence || 'standard'
         case subject
-        when ::BetterTogether::Post then FederatedSeedAttributes.post_attributes(subject)
-        when ::BetterTogether::Page then FederatedSeedAttributes.page_attributes(subject)
-        when ::BetterTogether::Event then FederatedSeedAttributes.event_attributes(subject)
+        when ::BetterTogether::Post then FederatedSeedAttributes.post_attributes(subject, sync_depth: depth)
+        when ::BetterTogether::Page then FederatedSeedAttributes.page_attributes(subject, sync_depth: depth)
+        when ::BetterTogether::Event then FederatedSeedAttributes.event_attributes(subject, sync_depth: depth)
         else
           {}
         end

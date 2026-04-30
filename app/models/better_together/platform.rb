@@ -26,10 +26,15 @@ module BetterTogether
     FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
     SOFTWARE_VARIANTS = %w[community_engine generic].freeze
     SEARCH_QUERY_ANALYTICS_MODES = %w[full hashed].freeze
+    DEFAULT_LOCAL_CSP_IMG_SOURCES = [
+      'https://*.tile.openstreetmap.org'
+    ].freeze
     CSP_SETTING_KEYS = {
       csp_frame_ancestors_text: 'csp_frame_ancestors',
       csp_frame_src_text: 'csp_frame_src',
-      csp_img_src_text: 'csp_img_src'
+      csp_img_src_text: 'csp_img_src',
+      csp_script_src_text: 'csp_script_src',
+      csp_connect_src_text: 'csp_connect_src'
     }.freeze
 
     has_community
@@ -52,6 +57,7 @@ module BetterTogether
     store_attributes :settings do
       requires_invitation Boolean, default: true
       allow_membership_requests Boolean, default: false
+      contributors_display_visibility String, default: 'on'
       software_variant String
       network_visibility String, default: 'private'
       connection_bootstrap_state String
@@ -79,6 +85,8 @@ module BetterTogether
     validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
     validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
     validates :search_query_analytics_mode, inclusion: { in: SEARCH_QUERY_ANALYTICS_MODES }
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES }
     validates :oauth_issuer_url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
     validate :validate_csp_origin_text_fields
@@ -86,6 +94,7 @@ module BetterTogether
 
     after_initialize :set_default_requires_invitation, if: :new_record?
     before_validation :apply_platform_registry_defaults
+    before_validation :seed_default_local_csp_settings, on: :create
     before_validation :persist_csp_origin_settings
 
     scope :external, -> { where(external: true) }
@@ -128,7 +137,8 @@ module BetterTogether
 
     # Virtual attributes to track removal
     attr_accessor :remove_profile_image, :remove_cover_image
-    attr_writer :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text
+    attr_writer :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text, :csp_script_src_text,
+                :csp_connect_src_text
 
     # Callbacks to remove images if necessary
     before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
@@ -154,6 +164,14 @@ module BetterTogether
       csp_setting_values('csp_img_src')
     end
 
+    def csp_script_src
+      csp_setting_values('csp_script_src')
+    end
+
+    def csp_connect_src
+      csp_setting_values('csp_connect_src')
+    end
+
     def csp_frame_ancestors_text
       @csp_frame_ancestors_text || csp_frame_ancestors.join("\n")
     end
@@ -164,6 +182,14 @@ module BetterTogether
 
     def csp_img_src_text
       @csp_img_src_text || csp_img_src.join("\n")
+    end
+
+    def csp_script_src_text
+      @csp_script_src_text || csp_script_src.join("\n")
+    end
+
+    def csp_connect_src_text
+      @csp_connect_src_text || csp_connect_src.join("\n")
     end
 
     def cache_key
@@ -193,7 +219,7 @@ module BetterTogether
     end
 
     def membership_requests_enabled_for?(community = primary_community)
-      allow_membership_requests? || community&.allow_membership_requests?
+      allow_membership_requests? && (community&.membership_requests_enabled?(platform: self) || false)
     end
 
     def to_s
@@ -246,6 +272,17 @@ module BetterTogether
       self.settings = updated_settings
     end
 
+    def seed_default_local_csp_settings
+      return if external?
+
+      updated_settings = settings.deep_dup
+      updated_settings['csp_img_src'] = merge_csp_setting_values(
+        updated_settings['csp_img_src'],
+        DEFAULT_LOCAL_CSP_IMG_SOURCES
+      )
+      self.settings = updated_settings
+    end
+
     def validate_csp_origin_text_fields
       CSP_SETTING_KEYS.each_key do |text_attribute|
         next unless instance_variable_defined?(:"@#{text_attribute}")
@@ -264,6 +301,17 @@ module BetterTogether
       Array(settings[setting_key]).filter_map do |value|
         BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
       end.uniq
+    end
+
+    def merge_csp_setting_values(existing_values, additional_values)
+      BetterTogether::ContentSecurityPolicySources.merged_sources(
+        Array(existing_values).filter_map do |value|
+          BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
+        end,
+        Array(additional_values).filter_map do |value|
+          BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
+        end
+      )
     end
   end
 end

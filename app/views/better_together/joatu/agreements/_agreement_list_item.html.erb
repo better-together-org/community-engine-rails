@@ -9,22 +9,25 @@
     <span class="badge bg-secondary ms-2"><%= joatu_agreement.status %></span>
   </h4>
 
-  <% participant_names = [joatu_agreement.offer&.creator, joatu_agreement.request&.creator].compact.uniq.map { |participant| participant.name.presence || participant.to_s } %>
   <div class="text-muted small mb-1">
-    <% if participant_names.any? %>
+    <% if joatu_agreement.participant_names.any? %>
       <%= t('better_together.joatu.by', default: 'by') %>
-      <%= participant_names.join(' ↔ ') %> |
+      <%= joatu_agreement.participant_names.join(' ↔ ') %> |
     <% end %>
     <%= l(joatu_agreement.created_at, format: :long) if joatu_agreement.created_at %>
+  </div>
+
+  <div class="small text-muted mb-2">
+    Mutual aid agreement for one matched offer and one matched request.
   </div>
 
   <% if joatu_agreement.terms.present? %>
     <% terms_preview = joatu_agreement.terms.respond_to?(:to_plain_text) ? joatu_agreement.terms.to_plain_text : joatu_agreement.terms.to_s %>
     <p class="mb-0"><%= truncate(terms_preview, length: 100) %></p>
+  <% else %>
+    <p class="mb-0 text-muted">No additional terms recorded.</p>
   <% end %>
 
   <div class="mt-2">
-    <%= render 'better_together/shared/record_contribution_summary', record: joatu_agreement %>
-    <%= render 'better_together/shared/record_evidence_summary', record: joatu_agreement %>
   </div>
 </div>

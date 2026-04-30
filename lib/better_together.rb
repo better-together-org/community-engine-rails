@@ -2,6 +2,7 @@
 
 require 'better_together/version'
 require 'better_together/adapter_registry'
+require 'better_together/profiling'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
 require 'better_together/mcp'
@@ -31,7 +32,11 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # Additional OpenAPI/Swagger endpoints to register in the rswag UI.
   # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
   mattr_accessor :swagger_additional_endpoints
+  mattr_accessor :head_tag_providers
+  mattr_accessor :registered_content_security_policy_sources
   self.swagger_additional_endpoints = []
+  self.head_tag_providers = {}
+  self.registered_content_security_policy_sources = Hash.new { |hash, key| hash[key] = [] }
   self.adapter_registry = BetterTogether::AdapterRegistry.new
 
   ADAPTER_GROUPS = %i[
@@ -177,6 +182,21 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
 
     def user_confirmation_url
       base_url + user_confirmation_path
+    end
+
+    def register_head_tag_provider(key, callable = nil, &block)
+      provider = callable || block
+      raise ArgumentError, 'provider must respond to call' unless provider.respond_to?(:call)
+
+      head_tag_providers[key.to_sym] = provider
+    end
+
+    def register_content_security_policy_sources(directive, *sources)
+      directive_sources = registered_content_security_policy_sources[directive.to_sym]
+
+      sources.flatten.compact.each do |source|
+        directive_sources << source unless directive_sources.include?(source)
+      end
     end
 
     private

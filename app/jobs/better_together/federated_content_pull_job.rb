@@ -6,6 +6,7 @@ module BetterTogether
   # Seeds are never serialised into job arguments to avoid large Redis payloads.
   class FederatedContentPullJob < ApplicationJob # rubocop:disable Metrics/ClassLength
     queue_as :platform_sync
+    discard_on ActiveRecord::StaleObjectError
 
     def perform(platform_connection_id:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       connection = ::BetterTogether::PlatformConnection.find(platform_connection_id)

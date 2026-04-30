@@ -16,7 +16,7 @@
   <div class="row">
     <!-- Vertical Pills Navigation -->
     <div class="col-md-3 mb-3">
-      <div class="nav flex-column nav-pills" id="settings-tabs" role="tablist" aria-orientation="vertical">
+      <div class="nav flex-column nav-pills" id="settings-tabs" role="tablist" aria-orientation="vertical" aria-label="<%= t('.navigation_aria_label') %>">
         <!-- <button class="nav-link" id="platform-tab" data-bs-toggle="pill" data-bs-target="#platform" type="button" role="tab" aria-controls="platform" aria-selected="true" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-server me-2" aria-hidden="true"></i>
           <%= t('.tabs.platform') %>
@@ -117,7 +117,7 @@
                                 class: "d-block" do %>
               <div class="d-flex justify-content-center py-4">
                 <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden"><%= t('globals.loading') %></span>
                 </div>
               </div>
             <% end %>
@@ -142,7 +142,7 @@
                                 class: "d-block" do %>
               <div class="d-flex justify-content-center py-4">
                 <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden"><%= t('globals.loading') %></span>
                 </div>
               </div>
             <% end %>
@@ -167,7 +167,7 @@
                                 class: "d-block" do %>
               <div class="d-flex justify-content-center py-4">
                 <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden"><%= t('globals.loading') %></span>
                 </div>
               </div>
             <% end %>
@@ -228,7 +228,7 @@
                                 class: 'd-block' do %>
               <div class="d-flex justify-content-center py-4">
                 <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden"><%= t('globals.loading') %></span>
                 </div>
               </div>
             <% end %>

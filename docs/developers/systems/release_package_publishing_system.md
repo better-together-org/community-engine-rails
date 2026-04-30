@@ -95,7 +95,6 @@ This system is now **partially implemented** in PR `#1494`.
 
 Implemented foundation:
 
-- a release-package draft builder now exists for creating a private draft `page + post` pair
 - governed contribution attribution can now represent broader editorial roles on the underlying content
 - citation, claim, and evidence-chain primitives are now available on the publishing records involved in the package
 - the public publishing agreement gate ensures publication can be constrained by explicit agreement state

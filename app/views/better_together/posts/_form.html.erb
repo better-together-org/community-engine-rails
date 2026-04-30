@@ -18,16 +18,7 @@
 
   <%= yield :resource_toolbar %>
 
-  <% if post.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('helpers.errors.heading') %></h4>
-      <ul>
-        <% post.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: post if post.errors.any? %>
 
   <div class="mb-3">
     <%= render partial: 'better_together/shared/translated_string_field', locals: { model: post, form: form, attribute: 'title' } %>
@@ -54,17 +45,18 @@
     <small class="form-text text-muted"><%= t('hints.categories.select_multiple') %></small>
   </div>
 
-  <% BetterTogether::Authorable::CONTRIBUTION_ROLE_CONFIG.each_key do |role_name| %>
-    <div class="mb-3">
-      <%= render partial: 'better_together/shared/governed_contribution_role_fields',
-                 locals: {
-                   form:,
-                   record: post,
-                   role_name:,
-                   role_label: post.contribution_role_label(role_name)
-                  } %>
-    </div>
-  <% end %>
+  <div class="mb-3">
+    <%= governed_contributions_fieldset(form:, record: post) %>
+  </div>
+
+  <div class="mb-3">
+    <%= contributor_display_visibility_field(
+          form:,
+          include_inherit: true,
+          label: t('better_together.authorable_contributor_visibility.labels.record', default: 'Contributor display'),
+          hint: t('better_together.authorable_contributor_visibility.hints.post', default: 'Choose whether this post shows contributor bylines on public-facing views, or inherits the platform setting.')
+        ) %>
+  </div>
 
   <div class="mb-3">
     <%= form.label :published_at %>

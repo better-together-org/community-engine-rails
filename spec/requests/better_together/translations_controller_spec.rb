@@ -26,6 +26,18 @@ module BetterTogether # :nodoc:
         allow(BetterTogether::TranslationBot).to receive(:new).and_return(translation_bot)
       end
 
+      context 'when unauthenticated' do
+        it 'returns 404 because the route is constrained to authenticated users' do
+          logout
+
+          expect do
+            post better_together.ai_translate_path(locale: I18n.default_locale),
+                 params: valid_params
+          end.to raise_error(ActionController::RoutingError)
+          expect(BetterTogether::TranslationBot).not_to have_received(:new)
+        end
+      end
+
       context 'with successful translation' do
         before do
           allow(translation_bot).to receive(:translate)

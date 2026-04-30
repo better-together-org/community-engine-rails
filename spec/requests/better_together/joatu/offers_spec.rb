@@ -20,7 +20,7 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
   end
 
   describe 'GET /index' do
-    it 'returns success with contribution and evidence summaries' do
+    it 'returns success without contribution and evidence summaries' do
       offer.add_governed_contributor(person, role: 'reviewer')
       offer.contributions.first.update!(details: {
                                           'github_handle' => 'joatu-offer-reviewer',
@@ -31,18 +31,27 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
 
       get better_together.joatu_offers_path(locale: I18n.locale)
       expect(response).to be_successful
-      expect(response.body).to include('Contributors:')
-      expect(response.body).to include('GitHub-linked')
-      expect(response.body).to include('Evidence:')
-      expect(response.body).to include('Governance Bundle')
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Evidence:')
+      expect(response.body).not_to include('Governance Bundle')
     end
   end
 
   describe 'POST /create' do
     it 'creates an offer' do
+      created_offer = nil
+
       expect do
         post better_together.joatu_offers_path(locale: I18n.locale), params: { joatu_offer: valid_attributes }
+        created_offer = BetterTogether::Joatu::Offer.order(:created_at).last
       end.to change(BetterTogether::Joatu::Offer, :count).by(1)
+
+      expect(response).to redirect_to(
+        better_together.joatu_offer_path(created_offer, locale: I18n.locale)
+      )
+      expect(created_offer.creator).to eq(person)
+      expect(created_offer.categories).to contain_exactly(category)
     end
 
     it 'preserves a platform target when responding to a connection request' do
@@ -59,14 +68,41 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       }
 
       created_offer = BetterTogether::Joatu::Offer.order(:created_at).last
+      expect(response).to redirect_to(
+        better_together.joatu_offer_path(created_offer, locale: I18n.locale)
+      )
       expect(created_offer.target).to eq(target_platform)
+    end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.joatu_offers_path(locale: I18n.locale), params: {
+          joatu_offer: valid_attributes.merge(name: '', description: '')
+        }
+      end.not_to change(BetterTogether::Joatu::Offer, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
   describe 'GET /show' do
-    it 'returns success' do
+    it 'returns success without contribution and evidence references' do
+      citation = create(:citation, citeable: offer, title: 'JOATU Offer Notes', reference_key: 'joatu-offer-notes')
+      claim = create(:claim, claimable: offer, statement: 'This offer is backed by review notes.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
+      offer.add_governed_contributor(person, role: 'reviewer')
+      offer.contributions.first.update!(details: {
+                                          'github_handle' => 'joatu-offer-reviewer',
+                                          'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                        })
+
       get better_together.joatu_offer_path(offer, locale: I18n.locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('JOATU Offer Notes')
     end
   end
 
@@ -81,6 +117,14 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       )
       expect(offer.reload.status).to eq('closed')
     end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      patch better_together.joatu_offer_path(offer, locale: I18n.locale),
+            params: { joatu_offer: { name: '', description: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(offer.reload.name).not_to be_blank
+    end
   end
 
   describe 'DELETE /destroy' do
@@ -89,6 +133,20 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       expect do
         delete better_together.joatu_offer_path(offer_to_delete, locale: I18n.locale)
       end.to change(BetterTogether::Joatu::Offer, :count).by(-1)
+    end
+  end
+
+  describe 'GET /respond_with_request' do
+    it 'redirects to a prefilled request form for the offer' do
+      get "/#{I18n.locale}/exchange/offers/#{offer.id}/respond_with_request"
+
+      expect(response).to redirect_to(
+        better_together.new_joatu_request_path(
+          locale: I18n.locale,
+          source_type: 'BetterTogether::Joatu::Offer',
+          source_id: offer.id
+        )
+      )
     end
   end
   # rubocop:enable Metrics/BlockLength

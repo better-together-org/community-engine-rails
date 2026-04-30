@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # A gathering
   class Community < ApplicationRecord # rubocop:todo Metrics/ClassLength
@@ -15,6 +17,7 @@ module BetterTogether
     include Privacy
     include Metrics::Viewable
     include Searchable
+    include ::Storext.model
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -29,6 +32,10 @@ module BetterTogether
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
+
+    store_attributes :settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
 
     # Community invitations
     has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
@@ -45,8 +52,6 @@ module BetterTogether
     translates :description, type: :text
     translates :description_html, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     searchable pg_search: {
       against: [:identifier],
       using: {
@@ -60,28 +65,40 @@ module BetterTogether
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [2400, 600],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     has_one_attached :logo do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     # Virtual attributes to track removal
@@ -94,9 +111,11 @@ module BetterTogether
     after_create :create_default_calendar
 
     validates :name, presence: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     def self.extra_permitted_attributes
-      super + %i[allow_membership_requests]
+      super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
     end
 
     def as_community
@@ -104,23 +123,28 @@ module BetterTogether
     end
 
     def membership_requests_enabled?(platform: primary_platform)
-      allow_membership_requests? || platform&.allow_membership_requests?
-    end
-
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        name:,
-        slug:,
-        identifier:,
-        description:,
-        description_html: description_html.present? ? search_text_value(description_html) : nil
-      }.compact.as_json
+      ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
+        ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
     end
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
+    end
+
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        cover_image
+
+      # For other formats, analyze to determine transparency
+      elsif cover_image.content_type == 'image/png'
+        # If PNG with transparency, return the optimized PNG variant
+        cover_image.variant(:optimized_png)
+      else
+        # Otherwise, use the optimized JPG variant
+        cover_image.variant(:optimized_jpeg)
+      end
     end
 
     def optimized_logo
@@ -131,10 +155,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif logo.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        logo.variant(:optimized_png).processed
+        logo.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        logo.variant(:optimized_jpeg).processed
+        logo.variant(:optimized_jpeg)
       end
     end
 
@@ -146,10 +170,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif profile_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        profile_image.variant(:optimized_png).processed
+        profile_image.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        profile_image.variant(:optimized_jpeg).processed
+        profile_image.variant(:optimized_jpeg)
       end
     end
 

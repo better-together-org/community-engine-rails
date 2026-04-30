@@ -5,6 +5,9 @@ module BetterTogether
   module Authorable # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
 
+    CONTRIBUTOR_DISPLAY_VISIBILITIES = %w[inherit on off].freeze
+    EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES = %w[on off].freeze
+
     CONTRIBUTION_ROLE_CONFIG = {
       author: BetterTogether::Authorship::AUTHOR_ROLE,
       editor: BetterTogether::Authorship::EDITOR_ROLE,
@@ -52,6 +55,8 @@ module BetterTogether
                through: :contributions,
                source: :author
 
+      accepts_nested_attributes_for :contributions, allow_destroy: true
+
       CONTRIBUTION_ROLE_CONFIG.each do |association_name, role_value|
         plural_name = association_name.to_s.pluralize
         contribution_assoc = :"#{association_name}_contributions"
@@ -78,6 +83,14 @@ module BetterTogether
     end
 
     class_methods do
+      def permitted_attributes(id: false, destroy: false, exclude_extra: false)
+        super + [
+          {
+            contributions_attributes: BetterTogether::Authorship.permitted_attributes(id:, destroy:)
+          }
+        ]
+      end
+
       def extra_permitted_attributes
         super + [
           *CONTRIBUTION_ROLE_CONFIG.keys.flat_map do |role_name|
@@ -112,10 +125,16 @@ module BetterTogether
     end
 
     def contribution_roles_with_contributors
-      contributions.includes(:author)
-                   .group_by(&:role)
-                   .transform_values { |role_contributions| role_contributions.map(&:author).compact.uniq }
-                   .reject { |_role, actors| actors.empty? }
+      contribution_records = if association(:contributions).loaded?
+                               contributions.to_a
+                             else
+                               contributions.includes(:author).to_a
+                             end
+
+      contribution_records
+        .group_by(&:role)
+        .transform_values { |role_contributions| role_contributions.map(&:author).compact.uniq }
+        .reject { |_role, actors| actors.empty? }
     end
 
     def github_backed_contributions
@@ -144,6 +163,11 @@ module BetterTogether
       CONTRIBUTION_ROLE_LABELS.fetch(role.to_s, role.to_s.humanize)
     end
 
+    def contribution_records_for_form
+      contribution_records = association(:contributions).loaded? ? contributions.to_a : contributions.includes(:author).to_a
+      contribution_records.sort_by { |contribution| [contribution.position || Float::INFINITY, contribution.id.to_s] }
+    end
+
     def add_governed_contributor(actor, role: BetterTogether::Authorship::AUTHOR_ROLE,
                                  contribution_type: BetterTogether::Authorship::CONTENT_CONTRIBUTION)
       return unless actor
@@ -164,6 +188,42 @@ module BetterTogether
         role: BetterTogether::Authorship::AUTHOR_ROLE,
         contribution_type: BetterTogether::Authorship::CONTENT_CONTRIBUTION
       )
+    end
+
+    def contributors_display_visible?
+      resolved_contributors_display_visibility != 'off'
+    end
+
+    def resolved_contributors_display_visibility
+      record_setting = normalize_contributors_display_visibility(
+        respond_to?(:contributors_display_visibility) ? contributors_display_visibility : nil
+      )
+      return record_setting if EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(record_setting)
+
+      community_setting = normalize_contributors_display_visibility(contributor_visibility_community&.contributors_display_visibility)
+      return community_setting if EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(community_setting)
+
+      platform_setting = normalize_contributors_display_visibility(contributor_visibility_platform&.contributors_display_visibility)
+      return platform_setting if EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(platform_setting)
+
+      'on'
+    end
+
+    private
+
+    def contributor_visibility_platform
+      platform if respond_to?(:platform)
+    end
+
+    def contributor_visibility_community
+      community if respond_to?(:community)
+    end
+
+    def normalize_contributors_display_visibility(value)
+      normalized = value.to_s.presence
+      return 'inherit' unless normalized
+
+      CONTRIBUTOR_DISPLAY_VISIBILITIES.include?(normalized) ? normalized : 'inherit'
     end
   end
 end

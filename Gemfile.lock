@@ -33,8 +33,6 @@ PATH
       devise-jwt
       devise_zxcvbn
       doorkeeper (>= 5.7, < 6.0)
-      elasticsearch-model (~> 8)
-      elasticsearch-rails (~> 8)
       fast-mcp (>= 1.6.0)
       font-awesome-sass (~> 6.5)
       friendly_id (>= 5.2, < 5.6)

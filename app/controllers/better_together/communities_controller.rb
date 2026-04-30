@@ -25,7 +25,7 @@ module BetterTogether
     end
 
     # GET /communities/1
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       # Check for valid invitation if accessing via invitation token
       @current_invitation = find_invitation_by_token
       @invitations = BetterTogether::CommunityInvitation.where(invitable: @community)
@@ -39,6 +39,7 @@ module BetterTogether
                            blocks: { background_image_file_attachment: :blob }
                          )
       set_current_person_community_membership
+      set_membership_request_review_state
 
       # Categorize events for display
       categorize_community_events
@@ -132,7 +133,9 @@ module BetterTogether
 
     def permitted_attributes
       %i[
+        requires_invitation
         allow_membership_requests
+        contributors_display_visibility
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
         .concat(resource_class.extra_permitted_attributes)
@@ -141,9 +144,21 @@ module BetterTogether
     def set_current_person_community_membership
       return unless helpers.current_person
 
-      @current_person_community_membership = @community.person_community_memberships.find_by(
-        member: helpers.current_person
-      )
+      @current_person_community_memberships = @community.person_community_memberships
+                                                      .includes(:role)
+                                                      .where(member: helpers.current_person)
+                                                      .order(Arel.sql("CASE WHEN status = 'active' THEN 0 ELSE 1 END"),
+                                                             :created_at)
+    end
+
+    def set_membership_request_review_state
+      sample_request = BetterTogether::Joatu::MembershipRequest.new(target: @community, status: 'open')
+      @membership_request_review_allowed = policy(sample_request).approve?
+      return unless @membership_request_review_allowed
+
+      @open_membership_request_count = policy_scope(BetterTogether::Joatu::MembershipRequest)
+                                       .where(target: @community, status: 'open')
+                                       .count
     end
 
     def resource_class

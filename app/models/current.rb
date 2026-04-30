@@ -2,5 +2,5 @@
 
 # Thread-local request context for runtime host/platform resolution and current person tracking.
 class Current < ActiveSupport::CurrentAttributes
-  attribute :person, :governed_agent, :platform, :platform_domain
+  attribute :person, :robot, :governed_agent, :platform, :platform_domain, :platform_domain_hostnames
 end

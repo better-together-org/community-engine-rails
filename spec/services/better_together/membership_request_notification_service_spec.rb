@@ -52,6 +52,48 @@ RSpec.describe BetterTogether::MembershipRequestNotificationService do
       expect(notification.recipient).to eq(manager)
       expect(notification.event.type).to eq('BetterTogether::MembershipRequestSubmittedNotifier')
     end
+
+    it 'does not duplicate the same reviewer notification for the same request' do
+      service.notify_submission
+
+      expect do
+        service.notify_submission
+      end.not_to change(Noticed::Notification, :count)
+    end
+
+    it 'collapses bursts into a digest notification' do
+      create_list(:better_together_joatu_membership_request, 2, target: community)
+      Noticed::Notification.destroy_all
+
+      expect do
+        service.notify_submission
+      end.to change(Noticed::Notification, :count).by(1)
+
+      notification = Noticed::Notification.last
+      expect(notification.recipient).to eq(manager)
+      expect(notification.event.type).to eq('BetterTogether::MembershipRequestDigestNotifier')
+      expect(
+        Noticed::Notification.includes(:event).where(recipient: manager).map { |item| item.event.type }
+      ).not_to include('BetterTogether::MembershipRequestSubmittedNotifier')
+    end
+
+    it 'suppresses repeat digest emails during the cooldown window' do
+      create_list(:better_together_joatu_membership_request, 2, target: community)
+      Noticed::Notification.destroy_all
+
+      service.notify_submission
+
+      follow_up_request = create(:better_together_joatu_membership_request, target: community)
+      follow_up_service = described_class.new(follow_up_request)
+
+      expect do
+        follow_up_service.notify_submission
+      end.not_to change(Noticed::Notification, :count)
+
+      notification = Noticed::Notification.last
+      expect(notification.event.type).to eq('BetterTogether::MembershipRequestDigestNotifier')
+      expect(notification.event.params.with_indifferent_access[:send_email]).to be(false)
+    end
   end
 
   describe '#notify_approval' do

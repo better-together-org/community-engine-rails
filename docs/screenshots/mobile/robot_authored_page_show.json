@@ -1,9 +1,8 @@
 {
   "name": "robot_authored_page_show",
   "device": "mobile",
-  "url": "http://127.0.0.1:36007/en/host/pages/robot-authored-page",
+  "url": "/en/host/pages/robot-authored-page",
   "title": "Robot Authored Page | Test Host Community",
-  "captured_at": "2026-04-05T00:15:37Z",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "robot_authored_page_post_publishing",

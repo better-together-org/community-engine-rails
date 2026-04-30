@@ -164,25 +164,4 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
       end
     end
   end
-
-  describe 'POST /host/pages/create_release_package_draft' do
-    it 'creates a private draft page and companion post' do
-      expect do
-        post better_together.create_release_package_draft_pages_path,
-             params: { title: 'Community Engine 0.11.0 Release Package' }
-      end.to change(BetterTogether::Page, :count).by(1)
-                                                 .and change(BetterTogether::Post, :count).by(1)
-
-      created_page = BetterTogether::Page.order(created_at: :desc).first
-      created_post = BetterTogether::Post.order(created_at: :desc).first
-
-      expect(created_page.title).to eq('Community Engine 0.11.0 Release Package')
-      expect(created_post.title).to eq('Community Engine 0.11.0 Release Package')
-      expect(created_page.privacy).to eq('private')
-      expect(created_post.privacy).to eq('private')
-      expect(created_page.published_at).to be_nil
-      expect(created_post.published_at).to be_nil
-      expect(response).to redirect_to(edit_page_path(created_page))
-    end
-  end
 end

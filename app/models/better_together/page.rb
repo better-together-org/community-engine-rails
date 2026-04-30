@@ -40,6 +40,7 @@ module BetterTogether
 
     store_attributes :display_settings do
       show_title Boolean, default: true
+      contributors_display_visibility String, default: 'inherit'
     end
 
     has_many :page_blocks, -> { positioned }, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
@@ -71,8 +72,6 @@ module BetterTogether
 
     translates :content, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     slugged :title, min_length: 1
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
@@ -84,6 +83,8 @@ module BetterTogether
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     # Automatically grant the page creator an authorship record only when no
     # explicit human or robot authors were selected during creation.
@@ -109,37 +110,6 @@ module BetterTogether
 
     def content_blocks
       @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
-    end
-
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
-      json = as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug', 'content')
-        end],
-        include: {
-          markdown_blocks: {
-            only: %i[id],
-            methods: [:as_indexed_json]
-          },
-          rich_text_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          },
-          template_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          }
-        }
-      )
-
-      # Include rendered template content if page has template attribute
-      if template.present?
-        json['template_content'] = BetterTogether::TemplateRendererService.new(template).render_for_all_locales
-      end
-
-      json
     end
 
     def primary_image
@@ -190,7 +160,7 @@ module BetterTogether
     def refresh_sitemap
       return if Rails.env.test?
 
-      SitemapRefreshJob.perform_later
+      SitemapRefreshJob.enqueue_unless_pending
     end
 
     def sync_name_and_title

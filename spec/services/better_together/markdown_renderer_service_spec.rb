@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'nokogiri'
 
 RSpec.describe BetterTogether::MarkdownRendererService do
   describe '#render_html' do
@@ -84,9 +85,55 @@ RSpec.describe BetterTogether::MarkdownRendererService do
         expect(html).to include('https://example.com')
       end
 
-      it 'adds target="_blank" to links' do
+      it 'adds target="_blank" to external links' do
         html = service.render_html
         expect(html).to include('target="_blank"')
+      end
+    end
+
+    context 'with platform-aware link targets' do
+      let!(:platform) do
+        create(
+          :'better_together/platform',
+          host_url: 'https://sjcnl.btsdev.ca'
+        )
+      end
+      let(:markdown_source) do
+        <<~MD
+          [External Link](https://example.com/page)
+          [Internal Relative](/about)
+          [Internal Absolute](https://sjcnl.btsdev.ca/en/about)
+        MD
+      end
+      let(:fragment) { Nokogiri::HTML::DocumentFragment.parse(service.render_html) }
+      let(:service) { described_class.new(markdown_source) }
+
+      before do
+        Current.platform = platform
+      end
+
+      after do
+        Current.reset
+      end
+
+      it 'opens external absolute links in a new tab' do
+        link = fragment.at_css('a[href="https://example.com/page"]')
+
+        expect(link['target']).to eq('_blank')
+        expect(link['rel']).to include('noopener')
+        expect(link['rel']).to include('noreferrer')
+      end
+
+      it 'keeps relative internal links in the same tab' do
+        link = fragment.at_css('a[href="/about"]')
+
+        expect(link['target']).to be_nil
+      end
+
+      it 'keeps same-platform absolute links in the same tab' do
+        link = fragment.at_css('a[href="https://sjcnl.btsdev.ca/en/about"]')
+
+        expect(link['target']).to be_nil
       end
     end
 

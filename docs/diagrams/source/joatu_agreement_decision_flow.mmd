@@ -1,0 +1,11 @@
+flowchart TD
+  A[Offer and request are matched] --> B[Create JOATU agreement in pending state]
+  B --> C[Agreement show page displays details and participants]
+  C --> D{Participant decision}
+  D -- Accept --> E[Accept action]
+  E --> F[Agreement status becomes accepted]
+  F --> G[Offer and request close]
+  F --> H[Decision timestamp and participant roles remain visible]
+  D -- Reject --> I[Reject action]
+  I --> J[Agreement status becomes rejected]
+  J --> K[Show rejected state to participants]

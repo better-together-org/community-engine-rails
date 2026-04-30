@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_member_data_export",
+  "device": "desktop",
+  "url": "http://127.0.0.1:34993/en/settings/my_data",
+  "title": "",
+  "captured_at": "2026-04-03T19:36:22Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "person_deletion_review",
+  "source_spec": "./spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
+}

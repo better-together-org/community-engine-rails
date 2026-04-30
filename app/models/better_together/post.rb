@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # Represents a blog post
   class Post < ApplicationRecord
@@ -18,6 +20,7 @@ module BetterTogether
     include Searchable
     include Seedable
     include TrackedActivity
+    include ::Storext.model
 
     attachable_cover_image
 
@@ -25,11 +28,13 @@ module BetterTogether
 
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
 
+    store_attributes :display_settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
+
     translates :title, type: :string
     alias name title
     translates :content, backend: :action_text
-
-    settings index: default_elasticsearch_index
 
     slugged :title
 
@@ -50,6 +55,8 @@ module BetterTogether
               presence: true
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     scope :latest_first, lambda {
       order(
@@ -58,11 +65,29 @@ module BetterTogether
       )
     }
 
+    def self.card_render_includes
+      includes = [
+        :string_translations,
+        { cover_image_attachment: :blob },
+        { contributions: :author },
+        { categories: { cover_image_attachment: :blob } }
+      ]
+
+      rich_text_association = reflect_on_association(:rich_text_content)&.name
+      includes << rich_text_association if rich_text_association
+
+      includes
+    end
+
     before_validation :assign_current_platform_if_available
 
     # Automatically grant the post creator an authorship record only when no
     # explicit human or robot authors were selected during creation.
     after_commit :add_creator_as_author, on: :create
+
+    def self.extra_permitted_attributes
+      super + %i[contributors_display_visibility]
+    end
 
     def to_s
       title
@@ -92,16 +117,6 @@ module BetterTogether
     end
 
     configure_attachment_cleanup
-
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {})
-      as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug', 'content')
-        end]
-      )
-    end
 
     private
 

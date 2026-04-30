@@ -13,6 +13,7 @@ RSpec.describe 'BetterTogether::GithubContributionImportsController', :as_platfo
         password: 'SecureTest123!@#'
       )
   end
+  let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:page) { create(:better_together_page) }
   let(:joatu_request) { create(:better_together_joatu_request) }
   let(:joatu_agreement) { create(:joatu_agreement) }
@@ -103,5 +104,44 @@ RSpec.describe 'BetterTogether::GithubContributionImportsController', :as_platfo
     expect(contribution.author).to eq(manager_user.person)
     expect(contribution.role).to eq('idea_source')
     expect(contribution.details['github_sources'].first['issue_number']).to eq(1494)
+  end
+
+  it 'returns not found for invalid contributable keys' do
+    post better_together.github_contribution_imports_path(
+      contributable_key: 'unknown',
+      id: page.slug,
+      locale:,
+      format: :json
+    ), params: {
+      source: {
+        reference_key: 'pull_request_1494',
+        source_kind: 'pull_request',
+        title: 'Governed publishing and evidence chain',
+        source_url: 'https://github.com/better-together-org/community-engine-rails/pull/1494'
+      }
+    }, as: :json
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'returns not found for signed-in users who cannot update the contributable' do
+    sign_in regular_user
+
+    post better_together.github_contribution_imports_path(
+      contributable_key: 'page',
+      id: page.slug,
+      locale:,
+      format: :json
+    ), params: {
+      source: {
+        reference_key: 'pull_request_1494',
+        source_kind: 'pull_request',
+        title: 'Governed publishing and evidence chain',
+        source_url: 'https://github.com/better-together-org/community-engine-rails/pull/1494'
+      }
+    }, as: :json
+
+    expect(response).to redirect_to(better_together.home_page_path(locale:))
+    expect(flash[:error]).to be_present
   end
 end

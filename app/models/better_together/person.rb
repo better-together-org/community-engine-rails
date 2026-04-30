@@ -124,6 +124,18 @@ module BetterTogether
       BetterTogether::ChecksRequiredAgreements.unaccepted_required_agreements(self)
     end
 
+    def accepted_agreement_participants
+      agreement_participants.accepted.includes(:agreement).order(accepted_at: :desc)
+    end
+
+    def current_agreement_participants
+      accepted_agreement_participants.select(&:current_for_agreement?)
+    end
+
+    def stale_agreement_participants
+      accepted_agreement_participants.select(&:stale_for_agreement?)
+    end
+
     # Returns true if this person has unaccepted required agreements
     # @return [Boolean]
     def unaccepted_required_agreements?
@@ -153,6 +165,11 @@ module BetterTogether
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
     end
+
+    # Borgberry fleet identity — set via USB key enrollment or fleet registration
+    # borgberry_did: W3C DID derived from operator GPG key (e.g. did:key:z6Mk...)
+    # borgberry_node_id: borgberry fleet node this person operates (e.g. bts-0)
+    attr_accessor :borgberry_did_raw # used during enrollment only
 
     # Ensure proper coercion and persistence for preferences store attributes
     def locale=(value)
@@ -209,12 +226,16 @@ module BetterTogether
     end
 
     has_one_attached :profile_image
-    has_one_attached :cover_image
+    has_one_attached :cover_image do |attachable|
+      attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600], preprocessed: true
+      attachable.variant :optimized_png, resize_to_limit: [2400, 600], preprocessed: true
+    end
 
     scope :anonymized, -> { where.not(anonymized_at: nil) }
 
     # Resize the profile image before rendering (non-blocking version)
     def profile_image_variant(size)
+      return profile_image if profile_image.content_type == 'image/svg+xml'
       return profile_image.variant(resize_to_fill: [size, size]) unless Rails.env.production?
 
       # In production, avoid blocking .processed calls
@@ -225,7 +246,11 @@ module BetterTogether
     def profile_image_url(size: 300)
       return nil unless profile_image.attached?
 
-      variant = profile_image.variant(resize_to_fill: [size, size])
+      variant = if profile_image.content_type == 'image/svg+xml'
+                  profile_image
+                else
+                  profile_image.variant(resize_to_fill: [size, size])
+                end
 
       Rails.application.routes.url_helpers.rails_storage_proxy_path(variant, only_path: true)
     rescue ActiveStorage::FileNotFoundError
@@ -234,7 +259,18 @@ module BetterTogether
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
+    end
+
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        cover_image
+      elsif cover_image.content_type == 'image/png'
+        cover_image.variant(:optimized_png)
+      else
+        cover_image.variant(:optimized_jpeg)
+      end
     end
 
     def description_html(locale: I18n.locale)

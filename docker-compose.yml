@@ -31,8 +31,9 @@ x-app-shared: &app-shared
     DB_USERNAME: ${DB_USERNAME:-postgres}
     DB_PASSWORD: ${DB_PASSWORD:-postgres}
     CE_WORKTREE_DB_SUFFIX: ${CE_WORKTREE_DB_SUFFIX:-}
-    ES_HOST: ${ES_HOST:-http://elasticsearch:9200}
-    ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://elasticsearch:9200}
+    SEARCH_BACKEND: ${SEARCH_BACKEND:-pg_search}
+    ES_HOST: ${ES_HOST:-}
+    ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-}
     REDIS_URL: ${REDIS_URL:-redis://redis:6379}
     RACK_ATTACK_REDIS_URL: ${RACK_ATTACK_REDIS_URL:-redis://redis-rack-attack:6379}
     RACK_ATTACK_REDIS_POOL_SIZE: ${RACK_ATTACK_REDIS_POOL_SIZE:-5}
@@ -41,7 +42,6 @@ x-app-shared: &app-shared
     - db
     - redis
     - redis-rack-attack
-    - elasticsearch
 
 services:
   app: &app

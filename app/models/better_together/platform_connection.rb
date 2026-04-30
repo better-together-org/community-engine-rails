@@ -43,6 +43,12 @@ module BetterTogether
       failed: 'failed'
     }.freeze
 
+    SYNC_DEPTH_VALUES = {
+      metadata: 'metadata',
+      standard: 'standard',
+      full: 'full'
+    }.freeze
+
     belongs_to :source_platform, class_name: '::BetterTogether::Platform'
     belongs_to :target_platform, class_name: '::BetterTogether::Platform'
     has_many :person_links, class_name: '::BetterTogether::PersonLink', dependent: :destroy
@@ -61,6 +67,8 @@ module BetterTogether
       allow_content_read_scope Boolean, default: false
       allow_linked_content_read_scope Boolean, default: false
       allow_content_write_scope Boolean, default: false
+      sync_depth String, default: 'standard'
+      min_sync_interval_seconds Integer, default: 0
       sync_cursor String, default: ''
       last_sync_status String, default: 'idle'
       last_sync_started_at String, default: ''
@@ -78,10 +86,13 @@ module BetterTogether
     validates :content_sharing_policy, inclusion: { in: CONTENT_SHARING_POLICIES.values }
     validates :federation_auth_policy, inclusion: { in: FEDERATION_AUTH_POLICIES.values }
     validates :last_sync_status, inclusion: { in: SYNC_STATUS_VALUES.values }
+    validates :sync_depth, inclusion: { in: SYNC_DEPTH_VALUES.values }
     validate :source_and_target_must_differ
 
     before_validation :apply_connection_policy_defaults
     before_validation :ensure_oauth_client_credentials
+    after_create_commit :notify_reviewers_of_submission, if: :pending?
+    after_update_commit :notify_reviewers_of_status_change, if: :saved_change_to_status?
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
     scope :for_platform, lambda { |platform|
@@ -103,6 +114,19 @@ module BetterTogether
       # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
       tbl = quoted_table_name
       where(Arel.sql("#{tbl}.settings->>'last_sync_status' != 'running' OR #{tbl}.settings->>'last_sync_status' IS NULL"))
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
+    }
+    scope :due_for_sync, lambda {
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB interval arithmetic has no Arel equivalent
+      tbl = quoted_table_name
+      where(Arel.sql(<<~SQL.squish))
+        (#{tbl}.settings->>'min_sync_interval_seconds') IS NULL
+        OR (#{tbl}.settings->>'min_sync_interval_seconds')::integer = 0
+        OR (#{tbl}.settings->>'last_synced_at') = ''
+        OR (#{tbl}.settings->>'last_synced_at')::timestamptz
+             + make_interval(secs => (#{tbl}.settings->>'min_sync_interval_seconds')::integer)
+             <= NOW()
+      SQL
       # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
 
@@ -132,6 +156,17 @@ module BetterTogether
 
       normalize_content_policy_settings!
       normalize_federation_policy_settings!
+    end
+
+    def notify_reviewers_of_submission
+      ::BetterTogether::PlatformConnectionNotificationService.new(self).notify_submission
+    end
+
+    def notify_reviewers_of_status_change
+      previous_status, = previous_changes['status']
+      ::BetterTogether::PlatformConnectionNotificationService.new(self).notify_status_change(
+        previous_status:
+      )
     end
   end
 end

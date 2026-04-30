@@ -7,7 +7,7 @@ module BetterTogether
     def index
       sitemap = Sitemap.current_index(helpers.host_platform)
       if sitemap&.file&.attached?
-        redirect_to sitemap.file.url, allow_other_host: true
+        redirect_to helpers.storage_proxy_url_for(sitemap.file)
       else
         head :not_found
       end
@@ -20,7 +20,7 @@ module BetterTogether
 
       sitemap = Sitemap.current(helpers.host_platform, locale)
       if sitemap&.file&.attached?
-        redirect_to sitemap.file.url, allow_other_host: true
+        redirect_to helpers.storage_proxy_url_for(sitemap.file)
       else
         head :not_found
       end

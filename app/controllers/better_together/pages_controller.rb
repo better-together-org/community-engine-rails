@@ -72,23 +72,6 @@ module BetterTogether
       end
     end
 
-    def create_release_package_draft
-      authorize resource_class
-
-      result = BetterTogether::ReleasePackageDraftBuilder.new(
-        creator: helpers.current_person,
-        title: release_package_draft_title,
-        robot_author_ids: params[:robot_author_ids]
-      ).call
-
-      redirect_to edit_page_path(result.page),
-                  notice: t(
-                    'better_together.pages.release_package_draft.created',
-                    default: 'Private release package draft created. Companion draft post: %<post_title>s',
-                    post_title: result.post.title
-                  )
-    end
-
     def edit
       authorize @page
     end
@@ -255,13 +238,9 @@ module BetterTogether
     def basic_page_attributes
       [
         :meta_description, :keywords, :published_at, :sidebar_nav_id,
-        :privacy, :layout, :template, :show_title, *Page.localized_attribute_list,
+        :privacy, :layout, :template, :show_title, :contributors_display_visibility, *Page.localized_attribute_list,
         *Page.extra_permitted_attributes
       ]
-    end
-
-    def release_package_draft_title
-      params[:title].presence || "Release Package #{Date.current.iso8601}"
     end
 
     def page_blocks_permitted_attributes

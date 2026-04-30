@@ -3,8 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::CallForInterest do
-  it_behaves_like 'an indexed searchable model', :better_together_call_for_interest
-
   it 'has a valid factory' do
     expect(build(:better_together_call_for_interest)).to be_valid
   end
@@ -132,21 +130,6 @@ RSpec.describe BetterTogether::CallForInterest do
       expect(call1.identifier).to be_present
       expect(call2.identifier).to be_present
       expect(call1.identifier).not_to eq(call2.identifier)
-    end
-  end
-
-  describe '#as_indexed_json' do
-    it 'includes translated name and description content' do
-      call_for_interest = create(
-        :better_together_call_for_interest,
-        name: 'Borgberry Cooperative Hosting',
-        description: 'Looking for members interested in shared hosting support.'
-      )
-
-      expect(call_for_interest.as_indexed_json).to include(
-        'name' => 'Borgberry Cooperative Hosting',
-        'description' => 'Looking for members interested in shared hosting support.'
-      )
     end
   end
 

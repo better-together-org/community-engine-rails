@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_08_190000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_16_214500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -150,8 +150,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_190000) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.boolean "collective", default: false, null: false
     t.uuid "page_id"
+    t.string "agreement_kind", default: "policy_consent", null: false
+    t.string "required_for", default: "none", null: false
+    t.boolean "active_for_consent", default: true, null: false
+    t.string "lifecycle_state", default: "active", null: false
+    t.boolean "requires_reacceptance", default: false, null: false
+    t.text "change_summary"
     t.index ["creator_id"], name: "by_better_together_agreements_creator"
     t.index ["identifier"], name: "index_better_together_agreements_on_identifier", unique: true
+    t.index ["lifecycle_state"], name: "index_better_together_agreements_on_lifecycle_state"
     t.index ["page_id"], name: "index_better_together_agreements_on_page_id"
     t.index ["privacy"], name: "by_better_together_agreements_privacy"
   end
@@ -381,7 +388,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_190000) do
     t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "creator_id"
     t.string "type", default: "BetterTogether::Community", null: false
+    t.boolean "requires_invitation", default: true, null: false
     t.boolean "allow_membership_requests", default: false, null: false
+    t.jsonb "settings", default: {}, null: false
     t.index ["creator_id"], name: "by_creator"
     t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
@@ -1694,6 +1703,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_08_190000) do
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
+    t.jsonb "display_settings", default: {}, null: false
     t.index ["creator_id"], name: "by_better_together_posts_creator"
     t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
     t.index ["platform_id", "source_id"], name: "index_bt_posts_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"

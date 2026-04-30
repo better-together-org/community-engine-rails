@@ -707,10 +707,18 @@ es:
             cuenta aquí.
           open: Las personas pueden crear una cuenta y unirse sin esperar aprobación.
       form:
-        community_help: Elige si las personas se unen de inmediato o si primero deben
-          solicitar acceso.
+        community_help: Elige si esta comunidad es solo por invitación o si puede
+          permitir solicitudes de membresía.
+        community_invitation_help: Las comunidades son solo por invitación de forma
+          predeterminada. Desactiva esto solo cuando quieras permitir ingresos de
+          autoservicio o solicitudes de membresía.
+        community_invitation_only: Exigir una invitación antes de que alguien pueda
+          unirse a esta comunidad
         community_requests: Exigir que las personas soliciten acceso antes de hacerse
           miembros
+        community_requests_hint: Las solicitudes de membresía de la comunidad permanecen
+          cerradas a menos que tanto esta comunidad como la plataforma permitan solicitudes
+          y se haya desactivado el acceso solo por invitación.
         platform_help: Elige si las personas pueden crear una cuenta directamente
           o si primero necesitan una invitación.
         platform_invitation_help: Las invitaciones pueden completar previamente las
@@ -752,13 +760,24 @@ es:
       add: Agregar
       title: Acuerdos
     agreements:
+      accept: Acepto
+      accept_action:
+        accepted: Acuerdo aceptado.
+        ineligible_flow: Este acuerdo no puede aceptarse desde este flujo.
+        no_participant: No hay ningún participante disponible para aceptar el acuerdo.
+      accept_error: No se puede registrar la aceptación del acuerdo en este momento.
+      accepted: Aceptado
+      accepting: Guardando...
       create:
         acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
         successfully_accepted: Gracias por aceptar los acuerdos requeridos.
       form:
+        active_for_consent: Activo para consentimiento
+        agreement_kind: Tipo de acuerdo
         page_help: Cuando se establezca, el contenido de la página vinculada se mostrará
           en lugar de los términos del acuerdo.
         page_label: Página vinculada (opcional)
+        required_for: Requerido para
       no_terms: No hay términos definidos.
       notice:
         body: Por favor, lea el acuerdo completo antes de aceptarlo.
@@ -812,6 +831,24 @@ es:
         view_agreement: Ver Acuerdo
     application:
       name: Mejores Juntos
+    authorable_contributor_visibility:
+      hints:
+        community: Anula el valor predeterminado de la plataforma para las páginas
+          de esta comunidad, o hereda la configuración de la plataforma.
+        page: Elige si esta página muestra las firmas de colaboradores en las vistas
+          públicas, o si hereda la configuración de la comunidad o la plataforma.
+        platform: Establece la visibilidad predeterminada de las firmas para páginas
+          y publicaciones, a menos que una comunidad o un registro la anule.
+        post: Elige si esta publicación muestra las firmas de colaboradores en las
+          vistas públicas, o si hereda la configuración de la plataforma.
+      labels:
+        community: Visibilidad de colaboradores de la comunidad
+        platform: Visibilidad predeterminada de colaboradores
+        record: Visibilidad de colaboradores
+      options:
+        'false': Ocultar firmas de colaboradores
+        inherit: Heredar
+        'true': Mostrar firmas de colaboradores
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hola %{recipient_name},
@@ -826,6 +863,18 @@ es:
         subject_removed_by: "%{actor_name} eliminó tu autoría de %{page}"
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
+    bot_defense:
+      errors:
+        expired_challenge: La verificación de seguridad venció. Recarga el formulario
+          e inténtalo de nuevo.
+        generic: La verificación de seguridad falló. Inténtalo de nuevo.
+        honeypot_triggered: La verificación de seguridad falló. Inténtalo de nuevo.
+        invalid_challenge: La verificación de seguridad venció. Recarga el formulario
+          e inténtalo de nuevo.
+        replayed_challenge: Esta verificación de seguridad ya se usó. Recarga el formulario
+          e inténtalo de nuevo.
+        submitted_too_quickly: Tómate un momento para revisar tu envío antes de enviarlo.
+      trap_label: Deja este campo en blanco
     buildings:
       add: Agregar
       title: Edificios
@@ -900,11 +949,39 @@ es:
           lo permite.
       index:
         new_btn_text: Nueva comunidad
+      membership_review:
+        description:
+          one: "%{community_name} tiene 1 solicitud de membresía abierta lista para
+            revisión."
+          other: "%{community_name} tiene %{count} solicitudes de membresía abiertas
+            listas para revisión."
+        heading: Revisión de solicitudes de membresía
+        open_requests_badge:
+          one: 1 solicitud abierta
+          other: "%{count} solicitudes abiertas"
+        review_link: Revisar solicitudes
       new:
         title: Comunidades
       none-yet: None-yet
       show:
+        about:
+          no_description: No hay descripción disponible.
+        actions:
+          destroy_aria: Eliminar la comunidad
+          edit_aria: Editar la comunidad
         create_event: Crear un evento
+        events:
+          create_event: Crear un evento
+          draft_heading: Borrador
+        members:
+          add_member_modal:
+            close: Cerrar
+            select_person: Seleccionar persona *
+            select_person_prompt: Seleccionar una persona
+            select_role: Seleccionar rol *
+            submit: Agregar
+            title: Agregar nuevo miembro
+        sections_aria: Secciones de la comunidad
       tabs:
         buildings: Edificios
         contact_details: Detalles de contacto
@@ -1110,6 +1187,21 @@ es:
           message: "%{filename} está actualmente restringido mientras una persona
             revisora lo verifica."
           title: Archivo adjunto restringido
+    contributions:
+      form:
+        add: Agregar colaborador
+        contributor: Colaborador
+        contributor_type: Tipo de colaborador
+        description: Asigna personas o robots a este registro con roles de contribución
+          explícitos.
+        entry_help: Elige un tipo de colaborador, el colaborador y el rol.
+        heading: Colaboradores
+        new_entry: Nuevo colaborador
+        person: Persona
+        remove: Quitar colaborador
+        robot: Robot
+        role: Rol
+        select_contributor: Seleccionar colaborador
     conversation_mailer:
       new_message_notification:
         from_address: Nuevo mensaje vía %{from_address}
@@ -1728,6 +1820,9 @@ es:
         request: Solicitud
         request_creator: Creador de la solicitud
         show:
+          agreement_family: Familia de acuerdo
+          agreement_type: Tipo de acuerdo
+          decision_made_at: Decisión registrada
           details: Detalles
           open_platform_connections: Abrir conexiones de plataforma
           platform_connection: Conexión de plataforma
@@ -1788,7 +1883,7 @@ es:
         title: Coincidencias potenciales
       nav:
         agreements: Acuerdos
-        hub: Hub
+        hub: Ayuda mutua
         manage_categories: Gestionar categorías
         offers: Ofertas
         requests: Solicitudes
@@ -1861,7 +1956,7 @@ es:
           El equipo de %{platform}
         subject: Se ha creado un nuevo acuerdo
       new_match:
-        subject: Nueva coincidencia de Joatu
+        subject: Nueva coincidencia de ayuda mutua
     labelable:
       custom-label-placeholder: Tu etiqueta personalizada
     loading: Cargando...
@@ -1923,6 +2018,21 @@ es:
           El equipo de %{community_name}
         signature_text: Saludos cordiales, El equipo de %{community_name}
         subject: Tu solicitud de membresía para %{community_name} fue rechazada
+      digest:
+        greeting: Hola %{name},
+        message:
+          one: 1 nueva solicitud de membresía ahora necesita revisión para %{community_name}.
+          other: "%{count} nuevas solicitudes de membresía ahora necesitan revisión
+            para %{community_name}."
+        requestors_label: Solicitantes recientes
+        review_requests: Revisar solicitudes de membresía
+        signature_html: |-
+          Saludos cordiales,<br />
+          El equipo de %{community_name}
+        signature_text: Saludos cordiales, El equipo de %{community_name}
+        subject:
+          one: 1 solicitud de membresía necesita revisión para %{community_name}
+          other: "%{count} solicitudes de membresía necesitan revisión para %{community_name}"
       submitted:
         greeting: Hola %{name},
         message: "%{requestor_name} solicitó unirse a %{community_name}."
@@ -2128,6 +2238,7 @@ es:
           medium_results: Medio
           no_results: Sin resultados
           result_quality: Promedio de resultados por búsqueda
+        loading: Cargando...
         search_health:
           backend: Backend
           db_count: Conteo BD
@@ -2164,7 +2275,6 @@ es:
       shares_controller:
         error_tracking: 'Error al realizar el seguimiento del compartido:'
         failed_tracking: No se pudo realizar el seguimiento del compartido.
-        ga_not_initialized: Google Analytics no está inicializado.
         unsupported_platform: 'Plataforma no soportada: %{platform}'
       user_account_reports_controller:
         create:
@@ -2274,15 +2384,21 @@ es:
         geography_settlements: Asentamientos
         geography_states: Estados
         host_dashboard: Panel de control del anfitrión
+        host_dashboard_membership_review: Revisión de membresías
+        host_dashboard_platform_connection_review: Revisión de federación
+        host_dashboard_safety_review: Revisión de seguridad
         joatu_offers: Ofertas
         joatu_requests: Solicitudes
         metrics_reports: Informes de métricas
         navigation_areas: Áreas de navegación
         pages: Páginas
         people: Personas
+        platform_connections: Conexiones de plataforma
         platforms: Plataformas
+        reports: Informes
         resource_permissions: Permisos de recursos
         roles: Roles
+        safety_cases: Revisión de seguridad
         users: Usuarios
       visibility_strategies:
         authenticated: Usuarios autenticados
@@ -2327,6 +2443,11 @@ es:
       membership_request_declined:
         body: Tu solicitud para unirte a %{community_name} fue rechazada
         title: Solicitud de membresía rechazada para %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} solicitó unirse a %{community_name}"
         title: Nueva solicitud de membresía para %{community_name}
@@ -2344,6 +2465,25 @@ es:
         body: Una nueva integración de cuenta %{provider} fue conectada el %{created_at}
         message: Nueva integración %{provider} conectada el %{created_at}
         title: Nueva integración %{provider} conectada
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: hace %{time}
     oauth:
       applications:
@@ -2420,12 +2560,8 @@ es:
         clear_filters: Limpiar filtros
         filter: Filtrar
         new_page: Nueva página
-        new_release_package_draft: Nuevo borrador de paquete de publicación
         search_by_slug: Buscar por slug...
         search_by_title: Buscar por título...
-      release_package_draft:
-        created: 'Se creó un borrador privado del paquete de publicación. Publicación
-          complementaria: %{post_title}'
     people:
       allow_messages_from_members: Permitir mensajes de miembros de la plataforma
       calendar:
@@ -3132,6 +3268,32 @@ es:
           description: Conecte y gestione sus cuentas de plataformas externas.
           title: Cuentas Conectadas
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Revise los permisos que ha otorgado a personas vinculadas
+                  y los que ellas le han otorgado de vuelta.
+                open_link: Abrir permisos de acceso
+                title: Permisos de acceso
+              linked_seeds:
+                description: Explore los datos sincronizados compartidos a través
+                  de sus enlaces de plataforma aprobados.
+                open_link: Abrir seeds vinculados
+                title: Seeds vinculados
+              person_links:
+                description: Revise las personas y conexiones federadas vinculadas
+                  actualmente a su cuenta.
+                open_link: Abrir personas vinculadas
+                title: Personas vinculadas
+              person_seeds:
+                description: Abra sus exportaciones seed portables para flujos avanzados
+                  de portabilidad e interoperabilidad.
+                open_link: Abrir exportaciones seed portables
+                title: Exportaciones seed portables
+            description: Acceda a sus personas vinculadas, permisos de acceso, datos
+              sincronizados y exportaciones portables desde un solo lugar.
+            open_link: Abrir
+            title: Intercambio y portabilidad de datos
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -3155,11 +3317,19 @@ es:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: No se pudo preparar esta exportación. Solicite una nueva
+              exportación.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Completada
+              failed: Fallida
+              pending: Pendiente
+              processing: En proceso
+            table_caption: Solicitudes recientes de exportación de cuenta
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
@@ -3285,7 +3455,7 @@ es:
         table_aria: Storage configurations
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
-      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
       new:
         subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
@@ -3999,8 +4169,10 @@ es:
       attendees: Asistentes
       contact: Contacto
       events: Eventos
+      federation: Federación
       invitations: Invitaciones
       members: Miembros
+      safety: Seguridad
     to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
@@ -4011,6 +4183,7 @@ es:
     visible: Visible
     'yes': Sí
   helpers:
+    cancel: Cancelar
     close: Cerrar
     errors:
       heading: Form Errors
@@ -4087,13 +4260,101 @@ es:
       infrastructure: Infraestructura
       page_title: Panel de control del anfitrión
       title: Panel de control del anfitrión
+    membership_review:
+      anonymous_requester: Persona solicitante anónima
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      page_title: Revisión de membresías
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      page_title: Revisión de federación
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: Nuevo %{resource}
       none_yet: Ninguno aún
       total_resources: Total de recursos
       view_all: Ver todo
+    safety_review:
+      description: Revise la cola de seguridad desde el panel del anfitrión. Hay %{open_cases}
+        casos abiertos y %{visible_reports} informes visibles dentro del alcance.
+      heading: Cola de revisión de seguridad
+      open_cases_badge:
+        one: 1 caso abierto
+        other: "%{count} casos abiertos"
+      page_title: Revisión de seguridad
+      review_queue_link: Abrir cola de revisión
+      summary:
+        content_review_items: Elementos de revisión de contenido
+        participant_updates: Actualizaciones para participantes
+        retaliation_risk: Riesgo de represalias
+        unassigned_cases: Necesitan asignación
+      summary_label: Resumen de la revisión de seguridad
+      urgent_cases_badge:
+        one: 1 caso urgente
+        other: "%{count} casos urgentes"
+      view_reports_link: Revisar informes enviados
+      visible_reports_badge:
+        one: 1 informe visible
+        other: "%{count} informes visibles"
   invitations:
     calculating: Calculando
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Volver arriba
+        copyright: "%{community_name} © %{year}. Todos los derechos reservados."
   locale_name: Español
   locales:
     en: English
@@ -4256,6 +4517,66 @@ es:
     actions:
       host_dashboard: Panel de Control del Anfitrión
     confirm_delete: Confirmar eliminación
+    show:
+      about:
+        access: 'Acceso:'
+        identifier: 'Identificador:'
+        protected: 'Protegida:'
+        protected_no: 'No'
+        protected_yes: Sí
+        time_zone: 'Zona horaria:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Eliminar la plataforma
+        edit_aria: Editar la plataforma
+        show_aria: Mostrar la plataforma
+        view_host_dashboard_aria: Ver el panel del anfitrión
+      federation:
+        connection_status: Estado
+        description: Revise las conexiones de federación y de plataforma vinculadas
+          actualmente a %{platform}.
+        direction:
+          incoming: Conexión entrante
+          outgoing: Conexión saliente
+        empty_state: Todavía no hay conexiones de federación que involucren esta plataforma.
+        new_connection: Nueva conexión
+        open_connections: Abrir conexiones
+        summary:
+          active: Activas
+          pending: Pendientes
+          total: Conexiones totales
+        title: Conexiones de federación
+        view_connection: Ver conexión
+      members:
+        add_member_modal:
+          close: Cerrar
+          search_placeholder: Buscar personas...
+          select_person: Seleccionar persona *
+          select_role: Seleccionar rol de plataforma *
+          submit: Agregar
+          title: Agregar nuevo miembro de la plataforma
+      operations:
+        description: Abra las operaciones de nivel anfitrión para esta plataforma
+          sin depender solo del conocimiento de la URL.
+        host_dashboard: Panel del anfitrión
+        storage_configurations: Gestionar almacenamiento
+        title: Operaciones de la plataforma
+      safety:
+        description: Revise los informes entrantes, los casos de seguridad activos
+          y los seguimientos visibles para participantes de %{platform}.
+        review_queue: Abrir cola de revisión
+        summary:
+          content_review_items: Elementos de revisión de contenido
+          open_cases: Casos abiertos
+          participant_updates: Actualizaciones para participantes
+          repeated_reports: Reportables repetidos
+          retaliation_risk_cases: Riesgo de represalias
+          unassigned_cases: Necesitan asignación
+          urgent_cases: Urgentes
+          visible_reports: Informes visibles
+        title: Revisión de seguridad
+        view_reports: Revisar informes enviados
+      sections_aria: Secciones de la plataforma
   pundit:
     errors:
       create: No está autorizado para crear este %{resource}.

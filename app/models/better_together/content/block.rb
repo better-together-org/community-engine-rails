@@ -102,7 +102,7 @@ module BetterTogether
         ]
       end
 
-      # Method to return the content used for Elasticsearch indexing
+      # Method to return the content used for cached search payloads
       def cached_content
         {
           id: id,

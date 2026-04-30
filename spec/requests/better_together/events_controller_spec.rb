@@ -180,14 +180,14 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         create(:evidence_link, claim:, citation:, relation_type: 'supports')
       end
 
-      it 'renders claims and bibliography on the show page' do
+      it 'keeps claims and bibliography out of the public show page' do
         get better_together.event_path(event, locale:)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('Claims and Supporting Evidence')
-        expect(response.body).to include('Evidence and Citations')
-        expect(response.body).to include('This event is community-led.')
-        expect(response.body).to include('Event agenda')
+        expect(response.body).not_to include('Claims and Supporting Evidence')
+        expect(response.body).not_to include('Evidence and Citations')
+        expect(response.body).not_to include('This event is community-led.')
+        expect(response.body).not_to include('Event agenda')
       end
     end
   end
@@ -382,6 +382,50 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.starts_at).to be_nil
         expect(event).to be_draft
         expect(event.location).to be_nil
+      end
+
+      it 'renders new when create params are invalid', :aggregate_failures do
+        expect do
+          post better_together.events_path(locale: locale), params: {
+            event: {
+              name: '',
+              starts_at: 1.day.from_now.iso8601,
+              identifier: SecureRandom.uuid,
+              privacy: 'private'
+            }
+          }
+        end.not_to change(BetterTogether::Event, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'updates an existing event', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Coverage Event')
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: 'Updated Coverage Event',
+            privacy: 'private'
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload.name).to eq('Updated Coverage Event')
+      end
+
+      it 'destroys an unprotected event', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Destroy Coverage Event')
+
+        delete better_together.event_path(event, locale: locale)
+
+        expect(response).to be_redirect
+        expect(BetterTogether::Event.exists?(event.id)).to be(false)
       end
     end
   end

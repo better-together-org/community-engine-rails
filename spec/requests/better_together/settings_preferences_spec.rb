@@ -255,6 +255,17 @@ RSpec.describe 'Settings Preferences Management', :as_user do
       expect(response).to have_http_status(:not_found)
     end
 
+    it 'raises a routing error for unauthenticated preference updates because the route is constrained' do
+      logout
+
+      expect do
+        patch update_settings_preferences_path(locale: I18n.default_locale),
+              params: { person: { locale: 'fr' } }
+      end.to raise_error(ActionController::RoutingError)
+
+      expect(person.reload.locale).to eq('en')
+    end
+
     it 'allows users to update their own preferences' do
       current_user = find_or_create_test_user('settings-owner@example.test', 'SecureTest123!@#', :user)
       login_as(current_user, scope: :user)

@@ -6,6 +6,18 @@ RSpec.describe 'BetterTogether::ViewPreferencesController', :as_platform_manager
   let(:locale) { I18n.default_locale }
 
   describe 'POST /:locale/.../view_preferences' do
+    it 'returns 404 for unauthenticated requests because the route is constrained' do
+      logout
+
+      expect do
+        post better_together.view_preferences_path(locale:), params: {
+          key: 'roles_index',
+          view_type: 'table',
+          allowed: %w[card table]
+        }
+      end.to raise_error(ActionController::RoutingError)
+    end
+
     it 'persists a valid view preference' do
       post better_together.view_preferences_path(locale:), params: {
         key: 'roles_index',
@@ -15,6 +27,18 @@ RSpec.describe 'BetterTogether::ViewPreferencesController', :as_platform_manager
 
       expect(response).to have_http_status(:found)
       expect(flash[:notice]).to eq(I18n.t('better_together.view_switcher.flash.updated'))
+      expect(session.dig(:view_preferences, 'roles_index')).to eq('table')
+    end
+
+    it 'returns ok for valid json requests while persisting the preference' do
+      post better_together.view_preferences_path(locale:), params: {
+        key: 'roles_index',
+        view_type: 'table',
+        allowed: %w[card table]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to be_blank
       expect(session.dig(:view_preferences, 'roles_index')).to eq('table')
     end
 

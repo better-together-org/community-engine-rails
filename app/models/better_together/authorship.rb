@@ -59,6 +59,16 @@ module BetterTogether
     scope :for_contribution_type, ->(contribution_type) { where(contribution_type: contribution_type.to_s) }
     scope :authors, -> { for_role(AUTHOR_ROLE) }
 
+    def self.permitted_attributes(id: false, destroy: false)
+      super + %i[
+        author_id
+        author_type
+        role
+        contribution_type
+        position
+      ]
+    end
+
     validates :role, presence: true, format: { with: /\A[a-z0-9_]+\z/ }
     validates :contribution_type, presence: true, format: { with: /\A[a-z0-9_]+\z/ }
 

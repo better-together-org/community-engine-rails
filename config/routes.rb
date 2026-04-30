@@ -8,6 +8,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
   post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
+  get '/bot-defense/challenges/:form_id',
+      to: 'bot_defense/challenges#show',
+      as: :bot_defense_challenge,
+      defaults: { format: :json }
 
   get '/content-security/active-storage/blobs/proxy/:signed_id/*filename',
       to: 'content_security/active_storage/blobs/proxy#show',
@@ -88,7 +92,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
-        resources :agreements
+        resources :agreements do
+          member do
+            post :accept
+          end
+        end
 
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
@@ -263,6 +271,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               put :resend
             end
           end
+          resources :membership_requests, only: %i[index show destroy],
+                                          controller: 'platform_membership_requests'
         end
 
         resources :person_seeds, only: %i[index show destroy], path: 'my/seeds' do
@@ -337,6 +347,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   get :search_queries_by_term_data
                   get :search_queries_daily_data
                   get :search_health_data
+                  get :search_health_panel
                   get :user_accounts_daily_data
                   get :user_confirmation_rate_data
                   get :user_registration_sources_data
@@ -352,6 +363,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+            get 'membership-review', to: 'host_dashboard#membership_review', as: 'host_dashboard_membership_review'
+            get 'safety-review', to: 'host_dashboard#safety_review', as: 'host_dashboard_safety_review'
+            get 'federation-review',
+                to: 'host_dashboard#platform_connection_review',
+                as: 'host_dashboard_platform_connection_review'
 
             resources :categories
 
@@ -371,10 +387,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Content Management
             resources :pages do
-              collection do
-                post :create_release_package_draft
-              end
-
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end

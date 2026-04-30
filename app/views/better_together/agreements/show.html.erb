@@ -6,16 +6,23 @@
     <% else %>
       <div class="card">
         <div class="card-header">
-          <h1><%= @agreement.title %></h1>
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <h1 class="mb-0"><%= @agreement.title %></h1>
+            <span class="badge <%= agreement_lifecycle_badge_class(@agreement) %>">
+              <%= @agreement.lifecycle_display_name %>
+            </span>
+          </div>
         </div>
         <div class="card-body">
           <p class="card-text"><strong>Description:</strong> <%= @agreement.description %></p>
           <p class="card-text"><strong>Creator:</strong> <%= @agreement.creator %></p>
           <p class="card-text"><strong>Privacy:</strong> <%= privacy_display_value(@agreement) %></p>
-
-          <%= render 'better_together/shared/claims_and_evidence', record: @agreement %>
-          <%= render 'better_together/shared/bibliography', record: @agreement %>
-          <%= render 'better_together/shared/governance_bundle_links', record: @agreement if @agreement.bibliography_entries.any? || @agreement.claims.any? %>
+          <p class="card-text"><strong>Required In Flow:</strong> <%= @agreement.required_for_display_name %></p>
+          <% if @agreement.change_summary.present? %>
+            <div class="alert alert-warning">
+              <strong>Latest update:</strong> <%= @agreement.change_summary %>
+            </div>
+          <% end %>
 
             <hr>
             <h2 class="h5 mb-3"> <%= t('better_together.agreements.terms', default: 'Terms') %> </h2>

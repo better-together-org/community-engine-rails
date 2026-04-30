@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Post do
   it_behaves_like 'an authorable model'
-  it_behaves_like 'an indexed searchable model', :better_together_post
 
   it 'has a valid factory' do
     expect(build(:better_together_post)).to be_valid
@@ -21,15 +20,6 @@ RSpec.describe BetterTogether::Post do
     it 'returns the title' do
       post = build(:better_together_post, title: 'Example')
       expect(post.to_s).to eq 'Example'
-    end
-  end
-
-  describe '#as_indexed_json' do
-    it 'includes localized search fields as string keys' do
-      post = create(:better_together_post, title_en: 'English Title', title_fr: 'Titre Francais')
-      indexed_json = post.as_indexed_json
-
-      expect(indexed_json).to include('title_en', 'title_fr')
     end
   end
 
@@ -97,6 +87,24 @@ RSpec.describe BetterTogether::Post do
 
       expect(post.governed_authors).to eq([post.authorships.first.author, person, robot].uniq)
       expect(post.robot_authors).to include(robot)
+    end
+  end
+
+  describe '#resolved_contributors_display_visibility' do
+    it 'inherits the platform default for posts' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:)
+
+      expect(post.resolved_contributors_display_visibility).to eq('off')
+      expect(post).not_to be_contributors_display_visible
+    end
+
+    it 'lets the post override the platform default' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:, contributors_display_visibility: 'on')
+
+      expect(post.resolved_contributors_display_visibility).to eq('on')
+      expect(post).to be_contributors_display_visible
     end
   end
 

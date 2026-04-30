@@ -4,6 +4,8 @@ require 'rails_helper'
 
 module BetterTogether # :nodoc:
   RSpec.describe Event do
+    include ActiveJob::TestHelper
+
     subject(:event) { build(:event) }
 
     describe 'associations' do
@@ -177,6 +179,16 @@ module BetterTogether # :nodoc:
             # Update ends_at to maintain validation, this should trigger both callbacks
             event_with_attendees.update!(ends_at: event_with_attendees.starts_at + 3.hours)
           end.to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
+        end
+
+        it 'does not reschedule reminders after a non-temporal update' do
+          event_with_attendees = create(:event, :upcoming, :with_attendees)
+
+          clear_enqueued_jobs
+
+          expect do
+            event_with_attendees.update!(name: 'Updated event name')
+          end.not_to have_enqueued_job(BetterTogether::EventReminderSchedulerJob)
         end
 
         it 'does not schedule for draft events' do

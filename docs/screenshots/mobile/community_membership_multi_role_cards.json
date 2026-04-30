@@ -1,0 +1,50 @@
+{
+  "name": "community_membership_multi_role_cards",
+  "device": "mobile",
+  "url": "/en/c/community-9bbbc5e746d188e556cf",
+  "title": "Harbour Gardeners | Communities | Test Host Community",
+  "locale": "en",
+  "role": "community_organizer",
+  "feature_set": "stacked_membership_roles",
+  "flow": "community_members_tab_stacked_roles",
+  "source_spec": "./spec/docs_screenshots/better_together/stacked_membership_roles_spec.rb",
+  "callouts": [
+    {
+      "selector": "#members_list",
+      "title": "Community stewardship can also be split across active role rows",
+      "bullets": [
+        "The same person can carry more than one community responsibility at once when the roles are both active.",
+        "Pending rows no longer widen access, so only active assignments contribute to what someone can manage or see.",
+        "This makes time-bounded or partial revocation safer because one role can end without collapsing the rest."
+      ],
+      "target": {
+        "x": 17.0,
+        "y": 767.34375,
+        "width": 451.0,
+        "height": 493.65625,
+        "right": 468.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 1014.171875
+      },
+      "avoid": {
+        "x": 17.0,
+        "y": 767.34375,
+        "width": 451.0,
+        "height": 493.65625,
+        "right": 468.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 1014.171875
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 45.34,
+        "width": 270.0,
+        "height": 702,
+        "score": 767.34375
+      }
+    }
+  ]
+}

@@ -22,10 +22,6 @@ module BetterTogether
       create?
     end
 
-    def create_release_package_draft?
-      create?
-    end
-
     def update?
       platform_content_manager? || (agent.present? && record.editable_contributors.include?(agent))
     end
@@ -45,13 +41,16 @@ module BetterTogether
                     .includes(
                       blocks: { background_image_file_attachment: :blob }
                     )
+        pt = BetterTogether::Page.arel_table
 
         if platform_content_manager?
           # Platform stewards and host-community content managers see all pages
           base.order(:identifier)
+        elsif robot.present?
+          page_query = visible_privacy_query(pt).and(pt[:published_at].lteq(Time.current))
+          base.where(page_query)
         elsif agent.present?
           # Contributors see their own pages (private or unpublished) plus published public pages
-          pt = BetterTogether::Page.arel_table
           at = BetterTogether::Authorship.arel_table
 
           # Subquery for pages with author/editor contributions by this agent
