@@ -2147,6 +2147,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_214500) do
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_string_translations_on_translatable_attribute"
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_string_translations_on_keys", unique: true
     t.index ["translatable_type", "key", "value", "locale"], name: "index_mobility_string_translations_on_query_keys"
+    t.index ["translatable_type", "locale", "key"], name: "index_mobility_string_translations_on_type_locale_key"
   end
 
   create_table "mobility_text_translations", force: :cascade do |t|
@@ -2159,6 +2160,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_214500) do
     t.datetime "updated_at", null: false
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_text_translations_on_translatable_attribute"
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_keys", unique: true
+    t.index ["translatable_type", "locale", "key"], name: "index_mobility_text_translations_on_type_locale_key"
   end
 
   create_table "noticed_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

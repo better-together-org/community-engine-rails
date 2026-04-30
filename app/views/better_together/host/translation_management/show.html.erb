@@ -1,0 +1,120 @@
+<% content_for :page_title, t('.title') %>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <h1 class="h2 mb-2"><%= t('.title') %></h1>
+          <p class="text-muted mb-0"><%= t('.subtitle') %></p>
+        </div>
+        <span class="badge text-bg-info fs-6"><%= t('.readonly_badge') %></span>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h2 class="h5"><%= t('.separation_heading') %></h2>
+          <p class="mb-2"><%= t('.separation_body') %></p>
+          <p class="mb-0">
+            <strong><%= t('.ai_translation_label') %></strong>
+            <code>POST <%= better_together.ai_translate_path(locale: I18n.locale) %></code>
+          </p>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h6 text-uppercase text-muted"><%= t('.overview.total_records') %></h2>
+              <p class="display-6 mb-0"><%= number_with_delimiter(@backend_stats.sum { |stat| stat[:record_count] }) %></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h6 text-uppercase text-muted"><%= t('.overview.translated_models') %></h2>
+              <p class="display-6 mb-0"><%= number_with_delimiter(@translatable_type_stats.count) %></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h6 text-uppercase text-muted"><%= t('.overview.locales_tracked') %></h2>
+              <p class="display-6 mb-0"><%= number_with_delimiter(@locale_stats.count) %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h5"><%= t('.overview.backend_heading') %></h2>
+              <div class="row row-cols-1 row-cols-sm-2 g-3 mb-4">
+                <% @backend_stats.each do |stat| %>
+                  <div class="col">
+                    <div class="border rounded p-3 h-100">
+                      <h3 class="h6 mb-2"><%= t(".overview.backends.#{stat[:key]}") %></h3>
+                      <div class="small text-muted"><%= t('.overview.records') %></div>
+                      <div class="fs-4"><%= number_with_delimiter(stat[:record_count]) %></div>
+                      <div class="small text-muted mt-2"><%= t('.overview.models') %></div>
+                      <div><%= number_with_delimiter(stat[:model_count]) %></div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+
+              <h2 class="h5"><%= t('.recovery_heading') %></h2>
+              <ul class="mb-0">
+                <% @recovery_slices.each do |slice| %>
+                  <li><%= t(".slices.#{slice}") %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h5"><%= t('.overview.locale_heading') %></h2>
+              <% if @locale_stats.any? %>
+                <ul class="list-group list-group-flush mb-4">
+                  <% @locale_stats.each do |locale, count| %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                      <span><%= locale.upcase %></span>
+                      <span class="badge text-bg-secondary"><%= number_with_delimiter(count) %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <p class="text-muted"><%= t('.overview.no_data') %></p>
+              <% end %>
+
+              <h2 class="h5"><%= t('.overview.type_heading') %></h2>
+              <% if @translatable_type_stats.any? %>
+                <ul class="list-group list-group-flush mb-4">
+                  <% @translatable_type_stats.each do |type, count| %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                      <span><%= type.demodulize %></span>
+                      <span class="badge text-bg-secondary"><%= number_with_delimiter(count) %></span>
+                    </li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <p class="text-muted"><%= t('.overview.no_data') %></p>
+              <% end %>
+
+              <h2 class="h5"><%= t('.next_heading') %></h2>
+              <p class="mb-0"><%= t('.next_body') %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
