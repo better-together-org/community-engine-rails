@@ -89,7 +89,7 @@ erDiagram
         uuid id PK
         integer contribution_type
         string contribution_type_name
-        bigint c3_millitokens "1 C3 = 10_000 millitokens"
+        bigint c3_millitokens "1 Tree Seed = 1_000 millitokens"
         string source_ref "job_id, PR number, CE event ID"
         string source_system
         decimal units

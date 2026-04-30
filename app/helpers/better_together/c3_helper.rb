@@ -12,11 +12,11 @@ module BetterTogether
     # Format a millitoken integer as a human-readable Tree Seeds amount.
     #
     # Examples:
-    #   tree_seeds_display(10_000)         # => "1 Tree Seed 🌱"
-    #   tree_seeds_display(18_750)         # => "1.875 Tree Seeds 🌱"
-    #   tree_seeds_display(100_000)        # => "10 Tree Seeds 🌱"
-    #   tree_seeds_display(0)              # => "0 Tree Seeds 🌱"
-    #   tree_seeds_display(18_750, include_emoji: false) # => "1.875 Tree Seeds"
+    #   tree_seeds_display(1_000)         # => "1 Tree Seed 🌱"
+    #   tree_seeds_display(1_875)         # => "1.875 Tree Seeds 🌱"
+    #   tree_seeds_display(10_000)        # => "10 Tree Seeds 🌱"
+    #   tree_seeds_display(0)             # => "0 Tree Seeds 🌱"
+    #   tree_seeds_display(1_875, include_emoji: false) # => "1.875 Tree Seeds"
     #
     # @param millitokens [Integer, #to_f] Raw millitoken value
     # @param include_emoji [Boolean] Whether to append the 🌱 emoji (default: true)

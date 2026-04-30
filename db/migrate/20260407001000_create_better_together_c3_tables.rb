@@ -39,7 +39,7 @@ class CreateBetterTogetherC3Tables < ActiveRecord::Migration[7.2]
         t.integer :contribution_type, null: false # enum: compute_cpu=0, compute_gpu=1, ...
         t.string :contribution_type_name, null: false
 
-        # Amount in millitokens (1 C3 = 10_000 millitokens) for integer arithmetic
+        # Amount in millitokens (1 Tree Seed = 1_000 millitokens) for integer arithmetic
         t.bigint :c3_millitokens, null: false, default: 0
 
         # Source evidence

@@ -4,15 +4,15 @@ module BetterTogether
   module C3
     # Token records a single C3 contribution event.
     # Earner is the Person (or future AgentActor) whose node performed the work.
-    # C3 amounts are stored as millitokens (1 C3 = 10_000 millitokens) for integer arithmetic.
+    # C3 amounts are stored as millitokens (1 Tree Seed = 1_000 millitokens) for integer arithmetic.
     #
     # NOTE: C3 does NOT influence governance votes — one member, one vote (co-op principle).
     class Token < ApplicationRecord
       self.table_name = 'better_together_c3_tokens'
 
-      MILLITOKEN_SCALE = 10_000 # 1 C3 = 10_000 millitokens
+      MILLITOKEN_SCALE = 1_000 # 1 Tree Seed = 1_000 millitokens
 
-      # Maximum millitokens in a single transaction (10,000 C3 / Tree Seeds).
+      # Maximum millitokens in a single transaction (10,000 Tree Seeds).
       # Prevents overflow and limits blast radius of malformed or malicious payloads.
       MAX_SINGLE_TRANSACTION_MILLITOKENS = 10_000 * MILLITOKEN_SCALE
 

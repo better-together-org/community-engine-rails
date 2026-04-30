@@ -4,8 +4,6 @@ This document is a complete reference to every table, model, and field in the C3
 
 All amounts are stored as **millitokens** (integer) in the database. **1 Tree Seed = 1,000 millitokens.** The milli prefix follows the SI convention (1/1000). Users always see Tree Seeds; millitokens are an internal wire and storage format only.
 
-> **Note on code constant:** `C3::Token::MILLITOKEN_SCALE` is currently set to `10_000` in the Ruby code. This is a known discrepancy from the definition above and needs to be corrected to `1_000` before live exchange is enabled.
-
 ---
 
 ## Entity Relationship Diagram
