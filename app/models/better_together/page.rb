@@ -160,7 +160,7 @@ module BetterTogether
     def refresh_sitemap
       return if Rails.env.test?
 
-      SitemapRefreshJob.perform_later
+      SitemapRefreshJob.enqueue_unless_pending
     end
 
     def sync_name_and_title

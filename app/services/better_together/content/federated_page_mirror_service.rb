@@ -83,8 +83,14 @@ module BetterTogether
           identifier: normalized_identifier(record),
           privacy: remote_attributes[:privacy].presence || 'public',
           published_at: remote_attributes[:published_at],
-          creator_id: remote_attributes[:creator_id]
+          creator_id: resolve_local_creator(remote_attributes[:creator_id])
         }
+      end
+
+      def resolve_local_creator(remote_id)
+        return nil if remote_id.blank?
+
+        ::BetterTogether::Person.where(id: remote_id).pick(:id)
       end
 
       def mirror_tracking_attributes

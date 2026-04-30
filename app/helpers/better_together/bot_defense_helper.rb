@@ -24,7 +24,6 @@ module BetterTogether
       content_tag(
         :div,
         class: 'better-together-bot-defense-trap',
-        style: 'position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;',
         'aria-hidden': 'true'
       ) do
         safe_join([bot_defense_trap_label(challenge), bot_defense_trap_input(challenge)])

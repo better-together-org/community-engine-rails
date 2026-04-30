@@ -64,6 +64,16 @@ module BetterTogether
 
     def c3_exchange_rate_value
       c3_exchange_rate.to_f.then { |r| r.positive? ? r : 1.0 }
+    def metadata_sync_depth?
+      sync_depth == 'metadata'
+    end
+
+    def standard_sync_depth?
+      sync_depth.in?(%w[standard full])
+    end
+
+    def full_sync_depth?
+      sync_depth == 'full'
     end
 
     private

@@ -24,7 +24,7 @@ module BetterTogether
     ].freeze
 
     def enabled?(env = ENV)
-      explicit_elasticsearch_backend?(env) || elasticsearch_env_configured?(env)
+      explicit_elasticsearch_backend?(env)
     end
 
     def build(env = ENV)
@@ -108,10 +108,6 @@ module BetterTogether
 
     def explicit_elasticsearch_backend?(env)
       env_value(env, 'SEARCH_BACKEND') == 'elasticsearch'
-    end
-
-    def elasticsearch_env_configured?(env)
-      env_value(env, *ELASTICSEARCH_ENV_KEYS).present?
     end
 
     def truthy?(value)

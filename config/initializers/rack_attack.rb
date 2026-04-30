@@ -142,6 +142,23 @@ module Rack
       req.params['client_id'].presence if req.path.include?('/oauth/token') && req.post?
     end
 
+    ### Federation Content Feed Throttling ###
+
+    # Throttle the federation content feed by Bearer token prefix (120 req/min per client).
+    # Legitimate pull jobs fetch at most a few pages per minute; this stops a
+    # misconfigured or hostile peer from hammering the export endpoint.
+    throttle('federation/feed/token', limit: 120, period: 1.minute) do |req|
+      if req.path.include?('/federation/content_feed')
+        req.env['HTTP_AUTHORIZATION']&.sub(/^Bearer\s+/i, '')&.first(32)
+      end
+    end
+
+    # Secondary IP-based guard for the federation feed (60 req/min per IP).
+    # Catches unauthenticated probes and peers rotating tokens rapidly.
+    throttle('federation/feed/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.path.include?('/federation/content_feed')
+    end
+
     # Throttle POST requests to /users/sign-in by email param
     #
     # Key: "rack::attack:#{Time.now.to_i/:period}:logins/email:#{normalized_email}"

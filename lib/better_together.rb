@@ -125,10 +125,29 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
     end
 
     def llm_available?(identifier: nil, platform: Current.platform)
-      return true if adapters_for(:llm).any?
-
       robot = resolve_llm_robot(identifier:, platform:)
-      llm_provider_available?(robot)
+      llm_provider_available?(robot:)
+    end
+
+    def llm_provider_available?(robot: nil, provider: nil)
+      normalized_provider = provider.presence || robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
+
+      case normalized_provider.to_s
+      when 'openai'
+        openai_credentials_present?
+      when 'ollama'
+        true
+      else
+        adapter_for(:llm, normalized_provider).present?
+      end
+    end
+
+    def openai_credentials_present?
+      ENV.fetch('OPENAI_API_KEY', nil).present? || ENV.fetch('OPENAI_ACCESS_TOKEN', nil).present?
+    end
+
+    def translation_available?(platform: Current.platform)
+      llm_available?(identifier: 'translation', platform:)
     end
 
     def e2ee_messaging_enabled?
@@ -211,18 +230,6 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       return unless identifier.present? && defined?(BetterTogether::Robot)
 
       BetterTogether::Robot.resolve(identifier:, platform:)
-    end
-
-    def llm_provider_available?(robot)
-      provider = robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
-      return openai_llm_available? if provider == 'openai'
-      return true if provider == 'ollama'
-
-      robot.present?
-    end
-
-    def openai_llm_available?
-      ENV.fetch('OPENAI_API_KEY', nil).present? || ENV.fetch('OPENAI_ACCESS_TOKEN', nil).present?
     end
   end
 end
