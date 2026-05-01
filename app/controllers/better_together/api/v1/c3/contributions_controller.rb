@@ -20,14 +20,30 @@ module BetterTogether
           skip_after_action :verify_policy_scoped, raise: false
           skip_after_action :enforce_policy_use, raise: false
 
-          def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+          require_oauth_scopes :write, only: :create
+          require_oauth_scopes :read, only: %i[index balance network_balance]
+          before_action :require_c3_service_access!, except: :network_balance
+          before_action :authorize_network_balance_access!, only: :network_balance
+
+          def create # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
             contrib = contribution_params
 
-            # Resolve earner: fleet node owner, or node itself if owner not found
-            earner = resolve_earner(contrib[:node_id])
-            return render json: { error: "node '#{contrib[:node_id]}' not registered" }, status: :unprocessable_entity if earner.nil?
+            # Validate c3_amount precision (max 4 decimal places = 0.1 millitokens)
+            c3_amount_str = contrib[:c3_amount].to_s
+            unless c3_amount_str.match?(/^\d+(\.\d{1,4})?$/)
+              return render json: {
+                error: 'c3_amount must have at most 4 decimal places (precision: 0.1 millitokens)'
+              }, status: :unprocessable_entity
+            end
 
-            c3_millitokens = (contrib[:c3_amount].to_f * MILLITOKEN_SCALE).round
+            fleet_node = BetterTogether::Fleet::Node.find_by(node_id: contrib[:node_id])
+            return render json: { error: "node '#{contrib[:node_id]}' not registered" }, status: :unprocessable_entity if fleet_node.nil?
+
+            earner = fleet_node.owner
+            return render_owner_not_configured(contrib[:node_id]) if earner.nil?
+
+            # Use safe conversion to avoid floating-point precision loss
+            c3_millitokens = BetterTogether::C3::Token.c3_to_millitokens(contrib[:c3_amount])
             created = false
 
             token = BetterTogether::C3::Token.transaction do
@@ -54,7 +70,8 @@ module BetterTogether
                 holder: earner,
                 community: nil
               )
-              balance.credit!(token.c3_amount)
+              # Use credit_millitokens! to avoid round-trip float conversion
+              balance.credit_millitokens!(c3_millitokens)
               token
             end
 
@@ -64,13 +81,16 @@ module BetterTogether
               render json: {
                 status: 'ok',
                 token_id: token.id,
-                c3_amount: token.c3_amount,
-                new_balance: balance.reload.available_c3
+                c3_amount: BetterTogether::C3::Token.millitokens_to_c3(token.c3_millitokens),
+                new_balance: BetterTogether::C3::Token.millitokens_to_c3(balance.reload.available_millitokens)
               }, status: :created
             else
               render json: { status: 'duplicate', message: 'contribution already recorded' }, status: :ok
             end
-          rescue ActiveRecord::RecordInvalid => e
+          rescue BetterTogether::C3::Token::ArgumentError => e
+            render json: { error: "invalid c3_amount: #{e.message}" }, status: :unprocessable_entity
+          rescue ArgumentError => e
+            render json: { error: e.message }, status: :unprocessable_entity
             render json: { error: e.message }, status: :unprocessable_entity
           rescue ActiveRecord::RecordNotUnique
             render json: { status: 'duplicate', message: 'contribution already recorded' }, status: :ok
@@ -82,8 +102,10 @@ module BetterTogether
 
             tokens = if node_id.present?
                        fleet_node = BetterTogether::Fleet::Node.find_by(node_id: node_id)
-                       earner = fleet_node&.owner || fleet_node
-                       return render json: { contributions: [] } if earner.nil?
+                       return render json: { contributions: [] } if fleet_node.nil?
+
+                       earner = fleet_node.owner
+                       return render_owner_not_configured(node_id) if earner.nil?
 
                        BetterTogether::C3::Token
                          .where(earner: earner)
@@ -106,7 +128,9 @@ module BetterTogether
             fleet_node = BetterTogether::Fleet::Node.find_by(node_id: node_id)
             return render json: { error: "node '#{node_id}' not found" }, status: :not_found if fleet_node.nil?
 
-            earner = fleet_node.owner || fleet_node
+            earner = fleet_node.owner
+            return render_owner_not_configured(node_id) if earner.nil?
+
             bal = BetterTogether::C3::Balance.find_by(holder: earner, community: nil)
 
             render json: {
@@ -117,7 +141,67 @@ module BetterTogether
             }
           end
 
+          # GET /api/v1/c3/network_balance?borgberry_did=did:key:z6Mk...
+          # Returns the aggregated C3 balance across all platforms where a person
+          # has earned or received C3, identified by their portable borgberry DID.
+          #
+          # Access: own DID only, or platform administrator.
+          # Optional: ?include_breakdown=true (admin scope required) — returns per-platform detail.
+          def network_balance # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+            did = params.require(:borgberry_did)
+            person = BetterTogether::Person.find_by(borgberry_did: did)
+
+            unless person
+              return render json: { error: "no person found with borgberry_did '#{did}'" },
+                            status: :not_found
+            end
+
+            balances = BetterTogether::C3::Balance.where(holder: person)
+
+            response_body = {
+              borgberry_did: did,
+              network_available_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.sum(:available_millitokens)),
+              network_locked_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.sum(:locked_millitokens)),
+              network_lifetime_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.sum(:lifetime_earned_millitokens)),
+              local_available_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.local.sum(:available_millitokens)),
+              federated_received_c3: BetterTogether::C3::Token.millitokens_to_c3(balances.federated.sum(:available_millitokens))
+            }
+
+            # Platform breakdown is opt-in and admin-only to protect cross-platform presence data.
+            if params[:include_breakdown] == 'true' && current_platform_admin?
+              response_body[:platform_breakdown] = balance_breakdown(balances)
+            end
+
+            render json: response_body
+          end
+
           private
+
+          def balance_breakdown(balances)
+            balances.map do |b|
+              {
+                origin_platform_id: b.origin_platform_id,
+                available_c3: b.available_c3,
+                locked_c3: b.locked_c3,
+                lifetime_earned_c3: b.lifetime_earned_c3,
+                federated: b.origin_platform_id.present?
+              }
+            end
+          end
+
+          # Restricts network_balance to: the person whose DID is being queried,
+          # or a platform administrator. Prevents cross-platform balance snooping.
+          def authorize_network_balance_access!
+            queried_did = params[:borgberry_did]
+            return if current_user&.person&.borgberry_did == queried_did
+            return if current_platform_admin?
+
+            render json: { error: 'forbidden' }, status: :forbidden
+          end
+
+          def current_platform_admin?
+            current_platform_manager?
+          end
 
           def contribution_params
             params.require(:contribution).permit(
@@ -126,11 +210,12 @@ module BetterTogether
             )
           end
 
-          def resolve_earner(node_id)
-            return nil if node_id.blank?
+          def render_owner_not_configured(node_id)
+            render json: { error: "node '#{node_id}' has no current owner" }, status: :unprocessable_entity
+          end
 
-            fleet_node = BetterTogether::Fleet::Node.find_by(node_id: node_id)
-            fleet_node&.owner || fleet_node
+          def require_c3_service_access!
+            require_trusted_oauth_application_or_platform_manager!
           end
         end
       end

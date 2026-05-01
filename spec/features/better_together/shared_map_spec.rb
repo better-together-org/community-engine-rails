@@ -84,44 +84,50 @@ RSpec.feature 'Shared map surfaces', :js do
   end
 
   def create_mapped_community(name:, address_line1: '62 Broadway', latitude: 48.9517, longitude: -57.9474)
-    community = create(
-      :better_together_community,
-      :open_access,
-      creator: platform_manager.person,
-      name:,
-      privacy: 'public'
-    )
-    building = create(
-      :better_together_infrastructure_building,
-      creator: platform_manager.person,
-      name: "#{name} Hall",
-      privacy: 'public',
-      address: build(
-        :better_together_address,
-        line1: address_line1,
-        city_name: 'Corner Brook',
-        state_province_name: 'Newfoundland and Labrador',
-        postal_code: 'A2H 4C2',
-        country_name: 'Canada',
-        privacy: 'public',
-        primary_flag: true
-      )
-    )
+    community = create_community(name)
+    building = create_building_for_community(community, name, address_line1)
+    connect_building_to_community(community, building)
+    set_building_geolocation(building, latitude, longitude)
+    community.reload
+    community
+  end
 
+  private
+
+  def create_community(name)
+    create(:better_together_community, :open_access, creator: platform_manager.person, name:, privacy: 'public')
+  end
+
+  def create_building_for_community(_community, name, address_line1)
+    create(:better_together_infrastructure_building,
+           creator: platform_manager.person,
+           name: "#{name} Hall",
+           privacy: 'public',
+           address: build_community_address(address_line1))
+  end
+
+  def build_community_address(address_line1)
+    build(:better_together_address,
+          line1: address_line1,
+          city_name: 'Corner Brook',
+          state_province_name: 'Newfoundland and Labrador',
+          postal_code: 'A2H 4C2',
+          country_name: 'Canada',
+          privacy: 'public',
+          primary_flag: true)
+  end
+
+  def connect_building_to_community(community, building)
     BetterTogether::Infrastructure::BuildingConnection.create!(
       building:,
       connection: community,
       position: 1,
       primary_flag: true
     )
+  end
 
-    building.geospatial_space.space.assign_attributes(
-      latitude:,
-      longitude:
-    )
+  def set_building_geolocation(building, latitude, longitude)
+    building.geospatial_space.space.assign_attributes(latitude:, longitude:)
     building.geospatial_space.save!
-
-    community.reload
-    community
   end
 end

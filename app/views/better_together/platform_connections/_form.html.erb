@@ -139,6 +139,43 @@
     </div>
   <% end %>
 
+  <% unless platform_connection.new_record? %>
+    <fieldset class="mb-3" aria-describedby="c3_exchange_hint">
+      <legend class="fs-6"><%= t('better_together.platform_connections.form.c3_exchange_legend',
+                                  default: 'Tree Seeds exchange') %></legend>
+      <p id="c3_exchange_hint" class="form-text text-muted mb-2">
+        <%= t('better_together.platform_connections.form.c3_exchange_hint',
+              platform: platform_connection.target_platform.name,
+              default: "When enabled, participants on this platform can send and receive Tree Seeds " \
+                       "with %{platform}. Both platforms must opt in for exchange to work.") %>
+      </p>
+      <div class="form-check mb-2">
+        <%= form.check_box :allow_c3_exchange, class: 'form-check-input',
+                           id: 'platform_connection_allow_c3_exchange' %>
+        <%= form.label :allow_c3_exchange,
+                       t('better_together.platform_connections.form.allow_c3_exchange',
+                         default: 'Allow Tree Seeds exchange with this platform'),
+                       class: 'form-check-label',
+                       for: 'platform_connection_allow_c3_exchange' %>
+      </div>
+      <div class="mb-2">
+        <%= form.label :c3_exchange_rate,
+                       t('better_together.platform_connections.form.c3_exchange_rate_label',
+                         default: 'Exchange rate'),
+                       class: 'form-label' %>
+        <%= form.text_field :c3_exchange_rate, class: 'form-control',
+                            style: 'max-width: 120px;',
+                            aria: { describedby: 'c3_exchange_rate_hint' } %>
+        <p id="c3_exchange_rate_hint" class="form-text text-muted">
+          <%= t('better_together.platform_connections.form.c3_exchange_rate_hint',
+                platform: platform_connection.target_platform.name,
+                default: "How many Tree Seeds here equal 1 Tree Seed on %{platform}? " \
+                         "Leave at 1.0 for equal value.") %>
+        </p>
+      </div>
+    </fieldset>
+  <% end %>
+
   <div class="btn-group">
     <% if platform_connection.new_record? %>
       <%= link_to t('better_together.platform_connections.form.back'),

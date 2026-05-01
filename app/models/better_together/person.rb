@@ -89,6 +89,14 @@ module BetterTogether
              foreign_key: :owner_id,
              dependent: :destroy,
              inverse_of: :owner
+    has_many :fleet_node_ownerships,
+             as: :owner,
+             class_name: 'BetterTogether::Fleet::NodeOwnership',
+             dependent: :destroy,
+             inverse_of: :owner
+    has_many :fleet_nodes,
+             through: :fleet_node_ownerships,
+             source: :node
 
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
@@ -166,9 +174,15 @@ module BetterTogether
       show_conversation_details Boolean, default: false
     end
 
-    # Borgberry fleet identity — set via USB key enrollment or fleet registration
+    # Borgberry fleet identity — portable person identity used across fleets.
+    # Fleet node ownership is tracked separately through BetterTogether::Fleet::NodeOwnership.
     # borgberry_did: W3C DID derived from operator GPG key (e.g. did:key:z6Mk...)
-    # borgberry_node_id: borgberry fleet node this person operates (e.g. bts-0)
+    #
+    # Deterministic encryption preserves find_by(borgberry_did:) lookups while
+    # preventing the plaintext DID from being exposed in a database extract.
+    # After adding this declaration, existing plaintext values must be re-encrypted
+    # via migration 20260415050000_reencrypt_person_borgberry_did.rb.
+    encrypts :borgberry_did, deterministic: true
     attr_accessor :borgberry_did_raw # used during enrollment only
 
     # Ensure proper coercion and persistence for preferences store attributes

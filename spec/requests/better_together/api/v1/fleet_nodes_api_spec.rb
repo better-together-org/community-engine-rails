@@ -6,18 +6,38 @@ RSpec.describe 'BetterTogether::Api::V1::Fleet::Nodes', :no_auth do
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
   let(:platform_manager_headers) { api_auth_headers(platform_manager_user, token: platform_manager_token) }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
+  let(:regular_headers) { api_auth_headers(regular_user).merge('ACCEPT' => 'application/json') }
+  let(:service_application) do
+    create(:better_together_oauth_application, owner: platform_manager_user.person, scopes: 'read write admin')
+  end
+  let(:service_token) do
+    create(:better_together_oauth_access_token,
+           :client_credentials,
+           application: service_application,
+           scopes: 'read write admin')
+  end
+  let(:service_headers) do
+    {
+      'Authorization' => "Bearer #{service_token.token}",
+      'ACCEPT' => 'application/json'
+    }
+  end
   let(:last_seen_at) { Time.current }
   let(:node_record) do
-    Struct.new(:node_id, :hardware, :compute, :services, :last_seen_at, keyword_init: true) do
+    Struct.new(:node_id, :hardware, :compute, :services, :last_seen_at, :owner, keyword_init: true) do
       def mark_online!; end
 
       def update!(*); end
+
+      def assign_owner!(*); end
     end.new(
       node_id: 'test-node-1',
       hardware: { 'ram_gb' => 32 },
       compute: { 'cpu' => 'm2' },
       services: { 'ollama' => true },
-      last_seen_at:
+      last_seen_at:,
+      owner: nil
     )
   end
   let(:node) { node_record }
@@ -31,6 +51,7 @@ RSpec.describe 'BetterTogether::Api::V1::Fleet::Nodes', :no_auth do
     allow(BetterTogether::Fleet::Node).to receive(:find_by).with(node_id: 'test-node-1').and_return(node)
     allow(node).to receive(:mark_online!)
     allow(node).to receive(:update!)
+    allow(node).to receive(:assign_owner!)
   end
 
   describe 'POST /api/v1/fleet/nodes/:node_id/heartbeat' do
@@ -45,6 +66,19 @@ RSpec.describe 'BetterTogether::Api::V1::Fleet::Nodes', :no_auth do
         compute: { 'cpu' => 'm2' },
         services: { 'ollama' => true }
       )
+    end
+
+    it 'allows a trusted OAuth service token to send heartbeats' do
+      post "/api/v1/fleet/nodes/#{node.node_id}/heartbeat", params: {}, headers: service_headers
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'rejects regular authenticated users' do
+      post "/api/v1/fleet/nodes/#{node.node_id}/heartbeat", params: {}, headers: regular_headers
+
+      expect(response).to have_http_status(:forbidden)
+      expect(JSON.parse(response.body)).to include('error' => 'forbidden')
     end
   end
 end

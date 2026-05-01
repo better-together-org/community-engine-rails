@@ -7,45 +7,42 @@ module BetterTogether
     # locked_millitokens — reserved for in-flight Joatu exchanges
     # lifetime_earned_millitokens — cumulative C3 ever earned (never decremented)
     class Balance < ApplicationRecord
+      include BalanceLocking
+
       self.table_name = 'better_together_c3_balances'
 
       MILLITOKEN_SCALE = BetterTogether::C3::Token::MILLITOKEN_SCALE
 
       belongs_to :holder, polymorphic: true
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
+      belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true
+
+      has_many :balance_locks, class_name: 'BetterTogether::C3::BalanceLock',
+                               foreign_key: :balance_id, dependent: :destroy
+
+      # local: earned on this platform; federated: received via C3 cross-platform exchange
+      scope :local,     -> { where(origin_platform_id: nil) }
+      scope :federated, -> { where.not(origin_platform_id: nil) }
 
       validates :holder, presence: true
       validates :available_millitokens, :locked_millitokens, :lifetime_earned_millitokens,
                 numericality: { greater_than_or_equal_to: 0 }
 
       # Credit C3 tokens to this balance (after a job completes)
+      # @param c3_amount [String, Numeric] Tree Seed amount
       def credit!(c3_amount)
-        millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
+        millitokens = BetterTogether::C3::Token.c3_to_millitokens(c3_amount)
         increment!(:available_millitokens, millitokens)
         increment!(:lifetime_earned_millitokens, millitokens)
       end
 
-      # Lock C3 for a pending Joatu exchange
-      def lock!(c3_amount)
-        millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
-        raise InsufficientBalance, "Only #{available_c3} C3 available" if millitokens > available_millitokens
-
-        decrement!(:available_millitokens, millitokens)
-        increment!(:locked_millitokens, millitokens)
-      end
-
-      # Release locked C3 back to available (exchange cancelled)
-      def unlock!(c3_amount)
-        millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
-        decrement!(:locked_millitokens, millitokens)
-        increment!(:available_millitokens, millitokens)
-      end
-
-      # Settle locked C3 to another balance (exchange fulfilled)
-      def settle_to!(recipient_balance, c3_amount)
-        millitokens = (c3_amount.to_f * MILLITOKEN_SCALE).round
-        decrement!(:locked_millitokens, millitokens)
-        recipient_balance.credit!(c3_amount)
+      # Credit exact millitokens to this balance, bypassing float conversion.
+      # Prefer this method when working with existing millitokens values (e.g., from BalanceLock).
+      # @param amount_millitokens [Integer] Exact millitokens to credit
+      def credit_millitokens!(amount_millitokens)
+        amount_millitokens = amount_millitokens.to_i
+        increment!(:available_millitokens, amount_millitokens)
+        increment!(:lifetime_earned_millitokens, amount_millitokens)
       end
 
       def available_c3
@@ -61,6 +58,8 @@ module BetterTogether
       end
 
       class InsufficientBalance < StandardError; end
+      class LockError < StandardError; end
+      class LockMismatch < StandardError; end
     end
   end
 end

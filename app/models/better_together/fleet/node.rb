@@ -11,8 +11,12 @@ module BetterTogether
       NODE_CATEGORIES = %w[cat1 cat2 cat3].freeze
       SAFETY_TIERS = %w[T0 T1 T2 T3].freeze
 
-      belongs_to :owner, polymorphic: true, optional: true
       belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+      has_one :node_ownership,
+              class_name: 'BetterTogether::Fleet::NodeOwnership',
+              foreign_key: :node_id,
+              dependent: :destroy,
+              inverse_of: :node
 
       has_many :agent_job_results, class_name: 'BetterTogether::AgentJobResult',
                                    foreign_key: :fleet_node_id, dependent: :nullify, inverse_of: :fleet_node
@@ -44,6 +48,31 @@ module BetterTogether
 
       def mark_offline!
         update!(online: false)
+      end
+
+      def owner
+        node_ownership&.owner
+      end
+
+      def owner_id
+        node_ownership&.owner_id
+      end
+
+      def owner_type
+        node_ownership&.owner_type
+      end
+
+      def assign_owner!(owner_record)
+        if owner_record.nil?
+          node_ownership&.destroy!
+          return
+        end
+
+        if node_ownership
+          node_ownership.update!(owner: owner_record)
+        else
+          create_node_ownership!(owner: owner_record)
+        end
       end
 
       def to_s

@@ -33,3 +33,9 @@
   class: "BetterTogether::FederationAccessTokenPurgeJob"
   queue: "maintenance"
   description: "Purge revoked and expired federation access tokens to prevent unbounded table growth"
+
+"better_together:c3:expire_balance_locks":
+  cron: "*/15 * * * *" # every 15 minutes
+  class: "BetterTogether::C3::ExpireBalanceLocksJob"
+  queue: "default"
+  description: "Release C3 balance locks that have passed their 24-hour expiry — returns reserved Tree Seeds to the payer"

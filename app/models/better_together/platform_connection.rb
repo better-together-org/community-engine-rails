@@ -76,6 +76,9 @@ module BetterTogether
       last_sync_error_at String, default: ''
       last_sync_error_message String, default: ''
       last_sync_item_count Integer, default: 0
+      # C3 community contribution token exchange (borgberry federation)
+      allow_c3_exchange Boolean, default: false
+      c3_exchange_rate String, default: '1.0' # bilateral rate string, e.g. '1.5' = 1 C3 here = 1.5 C3 there
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
