@@ -59,7 +59,7 @@ module BetterTogether
 
       def unlock_exact_millitokens!
         unlock_method = balance.method(:unlock_millitokens!)
-        keyword_parameters = unlock_method.parameters.select { |kind, _name| %i[key keyreq keyrest].include?(kind) }
+        keyword_parameters = unlock_method.parameters.slice(:key, :keyreq, :keyrest)
         accepts_lock_ref = keyword_parameters.any? { |_kind, name| name == :lock_ref } ||
                            keyword_parameters.any? { |kind, _name| kind == :keyrest }
 
@@ -69,6 +69,7 @@ module BetterTogether
           balance.unlock_millitokens!(millitokens)
         end
       end
+
       def generate_lock_ref
         self.lock_ref ||= SecureRandom.uuid
       end

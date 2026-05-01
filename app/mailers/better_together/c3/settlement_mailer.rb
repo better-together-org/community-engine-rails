@@ -28,30 +28,27 @@ module BetterTogether
       end
 
       def event_copy
-        case @event_type
-        when :c3_locked
-          I18n.t(
-            'better_together.notifications.c3.settlement.locked.body',
-            default: 'Tree Seeds have been reserved for your agreement. They will be released if the agreement is cancelled.'
-          )
-        when :c3_lock_released
-          I18n.t(
-            'better_together.notifications.c3.settlement.released.body',
-            default: 'Tree Seeds have been returned to your balance.'
-          )
-        else
-          I18n.t(
-            'better_together.notifications.c3.settlement.settled.body',
-            default: 'Tree Seeds have been exchanged. Your balance has been updated.'
-          )
-        end
-      end
-
-      def agreement_url
-        BetterTogether::Engine.routes.url_helpers.joatu_agreement_url(@settlement.agreement, locale: locale)
+        event_copy_for(@event_type)
       end
 
       private
+
+      def event_copy_for(event_type)
+        copies = {
+          c3_locked: 'better_together.notifications.c3.settlement.locked.body',
+          c3_lock_released: 'better_together.notifications.c3.settlement.released.body'
+        }
+        key = copies.fetch(event_type, 'better_together.notifications.c3.settlement.settled.body')
+        I18n.t(key, default: event_copy_default(event_type))
+      end
+
+      def event_copy_default(event_type)
+        defaults = {
+          c3_locked: 'Tree Seeds have been reserved for your agreement. They will be released if the agreement is cancelled.',
+          c3_lock_released: 'Tree Seeds have been returned to your balance.'
+        }
+        defaults.fetch(event_type, 'Tree Seeds have been exchanged. Your balance has been updated.')
+      end
 
       def subject_for_event
         case @event_type

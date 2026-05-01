@@ -50,22 +50,44 @@ module BetterTogether
       #
       # @param c3_amount [String, Numeric] Tree Seed amount (e.g., "1.5", 1.5, 1)
       # @return [Integer] Millitokens value
-      # @raise [ArgumentError] if amount is negative or exceeds MAX_SINGLE_TRANSACTION_MILLITOKENS
+      # @raise [ArgumentError] if amount is negative, exceeds max, or has more than 4 decimal places
       def self.c3_to_millitokens(c3_amount)
         decimal_amount = BigDecimal(c3_amount.to_s)
         raise ArgumentError, 'C3 amount must be non-negative' if decimal_amount.negative?
 
+        validate_decimal_places!(c3_amount)
+
         millitokens = (decimal_amount * MILLITOKEN_SCALE).to_i
-        if millitokens > MAX_SINGLE_TRANSACTION_MILLITOKENS
-          raise ArgumentError,
-                "C3 amount exceeds maximum (#{millitokens} > #{MAX_SINGLE_TRANSACTION_MILLITOKENS} millitokens)"
-        end
+        validate_max_transaction!(millitokens)
 
         millitokens
       rescue ArgumentError
         raise
       rescue StandardError => e
         raise ArgumentError, "Invalid C3 amount '#{c3_amount}': #{e.message}"
+      end
+
+      # Validates that the amount has at most 4 decimal places.
+      # @param c3_amount [String, Numeric] Amount to validate
+      # @raise [ArgumentError] if amount has more than 4 decimal places
+      private_class_method def self.validate_decimal_places!(c3_amount)
+        string_repr = c3_amount.to_s.strip
+        return unless string_repr.include?('.')
+
+        decimal_part = string_repr.split('.')[1]
+        return unless decimal_part.length > 4
+
+        raise ArgumentError, 'C3 amount must have at most 4 decimal places'
+      end
+
+      # Validates that millitokens doesn't exceed the maximum transaction amount.
+      # @param millitokens [Integer] Amount in millitokens
+      # @raise [ArgumentError] if exceeds MAX_SINGLE_TRANSACTION_MILLITOKENS
+      private_class_method def self.validate_max_transaction!(millitokens)
+        return unless millitokens > MAX_SINGLE_TRANSACTION_MILLITOKENS
+
+        raise ArgumentError,
+              "C3 amount exceeds maximum (#{millitokens} > #{MAX_SINGLE_TRANSACTION_MILLITOKENS} millitokens)"
       end
 
       # Safe conversion: millitokens (integer) → C3 Tree Seed amount (float, for display only)

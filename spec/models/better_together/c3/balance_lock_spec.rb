@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::C3::BalanceLock do
     it 'creates a pending BalanceLock with a lock_ref' do
       expect(lock.status).to eq('pending')
       expect(lock.lock_ref).to be_present
-      expect(lock.millitokens).to eq(30_000)
+      expect(lock.millitokens).to eq(3_000)
     end
 
     it 'sets expires_at to 24 hours from now by default' do
@@ -83,7 +83,7 @@ RSpec.describe BetterTogether::C3::BalanceLock do
       available_before = balance.reload.available_millitokens
       lock.expire!
       expect(lock.reload.status).to eq('expired')
-      expect(balance.reload.available_millitokens).to eq(available_before + 30_000)
+      expect(balance.reload.available_millitokens).to eq(available_before + 3_000)
     end
 
     it 'is a no-op when already settled' do
