@@ -548,10 +548,6 @@ en:
           attributes:
             event_hosts:
               too_short: Events must have at least one host
-        better_together/joatu/settlement:
-          attributes:
-            agreement_id:
-              already_settled: already has a settlement record
         better_together/joatu/connection_request:
           attributes:
             base:
@@ -566,6 +562,10 @@ en:
                 person, target person, and active platform connection
             target:
               must_be_person: must be a person
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: already has a settlement record
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -874,6 +874,22 @@ en:
     buildings:
       add: Add
       title: Buildings
+    c3:
+      balance_card:
+        available: Available
+        explainer: Tree Seeds are community contribution credits you earn by sharing
+          your time, skills, and resources. They can be exchanged for services offered
+          by other community members.
+        lifetime: Lifetime earned
+        network_available: Network available
+        network_description: Tree Seeds earned or received across all connected platforms.
+        network_lifetime: Network lifetime earned
+        reserved: Reserved for agreements
+        show_network_total: Show my cross-platform Tree Seeds total
+        title: Your Tree Seeds
+      tree_seed: Tree Seed
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Default calendar for %<community_name>s
       personal_calendar_name: "%{name}'s Personal Calendar"
@@ -1911,6 +1927,11 @@ en:
         placeholders:
           search: Search by title or description
         title: Search
+      settlement:
+        cancelled_html: The %{amount} reservation was released back to your balance.
+        completed_html: "%{amount} were exchanged on %{date}."
+        pending_html: "%{amount} are reserved, waiting for the exchange to complete."
+        status_label: Agreement Tree Seeds status
       status:
         any: Any
         closed: Closed
@@ -2370,6 +2391,22 @@ en:
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Tree Seeds have been reserved for your agreement. They
+              will be released if the agreement is cancelled."
+            title: Tree Seeds reserved
+          mailer:
+            activity_header: "%{amount} Tree Seeds have activity on your agreement."
+            view_agreement: View agreement
+          released:
+            body: "%{amount} Tree Seeds have been returned to your balance."
+            title: Tree Seeds reservation released
+          settled:
+            body: "%{amount} Tree Seeds have been exchanged. Your balance has been
+              updated."
+            title: Tree Seeds exchanged
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2384,20 +2421,6 @@ en:
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
-      c3:
-        settlement:
-          locked:
-            title: Tree Seeds reserved
-            body: "%{amount} Tree Seeds have been reserved for your agreement. They will be released if the agreement is cancelled."
-          settled:
-            title: Tree Seeds exchanged
-            body: "%{amount} Tree Seeds have been exchanged. Your balance has been updated."
-          released:
-            title: Tree Seeds reservation released
-            body: "%{amount} Tree Seeds have been returned to your balance."
-          mailer:
-            activity_header: "%{amount} Tree Seeds have activity on your agreement."
-            view_agreement: View agreement
       joatu:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.
@@ -2754,7 +2777,15 @@ en:
         secret_rotated: OAuth client secret rotated. Update the remote platform configuration.
         suspended: Connection suspended.
       form:
+        allow_c3_exchange: Allow Tree Seeds exchange with this platform
         back: Back
+        c3_exchange_hint: When enabled, participants on this platform can send and
+          receive Tree Seeds with %{platform}. Both platforms must opt in for exchange
+          to work.
+        c3_exchange_legend: Tree Seeds exchange
+        c3_exchange_rate_hint: How many Tree Seeds here equal 1 Tree Seed on %{platform}?
+          Leave at 1.0 for equal value.
+        c3_exchange_rate_label: Exchange rate
         connection_kind_hint: 'Member: this platform hosts members of the other. Peer:
           equal partnership between independent platforms.'
         content_sharing_policy_hint: Controls how public content is mirrored. "Mirror
@@ -2768,13 +2799,6 @@ en:
           request in OAuth tokens. Only enable scopes matching your agreed data-sharing
           terms.
         federation_scopes_legend: Federation Scopes
-        allow_c3_exchange: Allow Tree Seeds exchange with this platform
-        c3_exchange_hint: When enabled, participants on this platform can send and receive
-          Tree Seeds with %{platform}. Both platforms must opt in for exchange to work.
-        c3_exchange_legend: Tree Seeds exchange
-        c3_exchange_rate_hint: How many Tree Seeds here equal 1 Tree Seed on %{platform}?
-          Leave at 1.0 for equal value.
-        c3_exchange_rate_label: Exchange rate
         save: Save Changes
         shared_content_types_hint: Select which content types to include when syncing
           with this connection.
@@ -3029,6 +3053,62 @@ en:
         none: No roles assigned
     resources:
       membership_request: Membership request
+    robots:
+      created: Robot was successfully created.
+      destroyed: Robot was successfully deleted.
+      edit:
+        subtitle: Adjust provider, model, prompt, and runtime flags for this platform
+          robot.
+        title: Edit %{name} for %{platform_name}
+      form:
+        assume_model_exists: Assume model exists
+        assume_model_exists_help: Keep this enabled only when the provider/model path
+          is known to exist.
+        cancel: Cancel
+      index:
+        back_to_platform: Back to Platform
+        delete: Delete
+        delete_confirm: Delete %{name}?
+        edit: Edit
+        global_read_only: Global fallback
+        new_robot: Add Robot
+        scope: Scope
+        status: Status
+        subtitle: Manage platform-specific robots and inherited global fallbacks from
+          one place.
+        title: LLM Robots for %{platform_name}
+      new:
+        subtitle: Create a platform-scoped robot override. Credentials stay in environment
+          configuration.
+        title: New Robot for %{platform_name}
+      readiness:
+        configured: Configured
+        credentials_help: OpenAI-backed robots continue to use the deployment environment
+          for credentials.
+        hidden: Hidden
+        missing: Missing
+        no_translation_robot: No translation robot resolves for this platform.
+        openai_credentials: OpenAI Credentials
+        ready: Ready
+        shown: Shown
+        translation_provider: Translation Provider
+        translation_ui: Translation UI
+        translation_ui_help: Translation controls render only when the resolved translation
+          robot has an available provider.
+        unavailable: Unavailable
+      scope_labels:
+        global_fallback: Global fallback
+        platform_override: Platform override
+      statuses:
+        active: Active
+        inactive: Inactive
+        inactive_translation: Inactive translation robot
+        provider_ready: Provider available
+        provider_unavailable: Provider unavailable
+        translation_not_selected: Not the effective translation robot for this platform
+        translation_ui_disabled: Translation UI hidden for this platform
+        translation_ui_enabled: Translation UI enabled for this platform
+      updated: Robot was successfully updated.
     roles:
       index:
         new_role: New role
@@ -3420,56 +3500,6 @@ en:
       secret_key_hint: Leave blank to keep the existing value when editing.
       secret_key_placeholder: "••••••••"
       updated: Storage configuration was successfully updated.
-    robots:
-      created: Robot was successfully created.
-      destroyed: Robot was successfully deleted.
-      edit:
-        subtitle: Adjust provider, model, prompt, and runtime flags for this platform robot.
-        title: Edit %{name} for %{platform_name}
-      form:
-        assume_model_exists: Assume model exists
-        assume_model_exists_help: Keep this enabled only when the provider/model path is known to exist.
-        cancel: Cancel
-      index:
-        back_to_platform: Back to Platform
-        delete: Delete
-        delete_confirm: Delete %{name}?
-        edit: Edit
-        global_read_only: Global fallback
-        new_robot: Add Robot
-        scope: Scope
-        status: Status
-        subtitle: Manage platform-specific robots and inherited global fallbacks from one place.
-        title: LLM Robots for %{platform_name}
-      new:
-        subtitle: Create a platform-scoped robot override. Credentials stay in environment configuration.
-        title: New Robot for %{platform_name}
-      readiness:
-        configured: Configured
-        credentials_help: OpenAI-backed robots continue to use the deployment environment for credentials.
-        hidden: Hidden
-        missing: Missing
-        no_translation_robot: No translation robot resolves for this platform.
-        openai_credentials: OpenAI Credentials
-        ready: Ready
-        shown: Shown
-        translation_provider: Translation Provider
-        translation_ui: Translation UI
-        translation_ui_help: Translation controls render only when the resolved translation robot has an available provider.
-        unavailable: Unavailable
-      scope_labels:
-        global_fallback: Global fallback
-        platform_override: Platform override
-      statuses:
-        active: Active
-        inactive: Inactive
-        inactive_translation: Inactive translation robot
-        provider_ready: Provider available
-        provider_unavailable: Provider unavailable
-        translation_not_selected: Not the effective translation robot for this platform
-        translation_ui_disabled: Translation UI hidden for this platform
-        translation_ui_enabled: Translation UI enabled for this platform
-      updated: Robot was successfully updated.
     translations:
       errors:
         content_blank: Content cannot be blank
@@ -4093,6 +4123,7 @@ en:
     joatu:
       agreement:
         accepted: Agreement accepted
+        fulfilled: Agreement fulfilled — C3 transferred to offer creator.
         rejected: Agreement rejected
       response_links:
         offer_created: Offer created in response to request.
@@ -4594,7 +4625,6 @@ en:
     person_link: Person link
     person_platform_membership: Person platform membership
     platform: Platform
-    robot: Robot
     profile: Profile
     region: Region
     region_settlement: Region settlement

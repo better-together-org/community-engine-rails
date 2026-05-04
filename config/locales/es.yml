@@ -882,6 +882,23 @@ es:
     buildings:
       add: Agregar
       title: Edificios
+    c3:
+      balance_card:
+        available: Disponible
+        explainer: Tree Seeds son créditos de contribución comunitaria que ganas compartiendo
+          tu tiempo, habilidades y recursos. Pueden ser intercambiados por servicios
+          ofrecidos por otros miembros de la comunidad.
+        lifetime: Ganado de por vida
+        network_available: Red disponible
+        network_description: Tree Seeds ganados o recibidos en todas las plataformas
+          conectadas.
+        network_lifetime: Red ganada de por vida
+        reserved: Reservado para acuerdos
+        show_network_total: Mostrar mi total de Tree Seeds entre plataformas
+        title: Tus Tree Seeds
+      tree_seed: Tree Seed
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Calendario predeterminado para %<community_name>s
       personal_calendar_name: Calendario Personal de %{name}
@@ -1940,6 +1957,12 @@ es:
         placeholders:
           search: Buscar por título o descripción
         title: Buscar
+      settlement:
+        cancelled_html: La reserva de %{amount} fue devuelta a tu saldo.
+        completed_html: "%{amount} fueron intercambiados el %{date}."
+        pending_html: "%{amount} están reservados, esperando a que se complete el
+          intercambio."
+        status_label: Estado de Tree Seeds del acuerdo
       status:
         any: Cualquiera
         closed: Cerrado
@@ -2415,6 +2438,22 @@ es:
         temporalmente no disponible.
       title: 404 - Página no encontrada
     notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Semillas de árbol han sido reservadas para tu acuerdo.
+              Se liberarán si el acuerdo se cancela."
+            title: Semillas de árbol reservadas
+          mailer:
+            activity_header: "%{amount} Semillas de árbol tienen actividad en tu acuerdo."
+            view_agreement: Ver acuerdo
+          released:
+            body: "%{amount} Semillas de árbol han sido devueltas a tu saldo."
+            title: Reserva de Semillas de árbol liberada
+          settled:
+            body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha
+              sido actualizado."
+            title: Semillas de árbol intercambiadas
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2429,20 +2468,6 @@ es:
       index:
         no_notifications: No tienes notificaciones.
         notifications: Notificaciones
-      c3:
-        settlement:
-          locked:
-            title: Semillas de árbol reservadas
-            body: "%{amount} Semillas de árbol han sido reservadas para tu acuerdo. Se liberarán si el acuerdo se cancela."
-          settled:
-            title: Semillas de árbol intercambiadas
-            body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha sido actualizado."
-          released:
-            title: Reserva de Semillas de árbol liberada
-            body: "%{amount} Semillas de árbol han sido devueltas a tu saldo."
-          mailer:
-            activity_header: "%{amount} Semillas de árbol tienen actividad en tu acuerdo."
-            view_agreement: Ver acuerdo
       joatu:
         agreement_created:
           content: Se ha creado un acuerdo entre "%{offer}" y "%{request}".
@@ -2811,7 +2836,15 @@ es:
           de la plataforma remota.
         suspended: Conexión suspendida.
       form:
+        allow_c3_exchange: Permitir el intercambio de Semillas de árbol con esta plataforma
         back: Volver
+        c3_exchange_hint: Cuando está habilitado, los participantes de esta plataforma
+          pueden enviar y recibir Semillas de árbol con %{platform}. Ambas plataformas
+          deben habilitarlo para que el intercambio funcione.
+        c3_exchange_legend: Intercambio de Semillas de árbol
+        c3_exchange_rate_hint: "¿Cuántas Semillas de árbol aquí equivalen a 1 Semilla
+          de árbol en %{platform}? Deja en 1.0 para valor igual."
+        c3_exchange_rate_label: Tasa de intercambio
         connection_kind_hint: 'Miembro: esta plataforma aloja miembros de la otra.
           Par: asociación igualitaria entre plataformas independientes.'
         content_sharing_policy_hint: Controla cómo se sincroniza el contenido público.
@@ -2825,14 +2858,6 @@ es:
           plataforma remota en los tokens OAuth. Solo habilite los ámbitos que coincidan
           con sus términos de intercambio de datos acordados.
         federation_scopes_legend: Ámbitos de federación
-        allow_c3_exchange: Permitir el intercambio de Semillas de árbol con esta plataforma
-        c3_exchange_hint: Cuando está habilitado, los participantes de esta plataforma
-          pueden enviar y recibir Semillas de árbol con %{platform}. Ambas plataformas
-          deben habilitarlo para que el intercambio funcione.
-        c3_exchange_legend: Intercambio de Semillas de árbol
-        c3_exchange_rate_hint: "¿Cuántas Semillas de árbol aquí equivalen a 1 Semilla
-          de árbol en %{platform}? Deja en 1.0 para valor igual."
-        c3_exchange_rate_label: Tasa de intercambio
         save: Guardar cambios
         shared_content_types_hint: Seleccione qué tipos de contenido incluir al sincronizar
           con esta conexión.
@@ -3095,6 +3120,64 @@ es:
         none: No hay roles asignados
     resources:
       membership_request: Solicitud de membresía
+    robots:
+      created: El robot se creó correctamente.
+      destroyed: El robot se eliminó correctamente.
+      edit:
+        subtitle: Ajuste el proveedor, el modelo, el prompt y las opciones de ejecución
+          de este robot de plataforma.
+        title: Editar %{name} para %{platform_name}
+      form:
+        assume_model_exists: Asumir que el modelo existe
+        assume_model_exists_help: Actívelo solo cuando sepa que la ruta proveedor/modelo
+          existe.
+        cancel: Cancelar
+      index:
+        back_to_platform: Volver a la plataforma
+        delete: Eliminar
+        delete_confirm: "¿Eliminar %{name}?"
+        edit: Editar
+        global_read_only: Respaldo global
+        new_robot: Añadir robot
+        scope: Alcance
+        status: Estado
+        subtitle: Gestione los robots específicos de la plataforma y los respaldos
+          globales heredados desde un solo lugar.
+        title: Robots LLM para %{platform_name}
+      new:
+        subtitle: Cree una anulación de robot con alcance de plataforma. Las credenciales
+          siguen en la configuración del entorno.
+        title: Nuevo robot para %{platform_name}
+      readiness:
+        configured: Configurado
+        credentials_help: Los robots respaldados por OpenAI siguen usando el entorno
+          de despliegue para las credenciales.
+        hidden: Oculta
+        missing: Faltan
+        no_translation_robot: No hay un robot de traducción resuelto para esta plataforma.
+        openai_credentials: Credenciales de OpenAI
+        ready: Disponible
+        shown: Visible
+        translation_provider: Proveedor de traducción
+        translation_ui: Interfaz de traducción
+        translation_ui_help: Los controles de traducción solo se muestran cuando el
+          robot de traducción resuelto tiene un proveedor disponible.
+        unavailable: No disponible
+      scope_labels:
+        global_fallback: Respaldo global
+        platform_override: Anulación de plataforma
+      statuses:
+        active: Activo
+        inactive: Inactivo
+        inactive_translation: Robot de traducción inactivo
+        provider_ready: Proveedor disponible
+        provider_unavailable: Proveedor no disponible
+        translation_not_selected: No es el robot de traducción efectivo para esta
+          plataforma
+        translation_ui_disabled: La interfaz de traducción está oculta para esta plataforma
+        translation_ui_enabled: La interfaz de traducción está habilitada para esta
+          plataforma
+      updated: El robot se actualizó correctamente.
     roles:
       index:
         new_role: Nuevo rol
@@ -3490,56 +3573,6 @@ es:
       secret_key_hint: Leave blank to keep the existing value when editing.
       secret_key_placeholder: "••••••••"
       updated: Storage configuration was successfully updated.
-    robots:
-      created: El robot se creó correctamente.
-      destroyed: El robot se eliminó correctamente.
-      edit:
-        subtitle: Ajuste el proveedor, el modelo, el prompt y las opciones de ejecución de este robot de plataforma.
-        title: Editar %{name} para %{platform_name}
-      form:
-        assume_model_exists: Asumir que el modelo existe
-        assume_model_exists_help: Actívelo solo cuando sepa que la ruta proveedor/modelo existe.
-        cancel: Cancelar
-      index:
-        back_to_platform: Volver a la plataforma
-        delete: Eliminar
-        delete_confirm: "¿Eliminar %{name}?"
-        edit: Editar
-        global_read_only: Respaldo global
-        new_robot: Añadir robot
-        scope: Alcance
-        status: Estado
-        subtitle: Gestione los robots específicos de la plataforma y los respaldos globales heredados desde un solo lugar.
-        title: Robots LLM para %{platform_name}
-      new:
-        subtitle: Cree una anulación de robot con alcance de plataforma. Las credenciales siguen en la configuración del entorno.
-        title: Nuevo robot para %{platform_name}
-      readiness:
-        configured: Configurado
-        credentials_help: Los robots respaldados por OpenAI siguen usando el entorno de despliegue para las credenciales.
-        hidden: Oculta
-        missing: Faltan
-        no_translation_robot: No hay un robot de traducción resuelto para esta plataforma.
-        openai_credentials: Credenciales de OpenAI
-        ready: Disponible
-        shown: Visible
-        translation_provider: Proveedor de traducción
-        translation_ui: Interfaz de traducción
-        translation_ui_help: Los controles de traducción solo se muestran cuando el robot de traducción resuelto tiene un proveedor disponible.
-        unavailable: No disponible
-      scope_labels:
-        global_fallback: Respaldo global
-        platform_override: Anulación de plataforma
-      statuses:
-        active: Activo
-        inactive: Inactivo
-        inactive_translation: Robot de traducción inactivo
-        provider_ready: Proveedor disponible
-        provider_unavailable: Proveedor no disponible
-        translation_not_selected: No es el robot de traducción efectivo para esta plataforma
-        translation_ui_disabled: La interfaz de traducción está oculta para esta plataforma
-        translation_ui_enabled: La interfaz de traducción está habilitada para esta plataforma
-      updated: El robot se actualizó correctamente.
     translations:
       errors:
         content_blank: El contenido no puede estar en blanco
@@ -3551,7 +3584,8 @@ es:
         translation_failed: 'La traducción falló: %{message}'
         translation_request_failed: La solicitud de traducción falló. Por favor, inténtelo
           de nuevo.
-        translation_unavailable: La traducción no está disponible actualmente para esta plataforma.
+        translation_unavailable: La traducción no está disponible actualmente para
+          esta plataforma.
     uploads:
       content_security:
         badge:
@@ -4176,6 +4210,7 @@ es:
     joatu:
       agreement:
         accepted: Acuerdo aceptado
+        fulfilled: Acuerdo cumplido — C3 transferido al creador de la oferta.
         rejected: Acuerdo rechazado
       response_links:
         offer_created: Oferta creada en respuesta a la solicitud.
@@ -4686,7 +4721,6 @@ es:
     person_link: Enlace de persona
     person_platform_membership: Membresía de plataforma de persona
     platform: Plataforma
-    robot: Robot
     profile: Perfil
     region: Región
     region_settlement: Region settlement
