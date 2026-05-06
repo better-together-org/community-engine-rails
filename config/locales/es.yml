@@ -1062,135 +1062,96 @@ es:
     content:
       blocks:
         accordion_block:
-          empty: No hay elementos configurados.
-          items_json_help: Arreglo JSON de objetos con claves "question" y "answer".
-        associated_pages: Páginas asociadas
+          empty: No items configured.
+          items_json_help: JSON array of objects with "question" and "answer" keys.
+        associated_pages: Associated Pages
         checklist_block:
-          not_found: Lista de verificación no encontrada.
-          select_prompt: "— Seleccionar una lista de verificación —"
+          not_found: Checklist not found.
+          select_prompt: "— Select a checklist —"
         communities_block:
-          empty: No hay comunidades para mostrar.
+          empty: No communities to display.
         embeds:
-          blocked_body: "%{title} no pudo mostrarse aquí porque esta plataforma no
-            ha incluido ese origen de iframe en la lista permitida de la Política
-            de Seguridad de Contenido."
-          blocked_instructions: Agrega %{origin} en Anfitrión > Plataforma > Seguridad
-            / inserciones CSP > Orígenes permitidos de iframes salientes y luego recarga
-            esta página.
-          blocked_origin_label: 'Origen bloqueado:'
-          blocked_title: Este contenido incrustado está bloqueado actualmente
-          invalid_url_body: Revisa la URL del iframe y asegúrate de que sea una dirección
-            HTTPS completa.
-          invalid_url_title: Este contenido incrustado tiene una URL no válida
-          open_in_new_tab: Abrir contenido incrustado en una nueva pestaña
+          blocked_body: Blocked body
+          blocked_instructions: Blocked instructions
+          blocked_origin_label: Blocked origin label
+          blocked_title: Blocked title
+          invalid_url_body: Invalid url body
+          invalid_url_title: Invalid url title
+          open_in_new_tab: Open in new tab
         events_block:
-          empty: No hay eventos para mostrar.
+          empty: No events to display.
+        fields:
+          image:
+            library:
+              empty: Aún no hay cargas de imagen revisadas disponibles en tu biblioteca.
+              empty_hint: Sube primero una imagen o cambia a la persona que la subió.
+              open: Elegir de la biblioteca
+              scope_hint: Aquí solo están disponibles tus cargas de imagen revisadas.
+              title: Elegir de la biblioteca
+              view_uploads: Ver cargas y estados de revisión
         hero:
           editor:
-            background: Fondo
-            cta_button: Botón de llamada a la acción
-            cta_url_invalid: Proporcione una URL válida que comience con http:// o
-              https://.
-            heading_color: Color del encabezado
-            overlay_color: Color de superposición
-            paragraph_color: Color del párrafo
+            background: Background
+            cta_button: Cta button
+            cta_url_invalid: Cta url invalid
+            heading_color: Heading color
+            overlay_color: Overlay color
+            paragraph_color: Paragraph color
         iframe_block:
-          csp_help: Si este contenido no está permitido para la plataforma actual,
-            Community Engine mostrará una guía visible en lugar de un iframe en blanco.
-          default_title: Contenido incrustado
-          missing_url: No se ha configurado ninguna URL de iframe.
-          url_help: Acepta una URL HTTPS completa de iframe, como una encuesta de
-            Formbricks u otra inserción confiable de un espacio comunitario.
+          csp_help: Csp help
+          default_title: Default title
+          missing_url: Missing url
+          url_help: Url help
         markdown:
           fields:
-            auto_sync: Cargar siempre desde archivo (ignorar contenido de base de
-              datos)
-            file_path: Ruta del Archivo Markdown
-            file_path_placeholder: docs/README.md o /ruta/absoluta/al/archivo.md
-            markdown_source: Fuente Markdown
-            preview: Vista Previa
-            reference_file: Referenciar un Archivo Markdown
-            refresh_preview: Actualizar Vista Previa
-            write_inline: Escribir Markdown en Línea
+            auto_sync: Auto sync
+            file_path: File path
+            file_path_placeholder: File path placeholder
+            markdown_source: Markdown source
+            preview: Preview
+            reference_file: Reference file
+            refresh_preview: Refresh preview
+            write_inline: Write inline
           help:
-            auto_sync: Cuando está marcado, el contenido siempre se carga desde el
-              archivo. Cuando está desmarcado, el contenido del archivo se importa
-              a la base de datos y puede editarse por separado.
-            available_translations: 'Traducciones disponibles:'
-            file_path: Ruta a un archivo markdown. Puede ser relativa a Rails.root
-              (ej., docs/README.md) o absoluta (ej., /ruta/al/archivo.md). El archivo
-              debe tener extensión .md o .markdown.
-            inline_content: Escriba su contenido markdown directamente. Soporta markdown
-              estilo GitHub incluyendo tablas, bloques de código y más. El contenido
-              es traducible para cada idioma.
-            localized_files: El sistema busca automáticamente versiones específicas
-              del idioma (ej., privacy.en.md, privacy.es.md, privacy.fr.md) y recurre
-              al archivo base si no se encuentra.
-            preview_placeholder: La vista previa aparecerá aquí...
+            auto_sync: Auto sync
+            available_translations: Available translations
+            file_path: File path
+            inline_content: Inline content
+            localized_files: Localized files
+            preview_placeholder: Preview placeholder
         navigation_area_block:
-          not_found: Área de navegación no encontrada.
-          select_prompt: "— Seleccionar un área de navegación —"
+          not_found: Navigation area not found.
+          select_prompt: "— Select a navigation area —"
         people_block:
-          empty: No hay personas para mostrar.
+          empty: No people to display.
         posts_block:
-          empty: No hay publicaciones para mostrar.
+          empty: No posts to display.
         resource_block:
-          all_communities: Todas las comunidades (en toda la plataforma)
-          resource_ids_help: Si se establece, solo se mostrarán estos registros, ignorando
-            el ámbito de la comunidad y el orden.
-          resource_ids_placeholder: Dejar en blanco para mostrar los últimos registros
+          all_communities: All communities (platform-wide)
+          resource_ids_help: If set, only these records will be displayed, ignoring
+            the community scope and ordering.
+          resource_ids_placeholder: Leave blank to show latest records
         statistics_block:
-          stats_json_help: Arreglo JSON de objetos con claves "label", "value" e "icon"
-            opcional (clase Font Awesome).
-        template:
-          default: Plantilla predeterminada
-          host_community_contact_details: Detalles de contacto de la comunidad anfitriona
+          stats_json_help: JSON array of objects with "label", "value", and optional
+            "icon" (Font Awesome class) keys.
         video_block:
-          missing_url: No se ha configurado ninguna URL de video.
-          title: Reproductor de video de YouTube
-          url_help: Acepta URLs de YouTube, Vimeo o cualquier URL de inserción directa.
-        view_more: Ver todo
+          missing_url: No video URL configured.
+          title: Title
+          url_help: Accepts YouTube, Vimeo, or any direct embed URL.
+        view_more: View all
       mermaid_diagram:
         help:
-          auto_height: Cuando está habilitado, la altura del diagrama se ajusta automáticamente
-            para adaptarse al contenido. Cuando está deshabilitado, usa una altura
-            fija.
-          caption: Título opcional para mostrar debajo del diagrama
-          diagram_file_path: Ruta a un archivo .mmd que contenga la definición del
-            diagrama Mermaid. Puede ser relativa a Rails.root (p. ej., docs/diagrams/source/example.mmd)
-            o absoluta.
-          diagram_source: 'Escribe tu sintaxis de diagrama Mermaid directamente. Admite
-            todos los tipos de diagramas Mermaid: diagramas de flujo, de secuencia,
-            de clases, de estados y más.'
-          theme: 'Tema visual para el diagrama. Opciones: Predeterminado (colores
-            estándar), Oscuro (modo oscuro), Bosque (tonos verdes), Neutro (escala
-            de grises mínima).'
-        javascript_required: Se requiere JavaScript para ver diagramas interactivos.
-          Por favor, habilite JavaScript o vea la versión de imagen estática.
-        no_content: No hay contenido de diagrama disponible
-        no_preview: Agrega fuente del diagrama o ruta de archivo para ver una vista
-          previa
-        preview_title: Vista previa del diagrama
+          auto_height: Auto height
+          caption: Caption
+          diagram_file_path: Diagram file path
+          diagram_source: Diagram source
+          theme: Theme
+        no_content: No content
+        no_preview: No preview
+        preview_title: Preview title
         tabs:
-          file: Cargar desde archivo
-          source: Escribir diagrama
-        themes:
-          dark: Oscuro
-          default: Predeterminado
-          forest: Bosque
-          neutral: Neutro
-      static_pages:
-        accessibility: Accesibilidad
-        better_together: "¿Qué es Better Together?"
-        code_contributor_agreement: Acuerdo de contribuidor de código
-        code_of_conduct: Código de conducta
-        community_engine: Community Engine
-        content_contributor_agreement: Acuerdo de contribuidor de contenido
-        cookie_consent: Política de cookies
-        faq: Preguntas frecuentes
-        privacy: Política de privacidad
-        subprocessors: Subprocesadores
-        terms_of_service: Términos de servicio
+          file: File
+          source: Source
     content_actions:
       menu_label: Acciones para %{resource}
       report:
@@ -3602,6 +3563,15 @@ es:
           review_required: Esta carga está en revisión antes de poder insertarse en
             texto enriquecido o compartirse.
       index:
+        filter_group_aria: Filtrar cargas por estado de revisión
+        filters:
+          all: Todas (%{count})
+          clean: Listas (%{count})
+          restricted: Restringidas (%{count})
+          review_required: En revisión (%{count})
+        review_status_description: Los recuentos de revisión se muestran aquí para
+          que puedas encontrar rápidamente las cargas aprobadas, retenidas o restringidas.
+        review_status_heading: Estado de revisión
         storage_usage: Estás usando %{size} de almacenamiento
     validators:
       safe_federation_url:

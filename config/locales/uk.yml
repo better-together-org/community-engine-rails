@@ -1054,131 +1054,98 @@ uk:
     content:
       blocks:
         accordion_block:
-          empty: Елементи не налаштовано.
-          items_json_help: Масив JSON об'єктів з ключами "question" та "answer".
+          empty: No items configured.
+          items_json_help: JSON array of objects with "question" and "answer" keys.
         associated_pages: Associated Pages
         checklist_block:
-          not_found: Контрольний список не знайдено.
-          select_prompt: "— Виберіть контрольний список —"
+          not_found: Checklist not found.
+          select_prompt: "— Select a checklist —"
         communities_block:
-          empty: Немає спільнот для відображення.
+          empty: No communities to display.
         embeds:
-          blocked_body: "%{title} не вдалося показати тут, оскільки ця платформа не
-            внесла це джерело iframe до дозволених у налаштуваннях політики безпеки
-            вмісту."
-          blocked_instructions: Додайте %{origin} у Хост > Платформа > Безпека / вбудовування
-            CSP > Дозволені джерела вихідних iframe, а потім перезавантажте цю сторінку.
-          blocked_origin_label: 'Заблоковане джерело:'
-          blocked_title: Цей вбудований вміст зараз заблоковано
-          invalid_url_body: Перевірте URL iframe і переконайтеся, що це повна HTTPS-адреса.
-          invalid_url_title: Цей вбудований вміст має недійсний URL
-          open_in_new_tab: Відкрити вбудований вміст у новій вкладці
+          blocked_body: Blocked body
+          blocked_instructions: Blocked instructions
+          blocked_origin_label: Blocked origin label
+          blocked_title: Blocked title
+          invalid_url_body: Invalid url body
+          invalid_url_title: Invalid url title
+          open_in_new_tab: Open in new tab
         events_block:
-          empty: Немає подій для відображення.
+          empty: No events to display.
+        fields:
+          image:
+            library:
+              empty: У вашій бібліотеці ще немає доступних перевірених завантажень
+                зображень.
+              empty_hint: Спочатку завантажте зображення або перейдіть до людини,
+                яка його завантажила.
+              open: Вибрати з бібліотеки
+              scope_hint: Тут доступні лише ваші перевірені завантаження зображень.
+              title: Вибрати з бібліотеки
+              view_uploads: Переглянути завантаження та статуси перевірки
         hero:
           editor:
-            background: Тло
-            cta_button: Кнопка заклику до дії
-            cta_url_invalid: Укажіть дійсну URL-адресу, що починається з http:// або
-              https://.
-            heading_color: Колір заголовка
-            overlay_color: Колір накладання
-            paragraph_color: Колір абзацу
+            background: Background
+            cta_button: Cta button
+            cta_url_invalid: Cta url invalid
+            heading_color: Heading color
+            overlay_color: Overlay color
+            paragraph_color: Paragraph color
         iframe_block:
-          csp_help: Якщо це вбудовування не дозволене для поточної платформи, Community
-            Engine покаже видиме повідомлення з підказкою замість порожнього iframe.
-          default_title: Вбудований вміст
-          missing_url: URL iframe не налаштовано.
-          url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
-            або інше довірене вбудовування зі спільнотного простору.
+          csp_help: Csp help
+          default_title: Default title
+          missing_url: Missing url
+          url_help: Url help
         markdown:
           fields:
-            auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
-            file_path: Шлях до Файлу Markdown
-            file_path_placeholder: docs/README.md або /абсолютний/шлях/до/файлу.md
-            markdown_source: Джерело Markdown
-            preview: Попередній Перегляд
-            reference_file: Посилання на Файл Markdown
-            refresh_preview: Оновити Попередній Перегляд
-            write_inline: Писати Markdown Вбудовано
+            auto_sync: Auto sync
+            file_path: File path
+            file_path_placeholder: File path placeholder
+            markdown_source: Markdown source
+            preview: Preview
+            reference_file: Reference file
+            refresh_preview: Refresh preview
+            write_inline: Write inline
           help:
-            auto_sync: Коли позначено, контент завжди завантажується з файлу. Коли
-              не позначено, вміст файлу імпортується в базу даних і може редагуватися
-              окремо.
-            available_translations: 'Доступні переклади:'
-            file_path: Шлях до файлу markdown. Може бути відносним до Rails.root (наприклад,
-              docs/README.md) або абсолютним (наприклад, /шлях/до/файлу.md). Файл
-              повинен мати розширення .md або .markdown.
-            inline_content: Пишіть свій markdown контент безпосередньо. Підтримує
-              markdown у стилі GitHub, включаючи таблиці, блоки коду тощо. Контент
-              можна перекладати для кожної мови.
-            localized_files: Система автоматично шукає версії для конкретної мови
-              (наприклад, privacy.en.md, privacy.es.md, privacy.fr.md) і повертається
-              до базового файлу, якщо не знайдено.
-            preview_placeholder: Попередній перегляд з'явиться тут...
+            auto_sync: Auto sync
+            available_translations: Available translations
+            file_path: File path
+            inline_content: Inline content
+            localized_files: Localized files
+            preview_placeholder: Preview placeholder
         navigation_area_block:
-          not_found: Область навігації не знайдено.
-          select_prompt: "— Виберіть область навігації —"
+          not_found: Navigation area not found.
+          select_prompt: "— Select a navigation area —"
         people_block:
-          empty: Немає людей для відображення.
+          empty: No people to display.
         posts_block:
-          empty: Немає публікацій для відображення.
+          empty: No posts to display.
         resource_block:
-          all_communities: Усі спільноти (на рівні платформи)
-          resource_ids_help: Якщо встановлено, відображатимуться лише ці записи, ігноруючи
-            область спільноти та порядок.
-          resource_ids_placeholder: Залиште порожнім для відображення останніх записів
+          all_communities: All communities (platform-wide)
+          resource_ids_help: If set, only these records will be displayed, ignoring
+            the community scope and ordering.
+          resource_ids_placeholder: Leave blank to show latest records
         statistics_block:
-          stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
-            "icon" (клас Font Awesome).
-        template:
-          default: Типовий шаблон
-          host_community_contact_details: Контактні дані спільноти-хоста
+          stats_json_help: JSON array of objects with "label", "value", and optional
+            "icon" (Font Awesome class) keys.
         video_block:
-          missing_url: URL відео не налаштовано.
-          title: Відеопрогравач YouTube
-          url_help: Приймає URL YouTube, Vimeo або будь-який прямий URL вбудовування.
-        view_more: Переглянути все
+          missing_url: No video URL configured.
+          title: Title
+          url_help: Accepts YouTube, Vimeo, or any direct embed URL.
+        view_more: View all
       mermaid_diagram:
         help:
-          auto_height: Якщо увімкнено, висота діаграми автоматично підлаштовується
-            під вміст. Якщо вимкнено, використовується фіксована висота.
-          caption: Необов'язковий підпис, який відображається під діаграмою
-          diagram_file_path: Шлях до файлу .mmd із визначенням діаграми Mermaid. Може
-            бути відносним до Rails.root (наприклад, docs/diagrams/source/example.mmd)
-            або абсолютним.
-          diagram_source: 'Напишіть синтаксис діаграми Mermaid безпосередньо. Підтримує
-            всі типи діаграм Mermaid: блок-схеми, діаграми послідовностей, класи,
-            стани та інші.'
-          theme: 'Візуальна тема діаграми. Варіанти: Default (стандартні кольори),
-            Dark (темний режим), Forest (зелені тони), Neutral (мінімалістична сіра
-            гама).'
-        javascript_required: Для перегляду інтерактивних діаграм потрібен JavaScript.
-          Будь ласка, увімкніть JavaScript або перегляньте версію зі статичним зображенням.
-        no_content: Немає доступного вмісту діаграми
-        no_preview: Додайте джерело діаграми або шлях до файлу, щоб побачити попередній
-          перегляд
-        preview_title: Попередній перегляд діаграми
+          auto_height: Auto height
+          caption: Caption
+          diagram_file_path: Diagram file path
+          diagram_source: Diagram source
+          theme: Theme
+        no_content: No content
+        no_preview: No preview
+        preview_title: Preview title
         tabs:
-          file: Завантажити з файлу
-          source: Написати діаграму
-        themes:
-          dark: Темна
-          default: Типова
-          forest: Лісова
-          neutral: Нейтральна
-      static_pages:
-        accessibility: Доступність
-        better_together: Що таке Better Together?
-        code_contributor_agreement: Угода про внесок коду
-        code_of_conduct: Кодекс поведінки
-        community_engine: Community Engine
-        content_contributor_agreement: Угода про внесок контенту
-        cookie_consent: Політика cookies
-        faq: Часті запитання
-        privacy: Політика конфіденційності
-        subprocessors: Субпроцесори
-        terms_of_service: Умови використання
+          file: File
+          source: Source
     content_actions:
       menu_label: Дії для %{resource}
       report:
@@ -3574,6 +3541,15 @@ uk:
           review_required: Це завантаження проходить перевірку, перш ніж його можна
             буде вставити в розширений текст або поширити.
       index:
+        filter_group_aria: Фільтрувати завантаження за статусом перевірки
+        filters:
+          all: Усі (%{count})
+          clean: Готові (%{count})
+          restricted: Обмежені (%{count})
+          review_required: На перевірці (%{count})
+        review_status_description: Тут відображаються підрахунки перевірки, щоб ви
+          могли швидко знайти схвалені, утримані або обмежені завантаження.
+        review_status_heading: Статус перевірки
         storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:
