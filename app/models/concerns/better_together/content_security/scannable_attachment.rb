@@ -8,7 +8,7 @@ module BetterTogether
 
       included do
         class_attribute :scannable_attachments, default: {}
-        after_commit :sync_content_security_attachments
+        after_commit :sync_content_security_attachments, on: %i[create update]
       end
 
       class_methods do

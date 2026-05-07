@@ -252,7 +252,9 @@ module BetterTogether
 
     config.to_prepare do
       ActiveStorage::Blobs::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Blobs::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
       ActiveStorage::Representations::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
     end
 
     rake_tasks do

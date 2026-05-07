@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'socket'
+require 'timeout'
 
 module BetterTogether
   module ContentSecurity

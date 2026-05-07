@@ -6,6 +6,7 @@ module BetterTogether
     class AttachmentEnrollment
       class << self
         def sync_attachment!(record:, attachment_name:, surface:)
+          return unless Configuration.enabled?
           return unless Configuration.enabled_for_surface?(surface)
 
           attachment = record.public_send(attachment_name)

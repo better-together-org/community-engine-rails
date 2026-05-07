@@ -8,14 +8,33 @@ module BetterTogether
 
       discard_on ActiveJob::DeserializationError
 
+      # Retry transient clamd connection failures (restart, brief outage) before escalating.
+      # After exhaustion the item stays pending_scan; a monitoring alert should surface stale items.
+      retry_on BetterTogether::ContentSecurity::ClamAvClient::ConnectionError,
+               wait: :polynomially_longer, attempts: 3
+
       def perform(item_id)
         item = BetterTogether::ContentSecurity::Item.find(item_id)
+        return if item_already_assessed?(item)
+
         result = BetterTogether::ContentSecurity::Scanner.scan_blob(item.blob)
+
+        # Re-raise so retry_on can handle transient connection failures without creating a safety case.
+        raise BetterTogether::ContentSecurity::ClamAvClient::ConnectionError, result.error_summary if clamav_connection_error?(result)
+
         scan_event = create_scan_event!(item, result)
         apply_result!(item, result, scan_event)
       end
 
       private
+
+      def item_already_assessed?(item)
+        item.lifecycle_state_clean? || item.lifecycle_state_quarantined? || item.lifecycle_state_blocked?
+      end
+
+      def clamav_connection_error?(result)
+        result.status == :error && result.error_class == 'clamav_connection_error'
+      end
 
       def create_scan_event!(item, result)
         item.scan_events.create!(

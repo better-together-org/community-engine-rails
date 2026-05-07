@@ -14,6 +14,8 @@ module BetterTogether
           report = BetterTogether::Report.find_or_initialize_by(reporter: reporter, reportable: attachable)
           populate_report!(report, finding)
           safety_case = report.safety_case
+          return unless safety_case
+
           link_safety_case!(item, finding, safety_case)
           create_internal_note!(safety_case, reporter, finding)
         end
