@@ -25,8 +25,10 @@ sequenceDiagram
 - every webhook event is keyed by Stripe `event.id`
 - only the Stripe subscription events CE currently uses are subscribed
 - the custom CE sync work is enqueued off the webhook request thread
+- checkout success redirects also perform an idempotent CE-side sync using the Checkout Session ID
 - subscription events attempt to resolve the community from Stripe metadata first, then `Pay::Customer`
 - unsupported or unresolvable events are marked as ignored instead of failing silently
+- local subscriptions now record sync source, last sync timestamp, and the most recent Stripe event or Checkout Session reference
 
 ## Required Operational Expectations
 
@@ -44,7 +46,8 @@ sequenceDiagram
 ## Recommended Next Hardening Steps
 
 1. Move the processor call into an idempotent Active Job with a narrow synchronous ack path.
-2. Add a replay-safe reconciliation job that compares Stripe subscriptions against local `BetterTogether::Billing::Subscription` records.
-3. Capture more processor state for operational support, including Stripe customer id, last invoice id, and last event creation time.
-4. Add admin-visible error states for failed syncs and portal unavailability.
-5. Add alerting on repeated webhook processing failures.
+2. Add invoice, payment failure, and dispute processors before enabling production self-service access decisions.
+3. Extend reconciliation so unresolved drift is flagged explicitly for operators, not just resynchronized when possible.
+4. Capture more processor state for operational support, including last invoice id and last event creation time.
+5. Add admin-visible error states for failed syncs and portal unavailability.
+6. Add alerting on repeated webhook processing failures.

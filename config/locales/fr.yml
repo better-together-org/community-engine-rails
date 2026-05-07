@@ -874,10 +874,16 @@ fr:
     billing:
       available_plans: Plans disponibles
       cancel_at_period_end: 'Annuler a la fin de la periode :'
+      checkout_session_invalid: 'La session Stripe n''a pas pu etre synchronisee :
+        %<message>s'
+      checkout_sync_complete: Le paiement Stripe a ete synchronise avec succes.
+      checkout_sync_pending: Le paiement Stripe a ete recu, mais aucun etat d'abonnement
+        n'a encore pu etre synchronise.
       current_period_ends: 'Fin de la periode courante :'
       current_subscription: Abonnement actuel
       heading: Facturation de la communaute
       interval: Intervalle
+      last_synced_at: 'Derniere synchronisation :'
       manage_link: Gerer la facturation
       no_plans: Aucun plan de facturation actif n'est encore configure.
       no_subscription: Aucun abonnement synchronise n'est encore enregistre pour cette
@@ -888,9 +894,14 @@ fr:
       portal_unavailable: 'Le portail de facturation n''est pas encore disponible
         : %<message>s'
       price: Prix
+      reconcile_now: Reconciler maintenant
+      reconciliation_enqueued: Une tache de reconciliation Stripe a ete ajoutee pour
+        cette communaute.
       start_checkout: Commencer le paiement
       subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces au portail
         de facturation pour cette communaute.
+      sync_source: 'Source de synchronisation :'
+      unknown_sync_source: Inconnue
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire

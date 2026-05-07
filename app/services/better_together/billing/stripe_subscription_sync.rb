@@ -1,0 +1,173 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  module Billing
+    # Synchronizes a Stripe subscription object into the local CE billing read model.
+    class StripeSubscriptionSync # rubocop:todo Metrics/ClassLength
+      Result = Struct.new(
+        :synced,
+        :community,
+        :billing_subscription,
+        :billing_plan,
+        :reason,
+        keyword_init: true
+      )
+
+      def call(subscription:, community: nil, source: 'stripe_sync', event: nil, checkout_session_id: nil)
+        resolved_community = community || resolve_community(subscription)
+        return Result.new(synced: false, reason: :community_not_found) unless resolved_community
+
+        billing_plan = resolve_billing_plan(subscription)
+        return Result.new(community: resolved_community, synced: false, reason: :billing_plan_not_found) unless billing_plan
+
+        persist_subscription(
+          subscription,
+          build_context(
+            community: resolved_community,
+            billing_plan:,
+            source:,
+            event:,
+            checkout_session_id:
+          )
+        )
+      end
+
+      private
+
+      def build_subscription(subscription)
+        BetterTogether::Billing::Subscription.find_or_initialize_by(
+          processor: 'stripe',
+          processor_subscription_id: subscription.id
+        )
+      end
+
+      def subscription_attributes(subscription, context)
+        subscription_state_attributes(subscription).merge(
+          ownership_attributes(context)
+        ).merge(
+          sync_tracking_attributes(context)
+        )
+      end
+
+      def subscription_state_attributes(subscription)
+        {
+          pay_customer_id: stripe_customer_id(subscription),
+          status: normalize_status(subscription.status),
+          current_period_start: stripe_timestamp(subscription.current_period_start),
+          current_period_end: stripe_timestamp(subscription.current_period_end),
+          cancel_at_period_end: ActiveModel::Type::Boolean.new.cast(subscription.cancel_at_period_end),
+          metadata: object_metadata(subscription)
+        }
+      end
+
+      def ownership_attributes(context)
+        {
+          community: context[:community],
+          billing_plan: context[:billing_plan]
+        }
+      end
+
+      def sync_tracking_attributes(context)
+        {
+          last_synced_at: Time.current,
+          sync_source: context[:source],
+          latest_processor_event_id: context[:event]&.id,
+          latest_checkout_session_id: context[:checkout_session_id]
+        }
+      end
+
+      def resolve_community(subscription)
+        metadata = object_metadata(subscription)
+
+        BetterTogether::Community.find_by(id: metadata['bt_community_id']) ||
+          pay_customer_for(subscription)&.owner
+      end
+
+      def resolve_billing_plan(subscription)
+        metadata = object_metadata(subscription)
+
+        BetterTogether::Billing::Plan.find_by(id: metadata['bt_billing_plan_id']) ||
+          BetterTogether::Billing::Plan.find_by(identifier: metadata['bt_billing_plan_identifier']) ||
+          BetterTogether::Billing::Plan.find_by(stripe_price_id: stripe_price_id(subscription))
+      end
+
+      def pay_customer_for(subscription)
+        customer_id = stripe_customer_id(subscription)
+        return if customer_id.blank?
+
+        Pay::Customer.find_by(processor: 'stripe', processor_id: customer_id)
+      end
+
+      def stripe_customer_id(subscription)
+        return subscription.customer if subscription.respond_to?(:customer)
+
+        nil
+      end
+
+      def object_metadata(object)
+        return {} unless object.respond_to?(:metadata)
+
+        object.metadata.to_h
+      end
+
+      def stripe_price_id(subscription)
+        line_item_price_id(subscription) || legacy_plan_price_id(subscription)
+      end
+
+      def line_item_price_id(subscription)
+        return unless subscription.respond_to?(:items) && subscription.items.respond_to?(:data)
+
+        first_item = subscription.items.data.first
+        return unless first_item
+        return unless first_item.respond_to?(:price)
+
+        price = first_item.price
+        price.id if price.respond_to?(:id)
+      end
+
+      def legacy_plan_price_id(subscription)
+        return unless subscription.respond_to?(:plan)
+
+        plan = subscription.plan
+        plan.id if plan.respond_to?(:id)
+      end
+
+      def normalize_status(status)
+        normalized = status.to_s
+        return normalized if BetterTogether::Billing::Subscription::STATUSES.include?(normalized)
+
+        'incomplete'
+      end
+
+      def stripe_timestamp(value)
+        return if value.blank?
+
+        Time.zone.at(value.to_i)
+      end
+
+      def build_context(community:, billing_plan:, source:, event:, checkout_session_id:)
+        {
+          community:,
+          billing_plan:,
+          source:,
+          event:,
+          checkout_session_id:
+        }
+      end
+
+      def persist_subscription(subscription, context)
+        billing_subscription = build_subscription(subscription)
+        billing_subscription.assign_attributes(subscription_attributes(subscription, context))
+        billing_subscription.save!
+
+        Result.new(
+          synced: true,
+          community: context[:community],
+          billing_subscription:,
+          billing_plan: context[:billing_plan],
+          reason: :synced
+        )
+      end
+    end
+  end
+end

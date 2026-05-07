@@ -5,6 +5,7 @@ module BetterTogether
     # Enqueues the Stripe events CE currently needs for local billing synchronization.
     class StripeEventDispatcher
       EVENT_TYPES = %w[
+        stripe.checkout.session.completed
         stripe.customer.subscription.created
         stripe.customer.subscription.updated
         stripe.customer.subscription.deleted

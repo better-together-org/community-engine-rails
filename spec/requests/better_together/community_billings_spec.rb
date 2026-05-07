@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::CommunityBillings' do
+  include ActiveJob::TestHelper
+
   let(:locale) { I18n.default_locale }
   let(:platform_manager) do
     find_or_create_test_user("community-billing-manager-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#', :platform_manager)
@@ -19,6 +21,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
   end
 
   before do
+    clear_enqueued_jobs
     sign_in platform_manager
   end
 
@@ -29,6 +32,25 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Community Billing')
       expect(response.body).to include('Stewardship')
+    end
+
+    it 'synchronizes a checkout session when one is returned from Stripe' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      sync_result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
+        synced: true,
+        community:,
+        reason: :synced
+      )
+      sync_service = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync, call: sync_result)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+      allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(sync_service)
+
+      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Stripe checkout was synchronized successfully.')
+      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', community:)
     end
   end
 
@@ -45,7 +67,14 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       post better_together.checkout_community_billing_path(community, locale:), params: { billing_plan_id: billing_plan.id }
 
       expect(response).to redirect_to('https://checkout.stripe.test/session')
-      expect(processor).to have_received(:checkout).with(hash_including(mode: 'subscription', allow_promotion_codes: true))
+      expect(processor).to have_received(:checkout).with(
+        hash_including(
+          mode: 'subscription',
+          allow_promotion_codes: true,
+          success_url: a_string_including('{CHECKOUT_SESSION_ID}'),
+          cancel_url: a_string_excluding('{CHECKOUT_SESSION_ID}')
+        )
+      )
     end
   end
 
@@ -62,6 +91,20 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       post better_together.portal_community_billing_path(community, locale:)
 
       expect(response).to redirect_to('https://billing.stripe.test/session')
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/reconcile' do
+    it 'queues a reconciliation job and redirects to billing' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+
+      expect do
+        post better_together.reconcile_community_billing_path(community, locale:)
+      end.to have_enqueued_job(BetterTogether::Billing::ReconcileStripeCommunityBillingJob).with(community.id)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
     end
   end
 end

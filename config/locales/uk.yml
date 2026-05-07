@@ -856,10 +856,15 @@ uk:
     billing:
       available_plans: Dostupni taryfy
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
+      checkout_session_invalid: 'Sesiiu Stripe ne vdalosia synchronizuvaty: %<message>s'
+      checkout_sync_complete: Platezh Stripe uspishno synchronizovano.
+      checkout_sync_pending: Platezh Stripe otrymano, ale stan pidpysky shche ne vdalosia
+        synchronizuvaty.
       current_period_ends: 'Potochnyi period zakinchuietsia:'
       current_subscription: Potochna pidpyska
       heading: Billing spilnoty
       interval: Interval
+      last_synced_at: 'Ostannia synchronizatsiia:'
       manage_link: Keruvaty billingom
       no_plans: Aktyvni platezhni taryfy shche ne nalashtovano.
       no_subscription: Dlia tsiiei spilnoty shche ne zafiksovano sinhronizovanoi pidpysky.
@@ -868,9 +873,14 @@ uk:
       plan_not_found: Tsei billing plan nedostupnyi.
       portal_unavailable: 'Billing portal shche nedostupnyi: %<message>s'
       price: Tsina
+      reconcile_now: Synchronizuvaty zaraz
+      reconciliation_enqueued: Dlia tsiiei spilnoty postavleno v cherhu zadachu reconciliatsii
+        Stripe.
       start_checkout: Pochaty oplatu
       subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing
         portalu dlia tsiiei spilnoty.
+      sync_source: 'Dzherelo synchronizatsii:'
+      unknown_sync_source: Nevidome
     bot_defense:
       errors:
         expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму

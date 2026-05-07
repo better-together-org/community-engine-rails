@@ -861,10 +861,16 @@ en:
     billing:
       available_plans: Available plans
       cancel_at_period_end: 'Cancel at period end:'
+      checkout_session_invalid: 'The Stripe checkout session could not be synchronized:
+        %<message>s'
+      checkout_sync_complete: Stripe checkout was synchronized successfully.
+      checkout_sync_pending: Stripe checkout was received, but no subscription state
+        could be synchronized yet.
       current_period_ends: 'Current period ends:'
       current_subscription: Current subscription
       heading: Community Billing
       interval: Interval
+      last_synced_at: 'Last synced:'
       manage_link: Manage billing
       no_plans: No active billing plans are configured yet.
       no_subscription: No synced subscription is recorded for this community yet.
@@ -873,9 +879,13 @@ en:
       plan_not_found: That billing plan is not available.
       portal_unavailable: 'The billing portal is not available yet: %<message>s'
       price: Price
+      reconcile_now: Reconcile now
+      reconciliation_enqueued: A Stripe reconciliation job was queued for this community.
       start_checkout: Start checkout
       subheading: Manage Stripe checkout, subscription status, and billing portal
         access for this community.
+      sync_source: 'Sync source:'
+      unknown_sync_source: Unknown
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and

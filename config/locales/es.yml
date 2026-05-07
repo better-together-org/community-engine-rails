@@ -870,10 +870,15 @@ es:
     billing:
       available_plans: Planes disponibles
       cancel_at_period_end: 'Cancelar al final del periodo:'
+      checkout_session_invalid: 'La sesion de Stripe no pudo sincronizarse: %<message>s'
+      checkout_sync_complete: El pago de Stripe se sincronizo correctamente.
+      checkout_sync_pending: Se recibio el pago de Stripe, pero todavia no pudo sincronizarse
+        el estado de la suscripcion.
       current_period_ends: 'El periodo actual termina:'
       current_subscription: Suscripcion actual
       heading: Facturacion de la comunidad
       interval: Intervalo
+      last_synced_at: 'Ultima sincronizacion:'
       manage_link: Gestionar facturacion
       no_plans: Todavia no hay planes de facturacion activos configurados.
       no_subscription: Todavia no hay una suscripcion sincronizada registrada para
@@ -883,9 +888,14 @@ es:
       plan_not_found: Ese plan de facturacion no esta disponible.
       portal_unavailable: 'El portal de facturacion todavia no esta disponible: %<message>s'
       price: Precio
+      reconcile_now: Reconciliar ahora
+      reconciliation_enqueued: Se puso en cola un trabajo de conciliacion de Stripe
+        para esta comunidad.
       start_checkout: Iniciar pago
       subheading: Gestiona el pago de Stripe, el estado de la suscripcion y el acceso
         al portal de facturacion para esta comunidad.
+      sync_source: 'Fuente de sincronizacion:'
+      unknown_sync_source: Desconocida
     bot_defense:
       errors:
         expired_challenge: La verificación de seguridad venció. Recarga el formulario

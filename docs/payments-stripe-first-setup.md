@@ -19,6 +19,16 @@ Set the standard `pay` and Stripe credentials in the host app environment:
 
 If the host app uses Rails encrypted credentials instead of plain environment variables, map the same values into the initializer path expected by `pay`.
 
+## Queueing Requirement
+
+Community Engine now enqueues CE-specific Stripe synchronization work in Active Job. Production rollout requires:
+
+- a persistent Active Job backend
+- running workers for the queue used by billing jobs
+- alerting on repeated job failures
+
+Without that, webhook acknowledgement remains functional, but CE-side synchronization becomes less resilient than intended.
+
 ## Database Preparation
 
 Run the engine migrations in the host app:
@@ -54,6 +64,7 @@ Create or confirm:
 
 Subscribe the webhook endpoint to at least:
 
+- `checkout.session.completed`
 - `customer.subscription.created`
 - `customer.subscription.updated`
 - `customer.subscription.deleted`
@@ -76,5 +87,7 @@ bin/dc-run bundle exec rspec spec/requests/better_together/community_billings_sp
 Community admins reach billing from the community edit surface. The billing page then supports:
 
 - hosted Stripe checkout for a selected local plan
+- immediate checkout return synchronization using `checkout_session_id`
 - Stripe Billing Portal redirect
+- manual reconciliation trigger for the community's Stripe customer
 - read-only display of the latest synced local subscription state

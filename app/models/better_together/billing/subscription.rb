@@ -41,6 +41,10 @@ module BetterTogether
       def activeish?
         status.in?(%w[trialing active past_due])
       end
+
+      def last_synced_recently?(threshold: 15.minutes.ago)
+        last_synced_at.present? && last_synced_at >= threshold
+      end
     end
   end
 end

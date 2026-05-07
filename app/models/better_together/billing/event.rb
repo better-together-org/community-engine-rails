@@ -28,6 +28,10 @@ module BetterTogether
       def processed?
         processing_status == 'processed'
       end
+
+      def failed?
+        processing_status == 'failed'
+      end
     end
   end
 end

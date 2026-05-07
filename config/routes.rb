@@ -109,6 +109,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                    controller: 'community_billings' do
             post :checkout
             post :portal
+            post :reconcile
           end
 
           resources :invitations, only: %i[create destroy] do

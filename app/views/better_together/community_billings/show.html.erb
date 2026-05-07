@@ -15,6 +15,10 @@
       <%= link_to t('globals.edit', default: 'Edit'),
                   edit_community_path(@community, locale: I18n.locale),
                   class: 'btn btn-outline-secondary' %>
+      <%= button_to t('better_together.billing.reconcile_now', default: 'Reconcile now'),
+                    reconcile_community_billing_path(@community, locale: I18n.locale),
+                    method: :post,
+                    class: 'btn btn-outline-secondary' %>
       <%= button_to t('better_together.billing.open_portal', default: 'Open billing portal'),
                     portal_community_billing_path(@community, locale: I18n.locale),
                     method: :post,
@@ -33,6 +37,14 @@
             <p class="mb-2"><strong><%= @billing_subscription.billing_plan.name %></strong></p>
             <p class="mb-2">
               <span class="badge text-bg-primary"><%= @billing_subscription.status %></span>
+            </p>
+            <p class="mb-1">
+              <%= t('better_together.billing.last_synced_at', default: 'Last synced:') %>
+              <strong><%= l(@billing_subscription.last_synced_at, format: :long) if @billing_subscription.last_synced_at %></strong>
+            </p>
+            <p class="mb-1">
+              <%= t('better_together.billing.sync_source', default: 'Sync source:') %>
+              <strong><%= @billing_subscription.sync_source.presence || t('better_together.billing.unknown_sync_source', default: 'Unknown') %></strong>
             </p>
             <p class="mb-1">
               <%= t('better_together.billing.current_period_ends', default: 'Current period ends:') %>

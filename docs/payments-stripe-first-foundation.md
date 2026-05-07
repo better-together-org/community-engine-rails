@@ -10,14 +10,17 @@ This implementation includes:
 - guarded Pay migrations for host apps with partial schema state
 - `BetterTogether::Community` as the billable Stripe customer owner
 - community-admin billing page with hosted checkout and billing portal links
-- local billing plan, subscription, and event models
+- local billing plan, subscription, and event models with sync tracking
+- a CE-owned checkout return path that can synchronize Stripe checkout completion immediately
 - Stripe webhook processing that enqueues narrow subscription events, persists BTS billing events, and syncs local subscription state
+- a manual and job-driven community reconciliation path for Stripe subscriptions
 
 This implementation does not yet include:
 
 - dunning and failed-payment recovery UX
 - automated plan seeding
 - tax, invoicing, or metered-billing flows
+- automated remediation for unresolved reconciliation mismatches
 
 ## Architecture
 
@@ -29,13 +32,19 @@ flowchart LR
   Checkout --> Stripe[Stripe]
   Portal --> Stripe
   Stripe -->|webhooks| PayWebhook[/pay/webhooks/stripe]
+  Stripe -->|redirect with session id| ReturnFlow[Community Billing Return Flow]
   PayWebhook --> PayGem[Pay webhook delegator]
   PayGem --> Job[ProcessStripeEventJob]
   Job --> Processor[StripeEventProcessor]
+  ReturnFlow --> CheckoutSync[StripeCheckoutSessionSync]
+  CheckoutSync --> SubSync[StripeSubscriptionSync]
+  ReconcileJob[ReconcileStripeCommunityBillingJob] --> Reconciler[StripeCommunityReconciliation]
+  Reconciler --> SubSync
   Processor --> EventLog[(better_together_billing_events)]
   Processor --> LocalSubs[(better_together_billing_subscriptions)]
   Processor --> Plans[(better_together_billing_plans)]
   Processor --> Communities[(better_together_communities)]
+  SubSync --> LocalSubs
 ```
 
 ## Billing Model
