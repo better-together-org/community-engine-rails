@@ -11,11 +11,10 @@ This implementation includes:
 - `BetterTogether::Community` as the billable Stripe customer owner
 - community-admin billing page with hosted checkout and billing portal links
 - local billing plan, subscription, and event models
-- Stripe webhook processing that persists BTS billing events and syncs local subscription state
+- Stripe webhook processing that enqueues narrow subscription events, persists BTS billing events, and syncs local subscription state
 
 This implementation does not yet include:
 
-- asynchronous webhook processing jobs
 - dunning and failed-payment recovery UX
 - automated plan seeding
 - tax, invoicing, or metered-billing flows
@@ -31,7 +30,8 @@ flowchart LR
   Portal --> Stripe
   Stripe -->|webhooks| PayWebhook[/pay/webhooks/stripe]
   PayWebhook --> PayGem[Pay webhook delegator]
-  PayGem --> Processor[StripeEventProcessor]
+  PayGem --> Job[ProcessStripeEventJob]
+  Job --> Processor[StripeEventProcessor]
   Processor --> EventLog[(better_together_billing_events)]
   Processor --> LocalSubs[(better_together_billing_subscriptions)]
   Processor --> Plans[(better_together_billing_plans)]

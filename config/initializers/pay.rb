@@ -10,5 +10,9 @@ Pay.setup do |config|
 end
 
 ActiveSupport.on_load(:pay) do
-  Pay::Webhooks.delegator.all BetterTogether::Billing::StripeEventProcessor.new
+  dispatcher = BetterTogether::Billing::StripeEventDispatcher.new
+
+  BetterTogether::Billing::StripeEventDispatcher::EVENT_TYPES.each do |event_name|
+    Pay::Webhooks.delegator.subscribe(event_name, dispatcher)
+  end
 end

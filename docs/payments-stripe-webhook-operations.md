@@ -8,12 +8,14 @@ This guide describes the current webhook path and the operational gaps that stil
 sequenceDiagram
   participant Stripe
   participant Pay as Pay Webhook Endpoint
+  participant Job as ProcessStripeEventJob
   participant Processor as StripeEventProcessor
   participant EventLog as Billing Event Log
   participant Subs as Local Subscription Table
 
   Stripe->>Pay: customer.subscription.*
-  Pay->>Processor: parsed Stripe event
+  Pay->>Job: enqueue payload
+  Job->>Processor: reconstruct Stripe event and process
   Processor->>EventLog: upsert event payload and processing state
   Processor->>Subs: create or update subscription snapshot
 ```
@@ -21,7 +23,8 @@ sequenceDiagram
 ## Processing Contract
 
 - every webhook event is keyed by Stripe `event.id`
-- a BTS billing event record is created or updated before the request returns
+- only the Stripe subscription events CE currently uses are subscribed
+- the custom CE sync work is enqueued off the webhook request thread
 - subscription events attempt to resolve the community from Stripe metadata first, then `Pay::Customer`
 - unsupported or unresolvable events are marked as ignored instead of failing silently
 
@@ -34,7 +37,6 @@ sequenceDiagram
 
 ## Known Gaps Before Production Hardening
 
-- webhook work is still processed inline in the request cycle
 - there is no dead-letter or retry queue for local sync failures
 - invoice, payment failure, and charge dispute events are not yet surfaced in CE UX
 - subscription reconciliation is event-driven only and does not yet include a scheduled backfill job

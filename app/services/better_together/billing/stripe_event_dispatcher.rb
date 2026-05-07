@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  module Billing
+    # Enqueues the Stripe events CE currently needs for local billing synchronization.
+    class StripeEventDispatcher
+      EVENT_TYPES = %w[
+        stripe.customer.subscription.created
+        stripe.customer.subscription.updated
+        stripe.customer.subscription.deleted
+        stripe.customer.subscription.paused
+        stripe.customer.subscription.resumed
+        stripe.customer.subscription.trial_will_end
+      ].freeze
+
+      def call(event)
+        BetterTogether::Billing::ProcessStripeEventJob.perform_later(event.to_hash)
+      end
+    end
+  end
+end
