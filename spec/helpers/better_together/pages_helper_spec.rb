@@ -90,7 +90,10 @@ RSpec.describe BetterTogether::PagesHelper do
       allow(helper).to receive(:render).with(content_blocks).and_return('rendered-blocks')
 
       expect(Rails.cache).to receive(:fetch).with(
-        ['page_content', page.cache_key_with_version, I18n.locale, 'guest', 'v2'],
+        ['page_content', page.cache_key_with_version,
+         page.page_blocks.maximum(:updated_at),
+         page.blocks.maximum(:updated_at),
+         I18n.locale, 'guest', 'v2'],
         expires_in: 1.minute
       ).and_yield
 

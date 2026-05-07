@@ -12,6 +12,8 @@ RSpec.describe BetterTogether::ApplicationHelper do
   end
 
   describe '#host_community_primary_email' do
+    before { configure_host_platform }
+
     let(:community) { BetterTogether::Community.find_by!(host: true) }
     let(:contact_detail) { community.contact_detail || create(:contact_detail, contactable: community) }
 
