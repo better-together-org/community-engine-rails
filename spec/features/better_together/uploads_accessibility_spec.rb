@@ -56,7 +56,7 @@ RSpec.describe 'uploads accessibility', :accessibility, :js, retry: 0 do
       restrict_upload!(restricted)
 
       visit file_index_path(locale: I18n.default_locale)
-      expect(page).to have_css('[data-better_together--uploads-target="item"]', wait: 10)
+      find('[data-better_together--uploads-target="item"]', wait: 10)
     end
 
     it 'passes WCAG 2.1 AA on the uploads gallery page' do
@@ -72,7 +72,7 @@ RSpec.describe 'uploads accessibility', :accessibility, :js, retry: 0 do
 
       visit new_content_block_path(locale: I18n.default_locale, block_type: 'BetterTogether::Content::Image')
       click_button 'Choose from library'
-      expect(page).to have_css('.modal.show', wait: 10)
+      find('.modal.show', wait: 10)
     end
 
     it 'passes WCAG 2.1 AA inside the library modal with images present' do
@@ -86,7 +86,7 @@ RSpec.describe 'uploads accessibility', :accessibility, :js, retry: 0 do
     before do
       visit new_content_block_path(locale: I18n.default_locale, block_type: 'BetterTogether::Content::Image')
       click_button 'Choose from library'
-      expect(page).to have_css('.modal.show', wait: 10)
+      find('.modal.show', wait: 10)
     end
 
     it 'passes WCAG 2.1 AA inside the library modal with no images' do
