@@ -17,12 +17,14 @@ module BetterTogether
         item = BetterTogether::ContentSecurity::Item.find(item_id)
         return if item_already_assessed?(item)
 
+        started_at = Time.current
         result = BetterTogether::ContentSecurity::Scanner.scan_blob(item.blob)
+        finished_at = Time.current
 
         # Re-raise so retry_on can handle transient connection failures without creating a safety case.
         raise BetterTogether::ContentSecurity::ClamAvClient::ConnectionError, result.error_summary if clamav_connection_error?(result)
 
-        scan_event = create_scan_event!(item, result)
+        scan_event = create_scan_event!(item, result, started_at:, finished_at:)
         apply_result!(item, result, scan_event)
       end
 
@@ -36,7 +38,7 @@ module BetterTogether
         result.status == :error && result.error_class == 'clamav_connection_error'
       end
 
-      def create_scan_event!(item, result)
+      def create_scan_event!(item, result, started_at:, finished_at:)
         item.scan_events.create!(
           status: scan_event_status(result),
           plane: 'technical',
@@ -46,8 +48,8 @@ module BetterTogether
           signature_name: result.signature_name,
           error_class: result.error_class,
           error_summary: result.error_summary,
-          started_at: Time.current,
-          finished_at: Time.current
+          started_at:,
+          finished_at:
         )
       end
 

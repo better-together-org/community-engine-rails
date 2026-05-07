@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.1]
+class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.2]
   def change
     create_content_security_items_table
     create_content_security_scan_events_table
@@ -10,8 +10,7 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.1]
   private
 
   def create_content_security_items_table
-    create_table :better_together_content_security_items, id: :uuid do |t|
-      t.integer :lock_version, default: 0, null: false
+    create_bt_table :content_security_items do |t|
       t.uuid :blob_id, null: false
       t.references :attachable, polymorphic: true, null: false, type: :uuid, index: false
       t.references :safety_case, type: :uuid, foreign_key: { to_table: :better_together_safety_cases }
@@ -25,7 +24,6 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.1]
       t.string :last_error_class
       t.text :last_error_summary
       t.jsonb :metadata, null: false, default: {}
-      t.timestamps
     end
 
     add_index :better_together_content_security_items,
@@ -41,8 +39,7 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.1]
   end
 
   def create_content_security_scan_events_table
-    create_table :better_together_content_security_scan_events, id: :uuid do |t|
-      t.integer :lock_version, default: 0, null: false
+    create_bt_table :content_security_scan_events do |t|
       t.references :item, null: false, type: :uuid, foreign_key: { to_table: :better_together_content_security_items }
       t.string :status, null: false, default: 'started'
       t.string :plane, null: false, default: 'technical'
@@ -55,7 +52,6 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.1]
       t.datetime :started_at, null: false
       t.datetime :finished_at
       t.jsonb :metadata, null: false, default: {}
-      t.timestamps
     end
 
     add_index :better_together_content_security_scan_events, :status
@@ -63,8 +59,7 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.1]
   end
 
   def create_content_security_findings_table
-    create_table :better_together_content_security_findings, id: :uuid do |t|
-      t.integer :lock_version, default: 0, null: false
+    create_bt_table :content_security_findings do |t|
       t.references :item, null: false, type: :uuid, foreign_key: { to_table: :better_together_content_security_items }
       t.references :scan_event, null: false, type: :uuid,
                                 foreign_key: { to_table: :better_together_content_security_scan_events }
@@ -78,7 +73,6 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.1]
       t.text :evidence_summary
       t.datetime :detected_at, null: false
       t.jsonb :metadata, null: false, default: {}
-      t.timestamps
     end
 
     add_index :better_together_content_security_findings, :plane

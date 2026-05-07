@@ -76,7 +76,7 @@ RSpec.describe BetterTogether::ContentSecurity::ScanAttachmentJob do
     expect(item.safety_case.report.category).to eq('malware_detected')
   end
 
-  it 'holds uploads for review when the scanner connection fails' do
+  it 're-raises ClamAvClient::ConnectionError so retry_on can handle transient failures' do
     item = upload.content_security_item
     result = BetterTogether::ContentSecurity::Scanner::Result.new(
       status: :error,
@@ -87,11 +87,41 @@ RSpec.describe BetterTogether::ContentSecurity::ScanAttachmentJob do
     )
     allow(BetterTogether::ContentSecurity::Scanner).to receive(:scan_blob).and_return(result)
 
+    expect { described_class.perform_now(item.id) }.to raise_error(
+      BetterTogether::ContentSecurity::ClamAvClient::ConnectionError
+    )
+
+    # Item stays pending_scan — not transitioned to review_required — so no false safety case.
+    expect(item.reload).to be_lifecycle_state_pending_scan
+  end
+
+  it 'holds uploads for review when a non-connection scan error occurs' do
+    item = upload.content_security_item
+    result = BetterTogether::ContentSecurity::Scanner::Result.new(
+      status: :error,
+      verdict: 'review_required',
+      scanner_name: 'clamav',
+      error_class: 'clamav_scan_error',
+      error_summary: 'Scanner internal error'
+    )
+    allow(BetterTogether::ContentSecurity::Scanner).to receive(:scan_blob).and_return(result)
+
     described_class.perform_now(item.id)
 
     expect(item.reload).to be_lifecycle_state_review_required
-    expect(item.last_error_class).to eq('clamav_connection_error')
+    expect(item.last_error_class).to eq('clamav_scan_error')
     expect(item.safety_case).to be_present
     expect(item.safety_case.report.category).to eq('scan_failure')
+  end
+
+  it 'skips already-assessed items without re-scanning' do
+    item = upload.content_security_item
+    item.update!(lifecycle_state: 'clean', aggregate_verdict: 'clean', released_at: Time.current)
+
+    expect(BetterTogether::ContentSecurity::Scanner).not_to receive(:scan_blob)
+
+    described_class.perform_now(item.id)
+
+    expect(item.reload).to be_lifecycle_state_clean
   end
 end
