@@ -24,6 +24,10 @@ module BetterTogether
 
     let(:controller) { controller_class.new }
 
+    before do
+      controller.instance_variable_set(:@_response, ActionDispatch::TestResponse.create)
+    end
+
     describe '#publicly_accessible?' do
       context 'when the record is nil' do
         it 'returns false' do
@@ -111,6 +115,37 @@ module BetterTogether
           expect(controller).to receive(:head).with(:forbidden)
           controller.send(:enforce_download_policy!, record)
         end
+      end
+    end
+
+    describe '#apply_media_cache_headers' do
+      let(:blob) { instance_double(ActiveStorage::Blob) }
+
+      before do
+        controller.instance_variable_set(:@blob, blob)
+      end
+
+      it 'marks public blobs as public cacheable' do
+        allow(BetterTogether::MediaCachePolicy).to receive(:for_blob).with(blob)
+                                                              .and_return(instance_double(BetterTogether::MediaCachePolicy,
+                                                                                          cache_scope: 'public',
+                                                                                          public?: true))
+
+        controller.send(:apply_media_cache_headers)
+
+        expect(controller.response.headers['X-BTS-Cache-Scope']).to eq('public')
+      end
+
+      it 'marks non-public blobs as private and no-store' do
+        allow(BetterTogether::MediaCachePolicy).to receive(:for_blob).with(blob)
+                                                              .and_return(instance_double(BetterTogether::MediaCachePolicy,
+                                                                                          cache_scope: 'private',
+                                                                                          public?: false))
+
+        controller.send(:apply_media_cache_headers)
+
+        expect(controller.response.headers['X-BTS-Cache-Scope']).to eq('private')
+        expect(controller.response.headers['Cache-Control']).to eq('private, no-store')
       end
     end
 

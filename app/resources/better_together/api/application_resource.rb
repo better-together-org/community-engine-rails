@@ -67,30 +67,16 @@ module BetterTogether
       private
 
       def attachment_proxy_url(attachment)
-        helper_method = route_url_options[:host].present? ? :content_security_service_blob_proxy_url : :content_security_service_blob_proxy_path
-
-        BetterTogether::Engine.routes.url_helpers.public_send(
-          helper_method,
-          attachment.blob.signed_id(expires_in: ::ActiveStorage.urls_expire_in),
-          attachment.filename,
-          **route_url_options
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          attachment,
+          url_options: route_url_options
         )
       end
 
       def variant_proxy_url(variant)
-        helper_method =
-          if route_url_options[:host].present?
-            :content_security_blob_representation_proxy_url
-          else
-            :content_security_blob_representation_proxy_path
-          end
-
-        BetterTogether::Engine.routes.url_helpers.public_send(
-          helper_method,
-          variant.blob.signed_id(expires_in: ::ActiveStorage.urls_expire_in),
-          variant.variation.key,
-          variant.blob.filename,
-          **route_url_options
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          variant,
+          url_options: route_url_options
         )
       end
 

@@ -30,12 +30,12 @@ module BetterTogether
     def storage_proxy_url_for(attachment, **)
       return unless attachment.present?
 
-      proxy_path = rails_storage_proxy_path(attachment, only_path: true, **)
-      if request&.base_url.present?
-        build_url_for_path(request.base_url, proxy_path)
-      else
-        rails_storage_proxy_url(attachment, **)
-      end
+      BetterTogether::MediaUrlBuilder.proxy_url_for(
+        attachment,
+        base_url: request&.base_url,
+        **default_url_options,
+        **
+      )
     end
 
     # Returns the base path configured for BetterTogether.
@@ -184,7 +184,7 @@ module BetterTogether
                      host_community.logo
                    end
 
-      rails_storage_proxy_url(attachment)
+      storage_proxy_url_for(attachment)
     end
 
     # Sets a translated meta description for the current view. Provide the

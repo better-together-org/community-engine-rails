@@ -4,11 +4,12 @@ module BetterTogether
   # rubocop:todo Metrics/ModuleLength
   module PagesHelper # rubocop:todo Style/Documentation, Metrics/ModuleLength
     def render_page_content(page)
-  # rubocop:todo Layout/IndentationWidth
-  Rails.cache.fetch(['page_content', page.cache_key_with_version], expires_in: 1.minute) do
-    # rubocop:enable Layout/IndentationWidth
-    render @page.content_blocks
-  end
+      Rails.cache.fetch(
+        ['page_content', page.cache_key_with_version, I18n.locale, page_visibility_cache_context, 'v2'],
+        expires_in: 1.minute
+      ) do
+        render @page.content_blocks
+      end
     end
 
     def pages_cache_key(pages)
@@ -23,7 +24,7 @@ module BetterTogether
         pages.current_page,
         pages.total_pages,
         pages.size,
-        current_user&.id,
+        page_visibility_cache_context,
         I18n.locale
       ]
     end
@@ -47,9 +48,9 @@ module BetterTogether
         page.id,
         page.updated_at,
         page.page_blocks.maximum(:updated_at),
-        current_user&.id,
+        page_visibility_cache_context,
         I18n.locale,
-        'v1'
+        'v2'
       ]
     end
 
@@ -61,10 +62,18 @@ module BetterTogether
         page.page_blocks.maximum(:updated_at),
         page.blocks.maximum(:updated_at),
         page.sidebar_nav&.cache_key_with_version,
-        current_user&.id,
+        page_visibility_cache_context,
         I18n.locale,
-        'v1'
+        'v2'
       ]
+    end
+
+    def page_visibility_cache_context
+      return send(:nav_permission_cache_stamp) if respond_to?(:nav_permission_cache_stamp, true)
+
+      current_user&.cache_key_with_version || 'guest'
+    rescue StandardError
+      current_user&.cache_key_with_version || 'guest'
     end
 
     def sortable_column_header(column, label)
