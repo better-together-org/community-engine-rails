@@ -18,8 +18,8 @@ gem 'bootsnap', '>= 1.7.0', require: false
 gem 'fog-aws'
 
 # Database adapter for PostgreSQL
-gem 'pg', '>= 0.18', '< 2.0'
 gem 'pay', '~> 11.6'
+gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
 gem 'puma', '~> 8.0'
 
