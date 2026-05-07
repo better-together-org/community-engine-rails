@@ -35,5 +35,12 @@ module BetterTogether
     def resource_class
       Upload
     end
+
+    def resource_collection
+      @resources ||= policy_scope(resource_class)
+                       .includes(:content_security_subjects, file_attachment: :blob)
+
+      instance_variable_set("@#{resource_name(plural: true)}", @resources)
+    end
   end
 end

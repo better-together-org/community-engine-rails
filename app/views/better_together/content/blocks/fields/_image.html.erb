@@ -5,7 +5,7 @@
       .with_creator(current_person)
       .joins(file_attachment: :blob)
       .where('active_storage_blobs.content_type LIKE ?', 'image/%')
-      .includes(:content_security_subjects)
+      .includes(:content_security_subjects, file_attachment: :blob)
       .select do |upload|
         subject = upload.content_security_subjects.detect { |s| s.attachment_name == 'file' }
         subject.nil? || subject.released_for_human_access?

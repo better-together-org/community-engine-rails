@@ -10,7 +10,7 @@ module BetterTogether
     def upload_content_security_state(upload)
       @upload_security_state_cache ||= {}
       @upload_security_state_cache[upload.id] ||= begin
-        subject = upload.file_content_security_subject
+        subject = upload.content_security_subjects.detect { |s| s.attachment_name == 'file' }
         if subject.blank? || subject.released_for_human_access?
           'clean'
         elsif subject.aggregate_verdict.in?(%w[blocked quarantined])
