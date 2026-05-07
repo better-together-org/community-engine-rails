@@ -31,10 +31,12 @@ module BetterTogether
     def storage_proxy_url_for(attachment, **options)
       return unless attachment.present?
 
+      media_url_options = default_url_options.except(:locale, 'locale')
+
       BetterTogether::MediaUrlBuilder.proxy_url_for(
         attachment,
         base_url: request&.base_url,
-        **default_url_options,
+        **media_url_options,
         **options
       )
     end
