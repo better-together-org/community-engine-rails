@@ -16,14 +16,14 @@ module BetterTogether
       def proxy_url_for(attachment_or_variant, base_url: nil, url_options: {}, **options)
         if base_url.present?
           "#{base_url.delete_suffix('/')}#{proxy_path_for(attachment_or_variant, **options)}"
-        elsif url_options.present?
+        elsif url_options[:host].present?
           Rails.application.routes.url_helpers.rails_storage_proxy_url(
             attachment_or_variant,
             **url_options,
             **options
           )
         else
-          Rails.application.routes.url_helpers.rails_storage_proxy_url(
+          proxy_path_for(
             attachment_or_variant,
             **options
           )

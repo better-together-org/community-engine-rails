@@ -62,5 +62,39 @@ RSpec.describe BetterTogether::MediaUrlBuilder, type: :service do
         )
       ).to eq('https://communityengine.app/rails/active_storage/proxy/test')
     end
+
+    it 'falls back to the proxy path when url_options has no host' do
+      allow(described_class).to receive(:proxy_path_for).and_return('/rails/active_storage/proxy/test')
+      allow(route_helpers).to receive(:rails_storage_proxy_url)
+
+      expect(
+        described_class.proxy_url_for(
+          attachment,
+          url_options: { locale: :en },
+          disposition: 'attachment'
+        )
+      ).to eq('/rails/active_storage/proxy/test')
+
+      expect(described_class).to have_received(:proxy_path_for).with(
+        attachment,
+        disposition: 'attachment'
+      )
+      expect(route_helpers).not_to have_received(:rails_storage_proxy_url)
+    end
+
+    it 'falls back to the proxy path when url_options is empty' do
+      allow(described_class).to receive(:proxy_path_for).and_return('/rails/active_storage/proxy/test')
+      allow(route_helpers).to receive(:rails_storage_proxy_url)
+
+      expect(described_class.proxy_url_for(attachment, url_options: {}, disposition: 'attachment')).to eq(
+        '/rails/active_storage/proxy/test'
+      )
+
+      expect(described_class).to have_received(:proxy_path_for).with(
+        attachment,
+        disposition: 'attachment'
+      )
+      expect(route_helpers).not_to have_received(:rails_storage_proxy_url)
+    end
   end
 end
