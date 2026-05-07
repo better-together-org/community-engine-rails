@@ -63,6 +63,10 @@ module BetterTogether
         else
           apply_error_result!(item, result, scan_event)
         end
+      rescue ActiveRecord::StaleObjectError
+        # A concurrent job already processed this item (optimistic locking conflict).
+        # The first writer wins; discard our result rather than crashing.
+        Rails.logger.info "[ScanAttachmentJob] Stale object conflict for item #{item.id} — discarding duplicate result"
       end
 
       def apply_clean_result!(item, result)
