@@ -47,12 +47,64 @@ flowchart LR
   SubSync --> LocalSubs
 ```
 
+## Stakeholders
+
+The current billing slice affects operators and organization-level owners first, not individual end users.
+
+```mermaid
+flowchart TD
+  PM[Platform Manager]
+  CA[Community Admin]
+  Support[BTS Support and Finance]
+  Community[Billable Community]
+  Platform[Primary Platform]
+  Members[Community Members]
+
+  PM --> CA
+  CA --> Community
+  Community --> Platform
+  Community --> Support
+  Platform --> Members
+  Support --> Community
+```
+
+- `Community Admin` and `Platform Manager` are the direct human operators of billing.
+- `Community` is the billable owner and the main operational subject of reconciliation and subscription state.
+- `Primary Platform` is operationally affected, but it is not the processor-facing customer in this release.
+- `Community Members` are indirect stakeholders because billing can affect the hosted space they use.
+- `BTS Support and Finance` rely on the local billing records and event trail for audit, support, and reconciliation.
+
 ## Billing Model
 
 - `BetterTogether::Billing::Plan` is the local catalog record and references the canonical Stripe Price ID.
 - `BetterTogether::Billing::Subscription` is the CE-local subscription read model.
 - `BetterTogether::Billing::Event` stores raw Stripe webhook payloads plus BTS processing state.
 - `Pay::Customer` remains the processor-facing customer record owned by `BetterTogether::Community`.
+
+## Ownership Wiring
+
+```mermaid
+flowchart LR
+  Person[Person]
+  Community[BetterTogether::Community]
+  Platform[BetterTogether::Platform]
+  PayCustomer[Pay::Customer]
+  StripeCustomer[Stripe Customer]
+  LocalSub[Billing Subscription]
+
+  Person -->|administers or creates| Community
+  Community -->|has_one| Platform
+  Community -->|pay_customer| PayCustomer
+  PayCustomer --> StripeCustomer
+  StripeCustomer -->|metadata and processor id| Community
+  StripeCustomer --> LocalSub
+  Community --> LocalSub
+```
+
+- people are currently actors and contacts, not billable owners
+- communities are the organization boundary that own Stripe customer state
+- platforms hang off communities and inherit the operational consequences of billing
+- local billing subscriptions are CE-side read models tied back to the community
 
 ## Why `Community` Is Billable
 
