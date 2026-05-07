@@ -8,10 +8,10 @@ module BetterTogether
         def public_proxy_allowed?(blob)
           return true unless Configuration.enabled?
 
-          item = item_for(blob)
-          return true unless scannable_blob?(blob)
+          context = attachment_context_for(blob)
+          return true unless context
 
-          item&.releasable? == true
+          item_for_context(blob, context)&.releasable? == true
         end
 
         def download_allowed_for_record?(record, attachment_name)
@@ -33,7 +33,7 @@ module BetterTogether
         end
 
         def attachment_context_for(blob)
-          blob.attachments.each do |attachment|
+          blob.attachments.includes(:record).each do |attachment|
             config = attachment.record.class.try(:scannable_attachment_config_for, attachment.name)
             next unless config
             next unless Configuration.enabled_for_surface?(config.fetch(:surface))
@@ -46,8 +46,12 @@ module BetterTogether
 
         def item_for(blob)
           context = attachment_context_for(blob)
-          return nil unless context
+          item_for_context(blob, context) if context
+        end
 
+        private
+
+        def item_for_context(blob, context)
           attachment = context.fetch(:attachment)
           Item.for_attachment(attachment.record, attachment.name).find_by(blob_id: blob.id)
         end

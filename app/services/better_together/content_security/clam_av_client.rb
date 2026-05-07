@@ -27,21 +27,25 @@ module BetterTogether
           response = read_response(socket)
         end
         parse_response(response)
-      rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ETIMEDOUT, SocketError => e
+      rescue Timeout::Error, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ETIMEDOUT, SocketError => e
         raise ConnectionError, e.message
       end
 
       private
 
       def stream_file_to_socket(socket, path)
-        socket.write("zINSTREAM\0")
-        File.open(path, 'rb') do |file|
-          while (chunk = file.read(8192))
-            socket.write([chunk.bytesize].pack('N'))
-            socket.write(chunk)
+        # Timeout covers streaming, not just connect — clamd dying mid-scan would otherwise
+        # block socket.write indefinitely since connect_timeout only applies to handshake.
+        Timeout.timeout(@timeout) do
+          socket.write("zINSTREAM\0")
+          File.open(path, 'rb') do |file|
+            while (chunk = file.read(8192))
+              socket.write([chunk.bytesize].pack('N'))
+              socket.write(chunk)
+            end
           end
+          socket.write([0].pack('N'))
         end
-        socket.write([0].pack('N'))
       end
 
       def read_response(socket)
@@ -55,8 +59,6 @@ module BetterTogether
         end
 
         buffer.delete("\0").strip
-      rescue Timeout::Error => e
-        raise ConnectionError, e.message
       end
 
       def parse_response(response)

@@ -15,13 +15,15 @@ module BetterTogether
       def enforce_content_security!
         return unless @blob.present?
 
-        context = BetterTogether::ContentSecurity::BlobAccessPolicy.attachment_context_for(@blob)
-        return unless context
-
         unless BetterTogether::ContentSecurity::BlobAccessPolicy.public_proxy_allowed?(@blob)
           head :not_found
           return
         end
+
+        # Look up attachment context to determine whether auth enforcement is needed.
+        # Non-scannable blobs (no scans_attachment config) return nil and skip auth.
+        context = BetterTogether::ContentSecurity::BlobAccessPolicy.attachment_context_for(@blob)
+        return unless context
 
         record = context.fetch(:attachment).record
         return if record.respond_to?(:privacy_public?) && record.privacy_public?
