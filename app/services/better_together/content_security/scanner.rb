@@ -54,11 +54,12 @@ module BetterTogether
         end
 
         def execute_clamav_scan(client, blob)
+          scanner_version = client.fetch_version
           blob.open do |file|
             response = client.scan_file(file.path)
-            return clean_result if response.fetch(:status) == :clean
+            return clean_result(scanner_version) if response.fetch(:status) == :clean
 
-            infected_result(response.fetch(:signature_name))
+            infected_result(response.fetch(:signature_name), scanner_version)
           end
         end
 
@@ -71,20 +72,14 @@ module BetterTogether
           )
         end
 
-        def clean_result
-          Result.new(
-            status: :clean,
-            verdict: 'clean',
-            scanner_name: 'clamav'
-          )
+        def clean_result(scanner_version = nil)
+          Result.new(status: :clean, verdict: 'clean', scanner_name: 'clamav', scanner_version:)
         end
 
-        def infected_result(signature_name)
+        def infected_result(signature_name, scanner_version = nil)
           Result.new(
-            status: :infected,
-            verdict: 'quarantined',
-            scanner_name: 'clamav',
-            signature_name: signature_name
+            status: :infected, verdict: 'quarantined', scanner_name: 'clamav',
+            signature_name:, scanner_version:
           )
         end
 

@@ -56,6 +56,8 @@ module BetterTogether
         end
 
         def create_internal_note!(safety_case, reporter, finding)
+          return if safety_case.notes.exists?(body: finding.evidence_summary)
+
           safety_case.notes.create!(
             author: reporter,
             visibility: 'internal_only',

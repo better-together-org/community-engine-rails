@@ -17,6 +17,17 @@ module BetterTogether
         @max_stream_bytes = max_stream_bytes
       end
 
+      def fetch_version
+        response = nil
+        Socket.tcp(@host, @port, connect_timeout: @timeout) do |socket|
+          Timeout.timeout(@timeout) { socket.write("zVERSION\0") }
+          response = read_response(socket)
+        end
+        response
+      rescue StandardError
+        nil
+      end
+
       def scan_file(path)
         size = File.size(path)
         raise Error, "File exceeds ClamAV stream limit (#{size} > #{@max_stream_bytes})" if size > @max_stream_bytes
