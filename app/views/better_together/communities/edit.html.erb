@@ -4,7 +4,14 @@
 <% end %>
 
 <div class="container my-3">
-  <h1 class="mb-4">Editing Community</h1>
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="mb-0">Editing Community</h1>
+    <% if @community.persisted? %>
+      <%= link_to t('better_together.billing.manage_link', default: 'Manage billing'),
+                  community_billing_path(@community, locale: I18n.locale),
+                  class: 'btn btn-outline-primary' %>
+    <% end %>
+  </div>
 
   <%= render "form", community: @community %>
 </div>

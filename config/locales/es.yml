@@ -867,6 +867,25 @@ es:
         subject_removed_by: "%{actor_name} eliminó tu autoría de %{page}"
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
+    billing:
+      available_plans: Planes disponibles
+      cancel_at_period_end: 'Cancelar al final del periodo:'
+      current_period_ends: 'El periodo actual termina:'
+      current_subscription: Suscripcion actual
+      heading: Facturacion de la comunidad
+      interval: Intervalo
+      manage_link: Gestionar facturacion
+      no_plans: Todavia no hay planes de facturacion activos configurados.
+      no_subscription: Todavia no hay una suscripcion sincronizada registrada para
+        esta comunidad.
+      open_portal: Abrir portal de facturacion
+      page_title: Facturacion de la comunidad
+      plan_not_found: Ese plan de facturacion no esta disponible.
+      portal_unavailable: 'El portal de facturacion todavia no esta disponible: %<message>s'
+      price: Precio
+      start_checkout: Iniciar pago
+      subheading: Gestiona el pago de Stripe, el estado de la suscripcion y el acceso
+        al portal de facturacion para esta comunidad.
     bot_defense:
       errors:
         expired_challenge: La verificación de seguridad venció. Recarga el formulario
@@ -4239,6 +4258,7 @@ es:
     create: Crear
     declined: Rechazado
     delete: Eliminar
+    description: Descripción
     destroy: Destruir
     draft: Borrador
     edit: Editar
@@ -4251,6 +4271,7 @@ es:
     loading: Cargando...
     locale: Idioma
     message: Mensaje
+    name: Nombre
     new: Nuevo
     'no': 'No'
     no_description: Sin descripción

@@ -858,6 +858,24 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    billing:
+      available_plans: Available plans
+      cancel_at_period_end: 'Cancel at period end:'
+      current_period_ends: 'Current period ends:'
+      current_subscription: Current subscription
+      heading: Community Billing
+      interval: Interval
+      manage_link: Manage billing
+      no_plans: No active billing plans are configured yet.
+      no_subscription: No synced subscription is recorded for this community yet.
+      open_portal: Open billing portal
+      page_title: Community Billing
+      plan_not_found: That billing plan is not available.
+      portal_unavailable: 'The billing portal is not available yet: %<message>s'
+      price: Price
+      start_checkout: Start checkout
+      subheading: Manage Stripe checkout, subscription status, and billing portal
+        access for this community.
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and
@@ -4152,6 +4170,7 @@ en:
     create: Create
     declined: Declined
     delete: Delete
+    description: Description
     destroy: Destroy
     draft: Draft
     edit: Edit
@@ -4164,6 +4183,7 @@ en:
     loading: Loading...
     locale: Locale
     message: Message
+    name: Name
     new: New
     'no': 'No'
     no_description: No description

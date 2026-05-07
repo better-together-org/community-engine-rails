@@ -871,6 +871,26 @@ fr:
         subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
+    billing:
+      available_plans: Plans disponibles
+      cancel_at_period_end: 'Annuler a la fin de la periode :'
+      current_period_ends: 'Fin de la periode courante :'
+      current_subscription: Abonnement actuel
+      heading: Facturation de la communaute
+      interval: Intervalle
+      manage_link: Gerer la facturation
+      no_plans: Aucun plan de facturation actif n'est encore configure.
+      no_subscription: Aucun abonnement synchronise n'est encore enregistre pour cette
+        communaute.
+      open_portal: Ouvrir le portail de facturation
+      page_title: Facturation de la communaute
+      plan_not_found: Ce plan de facturation n'est pas disponible.
+      portal_unavailable: 'Le portail de facturation n''est pas encore disponible
+        : %<message>s'
+      price: Prix
+      start_checkout: Commencer le paiement
+      subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces au portail
+        de facturation pour cette communaute.
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
@@ -4266,6 +4286,7 @@ fr:
     create: Créer
     declined: Refusé
     delete: Supprimer
+    description: Description
     destroy: Détruire
     draft: Brouillon
     edit: Modifier
@@ -4278,6 +4299,7 @@ fr:
     loading: Chargement...
     locale: Locale
     message: Message
+    name: Nom
     new: Nouveau
     'no': Non
     no_description: Pas de description

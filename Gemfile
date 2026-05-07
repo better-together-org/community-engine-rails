@@ -19,6 +19,7 @@ gem 'fog-aws'
 
 # Database adapter for PostgreSQL
 gem 'pg', '>= 0.18', '< 2.0'
+gem 'pay', '~> 11.6'
 # Puma as the app server
 gem 'puma', '~> 8.0'
 
@@ -31,6 +32,7 @@ gem 'rails', ENV.fetch('RAILS_VERSION', '8.0.4.1')
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
+gem 'stripe', '~> 19.0'
 
 gem 'rswag'
 

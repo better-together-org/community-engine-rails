@@ -853,6 +853,24 @@ uk:
         subject_removed_by: "%{actor_name} видалив ваше авторство з %{page}"
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
+    billing:
+      available_plans: Dostupni taryfy
+      cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
+      current_period_ends: 'Potochnyi period zakinchuietsia:'
+      current_subscription: Potochna pidpyska
+      heading: Billing spilnoty
+      interval: Interval
+      manage_link: Keruvaty billingom
+      no_plans: Aktyvni platezhni taryfy shche ne nalashtovano.
+      no_subscription: Dlia tsiiei spilnoty shche ne zafiksovano sinhronizovanoi pidpysky.
+      open_portal: Vidkryty billing portal
+      page_title: Billing spilnoty
+      plan_not_found: Tsei billing plan nedostupnyi.
+      portal_unavailable: 'Billing portal shche nedostupnyi: %<message>s'
+      price: Tsina
+      start_checkout: Pochaty oplatu
+      subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing
+        portalu dlia tsiiei spilnoty.
     bot_defense:
       errors:
         expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму
@@ -4237,6 +4255,7 @@ uk:
     create: Створити
     declined: Відхилено
     delete: Видалити
+    description: Опис
     destroy: Знищити
     draft: Чернетка
     edit: Редагувати
@@ -4249,6 +4268,7 @@ uk:
     loading: Завантаження...
     locale: Локаль
     message: Повідомлення
+    name: Ім'я
     new: Новий
     'no': Ні
     no_description: Немає опису
