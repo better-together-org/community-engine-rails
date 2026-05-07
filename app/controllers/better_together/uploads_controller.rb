@@ -9,6 +9,11 @@ module BetterTogether
     before_action :authorize_resource, only: %i[new show edit update destroy download]
 
     def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      unless resource_instance.content_security_releasable?
+        redirect_to (request.referrer || helpers.base_url), alert: t('resources.download_failed')
+        return
+      end
+
       if resource_instance.attached?
         apply_download_cache_headers(resource_instance)
 

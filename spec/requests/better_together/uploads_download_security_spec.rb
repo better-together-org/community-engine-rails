@@ -2,8 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::ContentSecurity::BlobAccessPolicy, type: :service do
-  let(:upload) { create(:better_together_upload) }
+RSpec.describe 'BetterTogether upload download security' do
+  let(:user) { create(:better_together_user, :confirmed) }
+  let(:upload) { create(:better_together_upload, creator: user.person, privacy: 'private') }
 
   around do |example|
     original = BetterTogether.content_security
@@ -27,7 +28,13 @@ RSpec.describe BetterTogether::ContentSecurity::BlobAccessPolicy, type: :service
   end
 
   before do
-    upload.file.attach(io: StringIO.new('proxy file'), filename: 'proxy.txt', content_type: 'text/plain')
+    host! 'www.example.com'
+    sign_in user
+    upload.file.attach(
+      io: StringIO.new('safe-content'),
+      filename: 'sample.txt',
+      content_type: 'text/plain'
+    )
     BetterTogether::ContentSecurity::AttachmentEnrollment.sync_attachment!(
       record: upload,
       attachment_name: :file,
@@ -35,32 +42,22 @@ RSpec.describe BetterTogether::ContentSecurity::BlobAccessPolicy, type: :service
     )
   end
 
-  it 'blocks public proxy access while the item is pending scan' do
-    expect(described_class.public_proxy_allowed?(upload.file.blob)).to be(false)
+  it 'blocks download while the upload is pending scan' do
+    get "/en/bt/f/#{upload.id}/download"
+
+    expect(response).to redirect_to('http://www.example.com/')
   end
 
-  it 'allows public proxy access after the item is marked clean' do
+  it 'allows download after the upload is released' do
     upload.content_security_item.update!(
       lifecycle_state: 'clean',
       aggregate_verdict: 'clean',
       released_at: Time.current
     )
 
-    expect(described_class.public_proxy_allowed?(upload.file.blob)).to be(true)
-  end
+    get "/en/bt/f/#{upload.id}/download"
 
-  it 'blocks public proxy access for quarantined items' do
-    upload.content_security_item.update!(
-      lifecycle_state: 'quarantined',
-      aggregate_verdict: 'quarantined'
-    )
-
-    expect(described_class.public_proxy_allowed?(upload.file.blob)).to be(false)
-  end
-
-  it 'allows proxy access unconditionally when scanning is disabled' do
-    BetterTogether.content_security.malware_scanning.enabled = false
-
-    expect(described_class.public_proxy_allowed?(upload.file.blob)).to be(true)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to eq('safe-content')
   end
 end
