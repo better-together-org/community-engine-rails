@@ -31,7 +31,7 @@ module BetterTogether
         return nil unless attachment.attached?
         return nil unless BetterTogether::ContentSecurity::BlobAccessPolicy.public_proxy_allowed?(attachment.blob)
 
-        Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment)
+        attachment_proxy_url(attachment)
       rescue ActiveStorage::FileNotFoundError
         nil
       end
@@ -44,9 +44,9 @@ module BetterTogether
         return nil unless BetterTogether::ContentSecurity::BlobAccessPolicy.public_proxy_allowed?(attachment.blob)
 
         if attachment.content_type == 'image/svg+xml'
-          Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment)
+          attachment_proxy_url(attachment)
         else
-          Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment.variant(variant))
+          variant_proxy_url(attachment.variant(variant))
         end
       rescue ActiveStorage::FileNotFoundError
         nil

@@ -10,6 +10,8 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.2]
   private
 
   def create_content_security_items_table
+    return if table_exists?(:better_together_content_security_items)
+
     create_bt_table :content_security_items do |t|
       t.uuid :blob_id, null: false
       t.references :attachable, polymorphic: true, null: false, type: :uuid, index: false
@@ -39,6 +41,8 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.2]
   end
 
   def create_content_security_scan_events_table
+    return if table_exists?(:better_together_content_security_scan_events)
+
     create_bt_table :content_security_scan_events do |t|
       t.references :item, null: false, type: :uuid, foreign_key: { to_table: :better_together_content_security_items }
       t.string :status, null: false, default: 'started'
@@ -59,6 +63,8 @@ class CreateBetterTogetherContentSecurityTables < ActiveRecord::Migration[7.2]
   end
 
   def create_content_security_findings_table
+    return if table_exists?(:better_together_content_security_findings)
+
     create_bt_table :content_security_findings do |t|
       t.references :item, null: false, type: :uuid, foreign_key: { to_table: :better_together_content_security_items }
       t.references :scan_event, null: false, type: :uuid,

@@ -41,9 +41,13 @@ module BetterTogether
 
         def schedule_scan_if_needed!(item, blob_changed)
           item.save! if item.changed?
-          return unless blob_changed || item.lifecycle_state_pending_scan?
+          return unless blob_changed
 
           BetterTogether::ContentSecurity::ScanAttachmentJob.perform_later(item.id)
+        rescue ActiveRecord::RecordNotUnique
+          reloaded = Item.for_attachment(item.attachable, item.attachment_name)
+                         .find_by(blob_id: item.blob_id)
+          BetterTogether::ContentSecurity::ScanAttachmentJob.perform_later(reloaded.id) if reloaded
         end
       end
     end

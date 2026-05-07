@@ -40,7 +40,7 @@ module BetterTogether
         end
 
         policy = Pundit.policy(current_user, record)
-        return unless policy.respond_to?(:download?)
+        return head(:forbidden) unless policy.respond_to?(:download?)
 
         head :forbidden unless policy.download?
       end
