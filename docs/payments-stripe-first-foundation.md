@@ -114,3 +114,4 @@ The first release treats the community as the billable organization boundary. Th
 
 - [Stripe setup and install guide](./payments-stripe-first-setup.md)
 - [Webhook operations and resilience guide](./payments-stripe-webhook-operations.md)
+- [Multi-owner billing and merchant integrations plan](./payments-multi-owner-and-merchant-integrations-plan.md)
