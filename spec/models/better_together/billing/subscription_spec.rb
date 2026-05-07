@@ -23,4 +23,8 @@ RSpec.describe BetterTogether::Billing::Subscription do
 
     expect(subscription.activeish?).to be(false)
   end
+
+  it 'exposes the beneficiary community for compatibility' do
+    expect(subscription.community).to eq(subscription.beneficiary)
+  end
 end

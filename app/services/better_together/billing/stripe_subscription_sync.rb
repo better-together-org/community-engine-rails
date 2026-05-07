@@ -6,24 +6,46 @@ module BetterTogether
     class StripeSubscriptionSync # rubocop:todo Metrics/ClassLength
       Result = Struct.new(
         :synced,
-        :community,
+        :billable_owner,
+        :beneficiary,
         :billing_subscription,
         :billing_plan,
         :reason,
         keyword_init: true
-      )
+      ) do
+        def community
+          beneficiary if beneficiary.is_a?(BetterTogether::Community)
+        end
 
-      def call(subscription:, community: nil, source: 'stripe_sync', event: nil, checkout_session_id: nil)
-        resolved_community = community || resolve_community(subscription)
-        return Result.new(synced: false, reason: :community_not_found) unless resolved_community
+        def person
+          beneficiary if beneficiary.is_a?(BetterTogether::Person)
+        end
+      end
+
+      # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists
+      def call(subscription:, billable_owner: nil, beneficiary: nil, source: 'stripe_sync', event: nil,
+               checkout_session_id: nil)
+        resolved_billable_owner = billable_owner || resolve_billable_owner(subscription)
+        return Result.new(synced: false, reason: :billable_owner_not_found) unless resolved_billable_owner
+
+        resolved_beneficiary = beneficiary || resolve_beneficiary(subscription, billable_owner: resolved_billable_owner)
+        return Result.new(billable_owner: resolved_billable_owner, synced: false, reason: :beneficiary_not_found) unless resolved_beneficiary
 
         billing_plan = resolve_billing_plan(subscription)
-        return Result.new(community: resolved_community, synced: false, reason: :billing_plan_not_found) unless billing_plan
+        unless billing_plan
+          return Result.new(
+            billable_owner: resolved_billable_owner,
+            beneficiary: resolved_beneficiary,
+            synced: false,
+            reason: :billing_plan_not_found
+          )
+        end
 
         persist_subscription(
           subscription,
           build_context(
-            community: resolved_community,
+            billable_owner: resolved_billable_owner,
+            beneficiary: resolved_beneficiary,
             billing_plan:,
             source:,
             event:,
@@ -31,6 +53,7 @@ module BetterTogether
           )
         )
       end
+      # rubocop:enable Metrics/MethodLength, Metrics/ParameterLists
 
       private
 
@@ -62,7 +85,8 @@ module BetterTogether
 
       def ownership_attributes(context)
         {
-          community: context[:community],
+          billable_owner: context[:billable_owner],
+          beneficiary: context[:beneficiary],
           billing_plan: context[:billing_plan]
         }
       end
@@ -76,11 +100,22 @@ module BetterTogether
         }
       end
 
-      def resolve_community(subscription)
+      def resolve_billable_owner(subscription)
         metadata = object_metadata(subscription)
 
-        BetterTogether::Community.find_by(id: metadata['bt_community_id']) ||
-          pay_customer_for(subscription)&.owner
+        OwnershipResolver.resolve_billable_owner(
+          metadata:,
+          fallback_owner: pay_customer_for(subscription)&.owner
+        )
+      end
+
+      def resolve_beneficiary(subscription, billable_owner:)
+        metadata = object_metadata(subscription)
+
+        OwnershipResolver.resolve_beneficiary(
+          metadata:,
+          billable_owner:
+        )
       end
 
       def resolve_billing_plan(subscription)
@@ -145,15 +180,18 @@ module BetterTogether
         Time.zone.at(value.to_i)
       end
 
-      def build_context(community:, billing_plan:, source:, event:, checkout_session_id:)
+      # rubocop:disable Metrics/ParameterLists
+      def build_context(billable_owner:, beneficiary:, billing_plan:, source:, event:, checkout_session_id:)
         {
-          community:,
+          billable_owner:,
+          beneficiary:,
           billing_plan:,
           source:,
           event:,
           checkout_session_id:
         }
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def persist_subscription(subscription, context)
         billing_subscription = build_subscription(subscription)
@@ -162,7 +200,8 @@ module BetterTogether
 
         Result.new(
           synced: true,
-          community: context[:community],
+          billable_owner: context[:billable_owner],
+          beneficiary: context[:beneficiary],
           billing_subscription:,
           billing_plan: context[:billing_plan],
           reason: :synced

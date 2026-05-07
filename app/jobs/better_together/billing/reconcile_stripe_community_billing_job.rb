@@ -12,7 +12,7 @@ module BetterTogether
         community = BetterTogether::Community.find_by(id: community_id)
         return unless community
 
-        BetterTogether::Billing::StripeCommunityReconciliation.new.call(community:)
+        BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob.perform_now(community.class.name, community.id)
       end
     end
   end

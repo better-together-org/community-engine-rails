@@ -5,7 +5,14 @@
 <% end %>
 
 <div class="container my-3">
-  <h1>Edit Profile</h1>
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="mb-0">Edit Profile</h1>
+    <% if @person.persisted? %>
+      <%= link_to t('better_together.billing.manage_person_link', default: 'Manage billing'),
+                  person_billing_path(@person, locale: I18n.locale),
+                  class: 'btn btn-outline-primary' %>
+    <% end %>
+  </div>
 
   <div id="form_errors"></div>
   <%= render 'form', person: @person %>

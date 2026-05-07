@@ -1,0 +1,111 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.person_page_title', default: 'Personal Billing') %> | <%= @person.name %>
+<% end %>
+
+<div class="container my-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+      <h1 class="mb-1"><%= t('better_together.billing.person_heading', default: 'Personal Billing') %></h1>
+      <p class="text-muted mb-0">
+        <%= t('better_together.billing.person_subheading',
+              default: 'Manage Stripe checkout, subscription status, and billing portal access for your personal account.') %>
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <%= link_to t('globals.edit', default: 'Edit'),
+                  edit_person_path(@person, locale: I18n.locale),
+                  class: 'btn btn-outline-secondary' %>
+      <%= button_to t('better_together.billing.reconcile_now', default: 'Reconcile now'),
+                    reconcile_person_billing_path(@person, locale: I18n.locale),
+                    method: :post,
+                    class: 'btn btn-outline-secondary' %>
+      <%= button_to t('better_together.billing.open_portal', default: 'Open billing portal'),
+                    portal_person_billing_path(@person, locale: I18n.locale),
+                    method: :post,
+                    class: 'btn btn-outline-primary' %>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <strong><%= t('better_together.billing.current_subscription', default: 'Current subscription') %></strong>
+        </div>
+        <div class="card-body">
+          <% if @billing_subscription.present? %>
+            <p class="mb-2"><strong><%= @billing_subscription.billing_plan.name %></strong></p>
+            <p class="mb-2">
+              <span class="badge text-bg-primary"><%= @billing_subscription.status %></span>
+            </p>
+            <p class="mb-1">
+              <%= t('better_together.billing.last_synced_at', default: 'Last synced:') %>
+              <strong><%= l(@billing_subscription.last_synced_at, format: :long) if @billing_subscription.last_synced_at %></strong>
+            </p>
+            <p class="mb-1">
+              <%= t('better_together.billing.sync_source', default: 'Sync source:') %>
+              <strong><%= @billing_subscription.sync_source.presence || t('better_together.billing.unknown_sync_source', default: 'Unknown') %></strong>
+            </p>
+            <p class="mb-1">
+              <%= t('better_together.billing.current_period_ends', default: 'Current period ends:') %>
+              <strong><%= l(@billing_subscription.current_period_end, format: :long) if @billing_subscription.current_period_end %></strong>
+            </p>
+            <p class="mb-0">
+              <%= t('better_together.billing.cancel_at_period_end', default: 'Cancel at period end:') %>
+              <strong><%= @billing_subscription.cancel_at_period_end? ? t('globals.yes', default: 'Yes') : t('globals.no', default: 'No') %></strong>
+            </p>
+          <% else %>
+            <p class="mb-0 text-muted">
+              <%= t('better_together.billing.person_no_subscription', default: 'No synced subscription is recorded for this person yet.') %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <strong><%= t('better_together.billing.available_plans', default: 'Available plans') %></strong>
+        </div>
+        <div class="card-body">
+          <% if @billing_plans.any? %>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th><%= t('globals.name', default: 'Name') %></th>
+                    <th><%= t('globals.description', default: 'Description') %></th>
+                    <th><%= t('better_together.billing.interval', default: 'Interval') %></th>
+                    <th><%= t('better_together.billing.price', default: 'Price') %></th>
+                    <th class="text-end"><%= t('globals.actions', default: 'Actions') %></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @billing_plans.each do |billing_plan| %>
+                    <tr>
+                      <td><strong><%= billing_plan.name %></strong></td>
+                      <td><%= billing_plan.description.presence || billing_plan.identifier %></td>
+                      <td><%= billing_plan.billing_interval %></td>
+                      <td><%= number_to_currency(billing_plan.amount_cents / 100.0, unit: billing_plan.currency.upcase == 'CAD' ? 'CA$' : "#{billing_plan.currency.upcase} ") %></td>
+                      <td class="text-end">
+                        <%= button_to t('better_together.billing.start_checkout', default: 'Start checkout'),
+                                      checkout_person_billing_path(@person, billing_plan_id: billing_plan.id, locale: I18n.locale),
+                                      method: :post,
+                                      class: 'btn btn-primary btn-sm' %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <p class="mb-0 text-muted">
+              <%= t('better_together.billing.no_plans', default: 'No active billing plans are configured yet.') %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

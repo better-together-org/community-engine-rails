@@ -1,34 +1,34 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Community-admin billing entry points for Stripe checkout and portal access.
-  class CommunityBillingsController < ApplicationController # rubocop:todo Metrics/ClassLength
+  # Person-owned billing entry points for Stripe checkout and portal access.
+  class PersonBillingsController < ApplicationController # rubocop:todo Metrics/ClassLength
     before_action :authenticate_user!
-    before_action :set_community
-    before_action :authorize_community
+    before_action :set_person
+    before_action :authorize_person
 
     def show
       @checkout_sync_result = sync_checkout_session if params[:checkout_session_id].present?
       @billing_plans = available_billing_plans
-      @billing_subscription = @community.billing_subscriptions.order(updated_at: :desc).first
+      @billing_subscription = @person.billing_subscriptions.order(updated_at: :desc).first
     end
 
     def checkout
       redirect_to checkout_session_for(find_billing_plan).url, allow_other_host: true
     rescue ActiveRecord::RecordNotFound
-      redirect_to community_billing_path(@community, locale: I18n.locale),
+      redirect_to person_billing_path(@person, locale: I18n.locale),
                   alert: t('better_together.billing.plan_not_found', default: 'That billing plan is not available.'),
                   status: :see_other
     end
 
     def portal
-      portal_session = @community.set_payment_processor(:stripe).billing_portal(
-        return_url: community_billing_url(@community, locale: I18n.locale)
+      portal_session = @person.set_payment_processor(:stripe).billing_portal(
+        return_url: person_billing_url(@person, locale: I18n.locale)
       )
 
       redirect_to portal_session.url, allow_other_host: true
     rescue StandardError => e
-      redirect_to community_billing_path(@community, locale: I18n.locale),
+      redirect_to person_billing_path(@person, locale: I18n.locale),
                   alert: t(
                     'better_together.billing.portal_unavailable',
                     default: 'The billing portal is not available yet: %<message>s',
@@ -38,34 +38,34 @@ module BetterTogether
     end
 
     def reconcile
-      BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob.perform_later(@community.class.name, @community.id)
+      BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob.perform_later(@person.class.name, @person.id)
 
-      redirect_to community_billing_path(@community, locale: I18n.locale),
+      redirect_to person_billing_path(@person, locale: I18n.locale),
                   notice: t(
                     'better_together.billing.reconciliation_enqueued',
-                    default: 'A Stripe reconciliation job was queued for this community.'
+                    default: 'A Stripe reconciliation job was queued for this billing account.'
                   ),
                   status: :see_other
     end
 
     private
 
-    def set_community
-      @community = BetterTogether::Community.friendly.find(params[:community_id])
+    def set_person
+      @person = BetterTogether::Person.friendly.find(params[:person_id])
     end
 
-    def authorize_community
-      authorize @community, :update?
+    def authorize_person
+      authorize @person, :update?
     end
 
     def available_billing_plans
-      BetterTogether::Billing::Plan.active.order(:amount_cents, :name).select { |plan| plan.eligible_for?(@community) }
+      BetterTogether::Billing::Plan.active.order(:amount_cents, :name).select { |plan| plan.eligible_for?(@person) }
     end
 
     def checkout_metadata(billing_plan)
       BetterTogether::Billing::OwnershipResolver.build_metadata(
-        billable_owner: @community,
-        beneficiary: @community
+        billable_owner: @person,
+        beneficiary: @person
       ).merge(
         bt_billing_plan_id: billing_plan.id,
         bt_billing_plan_identifier: billing_plan.identifier
@@ -89,7 +89,7 @@ module BetterTogether
         success_url: billing_success_url,
         cancel_url: billing_cancel_url,
         allow_promotion_codes: true,
-        client_reference_id: @community.id,
+        client_reference_id: @person.id,
         metadata:,
         subscription_data: subscription_checkout_data(billing_plan, metadata)
       }
@@ -102,22 +102,22 @@ module BetterTogether
     end
 
     def billing_success_url
-      community_billing_url(@community, locale: I18n.locale, checkout_session_id: '{CHECKOUT_SESSION_ID}')
+      person_billing_url(@person, locale: I18n.locale, checkout_session_id: '{CHECKOUT_SESSION_ID}')
     end
 
     def billing_cancel_url
-      community_billing_url(@community, locale: I18n.locale)
+      person_billing_url(@person, locale: I18n.locale)
     end
 
     def payment_processor
-      @payment_processor ||= @community.set_payment_processor(:stripe)
+      @payment_processor ||= @person.set_payment_processor(:stripe)
     end
 
     def sync_checkout_session
       result = BetterTogether::Billing::StripeCheckoutSessionSync.new.call(
         checkout_session_id: params[:checkout_session_id],
-        billable_owner: @community,
-        beneficiary: @community
+        billable_owner: @person,
+        beneficiary: @person
       )
       flash.now[sync_flash_key(result)] = sync_flash_message(result)
       result

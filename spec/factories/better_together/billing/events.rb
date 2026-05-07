@@ -4,7 +4,8 @@ FactoryBot.define do
   factory 'better_together/billing/event',
           class: 'BetterTogether::Billing::Event',
           aliases: %i[better_together_billing_event] do
-    association :community, factory: :better_together_community
+    association :billable_owner, factory: :better_together_community
+    association :beneficiary, factory: :better_together_community
     association :billing_subscription, factory: 'better_together/billing/subscription'
     processor { 'stripe' }
     event_type { 'customer.subscription.updated' }

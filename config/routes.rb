@@ -258,6 +258,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :people, only: %i[update show edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
+
+          resource :billing,
+                   only: :show,
+                   controller: 'person_billings' do
+            post :checkout
+            post :portal
+            post :reconcile
+          end
         end
 
         resources :person_access_grants, path: 'access-grants', only: %i[index show update] do

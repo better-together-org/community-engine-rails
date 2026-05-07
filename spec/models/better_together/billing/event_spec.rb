@@ -23,4 +23,8 @@ RSpec.describe BetterTogether::Billing::Event do
     expect(event).not_to be_valid
     expect(event.errors[:processing_status]).to be_present
   end
+
+  it 'exposes the beneficiary community for compatibility' do
+    expect(event.community).to eq(event.beneficiary)
+  end
 end

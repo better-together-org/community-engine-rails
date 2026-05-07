@@ -33,14 +33,22 @@ module BetterTogether
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
-    has_many :billing_subscriptions,
+    has_many :owned_billing_subscriptions,
+             as: :billable_owner,
              class_name: 'BetterTogether::Billing::Subscription',
-             dependent: :destroy,
-             inverse_of: :community
-    has_many :billing_events,
+             dependent: :nullify
+    has_many :billing_subscriptions,
+             as: :beneficiary,
+             class_name: 'BetterTogether::Billing::Subscription',
+             dependent: :nullify
+    has_many :owned_billing_events,
+             as: :billable_owner,
              class_name: 'BetterTogether::Billing::Event',
-             dependent: :nullify,
-             inverse_of: :community
+             dependent: :nullify
+    has_many :billing_events,
+             as: :beneficiary,
+             class_name: 'BetterTogether::Billing::Event',
+             dependent: :nullify
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
     has_many :fleet_node_ownerships,
              as: :owner,
@@ -160,6 +168,10 @@ module BetterTogether
     def stripe_customer_attributes(pay_customer)
       {
         metadata: {
+          bt_billable_owner_type: self.class.name,
+          bt_billable_owner_id: id,
+          bt_beneficiary_type: self.class.name,
+          bt_beneficiary_id: id,
           bt_community_id: id,
           bt_community_identifier: identifier,
           pay_customer_id: pay_customer.id

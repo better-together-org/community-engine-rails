@@ -7,6 +7,7 @@ module BetterTogether
       self.table_name = 'better_together_billing_plans'
 
       BILLING_INTERVALS = %w[month year one_time].freeze
+      DEFAULT_ELIGIBLE_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
 
       has_many :subscriptions,
                class_name: 'BetterTogether::Billing::Subscription',
@@ -25,6 +26,18 @@ module BetterTogether
 
       def recurring?
         billing_interval.in?(%w[month year])
+      end
+
+      def eligible_for?(billable_owner)
+        return false unless billable_owner.present?
+
+        eligible_billable_owner_types.include?(billable_owner.class.name)
+      end
+
+      def eligible_billable_owner_types
+        raw_types = Array(metadata['eligible_billable_owner_types']).presence || DEFAULT_ELIGIBLE_OWNER_TYPES
+
+        raw_types.filter_map { |type_name| OwnershipResolver.supported_owner_type_name(type_name) }.presence || DEFAULT_ELIGIBLE_OWNER_TYPES
       end
     end
   end

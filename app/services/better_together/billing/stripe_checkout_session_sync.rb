@@ -3,18 +3,27 @@
 module BetterTogether
   module Billing
     # Synchronizes Stripe Checkout completion into the local CE billing state.
-    class StripeCheckoutSessionSync
+    class StripeCheckoutSessionSync # rubocop:todo Metrics/ClassLength
       Result = Struct.new(
         :synced,
-        :community,
+        :billable_owner,
+        :beneficiary,
         :billing_subscription,
         :billing_plan,
         :checkout_session,
         :reason,
         keyword_init: true
-      )
+      ) do
+        def community
+          beneficiary if beneficiary.is_a?(BetterTogether::Community)
+        end
 
-      def call(checkout_session_id:, community: nil)
+        def person
+          beneficiary if beneficiary.is_a?(BetterTogether::Person)
+        end
+      end
+
+      def call(checkout_session_id:, billable_owner: nil, beneficiary: nil)
         checkout_session = fetch_checkout_session(checkout_session_id)
         subscription = fetch_subscription(checkout_session)
 
@@ -24,7 +33,8 @@ module BetterTogether
           sync_subscription(
             subscription,
             checkout_session,
-            community
+            billable_owner,
+            beneficiary
           ),
           checkout_session
         )
@@ -56,11 +66,20 @@ module BetterTogether
         )
       end
 
-      def resolve_community(checkout_session)
+      def resolve_billable_owner(checkout_session)
         metadata = object_metadata(checkout_session)
 
-        BetterTogether::Community.find_by(id: metadata['bt_community_id']) ||
-          pay_customer_for(checkout_session)&.owner
+        OwnershipResolver.resolve_billable_owner(
+          metadata:,
+          fallback_owner: pay_customer_for(checkout_session)&.owner
+        )
+      end
+
+      def resolve_beneficiary(checkout_session, billable_owner:)
+        OwnershipResolver.resolve_beneficiary(
+          metadata: object_metadata(checkout_session),
+          billable_owner:
+        )
       end
 
       def pay_customer_for(checkout_session)
@@ -83,10 +102,14 @@ module BetterTogether
         @subscription_sync ||= BetterTogether::Billing::StripeSubscriptionSync.new
       end
 
-      def sync_subscription(subscription, checkout_session, community)
+      def sync_subscription(subscription, checkout_session, billable_owner, beneficiary)
+        resolved_billable_owner = billable_owner || resolve_billable_owner(checkout_session)
+        resolved_beneficiary = beneficiary || resolve_beneficiary(checkout_session, billable_owner: resolved_billable_owner)
+
         subscription_sync.call(
           subscription:,
-          community: community || resolve_community(checkout_session),
+          billable_owner: resolved_billable_owner,
+          beneficiary: resolved_beneficiary,
           source: 'checkout_return',
           checkout_session_id: checkout_session.id
         )
@@ -95,7 +118,8 @@ module BetterTogether
       def build_result(sync_result, checkout_session)
         Result.new(
           synced: sync_result.synced,
-          community: sync_result.community,
+          billable_owner: sync_result.billable_owner,
+          beneficiary: sync_result.beneficiary,
           billing_subscription: sync_result.billing_subscription,
           billing_plan: sync_result.billing_plan,
           checkout_session:,

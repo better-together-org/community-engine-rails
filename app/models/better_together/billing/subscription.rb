@@ -7,6 +7,7 @@ module BetterTogether
       self.table_name = 'better_together_billing_subscriptions'
 
       PROCESSORS = %w[stripe].freeze
+      SUPPORTED_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
       STATUSES = %w[
         incomplete
         trialing
@@ -17,9 +18,10 @@ module BetterTogether
         paused
       ].freeze
 
-      belongs_to :community,
-                 class_name: 'BetterTogether::Community',
-                 inverse_of: :billing_subscriptions
+      belongs_to :billable_owner,
+                 polymorphic: true
+      belongs_to :beneficiary,
+                 polymorphic: true
       belongs_to :billing_plan,
                  class_name: 'BetterTogether::Billing::Plan',
                  inverse_of: :subscriptions
@@ -33,8 +35,10 @@ module BetterTogether
       validates :processor, inclusion: { in: PROCESSORS }
       validates :status, inclusion: { in: STATUSES }
       validates :processor_subscription_id, presence: true, uniqueness: true
-      validates :community, :billing_plan, presence: true
+      validates :billable_owner, :beneficiary, :billing_plan, presence: true
       validates :cancel_at_period_end, inclusion: { in: [true, false] }
+      validate :billable_owner_type_supported
+      validate :beneficiary_type_supported
 
       scope :activeish, -> { where(status: %w[trialing active past_due]) }
 
@@ -44,6 +48,35 @@ module BetterTogether
 
       def last_synced_recently?(threshold: 15.minutes.ago)
         last_synced_at.present? && last_synced_at >= threshold
+      end
+
+      def community
+        owner_or_beneficiary_of_type(BetterTogether::Community)
+      end
+
+      def person
+        owner_or_beneficiary_of_type(BetterTogether::Person)
+      end
+
+      private
+
+      def owner_or_beneficiary_of_type(klass)
+        return beneficiary if beneficiary.is_a?(klass)
+        return billable_owner if billable_owner.is_a?(klass)
+
+        nil
+      end
+
+      def billable_owner_type_supported
+        return if billable_owner_type.blank? || billable_owner_type.in?(SUPPORTED_OWNER_TYPES)
+
+        errors.add(:billable_owner_type, :inclusion)
+      end
+
+      def beneficiary_type_supported
+        return if beneficiary_type.blank? || beneficiary_type.in?(SUPPORTED_OWNER_TYPES)
+
+        errors.add(:beneficiary_type, :inclusion)
       end
     end
   end

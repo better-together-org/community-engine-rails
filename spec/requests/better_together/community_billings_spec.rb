@@ -38,7 +38,8 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       friendly_scope = instance_double(ActiveRecord::Relation, find: community)
       sync_result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
         synced: true,
-        community:,
+        billable_owner: community,
+        beneficiary: community,
         reason: :synced
       )
       sync_service = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync, call: sync_result)
@@ -50,7 +51,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Stripe checkout was synchronized successfully.')
-      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', community:)
+      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', billable_owner: community, beneficiary: community)
     end
   end
 
@@ -102,7 +103,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect do
         post better_together.reconcile_community_billing_path(community, locale:)
-      end.to have_enqueued_job(BetterTogether::Billing::ReconcileStripeCommunityBillingJob).with(community.id)
+      end.to have_enqueued_job(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob).with(community.class.name, community.id)
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
     end
