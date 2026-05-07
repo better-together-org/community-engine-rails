@@ -79,7 +79,7 @@ module BetterTogether
       return unless routable_record?(community) && community.logo.attached?
 
       attachment = community.respond_to?(:optimized_logo) ? community.optimized_logo : community.logo
-      data[:logo] = rails_storage_proxy_url(attachment)
+      data[:logo] = storage_proxy_url_for(attachment)
     end
 
     def routable_record?(record)

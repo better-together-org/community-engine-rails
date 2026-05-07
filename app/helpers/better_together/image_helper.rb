@@ -23,21 +23,12 @@ module BetterTogether
 
       # Determine if entity has a profile image
       if entity.respond_to?(:cover_image) && entity.cover_image.attached?
-        attachment = if entity.respond_to?(:optimized_cover_image)
-                       entity.optimized_cover_image
-                     else
-                       entity.cover_image_variant(image_width, image_height)
-                     end
+        attachment = cover_image_attachment_for(entity, image_width, image_height)
 
-        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+        image_tag(storage_proxy_url_for(attachment), **image_tag_attributes)
       elsif (category = first_category_with_cover_image(entity))
-
-        attachment = if category.respond_to?(:optimized_cover_image)
-                       category.optimized_cover_image
-                     else
-                       category.cover_image_variant(image_width, image_height)
-                     end
-        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+        attachment = cover_image_attachment_for(category, image_width, image_height)
+        image_tag(storage_proxy_url_for(attachment), **image_tag_attributes)
       else
         # Use a default image based on the entity type
         default_image = default_cover_image(entity, image_format)
@@ -62,21 +53,12 @@ module BetterTogether
 
       # Determine if entity has a card image
       if entity.respond_to?(:card_image) && entity.card_image&.attached?
-        attachment = if entity.respond_to?(:optimized_card_image)
-                       entity.optimized_card_image
-                     else
-                       entity.card_image_variant(image_width, image_height)
-                     end
+        attachment = card_image_attachment_for(entity, image_width, image_height)
 
-        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+        image_tag(storage_proxy_url_for(attachment), **image_tag_attributes)
       elsif (category = first_category_with_cover_image(entity))
-
-        attachment = if category.respond_to?(:optimized_cover_image)
-                       category.optimized_cover_image
-                     else
-                       category.cover_image_variant(image_width, image_height)
-                     end
-        image_tag(rails_storage_proxy_url(attachment), **image_tag_attributes)
+        attachment = cover_image_attachment_for(category, image_width, image_height)
+        image_tag(storage_proxy_url_for(attachment), **image_tag_attributes)
       else
         # Use a default image based on the entity type
         default_image = default_card_image(entity, image_format)
@@ -117,17 +99,10 @@ module BetterTogether
 
       # Determine if entity has a profile image
       if entity.respond_to?(:profile_image) && entity.profile_image.attached?
-        # Use optimized URL method that doesn't block on .processed
-        image_url = if entity.respond_to?(:profile_image_url)
-                      entity.profile_image_url(size: image_size)
-                    elsif entity.respond_to?(:optimized_profile_image)
-                      rails_storage_proxy_url(entity.optimized_profile_image)
-                    else
-                      # Fallback to variant without calling .processed
-                      rails_storage_proxy_url(entity.profile_image_variant(image_size))
-                    end
+        attachment = profile_image_attachment_for(entity, image_size)
+        image_url = storage_proxy_url_for(attachment) if attachment
 
-        image_tag(same_origin_image_url(image_url), **image_tag_attributes) if image_url
+        image_tag(image_url, **image_tag_attributes) if image_url
       else
         # Use a default image based on the entity type
         default_image = default_profile_image(entity, image_format)
@@ -194,11 +169,46 @@ module BetterTogether
       record.association(association_name)
     end
 
-    def same_origin_image_url(image_url)
-      return image_url unless image_url.to_s.start_with?('/')
-      return image_url unless respond_to?(:request) && request
+    def profile_image_attachment_for(entity, image_size)
+      return unless entity.respond_to?(:profile_image) && entity.profile_image.attached?
 
-      "#{request.base_url}#{image_url}"
+      if entity.respond_to?(:optimized_profile_image)
+        entity.optimized_profile_image
+      elsif entity.respond_to?(:profile_image_variant)
+        entity.profile_image_variant(image_size)
+      elsif entity.profile_image.content_type == 'image/svg+xml'
+        entity.profile_image
+      else
+        entity.profile_image.variant(resize_to_fill: [image_size, image_size])
+      end
+    end
+
+    def cover_image_attachment_for(entity, image_width, image_height)
+      return unless entity.respond_to?(:cover_image) && entity.cover_image.attached?
+
+      if entity.respond_to?(:optimized_cover_image)
+        entity.optimized_cover_image
+      elsif entity.respond_to?(:cover_image_variant)
+        entity.cover_image_variant(image_width, image_height)
+      elsif entity.cover_image.content_type == 'image/svg+xml'
+        entity.cover_image
+      else
+        entity.cover_image.variant(resize_to_fill: [image_width, image_height])
+      end
+    end
+
+    def card_image_attachment_for(entity, image_width, image_height)
+      return unless entity.respond_to?(:card_image) && entity.card_image&.attached?
+
+      if entity.respond_to?(:optimized_card_image)
+        entity.optimized_card_image
+      elsif entity.respond_to?(:card_image_variant)
+        entity.card_image_variant(image_width, image_height)
+      elsif entity.card_image.content_type == 'image/svg+xml'
+        entity.card_image
+      else
+        entity.card_image.variant(resize_to_fill: [image_width, image_height])
+      end
     end
 
     def default_cover_image(entity, image_format)
