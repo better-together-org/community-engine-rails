@@ -6,6 +6,8 @@ module BetterTogether
     class BlobAccessPolicy
       class << self
         def public_proxy_allowed?(blob)
+          return true unless Configuration.enabled?
+
           item = item_for(blob)
           return true unless scannable_blob?(blob)
 

@@ -28,6 +28,22 @@ module BetterTogether
       BetterTogether::ContentSecurity::BlobAccessPolicy.download_allowed_for_record?(self, :file)
     end
 
+    # Legacy API used by views and helpers — delegates to the new content-security Item model.
+    def file_content_security_subject
+      content_security_item
+    end
+
+    def file_content_security_downloadable?
+      content_security_releasable?
+    end
+
+    def file_content_security_held?
+      item = content_security_item
+      return false if item.nil?
+
+      !item.releasable?
+    end
+
     def to_param
       id
     end

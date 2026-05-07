@@ -40,6 +40,8 @@ module BetterTogether
       def releasable?
         lifecycle_state_clean? || lifecycle_state_override_released?
       end
+
+      alias released_for_human_access? releasable?
     end
   end
 end
