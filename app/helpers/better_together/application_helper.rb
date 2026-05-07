@@ -32,12 +32,17 @@ module BetterTogether
       return unless attachment.present?
 
       media_url_options = default_url_options.except(:locale, 'locale')
+      request_base_url = request&.base_url
+
+      url_builder_options = {
+        url_options: media_url_options,
+        **options
+      }
+      url_builder_options[:base_url] = request_base_url if request_base_url.present?
 
       BetterTogether::MediaUrlBuilder.proxy_url_for(
         attachment,
-        base_url: request&.base_url,
-        **media_url_options,
-        **options
+        **url_builder_options
       )
     end
     # rubocop:enable Style/ArgumentsForwarding
