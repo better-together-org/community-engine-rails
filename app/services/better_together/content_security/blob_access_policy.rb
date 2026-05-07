@@ -2,28 +2,53 @@
 
 module BetterTogether
   module ContentSecurity
-    # Applies content-security enforcement to shared blob proxy URLs.
+    # Determines public proxy and download access for content-security-scanned blobs.
     class BlobAccessPolicy
-      def self.public_proxy_allowed?(blob)
-        new(blob).public_proxy_allowed?
-      end
+      class << self
+        def public_proxy_allowed?(blob)
+          item = item_for(blob)
+          return true unless scannable_blob?(blob)
 
-      def initialize(blob)
-        @blob = blob
-      end
+          item&.releasable? == true
+        end
 
-      def public_proxy_allowed?
-        return true if subjects.empty?
+        def download_allowed_for_record?(record, attachment_name)
+          return true unless Configuration.enabled?
 
-        subjects.all?(&:publicly_serving_allowed?)
-      end
+          config = record.class.try(:scannable_attachment_config_for, attachment_name)
+          return true unless config
+          return false unless Configuration.enabled_for_surface?(config.fetch(:surface))
 
-      private
+          attachment = record.public_send(attachment_name)
+          return true unless attachment.attached?
 
-      attr_reader :blob
+          item = Item.for_attachment(record, attachment_name).find_by(blob_id: attachment.blob_id)
+          item&.releasable? == true
+        end
 
-      def subjects
-        @subjects ||= Subject.for_blob(blob).to_a
+        def scannable_blob?(blob)
+          attachment_context_for(blob).present?
+        end
+
+        def attachment_context_for(blob)
+          blob.attachments.each do |attachment|
+            config = attachment.record.class.try(:scannable_attachment_config_for, attachment.name)
+            next unless config
+            next unless Configuration.enabled_for_surface?(config.fetch(:surface))
+
+            return { attachment: attachment, config: config }
+          end
+
+          nil
+        end
+
+        def item_for(blob)
+          context = attachment_context_for(blob)
+          return nil unless context
+
+          attachment = context.fetch(:attachment)
+          Item.for_attachment(attachment.record, attachment.name).find_by(blob_id: blob.id)
+        end
       end
     end
   end

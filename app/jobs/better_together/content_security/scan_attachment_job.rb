@@ -1,0 +1,94 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  module ContentSecurity
+    # Background job that scans an attachment blob and updates the Item lifecycle accordingly.
+    class ScanAttachmentJob < BetterTogether::ApplicationJob
+      queue_as :default
+
+      discard_on ActiveJob::DeserializationError
+
+      def perform(item_id)
+        item = BetterTogether::ContentSecurity::Item.find(item_id)
+        result = BetterTogether::ContentSecurity::Scanner.scan_blob(item.blob)
+        scan_event = create_scan_event!(item, result)
+        apply_result!(item, result, scan_event)
+      end
+
+      private
+
+      def create_scan_event!(item, result)
+        item.scan_events.create!(
+          status: scan_event_status(result),
+          plane: 'technical',
+          scanner_name: result.scanner_name,
+          scanner_version: result.scanner_version,
+          verdict: result.verdict,
+          signature_name: result.signature_name,
+          error_class: result.error_class,
+          error_summary: result.error_summary,
+          started_at: Time.current,
+          finished_at: Time.current
+        )
+      end
+
+      def apply_result!(item, result, scan_event)
+        case result.status
+        when :clean
+          apply_clean_result!(item, result)
+        when :infected
+          apply_infected_result!(item, result, scan_event)
+        else
+          apply_error_result!(item, result, scan_event)
+        end
+      end
+
+      def apply_clean_result!(item, result)
+        item.update!(
+          lifecycle_state: 'clean', aggregate_verdict: 'clean',
+          scanner_name: result.scanner_name, scanned_at: Time.current,
+          released_at: Time.current, last_error_class: nil, last_error_summary: nil
+        )
+      end
+
+      def apply_infected_result!(item, result, scan_event)
+        finding = create_finding!(
+          item:, scan_event:, finding_type: 'malware_signature',
+          rule_id: result.signature_name, severity: 'high', confidence: 'high',
+          verdict: 'quarantined',
+          evidence_summary: "ClamAV detected #{result.signature_name} on upload #{item.attachable_type}##{item.attachable_id}."
+        )
+        item.update!(
+          lifecycle_state: 'quarantined', aggregate_verdict: 'quarantined',
+          scanner_name: result.scanner_name, scanned_at: Time.current,
+          last_error_class: nil, last_error_summary: nil
+        )
+        BetterTogether::ContentSecurity::SafetyCaseRouter.route!(item:, finding:)
+      end
+
+      def apply_error_result!(item, result, scan_event)
+        finding = create_finding!(
+          item:, scan_event:, finding_type: 'scanner_error',
+          rule_id: result.error_class, severity: 'medium', confidence: 'medium',
+          verdict: 'review_required',
+          evidence_summary: "Malware scanning failed for upload #{item.attachable_type}##{item.attachable_id}: #{result.error_summary}"
+        )
+        item.update!(
+          lifecycle_state: 'review_required', aggregate_verdict: 'review_required',
+          scanner_name: result.scanner_name, scanned_at: Time.current,
+          released_at: nil, last_error_class: result.error_class, last_error_summary: result.error_summary
+        )
+        BetterTogether::ContentSecurity::SafetyCaseRouter.route!(item:, finding:)
+      end
+
+      def create_finding!(**params)
+        item = params.delete(:item)
+        item.findings.create!(**params, plane: 'technical', detected_at: Time.current)
+      end
+
+      def scan_event_status(result)
+        result.status == :error ? 'failed' : 'completed'
+      end
+    end
+  end
+end

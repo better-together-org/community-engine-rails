@@ -232,6 +232,29 @@ module BetterTogether
       end
     end
 
+    initializer 'better_together.content_security', after: :load_config_initializers do |app|
+      content_security = ActiveSupport::OrderedOptions.new
+      malware_scanning = ActiveSupport::OrderedOptions.new
+
+      malware_scanning.enabled = ENV.fetch('BT_MALWARE_SCANNING_ENABLED', 'false') == 'true'
+      malware_scanning.engine = ENV.fetch('BT_MALWARE_SCANNING_ENGINE', 'clamav')
+      malware_scanning.host = ENV.fetch('BT_MALWARE_SCANNING_HOST', '127.0.0.1')
+      malware_scanning.port = ENV.fetch('BT_MALWARE_SCANNING_PORT', 3310).to_i
+      malware_scanning.timeout = ENV.fetch('BT_MALWARE_SCANNING_TIMEOUT', 10).to_f
+      malware_scanning.max_stream_bytes = ENV.fetch('BT_MALWARE_SCANNING_MAX_STREAM_BYTES', 25.megabytes).to_i
+      malware_scanning.fail_mode = ENV.fetch('BT_MALWARE_SCANNING_FAIL_MODE', 'hold_until_clean')
+      malware_scanning.enabled_surfaces = ENV.fetch('BT_MALWARE_SCANNING_SURFACES', 'uploads').split(',').map(&:strip)
+
+      content_security.malware_scanning = malware_scanning
+      app.config.content_security = content_security
+      BetterTogether.content_security = content_security
+    end
+
+    config.to_prepare do
+      ActiveStorage::Blobs::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+    end
+
     rake_tasks do
       load 'tasks/better_together_tasks.rake'
 
