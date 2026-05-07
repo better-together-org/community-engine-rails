@@ -130,10 +130,11 @@ RSpec.describe 'uploads gallery', :js do # rubocop:disable Metrics/BlockLength
 
     expect(page).to have_css('.modal.show', wait: 10)
 
-    library_image = find('.modal.show img', match: :first)
+    library_button = find('.modal.show button[data-action*="image-library#select"]', match: :first)
+    library_image = library_button.find('img')
     expect(URI.parse(library_image[:src]).path).to include('/rails/active_storage/blobs/proxy/')
-    expect(library_image['data-url']).to be_present
-    expect(library_image['data-signed-id']).to eq(upload.file.blob.signed_id)
+    expect(library_button['data-url']).to be_present
+    expect(library_button['data-signed-id']).to eq(upload.file.blob.signed_id)
   end
 
   scenario 'shows an explanatory empty state when the current person has no reviewed images' do
@@ -173,7 +174,7 @@ RSpec.describe 'uploads gallery', :js do # rubocop:disable Metrics/BlockLength
     expect(page).to have_no_text('Hidden Image')
     expect(held_upload.file_content_security_downloadable?).to be(false)
 
-    library_image = find('.modal.show img', match: :first)
-    expect(library_image['data-signed-id']).to eq(own_upload.file.blob.signed_id)
+    library_button = find('.modal.show button[data-action*="image-library#select"]', match: :first)
+    expect(library_button['data-signed-id']).to eq(own_upload.file.blob.signed_id)
   end
 end
