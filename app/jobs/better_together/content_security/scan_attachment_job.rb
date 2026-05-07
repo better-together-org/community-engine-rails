@@ -7,6 +7,7 @@ module BetterTogether
       queue_as :default
 
       discard_on ActiveJob::DeserializationError
+      discard_on ActiveRecord::RecordNotFound
 
       # Retry transient clamd connection failures (restart, brief outage) before escalating.
       # After exhaustion the item stays pending_scan; a monitoring alert should surface stale items.
@@ -88,6 +89,22 @@ module BetterTogether
       end
 
       def apply_error_result!(item, result, scan_event)
+        return hold_pending!(item, result) if hold_until_clean?
+
+        escalate_to_review!(item, result, scan_event)
+      end
+
+      def hold_until_clean?
+        BetterTogether::ContentSecurity::Configuration.fail_mode == 'hold_until_clean'
+      end
+
+      # Hold access without escalating — item stays pending_scan; last_error_* recorded for
+      # debugging. Prevents scan outages from flooding the safety case queue.
+      def hold_pending!(item, result)
+        item.update!(last_error_class: result.error_class, last_error_summary: result.error_summary)
+      end
+
+      def escalate_to_review!(item, result, scan_event)
         finding = create_finding!(
           item:, scan_event:, finding_type: 'scanner_error',
           rule_id: result.error_class, severity: 'medium', confidence: 'medium',

@@ -95,7 +95,27 @@ RSpec.describe BetterTogether::ContentSecurity::ScanAttachmentJob do
     expect(item.reload).to be_lifecycle_state_pending_scan
   end
 
-  it 'holds uploads for review when a non-connection scan error occurs' do
+  it 'keeps item pending_scan and records the error when fail_mode is hold_until_clean' do
+    item = upload.content_security_item
+    result = BetterTogether::ContentSecurity::Scanner::Result.new(
+      status: :error,
+      verdict: 'review_required',
+      scanner_name: 'clamav',
+      error_class: 'clamav_scan_error',
+      error_summary: 'Scanner internal error'
+    )
+    allow(BetterTogether::ContentSecurity::Scanner).to receive(:scan_blob).and_return(result)
+
+    described_class.perform_now(item.id)
+
+    expect(item.reload).to be_lifecycle_state_pending_scan
+    expect(item.last_error_class).to eq('clamav_scan_error')
+    expect(item.safety_case).to be_nil
+  end
+
+  it 'holds uploads for review and opens a safety case when fail_mode is not hold_until_clean' do
+    BetterTogether.content_security.malware_scanning.fail_mode = 'review_required'
+
     item = upload.content_security_item
     result = BetterTogether::ContentSecurity::Scanner::Result.new(
       status: :error,
