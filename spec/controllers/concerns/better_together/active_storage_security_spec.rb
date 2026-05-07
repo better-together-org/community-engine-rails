@@ -126,10 +126,11 @@ module BetterTogether
       end
 
       it 'marks public blobs as public cacheable' do
-        allow(BetterTogether::MediaCachePolicy).to receive(:for_blob).with(blob)
-                                                              .and_return(instance_double(BetterTogether::MediaCachePolicy,
-                                                                                          cache_scope: 'public',
-                                                                                          public?: true))
+        allow(BetterTogether::MediaCachePolicy).to receive(:for_blob)
+          .with(blob)
+          .and_return(instance_double(BetterTogether::MediaCachePolicy,
+                                      cache_scope: 'public',
+                                      public?: true))
 
         controller.send(:apply_media_cache_headers)
 
@@ -137,10 +138,11 @@ module BetterTogether
       end
 
       it 'marks non-public blobs as private and no-store' do
-        allow(BetterTogether::MediaCachePolicy).to receive(:for_blob).with(blob)
-                                                              .and_return(instance_double(BetterTogether::MediaCachePolicy,
-                                                                                          cache_scope: 'private',
-                                                                                          public?: false))
+        allow(BetterTogether::MediaCachePolicy).to receive(:for_blob)
+          .with(blob)
+          .and_return(instance_double(BetterTogether::MediaCachePolicy,
+                                      cache_scope: 'private',
+                                      public?: false))
 
         controller.send(:apply_media_cache_headers)
 
