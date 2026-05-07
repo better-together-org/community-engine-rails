@@ -8,11 +8,17 @@ module BetterTogether
     end
 
     def upload_content_security_state(upload)
-      subject = upload.file_content_security_subject
-      return 'clean' if subject.blank? || subject.released_for_human_access?
-      return 'restricted' if subject.aggregate_verdict.in?(%w[blocked quarantined])
-
-      'review_required'
+      @upload_security_state_cache ||= {}
+      @upload_security_state_cache[upload.id] ||= begin
+        subject = upload.file_content_security_subject
+        if subject.blank? || subject.released_for_human_access?
+          'clean'
+        elsif subject.aggregate_verdict.in?(%w[blocked quarantined])
+          'restricted'
+        else
+          'review_required'
+        end
+      end
     end
 
     def upload_content_security_counts(uploads)

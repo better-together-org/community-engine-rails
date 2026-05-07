@@ -1,10 +1,18 @@
 
 <%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
-<% library_uploads = BetterTogether::Upload.with_creator(current_person).select do |upload|
-     upload.file.attached? &&
-       upload.content_type&.start_with?('image/') &&
-       upload.file_content_security_downloadable?
-   end %>
+<% library_uploads = if current_person
+    BetterTogether::Upload
+      .with_creator(current_person)
+      .joins(file_attachment: :blob)
+      .where('active_storage_blobs.content_type LIKE ?', 'image/%')
+      .includes(:content_security_subjects)
+      .select do |upload|
+        subject = upload.content_security_subjects.detect { |s| s.attachment_name == 'file' }
+        subject.nil? || subject.released_for_human_access?
+      end
+  else
+    []
+  end %>
 <div class="image-fields" data-controller="better_together--image-preview better_together--image-library">
   <%= label_tag do %>
     <%= block.class.human_attribute_name('media') %>
@@ -53,7 +61,14 @@
               <% library_uploads.each do |upload| %>
               <div class="col-3">
                 <% upload_url = storage_proxy_url_for(upload.file) %>
-                <%= image_tag upload_url, class: 'img-fluid', data: { action: 'click->better_together--image-library#select', signed_id: upload.file.blob.signed_id, url: upload_url } %>
+                <button type="button"
+                        class="p-0 border-0 bg-transparent w-100"
+                        data-action="better_together--image-library#select"
+                        data-signed-id="<%= upload.file.blob.signed_id %>"
+                        data-url="<%= upload_url %>"
+                        aria-label="<%= upload.name %>">
+                  <%= image_tag upload_url, class: 'img-fluid', alt: upload.name %>
+                </button>
               </div>
             <% end %>
             </div>
