@@ -51,6 +51,26 @@ module BetterTogether
       rescue ActiveStorage::FileNotFoundError
         nil
       end
+
+      private
+
+      def attachment_proxy_url(attachment)
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          attachment,
+          url_options: route_url_options
+        )
+      end
+
+      def variant_proxy_url(variant)
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          variant,
+          url_options: route_url_options
+        )
+      end
+
+      def route_url_options
+        @route_url_options ||= Rails.application.routes.default_url_options.symbolize_keys
+      end
     end
   end
 end
