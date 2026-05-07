@@ -10,6 +10,8 @@ module BetterTogether
 
     def download # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       if resource_instance.attached?
+        apply_download_cache_headers(resource_instance)
+
         # Trigger the background job to log the download
         BetterTogether::Metrics::TrackDownloadJob.perform_later(
           resource_instance,                                # Polymorphic resource model
@@ -34,6 +36,14 @@ module BetterTogether
 
     def resource_class
       Upload
+    end
+
+    def apply_download_cache_headers(upload)
+      policy = BetterTogether::MediaCachePolicy.for_upload(upload)
+      response.set_header('X-BTS-Cache-Scope', policy.cache_scope)
+      return if policy.public?
+
+      response.headers['Cache-Control'] = BetterTogether::MediaCachePolicy::PRIVATE_CACHE_CONTROL
     end
   end
 end
