@@ -27,16 +27,18 @@ module BetterTogether
       build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
-    def storage_proxy_url_for(attachment, **)
+    # rubocop:disable Style/ArgumentsForwarding
+    def storage_proxy_url_for(attachment, **options)
       return unless attachment.present?
 
       BetterTogether::MediaUrlBuilder.proxy_url_for(
         attachment,
         base_url: request&.base_url,
         **default_url_options,
-        **
+        **options
       )
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     # Returns the base path configured for BetterTogether.
     def base_path

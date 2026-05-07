@@ -8,7 +8,7 @@ module BetterTogether
         ['page_content', page.cache_key_with_version, I18n.locale, page_visibility_cache_context, 'v2'],
         expires_in: 1.minute
       ) do
-        render @page.content_blocks
+        render page.content_blocks
       end
     end
 

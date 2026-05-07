@@ -59,6 +59,41 @@ RSpec.describe BetterTogether::ApplicationHelper do
     end
   end
 
+  describe '#storage_proxy_url_for' do
+    let(:attachment) { instance_double(ActiveStorage::Attached) }
+    let(:request_double) { instance_double(ActionDispatch::Request, base_url: 'https://communityengine.app') }
+
+    before do
+      allow(helper).to receive_messages(
+        request: request_double,
+        default_url_options: { host: 'communityengine.app', protocol: 'https' }
+      )
+    end
+
+    it 'returns nil when the attachment is blank' do
+      expect(helper.storage_proxy_url_for(nil)).to be_nil
+    end
+
+    it 'forwards default URL options and keyword arguments to the media URL builder' do
+      allow(BetterTogether::MediaUrlBuilder).to receive(:proxy_url_for).and_return(
+        'https://communityengine.app/rails/active_storage/proxy/test'
+      )
+
+      helper.storage_proxy_url_for(attachment, disposition: 'attachment')
+
+      expect(BetterTogether::MediaUrlBuilder).to have_received(:proxy_url_for).with(
+        attachment,
+        base_url: 'https://communityengine.app',
+        host: 'communityengine.app',
+        protocol: 'https',
+        disposition: 'attachment'
+      )
+      expect(helper.storage_proxy_url_for(attachment, disposition: 'attachment')).to eq(
+        'https://communityengine.app/rails/active_storage/proxy/test'
+      )
+    end
+  end
+
   it 'renders registered provider fragments in order' do
     BetterTogether.register_head_tag_provider(:first, ->(_view_context) { '<meta name="first" />'.html_safe })
     BetterTogether.register_head_tag_provider(:second, ->(_view_context) { '<script src="/test.js"></script>'.html_safe })

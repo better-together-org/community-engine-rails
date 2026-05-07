@@ -87,7 +87,6 @@ RSpec.describe BetterTogether::PagesHelper do
     it 'scopes the cache by locale and visibility context' do
       content_blocks = [instance_double(BetterTogether::Content::Block)]
       allow(page).to receive(:content_blocks).and_return(content_blocks)
-      assign(:page, page)
       allow(helper).to receive(:render).with(content_blocks).and_return('rendered-blocks')
 
       expect(Rails.cache).to receive(:fetch).with(
@@ -96,6 +95,23 @@ RSpec.describe BetterTogether::PagesHelper do
       ).and_yield
 
       expect(helper.render_page_content(page)).to eq('rendered-blocks')
+    end
+
+    it 'renders the passed page content blocks rather than relying on @page' do
+      passed_page = create(:better_together_page)
+      assigned_page = create(:better_together_page)
+      passed_blocks = [instance_double(BetterTogether::Content::Block)]
+      assigned_blocks = [instance_double(BetterTogether::Content::Block)]
+
+      allow(passed_page).to receive(:content_blocks).and_return(passed_blocks)
+      allow(assigned_page).to receive(:content_blocks).and_return(assigned_blocks)
+      assign(:page, assigned_page)
+
+      allow(helper).to receive(:render).with(passed_blocks).and_return('passed-page-blocks')
+
+      helper.render_page_content(passed_page)
+
+      expect(helper).to have_received(:render).with(passed_blocks)
     end
   end
 end
