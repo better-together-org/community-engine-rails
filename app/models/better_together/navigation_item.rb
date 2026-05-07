@@ -85,7 +85,7 @@ module BetterTogether
 
     validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
-              format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
+              format: { with: %r{\A((http|https)://.+|#.*|/+[\w/-]*)\z}, allow_blank: true,
                         message: 'must be a valid URL, "start with #", or be an absolute path' }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }

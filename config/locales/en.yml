@@ -1072,6 +1072,16 @@ en:
           open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        fields:
+          image:
+            library:
+              empty: No reviewed image uploads are available in your library yet.
+              empty_hint: Upload an image first, or switch to the person who uploaded
+                it.
+              open: Choose from library
+              scope_hint: Only your reviewed image uploads are available here.
+              title: Choose from library
+              view_uploads: View uploads and review statuses
         hero:
           editor:
             background: Background
@@ -3526,6 +3536,15 @@ en:
           review_required: This upload is being reviewed before it can be inserted
             into rich text or shared.
       index:
+        filter_group_aria: Filter uploads by review status
+        filters:
+          all: All (%{count})
+          clean: Ready (%{count})
+          restricted: Restricted (%{count})
+          review_required: Under review (%{count})
+        review_status_description: Review counts are shown here to help you quickly
+          find approved, held, or restricted uploads.
+        review_status_heading: Review status
         storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:

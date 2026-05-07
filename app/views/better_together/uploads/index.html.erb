@@ -2,6 +2,8 @@
   <%= BetterTogether::Upload.model_name.human.pluralize %>
 <% end %>
 
+<% status_counts = upload_content_security_counts(@uploads) %>
+
 <div class="container mt-4" data-controller="better_together--uploads">
   <div class="row mb-2">
     <div class="col">
@@ -21,9 +23,56 @@
     </div>
   </div>
 
+  <section class="mb-4" aria-labelledby="upload-review-status-heading">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+      <div>
+        <h2 id="upload-review-status-heading" class="h5 mb-1"><%= t('.review_status_heading') %></h2>
+        <p class="text-muted mb-0"><%= t('.review_status_description') %></p>
+      </div>
+      <div class="btn-group" role="group" aria-label="<%= t('.filter_group_aria') %>">
+        <button type="button"
+                class="btn btn-outline-secondary active"
+                data-status-filter="all"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="true">
+          <%= t('.filters.all', count: @uploads.size) %>
+        </button>
+        <button type="button"
+                class="btn btn-outline-success"
+                data-status-filter="clean"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="false">
+          <%= t('.filters.clean', count: status_counts['clean']) %>
+        </button>
+        <button type="button"
+                class="btn btn-outline-warning"
+                data-status-filter="review_required"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="false">
+          <%= t('.filters.review_required', count: status_counts['review_required']) %>
+        </button>
+        <button type="button"
+                class="btn btn-outline-danger"
+                data-status-filter="restricted"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="false">
+          <%= t('.filters.restricted', count: status_counts['restricted']) %>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <div class="row g-3" data-better_together--uploads-target="list">
     <% @uploads.each do |upload| %>
-      <div class="col-md-3" data-better_together--uploads-target="item" data-name="<%= upload.name.to_s %>" data-created-at="<%= upload.created_at.iso8601 %>">
+      <div class="col-md-3"
+           data-better_together--uploads-target="item"
+           data-name="<%= upload.name.to_s %>"
+           data-created-at="<%= upload.created_at.iso8601 %>"
+           data-review-state="<%= upload_content_security_state(upload) %>">
         <div class="card h-100">
           <% if upload.file.attached? && upload.file.representable? %>
             <%= image_tag storage_proxy_url_for(upload.file.representation(resize_to_limit: [200, 200]).processed),

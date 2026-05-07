@@ -1085,6 +1085,15 @@ es:
           open_in_new_tab: Abrir contenido incrustado en una nueva pestaña
         events_block:
           empty: No hay eventos para mostrar.
+        fields:
+          image:
+            library:
+              empty: Aún no hay cargas de imagen revisadas disponibles en tu biblioteca.
+              empty_hint: Sube primero una imagen o cambia a la persona que la subió.
+              open: Elegir de la biblioteca
+              scope_hint: Aquí solo están disponibles tus cargas de imagen revisadas.
+              title: Elegir de la biblioteca
+              view_uploads: Ver cargas y estados de revisión
         hero:
           editor:
             background: Fondo
@@ -3602,6 +3611,15 @@ es:
           review_required: Esta carga está en revisión antes de poder insertarse en
             texto enriquecido o compartirse.
       index:
+        filter_group_aria: Filtrar cargas por estado de revisión
+        filters:
+          all: Todas (%{count})
+          clean: Listas (%{count})
+          restricted: Restringidas (%{count})
+          review_required: En revisión (%{count})
+        review_status_description: Los recuentos de revisión se muestran aquí para
+          que puedas encontrar rápidamente las cargas aprobadas, retenidas o restringidas.
+        review_status_heading: Estado de revisión
         storage_usage: Estás usando %{size} de almacenamiento
     validators:
       safe_federation_url:
