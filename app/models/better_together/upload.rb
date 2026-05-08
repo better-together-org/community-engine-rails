@@ -3,17 +3,13 @@
 module BetterTogether
   # Represents an uploaded file
   class Upload < ApplicationRecord
+    include BetterTogether::ContentSecurity::ScannableAttachment
     include Creatable
     include Identifier
     include Privacy
     include Translatable
 
     has_one_attached :file
-    has_many :content_security_subjects,
-             as: :subject,
-             class_name: 'BetterTogether::ContentSecurity::Subject',
-             dependent: :destroy,
-             inverse_of: :subject
 
     delegate :attached?, :byte_size, :content_type, :download, :filename, :url, to: :file
 
@@ -22,32 +18,34 @@ module BetterTogether
 
     include RemoveableAttachment
 
-    after_commit :sync_file_content_security_subject
+    scans_attachment :file, surface: :uploads
 
-    def to_param
-      id
+    def content_security_item
+      BetterTogether::ContentSecurity::Item.for_attachment(self, :file).find_by(blob_id: file.blob_id) if file.attached?
     end
 
+    def content_security_releasable?
+      BetterTogether::ContentSecurity::BlobAccessPolicy.download_allowed_for_record?(self, :file)
+    end
+
+    # Legacy API used by views and helpers — delegates to the new content-security Item model.
     def file_content_security_subject
-      content_security_subjects.find_by(attachment_name: 'file')
+      content_security_item
     end
 
     def file_content_security_downloadable?
-      file_content_security_subject.nil? || file_content_security_subject.released_for_human_access?
+      content_security_releasable?
     end
 
     def file_content_security_held?
-      file_content_security_subject.present? && file_content_security_subject.held_for_review?
+      item = content_security_item
+      return false if item.nil?
+
+      !item.releasable?
     end
 
-    private
-
-    def sync_file_content_security_subject
-      BetterTogether::ContentSecurity::AttachmentSubjectSync.new(
-        record: self,
-        attachment_name: :file,
-        source_surface: 'ce_upload_file'
-      ).call
+    def to_param
+      id
     end
   end
 end

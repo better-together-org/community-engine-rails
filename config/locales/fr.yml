@@ -565,6 +565,10 @@ fr:
                 active
             target:
               must_be_person: doit être une personne
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: a déjà un enregistrement de règlement
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -882,6 +886,24 @@ fr:
     buildings:
       add: Ajouter
       title: Bâtiments
+    c3:
+      balance_card:
+        available: Disponible
+        explainer: Tree Seeds sont des crédits de contribution communautaire que vous
+          gagnez en partageant votre temps, vos compétences et vos ressources. Ils
+          peuvent être échangés contre des services offerts par d'autres membres de
+          la communauté.
+        lifetime: Guadagné dans la vie
+        network_available: Réseau disponible
+        network_description: Tree Seeds gagnés ou reçus sur toutes les plates-formes
+          connectées.
+        network_lifetime: Réseau gagné dans la vie
+        reserved: Réservé pour les accords
+        show_network_total: Afficher mon total de Tree Seeds entre plates-formes
+        title: Vos Tree Seeds
+      tree_seed: Tree Seed
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Default calendar for %<community_name>s
       personal_calendar_name: Calendrier Personnel de %{name}
@@ -1067,6 +1089,18 @@ fr:
           open_in_new_tab: Ouvrir le contenu intégré dans un nouvel onglet
         events_block:
           empty: Aucun événement à afficher.
+        fields:
+          image:
+            library:
+              empty: Aucun téléversement d'image révisé n'est encore disponible dans
+                votre bibliothèque.
+              empty_hint: Téléversez d'abord une image, ou utilisez la personne qui
+                l'a téléversée.
+              open: Choisir depuis la bibliothèque
+              scope_hint: Seuls vos téléversements d'images révisés sont disponibles
+                ici.
+              title: Choisir depuis la bibliothèque
+              view_uploads: Voir les téléversements et leurs statuts de révision
         hero:
           editor:
             background: Arrière-plan
@@ -1942,6 +1976,11 @@ fr:
         placeholders:
           search: Rechercher par titre ou description
         title: Rechercher
+      settlement:
+        cancelled_html: La réservation de %{amount} a été restituée à votre solde.
+        completed_html: "%{amount} ont été échangés le %{date}."
+        pending_html: "%{amount} sont réservés, en attente de l'échange."
+        status_label: Statut des Tree Seeds de l'accord
       status:
         any: Tous
         closed: Fermé
@@ -2421,6 +2460,23 @@ fr:
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Graines d'arbre ont été réservées pour votre accord.
+              Elles seront libérées si l'accord est annulé."
+            title: Graines d'arbre réservées
+          mailer:
+            activity_header: "%{amount} Graines d'arbre ont de l'activité sur votre
+              accord."
+            view_agreement: Voir l'accord
+          released:
+            body: "%{amount} Graines d'arbre ont été restituées à votre solde."
+            title: Réservation de Graines d'arbre libérée
+          settled:
+            body: "%{amount} Graines d'arbre ont été échangées. Votre solde a été
+              mis à jour."
+            title: Graines d'arbre échangées
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2806,7 +2862,15 @@ fr:
           de la plateforme distante.
         suspended: Connexion suspendue.
       form:
+        allow_c3_exchange: Autoriser l'échange de Graines d'arbre avec cette plateforme
         back: Retour
+        c3_exchange_hint: Lorsqu'il est activé, les participants de cette plateforme
+          peuvent envoyer et recevoir des Graines d'arbre avec %{platform}. Les deux
+          plateformes doivent l'activer pour que l'échange fonctionne.
+        c3_exchange_legend: Échange de Graines d'arbre
+        c3_exchange_rate_hint: Combien de Graines d'arbre ici valent 1 Graine d'arbre
+          sur %{platform} ? Laissez à 1.0 pour une valeur égale.
+        c3_exchange_rate_label: Taux d'échange
         connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre.
           Pair : partenariat égal entre plateformes indépendantes.'
         content_sharing_policy_hint: Contrôle comment le contenu public est synchronisé.
@@ -3086,6 +3150,64 @@ fr:
         none: Aucun rôle attribué
     resources:
       membership_request: Demande d'adhésion
+    robots:
+      created: Le robot a été créé avec succès.
+      destroyed: Le robot a été supprimé avec succès.
+      edit:
+        subtitle: Ajustez le fournisseur, le modèle, le prompt et les options d'exécution
+          de ce robot de plateforme.
+        title: Modifier %{name} pour %{platform_name}
+      form:
+        assume_model_exists: Supposer que le modèle existe
+        assume_model_exists_help: N'activez ceci que si vous savez que la combinaison
+          fournisseur/modèle existe.
+        cancel: Annuler
+      index:
+        back_to_platform: Retour à la plateforme
+        delete: Supprimer
+        delete_confirm: Supprimer %{name} ?
+        edit: Modifier
+        global_read_only: Repli global
+        new_robot: Ajouter un robot
+        scope: Portée
+        status: Statut
+        subtitle: Gérez les robots propres à la plateforme et les replis globaux hérités
+          depuis un seul endroit.
+        title: Robots LLM pour %{platform_name}
+      new:
+        subtitle: Créez une surcharge de robot limitée à la plateforme. Les identifiants
+          restent gérés par l'environnement.
+        title: Nouveau robot pour %{platform_name}
+      readiness:
+        configured: Configuré
+        credentials_help: Les robots adossés à OpenAI continuent d'utiliser l'environnement
+          de déploiement pour les identifiants.
+        hidden: Masquée
+        missing: Manquants
+        no_translation_robot: Aucun robot de traduction ne se résout pour cette plateforme.
+        openai_credentials: Identifiants OpenAI
+        ready: Prêt
+        shown: Affichée
+        translation_provider: Fournisseur de traduction
+        translation_ui: Interface de traduction
+        translation_ui_help: Les contrôles de traduction ne s'affichent que lorsque
+          le robot de traduction résolu dispose d'un fournisseur disponible.
+        unavailable: Indisponible
+      scope_labels:
+        global_fallback: Repli global
+        platform_override: Surcharge de plateforme
+      statuses:
+        active: Actif
+        inactive: Inactif
+        inactive_translation: Robot de traduction inactif
+        provider_ready: Fournisseur disponible
+        provider_unavailable: Fournisseur indisponible
+        translation_not_selected: Ce n'est pas le robot de traduction effectif pour
+          cette plateforme
+        translation_ui_disabled: L'interface de traduction est masquée pour cette
+          plateforme
+        translation_ui_enabled: L'interface de traduction est activée pour cette plateforme
+      updated: Le robot a été mis à jour avec succès.
     roles:
       index:
         new_role: Nouveau rôle
@@ -3492,6 +3614,8 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+        translation_unavailable: La traduction n'est pas disponible actuellement pour
+          cette plateforme.
     uploads:
       content_security:
         badge:
@@ -3508,6 +3632,16 @@ fr:
           review_required: Ce téléversement est en cours de révision avant de pouvoir
             être inséré dans un texte enrichi ou partagé.
       index:
+        filter_group_aria: Filtrer les téléversements par statut de révision
+        filters:
+          all: Tous (%{count})
+          clean: Prêts (%{count})
+          restricted: Restreints (%{count})
+          review_required: En révision (%{count})
+        review_status_description: Les comptes de révision sont affichés ici pour
+          vous aider à trouver rapidement les téléversements approuvés, retenus ou
+          restreints.
+        review_status_heading: Statut de révision
         storage_usage: Vous utilisez %{size} de stockage
     validators:
       safe_federation_url:
@@ -4125,6 +4259,7 @@ fr:
     joatu:
       agreement:
         accepted: Accord accepté
+        fulfilled: Accord rempli — C3 transféré au créateur de l'offre.
         rejected: Accord rejeté
       response_links:
         offer_created: Offre créée en réponse à la demande.
@@ -4584,6 +4719,7 @@ fr:
         description: Ouvrez les opérations de niveau hôte pour cette plateforme sans
           dépendre uniquement d'une URL directe.
         host_dashboard: Tableau de bord hôte
+        robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage
         title: Opérations de la plateforme
       safety:

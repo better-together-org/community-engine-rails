@@ -562,6 +562,10 @@ uk:
                 особи, цільової особи та активного підключення платформи
             target:
               must_be_person: повинна бути особою
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: вже має запис про розрахунок
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -865,6 +869,23 @@ uk:
     buildings:
       add: Додати
       title: Будівлі
+    c3:
+      balance_card:
+        available: Доступно
+        explainer: Tree Seeds - це кредити за внески до спільноти, які ви отримуєте,
+          ділючись своїм часом, навичками та ресурсами. Вони можуть бути обмінені
+          на послуги, запропоновані іншими членами спільноти.
+        lifetime: Отримано за життя
+        network_available: Мережа доступна
+        network_description: Tree Seeds отримані або отримані на всіх підключених
+          платформах.
+        network_lifetime: Мережа отримана за життя
+        reserved: Зарезервовано для угод
+        show_network_total: Показати мій загальний обсяг Tree Seeds між платформами
+        title: Ваші Tree Seeds
+      tree_seed: Tree Seed
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Календар за замовчуванням для %<community_name>s
       personal_calendar_name: Особистий календар %{name}
@@ -1054,6 +1075,17 @@ uk:
           open_in_new_tab: Відкрити вбудований вміст у новій вкладці
         events_block:
           empty: Немає подій для відображення.
+        fields:
+          image:
+            library:
+              empty: У вашій бібліотеці ще немає доступних перевірених завантажень
+                зображень.
+              empty_hint: Спочатку завантажте зображення або перейдіть до людини,
+                яка його завантажила.
+              open: Вибрати з бібліотеки
+              scope_hint: Тут доступні лише ваші перевірені завантаження зображень.
+              title: Вибрати з бібліотеки
+              view_uploads: Переглянути завантаження та статуси перевірки
         hero:
           editor:
             background: Тло
@@ -1931,6 +1963,11 @@ uk:
         placeholders:
           search: Search by title or description
         title: Search
+      settlement:
+        cancelled_html: Резервування %{amount} було повернено до вашого балансу.
+        completed_html: "%{amount} були обмінені %{date}."
+        pending_html: "%{amount} зарезервовано, очікування завершення обміну."
+        status_label: Статус Tree Seeds угоди
       status:
         any: Any
         closed: Closed
@@ -2398,6 +2435,21 @@ uk:
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Насіння дерева зарезервовано для вашої угоди. Вони будуть
+              звільнені, якщо угоду скасують."
+            title: Насіння дерева зарезервовано
+          mailer:
+            activity_header: "%{amount} Насіння дерева мають активність у вашій угоді."
+            view_agreement: Переглянути угоду
+          released:
+            body: "%{amount} Насіння дерева повернено на ваш баланс."
+            title: Резервування Насіння дерева звільнено
+          settled:
+            body: "%{amount} Насіння дерева обміняно. Ваш баланс оновлено."
+            title: Насіння дерева обміняно
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2779,7 +2831,15 @@ uk:
           платформи.
         suspended: З'єднання призупинено.
       form:
+        allow_c3_exchange: Дозволити обмін Насінням дерева з цією платформою
         back: Назад
+        c3_exchange_hint: Коли увімкнено, учасники цієї платформи можуть надсилати
+          та отримувати Насіння дерева з %{platform}. Обидві платформи повинні це
+          увімкнути для роботи обміну.
+        c3_exchange_legend: Обмін Насінням дерева
+        c3_exchange_rate_hint: Скільки Насіння дерева тут дорівнює 1 Насінню дерева
+          на %{platform}? Залиште 1.0 для рівної вартості.
+        c3_exchange_rate_label: Курс обміну
         connection_kind_hint: 'Учасник: ця платформа приймає учасників іншої. Партнер:
           рівноправне партнерство між незалежними платформами.'
         content_sharing_policy_hint: Визначає спосіб синхронізації публічного вмісту.
@@ -3048,6 +3108,62 @@ uk:
         none: Ролі не призначено
     resources:
       membership_request: Запит на членство
+    robots:
+      created: Робота успішно створено.
+      destroyed: Робота успішно видалено.
+      edit:
+        subtitle: Налаштуйте провайдера, модель, prompt і параметри виконання для
+          цього робота платформи.
+        title: Редагувати %{name} для %{platform_name}
+      form:
+        assume_model_exists: Вважати, що модель існує
+        assume_model_exists_help: Увімкніть лише тоді, коли ви знаєте, що шлях провайдер/модель
+          існує.
+        cancel: Скасувати
+      index:
+        back_to_platform: Назад до платформи
+        delete: Видалити
+        delete_confirm: Видалити %{name}?
+        edit: Редагувати
+        global_read_only: Глобальний резерв
+        new_robot: Додати робота
+        scope: Обсяг
+        status: Статус
+        subtitle: Керуйте роботами платформи та успадкованими глобальними резервами
+          з одного місця.
+        title: LLM-роботи для %{platform_name}
+      new:
+        subtitle: Створіть перевизначення робота для цієї платформи. Облікові дані
+          залишаються в конфігурації середовища.
+        title: Новий робот для %{platform_name}
+      readiness:
+        configured: Налаштовано
+        credentials_help: Роботи на базі OpenAI і далі використовують середовище розгортання
+          для облікових даних.
+        hidden: Прихована
+        missing: Відсутні
+        no_translation_robot: Для цієї платформи не визначено робота перекладу.
+        openai_credentials: Облікові дані OpenAI
+        ready: Готово
+        shown: Показана
+        translation_provider: Провайдер перекладу
+        translation_ui: Інтерфейс перекладу
+        translation_ui_help: Керування перекладом з'являється лише тоді, коли визначений
+          робот перекладу має доступного провайдера.
+        unavailable: Недоступно
+      scope_labels:
+        global_fallback: Глобальний резерв
+        platform_override: Перевизначення платформи
+      statuses:
+        active: Активний
+        inactive: Неактивний
+        inactive_translation: Неактивний робот перекладу
+        provider_ready: Провайдер доступний
+        provider_unavailable: Провайдер недоступний
+        translation_not_selected: Це не ефективний робот перекладу для цієї платформи
+        translation_ui_disabled: Інтерфейс перекладу приховано для цієї платформи
+        translation_ui_enabled: Інтерфейс перекладу увімкнено для цієї платформи
+      updated: Робота успішно оновлено.
     roles:
       index:
         new_role: Нова роль
@@ -3453,6 +3569,7 @@ uk:
         translation_failed: 'Переклад не вдався: %{message}'
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
+        translation_unavailable: Переклад наразі недоступний для цієї платформи.
     uploads:
       content_security:
         badge:
@@ -3468,6 +3585,15 @@ uk:
           review_required: Це завантаження проходить перевірку, перш ніж його можна
             буде вставити в розширений текст або поширити.
       index:
+        filter_group_aria: Фільтрувати завантаження за статусом перевірки
+        filters:
+          all: Усі (%{count})
+          clean: Готові (%{count})
+          restricted: Обмежені (%{count})
+          review_required: На перевірці (%{count})
+        review_status_description: Тут відображаються підрахунки перевірки, щоб ви
+          могли швидко знайти схвалені, утримані або обмежені завантаження.
+        review_status_heading: Статус перевірки
         storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:
@@ -4102,6 +4228,7 @@ uk:
     joatu:
       agreement:
         accepted: Угоду прийнято
+        fulfilled: Угоду виконано — C3 передано творцю пропозиції.
         rejected: Угоду відхилено
       response_links:
         offer_created: Пропозицію створено у відповідь на запит.
@@ -4576,6 +4703,7 @@ uk:
         description: Відкривайте операції рівня хоста для цієї платформи без потреби
           знати точну URL-адресу.
         host_dashboard: Панель хоста
+        robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи
       safety:

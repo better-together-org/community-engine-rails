@@ -5,6 +5,7 @@ module BetterTogether
   # These methods facilitate access to common resources like the current user,
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
+    include C3Helper
     include MetricsHelper
     include StructuredDataHelper
 
@@ -26,16 +27,25 @@ module BetterTogether
       build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
-    def storage_proxy_url_for(attachment, **)
+    # rubocop:disable Style/ArgumentsForwarding
+    def storage_proxy_url_for(attachment, **options)
       return unless attachment.present?
 
-      proxy_path = rails_storage_proxy_path(attachment, only_path: true, **)
-      if request&.base_url.present?
-        build_url_for_path(request.base_url, proxy_path)
-      else
-        rails_storage_proxy_url(attachment, **)
-      end
+      media_url_options = default_url_options.except(:locale, 'locale')
+      request_base_url = request&.base_url
+
+      url_builder_options = {
+        url_options: media_url_options,
+        **options
+      }
+      url_builder_options[:base_url] = request_base_url if request_base_url.present?
+
+      BetterTogether::MediaUrlBuilder.proxy_url_for(
+        attachment,
+        **url_builder_options
+      )
     end
+    # rubocop:enable Style/ArgumentsForwarding
 
     # Returns the base path configured for BetterTogether.
     def base_path
@@ -183,7 +193,7 @@ module BetterTogether
                      host_community.logo
                    end
 
-      rails_storage_proxy_url(attachment)
+      storage_proxy_url_for(attachment)
     end
 
     # Sets a translated meta description for the current view. Provide the

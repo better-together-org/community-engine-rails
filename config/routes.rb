@@ -209,6 +209,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             member do
               post :accept
               post :reject
+              post :fulfill
             end
           end
 
@@ -411,6 +412,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               member do
                 get :available_people
               end
+              resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
                 member do
@@ -452,6 +454,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         post 'oauth/token', to: 'oauth_tokens#create', as: :oauth_token
         resource :content_feed, only: :show, controller: :content_feed
         resources :linked_seeds, only: :index, controller: :linked_seeds
+
+        # C3 cross-platform settlement endpoints (authenticated via FederationAccessToken scope: c3.exchange)
+        post 'c3/token_seeds',   to: 'c3_token_seeds#create',   as: :c3_token_seed
+        post 'c3/lock_requests', to: 'c3_lock_requests#create', as: :c3_lock_request
       end
 
       resources :agreements, only: :show

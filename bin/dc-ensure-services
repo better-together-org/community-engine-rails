@@ -10,10 +10,6 @@ source "$repo_root/bin/docker-compose-env.sh"
 
 services=(db redis redis-rack-attack)
 
-if [[ "${SEARCH_BACKEND:-pg_search}" == "elasticsearch" ]]; then
-  services+=(elasticsearch)
-fi
-
 ./bin/dc up -d "${services[@]}" >/dev/null
 
 wait_for_tcp() {

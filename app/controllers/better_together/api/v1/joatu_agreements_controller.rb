@@ -32,6 +32,11 @@ module BetterTogether
           transition_agreement(:reject)
         end
 
+        # POST /api/v1/joatu_agreements/:id/cancel
+        def cancel
+          transition_agreement(:cancel)
+        end
+
         private
 
         def transition_agreement(action)

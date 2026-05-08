@@ -57,11 +57,23 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
-    config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+    # Avoid registering nested lib directories as Zeitwerk roots. Doing so makes
+    # files like lib/better_together/mcp/pundit_context.rb map to PunditContext
+    # instead of BetterTogether::Mcp::PunditContext.
+    config.autoload_paths = Array(config.autoload_paths) + ["#{root}/lib"]
+
+    initializer 'better_together.zeitwerk_ignores', before: :set_autoload_paths do
+      ignored_lib_paths = %w[generators rubocop tasks].map { |dir| root.join('lib', dir).to_s }
+      ignored_lib_files = [root.join('lib/mobility/backends/attachments/backend.rb').to_s]
+
+      Rails.autoloaders.each do |autoloader|
+        autoloader.ignore(*ignored_lib_paths, *ignored_lib_files)
+      end
+    end
 
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/lib",
       "#{root}/app/mailboxes",
       "#{root}/app/tools",
       "#{root}/app/resources",
@@ -189,7 +201,19 @@ module BetterTogether
       # engine specs. The dummy app already sees the engine migrations through
       # the normal boot path, and appending them here causes duplicate runtime
       # migration paths during app:db:test:* tasks.
-      next if app.root.to_s == root.to_s || app.root.to_s.start_with?(root.join('spec/dummy').to_s)
+      #
+      # Use Pathname#realpath to resolve symlinks and normalize paths, ensuring
+      # accurate comparison even when paths use relative references or symlinks.
+      begin
+        app_root_real = Pathname.new(app.root).realpath
+        engine_root_real = Pathname.new(root).realpath
+        dummy_app_real = Pathname.new(root.join('spec/dummy')).realpath
+
+        next if app_root_real == engine_root_real || app_root_real.to_s.start_with?(dummy_app_real.to_s)
+      rescue Errno::ENOENT
+        # Fallback to string comparison if realpath fails (e.g., in test environments)
+        next if app.root.to_s == root.to_s || app.root.to_s.start_with?(root.join('spec/dummy').to_s)
+      end
 
       # Skip if the host app has already installed CE migrations via
       # `rails better_together:install:migrations`. Installed migrations carry
@@ -206,6 +230,31 @@ module BetterTogether
         app.config.paths['db/migrate'] << expanded_path
         existing_paths << expanded_path
       end
+    end
+
+    initializer 'better_together.content_security', after: :load_config_initializers do |app|
+      content_security = ActiveSupport::OrderedOptions.new
+      malware_scanning = ActiveSupport::OrderedOptions.new
+
+      malware_scanning.enabled = ENV.fetch('BT_MALWARE_SCANNING_ENABLED', 'false') == 'true'
+      malware_scanning.engine = ENV.fetch('BT_MALWARE_SCANNING_ENGINE', 'clamav')
+      malware_scanning.host = ENV.fetch('BT_MALWARE_SCANNING_HOST', '127.0.0.1')
+      malware_scanning.port = ENV.fetch('BT_MALWARE_SCANNING_PORT', 3310).to_i
+      malware_scanning.timeout = ENV.fetch('BT_MALWARE_SCANNING_TIMEOUT', 10).to_f
+      malware_scanning.max_stream_bytes = ENV.fetch('BT_MALWARE_SCANNING_MAX_STREAM_BYTES', 25.megabytes).to_i
+      malware_scanning.fail_mode = ENV.fetch('BT_MALWARE_SCANNING_FAIL_MODE', 'hold_until_clean')
+      malware_scanning.enabled_surfaces = ENV.fetch('BT_MALWARE_SCANNING_SURFACES', 'uploads').split(',').map(&:strip)
+
+      content_security.malware_scanning = malware_scanning
+      app.config.content_security = content_security
+      BetterTogether.content_security = content_security
+    end
+
+    config.to_prepare do
+      ActiveStorage::Blobs::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Blobs::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
     end
 
     rake_tasks do

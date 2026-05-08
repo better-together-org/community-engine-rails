@@ -22,40 +22,40 @@ module BetterTogether
     end
 
     def leaflet_map_state(selector = '.map')
-      page.evaluate_script(map_controller_script(<<~JS), selector)
-        if (!context || !controller || !controller.map) {
-          return null
-        }
+      page.evaluate_script(map_controller_script(leaflet_state_js), selector)
+    end
 
+    def stub_browser_geolocation(latitude:, longitude:, accuracy: 5)
+      page.execute_script(geolocation_stub_js, latitude, longitude, accuracy)
+    end
+
+    private
+
+    def leaflet_state_js
+      <<~JS
+        if (!context || !controller || !controller.map) { return null }
         const markerLayers = []
         controller.map.eachLayer((layer) => {
-          if (layer instanceof globalThis.L.Marker) {
-            markerLayers.push(layer)
-          }
+          if (layer instanceof globalThis.L.Marker) { markerLayers.push(layer) }
         })
-
         return {
           center: controller.map.getCenter(),
           hasOsmLayer: controller.map.hasLayer(controller.osmLayer),
           hasSatelliteLayer: controller.map.hasLayer(controller.satelliteLayer),
           markerCount: markerLayers.length,
-          popupHtml: markerLayers[0] && markerLayers[0].getPopup() ? markerLayers[0].getPopup().getContent() : null
+          popupHtml: markerLayers[0]?.getPopup()?.getContent() || null
         }
       JS
     end
 
-    def stub_browser_geolocation(latitude:, longitude:, accuracy: 5)
-      page.execute_script(<<~JS, latitude, longitude, accuracy)
-        const latitude = arguments[0]
-        const longitude = arguments[1]
-        const accuracy = arguments[2]
-
+    def geolocation_stub_js
+      <<~JS
         Object.defineProperty(window.navigator, 'geolocation', {
           configurable: true,
           value: {
             getCurrentPosition(success) {
               success({
-                coords: { latitude, longitude, accuracy },
+                coords: { latitude: arguments[0], longitude: arguments[1], accuracy: arguments[2] },
                 timestamp: Date.now()
               })
             }
@@ -63,8 +63,6 @@ module BetterTogether
         })
       JS
     end
-
-    private
 
     def map_controller_script(expression)
       <<~JS

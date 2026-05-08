@@ -32,6 +32,14 @@ module BetterTogether
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
+    has_many :fleet_node_ownerships,
+             as: :owner,
+             class_name: 'BetterTogether::Fleet::NodeOwnership',
+             dependent: :destroy,
+             inverse_of: :owner
+    has_many :fleet_nodes,
+             through: :fleet_node_ownerships,
+             source: :node
 
     store_attributes :settings do
       contributors_display_visibility String, default: 'inherit'
