@@ -873,34 +873,54 @@ fr:
         view_page_link: Cliquez ici pour voir la page
     billing:
       available_plans: Plans disponibles
+      billed_to: 'Facture a :'
       cancel_at_period_end: 'Annuler a la fin de la periode :'
       checkout_session_invalid: 'La session Stripe n''a pas pu etre synchronisee :
         %<message>s'
       checkout_sync_complete: Le paiement Stripe a ete synchronise avec succes.
       checkout_sync_pending: Le paiement Stripe a ete recu, mais aucun etat d'abonnement
         n'a encore pu etre synchronise.
+      community_sponsor_checkout: Payer via %{community}
       current_period_ends: 'Fin de la periode courante :'
       current_subscription: Abonnement actuel
       heading: Facturation de la communaute
       interval: Intervalle
       last_synced_at: 'Derniere synchronisation :'
       manage_link: Gerer la facturation
+      manage_person_link: Gerer la facturation personnelle
       no_plans: Aucun plan de facturation actif n'est encore configure.
       no_subscription: Aucun abonnement synchronise n'est encore enregistre pour cette
         communaute.
       open_portal: Ouvrir le portail de facturation
       page_title: Facturation de la communaute
+      person_heading: Facturation personnelle
+      person_no_subscription: Aucun abonnement synchronise n'est encore enregistre
+        pour cette personne.
+      person_page_title: Facturation personnelle
+      person_subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces
+        au portail de facturation pour cette personne.
       plan_not_found: Ce plan de facturation n'est pas disponible.
+      portal_requires_sponsor: Cet abonnement de communaute est facture a un autre
+        proprietaire. Demandez au sponsor actuel d'ouvrir le portail de facturation,
+        ou lancez un nouveau paiement ci-dessous pour reprendre la facturation de
+        cette communaute.
       portal_unavailable: 'Le portail de facturation n''est pas encore disponible
         : %<message>s'
       price: Prix
       reconcile_now: Reconciler maintenant
       reconciliation_enqueued: Une tache de reconciliation Stripe a ete ajoutee pour
         cette communaute.
+      sponsor_checkout: Payer personnellement pour cette communaute
+      sponsored_subscription_notice: Cette communaute est actuellement soutenue par
+        %{owner}. Lancez un nouveau paiement ci-dessous si vous voulez reprendre la
+        facturation avec un autre proprietaire.
       start_checkout: Commencer le paiement
       subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces au portail
         de facturation pour cette communaute.
       sync_source: 'Source de synchronisation :'
+      takeover_as_community: Transferer la facturation a cette communaute
+      takeover_as_other_community: Payer via %{community} a la place
+      takeover_as_person: Payer personnellement a la place
       unknown_sync_source: Inconnue
     bot_defense:
       errors:

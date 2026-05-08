@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
   describe '#call' do
     let(:community) { create(:better_together_community) }
+    let(:person) { create(:better_together_person) }
     let!(:billing_plan) do
       create(
         :better_together_billing_plan,
@@ -64,6 +65,76 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
       expect(Stripe::Checkout::Session).to have_received(:retrieve).with(
         hash_including(id: 'cs_test_123')
       )
+    end
+
+    it 'preserves person-sponsored ownership for a community beneficiary from checkout metadata' do
+      person_pay_customer = Pay::Customer.create!(
+        owner: person,
+        processor: 'stripe',
+        processor_id: 'cus_test_person'
+      )
+      sponsored_subscription = subscription.dup
+      sponsored_subscription.customer = person_pay_customer.processor_id
+      sponsored_subscription.metadata = {
+        'bt_billable_owner_type' => person.class.name,
+        'bt_billable_owner_id' => person.id,
+        'bt_beneficiary_type' => community.class.name,
+        'bt_beneficiary_id' => community.id,
+        'bt_billing_plan_id' => billing_plan.id
+      }
+      sponsored_checkout_session = checkout_session.dup
+      sponsored_checkout_session.customer = person_pay_customer.processor_id
+      sponsored_checkout_session.subscription = sponsored_subscription
+      sponsored_checkout_session.metadata = {
+        'bt_billable_owner_type' => person.class.name,
+        'bt_billable_owner_id' => person.id,
+        'bt_beneficiary_type' => community.class.name,
+        'bt_beneficiary_id' => community.id
+      }
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(sponsored_checkout_session)
+
+      result = described_class.new.call(checkout_session_id: 'cs_test_person')
+
+      expect(result).to have_attributes(synced: true, billable_owner: person, beneficiary: community, billing_plan:)
+      expect(result.billing_subscription.billable_owner).to eq(person)
+      expect(result.billing_subscription.beneficiary).to eq(community)
+      expect(result.billing_subscription.community).to eq(community)
+    end
+
+    it 'preserves community-sponsored ownership for another community beneficiary from checkout metadata' do
+      sponsor_community = create(:better_together_community, name: 'Collective Sponsor')
+      sponsor_pay_customer = Pay::Customer.create!(
+        owner: sponsor_community,
+        processor: 'stripe',
+        processor_id: 'cus_test_sponsor_community'
+      )
+      sponsored_subscription = subscription.dup
+      sponsored_subscription.customer = sponsor_pay_customer.processor_id
+      sponsored_subscription.metadata = {
+        'bt_billable_owner_type' => sponsor_community.class.name,
+        'bt_billable_owner_id' => sponsor_community.id,
+        'bt_beneficiary_type' => community.class.name,
+        'bt_beneficiary_id' => community.id,
+        'bt_billing_plan_id' => billing_plan.id
+      }
+      sponsored_checkout_session = checkout_session.dup
+      sponsored_checkout_session.customer = sponsor_pay_customer.processor_id
+      sponsored_checkout_session.subscription = sponsored_subscription
+      sponsored_checkout_session.metadata = {
+        'bt_billable_owner_type' => sponsor_community.class.name,
+        'bt_billable_owner_id' => sponsor_community.id,
+        'bt_beneficiary_type' => community.class.name,
+        'bt_beneficiary_id' => community.id
+      }
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(sponsored_checkout_session)
+
+      result = described_class.new.call(checkout_session_id: 'cs_test_sponsor_community')
+
+      expect(result).to have_attributes(synced: true, billable_owner: sponsor_community, beneficiary: community, billing_plan:)
+      expect(result.billing_subscription.billable_owner).to eq(sponsor_community)
+      expect(result.billing_subscription.beneficiary).to eq(community)
     end
   end
 end

@@ -855,31 +855,49 @@ uk:
         view_page_link: Натисніть тут, щоб переглянути сторінку
     billing:
       available_plans: Dostupni taryfy
+      billed_to: 'Vystavleno dlia:'
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
       checkout_session_invalid: 'Sesiiu Stripe ne vdalosia synchronizuvaty: %<message>s'
       checkout_sync_complete: Platezh Stripe uspishno synchronizovano.
       checkout_sync_pending: Platezh Stripe otrymano, ale stan pidpysky shche ne vdalosia
         synchronizuvaty.
+      community_sponsor_checkout: Oplatyty cherez %{community}
       current_period_ends: 'Potochnyi period zakinchuietsia:'
       current_subscription: Potochna pidpyska
       heading: Billing spilnoty
       interval: Interval
       last_synced_at: 'Ostannia synchronizatsiia:'
       manage_link: Keruvaty billingom
+      manage_person_link: Keruvaty osobystym billingom
       no_plans: Aktyvni platezhni taryfy shche ne nalashtovano.
       no_subscription: Dlia tsiiei spilnoty shche ne zafiksovano sinhronizovanoi pidpysky.
       open_portal: Vidkryty billing portal
       page_title: Billing spilnoty
+      person_heading: Osobystyi billing
+      person_no_subscription: Dlia tsiiei osoby shche ne zafiksovano sinhronizovanoi
+        pidpysky.
+      person_page_title: Osobystyi billing
+      person_subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do
+        billing portalu dlia tsiiei osoby.
       plan_not_found: Tsei billing plan nedostupnyi.
+      portal_requires_sponsor: Tsiu pidpysku spilnoty vystavleno na inshoho vlasnyka.
+        Poprosit potochnoho sponsora vidkryty billing portal abo pochnit novyi checkout
+        nyzhche, shchob perebraty oplatu za tsiu spilnotu.
       portal_unavailable: 'Billing portal shche nedostupnyi: %<message>s'
       price: Tsina
       reconcile_now: Synchronizuvaty zaraz
       reconciliation_enqueued: Dlia tsiiei spilnoty postavleno v cherhu zadachu reconciliatsii
         Stripe.
+      sponsor_checkout: Oplatyty za tsiu spilnotu osobysto
+      sponsored_subscription_notice: Tsiu spilnotu zaraz sponsoruie %{owner}. Pochni
+        novyi checkout nyzhche, yakshcho khochesh perebraty billing z inshym vlasnykom.
       start_checkout: Pochaty oplatu
       subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing
         portalu dlia tsiiei spilnoty.
       sync_source: 'Dzherelo synchronizatsii:'
+      takeover_as_community: Perevesty billing na tsiu spilnotu
+      takeover_as_other_community: Oplatyty cherez %{community} zamist tsoho
+      takeover_as_person: Oplatyty osobysto zamist tsoho
       unknown_sync_source: Nevidome
     bot_defense:
       errors:

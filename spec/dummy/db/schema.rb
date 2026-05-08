@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_07_195817) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_08_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -231,6 +231,85 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_07_195817) do
     t.index ["contribution_type"], name: "by_better_together_authorships_contribution_type"
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
     t.index ["role"], name: "by_better_together_authorships_role"
+  end
+
+  create_table "better_together_billing_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "community_id"
+    t.uuid "billing_subscription_id"
+    t.string "processor", default: "stripe", null: false
+    t.string "event_type", null: false
+    t.string "event_id", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.datetime "processed_at"
+    t.string "processing_status", default: "pending", null: false
+    t.text "error_message"
+    t.datetime "first_received_at"
+    t.datetime "last_attempted_at"
+    t.integer "attempt_count", default: 0, null: false
+    t.string "billable_owner_type"
+    t.uuid "billable_owner_id"
+    t.string "beneficiary_type"
+    t.uuid "beneficiary_id"
+    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_events_beneficiary"
+    t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_events_owner"
+    t.index ["billing_subscription_id"], name: "idx_bt_billing_events_subscription"
+    t.index ["community_id"], name: "idx_bt_billing_events_community"
+    t.index ["last_attempted_at"], name: "idx_bt_billing_events_last_attempted_at"
+    t.index ["processing_status"], name: "idx_bt_billing_events_processing_status"
+    t.index ["processor", "event_id"], name: "idx_bt_billing_events_processor_event", unique: true
+  end
+
+  create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "billing_interval", default: "month", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "currency", default: "CAD", null: false
+    t.boolean "active", default: true, null: false
+    t.string "stripe_price_id", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["active"], name: "idx_bt_billing_plans_active"
+    t.index ["identifier"], name: "idx_bt_billing_plans_identifier", unique: true
+    t.index ["stripe_price_id"], name: "idx_bt_billing_plans_stripe_price_id", unique: true
+  end
+
+  create_table "better_together_billing_subscriptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "community_id"
+    t.uuid "billing_plan_id", null: false
+    t.string "processor", default: "stripe", null: false
+    t.string "processor_subscription_id", null: false
+    t.string "pay_customer_id"
+    t.string "status", default: "incomplete", null: false
+    t.datetime "current_period_start"
+    t.datetime "current_period_end"
+    t.boolean "cancel_at_period_end", default: false, null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "last_synced_at"
+    t.string "sync_source"
+    t.string "latest_processor_event_id"
+    t.string "latest_checkout_session_id"
+    t.string "billable_owner_type"
+    t.uuid "billable_owner_id"
+    t.string "beneficiary_type"
+    t.uuid "beneficiary_id"
+    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_subscriptions_beneficiary"
+    t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_subscriptions_owner"
+    t.index ["billing_plan_id"], name: "idx_bt_billing_subscriptions_plan"
+    t.index ["community_id", "status"], name: "idx_bt_billing_subscriptions_community_status"
+    t.index ["community_id"], name: "idx_bt_billing_subscriptions_community"
+    t.index ["last_synced_at"], name: "idx_bt_billing_subscriptions_last_synced_at"
+    t.index ["processor_subscription_id"], name: "idx_bt_billing_subscriptions_processor_id", unique: true
+    t.index ["status"], name: "idx_bt_billing_subscriptions_status"
   end
 
   create_table "better_together_c3_balance_locks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2343,6 +2422,105 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_07_195817) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
+  create_table "pay_charges", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.uuid "subscription_id"
+    t.string "processor_id", null: false
+    t.integer "amount", null: false
+    t.string "currency"
+    t.integer "application_fee_amount"
+    t.integer "amount_refunded"
+    t.json "metadata"
+    t.json "data"
+    t.string "stripe_account"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.json "object"
+    t.index ["customer_id", "processor_id"], name: "index_pay_charges_on_customer_id_and_processor_id", unique: true
+    t.index ["subscription_id"], name: "index_pay_charges_on_subscription_id"
+  end
+
+  create_table "pay_customers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "owner_type"
+    t.uuid "owner_id"
+    t.string "processor", null: false
+    t.string "processor_id"
+    t.boolean "default"
+    t.json "data"
+    t.string "stripe_account"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.json "object"
+    t.index ["owner_type", "owner_id", "deleted_at"], name: "pay_customer_owner_index", unique: true
+    t.index ["processor", "processor_id"], name: "index_pay_customers_on_processor_and_processor_id", unique: true
+  end
+
+  create_table "pay_merchants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "owner_type"
+    t.uuid "owner_id"
+    t.string "processor", null: false
+    t.string "processor_id"
+    t.boolean "default"
+    t.json "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.index ["owner_type", "owner_id", "processor"], name: "index_pay_merchants_on_owner_type_and_owner_id_and_processor"
+  end
+
+  create_table "pay_payment_methods", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.string "processor_id", null: false
+    t.boolean "default"
+    t.string "payment_method_type"
+    t.json "data"
+    t.string "stripe_account"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.index ["customer_id", "processor_id"], name: "index_pay_payment_methods_on_customer_id_and_processor_id", unique: true
+  end
+
+  create_table "pay_subscriptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.string "name", null: false
+    t.string "processor_id", null: false
+    t.string "processor_plan", null: false
+    t.integer "quantity", default: 1, null: false
+    t.string "status", null: false
+    t.datetime "current_period_start"
+    t.datetime "current_period_end"
+    t.datetime "trial_ends_at"
+    t.datetime "ends_at"
+    t.boolean "metered"
+    t.string "pause_behavior"
+    t.datetime "pause_starts_at"
+    t.datetime "pause_resumes_at"
+    t.decimal "application_fee_percent", precision: 8, scale: 2
+    t.json "metadata"
+    t.json "data"
+    t.string "stripe_account"
+    t.string "payment_method_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.json "object"
+    t.index ["customer_id", "processor_id"], name: "index_pay_subscriptions_on_customer_id_and_processor_id", unique: true
+    t.index ["metered"], name: "index_pay_subscriptions_on_metered"
+    t.index ["pause_starts_at"], name: "index_pay_subscriptions_on_pause_starts_at"
+  end
+
+  create_table "pay_webhooks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "processor"
+    t.string "event_type"
+    t.json "event"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
@@ -2353,6 +2531,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_07_195817) do
   add_foreign_key "better_together_agreements", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_agreements", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
+  add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_events", "better_together_communities", column: "community_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_subscriptions", "better_together_billing_plans", column: "billing_plan_id", on_delete: :restrict
+  add_foreign_key "better_together_billing_subscriptions", "better_together_communities", column: "community_id", on_delete: :cascade
   add_foreign_key "better_together_c3_balance_locks", "better_together_c3_balances", column: "balance_id", on_delete: :cascade
   add_foreign_key "better_together_c3_balance_locks", "better_together_platforms", column: "source_platform_id", on_delete: :nullify
   add_foreign_key "better_together_c3_balances", "better_together_communities", column: "community_id", on_delete: :nullify
@@ -2535,4 +2717,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_07_195817) do
   add_foreign_key "better_together_wizard_steps", "better_together_wizard_step_definitions", column: "wizard_step_definition_id"
   add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id"
   add_foreign_key "noticed_notifications", "better_together_platforms", column: "platform_id"
+  add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
+  add_foreign_key "pay_charges", "pay_subscriptions", column: "subscription_id"
+  add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
+  add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"
 end

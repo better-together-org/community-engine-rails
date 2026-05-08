@@ -9,6 +9,8 @@ class AddSyncTrackingToBillingRecords < ActiveRecord::Migration[7.2]
   private
 
   def add_subscription_sync_columns
+    return unless table_exists?(:better_together_billing_subscriptions)
+
     add_column_unless_exists :better_together_billing_subscriptions, :last_synced_at, :datetime
     add_column_unless_exists :better_together_billing_subscriptions, :sync_source, :string
     add_column_unless_exists :better_together_billing_subscriptions, :latest_processor_event_id, :string
@@ -22,6 +24,8 @@ class AddSyncTrackingToBillingRecords < ActiveRecord::Migration[7.2]
   end
 
   def add_event_attempt_columns
+    return unless table_exists?(:better_together_billing_events)
+
     add_column_unless_exists :better_together_billing_events, :first_received_at, :datetime
     add_column_unless_exists :better_together_billing_events, :last_attempted_at, :datetime
     add_column_unless_exists :better_together_billing_events, :attempt_count, :integer, default: 0, null: false

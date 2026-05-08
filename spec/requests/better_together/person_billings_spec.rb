@@ -73,8 +73,8 @@ RSpec.describe 'BetterTogether::PersonBillings' do
         hash_including(
           mode: 'subscription',
           allow_promotion_codes: true,
-          success_url: a_string_including('{CHECKOUT_SESSION_ID}'),
-          cancel_url: a_string_excluding('{CHECKOUT_SESSION_ID}')
+          success_url: a_string_including('checkout_session_id=%7BCHECKOUT_SESSION_ID%7D'),
+          cancel_url: satisfy { |url| !url.include?('checkout_session_id=') }
         )
       )
     end

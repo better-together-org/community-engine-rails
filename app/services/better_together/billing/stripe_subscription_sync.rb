@@ -66,6 +66,8 @@ module BetterTogether
 
       def subscription_attributes(subscription, context)
         subscription_state_attributes(subscription).merge(
+          legacy_community_attributes(context)
+        ).merge(
           ownership_attributes(context)
         ).merge(
           sync_tracking_attributes(context)
@@ -89,6 +91,13 @@ module BetterTogether
           beneficiary: context[:beneficiary],
           billing_plan: context[:billing_plan]
         }
+      end
+
+      def legacy_community_attributes(context)
+        community = compatibility_community(context)
+        return {} unless community
+
+        { community_id: community.id }
       end
 
       def sync_tracking_attributes(context)
@@ -178,6 +187,12 @@ module BetterTogether
         return if value.blank?
 
         Time.zone.at(value.to_i)
+      end
+
+      def compatibility_community(context)
+        [context[:beneficiary], context[:billable_owner]].find do |record|
+          record.is_a?(BetterTogether::Community)
+        end
       end
 
       # rubocop:disable Metrics/ParameterLists

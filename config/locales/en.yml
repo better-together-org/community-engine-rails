@@ -860,31 +860,49 @@ en:
         view_page_link: Click here to view the page
     billing:
       available_plans: Available plans
+      billed_to: 'Billed to:'
       cancel_at_period_end: 'Cancel at period end:'
       checkout_session_invalid: 'The Stripe checkout session could not be synchronized:
         %<message>s'
       checkout_sync_complete: Stripe checkout was synchronized successfully.
       checkout_sync_pending: Stripe checkout was received, but no subscription state
         could be synchronized yet.
+      community_sponsor_checkout: Pay via %{community}
       current_period_ends: 'Current period ends:'
       current_subscription: Current subscription
       heading: Community Billing
       interval: Interval
       last_synced_at: 'Last synced:'
       manage_link: Manage billing
+      manage_person_link: Manage personal billing
       no_plans: No active billing plans are configured yet.
       no_subscription: No synced subscription is recorded for this community yet.
       open_portal: Open billing portal
       page_title: Community Billing
+      person_heading: Personal Billing
+      person_no_subscription: No synced subscription is recorded for this person yet.
+      person_page_title: Personal Billing
+      person_subheading: Manage Stripe checkout, subscription status, and billing
+        portal access for this person.
       plan_not_found: That billing plan is not available.
+      portal_requires_sponsor: This community subscription is billed to another owner.
+        Ask the current sponsor to open the billing portal, or start a new checkout
+        below to take over billing for this community.
       portal_unavailable: 'The billing portal is not available yet: %<message>s'
       price: Price
       reconcile_now: Reconcile now
       reconciliation_enqueued: A Stripe reconciliation job was queued for this community.
+      sponsor_checkout: Pay personally for this community
+      sponsored_subscription_notice: This community is currently sponsored by %{owner}.
+        Start a new checkout below if you want to take over billing with a different
+        owner.
       start_checkout: Start checkout
       subheading: Manage Stripe checkout, subscription status, and billing portal
         access for this community.
       sync_source: 'Sync source:'
+      takeover_as_community: Switch billing to this community
+      takeover_as_other_community: Pay via %{community} instead
+      takeover_as_person: Pay personally instead
       unknown_sync_source: Unknown
     bot_defense:
       errors:

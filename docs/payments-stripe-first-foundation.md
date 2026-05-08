@@ -1,6 +1,6 @@
 # Community Engine Payments: Stripe-First Foundation
 
-Community Engine now includes a Stripe-first billing slice built around `pay`, `BetterTogether::Community` as the billable owner, and BTS-local billing records for plans, subscriptions, and event audit trails.
+Community Engine now includes a Stripe-first billing slice built around `pay`, BTS-local billing records for plans, subscriptions, and event audit trails, and a Phase 1 hosted-billing ownership model that can resolve both `BetterTogether::Community` and `BetterTogether::Person` as Stripe customers.
 
 ## Scope
 
@@ -8,12 +8,13 @@ This implementation includes:
 
 - `pay` and `stripe` gem dependencies
 - guarded Pay migrations for host apps with partial schema state
-- `BetterTogether::Community` as the billable Stripe customer owner
-- community-admin billing page with hosted checkout and billing portal links
+- `BetterTogether::Community` and `BetterTogether::Person` as supported hosted-billing owners
+- community-admin billing page with hosted checkout, sponsorship-aware billing portal links, and checkout return sync
 - local billing plan, subscription, and event models with sync tracking
 - a CE-owned checkout return path that can synchronize Stripe checkout completion immediately
 - Stripe webhook processing that enqueues narrow subscription events, persists BTS billing events, and syncs local subscription state
 - a manual and job-driven community reconciliation path for Stripe subscriptions
+- owner / beneficiary metadata so hosted subscriptions can distinguish who pays from who receives service
 
 This implementation does not yet include:
 
@@ -69,7 +70,8 @@ flowchart TD
 ```
 
 - `Community Admin` and `Platform Manager` are the direct human operators of billing.
-- `Community` is the billable owner and the main operational subject of reconciliation and subscription state.
+- `Community` is always a possible beneficiary and may also be the billable owner.
+- `Person` can now be the processor-facing customer for personal billing or community sponsorship.
 - `Primary Platform` is operationally affected, but it is not the processor-facing customer in this release.
 - `Community Members` are indirect stakeholders because billing can affect the hosted space they use.
 - `BTS Support and Finance` rely on the local billing records and event trail for audit, support, and reconciliation.
@@ -79,7 +81,10 @@ flowchart TD
 - `BetterTogether::Billing::Plan` is the local catalog record and references the canonical Stripe Price ID.
 - `BetterTogether::Billing::Subscription` is the CE-local subscription read model.
 - `BetterTogether::Billing::Event` stores raw Stripe webhook payloads plus BTS processing state.
-- `Pay::Customer` remains the processor-facing customer record owned by `BetterTogether::Community`.
+- `Pay::Customer` remains the processor-facing customer record owned by either a `BetterTogether::Community` or a `BetterTogether::Person`.
+- `BetterTogether::Billing::Subscription` now distinguishes:
+  - `billable_owner` for the processor-facing payer
+  - `beneficiary` for the CE entity receiving hosted service
 
 ## Ownership Wiring
 
@@ -88,27 +93,41 @@ flowchart LR
   Person[Person]
   Community[BetterTogether::Community]
   Platform[BetterTogether::Platform]
+  BillableOwner[Billable Owner]
+  Beneficiary[Beneficiary]
   PayCustomer[Pay::Customer]
   StripeCustomer[Stripe Customer]
   LocalSub[Billing Subscription]
 
+  Person -->|can be| BillableOwner
+  Community -->|can be| BillableOwner
+  Person -->|can be| Beneficiary
+  Community -->|can be| Beneficiary
   Person -->|administers or creates| Community
   Community -->|has_one| Platform
-  Community -->|pay_customer| PayCustomer
+  BillableOwner -->|pay_customer| PayCustomer
   PayCustomer --> StripeCustomer
-  StripeCustomer -->|metadata and processor id| Community
-  StripeCustomer --> LocalSub
-  Community --> LocalSub
+  StripeCustomer -->|metadata and processor id| LocalSub
+  LocalSub --> BillableOwner
+  LocalSub --> Beneficiary
 ```
 
-- people are currently actors and contacts, not billable owners
-- communities are the organization boundary that own Stripe customer state
+- people are now valid hosted-billing owners in Phase 1
+- communities remain the main organization boundary for hosted service and may be either the payer or the beneficiary
 - platforms hang off communities and inherit the operational consequences of billing
-- local billing subscriptions are CE-side read models tied back to the community
+- local billing subscriptions are CE-side read models tied to the active billable owner and the beneficiary
 
-## Why `Community` Is Billable
+## Current Phase 1 status
 
-The first release treats the community as the billable organization boundary. That keeps billing tied to the administrative unit that receives hosted platform value, support, and subscription status.
+The current implementation has moved beyond the original community-only foundation:
+
+- a person can pay for themselves
+- a community can pay for itself
+- a person can sponsor a community
+- one community can sponsor another community
+- checkout return sync, portal access, and reconciliation follow the active billable owner while hosted entitlement remains tied to the beneficiary
+
+This is still a Phase 1 hosted-billing slice. It does not yet model a fully explicit transfer-state workflow for changing ownership over time; it currently handles takeover by starting a replacement checkout with the intended new owner.
 
 ## Source Docs
 
