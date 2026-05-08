@@ -29,5 +29,8 @@ module BetterTogether
     validates :status, presence: true
     validates :inventory_snapshot, presence: true
     validates :execution_snapshot, presence: true
+
+    before_update { raise ActiveRecord::ReadOnlyRecord, 'PersonPurgeAudit records are immutable' }
+    before_destroy { raise ActiveRecord::ReadOnlyRecord, 'PersonPurgeAudit records are immutable' }
   end
 end
