@@ -78,6 +78,17 @@ module BetterTogether
       redirect_to_billing_with_alert(replay_event_not_found_message)
     end
 
+    def provision_platform
+      @hosted_entitlement = hosted_entitlement_resolver.call(community: @community)
+    end
+
+    def create_platform_provision
+      @hosted_entitlement = hosted_entitlement_resolver.call(community: @community)
+      return redirect_to_billing_with_alert(provision_requires_plan_message) unless @hosted_entitlement.active?
+
+      handle_provision_result(::BetterTogether::TenantPlatformProvisioningService.call(**platform_provision_params_hash))
+    end
+
     private
 
     def set_community
@@ -400,6 +411,36 @@ module BetterTogether
         'better_together.billing.replay_event_not_found',
         default: 'That billing event is no longer available for replay.'
       )
+    end
+
+    def handle_provision_result(result)
+      if result.success?
+        redirect_to community_billing_path(@community, locale: I18n.locale),
+                    notice: t('better_together.billing.platform_provisioned',
+                              default: 'Platform provisioned at %<host_url>s.',
+                              host_url: result.platform.host_url),
+                    status: :see_other
+      else
+        flash.now[:alert] = result.errors.to_sentence
+        render :provision_platform, status: :unprocessable_content
+      end
+    end
+
+    def provision_requires_plan_message
+      t('better_together.billing.provision_requires_active_plan',
+        default: 'An active hosted plan is required to provision a platform. Subscribe to a hosted plan first.')
+    end
+
+    def platform_provision_params_hash
+      {
+        name: platform_provision_form_params[:name],
+        host_url: platform_provision_form_params[:host_url],
+        time_zone: platform_provision_form_params[:time_zone].presence || 'UTC'
+      }
+    end
+
+    def platform_provision_form_params
+      params.require(:platform_provision).permit(:name, :host_url, :time_zone)
     end
   end
 end

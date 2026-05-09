@@ -975,6 +975,7 @@ fr:
       plan_benefits: Avantages inclus
       plan_not_found: Ce plan de facturation n'est pas disponible.
       plan_value: Valeur du plan
+      platform_provisioned: Plateforme provisionnee a %<host_url>s.
       portal_access_attention: L''acces au portail de facturation demande de l''attention
       portal_access_attention_fallback: La derniere tentative d''ouverture du portail
         de facturation a echoue. Verifiez la disponibilite de Stripe et reessayez
@@ -987,6 +988,33 @@ fr:
       portal_unavailable: 'Le portail de facturation n''est pas encore disponible
         : %<message>s'
       price: Prix
+      provision_platform_cta: Provisionner la plateforme hebergee
+      provision_platform_cta_explainer: Votre plan donne droit a cette communaute
+        a une plateforme hebergee. Provisionnez-en une maintenant pour activer les
+        services.
+      provision_platform_form_heading: Details de la plateforme
+      provision_platform_heading: Provisionner la plateforme hebergee
+      provision_platform_host_url: URL de l'hote
+      provision_platform_host_url_hint: L'URL complete ou cette plateforme sera hebergee.
+        Doit etre unique.
+      provision_platform_name: Nom de la plateforme
+      provision_platform_name_hint: Le nom public de cette plateforme hebergee.
+      provision_platform_name_placeholder: ex. Mon espace communautaire
+      provision_platform_page_title: Provisionner la plateforme hebergee
+      provision_platform_step_admin: L'acces administrateur de la plateforme peut
+        etre configure apres le provisionnement.
+      provision_platform_step_community: Une communaute principale est automatiquement
+        attachee a la plateforme.
+      provision_platform_step_domain: Le domaine hote est enregistre et lie a la plateforme.
+      provision_platform_step_platform: Un nouvel enregistrement de plateforme est
+        cree a l'URL hote que vous fournissez.
+      provision_platform_subheading: Votre plan heberge est actif. Remplissez les
+        details ci-dessous pour provisionner une nouvelle plateforme pour cette communaute.
+      provision_platform_submit: Provisionner la plateforme
+      provision_platform_time_zone: Fuseau horaire
+      provision_platform_what_happens: Ce qui se passe ensuite
+      provision_requires_active_plan: Un plan heberge actif est requis pour provisionner
+        une plateforme. Abonnez-vous d'abord a un plan heberge.
       reconcile_now: Reconciler maintenant
       reconciliation_enqueued: Une tache de reconciliation Stripe a ete ajoutee pour
         cette communaute.

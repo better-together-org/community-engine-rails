@@ -955,6 +955,7 @@ en:
       plan_benefits: Included benefits
       plan_not_found: That billing plan is not available.
       plan_value: Plan value
+      platform_provisioned: Platform provisioned at %<host_url>s.
       portal_access_attention: Billing portal access needs attention
       portal_access_attention_fallback: The last attempt to open the billing portal
         failed. Check Stripe availability and retry when ready.
@@ -964,6 +965,33 @@ en:
         checkout below if billing should move to a different owner.
       portal_unavailable: 'The billing portal is not available yet: %<message>s'
       price: Price
+      provision_platform_cta: Provision hosted platform
+      provision_platform_cta_explainer: Your plan entitles this community to a hosted
+        platform. Provision one now to activate platform services.
+      provision_platform_form_heading: Platform details
+      provision_platform_heading: Provision hosted platform
+      provision_platform_host_url: Host URL
+      provision_platform_host_url_hint: The full URL where this platform will be hosted.
+        Must be unique.
+      provision_platform_name: Platform name
+      provision_platform_name_hint: The public-facing name for this hosted platform.
+      provision_platform_name_placeholder: e.g. My Community Space
+      provision_platform_page_title: Provision Hosted Platform
+      provision_platform_step_admin: Platform administrator access can be configured
+        after provisioning.
+      provision_platform_step_community: A primary community is automatically attached
+        to the platform.
+      provision_platform_step_domain: The host domain is registered and linked to
+        the platform.
+      provision_platform_step_platform: A new platform record is created at the host
+        URL you provide.
+      provision_platform_subheading: Your hosted plan is active. Fill in the details
+        below to provision a new platform for this community.
+      provision_platform_submit: Provision platform
+      provision_platform_time_zone: Time zone
+      provision_platform_what_happens: What happens next
+      provision_requires_active_plan: An active hosted plan is required to provision
+        a platform. Subscribe to a hosted plan first.
       reconcile_now: Reconcile now
       reconciliation_enqueued: A Stripe reconciliation job was queued for this community.
       refresh_merchant_account: Refresh merchant status

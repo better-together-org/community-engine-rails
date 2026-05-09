@@ -950,6 +950,7 @@ uk:
       plan_benefits: Vklucheni perevahy
       plan_not_found: Tsei billing plan nedostupnyi.
       plan_value: Tsinnist planu
+      platform_provisioned: Platforma provision na %<host_url>s.
       portal_access_attention: Dostup do billing portalu potrebuie uvahy
       portal_access_attention_fallback: Ostannia sproba vidkryty billing portal zavershylasia
         nevdalo. Perevir dostupnist Stripe ta sprobui shche raz, koly bude hotovo.
@@ -959,6 +960,33 @@ uk:
         checkout, yakshcho billing maie pereity do inshoho vlasnyka.
       portal_unavailable: 'Billing portal shche nedostupnyi: %<message>s'
       price: Tsina
+      provision_platform_cta: Provision hostingovu platformu
+      provision_platform_cta_explainer: Vash plan nadaye tsiy spilnoti pravo na hostingovu
+        platformu. Provision yiyi zaraz, shchob aktyvuvaty poslugy.
+      provision_platform_form_heading: Dani platformy
+      provision_platform_heading: Provision hostingovoi platformy
+      provision_platform_host_url: Host URL
+      provision_platform_host_url_hint: Povnyy URL, de bude rozmishchena tsia platforma.
+        Povynno buty unikalnym.
+      provision_platform_name: Nazva platformy
+      provision_platform_name_hint: Publichna nazva tsiyeyi hostingovoyi platformy.
+      provision_platform_name_placeholder: nap. Miy Spilnotny Prostir
+      provision_platform_page_title: Provision hostingovoi platformy
+      provision_platform_step_admin: Dostup administratora platformy mozhna nalashtuvatyy
+        pislia provisionuvannya.
+      provision_platform_step_community: Pershochergova spilnota avtomatychno pryv'yazuyetsya
+        do platformy.
+      provision_platform_step_domain: Domen khosta reyestruyetsya ta pov'yazuyetsya
+        z platformoyu.
+      provision_platform_step_platform: Novyy zapis platformy stvoryuyetsya za URL
+        khosta, yakyi vy vkazuyete.
+      provision_platform_subheading: Vash hostingovy plan aktyvny. Zapovnit dani nyzhche,
+        shchob provisionuvaty novu platformu dlya tsiyeyi spilnoty.
+      provision_platform_submit: Provision platformy
+      provision_platform_time_zone: Chasovy poyas
+      provision_platform_what_happens: Shcho bude dali
+      provision_requires_active_plan: Dlya provisionuvannya platformy potribny aktyvny
+        hosting-plan. Spochatku pidpyshitsya na hosting-plan.
       reconcile_now: Synchronizuvaty zaraz
       reconciliation_enqueued: Dlia tsiiei spilnoty postavleno v cherhu zadachu reconciliatsii
         Stripe.

@@ -515,4 +515,137 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(service).to have_received(:call).with(merchant_account:)
     end
   end
+
+  describe 'GET /:locale/c/:community_id/billing/provision_platform' do
+    it 'renders the provisioning form when entitlement is active' do
+      create(
+        :better_together_billing_subscription,
+        billing_plan:,
+        billable_owner: community,
+        beneficiary: community,
+        status: 'active'
+      )
+
+      get better_together.provision_platform_community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Provision hosted platform')
+      expect(response.body).to include('Host URL')
+      expect(response.body).to include('Hosted plan active')
+    end
+
+    it 'renders the provisioning form with attention warning when subscription is past_due' do
+      create(
+        :better_together_billing_subscription,
+        billing_plan:,
+        billable_owner: community,
+        beneficiary: community,
+        status: 'past_due'
+      )
+
+      get better_together.provision_platform_community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Billing attention needed')
+      expect(response.body).to include('Provision hosted platform')
+    end
+
+    it 'renders the provisioning form when there is no active subscription' do
+      get better_together.provision_platform_community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Provision hosted platform')
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/provision_platform' do
+    let(:provision_params) do
+      {
+        platform_provision: {
+          name: 'Test Hosted Platform',
+          host_url: 'https://testhosted.example.com',
+          time_zone: 'America/Toronto'
+        }
+      }
+    end
+
+    context 'when the community has an active hosted subscription' do
+      before do
+        create(
+          :better_together_billing_subscription,
+          billing_plan:,
+          billable_owner: community,
+          beneficiary: community,
+          status: 'active'
+        )
+      end
+
+      it 'calls TenantPlatformProvisioningService and redirects on success' do
+        result = BetterTogether::TenantPlatformProvisioningService::Result.new(
+          BetterTogether::Platform.new(host_url: 'https://testhosted.example.com'),
+          nil, nil, nil, []
+        )
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call).and_return(result)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(BetterTogether::TenantPlatformProvisioningService).to have_received(:call).with(
+          name: 'Test Hosted Platform',
+          host_url: 'https://testhosted.example.com',
+          time_zone: 'America/Toronto'
+        )
+        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+        expect(flash[:notice]).to include('testhosted.example.com')
+      end
+
+      it 're-renders the form when provisioning fails' do
+        result = BetterTogether::TenantPlatformProvisioningService::Result.new(
+          nil, nil, nil, nil, ['Host URL has already been taken']
+        )
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call).and_return(result)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include('Provision hosted platform')
+      end
+    end
+
+    context 'when the community has no active subscription' do
+      it 'blocks provisioning and redirects to billing with an alert' do
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(BetterTogether::TenantPlatformProvisioningService).not_to have_received(:call)
+        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+        follow_redirect!
+        expect(response.body).to include('active hosted plan is required')
+      end
+    end
+
+    context 'when the community subscription is past_due' do
+      it 'blocks provisioning and redirects to billing with an alert' do
+        create(
+          :better_together_billing_subscription,
+          billing_plan:,
+          billable_owner: community,
+          beneficiary: community,
+          status: 'past_due'
+        )
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(BetterTogether::TenantPlatformProvisioningService).not_to have_received(:call)
+        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+        follow_redirect!
+        expect(response.body).to include('active hosted plan is required')
+      end
+    end
+  end
 end

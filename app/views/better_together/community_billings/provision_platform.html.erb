@@ -1,0 +1,96 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.provision_platform_page_title', default: 'Provision Hosted Platform') %> | <%= @community.name %>
+<% end %>
+
+<div class="container my-4">
+  <div class="mb-4">
+    <h1 class="mb-1"><%= t('better_together.billing.provision_platform_heading', default: 'Provision hosted platform') %></h1>
+    <p class="text-muted mb-0">
+      <%= t('better_together.billing.provision_platform_subheading',
+            default: 'Your hosted plan is active. Fill in the details below to provision a new platform for this community.') %>
+    </p>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header">
+          <strong><%= t('better_together.billing.provision_platform_form_heading', default: 'Platform details') %></strong>
+        </div>
+        <div class="card-body">
+          <%= form_with url: provision_platform_community_billing_path(@community, locale: I18n.locale),
+                        method: :post,
+                        html: { class: 'needs-validation' } do |f| %>
+            <div class="mb-3">
+              <%= label_tag :platform_provision_name,
+                            t('better_together.billing.provision_platform_name', default: 'Platform name'),
+                            class: 'form-label' %>
+              <%= text_field_tag 'platform_provision[name]',
+                                 params.dig(:platform_provision, :name),
+                                 class: 'form-control',
+                                 required: true,
+                                 placeholder: t('better_together.billing.provision_platform_name_placeholder', default: 'e.g. My Community Space') %>
+              <div class="form-text">
+                <%= t('better_together.billing.provision_platform_name_hint',
+                      default: 'The public-facing name for this hosted platform.') %>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <%= label_tag :platform_provision_host_url,
+                            t('better_together.billing.provision_platform_host_url', default: 'Host URL'),
+                            class: 'form-label' %>
+              <%= text_field_tag 'platform_provision[host_url]',
+                                 params.dig(:platform_provision, :host_url),
+                                 class: 'form-control',
+                                 required: true,
+                                 placeholder: 'https://myspace.example.com' %>
+              <div class="form-text">
+                <%= t('better_together.billing.provision_platform_host_url_hint',
+                      default: 'The full URL where this platform will be hosted. Must be unique.') %>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <%= label_tag :platform_provision_time_zone,
+                            t('better_together.billing.provision_platform_time_zone', default: 'Time zone'),
+                            class: 'form-label' %>
+              <%= select_tag 'platform_provision[time_zone]',
+                             options_for_select(
+                               ActiveSupport::TimeZone.all.map { |tz| [tz.to_s, tz.name] },
+                               params.dig(:platform_provision, :time_zone).presence || 'UTC'
+                             ),
+                             class: 'form-select' %>
+            </div>
+
+            <div class="d-flex gap-2">
+              <%= submit_tag t('better_together.billing.provision_platform_submit', default: 'Provision platform'),
+                             class: 'btn btn-primary' %>
+              <%= link_to t('globals.cancel', default: 'Cancel'),
+                          community_billing_path(@community, locale: I18n.locale),
+                          class: 'btn btn-outline-secondary' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <%= render 'better_together/shared/hosted_entitlement_card', hosted_entitlement: @hosted_entitlement %>
+
+      <div class="card">
+        <div class="card-header">
+          <strong><%= t('better_together.billing.provision_platform_what_happens', default: 'What happens next') %></strong>
+        </div>
+        <div class="card-body">
+          <ul class="mb-0 ps-3">
+            <li><%= t('better_together.billing.provision_platform_step_platform', default: 'A new platform record is created at the host URL you provide.') %></li>
+            <li><%= t('better_together.billing.provision_platform_step_community', default: 'A primary community is automatically attached to the platform.') %></li>
+            <li><%= t('better_together.billing.provision_platform_step_domain', default: 'The host domain is registered and linked to the platform.') %></li>
+            <li><%= t('better_together.billing.provision_platform_step_admin', default: 'Platform administrator access can be configured after provisioning.') %></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

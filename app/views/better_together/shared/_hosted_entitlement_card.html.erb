@@ -1,3 +1,4 @@
+<% provision_path ||= nil %>
 <div class="card mb-4">
   <div class="card-header">
     <strong><%= t('better_together.billing.hosted_entitlement_heading', default: 'Hosted plan status') %></strong>
@@ -33,12 +34,25 @@
 
     <p class="mb-0 text-muted small">
       <% if hosted_entitlement.active? %>
-        <%= t('better_together.billing.hosted_entitlement_active_explainer', default: 'This community currently has an active hosted plan and support tier attached to its billing record.') %>
+        <%= t('better_together.billing.hosted_entitlement_active_explainer', default: 'This community currently has an active hosted plan and remains in good standing for hosted operations.') %>
       <% elsif hosted_entitlement.attention_needed? %>
-        <%= t('better_together.billing.hosted_entitlement_attention_explainer', default: 'This community still has hosted access metadata, but billing needs attention before the hosted state can be considered healthy again.') %>
+        <%= t('better_together.billing.hosted_entitlement_attention_explainer', default: 'This community still has hosted access, but billing needs attention before the hosted plan can be considered healthy again.') %>
       <% else %>
-        <%= t('better_together.billing.hosted_entitlement_inactive_explainer', default: 'This community does not currently have an active hosted plan recorded.') %>
+        <%= t('better_together.billing.hosted_entitlement_inactive_explainer', default: 'No active hosted plan is currently synced for this community.') %>
       <% end %>
     </p>
+
+    <% if provision_path.present? && hosted_entitlement.active? %>
+      <hr class="my-3">
+      <div>
+        <p class="mb-2 small">
+          <%= t('better_together.billing.provision_platform_cta_explainer',
+                default: 'Your plan entitles this community to a hosted platform. Provision one now to activate platform services.') %>
+        </p>
+        <%= link_to t('better_together.billing.provision_platform_cta', default: 'Provision hosted platform'),
+                    provision_path,
+                    class: 'btn btn-success btn-sm' %>
+      </div>
+    <% end %>
   </div>
 </div>

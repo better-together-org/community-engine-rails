@@ -114,6 +114,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :merchant_onboarding
             post :refresh_merchant_account
             post 'events/:event_id/replay', action: :replay_event, as: :replay_event
+            get  :provision_platform
+            post :provision_platform, action: :create_platform_provision
           end
 
           resources :invitations, only: %i[create destroy] do

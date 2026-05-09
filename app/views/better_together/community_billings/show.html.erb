@@ -28,7 +28,9 @@
 
   <div class="row g-4">
     <div class="col-lg-4">
-      <%= render 'better_together/shared/hosted_entitlement_card', hosted_entitlement: @hosted_entitlement %>
+      <%= render 'better_together/shared/hosted_entitlement_card',
+                 hosted_entitlement: @hosted_entitlement,
+                 provision_path: provision_platform_community_billing_path(@community, locale: I18n.locale) %>
 
       <div class="card h-100">
         <div class="card-header">
