@@ -49,6 +49,10 @@ module BetterTogether
              as: :beneficiary,
              class_name: 'BetterTogether::Billing::Event',
              dependent: :nullify
+    has_many :merchant_accounts,
+             as: :owner,
+             class_name: 'BetterTogether::Billing::MerchantAccount',
+             dependent: :destroy
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
     has_many :fleet_node_ownerships,
              as: :owner,

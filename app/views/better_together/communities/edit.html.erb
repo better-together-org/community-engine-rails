@@ -13,5 +13,9 @@
     <% end %>
   </div>
 
+  <% if @hosted_entitlement.present? %>
+    <%= render 'better_together/shared/hosted_entitlement_card', hosted_entitlement: @hosted_entitlement %>
+  <% end %>
+
   <%= render "form", community: @community %>
 </div>

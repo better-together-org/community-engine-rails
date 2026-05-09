@@ -69,5 +69,144 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       expect(billing_subscription.status).to eq('active')
       expect(billing_subscription.pay_customer_id).to eq('cus_test_123')
     end
+
+    it 'syncs merchant account updates into the local merchant account' do
+      merchant_account = create(
+        'better_together/billing/merchant_account',
+        owner: community,
+        provider: 'stripe_connect',
+        external_account_id: 'acct_connect_123',
+        status: 'pending',
+        charges_enabled: false,
+        payouts_enabled: false
+      )
+      merchant_event = Struct.new(:id, :type, :data, :payload, :account, keyword_init: true) do
+        def to_hash
+          payload
+        end
+      end.new(
+        id: 'evt_acct_123',
+        type: 'account.updated',
+        data: Struct.new(:object, keyword_init: true).new(object: instance_double(
+          Stripe::Account,
+          id: 'acct_connect_123',
+          country: 'CA',
+          default_currency: 'cad',
+          charges_enabled: true,
+          payouts_enabled: true,
+          details_submitted: true,
+          business_type: 'company',
+          capabilities: { transfers: 'active', card_payments: 'active' },
+          requirements: double(
+            currently_due: [],
+            eventually_due: [],
+            past_due: [],
+            pending_verification: [],
+            disabled_reason: nil
+          )
+        )),
+        payload: { id: 'evt_acct_123', type: 'account.updated' },
+        account: nil
+      )
+
+      described_class.new.call(merchant_event)
+
+      billing_event = BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: merchant_event.id)
+
+      expect(merchant_account.reload.status).to eq('active')
+      expect(merchant_account.charges_enabled).to be(true)
+      expect(merchant_account.payouts_enabled).to be(true)
+      expect(billing_event.processing_status).to eq('processed')
+      expect(billing_event.billable_owner).to eq(community)
+      expect(billing_event.beneficiary).to eq(community)
+    end
+
+    it 'marks merchant accounts disconnected when Stripe deauthorizes access' do
+      merchant_account = create(
+        'better_together/billing/merchant_account',
+        owner: community,
+        provider: 'stripe_connect',
+        external_account_id: 'acct_connect_456',
+        status: 'active',
+        charges_enabled: true,
+        payouts_enabled: true
+      )
+      merchant_event = Struct.new(:id, :type, :data, :payload, :account, keyword_init: true) do
+        def to_hash
+          payload
+        end
+      end.new(
+        id: 'evt_acct_deauth_123',
+        type: 'account.application.deauthorized',
+        data: Struct.new(:object, keyword_init: true).new(object: Struct.new(:id, keyword_init: true).new(id: nil)),
+        payload: { id: 'evt_acct_deauth_123', type: 'account.application.deauthorized' },
+        account: 'acct_connect_456'
+      )
+
+      described_class.new.call(merchant_event)
+
+      billing_event = BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: merchant_event.id)
+
+      expect(merchant_account.reload.status).to eq('disconnected')
+      expect(merchant_account.charges_enabled).to be(false)
+      expect(merchant_account.payouts_enabled).to be(false)
+      expect(billing_event.processing_status).to eq('processed')
+      expect(billing_event.billable_owner).to eq(community)
+      expect(billing_event.beneficiary).to eq(community)
+    end
+
+    it 'persists invoice payment failures as billing alerts linked to the local subscription' do
+      create(
+        :better_together_billing_subscription,
+        billable_owner: community,
+        beneficiary: community,
+        billing_plan:,
+        processor_subscription_id: 'sub_test_123',
+        pay_customer_id: pay_customer.processor_id,
+        status: 'active'
+      )
+      invoice_object = Struct.new(
+        :id,
+        :object,
+        :subscription,
+        :customer,
+        :status,
+        :metadata,
+        :last_payment_error,
+        keyword_init: true
+      ).new(
+        id: 'in_test_123',
+        object: 'invoice',
+        subscription: 'sub_test_123',
+        customer: pay_customer.processor_id,
+        status: 'open',
+        metadata: {},
+        last_payment_error: Struct.new(:message, keyword_init: true).new(message: 'Card was declined.')
+      )
+      invoice_event = Struct.new(:id, :type, :data, :payload, keyword_init: true) do
+        def to_hash
+          payload
+        end
+      end.new(
+        id: 'evt_invoice_failed_123',
+        type: 'invoice.payment_failed',
+        data: Struct.new(:object, keyword_init: true).new(object: invoice_object),
+        payload: { id: 'evt_invoice_failed_123', type: 'invoice.payment_failed' }
+      )
+
+      described_class.new.call(invoice_event)
+
+      billing_event = BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: invoice_event.id)
+      billing_subscription = BetterTogether::Billing::Subscription.find_by!(processor_subscription_id: 'sub_test_123')
+
+      expect(billing_event.processing_status).to eq('failed')
+      expect(billing_event.error_message).to include('Card was declined.')
+      expect(billing_event.billing_subscription).to eq(billing_subscription)
+      expect(billing_event.billable_owner).to eq(community)
+      expect(billing_event.beneficiary).to eq(community)
+      expect(billing_subscription.status).to eq('past_due')
+      expect(billing_subscription.sync_source).to eq('stripe_financial_event')
+      expect(billing_subscription.latest_processor_event_id).to eq('evt_invoice_failed_123')
+    end
   end
 end

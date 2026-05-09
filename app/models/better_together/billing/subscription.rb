@@ -50,6 +50,31 @@ module BetterTogether
         last_synced_at.present? && last_synced_at >= threshold
       end
 
+      def portal_access_issue?
+        last_portal_error_at.present?
+      end
+
+      def last_portal_error_at
+        timestamp_from_metadata('last_portal_error_at')
+      end
+
+      def last_portal_error_message
+        metadata.to_h['last_portal_error_message']
+      end
+
+      def record_portal_access_failure!(message:)
+        update!(metadata: metadata.to_h.merge(
+          'last_portal_error_at' => Time.current.iso8601,
+          'last_portal_error_message' => message
+        ))
+      end
+
+      def clear_portal_access_failure!
+        return unless portal_access_issue?
+
+        update!(metadata: metadata.to_h.except('last_portal_error_at', 'last_portal_error_message'))
+      end
+
       def community
         owner_or_beneficiary_of_type(BetterTogether::Community)
       end
@@ -77,6 +102,15 @@ module BetterTogether
         return if beneficiary_type.blank? || beneficiary_type.in?(SUPPORTED_OWNER_TYPES)
 
         errors.add(:beneficiary_type, :inclusion)
+      end
+
+      def timestamp_from_metadata(key)
+        value = metadata.to_h[key]
+        return if value.blank?
+
+        Time.zone.parse(value)
+      rescue ArgumentError
+        nil
       end
     end
   end

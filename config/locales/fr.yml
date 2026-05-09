@@ -872,6 +872,10 @@ fr:
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
     billing:
+      activity_alerts: Alertes d'activite de facturation
+      activity_alerts_explainer: Des problemes recents de webhook Stripe ont ete enregistres
+        pour cet enregistrement de facturation. Consultez les derniers evenements
+        ci-dessous et lancez une reconciliation si l'etat local semble stale.
       available_plans: Plans disponibles
       billed_to: 'Facture a :'
       cancel_at_period_end: 'Annuler a la fin de la periode :'
@@ -880,17 +884,81 @@ fr:
       checkout_sync_complete: Le paiement Stripe a ete synchronise avec succes.
       checkout_sync_pending: Le paiement Stripe a ete recu, mais aucun etat d'abonnement
         n'a encore pu etre synchronise.
+      community_capacity_tier: 'Niveau de capacite de la communaute :'
       community_sponsor_checkout: Payer via %{community}
       current_period_ends: 'Fin de la periode courante :'
       current_subscription: Abonnement actuel
+      dead_letter_alert_body: Certains evenements de facturation Stripe n''ont pas
+        pu etre repares par les tentatives normales ou la reconciliation. Consultez-les
+        ci-dessous et rejouez les evenements compatibles lorsque c''est approprie.
+      dead_letter_alert_heading: Evenements de facturation en dead letter
+      dead_letter_reason_unknown: Raison du dead letter inconnue
+      details: Details
+      event_type: Evenement
+      failed_without_message: Le processeur a signale un echec sans message d'erreur.
       heading: Facturation de la communaute
+      hosted_access_level: 'Niveau d''acces heberge :'
+      hosted_access_level_default: Standard
+      hosted_entitlement_active_explainer: Cette communaute dispose actuellement d''un
+        plan heberge actif et reste en bon etat pour les operations hebergees.
+      hosted_entitlement_attention_explainer: Cette communaute conserve un acces heberge,
+        mais la facturation demande de l''attention avant que le plan heberge puisse
+        de nouveau etre considere comme sain.
+      hosted_entitlement_heading: Statut du plan heberge
+      hosted_entitlement_inactive_explainer: Aucun plan heberge actif n''est actuellement
+        synchronise pour cette communaute.
+      hosted_entitlement_plan: 'Plan heberge actuel :'
+      hosted_plan_scope_body: Le parcours de lancement actuel prend en charge les
+        plans heberges recurrents pour les communautes et les sponsors. Les plans
+        a paiement unique restent hors perimetre jusqu''a l''implementation de leur
+        flux d''execution.
+      hosted_plan_scope_heading: Portee de lancement de la facturation hebergee
+      ignored_event_explainer: L'evenement a ete enregistre, mais n'a pas pu etre
+        associe a une mise a jour locale de facturation.
       interval: Intervalle
+      last_attempt: Derniere tentative
       last_synced_at: 'Derniere synchronisation :'
+      last_webhook_event: 'Dernier evenement de webhook :'
       manage_link: Gerer la facturation
       manage_person_link: Gerer la facturation personnelle
+      merchant_account: Compte marchand
+      merchant_charges_enabled: 'Paiements encaissables :'
+      merchant_connect_explainer_community: Connectez Stripe afin que cette communaute
+        puisse terminer l''integration et recevoir des versements dans les futurs
+        flux commerciaux.
+      merchant_connect_explainer_person: Connectez Stripe si vous voulez que cette
+        personne puisse recevoir des versements dans les futurs flux commerciaux.
+      merchant_disconnected_at: 'Deconnecte a :'
+      merchant_disconnected_body: Stripe a deconnecte ce compte marchand. Relancez
+        l''integration avant de compter sur les versements ou sur de futurs flux commerciaux.
+      merchant_disconnected_heading: Compte marchand deconnecte
+      merchant_not_connected: Aucun compte marchand n''est encore connecte.
+      merchant_onboarding_unavailable: 'L''integration marchand n''est pas encore
+        disponible : %<message>s'
+      merchant_payouts_enabled: 'Versements actives :'
+      merchant_provider: 'Fournisseur :'
+      merchant_refresh_complete: L''etat du compte marchand a ete actualise avec succes.
+      merchant_refresh_failed: 'L''actualisation du compte marchand a echoue : %<message>s'
+      merchant_required_action_body: Stripe exige encore des etapes d''integration
+        ou une revision du compte avant que ce compte marchand soit pret pour les
+        versements.
+      merchant_required_action_heading: Action requise pour le compte marchand
+      merchant_status_guidance: Utilisez l''integration pour terminer la configuration
+        de Stripe Connect, puis actualisez cette carte apres l''examen du compte par
+        Stripe.
+      merchant_support_attention_body: Ce compte marchand n''est pas pret pour les
+        versements pour le moment. Verifiez l''etat du compte dans Stripe puis actualisez
+        cette page apres toute action corrective.
+      merchant_support_attention_heading: Attention de support pour le compte marchand
+      no_activity_alerts: Aucun evenement de webhook de facturation echoue ou ignore
+        n'est actuellement enregistre pour cet enregistrement de facturation.
+      no_billing_events: Aucune activite de webhook de facturation Stripe n'a encore
+        ete enregistree pour cet enregistrement de facturation.
       no_plans: Aucun plan de facturation actif n'est encore configure.
       no_subscription: Aucun abonnement synchronise n'est encore enregistre pour cette
         communaute.
+      oldest_unresolved_at: 'Plus ancien non resolu a :'
+      open_merchant_onboarding: Ouvrir l''integration marchand
       open_portal: Ouvrir le portail de facturation
       page_title: Facturation de la communaute
       person_heading: Facturation personnelle
@@ -899,29 +967,66 @@ fr:
       person_page_title: Facturation personnelle
       person_subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces
         au portail de facturation pour cette personne.
+      personal_plan_scope_body: La facturation personnelle prend actuellement en charge
+        les plans heberges recurrents et les flux de parrainage. Les plans a paiement
+        unique restent hors du lancement tant que leur flux d''execution n''est pas
+        termine.
+      plan_beneficiary_label: 'Avantages pour :'
+      plan_benefits: Avantages inclus
       plan_not_found: Ce plan de facturation n'est pas disponible.
+      plan_value: Valeur du plan
+      portal_access_attention: L''acces au portail de facturation demande de l''attention
+      portal_access_attention_fallback: La derniere tentative d''ouverture du portail
+        de facturation a echoue. Verifiez la disponibilite de Stripe et reessayez
+        au bon moment.
+      portal_access_last_failed_at: 'Dernier echec d''acces au portail :'
       portal_requires_sponsor: Cet abonnement de communaute est facture a un autre
         proprietaire. Demandez au sponsor actuel d'ouvrir le portail de facturation,
-        ou lancez un nouveau paiement ci-dessous pour reprendre la facturation de
-        cette communaute.
+        ou lancez ci-dessous un paiement de remplacement si la facturation doit passer
+        a un autre proprietaire.
       portal_unavailable: 'Le portail de facturation n''est pas encore disponible
         : %<message>s'
       price: Prix
       reconcile_now: Reconciler maintenant
       reconciliation_enqueued: Une tache de reconciliation Stripe a ete ajoutee pour
         cette communaute.
+      refresh_merchant_account: Actualiser l''etat marchand
+      repeated_failure_alert_body: Certains evenements de facturation Stripe ont echoue
+        a plusieurs reprises. Consultez les evenements en echec ci-dessous puis relancez
+        une reconciliation ou une relecture avant que l''ecart ne s''aggrave.
+      repeated_failure_alert_heading: Echecs repetes d''evenements de facturation
+      replay_event: Rejouer l''evenement
+      replay_event_enqueued: La relecture de l''evenement de facturation a ete mise
+        en file avec succes.
+      replay_event_not_found: Cet evenement de facturation est introuvable pour une
+        relecture.
+      replay_event_payload_unavailable: La charge utile de cet evenement de facturation
+        n''est plus disponible pour une relecture.
+      replay_event_unsupported: Cet evenement de facturation ne peut pas etre rejoue
+        sans risque.
+      replay_unavailable: Relecture indisponible
+      retry_count: "%<count>d tentatives"
       sponsor_checkout: Payer personnellement pour cette communaute
+      sponsored_communities: Communautes soutenues
       sponsored_subscription_notice: Cette communaute est actuellement soutenue par
-        %{owner}. Lancez un nouveau paiement ci-dessous si vous voulez reprendre la
-        facturation avec un autre proprietaire.
+        %{owner}. La phase 1 utilise un paiement de remplacement plutot qu'un flux
+        de transfert distinct. Lancez ci-dessous un paiement de remplacement si la
+        facturation doit passer a un autre proprietaire.
       start_checkout: Commencer le paiement
+      status: Statut
       subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces au portail
         de facturation pour cette communaute.
+      support_tier: 'Niveau de support :'
+      support_tier_default: Communaute
       sync_source: 'Source de synchronisation :'
-      takeover_as_community: Transferer la facturation a cette communaute
-      takeover_as_other_community: Payer via %{community} a la place
-      takeover_as_person: Payer personnellement a la place
+      takeover_as_community: Lancer un paiement de remplacement pour cette communaute
+      takeover_as_other_community: Lancer un paiement de remplacement via %{community}
+      takeover_as_person: Lancer un paiement de remplacement personnel
       unknown_sync_source: Inconnue
+      unresolved_alert_body: L''ecart de facturation Stripe est reste non resolu assez
+        longtemps pour exiger une revue operatoire. Lancez une reconciliation maintenant
+        et inspectez les evenements non resolus les plus anciens.
+      unresolved_alert_heading: Ecart de facturation non resolu
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire

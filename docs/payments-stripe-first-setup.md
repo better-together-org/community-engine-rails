@@ -51,6 +51,19 @@ Create at least one `BetterTogether::Billing::Plan` record per Stripe Price ID b
 - `billing_interval`
 - `active`
 
+For the current hosted-billing launch path:
+
+- prefer recurring Stripe Prices only
+- do not expose `one_time` plans on the billing pages until CE handles the full Stripe one-time fulfillment path
+- add participant-facing metadata where possible:
+  - `participant_summary`
+  - `participant_benefits`
+  - `beneficiary_label`
+- add hosted-entitlement metadata where useful:
+  - `hosted_access_level`
+  - `support_tier`
+  - `community_capacity_tier`
+
 The local record is the CE-side catalog. Stripe remains the source of truth for charge execution.
 
 ## Stripe Dashboard Configuration

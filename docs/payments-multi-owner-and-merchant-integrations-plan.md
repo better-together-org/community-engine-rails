@@ -110,6 +110,17 @@ Goal: allow both people and communities to exist as Stripe customers for CE-host
 
 Goal: allow customers to connect their own Stripe or PayPal merchant accounts while BTS charges platform or service fees.
 
+#### Current Stripe Connect status
+
+- merchant-account domain model is in place for `Person` and `Community`
+- Stripe Connect onboarding, refresh, and account snapshot sync services are implemented
+- person/community billing pages expose merchant onboarding and health state behind the feature gate
+- Stripe Connect webhook reconciliation now handles:
+  - `account.updated`
+  - `account.application.deauthorized`
+- merchant-account webhook events reuse the existing `BetterTogether::Billing::Event` journal rather than creating a second merchant-only event table
+- a focused `ReconcileStripeMerchantAccountJob` can refresh one connected account on demand
+
 #### Required changes
 
 - Add `BetterTogether::Billing::MerchantAccount`.
@@ -139,6 +150,7 @@ Goal: allow customers to connect their own Stripe or PayPal merchant accounts wh
 - A merchant account can belong to a person or a community.
 - A hosted subscription does not imply a merchant integration.
 - Merchant onboarding and merchant health must be visible without exposing sensitive processor data.
+- Merchant reconciliation should repair local merchant state from either webhooks or explicit refresh jobs.
 
 ### Phase 3: Commerce transactions and fee architecture
 
@@ -270,7 +282,7 @@ Recommended scope:
 - Store only the processor data needed for audit and repair.
 - Keep PII retention for webhook payloads time-bounded where possible.
 - Separate payout authority from general community admin rights.
-- Make ownership transfers explicit, reversible, and logged.
+- Make ownership transfers explicit, reversible, and logged once BTS has a real operator requirement beyond the current replacement-checkout model.
 - Do not make access-control decisions directly from unverified webhook payloads.
 
 ## Testing and Readiness Gates
@@ -281,6 +293,12 @@ Recommended scope:
 - community checkout, portal, and subscription sync
 - person pays for community entitlement
 - ownership transfer between person and community
+
+### Phase 1 decision checkpoint
+
+- The current hosted-billing slice intentionally treats "take over billing" as a replacement-checkout action, not as an in-place transfer state machine.
+- This remains the chosen implementation unless BTS needs explicit approval, acceptance, rollback, or audit semantics for transfer requests.
+- If that need appears, implement it as a dedicated hosted-billing transfer workflow rather than mixing transfer state into merchant ownership or Connect onboarding.
 
 ### Merchant integrations
 

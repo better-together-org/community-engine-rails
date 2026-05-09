@@ -1,0 +1,19 @@
+<div class="small text-muted mb-2">
+  <%= billing_plan.participant_summary %>
+</div>
+
+<p class="mb-2 small">
+  <strong><%= t('better_together.billing.plan_beneficiary_label', default: 'What this supports:') %></strong>
+  <%= billing_plan.beneficiary_label %>
+</p>
+
+<% if billing_plan.participant_benefits.any? %>
+  <div class="small">
+    <strong><%= t('better_together.billing.plan_benefits', default: 'Included in this plan:') %></strong>
+    <ul class="mb-0 mt-1">
+      <% billing_plan.participant_benefits.each do |benefit| %>
+        <li><%= benefit %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

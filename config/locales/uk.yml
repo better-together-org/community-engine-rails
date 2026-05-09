@@ -854,6 +854,10 @@ uk:
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
     billing:
+      activity_alerts: Billing alerty aktyvnosti
+      activity_alerts_explainer: Dlia tsoho billing zapysu zafiksovano neshchodavni
+        problemy webhookiv Stripe. Perehlian ostanni podii nyzhche ta zapusti reconciliatsiiu,
+        yakshcho lokalnyi stan vyhliadaie zastarilym.
       available_plans: Dostupni taryfy
       billed_to: 'Vystavleno dlia:'
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
@@ -861,16 +865,76 @@ uk:
       checkout_sync_complete: Platezh Stripe uspishno synchronizovano.
       checkout_sync_pending: Platezh Stripe otrymano, ale stan pidpysky shche ne vdalosia
         synchronizuvaty.
+      community_capacity_tier: 'Riven vmistymosti spilnoty:'
       community_sponsor_checkout: Oplatyty cherez %{community}
       current_period_ends: 'Potochnyi period zakinchuietsia:'
       current_subscription: Potochna pidpyska
+      dead_letter_alert_body: Dekiaki billing-podii Stripe ne вдалося vidnovyty zvychainymy
+        povtoramy abo reconciliatsiieiu. Perehlian yikh nyzhche ta povtorno obrobliui
+        pidtrymuvani podii, koly tse dorochno.
+      dead_letter_alert_heading: Billing-podii v dead letter
+      dead_letter_reason_unknown: Nevidoma prychyna dead letter
+      details: Detali
+      event_type: Podiia
+      failed_without_message: Protsesor povidomyv pro pomylku bez tekstu pomylky.
       heading: Billing spilnoty
+      hosted_access_level: 'Riven hosted dostupu:'
+      hosted_access_level_default: Standard
+      hosted_entitlement_active_explainer: Tsia spilnota zaraz maie aktyvnyi hosted
+        plan i zalyshaetsia v nalezhnomu stani dlia hosted-operatsii.
+      hosted_entitlement_attention_explainer: Tsia spilnota vse shche maie hosted
+        dostup, ale billing potrebuie uvahy, persh nizh plan znovu mozhna vvazhaty
+        zdorovym.
+      hosted_entitlement_heading: Stan hosted planu
+      hosted_entitlement_inactive_explainer: Dlia tsiiei spilnoty zaraz nemaie synchronizovanoho
+        aktyvnoho hosted planu.
+      hosted_entitlement_plan: 'Potochnyi hosted plan:'
+      hosted_plan_scope_body: Potochnyi shliakh zapusku pidtrymuie rekurentni hosted
+        plany dlia spilnot ta sponsoriv. Odnorazovi plany zalyshaiutsia poza mezhamy,
+        doky ne bude vprovadzheno yikhnii fulfillment-potik.
+      hosted_plan_scope_heading: Mezhi zapusku hosted billingu
+      ignored_event_explainer: Podiiu zafiksovano, ale ii ne vdalosia poviazaty z
+        lokalnym onovlenniam billingu.
       interval: Interval
+      last_attempt: Ostannia sproba
       last_synced_at: 'Ostannia synchronizatsiia:'
+      last_webhook_event: 'Ostannia webhook-podiia:'
       manage_link: Keruvaty billingom
       manage_person_link: Keruvaty osobystym billingom
+      merchant_account: Merchant account
+      merchant_charges_enabled: 'Charges enabled:'
+      merchant_connect_explainer_community: Pidkliuchit Stripe, shchob tsia spilnota
+        mohla zavershyty onboarding i otrymuvaty vyplaty v maibutnikh komertsiinykh
+        potokakh.
+      merchant_connect_explainer_person: Pidkliuchit Stripe, yakshcho vy khochiete,
+        shchob tsia osoba mohla otrymuvaty vyplaty v maibutnikh komertsiinykh potokakh.
+      merchant_disconnected_at: 'Vidkliucheno o:'
+      merchant_disconnected_body: Stripe vidkliuchyv tsei merchant account. Povtori
+        onboarding persh nizh pokladatysia na vyplaty chy maibutni komertsiini potoky.
+      merchant_disconnected_heading: Merchant account vidkliucheno
+      merchant_not_connected: Merchant account shche ne pidkliucheno.
+      merchant_onboarding_unavailable: 'Merchant onboarding shche nedostupnyi: %<message>s'
+      merchant_payouts_enabled: 'Payouts enabled:'
+      merchant_provider: 'Provider:'
+      merchant_refresh_complete: Stan merchant account uspishno onovleno.
+      merchant_refresh_failed: 'Ne vdalosia onovyty merchant account: %<message>s'
+      merchant_required_action_body: Stripe vse shche vymahaie dodatkovyi onboarding
+        abo perevirku akkaunta persh nizh tsei merchant account bude hotovyi do vyplat.
+      merchant_required_action_heading: Dlia merchant account potribna dia
+      merchant_status_guidance: Vykorystai onboarding, shchob zavershyty nalashtuvannia
+        Stripe Connect, a potim onovy tsiu kartku pislia perevirky akkaunta v Stripe.
+      merchant_support_attention_body: Tsei merchant account zaraz ne hotovyi do vyplat.
+        Perevir stan akkaunta v Stripe ta onovy tsiu storinku pislia bud-yakoi korektsiinoi
+        dii.
+      merchant_support_attention_heading: Merchant account potrebuie uvahy pidtrymky
+      no_activity_alerts: Dlia tsoho billing zapysu zaraz nemaie zafiksovanykh pomylkovykh
+        abo proihnorovanykh billing webhookiv.
+      no_billing_events: Dlia tsoho billing zapysu shche ne zafiksovano zhodnoi aktyvnosti
+        billing webhookiv Stripe.
       no_plans: Aktyvni platezhni taryfy shche ne nalashtovano.
       no_subscription: Dlia tsiiei spilnoty shche ne zafiksovano sinhronizovanoi pidpysky.
+      oldest_unresolved_at: 'Naistarisha nevyrishena o:'
+      open_merchant_onboarding: Vidkryty merchant onboarding
       open_portal: Vidkryty billing portal
       page_title: Billing spilnoty
       person_heading: Osobystyi billing
@@ -879,26 +943,60 @@ uk:
       person_page_title: Osobystyi billing
       person_subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do
         billing portalu dlia tsiiei osoby.
+      personal_plan_scope_body: Osobystyi billing zaraz pidtrymuie rekurentni hosted
+        plany ta sponsorni potoky. Odnorazovi plany zalyshaiutsia poza zapuskom, doky
+        yikhnii fulfillment-potik ne bude zaversheno.
+      plan_beneficiary_label: 'Perevahy dlia:'
+      plan_benefits: Vklucheni perevahy
       plan_not_found: Tsei billing plan nedostupnyi.
+      plan_value: Tsinnist planu
+      portal_access_attention: Dostup do billing portalu potrebuie uvahy
+      portal_access_attention_fallback: Ostannia sproba vidkryty billing portal zavershylasia
+        nevdalo. Perevir dostupnist Stripe ta sprobui shche raz, koly bude hotovo.
+      portal_access_last_failed_at: 'Ostannii nevdalyi dostup do portalu:'
       portal_requires_sponsor: Tsiu pidpysku spilnoty vystavleno na inshoho vlasnyka.
-        Poprosit potochnoho sponsora vidkryty billing portal abo pochnit novyi checkout
-        nyzhche, shchob perebraty oplatu za tsiu spilnotu.
+        Poprosit potochnoho sponsora vidkryty billing portal abo pochnit nyzhche zaminnii
+        checkout, yakshcho billing maie pereity do inshoho vlasnyka.
       portal_unavailable: 'Billing portal shche nedostupnyi: %<message>s'
       price: Tsina
       reconcile_now: Synchronizuvaty zaraz
       reconciliation_enqueued: Dlia tsiiei spilnoty postavleno v cherhu zadachu reconciliatsii
         Stripe.
+      refresh_merchant_account: Onovyty merchant status
+      repeated_failure_alert_body: Dekiaki billing-podii Stripe neodnorazovo zavershuvalysia
+        pomylkoiu. Perehlian nyzhche nevdali podii ta zapusti reconciliatsiiu abo
+        povtornu obrobku persh nizh vidkhylennia zrostatyme.
+      repeated_failure_alert_heading: Povtorni zboi billing-podii
+      replay_event: Povtorno obrobyty podiiu
+      replay_event_enqueued: Povtornu obrobku billing-podii uspishno postavleno v
+        cherhu.
+      replay_event_not_found: Tsiu billing-podiiu ne vdalosia znaity dlia povtornoi
+        obrobky.
+      replay_event_payload_unavailable: Payload tsiiei billing-podii bilshe nedostupnyi
+        dlia povtornoi obrobky.
+      replay_event_unsupported: Tsiu billing-podiiu ne mozhna bezpechno povtorno obrobyty.
+      replay_unavailable: Povtorna obrobka nedostupna
+      retry_count: "%<count>d sprob"
       sponsor_checkout: Oplatyty za tsiu spilnotu osobysto
-      sponsored_subscription_notice: Tsiu spilnotu zaraz sponsoruie %{owner}. Pochni
-        novyi checkout nyzhche, yakshcho khochesh perebraty billing z inshym vlasnykom.
+      sponsored_communities: Sponsorovani spilnoty
+      sponsored_subscription_notice: Tsiu spilnotu zaraz sponsoruie %{owner}. Faza
+        1 vykorystovuie zaminnyi checkout zamist okremoho transfernoho potoku. Pochni
+        nyzhche zaminnyi checkout, yakshcho billing maie pereity do inshoho vlasnyka.
       start_checkout: Pochaty oplatu
+      status: Stan
       subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing
         portalu dlia tsiiei spilnoty.
+      support_tier: 'Riven pidtrymky:'
+      support_tier_default: Spilnota
       sync_source: 'Dzherelo synchronizatsii:'
-      takeover_as_community: Perevesty billing na tsiu spilnotu
-      takeover_as_other_community: Oplatyty cherez %{community} zamist tsoho
-      takeover_as_person: Oplatyty osobysto zamist tsoho
+      takeover_as_community: Pochaty zaminnyi checkout dlia tsiiei spilnoty
+      takeover_as_other_community: Pochaty zaminnyi checkout cherez %{community}
+      takeover_as_person: Pochaty zaminnyi checkout osobysto
       unknown_sync_source: Nevidome
+      unresolved_alert_body: Billing-vidkhylennia Stripe zalyshalosia nevyrishenym
+        dostatno dovho, shchob vymagaty operatornoho ohliadu. Zapusti reconciliatsiiu
+        zaraz i perehliand naistarishi nevyrisheni podii.
+      unresolved_alert_heading: Nevyrishene billing-vidkhylennia
     bot_defense:
       errors:
         expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму

@@ -1,0 +1,44 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <strong><%= t('better_together.billing.hosted_entitlement_heading', default: 'Hosted plan status') %></strong>
+  </div>
+  <div class="card-body">
+    <p class="mb-2">
+      <span class="badge <%= hosted_entitlement.status_badge_class %>"><%= hosted_entitlement.status_label %></span>
+    </p>
+
+    <% if hosted_entitlement.billing_subscription.present? %>
+      <p class="mb-1">
+        <%= t('better_together.billing.hosted_entitlement_plan', default: 'Current hosted plan:') %>
+        <strong><%= hosted_entitlement.billing_subscription.billing_plan.name %></strong>
+      </p>
+    <% end %>
+
+    <p class="mb-1">
+      <%= t('better_together.billing.hosted_access_level', default: 'Hosted access level:') %>
+      <strong><%= hosted_entitlement.hosted_access_level.presence || t('better_together.billing.hosted_access_level_default', default: 'Standard') %></strong>
+    </p>
+
+    <p class="mb-1">
+      <%= t('better_together.billing.support_tier', default: 'Support tier:') %>
+      <strong><%= hosted_entitlement.support_tier.presence || t('better_together.billing.support_tier_default', default: 'Community') %></strong>
+    </p>
+
+    <% if hosted_entitlement.community_capacity_tier.present? %>
+      <p class="mb-1">
+        <%= t('better_together.billing.community_capacity_tier', default: 'Community capacity tier:') %>
+        <strong><%= hosted_entitlement.community_capacity_tier %></strong>
+      </p>
+    <% end %>
+
+    <p class="mb-0 text-muted small">
+      <% if hosted_entitlement.active? %>
+        <%= t('better_together.billing.hosted_entitlement_active_explainer', default: 'This community currently has an active hosted plan and support tier attached to its billing record.') %>
+      <% elsif hosted_entitlement.attention_needed? %>
+        <%= t('better_together.billing.hosted_entitlement_attention_explainer', default: 'This community still has hosted access metadata, but billing needs attention before the hosted state can be considered healthy again.') %>
+      <% else %>
+        <%= t('better_together.billing.hosted_entitlement_inactive_explainer', default: 'This community does not currently have an active hosted plan recorded.') %>
+      <% end %>
+    </p>
+  </div>
+</div>

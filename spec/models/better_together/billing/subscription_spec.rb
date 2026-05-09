@@ -27,4 +27,13 @@ RSpec.describe BetterTogether::Billing::Subscription do
   it 'exposes the beneficiary community for compatibility' do
     expect(subscription.community).to eq(subscription.beneficiary)
   end
+
+  it 'persists portal access failures in metadata' do
+    subscription = create('better_together/billing/subscription')
+
+    subscription.record_portal_access_failure!(message: 'Stripe portal outage')
+
+    expect(subscription.reload.portal_access_issue?).to be(true)
+    expect(subscription.last_portal_error_message).to eq('Stripe portal outage')
+  end
 end

@@ -23,6 +23,32 @@ RSpec.describe BetterTogether::Billing::StripeEventDispatcher do
       end.to have_enqueued_job(BetterTogether::Billing::ProcessStripeEventJob).with(payload)
     end
 
+    it 'enqueues merchant account webhook payloads' do
+      payload = { 'id' => 'evt_acct_123', 'type' => 'account.updated' }
+      event = Struct.new(:payload, keyword_init: true) do
+        def to_hash
+          payload
+        end
+      end.new(payload:)
+
+      expect do
+        described_class.new.call(event)
+      end.to have_enqueued_job(BetterTogether::Billing::ProcessStripeEventJob).with(payload)
+    end
+
+    it 'enqueues invoice lifecycle webhook payloads' do
+      payload = { 'id' => 'evt_invoice_123', 'type' => 'invoice.payment_failed' }
+      event = Struct.new(:payload, keyword_init: true) do
+        def to_hash
+          payload
+        end
+      end.new(payload:)
+
+      expect do
+        described_class.new.call(event)
+      end.to have_enqueued_job(BetterTogether::Billing::ProcessStripeEventJob).with(payload)
+    end
+
     it 'processes the payload through the queued job' do
       payload = {
         'id' => 'evt_test_123',

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_08_020000) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_09_152000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -253,13 +253,46 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_08_020000) do
     t.uuid "billable_owner_id"
     t.string "beneficiary_type"
     t.uuid "beneficiary_id"
+    t.datetime "payload_redacted_at"
+    t.datetime "dead_lettered_at"
+    t.string "dead_letter_reason"
+    t.datetime "last_replayed_at"
+    t.integer "replay_count", default: 0, null: false
+    t.string "last_replay_requested_by_type"
+    t.uuid "last_replay_requested_by_id"
     t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_events_beneficiary"
     t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_events_owner"
     t.index ["billing_subscription_id"], name: "idx_bt_billing_events_subscription"
     t.index ["community_id"], name: "idx_bt_billing_events_community"
+    t.index ["dead_lettered_at"], name: "idx_bt_billing_events_dead_lettered_at"
     t.index ["last_attempted_at"], name: "idx_bt_billing_events_last_attempted_at"
+    t.index ["last_replay_requested_by_type", "last_replay_requested_by_id"], name: "idx_bt_billing_events_last_replay_requested_by"
+    t.index ["payload_redacted_at"], name: "idx_bt_billing_events_payload_redacted_at"
     t.index ["processing_status"], name: "idx_bt_billing_events_processing_status"
     t.index ["processor", "event_id"], name: "idx_bt_billing_events_processor_event", unique: true
+  end
+
+  create_table "better_together_billing_merchant_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.string "provider", null: false
+    t.string "external_account_id"
+    t.string "status", default: "pending", null: false
+    t.boolean "charges_enabled", default: false, null: false
+    t.boolean "payouts_enabled", default: false, null: false
+    t.jsonb "capabilities", default: {}, null: false
+    t.string "country"
+    t.string "currency"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "last_synced_at"
+    t.index ["owner_type", "owner_id", "provider"], name: "idx_bt_billing_merchant_accounts_owner_provider", unique: true
+    t.index ["owner_type", "owner_id"], name: "idx_bt_billing_merchant_accounts_owner"
+    t.index ["provider", "external_account_id"], name: "idx_bt_billing_merchant_accounts_external", unique: true, where: "(external_account_id IS NOT NULL)"
+    t.index ["provider"], name: "idx_bt_billing_merchant_accounts_provider"
+    t.index ["status"], name: "idx_bt_billing_merchant_accounts_status"
   end
 
   create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

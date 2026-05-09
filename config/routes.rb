@@ -103,6 +103,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[create new]
+        # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[edit update destroy], path: 'c' do
           resource :billing,
                    only: :show,
@@ -110,6 +111,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :checkout
             post :portal
             post :reconcile
+            post :merchant_onboarding
+            post :refresh_merchant_account
+            post 'events/:event_id/replay', action: :replay_event, as: :replay_event
           end
 
           resources :invitations, only: %i[create destroy] do
@@ -132,6 +136,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
+        # rubocop:enable Metrics/BlockLength
 
         resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
@@ -265,6 +270,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :checkout
             post :portal
             post :reconcile
+            post :merchant_onboarding
+            post :refresh_merchant_account
+            post 'events/:event_id/replay', action: :replay_event, as: :replay_event
           end
         end
 
