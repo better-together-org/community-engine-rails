@@ -893,6 +893,9 @@ uk:
         plany dlia spilnot ta sponsoriv. Odnorazovi plany zalyshaiutsia poza mezhamy,
         doky ne bude vprovadzheno yikhnii fulfillment-potik.
       hosted_plan_scope_heading: Mezhi zapusku hosted billingu
+      hosted_status_active: Hosted plan aktyvnyy
+      hosted_status_attention: Potriben uhlyad za billingom
+      hosted_status_inactive: Nemaye aktyvnoho hosted planu
       ignored_event_explainer: Podiiu zafiksovano, ale ii ne vdalosia poviazaty z
         lokalnym onovlenniam billingu.
       interval: Interval
@@ -950,7 +953,9 @@ uk:
       plan_benefits: Vklucheni perevahy
       plan_not_found: Tsei billing plan nedostupnyi.
       plan_value: Tsinnist planu
-      platform_provisioned: Platforma provision na %<host_url>s.
+      platform_provisioned: Platforma uspishno provisionovana.
+      platform_provisioned_success: Platforma provisionovana
+      platform_provisioned_visit: Vidvidaty novu platformu
       portal_access_attention: Dostup do billing portalu potrebuie uvahy
       portal_access_attention_fallback: Ostannia sproba vidkryty billing portal zavershylasia
         nevdalo. Perevir dostupnist Stripe ta sprobui shche raz, koly bude hotovo.
@@ -980,8 +985,8 @@ uk:
         z platformoyu.
       provision_platform_step_platform: Novyy zapis platformy stvoryuyetsya za URL
         khosta, yakyi vy vkazuyete.
-      provision_platform_subheading: Vash hostingovy plan aktyvny. Zapovnit dani nyzhche,
-        shchob provisionuvaty novu platformu dlya tsiyeyi spilnoty.
+      provision_platform_subheading: Zapovnit dani nyzhche, shchob provisionuvaty
+        novu platformu dlya tsiyeyi spilnoty.
       provision_platform_submit: Provision platformy
       provision_platform_time_zone: Chasovy poyas
       provision_platform_what_happens: Shcho bude dali

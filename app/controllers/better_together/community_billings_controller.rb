@@ -80,6 +80,7 @@ module BetterTogether
 
     def provision_platform
       @hosted_entitlement = hosted_entitlement_resolver.call(community: @community)
+      redirect_to_billing_with_alert(provision_requires_plan_message) unless @hosted_entitlement.active?
     end
 
     def create_platform_provision
@@ -415,10 +416,10 @@ module BetterTogether
 
     def handle_provision_result(result)
       if result.success?
+        flash[:provision_url] = result.platform.host_url
         redirect_to community_billing_path(@community, locale: I18n.locale),
                     notice: t('better_together.billing.platform_provisioned',
-                              default: 'Platform provisioned at %<host_url>s.',
-                              host_url: result.platform.host_url),
+                              default: 'Platform provisioned successfully.'),
                     status: :see_other
       else
         flash.now[:alert] = result.errors.to_sentence

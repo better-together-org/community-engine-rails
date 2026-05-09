@@ -913,6 +913,9 @@ fr:
         a paiement unique restent hors perimetre jusqu''a l''implementation de leur
         flux d''execution.
       hosted_plan_scope_heading: Portee de lancement de la facturation hebergee
+      hosted_status_active: Plan heberge actif
+      hosted_status_attention: Attention requise pour la facturation
+      hosted_status_inactive: Aucun plan heberge actif
       ignored_event_explainer: L'evenement a ete enregistre, mais n'a pas pu etre
         associe a une mise a jour locale de facturation.
       interval: Intervalle
@@ -975,7 +978,9 @@ fr:
       plan_benefits: Avantages inclus
       plan_not_found: Ce plan de facturation n'est pas disponible.
       plan_value: Valeur du plan
-      platform_provisioned: Plateforme provisionnee a %<host_url>s.
+      platform_provisioned: Plateforme provisionnee avec succes.
+      platform_provisioned_success: Plateforme provisionnee
+      platform_provisioned_visit: Visiter la nouvelle plateforme
       portal_access_attention: L''acces au portail de facturation demande de l''attention
       portal_access_attention_fallback: La derniere tentative d''ouverture du portail
         de facturation a echoue. Verifiez la disponibilite de Stripe et reessayez
@@ -1008,8 +1013,8 @@ fr:
       provision_platform_step_domain: Le domaine hote est enregistre et lie a la plateforme.
       provision_platform_step_platform: Un nouvel enregistrement de plateforme est
         cree a l'URL hote que vous fournissez.
-      provision_platform_subheading: Votre plan heberge est actif. Remplissez les
-        details ci-dessous pour provisionner une nouvelle plateforme pour cette communaute.
+      provision_platform_subheading: Remplissez les details ci-dessous pour provisionner
+        une nouvelle plateforme pour cette communaute.
       provision_platform_submit: Provisionner la plateforme
       provision_platform_time_zone: Fuseau horaire
       provision_platform_what_happens: Ce qui se passe ensuite

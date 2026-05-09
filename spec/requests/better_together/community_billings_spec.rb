@@ -534,7 +534,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response.body).to include('Hosted plan active')
     end
 
-    it 'renders the provisioning form with attention warning when subscription is past_due' do
+    it 'redirects to billing with an alert when subscription is past_due' do
       create(
         :better_together_billing_subscription,
         billing_plan:,
@@ -545,16 +545,17 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       get better_together.provision_platform_community_billing_path(community, locale:)
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Billing attention needed')
-      expect(response.body).to include('Provision hosted platform')
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('active hosted plan is required')
     end
 
-    it 'renders the provisioning form when there is no active subscription' do
+    it 'redirects to billing with an alert when there is no active subscription' do
       get better_together.provision_platform_community_billing_path(community, locale:)
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Provision hosted platform')
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('active hosted plan is required')
     end
   end
 
@@ -596,7 +597,8 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
           time_zone: 'America/Toronto'
         )
         expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-        expect(flash[:notice]).to include('testhosted.example.com')
+        expect(flash[:provision_url]).to include('testhosted.example.com')
+        expect(flash[:notice]).to include('provisioned')
       end
 
       it 're-renders the form when provisioning fails' do

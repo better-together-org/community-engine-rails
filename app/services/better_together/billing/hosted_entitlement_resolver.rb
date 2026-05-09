@@ -29,11 +29,11 @@ module BetterTogether
         def status_label
           case hosted_status
           when :active
-            'Hosted plan active'
+            I18n.t('better_together.billing.hosted_status_active', default: 'Hosted plan active')
           when :attention
-            'Billing attention needed'
+            I18n.t('better_together.billing.hosted_status_attention', default: 'Billing attention needed')
           else
-            'No active hosted plan'
+            I18n.t('better_together.billing.hosted_status_inactive', default: 'No active hosted plan')
           end
         end
 

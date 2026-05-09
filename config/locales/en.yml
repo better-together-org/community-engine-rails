@@ -899,6 +899,9 @@ en:
         for communities and sponsors. One-time plans remain out of scope until their
         fulfillment path is implemented.
       hosted_plan_scope_heading: Hosted billing launch scope
+      hosted_status_active: Hosted plan active
+      hosted_status_attention: Billing attention needed
+      hosted_status_inactive: No active hosted plan
       ignored_event_explainer: The event was recorded but did not map to a local billing
         update.
       interval: Interval
@@ -955,7 +958,9 @@ en:
       plan_benefits: Included benefits
       plan_not_found: That billing plan is not available.
       plan_value: Plan value
-      platform_provisioned: Platform provisioned at %<host_url>s.
+      platform_provisioned: Platform provisioned successfully.
+      platform_provisioned_success: Platform provisioned
+      platform_provisioned_visit: Visit your new platform
       portal_access_attention: Billing portal access needs attention
       portal_access_attention_fallback: The last attempt to open the billing portal
         failed. Check Stripe availability and retry when ready.
@@ -985,8 +990,8 @@ en:
         the platform.
       provision_platform_step_platform: A new platform record is created at the host
         URL you provide.
-      provision_platform_subheading: Your hosted plan is active. Fill in the details
-        below to provision a new platform for this community.
+      provision_platform_subheading: Fill in the details below to provision a new
+        platform for this community.
       provision_platform_submit: Provision platform
       provision_platform_time_zone: Time zone
       provision_platform_what_happens: What happens next

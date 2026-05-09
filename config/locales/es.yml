@@ -907,6 +907,9 @@ es:
         alojados para comunidades y patrocinadores. Los planes de pago unico siguen
         fuera de alcance hasta que se implemente su flujo de cumplimiento.
       hosted_plan_scope_heading: Alcance de lanzamiento de la facturacion alojada
+      hosted_status_active: Plan alojado activo
+      hosted_status_attention: Atencion de facturacion requerida
+      hosted_status_inactive: Sin plan alojado activo
       ignored_event_explainer: El evento se registro, pero no se pudo mapear a una
         actualizacion local de facturacion.
       interval: Intervalo
@@ -966,7 +969,9 @@ es:
       plan_benefits: Beneficios incluidos
       plan_not_found: Ese plan de facturacion no esta disponible.
       plan_value: Valor del plan
-      platform_provisioned: Plataforma provisionada en %<host_url>s.
+      platform_provisioned: Plataforma provisionada exitosamente.
+      platform_provisioned_success: Plataforma provisionada
+      platform_provisioned_visit: Visitar la nueva plataforma
       portal_access_attention: El acceso al portal de facturacion necesita atencion
       portal_access_attention_fallback: El ultimo intento de abrir el portal de facturacion
         fallo. Revisa la disponibilidad de Stripe e intentalo de nuevo cuando corresponda.
@@ -997,8 +1002,8 @@ es:
         la plataforma.
       provision_platform_step_platform: Se crea un nuevo registro de plataforma en
         la URL del host que proporciones.
-      provision_platform_subheading: Tu plan alojado esta activo. Completa los detalles
-        para provisionar una nueva plataforma para esta comunidad.
+      provision_platform_subheading: Completa los detalles para provisionar una nueva
+        plataforma para esta comunidad.
       provision_platform_submit: Provisionar plataforma
       provision_platform_time_zone: Zona horaria
       provision_platform_what_happens: Que sucede a continuacion
