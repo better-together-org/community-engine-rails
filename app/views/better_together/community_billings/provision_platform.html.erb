@@ -3,6 +3,21 @@
 <% end %>
 
 <div class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to @community.name, community_path(@community, locale: I18n.locale) %>
+      </li>
+      <li class="breadcrumb-item">
+        <%= link_to t('better_together.billing.breadcrumb_label', default: 'Billing'),
+                    community_billing_path(@community, locale: I18n.locale) %>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <%= t('better_together.billing.provision_platform_page_title', default: 'Provision Hosted Platform') %>
+      </li>
+    </ol>
+  </nav>
+
   <div class="mb-4">
     <h1 class="mb-1"><%= t('better_together.billing.provision_platform_heading', default: 'Provision hosted platform') %></h1>
     <p class="text-muted mb-0">

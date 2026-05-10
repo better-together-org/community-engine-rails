@@ -3,6 +3,17 @@
 <% end %>
 
 <div class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to @community.name, community_path(@community, locale: I18n.locale) %>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <%= t('better_together.billing.breadcrumb_label', default: 'Billing') %>
+      </li>
+    </ol>
+  </nav>
+
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
     <div>
       <h1 class="mb-1"><%= t('better_together.billing.heading', default: 'Community Billing') %></h1>

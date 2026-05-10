@@ -860,6 +860,7 @@ uk:
         yakshcho lokalnyi stan vyhliadaie zastarilym.
       available_plans: Dostupni taryfy
       billed_to: 'Vystavleno dlia:'
+      breadcrumb_label: Billing
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
       checkout_session_invalid: 'Sesiiu Stripe ne vdalosia synchronizuvaty: %<message>s'
       checkout_sync_complete: Platezh Stripe uspishno synchronizovano.
@@ -1185,6 +1186,7 @@ uk:
         actions:
           destroy_aria: Видалити спільноту
           edit_aria: Редагувати спільноту
+          manage_billing: Керuvaty billing
         create_event: Створити подію
         events:
           create_event: Створити подію

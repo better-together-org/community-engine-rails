@@ -865,6 +865,7 @@ en:
         state looks stale.
       available_plans: Available plans
       billed_to: 'Billed to:'
+      breadcrumb_label: Billing
       cancel_at_period_end: 'Cancel at period end:'
       checkout_session_invalid: 'The Stripe checkout session could not be synchronized:
         %<message>s'
@@ -1178,6 +1179,7 @@ en:
         actions:
           destroy_aria: Delete community
           edit_aria: Edit community
+          manage_billing: Manage billing
         create_event: Create an Event
         events:
           create_event: Create an Event

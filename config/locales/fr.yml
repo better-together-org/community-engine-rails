@@ -878,6 +878,7 @@ fr:
         ci-dessous et lancez une reconciliation si l'etat local semble stale.
       available_plans: Plans disponibles
       billed_to: 'Facture a :'
+      breadcrumb_label: Facturation
       cancel_at_period_end: 'Annuler a la fin de la periode :'
       checkout_session_invalid: 'La session Stripe n''a pas pu etre synchronisee :
         %<message>s'
@@ -1209,6 +1210,7 @@ fr:
         actions:
           destroy_aria: Supprimer la communauté
           edit_aria: Modifier la communauté
+          manage_billing: Gerer la facturation
         create_event: Créer un événement
         events:
           create_event: Créer un événement

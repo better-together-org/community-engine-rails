@@ -874,6 +874,7 @@ es:
         y ejecuta una conciliacion si el estado local parece desactualizado.
       available_plans: Planes disponibles
       billed_to: 'Facturado a:'
+      breadcrumb_label: Facturacion
       cancel_at_period_end: 'Cancelar al final del periodo:'
       checkout_session_invalid: 'La sesion de Stripe no pudo sincronizarse: %<message>s'
       checkout_sync_complete: El pago de Stripe se sincronizo correctamente.
@@ -1198,6 +1199,7 @@ es:
         actions:
           destroy_aria: Eliminar la comunidad
           edit_aria: Editar la comunidad
+          manage_billing: Gestionar facturacion
         create_event: Crear un evento
         events:
           create_event: Crear un evento
