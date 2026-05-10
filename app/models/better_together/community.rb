@@ -20,6 +20,7 @@ module BetterTogether
     include ::Storext.model
 
     pay_customer default_payment_processor: :stripe, stripe_attributes: :stripe_customer_attributes
+    pay_merchant
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',

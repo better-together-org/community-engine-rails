@@ -72,6 +72,7 @@ RSpec.describe BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateO
   end
 
   it 'reuses an existing stripe account id instead of creating a new account' do
+    owner.set_merchant_processor(:stripe, processor_id: 'acct_existing')
     merchant_account = create(
       'better_together/billing/merchant_account',
       :person_owned,
@@ -105,6 +106,21 @@ RSpec.describe BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateO
     expect(result.created).to be(false)
     expect(result.merchant_account).to eq(merchant_account)
     expect(Stripe::Account).not_to have_received(:create)
+  end
+
+  it 'creates and stores a Pay merchant processor for the owner' do
+    allow(Stripe::Account).to receive(:create).and_return(stripe_account)
+    allow(Stripe::AccountLink).to receive(:create).and_return(account_link)
+
+    service.call(
+      owner:,
+      refresh_url: 'https://example.test/refresh',
+      return_url: 'https://example.test/return'
+    )
+
+    expect(owner.reload.merchant_processor).to be_present
+    expect(owner.merchant_processor.processor).to eq('stripe')
+    expect(owner.merchant_processor.processor_id).to eq('acct_123')
   end
 
   it 'fails closed when onboarding is disabled' do

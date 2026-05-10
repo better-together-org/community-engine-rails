@@ -15,7 +15,7 @@ Set the standard `pay` and Stripe credentials in the host app environment:
 
 - `STRIPE_PUBLIC_KEY`
 - `STRIPE_PRIVATE_KEY`
-- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_SIGNING_SECRET`
 
 If the host app uses Rails encrypted credentials instead of plain environment variables, map the same values into the initializer path expected by `pay`.
 

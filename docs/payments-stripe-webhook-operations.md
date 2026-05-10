@@ -42,7 +42,7 @@ sequenceDiagram
 
 ## Required Operational Expectations
 
-- webhook signing must remain enabled with `STRIPE_WEBHOOK_SECRET`
+- webhook signing must remain enabled with `STRIPE_SIGNING_SECRET`
 - event replay must be safe because the event table keys on processor plus event id
 - Stripe delivery retries must not produce duplicate local subscription rows
 - Stripe delivery retries must not produce duplicate local merchant-account state transitions

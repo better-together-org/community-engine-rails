@@ -5,7 +5,7 @@ module BetterTogether
     module MerchantAccounts
       module StripeConnect
         # Maps Stripe Connect account state into the local merchant account read model.
-        class SyncAccount
+        class SyncAccount # rubocop:todo Metrics/ClassLength
           class Error < StandardError; end
 
           Result = Struct.new(
@@ -15,15 +15,18 @@ module BetterTogether
             keyword_init: true
           )
 
+          # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           def call(merchant_account: nil, owner: nil, stripe_account: nil, stripe_account_id: nil)
             account = stripe_account || retrieve_account(stripe_account_id || merchant_account&.external_account_id)
-            local_merchant_account = merchant_account || find_or_initialize_account(owner:, stripe_account: account)
+            local_owner = owner || merchant_account&.owner || pay_merchant_owner_for(account.id)
+            local_merchant_account = merchant_account || find_or_initialize_account(owner: local_owner, stripe_account: account)
             created = local_merchant_account.new_record?
 
             local_merchant_account.assign_attributes(attributes_from(account))
-            local_merchant_account.owner ||= owner
+            local_merchant_account.owner ||= local_owner
             local_merchant_account.provider ||= 'stripe_connect'
             local_merchant_account.save!
+            sync_pay_merchant!(local_merchant_account.owner, account.id)
 
             Result.new(
               merchant_account: local_merchant_account,
@@ -31,6 +34,7 @@ module BetterTogether
               created:
             )
           end
+          # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
           private
 
@@ -67,15 +71,15 @@ module BetterTogether
 
           def map_status(account)
             return 'disabled' if account.respond_to?(:deleted) && cast_bool(account.deleted)
-            return 'restricted' if requirements_due?(account)
             return 'active' if cast_bool(account.charges_enabled) && cast_bool(account.payouts_enabled)
+            return 'required_action' if requirements_due?(account)
             return 'pending' unless cast_bool(account.details_submitted)
 
             'onboarding'
           end
 
           def requirements_due?(account)
-            requirement_field_values(account).any?(&:any?)
+            immediately_due_requirements(account).any?(&:any?) || disabled_reason(account).present?
           end
 
           def normalize_capabilities(capabilities)
@@ -107,12 +111,26 @@ module BetterTogether
             }.compact
           end
 
-          def requirement_field_values(account)
+          def immediately_due_requirements(account)
             requirements = account.try(:requirements)
 
-            %i[currently_due eventually_due past_due pending_verification].map do |field|
+            %i[currently_due past_due pending_verification].map do |field|
               compact_requirement_value(requirements, field)
             end
+          end
+
+          def disabled_reason(account)
+            account.try(:requirements).try(:disabled_reason)
+          end
+
+          def pay_merchant_owner_for(account_id)
+            Pay::Merchant.find_by(processor: 'stripe', processor_id: account_id)&.owner
+          end
+
+          def sync_pay_merchant!(owner, account_id)
+            return if owner.blank? || account_id.blank?
+
+            owner.set_merchant_processor(:stripe, processor_id: account_id)
           end
 
           def compact_requirement_value(requirements, field)

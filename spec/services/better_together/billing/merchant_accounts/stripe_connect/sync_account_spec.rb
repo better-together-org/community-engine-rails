@@ -51,12 +51,21 @@ RSpec.describe BetterTogether::Billing::MerchantAccounts::StripeConnect::SyncAcc
     expect(result.merchant_account.currency).to eq('CAD')
   end
 
-  it 'maps requirements-due accounts to restricted' do
+  it 'maps immediately-due requirements to required_action' do
     currently_due << 'external_account'
+    allow(stripe_account).to receive(:charges_enabled).and_return(false)
 
     result = service.call(owner:, stripe_account:)
 
-    expect(result.merchant_account.status).to eq('restricted')
+    expect(result.merchant_account.status).to eq('required_action')
+  end
+
+  it 'keeps fully enabled accounts active when only eventually_due requirements remain' do
+    allow(requirements).to receive(:eventually_due).and_return(['owners.address'])
+
+    result = service.call(owner:, stripe_account:)
+
+    expect(result.merchant_account.status).to eq('active')
   end
 
   it 'refreshes an existing account by stripe account id' do
@@ -76,5 +85,14 @@ RSpec.describe BetterTogether::Billing::MerchantAccounts::StripeConnect::SyncAcc
     expect(result.created).to be(false)
     expect(result.merchant_account).to eq(merchant_account)
     expect(result.merchant_account.reload.status).to eq('active')
+  end
+
+  it 'syncs the Pay merchant processor for the owner' do
+    result = service.call(owner:, stripe_account:)
+
+    expect(owner.reload.merchant_processor).to be_present
+    expect(owner.merchant_processor.processor).to eq('stripe')
+    expect(owner.merchant_processor.processor_id).to eq('acct_sync_123')
+    expect(result.merchant_account.external_account_id).to eq('acct_sync_123')
   end
 end

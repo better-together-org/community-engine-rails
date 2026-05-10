@@ -50,7 +50,9 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response.body).to include('Personal Billing')
       expect(response.body).to include('Personal Support')
       expect(response.body).to include('Supports your participation and any communities you sponsor.')
-      expect(response.body).to include('Hosted plans available now')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.hosted_plan_scope_heading', default: 'Hosted plans available now')
+      )
       expect(response.body).not_to include('One-time donation')
     end
 
@@ -101,8 +103,10 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       get better_together.person_billing_path(person, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Merchant account disconnected.')
-      expect(response.body).to include('Reconnect onboarding')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.merchant_disconnected_heading', default: 'Merchant account disconnected.')
+      )
+      expect(response.body).to include(I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'))
     end
 
     it 'surfaces recent failed billing events for operator visibility' do
@@ -123,9 +127,20 @@ RSpec.describe 'BetterTogether::PersonBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Billing activity alerts')
-      expect(response.body).to include('Repeated webhook failures detected.')
-      expect(response.body).to include('failed 3 or more times')
-      expect(response.body).to include('Unresolved billing drift may remain.')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.repeated_failure_alert_heading', default: 'Repeated webhook failures detected.')
+      )
+      expect(response.body).to include(
+        I18n.t(
+          'better_together.billing.repeated_failure_alert_body',
+          default: '%<count>d billing events have failed %<threshold>d or more times. Reconciliation may not have restored local state yet.',
+          count: 1,
+          threshold: BetterTogether::Billing::Event::REPEATED_FAILURE_ATTEMPT_THRESHOLD
+        )
+      )
+      expect(response.body).to include(
+        I18n.t('better_together.billing.unresolved_alert_heading', default: 'Unresolved billing drift may remain.')
+      )
       expect(response.body).to include('invoice.payment_failed')
       expect(response.body).to include('Card was declined')
       expect(response.body).to include('3 attempts')
@@ -151,7 +166,9 @@ RSpec.describe 'BetterTogether::PersonBillings' do
 
       get better_together.person_billing_path(person, locale:)
 
-      expect(response.body).to include('Dead-lettered billing events need review.')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.dead_letter_alert_heading', default: 'Dead-lettered billing events need review.')
+      )
       expect(response.body).to include('Replay event')
     end
 
@@ -178,37 +195,42 @@ RSpec.describe 'BetterTogether::PersonBillings' do
 
   describe 'POST /:locale/p/:person_id/billing/checkout' do
     it 'redirects to a hosted Stripe checkout session' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: person)
-      processor = instance_double(Pay::Stripe::Customer)
       checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/session')
+      Pay::Stripe::Customer.create!(owner: person, processor: 'stripe', processor_id: 'cus_person_checkout')
 
-      allow(BetterTogether::Person).to receive(:friendly).and_return(friendly_scope)
-      allow(person).to receive(:set_payment_processor).with(:stripe).and_return(processor)
-      allow(processor).to receive(:checkout).and_return(checkout_session)
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
 
       post better_together.checkout_person_billing_path(person, locale:), params: { billing_plan_id: billing_plan.id }
 
       expect(response).to redirect_to('https://checkout.stripe.test/session')
-      expect(processor).to have_received(:checkout).with(
+      expect(Stripe::Checkout::Session).to have_received(:create).with(
         hash_including(
+          customer: 'cus_person_checkout',
           mode: 'subscription',
           allow_promotion_codes: true,
-          success_url: a_string_including('checkout_session_id=%7BCHECKOUT_SESSION_ID%7D'),
-          cancel_url: satisfy { |url| !url.include?('checkout_session_id=') }
-        )
+          success_url: satisfy do |url|
+            url.include?('checkout_session_id={CHECKOUT_SESSION_ID}') &&
+              url.include?('stripe_checkout_session_id={CHECKOUT_SESSION_ID}')
+          end,
+          cancel_url: a_string_including('stripe_checkout_session_id={CHECKOUT_SESSION_ID}')
+        ),
+        anything
       )
+    end
+
+    it 'disables Turbo on checkout actions that redirect to Stripe' do
+      get better_together.person_billing_path(person, locale:)
+
+      expect(response.body).to include('data-turbo="false"')
     end
   end
 
   describe 'POST /:locale/p/:person_id/billing/portal' do
     it 'redirects to the Stripe billing portal' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: person)
-      processor = instance_double(Pay::Stripe::Customer)
       portal_session = instance_double(Stripe::BillingPortal::Session, url: 'https://billing.stripe.test/session')
+      Pay::Stripe::Customer.create!(owner: person, processor: 'stripe', processor_id: 'cus_person_portal')
 
-      allow(BetterTogether::Person).to receive(:friendly).and_return(friendly_scope)
-      allow(person).to receive(:set_payment_processor).with(:stripe).and_return(processor)
-      allow(processor).to receive(:billing_portal).and_return(portal_session)
+      allow(Stripe::BillingPortal::Session).to receive(:create).and_return(portal_session)
 
       post better_together.portal_person_billing_path(person, locale:)
 
@@ -216,18 +238,15 @@ RSpec.describe 'BetterTogether::PersonBillings' do
     end
 
     it 'persists portal failure support state on the billing subscription' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: person)
       billing_subscription = create(
         :better_together_billing_subscription,
         billable_owner: person,
         beneficiary: person,
         billing_plan:
       )
-      processor = instance_double(Pay::Stripe::Customer)
+      Pay::Stripe::Customer.create!(owner: person, processor: 'stripe', processor_id: 'cus_person_portal_failure')
 
-      allow(BetterTogether::Person).to receive(:friendly).and_return(friendly_scope)
-      allow(person).to receive(:set_payment_processor).with(:stripe).and_return(processor)
-      allow(processor).to receive(:billing_portal).and_raise(StandardError, 'Stripe portal outage')
+      allow(Stripe::BillingPortal::Session).to receive(:create).and_raise(StandardError, 'Stripe portal outage')
 
       post better_together.portal_person_billing_path(person, locale:)
 
@@ -235,7 +254,9 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(billing_subscription.reload.last_portal_error_message).to eq('Stripe portal outage')
 
       get better_together.person_billing_path(person, locale:)
-      expect(response.body).to include('Billing portal access needs attention.')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.portal_access_attention', default: 'Billing portal access needs attention.')
+      )
       expect(response.body).to include('Stripe portal outage')
     end
   end
@@ -326,7 +347,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       post better_together.refresh_merchant_account_person_billing_path(person, locale:)
 
       expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
-      expect(service).to have_received(:call).with(merchant_account:)
+      expect(service).to have_received(:call).with(merchant_account:, owner: person)
     end
   end
 end

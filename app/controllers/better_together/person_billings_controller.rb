@@ -65,11 +65,9 @@ module BetterTogether
     end
 
     def refresh_merchant_account
-      merchant_refresh_service.call(merchant_account: current_merchant_account!)
+      merchant_refresh_service.call(merchant_account: current_merchant_account, owner: @person)
 
       redirect_to_billing_with_notice(merchant_refresh_complete_message)
-    rescue ActiveRecord::RecordNotFound
-      redirect_to_billing_with_alert(merchant_not_connected_message)
     rescue StandardError => e
       redirect_to_billing_with_alert(merchant_refresh_failed_message(e))
     end
@@ -221,10 +219,6 @@ module BetterTogether
         refresh_url: person_billing_url(@person, locale: I18n.locale),
         return_url: person_billing_url(@person, locale: I18n.locale)
       )
-    end
-
-    def current_merchant_account!
-      current_merchant_account || raise(ActiveRecord::RecordNotFound)
     end
 
     def billing_alert_events

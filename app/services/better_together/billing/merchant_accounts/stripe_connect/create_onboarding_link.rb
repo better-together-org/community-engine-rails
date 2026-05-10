@@ -24,7 +24,7 @@ module BetterTogether
 
             merchant_account = merchant_account_for(owner)
             created = merchant_account.new_record?
-            stripe_account = provision_stripe_account(merchant_account, owner)
+            stripe_account = provision_stripe_account(owner)
             sync_result = sync_service.call(merchant_account:, owner:, stripe_account:)
 
             build_result(sync_result, refresh_url:, return_url:, type:, created:)
@@ -43,10 +43,11 @@ module BetterTogether
             )
           end
 
-          def provision_stripe_account(merchant_account, owner)
-            return Stripe::Account.retrieve(merchant_account.external_account_id) if merchant_account.external_account_id.present?
+          def provision_stripe_account(owner)
+            merchant_processor = owner.merchant_processor || owner.set_merchant_processor(:stripe)
+            return merchant_processor.account if merchant_processor.processor_id.present?
 
-            Stripe::Account.create(stripe_account_attributes(owner))
+            merchant_processor.create_account(**stripe_account_attributes(owner))
           end
 
           def build_result(sync_result, refresh_url:, return_url:, type:, created:)
@@ -112,8 +113,7 @@ module BetterTogether
           end
 
           def create_account_link(merchant_account, refresh_url:, return_url:, type:)
-            Stripe::AccountLink.create(
-              account: merchant_account.external_account_id,
+            merchant_account.owner.merchant_processor.account_link(
               refresh_url:,
               return_url:,
               type:

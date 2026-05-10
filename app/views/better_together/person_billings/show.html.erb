@@ -33,7 +33,8 @@
       <%= button_to t('better_together.billing.open_portal', default: 'Open billing portal'),
                     portal_person_billing_path(@person, locale: I18n.locale),
                     method: :post,
-                    class: 'btn btn-outline-primary' %>
+                    class: 'btn btn-outline-primary',
+                    data: { turbo: false } %>
     </div>
   </div>
 
@@ -98,7 +99,8 @@
             <%= button_to t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'),
                           merchant_onboarding_person_billing_path(@person, locale: I18n.locale),
                           method: :post,
-                          class: 'btn btn-outline-primary btn-sm' %>
+                          class: 'btn btn-outline-primary btn-sm',
+                          data: { turbo: false } %>
           </div>
         </div>
         <div class="card-body">
@@ -244,7 +246,8 @@
                         <%= button_to t('better_together.billing.start_checkout', default: 'Start checkout'),
                                       checkout_person_billing_path(@person, billing_plan_id: billing_plan.id, locale: I18n.locale),
                                       method: :post,
-                                      class: 'btn btn-primary btn-sm' %>
+                                      class: 'btn btn-primary btn-sm',
+                                      data: { turbo: false } %>
                       </td>
                     </tr>
                   <% end %>

@@ -33,7 +33,8 @@
       <%= button_to t('better_together.billing.open_portal', default: 'Open billing portal'),
                     portal_community_billing_path(@community, locale: I18n.locale),
                     method: :post,
-                    class: 'btn btn-outline-primary' %>
+                    class: 'btn btn-outline-primary',
+                    data: { turbo: false } %>
     </div>
   </div>
 
@@ -107,7 +108,8 @@
                       <%= button_to t('better_together.billing.takeover_as_community', default: 'Switch billing to this community'),
                                     checkout_community_billing_path(@community, billing_plan_id: @current_billing_plan.identifier, locale: I18n.locale),
                                     method: :post,
-                                    class: 'btn btn-warning btn-sm' %>
+                                    class: 'btn btn-warning btn-sm',
+                                    data: { turbo: false } %>
                     <% end %>
                     <% if @sponsoring_person.present? &&
                           @sponsoring_person != @billing_subscription.billable_owner &&
@@ -120,7 +122,8 @@
                                       locale: I18n.locale
                                     ),
                                     method: :post,
-                                    class: 'btn btn-outline-warning btn-sm' %>
+                                    class: 'btn btn-outline-warning btn-sm',
+                                    data: { turbo: false } %>
                     <% end %>
                     <% @sponsoring_communities.each do |sponsoring_community| %>
                       <% next if sponsoring_community == @billing_subscription.billable_owner %>
@@ -139,7 +142,8 @@
                                       locale: I18n.locale
                                     ),
                                     method: :post,
-                                    class: 'btn btn-outline-warning btn-sm' %>
+                                    class: 'btn btn-outline-warning btn-sm',
+                                    data: { turbo: false } %>
                     <% end %>
                   </div>
                 <% end %>
@@ -173,7 +177,8 @@
                           merchant_onboarding_community_billing_path(@community, locale: I18n.locale),
                           method: :post,
                           class: 'btn btn-outline-primary btn-sm',
-                          data: { turbo_confirm: t('better_together.billing.merchant_onboarding_confirm',
+                          data: { turbo: false,
+                                  turbo_confirm: t('better_together.billing.merchant_onboarding_confirm',
                                                    default: 'This will create a Stripe-managed merchant account linked to this community. Stripe\'s data practices apply. Proceed?') } %>
           </div>
         </div>
@@ -279,7 +284,8 @@
                           <%= button_to t('better_together.billing.start_checkout', default: 'Start checkout'),
                                         checkout_community_billing_path(@community, billing_plan_id: billing_plan.identifier, locale: I18n.locale),
                                         method: :post,
-                                        class: 'btn btn-primary btn-sm' %>
+                                        class: 'btn btn-primary btn-sm',
+                                        data: { turbo: false } %>
                           <% if @sponsoring_person.present? && billing_plan.eligible_for?(@sponsoring_person) %>
                             <%= button_to t('better_together.billing.sponsor_checkout', default: 'Pay personally for this community'),
                                           checkout_community_billing_path(
@@ -289,7 +295,8 @@
                                             locale: I18n.locale
                                           ),
                                           method: :post,
-                                          class: 'btn btn-outline-primary btn-sm' %>
+                                          class: 'btn btn-outline-primary btn-sm',
+                                          data: { turbo: false } %>
                           <% end %>
                           <% @sponsoring_communities.each do |sponsoring_community| %>
                             <% next unless billing_plan.eligible_for?(sponsoring_community) %>
@@ -307,7 +314,8 @@
                                             locale: I18n.locale
                                           ),
                                           method: :post,
-                                          class: 'btn btn-outline-secondary btn-sm' %>
+                                          class: 'btn btn-outline-secondary btn-sm',
+                                          data: { turbo: false } %>
                           <% end %>
                         </div>
                       </td>

@@ -55,4 +55,30 @@ RSpec.describe BetterTogether::Billing::HostedEntitlementResolver do
     expect(result).to be_attention_needed
     expect(result.hosted_access_active).to be(true)
   end
+
+  it 'prefers an active subscription over a newer canceled subscription' do
+    active_plan = create(:better_together_billing_plan, metadata: { 'hosted_access_level' => 'Steady' })
+    canceled_plan = create(:better_together_billing_plan, metadata: { 'hosted_access_level' => 'Canceled' })
+    create(
+      :better_together_billing_subscription,
+      billable_owner: community,
+      beneficiary: community,
+      billing_plan: active_plan,
+      status: 'active',
+      updated_at: 2.days.ago
+    )
+    create(
+      :better_together_billing_subscription,
+      billable_owner: community,
+      beneficiary: community,
+      billing_plan: canceled_plan,
+      status: 'canceled',
+      updated_at: 1.hour.ago
+    )
+
+    result = resolver.call(community:)
+
+    expect(result).to be_active
+    expect(result.hosted_access_level).to eq('Steady')
+  end
 end

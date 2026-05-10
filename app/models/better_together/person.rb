@@ -31,6 +31,7 @@ module BetterTogether
 
     has_community
     pay_customer default_payment_processor: :stripe, stripe_attributes: :stripe_customer_attributes
+    pay_merchant
 
     # Set up membership associations for platforms and communities
     member joinable_type: 'platform', member_type: 'person', dependent: :destroy

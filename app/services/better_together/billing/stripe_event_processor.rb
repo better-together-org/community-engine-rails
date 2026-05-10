@@ -52,11 +52,12 @@ module BetterTogether
 
       def sync_merchant_event(event)
         merchant_account = merchant_account_for(event)
-        return if merchant_account.blank?
+        owner = merchant_owner_for_event(event)
+        return if merchant_account.blank? && owner.blank?
 
         return disconnect_merchant_account(merchant_account, event) if merchant_deauthorized_event?(event)
 
-        merchant_account_sync.call(merchant_account:, stripe_account: event.data.object).tap do |result|
+        merchant_account_sync.call(merchant_account:, owner:, stripe_account: event.data.object).tap do |result|
           annotate_merchant_account!(result.merchant_account, event)
         end
       end
@@ -233,9 +234,17 @@ module BetterTogether
         event.data.object.try(:id).presence || event.try(:account).presence
       end
 
+      def merchant_owner_for_event(event)
+        Pay::Merchant.find_by(
+          processor: 'stripe',
+          processor_id: merchant_account_id_from(event)
+        )&.owner
+      end
+
       def annotate_merchant_account!(merchant_account, event)
         merchant_account.update!(
           metadata: merchant_account.metadata.merge(
+            'last_webhook_event_at' => Time.current.iso8601,
             'last_webhook_event_id' => event.id,
             'last_webhook_event_type' => event.type
           )
@@ -243,6 +252,8 @@ module BetterTogether
       end
 
       def disconnect_merchant_account(merchant_account, event)
+        return if merchant_account.blank?
+
         merchant_account.update!(
           status: 'disconnected',
           charges_enabled: false,
@@ -250,6 +261,7 @@ module BetterTogether
           last_synced_at: Time.current,
           metadata: merchant_account.metadata.merge(
             'deauthorized_at' => Time.current.iso8601,
+            'last_webhook_event_at' => Time.current.iso8601,
             'last_webhook_event_id' => event.id,
             'last_webhook_event_type' => event.type
           )
