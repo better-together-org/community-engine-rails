@@ -925,6 +925,15 @@ fr:
       manage_link: Gerer la facturation
       manage_person_link: Gerer la facturation personnelle
       merchant_account: Compte marchand
+      merchant_account_status:
+        active: Actif
+        disabled: Desactive
+        enabled: Active
+        errored: Erreur
+        pending: En attente
+        rejected: Rejete
+        restricted: Restreint
+        restricted_soon: Bientot restreint
       merchant_charges_enabled: 'Paiements encaissables :'
       merchant_connect_explainer_community: Connectez Stripe afin que cette communaute
         puisse terminer l''integration et recevoir des versements dans les futurs
@@ -936,6 +945,9 @@ fr:
         l''integration avant de compter sur les versements ou sur de futurs flux commerciaux.
       merchant_disconnected_heading: Compte marchand deconnecte
       merchant_not_connected: Aucun compte marchand n''est encore connecte.
+      merchant_onboarding_confirm: Cela creera un compte marchand gere par Stripe
+        lie a cette communaute. Les pratiques de donnees de Stripe s''appliquent.
+        Continuer?
       merchant_onboarding_unavailable: 'L''integration marchand n''est pas encore
         disponible : %<message>s'
       merchant_payouts_enabled: 'Versements actives :'
@@ -1006,13 +1018,19 @@ fr:
       provision_platform_name_hint: Le nom public de cette plateforme hebergee.
       provision_platform_name_placeholder: ex. Mon espace communautaire
       provision_platform_page_title: Provisionner la plateforme hebergee
-      provision_platform_step_admin: L'acces administrateur de la plateforme peut
-        etre configure apres le provisionnement.
+      provision_platform_privacy: Visibilite
+      provision_platform_privacy_community: Communaute — accessible aux membres
+      provision_platform_privacy_hint: Controle qui peut decouvrir et acceder a cette
+        plateforme. Vous pouvez modifier cela apres le provisionnement.
+      provision_platform_privacy_private: Prive — accessible sur invitation uniquement
+      provision_platform_privacy_public: Public — ouvert a tous
       provision_platform_step_community: Une communaute principale est automatiquement
         attachee a la plateforme.
       provision_platform_step_domain: Le domaine hote est enregistre et lie a la plateforme.
       provision_platform_step_platform: Un nouvel enregistrement de plateforme est
         cree a l'URL hote que vous fournissez.
+      provision_platform_step_steward: L'acces de gestion de la plateforme peut etre
+        configure apres le provisionnement.
       provision_platform_subheading: Remplissez les details ci-dessous pour provisionner
         une nouvelle plateforme pour cette communaute.
       provision_platform_submit: Provisionner la plateforme
@@ -1029,8 +1047,8 @@ fr:
         une reconciliation ou une relecture avant que l''ecart ne s''aggrave.
       repeated_failure_alert_heading: Echecs repetes d''evenements de facturation
       replay_event: Rejouer l''evenement
-      replay_event_enqueued: La relecture de l''evenement de facturation a ete mise
-        en file avec succes.
+      replay_event_enqueued: Evenement de facturation %<event_type>s mis en file pour
+        relecture.
       replay_event_not_found: Cet evenement de facturation est introuvable pour une
         relecture.
       replay_event_payload_unavailable: La charge utile de cet evenement de facturation
@@ -1049,6 +1067,15 @@ fr:
       status: Statut
       subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces au portail
         de facturation pour cette communaute.
+      subscription_status:
+        active: Actif
+        canceled: Annule
+        incomplete: Incomplet
+        incomplete_expired: Expire
+        past_due: En retard de paiement
+        paused: Suspendu
+        trialing: En essai
+        unpaid: Non paye
       support_tier: 'Niveau de support :'
       support_tier_default: Communaute
       sync_source: 'Source de synchronisation :'

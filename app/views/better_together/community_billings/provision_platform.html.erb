@@ -51,16 +51,36 @@
               </div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-3">
               <%= label_tag :platform_provision_time_zone,
                             t('better_together.billing.provision_platform_time_zone', default: 'Time zone'),
                             class: 'form-label' %>
               <%= select_tag 'platform_provision[time_zone]',
                              options_for_select(
                                ActiveSupport::TimeZone.all.map { |tz| [tz.to_s, tz.name] },
-                               params.dig(:platform_provision, :time_zone).presence || 'UTC'
+                               params.dig(:platform_provision, :time_zone).presence || 'America/St_Johns'
                              ),
                              class: 'form-select' %>
+            </div>
+
+            <div class="mb-4">
+              <%= label_tag :platform_provision_privacy,
+                            t('better_together.billing.provision_platform_privacy', default: 'Visibility'),
+                            class: 'form-label' %>
+              <%= select_tag 'platform_provision[privacy]',
+                             options_for_select(
+                               [
+                                 [t('better_together.billing.provision_platform_privacy_private', default: 'Private — accessible by invitation only'), 'private'],
+                                 [t('better_together.billing.provision_platform_privacy_community', default: 'Community — accessible to members'), 'community'],
+                                 [t('better_together.billing.provision_platform_privacy_public', default: 'Public — open to everyone'), 'public']
+                               ],
+                               params.dig(:platform_provision, :privacy).presence || 'private'
+                             ),
+                             class: 'form-select' %>
+              <div class="form-text">
+                <%= t('better_together.billing.provision_platform_privacy_hint',
+                      default: 'Controls who can discover and access this platform. You can change this after provisioning.') %>
+              </div>
             </div>
 
             <div class="d-flex gap-2">
@@ -87,7 +107,7 @@
             <li><%= t('better_together.billing.provision_platform_step_platform', default: 'A new platform record is created at the host URL you provide.') %></li>
             <li><%= t('better_together.billing.provision_platform_step_community', default: 'A primary community is automatically attached to the platform.') %></li>
             <li><%= t('better_together.billing.provision_platform_step_domain', default: 'The host domain is registered and linked to the platform.') %></li>
-            <li><%= t('better_together.billing.provision_platform_step_admin', default: 'Platform administrator access can be configured after provisioning.') %></li>
+            <li><%= t('better_together.billing.provision_platform_step_steward', default: 'Platform stewardship access can be configured after provisioning.') %></li>
           </ul>
         </div>
       </div>

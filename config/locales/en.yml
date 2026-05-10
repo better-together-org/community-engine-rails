@@ -911,6 +911,15 @@ en:
       manage_link: Manage billing
       manage_person_link: Manage personal billing
       merchant_account: Merchant account
+      merchant_account_status:
+        active: Active
+        disabled: Disabled
+        enabled: Enabled
+        errored: Error
+        pending: Pending
+        rejected: Rejected
+        restricted: Restricted
+        restricted_soon: Restricted soon
       merchant_charges_enabled: 'Charges enabled:'
       merchant_connect_explainer_community: Connect Stripe so this community can complete
         onboarding and receive payouts in later commerce flows.
@@ -921,6 +930,8 @@ en:
         onboarding before relying on payouts or later commerce flows.
       merchant_disconnected_heading: Merchant account disconnected
       merchant_not_connected: No merchant account is connected yet.
+      merchant_onboarding_confirm: This will create a Stripe-managed merchant account
+        linked to this community. Stripe's data practices apply. Proceed?
       merchant_onboarding_unavailable: 'Merchant onboarding is not available yet:
         %<message>s'
       merchant_payouts_enabled: 'Payouts enabled:'
@@ -982,14 +993,20 @@ en:
       provision_platform_name_hint: The public-facing name for this hosted platform.
       provision_platform_name_placeholder: e.g. My Community Space
       provision_platform_page_title: Provision Hosted Platform
-      provision_platform_step_admin: Platform administrator access can be configured
-        after provisioning.
+      provision_platform_privacy: Visibility
+      provision_platform_privacy_community: Community — accessible to members
+      provision_platform_privacy_hint: Controls who can discover and access this platform.
+        You can change this after provisioning.
+      provision_platform_privacy_private: Private — accessible by invitation only
+      provision_platform_privacy_public: Public — open to everyone
       provision_platform_step_community: A primary community is automatically attached
         to the platform.
       provision_platform_step_domain: The host domain is registered and linked to
         the platform.
       provision_platform_step_platform: A new platform record is created at the host
         URL you provide.
+      provision_platform_step_steward: Platform stewardship access can be configured
+        after provisioning.
       provision_platform_subheading: Fill in the details below to provision a new
         platform for this community.
       provision_platform_submit: Provision platform
@@ -1005,7 +1022,7 @@ en:
         accumulates.
       repeated_failure_alert_heading: Repeated billing event failures
       replay_event: Replay event
-      replay_event_enqueued: The billing event replay was queued successfully.
+      replay_event_enqueued: Billing event %<event_type>s queued for replay.
       replay_event_not_found: That billing event could not be found for replay.
       replay_event_payload_unavailable: The billing event payload is no longer available
         for replay.
@@ -1021,6 +1038,15 @@ en:
       status: Status
       subheading: Manage Stripe checkout, subscription status, and billing portal
         access for this community.
+      subscription_status:
+        active: Active
+        canceled: Canceled
+        incomplete: Incomplete
+        incomplete_expired: Expired
+        past_due: Past due
+        paused: Paused
+        trialing: Trialing
+        unpaid: Unpaid
       support_tier: 'Support tier:'
       support_tier_default: Community
       sync_source: 'Sync source:'

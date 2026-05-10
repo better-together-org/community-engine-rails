@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Community-admin billing entry points for Stripe checkout and portal access.
+  # Community steward billing entry points for Stripe checkout and portal access.
   class CommunityBillingsController < ApplicationController # rubocop:todo Metrics/ClassLength
     before_action :authenticate_user!
     before_action :set_community
     before_action :authorize_community
     before_action :authorize_merchant_account_management, only: %i[merchant_onboarding refresh_merchant_account]
+    after_action :verify_authorized
 
     def show
-      @checkout_sync_result = sync_checkout_session if params[:checkout_session_id].present?
+      @checkout_sync_result = sync_checkout_session if valid_checkout_session_id?
+      @provision_result_platform = BetterTogether::Platform.find_by(id: flash[:provision_platform_id])
       load_billing_overview
     end
 
@@ -66,13 +68,14 @@ module BetterTogether
     end
 
     def replay_event
+      event = replayable_billing_event
       replay_result = billing_event_replay_service.call(
-        billing_event: replayable_billing_event,
+        billing_event: event,
         requested_by: current_user
       )
 
       redirect_to community_billing_path(@community, locale: I18n.locale),
-                  flash: replay_event_flash(replay_result),
+                  flash: replay_event_flash(replay_result, event),
                   status: :see_other
     rescue ActiveRecord::RecordNotFound
       redirect_to_billing_with_alert(replay_event_not_found_message)
@@ -121,7 +124,7 @@ module BetterTogether
     end
 
     def find_billing_plan
-      available_billing_plans.find { |plan| plan.id == params[:billing_plan_id] } || raise(ActiveRecord::RecordNotFound)
+      available_billing_plans.find { |plan| plan.identifier == params[:billing_plan_id] } || raise(ActiveRecord::RecordNotFound)
     end
 
     def checkout_session_for(billing_plan)
@@ -162,6 +165,10 @@ module BetterTogether
       billable_owner.set_payment_processor(:stripe)
     end
 
+    def valid_checkout_session_id?
+      params[:checkout_session_id].to_s.match?(/\Acs_[a-zA-Z0-9_]+\z/)
+    end
+
     def sync_checkout_session
       result = BetterTogether::Billing::StripeCheckoutSessionSync.new.call(
         checkout_session_id: params[:checkout_session_id]
@@ -172,7 +179,7 @@ module BetterTogether
       flash.now[:alert] = t(
         'better_together.billing.checkout_session_invalid',
         default: 'The Stripe checkout session could not be synchronized: %<message>s',
-        message: e.message
+        message: ERB::Util.html_escape(e.message)
       )
       nil
     end
@@ -237,9 +244,10 @@ module BetterTogether
     end
 
     def sponsoring_communities
-      @sponsoring_communities ||= BetterTogether::Community.all.select do |community|
-        community != @community && policy(community).update?
-      end.sort_by(&:to_s)
+      @sponsoring_communities ||= begin
+        scope = policy_scope(BetterTogether::Community).where.not(id: @community.id)
+        scope.select { |community| policy(community).update? }.sort_by(&:to_s)
+      end
     end
 
     def requested_sponsor_owner
@@ -247,7 +255,7 @@ module BetterTogether
       when 'person'
         sponsoring_person
       when 'community'
-        sponsoring_communities.find { |community| community.id == params[:billable_owner_community_id] }
+        sponsoring_communities.find { |community| community.slug == params[:billable_owner_community_id] }
       end
     end
 
@@ -273,7 +281,7 @@ module BetterTogether
                   alert: t(
                     'better_together.billing.portal_unavailable',
                     default: 'The billing portal is not available yet: %<message>s',
-                    message: error.message
+                    message: ERB::Util.html_escape(error.message)
                   ),
                   status: :see_other
     end
@@ -349,7 +357,7 @@ module BetterTogether
       t(
         'better_together.billing.merchant_onboarding_unavailable',
         default: 'Merchant onboarding is not available yet: %<message>s',
-        message: error.message
+        message: ERB::Util.html_escape(error.message)
       )
     end
 
@@ -371,16 +379,17 @@ module BetterTogether
       t(
         'better_together.billing.merchant_refresh_failed',
         default: 'Merchant account refresh failed: %<message>s',
-        message: error.message
+        message: ERB::Util.html_escape(error.message)
       )
     end
 
-    def replay_event_flash(replay_result)
+    def replay_event_flash(replay_result, billing_event)
       if replay_result.enqueued
         {
           notice: t(
             'better_together.billing.replay_event_enqueued',
-            default: 'The dead-lettered billing event was queued for replay.'
+            default: 'Billing event %<event_type>s queued for replay.',
+            event_type: billing_event.event_type
           )
         }
       else
@@ -416,7 +425,7 @@ module BetterTogether
 
     def handle_provision_result(result)
       if result.success?
-        flash[:provision_url] = result.platform.host_url
+        flash[:provision_platform_id] = result.platform.id
         redirect_to community_billing_path(@community, locale: I18n.locale),
                     notice: t('better_together.billing.platform_provisioned',
                               default: 'Platform provisioned successfully.'),
@@ -436,12 +445,13 @@ module BetterTogether
       {
         name: platform_provision_form_params[:name],
         host_url: platform_provision_form_params[:host_url],
-        time_zone: platform_provision_form_params[:time_zone].presence || 'UTC'
+        time_zone: platform_provision_form_params[:time_zone].presence || 'America/St_Johns',
+        privacy: platform_provision_form_params[:privacy].presence || 'private'
       }
     end
 
     def platform_provision_form_params
-      params.require(:platform_provision).permit(:name, :host_url, :time_zone)
+      params.require(:platform_provision).permit(:name, :host_url, :time_zone, :privacy)
     end
   end
 end

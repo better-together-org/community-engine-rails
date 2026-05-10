@@ -9,8 +9,8 @@ module BetterTogether
   #   - federation registry defaults (apply_platform_registry_defaults before_validation)
   #
   # This service adds:
-  #   - Optional admin User + PersonPlatformMembership (platform_steward)
-  #   - Optional admin PersonCommunityMembership (community_governance_council)
+  #   - Optional steward User + PersonPlatformMembership (platform_steward)
+  #   - Optional steward PersonCommunityMembership (community_governance_council)
   #   - Transactional wrapper so partial failures roll back completely
   #
   # Idempotent: uses find_or_initialize_by(host_url:) — safe to re-run.
@@ -19,8 +19,8 @@ module BetterTogether
   #   result = BetterTogether::TenantPlatformProvisioningService.call(
   #     name: 'My Tenant',
   #     host_url: 'https://tenant.example.com',
-  #     time_zone: 'America/Toronto',
-  #     admin: { email: 'admin@example.com', password: 'SecurePass1!' }
+  #     time_zone: 'America/St_Johns',
+  #     steward: { email: 'steward@example.com', password: 'SecurePass1!' }
   #   )
   #   result.success? # => true
   #   result.platform # => BetterTogether::Platform instance
@@ -29,7 +29,7 @@ module BetterTogether
       :platform,
       :community,
       :domain,
-      :admin_user,
+      :steward_user,
       :errors
     ) do
       def success?
@@ -41,12 +41,13 @@ module BetterTogether
       new(**).call
     end
 
-    def initialize(name:, host_url:, time_zone: 'UTC', host: false, admin: nil)
+    def initialize(name:, host_url:, time_zone: 'America/St_Johns', host: false, steward: nil, privacy: 'private') # rubocop:disable Metrics/ParameterLists
       @name      = name
       @host_url  = host_url
       @time_zone = time_zone
       @host      = host
-      @admin     = admin
+      @steward   = steward
+      @privacy   = privacy
     end
 
     def call # rubocop:disable Metrics/AbcSize
@@ -58,7 +59,7 @@ module BetterTogether
         platform: result.platform,
         community: result.platform&.primary_community,
         domain: result.platform&.primary_platform_domain,
-        admin_user: result.admin_user,
+        steward_user: result.steward_user,
         errors: []
       )
     rescue ActiveRecord::RecordInvalid => e
@@ -70,20 +71,20 @@ module BetterTogether
     private
 
     def build_result!
-      platform   = provision_platform!
-      admin_user = provision_admin!(platform) if @admin.present?
+      platform = provision_platform!
+      steward_user = provision_steward!(platform) if @steward.present?
 
       Result.new(
         platform:,
         community: platform.primary_community,
         domain: platform.primary_platform_domain,
-        admin_user:,
+        steward_user:,
         errors: []
       )
     end
 
     def failure_result(errors)
-      Result.new(platform: nil, community: nil, domain: nil, admin_user: nil, errors:)
+      Result.new(platform: nil, community: nil, domain: nil, steward_user: nil, errors:)
     end
 
     def provision_platform!
@@ -94,19 +95,19 @@ module BetterTogether
         time_zone: @time_zone,
         external: false,
         host: @host,
-        privacy: 'public'
+        privacy: @privacy
       )
 
       platform.save!
       platform
     end
 
-    def provision_admin!(platform)
-      user = ::BetterTogether::User.find_or_initialize_by(email: @admin[:email])
+    def provision_steward!(platform)
+      user = ::BetterTogether::User.find_or_initialize_by(email: @steward[:email])
       user.build_person unless user.person
 
-      user.assign_attributes(@admin.except(:name))
-      user.person.name = @admin[:name] if @admin[:name].present?
+      user.assign_attributes(@steward.slice(:email, :password, :password_confirmation))
+      user.person.name = @steward[:name] if @steward[:name].present?
       user.save!
 
       assign_platform_role!(platform, user.person)

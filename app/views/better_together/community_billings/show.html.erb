@@ -26,13 +26,13 @@
     </div>
   </div>
 
-  <% if flash[:provision_url].present? %>
+  <% if @provision_result_platform.present? %>
     <div class="alert alert-success d-flex align-items-center gap-3 mb-4" role="alert">
       <div>
         <strong><%= t('better_together.billing.platform_provisioned_success', default: 'Platform provisioned') %></strong>
         &mdash;
         <%= link_to t('better_together.billing.platform_provisioned_visit', default: 'Visit your new platform'),
-                    flash[:provision_url],
+                    @provision_result_platform.host_url,
                     target: '_blank', rel: 'noopener noreferrer',
                     class: 'alert-link' %>
       </div>
@@ -63,7 +63,7 @@
             <% end %>
             <p class="mb-2"><strong><%= @billing_subscription.billing_plan.name %></strong></p>
             <p class="mb-2">
-              <span class="badge text-bg-primary"><%= @billing_subscription.status %></span>
+              <span class="badge text-bg-primary"><%= t("better_together.billing.subscription_status.#{@billing_subscription.status}", default: @billing_subscription.status.humanize) %></span>
             </p>
             <p class="mb-1">
               <%= t('better_together.billing.last_synced_at', default: 'Last synced:') %>
@@ -94,7 +94,7 @@
                   <div class="d-flex flex-wrap gap-2">
                     <% if @current_billing_plan.eligible_for?(@community) %>
                       <%= button_to t('better_together.billing.takeover_as_community', default: 'Switch billing to this community'),
-                                    checkout_community_billing_path(@community, billing_plan_id: @current_billing_plan.id, locale: I18n.locale),
+                                    checkout_community_billing_path(@community, billing_plan_id: @current_billing_plan.identifier, locale: I18n.locale),
                                     method: :post,
                                     class: 'btn btn-warning btn-sm' %>
                     <% end %>
@@ -104,7 +104,7 @@
                       <%= button_to t('better_together.billing.takeover_as_person', default: 'Pay personally instead'),
                                     checkout_community_billing_path(
                                       @community,
-                                      billing_plan_id: @current_billing_plan.id,
+                                      billing_plan_id: @current_billing_plan.identifier,
                                       checkout_as: 'person',
                                       locale: I18n.locale
                                     ),
@@ -122,9 +122,9 @@
                           ),
                                     checkout_community_billing_path(
                                       @community,
-                                      billing_plan_id: @current_billing_plan.id,
+                                      billing_plan_id: @current_billing_plan.identifier,
                                       checkout_as: 'community',
-                                      billable_owner_community_id: sponsoring_community.id,
+                                      billable_owner_community_id: sponsoring_community.slug,
                                       locale: I18n.locale
                                     ),
                                     method: :post,
@@ -161,7 +161,9 @@
             <%= button_to t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'),
                           merchant_onboarding_community_billing_path(@community, locale: I18n.locale),
                           method: :post,
-                          class: 'btn btn-outline-primary btn-sm' %>
+                          class: 'btn btn-outline-primary btn-sm',
+                          data: { turbo_confirm: t('better_together.billing.merchant_onboarding_confirm',
+                                                   default: 'This will create a Stripe-managed merchant account linked to this community. Stripe\'s data practices apply. Proceed?') } %>
           </div>
         </div>
         <div class="card-body">
@@ -188,7 +190,7 @@
               </div>
             <% end %>
             <p class="mb-2">
-              <span class="badge text-bg-info"><%= @merchant_account.status %></span>
+              <span class="badge text-bg-info"><%= t("better_together.billing.merchant_account_status.#{@merchant_account.status}", default: @merchant_account.status.humanize) %></span>
             </p>
             <p class="mb-1">
               <%= t('better_together.billing.merchant_provider', default: 'Provider:') %>
@@ -264,14 +266,14 @@
                       <td class="text-end">
                         <div class="d-flex justify-content-end gap-2 flex-wrap">
                           <%= button_to t('better_together.billing.start_checkout', default: 'Start checkout'),
-                                        checkout_community_billing_path(@community, billing_plan_id: billing_plan.id, locale: I18n.locale),
+                                        checkout_community_billing_path(@community, billing_plan_id: billing_plan.identifier, locale: I18n.locale),
                                         method: :post,
                                         class: 'btn btn-primary btn-sm' %>
                           <% if @sponsoring_person.present? && billing_plan.eligible_for?(@sponsoring_person) %>
                             <%= button_to t('better_together.billing.sponsor_checkout', default: 'Pay personally for this community'),
                                           checkout_community_billing_path(
                                             @community,
-                                            billing_plan_id: billing_plan.id,
+                                            billing_plan_id: billing_plan.identifier,
                                             checkout_as: 'person',
                                             locale: I18n.locale
                                           ),
@@ -288,9 +290,9 @@
                                 ),
                                           checkout_community_billing_path(
                                             @community,
-                                            billing_plan_id: billing_plan.id,
+                                            billing_plan_id: billing_plan.identifier,
                                             checkout_as: 'community',
-                                            billable_owner_community_id: sponsoring_community.id,
+                                            billable_owner_community_id: sponsoring_community.slug,
                                             locale: I18n.locale
                                           ),
                                           method: :post,

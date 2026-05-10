@@ -198,7 +198,7 @@ module BetterTogether
         {
           event_type: event.type,
           payload: event.to_hash,
-          payload_redacted_at: nil,
+          payload_redacted_at: billing_event.payload_redacted_at,
           first_received_at: billing_event.first_received_at || Time.current,
           last_attempted_at: Time.current,
           attempt_count: billing_event.attempt_count.to_i + 1,

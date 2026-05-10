@@ -13,7 +13,7 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
   end
 
   describe '.call' do
-    context 'without admin params' do
+    context 'without steward params' do
       it 'provisions a platform with community and domain' do
         result = described_class.call(**base_params)
 
@@ -25,7 +25,7 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
         expect(result.platform.csp_img_src).to include('https://*.tile.openstreetmap.org')
         expect(result.platform.csp_img_src).not_to include('https://unpkg.com')
         expect(result.community).to be_present
-        expect(result.admin_user).to be_nil
+        expect(result.steward_user).to be_nil
       end
 
       it 'auto-creates a PlatformDomain via model callback' do
@@ -36,23 +36,23 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
       end
     end
 
-    context 'with admin params' do
-      let(:admin_params) do
+    context 'with steward params' do
+      let(:steward_params) do
         {
-          email: "admin-#{SecureRandom.hex(4)}@example.com",
+          email: "steward-#{SecureRandom.hex(4)}@example.com",
           password: 'Secur3Pass!wordXYZ',
-          name: 'Admin User'
+          name: 'Platform Steward'
         }
       end
 
-      it 'creates an admin user with platform and community roles' do
-        result = described_class.call(**base_params, admin: admin_params)
+      it 'creates a steward user with platform and community roles' do
+        result = described_class.call(**base_params, steward: steward_params)
 
         expect(result).to be_success
-        expect(result.admin_user).to be_persisted
-        expect(result.admin_user.email).to eq(admin_params[:email])
+        expect(result.steward_user).to be_persisted
+        expect(result.steward_user.email).to eq(steward_params[:email])
 
-        person = result.admin_user.person
+        person = result.steward_user.person
         expect(person.person_platform_memberships.joins(:role)
           .where(better_together_roles: { identifier: 'platform_steward' })
           .where(joinable: result.platform)).to exist

@@ -224,7 +224,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       allow(community).to receive(:set_payment_processor).with(:stripe).and_return(processor)
       allow(processor).to receive(:checkout).and_return(checkout_session)
 
-      post better_together.checkout_community_billing_path(community, locale:), params: { billing_plan_id: billing_plan.id }
+      post better_together.checkout_community_billing_path(community, locale:), params: { billing_plan_id: billing_plan.identifier }
 
       expect(response).to redirect_to('https://checkout.stripe.test/session')
       expect(processor).to have_received(:checkout).with(
@@ -248,7 +248,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       allow(processor).to receive(:checkout).and_return(checkout_session)
 
       post better_together.checkout_community_billing_path(community, locale:),
-           params: { billing_plan_id: billing_plan.id, checkout_as: 'person' }
+           params: { billing_plan_id: billing_plan.identifier, checkout_as: 'person' }
 
       expect(response).to redirect_to('https://checkout.stripe.test/session')
       expect(processor).to have_received(:checkout).with(
@@ -279,9 +279,9 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       post better_together.checkout_community_billing_path(community, locale:),
            params: {
-             billing_plan_id: billing_plan.id,
+             billing_plan_id: billing_plan.identifier,
              checkout_as: 'community',
-             billable_owner_community_id: sponsor_community.id
+             billable_owner_community_id: sponsor_community.slug
            }
 
       expect(response).to redirect_to('https://checkout.stripe.test/community-session')
@@ -565,7 +565,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         platform_provision: {
           name: 'Test Hosted Platform',
           host_url: 'https://testhosted.example.com',
-          time_zone: 'America/Toronto'
+          time_zone: 'America/St_Johns'
         }
       }
     end
@@ -582,9 +582,11 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       end
 
       it 'calls TenantPlatformProvisioningService and redirects on success' do
+        platform_uuid = SecureRandom.uuid
+        platform = BetterTogether::Platform.new(host_url: 'https://testhosted.example.com')
+        allow(platform).to receive(:id).and_return(platform_uuid)
         result = BetterTogether::TenantPlatformProvisioningService::Result.new(
-          BetterTogether::Platform.new(host_url: 'https://testhosted.example.com'),
-          nil, nil, nil, []
+          platform, nil, nil, nil, []
         )
         allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call).and_return(result)
 
@@ -594,10 +596,11 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         expect(BetterTogether::TenantPlatformProvisioningService).to have_received(:call).with(
           name: 'Test Hosted Platform',
           host_url: 'https://testhosted.example.com',
-          time_zone: 'America/Toronto'
+          time_zone: 'America/St_Johns',
+          privacy: 'private'
         )
         expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-        expect(flash[:provision_url]).to include('testhosted.example.com')
+        expect(flash[:provision_platform_id]).to eq(platform_uuid)
         expect(flash[:notice]).to include('provisioned')
       end
 

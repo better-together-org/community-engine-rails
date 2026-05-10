@@ -905,6 +905,15 @@ uk:
       manage_link: Keruvaty billingom
       manage_person_link: Keruvaty osobystym billingom
       merchant_account: Merchant account
+      merchant_account_status:
+        active: Aktyvny
+        disabled: Vymknenyi
+        enabled: Uvimkneno
+        errored: Pomylka
+        pending: Ochikuye
+        rejected: Vidkhyleno
+        restricted: Obmezhenyi
+        restricted_soon: Skoro buде obmezhenyi
       merchant_charges_enabled: 'Charges enabled:'
       merchant_connect_explainer_community: Pidkliuchit Stripe, shchob tsia spilnota
         mohla zavershyty onboarding i otrymuvaty vyplaty v maibutnikh komertsiinykh
@@ -916,6 +925,8 @@ uk:
         onboarding persh nizh pokladatysia na vyplaty chy maibutni komertsiini potoky.
       merchant_disconnected_heading: Merchant account vidkliucheno
       merchant_not_connected: Merchant account shche ne pidkliucheno.
+      merchant_onboarding_confirm: Tse stvoryt merchant account, kerovanyi Stripe,
+        pov'yazany z tsiyeyu spilnotoyu. Zastosouyutsya praktyky danykh Stripe. Prodovzhyty?
       merchant_onboarding_unavailable: 'Merchant onboarding shche nedostupnyi: %<message>s'
       merchant_payouts_enabled: 'Payouts enabled:'
       merchant_provider: 'Provider:'
@@ -977,14 +988,20 @@ uk:
       provision_platform_name_hint: Publichna nazva tsiyeyi hostingovoyi platformy.
       provision_platform_name_placeholder: nap. Miy Spilnotny Prostir
       provision_platform_page_title: Provision hostingovoi platformy
-      provision_platform_step_admin: Dostup administratora platformy mozhna nalashtuvatyy
-        pislia provisionuvannya.
+      provision_platform_privacy: Vymist
+      provision_platform_privacy_community: Spilnota — dostupno dlya chleniv
+      provision_platform_privacy_hint: Kontrolyuye, khto mozhe znayty ta otrimaty
+        dostup do tsiyeyi platformy. Mozhna zminyty pislia provisionuvannya.
+      provision_platform_privacy_private: Pryvatno — dostupno lyshe za zaproshennyam
+      provision_platform_privacy_public: Publichno — vidkryto dlya vsikh
       provision_platform_step_community: Pershochergova spilnota avtomatychno pryv'yazuyetsya
         do platformy.
       provision_platform_step_domain: Domen khosta reyestruyetsya ta pov'yazuyetsya
         z platformoyu.
       provision_platform_step_platform: Novyy zapis platformy stvoryuyetsya za URL
         khosta, yakyi vy vkazuyete.
+      provision_platform_step_steward: Dostup stewarduvannya platformy mozhna nalashtuvatyy
+        pislia provisionuvannya.
       provision_platform_subheading: Zapovnit dani nyzhche, shchob provisionuvaty
         novu platformu dlya tsiyeyi spilnoty.
       provision_platform_submit: Provision platformy
@@ -1001,8 +1018,8 @@ uk:
         povtornu obrobku persh nizh vidkhylennia zrostatyme.
       repeated_failure_alert_heading: Povtorni zboi billing-podii
       replay_event: Povtorno obrobyty podiiu
-      replay_event_enqueued: Povtornu obrobku billing-podii uspishno postavleno v
-        cherhu.
+      replay_event_enqueued: Billing-podiyu %<event_type>s postavleno v cherhu dlya
+        povtornoi obrobky.
       replay_event_not_found: Tsiu billing-podiiu ne vdalosia znaity dlia povtornoi
         obrobky.
       replay_event_payload_unavailable: Payload tsiiei billing-podii bilshe nedostupnyi
@@ -1019,6 +1036,15 @@ uk:
       status: Stan
       subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing
         portalu dlia tsiiei spilnoty.
+      subscription_status:
+        active: Aktyvny
+        canceled: Skasovano
+        incomplete: Neповne
+        incomplete_expired: Vycherpano
+        past_due: Prostrochenyi platizh
+        paused: Pauzovano
+        trialing: Probirnyi period
+        unpaid: Nesplachenyi
       support_tier: 'Riven pidtrymky:'
       support_tier_default: Spilnota
       sync_source: 'Dzherelo synchronizatsii:'
