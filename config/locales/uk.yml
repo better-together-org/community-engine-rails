@@ -965,6 +965,52 @@ uk:
       plan_benefits: Vklucheni perevahy
       plan_not_found: Tsei billing plan nedostupnyi.
       plan_value: Tsinnist planu
+      plans:
+        create_submit: Stvoriti plan
+        created: Plan bilingu uspishno stvoreno.
+        deactivate_confirm: Deaktuvuvaty tsej plan? Isnuyuchi peredplatnyky ne postrazhdayut'.
+        edit_title: Redaguvaty plan bilingu
+        field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
+        field_amount_cents: Suma (tsenty)
+        field_amount_cents_hint: nap. 4500 = $45.00
+        field_beneficiary_label: Marka benefitsiariya
+        field_billing_interval: Interval bilingu
+        field_community_capacity_tier: Riven' potshnosty
+        field_currency: Valyuta
+        field_description: Opys
+        field_eligible_owner_types: Pidkhodyashchi dlya
+        field_hosted_access_level: Riven' hostingovoho dostupu
+        field_identifier: Identyfikator
+        field_identifier_hint: Unikalnyj klyuch. Ne mozhna zminyty pislia stvorennya.
+        field_name: Nazva
+        field_participant_benefits: Perevagy
+        field_participant_benefits_hint: Odna perevaga na ryadok.
+        field_participant_summary: Kharakterystyka dlya uchasnykiv
+        field_stripe_price_id: Stripe Price ID
+        field_stripe_price_id_hint: Z paneli Stripe. Ne mozhna zminyty pislia stvorennya.
+        field_support_tier: Riven' pidtrymky
+        index_title: Plany bilingu
+        interval_month: Shchomisyachno
+        interval_one_time: Odnorazovo
+        interval_year: Shchorichno
+        metadata_section_hint: Vidobrazhayet'sya na storinkakh bilingu ta kartochkakh
+          prav
+        metadata_section_title: Metadani planu
+        new_plan: Novyj plan
+        new_title: Novyj plan bilingu
+        no_plans: Plany bilingu shche ne stvoren.
+        owner_type_community: Spilnota
+        owner_type_person: Osobystist'
+        recent_subscribers_title: Aktyvni peredplatnyky
+        show_title: Plan bilingu
+        status_active: Aktyvnyj
+        status_inactive: Neaktyvnyj
+        subscribers_count_label: Aktyvni peredplatnyky
+        subscription_health_title: Stan peredplat
+        toggle_activate: Aktuvuvaty
+        toggle_deactivate: Deaktuvuvaty
+        update_submit: Onovyty plan
+        updated: Plan bilingu uspishno onovleno.
       platform_provisioned: Platforma uspishno provisionovana.
       platform_provisioned_success: Platforma provisionovana
       platform_provisioned_visit: Vidvidaty novu platformu

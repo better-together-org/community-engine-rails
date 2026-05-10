@@ -982,6 +982,54 @@ es:
       plan_benefits: Beneficios incluidos
       plan_not_found: Ese plan de facturacion no esta disponible.
       plan_value: Valor del plan
+      plans:
+        create_submit: Crear plan
+        created: Plan de facturacion creado exitosamente.
+        deactivate_confirm: "¿Desactivar este plan? Los suscriptores existentes no
+          se veran afectados."
+        edit_title: Editar plan de facturacion
+        field_active: Activo (visible para suscriptores)
+        field_amount_cents: Monto (centavos)
+        field_amount_cents_hint: ej. 4500 = $45.00
+        field_beneficiary_label: Etiqueta de beneficiario
+        field_billing_interval: Intervalo de facturacion
+        field_community_capacity_tier: Nivel de capacidad
+        field_currency: Moneda
+        field_description: Descripcion
+        field_eligible_owner_types: Elegible para
+        field_hosted_access_level: Nivel de acceso alojado
+        field_identifier: Identificador
+        field_identifier_hint: Clave unica de maquina. No se puede cambiar despues
+          de la creacion.
+        field_name: Nombre
+        field_participant_benefits: Beneficios
+        field_participant_benefits_hint: Un beneficio por linea.
+        field_participant_summary: Resumen para participantes
+        field_stripe_price_id: ID de precio de Stripe
+        field_stripe_price_id_hint: Desde el panel de Stripe. No se puede cambiar
+          despues de la creacion.
+        field_support_tier: Nivel de soporte
+        index_title: Planes de facturacion
+        interval_month: Mensual
+        interval_one_time: Unico
+        interval_year: Anual
+        metadata_section_hint: Mostrado en paginas de facturacion y tarjetas de derechos
+        metadata_section_title: Metadatos del plan
+        new_plan: Nuevo plan
+        new_title: Nuevo plan de facturacion
+        no_plans: Aun no se han creado planes de facturacion.
+        owner_type_community: Comunidad
+        owner_type_person: Persona
+        recent_subscribers_title: Suscriptores activos
+        show_title: Plan de facturacion
+        status_active: Activo
+        status_inactive: Inactivo
+        subscribers_count_label: Suscriptores activos
+        subscription_health_title: Estado de suscripciones
+        toggle_activate: Activar
+        toggle_deactivate: Desactivar
+        update_submit: Actualizar plan
+        updated: Plan de facturacion actualizado exitosamente.
       platform_provisioned: Plataforma provisionada exitosamente.
       platform_provisioned_success: Plataforma provisionada
       platform_provisioned_visit: Visitar la nueva plataforma

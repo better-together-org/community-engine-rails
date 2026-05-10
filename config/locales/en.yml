@@ -970,6 +970,53 @@ en:
       plan_benefits: Included benefits
       plan_not_found: That billing plan is not available.
       plan_value: Plan value
+      plans:
+        create_submit: Create plan
+        created: Billing plan created successfully.
+        deactivate_confirm: Deactivate this plan? Existing subscribers are unaffected.
+        edit_title: Edit Billing Plan
+        field_active: Active (visible to subscribers)
+        field_amount_cents: Amount (cents)
+        field_amount_cents_hint: e.g. 4500 = $45.00
+        field_beneficiary_label: Beneficiary label
+        field_billing_interval: Billing interval
+        field_community_capacity_tier: Capacity tier
+        field_currency: Currency
+        field_description: Description
+        field_eligible_owner_types: Eligible for
+        field_hosted_access_level: Hosted access level
+        field_identifier: Identifier
+        field_identifier_hint: Unique machine-readable key. Cannot be changed after
+          creation.
+        field_name: Name
+        field_participant_benefits: Benefits
+        field_participant_benefits_hint: One benefit per line.
+        field_participant_summary: Participant summary
+        field_stripe_price_id: Stripe Price ID
+        field_stripe_price_id_hint: From the Stripe Dashboard. Cannot be changed after
+          creation.
+        field_support_tier: Support tier
+        index_title: Billing Plans
+        interval_month: Monthly
+        interval_one_time: One-time
+        interval_year: Yearly
+        metadata_section_hint: Shown on billing pages and entitlement cards
+        metadata_section_title: Plan metadata
+        new_plan: New plan
+        new_title: New Billing Plan
+        no_plans: No billing plans have been created yet.
+        owner_type_community: Community
+        owner_type_person: Person
+        recent_subscribers_title: Active subscribers
+        show_title: Billing Plan
+        status_active: Active
+        status_inactive: Inactive
+        subscribers_count_label: Active subscribers
+        subscription_health_title: Subscription health
+        toggle_activate: Activate
+        toggle_deactivate: Deactivate
+        update_submit: Update plan
+        updated: Billing plan updated successfully.
       platform_provisioned: Platform provisioned successfully.
       platform_provisioned_success: Platform provisioned
       platform_provisioned_visit: Visit your new platform

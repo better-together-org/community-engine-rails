@@ -464,6 +464,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
             resources :oauth_applications
 
+            # Billing plan management (platform stewards only)
+            namespace :billing do
+              resources :plans
+            end
+
             # Geography Routes for WIP Geography Feature
             namespace :geography do
               resources :continents, except: %i[new create destroy]
