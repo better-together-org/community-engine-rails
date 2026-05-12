@@ -92,3 +92,20 @@ services:
     ports:
       - '1025:1025'
       - '8025:8025'
+
+  stripe-cli:
+    # Only started when the 'stripe' profile is active.
+    # bin/dc activates this profile automatically when STRIPE_PRIVATE_KEY is set.
+    image: stripe/stripe-cli:latest
+    container_name: community-engine-stripe-cli
+    command: >
+      listen
+      --api-key ${STRIPE_PRIVATE_KEY}
+      --forward-to http://app:3000/pay/webhooks/stripe
+      --skip-verify
+    environment:
+      STRIPE_API_KEY: ${STRIPE_PRIVATE_KEY:-}
+    depends_on:
+      - app
+    profiles:
+      - stripe

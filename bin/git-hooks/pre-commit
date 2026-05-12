@@ -83,7 +83,8 @@ if [ -n "$staged_i18n" ]; then
   echo "pre-commit: Running i18n-tasks health…"
 
   i18n_exit=0
-  bundle exec i18n-tasks health || i18n_exit=$?
+  BUNDLE_WITH="${BUNDLE_WITH:-development:test}" BUNDLE_WITHOUT="${BUNDLE_WITHOUT:-}" \
+    bundle exec i18n-tasks health || i18n_exit=$?
 
   if [ "$i18n_exit" -ne 0 ]; then
     echo ""
