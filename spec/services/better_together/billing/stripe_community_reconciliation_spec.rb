@@ -19,6 +19,17 @@ RSpec.describe BetterTogether::Billing::StripeCommunityReconciliation do
         processor_id: 'cus_test_123'
       )
     end
+    let!(:pay_subscription) do
+      Pay::Subscription.create!(
+        customer: pay_customer,
+        name: 'default',
+        processor_id: 'sub_test_123',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
+    end
     let(:subscription) do
       price = Struct.new(:id, keyword_init: true).new(id: billing_plan.stripe_price_id)
       line_item = Struct.new(:price, keyword_init: true).new(price:)
@@ -60,7 +71,9 @@ RSpec.describe BetterTogether::Billing::StripeCommunityReconciliation do
 
       expect(result.synced_count).to eq(1)
       expect(result.subscription_ids).to eq(['sub_test_123'])
-      expect(community.billing_subscriptions.find_by(processor_subscription_id: 'sub_test_123')).to be_present
+      pay_sub = Pay::Customer.find_by(processor: 'stripe', processor_id: 'cus_test_123')
+                             .subscriptions.find_by(processor_id: 'sub_test_123')
+      expect(pay_sub&.billing_subscription_record).to be_present
     end
   end
 end

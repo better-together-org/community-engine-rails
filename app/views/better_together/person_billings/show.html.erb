@@ -172,48 +172,6 @@
                  end,
                  last_billing_event: @last_billing_event %>
 
-      <% if @sponsored_billing_subscriptions.any? %>
-        <div class="card mb-4">
-          <div class="card-header">
-            <strong><%= t('better_together.billing.sponsored_communities', default: 'Sponsored communities') %></strong>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th><%= t('globals.name', default: 'Name') %></th>
-                    <th><%= t('better_together.billing.current_subscription', default: 'Current subscription') %></th>
-                    <th><%= t('better_together.billing.current_period_ends', default: 'Current period ends:') %></th>
-                    <th class="text-end"><%= t('globals.actions', default: 'Actions') %></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @sponsored_billing_subscriptions.each do |subscription| %>
-                    <% beneficiary = subscription.beneficiary %>
-                    <tr>
-                      <td>
-                        <strong><%= beneficiary.respond_to?(:name) ? beneficiary.name : beneficiary.to_s %></strong>
-                        <div class="text-muted small"><%= subscription.status %></div>
-                      </td>
-                      <td><%= subscription.billing_plan.name %></td>
-                      <td><%= l(subscription.current_period_end, format: :long) if subscription.current_period_end %></td>
-                      <td class="text-end">
-                        <% if beneficiary.is_a?(BetterTogether::Community) %>
-                          <%= link_to t('better_together.billing.manage_link', default: 'Manage billing'),
-                                      community_billing_path(beneficiary, locale: I18n.locale),
-                                      class: 'btn btn-outline-secondary btn-sm' %>
-                        <% end %>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      <% end %>
-
       <div class="card">
         <div class="card-header">
           <strong><%= t('better_together.billing.available_plans', default: 'Available hosted plans') %></strong>

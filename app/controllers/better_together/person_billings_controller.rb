@@ -12,7 +12,6 @@ module BetterTogether
       @checkout_sync_result = sync_checkout_session if params[:checkout_session_id].present?
       @billing_plans = available_billing_plans
       @billing_subscription = current_billing_subscription
-      @sponsored_billing_subscriptions = sponsored_billing_subscriptions
       @merchant_account = current_merchant_account
       @billing_alert_events = billing_alert_events
       @billing_alert_summary = billing_alert_summary
@@ -106,13 +105,7 @@ module BetterTogether
     end
 
     def checkout_metadata(billing_plan)
-      BetterTogether::Billing::OwnershipResolver.build_metadata(
-        billable_owner: @person,
-        beneficiary: @person
-      ).merge(
-        bt_billing_plan_id: billing_plan.id,
-        bt_billing_plan_identifier: billing_plan.identifier
-      )
+      BetterTogether::Billing::OwnershipResolver.build_metadata(billing_plan:)
     end
 
     def find_billing_plan
@@ -157,14 +150,16 @@ module BetterTogether
     end
 
     def current_billing_subscription
-      @current_billing_subscription ||= @person.billing_subscriptions.order(updated_at: :desc).first
+      @current_billing_subscription ||= BetterTogether::Billing::Subscription
+                                        .joins(:pay_subscription)
+                                        .where(pay_subscriptions: { customer_id: @person.pay_customers.select(:id) })
+                                        .order(Pay::Subscription.arel_table[:created_at].desc)
+                                        .first
     end
 
     def sync_checkout_session
       result = BetterTogether::Billing::StripeCheckoutSessionSync.new.call(
-        checkout_session_id: params[:checkout_session_id],
-        billable_owner: @person,
-        beneficiary: @person
+        checkout_session_id: params[:checkout_session_id]
       )
       flash.now[sync_flash_key(result)] = sync_flash_message(result)
       result
@@ -188,13 +183,6 @@ module BetterTogether
         'better_together.billing.checkout_sync_pending',
         default: 'Stripe checkout was received, but no subscription state could be synchronized yet.'
       )
-    end
-
-    def sponsored_billing_subscriptions
-      @person.owned_billing_subscriptions
-             .where.not(beneficiary_type: BetterTogether::Person.name)
-             .includes(:beneficiary, :billing_plan)
-             .order(updated_at: :desc)
     end
 
     def current_merchant_account
@@ -234,14 +222,7 @@ module BetterTogether
     end
 
     def billing_events_scope
-      BetterTogether::Billing::Event.where(
-        '(billable_owner_type = :owner_type AND billable_owner_id = :owner_id) OR ' \
-        '(beneficiary_type = :beneficiary_type AND beneficiary_id = :beneficiary_id)',
-        owner_type: @person.class.name,
-        owner_id: @person.id,
-        beneficiary_type: @person.class.name,
-        beneficiary_id: @person.id
-      ).distinct
+      BetterTogether::Billing::Event.where(billable_owner: @person)
     end
 
     def replayable_billing_event

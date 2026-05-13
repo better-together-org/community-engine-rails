@@ -2,7 +2,12 @@
 
 module BetterTogether
   module Billing
-    # Shared resolution helpers for billing owner and beneficiary metadata.
+    # Helpers for building Stripe checkout metadata and resolving billing
+    # record owners from Stripe webhook payloads.
+    #
+    # With v1 owner-equals-beneficiary, metadata only needs to encode the
+    # billing plan. The billable owner is implicit from the Pay::Customer
+    # associated with the Stripe customer ID on the webhook payload.
     module OwnershipResolver
       SUPPORTED_OWNER_TYPES = {
         'community' => 'BetterTogether::Community',
@@ -15,26 +20,21 @@ module BetterTogether
 
       module_function
 
-      def build_metadata(billable_owner:, beneficiary:)
+      # Builds Stripe checkout metadata encoding the billing plan only.
+      # Owner identity is implicit from which pay_customer calls checkout.
+      def build_metadata(billing_plan:)
         {
-          bt_billable_owner_type: billable_owner.class.name,
-          bt_billable_owner_id: billable_owner.id,
-          bt_beneficiary_type: beneficiary.class.name,
-          bt_beneficiary_id: beneficiary.id
-        }.merge(legacy_community_metadata(beneficiary))
+          bt_billing_plan_id: billing_plan.id,
+          bt_billing_plan_identifier: billing_plan.identifier
+        }
       end
 
+      # Resolves the billable owner from the Stripe webhook payload.
+      # Falls back to the pay_customer owner when metadata lacks an explicit type.
       def resolve_billable_owner(metadata:, fallback_owner: nil)
         resolve_record(metadata['bt_billable_owner_type'], metadata['bt_billable_owner_id']) ||
           resolve_record('BetterTogether::Community', metadata['bt_community_id']) ||
           fallback_owner
-      end
-
-      def resolve_beneficiary(metadata:, fallback_beneficiary: nil, billable_owner: nil)
-        resolve_record(metadata['bt_beneficiary_type'], metadata['bt_beneficiary_id']) ||
-          resolve_record('BetterTogether::Community', metadata['bt_community_id']) ||
-          fallback_beneficiary ||
-          billable_owner
       end
 
       def supported_owner_type?(record)
@@ -52,15 +52,6 @@ module BetterTogether
         normalized_type.constantize.find_by(id:)
       rescue NameError
         nil
-      end
-
-      def legacy_community_metadata(record)
-        return {} unless record.is_a?(BetterTogether::Community)
-
-        {
-          bt_community_id: record.id,
-          bt_community_identifier: record.identifier
-        }
       end
     end
   end

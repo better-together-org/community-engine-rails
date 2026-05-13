@@ -15,15 +15,8 @@ module BetterTogether
 
       def show
         authorize @plan
-        @subscription_health = @plan.subscriptions
-                                    .group(:status)
-                                    .count
-                                    .transform_keys { |k| k.presence || 'unknown' }
-        @recent_subscribers = @plan.subscriptions
-                                   .where(status: 'active')
-                                   .includes(:billable_owner)
-                                   .order(created_at: :desc)
-                                   .limit(20)
+        @subscription_health = subscription_health_for(@plan)
+        @recent_subscribers = recent_active_subscribers_for(@plan)
       end
 
       def new
@@ -62,6 +55,23 @@ module BetterTogether
 
       def set_plan
         @plan = BetterTogether::Billing::Plan.find(params[:id])
+      end
+
+      def subscription_health_for(plan)
+        plan.subscriptions
+            .joins(:pay_subscription)
+            .group(Pay::Subscription.arel_table[:status])
+            .count
+            .transform_keys { |k| k.presence || 'unknown' }
+      end
+
+      def recent_active_subscribers_for(plan)
+        plan.subscriptions
+            .joins(:pay_subscription)
+            .where(pay_subscriptions: { status: 'active' })
+            .includes(pay_subscription: :customer)
+            .order(Pay::Subscription.arel_table[:created_at].desc)
+            .limit(20)
       end
 
       def plan_params # rubocop:disable Metrics/MethodLength, Metrics/AbcSize

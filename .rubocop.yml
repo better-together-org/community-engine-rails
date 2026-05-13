@@ -13,6 +13,8 @@ AllCops:
     - 'tmp/**/*'               # CI compat copies and build artifacts
     - 'spec/integration/**/*'  # rswag specs - never run rubocop on these
     - 'rubocop/**/*'           # custom cop source — not subject to self-inspection
+    - '**/*.html.erb'          # ERB files require rubocop-erb; exclude until that plugin is added
+    - '**/*.erb'               # catches any other .erb extensions
   NewCops: enable
   TargetRubyVersion: 3.4
 plugins:
@@ -72,6 +74,14 @@ Metrics/ModuleLength:
     - 'spec/support/**/*'
 
 Metrics/AbcSize:
+  Exclude:
+    - 'db/migrate/*'
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'db/migrate/*'
+
+Metrics/PerceivedComplexity:
   Exclude:
     - 'db/migrate/*'
 

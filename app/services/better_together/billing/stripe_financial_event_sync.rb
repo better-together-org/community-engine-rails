@@ -34,7 +34,6 @@ module BetterTogether
       Result = Struct.new(
         :synced,
         :billable_owner,
-        :beneficiary,
         :billing_subscription,
         :processing_status,
         :error_message,
@@ -47,14 +46,12 @@ module BetterTogether
         billing_subscription = resolve_billing_subscription(event)
         synchronize_billing_subscription!(billing_subscription, event) if billing_subscription.present?
 
-        billable_owner = billing_subscription&.billable_owner || resolve_billable_owner(event)
-        beneficiary = billing_subscription&.beneficiary || resolve_beneficiary(event, billable_owner:)
-        context_present = billable_owner.present? || beneficiary.present? || billing_subscription.present?
+        billable_owner = billing_subscription&.pay_subscription&.owner || resolve_billable_owner(event)
+        context_present = billable_owner.present? || billing_subscription.present?
 
         Result.new(
           synced: context_present,
           billable_owner:,
-          beneficiary:,
           billing_subscription:,
           processing_status: processing_status_for(event, context_present:),
           error_message: error_message_for(event, context_present:),
@@ -79,10 +76,8 @@ module BetterTogether
       end
 
       def billing_subscription_for_processor_id(subscription_id)
-        BetterTogether::Billing::Subscription.find_by(
-          processor: 'stripe',
-          processor_subscription_id: subscription_id
-        )
+        Pay::Subscription.stripe.find_by(processor_id: subscription_id)
+                         &.billing_subscription_record
       end
 
       def billing_subscription_for_charge(charge_id)
@@ -96,10 +91,15 @@ module BetterTogether
       def billing_subscription_for_customer(customer_id)
         return if customer_id.blank?
 
-        scope = BetterTogether::Billing::Subscription.where(processor: 'stripe', pay_customer_id: customer_id)
-        return scope.first if scope.one?
+        pay_customer = Pay::Customer.find_by(processor: 'stripe', processor_id: customer_id)
+        return unless pay_customer
 
-        scope.order(updated_at: :desc).first if scope.activeish.one?
+        bt_subs = pay_customer.subscriptions
+                              .includes(:billing_subscription_record)
+                              .filter_map(&:billing_subscription_record)
+        return bt_subs.first if bt_subs.one?
+
+        bt_subs.max_by(&:updated_at)
       end
 
       def resolve_billable_owner(event)
@@ -111,15 +111,6 @@ module BetterTogether
         )
       end
 
-      def resolve_beneficiary(event, billable_owner:)
-        data_object = event_object(event)
-
-        OwnershipResolver.resolve_beneficiary(
-          metadata: object_metadata(data_object),
-          billable_owner:
-        )
-      end
-
       def pay_customer_for(data_object)
         customer_id = customer_id_from(data_object)
         return if customer_id.blank?
@@ -128,26 +119,12 @@ module BetterTogether
       end
 
       def synchronize_billing_subscription!(billing_subscription, event)
-        attributes = {
+        billing_subscription.update!(
           last_synced_at: Time.current,
           sync_source: 'stripe_financial_event',
           latest_processor_event_id: event.id,
           metadata: billing_subscription.metadata.to_h.merge(financial_metadata(event))
-        }
-        subscription_status = subscription_status_for(event)
-        attributes[:status] = subscription_status if subscription_status.present?
-        billing_subscription.update!(attributes)
-      end
-
-      def subscription_status_for(event)
-        case event.type
-        when 'invoice.payment_failed', 'invoice.payment_action_required'
-          'past_due'
-        when 'invoice.marked_uncollectible'
-          'unpaid'
-        when 'invoice.paid', 'invoice.payment_succeeded'
-          'active'
-        end
+        )
       end
 
       # rubocop:disable Metrics/AbcSize

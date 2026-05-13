@@ -19,15 +19,22 @@ RSpec.describe BetterTogether::Billing::StripeFinancialEventSync do
         processor_id: 'cus_test_123'
       )
     end
+    let!(:pay_subscription) do
+      Pay::Subscription.create!(
+        customer: pay_customer,
+        name: 'default',
+        processor_id: 'sub_test_123',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
+    end
     let!(:billing_subscription) do
       create(
         :better_together_billing_subscription,
-        billable_owner: community,
-        beneficiary: community,
-        billing_plan:,
-        processor_subscription_id: 'sub_test_123',
-        pay_customer_id: pay_customer.processor_id,
-        status: 'active'
+        pay_subscription: pay_subscription,
+        billing_plan: billing_plan
       )
     end
 
@@ -44,7 +51,7 @@ RSpec.describe BetterTogether::Billing::StripeFinancialEventSync do
       ).new(
         id: 'in_test_123',
         object: 'invoice',
-        subscription: billing_subscription.processor_subscription_id,
+        subscription: billing_subscription.processor_id,
         customer: pay_customer.processor_id,
         status: 'open',
         metadata: {},
@@ -60,14 +67,12 @@ RSpec.describe BetterTogether::Billing::StripeFinancialEventSync do
 
       expect(result.synced).to be(true)
       expect(result.billable_owner).to eq(community)
-      expect(result.beneficiary).to eq(community)
       expect(result.billing_subscription).to eq(billing_subscription)
       expect(result.processing_status).to eq('failed')
       expect(result.error_message).to include('Stripe reported that an invoice payment failed.')
       expect(result.error_message).to include('Card was declined.')
 
       billing_subscription.reload
-      expect(billing_subscription.status).to eq('past_due')
       expect(billing_subscription.sync_source).to eq('stripe_financial_event')
       expect(billing_subscription.latest_processor_event_id).to eq('evt_invoice_failed_123')
       expect(billing_subscription.metadata).to include(
@@ -89,7 +94,7 @@ RSpec.describe BetterTogether::Billing::StripeFinancialEventSync do
       ).new(
         id: 'in_test_paid_123',
         object: 'invoice',
-        subscription: billing_subscription.processor_subscription_id,
+        subscription: billing_subscription.processor_id,
         customer: pay_customer.processor_id,
         status: 'paid',
         metadata: {}
@@ -104,17 +109,10 @@ RSpec.describe BetterTogether::Billing::StripeFinancialEventSync do
 
       expect(result.processing_status).to eq('processed')
       expect(result.error_message).to be_nil
-      expect(billing_subscription.reload.status).to eq('active')
+      expect(billing_subscription.reload.sync_source).to eq('stripe_financial_event')
     end
 
     it 'resolves disputes through stored Pay charges when no subscription id is present on the event object' do
-      pay_subscription = Pay::Subscription.create!(
-        customer: pay_customer,
-        name: 'default',
-        processor_id: billing_subscription.processor_subscription_id,
-        processor_plan: billing_plan.stripe_price_id,
-        status: 'active'
-      )
       Pay::Charge.create!(
         customer: pay_customer,
         subscription: pay_subscription,
@@ -138,7 +136,6 @@ RSpec.describe BetterTogether::Billing::StripeFinancialEventSync do
 
       expect(result.synced).to be(true)
       expect(result.billable_owner).to eq(community)
-      expect(result.beneficiary).to eq(community)
       expect(result.billing_subscription).to eq(billing_subscription)
       expect(result.processing_status).to eq('failed')
       expect(result.error_message).to include('Stripe opened a dispute for a related charge.')

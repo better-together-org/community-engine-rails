@@ -17,9 +17,6 @@ module BetterTogether
       belongs_to :billable_owner,
                  polymorphic: true,
                  optional: true
-      belongs_to :beneficiary,
-                 polymorphic: true,
-                 optional: true
       belongs_to :billing_subscription,
                  class_name: 'BetterTogether::Billing::Subscription',
                  optional: true,
@@ -30,7 +27,6 @@ module BetterTogether
       validates :event_id, uniqueness: { scope: :processor }
       validates :processing_status, inclusion: { in: PROCESSING_STATUSES }
       validate :billable_owner_type_supported
-      validate :beneficiary_type_supported
 
       scope :pending, -> { where(processing_status: 'pending') }
       scope :failed, -> { where(processing_status: 'failed') }
@@ -105,11 +101,11 @@ module BetterTogether
       end
 
       def community
-        owner_or_beneficiary_of_type(BetterTogether::Community)
+        billable_owner if billable_owner.is_a?(BetterTogether::Community)
       end
 
       def person
-        owner_or_beneficiary_of_type(BetterTogether::Person)
+        billable_owner if billable_owner.is_a?(BetterTogether::Person)
       end
 
       def redact_payload!
@@ -178,23 +174,10 @@ module BetterTogether
 
       private
 
-      def owner_or_beneficiary_of_type(klass)
-        return beneficiary if beneficiary.is_a?(klass)
-        return billable_owner if billable_owner.is_a?(klass)
-
-        nil
-      end
-
       def billable_owner_type_supported
         return if billable_owner_type.blank? || billable_owner_type.in?(SUPPORTED_OWNER_TYPES)
 
         errors.add(:billable_owner_type, :inclusion)
-      end
-
-      def beneficiary_type_supported
-        return if beneficiary_type.blank? || beneficiary_type.in?(SUPPORTED_OWNER_TYPES)
-
-        errors.add(:beneficiary_type, :inclusion)
       end
     end
     # rubocop:enable Metrics/ClassLength

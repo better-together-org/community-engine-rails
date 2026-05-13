@@ -9,23 +9,20 @@ RSpec.describe BetterTogether::Billing::Subscription do
     expect(subscription).to be_valid
   end
 
-  it 'requires a supported processor' do
-    subscription.processor = 'paypal'
-
-    expect(subscription).not_to be_valid
-    expect(subscription.errors[:processor]).to be_present
-  end
-
   it 'identifies activeish statuses' do
     expect(subscription.activeish?).to be(true)
 
-    subscription.status = 'canceled'
+    subscription.pay_subscription.status = 'canceled'
 
     expect(subscription.activeish?).to be(false)
   end
 
-  it 'exposes the beneficiary community for compatibility' do
-    expect(subscription.community).to eq(subscription.beneficiary)
+  it 'delegates status to pay_subscription' do
+    expect(subscription.status).to eq(subscription.pay_subscription.status)
+  end
+
+  it 'exposes the processor from the pay customer' do
+    expect(subscription.processor).to eq('stripe')
   end
 
   it 'persists portal access failures in metadata' do

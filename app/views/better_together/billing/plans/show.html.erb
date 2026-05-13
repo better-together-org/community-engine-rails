@@ -123,9 +123,10 @@
         <ul class="list-group list-group-flush">
           <% @recent_subscribers.each do |subscription| %>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-              <span><%= subscription.billable_owner.try(:name) || subscription.billable_owner_id %></span>
+              <% sub_owner = subscription.pay_subscription&.owner %>
+              <span><%= sub_owner&.try(:name) || subscription.pay_subscription_id %></span>
               <span class="badge bg-light text-dark border">
-                <%= subscription.billable_owner.class.model_name.human %>
+                <%= sub_owner&.class&.model_name&.human || '—'%>
               </span>
             </li>
           <% end %>

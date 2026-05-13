@@ -2,26 +2,17 @@
 
 module BetterTogether
   module Billing
-    # Local subscription record synced from the payment processor.
+    # CE extension record for a pay_subscription. Status, period, and
+    # processor details live on Pay::Subscription; this record stores only
+    # CE billing-plan linkage and operational metadata (portal errors, sync
+    # tracking, etc.).
     class Subscription < ApplicationRecord
       self.table_name = 'better_together_billing_subscriptions'
 
-      PROCESSORS = %w[stripe].freeze
-      SUPPORTED_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
-      STATUSES = %w[
-        incomplete
-        trialing
-        active
-        past_due
-        canceled
-        unpaid
-        paused
-      ].freeze
+      belongs_to :pay_subscription,
+                 class_name: 'Pay::Subscription',
+                 inverse_of: :billing_subscription_record
 
-      belongs_to :billable_owner,
-                 polymorphic: true
-      belongs_to :beneficiary,
-                 polymorphic: true
       belongs_to :billing_plan,
                  class_name: 'BetterTogether::Billing::Plan',
                  inverse_of: :subscriptions
@@ -32,15 +23,22 @@ module BetterTogether
                dependent: :nullify,
                inverse_of: :billing_subscription
 
-      validates :processor, inclusion: { in: PROCESSORS }
-      validates :status, inclusion: { in: STATUSES }
-      validates :processor_subscription_id, presence: true, uniqueness: true
-      validates :billable_owner, :beneficiary, :billing_plan, presence: true
-      validates :cancel_at_period_end, inclusion: { in: [true, false] }
-      validate :billable_owner_type_supported
-      validate :beneficiary_type_supported
+      validates :pay_subscription, :billing_plan, presence: true
 
-      scope :activeish, -> { where(status: %w[trialing active past_due]) }
+      # Delegate subscription state to pay so we can use pay's helpers.
+      delegate :status, :current_period_start, :current_period_end,
+               :cancel_at_period_end, :processor_id, :trial_ends_at,
+               :ends_at, to: :pay_subscription, allow_nil: true
+
+      # Pay::Subscription has no #processor instance method; processor lives
+      # on the associated customer record.
+      def processor
+        pay_subscription&.customer&.processor
+      end
+
+      scope :activeish, lambda {
+        joins(:pay_subscription).where(pay_subscriptions: { status: %w[trialing active past_due] })
+      }
 
       def activeish?
         status.in?(%w[trialing active past_due])
@@ -75,34 +73,7 @@ module BetterTogether
         update!(metadata: metadata.to_h.except('last_portal_error_at', 'last_portal_error_message'))
       end
 
-      def community
-        owner_or_beneficiary_of_type(BetterTogether::Community)
-      end
-
-      def person
-        owner_or_beneficiary_of_type(BetterTogether::Person)
-      end
-
       private
-
-      def owner_or_beneficiary_of_type(klass)
-        return beneficiary if beneficiary.is_a?(klass)
-        return billable_owner if billable_owner.is_a?(klass)
-
-        nil
-      end
-
-      def billable_owner_type_supported
-        return if billable_owner_type.blank? || billable_owner_type.in?(SUPPORTED_OWNER_TYPES)
-
-        errors.add(:billable_owner_type, :inclusion)
-      end
-
-      def beneficiary_type_supported
-        return if beneficiary_type.blank? || beneficiary_type.in?(SUPPORTED_OWNER_TYPES)
-
-        errors.add(:beneficiary_type, :inclusion)
-      end
 
       def timestamp_from_metadata(key)
         value = metadata.to_h[key]

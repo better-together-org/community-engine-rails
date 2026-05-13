@@ -19,6 +19,17 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
         processor_id: 'cus_test_123'
       )
     end
+    let!(:pay_subscription) do
+      Pay::Subscription.create!(
+        customer: pay_customer,
+        name: 'default',
+        processor_id: 'sub_test_123',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
+    end
     let(:subscription_object) do
       price = Struct.new(:id, keyword_init: true).new(id: billing_plan.stripe_price_id)
       line_item = Struct.new(:price, keyword_init: true).new(price:)
@@ -60,14 +71,15 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       described_class.new.call(event)
 
       billing_event = BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: event.id)
-      billing_subscription = BetterTogether::Billing::Subscription.find_by!(processor_subscription_id: 'sub_test_123')
+      billing_subscription = Pay::Subscription.stripe
+                                              .find_by!(processor_id: 'sub_test_123')
+                                              .billing_subscription_record
 
       expect(billing_event.processing_status).to eq('processed')
-      expect(billing_event.community).to eq(community)
-      expect(billing_subscription.community).to eq(community)
+      expect(billing_event.billable_owner).to eq(community)
+      expect(billing_subscription.pay_subscription.customer.owner).to eq(community)
       expect(billing_subscription.billing_plan).to eq(billing_plan)
       expect(billing_subscription.status).to eq('active')
-      expect(billing_subscription.pay_customer_id).to eq('cus_test_123')
     end
 
     it 'syncs merchant account updates into the local merchant account' do
@@ -118,7 +130,6 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       expect(merchant_account.payouts_enabled).to be(true)
       expect(billing_event.processing_status).to eq('processed')
       expect(billing_event.billable_owner).to eq(community)
-      expect(billing_event.beneficiary).to eq(community)
     end
 
     it 'marks merchant accounts disconnected when Stripe deauthorizes access' do
@@ -152,18 +163,13 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       expect(merchant_account.payouts_enabled).to be(false)
       expect(billing_event.processing_status).to eq('processed')
       expect(billing_event.billable_owner).to eq(community)
-      expect(billing_event.beneficiary).to eq(community)
     end
 
     it 'persists invoice payment failures as billing alerts linked to the local subscription' do
       create(
         :better_together_billing_subscription,
-        billable_owner: community,
-        beneficiary: community,
-        billing_plan:,
-        processor_subscription_id: 'sub_test_123',
-        pay_customer_id: pay_customer.processor_id,
-        status: 'active'
+        pay_subscription:,
+        billing_plan:
       )
       invoice_object = Struct.new(
         :id,
@@ -197,14 +203,14 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       described_class.new.call(invoice_event)
 
       billing_event = BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: invoice_event.id)
-      billing_subscription = BetterTogether::Billing::Subscription.find_by!(processor_subscription_id: 'sub_test_123')
+      billing_subscription = Pay::Subscription.stripe
+                                              .find_by!(processor_id: 'sub_test_123')
+                                              .billing_subscription_record
 
       expect(billing_event.processing_status).to eq('failed')
       expect(billing_event.error_message).to include('Card was declined.')
       expect(billing_event.billing_subscription).to eq(billing_subscription)
       expect(billing_event.billable_owner).to eq(community)
-      expect(billing_event.beneficiary).to eq(community)
-      expect(billing_subscription.status).to eq('past_due')
       expect(billing_subscription.sync_source).to eq('stripe_financial_event')
       expect(billing_subscription.latest_processor_event_id).to eq('evt_invoice_failed_123')
     end

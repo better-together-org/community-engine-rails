@@ -10,8 +10,7 @@ module BetterTogether
       def call(event)
         sync_result = sync_result_for(event)
         billable_owner = billable_owner_for(sync_result, event)
-        beneficiary = beneficiary_for(sync_result, event, billable_owner:)
-        persist_success(event, sync_result, billable_owner, beneficiary)
+        persist_success(event, sync_result, billable_owner)
       rescue StandardError => e
         persist_failure(event, e)
         raise
@@ -29,16 +28,8 @@ module BetterTogether
       end
 
       def sync_subscription_event(event)
-        billable_owner = resolve_billable_owner(event)
-        return unless billable_owner
-
-        beneficiary = resolve_beneficiary(event, billable_owner:)
-        return unless beneficiary
-
         subscription_sync.call(
           subscription: event.data.object,
-          billable_owner:,
-          beneficiary:,
           source: 'stripe_webhook',
           event:
         )
@@ -91,10 +82,10 @@ module BetterTogether
         'ignored'
       end
 
-      def persist_success(event, sync_result, billable_owner, beneficiary)
+      def persist_success(event, sync_result, billable_owner)
         billing_event = billing_event_for(event)
         billing_event.assign_attributes(
-          event_success_attributes(billing_event, event, sync_result, billable_owner, beneficiary)
+          event_success_attributes(billing_event, event, sync_result, billable_owner)
         )
         billing_event.save!
       end
@@ -117,20 +108,7 @@ module BetterTogether
       end
 
       def resolve_billable_owner(event)
-        data_object = event.data.object
-        metadata = object_metadata(data_object)
-
-        OwnershipResolver.resolve_billable_owner(
-          metadata:,
-          fallback_owner: pay_customer_for(data_object)&.owner
-        )
-      end
-
-      def resolve_beneficiary(event, billable_owner:)
-        OwnershipResolver.resolve_beneficiary(
-          metadata: object_metadata(event.data.object),
-          billable_owner:
-        )
+        pay_customer_for(event.data.object)&.owner
       end
 
       def sync_financial_event(event)
@@ -138,11 +116,7 @@ module BetterTogether
       end
 
       def billable_owner_for(sync_result, event)
-        merchant_owner_for(sync_result) || sync_result&.billable_owner || resolve_billable_owner(event)
-      end
-
-      def beneficiary_for(sync_result, event, billable_owner:)
-        merchant_owner_for(sync_result) || sync_result&.beneficiary || resolve_beneficiary(event, billable_owner:)
+        merchant_owner_for(sync_result) || resolve_billable_owner(event)
       end
 
       def pay_customer_for(data_object)
@@ -178,10 +152,9 @@ module BetterTogether
         sync_result.try(:merchant_account)&.owner
       end
 
-      def event_success_attributes(billing_event, event, sync_result, billable_owner, beneficiary)
+      def event_success_attributes(billing_event, event, sync_result, billable_owner)
         base_event_attributes(billing_event, event).merge(
           billable_owner:,
-          beneficiary:,
           billing_subscription: sync_result.try(:billing_subscription),
           processing_status: processing_status_for(event, sync_result),
           error_message: sync_result.try(:error_message)

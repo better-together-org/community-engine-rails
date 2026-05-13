@@ -89,17 +89,18 @@
               <%= t('better_together.billing.current_period_ends', default: 'Current period ends:') %>
               <strong><%= l(@billing_subscription.current_period_end, format: :long) if @billing_subscription.current_period_end %></strong>
             </p>
-            <% if @billing_subscription.billable_owner != @billing_subscription.beneficiary %>
+            <% billing_payer = @billing_subscription.pay_subscription&.owner %>
+            <% if billing_payer.present? && billing_payer != @community %>
               <p class="mb-1">
                 <%= t('better_together.billing.billed_to', default: 'Billed to:') %>
-                <strong><%= @billing_subscription.billable_owner.name %></strong>
+                <strong><%= billing_payer.name %></strong>
               </p>
               <div class="alert alert-warning mt-3 mb-0">
                 <p class="mb-2">
                   <%= t(
                         'better_together.billing.sponsored_subscription_notice',
                         default: 'This community is currently sponsored by %{owner}. Start a new checkout below if you want to take over billing with a different owner.',
-                        owner: @billing_subscription.billable_owner.name
+                        owner: billing_payer.name
                       ) %>
                 </p>
                 <% if @current_billing_plan.present? %>
@@ -112,7 +113,7 @@
                                     data: { turbo: false } %>
                     <% end %>
                     <% if @sponsoring_person.present? &&
-                          @sponsoring_person != @billing_subscription.billable_owner &&
+                          @sponsoring_person != billing_payer &&
                           @current_billing_plan.eligible_for?(@sponsoring_person) %>
                       <%= button_to t('better_together.billing.takeover_as_person', default: 'Pay personally instead'),
                                     checkout_community_billing_path(
@@ -126,7 +127,7 @@
                                     data: { turbo: false } %>
                     <% end %>
                     <% @sponsoring_communities.each do |sponsoring_community| %>
-                      <% next if sponsoring_community == @billing_subscription.billable_owner %>
+                      <% next if sponsoring_community == billing_payer %>
                       <% next unless @current_billing_plan.eligible_for?(sponsoring_community) %>
 
                       <%= button_to t(

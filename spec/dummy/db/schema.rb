@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_09_152000) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_13_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -317,32 +317,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_09_152000) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "community_id"
+    t.uuid "pay_subscription_id", null: false
     t.uuid "billing_plan_id", null: false
-    t.string "processor", default: "stripe", null: false
-    t.string "processor_subscription_id", null: false
-    t.string "pay_customer_id"
-    t.string "status", default: "incomplete", null: false
-    t.datetime "current_period_start"
-    t.datetime "current_period_end"
-    t.boolean "cancel_at_period_end", default: false, null: false
-    t.jsonb "metadata", default: {}, null: false
-    t.datetime "last_synced_at"
     t.string "sync_source"
-    t.string "latest_processor_event_id"
     t.string "latest_checkout_session_id"
-    t.string "billable_owner_type"
-    t.uuid "billable_owner_id"
-    t.string "beneficiary_type"
-    t.uuid "beneficiary_id"
-    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_subscriptions_beneficiary"
-    t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_subscriptions_owner"
+    t.string "latest_processor_event_id"
+    t.datetime "last_synced_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["pay_subscription_id"], name: "idx_bt_billing_subscriptions_pay_subscription", unique: true
     t.index ["billing_plan_id"], name: "idx_bt_billing_subscriptions_plan"
-    t.index ["community_id", "status"], name: "idx_bt_billing_subscriptions_community_status"
-    t.index ["community_id"], name: "idx_bt_billing_subscriptions_community"
     t.index ["last_synced_at"], name: "idx_bt_billing_subscriptions_last_synced_at"
-    t.index ["processor_subscription_id"], name: "idx_bt_billing_subscriptions_processor_id", unique: true
-    t.index ["status"], name: "idx_bt_billing_subscriptions_status"
   end
 
   create_table "better_together_c3_balance_locks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2566,8 +2550,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_09_152000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
   add_foreign_key "better_together_billing_events", "better_together_communities", column: "community_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_subscriptions", "pay_subscriptions", column: "pay_subscription_id", on_delete: :cascade
   add_foreign_key "better_together_billing_subscriptions", "better_together_billing_plans", column: "billing_plan_id", on_delete: :restrict
-  add_foreign_key "better_together_billing_subscriptions", "better_together_communities", column: "community_id", on_delete: :cascade
   add_foreign_key "better_together_c3_balance_locks", "better_together_c3_balances", column: "balance_id", on_delete: :cascade
   add_foreign_key "better_together_c3_balance_locks", "better_together_platforms", column: "source_platform_id", on_delete: :nullify
   add_foreign_key "better_together_c3_balances", "better_together_communities", column: "community_id", on_delete: :nullify

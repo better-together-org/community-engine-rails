@@ -36,14 +36,14 @@ module BetterTogether
         @subscription_sync ||= BetterTogether::Billing::StripeSubscriptionSync.new
       end
 
-      def reconcile_subscriptions(billable_owner, processor_id)
+      def reconcile_subscriptions(_billable_owner, processor_id)
         synced_count = 0
         skipped_count = 0
         subscription_ids = []
 
         stripe_subscriptions(processor_id).auto_paging_each do |subscription|
           subscription_ids << subscription.id
-          result = subscription_sync.call(subscription:, billable_owner:, source: 'reconciliation')
+          result = subscription_sync.call(subscription:, source: 'reconciliation')
           result.synced ? synced_count += 1 : skipped_count += 1
         end
 

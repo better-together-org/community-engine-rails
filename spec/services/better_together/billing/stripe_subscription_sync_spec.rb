@@ -20,6 +20,17 @@ RSpec.describe BetterTogether::Billing::StripeSubscriptionSync do
         processor_id: 'cus_test_123'
       )
     end
+    let!(:pay_subscription) do
+      Pay::Subscription.create!(
+        customer: pay_customer,
+        name: 'default',
+        processor_id: 'sub_test_123',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
+    end
     let(:subscription) do
       price = Struct.new(:id, keyword_init: true).new(id: billing_plan.stripe_price_id)
       line_item = Struct.new(:price, keyword_init: true).new(price:)
@@ -56,16 +67,17 @@ RSpec.describe BetterTogether::Billing::StripeSubscriptionSync do
         checkout_session_id: 'cs_test_123'
       )
 
-      expect(result).to have_attributes(synced: true, community:, billing_plan:)
+      expect(result).to have_attributes(synced: true, billing_plan:)
       expect(result.billing_subscription).to have_attributes(
         latest_processor_event_id: 'evt_test_123',
         latest_checkout_session_id: 'cs_test_123',
         sync_source: 'checkout_return'
       )
       expect(result.billing_subscription.last_synced_at).to be_present
+      expect(result.billing_subscription.pay_subscription).to eq(pay_subscription)
     end
 
-    it 'persists a person-owned billing subscription without requiring a legacy community id' do
+    it 'persists a person-owned billing subscription' do
       person_plan = create(
         :better_together_billing_plan,
         identifier: 'personal-support',
@@ -76,6 +88,15 @@ RSpec.describe BetterTogether::Billing::StripeSubscriptionSync do
         owner: person,
         processor: 'stripe',
         processor_id: 'cus_person_test_123'
+      )
+      person_pay_subscription = Pay::Subscription.create!(
+        customer: person_pay_customer,
+        name: 'default',
+        processor_id: 'sub_person_test_123',
+        processor_plan: person_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
       )
       person_price = Struct.new(:id, keyword_init: true).new(id: person_plan.stripe_price_id)
       person_line_item = Struct.new(:price, keyword_init: true).new(price: person_price)
@@ -109,8 +130,9 @@ RSpec.describe BetterTogether::Billing::StripeSubscriptionSync do
 
       result = described_class.new.call(subscription: person_subscription, source: 'checkout_return')
 
-      expect(result).to have_attributes(synced: true, billable_owner: person, beneficiary: person, billing_plan: person_plan)
-      expect(result.billing_subscription.community_id).to be_nil
+      expect(result).to have_attributes(synced: true, billing_plan: person_plan)
+      expect(result.billing_subscription.pay_subscription).to eq(person_pay_subscription)
+      expect(result.billing_subscription.pay_subscription.customer.owner).to eq(person)
     end
   end
 end

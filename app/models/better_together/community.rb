@@ -34,20 +34,8 @@ module BetterTogether
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
-    has_many :owned_billing_subscriptions,
-             as: :billable_owner,
-             class_name: 'BetterTogether::Billing::Subscription',
-             dependent: :nullify
-    has_many :billing_subscriptions,
-             as: :beneficiary,
-             class_name: 'BetterTogether::Billing::Subscription',
-             dependent: :nullify
     has_many :owned_billing_events,
              as: :billable_owner,
-             class_name: 'BetterTogether::Billing::Event',
-             dependent: :nullify
-    has_many :billing_events,
-             as: :beneficiary,
              class_name: 'BetterTogether::Billing::Event',
              dependent: :nullify
     has_many :merchant_accounts,

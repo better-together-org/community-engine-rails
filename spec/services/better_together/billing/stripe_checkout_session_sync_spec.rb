@@ -20,6 +20,17 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
         processor_id: 'cus_test_123'
       )
     end
+    let!(:pay_subscription) do
+      Pay::Subscription.create!(
+        customer: pay_customer,
+        name: 'default',
+        processor_id: 'sub_test_123',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
+    end
     let(:subscription) do
       price = Struct.new(:id, keyword_init: true).new(id: billing_plan.stripe_price_id)
       line_item = Struct.new(:price, keyword_init: true).new(price:)
@@ -60,7 +71,7 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
 
       result = described_class.new.call(checkout_session_id: 'cs_test_123')
 
-      expect(result).to have_attributes(synced: true, community:, billing_plan:)
+      expect(result).to have_attributes(synced: true, billing_plan:)
       expect(result.billing_subscription.latest_checkout_session_id).to eq('cs_test_123')
       expect(Stripe::Checkout::Session).to have_received(:retrieve).with(
         hash_including(id: 'cs_test_123')
@@ -73,7 +84,17 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
         processor: 'stripe',
         processor_id: 'cus_test_person'
       )
+      Pay::Subscription.create!(
+        customer: person_pay_customer,
+        name: 'default',
+        processor_id: 'sub_person_test_123',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
       sponsored_subscription = subscription.dup
+      sponsored_subscription.id = 'sub_person_test_123'
       sponsored_subscription.customer = person_pay_customer.processor_id
       sponsored_subscription.metadata = {
         'bt_billable_owner_type' => person.class.name,
@@ -96,10 +117,8 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
 
       result = described_class.new.call(checkout_session_id: 'cs_test_person')
 
-      expect(result).to have_attributes(synced: true, billable_owner: person, beneficiary: community, billing_plan:)
-      expect(result.billing_subscription.billable_owner).to eq(person)
-      expect(result.billing_subscription.beneficiary).to eq(community)
-      expect(result.billing_subscription.community).to eq(community)
+      expect(result).to have_attributes(synced: true, billing_plan:)
+      expect(result.billing_subscription.pay_subscription.customer.owner).to eq(person)
     end
 
     it 'preserves community-sponsored ownership for another community beneficiary from checkout metadata' do
@@ -109,7 +128,17 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
         processor: 'stripe',
         processor_id: 'cus_test_sponsor_community'
       )
+      Pay::Subscription.create!(
+        customer: sponsor_pay_customer,
+        name: 'default',
+        processor_id: 'sub_sponsor_test_123',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
       sponsored_subscription = subscription.dup
+      sponsored_subscription.id = 'sub_sponsor_test_123'
       sponsored_subscription.customer = sponsor_pay_customer.processor_id
       sponsored_subscription.metadata = {
         'bt_billable_owner_type' => sponsor_community.class.name,
@@ -132,9 +161,8 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
 
       result = described_class.new.call(checkout_session_id: 'cs_test_sponsor_community')
 
-      expect(result).to have_attributes(synced: true, billable_owner: sponsor_community, beneficiary: community, billing_plan:)
-      expect(result.billing_subscription.billable_owner).to eq(sponsor_community)
-      expect(result.billing_subscription.beneficiary).to eq(community)
+      expect(result).to have_attributes(synced: true, billing_plan:)
+      expect(result.billing_subscription.pay_subscription.customer.owner).to eq(sponsor_community)
     end
   end
 end

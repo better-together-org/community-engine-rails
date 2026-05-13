@@ -15,4 +15,10 @@ ActiveSupport.on_load(:pay) do
   BetterTogether::Billing::StripeEventDispatcher::EVENT_TYPES.each do |event_name|
     Pay::Webhooks.delegator.subscribe(event_name, dispatcher)
   end
+
+  Pay::Subscription.has_one :billing_subscription_record,
+                            class_name: 'BetterTogether::Billing::Subscription',
+                            foreign_key: :pay_subscription_id,
+                            dependent: :destroy,
+                            inverse_of: :pay_subscription
 end
