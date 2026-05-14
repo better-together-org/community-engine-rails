@@ -106,6 +106,8 @@ module BetterTogether
       agreement_content_digest.presence || agreement.acceptance_content_digest
     end
 
+    # TODO(0.12.x): remove once all person_id-based queries have been migrated to
+    # the polymorphic participant_type/participant_id columns.
     def sync_legacy_person_and_participant!
       self.participant ||= person if person.present?
       self.person ||= participant if participant.is_a?(BetterTogether::Person)

@@ -2,6 +2,7 @@
 
 require 'json'
 require 'net/http'
+require 'resolv'
 require 'uri'
 require 'cgi'
 
@@ -12,6 +13,17 @@ module BetterTogether
       class HttpAdapter # rubocop:disable Metrics/ClassLength
         DEFAULT_OPEN_TIMEOUT = 5
         DEFAULT_READ_TIMEOUT = 15
+
+        # Blocks outbound requests to loopback, RFC-1918, and ULA addresses.
+        PRIVATE_IP_PATTERNS = [
+          /\A127\./,
+          /\A10\./,
+          /\A172\.(1[6-9]|2\d|3[01])\./,
+          /\A192\.168\./,
+          /\A::1\z/,
+          /\Afc[0-9a-f]{2}:/i,
+          /\Afd[0-9a-f]{2}:/i
+        ].freeze
 
         def self.call(connection:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
           new(connection:, cursor:, limit:).call
@@ -55,7 +67,22 @@ module BetterTogether
           ::BetterTogether::Engine.routes.url_helpers.federation_content_feed_path(locale: I18n.default_locale)
         end
 
+        def validate_federation_uri!(uri)
+          unless uri.scheme == 'https'
+            raise ArgumentError, "federation URI must use HTTPS (got #{uri.scheme.inspect})"
+          end
+
+          addresses = Resolv.getaddresses(uri.host)
+          addresses << uri.host if addresses.empty?
+          addresses.each do |addr|
+            if PRIVATE_IP_PATTERNS.any? { |pattern| addr.match?(pattern) }
+              raise ArgumentError, 'federation URI resolves to a private/loopback address'
+            end
+          end
+        end
+
         def http_get(uri)
+          validate_federation_uri!(uri)
           Net::HTTP.start(
             uri.host,
             uri.port,
@@ -114,6 +141,7 @@ module BetterTogether
         end
 
         def http_post_form(uri, params)
+          validate_federation_uri!(uri)
           Net::HTTP.start(
             uri.host,
             uri.port,
