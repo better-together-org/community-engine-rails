@@ -21,7 +21,7 @@ fi
 stripe_profile_flag=()
 stripe_key="${STRIPE_PRIVATE_KEY:-}"
 if [[ -z "$stripe_key" && -f ".env.dev" ]]; then
-  stripe_key="$(grep -E '^STRIPE_PRIVATE_KEY=.' .env.dev | cut -d= -f2- | tr -d "'\"" | head -1)"
+  stripe_key="$(grep -Em 1 '^STRIPE_PRIVATE_KEY=.' .env.dev | cut -d= -f2- | tr -d "'\"")" || true
 fi
 if [[ -n "$stripe_key" ]]; then
   stripe_profile_flag=("--profile" "stripe")
@@ -30,7 +30,7 @@ if [[ -n "$stripe_key" ]]; then
   # Uses a one-shot stripe-cli container with --print-secret so the app always
   # has the correct whsec_ value without any manual copy-paste step.
   if [[ -f ".env.dev" ]]; then
-    current_signing_secret="$(grep -E '^STRIPE_SIGNING_SECRET=.' .env.dev | cut -d= -f2- | tr -d "'\"" | head -1)"
+    current_signing_secret="$(grep -Em 1 '^STRIPE_SIGNING_SECRET=.' .env.dev | cut -d= -f2- | tr -d "'\"")" || true
     if [[ -z "$current_signing_secret" ]]; then
       echo "[bin/dc] Fetching Stripe webhook signing secret via stripe-cli..." >&2
       fetched_secret="$(docker run --rm stripe/stripe-cli:latest listen \
