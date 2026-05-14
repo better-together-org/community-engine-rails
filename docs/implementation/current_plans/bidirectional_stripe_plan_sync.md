@@ -28,12 +28,15 @@ New columns on `better_together_billing_plans`:
 - `stripe_product_id` string, nullable (Stripe `prod_xxx` ID; populated on first push)
 - `sync_source` string, nullable (`'stripe_webhook'` signals inbound; nil = app-originated)
 - `synced_to_stripe_at` datetime, nullable (last successful outbound push)
+- `latest_stripe_event_id` string, nullable (Stripe event ID that last mutated the plan via webhook; aids audit trail)
 
 Constraint changes:
 - Index `stripe_product_id` (unique where not null, using partial index)
-- No change to `stripe_price_id` nullability (stays `NOT NULL`)
+- Index `stripe_price_id` (unique — prevents ambiguous lookup in `StripePriceSync` and `StripeSubscriptionSync`; previously unconstrained)
 
 Idempotency: guard all with `column_exists?` / `index_name_exists?`
+
+> **Note:** The `stripe_price_id` uniqueness index may fail if duplicate values exist. Run a one-time data check before the migration: `BetterTogether::Billing::Plan.group(:stripe_price_id).having('count(*) > 1').count` and resolve any duplicates first.
 
 **File:** `db/migrate/YYYYMMDD_add_stripe_sync_fields_to_billing_plans.rb`
 
@@ -44,9 +47,10 @@ Idempotency: guard all with `column_exists?` / `index_name_exists?`
 Add to `BetterTogether::Billing::Plan`:
 - `validate :price_fields_immutable_after_create` — rejects changes to `amount_cents`, `currency`, `billing_interval` if `stripe_price_id` is persisted and any of those fields changed
 - Error message: i18n key `better_together.billing.plans.errors.price_fields_immutable`
-- Also remove those three fields from `plan_params` in `PlansController` for the update action (permit only on new records — handle via `plan_params_for_create` vs `plan_params_for_update`)
+- Add `validates :stripe_price_id, uniqueness: true` to enforce uniqueness at the model layer
+- Define `self.permitted_attributes` (for update) and `self.permitted_attributes_for_create` (adds price fields) on the **model** following project convention. Controllers call `Plan.permitted_attributes` / `Plan.permitted_attributes_for_create` instead of hard-coding permit lists.
 
-Rationale: Stripe Prices are immutable for these fields. Allowing changes would silently diverge local state from Stripe without this guard.
+Rationale: Stripe Prices are immutable for these fields. Allowing changes would silently diverge local state from Stripe without this guard. Placing permitted attribute lists on the model follows the project-wide pattern (see copilot-instructions.md).
 
 **Files:** `app/models/better_together/billing/plan.rb`, `app/controllers/better_together/billing/plans_controller.rb`, all 4 locale files
 
@@ -63,17 +67,19 @@ def call(plan:)
 ```
 
 Logic:
-1. Return `reason: :webhook_initiated` if `plan.sync_source == 'stripe_webhook'` → also resets `sync_source` to nil via `update_columns`
+1. Return `reason: :webhook_initiated` if `plan.sync_source == 'stripe_webhook'` → also resets `sync_source` to nil via `update_columns` (single call with `sync_source: nil`)
 2. Return `reason: :no_price_id` if `plan.stripe_price_id.blank?`
 3. If `plan.stripe_product_id.blank?`: fetch `Stripe::Price.retrieve(plan.stripe_price_id)` → read `.product` field → `plan.update_columns(stripe_product_id: product_id)`
 4. `Stripe::Product.update(stripe_product_id, { name: plan.name, description: plan.description, metadata: { bt_plan_id: plan.id, bt_plan_identifier: plan.identifier } })`
 5. `Stripe::Price.update(stripe_price_id, { nickname: plan.name, active: plan.active?, metadata: { bt_plan_id: plan.id, bt_plan_identifier: plan.identifier } })`
-6. `plan.update_columns(synced_to_stripe_at: Time.current, sync_source: nil)`
+6. `plan.update_columns(synced_to_stripe_at: Time.current, sync_source: nil)` — single atomic call; skips validations intentionally (system-managed fields only)
 7. Return `Result.new(synced: true, billing_plan: plan, reason: :synced)`
 
 Error handling:
 - Rescue `Stripe::StripeError` → return `synced: false, reason: :stripe_error`
 - Rescue `ActiveRecord::RecordNotFound` → return `synced: false, reason: :plan_not_found`
+
+> **Note on `update_columns`:** Bypasses validations and `lock_version` (optimistic locking). Acceptable here because only system-managed sync fields are written, not user-entered data.
 
 Uses defensive `extract_value` helpers (same pattern as `StripeFinancialEventSync`).
 
@@ -125,16 +131,27 @@ Result = Struct.new(:synced, :billing_plan, :reason, keyword_init: true)
 def call(event:)
 ```
 
+**Data ownership boundary (critical):**
+| Field | Source of truth | StripePriceSync action |
+|---|---|---|
+| `amount_cents`, `currency`, `billing_interval` | Stripe (immutable) | Never written — blocked by Phase 2 validator |
+| `active` | Stripe (bidirectional) | Synced inbound from `price.updated` / `price.deleted` / `product.deleted` |
+| `name`, `description` | CE (CE pushes to Stripe) | **NOT** overwritten from inbound Stripe events |
+
 Routing by `event.type`:
-- `price.updated`: `Plan.find_by(stripe_price_id: event.data.object.id)` → update `active` if it changed; set `sync_source: 'stripe_webhook'`
-- `price.deleted`: find by `stripe_price_id` → `plan.update!(active: false, sync_source: 'stripe_webhook')`
-- `product.updated`: `Plan.find_by(stripe_product_id: event.data.object.id)` → update `name`, `description` if changed; set `sync_source: 'stripe_webhook'`
-- `product.deleted`: find by `stripe_product_id` → deactivate + set `sync_source: 'stripe_webhook'`
+- `price.updated`: `Plan.find_by(stripe_price_id: event.data.object.id)` → sync `active` field only; check if Stripe billing interval is in `BILLING_INTERVALS` — if not, return `reason: :unsupported_interval`
+- `price.deleted`: find by `stripe_price_id` → `update_columns(active: false, sync_source: 'stripe_webhook', latest_stripe_event_id: event.id, synced_to_stripe_at: Time.current)`
+- `product.updated`: `Plan.find_by(stripe_product_id: event.data.object.id)` → sync `active` only (do **not** overwrite `name`/`description` — CE owns those fields)
+- `product.deleted`: find by `stripe_product_id` → `update_columns(active: false, sync_source: 'stripe_webhook', latest_stripe_event_id: event.id, synced_to_stripe_at: Time.current)`
 - `price.created`: no-op for now (plan was created manually or via the "Provision" path); return `reason: :no_action_needed`
 
 Guard: if plan not found → return `synced: false, reason: :plan_not_found` (not all prices/products belong to CE)
 
-Uses same defensive `extract_value` helpers. Sets `last_synced_at = Time.current` on plan via `update_columns` to avoid triggering `after_commit` again (but `sync_source: 'stripe_webhook'` is the real loop guard if `update!` is used instead).
+**Loop guard — single `update_columns` call (critical):** All field updates from `StripePriceSync` MUST use a single `update_columns(field: value, sync_source: 'stripe_webhook', latest_stripe_event_id: event.id, synced_to_stripe_at: Time.current)` call. **Never** use `update!` or `save` followed by a separate `update_columns` — this creates a race window where `after_commit` fires with `sync_source: nil` and re-enqueues the outbound sync job, causing a webhook loop.
+
+**Subscriber impact:** When `product.deleted` deactivates a plan, existing subscriptions on that plan are NOT cancelled — subscribers continue on their current terms; no new subscriptions can be created. Operator alert should be triggered (consider Noticed notification for platform managers).
+
+Uses same defensive `extract_value` helpers.
 
 **File:** `app/services/better_together/billing/stripe_price_sync.rb`
 
@@ -144,7 +161,7 @@ Uses same defensive `extract_value` helpers. Sets `last_synced_at = Time.current
 
 ### 7a. `StripeEventDispatcher` — add event types
 
-Add to `EVENT_TYPES` array:
+`StripeEventDispatcher` registers the Stripe event types CE wants to receive and dispatches inbound Stripe events to `ProcessStripeEventJob`. Add to `EVENT_TYPES` array:
 ```ruby
 'stripe.price.created'
 'stripe.price.updated'
@@ -152,6 +169,8 @@ Add to `EVENT_TYPES` array:
 'stripe.product.updated'
 'stripe.product.deleted'
 ```
+
+> **Webhook auth note:** No changes needed to the Stripe webhook controller. Stripe-Signature verification via `Stripe::Webhook.construct_event` is already handled by the existing controller before events reach this pipeline.
 
 **File:** `app/services/better_together/billing/stripe_event_dispatcher.rb`
 
@@ -183,7 +202,7 @@ New file: `app/jobs/better_together/billing/backfill_stripe_product_ids_job.rb`
 
 Pattern: matches `ReconcileStripeBillableOwnerBillingScanJob` (`:maintenance` queue, Redis lock):
 - Finds all Plans where `stripe_product_id.nil? && stripe_price_id.present?`
-- For each: enqueues `SyncPlanToStripeJob` (which will do the Price lookup → populate `stripe_product_id` → push metadata)
+- For each: enqueues `SyncPlanToStripeJob` with a per-job delay (`perform_in(index * 2.seconds, plan.id)`) to avoid Stripe API rate limit bursts
 - Respects `LOCK_KEY`/`LOCK_TTL` Redis pattern to prevent concurrent runs
 
 Separately: a one-time data fix can be run as a Sidekiq `perform_now` call or Rake task after deploy.
@@ -201,6 +220,7 @@ Add to all 4 locale files (`en`, `es`, `fr`, `uk`) under `better_together.billin
 - `sync_status_synced` — "Synced"
 - `sync_status_pending` — "Pending sync"
 - `sync_status_never` — "Not yet synced"
+- `notifications.plan_deactivated_by_stripe` — "Plan '%{plan_name}' was deactivated by a Stripe webhook event."
 
 ---
 
@@ -252,12 +272,15 @@ Updated spec files:
 
 - **`stripe_price_id` on create stays manual** — operators paste it from Stripe Dashboard or create via Stripe CLI. `StripePlanSync` populates `stripe_product_id` automatically on first push by calling `Stripe::Price.retrieve`. A future "Provision in Stripe" controller action (explicit button) is the path to full auto-creation; out of scope here.
 - **Price field mutation (amount_cents, currency, billing_interval) is blocked** — Stripe Prices are immutable for these fields. The validator prevents silent divergence. Operators create a new plan when pricing changes are needed. Subscriber migration tooling is a separate future issue.
-- **Loop guard via `sync_source`** — same column name as `Billing::Subscription#sync_source`, consistent pattern. `StripePriceSync` sets `sync_source: 'stripe_webhook'` on the plan before saving; `StripePlanSync` reads it and skips → clears it.
-- **`price.created` is no-op** — CE does not auto-create local plans from new Stripe Prices. Requires an operator decision.
-- **`product.deleted` deactivates the plan** — rather than destroying it (consistent with `destroy? = false` policy).
+- **Loop guard via `sync_source`** — same column name as `Billing::Subscription#sync_source`, consistent pattern. `StripePriceSync` sets `sync_source: 'stripe_webhook'` atomically in the same `update_columns` call as the data change. `StripePlanSync` reads it at the start of the job and skips if set. Never use a separate save followed by `update_columns` — the `after_commit` fires between them, creating a loop.
+- **`price.created` is no-op** — CE does not auto-create local plans from new Stripe Prices. Requires an operator decision (human-in-the-loop).
+- **`product.deleted` deactivates the plan** — rather than destroying it (consistent with `destroy? = false` policy). Existing subscriptions are not cancelled.
+- **CE owns `name`/`description`; Stripe owns `active`** — `StripePriceSync` never overwrites plan name or description from inbound Stripe events. CE pushes those fields to Stripe; Stripe is authoritative only for billing state (`active`).
+- **Unsupported billing intervals** — If a Stripe Price has an interval not in `BILLING_INTERVALS` (e.g., `week`, `day`), `StripePriceSync` returns `reason: :unsupported_interval` without erroring.
 
 ## Further Considerations
 
-1. **`stripe_price_id` writability on update** — currently the view enforces readonly after persist, but `plan_params` permits the field for all actions. Splitting into `plan_params_for_create`/`plan_params_for_update` closes this gap at the controller level. If you want it truly immutable, add a model validator too.
-2. **Stripe API key in test environment** — `StripePlanSync` and `StripePriceSync` make direct Stripe API calls. All specs must stub `Stripe::Price`, `Stripe::Product` via `allow(Stripe::Price).to receive(:retrieve)` etc. WebMock or stripe-ruby-mock may be preferred; check existing spec conventions.
+1. **`stripe_price_id` writability on update** — the `Plan.permitted_attributes_for_update` list must exclude `stripe_price_id`, `amount_cents`, `currency`, and `billing_interval`. Model-level uniqueness and immutability validators provide defence-in-depth.
+2. **Stripe API key in test environment** — `StripePlanSync` and `StripePriceSync` make direct Stripe API calls. All specs must stub `Stripe::Price`, `Stripe::Product` via `allow(Stripe::Price).to receive(:retrieve)` etc. Use the existing spec convention (check `spec/services/better_together/billing/stripe_subscription_sync_spec.rb` for pattern).
 3. **Backfill timing** — run `BackfillStripeProductIdsJob` immediately after deploy via a Sidekiq `perform_now` call in a one-time task, or schedule it via `sidekiq_cron.yml`. Don't block the migration on it.
+4. **Test factory default** — the `:better_together_billing_plan` factory should have `stripe_price_id: nil` as default (or set it only in billing-specific contexts) so that non-billing integration tests do not enqueue `SyncPlanToStripeJob` unnecessarily. Verify after Phase 5 that existing factories still work.

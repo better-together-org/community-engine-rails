@@ -1008,6 +1008,9 @@ es:
         field_stripe_price_id: ID de precio de Stripe
         field_stripe_price_id_hint: Desde el panel de Stripe. No se puede cambiar
           despues de la creacion.
+        field_stripe_product_id: ID de producto de Stripe
+        field_stripe_product_id_hint: Se rellena automáticamente cuando el plan se
+          sincroniza con Stripe.
         field_support_tier: Nivel de soporte
         index_title: Planes de facturacion
         interval_month: Mensual
@@ -4389,6 +4392,8 @@ es:
       expired: ha expirado, por favor solicita una nueva
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
+      immutable_after_stripe_link: no se puede cambiar después de vincular un precio
+        de Stripe
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido

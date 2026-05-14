@@ -3,11 +3,14 @@
 module BetterTogether
   module Billing
     # Catalog entry for a billable Community Engine plan.
-    class Plan < ApplicationRecord
+    class Plan < ApplicationRecord # rubocop:disable Metrics/ClassLength
       self.table_name = 'better_together_billing_plans'
 
       BILLING_INTERVALS = %w[month year one_time].freeze
       DEFAULT_ELIGIBLE_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
+
+      # Fields that must not change once a Stripe Price has been linked.
+      PRICE_IMMUTABLE_FIELDS = %i[amount_cents currency billing_interval].freeze
 
       has_many :subscriptions,
                class_name: 'BetterTogether::Billing::Subscription',
@@ -17,12 +20,34 @@ module BetterTogether
 
       validates :identifier, :name, :currency, :stripe_price_id, presence: true
       validates :identifier, uniqueness: true
+      validates :stripe_price_id, uniqueness: true
       validates :amount_cents, numericality: { greater_than_or_equal_to: 0, only_integer: true }
       validates :billing_interval, inclusion: { in: BILLING_INTERVALS }
       validates :currency, length: { is: 3 }
       validates :active, inclusion: { in: [true, false] }
+      validate :price_fields_immutable_after_create
+
+      after_commit :enqueue_stripe_sync!, on: %i[create update]
 
       scope :active, -> { where(active: true) }
+      scope :needs_stripe_product_id, -> { where(stripe_product_id: nil).where.not(stripe_price_id: nil) }
+
+      # Permitted attributes for update (price-defining fields excluded after creation).
+      def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
+        [
+          :name,
+          :description,
+          :active,
+          { metadata: [:participant_summary, :beneficiary_label, :hosted_access_level,
+                       :support_tier, :community_capacity_tier,
+                       { participant_benefits: [], eligible_billable_owner_types: [] }] }
+        ]
+      end
+
+      # Permitted attributes for create (includes immutable price-defining fields).
+      def self.permitted_attributes_for_create
+        permitted_attributes + %i[identifier stripe_price_id amount_cents currency billing_interval]
+      end
 
       def recurring?
         billing_interval.in?(%w[month year])
@@ -36,6 +61,12 @@ module BetterTogether
         return false unless billable_owner.present?
 
         eligible_billable_owner_types.include?(billable_owner.class.name)
+      end
+
+      def active_subscription_count
+        subscriptions.joins(:pay_subscription)
+                     .merge(Pay::Subscription.active)
+                     .count
       end
 
       def eligible_billable_owner_types
@@ -88,6 +119,23 @@ module BetterTogether
         else
           'Hosted access'
         end
+      end
+
+      def price_fields_immutable_after_create
+        return if new_record?
+        return if stripe_price_id_was.blank?
+
+        PRICE_IMMUTABLE_FIELDS.each do |field|
+          next unless public_send(:"#{field}_changed?")
+
+          errors.add(field, :immutable_after_stripe_link)
+        end
+      end
+
+      def enqueue_stripe_sync!
+        return if stripe_price_id.blank?
+
+        BetterTogether::Billing::SyncPlanToStripeJob.perform_later(id)
       end
     end
   end

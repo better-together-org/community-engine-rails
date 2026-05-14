@@ -71,4 +71,28 @@ RSpec.describe BetterTogether::Billing::StripeEventDispatcher do
       expect(processor).to have_received(:call).with(an_instance_of(Stripe::Event))
     end
   end
+
+  describe 'EVENT_TYPES' do
+    subject(:event_types) { described_class::EVENT_TYPES }
+
+    it 'includes price.created for bidirectional sync' do
+      expect(event_types).to include('stripe.price.created')
+    end
+
+    it 'includes price.updated for bidirectional sync' do
+      expect(event_types).to include('stripe.price.updated')
+    end
+
+    it 'includes price.deleted to detect deactivated plans' do
+      expect(event_types).to include('stripe.price.deleted')
+    end
+
+    it 'includes product.created for bidirectional sync' do
+      expect(event_types).to include('stripe.product.created')
+    end
+
+    it 'includes product.updated for bidirectional sync' do
+      expect(event_types).to include('stripe.product.updated')
+    end
+  end
 end

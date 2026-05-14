@@ -14,6 +14,11 @@ module BetterTogether
         stripe.customer.subscription.paused
         stripe.customer.subscription.resumed
         stripe.customer.subscription.trial_will_end
+        stripe.price.created
+        stripe.price.updated
+        stripe.price.deleted
+        stripe.product.created
+        stripe.product.updated
       ].concat(
         BetterTogether::Billing::StripeFinancialEventSync::EVENT_TYPES.map { |event_type| "stripe.#{event_type}" }
       ).freeze

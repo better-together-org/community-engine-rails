@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_13_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -307,10 +307,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_000000) do
     t.string "currency", default: "CAD", null: false
     t.boolean "active", default: true, null: false
     t.string "stripe_price_id", null: false
+    t.string "stripe_product_id"
+    t.string "sync_source"
+    t.datetime "synced_to_stripe_at"
+    t.string "latest_stripe_event_id"
     t.jsonb "metadata", default: {}, null: false
     t.index ["active"], name: "idx_bt_billing_plans_active"
     t.index ["identifier"], name: "idx_bt_billing_plans_identifier", unique: true
     t.index ["stripe_price_id"], name: "idx_bt_billing_plans_stripe_price_id", unique: true
+    t.index ["stripe_product_id"], name: "idx_bt_billing_plans_stripe_product_id", unique: true, where: "stripe_product_id IS NOT NULL"
   end
 
   create_table "better_together_billing_subscriptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -324,9 +329,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_000000) do
     t.string "latest_processor_event_id"
     t.datetime "last_synced_at"
     t.jsonb "metadata", default: {}, null: false
-    t.index ["pay_subscription_id"], name: "idx_bt_billing_subscriptions_pay_subscription", unique: true
     t.index ["billing_plan_id"], name: "idx_bt_billing_subscriptions_plan"
     t.index ["last_synced_at"], name: "idx_bt_billing_subscriptions_last_synced_at"
+    t.index ["pay_subscription_id"], name: "idx_bt_billing_subscriptions_pay_subscription", unique: true
   end
 
   create_table "better_together_c3_balance_locks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2550,8 +2555,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_000000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
   add_foreign_key "better_together_billing_events", "better_together_communities", column: "community_id", on_delete: :nullify
-  add_foreign_key "better_together_billing_subscriptions", "pay_subscriptions", column: "pay_subscription_id", on_delete: :cascade
   add_foreign_key "better_together_billing_subscriptions", "better_together_billing_plans", column: "billing_plan_id", on_delete: :restrict
+  add_foreign_key "better_together_billing_subscriptions", "pay_subscriptions", on_delete: :cascade
   add_foreign_key "better_together_c3_balance_locks", "better_together_c3_balances", column: "balance_id", on_delete: :cascade
   add_foreign_key "better_together_c3_balance_locks", "better_together_platforms", column: "source_platform_id", on_delete: :nullify
   add_foreign_key "better_together_c3_balances", "better_together_communities", column: "community_id", on_delete: :nullify

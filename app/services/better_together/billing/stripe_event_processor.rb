@@ -23,6 +23,7 @@ module BetterTogether
         return sync_checkout_session_event(event) if checkout_session_event?(event)
         return sync_merchant_event(event) if merchant_event?(event)
         return sync_financial_event(event) if financial_event?(event)
+        return sync_plan_event(event) if plan_event?(event)
 
         nil
       end
@@ -33,6 +34,10 @@ module BetterTogether
           source: 'stripe_webhook',
           event:
         )
+      end
+
+      def sync_plan_event(event)
+        BetterTogether::Billing::StripePriceSync.new.call(event:)
       end
 
       def sync_checkout_session_event(event)
@@ -67,6 +72,10 @@ module BetterTogether
 
       def financial_event?(event)
         event.type.in?(BetterTogether::Billing::StripeFinancialEventSync::EVENT_TYPES)
+      end
+
+      def plan_event?(event)
+        event.type.start_with?('price.', 'product.')
       end
 
       def merchant_deauthorized_event?(event)

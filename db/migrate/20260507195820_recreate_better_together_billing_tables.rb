@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateBetterTogetherBillingTables < ActiveRecord::Migration[7.2]
+class RecreateBetterTogetherBillingTables < ActiveRecord::Migration[7.2]
   def change
     create_billing_plans
     create_billing_subscriptions

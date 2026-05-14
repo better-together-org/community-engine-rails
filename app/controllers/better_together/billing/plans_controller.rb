@@ -25,7 +25,7 @@ module BetterTogether
       end
 
       def create
-        @plan = BetterTogether::Billing::Plan.new(plan_params)
+        @plan = BetterTogether::Billing::Plan.new(plan_params_for_create)
         authorize @plan
 
         if @plan.save
@@ -74,35 +74,25 @@ module BetterTogether
             .limit(20)
       end
 
-      def plan_params # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-        permitted = params.require(:billing_plan).permit(
-          :identifier,
-          :name,
-          :description,
-          :billing_interval,
-          :amount_cents,
-          :currency,
-          :stripe_price_id,
-          :active,
-          metadata: [
-            :participant_summary,
-            :beneficiary_label,
-            :hosted_access_level,
-            :support_tier,
-            :community_capacity_tier,
-            { participant_benefits: [], eligible_billable_owner_types: [] }
-          ]
-        )
+      def plan_params_for_create
+        raw = params.require(:billing_plan).permit(Plan.permitted_attributes_for_create)
+        normalize_metadata_arrays!(raw)
+        raw
+      end
 
-        # Normalize blank arrays to empty arrays so metadata stays clean
-        if permitted[:metadata].present?
-          permitted[:metadata][:participant_benefits] =
-            Array(permitted[:metadata][:participant_benefits]).filter_map(&:presence)
-          permitted[:metadata][:eligible_billable_owner_types] =
-            Array(permitted[:metadata][:eligible_billable_owner_types]).filter_map(&:presence)
-        end
+      def plan_params
+        raw = params.require(:billing_plan).permit(Plan.permitted_attributes)
+        normalize_metadata_arrays!(raw)
+        raw
+      end
 
-        permitted
+      def normalize_metadata_arrays!(permitted)
+        return unless permitted[:metadata].present?
+
+        permitted[:metadata][:participant_benefits] =
+          Array(permitted[:metadata][:participant_benefits]).filter_map(&:presence)
+        permitted[:metadata][:eligible_billable_owner_types] =
+          Array(permitted[:metadata][:eligible_billable_owner_types]).filter_map(&:presence)
       end
     end
   end

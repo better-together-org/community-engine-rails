@@ -165,6 +165,71 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       expect(billing_event.billable_owner).to eq(community)
     end
 
+    it 'routes price.updated events to StripePriceSync' do
+      price_sync_service = instance_double(BetterTogether::Billing::StripePriceSync)
+      allow(BetterTogether::Billing::StripePriceSync).to receive(:new).and_return(price_sync_service)
+      allow(price_sync_service).to receive(:call).and_return(
+        BetterTogether::Billing::StripePriceSync::Result.new(
+          synced: true,
+          plan: billing_plan,
+          reason: :synced
+        )
+      )
+
+      price_object = Struct.new(:id, :active, keyword_init: true).new(
+        id: billing_plan.stripe_price_id,
+        active: false
+      )
+      data = Struct.new(:object, keyword_init: true).new(object: price_object)
+      price_event = Struct.new(:id, :type, :data, :payload, keyword_init: true) do
+        def to_hash
+          payload
+        end
+      end.new(
+        id: 'evt_price_upd_proc',
+        type: 'price.updated',
+        data: data,
+        payload: { id: 'evt_price_upd_proc', type: 'price.updated' }
+      )
+
+      described_class.new.call(price_event)
+
+      expect(price_sync_service).to have_received(:call).with(event: price_event)
+    end
+
+    it 'routes product.updated events to StripePriceSync' do
+      price_sync_service = instance_double(BetterTogether::Billing::StripePriceSync)
+      allow(BetterTogether::Billing::StripePriceSync).to receive(:new).and_return(price_sync_service)
+      allow(price_sync_service).to receive(:call).and_return(
+        BetterTogether::Billing::StripePriceSync::Result.new(
+          synced: true,
+          plan: billing_plan,
+          reason: :synced
+        )
+      )
+
+      billing_plan.update_columns(stripe_product_id: 'prod_proc_test')
+      product_object = Struct.new(:id, :active, keyword_init: true).new(
+        id: 'prod_proc_test',
+        active: false
+      )
+      data = Struct.new(:object, keyword_init: true).new(object: product_object)
+      product_event = Struct.new(:id, :type, :data, :payload, keyword_init: true) do
+        def to_hash
+          payload
+        end
+      end.new(
+        id: 'evt_prod_upd_proc',
+        type: 'product.updated',
+        data: data,
+        payload: { id: 'evt_prod_upd_proc', type: 'product.updated' }
+      )
+
+      described_class.new.call(product_event)
+
+      expect(price_sync_service).to have_received(:call).with(event: product_event)
+    end
+
     it 'persists invoice payment failures as billing alerts linked to the local subscription' do
       create(
         :better_together_billing_subscription,

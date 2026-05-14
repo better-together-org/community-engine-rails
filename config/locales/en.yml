@@ -995,6 +995,9 @@ en:
         field_stripe_price_id: Stripe Price ID
         field_stripe_price_id_hint: From the Stripe Dashboard. Cannot be changed after
           creation.
+        field_stripe_product_id: Stripe Product ID
+        field_stripe_product_id_hint: Populated automatically after the plan is synced
+          to Stripe.
         field_support_tier: Support tier
         index_title: Billing Plans
         interval_month: Monthly
@@ -4292,6 +4295,8 @@ en:
       expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
+      immutable_after_stripe_link: cannot be changed after a Stripe Price has been
+        linked
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid

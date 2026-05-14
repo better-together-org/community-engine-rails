@@ -988,6 +988,9 @@ uk:
         field_participant_summary: Kharakterystyka dlya uchasnykiv
         field_stripe_price_id: Stripe Price ID
         field_stripe_price_id_hint: Z paneli Stripe. Ne mozhna zminyty pislia stvorennya.
+        field_stripe_product_id: Stripe Product ID
+        field_stripe_product_id_hint: Заповнюється автоматично після синхронізації
+          плану з Stripe.
         field_support_tier: Riven' pidtrymky
         index_title: Plany bilingu
         interval_month: Shchomisyachno
@@ -4369,6 +4372,7 @@ uk:
       expired: закінчився, будь ласка, запросіть новий
       greater_than: має бути більше %{count}
       greater_than_or_equal_to: має бути більше або дорівнювати %{count}
+      immutable_after_stripe_link: не можна змінити після прив'язки ціни Stripe
       in: має бути в %{count}
       inclusion: не включено до списку
       invalid: неправильний
