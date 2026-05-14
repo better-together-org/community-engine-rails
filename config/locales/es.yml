@@ -589,6 +589,8 @@ es:
           attributes:
             active:
               must_be_true_for_primary: debe ser verdadero para un dominio primario
+              must_be_true_for_share_domain: debe ser verdadero para un dominio de
+                compartición
             primary:
               already_taken_for_platform: ya ha sido utilizado para esta plataforma
     models:
@@ -3515,6 +3517,44 @@ es:
         name: Ingrese un nombre (al menos un idioma debe completarse)
         slug: Identificador amigable para URL (único entre idiomas)
       unpublished: Unpublished
+    short_links:
+      edit:
+        page_title: Editar enlace corto
+      form:
+        back: Volver a los enlaces cortos
+        code: Código corto (dejar en blanco para generar automáticamente)
+        code_hint: Solo letras minúsculas, números y guiones
+        expires_at: Expira el (opcional)
+        save: Guardar
+        status: Estado
+        target_url: URL de destino
+        view: Ver
+      index:
+        copy_url: Copiar URL corta
+        empty: Aún no hay enlaces cortos.
+        new_btn: Nuevo enlace corto
+        page_title: Enlaces cortos
+        table:
+          clicks: Clics
+          code: Código
+          expires: Expira
+          status: Estado
+          target: URL de destino
+          title: Título
+      new:
+        page_title: Nuevo enlace corto
+      show:
+        back: Volver a los enlaces cortos
+        clicks: Total de clics
+        copy: Copiar
+        created_at: Creado el
+        delete: Eliminar
+        edit: Editar
+        expires_at: Expira el
+        page_title: Enlace corto
+        short_url: URL corta
+        status: Estado
+        target_url: URL de destino
     social_media_accounts:
       add: Agregar Cuenta de Redes Sociales
       handle: Nombre de usuario

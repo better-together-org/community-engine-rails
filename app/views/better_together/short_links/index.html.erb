@@ -1,0 +1,75 @@
+<% content_for :page_title do %>
+  <%= t('.page_title', default: 'Short Links') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= t('.page_title', default: 'Short Links') %></h1>
+    <% if policy(resource_class).create? %>
+      <%= link_to new_short_link_path, class: 'btn btn-primary' do %>
+        <i class="fas fa-plus"></i> <%= t('.new_btn', default: 'New Short Link') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @short_links.any? %>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th><%= t('.table.code', default: 'Code') %></th>
+            <th><%= t('.table.title', default: 'Title') %></th>
+            <th><%= t('.table.target', default: 'Target URL') %></th>
+            <th class="text-center"><%= t('.table.clicks', default: 'Clicks') %></th>
+            <th><%= t('.table.status', default: 'Status') %></th>
+            <th><%= t('.table.expires', default: 'Expires') %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @short_links.each do |short_link| %>
+            <tr>
+              <td>
+                <code><%= short_link.code %></code>
+                <button class="btn btn-sm btn-outline-secondary ms-1"
+                        data-clipboard-text="<%= short_link.url %>"
+                        title="<%= t('.copy_url', default: 'Copy short URL') %>">
+                  <i class="fas fa-copy"></i>
+                </button>
+              </td>
+              <td><%= short_link.title.presence || '—' %></td>
+              <td class="text-truncate" style="max-width:240px;">
+                <%= link_to short_link.target_url, short_link.target_url, target: '_blank', rel: 'noopener noreferrer' %>
+              </td>
+              <td class="text-center"><%= short_link.click_count %></td>
+              <td>
+                <span class="badge bg-<%= short_link.status_active? ? 'success' : (short_link.status_expired? ? 'secondary' : 'warning') %>">
+                  <%= short_link.status %>
+                </span>
+              </td>
+              <td><%= short_link.expires_at&.strftime('%Y-%m-%d') || '—' %></td>
+              <td class="text-end">
+                <%= link_to short_link_path(short_link), class: 'btn btn-sm btn-outline-primary me-1' do %>
+                  <i class="fas fa-eye"></i>
+                <% end %>
+                <%= link_to edit_short_link_path(short_link), class: 'btn btn-sm btn-outline-secondary me-1' do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <%= button_to short_link_path(short_link), method: :delete,
+                              class: 'btn btn-sm btn-outline-danger',
+                              form: { data: { turbo_confirm: t('globals.confirm_delete') } } do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="text-center text-muted py-5">
+      <i class="fas fa-link fa-3x mb-3"></i>
+      <p><%= t('.empty', default: 'No short links yet.') %></p>
+    </div>
+  <% end %>
+</div>

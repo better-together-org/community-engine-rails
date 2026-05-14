@@ -199,7 +199,17 @@ module BetterTogether
     def primary_platform_domain
       return unless self.class.connection.data_source_exists?('better_together_platform_domains')
 
-      platform_domains.primary.active.first
+      platform_domains.where(primary_flag: true).active.first
+    end
+
+    def share_platform_domain
+      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+
+      platform_domains.share_domain_active.first
+    end
+
+    def share_base_url
+      share_platform_domain&.url || resolved_host_url
     end
 
     def resolved_host_url

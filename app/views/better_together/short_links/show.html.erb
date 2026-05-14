@@ -1,0 +1,64 @@
+<% content_for :page_title do %>
+  <%= @short_link.title.presence || @short_link.code %> | <%= t('.page_title', default: 'Short Link') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= @short_link.title.presence || @short_link.code %></h1>
+    <div class="btn-group">
+      <%= link_to edit_short_link_path(@short_link), class: 'btn btn-outline-secondary' do %>
+        <i class="fas fa-edit"></i> <%= t('.edit', default: 'Edit') %>
+      <% end %>
+      <%= button_to short_link_path(@short_link), method: :delete, class: 'btn btn-outline-danger',
+                    form: { data: { turbo_confirm: t('globals.confirm_delete') } } do %>
+        <i class="fas fa-trash"></i> <%= t('.delete', default: 'Delete') %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label fw-bold"><%= t('.short_url', default: 'Short URL') %></label>
+        <div class="input-group">
+          <input type="text" class="form-control font-monospace"
+                 value="<%= @short_link.url %>" readonly id="short-link-url">
+          <button class="btn btn-outline-secondary"
+                  data-clipboard-target="#short-link-url"
+                  title="<%= t('.copy', default: 'Copy') %>">
+            <i class="fas fa-copy"></i> <%= t('.copy', default: 'Copy') %>
+          </button>
+        </div>
+      </div>
+
+      <dl class="row">
+        <dt class="col-sm-3"><%= t('.target_url', default: 'Target URL') %></dt>
+        <dd class="col-sm-9">
+          <%= link_to @short_link.target_url, @short_link.target_url, target: '_blank', rel: 'noopener noreferrer' %>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('.status', default: 'Status') %></dt>
+        <dd class="col-sm-9">
+          <span class="badge bg-<%= @short_link.status_active? ? 'success' : (@short_link.status_expired? ? 'secondary' : 'warning') %>">
+            <%= @short_link.status %>
+          </span>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('.clicks', default: 'Total Clicks') %></dt>
+        <dd class="col-sm-9"><%= @short_link.click_count %></dd>
+
+        <% if @short_link.expires_at.present? %>
+          <dt class="col-sm-3"><%= t('.expires_at', default: 'Expires At') %></dt>
+          <dd class="col-sm-9"><%= @short_link.expires_at.strftime('%Y-%m-%d %H:%M UTC') %></dd>
+        <% end %>
+
+        <dt class="col-sm-3"><%= t('.created_at', default: 'Created') %></dt>
+        <dd class="col-sm-9"><%= @short_link.created_at.strftime('%Y-%m-%d') %></dd>
+      </dl>
+    </div>
+  </div>
+
+  <%= link_to short_links_path, class: 'btn btn-secondary' do %>
+    <i class="fas fa-arrow-left"></i> <%= t('.back', default: 'Back to Short Links') %>
+  <% end %>
+</div>

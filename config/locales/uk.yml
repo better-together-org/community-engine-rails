@@ -580,6 +580,7 @@ uk:
           attributes:
             active:
               must_be_true_for_primary: повинно бути правдою для основного домену
+              must_be_true_for_share_domain: повинно бути правдою для домену поширення
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
     models:
@@ -3492,6 +3493,44 @@ uk:
         name: Enter a name (at least one locale must be filled)
         slug: URL‑friendly identifier (unique across locales)
       unpublished: Unpublished
+    short_links:
+      edit:
+        page_title: Редагувати коротке посилання
+      form:
+        back: Назад до коротких посилань
+        code: Короткий код (залиште порожнім для автоматичної генерації)
+        code_hint: Лише малі літери, цифри та дефіси
+        expires_at: Закінчується (необов'язково)
+        save: Зберегти
+        status: Статус
+        target_url: Цільовий URL
+        view: Переглянути
+      index:
+        copy_url: Копіювати коротке посилання
+        empty: Ще немає коротких посилань.
+        new_btn: Нове коротке посилання
+        page_title: Короткі посилання
+        table:
+          clicks: Кліки
+          code: Код
+          expires: Закінчується
+          status: Статус
+          target: Цільовий URL
+          title: Заголовок
+      new:
+        page_title: Нове коротке посилання
+      show:
+        back: Назад до коротких посилань
+        clicks: Всього кліків
+        copy: Копіювати
+        created_at: Створено
+        delete: Видалити
+        edit: Редагувати
+        expires_at: Закінчується
+        page_title: Коротке посилання
+        short_url: Короткий URL
+        status: Статус
+        target_url: Цільовий URL
     social_media_accounts:
       add: Додати акаунт соціальних мереж
       handle: Нікнейм

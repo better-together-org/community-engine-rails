@@ -591,6 +591,7 @@ fr:
           attributes:
             active:
               must_be_true_for_primary: doit être vrai pour un domaine principal
+              must_be_true_for_share_domain: doit être vrai pour un domaine de partage
             primary:
               already_taken_for_platform: a déjà été pris pour cette plateforme
     models:
@@ -3538,6 +3539,44 @@ fr:
         name: Entrez un nom (au moins une langue doit être remplie)
         slug: Identifiant URL-friendly (unique entre les langues)
       unpublished: Non publié
+    short_links:
+      edit:
+        page_title: Modifier le lien court
+      form:
+        back: Retour aux liens courts
+        code: Code court (laisser vide pour générer automatiquement)
+        code_hint: Lettres minuscules, chiffres et tirets uniquement
+        expires_at: Expire le (facultatif)
+        save: Enregistrer
+        status: Statut
+        target_url: URL cible
+        view: Voir
+      index:
+        copy_url: Copier l'URL courte
+        empty: Aucun lien court pour l'instant.
+        new_btn: Nouveau lien court
+        page_title: Liens courts
+        table:
+          clicks: Clics
+          code: Code
+          expires: Expire
+          status: Statut
+          target: URL cible
+          title: Titre
+      new:
+        page_title: Nouveau lien court
+      show:
+        back: Retour aux liens courts
+        clicks: Clics totaux
+        copy: Copier
+        created_at: Créé le
+        delete: Supprimer
+        edit: Modifier
+        expires_at: Expire le
+        page_title: Lien court
+        short_url: URL courte
+        status: Statut
+        target_url: URL cible
     social_media_accounts:
       add: Ajouter un compte de réseaux sociaux
       handle: Pseudonyme

@@ -586,8 +586,14 @@ en:
           attributes:
             active:
               must_be_true_for_primary: must be true for a primary domain
+              must_be_true_for_share_domain: must be true for a share domain
             primary:
               already_taken_for_platform: has already been taken for this platform
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: is not a valid URL
+              invalid_scheme: must use http or https
     models:
       action_text/encrypted_rich_text: Encrypted Rich Text
       action_text/rich_text: Rich Text
@@ -3443,6 +3449,44 @@ en:
         name: Enter a name (at least one locale must be filled)
         slug: URL‑friendly identifier (unique across locales)
       unpublished: Unpublished
+    short_links:
+      edit:
+        page_title: Edit Short Link
+      form:
+        back: Back to Short Links
+        code: Short Code (leave blank to auto-generate)
+        code_hint: Lowercase letters, numbers, and hyphens only
+        expires_at: Expires At (optional)
+        save: Save
+        status: Status
+        target_url: Target URL
+        view: View
+      index:
+        copy_url: Copy short URL
+        empty: No short links yet.
+        new_btn: New Short Link
+        page_title: Short Links
+        table:
+          clicks: Clicks
+          code: Code
+          expires: Expires
+          status: Status
+          target: Target URL
+          title: Title
+      new:
+        page_title: New Short Link
+      show:
+        back: Back to Short Links
+        clicks: Total Clicks
+        copy: Copy
+        created_at: Created
+        delete: Delete
+        edit: Edit
+        expires_at: Expires At
+        page_title: Short Link
+        short_url: Short URL
+        status: Status
+        target_url: Target URL
     social_media_accounts:
       add: Add Social Media Account
       handle: Handle
