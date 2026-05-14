@@ -3522,8 +3522,10 @@ fr:
     share_buttons:
       aria_label: Partager sur %{platform}
       bluesky: Partager sur Bluesky
+      copy_short_link: Copier le lien court
       default_title: Découvrez ceci !
       facebook: Partager sur Facebook
+      get_short_link: Obtenir le lien court
       linkedin: Partager sur LinkedIn
       pinterest: Épingler
       reddit: Partager sur Reddit

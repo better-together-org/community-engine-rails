@@ -3500,8 +3500,10 @@ es:
     share_buttons:
       aria_label: Compartir en %{platform}
       bluesky: Compartir en Bluesky
+      copy_short_link: Copiar enlace corto
       default_title: "¡Mira esto!"
       facebook: Compartir en Facebook
+      get_short_link: Obtener enlace corto
       linkedin: Compartir en LinkedIn
       pinterest: Pinear
       reddit: Compartir en Reddit

@@ -93,6 +93,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Calendar feed route - accessible without authentication (token-based auth in controller)
       get 'calendars/:id/feed', to: 'calendars#feed', as: :feed_calendar
 
+      # Short link generation for public content — guests can generate share links
+      post 'short_links/ensure', to: 'short_links#ensure', as: :ensure_content_short_link
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :short_links

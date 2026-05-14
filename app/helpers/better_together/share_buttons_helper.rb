@@ -2,7 +2,7 @@
 
 module BetterTogether
   # app/helpers/share_buttons_helper.rb
-  module ShareButtonsHelper
+  module ShareButtonsHelper # rubocop:todo Metrics/ModuleLength
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
     def share_buttons(platforms: BetterTogether::Metrics::Share::SHAREABLE_PLATFORMS, shareable: nil)
@@ -30,7 +30,8 @@ module BetterTogether
         end
 
         buttons = content_tag :div do
-          safe_join(platforms.map do |platform|
+          short_link_btn = shortlinkable_share_button(shareable) if shareable.respond_to?(:ensure_short_link!)
+          social_btns = platforms.map do |platform|
             link_to share_button_content(platform).html_safe, "#share-#{platform}",
                     class: "share-button share-#{platform}",
                     data: {
@@ -48,7 +49,8 @@ module BetterTogether
                     # rubocop:enable Layout/LineLength
                     rel: 'noopener noreferrer',
                     target: '_blank'
-          end)
+          end
+          safe_join([short_link_btn, *social_btns].compact)
         end
 
         heading + buttons
@@ -64,6 +66,33 @@ module BetterTogether
         send(:canonical_current_url)
       else
         request.original_url
+      end
+    end
+
+    def shortlinkable_share_button(shareable) # rubocop:disable Metrics/MethodLength
+      frame_id = "sl-#{dom_id(shareable)}"
+      existing = shareable.short_link&.active_and_unexpired? ? shareable.short_link : nil
+
+      content_tag :'turbo-frame', id: frame_id do
+        if existing
+          render partial: 'better_together/short_links/share_link_button',
+                 locals: { shareable:, short_link: existing }
+        else
+          button_to ensure_content_short_link_path,
+                    params: { linkable_type: shareable.class.name, linkable_id: shareable.id },
+                    class: 'share-button share-short-link btn p-0 border-0 bg-transparent',
+                    form: { data: { turbo_frame: frame_id } },
+                    title: t('better_together.share_buttons.get_short_link') do
+            short_link_icon
+          end
+        end
+      end
+    end
+
+    def short_link_icon
+      content_tag :div, class: 'fa-stack fa-2x', role: 'img' do
+        content_tag(:i, '', class: 'bg fas fa-circle fa-stack-2x') +
+          content_tag(:i, '', class: 'fa-stack-1x icon fas fa-link')
       end
     end
 

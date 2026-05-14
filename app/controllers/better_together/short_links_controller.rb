@@ -2,6 +2,26 @@
 
 module BetterTogether
   class ShortLinksController < ResourceController # rubocop:todo Style/Documentation
+    LINKABLE_TYPES = %w[
+      BetterTogether::Page
+      BetterTogether::Event
+      BetterTogether::Community
+      BetterTogether::Post
+    ].freeze
+
+    skip_before_action :authenticate_user!, only: [:ensure], raise: false
+
+    def ensure
+      linkable = resolve_linkable
+      authorize linkable, :show?
+      short_link = linkable.ensure_short_link!
+      render turbo_stream: turbo_stream.replace(
+        "sl-#{ActionView::RecordIdentifier.dom_id(linkable)}",
+        partial: 'better_together/short_links/share_link_button',
+        locals: { shareable: linkable, short_link: short_link }
+      )
+    end
+
     private
 
     def resource_class
@@ -14,6 +34,13 @@ module BetterTogether
                      .order(created_at: :desc)
 
       @short_links = @resources
+    end
+
+    def resolve_linkable
+      type = params.require(:linkable_type)
+      raise ActionController::BadRequest unless LINKABLE_TYPES.include?(type)
+
+      type.constantize.find(params.require(:linkable_id))
     end
   end
 end

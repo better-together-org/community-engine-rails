@@ -20,6 +20,7 @@ module BetterTogether
     include Publishable
     include Searchable
     include Seedable
+    include Shortlinkable
     include TrackedActivity
     include ::Storext.model
 

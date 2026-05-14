@@ -19,6 +19,7 @@ module BetterTogether
     include Publishable
     include Searchable
     include Seedable
+    include Shortlinkable
     include TrackedActivity
     include ::Storext.model
 
@@ -117,6 +118,10 @@ module BetterTogether
     end
 
     configure_attachment_cleanup
+
+    def short_link_target_url
+      BetterTogether::Engine.routes.url_helpers.post_url(self, locale: I18n.locale)
+    end
 
     private
 

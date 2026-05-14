@@ -3476,8 +3476,10 @@ uk:
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
+      copy_short_link: Копіювати коротке посилання
       default_title: Check this out!
       facebook: Share on Facebook
+      get_short_link: Отримати коротке посилання
       linkedin: Share on LinkedIn
       pinterest: Pin
       reddit: Share on Reddit

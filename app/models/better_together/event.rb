@@ -19,6 +19,7 @@ module BetterTogether
     include RecurringSchedulable
     include Searchable
     include Seedable
+    include Shortlinkable
     include TimezoneAttributeAliasing
     include TrackedActivity
 

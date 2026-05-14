@@ -3432,8 +3432,10 @@ en:
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
+      copy_short_link: Copy short link
       default_title: Check this out!
       facebook: Share on Facebook
+      get_short_link: Get short link
       linkedin: Share on LinkedIn
       pinterest: Pin
       reddit: Share on Reddit
