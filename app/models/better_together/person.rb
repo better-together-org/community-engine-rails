@@ -298,7 +298,7 @@ module BetterTogether
                   profile_image.variant(resize_to_fill: [size, size])
                 end
 
-      Rails.application.routes.url_helpers.rails_storage_proxy_path(variant, only_path: true)
+      BetterTogether::MediaUrlBuilder.proxy_path_for(variant)
     rescue ActiveStorage::FileNotFoundError
       nil
     end

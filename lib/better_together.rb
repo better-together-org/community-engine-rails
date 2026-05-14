@@ -34,6 +34,7 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   mattr_accessor :swagger_additional_endpoints
   mattr_accessor :head_tag_providers
   mattr_accessor :registered_content_security_policy_sources
+  mattr_accessor :content_security
   self.swagger_additional_endpoints = []
   self.head_tag_providers = {}
   self.registered_content_security_policy_sources = Hash.new { |hash, key| hash[key] = [] }

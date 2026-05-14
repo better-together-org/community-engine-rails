@@ -1356,6 +1356,18 @@ fr:
           open_in_new_tab: Ouvrir le contenu intégré dans un nouvel onglet
         events_block:
           empty: Aucun événement à afficher.
+        fields:
+          image:
+            library:
+              empty: Aucun téléversement d'image révisé n'est encore disponible dans
+                votre bibliothèque.
+              empty_hint: Téléversez d'abord une image, ou utilisez la personne qui
+                l'a téléversée.
+              open: Choisir depuis la bibliothèque
+              scope_hint: Seuls vos téléversements d'images révisés sont disponibles
+                ici.
+              title: Choisir depuis la bibliothèque
+              view_uploads: Voir les téléversements et leurs statuts de révision
         hero:
           editor:
             background: Arrière-plan
@@ -3887,6 +3899,16 @@ fr:
           review_required: Ce téléversement est en cours de révision avant de pouvoir
             être inséré dans un texte enrichi ou partagé.
       index:
+        filter_group_aria: Filtrer les téléversements par statut de révision
+        filters:
+          all: Tous (%{count})
+          clean: Prêts (%{count})
+          restricted: Restreints (%{count})
+          review_required: En révision (%{count})
+        review_status_description: Les comptes de révision sont affichés ici pour
+          vous aider à trouver rapidement les téléversements approuvés, retenus ou
+          restreints.
+        review_status_heading: Statut de révision
         storage_usage: Vous utilisez %{size} de stockage
     validators:
       safe_federation_url:
