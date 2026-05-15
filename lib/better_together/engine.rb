@@ -57,6 +57,12 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
+    OPTIONAL_PROVIDER_GEMS = {
+      'better_together-google-analytics' => 'better_together/google_analytics',
+      'better_together-sentry' => 'better_together/sentry',
+      'better_together-elasticsearch' => 'better_together/elasticsearch'
+    }.freeze
+
     # Avoid registering nested lib directories as Zeitwerk roots. Doing so makes
     # files like lib/better_together/mcp/pundit_context.rb map to PunditContext
     # instead of BetterTogether::Mcp::PunditContext.
@@ -114,6 +120,14 @@ module BetterTogether
 
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
+    end
+
+    initializer 'better_together.optional_provider_extensions' do
+      OPTIONAL_PROVIDER_GEMS.each do |gem_name, require_path|
+        next unless Gem.loaded_specs.key?(gem_name)
+
+        require require_path
+      end
     end
 
     # Insert PlatformContextMiddleware early in the stack so Current.platform
