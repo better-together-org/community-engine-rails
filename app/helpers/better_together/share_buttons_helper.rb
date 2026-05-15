@@ -82,7 +82,8 @@ module BetterTogether
                     params: { linkable_type: shareable.class.name, linkable_id: shareable.id },
                     class: 'share-button share-short-link btn p-0 border-0 bg-transparent',
                     form: { data: { turbo_frame: frame_id } },
-                    title: t('better_together.share_buttons.get_short_link') do
+                    title: t('better_together.share_buttons.get_short_link'),
+                    aria: { label: t('better_together.share_buttons.get_short_link') } do
             short_link_icon
           end
         end
@@ -90,9 +91,9 @@ module BetterTogether
     end
 
     def short_link_icon
-      content_tag :div, class: 'fa-stack fa-2x', role: 'img' do
-        content_tag(:i, '', class: 'bg fas fa-circle fa-stack-2x') +
-          content_tag(:i, '', class: 'fa-stack-1x icon fas fa-link')
+      content_tag :div, class: 'fa-stack fa-2x' do
+        content_tag(:i, '', class: 'bg fas fa-circle fa-stack-2x', aria: { hidden: 'true' }) +
+          content_tag(:i, '', class: 'fa-stack-1x icon fas fa-link', aria: { hidden: 'true' })
       end
     end
 

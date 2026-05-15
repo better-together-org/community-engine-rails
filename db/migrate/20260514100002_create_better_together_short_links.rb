@@ -22,7 +22,8 @@ class CreateBetterTogetherShortLinks < ActiveRecord::Migration[7.2]
       t.index %i[platform_id code], unique: true,
                                     name: 'index_better_together_short_links_on_platform_and_code'
       t.index %i[linkable_type linkable_id],
-              name: 'index_better_together_short_links_on_linkable'
+              name: 'index_better_together_short_links_on_linkable',
+              unique: true
       t.index :platform_id,
               name: 'index_better_together_short_links_on_platform_id'
     end

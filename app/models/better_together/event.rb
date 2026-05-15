@@ -18,14 +18,13 @@ module BetterTogether
     include Privacy
     include RecurringSchedulable
     include Searchable
+    include PlatformScoped
     include Seedable
     include Shortlinkable
     include TimezoneAttributeAliasing
     include TrackedActivity
 
     attachable_cover_image
-
-    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
                                  foreign_key: :event_id, inverse_of: :event, dependent: :destroy
@@ -74,7 +73,6 @@ module BetterTogether
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
     validate :ends_at_after_starts_at
 
-    before_validation :assign_current_platform_if_available
     before_validation :set_host
     before_validation :set_default_duration
     before_validation :sync_time_duration_relationship
@@ -330,16 +328,6 @@ module BetterTogether
     end
 
     private
-
-    def assign_current_platform_if_available
-      return unless has_attribute?(:platform_id)
-      return if platform_id.present?
-
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
-    end
 
     # Set default duration if not set and start time is present
     def set_default_duration

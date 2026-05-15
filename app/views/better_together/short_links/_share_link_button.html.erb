@@ -1,12 +1,13 @@
 <div data-controller="better_together--clipboard"
-     data-better-together--clipboard-url-value="<%= short_link.url %>">
+     data-better_together--clipboard-url-value="<%= short_link.url %>">
   <button class="share-button share-short-link btn p-0 border-0 bg-transparent"
           data-action="click->better_together--clipboard#copy"
-          data-better-together--clipboard-target="button"
+          data-better_together--clipboard-target="button"
+          aria-label="<%= t('better_together.share_buttons.copy_short_link') %>"
           title="<%= t('better_together.share_buttons.copy_short_link') %>">
-    <div class="fa-stack fa-2x" role="img">
-      <i class="bg fas fa-circle fa-stack-2x"></i>
-      <i class="fa-stack-1x icon fas fa-link"></i>
+    <div class="fa-stack fa-2x">
+      <i class="bg fas fa-circle fa-stack-2x" aria-hidden="true"></i>
+      <i class="fa-stack-1x icon fas fa-link" aria-hidden="true"></i>
     </div>
   </button>
 </div>

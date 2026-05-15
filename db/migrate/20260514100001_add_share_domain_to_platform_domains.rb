@@ -6,8 +6,16 @@ class AddShareDomainToPlatformDomains < ActiveRecord::Migration[7.2]
       add_column :better_together_platform_domains, :share_domain, :boolean, null: false, default: false
     end
 
-    # All existing records are single-domain-per-platform, so each is its own share domain.
-    execute 'UPDATE better_together_platform_domains SET share_domain = TRUE'
+    # Backfill: designate one share domain per platform (primary first, then first by hostname).
+    execute <<~SQL
+      UPDATE better_together_platform_domains
+      SET share_domain = TRUE
+      WHERE id IN (
+        SELECT DISTINCT ON (platform_id) id
+        FROM better_together_platform_domains
+        ORDER BY platform_id, primary_flag DESC, hostname ASC
+      )
+    SQL
 
     unless index_name_exists?(:better_together_platform_domains,
                               'index_better_together_platform_domains_on_share_domain')

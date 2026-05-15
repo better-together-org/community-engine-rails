@@ -593,6 +593,11 @@ es:
                 compartición
             primary:
               already_taken_for_platform: ya ha sido utilizado para esta plataforma
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: no es una URL válida
+              invalid_scheme: debe usar http o https
     models:
       action_text/encrypted_rich_text: Texto Enriquecido Cifrado
       action_text/rich_text: Texto Enriquecido

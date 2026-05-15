@@ -40,7 +40,9 @@ module BetterTogether
       type = params.require(:linkable_type)
       raise ActionController::BadRequest unless LINKABLE_TYPES.include?(type)
 
-      type.constantize.find(params.require(:linkable_id))
+      klass = type.constantize
+      scope = klass.column_names.include?('platform_id') ? klass.where(platform: Current.platform) : klass
+      scope.find(params.require(:linkable_id))
     end
   end
 end

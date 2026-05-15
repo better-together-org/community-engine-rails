@@ -583,6 +583,11 @@ uk:
               must_be_true_for_share_domain: повинно бути правдою для домену поширення
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: не є дійсною URL-адресою
+              invalid_scheme: повинна використовувати http або https
     models:
       action_text/encrypted_rich_text: зашифрований багатий текст
       action_text/rich_text: багатий текст

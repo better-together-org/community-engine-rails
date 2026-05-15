@@ -20,14 +20,20 @@
     <div class="card-body">
       <div class="mb-3">
         <label class="form-label fw-bold"><%= t('.short_url', default: 'Short URL') %></label>
-        <div class="input-group">
-          <input type="text" class="form-control font-monospace"
-                 value="<%= @short_link.url %>" readonly id="short-link-url">
-          <button class="btn btn-outline-secondary"
-                  data-clipboard-target="#short-link-url"
-                  title="<%= t('.copy', default: 'Copy') %>">
-            <i class="fas fa-copy"></i> <%= t('.copy', default: 'Copy') %>
-          </button>
+        <div data-controller="better_together--clipboard"
+             data-better_together--clipboard-url-value="<%= @short_link.url %>">
+          <div class="input-group">
+            <input type="text" class="form-control font-monospace"
+                   value="<%= @short_link.url %>" readonly>
+            <button class="btn btn-outline-secondary"
+                    data-action="click->better_together--clipboard#copy"
+                    data-better_together--clipboard-target="button"
+                    aria-label="<%= t('.copy', default: 'Copy') %>"
+                    title="<%= t('.copy', default: 'Copy') %>">
+              <i class="fas fa-copy" aria-hidden="true"></i>
+              <%= t('.copy', default: 'Copy') %>
+            </button>
+          </div>
         </div>
       </div>
 

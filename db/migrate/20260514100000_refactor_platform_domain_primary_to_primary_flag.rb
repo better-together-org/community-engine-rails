@@ -6,7 +6,9 @@ class RefactorPlatformDomainPrimaryToPrimaryFlag < ActiveRecord::Migration[7.2]
       add_column :better_together_platform_domains, :primary_flag, :boolean, null: false, default: false
     end
 
-    execute 'UPDATE better_together_platform_domains SET primary_flag = "primary"'
+    if column_exists?(:better_together_platform_domains, :primary)
+      execute 'UPDATE better_together_platform_domains SET primary_flag = "primary"'
+    end
 
     remove_index :better_together_platform_domains,
                  name: 'index_better_together_platform_domains_on_primary', if_exists: true

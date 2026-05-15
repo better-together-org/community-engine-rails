@@ -594,6 +594,11 @@ fr:
               must_be_true_for_share_domain: doit être vrai pour un domaine de partage
             primary:
               already_taken_for_platform: a déjà été pris pour cette plateforme
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: n'est pas une URL valide
+              invalid_scheme: doit utiliser http ou https
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi

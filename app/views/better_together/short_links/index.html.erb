@@ -31,11 +31,16 @@
             <tr>
               <td>
                 <code><%= short_link.code %></code>
-                <button class="btn btn-sm btn-outline-secondary ms-1"
-                        data-clipboard-text="<%= short_link.url %>"
-                        title="<%= t('.copy_url', default: 'Copy short URL') %>">
-                  <i class="fas fa-copy"></i>
-                </button>
+                <span data-controller="better_together--clipboard"
+                      data-better_together--clipboard-url-value="<%= short_link.url %>">
+                  <button class="btn btn-sm btn-outline-secondary ms-1"
+                          data-action="click->better_together--clipboard#copy"
+                          data-better_together--clipboard-target="button"
+                          aria-label="<%= t('.copy_url', default: 'Copy short URL') %>"
+                          title="<%= t('.copy_url', default: 'Copy short URL') %>">
+                    <i class="fas fa-copy" aria-hidden="true"></i>
+                  </button>
+                </span>
               </td>
               <td><%= short_link.title.presence || '—' %></td>
               <td class="text-truncate" style="max-width:240px;">
