@@ -39,9 +39,6 @@ gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.0.4.1').start_with?('7.2.') ? '~> 7
 # Pin connection_pool to avoid breaking changes in 3.x
 gem 'connection_pool', '~> 3.0.2'
 
-# External error/performance providers should be loaded through extension gems.
-gem 'sentry-rails', require: false
-gem 'sentry-ruby', require: false
 gem 'stackprof'
 
 # Sitemap generation
