@@ -7,11 +7,11 @@
     <h1><%= @short_link.title.presence || @short_link.code %></h1>
     <div class="btn-group">
       <%= link_to edit_short_link_path(@short_link), class: 'btn btn-outline-secondary' do %>
-        <i class="fas fa-edit"></i> <%= t('.edit', default: 'Edit') %>
+        <i class="fas fa-edit" aria-hidden="true"></i> <%= t('.edit', default: 'Edit') %>
       <% end %>
       <%= button_to short_link_path(@short_link), method: :delete, class: 'btn btn-outline-danger',
                     form: { data: { turbo_confirm: t('globals.confirm_delete') } } do %>
-        <i class="fas fa-trash"></i> <%= t('.delete', default: 'Delete') %>
+        <i class="fas fa-trash" aria-hidden="true"></i> <%= t('.delete', default: 'Delete') %>
       <% end %>
     </div>
   </div>
@@ -19,18 +19,18 @@
   <div class="card mb-4">
     <div class="card-body">
       <div class="mb-3">
-        <label class="form-label fw-bold"><%= t('.short_url', default: 'Short URL') %></label>
+        <label class="form-label fw-bold" for="short-link-url"><%= t('.short_url', default: 'Short URL') %></label>
         <div data-controller="better_together--clipboard"
              data-better_together--clipboard-url-value="<%= @short_link.url %>">
           <div class="input-group">
-            <input type="text" class="form-control font-monospace"
+            <input type="text" id="short-link-url" class="form-control font-monospace"
                    value="<%= @short_link.url %>" readonly>
             <button class="btn btn-outline-secondary"
                     data-action="click->better_together--clipboard#copy"
                     data-better_together--clipboard-target="button"
                     aria-label="<%= t('.copy', default: 'Copy') %>"
                     title="<%= t('.copy', default: 'Copy') %>">
-              <i class="fas fa-copy" aria-hidden="true"></i>
+              <i class="fas fa-copy icon" aria-hidden="true"></i>
               <%= t('.copy', default: 'Copy') %>
             </button>
           </div>
@@ -65,6 +65,6 @@
   </div>
 
   <%= link_to short_links_path, class: 'btn btn-secondary' do %>
-    <i class="fas fa-arrow-left"></i> <%= t('.back', default: 'Back to Short Links') %>
+    <i class="fas fa-arrow-left" aria-hidden="true"></i> <%= t('.back', default: 'Back to Short Links') %>
   <% end %>
 </div>

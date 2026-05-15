@@ -38,12 +38,12 @@
                           data-better_together--clipboard-target="button"
                           aria-label="<%= t('.copy_url', default: 'Copy short URL') %>"
                           title="<%= t('.copy_url', default: 'Copy short URL') %>">
-                    <i class="fas fa-copy" aria-hidden="true"></i>
+                    <i class="fas fa-copy icon" aria-hidden="true"></i>
                   </button>
                 </span>
               </td>
               <td><%= short_link.title.presence || '—' %></td>
-              <td class="text-truncate" style="max-width:240px;">
+              <td class="text-truncate bt-short-links-target-col">
                 <%= link_to short_link.target_url, short_link.target_url, target: '_blank', rel: 'noopener noreferrer' %>
               </td>
               <td class="text-center"><%= short_link.click_count %></td>

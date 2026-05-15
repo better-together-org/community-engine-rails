@@ -1,5 +1,9 @@
 @use 'theme' as *;
 
+.bt-short-links-target-col {
+  max-width: 240px;
+}
+
 .social-share-buttons {
   margin-top: 40px;
   margin-bottom: 40px;

@@ -22,7 +22,8 @@ export default class extends Controller {
   _flashIcon() {
     const icon = this.buttonTarget.querySelector('i.icon')
     if (!icon) return
-    icon.className = 'fa-stack-1x icon fas fa-check'
-    setTimeout(() => { icon.className = 'fa-stack-1x icon fas fa-link' }, 2000)
+    const original = icon.className
+    icon.className = original.replace(/\bfa-[a-z-]+\b/, 'fa-check')
+    setTimeout(() => { icon.className = original }, 2000)
   }
 }

@@ -18,6 +18,9 @@ module BetterTogether
         platform: Current.platform,
         creator: Current.person
       )
+    rescue ActiveRecord::RecordNotUnique
+      reload
+      short_link
     end
 
     def short_link_target_url

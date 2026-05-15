@@ -50,6 +50,19 @@ RSpec.feature 'Short Link Clipboard Controller', :js do
       find('[data-better_together--clipboard-target="button"]').click
       expect(page.evaluate_script('window.copiedText')).to eq(short_link.url)
     end
+
+    scenario 'icon flips to fa-check immediately after copy' do
+      mock_clipboard
+      find('[data-better_together--clipboard-target="button"]').click
+      expect(page).to have_css('i.icon.fa-check', wait: 2)
+    end
+
+    scenario 'icon resets to fa-copy after 2 seconds' do
+      mock_clipboard
+      find('[data-better_together--clipboard-target="button"]').click
+      expect(page).to have_css('i.icon.fa-check', wait: 2)
+      expect(page).to have_css('i.icon.fa-copy', wait: 4)
+    end
   end
 
   # ----------------------------------------------------------------- index page
@@ -76,6 +89,19 @@ RSpec.feature 'Short Link Clipboard Controller', :js do
       mock_clipboard
       find('[data-better_together--clipboard-target="button"]', match: :first).click
       expect(page.evaluate_script('window.copiedText')).to eq(short_link.url)
+    end
+
+    scenario 'icon flips to fa-check immediately after copy' do
+      mock_clipboard
+      find('[data-better_together--clipboard-target="button"]', match: :first).click
+      expect(page).to have_css('i.icon.fa-check', wait: 2)
+    end
+
+    scenario 'icon resets to fa-copy after 2 seconds' do
+      mock_clipboard
+      find('[data-better_together--clipboard-target="button"]', match: :first).click
+      expect(page).to have_css('i.icon.fa-check', wait: 2)
+      expect(page).to have_css('i.icon.fa-copy', wait: 4)
     end
   end
 

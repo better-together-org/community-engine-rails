@@ -64,14 +64,14 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Full Test Suite (USE SPARINGLY):** `bin/dc-run bin/ci`
   - Uses `prspec` (parallel_rspec) for faster execution via parallelization
   - Equivalent: `bin/dc-run bundle exec prspec spec --format documentation`
-  - Alternative (slower, sequential): `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`
+  - **No sequential alternative** — bare `rspec` is not permitted without explicit operator authorization
 - **Running specific tests (PREFER THIS):** 
   - **Prefer `prspec`** for all test runs - it's faster than plain `rspec`
   - Single spec file: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
   - Specific line: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb:123`
   - Multiple files: `bin/dc-run bundle exec prspec spec/file1_spec.rb spec/file2_spec.rb`
   - Multiple specific lines: `bin/dc-run bundle exec prspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
-  - Fallback (if prspec unavailable): Use `rspec` with same arguments
+  - **No rspec fallback** — if `prspec` is unavailable, stop and report; do not fall back to bare `rspec`
   - **Important**: Neither tool supports hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
   - **Do NOT use `-v` flag**: The `-v` flag displays version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
   - **Note**: `prspec` always requires a spec path argument (file, directory, or line number)
@@ -878,7 +878,7 @@ Each major system must include:
 - **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
-  - Tests: `bin/dc-run bundle exec rspec`
+  - Tests: `bin/dc-run bundle exec prspec spec/` (or `bin/dc-ci` for full suite)
   - Generators: `bin/dc-run rails generate model User`
   - Brakeman: `bin/dc-run bundle exec brakeman`
   - RuboCop: `bin/dc-run bundle exec rubocop`

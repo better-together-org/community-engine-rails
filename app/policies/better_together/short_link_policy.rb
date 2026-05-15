@@ -25,7 +25,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         if permitted_to?('manage_platform')
-          scope.all
+          scope.where(platform: Current.platform)
         else
           scope.with_creator(agent)
         end
@@ -35,7 +35,7 @@ module BetterTogether
     private
 
     def creator_or_manager?
-      record.creator == agent || permitted_to?('manage_platform')
+      (record.creator_id.present? && record.creator == agent) || permitted_to?('manage_platform')
     end
 
     def permitted_to?(permission)
