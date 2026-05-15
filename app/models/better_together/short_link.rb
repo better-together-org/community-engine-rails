@@ -4,7 +4,6 @@ module BetterTogether
   class ShortLink < ApplicationRecord # rubocop:todo Style/Documentation
     include PlatformScoped
     include Creatable
-    include Publishable
     include Translatable
 
     translates :title, type: :string

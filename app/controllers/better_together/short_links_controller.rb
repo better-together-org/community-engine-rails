@@ -10,6 +10,7 @@ module BetterTogether
     ].freeze
 
     skip_before_action :authenticate_user!, only: [:ensure], raise: false
+    rescue_from ActionController::BadRequest, with: :render_bad_request
 
     def ensure
       linkable = resolve_linkable
@@ -34,6 +35,10 @@ module BetterTogether
                      .order(created_at: :desc)
 
       @short_links = @resources
+    end
+
+    def render_bad_request
+      head :bad_request
     end
 
     def resolve_linkable
