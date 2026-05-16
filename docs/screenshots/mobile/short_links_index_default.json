@@ -110,10 +110,11 @@
       },
       "placement": {
         "side": "floating",
-        "x": 206.0,
-        "y": 182.69,
+        "x": 24,
+        "y": 656,
         "width": 270.0,
-        "height": 158
+        "height": 158,
+        "score": 0
       }
     }
   ]

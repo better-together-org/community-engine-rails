@@ -191,15 +191,44 @@ module BetterTogether # :nodoc:
         return candidate if candidate
       end
 
+      grid_scan_placement(width, height, image_width, image_height, avoid, placed_boxes) ||
+        stack_placement(width, height, image_height, placed_boxes)
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+    def grid_scan_placement(width, height, image_width, image_height, avoid, placed_boxes)
+      x_anchors = [
+        BOX_MARGIN,
+        ((image_width - width) / 2.0).round,
+        image_width - width - BOX_MARGIN
+      ].uniq
+      step = [(height / 2.0).round, 30].max
+      (BOX_MARGIN.to_i..(image_height - height - BOX_MARGIN).to_i).step(step) do |y|
+        x_anchors.each do |x|
+          candidate = placement_candidate(
+            side: 'floating', position: { x:, y: },
+            box: { width:, height: },
+            image: { width: image_width, height: image_height },
+            avoid:, free_space: 0, placed_boxes:
+          )
+          return candidate if candidate
+        end
+      end
+      nil
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+
+    def stack_placement(width, height, image_height, placed_boxes)
+      stack_y = (placed_boxes.map { |b| b[:y] + b[:height] }.max || BOX_MARGIN) + 20
       {
         side: 'floating',
-        x: clamp(target[:right] + TARGET_GAP, BOX_MARGIN, image_width - width - BOX_MARGIN).round(2),
-        y: clamp(target[:bottom] + TARGET_GAP, BOX_MARGIN, image_height - height - BOX_MARGIN).round(2),
+        x: BOX_MARGIN.to_f.round(2),
+        y: stack_y.clamp(BOX_MARGIN, image_height - height - BOX_MARGIN).round(2),
         width: width.round(2),
         height: height.round(2)
       }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
     # rubocop:disable Metrics/AbcSize
     def rect_overlap?(source_rect, target_rect)
@@ -234,22 +263,23 @@ module BetterTogether # :nodoc:
     end
 
     def build_overlay_svg(image_width, image_height, callouts)
+      groups = callouts.each_with_index.map { |c, i| callout_group_svg(c, i) }.join("\n")
       <<~SVG
         <svg xmlns="http://www.w3.org/2000/svg" width="#{image_width}" height="#{image_height}" viewBox="0 0 #{image_width} #{image_height}">
-          <g class="docs-callout-targets">
+          <g class="docs-callout-decorations">
             #{callouts.map { |c| target_highlight_svg(c) }.join("\n")}
-          </g>
-          <g class="docs-callout-connectors">
             #{callouts.map { |c| connector_svg(c) }.join("\n")}
           </g>
-          <g class="docs-callout-boxes">
-            #{callouts.map { |c| callout_box_svg(c) }.join("\n")}
-          </g>
-          <g class="docs-callout-texts">
-            #{callouts.map { |c| callout_text_svg(c) }.join("\n")}
-          </g>
+          #{groups}
         </svg>
       SVG
+    end
+
+    def callout_group_svg(callout, index)
+      "<g class=\"docs-callout-group-#{index}\">\n" \
+        "#{callout_box_svg(callout)}\n" \
+        "#{callout_text_svg(callout)}\n" \
+        '</g>'
     end
 
     def target_highlight_svg(callout)
