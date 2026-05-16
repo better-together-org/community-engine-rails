@@ -55,6 +55,7 @@ Quality rules for UI screenshots:
 - when the highlighted selector is only part of a larger card, panel, or toolbar, the screenshot spec should provide a broader container-avoidance selector so callout placement protects the whole component
 - when the highlighted control opens related UI such as a dropdown or popover, the screenshot spec should also protect that revealed UI with `avoid_selectors`
 - generated screenshots should be visually spot-checked before PR publication to confirm that callouts, overlays, and labels do not hide the evidence they are supposed to explain
+- **callout array order is placement priority order** — the placement algorithm is greedy; declare the most spatially constrained callout first (elements near edges or in dense regions have fewer viable directions and must claim their slot before centre elements do); a `score: 0` in the generated JSON sidecar means the callout fell back to a grid scan — move it earlier in the array
 
 DOM identifier requirements for UI/Workflow PRs:
 
