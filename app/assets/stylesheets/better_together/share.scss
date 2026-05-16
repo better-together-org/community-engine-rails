@@ -99,5 +99,6 @@ button {
     transform: scale(1.05);
   }
 
-  &.share-short-link i.bg { color: var(--bs-primary); }
+  &.share-short-link:hover i.bg,
+  &.share-short-link:focus i.bg { color: var(--bs-primary); }
 }
