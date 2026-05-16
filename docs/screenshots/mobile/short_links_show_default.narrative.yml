@@ -1,0 +1,21 @@
+---
+title: Short Link — Detail Page
+audience:
+- platform_manager
+- developer
+journey_step: As a platform manager, I view a short link detail page to see its target
+  URL, click count, and status, and copy the short URL.
+callouts:
+- :id: short_url_input
+  :title: Short URL field
+  :description: Read-only input showing the full short URL. The adjacent copy button
+    uses the Stimulus clipboard controller — click counts are tracked in the browser,
+    not server-side.
+- :id: click_count
+  :title: Click count
+  :description: Server-side counter incremented on every redirect. Useful for gauging
+    link popularity.
+accessibility_notes: Input has id matching label for= attribute. Copy button has aria-label.
+  Status icons are aria-hidden.
+slug: short_links_show_default
+device: mobile

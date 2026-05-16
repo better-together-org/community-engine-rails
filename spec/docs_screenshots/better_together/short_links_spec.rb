@@ -56,6 +56,16 @@ RSpec.describe 'Documentation screenshots for Short Links',
     Current.platform = nil
   end
 
+  def screenshot_metadata(flow:, role:)
+    {
+      locale: I18n.default_locale,
+      role:,
+      feature_set: 'short_links',
+      flow:,
+      source_spec: self.class.metadata[:file_path]
+    }
+  end
+
   it 'captures the short links index — populated list' do
     BetterTogether::CapybaraScreenshotEngine.capture(
       'short_links_index_default',
@@ -193,8 +203,13 @@ RSpec.describe 'Documentation screenshots for Short Links',
   end
 
   it 'captures the share button on a page — short URL clipboard integration' do
-    page_record = BetterTogether::Page.first || create(:better_together_page, :published, platform: host_platform)
-    page_record.ensure_short_link!
+    page_record = create(:better_together_page, :published_public, platform: host_platform)
+    create(:better_together_short_link,
+           platform: host_platform,
+           linkable: page_record,
+           target_url: 'https://bettertogethersolutions.com/',
+           status: 'active',
+           expires_at: nil)
 
     BetterTogether::CapybaraScreenshotEngine.capture(
       'short_links_share_button',
@@ -227,7 +242,7 @@ RSpec.describe 'Documentation screenshots for Short Links',
         accessibility_notes: 'Button has aria-label and title. Stack icon layers are aria-hidden.'
       }
     ) do
-      visit better_together.page_path(page_record, locale: I18n.default_locale)
+      visit better_together.render_page_path(page_record.slug, locale: I18n.default_locale)
       expect(page).to have_css('[data-better_together--clipboard-url-value]')
     end
   end

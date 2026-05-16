@@ -1,0 +1,49 @@
+{
+  "name": "short_links_share_button",
+  "device": "mobile",
+  "url": "/en/rerum-aut-deleniti",
+  "title": "Rerum aut deleniti. | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "short_links",
+  "flow": "short_links_share_button",
+  "source_spec": "./spec/docs_screenshots/better_together/short_links_spec.rb",
+  "callouts": [
+    {
+      "selector": "[data-better_together--clipboard-url-value]",
+      "title": "Share link button",
+      "bullets": [
+        "Appears in the share panel on any Shortlinkable content.",
+        "Clicking copies the short URL to clipboard — no page reload required."
+      ],
+      "target": {
+        "x": 36.0,
+        "y": 227.390625,
+        "width": 80.0,
+        "height": 64.0,
+        "right": 116.0,
+        "bottom": 291.390625,
+        "center_x": 76.0,
+        "center_y": 259.390625
+      },
+      "avoid": {
+        "x": 36.0,
+        "y": 227.390625,
+        "width": 80.0,
+        "height": 64.0,
+        "right": 116.0,
+        "bottom": 291.390625,
+        "center_x": 76.0,
+        "center_y": 259.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 311.39,
+        "width": 270.0,
+        "height": 288,
+        "score": 969.609375
+      }
+    }
+  ]
+}
