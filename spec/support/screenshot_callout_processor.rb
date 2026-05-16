@@ -236,31 +236,41 @@ module BetterTogether # :nodoc:
     def build_overlay_svg(image_width, image_height, callouts)
       <<~SVG
         <svg xmlns="http://www.w3.org/2000/svg" width="#{image_width}" height="#{image_height}" viewBox="0 0 #{image_width} #{image_height}">
-          #{callouts.map { |callout| callout_svg(callout) }.join("\n")}
+          <g class="docs-callout-targets">
+            #{callouts.map { |c| target_highlight_svg(c) }.join("\n")}
+          </g>
+          <g class="docs-callout-connectors">
+            #{callouts.map { |c| connector_svg(c) }.join("\n")}
+          </g>
+          <g class="docs-callout-boxes">
+            #{callouts.map { |c| callout_box_svg(c) }.join("\n")}
+          </g>
+          <g class="docs-callout-texts">
+            #{callouts.map { |c| callout_text_svg(c) }.join("\n")}
+          </g>
         </svg>
       SVG
     end
 
-    # rubocop:disable Metrics/AbcSize
-    def callout_svg(callout)
-      target = callout[:target]
-      placement = callout[:placement]
-      start_point, end_point = connector_points(target, placement)
-
-      <<~SVG
-        <g class="docs-callout">
-          <rect x="#{target[:x]}" y="#{target[:y]}" width="#{target[:width]}" height="#{target[:height]}"
-                rx="12" fill="rgba(13, 110, 253, 0.12)" stroke="#0d6efd" stroke-width="4" />
-          <path d="M #{start_point[:x]} #{start_point[:y]} L #{end_point[:x]} #{end_point[:y]}"
-                stroke="#0d6efd" stroke-width="4" stroke-linecap="round" fill="none" />
-          <circle cx="#{start_point[:x]}" cy="#{start_point[:y]}" r="6" fill="#0d6efd" />
-          <rect x="#{placement[:x]}" y="#{placement[:y]}" width="#{placement[:width]}" height="#{placement[:height]}"
-                rx="18" fill="rgba(248, 251, 255, 0.96)" stroke="#0d6efd" stroke-width="4" />
-          #{callout_text_svg(callout)}
-        </g>
-      SVG
+    def target_highlight_svg(callout)
+      t = callout[:target]
+      attrs = "x=\"#{t[:x]}\" y=\"#{t[:y]}\" width=\"#{t[:width]}\" height=\"#{t[:height]}\""
+      "<rect #{attrs} rx=\"12\" fill=\"rgba(13, 110, 253, 0.12)\" stroke=\"#0d6efd\" stroke-width=\"4\" />"
     end
-    # rubocop:enable Metrics/AbcSize
+
+    def connector_svg(callout)
+      sp, ep = connector_points(callout[:target], callout[:placement])
+      path = "<path d=\"M #{sp[:x]} #{sp[:y]} L #{ep[:x]} #{ep[:y]}\" " \
+             'stroke="#0d6efd" stroke-width="4" stroke-linecap="round" fill="none" />'
+      dot  = "<circle cx=\"#{sp[:x]}\" cy=\"#{sp[:y]}\" r=\"6\" fill=\"#0d6efd\" />"
+      "#{path}\n#{dot}"
+    end
+
+    def callout_box_svg(callout)
+      p = callout[:placement]
+      attrs = "x=\"#{p[:x]}\" y=\"#{p[:y]}\" width=\"#{p[:width]}\" height=\"#{p[:height]}\""
+      "<rect #{attrs} rx=\"18\" fill=\"rgba(248, 251, 255, 0.96)\" stroke=\"#0d6efd\" stroke-width=\"4\" />"
+    end
 
     # rubocop:disable Metrics/AbcSize
     def connector_points(target, placement)
