@@ -23,7 +23,7 @@ export default class extends Controller {
     const icon = this.buttonTarget.querySelector('i.icon')
     if (!icon) return
     const original = icon.className
-    icon.className = original.replace(/\bfa-[a-z-]+\b/, 'fa-check')
+    icon.className = original.replace(/\bfa-[a-z-]+\b(?!.*\bfa-)/, 'fa-check')
     setTimeout(() => { icon.className = original }, 2000)
   }
 }

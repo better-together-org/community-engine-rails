@@ -3560,6 +3560,8 @@ fr:
         view: Voir
       index:
         copy_url: Copier l'URL courte
+        delete: Supprimer le lien court
+        edit: Modifier le lien court
         empty: Aucun lien court pour l'instant.
         new_btn: Nouveau lien court
         page_title: Liens courts
@@ -3570,6 +3572,7 @@ fr:
           status: Statut
           target: URL cible
           title: Titre
+        view: Voir le lien court
       new:
         page_title: Nouveau lien court
       show:

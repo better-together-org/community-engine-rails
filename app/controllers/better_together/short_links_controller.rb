@@ -11,6 +11,7 @@ module BetterTogether
 
     skip_before_action :authenticate_user!, only: [:ensure], raise: false
     rescue_from ActionController::BadRequest, with: :render_bad_request
+    rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
 
     def ensure
       linkable = resolve_linkable
@@ -39,6 +40,10 @@ module BetterTogether
 
     def render_bad_request
       head :bad_request
+    end
+
+    def render_forbidden
+      head :forbidden
     end
 
     def resolve_linkable

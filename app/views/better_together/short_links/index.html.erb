@@ -52,18 +52,21 @@
                   <%= short_link.status %>
                 </span>
               </td>
-              <td><%= short_link.expires_at&.strftime('%Y-%m-%d') || '—' %></td>
+              <td><%= short_link.expires_at ? l(short_link.expires_at.to_date) : '—' %></td>
               <td class="text-end">
-                <%= link_to short_link_path(short_link), class: 'btn btn-sm btn-outline-primary me-1' do %>
-                  <i class="fas fa-eye"></i>
+                <%= link_to short_link_path(short_link), class: 'btn btn-sm btn-outline-primary me-1',
+                            aria: { label: t('.view', default: 'View short link') } do %>
+                  <i class="fas fa-eye" aria-hidden="true"></i>
                 <% end %>
-                <%= link_to edit_short_link_path(short_link), class: 'btn btn-sm btn-outline-secondary me-1' do %>
-                  <i class="fas fa-edit"></i>
+                <%= link_to edit_short_link_path(short_link), class: 'btn btn-sm btn-outline-secondary me-1',
+                            aria: { label: t('.edit', default: 'Edit short link') } do %>
+                  <i class="fas fa-edit" aria-hidden="true"></i>
                 <% end %>
                 <%= button_to short_link_path(short_link), method: :delete,
                               class: 'btn btn-sm btn-outline-danger',
+                              aria: { label: t('.delete', default: 'Delete short link') },
                               form: { data: { turbo_confirm: t('globals.confirm_delete') } } do %>
-                  <i class="fas fa-trash"></i>
+                  <i class="fas fa-trash" aria-hidden="true"></i>
                 <% end %>
               </td>
             </tr>

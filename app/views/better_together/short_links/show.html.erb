@@ -55,11 +55,11 @@
 
         <% if @short_link.expires_at.present? %>
           <dt class="col-sm-3"><%= t('.expires_at', default: 'Expires At') %></dt>
-          <dd class="col-sm-9"><%= @short_link.expires_at.strftime('%Y-%m-%d %H:%M UTC') %></dd>
+          <dd class="col-sm-9"><%= l(@short_link.expires_at, format: :long) %></dd>
         <% end %>
 
         <dt class="col-sm-3"><%= t('.created_at', default: 'Created') %></dt>
-        <dd class="col-sm-9"><%= @short_link.created_at.strftime('%Y-%m-%d') %></dd>
+        <dd class="col-sm-9"><%= l(@short_link.created_at.to_date, format: :long) %></dd>
       </dl>
     </div>
   </div>

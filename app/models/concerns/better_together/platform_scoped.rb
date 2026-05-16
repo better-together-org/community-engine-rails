@@ -5,7 +5,7 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+      belongs_to :platform, class_name: 'BetterTogether::Platform'
       before_validation :assign_current_platform_if_available
       scope :for_platform, ->(platform) { where(platform:) }
     end

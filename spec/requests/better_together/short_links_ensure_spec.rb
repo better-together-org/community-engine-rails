@@ -49,7 +49,7 @@ RSpec.describe 'ShortLinks#ensure' do
       it 'is not accessible' do
         post ensure_path, params: ensure_params(private_page)
 
-        expect(response).to have_http_status(:forbidden).or have_http_status(:redirect)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 

@@ -27,7 +27,7 @@ module BetterTogether
         if permitted_to?('manage_platform')
           scope.where(platform: Current.platform)
         else
-          scope.with_creator(agent)
+          scope.with_creator(agent).for_platform(Current.platform)
         end
       end
     end

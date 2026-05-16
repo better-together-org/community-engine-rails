@@ -3538,6 +3538,8 @@ es:
         view: Ver
       index:
         copy_url: Copiar URL corta
+        delete: Eliminar enlace corto
+        edit: Editar enlace corto
         empty: Aún no hay enlaces cortos.
         new_btn: Nuevo enlace corto
         page_title: Enlaces cortos
@@ -3548,6 +3550,7 @@ es:
           status: Estado
           target: URL de destino
           title: Título
+        view: Ver enlace corto
       new:
         page_title: Nuevo enlace corto
       show:
