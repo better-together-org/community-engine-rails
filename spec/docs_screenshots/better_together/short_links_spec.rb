@@ -74,7 +74,7 @@ RSpec.describe 'Documentation screenshots for Short Links',
       callouts: [
         {
           id: 'copy_button',
-          selector: '[data-better_together--clipboard-target="button"]:first-of-type',
+          selector: '#short-links-table tbody tr:first-child [data-better_together--clipboard-target="button"]',
           title: 'Copy short URL',
           bullets: [
             'Copies the short URL to the clipboard.',
@@ -83,7 +83,7 @@ RSpec.describe 'Documentation screenshots for Short Links',
         },
         {
           id: 'status_badge',
-          selector: '.badge.bg-success',
+          selector: '#short-links-table .short-link-status-badge.bg-success',
           title: 'Active status badge',
           bullets: [
             'Green = active and unexpired.',
@@ -93,7 +93,7 @@ RSpec.describe 'Documentation screenshots for Short Links',
         },
         {
           id: 'new_button',
-          selector: 'a.btn-primary',
+          selector: '#new-short-link-btn',
           title: 'New Short Link',
           bullets: ['Opens the form to create a new short link for any URL.']
         }
@@ -169,7 +169,7 @@ RSpec.describe 'Documentation screenshots for Short Links',
         },
         {
           id: 'click_count',
-          selector: '.card-body dl dd:nth-of-type(3)',
+          selector: '#short-link-click-count',
           title: 'Click count',
           bullets: ['Total number of times this link has been followed.']
         }

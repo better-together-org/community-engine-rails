@@ -2,10 +2,10 @@
   <%= @short_link.title.presence || @short_link.code %> | <%= t('.page_title', default: 'Short Link') %>
 <% end %>
 
-<div class="container my-3">
+<div class="container my-3" id="<%= dom_id(@short_link) %>">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1><%= @short_link.title.presence || @short_link.code %></h1>
-    <div class="btn-group">
+    <div class="btn-group" id="short-link-actions">
       <%= link_to edit_short_link_path(@short_link), class: 'btn btn-outline-secondary' do %>
         <i class="fas fa-edit" aria-hidden="true"></i> <%= t('.edit', default: 'Edit') %>
       <% end %>
@@ -37,29 +37,29 @@
         </div>
       </div>
 
-      <dl class="row">
+      <dl class="row" id="short-link-details">
         <dt class="col-sm-3"><%= t('.target_url', default: 'Target URL') %></dt>
-        <dd class="col-sm-9">
+        <dd class="col-sm-9" id="short-link-target-url">
           <%= link_to @short_link.target_url, @short_link.target_url, target: '_blank', rel: 'noopener noreferrer' %>
         </dd>
 
         <dt class="col-sm-3"><%= t('.status', default: 'Status') %></dt>
-        <dd class="col-sm-9">
-          <span class="badge bg-<%= @short_link.status_active? ? 'success' : (@short_link.status_expired? ? 'secondary' : 'warning') %>">
+        <dd class="col-sm-9" id="short-link-status">
+          <span class="badge short-link-status-badge bg-<%= @short_link.status_active? ? 'success' : (@short_link.status_expired? ? 'secondary' : 'warning') %>">
             <%= @short_link.status %>
           </span>
         </dd>
 
         <dt class="col-sm-3"><%= t('.clicks', default: 'Total Clicks') %></dt>
-        <dd class="col-sm-9"><%= @short_link.click_count %></dd>
+        <dd class="col-sm-9" id="short-link-click-count"><%= @short_link.click_count %></dd>
 
         <% if @short_link.expires_at.present? %>
           <dt class="col-sm-3"><%= t('.expires_at', default: 'Expires At') %></dt>
-          <dd class="col-sm-9"><%= l(@short_link.expires_at, format: :long) %></dd>
+          <dd class="col-sm-9" id="short-link-expires-at"><%= l(@short_link.expires_at, format: :long) %></dd>
         <% end %>
 
         <dt class="col-sm-3"><%= t('.created_at', default: 'Created') %></dt>
-        <dd class="col-sm-9"><%= l(@short_link.created_at.to_date, format: :long) %></dd>
+        <dd class="col-sm-9" id="short-link-created-at"><%= l(@short_link.created_at.to_date, format: :long) %></dd>
       </dl>
     </div>
   </div>

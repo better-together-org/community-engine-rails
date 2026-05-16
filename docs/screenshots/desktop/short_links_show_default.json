@@ -1,7 +1,7 @@
 {
   "name": "short_links_show_default",
   "device": "desktop",
-  "url": "/en/short_links/b1489417-cc0e-4f51-a538-096ec7bd0e26",
+  "url": "/en/short_links/c5a9f6ce-acda-4b0c-8e91-d8b5035fd400",
   "title": "BTS Homepage | Short Link | Mante Inc",
   "locale": "en",
   "role": "platform_manager",
@@ -46,7 +46,7 @@
       }
     },
     {
-      "selector": ".card-body dl dd:nth-of-type(3)",
+      "selector": "#short-link-click-count",
       "title": "Click count",
       "bullets": [
         "Total number of times this link has been followed."
