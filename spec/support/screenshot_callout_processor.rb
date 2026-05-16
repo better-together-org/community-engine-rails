@@ -266,10 +266,6 @@ module BetterTogether # :nodoc:
       groups = callouts.each_with_index.map { |c, i| callout_group_svg(c, i) }.join("\n")
       <<~SVG
         <svg xmlns="http://www.w3.org/2000/svg" width="#{image_width}" height="#{image_height}" viewBox="0 0 #{image_width} #{image_height}">
-          <g class="docs-callout-decorations">
-            #{callouts.map { |c| target_highlight_svg(c) }.join("\n")}
-            #{callouts.map { |c| connector_svg(c) }.join("\n")}
-          </g>
           #{groups}
         </svg>
       SVG
@@ -277,6 +273,8 @@ module BetterTogether # :nodoc:
 
     def callout_group_svg(callout, index)
       "<g class=\"docs-callout-group-#{index}\">\n" \
+        "#{target_highlight_svg(callout)}\n" \
+        "#{connector_svg(callout)}\n" \
         "#{callout_box_svg(callout)}\n" \
         "#{callout_text_svg(callout)}\n" \
         '</g>'
