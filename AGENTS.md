@@ -118,6 +118,30 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Use repository-scoped temporary paths instead (for example `tmp/` inside the repo, which remains repository-local).
 - If a command or script defaults to `/tmp`, override it to a repository path before running.
 
+## View DOM Identifier Requirements
+
+Every interactive or data-bearing HTML element in a new or modified ERB view **must** carry a
+stable, predictable `id` or semantic `class` attribute. This is enforced at code-review time and
+verified by doc screenshot specs and DOM contract specs.
+
+**Full standard**: [`docs/development/view_dom_identifier_standard.md`](docs/development/view_dom_identifier_standard.md)
+
+Required elements and their patterns:
+
+| Element | Required identifier | Example |
+|---------|--------------------|---------| 
+| Record container | `dom_id(record)` | `id="<%= dom_id(@short_link) %>"` |
+| Index table | `<resource>-table` | `id="short-links-table"` |
+| New CTA button | `new-<resource>-btn` | `id="new-short-link-btn"` |
+| Detail `<dl>` | `dom_id(record, :details)` | `id="<%= dom_id(@resource, :details) %>"` |
+| Detail `<dd>` | `dom_id(record, :field)` or static kebab | `id="short-link-click-count"` |
+| Status badge | `<resource>-status-badge` class | `class="short-link-status-badge bg-success"` |
+| Action group | `<resource>-actions` | `id="short-link-actions"` |
+
+**Agent rule**: Never write a doc screenshot spec `selector:` using `nth-of-type`, `:first-of-type`,
+or other structural pseudo-selectors. Always target a stable `id` or semantic `class`. If the target
+element lacks one, add it to the view first.
+
 ## String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries.
 - **Follow existing pattern**: Use full English words as enum values (current average: ~7 characters).

@@ -56,6 +56,12 @@ Quality rules for UI screenshots:
 - when the highlighted control opens related UI such as a dropdown or popover, the screenshot spec should also protect that revealed UI with `avoid_selectors`
 - generated screenshots should be visually spot-checked before PR publication to confirm that callouts, overlays, and labels do not hide the evidence they are supposed to explain
 
+DOM identifier requirements for UI/Workflow PRs:
+
+- every new or modified view must add stable `id` and/or semantic `class` attributes to all interactive and data-bearing elements per the [View DOM Identifier Standard](view_dom_identifier_standard.md)
+- screenshot spec `selector:` values must target stable IDs or semantic classes — structural pseudo-selectors (`nth-of-type`, `:first-of-type`, generic tag chains) are not permitted and will be flagged in code review
+- when the PR introduces a new model surface (index, show, form), add corresponding DOM contract specs under `spec/dom_contracts/` asserting the key IDs are present in the rendered page
+
 ## Significant PR Packet Rule
 
 Significant PRs should also have a private Community Engine stakeholder packet:
