@@ -32,20 +32,25 @@ module BetterTogether # :nodoc:
 
     private
 
-    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def prepare_callouts(callouts, image_path:)
       image = Vips::Image.new_from_file(image_path.to_s, access: :sequential)
+      placed_boxes = []
+      placed_targets = []
       Array(callouts).filter_map do |callout|
         normalized = normalize_callout(callout)
         target = clip_rect(normalized[:target], image.width, image.height)
         next unless target
 
         avoid = clip_rect(normalized[:avoid], image.width, image.height) || target
-        placement = best_placement(target, avoid, image.width, image.height, normalized[:title], normalized[:bullets])
+        placement = best_placement(target, avoid, image.width, image.height, normalized[:title], normalized[:bullets],
+                                   placed_boxes, placed_targets)
+        placed_boxes << { x: placement[:x], y: placement[:y], width: placement[:width], height: placement[:height] }
+        placed_targets << target
         normalized.merge(target:, avoid:, placement:)
       end
     end
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def normalize_callout(callout)
       target = symbolize_hash(callout[:target] || callout['target'])
@@ -88,7 +93,7 @@ module BetterTogether # :nodoc:
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     # rubocop:disable Metrics/ParameterLists
-    def best_placement(target, avoid, image_width, image_height, title, bullets)
+    def best_placement(target, avoid, image_width, image_height, title, bullets, placed_boxes = [], placed_targets = [])
       box_width = (image_width * (image_width < 700 ? 0.54 : 0.28)).clamp(MIN_BOX_WIDTH, MAX_BOX_WIDTH)
       box_height = estimate_box_height(box_width, title, bullets)
 
@@ -99,7 +104,9 @@ module BetterTogether # :nodoc:
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
           avoid:,
-          free_space: image_width - avoid[:right]
+          free_space: image_width - avoid[:right],
+          placed_boxes:,
+          placed_targets:
         ),
         placement_candidate(
           side: :left,
@@ -107,7 +114,9 @@ module BetterTogether # :nodoc:
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
           avoid:,
-          free_space: avoid[:x]
+          free_space: avoid[:x],
+          placed_boxes:,
+          placed_targets:
         ),
         placement_candidate(
           side: :below,
@@ -115,7 +124,9 @@ module BetterTogether # :nodoc:
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
           avoid:,
-          free_space: image_height - avoid[:bottom]
+          free_space: image_height - avoid[:bottom],
+          placed_boxes:,
+          placed_targets:
         ),
         placement_candidate(
           side: :above,
@@ -123,18 +134,20 @@ module BetterTogether # :nodoc:
           box: { width: box_width, height: box_height },
           image: { width: image_width, height: image_height },
           avoid:,
-          free_space: avoid[:y]
+          free_space: avoid[:y],
+          placed_boxes:,
+          placed_targets:
         )
       ].compact
 
       candidates.max_by { |candidate| candidate[:score] } ||
-        fallback_placement(box_width, box_height, image_width, image_height, target, avoid)
+        fallback_placement(box_width, box_height, image_width, image_height, target, avoid, placed_boxes, placed_targets)
     end
     # rubocop:enable Metrics/ParameterLists
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
-    def placement_candidate(side:, position:, box:, image:, avoid:, free_space:)
+    def placement_candidate(side:, position:, box:, image:, avoid:, free_space:, placed_boxes: [], placed_targets: [])
       clamped_x = clamp(position[:x], BOX_MARGIN, image[:width] - box[:width] - BOX_MARGIN)
       clamped_y = clamp(position[:y], BOX_MARGIN, image[:height] - box[:height] - BOX_MARGIN)
       overlap = rect_overlap?(
@@ -142,6 +155,15 @@ module BetterTogether # :nodoc:
         { x: avoid[:x] - 8, y: avoid[:y] - 8, width: avoid[:width] + 16, height: avoid[:height] + 16 }
       )
       return if overlap
+
+      candidate_rect = { x: clamped_x, y: clamped_y, width: box[:width], height: box[:height] }
+      return if placed_boxes.any? do |placed|
+        rect_overlap?(candidate_rect,
+                      { x: placed[:x] - 12, y: placed[:y] - 12,
+                        width: placed[:width] + 24, height: placed[:height] + 24 })
+      end
+
+      return if placed_targets.any? { |t| rect_overlap?(candidate_rect, t) }
 
       {
         side: side.to_s,
@@ -155,7 +177,7 @@ module BetterTogether # :nodoc:
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
-    def fallback_placement(width, height, image_width, image_height, target, avoid)
+    def fallback_placement(width, height, image_width, image_height, target, avoid, placed_boxes = [], placed_targets = [])
       placements = [
         { side: 'right', x: avoid[:right] + TARGET_GAP, y: BOX_MARGIN },
         { side: 'left', x: avoid[:x] - width - TARGET_GAP, y: BOX_MARGIN },
@@ -171,20 +193,51 @@ module BetterTogether # :nodoc:
           box: { width:, height: },
           image: { width: image_width, height: image_height },
           avoid:,
-          free_space: 0
+          free_space: 0,
+          placed_boxes:,
+          placed_targets:
         )
         return candidate if candidate
       end
 
+      grid_scan_placement(width, height, image_width, image_height, avoid, placed_boxes, placed_targets) ||
+        stack_placement(width, height, image_height, placed_boxes)
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+    def grid_scan_placement(width, height, image_width, image_height, avoid, placed_boxes, placed_targets = [])
+      x_anchors = [
+        BOX_MARGIN,
+        ((image_width - width) / 2.0).round,
+        image_width - width - BOX_MARGIN
+      ].uniq
+      step = [(height / 2.0).round, 30].max
+      (BOX_MARGIN.to_i..(image_height - height - BOX_MARGIN).to_i).step(step) do |y|
+        x_anchors.each do |x|
+          candidate = placement_candidate(
+            side: 'floating', position: { x:, y: },
+            box: { width:, height: },
+            image: { width: image_width, height: image_height },
+            avoid:, free_space: 0, placed_boxes:, placed_targets:
+          )
+          return candidate if candidate
+        end
+      end
+      nil
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
+
+    def stack_placement(width, height, image_height, placed_boxes)
+      stack_y = (placed_boxes.map { |b| b[:y] + b[:height] }.max || BOX_MARGIN) + 20
       {
         side: 'floating',
-        x: clamp(target[:right] + TARGET_GAP, BOX_MARGIN, image_width - width - BOX_MARGIN).round(2),
-        y: clamp(target[:bottom] + TARGET_GAP, BOX_MARGIN, image_height - height - BOX_MARGIN).round(2),
+        x: BOX_MARGIN.to_f.round(2),
+        y: stack_y.clamp(BOX_MARGIN, image_height - height - BOX_MARGIN).round(2),
         width: width.round(2),
         height: height.round(2)
       }
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/ParameterLists
 
     # rubocop:disable Metrics/AbcSize
     def rect_overlap?(source_rect, target_rect)
@@ -219,33 +272,44 @@ module BetterTogether # :nodoc:
     end
 
     def build_overlay_svg(image_width, image_height, callouts)
+      groups = callouts.each_with_index.map { |c, i| callout_group_svg(c, i) }.join("\n")
       <<~SVG
         <svg xmlns="http://www.w3.org/2000/svg" width="#{image_width}" height="#{image_height}" viewBox="0 0 #{image_width} #{image_height}">
-          #{callouts.map { |callout| callout_svg(callout) }.join("\n")}
+          <g class="docs-callout-decorations">
+            #{callouts.map { |c| target_highlight_svg(c) }.join("\n")}
+            #{callouts.map { |c| connector_svg(c) }.join("\n")}
+          </g>
+          #{groups}
         </svg>
       SVG
     end
 
-    # rubocop:disable Metrics/AbcSize
-    def callout_svg(callout)
-      target = callout[:target]
-      placement = callout[:placement]
-      start_point, end_point = connector_points(target, placement)
-
-      <<~SVG
-        <g class="docs-callout">
-          <rect x="#{target[:x]}" y="#{target[:y]}" width="#{target[:width]}" height="#{target[:height]}"
-                rx="12" fill="rgba(13, 110, 253, 0.12)" stroke="#0d6efd" stroke-width="4" />
-          <path d="M #{start_point[:x]} #{start_point[:y]} L #{end_point[:x]} #{end_point[:y]}"
-                stroke="#0d6efd" stroke-width="4" stroke-linecap="round" fill="none" />
-          <circle cx="#{start_point[:x]}" cy="#{start_point[:y]}" r="6" fill="#0d6efd" />
-          <rect x="#{placement[:x]}" y="#{placement[:y]}" width="#{placement[:width]}" height="#{placement[:height]}"
-                rx="18" fill="rgba(248, 251, 255, 0.96)" stroke="#0d6efd" stroke-width="4" />
-          #{callout_text_svg(callout)}
-        </g>
-      SVG
+    def callout_group_svg(callout, index)
+      "<g class=\"docs-callout-group-#{index}\">\n" \
+        "#{callout_box_svg(callout)}\n" \
+        "#{callout_text_svg(callout)}\n" \
+        '</g>'
     end
-    # rubocop:enable Metrics/AbcSize
+
+    def target_highlight_svg(callout)
+      t = callout[:target]
+      attrs = "x=\"#{t[:x]}\" y=\"#{t[:y]}\" width=\"#{t[:width]}\" height=\"#{t[:height]}\""
+      "<rect #{attrs} rx=\"12\" fill=\"rgba(13, 110, 253, 0.12)\" stroke=\"#0d6efd\" stroke-width=\"4\" />"
+    end
+
+    def connector_svg(callout)
+      sp, ep = connector_points(callout[:target], callout[:placement])
+      path = "<path d=\"M #{sp[:x]} #{sp[:y]} L #{ep[:x]} #{ep[:y]}\" " \
+             'stroke="#0d6efd" stroke-width="4" stroke-linecap="round" fill="none" />'
+      dot  = "<circle cx=\"#{sp[:x]}\" cy=\"#{sp[:y]}\" r=\"6\" fill=\"#0d6efd\" />"
+      "#{path}\n#{dot}"
+    end
+
+    def callout_box_svg(callout)
+      p = callout[:placement]
+      attrs = "x=\"#{p[:x]}\" y=\"#{p[:y]}\" width=\"#{p[:width]}\" height=\"#{p[:height]}\""
+      "<rect #{attrs} rx=\"18\" fill=\"rgba(248, 251, 255, 0.96)\" stroke=\"#0d6efd\" stroke-width=\"4\" />"
+    end
 
     # rubocop:disable Metrics/AbcSize
     def connector_points(target, placement)

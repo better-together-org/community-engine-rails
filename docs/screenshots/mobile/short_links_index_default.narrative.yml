@@ -1,0 +1,24 @@
+---
+title: Short Links — Index Page
+audience:
+- platform_manager
+- developer
+journey_step: As a platform manager, I view the short links list to find, copy, and
+  manage all share URLs on my platform.
+callouts:
+- :id: copy_button
+  :title: Copy short URL
+  :description: One click copies the full short URL to the clipboard. The icon briefly
+    changes to a checkmark to confirm the copy succeeded.
+- :id: status_badge
+  :title: Status badge
+  :description: Shows whether each link is active, inactive, or expired. Green = safe
+    to share, grey = no longer redirecting.
+- :id: new_button
+  :title: New Short Link
+  :description: Opens the creation form for a new short link pointing to any target
+    URL.
+accessibility_notes: All action buttons (view, edit, delete, copy) have aria-label
+  attributes. Decorative icons are aria-hidden.
+slug: short_links_index_default
+device: mobile

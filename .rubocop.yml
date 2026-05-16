@@ -39,6 +39,12 @@ RSpec/ContextWording:
   Enabled: false
 RSpec/MessageSpies:
   Enabled: false
+RSpec/SpecFilePathSuffix:
+  Exclude:
+    - 'spec/docs_screenshots/_template.rb'
+RSpec/NoExpectationExample:
+  Exclude:
+    - 'spec/docs_screenshots/_template.rb'
 RSpec/LetSetup:
   Enabled: false
 RSpec/EmptyExampleGroup:

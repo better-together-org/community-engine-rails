@@ -14,6 +14,9 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :people
   # NOTE: Relationship routes omitted until all related resources exist
 
+  # Short Links
+  jsonapi_resources :short_links
+
   # Communities
   jsonapi_resources :communities
   # NOTE: Relationship routes omitted until all related resources exist

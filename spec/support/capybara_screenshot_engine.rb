@@ -4,6 +4,7 @@ require 'capybara'
 require 'fileutils'
 require 'json'
 require 'uri'
+require 'yaml'
 
 module BetterTogether # :nodoc:
   # Captures deterministic desktop and mobile screenshots for documentation specs.
@@ -15,11 +16,11 @@ module BetterTogether # :nodoc:
 
     SCREENSHOT_ROOT = BetterTogether::Engine.root.join('docs', 'screenshots').freeze
 
-    def capture(name, device: :both, metadata: {}, callouts: [], &)
+    def capture(name, device: :both, metadata: {}, callouts: [], narrative: nil, &)
       register_drivers
 
       devices_for(device).to_h do |current_device|
-        [current_device, capture_single(name, current_device, metadata:, callouts:, &)]
+        [current_device, capture_single(name, current_device, metadata:, callouts:, narrative:, &)]
       end
     end
 
@@ -62,7 +63,7 @@ module BetterTogether # :nodoc:
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def capture_single(name, device, metadata:, callouts:)
+    def capture_single(name, device, metadata:, callouts:, narrative: nil)
       directory = SCREENSHOT_ROOT.join(device.to_s)
       FileUtils.mkdir_p(directory)
 
@@ -93,6 +94,14 @@ module BetterTogether # :nodoc:
         end
         File.write(json_path, JSON.pretty_generate(processed_metadata))
         normalize_artifact_permissions(json_path)
+        if narrative
+          yaml_path = directory.join("#{filename}.narrative.yml")
+          normalized_narrative = narrative.transform_keys(&:to_s)
+          normalized_narrative['slug'] ||= filename
+          normalized_narrative['device'] = device.to_s
+          File.write(yaml_path, YAML.dump(normalized_narrative))
+          normalize_artifact_permissions(yaml_path)
+        end
       ensure
         restore_sticky_elements
       end
