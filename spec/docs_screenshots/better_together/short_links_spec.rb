@@ -82,6 +82,12 @@ RSpec.describe 'Documentation screenshots for Short Links',
           ]
         },
         {
+          id: 'new_button',
+          selector: '#new-short-link-btn',
+          title: 'New Short Link',
+          bullets: ['Opens the form to create a new short link for any URL.']
+        },
+        {
           id: 'status_badge',
           selector: '#short-links-table .short-link-status-badge.bg-success',
           title: 'Active status badge',
@@ -90,12 +96,6 @@ RSpec.describe 'Documentation screenshots for Short Links',
             'Yellow = scheduled or inactive.',
             'Grey = expired.'
           ]
-        },
-        {
-          id: 'new_button',
-          selector: '#new-short-link-btn',
-          title: 'New Short Link',
-          bullets: ['Opens the form to create a new short link for any URL.']
         }
       ],
       narrative: {
