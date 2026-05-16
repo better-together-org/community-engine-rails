@@ -169,7 +169,7 @@ RSpec.describe 'Documentation screenshots for Short Links',
         },
         {
           id: 'click_count',
-          selector: '.card-body dd:first-of-type',
+          selector: '.card-body dl dd:nth-of-type(3)',
           title: 'Click count',
           bullets: ['Total number of times this link has been followed.']
         }
