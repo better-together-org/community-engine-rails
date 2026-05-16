@@ -90,6 +90,13 @@ a {
 
 // Extend share button styles to <button> elements (e.g. short-link clipboard button)
 button {
+  &.share-button {
+    font-size: 0.6em;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease-in-out, transform 0.3s;
+  }
+
   &.share-button i.icon { color: white; }
   &.share-button i.bg { color: var(--bs-secondary); }
 
