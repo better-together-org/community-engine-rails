@@ -80,7 +80,7 @@ module BetterTogether
         else
           button_to ensure_content_short_link_path,
                     params: { linkable_type: shareable.class.name, linkable_id: shareable.id },
-                    class: 'share-button share-short-link btn p-0 border-0 bg-transparent',
+                    class: 'share-button share-short-link',
                     form: { data: { turbo_frame: frame_id } },
                     title: t('better_together.share_buttons.get_short_link'),
                     aria: { label: t('better_together.share_buttons.get_short_link') } do

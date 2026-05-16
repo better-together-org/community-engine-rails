@@ -88,13 +88,21 @@ a {
   }
 }
 
-// Extend share button styles to <button> elements (e.g. short-link clipboard button)
+// <button> share buttons — full reset so Bootstrap .btn classes are not needed
 button {
   &.share-button {
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    line-height: 1;
     font-size: 0.6em;
     display: flex;
     align-items: center;
+    text-decoration: none;
     transition: background-color 0.3s ease-in-out, transform 0.3s;
+
+    &:focus { outline: 2px solid #000; outline-offset: 2px; }
   }
 
   &.share-button i.icon { color: white; }

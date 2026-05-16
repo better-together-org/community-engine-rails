@@ -2,7 +2,7 @@
   "name": "short_links_index_default",
   "device": "desktop",
   "url": "/en/short_links",
-  "title": "Short Links | Sanford, Frami and Balistreri",
+  "title": "Short Links | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "short_links",
@@ -46,6 +46,41 @@
       }
     },
     {
+      "selector": "#new-short-link-btn",
+      "title": "New Short Link",
+      "bullets": [
+        "Opens the form to create a new short link for any URL."
+      ],
+      "target": {
+        "x": 1202.140625,
+        "y": 129.0,
+        "width": 165.859375,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 167.0,
+        "center_x": 1285.0703125,
+        "center_y": 148.0
+      },
+      "avoid": {
+        "x": 1202.140625,
+        "y": 129.0,
+        "width": 165.859375,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 167.0,
+        "center_x": 1285.0703125,
+        "center_y": 148.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 187.0,
+        "width": 380,
+        "height": 132,
+        "score": 1294.0
+      }
+    },
+    {
       "selector": "#short-links-table .short-link-status-badge.bg-success",
       "title": "Active status badge",
       "bullets": [
@@ -80,41 +115,6 @@
         "width": 380,
         "height": 210,
         "score": 1098.8125
-      }
-    },
-    {
-      "selector": "#new-short-link-btn",
-      "title": "New Short Link",
-      "bullets": [
-        "Opens the form to create a new short link for any URL."
-      ],
-      "target": {
-        "x": 1202.140625,
-        "y": 129.0,
-        "width": 165.859375,
-        "height": 38.0,
-        "right": 1368.0,
-        "bottom": 167.0,
-        "center_x": 1285.0703125,
-        "center_y": 148.0
-      },
-      "avoid": {
-        "x": 1202.140625,
-        "y": 129.0,
-        "width": 165.859375,
-        "height": 38.0,
-        "right": 1368.0,
-        "bottom": 167.0,
-        "center_x": 1285.0703125,
-        "center_y": 148.0
-      },
-      "placement": {
-        "side": "below",
-        "x": 1036,
-        "y": 187.0,
-        "width": 380,
-        "height": 132,
-        "score": 1294.0
       }
     }
   ]
