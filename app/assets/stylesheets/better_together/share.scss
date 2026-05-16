@@ -87,3 +87,17 @@ a {
     // }
   }
 }
+
+// Extend share button styles to <button> elements (e.g. short-link clipboard button)
+button {
+  &.share-button i.icon { color: white; }
+  &.share-button i.bg { color: var(--bs-secondary); }
+
+  &.share-button:hover,
+  &.share-button:focus {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+
+  &.share-short-link i.bg { color: var(--bs-primary); }
+}

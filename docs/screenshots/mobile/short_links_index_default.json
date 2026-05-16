@@ -74,12 +74,12 @@
         "center_y": 387.890625
       },
       "placement": {
-        "side": "below",
+        "side": "right",
         "x": 206.0,
-        "y": 418.08,
+        "y": 24,
         "width": 270.0,
         "height": 242,
-        "score": 862.921875
+        "score": 0
       }
     },
     {
@@ -109,12 +109,11 @@
         "center_y": 143.6875
       },
       "placement": {
-        "side": "below",
+        "side": "floating",
         "x": 206.0,
         "y": 182.69,
         "width": 270.0,
-        "height": 158,
-        "score": 1098.3125
+        "height": 158
       }
     }
   ]

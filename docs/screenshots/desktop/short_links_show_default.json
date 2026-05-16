@@ -1,7 +1,7 @@
 {
   "name": "short_links_show_default",
   "device": "desktop",
-  "url": "/en/short_links/9f6f4dfc-21ad-4e05-b383-e84ac0564d6e",
+  "url": "/en/short_links/87c8af4f-eee4-4672-a063-b440454b9821",
   "title": "BTS Homepage | Short Link | Mante Inc",
   "locale": "en",
   "role": "platform_manager",
@@ -72,12 +72,12 @@
         "center_y": 307.0
       },
       "placement": {
-        "side": "below",
+        "side": "above",
         "x": 690.75,
-        "y": 339.0,
+        "y": 143.0,
         "width": 380,
         "height": 132,
-        "score": 1142.0
+        "score": 295.0
       }
     }
   ]
