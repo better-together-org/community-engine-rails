@@ -67,7 +67,11 @@ module BetterTogether
       private
 
       def current_subscription_for(community)
-        community.billing_subscriptions.max_by do |subscription|
+        BetterTogether::Billing::Subscription
+          .joins(:pay_subscription)
+          .includes(:billing_plan, :pay_subscription)
+          .where(pay_subscriptions: { customer_id: community.pay_customers.select(:id) })
+          .max_by do |subscription|
           [
             subscription_priority(subscription),
             subscription.updated_at || Time.at(0),

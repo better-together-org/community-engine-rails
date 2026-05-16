@@ -6,7 +6,7 @@
 
 <div class="container my-3">
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-    <h1 class="mb-0">Edit Profile</h1>
+    <h1 class="mb-0"><%= t('better_together.people.edit_heading', default: 'Edit Profile') %></h1>
     <% if @person.persisted? %>
       <%= link_to t('better_together.billing.manage_person_link', default: 'Manage billing'),
                   person_billing_path(@person, locale: I18n.locale),

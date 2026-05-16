@@ -100,7 +100,7 @@ module BetterTogether
 
         Rails.logger.warn(
           "StripePriceSync: plan #{plan.id} has unsupported billing interval from Stripe. " \
-          'Deactivating locally.'
+          'Leaving the local active flag aligned with Stripe until interval support is added.'
         )
       end
 

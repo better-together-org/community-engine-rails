@@ -7,6 +7,15 @@ RSpec.describe BetterTogether::Billing::HostedEntitlementResolver do
 
   let(:community) { create(:better_together_community) }
 
+  def create_subscription_for(owner:, billing_plan:, status:, updated_at: nil)
+    pay_customer = create('pay/customer', owner:)
+    pay_subscription = create('pay/subscription', customer: pay_customer, status:)
+    attributes = { pay_subscription:, billing_plan: }
+    attributes[:updated_at] = updated_at if updated_at
+
+    create(:better_together_billing_subscription, **attributes)
+  end
+
   it 'returns inactive state when no billing subscription is present' do
     result = resolver.call(community:)
 
@@ -24,13 +33,7 @@ RSpec.describe BetterTogether::Billing::HostedEntitlementResolver do
         'community_capacity_tier' => 'Growth'
       }
     )
-    create(
-      :better_together_billing_subscription,
-      billable_owner: community,
-      beneficiary: community,
-      billing_plan: plan,
-      status: 'active'
-    )
+    create_subscription_for(owner: community, billing_plan: plan, status: 'active')
 
     result = resolver.call(community:)
 
@@ -42,13 +45,7 @@ RSpec.describe BetterTogether::Billing::HostedEntitlementResolver do
   end
 
   it 'marks past-due subscriptions as needing attention' do
-    create(
-      :better_together_billing_subscription,
-      billable_owner: community,
-      beneficiary: community,
-      billing_plan: create(:better_together_billing_plan),
-      status: 'past_due'
-    )
+    create_subscription_for(owner: community, billing_plan: create(:better_together_billing_plan), status: 'past_due')
 
     result = resolver.call(community:)
 
@@ -59,22 +56,8 @@ RSpec.describe BetterTogether::Billing::HostedEntitlementResolver do
   it 'prefers an active subscription over a newer canceled subscription' do
     active_plan = create(:better_together_billing_plan, metadata: { 'hosted_access_level' => 'Steady' })
     canceled_plan = create(:better_together_billing_plan, metadata: { 'hosted_access_level' => 'Canceled' })
-    create(
-      :better_together_billing_subscription,
-      billable_owner: community,
-      beneficiary: community,
-      billing_plan: active_plan,
-      status: 'active',
-      updated_at: 2.days.ago
-    )
-    create(
-      :better_together_billing_subscription,
-      billable_owner: community,
-      beneficiary: community,
-      billing_plan: canceled_plan,
-      status: 'canceled',
-      updated_at: 1.hour.ago
-    )
+    create_subscription_for(owner: community, billing_plan: active_plan, status: 'active', updated_at: 2.days.ago)
+    create_subscription_for(owner: community, billing_plan: canceled_plan, status: 'canceled', updated_at: 1.hour.ago)
 
     result = resolver.call(community:)
 

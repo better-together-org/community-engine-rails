@@ -19,6 +19,11 @@ RSpec.describe BetterTogether::Billing::PlansController do
   end
   let!(:billing_plan) { create(:better_together_billing_plan) }
 
+  def create_active_subscription_for(plan)
+    pay_subscription = create('pay/subscription', status: 'active')
+    create(:better_together_billing_subscription, pay_subscription:, billing_plan: plan)
+  end
+
   describe 'GET /:locale/host/billing/plans' do
     context 'as platform manager' do
       before { sign_in platform_manager }
@@ -27,6 +32,29 @@ RSpec.describe BetterTogether::Billing::PlansController do
         get better_together.billing_plans_path(locale:)
         expect(response).to have_http_status(:ok)
         expect(response.body).to include(billing_plan.name)
+      end
+
+      it 'renders precomputed active subscriber counts per plan' do
+        other_plan = create(:better_together_billing_plan)
+        create_active_subscription_for(billing_plan)
+        create_active_subscription_for(other_plan)
+        create(
+          :better_together_billing_subscription,
+          pay_subscription: create('pay/subscription', status: 'canceled'),
+          billing_plan: other_plan
+        )
+
+        get better_together.billing_plans_path(locale:)
+
+        document = Nokogiri::HTML.parse(response.body)
+        rows = document.css('tbody tr')
+        counts_by_identifier = rows.to_h do |row|
+          cells = row.css('td')
+          [cells[0].text.strip, cells[5].text.strip]
+        end
+
+        expect(counts_by_identifier[billing_plan.identifier]).to eq('1')
+        expect(counts_by_identifier[other_plan.identifier]).to eq('1')
       end
     end
 

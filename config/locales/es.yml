@@ -1223,6 +1223,7 @@ es:
         items_title: Elementos
         no_items: No hay elementos para mostrar
     communities:
+      edit_heading: Editando comunidad
       form:
         allow_membership_requests: Permitir solicitudes de membresía
         allow_membership_requests_hint: Muestra un formulario público de solicitud
@@ -2896,6 +2897,7 @@ es:
         microphone: Micrófono
         notifications: Notificaciones
         permissions_group_label: Permissions group label
+      edit_heading: Editar perfil
       federate_content: Permitir que esta plataforma incluya tus publicaciones, páginas
         y eventos públicos en fuentes de federación aprobadas.
       index:

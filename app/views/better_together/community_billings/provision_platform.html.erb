@@ -33,18 +33,19 @@
           <strong><%= t('better_together.billing.provision_platform_form_heading', default: 'Platform details') %></strong>
         </div>
         <div class="card-body">
-          <%= form_with url: provision_platform_community_billing_path(@community, locale: I18n.locale),
+          <%= form_with scope: :platform_provision,
+                        url: provision_platform_community_billing_path(@community, locale: I18n.locale),
                         method: :post,
                         html: { class: 'needs-validation' } do |f| %>
             <div class="mb-3">
-              <%= label_tag :platform_provision_name,
-                            t('better_together.billing.provision_platform_name', default: 'Platform name'),
-                            class: 'form-label' %>
-              <%= text_field_tag 'platform_provision[name]',
-                                 params.dig(:platform_provision, :name),
-                                 class: 'form-control',
-                                 required: true,
-                                 placeholder: t('better_together.billing.provision_platform_name_placeholder', default: 'e.g. My Community Space') %>
+              <%= f.label :name,
+                          t('better_together.billing.provision_platform_name', default: 'Platform name'),
+                          class: 'form-label' %>
+              <%= f.text_field :name,
+                               value: params.dig(:platform_provision, :name),
+                               class: 'form-control',
+                               required: true,
+                               placeholder: t('better_together.billing.provision_platform_name_placeholder', default: 'e.g. My Community Space') %>
               <div class="form-text">
                 <%= t('better_together.billing.provision_platform_name_hint',
                       default: 'The public-facing name for this hosted platform.') %>
@@ -52,14 +53,14 @@
             </div>
 
             <div class="mb-3">
-              <%= label_tag :platform_provision_host_url,
-                            t('better_together.billing.provision_platform_host_url', default: 'Host URL'),
-                            class: 'form-label' %>
-              <%= text_field_tag 'platform_provision[host_url]',
-                                 params.dig(:platform_provision, :host_url),
-                                 class: 'form-control',
-                                 required: true,
-                                 placeholder: 'https://myspace.example.com' %>
+              <%= f.label :host_url,
+                          t('better_together.billing.provision_platform_host_url', default: 'Host URL'),
+                          class: 'form-label' %>
+              <%= f.text_field :host_url,
+                               value: params.dig(:platform_provision, :host_url),
+                               class: 'form-control',
+                               required: true,
+                               placeholder: 'https://myspace.example.com' %>
               <div class="form-text">
                 <%= t('better_together.billing.provision_platform_host_url_hint',
                       default: 'The full URL where this platform will be hosted. Must be unique.') %>
@@ -67,31 +68,30 @@
             </div>
 
             <div class="mb-3">
-              <%= label_tag :platform_provision_time_zone,
-                            t('better_together.billing.provision_platform_time_zone', default: 'Time zone'),
-                            class: 'form-label' %>
-              <%= select_tag 'platform_provision[time_zone]',
-                             options_for_select(
-                               ActiveSupport::TimeZone.all.map { |tz| [tz.to_s, tz.name] },
-                               params.dig(:platform_provision, :time_zone).presence || 'America/St_Johns'
-                             ),
-                             class: 'form-select' %>
+              <%= f.label :time_zone,
+                          t('better_together.billing.provision_platform_time_zone', default: 'Time zone'),
+                          class: 'form-label' %>
+              <%= iana_time_zone_select(
+                    f,
+                    :time_zone,
+                    params.dig(:platform_provision, :time_zone).presence || 'America/St_Johns',
+                    {},
+                    { id: 'platform_provision_time_zone', required: true }
+                  ) %>
             </div>
 
             <div class="mb-4">
-              <%= label_tag :platform_provision_privacy,
-                            t('better_together.billing.provision_platform_privacy', default: 'Visibility'),
-                            class: 'form-label' %>
-              <%= select_tag 'platform_provision[privacy]',
-                             options_for_select(
-                               [
-                                 [t('better_together.billing.provision_platform_privacy_private', default: 'Private — accessible by invitation only'), 'private'],
-                                 [t('better_together.billing.provision_platform_privacy_community', default: 'Community — accessible to members'), 'community'],
-                                 [t('better_together.billing.provision_platform_privacy_public', default: 'Public — open to everyone'), 'public']
-                               ],
-                               params.dig(:platform_provision, :privacy).presence || 'private'
-                             ),
-                             class: 'form-select' %>
+              <%= f.label :privacy,
+                          t('better_together.billing.provision_platform_privacy', default: 'Visibility'),
+                          class: 'form-label' %>
+              <%= f.select :privacy,
+                           [
+                             [t('better_together.billing.provision_platform_privacy_private', default: 'Private — accessible by invitation only'), 'private'],
+                             [t('better_together.billing.provision_platform_privacy_community', default: 'Community — accessible to members'), 'community'],
+                             [t('better_together.billing.provision_platform_privacy_public', default: 'Public — open to everyone'), 'public']
+                           ],
+                           { selected: params.dig(:platform_provision, :privacy).presence || 'private' },
+                           { class: 'form-select' } %>
               <div class="form-text">
                 <%= t('better_together.billing.provision_platform_privacy_hint',
                       default: 'Controls who can discover and access this platform. You can change this after provisioning.') %>

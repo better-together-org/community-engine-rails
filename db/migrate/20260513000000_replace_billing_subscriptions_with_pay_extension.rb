@@ -10,11 +10,18 @@
 #   - sync_source, latest_checkout_session_id, latest_processor_event_id,
 #     last_synced_at, metadata kept
 #   - All duplicated pay columns and polymorphic owner/beneficiary columns removed
-class ReplaceBillingSubscriptionsWithPayExtension < ActiveRecord::Migration[7.2]
+class ReplaceBillingSubscriptionsWithPayExtension < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   TABLE = :better_together_billing_subscriptions
+  PAY_SUBSCRIPTION_INDEX = 'idx_bt_billing_subscriptions_pay_subscription'
 
   def up
     return unless table_exists?(TABLE)
+
+    ensure_pay_subscription_id_column
+    backfill_pay_subscription_id!
+    ensure_pay_subscription_id_index
+    ensure_pay_subscription_foreign_key
+    enforce_pay_subscription_not_null!
 
     # ── Remove old indexes ───────────────────────────────────────────────────
     remove_index TABLE, name: 'idx_bt_billing_subscriptions_community' if index_name_exists?(TABLE,
@@ -50,19 +57,6 @@ class ReplaceBillingSubscriptionsWithPayExtension < ActiveRecord::Migration[7.2]
     ].each do |col|
       remove_column TABLE, col if column_exists?(TABLE, col)
     end
-
-    # ── Add pay_subscription_id ──────────────────────────────────────────────
-    return if column_exists?(TABLE, :pay_subscription_id)
-
-    add_column TABLE, :pay_subscription_id, :uuid, null: false
-
-    add_index TABLE, :pay_subscription_id,
-              unique: true,
-              name: 'idx_bt_billing_subscriptions_pay_subscription'
-
-    add_foreign_key TABLE, :pay_subscriptions,
-                    column: :pay_subscription_id,
-                    on_delete: :cascade
   end
 
   def down
@@ -72,8 +66,7 @@ class ReplaceBillingSubscriptionsWithPayExtension < ActiveRecord::Migration[7.2]
     if foreign_key_exists?(TABLE, column: :pay_subscription_id)
       remove_foreign_key TABLE, column: :pay_subscription_id
     end
-    pay_sub_idx = 'idx_bt_billing_subscriptions_pay_subscription'
-    remove_index TABLE, name: pay_sub_idx if index_name_exists?(TABLE, pay_sub_idx)
+    remove_index TABLE, name: PAY_SUBSCRIPTION_INDEX if index_name_exists?(TABLE, PAY_SUBSCRIPTION_INDEX)
     remove_column TABLE, :pay_subscription_id if column_exists?(TABLE, :pay_subscription_id)
 
     # Restore old columns (nullability relaxed for reversibility)
@@ -98,5 +91,56 @@ class ReplaceBillingSubscriptionsWithPayExtension < ActiveRecord::Migration[7.2]
     add_index TABLE, %i[beneficiary_type beneficiary_id],           name: 'idx_bt_billing_subscriptions_beneficiary'
 
     add_foreign_key TABLE, :better_together_communities, column: :community_id, on_delete: :cascade
+  end
+
+  private
+
+  def ensure_pay_subscription_id_column
+    return if column_exists?(TABLE, :pay_subscription_id)
+
+    add_column TABLE, :pay_subscription_id, :uuid
+  end
+
+  def backfill_pay_subscription_id!
+    return unless column_exists?(TABLE, :pay_subscription_id)
+    return unless column_exists?(TABLE, :processor_subscription_id)
+
+    execute <<~SQL.squish
+      UPDATE #{quote_table_name(TABLE)} AS billing_subscriptions
+      SET pay_subscription_id = pay_subscriptions.id
+      FROM #{quote_table_name(:pay_subscriptions)} AS pay_subscriptions
+      INNER JOIN #{quote_table_name(:pay_customers)} AS pay_customers
+        ON pay_customers.id = pay_subscriptions.customer_id
+      WHERE billing_subscriptions.pay_subscription_id IS NULL
+        AND billing_subscriptions.processor_subscription_id = pay_subscriptions.processor_id
+        AND (
+          billing_subscriptions.pay_customer_id IS NULL OR
+          billing_subscriptions.pay_customer_id = pay_customers.processor_id
+        )
+    SQL
+  end
+
+  def ensure_pay_subscription_id_index
+    return if index_name_exists?(TABLE, PAY_SUBSCRIPTION_INDEX)
+
+    add_index TABLE, :pay_subscription_id, unique: true, name: PAY_SUBSCRIPTION_INDEX
+  end
+
+  def ensure_pay_subscription_foreign_key
+    return if foreign_key_exists?(TABLE, :pay_subscriptions, column: :pay_subscription_id)
+
+    add_foreign_key TABLE, :pay_subscriptions, column: :pay_subscription_id, on_delete: :cascade
+  end
+
+  def enforce_pay_subscription_not_null!
+    return unless column_exists?(TABLE, :pay_subscription_id)
+    return if connection.select_value(<<~SQL.squish).present?
+      SELECT 1
+      FROM #{quote_table_name(TABLE)}
+      WHERE pay_subscription_id IS NULL
+      LIMIT 1
+    SQL
+
+    change_column_null TABLE, :pay_subscription_id, false
   end
 end

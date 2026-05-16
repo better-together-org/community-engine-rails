@@ -1204,6 +1204,7 @@ uk:
         items_title: Елементи
         no_items: Немає елементів для відображення
     communities:
+      edit_heading: Redahuvannya spilnoty
       form:
         allow_membership_requests: Дозволити запити на членство
         allow_membership_requests_hint: Показує публічну форму запиту на членство
@@ -2875,6 +2876,7 @@ uk:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      edit_heading: Redahuvaty profil
       federate_content: Дозволити цій платформі включати ваші публічні дописи, сторінки
         та події до схвалених федеративних стрічок.
       index:

@@ -1238,6 +1238,7 @@ fr:
         items_title: Éléments
         no_items: Aucun élément à afficher
     communities:
+      edit_heading: Modification de la communaute
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
         allow_membership_requests_hint: Affiche un formulaire public de demande d'adhésion
@@ -2920,6 +2921,7 @@ fr:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Groupe de permissions
+      edit_heading: Modifier le profil
       federate_content: Autoriser cette plateforme à inclure vos publications, pages
         et événements publics dans des flux de fédération approuvés.
       index:

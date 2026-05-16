@@ -44,7 +44,7 @@
                     <span class="badge bg-secondary"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
                   <% end %>
                 </td>
-                <td><%= plan.subscriptions.joins(:pay_subscription).merge(Pay::Subscription.where(status: 'active')).count %></td>
+                <td><%= @active_subscription_counts.fetch(plan.id, 0) %></td>
                 <td class="text-end">
                   <div class="d-flex gap-2 justify-content-end">
                     <%= link_to t('globals.view', default: 'View'),

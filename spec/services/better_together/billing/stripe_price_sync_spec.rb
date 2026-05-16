@@ -70,6 +70,28 @@ RSpec.describe BetterTogether::Billing::StripePriceSync do
 
         expect(result).to have_attributes(synced: true, reason: :synced)
       end
+
+      it 'logs unsupported intervals without claiming a local deactivation' do
+        recurring = Struct.new(:interval, keyword_init: true).new(interval: 'week')
+        unsupported_price_object = Struct.new(:id, :active, :recurring, keyword_init: true).new(
+          id: plan.stripe_price_id,
+          active: true,
+          recurring:
+        )
+        unsupported_event = build_event(
+          id: 'evt_price_cre_unsupported',
+          type: 'price.created',
+          object_data: unsupported_price_object
+        )
+
+        allow(Rails.logger).to receive(:warn)
+
+        described_class.new.call(event: unsupported_event)
+
+        expect(Rails.logger).to have_received(:warn).with(
+          a_string_including('Leaving the local active flag aligned with Stripe')
+        )
+      end
     end
 
     context 'with a price.deleted event for a known plan' do

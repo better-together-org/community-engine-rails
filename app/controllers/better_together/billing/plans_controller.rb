@@ -11,6 +11,7 @@ module BetterTogether
       def index
         authorize BetterTogether::Billing::Plan
         @plans = policy_scope(BetterTogether::Billing::Plan).order(:identifier)
+        @active_subscription_counts = active_subscription_counts_for(@plans)
       end
 
       def show
@@ -72,6 +73,15 @@ module BetterTogether
             .includes(pay_subscription: :customer)
             .order(Pay::Subscription.arel_table[:created_at].desc)
             .limit(20)
+      end
+
+      def active_subscription_counts_for(plans)
+        BetterTogether::Billing::Subscription
+          .joins(:pay_subscription)
+          .merge(Pay::Subscription.active)
+          .where(billing_plan_id: plans.select(:id))
+          .group(:billing_plan_id)
+          .count
       end
 
       def plan_params_for_create

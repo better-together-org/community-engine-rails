@@ -1204,6 +1204,7 @@ en:
         items_title: Items
         no_items: No items to display
     communities:
+      edit_heading: Editing Community
       form:
         allow_membership_requests: Allow membership requests
         allow_membership_requests_hint: Show a public membership request form for
@@ -2839,6 +2840,7 @@ en:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      edit_heading: Edit Profile
       federate_content: Allow this platform to include your public posts, pages, and
         events in approved federation feeds.
       index:

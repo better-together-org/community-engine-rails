@@ -43,6 +43,13 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
     sign_in platform_manager
   end
 
+  def create_owned_billing_subscription(owner:, billing_plan:, status:)
+    pay_customer = create('pay/customer', owner:)
+    pay_subscription = create('pay/subscription', customer: pay_customer, status:)
+
+    create(:better_together_billing_subscription, pay_subscription:, billing_plan:)
+  end
+
   describe 'GET /:locale/c/:community_id/billing' do
     it 'renders the billing page and plan catalog' do
       get better_together.community_billing_path(community, locale:)
@@ -522,13 +529,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
   describe 'GET /:locale/c/:community_id/billing/provision_platform' do
     it 'renders the provisioning form when entitlement is active' do
-      create(
-        :better_together_billing_subscription,
-        billing_plan:,
-        billable_owner: community,
-        beneficiary: community,
-        status: 'active'
-      )
+      create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
 
       get better_together.provision_platform_community_billing_path(community, locale:)
 
@@ -536,30 +537,23 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response.body).to include('Provision hosted platform')
       expect(response.body).to include('Host URL')
       expect(response.body).to include('Hosted plan active')
+      expect(response.body).to include('value="America/St_Johns"')
     end
 
     it 'redirects to billing with an alert when subscription is past_due' do
-      create(
-        :better_together_billing_subscription,
-        billing_plan:,
-        billable_owner: community,
-        beneficiary: community,
-        status: 'past_due'
-      )
+      create_owned_billing_subscription(owner: community, billing_plan:, status: 'past_due')
 
       get better_together.provision_platform_community_billing_path(community, locale:)
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-      follow_redirect!
-      expect(response.body).to include('active hosted plan is required')
+      expect(flash[:alert]).to include('active hosted plan is required')
     end
 
     it 'redirects to billing with an alert when there is no active subscription' do
       get better_together.provision_platform_community_billing_path(community, locale:)
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-      follow_redirect!
-      expect(response.body).to include('active hosted plan is required')
+      expect(flash[:alert]).to include('active hosted plan is required')
     end
   end
 
@@ -576,13 +570,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
     context 'when the community has an active hosted subscription' do
       before do
-        create(
-          :better_together_billing_subscription,
-          billing_plan:,
-          billable_owner: community,
-          beneficiary: community,
-          status: 'active'
-        )
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
       end
 
       it 'calls TenantPlatformProvisioningService and redirects on success' do
@@ -631,20 +619,13 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
         expect(BetterTogether::TenantPlatformProvisioningService).not_to have_received(:call)
         expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-        follow_redirect!
-        expect(response.body).to include('active hosted plan is required')
+        expect(flash[:alert]).to include('active hosted plan is required')
       end
     end
 
     context 'when the community subscription is past_due' do
       it 'blocks provisioning and redirects to billing with an alert' do
-        create(
-          :better_together_billing_subscription,
-          billing_plan:,
-          billable_owner: community,
-          beneficiary: community,
-          status: 'past_due'
-        )
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'past_due')
         allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call)
 
         post better_together.provision_platform_community_billing_path(community, locale:),
@@ -652,8 +633,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
         expect(BetterTogether::TenantPlatformProvisioningService).not_to have_received(:call)
         expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-        follow_redirect!
-        expect(response.body).to include('active hosted plan is required')
+        expect(flash[:alert]).to include('active hosted plan is required')
       end
     end
   end
