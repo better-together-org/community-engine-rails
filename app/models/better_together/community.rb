@@ -17,6 +17,7 @@ module BetterTogether
     include Privacy
     include Metrics::Viewable
     include Searchable
+    include Shortlinkable
     include ::Storext.model
 
     pay_customer default_payment_processor: :stripe, stripe_attributes: :stripe_customer_attributes
@@ -230,6 +231,10 @@ module BetterTogether
     def self.invitation_additional_exclusions(community_instance, invited_ids)
       existing_member_ids = community_instance.person_community_memberships.pluck(:member_id)
       (invited_ids + existing_member_ids).uniq
+    end
+
+    def short_link_target_url
+      BetterTogether::Engine.routes.url_helpers.community_url(self, locale: I18n.locale)
     end
 
     private

@@ -1,0 +1,84 @@
+{
+  "name": "short_links_show_default",
+  "device": "mobile",
+  "url": "/en/short_links/26243f8e-5bac-4609-9249-b393353311fd",
+  "title": "BTS Homepage | Short Link | Mante Inc",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "short_links",
+  "flow": "short_links_show",
+  "source_spec": "./spec/docs_screenshots/better_together/short_links_spec.rb",
+  "callouts": [
+    {
+      "selector": "#short-link-url",
+      "title": "Short URL",
+      "bullets": [
+        "Read-only field showing the full short URL.",
+        "Click the copy button on the right to copy it instantly."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 190.390625,
+        "width": 357.328125,
+        "height": 38.0,
+        "right": 386.328125,
+        "bottom": 228.390625,
+        "center_x": 207.6640625,
+        "center_y": 209.390625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 190.390625,
+        "width": 357.328125,
+        "height": 38.0,
+        "right": 386.328125,
+        "bottom": 228.390625,
+        "center_x": 207.6640625,
+        "center_y": 209.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 72.66,
+        "y": 248.39,
+        "width": 270.0,
+        "height": 262,
+        "score": 1032.609375
+      }
+    },
+    {
+      "selector": "#short-link-click-count",
+      "title": "Click count",
+      "bullets": [
+        "Total number of times this link has been followed."
+      ],
+      "target": {
+        "x": 17.0,
+        "y": 380.390625,
+        "width": 466.0,
+        "height": 24.0,
+        "right": 483.0,
+        "bottom": 404.390625,
+        "center_x": 250.0,
+        "center_y": 392.390625
+      },
+      "avoid": {
+        "x": 17.0,
+        "y": 380.390625,
+        "width": 466.0,
+        "height": 24.0,
+        "right": 483.0,
+        "bottom": 404.390625,
+        "center_x": 250.0,
+        "center_y": 392.390625
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 158,
+        "score": 0
+      }
+    }
+  ]
+}

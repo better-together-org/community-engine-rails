@@ -5,6 +5,9 @@ require 'rswag/ui'
 require 'rswag/api'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  # Short link public redirect — no locale prefix keeps URLs short
+  get '/s/:code', to: 'short_link_redirects#show', as: :short_link_redirect
+
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
   post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
@@ -92,8 +95,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Calendar feed route - accessible without authentication (token-based auth in controller)
       get 'calendars/:id/feed', to: 'calendars#feed', as: :feed_calendar
 
+      # Short link generation for public content — guests can generate share links
+      post 'short_links/ensure', to: 'short_links#ensure', as: :ensure_content_short_link
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
+        resources :short_links
+
         resources :agreements do
           member do
             post :accept

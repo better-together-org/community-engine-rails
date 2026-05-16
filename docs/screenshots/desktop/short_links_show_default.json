@@ -1,0 +1,84 @@
+{
+  "name": "short_links_show_default",
+  "device": "desktop",
+  "url": "/en/short_links/26243f8e-5bac-4609-9249-b393353311fd",
+  "title": "BTS Homepage | Short Link | Mante Inc",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "short_links",
+  "flow": "short_links_show",
+  "source_spec": "./spec/docs_screenshots/better_together/short_links_spec.rb",
+  "callouts": [
+    {
+      "selector": "#short-link-url",
+      "title": "Short URL",
+      "bullets": [
+        "Read-only field showing the full short URL.",
+        "Click the copy button on the right to copy it instantly."
+      ],
+      "target": {
+        "x": 89.0,
+        "y": 241.0,
+        "width": 1177.328125,
+        "height": 38.0,
+        "right": 1266.328125,
+        "bottom": 279.0,
+        "center_x": 677.6640625,
+        "center_y": 260.0
+      },
+      "avoid": {
+        "x": 89.0,
+        "y": 241.0,
+        "width": 1177.328125,
+        "height": 38.0,
+        "right": 1266.328125,
+        "bottom": 279.0,
+        "center_x": 677.6640625,
+        "center_y": 260.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 487.66,
+        "y": 299.0,
+        "width": 380,
+        "height": 210,
+        "score": 1182.0
+      }
+    },
+    {
+      "selector": "#short-link-click-count",
+      "title": "Click count",
+      "bullets": [
+        "Total number of times this link has been followed."
+      ],
+      "target": {
+        "x": 398.5,
+        "y": 359.0,
+        "width": 964.5,
+        "height": 24.0,
+        "right": 1363.0,
+        "bottom": 383.0,
+        "center_x": 880.75,
+        "center_y": 371.0
+      },
+      "avoid": {
+        "x": 398.5,
+        "y": 359.0,
+        "width": 964.5,
+        "height": 24.0,
+        "right": 1363.0,
+        "bottom": 383.0,
+        "center_x": 880.75,
+        "center_y": 371.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 1036,
+        "y": 24,
+        "width": 380,
+        "height": 132,
+        "score": 0
+      }
+    }
+  ]
+}

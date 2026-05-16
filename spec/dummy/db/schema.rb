@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_14_100004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1248,6 +1248,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
     t.index ["source_type", "source_id"], name: "bt_joatu_response_links_by_source"
   end
 
+  create_table "better_together_joatu_service_credit_balances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "agreement_id", null: false
+    t.string "unit_type", null: false
+    t.decimal "purchased_units", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "consumed_units", precision: 10, scale: 2, default: "0.0", null: false
+    t.boolean "active", default: true, null: false
+    t.index ["agreement_id"], name: "bt_joatu_service_credit_balances_by_agreement", unique: true
+  end
+
   create_table "better_together_joatu_settlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1430,6 +1442,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
     t.index ["platform", "url"], name: "index_better_together_metrics_shares_on_platform_and_url"
     t.index ["platform_id"], name: "index_better_together_metrics_shares_on_platform_id"
     t.index ["shareable_type", "shareable_id"], name: "index_better_together_metrics_shares_on_shareable"
+  end
+
+  create_table "better_together_metrics_short_link_visits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "short_link_id", null: false
+    t.string "referrer", limit: 2048
+    t.string "user_agent_string", limit: 255
+    t.string "remote_addr", limit: 45
+    t.datetime "visited_at", null: false
+    t.boolean "logged_in", default: false, null: false
+    t.boolean "potential_bot", default: false, null: false
+    t.uuid "platform_id", null: false
+    t.index ["platform_id"], name: "index_bt_metrics_short_link_visits_on_platform_id"
+    t.index ["short_link_id"], name: "index_bt_metrics_short_link_visits_on_short_link_id"
   end
 
   create_table "better_together_metrics_user_account_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1701,6 +1729,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["person_id", "status"], name: "idx_bt_person_deletion_requests_person_status"
+    t.index ["person_id"], name: "idx_bt_person_deletion_requests_one_pending_per_person", unique: true, where: "((status)::text = 'pending'::text)"
     t.index ["person_id"], name: "index_better_together_person_deletion_requests_on_person_id"
     t.index ["reviewed_by_id"], name: "idx_on_reviewed_by_id_386225301f"
   end
@@ -1879,10 +1908,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
     t.datetime "updated_at", null: false
     t.uuid "platform_id", null: false
     t.string "hostname", null: false
-    t.boolean "primary", default: false, null: false
     t.boolean "active", default: true, null: false
+    t.boolean "primary_flag", default: false, null: false
+    t.boolean "share_domain", default: false, null: false
     t.index "lower((hostname)::text)", name: "index_better_together_platform_domains_on_lower_hostname", unique: true
-    t.index ["platform_id", "primary"], name: "index_better_together_platform_domains_on_primary", unique: true, where: "(\"primary\" IS TRUE)"
+    t.index ["platform_id", "primary_flag"], name: "index_better_together_platform_domains_on_primary_flag", unique: true, where: "(primary_flag IS TRUE)"
+    t.index ["platform_id", "share_domain"], name: "index_better_together_platform_domains_on_share_domain", unique: true, where: "(share_domain IS TRUE)"
     t.index ["platform_id"], name: "index_better_together_platform_domains_on_platform_id"
   end
 
@@ -2196,6 +2227,25 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
     t.index ["privacy"], name: "by_better_together_seeds_privacy"
     t.index ["seedable_type", "seedable_id"], name: "index_better_together_seeds_on_seedable"
     t.index ["type", "identifier"], name: "index_better_together_seeds_on_type_and_identifier", unique: true
+  end
+
+  create_table "better_together_short_links", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "code", null: false
+    t.string "target_url", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "expires_at"
+    t.integer "click_count", default: 0, null: false
+    t.string "linkable_type"
+    t.uuid "linkable_id"
+    t.uuid "platform_id", null: false
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "index_better_together_short_links_on_creator_id"
+    t.index ["linkable_type", "linkable_id"], name: "index_better_together_short_links_on_linkable", unique: true
+    t.index ["platform_id", "code"], name: "index_better_together_short_links_on_platform_and_code", unique: true
+    t.index ["platform_id"], name: "index_better_together_short_links_on_platform_id"
   end
 
   create_table "better_together_sitemaps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2541,6 +2591,52 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
     t.json "event"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  create_table "oauth_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "resource_owner_id", null: false
+    t.uuid "application_id", null: false
+    t.string "token", null: false
+    t.integer "expires_in", null: false
+    t.text "redirect_uri", null: false
+    t.string "scopes", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "revoked_at"
+    t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
+    t.index ["resource_owner_id"], name: "index_oauth_access_grants_on_resource_owner_id"
+    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
+  end
+
+  create_table "oauth_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "resource_owner_id"
+    t.uuid "application_id", null: false
+    t.string "token", null: false
+    t.string "refresh_token"
+    t.integer "expires_in"
+    t.string "scopes"
+    t.datetime "created_at", null: false
+    t.datetime "revoked_at"
+    t.string "previous_refresh_token", default: "", null: false
+    t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
+    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
+    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
+    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+  end
+
+  create_table "oauth_applications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "uid", null: false
+    t.string "secret", null: false
+    t.text "redirect_uri", null: false
+    t.string "scopes", default: "", null: false
+    t.boolean "confidential", default: true, null: false
+    t.string "owner_type"
+    t.uuid "owner_id"
+    t.string "application_type", default: "web", null: false
+    t.string "rate_limit_tier", default: "free", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_type", "owner_id"], name: "index_oauth_applications_on_owner"
+    t.index ["owner_type", "owner_id"], name: "index_oauth_applications_on_owner_type_and_owner_id"
+    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -2652,6 +2748,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
   add_foreign_key "better_together_metrics_rich_text_links", "better_together_content_links", column: "link_id"
   add_foreign_key "better_together_metrics_search_queries", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_metrics_shares", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_metrics_short_link_visits", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_metrics_short_link_visits", "better_together_short_links", column: "short_link_id"
   add_foreign_key "better_together_metrics_user_account_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_areas", column: "navigation_area_id"
   add_foreign_key "better_together_navigation_items", "better_together_navigation_items", column: "parent_id"
@@ -2725,6 +2823,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
   add_foreign_key "better_together_safety_cases", "better_together_reports", column: "report_id"
   add_foreign_key "better_together_safety_notes", "better_together_people", column: "author_id"
   add_foreign_key "better_together_safety_notes", "better_together_safety_cases", column: "safety_case_id"
+  add_foreign_key "better_together_short_links", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_sitemaps", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_storage_configurations", "better_together_platforms", column: "platform_id"
@@ -2743,4 +2842,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_13_010000) do
   add_foreign_key "pay_charges", "pay_subscriptions", column: "subscription_id"
   add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
   add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"
+  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
 end

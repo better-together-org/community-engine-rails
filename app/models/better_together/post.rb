@@ -18,15 +18,15 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
+    include PlatformScoped
     include Seedable
+    include Shortlinkable
     include TrackedActivity
     include ::Storext.model
 
     attachable_cover_image
 
     categorizable
-
-    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
 
     store_attributes :display_settings do
       contributors_display_visibility String, default: 'inherit'
@@ -79,8 +79,6 @@ module BetterTogether
       includes
     end
 
-    before_validation :assign_current_platform_if_available
-
     # Automatically grant the post creator an authorship record only when no
     # explicit human or robot authors were selected during creation.
     after_commit :add_creator_as_author, on: :create
@@ -118,16 +116,8 @@ module BetterTogether
 
     configure_attachment_cleanup
 
-    private
-
-    def assign_current_platform_if_available
-      return unless has_attribute?(:platform_id)
-      return if platform_id.present?
-
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
+    def short_link_target_url
+      BetterTogether::Engine.routes.url_helpers.post_url(self, locale: I18n.locale)
     end
   end
 end

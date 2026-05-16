@@ -589,8 +589,15 @@ es:
           attributes:
             active:
               must_be_true_for_primary: debe ser verdadero para un dominio primario
+              must_be_true_for_share_domain: debe ser verdadero para un dominio de
+                compartición
             primary:
               already_taken_for_platform: ya ha sido utilizado para esta plataforma
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: no es una URL válida
+              invalid_scheme: debe usar http o https
     models:
       action_text/encrypted_rich_text: Texto Enriquecido Cifrado
       action_text/rich_text: Texto Enriquecido
@@ -3761,8 +3768,10 @@ es:
     share_buttons:
       aria_label: Compartir en %{platform}
       bluesky: Compartir en Bluesky
+      copy_short_link: Copiar enlace corto
       default_title: "¡Mira esto!"
       facebook: Compartir en Facebook
+      get_short_link: Obtener enlace corto
       linkedin: Compartir en LinkedIn
       pinterest: Pinear
       reddit: Compartir en Reddit
@@ -3778,6 +3787,47 @@ es:
         name: Ingrese un nombre (al menos un idioma debe completarse)
         slug: Identificador amigable para URL (único entre idiomas)
       unpublished: Unpublished
+    short_links:
+      edit:
+        page_title: Editar enlace corto
+      form:
+        back: Volver a los enlaces cortos
+        code: Código corto (dejar en blanco para generar automáticamente)
+        code_hint: Solo letras minúsculas, números y guiones
+        expires_at: Expira el (opcional)
+        save: Guardar
+        status: Estado
+        target_url: URL de destino
+        view: Ver
+      index:
+        copy_url: Copiar URL corta
+        delete: Eliminar enlace corto
+        edit: Editar enlace corto
+        empty: Aún no hay enlaces cortos.
+        new_btn: Nuevo enlace corto
+        page_title: Enlaces cortos
+        table:
+          clicks: Clics
+          code: Código
+          expires: Expira
+          status: Estado
+          target: URL de destino
+          title: Título
+        view: Ver enlace corto
+      new:
+        page_title: Nuevo enlace corto
+      show:
+        back: Volver a los enlaces cortos
+        clicks: Total de clics
+        copy: Copiar
+        created_at: Creado el
+        delete: Eliminar
+        edit: Editar
+        expires_at: Expira el
+        page_title: Enlace corto
+        short_url: URL corta
+        status: Estado
+        target_url: URL de destino
     social_media_accounts:
       add: Agregar Cuenta de Redes Sociales
       handle: Nombre de usuario
