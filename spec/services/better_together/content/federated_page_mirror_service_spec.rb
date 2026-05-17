@@ -67,6 +67,8 @@ module BetterTogether # :nodoc:
         expect(page.id).to eq(remote_id)
         expect(page.source_id).to be_nil
         expect(page.platform).to eq(external_target)
+        expect(page.identifier).to eq("#{source_platform.identifier}--remote-page")
+        expect(page.last_synced_at).to be_present
       end
 
       it 'falls back to source_id for non-UUID remote identifiers' do
@@ -80,6 +82,7 @@ module BetterTogether # :nodoc:
         expect(page.id).not_to eq('legacy-page-42')
         expect(page.source_id).to eq('legacy-page-42')
         expect(page.platform).to eq(target_platform)
+        expect(page.identifier).to eq("#{source_platform.identifier}--remote-page")
       end
 
       it 'updates an existing mirrored page on repeat import' do
@@ -97,6 +100,7 @@ module BetterTogether # :nodoc:
 
         expect(updated.id).to eq(existing.id)
         expect(updated.title).to eq('Updated Remote Page')
+        expect(updated.identifier).to eq("#{source_platform.identifier}--remote-page")
       end
 
       it 'rejects mirroring when the connection policy does not allow pages' do

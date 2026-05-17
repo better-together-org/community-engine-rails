@@ -93,9 +93,13 @@ module BetterTogether
         # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
         return post.identifier if post.persisted?
 
-        base = remote_attributes[:identifier].presence ||
-               "federated-post-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-        identifier_or_namespaced(::BetterTogether::Post, base, post.id)
+        mirrored_identifier_for(
+          content_type: 'post',
+          remote_identifier: remote_attributes[:identifier],
+          remote_id:,
+          model_class: ::BetterTogether::Post,
+          exclude_id: post.id
+        )
       end
 
       def normalized_source_updated_at

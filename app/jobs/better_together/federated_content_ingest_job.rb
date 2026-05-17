@@ -35,7 +35,17 @@ module BetterTogether
     end
 
     def record_sync_success(connection, result, cursor)
-      connection.mark_sync_succeeded!(cursor:, item_count: result.processed_count)
+      connection.mark_sync_succeeded!(
+        cursor:,
+        item_count: result.processed_count,
+        message: sync_summary_message(result)
+      )
+    end
+
+    def sync_summary_message(result)
+      return '' if result.conflict_count.to_i.zero?
+
+      "Federated ingest completed with #{result.conflict_count} mirrored content conflict(s)"
     end
   end
 end

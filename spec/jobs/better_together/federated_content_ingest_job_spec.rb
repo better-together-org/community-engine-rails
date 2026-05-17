@@ -45,6 +45,8 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
           imported_seeds: [],
           imported_records: [],
           unsupported_seeds: [],
+          conflicted_seeds: [],
+          conflict_count: 0,
           planting: nil
         )
       )
@@ -62,6 +64,8 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
           imported_seeds: [],
           imported_records: [],
           unsupported_seeds: [],
+          conflicted_seeds: [],
+          conflict_count: 0,
           planting: nil
         )
       )
@@ -72,6 +76,26 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
       expect(connection).to be_sync_succeeded
       expect(connection.sync_cursor).to eq('cursor-1')
       expect(connection.last_sync_item_count).to eq(1)
+    end
+
+    it 'stores a success summary when conflicts were downgraded' do
+      allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(
+        BetterTogether::Content::FederatedContentIngestService::Result.new(
+          connection:,
+          processed_count: 1,
+          imported_seeds: [],
+          imported_records: [],
+          unsupported_seeds: [],
+          conflicted_seeds: [{ 'seed_type' => 'post' }],
+          conflict_count: 1,
+          planting: nil
+        )
+      )
+
+      described_class.perform_now(platform_connection_id: connection.id, seeds:, sync_cursor: 'cursor-1')
+
+      connection.reload
+      expect(connection.last_sync_error_message).to eq('Federated ingest completed with 1 mirrored content conflict(s)')
     end
 
     it 'marks sync failure and re-raises the error' do

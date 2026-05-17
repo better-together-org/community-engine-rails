@@ -106,9 +106,13 @@ module BetterTogether
         # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
         return page.identifier if page.persisted?
 
-        base = remote_attributes[:identifier].presence ||
-               "federated-page-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-        identifier_or_namespaced(::BetterTogether::Page, base, page.id)
+        mirrored_identifier_for(
+          content_type: 'page',
+          remote_identifier: remote_attributes[:identifier],
+          remote_id:,
+          model_class: ::BetterTogether::Page,
+          exclude_id: page.id
+        )
       end
 
       def normalized_source_updated_at

@@ -103,9 +103,13 @@ module BetterTogether
       # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
       return event.identifier if event.persisted?
 
-      base = remote_attributes[:identifier].presence ||
-             "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-      identifier_or_namespaced(::BetterTogether::Event, base, event.id)
+      mirrored_identifier_for(
+        content_type: 'event',
+        remote_identifier: remote_attributes[:identifier],
+        remote_id:,
+        model_class: ::BetterTogether::Event,
+        exclude_id: event.id
+      )
     end
 
     def normalized_timezone

@@ -27,7 +27,11 @@ module BetterTogether
         connection:,
         seeds: result.seeds
       )
-      connection.mark_sync_succeeded!(cursor: result.next_cursor, item_count: ingest_result.processed_count)
+      connection.mark_sync_succeeded!(
+        cursor: result.next_cursor,
+        item_count: ingest_result.processed_count,
+        message: sync_summary_message(ingest_result)
+      )
 
       # Enqueue the next page if more content is available
       if result.next_cursor.present?
@@ -43,6 +47,14 @@ module BetterTogether
         cursor:
       )
       raise
+    end
+
+    private
+
+    def sync_summary_message(result)
+      return '' if result.conflict_count.to_i.zero?
+
+      "Federated ingest completed with #{result.conflict_count} mirrored content conflict(s)"
     end
   end
 end
