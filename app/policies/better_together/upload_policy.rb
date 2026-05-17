@@ -22,7 +22,7 @@ module BetterTogether
     def download?
       (record.privacy_public? || record.creator == agent) &&
         record.attached? &&
-        record.content_security_releasable?
+        record.file_content_security_downloadable?
     end
 
     # Filtering and sorting for files according to permissions and context
