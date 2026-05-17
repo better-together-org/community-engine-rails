@@ -21,9 +21,9 @@ RSpec.describe 'Federated mirrored identifier backfill' do # rubocop:disable RSp
     )
 
     native_post = create(:better_together_post, identifier: 'native-post', platform: target_platform)
-    mirrored_post = create(:better_together_post, identifier: 'remote-post', platform: source_platform, source_id: 'legacy-post-42')
-    mirrored_page = create(:better_together_page, identifier: 'remote-page', platform: source_platform, source_id: 'legacy-page-42')
-    mirrored_event = create(:better_together_event, identifier: 'remote-event', platform: source_platform, source_id: 'legacy-event-42')
+    mirrored_post = create(:better_together_post, identifier: 'remote-post', platform: target_platform, source_id: 'legacy-post-42')
+    mirrored_page = create(:better_together_page, identifier: 'remote-page', platform: target_platform, source_id: 'legacy-page-42')
+    mirrored_event = create(:better_together_event, identifier: 'remote-event', platform: target_platform, source_id: 'legacy-event-42')
 
     old_post_slug = mirrored_post.slug
 
@@ -41,5 +41,29 @@ RSpec.describe 'Federated mirrored identifier backfill' do # rubocop:disable RSp
     ).pluck(:slug)
     expect(slug_history).to include(old_post_slug)
     expect(slug_history).to include("#{source_platform.identifier}--remote-post")
+  end
+
+  it 'remains idempotent for mirrored records that are already namespaced' do
+    create(
+      :better_together_platform_connection,
+      :active,
+      source_platform:,
+      target_platform:,
+      content_sharing_policy: 'mirror_network_feed',
+      share_posts: true
+    )
+
+    mirrored_post = create(
+      :better_together_post,
+      identifier: "#{source_platform.identifier}--remote-post",
+      platform: target_platform,
+      source_id: 'legacy-post-42'
+    )
+
+    migration.up
+    expect(mirrored_post.reload.identifier).to eq("#{source_platform.identifier}--remote-post")
+
+    migration.up
+    expect(mirrored_post.reload.identifier).to eq("#{source_platform.identifier}--remote-post")
   end
 end
