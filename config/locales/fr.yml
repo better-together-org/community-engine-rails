@@ -1658,6 +1658,31 @@ fr:
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
         other: ne fait pas la longueur correcte (%{count} caractères)
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: "%{model_name} %{record_id} ignoré : conflit
+            d'identifiant sur %{identifier}"
+          skipped_missing_source_platform: "%{model_name} %{record_id} ignoré : impossible
+            de déterminer la plateforme source"
+          title: Remplissage des identifiants miroirs fédérés
+      ingest:
+        errors:
+          connection_required: la connexion est requise
+          seeds_payload_too_large: La charge de graines est trop volumineuse (%{count}
+            > %{max_count}). Utilisez FederatedContentPullJob pour les grands lots.
+        sync_summary:
+          one: L'ingestion fédérée s'est terminée avec 1 conflit de contenu miroir
+          other: L'ingestion fédérée s'est terminée avec %{count} conflits de contenu
+            miroir
+      mirroring:
+        content_types:
+          event: événement
+          page: page
+          post: publication
+        errors:
+          not_authorized: 'la mise en miroir de %{content_type} n''est pas autorisée
+            : %{reason}'
     feedback_routing:
       audience:
         community_stewards: responsables du contenu de la communauté

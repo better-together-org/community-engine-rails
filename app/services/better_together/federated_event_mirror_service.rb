@@ -38,7 +38,7 @@ module BetterTogether
 
       return if result.allowed?
 
-      raise ArgumentError, "event mirroring not authorized: #{result.reason}"
+      raise ArgumentError, mirroring_not_authorized_message(result.reason)
     end
 
     def find_or_initialize_event
@@ -103,9 +103,13 @@ module BetterTogether
       # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
       return event.identifier if event.persisted?
 
-      base = remote_attributes[:identifier].presence ||
-             "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-      identifier_or_namespaced(::BetterTogether::Event, base, event.id)
+      mirrored_identifier_for(
+        content_type: 'event',
+        remote_identifier: remote_attributes[:identifier],
+        remote_id:,
+        model_class: ::BetterTogether::Event,
+        exclude_id: event.id
+      )
     end
 
     def normalized_timezone
@@ -157,6 +161,14 @@ module BetterTogether
 
     def uuid?(value)
       /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
+    end
+
+    def mirroring_not_authorized_message(reason)
+      I18n.t(
+        'better_together.federation.mirroring.errors.not_authorized',
+        content_type: I18n.t('better_together.federation.mirroring.content_types.event'),
+        reason:
+      )
     end
   end
 end

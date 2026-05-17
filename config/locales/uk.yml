@@ -1649,6 +1649,34 @@ uk:
         many: неправильна довжина (точно %{count} символів)
         one: неправильна довжина (точно %{count} символ)
         other: неправильна довжина (точно %{count} символів)
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: 'Пропущено %{model_name} %{record_id}: конфлікт
+            ідентифікатора для %{identifier}'
+          skipped_missing_source_platform: 'Пропущено %{model_name} %{record_id}:
+            не вдалося визначити платформу-джерело'
+          title: Зворотне заповнення дзеркальних федеративних ідентифікаторів
+      ingest:
+        errors:
+          connection_required: потрібне з'єднання
+          seeds_payload_too_large: Завеликий пакет насіння (%{count} > %{max_count}).
+            Використовуйте FederatedContentPullJob для великих пакетів.
+        sync_summary:
+          few: Федеративне отримання завершилося з %{count} конфліктами дзеркального
+            вмісту
+          many: Федеративне отримання завершилося з %{count} конфліктами дзеркального
+            вмісту
+          one: Федеративне отримання завершилося з 1 конфліктом дзеркального вмісту
+          other: Федеративне отримання завершилося з %{count} конфліктами дзеркального
+            вмісту
+      mirroring:
+        content_types:
+          event: події
+          page: сторінки
+          post: допису
+        errors:
+          not_authorized: 'дзеркалювання %{content_type} не дозволено: %{reason}'
     feedback_routing:
       audience:
         community_stewards: відповідальні за вміст спільноти

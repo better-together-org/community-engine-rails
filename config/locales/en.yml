@@ -1623,6 +1623,29 @@ en:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: 'Skipped %{model_name} %{record_id}: identifier
+            conflict on %{identifier}'
+          skipped_missing_source_platform: 'Skipped %{model_name} %{record_id}: could
+            not determine source platform'
+          title: Backfilling federated mirrored identifiers
+      ingest:
+        errors:
+          connection_required: connection is required
+          seeds_payload_too_large: Seeds payload too large (%{count} > %{max_count}).
+            Use FederatedContentPullJob for large batches.
+        sync_summary:
+          one: Federated ingest completed with 1 mirrored content conflict
+          other: Federated ingest completed with %{count} mirrored content conflicts
+      mirroring:
+        content_types:
+          event: event
+          page: page
+          post: post
+        errors:
+          not_authorized: "%{content_type} mirroring not authorized: %{reason}"
     feedback_routing:
       audience:
         community_stewards: responsible community stewards
