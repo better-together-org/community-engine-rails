@@ -25,7 +25,7 @@ export default class extends Controller {
 
     // Track the share internally via AJAX
     this.trackShare(platform, url, shareTrackingUrl, shareableType, shareableId)
-
+    this.dispatchShareEvent({ platform, url, title, image, shareableType, shareableId })
   }
 
   constructShareUrl(platform, url, title, image) {
@@ -77,6 +77,10 @@ export default class extends Controller {
     .catch(error => {
       console.error(this.localizedString('share_controller.error_tracking'), error)
     })
+  }
+
+  dispatchShareEvent(detail) {
+    window.dispatchEvent(new CustomEvent('better_together:share', { detail }))
   }
 
   getCSRFToken() {
