@@ -1914,6 +1914,30 @@ es:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: 'Se omitió %{model_name} %{record_id}: conflicto
+            de identificador en %{identifier}'
+          skipped_missing_source_platform: 'Se omitió %{model_name} %{record_id}:
+            no se pudo determinar la plataforma de origen'
+          title: Rellenando identificadores reflejados federados
+      ingest:
+        errors:
+          connection_required: se requiere una conexión
+          seeds_payload_too_large: La carga de semillas es demasiado grande (%{count}
+            > %{max_count}). Usa FederatedContentPullJob para lotes grandes.
+        sync_summary:
+          one: La ingesta federada se completó con 1 conflicto de contenido reflejado
+          other: La ingesta federada se completó con %{count} conflictos de contenido
+            reflejado
+      mirroring:
+        content_types:
+          event: evento
+          page: página
+          post: publicación
+        errors:
+          not_authorized: 'la replicación de %{content_type} no está autorizada: %{reason}'
     feedback_routing:
       audience:
         community_stewards: responsables de contenido de la comunidad

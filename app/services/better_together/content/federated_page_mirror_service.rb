@@ -38,7 +38,7 @@ module BetterTogether
 
         return if result.allowed?
 
-        raise ArgumentError, "page mirroring not authorized: #{result.reason}"
+        raise ArgumentError, mirroring_not_authorized_message(result.reason)
       end
 
       def find_or_initialize_page
@@ -106,9 +106,13 @@ module BetterTogether
         # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
         return page.identifier if page.persisted?
 
-        base = remote_attributes[:identifier].presence ||
-               "federated-page-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-        identifier_or_namespaced(::BetterTogether::Page, base, page.id)
+        mirrored_identifier_for(
+          content_type: 'page',
+          remote_identifier: remote_attributes[:identifier],
+          remote_id:,
+          model_class: ::BetterTogether::Page,
+          exclude_id: page.id
+        )
       end
 
       def normalized_source_updated_at
@@ -140,6 +144,14 @@ module BetterTogether
 
       def uuid?(value)
         /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
+      end
+
+      def mirroring_not_authorized_message(reason)
+        I18n.t(
+          'better_together.federation.mirroring.errors.not_authorized',
+          content_type: I18n.t('better_together.federation.mirroring.content_types.page'),
+          reason:
+        )
       end
     end
     # rubocop:enable Metrics/ClassLength

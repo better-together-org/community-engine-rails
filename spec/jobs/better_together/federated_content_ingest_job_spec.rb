@@ -34,7 +34,14 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
 
       expect do
         described_class.perform_now(platform_connection_id: connection.id, seeds: oversized_seeds)
-      end.to raise_error(ArgumentError, /seeds payload too large/)
+      end.to raise_error(
+        ArgumentError,
+        I18n.t(
+          'better_together.federation.ingest.errors.seeds_payload_too_large',
+          count: oversized_seeds.size,
+          max_count: described_class::MAX_SEEDS_PER_JOB
+        )
+      )
     end
 
     it 'delegates to the federated content ingest service' do
@@ -45,6 +52,8 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
           imported_seeds: [],
           imported_records: [],
           unsupported_seeds: [],
+          conflicted_seeds: [],
+          conflict_count: 0,
           planting: nil
         )
       )
@@ -62,6 +71,8 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
           imported_seeds: [],
           imported_records: [],
           unsupported_seeds: [],
+          conflicted_seeds: [],
+          conflict_count: 0,
           planting: nil
         )
       )
@@ -72,6 +83,28 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
       expect(connection).to be_sync_succeeded
       expect(connection.sync_cursor).to eq('cursor-1')
       expect(connection.last_sync_item_count).to eq(1)
+    end
+
+    it 'stores a success summary when conflicts were downgraded' do
+      allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(
+        BetterTogether::Content::FederatedContentIngestService::Result.new(
+          connection:,
+          processed_count: 1,
+          imported_seeds: [],
+          imported_records: [],
+          unsupported_seeds: [],
+          conflicted_seeds: [{ 'seed_type' => 'post' }],
+          conflict_count: 1,
+          planting: nil
+        )
+      )
+
+      described_class.perform_now(platform_connection_id: connection.id, seeds:, sync_cursor: 'cursor-1')
+
+      connection.reload
+      expect(connection.last_sync_error_message).to eq(
+        I18n.t('better_together.federation.ingest.sync_summary', count: 1)
+      )
     end
 
     it 'marks sync failure and re-raises the error' do
