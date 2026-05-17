@@ -34,7 +34,14 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
 
       expect do
         described_class.perform_now(platform_connection_id: connection.id, seeds: oversized_seeds)
-      end.to raise_error(ArgumentError, /seeds payload too large/)
+      end.to raise_error(
+        ArgumentError,
+        I18n.t(
+          'better_together.federation.ingest.errors.seeds_payload_too_large',
+          count: oversized_seeds.size,
+          max_count: described_class::MAX_SEEDS_PER_JOB
+        )
+      )
     end
 
     it 'delegates to the federated content ingest service' do
@@ -95,7 +102,9 @@ RSpec.describe BetterTogether::FederatedContentIngestJob do
       described_class.perform_now(platform_connection_id: connection.id, seeds:, sync_cursor: 'cursor-1')
 
       connection.reload
-      expect(connection.last_sync_error_message).to eq('Federated ingest completed with 1 mirrored content conflict(s)')
+      expect(connection.last_sync_error_message).to eq(
+        I18n.t('better_together.federation.ingest.sync_summary', count: 1)
+      )
     end
 
     it 'marks sync failure and re-raises the error' do

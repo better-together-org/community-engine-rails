@@ -113,7 +113,14 @@ module BetterTogether # :nodoc:
             remote_id: SecureRandom.uuid,
             preserve_remote_uuid: true
           ).call
-        end.to raise_error(ArgumentError, /not authorized/)
+        end.to raise_error(
+          ArgumentError,
+          I18n.t(
+            'better_together.federation.mirroring.errors.not_authorized',
+            content_type: I18n.t('better_together.federation.mirroring.content_types.page'),
+            reason: 'content mirroring not enabled for type'
+          )
+        )
       end
     end
   end

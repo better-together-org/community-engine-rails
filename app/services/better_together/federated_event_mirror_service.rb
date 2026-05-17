@@ -38,7 +38,7 @@ module BetterTogether
 
       return if result.allowed?
 
-      raise ArgumentError, "event mirroring not authorized: #{result.reason}"
+      raise ArgumentError, mirroring_not_authorized_message(result.reason)
     end
 
     def find_or_initialize_event
@@ -161,6 +161,14 @@ module BetterTogether
 
     def uuid?(value)
       /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
+    end
+
+    def mirroring_not_authorized_message(reason)
+      I18n.t(
+        'better_together.federation.mirroring.errors.not_authorized',
+        content_type: I18n.t('better_together.federation.mirroring.content_types.event'),
+        reason:
+      )
     end
   end
 end

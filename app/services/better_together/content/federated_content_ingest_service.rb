@@ -33,7 +33,7 @@ module BetterTogether
       end
 
       def call
-        raise ArgumentError, 'connection is required' unless connection
+        raise ArgumentError, I18n.t('better_together.federation.ingest.errors.connection_required') unless connection
 
         planting = create_planting!
         planting.mark_started!

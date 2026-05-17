@@ -112,7 +112,14 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
           remote_id: SecureRandom.uuid,
           preserve_remote_uuid: true
         ).call
-      end.to raise_error(ArgumentError, /not authorized/)
+      end.to raise_error(
+        ArgumentError,
+        I18n.t(
+          'better_together.federation.mirroring.errors.not_authorized',
+          content_type: I18n.t('better_together.federation.mirroring.content_types.post'),
+          reason: 'content mirroring not enabled for type'
+        )
+      )
     end
   end
 end

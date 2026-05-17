@@ -170,7 +170,10 @@ module BetterTogether # :nodoc:
       it 'requires a connection' do
         expect do
           described_class.call(connection: nil, seeds:)
-        end.to raise_error(ArgumentError, /connection is required/)
+        end.to raise_error(
+          ArgumentError,
+          I18n.t('better_together.federation.ingest.errors.connection_required')
+        )
       end
     end
   end

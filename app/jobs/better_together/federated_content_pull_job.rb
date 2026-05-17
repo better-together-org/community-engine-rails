@@ -54,7 +54,10 @@ module BetterTogether
     def sync_summary_message(result)
       return '' if result.conflict_count.to_i.zero?
 
-      "Federated ingest completed with #{result.conflict_count} mirrored content conflict(s)"
+      I18n.t(
+        'better_together.federation.ingest.sync_summary',
+        count: result.conflict_count
+      )
     end
   end
 end

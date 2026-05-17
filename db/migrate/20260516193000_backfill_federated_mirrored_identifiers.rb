@@ -4,7 +4,7 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
   NAMESPACE_SEPARATOR = '--'
 
   def up
-    say_with_time 'Backfilling federated mirrored identifiers' do
+    say_with_time migration_message(:title) do
       backfill(::BetterTogether::Post, content_type: 'post') +
         backfill(::BetterTogether::Page, content_type: 'page') +
         backfill(::BetterTogether::Event, content_type: 'event')
@@ -23,7 +23,7 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
     model_class.where.not(source_id: [nil, '']).find_each do |record|
       source_platform = source_platform_for(record, content_type:)
       unless source_platform
-        say "Skipped #{model_class.name} #{record.id}: could not determine source platform"
+        say migration_message(:skipped_missing_source_platform, model_name: model_class.name, record_id: record.id)
         next
       end
 
@@ -37,7 +37,12 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
       next if record.identifier == new_identifier
 
       if model_class.where(identifier: new_identifier).where.not(id: record.id).exists?
-        say "Skipped #{model_class.name} #{record.id}: identifier conflict on #{new_identifier}"
+        say migration_message(
+          :skipped_identifier_conflict,
+          model_name: model_class.name,
+          record_id: record.id,
+          identifier: new_identifier
+        )
         next
       end
 
@@ -88,5 +93,9 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
     return record.identifier.delete_prefix(namespace) if record.identifier.to_s.start_with?(namespace)
 
     record.identifier
+  end
+
+  def migration_message(key, **interpolations)
+    I18n.t("better_together.federation.backfill.messages.#{key}", **interpolations)
   end
 end

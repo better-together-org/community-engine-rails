@@ -12,11 +12,7 @@ module BetterTogether
     MAX_SEEDS_PER_JOB = 50
 
     def perform(platform_connection_id:, seeds:, sync_cursor: nil)
-      if seeds.size > MAX_SEEDS_PER_JOB
-        raise ArgumentError,
-              "seeds payload too large (#{seeds.size} > #{MAX_SEEDS_PER_JOB}). " \
-              'Use FederatedContentPullJob for large batches.'
-      end
+      raise ArgumentError, oversized_seeds_message(seeds.size) if seeds.size > MAX_SEEDS_PER_JOB
 
       connection = ::BetterTogether::PlatformConnection.find(platform_connection_id)
       connection.mark_sync_started!(cursor: sync_cursor)
@@ -45,7 +41,18 @@ module BetterTogether
     def sync_summary_message(result)
       return '' if result.conflict_count.to_i.zero?
 
-      "Federated ingest completed with #{result.conflict_count} mirrored content conflict(s)"
+      I18n.t(
+        'better_together.federation.ingest.sync_summary',
+        count: result.conflict_count
+      )
+    end
+
+    def oversized_seeds_message(seed_count)
+      I18n.t(
+        'better_together.federation.ingest.errors.seeds_payload_too_large',
+        count: seed_count,
+        max_count: MAX_SEEDS_PER_JOB
+      )
     end
   end
 end

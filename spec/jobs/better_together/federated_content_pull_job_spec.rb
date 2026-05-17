@@ -100,7 +100,9 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
 
       connection.reload
       expect(connection).to be_sync_succeeded
-      expect(connection.last_sync_error_message).to eq('Federated ingest completed with 1 mirrored content conflict(s)')
+      expect(connection.last_sync_error_message).to eq(
+        I18n.t('better_together.federation.ingest.sync_summary', count: 1)
+      )
     end
   end
 end
