@@ -2591,6 +2591,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_14_100004) do
     t.json "event"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
   create_table "oauth_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "resource_owner_id", null: false
     t.uuid "application_id", null: false
