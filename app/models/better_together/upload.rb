@@ -34,10 +34,14 @@ module BetterTogether
 
     # Legacy UI helpers still expect a Subject-backed review record for the attached file.
     def file_content_security_subject
+      return unless upload_content_security_enabled?
+
       content_security_subjects.find_by(attachment_name: 'file') if file.attached?
     end
 
     def file_content_security_downloadable?
+      return content_security_releasable? unless upload_content_security_enabled?
+
       subject = file_content_security_subject
       return subject.released_for_human_access? unless subject.nil?
 
@@ -45,6 +49,8 @@ module BetterTogether
     end
 
     def file_content_security_held?
+      return false unless upload_content_security_enabled?
+
       subject = file_content_security_subject
       return subject.held_for_review? unless subject.nil?
 
@@ -61,11 +67,18 @@ module BetterTogether
     private
 
     def sync_legacy_content_security_subject
+      return unless upload_content_security_enabled?
+
       BetterTogether::ContentSecurity::AttachmentSubjectSync.new(
         record: self,
         attachment_name: :file,
         source_surface: :uploads
       ).call
+    end
+
+    def upload_content_security_enabled?
+      BetterTogether::ContentSecurity::Configuration.enabled? &&
+        BetterTogether::ContentSecurity::Configuration.enabled_for_surface?(:uploads)
     end
   end
 end

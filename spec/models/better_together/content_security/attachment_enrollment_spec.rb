@@ -61,4 +61,16 @@ RSpec.describe BetterTogether::ContentSecurity::AttachmentEnrollment do
     expect(item.aggregate_verdict).to eq('pending_scan')
     expect(item.released_at).to be_nil
   end
+
+  it 'does not create item or legacy subject records when uploads scanning is disabled' do
+    BetterTogether.content_security.malware_scanning.enabled = false
+
+    upload.file.attach(io: StringIO.new('unscanned file'), filename: 'unscanned.txt', content_type: 'text/plain')
+    upload.save!
+    upload.reload
+
+    expect(upload.content_security_item).to be_nil
+    expect(upload.file_content_security_subject).to be_nil
+    expect(upload.file_content_security_downloadable?).to be(true)
+  end
 end
