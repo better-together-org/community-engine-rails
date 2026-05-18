@@ -147,7 +147,8 @@ module BetterTogether
       end
 
       def relevant_event?(event)
-        subscription_event?(event) || checkout_session_event?(event) || merchant_event?(event) || financial_event?(event)
+        subscription_event?(event) || checkout_session_event?(event) || merchant_event?(event) || financial_event?(event) ||
+          plan_event?(event)
       end
 
       def processed_sync_result?(event, sync_result)
@@ -164,6 +165,7 @@ module BetterTogether
       def event_success_attributes(billing_event, event, sync_result, billable_owner)
         base_event_attributes(billing_event, event).merge(
           billable_owner:,
+          beneficiary: beneficiary_for(sync_result, event),
           billing_subscription: sync_result.try(:billing_subscription),
           processing_status: processing_status_for(event, sync_result),
           error_message: sync_result.try(:error_message)
@@ -172,6 +174,8 @@ module BetterTogether
 
       def event_failure_attributes(billing_event, event, error)
         base_event_attributes(billing_event, event).merge(
+          billable_owner: resolve_billable_owner(event),
+          beneficiary: resolve_beneficiary(event),
           processing_status: 'failed',
           error_message: error.message
         )
@@ -191,6 +195,24 @@ module BetterTogether
 
       def subscription_sync
         @subscription_sync ||= BetterTogether::Billing::StripeSubscriptionSync.new
+      end
+
+      def beneficiary_for(sync_result, event)
+        sync_result.try(:beneficiary) ||
+          sync_result.try(:billing_subscription)&.beneficiary ||
+          resolve_beneficiary(event)
+      end
+
+      def resolve_beneficiary(event)
+        metadata = object_metadata(event.data.object)
+
+        BetterTogether::Billing::OwnershipResolver.resolve_record(
+          metadata['bt_beneficiary_type'],
+          metadata['bt_beneficiary_id']
+        ) || BetterTogether::Billing::OwnershipResolver.resolve_record(
+          'BetterTogether::Community',
+          metadata['bt_community_id']
+        )
       end
 
       def checkout_session_sync

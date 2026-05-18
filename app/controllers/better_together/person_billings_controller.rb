@@ -184,6 +184,12 @@ module BetterTogether
 
     def sync_flash_message(result)
       return t('better_together.billing.checkout_sync_complete', default: 'Stripe checkout was synchronized successfully.') if result&.synced
+      if result&.reason.in?(%i[beneficiary_mismatch billable_owner_mismatch ownership_mismatch])
+        return t(
+          'better_together.billing.checkout_sync_wrong_beneficiary',
+          default: 'This Stripe checkout session does not belong to this billing page.'
+        )
+      end
 
       t(
         'better_together.billing.checkout_sync_pending',

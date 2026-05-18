@@ -887,6 +887,8 @@ es:
       checkout_sync_complete: El pago de Stripe se sincronizo correctamente.
       checkout_sync_pending: Se recibio el pago de Stripe, pero todavia no pudo sincronizarse
         el estado de la suscripcion.
+      checkout_sync_wrong_beneficiary: Esta sesion de Stripe Checkout no pertenece
+        a esta pagina de facturacion.
       community_capacity_tier: 'Nivel de capacidad de la comunidad:'
       community_sponsor_checkout: Pagar a traves de %{community}
       current_period_ends: 'El periodo actual termina:'

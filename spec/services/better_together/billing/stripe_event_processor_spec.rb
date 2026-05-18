@@ -77,6 +77,7 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
 
       expect(billing_event.processing_status).to eq('processed')
       expect(billing_event.billable_owner).to eq(community)
+      expect(billing_event.beneficiary).to eq(community)
       expect(billing_subscription.pay_subscription.customer.owner).to eq(community)
       expect(billing_subscription.billing_plan).to eq(billing_plan)
       expect(billing_subscription.status).to eq('active')
@@ -195,6 +196,8 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       described_class.new.call(price_event)
 
       expect(price_sync_service).to have_received(:call).with(event: price_event)
+      expect(BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: 'evt_price_upd_proc').processing_status)
+        .to eq('processed')
     end
 
     it 'routes product.updated events to StripePriceSync' do
@@ -228,6 +231,8 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       described_class.new.call(product_event)
 
       expect(price_sync_service).to have_received(:call).with(event: product_event)
+      expect(BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: 'evt_prod_upd_proc').processing_status)
+        .to eq('processed')
     end
 
     it 'persists invoice payment failures as billing alerts linked to the local subscription' do

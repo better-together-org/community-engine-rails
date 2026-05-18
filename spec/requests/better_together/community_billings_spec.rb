@@ -232,7 +232,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Stripe checkout was synchronized successfully.')
-      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123')
+      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', beneficiary: community)
     end
   end
 
@@ -449,6 +449,28 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect do
         post better_together.reconcile_community_billing_path(community, locale:)
       end.to have_enqueued_job(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob).with(sponsor.class.name, sponsor.id)
+    end
+
+    it 'queues reconciliation for historical sponsor owners when the current subscription is missing' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      sponsor = platform_manager.person
+      sponsor_community = create(:better_together_community, name: 'Sponsor Collective')
+      create(:better_together_billing_subscription, billable_owner: sponsor, beneficiary: community)
+      create(:better_together_billing_subscription, billable_owner: sponsor_community, beneficiary: community)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+      allow(BetterTogether::Billing::Subscription).to receive(:current_for_beneficiary).with(community).and_return(nil)
+
+      post better_together.reconcile_community_billing_path(community, locale:)
+
+      reconciliation_jobs = enqueued_jobs.filter_map do |job|
+        next unless job[:job] == BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob
+
+        job[:args]
+      end
+
+      expect(reconciliation_jobs).to include([sponsor.class.name, sponsor.id])
+      expect(reconciliation_jobs).to include([sponsor_community.class.name, sponsor_community.id])
     end
   end
 

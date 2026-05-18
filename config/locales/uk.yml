@@ -872,6 +872,8 @@ uk:
       checkout_sync_complete: Platezh Stripe uspishno synchronizovano.
       checkout_sync_pending: Platezh Stripe otrymano, ale stan pidpysky shche ne vdalosia
         synchronizuvaty.
+      checkout_sync_wrong_beneficiary: Tsei seans Stripe Checkout ne nalezhyt tsii
+        storintsi vystavlennia rakhunkiv.
       community_capacity_tier: 'Riven vmistymosti spilnoty:'
       community_sponsor_checkout: Oplatyty cherez %{community}
       current_period_ends: 'Potochnyi period zakinchuietsia:'

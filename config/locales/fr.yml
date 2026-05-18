@@ -891,6 +891,8 @@ fr:
       checkout_sync_complete: Le paiement Stripe a ete synchronise avec succes.
       checkout_sync_pending: Le paiement Stripe a ete recu, mais aucun etat d'abonnement
         n'a encore pu etre synchronise.
+      checkout_sync_wrong_beneficiary: Cette session Stripe Checkout ne correspond
+        pas a cette page de facturation.
       community_capacity_tier: 'Niveau de capacite de la communaute :'
       community_sponsor_checkout: Payer via %{community}
       current_period_ends: 'Fin de la periode courante :'

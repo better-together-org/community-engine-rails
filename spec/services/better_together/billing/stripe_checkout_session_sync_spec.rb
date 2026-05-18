@@ -164,5 +164,29 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
       expect(result).to have_attributes(synced: true, billing_plan:)
       expect(result.billing_subscription.pay_subscription.customer.owner).to eq(sponsor_community)
     end
+
+    it 'refuses to sync a checkout session for the wrong beneficiary page' do
+      other_community = create(:better_together_community)
+      mismatched_subscription = subscription.dup
+      mismatched_subscription.metadata = {
+        'bt_billing_plan_id' => billing_plan.id,
+        'bt_beneficiary_type' => other_community.class.name,
+        'bt_beneficiary_id' => other_community.id
+      }
+      mismatched_checkout_session = checkout_session.dup
+      mismatched_checkout_session.subscription = mismatched_subscription
+      mismatched_checkout_session.metadata = {
+        'bt_beneficiary_type' => other_community.class.name,
+        'bt_beneficiary_id' => other_community.id
+      }
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(mismatched_checkout_session)
+
+      result = described_class.new.call(checkout_session_id: 'cs_test_123', beneficiary: community)
+
+      expect(result.synced).to be(false)
+      expect(result.reason).to eq(:beneficiary_mismatch)
+      expect(BetterTogether::Billing::Subscription.count).to eq(0)
+    end
   end
 end

@@ -35,11 +35,12 @@ module BetterTogether
     end
 
     def reconcile
-      owner = current_billing_subscription&.billable_owner || @community
-      BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob.perform_later(
-        owner.class.name,
-        owner.id
-      )
+      reconciliation_targets.each do |owner|
+        BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob.perform_later(
+          owner.class.name,
+          owner.id
+        )
+      end
 
       redirect_to community_billing_path(@community, locale: I18n.locale),
                   notice: t(
@@ -163,7 +164,8 @@ module BetterTogether
 
     def sync_checkout_session
       result = BetterTogether::Billing::StripeCheckoutSessionSync.new.call(
-        checkout_session_id: params[:checkout_session_id]
+        checkout_session_id: params[:checkout_session_id],
+        beneficiary: @community
       )
       flash.now[sync_flash_key(result)] = sync_flash_message(result)
       result
@@ -182,6 +184,12 @@ module BetterTogether
 
     def sync_flash_message(result)
       return t('better_together.billing.checkout_sync_complete', default: 'Stripe checkout was synchronized successfully.') if result&.synced
+      if result&.reason == :beneficiary_mismatch
+        return t(
+          'better_together.billing.checkout_sync_wrong_beneficiary',
+          default: 'This Stripe checkout session does not belong to this billing page.'
+        )
+      end
 
       t(
         'better_together.billing.checkout_sync_pending',
@@ -269,6 +277,19 @@ module BetterTogether
 
     def billing_events_scope
       BetterTogether::Billing::Event.for_owner_or_beneficiary(@community).distinct
+    end
+
+    def reconciliation_targets
+      targets = []
+      current_owner = current_billing_subscription&.billable_owner
+      targets << current_owner if current_owner.present?
+      targets.concat(
+        BetterTogether::Billing::Subscription.for_beneficiary(@community)
+                                            .includes(pay_subscription: :customer)
+                                            .filter_map(&:billable_owner)
+      )
+
+      targets.compact.uniq.presence || [@community]
     end
 
     def replayable_billing_event

@@ -878,6 +878,8 @@ en:
       checkout_sync_complete: Stripe checkout was synchronized successfully.
       checkout_sync_pending: Stripe checkout was received, but no subscription state
         could be synchronized yet.
+      checkout_sync_wrong_beneficiary: This Stripe checkout session does not belong
+        to this billing page.
       community_capacity_tier: 'Community capacity tier:'
       community_sponsor_checkout: Pay via %{community}
       current_period_ends: 'Current period ends:'
