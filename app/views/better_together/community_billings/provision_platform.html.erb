@@ -2,7 +2,7 @@
   <%= t('better_together.billing.provision_platform_page_title', default: 'Provision Hosted Platform') %> | <%= @community.name %>
 <% end %>
 
-<div class="container my-4">
+<div id="<%= dom_id(@community, :provision_platform_page) %>" class="container my-4">
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -28,7 +28,7 @@
 
   <div class="row">
     <div class="col-lg-7">
-      <div class="card">
+      <div id="<%= dom_id(@community, :provision_platform_form_card) %>" class="card">
         <div class="card-header">
           <strong><%= t('better_together.billing.provision_platform_form_heading', default: 'Platform details') %></strong>
         </div>
@@ -36,7 +36,7 @@
           <%= form_with scope: :platform_provision,
                         url: provision_platform_community_billing_path(@community, locale: I18n.locale),
                         method: :post,
-                        html: { class: 'needs-validation' } do |f| %>
+                        html: { class: 'needs-validation', id: 'community-platform-provision-form' } do |f| %>
             <div class="mb-3">
               <%= f.label :name,
                           t('better_together.billing.provision_platform_name', default: 'Platform name'),
@@ -113,7 +113,7 @@
     <div class="col-lg-5">
       <%= render 'better_together/shared/hosted_entitlement_card', hosted_entitlement: @hosted_entitlement %>
 
-      <div class="card">
+      <div id="<%= dom_id(@community, :provision_platform_next_steps) %>" class="card">
         <div class="card-header">
           <strong><%= t('better_together.billing.provision_platform_what_happens', default: 'What happens next') %></strong>
         </div>

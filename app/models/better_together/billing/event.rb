@@ -17,6 +17,9 @@ module BetterTogether
       belongs_to :billable_owner,
                  polymorphic: true,
                  optional: true
+      belongs_to :beneficiary,
+                 polymorphic: true,
+                 optional: true
       belongs_to :billing_subscription,
                  class_name: 'BetterTogether::Billing::Subscription',
                  optional: true,
@@ -37,6 +40,13 @@ module BetterTogether
       scope :with_retries, -> { where(arel_table[:attempt_count].gt(1)) }
       scope :repeated_failures, -> { failed.where(arel_table[:attempt_count].gteq(REPEATED_FAILURE_ATTEMPT_THRESHOLD)) }
       scope :payload_unredacted, -> { where(payload_redacted_at: nil) }
+      scope :for_owner_or_beneficiary, lambda { |record|
+        owner_match = arel_table[:billable_owner_type].eq(record.class.name)
+                                                      .and(arel_table[:billable_owner_id].eq(record.id))
+        beneficiary_match = arel_table[:beneficiary_type].eq(record.class.name)
+                                                         .and(arel_table[:beneficiary_id].eq(record.id))
+        where(owner_match.or(beneficiary_match))
+      }
 
       def processed?
         processing_status == 'processed'

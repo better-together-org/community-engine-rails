@@ -2,20 +2,21 @@
   <%= t('better_together.billing.plans.index_title', default: 'Billing Plans') %>
 <% end %>
 
-<div class="container my-4">
+<div id="billing-plans-index-page" class="container my-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><%= t('better_together.billing.plans.index_title', default: 'Billing Plans') %></h1>
     <% if policy(BetterTogether::Billing::Plan.new).new? %>
       <%= link_to t('better_together.billing.plans.new_plan', default: 'New plan'),
                   new_billing_plan_path(locale: I18n.locale),
-                  class: 'btn btn-primary' %>
+                  class: 'btn btn-primary',
+                  id: 'new-billing-plan-btn' %>
     <% end %>
   </div>
 
   <% if @plans.any? %>
     <div class="card">
       <div class="table-responsive">
-        <table class="table table-hover mb-0">
+        <table id="billing-plans-table" class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
               <th><%= t('better_together.billing.plans.field_identifier', default: 'Identifier') %></th>
@@ -29,7 +30,7 @@
           </thead>
           <tbody>
             <% @plans.each do |plan| %>
-              <tr>
+              <tr id="<%= dom_id(plan) %>">
                 <td><code><%= plan.identifier %></code></td>
                 <td><%= plan.name %></td>
                 <td>
@@ -39,9 +40,9 @@
                 <td><%= number_to_currency(plan.amount_cents / 100.0, unit: plan.currency + ' ') %></td>
                 <td>
                   <% if plan.active? %>
-                    <span class="badge bg-success"><%= t('better_together.billing.plans.status_active', default: 'Active') %></span>
+                    <span class="badge bg-success billing-plan-status-badge"><%= t('better_together.billing.plans.status_active', default: 'Active') %></span>
                   <% else %>
-                    <span class="badge bg-secondary"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
+                    <span class="badge bg-secondary billing-plan-status-badge"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
                   <% end %>
                 </td>
                 <td><%= @active_subscription_counts.fetch(plan.id, 0) %></td>

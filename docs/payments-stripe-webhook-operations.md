@@ -1,6 +1,6 @@
 # Stripe Webhook Operations
 
-This guide describes the current webhook path for both hosted billing subscriptions and Stripe Connect merchant accounts, plus the operational gaps that still need hardening before production rollout.
+This guide describes the current webhook path for both hosted billing subscriptions and Stripe Connect merchant accounts, plus the remaining hardening work after the current billing foundation changes.
 
 ## Current Flow
 
@@ -113,21 +113,23 @@ These paths should be used when:
 - the redacted snapshot removes non-essential attributes that may include broader personal or financial detail
 - redaction is idempotent and tracked on `better_together_billing_events.payload_redacted_at`
 
-## Known Gaps Before Production Hardening
+## Current Hardening Status
 
-- there is no dead-letter or retry queue for local sync failures
-- invoice payment failures and mapped charge disputes now surface through CE billing activity alerts when the webhook can be resolved to a local billing record
-- invoice settlement/finalization events now refresh local billing subscription sync metadata
+- dead-letter handling now exists for Stripe billing events that exceed retry limits
+- replay is available while the short-lived raw payload window remains intact
+- invoice payment failures and mapped charge disputes surface through CE billing activity alerts when the webhook can be resolved to a local billing record
+- invoice settlement and finalization events refresh local billing subscription sync metadata
 - scheduled reconciliation now exists for:
   - Stripe-backed hosted billing owners
   - connected Stripe merchant accounts
 - operator-visible billing pages now escalate:
   - repeated webhook failures when an event fails `3` or more times
   - stale unresolved drift when failed or ignored events remain older than the `6`-hour reconciliation window
-- daily payload redaction now exists, but unresolved drift still relies on operator-visible alerts and reconciliation rather than a dedicated dead-letter queue
+  - dead-lettered events that need operator replay or follow-up
+- daily payload redaction exists, but replay depends on the raw payload window remaining available
 
 ## Recommended Next Hardening Steps
 
-1. Decide whether CE needs a dead-letter or replay workflow for webhook events that still cannot be repaired automatically.
+1. Add stronger operator alert routing outside the billing page itself if support needs proactive notification.
 2. Capture more processor state for operational support, including last invoice id and last event creation time.
 3. Decide whether refund-only events should surface a dedicated operator notice once CE models one-off commerce transactions beyond subscription billing.

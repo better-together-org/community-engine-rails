@@ -929,6 +929,7 @@ fr:
       last_attempt: Derniere tentative
       last_synced_at: 'Derniere synchronisation :'
       last_webhook_event: 'Dernier evenement de webhook :'
+      manage_billing: Gerer la facturation
       manage_link: Gerer la facturation
       manage_person_link: Gerer la facturation personnelle
       merchant_account: Compte marchand
@@ -995,6 +996,12 @@ fr:
         termine.
       plan_beneficiary_label: 'Avantages pour :'
       plan_benefits: Avantages inclus
+      plan_defaults:
+        community_beneficiary_label: Acces communautaire
+        hosted_beneficiary_label: Acces heberge
+        one_time_participant_summary: Contribution unique a l'hebergement
+        personal_beneficiary_label: Acces personnel
+        recurring_participant_summary: Acces heberge continu et soutien de stewardship
       plan_not_found: Ce plan de facturation n'est pas disponible.
       plan_value: Valeur du plan
       plans:
@@ -1057,6 +1064,8 @@ fr:
         de facturation a echoue. Verifiez la disponibilite de Stripe et reessayez
         au bon moment.
       portal_access_last_failed_at: 'Dernier echec d''acces au portail :'
+      portal_owner_unavailable: Cet abonnement communautaire est facture a un autre
+        proprietaire.
       portal_requires_sponsor: Cet abonnement de communaute est facture a un autre
         proprietaire. Demandez au sponsor actuel d'ouvrir le portail de facturation,
         ou lancez ci-dessous un paiement de remplacement si la facturation doit passer

@@ -22,7 +22,7 @@ module BetterTogether
         billing_plan = resolve_billing_plan(subscription)
         return Result.new(synced: false, reason: :billing_plan_not_found) unless billing_plan
 
-        persist_subscription(pay_sub, billing_plan, source:, event:, checkout_session_id:)
+        persist_subscription(subscription, pay_sub, billing_plan, source:, event:, checkout_session_id:)
       end
 
       private
@@ -35,10 +35,12 @@ module BetterTogether
         BetterTogether::Billing::Subscription.find_or_initialize_by(pay_subscription:)
       end
 
-      def persist_subscription(pay_sub, billing_plan, source:, event:, checkout_session_id:)
+      # rubocop:disable Metrics/ParameterLists
+      def persist_subscription(subscription, pay_sub, billing_plan, source:, event:, checkout_session_id:)
         billing_subscription = build_subscription(pay_sub)
         billing_subscription.assign_attributes(
           billing_plan:,
+          beneficiary: resolve_beneficiary(subscription),
           last_synced_at: Time.current,
           sync_source: source,
           latest_processor_event_id: event&.id,
@@ -48,6 +50,7 @@ module BetterTogether
 
         Result.new(synced: true, billing_subscription:, billing_plan:, reason: :synced)
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def resolve_billing_plan(subscription)
         metadata = object_metadata(subscription)
@@ -55,6 +58,18 @@ module BetterTogether
         BetterTogether::Billing::Plan.find_by(id: metadata['bt_billing_plan_id']) ||
           BetterTogether::Billing::Plan.find_by(identifier: metadata['bt_billing_plan_identifier']) ||
           BetterTogether::Billing::Plan.find_by(stripe_price_id: stripe_price_id(subscription))
+      end
+
+      def resolve_beneficiary(subscription)
+        metadata = object_metadata(subscription)
+
+        BetterTogether::Billing::OwnershipResolver.resolve_record(
+          metadata['bt_beneficiary_type'],
+          metadata['bt_beneficiary_id']
+        ) || BetterTogether::Billing::OwnershipResolver.resolve_record(
+          'BetterTogether::Community',
+          metadata['bt_community_id']
+        )
       end
 
       def object_metadata(object)

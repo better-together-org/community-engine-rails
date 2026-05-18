@@ -924,6 +924,7 @@ es:
       last_attempt: Ultimo intento
       last_synced_at: 'Ultima sincronizacion:'
       last_webhook_event: 'Ultimo evento de webhook:'
+      manage_billing: Gestionar facturacion
       manage_link: Gestionar facturacion
       manage_person_link: Gestionar facturacion personal
       merchant_account: Cuenta comercial
@@ -987,6 +988,12 @@ es:
         fuera del lanzamiento hasta que se complete su flujo de cumplimiento.
       plan_beneficiary_label: 'Beneficios para:'
       plan_benefits: Beneficios incluidos
+      plan_defaults:
+        community_beneficiary_label: Acceso comunitario
+        hosted_beneficiary_label: Acceso alojado
+        one_time_participant_summary: Contribucion unica al alojamiento
+        personal_beneficiary_label: Acceso personal
+        recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
       plan_not_found: Ese plan de facturacion no esta disponible.
       plan_value: Valor del plan
       plans:
@@ -1047,6 +1054,8 @@ es:
       portal_access_attention_fallback: El ultimo intento de abrir el portal de facturacion
         fallo. Revisa la disponibilidad de Stripe e intentalo de nuevo cuando corresponda.
       portal_access_last_failed_at: 'Ultimo fallo de acceso al portal:'
+      portal_owner_unavailable: Esta suscripcion de la comunidad se factura a otro
+        titular.
       portal_requires_sponsor: Esta suscripcion de la comunidad esta facturada a otra
         persona o comunidad. Pide al patrocinador actual que abra el portal de facturacion
         o inicia abajo un pago de reemplazo si la facturacion debe pasar a otra persona

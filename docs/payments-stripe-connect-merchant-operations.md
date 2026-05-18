@@ -159,7 +159,6 @@ Webhook metadata is retained so support can confirm that the disconnect came fro
 
 ## Current Gaps
 
-- no scheduled fleet-wide merchant reconciliation scan yet
-- no operator-visible dead-letter or repeated-failure alerting yet
 - no customer-facing commerce ledger yet
 - no payout-history or transfer reporting yet
+- no dedicated support dashboard beyond the billing-page merchant status and billing-event alerts

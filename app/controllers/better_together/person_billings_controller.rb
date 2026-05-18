@@ -7,15 +7,17 @@ module BetterTogether
     before_action :set_person
     before_action :authorize_person
     before_action :authorize_merchant_account_management, only: %i[merchant_onboarding refresh_merchant_account]
+    after_action :verify_authorized
 
     def show
-      @checkout_sync_result = sync_checkout_session if params[:checkout_session_id].present?
+      @checkout_sync_result = sync_checkout_session if valid_checkout_session_id?
       @billing_plans = available_billing_plans
       @billing_subscription = current_billing_subscription
       @merchant_account = current_merchant_account
       @billing_alert_events = billing_alert_events
       @billing_alert_summary = billing_alert_summary
       @last_billing_event = last_billing_event
+      @sponsored_communities = sponsored_communities
     end
 
     def checkout
@@ -26,6 +28,7 @@ module BetterTogether
                   status: :see_other
     end
 
+    # rubocop:disable Metrics/AbcSize
     def portal
       portal_session = @person.set_payment_processor(:stripe).billing_portal(
         return_url: person_billing_url(@person, locale: I18n.locale)
@@ -39,10 +42,11 @@ module BetterTogether
                   alert: t(
                     'better_together.billing.portal_unavailable',
                     default: 'The billing portal is not available yet: %<message>s',
-                    message: e.message
+                    message: ERB::Util.html_escape(e.message)
                   ),
                   status: :see_other
     end
+    # rubocop:enable Metrics/AbcSize
 
     def reconcile
       BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob.perform_later(@person.class.name, @person.id)
@@ -150,16 +154,18 @@ module BetterTogether
     end
 
     def current_billing_subscription
-      @current_billing_subscription ||= BetterTogether::Billing::Subscription
-                                        .joins(:pay_subscription)
-                                        .where(pay_subscriptions: { customer_id: @person.pay_customers.select(:id) })
-                                        .order(Pay::Subscription.arel_table[:created_at].desc)
-                                        .first
+      @current_billing_subscription ||= BetterTogether::Billing::Subscription.current_for_owner(@person)
+    end
+
+    def valid_checkout_session_id?
+      params[:checkout_session_id].to_s.match?(/\Acs_[a-zA-Z0-9_]+\z/)
     end
 
     def sync_checkout_session
       result = BetterTogether::Billing::StripeCheckoutSessionSync.new.call(
-        checkout_session_id: params[:checkout_session_id]
+        checkout_session_id: params[:checkout_session_id],
+        billable_owner: @person,
+        beneficiary: @person
       )
       flash.now[sync_flash_key(result)] = sync_flash_message(result)
       result
@@ -167,7 +173,7 @@ module BetterTogether
       flash.now[:alert] = t(
         'better_together.billing.checkout_session_invalid',
         default: 'The Stripe checkout session could not be synchronized: %<message>s',
-        message: e.message
+        message: ERB::Util.html_escape(e.message)
       )
       nil
     end
@@ -222,8 +228,24 @@ module BetterTogether
     end
 
     def billing_events_scope
-      BetterTogether::Billing::Event.where(billable_owner: @person)
+      BetterTogether::Billing::Event.for_owner_or_beneficiary(@person).distinct
     end
+
+    # rubocop:disable Style/MultilineBlockChain
+    def sponsored_communities
+      BetterTogether::Billing::Subscription
+        .for_owner(@person)
+        .includes(:billing_plan, :pay_subscription)
+        .filter_map do |subscription|
+          beneficiary = subscription.beneficiary
+          next unless beneficiary.is_a?(BetterTogether::Community)
+
+          subscription
+        end
+        .sort_by { |subscription| subscription.updated_at || Time.at(0) }
+        .reverse
+    end
+    # rubocop:enable Style/MultilineBlockChain
 
     def replayable_billing_event
       billing_events_scope.dead_lettered.find(params[:event_id])
@@ -241,7 +263,7 @@ module BetterTogether
       t(
         'better_together.billing.merchant_onboarding_unavailable',
         default: 'Merchant onboarding is not available yet: %<message>s',
-        message: error.message
+        message: ERB::Util.html_escape(error.message)
       )
     end
 
@@ -263,7 +285,7 @@ module BetterTogether
       t(
         'better_together.billing.merchant_refresh_failed',
         default: 'Merchant account refresh failed: %<message>s',
-        message: error.message
+        message: ERB::Util.html_escape(error.message)
       )
     end
 

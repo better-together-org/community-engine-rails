@@ -1,7 +1,8 @@
 <%= form_with(
       model: billing_plan,
       url: billing_plan.persisted? ? billing_plan_path(billing_plan) : billing_plans_path,
-      class: 'needs-validation'
+      class: 'needs-validation',
+      id: 'billing-plan-form'
     ) do |form| %>
   <% if billing_plan.errors.any? %>
     <div class="alert alert-danger" role="alert">
@@ -13,7 +14,7 @@
     </div>
   <% end %>
 
-  <div class="row g-3 mb-4">
+  <div id="billing-plan-core-fields" class="row g-3 mb-4">
     <div class="col-md-6">
       <div class="mb-3">
         <%= form.label :identifier,
@@ -103,7 +104,7 @@
     </div>
   </div>
 
-  <div class="card mb-4">
+  <div id="billing-plan-metadata-card" class="card mb-4">
     <div class="card-header">
       <strong><%= t('better_together.billing.plans.metadata_section_title', default: 'Plan metadata') %></strong>
       <span class="text-muted small ms-2"><%= t('better_together.billing.plans.metadata_section_hint', default: 'Shown on billing pages and entitlement cards') %></span>
@@ -131,7 +132,7 @@
         <div class="form-text"><%= t('better_together.billing.plans.field_participant_benefits_hint', default: 'One benefit per line.') %></div>
       </div>
 
-      <div class="row g-3">
+      <div id="billing-plan-metadata-fields" class="row g-3">
         <div class="col-md-6">
           <div class="mb-3">
             <%= form.label 'metadata[beneficiary_label]',
@@ -177,7 +178,7 @@
         </div>
       </div>
 
-      <div class="mb-0">
+      <div id="billing-plan-eligibility-fields" class="mb-0">
         <label class="form-label">
           <%= t('better_together.billing.plans.field_eligible_owner_types', default: 'Eligible for') %>
         </label>

@@ -67,28 +67,7 @@ module BetterTogether
       private
 
       def current_subscription_for(community)
-        BetterTogether::Billing::Subscription
-          .joins(:pay_subscription)
-          .includes(:billing_plan, :pay_subscription)
-          .where(pay_subscriptions: { customer_id: community.pay_customers.select(:id) })
-          .max_by do |subscription|
-          [
-            subscription_priority(subscription),
-            subscription.updated_at || Time.at(0),
-            subscription.current_period_end || Time.at(0)
-          ]
-        end
-      end
-
-      def subscription_priority(subscription)
-        case subscription.status
-        when 'active', 'trialing'
-          3
-        when 'past_due'
-          2
-        else
-          1
-        end
+        BetterTogether::Billing::Subscription.current_for_beneficiary(community)
       end
 
       def hosted_status_for(subscription)

@@ -1,0 +1,32 @@
+---
+title: Community billing overview
+audience:
+- board_member
+- community_steward
+- operator
+journey_step: A steward reviews the community billing page to see who is paying, what
+  the plan unlocks, whether payouts are configured, and whether Stripe events need
+  attention.
+callouts:
+- :title: Hosted plan status
+  :description: 'This card translates billing into plain operational terms: whether
+    the hosted community is active, what support tier it has, and whether platform
+    provisioning is allowed.'
+- :title: Current subscription
+  :description: This section makes sponsorship visible. If another person or community
+    is paying, the page offers explicit takeover actions instead of assuming billing
+    ownership.
+- :title: Merchant account
+  :description: Hosted billing and payout onboarding are intentionally separate. A
+    community can have hosted access without yet being ready to receive payouts.
+- :title: Billing activity alerts
+  :description: This gives operators a plain dashboard for recent webhook trouble,
+    including failures that may require replay or reconciliation.
+- :title: Available hosted plans
+  :description: The plan table explains what each recurring plan supports and which
+    checkout path will charge the selected payer.
+accessibility_notes: All annotated targets use stable IDs or semantic classes. The
+  page uses native headings, buttons, and table semantics so non-technical reviewers
+  can cross-reference the screenshot with the live UI.
+slug: pr_1581_community_billing_overview
+device: mobile

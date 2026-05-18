@@ -39,6 +39,11 @@ FactoryBot.define do
     association :billing_plan, factory: 'better_together/billing/plan'
     metadata { {} }
 
+    after(:build) do |subscription, evaluator|
+      subscription.billable_owner = evaluator.billable_owner if evaluator.respond_to?(:billable_owner) && evaluator.billable_owner.present?
+      subscription.beneficiary = evaluator.beneficiary if evaluator.respond_to?(:beneficiary) && evaluator.beneficiary.present?
+    end
+
     trait :person_owned do
       association :pay_subscription, factory: %i[pay/subscription person_owned]
     end

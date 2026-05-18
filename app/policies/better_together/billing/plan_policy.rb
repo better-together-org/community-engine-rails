@@ -30,6 +30,8 @@ module BetterTogether
         return false unless user
 
         platform = ::BetterTogether::Platform.find_by(host: true)
+        return false unless platform
+
         user.permitted_to?(:manage_platform, platform)
       end
     end

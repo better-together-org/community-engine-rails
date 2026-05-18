@@ -909,6 +909,7 @@ uk:
       last_attempt: Ostannia sproba
       last_synced_at: 'Ostannia synchronizatsiia:'
       last_webhook_event: 'Ostannia webhook-podiia:'
+      manage_billing: Keruvaty billingom
       manage_link: Keruvaty billingom
       manage_person_link: Keruvaty osobystym billingom
       merchant_account: Merchant account
@@ -969,6 +970,12 @@ uk:
         yikhnii fulfillment-potik ne bude zaversheno.
       plan_beneficiary_label: 'Perevahy dlia:'
       plan_benefits: Vklucheni perevahy
+      plan_defaults:
+        community_beneficiary_label: Dostup spilnoty
+        hosted_beneficiary_label: Hosted-dostup
+        one_time_participant_summary: Razovyi vnesok na hosted-dostup
+        personal_beneficiary_label: Osobystyi dostup
+        recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
       plan_not_found: Tsei billing plan nedostupnyi.
       plan_value: Tsinnist planu
       plans:
@@ -1027,6 +1034,8 @@ uk:
       portal_access_attention_fallback: Ostannia sproba vidkryty billing portal zavershylasia
         nevdalo. Perevir dostupnist Stripe ta sprobui shche raz, koly bude hotovo.
       portal_access_last_failed_at: 'Ostannii nevdalyi dostup do portalu:'
+      portal_owner_unavailable: Tsiu pidpysku spilnoty vystavleno do oplaty inshomu
+        vlasnyku.
       portal_requires_sponsor: Tsiu pidpysku spilnoty vystavleno na inshoho vlasnyka.
         Poprosit potochnoho sponsora vidkryty billing portal abo pochnit nyzhche zaminnii
         checkout, yakshcho billing maie pereity do inshoho vlasnyka.

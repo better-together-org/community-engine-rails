@@ -1,0 +1,24 @@
+---
+title: Billing plan editor
+audience:
+- operator
+- board_member
+journey_step: A host steward edits a plan to define who can buy it and what hosted
+  support the plan represents.
+callouts:
+- :title: Plan editor
+  :description: This form is the administrative source of truth for each hosted recurring
+    plan. It combines pricing data, Stripe references, and the language that subscribers
+    will read.
+- :title: Subscriber-facing metadata
+  :description: This section matters to non-technical reviewers because it directly
+    shapes how the platform explains plan value and entitlement status to members
+    and sponsors.
+- :title: Eligible payers
+  :description: The payer rules are what make personal sponsorship and community-to-community
+    sponsorship possible without introducing ambiguous ownership.
+accessibility_notes: The editor exposes stable IDs for the full form and each major
+  field cluster, allowing screenshot evidence and DOM contract tests to avoid fragile
+  selectors.
+slug: pr_1581_billing_plan_editor
+device: desktop

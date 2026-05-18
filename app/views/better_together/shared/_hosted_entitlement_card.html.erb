@@ -1,11 +1,11 @@
 <% provision_path ||= nil %>
-<div class="card mb-4">
+<div id="hosted-entitlement-card" class="card mb-4">
   <div class="card-header">
     <strong><%= t('better_together.billing.hosted_entitlement_heading', default: 'Hosted plan status') %></strong>
   </div>
   <div class="card-body">
     <p class="mb-2">
-      <span class="badge <%= hosted_entitlement.status_badge_class %>"><%= hosted_entitlement.status_label %></span>
+      <span class="badge <%= hosted_entitlement.status_badge_class %> hosted-entitlement-status-badge"><%= hosted_entitlement.status_label %></span>
     </p>
 
     <% if hosted_entitlement.billing_subscription.present? %>

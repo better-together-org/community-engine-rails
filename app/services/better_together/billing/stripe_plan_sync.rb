@@ -24,8 +24,10 @@ module BetterTogether
         keyword_init: true
       )
 
+      # rubocop:disable Metrics/AbcSize
       def call(plan:)
         return Result.new(synced: false, plan:, reason: :no_stripe_price_id) if plan.stripe_price_id.blank?
+        return Result.new(synced: false, plan:, reason: :stripe_initiated) if plan.sync_source == 'stripe_webhook'
 
         product = upsert_product(plan)
         return Result.new(synced: false, plan:, reason: :product_upsert_failed) unless product
@@ -39,6 +41,7 @@ module BetterTogether
         Rails.logger.error("StripePlanSync failed for plan #{plan.id}: #{e.message}")
         Result.new(synced: false, plan:, reason: :stripe_error)
       end
+      # rubocop:enable Metrics/AbcSize
 
       private
 
@@ -71,9 +74,12 @@ module BetterTogether
       def update_product(plan)
         Stripe::Product.update(
           plan.stripe_product_id,
-          name: plan.name,
-          description: plan.description.presence,
-          metadata: { bt_billing_plan_id: plan.id, bt_billing_plan_identifier: plan.identifier }
+          {
+            name: plan.name,
+            description: plan.description.presence,
+            active: plan.active,
+            metadata: { bt_billing_plan_id: plan.id, bt_billing_plan_identifier: plan.identifier }
+          }
         )
       end
 
@@ -117,7 +123,7 @@ module BetterTogether
       end
 
       def mark_synced(plan, product, price)
-        updates = { synced_to_stripe_at: Time.current, sync_source: 'ce_push' }
+        updates = { synced_to_stripe_at: Time.current, sync_source: 'ce_push', latest_stripe_event_id: nil }
         updates[:stripe_product_id] = product.id if product.id != plan.stripe_product_id
         updates[:stripe_price_id] = price.id if price.id != plan.stripe_price_id
         plan.update_columns(**updates)

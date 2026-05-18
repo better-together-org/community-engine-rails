@@ -1,0 +1,81 @@
+{
+  "name": "pr_1581_billing_plan_editor",
+  "device": "desktop",
+  "url": "/en/host/billing/plans/2eeb2943-28e2-4ae3-9e7b-2efe09fb488d/edit",
+  "title": "Edit Billing Plan — Community Stewardship | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plan-form",
+      "title": "Plan editor",
+      "bullets": [
+        "Central place to define recurring pricing, Stripe linkage, and subscriber-facing copy.",
+        "Keeps pricing and stewardship promises together in one form."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 224.0,
+        "width": 1296.0,
+        "height": 1207.0,
+        "right": 1360.5,
+        "bottom": 1431.0,
+        "center_x": 712.5,
+        "center_y": 827.5
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 224.0,
+        "width": 1296.0,
+        "height": 1207.0,
+        "right": 1360.5,
+        "bottom": 1431.0,
+        "center_x": 712.5,
+        "center_y": 827.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 262
+      }
+    },
+    {
+      "selector": "#billing-plan-metadata-card",
+      "title": "Subscriber-facing metadata",
+      "bullets": [
+        "Controls the text and labels shown on community and personal billing pages.",
+        "Lets the host explain the plan in non-technical language."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 779.0,
+        "width": 1296.0,
+        "height": 590.0,
+        "right": 1360.5,
+        "bottom": 1369.0,
+        "center_x": 712.5,
+        "center_y": 1074.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 779.0,
+        "width": 1296.0,
+        "height": 590.0,
+        "right": 1360.5,
+        "bottom": 1369.0,
+        "center_x": 712.5,
+        "center_y": 1074.0
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 326,
+        "width": 380,
+        "height": 268
+      }
+    }
+  ]
+}

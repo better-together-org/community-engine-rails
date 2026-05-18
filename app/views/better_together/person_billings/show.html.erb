@@ -2,7 +2,7 @@
   <%= t('better_together.billing.person_page_title', default: 'Personal Billing') %> | <%= @person.name %>
 <% end %>
 
-<div class="container my-4">
+<div id="<%= dom_id(@person, :billing_page) %>" class="container my-4">
   <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
@@ -14,7 +14,7 @@
     </ol>
   </nav>
 
-  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div id="<%= dom_id(@person, :billing_header) %>" class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
     <div>
       <h1 class="mb-1"><%= t('better_together.billing.person_heading', default: 'Personal Billing') %></h1>
       <p class="text-muted mb-0">
@@ -40,7 +40,7 @@
 
   <div class="row g-4">
     <div class="col-lg-4">
-      <div class="card h-100">
+      <div id="<%= dom_id(@person, :current_subscription_card) %>" class="card h-100">
         <div class="card-header">
           <strong><%= t('better_together.billing.current_subscription', default: 'Current subscription') %></strong>
         </div>
@@ -58,7 +58,7 @@
             <% end %>
             <p class="mb-2"><strong><%= @billing_subscription.billing_plan.name %></strong></p>
             <p class="mb-2">
-              <span class="badge text-bg-primary"><%= @billing_subscription.status %></span>
+              <span class="badge text-bg-primary billing-subscription-status-badge"><%= @billing_subscription.status %></span>
             </p>
             <p class="mb-1">
               <%= t('better_together.billing.last_synced_at', default: 'Last synced:') %>
@@ -86,7 +86,35 @@
     </div>
 
     <div class="col-lg-8">
-      <div class="card mb-4">
+      <% if @sponsored_communities.any? %>
+        <div id="<%= dom_id(@person, :sponsored_communities_card) %>" class="card mb-4">
+          <div class="card-header">
+            <strong><%= t('better_together.billing.sponsored_communities', default: 'Sponsored communities') %></strong>
+          </div>
+          <div class="card-body">
+            <div id="person-sponsored-communities-list" class="list-group list-group-flush">
+              <% @sponsored_communities.each do |subscription| %>
+                <% sponsored_community = subscription.beneficiary %>
+                <div id="<%= dom_id(sponsored_community, :sponsorship_row) %>" class="list-group-item px-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                  <div>
+                    <div class="fw-semibold"><%= sponsored_community.name %></div>
+                    <div class="text-muted small">
+                      <%= subscription.billing_plan.name %>
+                      ·
+                      <%= t("better_together.billing.subscription_status.#{subscription.status}", default: subscription.status.humanize) %>
+                    </div>
+                  </div>
+                  <%= link_to t('better_together.billing.manage_billing', default: 'Manage billing'),
+                              community_billing_path(sponsored_community, locale: I18n.locale),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div id="<%= dom_id(@person, :merchant_account_card) %>" class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center gap-2">
           <strong><%= t('better_together.billing.merchant_account', default: 'Merchant account') %></strong>
           <div class="d-flex gap-2">
@@ -127,7 +155,7 @@
               </div>
             <% end %>
             <p class="mb-2">
-              <span class="badge text-bg-info"><%= @merchant_account.status %></span>
+              <span class="badge text-bg-info billing-merchant-status-badge"><%= @merchant_account.status %></span>
             </p>
             <p class="mb-1">
               <%= t('better_together.billing.merchant_provider', default: 'Provider:') %>
@@ -172,7 +200,7 @@
                  end,
                  last_billing_event: @last_billing_event %>
 
-      <div class="card">
+      <div id="<%= dom_id(@person, :available_plans_card) %>" class="card">
         <div class="card-header">
           <strong><%= t('better_together.billing.available_plans', default: 'Available hosted plans') %></strong>
         </div>
@@ -183,7 +211,7 @@
           </div>
           <% if @billing_plans.any? %>
             <div class="table-responsive">
-              <table class="table align-middle">
+              <table id="person-billing-plans-table" class="table align-middle">
                 <thead>
                   <tr>
                     <th><%= t('globals.name', default: 'Name') %></th>
@@ -195,7 +223,7 @@
                 </thead>
                 <tbody>
                   <% @billing_plans.each do |billing_plan| %>
-                    <tr>
+                    <tr id="<%= dom_id(billing_plan) %>">
                       <td><strong><%= billing_plan.name %></strong></td>
                       <td><%= render 'better_together/shared/billing_plan_details', billing_plan: billing_plan %></td>
                       <td><%= billing_plan.billing_interval %></td>

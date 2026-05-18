@@ -2,60 +2,60 @@
   <%= @plan.name %> | <%= t('better_together.billing.plans.index_title', default: 'Billing Plans') %>
 <% end %>
 
-<div class="container my-4">
+<div id="<%= dom_id(@plan, :show_page) %>" class="container my-4">
   <%= render 'shared/resource_toolbar',
              back_to_list_path: billing_plans_path(locale: I18n.locale),
              edit_path: policy(@plan).edit? ? edit_billing_plan_path(@plan, locale: I18n.locale) : nil %>
 
   <div class="row g-4 mt-1">
     <div class="col-lg-6">
-      <div class="card">
+      <div id="<%= dom_id(@plan, :summary_card) %>" class="card">
         <div class="card-header">
           <strong><%= @plan.name %></strong>
           <% if @plan.active? %>
-            <span class="badge bg-success ms-2"><%= t('better_together.billing.plans.status_active', default: 'Active') %></span>
+            <span class="badge bg-success ms-2 billing-plan-status-badge"><%= t('better_together.billing.plans.status_active', default: 'Active') %></span>
           <% else %>
-            <span class="badge bg-secondary ms-2"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
+            <span class="badge bg-secondary ms-2 billing-plan-status-badge"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
           <% end %>
         </div>
         <div class="card-body">
-          <dl class="row mb-0">
+          <dl id="<%= dom_id(@plan, :summary_details) %>" class="row mb-0">
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_identifier', default: 'Identifier') %></dt>
-            <dd class="col-sm-7"><code><%= @plan.identifier %></code></dd>
+            <dd id="<%= dom_id(@plan, :identifier) %>" class="col-sm-7"><code><%= @plan.identifier %></code></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_description', default: 'Description') %></dt>
-            <dd class="col-sm-7"><%= @plan.description.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :description) %>" class="col-sm-7"><%= @plan.description.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_billing_interval', default: 'Interval') %></dt>
-            <dd class="col-sm-7">
+            <dd id="<%= dom_id(@plan, :billing_interval) %>" class="col-sm-7">
               <%= t("better_together.billing.plans.interval_#{@plan.billing_interval}",
                     default: @plan.billing_interval.humanize) %>
             </dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount_cents', default: 'Price') %></dt>
-            <dd class="col-sm-7">
+            <dd id="<%= dom_id(@plan, :price) %>" class="col-sm-7">
               <%= number_to_currency(@plan.amount_cents / 100.0, unit: @plan.currency + ' ') %>
             </dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_stripe_price_id', default: 'Stripe Price ID') %></dt>
-            <dd class="col-sm-7"><code><%= @plan.stripe_price_id %></code></dd>
+            <dd id="<%= dom_id(@plan, :stripe_price_id) %>" class="col-sm-7"><code><%= @plan.stripe_price_id %></code></dd>
           </dl>
         </div>
       </div>
     </div>
 
     <div class="col-lg-6">
-      <div class="card">
+      <div id="<%= dom_id(@plan, :metadata_card) %>" class="card">
         <div class="card-header">
           <strong><%= t('better_together.billing.plans.metadata_section_title', default: 'Plan metadata') %></strong>
         </div>
         <div class="card-body">
-          <dl class="row mb-0">
+          <dl id="<%= dom_id(@plan, :metadata_details) %>" class="row mb-0">
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_summary', default: 'Participant summary') %></dt>
-            <dd class="col-sm-7"><%= @plan.participant_summary.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :participant_summary) %>" class="col-sm-7"><%= @plan.participant_summary.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_benefits', default: 'Benefits') %></dt>
-            <dd class="col-sm-7">
+            <dd id="<%= dom_id(@plan, :participant_benefits) %>" class="col-sm-7">
               <% if @plan.participant_benefits.any? %>
                 <ul class="mb-0 ps-3">
                   <% @plan.participant_benefits.each do |benefit| %>
@@ -68,19 +68,19 @@
             </dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_beneficiary_label', default: 'Beneficiary label') %></dt>
-            <dd class="col-sm-7"><%= @plan.beneficiary_label.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :beneficiary_label) %>" class="col-sm-7"><%= @plan.beneficiary_label.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_hosted_access_level', default: 'Hosted access level') %></dt>
-            <dd class="col-sm-7"><%= @plan.hosted_access_level.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :hosted_access_level) %>" class="col-sm-7"><%= @plan.hosted_access_level.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_support_tier', default: 'Support tier') %></dt>
-            <dd class="col-sm-7"><%= @plan.support_tier.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :support_tier) %>" class="col-sm-7"><%= @plan.support_tier.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_community_capacity_tier', default: 'Capacity tier') %></dt>
-            <dd class="col-sm-7"><%= @plan.community_capacity_tier.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :community_capacity_tier) %>" class="col-sm-7"><%= @plan.community_capacity_tier.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_eligible_owner_types', default: 'Eligible for') %></dt>
-            <dd class="col-sm-7">
+            <dd id="<%= dom_id(@plan, :eligible_owner_types) %>" class="col-sm-7">
               <% @plan.eligible_billable_owner_types.each do |type| %>
                 <span class="badge bg-light text-dark border me-1">
                   <%= type.demodulize %>
@@ -94,7 +94,7 @@
   </div>
 
   <% if @subscription_health.any? %>
-    <div class="card mt-4">
+    <div id="<%= dom_id(@plan, :subscription_health_card) %>" class="card mt-4">
       <div class="card-header">
         <strong><%= t('better_together.billing.plans.subscription_health_title', default: 'Subscription health') %></strong>
       </div>
@@ -114,7 +114,7 @@
   <% end %>
 
   <% if @recent_subscribers.any? %>
-    <div class="card mt-4">
+    <div id="<%= dom_id(@plan, :recent_subscribers_card) %>" class="card mt-4">
       <div class="card-header">
         <strong><%= t('better_together.billing.plans.recent_subscribers_title', default: 'Active subscribers') %></strong>
         <span class="badge bg-primary rounded-pill ms-2"><%= @recent_subscribers.size %></span>

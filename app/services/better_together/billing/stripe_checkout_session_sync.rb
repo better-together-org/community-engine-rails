@@ -11,11 +11,13 @@ module BetterTogether
         :billing_subscription,
         :billing_plan,
         :checkout_session,
+        :billable_owner,
+        :beneficiary,
         :reason,
         keyword_init: true
       )
 
-      def call(checkout_session_id:)
+      def call(checkout_session_id:, **)
         checkout_session = fetch_checkout_session(checkout_session_id)
         subscription = fetch_subscription(checkout_session)
 
@@ -67,6 +69,8 @@ module BetterTogether
           billing_subscription: sync_result.billing_subscription,
           billing_plan: sync_result.billing_plan,
           checkout_session:,
+          billable_owner: sync_result.billing_subscription&.billable_owner,
+          beneficiary: sync_result.billing_subscription&.beneficiary,
           reason: sync_result.reason
         )
       end

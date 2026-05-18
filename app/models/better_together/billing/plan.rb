@@ -105,19 +105,25 @@ module BetterTogether
 
       def default_participant_summary
         if recurring?
-          'Supports hosted access and ongoing stewardship for this Better Together space.'
+          I18n.t(
+            'better_together.billing.plan_defaults.recurring_participant_summary',
+            default: 'Supports hosted access and ongoing stewardship for this Better Together space.'
+          )
         else
-          'This one-time plan is not currently available in the hosted billing launch path.'
+          I18n.t(
+            'better_together.billing.plan_defaults.one_time_participant_summary',
+            default: 'This one-time plan is not currently available in the hosted billing launch path.'
+          )
         end
       end
 
       def default_beneficiary_label
         if eligible_billable_owner_types == [BetterTogether::Person.name]
-          'Personal access'
+          I18n.t('better_together.billing.plan_defaults.personal_beneficiary_label', default: 'Personal access')
         elsif eligible_billable_owner_types == [BetterTogether::Community.name]
-          'Community access'
+          I18n.t('better_together.billing.plan_defaults.community_beneficiary_label', default: 'Community access')
         else
-          'Hosted access'
+          I18n.t('better_together.billing.plan_defaults.hosted_beneficiary_label', default: 'Hosted access')
         end
       end
 
@@ -134,6 +140,7 @@ module BetterTogether
 
       def enqueue_stripe_sync!
         return if stripe_price_id.blank?
+        return if sync_source == 'stripe_webhook'
 
         BetterTogether::Billing::SyncPlanToStripeJob.perform_later(id)
       end

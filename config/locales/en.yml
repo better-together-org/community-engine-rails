@@ -915,6 +915,7 @@ en:
       last_attempt: Last attempt
       last_synced_at: 'Last synced:'
       last_webhook_event: 'Last webhook event:'
+      manage_billing: Manage billing
       manage_link: Manage billing
       manage_person_link: Manage personal billing
       merchant_account: Merchant account
@@ -974,6 +975,12 @@ en:
         until their fulfillment flow is complete.
       plan_beneficiary_label: 'Benefits for:'
       plan_benefits: Included benefits
+      plan_defaults:
+        community_beneficiary_label: Community access
+        hosted_beneficiary_label: Hosted access
+        one_time_participant_summary: One-time hosted contribution
+        personal_beneficiary_label: Personal access
+        recurring_participant_summary: Ongoing hosted access and stewardship support
       plan_not_found: That billing plan is not available.
       plan_value: Plan value
       plans:
@@ -1033,6 +1040,7 @@ en:
       portal_access_attention_fallback: The last attempt to open the billing portal
         failed. Check Stripe availability and retry when ready.
       portal_access_last_failed_at: 'Last failed portal access:'
+      portal_owner_unavailable: This community subscription is billed to another owner.
       portal_requires_sponsor: This community subscription is billed to another owner.
         Ask the current sponsor to open the billing portal, or start a replacement
         checkout below if billing should move to a different owner.

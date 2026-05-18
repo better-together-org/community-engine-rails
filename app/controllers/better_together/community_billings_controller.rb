@@ -24,17 +24,21 @@ module BetterTogether
     end
 
     def portal
+      owner = portal_billable_owner
+      return redirect_to_billing_with_alert(portal_owner_unavailable_message) unless owner
+
       current_billing_subscription&.clear_portal_access_failure!
-      redirect_to billing_portal_session_for(@community).url, allow_other_host: true
+      redirect_to billing_portal_session_for(owner).url, allow_other_host: true
     rescue StandardError => e
       current_billing_subscription&.record_portal_access_failure!(message: e.message)
       redirect_to_portal_unavailable(e)
     end
 
     def reconcile
+      owner = current_billing_subscription&.billable_owner || @community
       BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob.perform_later(
-        @community.class.name,
-        @community.id
+        owner.class.name,
+        owner.id
       )
 
       redirect_to community_billing_path(@community, locale: I18n.locale),
@@ -108,7 +112,11 @@ module BetterTogether
     end
 
     def checkout_metadata(billing_plan)
-      BetterTogether::Billing::OwnershipResolver.build_metadata(billing_plan:)
+      BetterTogether::Billing::OwnershipResolver.build_metadata(
+        billing_plan:,
+        billable_owner: selected_billable_owner,
+        beneficiary: @community
+      )
     end
 
     def find_billing_plan
@@ -116,11 +124,12 @@ module BetterTogether
     end
 
     def checkout_session_for(billing_plan)
-      payment_processor.checkout(**checkout_options(billing_plan))
+      selected_billable_owner.set_payment_processor(:stripe).checkout(**checkout_options(billing_plan))
     end
 
     def checkout_options(billing_plan)
       metadata = checkout_metadata(billing_plan)
+      billable_owner = selected_billable_owner
 
       {
         mode: billing_plan.recurring? ? 'subscription' : 'payment',
@@ -128,7 +137,7 @@ module BetterTogether
         success_url: billing_success_url,
         cancel_url: billing_cancel_url,
         allow_promotion_codes: true,
-        client_reference_id: @community.id,
+        client_reference_id: billable_owner.id,
         metadata:,
         subscription_data: subscription_checkout_data(billing_plan, metadata)
       }
@@ -146,10 +155,6 @@ module BetterTogether
 
     def billing_cancel_url
       community_billing_url(@community, locale: I18n.locale)
-    end
-
-    def payment_processor
-      @community.set_payment_processor(:stripe)
     end
 
     def valid_checkout_session_id?
@@ -185,13 +190,10 @@ module BetterTogether
     end
 
     def current_billing_subscription
-      BetterTogether::Billing::Subscription
-        .joins(:pay_subscription)
-        .where(pay_subscriptions: { customer_id: @community.pay_customers.select(:id) })
-        .order(Pay::Subscription.arel_table[:created_at].desc)
-        .first
+      @current_billing_subscription ||= BetterTogether::Billing::Subscription.current_for_beneficiary(@community)
     end
 
+    # rubocop:disable Metrics/AbcSize
     def load_billing_overview
       @billing_plans = available_billing_plans
       @billing_subscription = current_billing_subscription
@@ -204,7 +206,10 @@ module BetterTogether
       @billing_alert_events = billing_alert_events
       @billing_alert_summary = billing_alert_summary
       @last_billing_event = last_billing_event
+      @sponsoring_person = current_user.person
+      @sponsoring_communities = policy_scope(BetterTogether::Community).where.not(id: @community.id).to_a
     end
+    # rubocop:enable Metrics/AbcSize
 
     def billing_portal_session_for(billable_owner)
       billable_owner.set_payment_processor(:stripe).billing_portal(
@@ -263,14 +268,7 @@ module BetterTogether
     end
 
     def billing_events_scope
-      BetterTogether::Billing::Event.where(
-        '(billable_owner_type = :owner_type AND billable_owner_id = :owner_id) OR ' \
-        '(beneficiary_type = :beneficiary_type AND beneficiary_id = :beneficiary_id)',
-        owner_type: @community.class.name,
-        owner_id: @community.id,
-        beneficiary_type: @community.class.name,
-        beneficiary_id: @community.id
-      ).distinct
+      BetterTogether::Billing::Event.for_owner_or_beneficiary(@community).distinct
     end
 
     def replayable_billing_event
@@ -312,6 +310,41 @@ module BetterTogether
         'better_together.billing.merchant_refresh_failed',
         default: 'Merchant account refresh failed: %<message>s',
         message: ERB::Util.html_escape(error.message)
+      )
+    end
+
+    def selected_billable_owner
+      @selected_billable_owner ||= case params[:checkout_as].to_s
+                                   when 'person'
+                                     current_user.person.presence || @community
+                                   when 'community'
+                                     sponsoring_communities_by_slug.fetch(params[:billable_owner_community_id].to_s, @community)
+                                   else
+                                     @community
+                                   end
+    end
+
+    def sponsoring_communities_by_slug
+      @sponsoring_communities_by_slug ||= policy_scope(BetterTogether::Community)
+                                          .where.not(id: @community.id)
+                                          .index_by(&:slug)
+    end
+
+    # rubocop:disable Metrics/CyclomaticComplexity
+    def portal_billable_owner
+      owner = current_billing_subscription&.billable_owner
+      return @community if owner.blank? || owner == @community
+      return owner if owner.is_a?(BetterTogether::Person) && owner == current_user.person
+      return owner if owner.is_a?(BetterTogether::Community) && policy(owner).update?
+
+      nil
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity
+
+    def portal_owner_unavailable_message
+      t(
+        'better_together.billing.portal_owner_unavailable',
+        default: 'This community subscription is billed to another owner.'
       )
     end
 

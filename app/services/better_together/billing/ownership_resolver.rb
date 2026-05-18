@@ -5,9 +5,9 @@ module BetterTogether
     # Helpers for building Stripe checkout metadata and resolving billing
     # record owners from Stripe webhook payloads.
     #
-    # With v1 owner-equals-beneficiary, metadata only needs to encode the
-    # billing plan. The billable owner is implicit from the Pay::Customer
-    # associated with the Stripe customer ID on the webhook payload.
+    # Hosted billing needs both the paying owner and the beneficiary encoded so
+    # sponsored checkouts can be reconstructed after hosted redirects and
+    # webhook delivery.
     module OwnershipResolver
       SUPPORTED_OWNER_TYPES = {
         'community' => 'BetterTogether::Community',
@@ -20,13 +20,25 @@ module BetterTogether
 
       module_function
 
-      # Builds Stripe checkout metadata encoding the billing plan only.
-      # Owner identity is implicit from which pay_customer calls checkout.
-      def build_metadata(billing_plan:)
-        {
+      # Builds Stripe checkout metadata for the billing plan plus any explicit
+      # owner / beneficiary split used by sponsored hosted billing flows.
+      def build_metadata(billing_plan:, billable_owner: nil, beneficiary: nil)
+        metadata = {
           bt_billing_plan_id: billing_plan.id,
           bt_billing_plan_identifier: billing_plan.identifier
         }
+
+        if supported_owner_type?(billable_owner)
+          metadata[:bt_billable_owner_type] = billable_owner.class.name
+          metadata[:bt_billable_owner_id] = billable_owner.id
+        end
+
+        if supported_owner_type?(beneficiary)
+          metadata[:bt_beneficiary_type] = beneficiary.class.name
+          metadata[:bt_beneficiary_id] = beneficiary.id
+        end
+
+        metadata
       end
 
       # Resolves the billable owner from the Stripe webhook payload.

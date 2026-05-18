@@ -1,4 +1,4 @@
-<div class="card mb-4">
+<div id="billing-activity-alerts-card" class="card mb-4">
   <div class="card-header">
     <strong><%= t('better_together.billing.activity_alerts', default: 'Billing activity alerts') %></strong>
   </div>
@@ -69,7 +69,7 @@
       </div>
 
       <div class="table-responsive">
-        <table class="table align-middle mb-0">
+        <table id="billing-activity-alerts-table" class="table align-middle mb-0">
           <thead>
             <tr>
               <th><%= t('better_together.billing.event_type', default: 'Event') %></th>
@@ -81,13 +81,13 @@
           </thead>
           <tbody>
             <% billing_alert_events.each do |billing_event| %>
-              <tr>
+              <tr id="<%= dom_id(billing_event) %>">
                 <td>
                   <strong><%= billing_event.event_type %></strong>
                   <div class="text-muted small"><%= billing_event.event_id %></div>
                 </td>
                 <td>
-                  <span class="badge <%= billing_event.status_badge_class %>">
+                  <span class="badge <%= billing_event.status_badge_class %> billing-event-status-badge">
                     <%= billing_event.processing_status %>
                   </span>
                   <% if billing_event.retrying? %>
