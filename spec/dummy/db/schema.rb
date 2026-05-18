@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_14_100004) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_17_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -579,6 +579,74 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_14_100004) do
     t.index ["platform_id"], name: "index_better_together_content_platform_blocks_on_platform_id"
   end
 
+  create_table "better_together_content_security_findings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "item_id", null: false
+    t.uuid "scan_event_id", null: false
+    t.uuid "safety_case_id"
+    t.string "plane", default: "technical", null: false
+    t.string "finding_type", null: false
+    t.string "rule_id"
+    t.string "severity", null: false
+    t.string "confidence", null: false
+    t.string "verdict", null: false
+    t.text "evidence_summary"
+    t.datetime "detected_at", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["item_id"], name: "idx_bt_cs_findings_on_item_id"
+    t.index ["plane"], name: "index_better_together_content_security_findings_on_plane"
+    t.index ["safety_case_id"], name: "idx_bt_cs_findings_on_safety_case_id"
+    t.index ["scan_event_id"], name: "idx_bt_cs_findings_on_scan_event_id"
+    t.index ["verdict"], name: "index_better_together_content_security_findings_on_verdict"
+  end
+
+  create_table "better_together_content_security_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "blob_id", null: false
+    t.string "attachable_type", null: false
+    t.uuid "attachable_id", null: false
+    t.uuid "safety_case_id"
+    t.string "attachment_name", null: false
+    t.string "source_surface", null: false
+    t.string "lifecycle_state", default: "pending_scan", null: false
+    t.string "aggregate_verdict", default: "pending_scan", null: false
+    t.string "scanner_name"
+    t.datetime "scanned_at"
+    t.datetime "released_at"
+    t.string "last_error_class"
+    t.text "last_error_summary"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_attachment", unique: true
+    t.index ["blob_id", "attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_blob_attachment", unique: true
+    t.index ["lifecycle_state"], name: "idx_bt_cs_items_on_lifecycle_state"
+    t.index ["safety_case_id"], name: "idx_bt_cs_items_on_safety_case_id"
+  end
+
+  create_table "better_together_content_security_scan_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "item_id", null: false
+    t.string "status", default: "started", null: false
+    t.string "plane", default: "technical", null: false
+    t.string "scanner_name", null: false
+    t.string "scanner_version"
+    t.string "verdict"
+    t.string "signature_name"
+    t.string "error_class"
+    t.text "error_summary"
+    t.datetime "started_at", null: false
+    t.datetime "finished_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["item_id"], name: "idx_bt_cs_scan_events_on_item_id"
+    t.index ["plane"], name: "index_better_together_content_security_scan_events_on_plane"
+    t.index ["status"], name: "index_better_together_content_security_scan_events_on_status"
+  end
+
   create_table "better_together_content_security_subjects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.string "subject_type", null: false
@@ -1049,8 +1117,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_14_100004) do
     t.uuid "invitable_id", null: false
     t.string "inviter_type", null: false
     t.uuid "inviter_id", null: false
-    t.string "invitee_type", null: false
-    t.uuid "invitee_id", null: false
+    t.string "invitee_type"
+    t.uuid "invitee_id"
     t.string "invitee_email", null: false
     t.uuid "role_id"
     t.uuid "creator_id"
@@ -2475,6 +2543,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_14_100004) do
   add_foreign_key "better_together_content_page_blocks", "better_together_pages", column: "page_id"
   add_foreign_key "better_together_content_platform_blocks", "better_together_content_blocks", column: "block_id"
   add_foreign_key "better_together_content_platform_blocks", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_content_security_findings", "better_together_content_security_items", column: "item_id"
+  add_foreign_key "better_together_content_security_findings", "better_together_content_security_scan_events", column: "scan_event_id"
+  add_foreign_key "better_together_content_security_findings", "better_together_safety_cases", column: "safety_case_id"
+  add_foreign_key "better_together_content_security_items", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "better_together_content_security_items", "better_together_safety_cases", column: "safety_case_id"
+  add_foreign_key "better_together_content_security_scan_events", "better_together_content_security_items", column: "item_id"
   add_foreign_key "better_together_content_security_subjects", "active_storage_blobs"
   add_foreign_key "better_together_conversation_participants", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_conversation_participants", "better_together_people", column: "person_id"

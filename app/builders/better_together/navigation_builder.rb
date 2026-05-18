@@ -767,6 +767,7 @@ module BetterTogether
       end
 
       def delete_pages
+        ::BetterTogether::Agreement.update_all(page_id: nil)
         ::BetterTogether::Content::PageBlock.delete_all
         ::BetterTogether::Content::Block.delete_all
         ::BetterTogether::Page.delete_all
