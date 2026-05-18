@@ -43,9 +43,9 @@ RSpec.describe 'BetterTogether upload download security' do
   end
 
   it 'blocks download while the upload is pending scan' do
-    get "/en/bt/f/#{upload.id}/download"
+    get better_together.download_file_path(upload, locale: I18n.default_locale)
 
-    expect(response).to redirect_to('http://www.example.com/')
+    expect(response).to redirect_to('http://www.example.com')
   end
 
   it 'allows download after the upload is released' do
@@ -55,7 +55,7 @@ RSpec.describe 'BetterTogether upload download security' do
       released_at: Time.current
     )
 
-    get "/en/bt/f/#{upload.id}/download"
+    get better_together.download_file_path(upload, locale: I18n.default_locale)
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to eq('safe-content')
