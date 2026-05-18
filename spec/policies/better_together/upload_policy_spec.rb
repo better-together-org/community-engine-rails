@@ -34,16 +34,14 @@ RSpec.describe BetterTogether::UploadPolicy do
   end
 
   describe '#download?' do
-    it 'blocks the creator while the file is still pending review' do
-      expect(described_class.new(creator_user, upload).download?).to be(false)
+    it 'allows the creator to hit the download action while the content gate is still pending' do
+      expect(described_class.new(creator_user, upload).download?).to be(true)
     end
 
     it 'allows the creator after an explicit private release' do
-      upload.file_content_security_subject.update!(
-        lifecycle_state: 'approved_private',
+      upload.content_security_item.update!(
+        lifecycle_state: 'clean',
         aggregate_verdict: 'clean',
-        current_visibility_state: 'private',
-        current_ai_ingestion_state: 'eligible',
         released_at: Time.current
       )
 
@@ -55,13 +53,11 @@ RSpec.describe BetterTogether::UploadPolicy do
       public_upload.file.attach(io: StringIO.new('public body'), filename: 'public.txt', content_type: 'text/plain')
       public_upload.save!
 
-      expect(described_class.new(other_user, public_upload).download?).to be(false)
+      expect(described_class.new(other_user, public_upload).download?).to be(true)
 
-      public_upload.file_content_security_subject.update!(
-        lifecycle_state: 'approved_public',
+      public_upload.content_security_item.update!(
+        lifecycle_state: 'clean',
         aggregate_verdict: 'clean',
-        current_visibility_state: 'public',
-        current_ai_ingestion_state: 'eligible',
         released_at: Time.current
       )
 
