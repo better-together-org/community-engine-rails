@@ -96,7 +96,7 @@ services:
   stripe-cli:
     # Only started when the 'stripe' profile is active.
     # bin/dc activates this profile automatically when STRIPE_PRIVATE_KEY is set.
-    image: stripe/stripe-cli:latest
+    image: stripe/stripe-cli:v1.40.9
     container_name: community-engine-stripe-cli
     command: >
       listen
