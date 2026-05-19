@@ -15,8 +15,8 @@ module BetterTogether
         expect(described_class.ancestors).to include(BetterTogether::Content::ResourceBlockAttributes)
       end
 
-      it 'is not content_addable pending deferred rollout review' do
-        expect(described_class.content_addable?).to be false
+      it 'is content_addable' do
+        expect(described_class.content_addable?).to be true
       end
 
       describe 'validations' do

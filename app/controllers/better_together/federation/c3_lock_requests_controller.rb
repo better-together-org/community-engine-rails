@@ -48,12 +48,11 @@ module BetterTogether
           payer_did: lock_params[:payer_did],
           agreement_ref: lock_params[:agreement_ref]
         }, status: :ok
-      rescue BetterTogether::C3::Balance::InsufficientBalance => e
-        payer_balance = BetterTogether::C3::Balance.find_by(holder: payer)
-        render json: {
-          error: e.message,
-          available_c3: payer_balance&.available_c3 || 0.0
-        }, status: :payment_required
+      rescue BetterTogether::C3::Balance::InsufficientBalance
+        # Return a generic 422 — do not confirm balance details to federation peers
+        # (prevents cross-platform enumeration of DID existence and balance state).
+        render json: { error: 'Lock request cannot be fulfilled' },
+               status: :unprocessable_entity
       rescue ActiveRecord::RecordInvalid => e
         render json: { error: e.message }, status: :unprocessable_entity
       end

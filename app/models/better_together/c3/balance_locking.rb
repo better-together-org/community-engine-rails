@@ -37,10 +37,11 @@ module BetterTogether
       # @raise [InsufficientBalance] if locked amount exceeds available balance
       def lock_millitokens!(amount_millitokens, agreement_ref: nil, source_platform: nil, expires_in: nil) # rubocop:todo Metrics/MethodLength
         millitokens = amount_millitokens.to_i
-        raise InsufficientBalance, "Only #{available_millitokens} millitokens available" if millitokens > available_millitokens
-
         lock_record = nil
-        transaction do
+
+        with_lock do
+          raise InsufficientBalance, "Only #{available_millitokens} millitokens available" if millitokens > available_millitokens
+
           decrement!(:available_millitokens, millitokens)
           increment!(:locked_millitokens, millitokens)
           lock_record = balance_locks.create!(
