@@ -2,7 +2,7 @@
 
 require 'json'
 require 'net/http'
-require 'resolv'
+require 'ssrf_filter'
 require 'uri'
 require 'cgi'
 
@@ -14,16 +14,8 @@ module BetterTogether
         DEFAULT_OPEN_TIMEOUT = 5
         DEFAULT_READ_TIMEOUT = 15
 
-        # Blocks outbound requests to loopback, RFC-1918, and ULA addresses.
-        PRIVATE_IP_PATTERNS = [
-          /\A127\./,
-          /\A10\./,
-          /\A172\.(1[6-9]|2\d|3[01])\./,
-          /\A192\.168\./,
-          /\A::1\z/,
-          /\Afc[0-9a-f]{2}:/i,
-          /\Afd[0-9a-f]{2}:/i
-        ].freeze
+        # Raised when an outbound federation request targets a private/loopback address.
+        class SSRFError < StandardError; end
 
         def self.call(connection:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
           new(connection:, cursor:, limit:).call
@@ -67,34 +59,20 @@ module BetterTogether
           ::BetterTogether::Engine.routes.url_helpers.federation_content_feed_path(locale: I18n.default_locale)
         end
 
-        def validate_federation_uri!(uri)
-          unless uri.scheme == 'https'
-            raise ArgumentError, "federation URI must use HTTPS (got #{uri.scheme.inspect})"
-          end
-
-          addresses = Resolv.getaddresses(uri.host)
-          addresses << uri.host if addresses.empty?
-          addresses.each do |addr|
-            if PRIVATE_IP_PATTERNS.any? { |pattern| addr.match?(pattern) }
-              raise ArgumentError, 'federation URI resolves to a private/loopback address'
-            end
-          end
-        end
-
         def http_get(uri)
-          validate_federation_uri!(uri)
-          Net::HTTP.start(
-            uri.host,
-            uri.port,
-            use_ssl: uri.scheme == 'https',
-            open_timeout: DEFAULT_OPEN_TIMEOUT,
-            read_timeout: DEFAULT_READ_TIMEOUT
-          ) do |http|
-            request = Net::HTTP::Get.new(uri.request_uri)
-            request['Authorization'] = "Bearer #{access_token_for_request}"
-            request['Accept'] = 'application/json'
-            http.request(request)
-          end
+          SsrfFilter.get(
+            uri.to_s,
+            headers: {
+              'Authorization' => "Bearer #{access_token_for_request}",
+              'Accept' => 'application/json'
+            },
+            http_options: {
+              open_timeout: DEFAULT_OPEN_TIMEOUT,
+              read_timeout: DEFAULT_READ_TIMEOUT
+            }
+          )
+        rescue SsrfFilter::PrivateIPAddress => e
+          raise SSRFError, e.message
         end
 
         def access_token_for_request
@@ -141,20 +119,20 @@ module BetterTogether
         end
 
         def http_post_form(uri, params)
-          validate_federation_uri!(uri)
-          Net::HTTP.start(
-            uri.host,
-            uri.port,
-            use_ssl: uri.scheme == 'https',
-            open_timeout: DEFAULT_OPEN_TIMEOUT,
-            read_timeout: DEFAULT_READ_TIMEOUT
-          ) do |http|
-            request = Net::HTTP::Post.new(uri.request_uri)
-            request['Accept'] = 'application/json'
-            request['Content-Type'] = 'application/x-www-form-urlencoded'
-            request.body = URI.encode_www_form(params)
-            http.request(request)
-          end
+          SsrfFilter.post(
+            uri.to_s,
+            headers: {
+              'Accept' => 'application/json',
+              'Content-Type' => 'application/x-www-form-urlencoded'
+            },
+            body: URI.encode_www_form(params),
+            http_options: {
+              open_timeout: DEFAULT_OPEN_TIMEOUT,
+              read_timeout: DEFAULT_READ_TIMEOUT
+            }
+          )
+        rescue SsrfFilter::PrivateIPAddress => e
+          raise SSRFError, e.message
         end
       end
     end
