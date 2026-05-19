@@ -36,33 +36,85 @@ PR 1581 introduces the first complete hosted billing foundation for Community En
 
 ## The six screenshots to review first
 
-Each screenshot is committed in `docs/screenshots/review/pr-1581/` in both desktop and mobile variants.
+Each screenshot is committed in [docs/screenshots/review/pr-1581](../screenshots/review/pr-1581/) in both desktop and mobile variants.
 
 1. `pr_1581_community_billing_overview`
    This is the best single page to understand the new system. It shows hosted entitlement, current payer, merchant onboarding status, webhook trouble alerts, and checkout options.
 
+   Files:
+   [desktop PNG](../screenshots/review/pr-1581/pr_1581_community_billing_overview-desktop.png) ·
+   [mobile PNG](../screenshots/review/pr-1581/pr_1581_community_billing_overview-mobile.png) ·
+   [desktop narrative](../screenshots/review/pr-1581/pr_1581_community_billing_overview-desktop.narrative.yml) ·
+   [mobile narrative](../screenshots/review/pr-1581/pr_1581_community_billing_overview-mobile.narrative.yml)
+
+   ![Community billing overview screenshot](../screenshots/review/pr-1581/pr_1581_community_billing_overview-desktop.png)
+
 2. `pr_1581_provision_hosted_platform`
    This shows that platform creation is now gated by an active hosted entitlement rather than an informal manual process.
+
+   Files:
+   [desktop PNG](../screenshots/review/pr-1581/pr_1581_provision_hosted_platform-desktop.png) ·
+   [mobile PNG](../screenshots/review/pr-1581/pr_1581_provision_hosted_platform-mobile.png) ·
+   [desktop narrative](../screenshots/review/pr-1581/pr_1581_provision_hosted_platform-desktop.narrative.yml) ·
+   [mobile narrative](../screenshots/review/pr-1581/pr_1581_provision_hosted_platform-mobile.narrative.yml)
+
+   ![Hosted platform provisioning screenshot](../screenshots/review/pr-1581/pr_1581_provision_hosted_platform-desktop.png)
 
 3. `pr_1581_person_billing_overview`
    This explains the new sponsorship model. A person can now see their own plan and the communities they are financially supporting.
 
+   Files:
+   [desktop PNG](../screenshots/review/pr-1581/pr_1581_person_billing_overview-desktop.png) ·
+   [mobile PNG](../screenshots/review/pr-1581/pr_1581_person_billing_overview-mobile.png) ·
+   [desktop narrative](../screenshots/review/pr-1581/pr_1581_person_billing_overview-desktop.narrative.yml) ·
+   [mobile narrative](../screenshots/review/pr-1581/pr_1581_person_billing_overview-mobile.narrative.yml)
+
+   ![Person billing overview screenshot](../screenshots/review/pr-1581/pr_1581_person_billing_overview-desktop.png)
+
 4. `pr_1581_billing_plans_index`
    This is the host operator inventory of all recurring plans currently available for launch.
+
+   Files:
+   [desktop PNG](../screenshots/review/pr-1581/pr_1581_billing_plans_index-desktop.png) ·
+   [mobile PNG](../screenshots/review/pr-1581/pr_1581_billing_plans_index-mobile.png) ·
+   [desktop narrative](../screenshots/review/pr-1581/pr_1581_billing_plans_index-desktop.narrative.yml) ·
+   [mobile narrative](../screenshots/review/pr-1581/pr_1581_billing_plans_index-mobile.narrative.yml)
+
+   ![Billing plans index screenshot](../screenshots/review/pr-1581/pr_1581_billing_plans_index-desktop.png)
 
 5. `pr_1581_billing_plan_detail`
    This shows how a plan's subscriber-facing promises are stored: summary text, benefits, hosted access level, support tier, and who is allowed to pay.
 
+   Files:
+   [desktop PNG](../screenshots/review/pr-1581/pr_1581_billing_plan_detail-desktop.png) ·
+   [mobile PNG](../screenshots/review/pr-1581/pr_1581_billing_plan_detail-mobile.png) ·
+   [desktop narrative](../screenshots/review/pr-1581/pr_1581_billing_plan_detail-desktop.narrative.yml) ·
+   [mobile narrative](../screenshots/review/pr-1581/pr_1581_billing_plan_detail-mobile.narrative.yml)
+
+   ![Billing plan detail screenshot](../screenshots/review/pr-1581/pr_1581_billing_plan_detail-desktop.png)
+
 6. `pr_1581_billing_plan_editor`
    This shows how host stewards configure the plan catalog that drives the new billing pages.
 
+   Files:
+   [desktop PNG](../screenshots/review/pr-1581/pr_1581_billing_plan_editor-desktop.png) ·
+   [mobile PNG](../screenshots/review/pr-1581/pr_1581_billing_plan_editor-mobile.png) ·
+   [desktop narrative](../screenshots/review/pr-1581/pr_1581_billing_plan_editor-desktop.narrative.yml) ·
+   [mobile narrative](../screenshots/review/pr-1581/pr_1581_billing_plan_editor-mobile.narrative.yml)
+
+   ![Billing plan editor screenshot](../screenshots/review/pr-1581/pr_1581_billing_plan_editor-desktop.png)
+
 ## The three diagrams to review
 
-Source files live in `docs/diagrams/source/`. Review copies live in `docs/diagrams/review/pr-1581/`.
+Source files live in [docs/diagrams/source](../diagrams/source/). Review copies live in [docs/diagrams/review/pr-1581](../diagrams/review/pr-1581/).
 
 ### Billing object and data model
 
-`pr_1581_billing_object_data_model`
+Files:
+[review PNG](../diagrams/review/pr-1581/pr_1581_billing_object_data_model.png) ·
+[review SVG](../diagrams/review/pr-1581/pr_1581_billing_object_data_model.svg) ·
+[review Mermaid](../diagrams/review/pr-1581/pr_1581_billing_object_data_model.mmd) ·
+[source Mermaid](../diagrams/source/pr_1581_billing_object_data_model.mmd)
 
 Read this first if the data model feels confusing. The most important concept is that:
 
@@ -71,17 +123,31 @@ Read this first if the data model feels confusing. The most important concept is
 
 They can be the same entity, but they do not have to be.
 
+![Billing object and data model diagram](../diagrams/review/pr-1581/pr_1581_billing_object_data_model.png)
+
 ### Checkout and entitlement flow
 
-`pr_1581_billing_checkout_and_entitlement_flow`
+Files:
+[review PNG](../diagrams/review/pr-1581/pr_1581_billing_checkout_and_entitlement_flow.png) ·
+[review SVG](../diagrams/review/pr-1581/pr_1581_billing_checkout_and_entitlement_flow.svg) ·
+[review Mermaid](../diagrams/review/pr-1581/pr_1581_billing_checkout_and_entitlement_flow.mmd) ·
+[source Mermaid](../diagrams/source/pr_1581_billing_checkout_and_entitlement_flow.mmd)
 
 This shows how a billing page action turns into a Stripe checkout session, then into local subscription state, then into an active or inactive hosted entitlement.
 
+![Checkout and entitlement flow diagram](../diagrams/review/pr-1581/pr_1581_billing_checkout_and_entitlement_flow.png)
+
 ### Stripe Connect merchant flow
 
-`pr_1581_stripe_connect_merchant_flow`
+Files:
+[review PNG](../diagrams/review/pr-1581/pr_1581_stripe_connect_merchant_flow.png) ·
+[review SVG](../diagrams/review/pr-1581/pr_1581_stripe_connect_merchant_flow.svg) ·
+[review Mermaid](../diagrams/review/pr-1581/pr_1581_stripe_connect_merchant_flow.mmd) ·
+[source Mermaid](../diagrams/source/pr_1581_stripe_connect_merchant_flow.mmd)
 
 This diagram is separate because payout onboarding is not the same as hosted billing. A community may have hosted service before it is ready to receive payouts.
+
+![Stripe Connect merchant flow diagram](../diagrams/review/pr-1581/pr_1581_stripe_connect_merchant_flow.png)
 
 ## What the review comments in this PR were about
 
