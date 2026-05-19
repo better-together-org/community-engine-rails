@@ -79,10 +79,11 @@ module BetterTogether
           *resource_class.storext_keys
         )
 
-        # Handle markdown_source_type: clear the unused field
+        # Handle markdown_source_type: explicitly clear the unused field so DB values are overwritten
         if permitted_params[:markdown_source_type].present?
           if permitted_params[:markdown_source_type] == 'inline'
-            permitted_params.delete(:markdown_file_path)
+            permitted_params[:markdown_file_path] = ''
+            permitted_params[:auto_sync_from_file] = false
           elsif permitted_params[:markdown_source_type] == 'file'
             permitted_params.delete(:markdown_source)
           end

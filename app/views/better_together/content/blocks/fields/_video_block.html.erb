@@ -3,8 +3,14 @@
 <div class="video-block-fields">
   <div class="mb-3">
     <%= label_tag "#{scope}[video_url]", BetterTogether::Content::Block.human_attribute_name('video_url', default: 'Video URL'), class: 'form-label' %>
-    <%= url_field_tag "#{scope}[video_url]", block.video_url, class: 'form-control',
+    <%= url_field_tag "#{scope}[video_url]", block.video_url,
+                      class: "form-control#{' is-invalid' if block.errors[:video_url].any?}",
                       placeholder: 'https://www.youtube.com/watch?v=...' %>
+    <% if block.errors[:video_url].any? %>
+      <div class="invalid-feedback d-block">
+        <%= block.errors[:video_url].join(', ') %>
+      </div>
+    <% end %>
     <div class="form-text">
       <%= t('better_together.content.blocks.video_block.url_help',
             default: 'Accepts YouTube, Vimeo, or any direct embed URL.') %>
