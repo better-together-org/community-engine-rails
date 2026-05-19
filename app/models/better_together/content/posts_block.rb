@@ -15,7 +15,7 @@ module BetterTogether
       validates :posts_scope, inclusion: { in: POSTS_SCOPES }
 
       def self.content_addable?
-        false
+        true
       end
 
       def self.extra_permitted_attributes

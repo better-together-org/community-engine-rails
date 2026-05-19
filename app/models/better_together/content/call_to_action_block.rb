@@ -20,7 +20,7 @@ module BetterTogether
       validates :layout, inclusion: { in: LAYOUTS }
 
       def self.content_addable?
-        false
+        true
       end
 
       def self.extra_permitted_attributes
