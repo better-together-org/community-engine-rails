@@ -29,8 +29,8 @@ gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resource
 gem 'rack-protection'
 
 # SSRF protection for outbound HTTP requests
-gem 'ssrf_filter', '~> 1.1'
 gem 'rails', ENV.fetch('RAILS_VERSION', '8.0.4.1')
+gem 'ssrf_filter', '~> 1.1'
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
