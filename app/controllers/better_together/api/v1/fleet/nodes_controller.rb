@@ -18,15 +18,13 @@ module BetterTogether
 
           class OwnerAuthorizationError < StandardError; end
 
-          skip_after_action :verify_authorized, raise: false
-          skip_after_action :verify_policy_scoped, raise: false
-          skip_after_action :enforce_policy_use, raise: false
           require_oauth_scopes :read, only: %i[index show]
           require_oauth_scopes :write, only: %i[create heartbeat]
           before_action :require_fleet_service_access!
 
           def index
-            nodes = BetterTogether::Fleet::Node.all
+            authorize BetterTogether::Fleet::Node
+            nodes = policy_scope(BetterTogether::Fleet::Node)
             nodes = nodes.online if params[:online] == 'true'
 
             render json: { nodes: nodes.map { |n| node_json(n) } }
@@ -34,12 +32,14 @@ module BetterTogether
 
           def show
             node = BetterTogether::Fleet::Node.find_by!(node_id: params[:node_id])
+            authorize node
             render json: { node: node_json(node) }
           rescue ActiveRecord::RecordNotFound
             render json: { error: "node '#{params[:node_id]}' not found" }, status: :not_found
           end
 
           def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+            authorize BetterTogether::Fleet::Node
             node_data = node_params
             noise_key = node_data.delete(:borgberry_noise_public_key_base64)
             requested_owner = resolve_requested_owner(node_data)
@@ -76,6 +76,8 @@ module BetterTogether
           def heartbeat # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity
             node = BetterTogether::Fleet::Node.find_by(node_id: params[:node_id])
             return render json: { error: 'node not found' }, status: :not_found unless node
+
+            authorize node, :update?
 
             node.mark_online!
             node.update!(
