@@ -17,6 +17,12 @@ module BetterTogether
         # Used by `borgberry did show` to fetch and cache this node's DID.
         # Requires standard API authentication (JWT or OAuth2 bearer token).
         class ProfileController < BetterTogether::Api::ApplicationController
+          # This controller renders directly without going through JSONAPI resources,
+          # so Pundit's resource-controller after-action hooks must be skipped.
+          skip_after_action :verify_authorized, raise: false
+          skip_after_action :verify_policy_scoped, raise: false
+          skip_after_action :enforce_policy_use,   raise: false
+
           require_oauth_scopes :read, only: :show
 
           def show
