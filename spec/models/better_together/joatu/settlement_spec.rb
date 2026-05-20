@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::Joatu::Settlement do
   end
 
   let(:lock_ref) do
-    payer_balance.lock!(2.0, agreement_ref: agreement.id)
+    payer_balance.lock_c3!(2.0, agreement_ref: agreement.id)
   end
 
   let(:settlement) do

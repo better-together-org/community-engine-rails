@@ -35,7 +35,7 @@ module BetterTogether
         c3_amount = millitokens.to_f / BetterTogether::C3::Token::MILLITOKEN_SCALE
 
         payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: payer, community: nil)
-        lock_ref = payer_balance.lock!(
+        lock_ref = payer_balance.lock_c3!(
           c3_amount,
           agreement_ref: lock_params[:agreement_ref],
           source_platform: connection.source_platform

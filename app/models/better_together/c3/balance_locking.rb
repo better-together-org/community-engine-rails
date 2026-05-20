@@ -15,12 +15,15 @@ module BetterTogether
 
       # Lock C3 tokens for a pending exchange. Creates a BalanceLock audit record.
       #
+      # Named lock_c3! (not lock!) to avoid shadowing ActiveRecord::Locking::Pessimistic#lock!,
+      # which is called internally by with_lock. Shadowing it breaks pessimistic row locking.
+      #
       # @param c3_amount [String, Numeric] Tree Seed amount to lock
       # @param agreement_ref [String] Optional caller-supplied agreement identifier
       # @param source_platform [Platform] Optional platform that requested this lock
       # @param expires_in [ActiveSupport::Duration] Optional override for 24h TTL
       # @raise [InsufficientBalance] if locked amount exceeds available balance
-      def lock!(c3_amount, agreement_ref: nil, source_platform: nil, expires_in: nil) # rubocop:todo Metrics/MethodLength
+      def lock_c3!(c3_amount, agreement_ref: nil, source_platform: nil, expires_in: nil) # rubocop:todo Metrics/MethodLength
         millitokens = BetterTogether::C3::Token.c3_to_millitokens(c3_amount)
         lock_millitokens!(millitokens, agreement_ref: agreement_ref,
                                        source_platform: source_platform, expires_in: expires_in)
