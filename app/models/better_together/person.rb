@@ -67,6 +67,13 @@ module BetterTogether
     has_many :link_click_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::LinkClickReport', dependent: :destroy,
                                   inverse_of: :creator
 
+    # Billing reports created by this person
+    has_many :billing_subscription_summary_reports,
+             foreign_key: :creator_id,
+             class_name: 'BetterTogether::Billing::Reports::SubscriptionSummaryReport',
+             dependent: :destroy,
+             inverse_of: :creator
+
     has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
     has_many :notification_mentions, as: :record, dependent: :destroy, class_name: 'Noticed::Event'
 
