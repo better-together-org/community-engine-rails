@@ -332,6 +332,39 @@ Recommended scope:
 5. Pilot event registration or booking, not both at once
 6. Add PayPal multiparty after the Stripe merchant path is operationally stable
 
+## Open Payment Rails
+
+The `Pay` gem's processor abstraction (`pay_processors` hash, `Pay::Processor` interface) is the intended path for adding non-Stripe payment processors in future phases. Phase 2 targets PayPal Braintree as a second rail. Beyond that, community-maintained processors (Interledger, Open Payments Protocol, credit union APIs) can be added without breaking the existing Stripe integration — each processor is isolated behind its own `Pay::Processor` subclass. No architectural changes to CE billing are needed to enable this; it is a gem-level concern.
+
+When adding a second processor:
+- `pay_customers` and `pay_subscriptions` are already processor-keyed
+- Each `BetterTogether::Billing::Event` records `processor:` — all sync services must remain processor-scoped
+- Community-operated processors must go through the same dead-letter/replay lifecycle as Stripe events
+
+## Patronage Dividend Aggregation
+
+The BTS financial model allocates 20–30% of platform revenue as patronage dividends returned to client co-ops. The existing schema supports the needed aggregation:
+
+- `pay_subscriptions` — queryable by `customer` (community/person), `status`, `current_period_start/end`
+- `better_together_billing_events` — queryable by `billable_owner_type/id`, `event_type`, `processor`, `processed_at`
+
+A future `BetterTogether::Billing::PatronageDividendReport` service should:
+1. Aggregate billed revenue per community per period (via `invoice.payment_succeeded` events)
+2. Apply the platform's patronage allocation ratio (operator-configured)
+3. Produce a per-subscriber surplus share record for cooperative governance reporting
+
+No schema changes are needed — the data is already captured. This is listed as a Phase 4 deliverable.
+
+## C3 Tree Seeds Redemption — Design Decision Required
+
+The `docs/c3-community-contribution-token.md` spec states C3 Tree Seeds are redeemable against BTS membership fees. A design decision is needed before Phase 2 implementation:
+
+**Option A — CE subscription discounts:** C3 balance → Stripe coupon applied at checkout. Requires a `BetterTogether::C3::Balance` → Stripe Coupon bridge, scoped redemption to prevent over-use, and a way to surface available Tree Seeds on billing pages.
+
+**Option B — Solidus/CCR orders only:** C3 redemption applies only to community-commerce-rails (Solidus) orders, not CE hosted subscriptions. CE billing remains fiat-only; C3 stays within the CCR commerce layer.
+
+Until the decision is made, C3 balance should be surfaced read-only on billing pages (show the community's current C3 balance if present, no redemption UI). This avoids prematurely committing the architecture to either option.
+
 ## References
 
 - Stripe Connect overview: https://docs.stripe.com/connect

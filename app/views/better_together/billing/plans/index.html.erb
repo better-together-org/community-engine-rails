@@ -24,6 +24,7 @@
               <th><%= t('better_together.billing.plans.field_billing_interval', default: 'Interval') %></th>
               <th><%= t('better_together.billing.plans.field_amount_cents', default: 'Price') %></th>
               <th><%= t('better_together.billing.plans.field_active', default: 'Active') %></th>
+              <th><%= t('better_together.billing.plans.field_pricing_tier', default: 'Pricing tier') %></th>
               <th><%= t('better_together.billing.plans.subscribers_count_label', default: 'Active subscribers') %></th>
               <th></th>
             </tr>
@@ -44,6 +45,12 @@
                   <% else %>
                     <span class="badge bg-secondary billing-plan-status-badge"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
                   <% end %>
+                </td>
+                <td>
+                  <span class="badge <%= plan.solidarity_tier? ? 'bg-info text-dark' : 'bg-secondary' %>">
+                    <%= t("better_together.billing.plans.pricing_tier_#{plan.pricing_tier}",
+                          default: plan.pricing_tier.humanize) %>
+                  </span>
                 </td>
                 <td><%= @active_subscription_counts.fetch(plan.id, 0) %></td>
                 <td class="text-end">

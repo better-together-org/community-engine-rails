@@ -1029,6 +1029,12 @@ fr:
         field_participant_benefits: Avantages
         field_participant_benefits_hint: Un avantage par ligne.
         field_participant_summary: Resume pour les participants
+        field_pricing_tier: Niveau tarifaire
+        field_pricing_tier_hint: Les niveaux solidaires permettent aux plus petites
+          cooperatives d''acceder a la plateforme a cout reduit.
+        field_solidarity_description: Description de solidarite
+        field_solidarity_description_hint: Affiche aux abonnes potentiels pour expliquer
+          a qui ce niveau s''adresse.
         field_stripe_price_id: ID de prix Stripe
         field_stripe_price_id_hint: Depuis le tableau de bord Stripe. Ne peut pas
           etre modifie apres la creation.
@@ -1048,6 +1054,10 @@ fr:
         no_plans: Aucun plan de facturation n''a encore ete cree.
         owner_type_community: Communaute
         owner_type_person: Personne
+        pricing_tier_solidarity_medium: Solidarite — Moyenne
+        pricing_tier_solidarity_premium: Prime de solidarite
+        pricing_tier_solidarity_small: Solidarite — Petite
+        pricing_tier_standard: Standard
         recent_subscribers_title: Abonnes actifs
         show_title: Plan de facturation
         status_active: Actif

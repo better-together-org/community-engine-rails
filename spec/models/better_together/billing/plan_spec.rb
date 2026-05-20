@@ -154,6 +154,55 @@ RSpec.describe BetterTogether::Billing::Plan do
     end
   end
 
+  describe '#pricing_tier' do
+    it 'defaults to standard when no tier is set in metadata' do
+      plan.metadata = {}
+      expect(plan.pricing_tier).to eq('standard')
+    end
+
+    it 'returns the tier set in metadata' do
+      plan.metadata = { 'pricing_tier' => 'solidarity_small' }
+      expect(plan.pricing_tier).to eq('solidarity_small')
+    end
+  end
+
+  describe '#solidarity_tier?' do
+    it 'returns false for the standard tier' do
+      plan.metadata = { 'pricing_tier' => 'standard' }
+      expect(plan.solidarity_tier?).to be(false)
+    end
+
+    it 'returns true for solidarity tiers' do
+      plan.metadata = { 'pricing_tier' => 'solidarity_medium' }
+      expect(plan.solidarity_tier?).to be(true)
+    end
+
+    it 'returns false when no pricing_tier is set' do
+      plan.metadata = {}
+      expect(plan.solidarity_tier?).to be(false)
+    end
+  end
+
+  describe 'pricing_tier validation' do
+    it 'accepts all known tiers' do
+      BetterTogether::Billing::Plan::PLAN_PRICING_TIERS.each do |tier|
+        plan.metadata = { 'pricing_tier' => tier }
+        expect(plan).to be_valid, "expected tier '#{tier}' to be valid"
+      end
+    end
+
+    it 'rejects an unknown tier' do
+      plan.metadata = { 'pricing_tier' => 'discount' }
+      expect(plan).not_to be_valid
+      expect(plan.errors[:base]).to be_present
+    end
+
+    it 'is valid when pricing_tier is blank' do
+      plan.metadata = {}
+      expect(plan).to be_valid
+    end
+  end
+
   describe 'after_commit :enqueue_stripe_sync!' do
     it 'enqueues SyncPlanToStripeJob when a plan is created' do
       expect do

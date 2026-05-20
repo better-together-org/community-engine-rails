@@ -1001,6 +1001,12 @@ uk:
         field_participant_benefits: Perevagy
         field_participant_benefits_hint: Odna perevaga na ryadok.
         field_participant_summary: Kharakterystyka dlya uchasnykiv
+        field_pricing_tier: Taryfnyj riven'
+        field_pricing_tier_hint: Taryfy solidarnosti dozvolyayut' menshym kooperatyvam
+          otrymaty dostup do platformy za znyzhenoyu vartistyu.
+        field_solidarity_description: Opys solidarnosti
+        field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
+          shchob poyasnyty, dlya koho pryznachenyj tsej riven'.
         field_stripe_price_id: Stripe Price ID
         field_stripe_price_id_hint: Z paneli Stripe. Ne mozhna zminyty pislia stvorennya.
         field_stripe_product_id: Stripe Product ID
@@ -1019,6 +1025,10 @@ uk:
         no_plans: Plany bilingu shche ne stvoren.
         owner_type_community: Spilnota
         owner_type_person: Osobystist'
+        pricing_tier_solidarity_medium: Solidarnist' — Serednij
+        pricing_tier_solidarity_premium: Premiyum solidarnosti
+        pricing_tier_solidarity_small: Solidarnist' — Malyj
+        pricing_tier_standard: Standartnyj
         recent_subscribers_title: Aktyvni peredplatnyky
         show_title: Plan bilingu
         status_active: Aktyvnyj

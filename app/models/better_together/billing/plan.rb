@@ -12,6 +12,8 @@ module BetterTogether
       # Fields that must not change once a Stripe Price has been linked.
       PRICE_IMMUTABLE_FIELDS = %i[amount_cents currency billing_interval].freeze
 
+      PLAN_PRICING_TIERS = %w[standard solidarity_small solidarity_medium solidarity_premium].freeze
+
       has_many :subscriptions,
                class_name: 'BetterTogether::Billing::Subscription',
                foreign_key: :billing_plan_id,
@@ -26,6 +28,7 @@ module BetterTogether
       validates :currency, length: { is: 3 }
       validates :active, inclusion: { in: [true, false] }
       validate :price_fields_immutable_after_create
+      validate :pricing_tier_within_known_values
 
       after_commit :enqueue_stripe_sync!, on: %i[create update]
 
@@ -40,6 +43,7 @@ module BetterTogether
           :active,
           { metadata: [:participant_summary, :beneficiary_label, :hosted_access_level,
                        :support_tier, :community_capacity_tier,
+                       :pricing_tier, :solidarity_description,
                        { participant_benefits: [], eligible_billable_owner_types: [] }] }
         ]
       end
@@ -101,6 +105,18 @@ module BetterTogether
         metadata.to_h['community_capacity_tier'].presence
       end
 
+      def pricing_tier
+        metadata.to_h['pricing_tier'].presence || 'standard'
+      end
+
+      def solidarity_description
+        metadata.to_h['solidarity_description'].presence
+      end
+
+      def solidarity_tier?
+        pricing_tier != 'standard'
+      end
+
       private
 
       def default_participant_summary
@@ -125,6 +141,14 @@ module BetterTogether
         else
           I18n.t('better_together.billing.plan_defaults.hosted_beneficiary_label', default: 'Hosted access')
         end
+      end
+
+      def pricing_tier_within_known_values
+        tier = metadata.to_h['pricing_tier']
+        return if tier.blank? || PLAN_PRICING_TIERS.include?(tier)
+
+        errors.add(:base, :invalid_pricing_tier,
+                   message: "pricing tier '#{tier}' is not one of: #{PLAN_PRICING_TIERS.join(', ')}")
       end
 
       def price_fields_immutable_after_create

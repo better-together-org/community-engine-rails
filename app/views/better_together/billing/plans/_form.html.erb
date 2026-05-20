@@ -178,6 +178,43 @@
         </div>
       </div>
 
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[pricing_tier]',
+                           t('better_together.billing.plans.field_pricing_tier', default: 'Pricing tier'),
+                           class: 'form-label' %>
+            <%= form.select 'metadata[pricing_tier]',
+                            BetterTogether::Billing::Plan::PLAN_PRICING_TIERS.map { |tier|
+                              [t("better_together.billing.plans.pricing_tier_#{tier}",
+                                 default: tier.humanize), tier]
+                            },
+                            { selected: billing_plan.metadata.to_h['pricing_tier'].presence || 'standard' },
+                            class: 'form-select' %>
+            <div class="form-text">
+              <%= t('better_together.billing.plans.field_pricing_tier_hint',
+                    default: 'Solidarity tiers let smaller co-ops access the platform at a reduced contribution.') %>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[solidarity_description]',
+                           t('better_together.billing.plans.field_solidarity_description',
+                             default: 'Solidarity description'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[solidarity_description]',
+                                value: billing_plan.metadata.to_h['solidarity_description'],
+                                class: 'form-control',
+                                placeholder: 'e.g. For co-ops under $100k annual revenue' %>
+            <div class="form-text">
+              <%= t('better_together.billing.plans.field_solidarity_description_hint',
+                    default: 'Shown to potential subscribers to explain who this tier is for.') %>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="billing-plan-eligibility-fields" class="mb-0">
         <label class="form-label">
           <%= t('better_together.billing.plans.field_eligible_owner_types', default: 'Eligible for') %>

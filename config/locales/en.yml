@@ -1007,6 +1007,12 @@ en:
         field_participant_benefits: Benefits
         field_participant_benefits_hint: One benefit per line.
         field_participant_summary: Participant summary
+        field_pricing_tier: Pricing tier
+        field_pricing_tier_hint: Solidarity tiers let smaller co-ops access the platform
+          at a reduced contribution.
+        field_solidarity_description: Solidarity description
+        field_solidarity_description_hint: Shown to potential subscribers to explain
+          who this tier is for.
         field_stripe_price_id: Stripe Price ID
         field_stripe_price_id_hint: From the Stripe Dashboard. Cannot be changed after
           creation.
@@ -1025,6 +1031,10 @@ en:
         no_plans: No billing plans have been created yet.
         owner_type_community: Community
         owner_type_person: Person
+        pricing_tier_solidarity_medium: Solidarity — Medium
+        pricing_tier_solidarity_premium: Solidarity Premium
+        pricing_tier_solidarity_small: Solidarity — Small
+        pricing_tier_standard: Standard
         recent_subscribers_title: Active subscribers
         show_title: Billing Plan
         status_active: Active
