@@ -50,7 +50,7 @@ module BetterTogether
       end
 
       def self.content_addable?
-        false
+        true
       end
 
       def self.extra_permitted_attributes
@@ -76,3 +76,11 @@ module BetterTogether
     end
   end
 end
+
+# Register known video provider origins so the CSP-aware iframe embed renders them instead of showing a blocked notice.
+BetterTogether.register_content_security_policy_sources(
+  :frame_src,
+  'https://www.youtube.com',
+  'https://player.vimeo.com',
+  'https://www.youtube-nocookie.com'
+)

@@ -34,15 +34,26 @@ module BetterTogether
       end
 
       def enforce_authenticated_access!(record)
-        unless respond_to?(:user_signed_in?, true) && user_signed_in?
+        if respond_to?(:user_signed_in?, true) && user_signed_in?
+          enforce_user_download_policy!(record)
+        elsif robot_with_read_private_content_scope?
+          nil # Robot with sufficient scope — scope-based authz applies; Pundit skipped.
+        else
           head :unauthorized
-          return
         end
+      end
 
+      def enforce_user_download_policy!(record)
         policy = Pundit.policy(current_user, record)
         return head(:forbidden) unless policy.respond_to?(:download?)
 
         head :forbidden unless policy.download?
+      end
+
+      def robot_with_read_private_content_scope?
+        respond_to?(:robot_authenticated?, true) &&
+          robot_authenticated? &&
+          current_robot&.allows_bot_scope?('read_private_content')
       end
     end
   end

@@ -11,8 +11,8 @@ module BetterTogether
         expect(described_class.superclass).to eq(BetterTogether::Content::Block)
       end
 
-      it 'is not content_addable pending deferred rollout review' do
-        expect(described_class.content_addable?).to be false
+      it 'is content_addable' do
+        expect(described_class.content_addable?).to be true
       end
 
       describe '#event_scope' do

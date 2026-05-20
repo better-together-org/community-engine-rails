@@ -58,7 +58,8 @@ module BetterTogether
     end
 
     def frame_sources(raw_frame_src = ENV.fetch('CSP_FRAME_SRC', nil))
-      [:self] + parse_origin_list(raw_frame_src) + dynamic_platform_sources(:csp_frame_src)
+      registered_sources = BetterTogether.registered_content_security_policy_sources[:frame_src]
+      [:self] + parse_origin_list(raw_frame_src) + dynamic_platform_sources(:csp_frame_src) + registered_sources
     end
 
     def frame_ancestor_sources(raw_frame_ancestors = ENV.fetch('CSP_FRAME_ANCESTORS', nil))

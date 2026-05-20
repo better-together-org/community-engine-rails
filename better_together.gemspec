@@ -78,6 +78,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'simple_calendar'
   spec.add_dependency 'sitemap_generator'
   spec.add_dependency 'sprockets-rails'
+  spec.add_dependency 'ssrf_filter', '~> 1.1'
   spec.add_dependency 'stackprof'
   spec.add_dependency 'stimulus-rails', '~> 1.3'
   spec.add_dependency 'storext'

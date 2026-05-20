@@ -28,7 +28,7 @@ module BetterTogether
       end
 
       def self.content_addable?
-        false
+        true
       end
 
       def self.extra_permitted_attributes
@@ -41,7 +41,7 @@ module BetterTogether
         return if iframe_url.blank?
         return if BetterTogether::ContentSecurityPolicySources.origin_for_url(iframe_url).present?
 
-        errors.add(:iframe_url, :invalid)
+        errors.add(:iframe_url, :csp_not_allowed)
       end
     end
   end

@@ -544,6 +544,11 @@ en:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/content/iframe_block:
+          attributes:
+            iframe_url:
+              csp_not_allowed: URL origin is not in the platform's allowed embed sources
+                — add the origin in Platform settings or contact a developer
         better_together/event:
           attributes:
             event_hosts:

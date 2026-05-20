@@ -7,10 +7,10 @@ RSpec.describe BetterTogether::C3::BalanceLock do
   let(:balance) do
     BetterTogether::C3::Balance.find_or_create_by!(holder: person).tap { |b| b.credit!(10.0) }
   end
-  let(:lock_ref) { balance.lock!(3.0, agreement_ref: 'test-agreement') }
+  let(:lock_ref) { balance.lock_c3!(3.0, agreement_ref: 'test-agreement') }
   let(:lock)     { described_class.find_by!(lock_ref: lock_ref) }
 
-  describe 'creation via Balance#lock!' do
+  describe 'creation via Balance#lock_c3!' do
     it 'creates a pending BalanceLock with a lock_ref' do
       expect(lock.status).to eq('pending')
       expect(lock.lock_ref).to be_present
@@ -80,6 +80,7 @@ RSpec.describe BetterTogether::C3::BalanceLock do
 
   describe '#expire!' do
     it 'releases the C3 back to the balance and marks expired' do
+      lock # materialise the lock (and its balance decrement) before reading available_before
       available_before = balance.reload.available_millitokens
       lock.expire!
       expect(lock.reload.status).to eq('expired')

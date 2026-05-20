@@ -3,8 +3,14 @@
 <div class="iframe-block-fields">
   <div class="mb-3">
     <%= label_tag "#{scope}[iframe_url]", block.class.human_attribute_name('iframe_url', default: 'Iframe URL'), class: 'form-label' %>
-    <%= url_field_tag "#{scope}[iframe_url]", block.iframe_url, class: 'form-control',
+    <%= url_field_tag "#{scope}[iframe_url]", block.iframe_url,
+                      class: "form-control#{' is-invalid' if block.errors[:iframe_url].any?}",
                       placeholder: 'https://forms.btsdev.ca/s/example' %>
+    <% if block.errors[:iframe_url].any? %>
+      <div class="invalid-feedback d-block">
+        <%= block.errors[:iframe_url].join(', ') %>
+      </div>
+    <% end %>
     <div class="form-text">
       <%= t('better_together.content.blocks.iframe_block.url_help') %>
     </div>

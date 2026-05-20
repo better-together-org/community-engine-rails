@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::Joatu::Settlement do
   end
 
   let(:lock_ref) do
-    payer_balance.lock!(2.0, agreement_ref: agreement.id)
+    payer_balance.lock_c3!(2.0, agreement_ref: agreement.id)
   end
 
   let(:settlement) do
@@ -27,7 +27,7 @@ RSpec.describe BetterTogether::Joatu::Settlement do
       agreement: agreement,
       payer: payer,
       recipient: recipient,
-      c3_millitokens: 20_000,
+      c3_millitokens: 2_000,
       lock_ref: lock_ref,
       status: 'pending'
     )
@@ -85,7 +85,7 @@ RSpec.describe BetterTogether::Joatu::Settlement do
     it 'transfers C3 from payer to recipient and mints a token' do
       expect do
         settlement.complete!(payer_balance: payer_balance.reload, recipient_balance: recipient_balance.reload)
-      end.to change { recipient_balance.reload.available_millitokens }.by(20_000)
+      end.to change { recipient_balance.reload.available_millitokens }.by(2_000)
                                                                       .and change(BetterTogether::C3::Token, :count).by(1)
 
       expect(settlement.reload.status).to eq('completed')
