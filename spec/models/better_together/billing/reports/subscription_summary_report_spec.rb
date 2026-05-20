@@ -73,8 +73,8 @@ module BetterTogether
             expect(report.report_data['summary']['active_subscription_count']).to eq(1)
           end
 
-          it 'calculates MRR in cents' do
-            expect(report.report_data['summary']['mrr_cents']).to eq(4500)
+          it 'calculates current MRR in cents' do
+            expect(report.report_data['summary']['current_mrr_cents']).to eq(4500)
           end
         end
 

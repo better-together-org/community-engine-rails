@@ -66,8 +66,7 @@ module BetterTogether
                          .count
 
           new_count = BetterTogether::Billing::Subscription
-                      .joins(:pay_subscription)
-                      .where(pay_subscriptions: { created_at: date_range })
+                      .where(created_at: date_range)
                       .count
 
           churned_count = BetterTogether::Billing::Subscription
@@ -79,7 +78,7 @@ module BetterTogether
             active_subscription_count: active_count,
             new_subscriptions: new_count,
             churned_subscriptions: churned_count,
-            mrr_cents: calculate_mrr_cents,
+            current_mrr_cents: calculate_mrr_cents,
             date_range: {
               from: date_range.begin.to_date.iso8601,
               to: date_range.end.to_date.iso8601
@@ -108,11 +107,14 @@ module BetterTogether
 
         # rubocop:disable Metrics/MethodLength
         def build_plan_breakdown
+          active_counts = BetterTogether::Billing::Subscription
+                          .joins(:pay_subscription)
+                          .merge(Pay::Subscription.active)
+                          .group(:billing_plan_id)
+                          .count
+
           BetterTogether::Billing::Plan.order(:identifier).map do |plan|
-            active_for_plan = plan.subscriptions
-                                  .joins(:pay_subscription)
-                                  .merge(Pay::Subscription.active)
-                                  .count
+            active_for_plan = active_counts.fetch(plan.id, 0)
 
             {
               identifier: plan.identifier,

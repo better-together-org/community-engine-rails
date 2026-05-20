@@ -18,7 +18,7 @@ FactoryBot.define do
           'active_subscription_count' => 0,
           'new_subscriptions' => 0,
           'churned_subscriptions' => 0,
-          'mrr_cents' => 0
+          'current_mrr_cents' => 0
         },
         'plan_breakdown' => [],
         'event_health' => {
@@ -39,7 +39,7 @@ FactoryBot.define do
             'active_subscription_count' => 3,
             'new_subscriptions' => 2,
             'churned_subscriptions' => 1,
-            'mrr_cents' => 13_500,
+            'current_mrr_cents' => 13_500,
             'date_range' => { 'from' => 30.days.ago.to_date.to_s, 'to' => Date.current.to_s }
           },
           'plan_breakdown' => [

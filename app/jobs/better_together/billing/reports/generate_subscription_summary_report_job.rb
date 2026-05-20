@@ -53,8 +53,8 @@ module BetterTogether
           csv << ['Active subscriptions', summary['active_subscription_count']]
           csv << ['New subscriptions (period)', summary['new_subscriptions']]
           csv << ['Churned subscriptions (period)', summary['churned_subscriptions']]
-          csv << ['MRR (cents)', summary['mrr_cents']]
-          csv << ['MRR ($)', format('%.2f', summary['mrr_cents'].to_f / 100)]
+          csv << ['Current MRR (cents)', summary['current_mrr_cents']]
+          csv << ['Current MRR ($)', format('%.2f', summary['current_mrr_cents'].to_f / 100)]
         end
         # rubocop:enable Metrics/AbcSize
 
