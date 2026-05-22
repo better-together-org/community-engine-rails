@@ -147,6 +147,38 @@
         ) %>
   </div>
 
+  <div class="card border-0 bg-body-tertiary mb-3">
+    <div class="card-body">
+      <h2 class="h5 mb-2"><%= t('better_together.platforms.form.feature_gates_title', default: 'Feature rollout gates') %></h2>
+      <p class="text-muted mb-3">
+        <%= t('better_together.platforms.form.feature_gates_hint',
+              default: 'Choose whether each feature is off, alpha, beta, or stable for this platform. Staff and testers can still be filtered by the RBAC feature-access permissions.') %>
+      </p>
+
+      <div class="row g-3">
+        <% feature_gate_catalog.each do |gate| %>
+          <% field_id = "#{dom_id(platform)}_feature_gate_#{gate[:key]}" %>
+          <div class="col-lg-6">
+            <div class="border rounded-3 p-3 h-100 bg-white">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <div>
+                  <label class="form-label fw-semibold mb-1" for="<%= field_id %>"><%= gate[:name] %></label>
+                  <div class="small text-muted"><%= gate[:description] %></div>
+                </div>
+                <span class="badge text-bg-light"><%= gate[:category].to_s.humanize %></span>
+              </div>
+
+              <%= select_tag "platform[feature_gate_rollouts][#{gate[:key]}]",
+                             options_for_select(feature_gate_rollout_options, platform.feature_rollout_for(gate[:key])),
+                             id: field_id,
+                             class: 'form-select' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
   <div class="accordion mb-3" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>">
     <div class="accordion-item">
       <h2 class="accordion-header" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header">

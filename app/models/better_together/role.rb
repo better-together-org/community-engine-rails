@@ -20,6 +20,7 @@ module BetterTogether
               presence: true
 
     scope :positioned, -> { order(:resource_type, :position) }
+    after_commit :expire_affected_member_permission_caches
 
     def assign_resource_permissions(permission_identifiers, save_record: true, sync: false)
       permissions = ::BetterTogether::ResourcePermission.where(identifier: permission_identifiers)
@@ -37,6 +38,17 @@ module BetterTogether
     end
 
     private
+
+    def expire_affected_member_permission_caches
+      BetterTogether::Person.expire_permission_cache_for_ids(affected_member_ids)
+    end
+
+    def affected_member_ids
+      platform_member_ids = BetterTogether::PersonPlatformMembership.where(role_id: id).pluck(:member_id)
+      community_member_ids = BetterTogether::PersonCommunityMembership.where(role_id: id).pluck(:member_id)
+
+      (platform_member_ids + community_member_ids).uniq
+    end
 
     def synchronize_resource_permissions!(permissions)
       resource_types = permissions.distinct.pluck(:resource_type)

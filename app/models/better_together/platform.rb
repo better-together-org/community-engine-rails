@@ -129,6 +129,9 @@ module BetterTogether
     has_many :robots,
              class_name: 'BetterTogether::Robot',
              dependent: :destroy
+    has_many :feature_access_grants,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :destroy
 
     belongs_to :active_storage_configuration,
                class_name: 'BetterTogether::StorageConfiguration',
@@ -232,6 +235,24 @@ module BetterTogether
       allow_membership_requests? && (community&.membership_requests_enabled?(platform: self) || false)
     end
 
+    def feature_gate_rollouts
+      raw_rollouts = settings.fetch('feature_gate_rollouts', {})
+      raw_rollouts.is_a?(Hash) ? raw_rollouts.stringify_keys : {}
+    end
+
+    def feature_gate_rollouts=(value)
+      normalized = value.respond_to?(:to_h) ? value.to_h : value
+      sanitized = sanitize_feature_gate_rollouts(normalized)
+      self.settings = settings.merge('feature_gate_rollouts' => sanitized)
+    end
+
+    def feature_rollout_for(feature_key)
+      feature_gate_rollouts.fetch(
+        feature_key.to_s,
+        BetterTogether::FeatureRegistry.fetch(feature_key).fetch(:default_rollout)
+      )
+    end
+
     def to_s
       name
     end
@@ -322,6 +343,20 @@ module BetterTogether
           BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
         end
       )
+    end
+
+    def sanitize_feature_gate_rollouts(value)
+      return {} unless value.is_a?(Hash)
+
+      allowed_keys = BetterTogether::FeatureRegistry.keys
+      allowed_rollouts = BetterTogether::FeatureRegistry::VALID_ROLLOUTS
+
+      value.each_with_object({}) do |(key, rollout), sanitized|
+        next unless allowed_keys.include?(key.to_s)
+        next unless allowed_rollouts.include?(rollout.to_s)
+
+        sanitized[key.to_s] = rollout.to_s
+      end
     end
   end
 end

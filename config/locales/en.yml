@@ -2963,6 +2963,9 @@ en:
         csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
+        feature_gates_hint: Choose which rollout stage each feature requires on this
+          platform.
+        feature_gates_title: Feature rollout gates
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.

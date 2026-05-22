@@ -3041,6 +3041,9 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
+          fonctionnalité sur cette plateforme.
+        feature_gates_title: Contrôles de déploiement des fonctionnalités
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.

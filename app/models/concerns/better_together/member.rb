@@ -35,6 +35,12 @@ module BetterTogether
         joinable_membership_classes << membership_class
       end
 
+      def self.expire_permission_cache_for_ids(ids)
+        ids.compact.uniq.each do |member_id|
+          Rails.cache.delete_matched("better_together/member/#{name}/#{member_id}/*")
+        end
+      end
+
       # Cache roles for the current instance
       def roles
         Rails.cache.fetch(cache_key_for(:roles), expires_in: 12.hours) do
@@ -140,6 +146,12 @@ module BetterTogether
         base_key = "better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
         key = identifier ? "#{base_key}/#{identifier}" : base_key
         record ? "#{key}/#{record.class.name}/#{record.identifier}" : key
+      end
+
+      public
+
+      def expire_permission_cache!
+        self.class.expire_permission_cache_for_ids([id])
       end
     end
   end

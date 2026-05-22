@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_17_160000) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_22_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -772,6 +772,27 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_17_160000) do
     t.index ["claim_id", "citation_id", "relation_type"], name: "idx_bt_evidence_links_on_claim_citation_relation", unique: true
     t.index ["claim_id"], name: "index_better_together_evidence_links_on_claim_id"
     t.index ["creator_id"], name: "index_better_together_evidence_links_on_creator_id"
+  end
+
+  create_table "better_together_feature_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.uuid "platform_id", null: false
+    t.uuid "person_id", null: false
+    t.uuid "granted_by_person_id"
+    t.string "feature_key", null: false
+    t.string "access_level", null: false
+    t.datetime "expires_at"
+    t.datetime "revoked_at"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_better_together_feature_access_grants_on_expires_at"
+    t.index ["feature_key"], name: "index_better_together_feature_access_grants_on_feature_key"
+    t.index ["granted_by_person_id"], name: "idx_on_granted_by_person_id_04c42d5f0d"
+    t.index ["person_id"], name: "index_better_together_feature_access_grants_on_person_id"
+    t.index ["platform_id", "person_id", "feature_key"], name: "index_bt_feature_access_grants_active_unique", unique: true, where: "(revoked_at IS NULL)"
+    t.index ["platform_id"], name: "index_better_together_feature_access_grants_on_platform_id"
+    t.index ["revoked_at"], name: "index_better_together_feature_access_grants_on_revoked_at"
   end
 
   create_table "better_together_federation_access_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2562,6 +2583,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_17_160000) do
   add_foreign_key "better_together_evidence_links", "better_together_citations", column: "citation_id"
   add_foreign_key "better_together_evidence_links", "better_together_claims", column: "claim_id"
   add_foreign_key "better_together_evidence_links", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_feature_access_grants", "better_together_people", column: "granted_by_person_id"
+  add_foreign_key "better_together_feature_access_grants", "better_together_people", column: "person_id"
+  add_foreign_key "better_together_feature_access_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_federation_access_tokens", "better_together_platform_connections", column: "platform_connection_id"
   add_foreign_key "better_together_fleet_node_ownerships", "better_together_fleet_nodes", column: "node_id", on_delete: :cascade
   add_foreign_key "better_together_fleet_nodes", "better_together_platforms", column: "platform_id", on_delete: :nullify

@@ -103,6 +103,12 @@ module BetterTogether
       current_person.permitted_to?(permission_identifier)
     end
 
+    def feature_enabled?(feature_key, actor: current_person || current_robot, platform: Current.platform, record: nil)
+      BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:, record:)
+    rescue KeyError
+      false
+    end
+
     def contributor_display_visible_for?(record)
       return false unless record.respond_to?(:contributors_display_visible?)
       return true if record.contributors_display_visible?

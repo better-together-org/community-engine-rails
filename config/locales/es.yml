@@ -3022,6 +3022,9 @@ es:
           de CE puede cargar. Selecciona orígenes de confianza o escribe un nuevo
           hostname/origen y presiona Enter.
         csp_img_src_text_label: Orígenes externos de imágenes permitidos
+        feature_gates_hint: Elige qué etapa de despliegue requiere cada funcionalidad
+          en esta plataforma.
+        feature_gates_title: Controles de despliegue de funcionalidades
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
