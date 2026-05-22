@@ -99,7 +99,8 @@
               <div class="col-md-9"><%= access_mode_label(@platform) %></div>
             </div>
 
-            <% show_platform_operations = (@platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show?) || policy(::BetterTogether::StorageConfiguration).index? %>
+            <% show_feature_access_grants = policy(::BetterTogether::FeatureAccessGrant.new(platform: @platform)).index? %>
+            <% show_platform_operations = (@platform.host? && BetterTogether::HostDashboardPolicy.new(current_user, [:host_dashboard]).show?) || policy(::BetterTogether::StorageConfiguration).index? || show_feature_access_grants %>
             <% if show_platform_operations %>
               <div class="card border-0 bg-body-tertiary mt-4">
                 <div class="card-body">
@@ -115,6 +116,11 @@
                     <% if policy(::BetterTogether::StorageConfiguration).index? %>
                       <%= link_to t('platforms.show.operations.storage_configurations'),
                                   platform_storage_configurations_path(@platform),
+                                  class: 'btn btn-outline-primary btn-sm' %>
+                    <% end %>
+                    <% if show_feature_access_grants %>
+                      <%= link_to t('platforms.show.operations.feature_access_grants', default: 'Feature access grants'),
+                                  platform_feature_access_grants_path(@platform),
                                   class: 'btn btn-outline-primary btn-sm' %>
                     <% end %>
                     <% if policy(BetterTogether::Robot).index? %>

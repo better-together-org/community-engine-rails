@@ -34,4 +34,13 @@ RSpec.describe BetterTogether::PersonAccessGrantPolicy do
     expect(resolved).to include(grant)
     expect(resolved).not_to include(other_grant)
   end
+
+  it 'returns no grants when the feature rollout is disabled' do
+    platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+    platform.update!(feature_gate_rollouts: { 'person_access_grants' => 'off' })
+
+    resolved = BetterTogether::PersonAccessGrantPolicy::Scope.new(user, BetterTogether::PersonAccessGrant.all).resolve
+
+    expect(resolved).to be_empty
+  end
 end

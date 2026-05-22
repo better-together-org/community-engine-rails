@@ -23,6 +23,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless agent
+        return scope.none unless feature_enabled?('person_access_grants')
 
         scope.where(grantor_person_id: agent.id).or(scope.where(grantee_person_id: agent.id))
       end

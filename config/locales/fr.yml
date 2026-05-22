@@ -1658,6 +1658,43 @@ fr:
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
         other: ne fait pas la longueur correcte (%{count} caractères)
+    feature_access_grants:
+      created: Accès aux fonctionnalités créé.
+      edit:
+        title: Modifier l'accès aux fonctionnalités
+      form:
+        access_level: Niveau d'accès
+        current_rollout: Déploiement actuel
+        expires_at: Expire le
+        feature: Fonctionnalité
+        notes: Notes
+        person: Personne
+        person_prompt: Rechercher une personne
+      index:
+        description: Accordez un accès bêta ou alpha à des personnes précises sans
+          élargir les permissions de leur rôle de plateforme.
+        empty: Aucun accès explicite aux fonctionnalités n'a encore été créé pour
+          cette plateforme.
+        new: Nouvel accès
+        revoke: Révoquer
+        revoke_confirm: Révoquer cet accès aux fonctionnalités ?
+        title: Accès aux fonctionnalités
+      new:
+        title: Nouvel accès aux fonctionnalités
+      revoked: Accès aux fonctionnalités révoqué.
+      status:
+        active: Actif
+        revoked: Inactif
+      table:
+        access_level: Niveau d'accès
+        actions: Actions
+        expires_at: Expire
+        feature: Fonctionnalité
+        granted_by: Accordé par %{name}
+        no_expiry: Sans expiration
+        person: Personne
+        status: Statut
+      updated: Accès aux fonctionnalités mis à jour.
     federation:
       backfill:
         messages:
@@ -4795,6 +4832,7 @@ fr:
       operations:
         description: Ouvrez les opérations de niveau hôte pour cette plateforme sans
           dépendre uniquement d'une URL directe.
+        feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
         robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage

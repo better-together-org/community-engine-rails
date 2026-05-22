@@ -1649,6 +1649,42 @@ uk:
         many: неправильна довжина (точно %{count} символів)
         one: неправильна довжина (точно %{count} символ)
         other: неправильна довжина (точно %{count} символів)
+    feature_access_grants:
+      created: Доступ до функцій створено.
+      edit:
+        title: Редагувати доступ до функцій
+      form:
+        access_level: Рівень доступу
+        current_rollout: Поточний етап розгортання
+        expires_at: Діє до
+        feature: Функція
+        notes: Нотатки
+        person: Людина
+        person_prompt: Знайти людину
+      index:
+        description: Надавайте beta або alpha доступ окремим людям без розширення
+          дозволів їхньої ролі на платформі.
+        empty: Для цієї платформи ще не створено жодного явного доступу до функцій.
+        new: Новий доступ
+        revoke: Відкликати
+        revoke_confirm: Відкликати цей доступ до функцій?
+        title: Доступи до функцій
+      new:
+        title: Новий доступ до функцій
+      revoked: Доступ до функцій відкликано.
+      status:
+        active: Активний
+        revoked: Неактивний
+      table:
+        access_level: Рівень доступу
+        actions: Дії
+        expires_at: Діє до
+        feature: Функція
+        granted_by: Надано %{name}
+        no_expiry: Без строку дії
+        person: Людина
+        status: Статус
+      updated: Доступ до функцій оновлено.
     federation:
       backfill:
         messages:
@@ -4782,6 +4818,7 @@ uk:
       operations:
         description: Відкривайте операції рівня хоста для цієї платформи без потреби
           знати точну URL-адресу.
+        feature_access_grants: Керувати доступами до функцій
         host_dashboard: Панель хоста
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем

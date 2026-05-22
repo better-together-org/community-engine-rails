@@ -163,10 +163,12 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t('platforms.show.operations.title'))
       expect(response.body).to include(I18n.t('platforms.show.operations.storage_configurations'))
+      expect(response.body).to include('Feature access grants')
       expect(response.body).to include(I18n.t('platforms.show.operations.robot_management'))
       expect(response.body).to include(I18n.t('better_together.robots.readiness.translation_ui'))
       expect(response.body).to include(I18n.t('better_together.robots.readiness.shown'))
       expect(response.body).to include(better_together.platform_storage_configurations_path(host_platform, locale: locale))
+      expect(response.body).to include(better_together.platform_feature_access_grants_path(host_platform, locale: locale))
       expect(response.body).to include(better_together.platform_robots_path(host_platform, locale: locale))
     end
 
