@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Policy for platform-managed feature access grants.
+  # Policy for host-admin managed feature access grants.
+  # This surface intentionally follows the existing /host management contract,
+  # where host platform managers can administer platform-level operations.
   class FeatureAccessGrantPolicy < ApplicationPolicy
     def index?
       platform_manager?
