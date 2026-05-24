@@ -869,6 +869,276 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    billing:
+      activity_alerts: Billing activity alerts
+      activity_alerts_explainer: Recent Stripe webhook issues were recorded for this
+        billing record. Review the latest events below and run reconciliation if local
+        state looks stale.
+      available_plans: Available plans
+      billed_to: 'Billed to:'
+      breadcrumb_label: Billing
+      cancel_at_period_end: 'Cancel at period end:'
+      checkout_session_invalid: 'The Stripe checkout session could not be synchronized:
+        %<message>s'
+      checkout_sync_complete: Stripe checkout was synchronized successfully.
+      checkout_sync_pending: Stripe checkout was received, but no subscription state
+        could be synchronized yet.
+      checkout_sync_wrong_beneficiary: This Stripe checkout session does not belong
+        to this billing page.
+      community_capacity_tier: 'Community capacity tier:'
+      community_sponsor_checkout: Pay via %{community}
+      current_period_ends: 'Current period ends:'
+      current_subscription: Current subscription
+      dead_letter_alert_body: Some Stripe billing events could not be repaired by
+        normal retries or reconciliation. Review them below and replay supported events
+        when appropriate.
+      dead_letter_alert_heading: Dead-lettered billing events
+      dead_letter_reason_unknown: Unknown dead-letter reason
+      details: Details
+      event_type: Event
+      failed_without_message: The processor reported a failure without an error message.
+      heading: Community Billing
+      hosted_access_level: 'Hosted access level:'
+      hosted_access_level_default: Standard
+      hosted_entitlement_active_explainer: This community currently has an active
+        hosted plan and remains in good standing for hosted operations.
+      hosted_entitlement_attention_explainer: This community still has hosted access,
+        but billing needs attention before the hosted plan can be considered healthy
+        again.
+      hosted_entitlement_heading: Hosted plan status
+      hosted_entitlement_inactive_explainer: No active hosted plan is currently synced
+        for this community.
+      hosted_entitlement_plan: 'Current hosted plan:'
+      hosted_plan_scope_body: The current launch path supports recurring hosted plans
+        for communities and sponsors. One-time plans remain out of scope until their
+        fulfillment path is implemented.
+      hosted_plan_scope_heading: Hosted billing launch scope
+      hosted_status_active: Hosted plan active
+      hosted_status_attention: Billing attention needed
+      hosted_status_inactive: No active hosted plan
+      ignored_event_explainer: The event was recorded but did not map to a local billing
+        update.
+      interval: Interval
+      last_attempt: Last attempt
+      last_synced_at: 'Last synced:'
+      last_webhook_event: 'Last webhook event:'
+      manage_billing: Manage billing
+      manage_link: Manage billing
+      manage_person_link: Manage personal billing
+      merchant_account: Merchant account
+      merchant_account_status:
+        active: Active
+        disabled: Disabled
+        enabled: Enabled
+        errored: Error
+        pending: Pending
+        rejected: Rejected
+        restricted: Restricted
+        restricted_soon: Restricted soon
+      merchant_charges_enabled: 'Charges enabled:'
+      merchant_connect_explainer_community: Connect Stripe so this community can complete
+        onboarding and receive payouts in later commerce flows.
+      merchant_connect_explainer_person: Connect Stripe if you want this person to
+        receive payouts for future commerce flows.
+      merchant_disconnected_at: 'Disconnected at:'
+      merchant_disconnected_body: Stripe disconnected this merchant account. Reconnect
+        onboarding before relying on payouts or later commerce flows.
+      merchant_disconnected_heading: Merchant account disconnected
+      merchant_not_connected: No merchant account is connected yet.
+      merchant_onboarding_confirm: This will create a Stripe-managed merchant account
+        linked to this community. Stripe's data practices apply. Proceed?
+      merchant_onboarding_unavailable: 'Merchant onboarding is not available yet:
+        %<message>s'
+      merchant_payouts_enabled: 'Payouts enabled:'
+      merchant_provider: 'Provider:'
+      merchant_refresh_complete: Merchant account status was refreshed successfully.
+      merchant_refresh_failed: 'Merchant account refresh failed: %<message>s'
+      merchant_required_action_body: Stripe still requires more onboarding or account
+        review before this merchant account is ready for payouts.
+      merchant_required_action_heading: Merchant account action required
+      merchant_status_guidance: Use onboarding to finish Stripe Connect setup, then
+        refresh this card after Stripe reviews the account.
+      merchant_support_attention_body: This merchant account is not currently payout-ready.
+        Review the account status in Stripe and refresh this page after any corrective
+        action.
+      merchant_support_attention_heading: Merchant account support attention
+      no_activity_alerts: No failed or ignored billing webhook events are currently
+        recorded for this billing record.
+      no_billing_events: No Stripe billing webhook activity has been recorded for
+        this billing record yet.
+      no_plans: No active billing plans are configured yet.
+      no_subscription: No synced subscription is recorded for this community yet.
+      oldest_unresolved_at: 'Oldest unresolved at:'
+      open_merchant_onboarding: Open merchant onboarding
+      open_portal: Open billing portal
+      page_title: Community Billing
+      person_heading: Personal Billing
+      person_no_subscription: No synced subscription is recorded for this person yet.
+      person_page_title: Personal Billing
+      person_subheading: Manage Stripe checkout, subscription status, and billing
+        portal access for this person.
+      personal_plan_scope_body: Personal billing currently supports recurring hosted
+        plans and sponsorship flows. One-time plans remain out of the launch path
+        until their fulfillment flow is complete.
+      plan_beneficiary_label: 'Benefits for:'
+      plan_benefits: Included benefits
+      plan_defaults:
+        community_beneficiary_label: Community access
+        hosted_beneficiary_label: Hosted access
+        one_time_participant_summary: One-time hosted contribution
+        personal_beneficiary_label: Personal access
+        recurring_participant_summary: Ongoing hosted access and stewardship support
+      plan_not_found: That billing plan is not available.
+      plan_value: Plan value
+      plans:
+        create_submit: Create plan
+        created: Billing plan created successfully.
+        deactivate_confirm: Deactivate this plan? Existing subscribers are unaffected.
+        edit_title: Edit Billing Plan
+        field_active: Active (visible to subscribers)
+        field_amount_cents: Amount (cents)
+        field_amount_cents_hint: e.g. 4500 = $45.00
+        field_beneficiary_label: Beneficiary label
+        field_billing_interval: Billing interval
+        field_community_capacity_tier: Capacity tier
+        field_currency: Currency
+        field_description: Description
+        field_eligible_owner_types: Eligible for
+        field_hosted_access_level: Hosted access level
+        field_identifier: Identifier
+        field_identifier_hint: Unique machine-readable key. Cannot be changed after
+          creation.
+        field_name: Name
+        field_participant_benefits: Benefits
+        field_participant_benefits_hint: One benefit per line.
+        field_participant_summary: Participant summary
+        field_pricing_tier: Pricing tier
+        field_pricing_tier_hint: Solidarity tiers let smaller co-ops access the platform
+          at a reduced contribution.
+        field_solidarity_description: Solidarity description
+        field_solidarity_description_hint: Shown to potential subscribers to explain
+          who this tier is for.
+        field_stripe_price_id: Stripe Price ID
+        field_stripe_price_id_hint: From the Stripe Dashboard. Cannot be changed after
+          creation.
+        field_stripe_product_id: Stripe Product ID
+        field_stripe_product_id_hint: Populated automatically after the plan is synced
+          to Stripe.
+        field_support_tier: Support tier
+        index_title: Billing Plans
+        interval_month: Monthly
+        interval_one_time: One-time
+        interval_year: Yearly
+        metadata_section_hint: Shown on billing pages and entitlement cards
+        metadata_section_title: Plan metadata
+        new_plan: New plan
+        new_title: New Billing Plan
+        no_plans: No billing plans have been created yet.
+        owner_type_community: Community
+        owner_type_person: Person
+        pricing_tier_solidarity_medium: Solidarity — Medium
+        pricing_tier_solidarity_premium: Solidarity Premium
+        pricing_tier_solidarity_small: Solidarity — Small
+        pricing_tier_standard: Standard
+        recent_subscribers_title: Active subscribers
+        show_title: Billing Plan
+        status_active: Active
+        status_inactive: Inactive
+        subscribers_count_label: Active subscribers
+        subscription_health_title: Subscription health
+        toggle_activate: Activate
+        toggle_deactivate: Deactivate
+        update_submit: Update plan
+        updated: Billing plan updated successfully.
+      platform_provisioned: Platform provisioned successfully.
+      platform_provisioned_success: Platform provisioned
+      platform_provisioned_visit: Visit your new platform
+      portal_access_attention: Billing portal access needs attention
+      portal_access_attention_fallback: The last attempt to open the billing portal
+        failed. Check Stripe availability and retry when ready.
+      portal_access_last_failed_at: 'Last failed portal access:'
+      portal_owner_unavailable: This community subscription is billed to another owner.
+      portal_requires_sponsor: This community subscription is billed to another owner.
+        Ask the current sponsor to open the billing portal, or start a replacement
+        checkout below if billing should move to a different owner.
+      portal_unavailable: 'The billing portal is not available yet: %<message>s'
+      price: Price
+      provision_platform_cta: Provision hosted platform
+      provision_platform_cta_explainer: Your plan entitles this community to a hosted
+        platform. Provision one now to activate platform services.
+      provision_platform_form_heading: Platform details
+      provision_platform_heading: Provision hosted platform
+      provision_platform_host_url: Host URL
+      provision_platform_host_url_hint: The full URL where this platform will be hosted.
+        Must be unique.
+      provision_platform_name: Platform name
+      provision_platform_name_hint: The public-facing name for this hosted platform.
+      provision_platform_name_placeholder: e.g. My Community Space
+      provision_platform_page_title: Provision Hosted Platform
+      provision_platform_privacy: Visibility
+      provision_platform_privacy_community: Community — accessible to members
+      provision_platform_privacy_hint: Controls who can discover and access this platform.
+        You can change this after provisioning.
+      provision_platform_privacy_private: Private — accessible by invitation only
+      provision_platform_privacy_public: Public — open to everyone
+      provision_platform_step_community: A primary community is automatically attached
+        to the platform.
+      provision_platform_step_domain: The host domain is registered and linked to
+        the platform.
+      provision_platform_step_platform: A new platform record is created at the host
+        URL you provide.
+      provision_platform_step_steward: Platform stewardship access can be configured
+        after provisioning.
+      provision_platform_subheading: Fill in the details below to provision a new
+        platform for this community.
+      provision_platform_submit: Provision platform
+      provision_platform_time_zone: Time zone
+      provision_platform_what_happens: What happens next
+      provision_requires_active_plan: An active hosted plan is required to provision
+        a platform. Subscribe to a hosted plan first.
+      reconcile_now: Reconcile now
+      reconciliation_enqueued: A Stripe reconciliation job was queued for this community.
+      refresh_merchant_account: Refresh merchant status
+      repeated_failure_alert_body: Some Stripe billing events have failed repeatedly.
+        Review the failed events below and reconcile or replay them before more drift
+        accumulates.
+      repeated_failure_alert_heading: Repeated billing event failures
+      replay_event: Replay event
+      replay_event_enqueued: Billing event %<event_type>s queued for replay.
+      replay_event_not_found: That billing event could not be found for replay.
+      replay_event_payload_unavailable: The billing event payload is no longer available
+        for replay.
+      replay_event_unsupported: This billing event cannot be replayed safely.
+      replay_unavailable: Replay unavailable
+      retry_count: "%<count>d attempts"
+      sponsor_checkout: Pay personally for this community
+      sponsored_communities: Sponsored communities
+      sponsored_subscription_notice: This community is currently sponsored by %{owner}.
+        Phase 1 uses replacement checkout instead of a separate transfer workflow.
+        Start a replacement checkout below if billing should move to a different owner.
+      start_checkout: Start checkout
+      status: Status
+      subheading: Manage Stripe checkout, subscription status, and billing portal
+        access for this community.
+      subscription_status:
+        active: Active
+        canceled: Canceled
+        incomplete: Incomplete
+        incomplete_expired: Expired
+        past_due: Past due
+        paused: Paused
+        trialing: Trialing
+        unpaid: Unpaid
+      support_tier: 'Support tier:'
+      support_tier_default: Community
+      sync_source: 'Sync source:'
+      takeover_as_community: Start replacement checkout for this community
+      takeover_as_other_community: Start replacement checkout via %{community}
+      takeover_as_person: Start replacement checkout personally
+      unknown_sync_source: Unknown
+      unresolved_alert_body: Stripe billing drift has remained unresolved long enough
+        to need operator review. Reconcile now and inspect the oldest unresolved events.
+      unresolved_alert_heading: Unresolved billing drift
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and
@@ -965,6 +1235,7 @@ en:
         items_title: Items
         no_items: No items to display
     communities:
+      edit_heading: Editing Community
       form:
         allow_membership_requests: Allow membership requests
         allow_membership_requests_hint: Show a public membership request form for
@@ -990,6 +1261,7 @@ en:
         actions:
           destroy_aria: Delete community
           edit_aria: Edit community
+          manage_billing: Manage billing
         create_event: Create an Event
         events:
           create_event: Create an Event
@@ -2622,6 +2894,7 @@ en:
         microphone: Microphone
         notifications: Notifications
         permissions_group_label: Permissions group label
+      edit_heading: Edit Profile
       federate_content: Allow this platform to include your public posts, pages, and
         events in approved federation feeds.
       index:
@@ -4140,6 +4413,8 @@ en:
       expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
+      immutable_after_stripe_link: cannot be changed after a Stripe Price has been
+        linked
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
@@ -4248,6 +4523,7 @@ en:
     create: Create
     declined: Declined
     delete: Delete
+    description: Description
     destroy: Destroy
     draft: Draft
     edit: Edit
@@ -4260,6 +4536,7 @@ en:
     loading: Loading...
     locale: Locale
     message: Message
+    name: Name
     new: New
     'no': 'No'
     no_description: No description

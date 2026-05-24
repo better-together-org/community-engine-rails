@@ -48,7 +48,8 @@ module BetterTogether
       roles: 'roles_url',
       safety_cases: 'safety_cases_url',
       users: 'users_url',
-      webhook_endpoints: 'webhook_endpoints_url'
+      webhook_endpoints: 'webhook_endpoints_url',
+      billing_plans: 'billing_plans_url'
     }
 
     belongs_to :navigation_area, touch: true
