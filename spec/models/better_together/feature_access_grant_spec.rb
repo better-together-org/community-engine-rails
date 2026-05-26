@@ -57,6 +57,14 @@ RSpec.describe BetterTogether::FeatureAccessGrant do
       expect(described_class.active).not_to include(grant)
     end
 
+    it 'preserves the original revoked_at when revoke! is called again' do
+      original_revoked_at = 2.days.ago.change(usec: 0)
+      grant = create(:better_together_feature_access_grant, revoked_at: original_revoked_at)
+
+      expect { grant.revoke!(revoked_time: Time.current) }
+        .not_to(change { grant.reload.revoked_at })
+    end
+
     it 'treats expired grants as inactive' do
       grant = create(:better_together_feature_access_grant, expires_at: 2.minutes.ago)
 

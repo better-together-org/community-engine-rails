@@ -26,6 +26,8 @@ module BetterTogether
     }
 
     def revoke!(revoked_time: Time.current)
+      return self if revoked_at.present?
+
       update!(revoked_at: revoked_time)
     end
 
