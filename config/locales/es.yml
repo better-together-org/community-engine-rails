@@ -1664,6 +1664,7 @@ es:
         notes: Notas
         person: Persona
         person_prompt: Buscar una persona
+        unknown_rollout: Funcionalidad desconocida o retirada
       index:
         description: Otorga acceso beta o alpha a personas concretas sin ampliar los
           permisos de su rol de plataforma.

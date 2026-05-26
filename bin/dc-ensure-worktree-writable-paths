@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+# shellcheck source=./docker-compose-env.sh
+source "$repo_root/bin/docker-compose-env.sh"
+
+compose_files=("-f" "docker-compose.yml")
+
+if [[ -f ".env" && -f "docker-compose.dev.yml" ]]; then
+  compose_files+=("-f" "docker-compose.dev.yml")
+fi
+
+host_uid="$(id -u)"
+host_gid="$(id -g)"
+
+repair_roots=(
+  "coverage"
+  "spec/dummy/log"
+  "spec/dummy/tmp"
+)
+
+needs_repair=0
+for path in "${repair_roots[@]}"; do
+  if [[ -e "$path" ]] && find "$path" ! -uid "$host_uid" -print -quit | grep -q .; then
+    needs_repair=1
+    break
+  fi
+done
+
+if [[ "$needs_repair" == "1" ]]; then
+  docker compose "${compose_files[@]}" run --rm --no-deps --user root app bash -lc "
+    set -euo pipefail
+    mkdir -p coverage spec/dummy/log spec/dummy/tmp
+    chown -R $host_uid:$host_gid coverage spec/dummy/log spec/dummy/tmp
+    chmod -R u+rwX coverage spec/dummy/log spec/dummy/tmp
+  " >/dev/null
+fi
+
+mkdir -p coverage spec/dummy/log spec/dummy/tmp
+
+for path in "${repair_roots[@]}"; do
+  if [[ ! -w "$path" ]]; then
+    echo "Path is not writable after repair: $path" >&2
+    exit 1
+  fi
+done

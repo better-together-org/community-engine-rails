@@ -247,9 +247,12 @@ module BetterTogether
     end
 
     def feature_rollout_for(feature_key)
+      registry_entry = BetterTogether::FeatureRegistry.find(feature_key)
+      return 'off' unless registry_entry
+
       feature_gate_rollouts.fetch(
         feature_key.to_s,
-        BetterTogether::FeatureRegistry.fetch(feature_key).fetch(:default_rollout)
+        registry_entry.fetch(:default_rollout)
       )
     end
 

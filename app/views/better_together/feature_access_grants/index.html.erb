@@ -44,7 +44,7 @@
                   </div>
                 <% end %>
               </td>
-              <td><%= BetterTogether::FeatureRegistry.fetch(grant.feature_key).fetch(:name) %></td>
+              <td><%= BetterTogether::FeatureRegistry.name_for(grant.feature_key) %></td>
               <td><span class="badge text-bg-info"><%= grant.access_level.humanize %></span></td>
               <td>
                 <% if grant.active_now? %>

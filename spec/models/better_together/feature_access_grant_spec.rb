@@ -11,6 +11,16 @@ RSpec.describe BetterTogether::FeatureAccessGrant do
       expect(grant.errors[:feature_key]).to be_present
     end
 
+    it 'allows updating a persisted grant after its feature key is retired from the registry' do
+      grant = create(:better_together_feature_access_grant, feature_key: 'device_permissions', notes: 'Original note')
+
+      allow(BetterTogether::FeatureRegistry).to receive(:find).and_call_original
+      allow(BetterTogether::FeatureRegistry).to receive(:find).with('device_permissions').and_return(nil)
+
+      expect(grant.update(notes: 'Updated note after retirement')).to be(true)
+      expect(grant.reload.notes).to eq('Updated note after retirement')
+    end
+
     it 'rejects duplicate active grants for the same platform, person, and feature' do
       grant = create(:better_together_feature_access_grant)
       duplicate = build(:better_together_feature_access_grant,

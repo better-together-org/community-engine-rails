@@ -11,12 +11,20 @@ module BetterTogether
         @all ||= load_registry
       end
 
+      def find(key)
+        all[key.to_s]
+      end
+
       def fetch(key)
         all.fetch(key.to_s)
       end
 
       def keys
         all.keys
+      end
+
+      def name_for(key)
+        find(key)&.fetch(:name) || "Unknown feature (#{key})"
       end
 
       def reset!

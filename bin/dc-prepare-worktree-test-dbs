@@ -8,6 +8,9 @@ cd "$repo_root"
 # shellcheck source=./docker-compose-env.sh
 source "$repo_root/bin/docker-compose-env.sh"
 
+"$repo_root/bin/dc-ensure-worktree-writable-paths"
+trap '"$repo_root/bin/dc-ensure-worktree-writable-paths" >/dev/null 2>&1 || true' EXIT
+
 if [[ -z "${CE_WORKTREE_DB_SUFFIX:-}" ]]; then
   exit 0
 fi

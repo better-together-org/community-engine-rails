@@ -1670,6 +1670,7 @@ fr:
         notes: Notes
         person: Personne
         person_prompt: Rechercher une personne
+        unknown_rollout: Fonctionnalité inconnue ou retirée
       index:
         description: Accordez un accès bêta ou alpha à des personnes précises sans
           élargir les permissions de leur rôle de plateforme.

@@ -1640,6 +1640,7 @@ en:
         notes: Notes
         person: Person
         person_prompt: Search for a person
+        unknown_rollout: Unknown / retired feature
       index:
         description: Grant beta or alpha access to specific people without broadening
           their platform role permissions.

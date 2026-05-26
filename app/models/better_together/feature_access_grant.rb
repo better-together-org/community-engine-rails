@@ -17,8 +17,9 @@ module BetterTogether
     before_validation :revoke_self_if_expired
     before_validation :revoke_expired_conflicts
 
-    validates :feature_key, presence: true, inclusion: { in: ->(_record) { BetterTogether::FeatureRegistry.keys } }
+    validates :feature_key, presence: true
     validate :ensure_no_other_active_grant
+    validate :ensure_known_feature_key
 
     scope :active, lambda {
       where(revoked_at: nil)
@@ -45,6 +46,14 @@ module BetterTogether
       return unless conflicting_grants.exists?
 
       errors.add(:person_id, :taken)
+    end
+
+    def ensure_known_feature_key
+      return if feature_key.blank?
+      return if BetterTogether::FeatureRegistry.find(feature_key).present?
+      return if persisted? && feature_key_in_database == feature_key
+
+      errors.add(:feature_key, :inclusion)
     end
 
     def revoke_self_if_expired

@@ -6,6 +6,7 @@ module BetterTogether
     before_action :set_platform
     before_action :set_feature_access_grant, only: %i[edit update destroy]
     after_action :verify_authorized
+    rescue_from Pundit::NotAuthorizedError, with: :render_not_found
 
     def index
       authorize build_feature_access_grant

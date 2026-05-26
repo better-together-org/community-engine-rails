@@ -1,3 +1,11 @@
+<%
+  feature_options = BetterTogether::FeatureRegistry.all.values.map { |gate| [gate[:name], gate[:key]] }
+  if feature_access_grant.feature_key.present? && BetterTogether::FeatureRegistry.find(feature_access_grant.feature_key).nil?
+    feature_options.unshift([BetterTogether::FeatureRegistry.name_for(feature_access_grant.feature_key),
+                             feature_access_grant.feature_key])
+  end
+%>
+
 <%= form_with model: [platform, feature_access_grant], local: true do |form| %>
   <%= render 'layouts/better_together/errors', object: feature_access_grant %>
 
@@ -43,8 +51,7 @@
                      t('better_together.feature_access_grants.form.feature', default: 'Feature'),
                      class: 'form-label' %>
       <%= form.select :feature_key,
-                      options_for_select(BetterTogether::FeatureRegistry.all.values.map { |gate| [gate[:name], gate[:key]] },
-                                         feature_access_grant.feature_key),
+                      options_for_select(feature_options, feature_access_grant.feature_key),
                       {},
                       class: 'form-select', required: true %>
     </div>
@@ -72,7 +79,13 @@
     <div class="col-md-6">
       <label class="form-label"><%= t('better_together.feature_access_grants.form.current_rollout', default: 'Current rollout') %></label>
       <div class="form-control-plaintext">
-        <%= platform.feature_rollout_for(feature_access_grant.feature_key.presence || BetterTogether::FeatureRegistry.keys.first).humanize %>
+        <% current_feature_key = feature_access_grant.feature_key.presence || BetterTogether::FeatureRegistry.keys.first %>
+        <% if BetterTogether::FeatureRegistry.find(current_feature_key).present? %>
+          <%= platform.feature_rollout_for(current_feature_key).humanize %>
+        <% else %>
+          <%= t('better_together.feature_access_grants.form.unknown_rollout',
+                default: 'Unknown / retired feature') %>
+        <% end %>
       </div>
     </div>
   </div>
