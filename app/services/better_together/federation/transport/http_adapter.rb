@@ -3,6 +3,7 @@
 require 'json'
 require 'net/http'
 require 'ssrf_filter'
+require 'socket'
 require 'uri'
 require 'cgi'
 
@@ -13,6 +14,7 @@ module BetterTogether
       class HttpAdapter # rubocop:disable Metrics/ClassLength
         DEFAULT_OPEN_TIMEOUT = 5
         DEFAULT_READ_TIMEOUT = 15
+        DEFAULT_CONNECT_TIMEOUT = 2
 
         # Raised when an outbound federation request targets a private/loopback address.
         class SSRFError < StandardError; end
@@ -21,10 +23,20 @@ module BetterTogether
           new(connection:, cursor:, limit:).call
         end
 
+        def self.accessible?(connection:)
+          new(connection:).accessible?
+        end
+
         def initialize(connection:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
           @connection = connection
           @cursor = cursor
           @limit = limit.to_i.positive? ? limit.to_i : BetterTogether::FederatedContentPullService::DEFAULT_LIMIT
+        end
+
+        def accessible?
+          [feed_uri, token_uri].all? { |uri| host_reachable?(uri) }
+        rescue URI::InvalidURIError, SocketError, SystemCallError, ArgumentError
+          false
         end
 
         def call
@@ -133,6 +145,16 @@ module BetterTogether
           )
         rescue SsrfFilter::PrivateIPAddress => e
           raise SSRFError, e.message
+        end
+
+        def host_reachable?(uri)
+          Socket.tcp(uri.host, uri.port, connect_timeout: DEFAULT_CONNECT_TIMEOUT) do |socket|
+            socket.close unless socket.closed?
+          end
+
+          true
+        rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ENETUNREACH, SocketError, Timeout::Error
+          false
         end
       end
     end
