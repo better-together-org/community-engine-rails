@@ -78,6 +78,15 @@ module BetterTogether
                                             class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantor_person
     has_many :received_person_access_grants, foreign_key: :grantee_person_id, dependent: :destroy,
                                              class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantee_person
+    has_many :feature_access_grants,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :destroy,
+             inverse_of: :person
+    has_many :granted_feature_access_grants,
+             foreign_key: :granted_by_person_id,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :nullify,
+             inverse_of: :granted_by_person
     has_many :person_linked_seeds, foreign_key: :recipient_person_id, dependent: :destroy,
                                    class_name: 'BetterTogether::PersonLinkedSeed', inverse_of: :recipient_person
     has_many :webhook_endpoints,

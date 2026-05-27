@@ -420,6 +420,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               member do
                 get :available_people
               end
+              resources :feature_access_grants, except: :show
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
