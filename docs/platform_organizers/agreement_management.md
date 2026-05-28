@@ -7,7 +7,7 @@ Community Engine ships agreements as reusable governance tools, not just legal b
 - `policy_consent`
   Used for agreements required to create and keep an account in good standing, such as Terms of Service, Privacy Policy, and Code of Conduct.
 - `publishing_consent`
-  Used for agreements required before a person can make content public, such as the content publishing agreement.
+  Used for agreements required before a person can publish content to the community or broader audiences, such as the content publishing agreement.
 - `transactional_agreement`
   Used for exchange records like mutual aid agreements between an offer and a request.
 

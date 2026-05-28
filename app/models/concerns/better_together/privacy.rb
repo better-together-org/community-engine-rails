@@ -42,7 +42,7 @@ module BetterTogether
     private
 
     def require_publishing_agreement_for_public_visibility
-      return unless privacy_public?
+      return unless privacy_public? || privacy_community?
       return unless new_record? || will_save_change_to_privacy?
       return if respond_to?(:external?) && external?
 
