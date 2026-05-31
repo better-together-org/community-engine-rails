@@ -61,6 +61,49 @@ module BetterTogether # :nodoc:
     end
 
     describe 'Methods' do
+      describe 'publishing agreement gate' do
+        let!(:publishing_agreement) do
+          BetterTogether::Agreement.find_or_create_by!(
+            identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER
+          ) do |agreement|
+            agreement.title = 'Content Publishing Agreement'
+            agreement.privacy = 'public'
+            agreement.protected = true
+          end
+        end
+
+        let(:publisher) { create(:better_together_person) }
+
+        after do
+          Current.reset
+        end
+
+        it 'blocks publishing community-visible pages without agreement acceptance' do
+          community_page = create(:better_together_page, privacy: 'community', published_at: nil)
+          Current.governed_agent = publisher
+
+          community_page.published_at = Time.current
+
+          expect(community_page).not_to be_valid
+          expect(community_page.errors[:base]).to include(
+            BetterTogether::PublicVisibilityGate.error_message_for(:missing_publishing_agreement)
+          )
+        end
+
+        it 'allows publishing community-visible pages after agreement acceptance' do
+          create(:better_together_agreement_participant,
+                 agreement: publishing_agreement,
+                 participant: publisher,
+                 accepted_at: Time.current)
+          community_page = create(:better_together_page, privacy: 'community', published_at: nil)
+          Current.governed_agent = publisher
+
+          community_page.published_at = Time.current
+
+          expect(community_page).to be_valid
+        end
+      end
+
       describe '#published?' do
         it 'returns true if the page is published' do
           page.published_at = Time.now - 2.days
