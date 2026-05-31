@@ -50,13 +50,19 @@ module BetterTogether
     def require_publishing_agreement_for_publication
       return unless new_record? || will_save_change_to_published_at?
       return if published_at.blank?
-      return if respond_to?(:privacy_public?) && !privacy_public?
+      return unless publication_privacy_requires_agreement?
 
       BetterTogether::PublicVisibilityGate.allow!(
         record: self,
         actor: Current.governed_agent,
         target_published_at: published_at
       )
+    end
+
+    def publication_privacy_requires_agreement?
+      return true unless respond_to?(:privacy_public?)
+
+      privacy_public? || (respond_to?(:privacy_community?) && privacy_community?)
     end
   end
 end
