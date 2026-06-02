@@ -49,8 +49,10 @@ module BetterTogether
         caption.presence || I18n.t('better_together.content.blocks.video_block.title')
       end
 
-      def self.content_addable?
-        true
+      def self.content_addable?(actor: nil)
+        BetterTogether::FeatureGate.enabled?('content_block_media_embeds', actor:, platform: Current.platform)
+      rescue KeyError
+        false
       end
 
       def self.extra_permitted_attributes

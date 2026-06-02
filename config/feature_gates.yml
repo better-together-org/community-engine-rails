@@ -41,3 +41,15 @@ features:
     default_rollout: alpha
     owner_surface: ui
     category: content
+  - key: content_block_rich_content
+    name: Rich Content Blocks
+    description: Enables AlertBlock, CallToActionBlock, ChecklistBlock, NavigationAreaBlock, and QuoteBlock in the page editor.
+    default_rollout: alpha
+    owner_surface: ui
+    category: content
+  - key: content_block_media_embeds
+    name: Media & Embed Blocks
+    description: Enables VideoBlock and IframeBlock in the page editor.
+    default_rollout: alpha
+    owner_surface: ui
+    category: content
