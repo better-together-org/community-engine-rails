@@ -1069,8 +1069,12 @@ es:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: No hay elementos configurados.
           items_json_help: Arreglo JSON de objetos con claves "question" y "answer".
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Páginas asociadas
         checklist_block:
           not_found: Lista de verificación no encontrada.
@@ -1117,6 +1121,12 @@ es:
           missing_url: No se ha configurado ninguna URL de iframe.
           url_help: Acepta una URL HTTPS completa de iframe, como una encuesta de
             Formbricks u otra inserción confiable de un espacio comunitario.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Cargar siempre desde archivo (ignorar contenido de base de
@@ -1156,8 +1166,14 @@ es:
             el ámbito de la comunidad y el orden.
           resource_ids_placeholder: Dejar en blanco para mostrar los últimos registros
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: Arreglo JSON de objetos con claves "label", "value" e "icon"
             opcional (clase Font Awesome).
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Plantilla predeterminada
           host_community_contact_details: Detalles de contacto de la comunidad anfitriona

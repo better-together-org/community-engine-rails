@@ -1060,8 +1060,12 @@ uk:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: Елементи не налаштовано.
           items_json_help: Масив JSON об'єктів з ключами "question" та "answer".
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Associated Pages
         checklist_block:
           not_found: Контрольний список не знайдено.
@@ -1108,6 +1112,12 @@ uk:
           missing_url: URL iframe не налаштовано.
           url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
             або інше довірене вбудовування зі спільнотного простору.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -1146,8 +1156,14 @@ uk:
             область спільноти та порядок.
           resource_ids_placeholder: Залиште порожнім для відображення останніх записів
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
             "icon" (клас Font Awesome).
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Типовий шаблон
           host_community_contact_details: Контактні дані спільноти-хоста

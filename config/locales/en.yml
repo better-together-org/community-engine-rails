@@ -1062,8 +1062,12 @@ en:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: No items configured.
           items_json_help: JSON array of objects with "question" and "answer" keys.
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Associated Pages
         checklist_block:
           not_found: Checklist not found.
@@ -1108,6 +1112,12 @@ en:
           missing_url: No iframe URL configured.
           url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
             another trusted community-space embed.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -1146,8 +1156,14 @@ en:
             the community scope and ordering.
           resource_ids_placeholder: Leave blank to show latest records
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: JSON array of objects with "label", "value", and optional
             "icon" (Font Awesome class) keys.
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Default template
           host_community_contact_details: Host community contact details
