@@ -50,7 +50,7 @@ module BetterTogether
       end
 
       def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('content_block_media_embeds', actor:, platform: Current.platform)
+        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
       rescue KeyError
         false
       end

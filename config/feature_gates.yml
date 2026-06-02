@@ -29,27 +29,9 @@ features:
     default_rollout: stable
     owner_surface: both
     category: federation
-  - key: content_block_json_fields
-    name: JSON Field Content Blocks
-    description: Enables AccordionBlock and StatisticsBlock in the page editor.
-    default_rollout: alpha
-    owner_surface: ui
-    category: content
-  - key: content_block_resource_collections
-    name: Resource Collection Content Blocks
-    description: Enables Communities, Events, People, and Posts blocks in the page editor.
-    default_rollout: alpha
-    owner_surface: ui
-    category: content
-  - key: content_block_rich_content
-    name: Rich Content Blocks
-    description: Enables AlertBlock, CallToActionBlock, ChecklistBlock, NavigationAreaBlock, and QuoteBlock in the page editor.
-    default_rollout: alpha
-    owner_surface: ui
-    category: content
-  - key: content_block_media_embeds
-    name: Media & Embed Blocks
-    description: Enables VideoBlock and IframeBlock in the page editor.
+  - key: new_content_blocks
+    name: New Content Blocks (v0.11.0)
+    description: Enables all 13 new content block types in the page editor (Accordion, Alert, CallToAction, Checklist, Communities, Events, Iframe, Navigation, People, Posts, Quote, Statistics, Video).
     default_rollout: alpha
     owner_surface: ui
     category: content

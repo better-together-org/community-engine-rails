@@ -20,7 +20,7 @@ module BetterTogether
       validates :layout, inclusion: { in: LAYOUTS }
 
       def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('content_block_rich_content', actor:, platform: Current.platform)
+        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
       rescue KeyError
         false
       end

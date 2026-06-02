@@ -15,7 +15,7 @@ module BetterTogether
       validates :posts_scope, inclusion: { in: POSTS_SCOPES }
 
       def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('content_block_resource_collections', actor:, platform: Current.platform)
+        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
       rescue KeyError
         false
       end
