@@ -22,8 +22,10 @@ module BetterTogether
         open_first == 'true'
       end
 
-      def self.content_addable?
-        true
+      def self.content_addable?(actor: nil)
+        BetterTogether::FeatureGate.enabled?('content_block_json_fields', actor:, platform: Current.platform)
+      rescue KeyError
+        false
       end
 
       def self.extra_permitted_attributes

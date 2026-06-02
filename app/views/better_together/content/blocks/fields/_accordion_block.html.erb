@@ -36,9 +36,8 @@
             <div class="row g-2 mb-2">
               <div class="col">
                 <button type="button"
-                        class="btn btn-sm btn-link text-muted p-0"
+                        class="btn btn-sm btn-link text-muted p-0 drag-handle"
                         title="<%= t('better_together.content.blocks.json_array_rows.drag_handle', default: 'Drag to reorder') %>"
-                        data-action="dragstart->better_together--json-array-rows#rowDragStart dragend->better_together--json-array-rows#rowDragEnd dragover->better_together--json-array-rows#rowDragOver dragleave->better_together--json-array-rows#rowDragLeave drop->better_together--json-array-rows#rowDrop"
                         style="cursor: grab;">
                   <i class="fas fa-grip-vertical fa-lg" aria-hidden="true"></i>
                   <span class="visually-hidden"><%= t('better_together.content.blocks.json_array_rows.drag_handle', default: 'Drag to reorder') %></span>

@@ -7,6 +7,8 @@ export default class extends Controller {
   connect() {
     // Parse the current JSON value and render rows for each item
     this.parseAndRenderRows()
+    this._dragSrc = null
+    this.addDragHandlers()
   }
 
   parseAndRenderRows() {
@@ -102,84 +104,88 @@ export default class extends Controller {
     }
   }
 
-  // Drag-and-drop handlers
-  rowDragStart(event) {
-    event.dataTransfer.effectAllowed = 'move'
-    event.dataTransfer.setData('text/html', event.target.innerHTML)
-    this.draggedRow = event.currentTarget
-    this.draggedRow.classList.add('opacity-50')
-  }
+  addDragHandlers() {
+    const container = this.containerTarget
+    const controller = this
 
-  rowDragOver(event) {
-    event.preventDefault()
-    event.dataTransfer.dropEffect = 'move'
+    // Delegated dragover on the container: show insertion indicator
+    container.addEventListener('dragover', (e) => {
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'move'
 
-    const row = event.target.closest('[data-better_together--json-array-rows-target="row"]')
-    if (!row || row === this.draggedRow) {
-      if (this.lastDropTarget && this.lastDropTarget !== row) {
-        this.lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after')
-        this.lastDropTarget = null
+      const row = e.target.closest('[data-better_together--json-array-rows-target="row"]')
+      if (!row || !controller._dragSrc || row === controller._dragSrc) {
+        if (controller._lastDropTarget && controller._lastDropTarget !== row) {
+          controller._lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after')
+          controller._lastDropTarget = null
+        }
+        return
       }
-      return
-    }
 
-    // Determine if dropping before or after based on cursor position
-    const rect = row.getBoundingClientRect()
-    const before = (event.clientY - rect.top) < (rect.height / 2)
+      const rect = row.getBoundingClientRect()
+      const before = (e.clientY - rect.top) < (rect.height / 2)
 
-    // Clear previous indicator
-    if (this.lastDropTarget && this.lastDropTarget !== row) {
-      this.lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after')
-    }
+      if (controller._lastDropTarget && controller._lastDropTarget !== row) {
+        controller._lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after')
+      }
 
-    // Add new indicator
-    row.classList.remove('bt-drop-before', 'bt-drop-after')
-    row.classList.add(before ? 'bt-drop-before' : 'bt-drop-after')
-    this.lastDropTarget = row
-  }
-
-  rowDragLeave(event) {
-    const row = event.target.closest('[data-better_together--json-array-rows-target="row"]')
-    if (row) {
       row.classList.remove('bt-drop-before', 'bt-drop-after')
-    }
-  }
+      row.classList.add(before ? 'bt-drop-before' : 'bt-drop-after')
+      controller._lastDropTarget = row
+    })
 
-  rowDrop(event) {
-    event.preventDefault()
-    event.stopPropagation()
+    // Document-level dragend cleanup
+    document.addEventListener('dragend', () => {
+      if (controller._lastDropTarget) {
+        controller._lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after')
+        controller._lastDropTarget = null
+      }
+      if (controller._dragSrc) {
+        controller._dragSrc.classList.remove('opacity-50')
+        controller._dragSrc = null
+      }
+    })
 
-    if (!this.draggedRow) return
+    // Per-row dragstart and drop handlers
+    Array.from(container.querySelectorAll('[data-better_together--json-array-rows-target="row"]')).forEach((row) => {
+      if (row.dataset.dragAttached) return
 
-    const dropTarget = event.target.closest('[data-better_together--json-array-rows-target="row"]')
-    if (!dropTarget || dropTarget === this.draggedRow) return
+      const handle = row.querySelector('.drag-handle')
+      if (handle) {
+        handle.setAttribute('draggable', 'true')
+        handle.addEventListener('dragstart', (e) => {
+          controller._dragSrc = row
+          e.dataTransfer.effectAllowed = 'move'
+          row.classList.add('opacity-50')
+        })
+      }
 
-    // Determine drop position
-    const rect = dropTarget.getBoundingClientRect()
-    const before = (event.clientY - rect.top) < (rect.height / 2)
+      row.addEventListener('drop', (e) => {
+        e.preventDefault()
+        e.stopPropagation()
 
-    // Perform the reorder
-    if (before) {
-      this.containerTarget.insertBefore(this.draggedRow, dropTarget)
-    } else {
-      this.containerTarget.insertBefore(this.draggedRow, dropTarget.nextSibling)
-    }
+        if (!controller._dragSrc || controller._dragSrc === row) return
 
-    this.syncJson()
-  }
+        const rect = row.getBoundingClientRect()
+        const before = (e.clientY - rect.top) < (rect.height / 2)
 
-  rowDragEnd(event) {
-    event.preventDefault()
-    if (this.draggedRow) {
-      this.draggedRow.classList.remove('opacity-50')
-      this.draggedRow = null
-    }
+        if (before) {
+          container.insertBefore(controller._dragSrc, row)
+        } else {
+          container.insertBefore(controller._dragSrc, row.nextSibling)
+        }
 
-    // Clean up drop indicators
-    if (this.lastDropTarget) {
-      this.lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after')
-      this.lastDropTarget = null
-    }
+        try { row.classList.remove('bt-drop-before', 'bt-drop-after') } catch (er) {}
+        if (controller._lastDropTarget) {
+          controller._lastDropTarget.classList.remove('bt-drop-before', 'bt-drop-after')
+          controller._lastDropTarget = null
+        }
+
+        controller.syncJson()
+      })
+
+      row.dataset.dragAttached = '1'
+    })
   }
 
   syncJson() {
