@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_23_090000) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_30_193000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -721,9 +721,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_23_090000) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "event_id"
-    t.string "host_type"
-    t.uuid "host_id"
+    t.uuid "event_id", null: false
+    t.string "host_type", null: false
+    t.uuid "host_id", null: false
     t.index ["event_id"], name: "index_better_together_event_hosts_on_event_id"
     t.index ["host_type", "host_id"], name: "index_better_together_event_hosts_on_host"
   end
