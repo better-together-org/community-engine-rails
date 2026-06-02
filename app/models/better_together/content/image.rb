@@ -35,7 +35,7 @@ module BetterTogether
                 content_type: CONTENT_TYPES,
                 size: { less_than: 100.megabytes, message: 'is too large' }
 
-      def self.content_addable?
+      def self.content_addable?(actor: nil) # rubocop:disable Lint/UnusedMethodArgument
         true
       end
 
