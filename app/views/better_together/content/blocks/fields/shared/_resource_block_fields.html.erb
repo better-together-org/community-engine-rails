@@ -77,9 +77,9 @@
     </div>
 
     <div class="col mb-3">
-      <%= label_tag "#{scope}[view_more_url]", BetterTogether::Content::Block.human_attribute_name('view_more_url', default: '"View all" URL'), class: 'form-label' %>
-      <%= url_field_tag "#{scope}[view_more_url]", block.view_more_url, class: 'form-control',
-                        placeholder: 'https://...' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id || SecureRandom.uuid, attribute: 'view_more_url',
+                           help_text: '"View all" link destination (https://...)' } %>
     </div>
   </div>
 </div>

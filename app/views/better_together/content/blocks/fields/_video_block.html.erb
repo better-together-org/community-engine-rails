@@ -29,8 +29,9 @@
                      data: { controller: 'better_together--slim-select' } %>
     </div>
     <div class="col mb-3">
-      <%= label_tag "#{scope}[caption]", BetterTogether::Content::Block.human_attribute_name('caption', default: 'Caption (optional)'), class: 'form-label' %>
-      <%= text_field_tag "#{scope}[caption]", block.caption, class: 'form-control' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'caption',
+                           help_text: 'Optional video description or caption' } %>
     </div>
   </div>
 </div>

@@ -1101,6 +1101,7 @@ en:
           editor:
             background: Background
             cta_button: CTA Button
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Please provide a valid URL starting with http:// or https://.
             heading_color: Heading Color
             overlay_color: Overlay Color

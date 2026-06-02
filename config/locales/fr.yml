@@ -1115,6 +1115,7 @@ fr:
           editor:
             background: Arrière-plan
             cta_button: Bouton d’appel à l’action
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Veuillez fournir une URL valide commençant par http://
               ou https://.
             heading_color: Couleur du titre

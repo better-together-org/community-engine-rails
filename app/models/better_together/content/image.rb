@@ -14,13 +14,7 @@ module BetterTogether
 
       delegate :url, to: :media
 
-      translates :attribution, type: :string
-      translates :alt_text, type: :string
-      translates :caption, type: :string
-
-      store_attributes :media_settings do
-        attribution_url String, default: ''
-      end
+      translates :attribution, :alt_text, :caption, :attribution_url, type: :string
 
       validates :attribution_url,
                 format: {

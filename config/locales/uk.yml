@@ -1100,6 +1100,7 @@ uk:
           editor:
             background: Тло
             cta_button: Кнопка заклику до дії
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Укажіть дійсну URL-адресу, що починається з http:// або
               https://.
             heading_color: Колір заголовка
