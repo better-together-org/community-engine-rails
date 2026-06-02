@@ -11,7 +11,7 @@ module BetterTogether
         attributes :title
 
         # Standard attributes
-        attributes :code, :target_url, :status, :expires_at, :click_count, :created_at
+        attributes :code, :target_url, :status, :expires_at, :click_count
 
         # Virtual attribute: fully-qualified short URL for the redirect
         attribute :url
