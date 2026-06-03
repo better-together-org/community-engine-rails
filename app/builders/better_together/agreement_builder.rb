@@ -10,6 +10,7 @@ module BetterTogether
         build_privacy_policy
         build_terms_of_service
         build_code_of_conduct
+        build_content_publishing_agreement
       end
 
       def clear_existing
@@ -81,6 +82,25 @@ module BetterTogether
         agreement.update!(page: page) if page.present?
       end
       # rubocop:enable Metrics/MethodLength
+
+      def build_content_publishing_agreement # rubocop:todo Metrics/MethodLength
+        agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |a|
+          a.protected = true
+          a.title = 'Content Publishing Agreement'
+          a.description = 'Consent requirement for making content or identity information publicly visible.'
+          a.privacy = 'public'
+        end
+
+        agreement.agreement_terms.find_or_create_by!(identifier: 'content_publishing_agreement_summary') do |term|
+          term.protected = true
+          term.position = 1
+          term.content = <<~CONTENT
+            Public publishing can expose content and identity information to the wider community and public internet.
+            Publishing agents must respect consent, privacy, attribution, safety, and truthful representation,
+            and must not expose other people or communities without authorization.
+          CONTENT
+        end
+      end
     end
   end
 end

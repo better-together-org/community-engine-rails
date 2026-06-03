@@ -29,6 +29,7 @@ module BetterTogether
       before_action :load_all_invitations_from_session, only: %i[new create]
       before_action :check_invitation_requirement, only: [:create]
       before_action :configure_account_update_params, only: [:update]
+      before_action :load_person_deletion_requests, only: %i[edit update]
 
       # PUT /resource
       # We need to use a copy of the resource because we don't want to change
@@ -131,6 +132,14 @@ module BetterTogether
         respond_with resource
       end
 
+      def destroy
+        active_request = find_or_create_deletion_request
+
+        redirect_to edit_user_registration_path(locale: I18n.locale),
+                    notice: deletion_request_notice(active_request),
+                    status: :see_other
+      end
+
       protected
 
       def account_update_params
@@ -150,6 +159,29 @@ module BetterTogether
         @privacy_policy_agreement = BetterTogether::Agreement.find_by(identifier: 'privacy_policy')
         @terms_of_service_agreement = BetterTogether::Agreement.find_by(identifier: 'terms_of_service')
         @code_of_conduct_agreement = BetterTogether::Agreement.find_by(identifier: 'code_of_conduct')
+      end
+
+      def find_or_create_deletion_request
+        current_user.person.person_deletion_requests.active.first ||
+          current_user.person.person_deletion_requests.create!(
+            requested_at: Time.current,
+            requested_reason: 'Requested from account settings'
+          )
+      end
+
+      def deletion_request_notice(active_request)
+        return I18n.t('better_together.settings.index.my_data.deletion_request_created') if active_request.previously_new_record?
+
+        I18n.t(
+          'better_together.settings.index.my_data.deletion_request_exists',
+          default: 'Your deletion request is already pending review.'
+        )
+      end
+
+      def load_person_deletion_requests
+        return unless current_user&.person
+
+        @person_deletion_requests = current_user.person.person_deletion_requests.latest_first.limit(10)
       end
 
       # Hook method for host applications to implement captcha validation
@@ -329,16 +361,46 @@ module BetterTogether
         return unless params[:invitation_code].present?
 
         # Find the invitation by token
-        invitation = BetterTogether::Invitation.find_by(token: params[:invitation_code])
-        return unless invitation
+        invitation = find_invitation_by_token(params[:invitation_code])
+        unless invitation
+          clear_all_invitation_session_data
+          return
+        end
 
         # Determine invitation type and store both in session and instance variables
         invitation_type = determine_invitation_type(invitation)
-        return unless invitation_type
+        unless invitation_type
+          clear_all_invitation_session_data
+          return
+        end
 
         store_invitation_token_in_session(invitation, invitation_type)
         # Also directly set the instance variable for immediate use
         store_invitation_instance(invitation_type, invitation)
+      end
+
+      def clear_all_invitation_session_data
+        %i[community event platform].each { |type| clear_invitation_session_data(type) }
+      end
+
+      def find_invitation_by_token(*args)
+        return find_typed_invitation_by_token(*args) if args.length == 2
+
+        token = args.first
+        find_pending_invitation_by_token(token)
+      end
+
+      def find_typed_invitation_by_token(invitation_type, token)
+        invitation_class = invitation_class_for_type(invitation_type)
+        invitation_class.pending.not_expired.find_by(token: token)
+      end
+
+      def find_pending_invitation_by_token(token)
+        [
+          BetterTogether::PlatformInvitation.pending.not_expired,
+          BetterTogether::CommunityInvitation.pending.not_expired,
+          BetterTogether::EventInvitation.pending.not_expired
+        ].lazy.map { |scope| scope.find_by(token: token) }.find(&:present?)
       end
 
       # Check if platform requires invitation and if valid invitation exists
@@ -385,17 +447,26 @@ module BetterTogether
           return
         end
 
+        registration_agreements.find_each do |agreement|
+          record_sign_up_agreement_acceptance(agreement, person)
+        end
+      end
+
+      def registration_agreements
         identifiers = %w[privacy_policy terms_of_service]
         identifiers << 'code_of_conduct' if BetterTogether::Agreement.exists?(identifier: 'code_of_conduct')
-        agreements = BetterTogether::Agreement.where(identifier: identifiers)
 
-        agreements.find_each do |agreement|
-          BetterTogether::AgreementParticipant.create!(
-            agreement: agreement,
-            person: person,
-            accepted_at: Time.current
-          )
-        end
+        BetterTogether::Agreement.where(identifier: identifiers)
+      end
+
+      def record_sign_up_agreement_acceptance(agreement, person)
+        BetterTogether::AgreementAcceptanceRecorder.record!(
+          agreement: agreement,
+          person: person,
+          acceptance_method: :sign_up,
+          accepted_at: Time.current,
+          context: { request: }
+        )
       end
     end
   end

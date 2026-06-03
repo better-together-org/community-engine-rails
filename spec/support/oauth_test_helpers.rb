@@ -118,6 +118,7 @@ module OAuthTestHelpers # :nodoc:
   # Setup OmniAuth test mode with mock auth
   def setup_omniauth_test_mode(provider, auth_hash = nil)
     OmniAuth.config.test_mode = true
+    OmniauthTestHelpers.reset_failure_handler!
     auth_hash ||= case provider.to_sym
                   when :github
                     mock_github_auth_hash
@@ -141,11 +142,13 @@ module OAuthTestHelpers # :nodoc:
       OmniAuth.config.mock_auth = {}
     end
     OmniAuth.config.test_mode = false
+    OmniauthTestHelpers.reset_failure_handler!
   end
 
   # Simulate OAuth failure
   def simulate_oauth_failure(provider, error_type = :invalid_credentials)
     OmniAuth.config.test_mode = true
+    OmniauthTestHelpers.reset_failure_handler!
     OmniAuth.config.mock_auth[provider.to_sym] = error_type
   end
 

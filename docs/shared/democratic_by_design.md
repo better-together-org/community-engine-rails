@@ -2,6 +2,8 @@
 
 The Community Engine is built to empower communities to operate in line with the 7 Cooperative Principles. Our defaults, feature choices, and extensibility aim to strengthen democratic control and local autonomy rather than weaken it.
 
+An emerging extension of this position is to treat both humans and bots as community agents with equal dignity, while still applying different operational limits, duties, and review requirements according to means and capabilities. That future governance layer should be grounded in informed consent, anti-domination, and shared-resource stewardship rather than hidden operator control.
+
 ## 1) Voluntary and Open Membership
 - Invitation‑required by default: Hosts invite members deliberately, ensuring safe, values‑aligned onboarding (can be opened as needed).
 - Accessible UX and i18n: Pages/blocks + Mobility translations support multilingual participation.
@@ -50,5 +52,6 @@ The Community Engine is built to empower communities to operate in line with the
 - Proposals & polls: Lightweight deliberation modules (e.g., polls, consensus workflows) built on the same RBAC and privacy foundations.
 - Participatory budgeting: Simple budget items with community voting; compatible with private‑by‑default metrics.
 - Federation: Optional interoperability with other community engines to share knowledge without centralization.
+- Community action network governance: A future constitutional layer connecting humans, bots, rights, duties, consent, and governed access to shared resources.
 
 If you’re building a specific democratic workflow, we’ll help map it onto the engine’s patterns (RBAC, content, exchange, metrics) so it remains privacy‑respecting and community‑owned.

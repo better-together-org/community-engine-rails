@@ -98,7 +98,13 @@
         <div class="row">
           <!-- Translatable Description Field -->
           <div class="col mb-3 pb-3 border-bottom">
-            <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: event, form: form, attribute: 'description' } %>
+            <%= render partial: 'better_together/shared/translated_rich_text_field',
+                       locals: {
+                         model: event,
+                         form: form,
+                         attribute: 'description',
+                         citation_options: event.citation_reference_options
+                       } %>
           </div>
         </div>
       </div>

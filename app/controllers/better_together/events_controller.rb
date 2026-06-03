@@ -28,10 +28,12 @@ module BetterTogether
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
 
     def index
-      @draft_events = @events.draft
-      @upcoming_events = @events.upcoming
+      @events = @events.includes(:categories, cover_image_attachment: :blob)
+
+      @draft_events = paginated_events(@events.draft, params[:draft_page])
+      @upcoming_events = paginated_events(@events.upcoming, params[:upcoming_page])
       @ongoing_events = @events.ongoing
-      @past_events = @events.past
+      @past_events = paginated_events(@events.past, params[:past_page])
     end
 
     def show
@@ -136,6 +138,10 @@ module BetterTogether
                 filename: "#{@event.slug}.ics",
                 type: 'text/calendar; charset=UTF-8',
                 disposition: 'attachment'
+    end
+
+    def paginated_events(scope, page)
+      scope.page(page).per(params[:per])
     end
 
     def load_invitations

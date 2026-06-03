@@ -6,7 +6,7 @@ module BetterTogether
       # JSONAPI resource for person community memberships (PersonCommunityMembership)
       # Provides API functionality to manage community membership relationships
       class PersonCommunityMembershipsController < BetterTogether::Api::ApplicationController
-        before_action :authenticate_user!
+        before_action :authenticate_api_user!, unless: :oauth2_authenticated?
 
         # GET /api/v1/person_community_memberships
         # GET /api/v1/people/:person_id/person_community_memberships

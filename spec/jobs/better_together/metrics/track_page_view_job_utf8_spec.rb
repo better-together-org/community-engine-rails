@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::Metrics::TrackPageViewJob do
       # Test that the job can create page views successfully
       # The UTF-8 handling is tested at the model level
       expect do
-        described_class.perform_now(pageable, 'en')
+        described_class.perform_now(pageable, 'en', pageable.platform_id, false)
       end.to change(BetterTogether::Metrics::PageView, :count).by(1)
 
       page_view = BetterTogether::Metrics::PageView.last

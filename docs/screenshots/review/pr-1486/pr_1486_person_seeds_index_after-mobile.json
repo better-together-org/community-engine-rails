@@ -1,0 +1,11 @@
+{
+  "name": "pr_1486_person_seeds_index_after",
+  "device": "mobile",
+  "url": "http://127.0.0.1:35933/en/my/seeds",
+  "title": "My Data | Test Host Community",
+  "captured_at": "2026-04-03T00:31:47Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "person_deletion_review",
+  "source_spec": "./spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
+}

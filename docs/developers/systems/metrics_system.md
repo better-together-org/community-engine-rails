@@ -10,6 +10,7 @@ This guide explains how page views, link clicks, shares, and downloads are track
 - Search queries: tracked in two ways:
   - Server‑side in `SearchController#search` after Elasticsearch returns (records `query`, `results_count`, `locale`).
   - API endpoint `/:locale/bt/metrics/search_queries` (POST) via `Metrics::SearchQueriesController#create` for client‑side tracking.
+  - Host platforms can disable search-query analytics entirely or switch to hashed capture so repeated terms can still be counted without storing raw query text.
 - Downloads: when a report file is downloaded, `TrackDownloadJob` records a `Metrics::Download` (filename, content_type, byte_size, locale).
 
 ## Data Models
@@ -26,6 +27,7 @@ This guide explains how page views, link clicks, shares, and downloads are track
 - `Metrics::SearchQuery`
   - Stores `query`, `searched_at`, `locale`.
   - Created by `Metrics::TrackSearchQueryJob` either from `SearchController#search` or the `/metrics/search_queries` endpoint.
+  - When a platform sets `search_query_analytics_mode` to `hashed`, stored values are SHA-256 digests prefixed with `sha256:`.
 
 ## Reports
 - `Metrics::LinkClickReport`
@@ -56,31 +58,37 @@ This guide explains how page views, link clicks, shares, and downloads are track
 - Privacy‑first:
   - We record what happened, not who did it. No user identifiers are stored in metrics events.
   - Page view URLs strip query parameters and are sanitized to remove sensitive keys; persisted `page_url` is the path only.
-  - Search query tracking stores the query string, count of results, timestamp, and locale.
+  - Search query tracking can be disabled per host platform, or reduced to hashed values so raw search terms are not retained.
   - Platform managers may add third‑party tools (e.g., GA, Sentry) per their own privacy policy and consent practices.
 - Locale: all metrics record `locale` for reporting.
 - Performance: reports aggregate via grouped database queries and only touch filtered subsets.
 - Storage: exported CSVs are attached via Active Storage and purged on report destroy.
 
-## Data Deletion & Retention (Examples)
-These examples illustrate how a host can manage retention and deletion in line with their policy. Adjust windows to your needs and run in maintenance windows.
+## Data Deletion & Retention
+Use the built-in retention task to purge stale raw metrics and generated report exports in line with your host privacy policy.
 
-Rails console snippets:
+Default windows:
+- raw metrics: 180 days
+- generated report exports: 90 days
 
-```ruby
-# Purge report exports older than 90 days
-BetterTogether::Metrics::LinkClickReport.where('created_at < ?', 90.days.ago).find_each(&:destroy)
-BetterTogether::Metrics::PageViewReport.where('created_at < ?', 90.days.ago).find_each(&:destroy)
+Dry run:
 
-# Delete raw metrics older than 180 days (batch as needed)
-BetterTogether::Metrics::PageView.where('viewed_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::LinkClick.where('clicked_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::Share.where('shared_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::Download.where('downloaded_at < ?', 180.days.ago).in_batches.delete_all
-BetterTogether::Metrics::SearchQuery.where('searched_at < ?', 180.days.ago).in_batches.delete_all
+```bash
+bundle exec rake better_together:metrics:retention DRY_RUN=true
 ```
 
+Override the windows:
+
+```bash
+bundle exec rake better_together:metrics:retention RAW_METRICS_DAYS=120 REPORT_DAYS=30
+```
+
+The task:
+- deletes old raw metrics in batches to avoid long-running transactions
+- destroys old report records so their attached export files are purged too
+- prints a JSON summary of eligible and deleted rows for each metrics/report type
+
 Tips:
-- Use `in_batches` to avoid long‑running transactions.
-- Consider wrapping deletions in a Rake task and scheduling via cron.
-- Announce retention in your privacy policy and honor deletion requests.
+- schedule the task during low-traffic maintenance windows
+- use `DRY_RUN=true` before changing windows in production
+- announce retention in your privacy policy and honor deletion requests

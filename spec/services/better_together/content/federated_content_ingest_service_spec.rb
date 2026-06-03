@@ -135,10 +135,17 @@ module BetterTogether # :nodoc:
 
         described_class.call(connection:, seeds:)
 
+        post = BetterTogether::Post.find_by(identifier: 'remote-post')
+        page = BetterTogether::Page.find_by(identifier: 'remote-page')
+        event = BetterTogether::Event.find_by(identifier: 'remote-event')
+
         expect(Current.platform).to eq(previous_platform)
-        expect(BetterTogether::Post.find_by(identifier: 'remote-post')).to be_remote_to_platform(target_platform)
-        expect(BetterTogether::Page.find_by(identifier: 'remote-page')).to be_remote_to_platform(target_platform)
-        expect(BetterTogether::Event.find_by(identifier: 'remote-event')).to be_remote_to_platform(target_platform)
+        expect(post.platform).to eq(target_platform)
+        expect(post.source_id).to be_present
+        expect(page.platform).to eq(target_platform)
+        expect(page.source_id).to eq('legacy-page-42')
+        expect(event.platform).to eq(target_platform)
+        expect(event.source_id).to eq('legacy-event-42')
       end
 
       it 'requires a connection' do

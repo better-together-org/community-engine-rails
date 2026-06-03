@@ -132,23 +132,15 @@
       <% end %>
     </div>
 
-    <!-- Authors: assign one or more People as page authors -->
-    <div class="col mb-3 pb-3 border-bottom">
-      <%= form.label :author_ids, 'Authors' %>
-      <%= form.collection_select :author_ids,
-        BetterTogether::Person.all,
-        :id,
-        :select_option_title,
-        {},
-        { multiple: true,
-          class: "form-select#{' is-invalid' if page.errors[:author_ids].any?}",
-          data: { controller: "better_together--slim-select" } } %>
-      <% if page.errors[:author_ids].any? %>
-        <div class="invalid-feedback">
-          <%= page.errors[:author_ids].join(', ') %>
-        </div>
-      <% end %>
-    </div>
+    <% BetterTogether::Authorable::CONTRIBUTION_ROLE_CONFIG.each_key do |role_name| %>
+      <%= render partial: 'better_together/shared/governed_contribution_role_fields',
+                 locals: {
+                    form:,
+                    record: page,
+                    role_name:,
+                    role_label: page.contribution_role_label(role_name)
+                  } %>
+    <% end %>
   </div>
 
   <!-- Host app can extend the page form via this partial -->

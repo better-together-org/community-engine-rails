@@ -1,0 +1,391 @@
+entries:
+  - key: user
+    kind: self
+    owner: user
+    action: destroy
+
+  - key: user.person_identification
+    kind: owner_association
+    owner: user
+    association: person_identification
+    action: destroy
+
+  - key: person
+    kind: self
+    owner: person
+    action: anonymize
+
+  - key: person.identifications
+    kind: owner_association
+    owner: person
+    association: identifications
+    action: destroy
+
+  - key: person.contact_detail
+    kind: owner_association
+    owner: person
+    association: contact_detail
+    action: destroy
+
+  - key: person.notifications
+    kind: owner_association
+    owner: person
+    association: notifications
+    action: destroy
+
+  - key: person.notification_mentions
+    kind: owner_association
+    owner: person
+    association: notification_mentions
+    action: destroy
+
+  - key: BetterTogether::PersonPlatformIntegration#user
+    kind: model_reference
+    owner: user
+    model: BetterTogether::PersonPlatformIntegration
+    association: user
+    foreign_key: user_id
+    action: destroy
+
+  - key: BetterTogether::AgreementParticipant#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::AgreementParticipant
+    association: person
+    foreign_key: person_id
+    action: destroy
+
+  - key: BetterTogether::ConversationParticipant#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::ConversationParticipant
+    association: person
+    foreign_key: person_id
+    action: destroy
+
+  - key: BetterTogether::EventAttendance#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::EventAttendance
+    association: person
+    foreign_key: person_id
+    action: destroy
+
+  - key: BetterTogether::OneTimePrekey#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::OneTimePrekey
+    association: person
+    foreign_key: person_id
+    action: destroy
+
+  - key: BetterTogether::PersonBlock#blocker
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonBlock
+    association: blocker
+    foreign_key: blocker_id
+    action: destroy
+
+  - key: BetterTogether::PersonBlock#blocked
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonBlock
+    association: blocked
+    foreign_key: blocked_id
+    action: destroy
+
+  - key: BetterTogether::PersonAccessGrant#grantor_person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonAccessGrant
+    association: grantor_person
+    foreign_key: grantor_person_id
+    action: destroy
+
+  - key: BetterTogether::PersonAccessGrant#grantee_person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonAccessGrant
+    association: grantee_person
+    foreign_key: grantee_person_id
+    action: destroy
+
+  - key: BetterTogether::PersonChecklistItem#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonChecklistItem
+    association: person
+    foreign_key: person_id
+    action: destroy
+    reverse_association: person_checklist_items
+
+  - key: BetterTogether::PersonDataExport#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonDataExport
+    association: person
+    foreign_key: person_id
+    action: destroy
+    reverse_association: person_data_exports
+
+  - key: BetterTogether::PersonDeletionRequest#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonDeletionRequest
+    association: person
+    foreign_key: person_id
+    action: retain
+    reverse_association: person_deletion_requests
+
+  - key: BetterTogether::PersonDeletionRequest#reviewed_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonDeletionRequest
+    association: reviewed_by
+    foreign_key: reviewed_by_id
+    action: retain
+    reverse_association: reviewed_person_deletion_requests
+
+  - key: BetterTogether::PersonPurgeAudit#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonPurgeAudit
+    association: person
+    foreign_key: person_id
+    action: retain
+    reverse_association: person_purge_audits
+
+  - key: BetterTogether::PersonPurgeAudit#reviewed_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonPurgeAudit
+    association: reviewed_by
+    foreign_key: reviewed_by_id
+    action: retain
+    reverse_association: reviewed_person_purge_audits
+
+  - key: BetterTogether::PersonLinkedSeed#recipient_person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonLinkedSeed
+    association: recipient_person
+    foreign_key: recipient_person_id
+    action: destroy
+    reverse_association: person_linked_seeds
+
+  - key: BetterTogether::PersonLink#source_person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonLink
+    association: source_person
+    foreign_key: source_person_id
+    action: destroy
+    reverse_association: source_person_links
+
+  - key: BetterTogether::PersonLink#target_person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonLink
+    association: target_person
+    foreign_key: target_person_id
+    action: destroy
+    reverse_association: target_person_links
+
+  - key: BetterTogether::WebhookEndpoint#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::WebhookEndpoint
+    association: person
+    foreign_key: person_id
+    action: destroy
+    reverse_association: webhook_endpoints
+
+  - key: BetterTogether::PersonPlatformIntegration#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonPlatformIntegration
+    association: person
+    foreign_key: person_id
+    action: destroy
+    reverse_association: person_platform_integrations
+
+  - key: BetterTogether::PersonCommunityMembership#member
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonCommunityMembership
+    association: member
+    foreign_key: member_id
+    action: destroy
+    reverse_association: person_community_memberships
+
+  - key: BetterTogether::PersonPlatformMembership#member
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonPlatformMembership
+    association: member
+    foreign_key: member_id
+    action: destroy
+    reverse_association: person_platform_memberships
+
+  - key: BetterTogether::OauthApplication#owner
+    kind: model_reference
+    owner: person
+    model: BetterTogether::OauthApplication
+    association: owner
+    foreign_key: owner_id
+    action: destroy
+    reverse_association: oauth_applications
+
+  - key: BetterTogether::Report#reporter
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Report
+    association: reporter
+    foreign_key: reporter_id
+    action: anonymize
+    reverse_association: reports_made
+
+  - key: BetterTogether::Conversation#creator
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Conversation
+    association: creator
+    foreign_key: creator_id
+    action: anonymize
+    reverse_association: created_conversations
+
+  - key: BetterTogether::Message#sender
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Message
+    association: sender
+    foreign_key: sender_id
+    action: anonymize
+    reverse_association: sent_messages
+    concern: BetterTogether::Communicator
+
+  - key: BetterTogether::Authorship#author
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Authorship
+    association: author
+    foreign_key: author_id
+    action: anonymize
+    reverse_association: authorships
+    concern: BetterTogether::Author
+
+  - key: BetterTogether::Safety::Note#author
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Safety::Note
+    association: author
+    foreign_key: author_id
+    action: anonymize
+    reverse_association: authored_safety_notes
+    concern: BetterTogether::GovernanceParticipant
+
+  - key: BetterTogether::Safety::Action#actor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Safety::Action
+    association: actor
+    foreign_key: actor_id
+    action: anonymize
+    reverse_association: acted_safety_actions
+    concern: BetterTogether::GovernanceParticipant
+
+  - key: BetterTogether::Safety::Action#approved_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Safety::Action
+    association: approved_by
+    foreign_key: approved_by_id
+    action: anonymize
+    reverse_association: approved_safety_actions
+    concern: BetterTogether::GovernanceParticipant
+
+  - key: BetterTogether::Safety::Agreement#created_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Safety::Agreement
+    association: created_by
+    foreign_key: created_by_id
+    action: anonymize
+    reverse_association: created_safety_agreements
+    concern: BetterTogether::GovernanceParticipant
+
+  - key: BetterTogether::Safety::Case#assigned_reviewer
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Safety::Case
+    association: assigned_reviewer
+    foreign_key: assigned_reviewer_id
+    action: anonymize
+    reverse_association: assigned_safety_cases
+    concern: BetterTogether::GovernanceParticipant
+
+  - key: BetterTogether::Community#creator
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Community
+    association: creator
+    foreign_key: creator_id
+    action: anonymize
+    reverse_association: created_communities
+    concern: BetterTogether::CreatedRecords
+
+  - key: BetterTogether::PlatformInvitation#inviter
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformInvitation
+    association: inviter
+    foreign_key: inviter_id
+    action: destroy
+    reverse_association: sent_platform_invitations
+    concern: BetterTogether::InvitationParticipant
+
+  - key: BetterTogether::PlatformInvitation#invitee
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformInvitation
+    association: invitee
+    foreign_key: invitee_id
+    action: destroy
+    reverse_association: received_platform_invitations
+    concern: BetterTogether::InvitationParticipant
+
+  - key: BetterTogether::GuestAccess#inviter
+    kind: model_reference
+    owner: person
+    model: BetterTogether::GuestAccess
+    association: inviter
+    foreign_key: inviter_id
+    action: destroy
+    reverse_association: sent_guest_accesses
+    concern: BetterTogether::InvitationParticipant
+
+  - key: BetterTogether::GuestAccess#invitee
+    kind: model_reference
+    owner: person
+    model: BetterTogether::GuestAccess
+    association: invitee
+    foreign_key: invitee_id
+    action: destroy
+    reverse_association: received_guest_accesses
+    concern: BetterTogether::InvitationParticipant
+
+  - key: BetterTogether::Ai::Log::Translation#initiator
+    kind: model_reference
+    owner: person
+    model: BetterTogether::Ai::Log::Translation
+    association: initiator
+    foreign_key: initiator_id
+    action: destroy
+    reverse_association: ai_translation_logs
+
+  - key: BetterTogether::Creatable#creator
+    kind: creatable_creator_reference
+    owner: person
+    action: anonymize
+    concern: BetterTogether::CreatedRecords

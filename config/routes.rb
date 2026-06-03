@@ -7,6 +7,14 @@ require 'rswag/api'
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
+  post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
+
+  get '/content-security/active-storage/blobs/proxy/:signed_id/*filename',
+      to: 'content_security/active_storage/blobs/proxy#show',
+      as: :content_security_service_blob_proxy
+  get '/content-security/active-storage/representations/proxy/:signed_blob_id/:variation_key/*filename',
+      to: 'content_security/active_storage/representations/proxy#show',
+      as: :content_security_blob_representation_proxy
 
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
@@ -163,7 +171,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :reports, only: %i[index show new create]
+        resources :reports, only: %i[index show new create] do
+          resource :followup, only: :create, controller: 'report_followups'
+        end
 
         resources :platform_connections, only: %i[index show new create edit update] do
           member do
@@ -260,7 +270,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         get 'settings', to: 'settings#index'
+        resources :person_data_exports, only: %i[create show]
+        resources :person_deletion_requests, only: %i[create destroy]
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
+        get 'settings/my_data', to: 'settings#my_data', as: :settings_my_data
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
                                                              as: :mark_integration_notifications_read
 
@@ -358,6 +371,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Content Management
             resources :pages do
+              collection do
+                post :create_release_package_draft
+              end
+
               scope module: 'content' do
                 resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
               end
@@ -427,6 +444,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
+      get 'citations/export/:citeable_key/:id', to: 'citation_exports#show', as: :citation_export
+      get 'citations/import/github', to: 'github_citation_imports#index', as: :github_citation_imports
+      post 'citations/import/github/:citeable_key/:id', to: 'github_citation_imports#create', as: :import_github_citation
+      post 'contributions/import/github/:contributable_key/:id',
+           to: 'github_contribution_imports#create',
+           as: :github_contribution_imports
       # Public access: allow viewing public checklists
       resources :checklists, only: %i[index show]
 

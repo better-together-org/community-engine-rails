@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'nokogiri'
 
 RSpec.describe BetterTogether::ApplicationHelper do
   describe '#base_url' do
@@ -49,6 +50,25 @@ RSpec.describe BetterTogether::ApplicationHelper do
         helper.content_for(:canonical_url, 'https://external.test/path')
         result = helper.canonical_link_tag
         expect(result).to include('href="https://external.test/path"')
+      end
+    end
+
+    describe '#set_meta_description' do
+      it 'stores translated description in content_for and renders meta tag' do
+        allow(helper).to receive_messages(
+          host_platform: double(name: 'MyPlatform'),
+          request: double(original_url: 'http://example.com'),
+          host_community_logo_url: nil
+        )
+
+        helper.set_meta_description('communities.index', platform_name: 'MyPlatform')
+
+        expected = I18n.t('meta.descriptions.communities.index', platform_name: 'MyPlatform')
+        expect(view.content_for(:meta_description)).to eq(expected)
+
+        html = Nokogiri::HTML.fragment(helper.seo_meta_tags)
+        meta = html.at('meta[name="description"]')
+        expect(meta['content']).to eq(expected)
       end
     end
   end
@@ -124,6 +144,35 @@ RSpec.describe BetterTogether::ApplicationHelper do
       allow(helper).to receive_messages(params: { debug: 'true' }, session: {})
 
       expect(helper.stimulus_debug_enabled?).to be true
+    end
+  end
+
+  describe '#e2ee_messaging_enabled?' do
+    before do
+      allow(ENV).to receive(:fetch).and_call_original
+    end
+
+    it 'defaults to false when the feature flag is unset' do
+      allow(ENV).to receive(:fetch).with('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil).and_return(nil)
+
+      expect(helper.e2ee_messaging_enabled?).to be false
+    end
+
+    it 'returns true when the feature flag is enabled' do
+      allow(ENV).to receive(:fetch).with('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil).and_return('true')
+
+      expect(helper.e2ee_messaging_enabled?).to be true
+    end
+  end
+
+  describe '#e2ee_messaging_enabled_for?' do
+    let(:person) { double('person', present?: true) } # rubocop:todo RSpec/VerifiedDoubles
+
+    it 'requires both the feature flag and a person' do
+      allow(helper).to receive(:e2ee_messaging_enabled?).and_return(true)
+
+      expect(helper.e2ee_messaging_enabled_for?(person)).to be true
+      expect(helper.e2ee_messaging_enabled_for?(nil)).to be false
     end
   end
 

@@ -77,10 +77,19 @@
         <div class="row">
           <!-- Translatable Description Field -->
           <div class="col mb-3 pb-3 border-bottom">
-            <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: call_for_interest, form: form, attribute: 'description' } %>
+            <%= render partial: 'better_together/shared/translated_rich_text_field',
+                       locals: {
+                         model: call_for_interest,
+                         form: form,
+                         attribute: 'description',
+                         citation_options: call_for_interest.citation_reference_options
+                       } %>
             <small class="form-text text-muted mt-2"><%= t('better_together.calls_for_interest.hints.description') %></small>
           </div>
         </div>
+
+        <%= render 'better_together/shared/citation_fields_section', form:, record: call_for_interest %>
+        <%= render 'better_together/shared/claim_fields_section', form:, record: call_for_interest %>
       </div>
 
       <!-- Event Schedule Tab -->

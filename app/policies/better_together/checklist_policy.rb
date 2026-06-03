@@ -3,8 +3,9 @@
 module BetterTogether
   class ChecklistPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def show?
-      # Allow viewing public checklists to everyone, otherwise fall back to update permissions
-      record.privacy_public? || update?
+      # Checklists do not currently resolve a scoped community, so community privacy
+      # does not broaden visibility beyond creator/manager access.
+      public_or_member_scoped_community?(record) || update?
     end
 
     def index?
@@ -35,7 +36,7 @@ module BetterTogether
         table = scope.arel_table
 
         if scope.ancestors.include?(BetterTogether::Privacy)
-          query = table[:privacy].eq('public')
+          query = visible_privacy_query(table)
 
           if platform_checklist_manager?
             query = query.or(table[:privacy].eq('private'))

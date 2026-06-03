@@ -1,0 +1,93 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  # Helper methods for rendering JSON-LD structured data for schema.org
+  module StructuredDataHelper
+    def structured_data_tag(data)
+      return if data.blank?
+
+      tag.script(type: 'application/ld+json') do
+        raw(Array.wrap(data).to_json)
+      end
+    end
+
+    def platform_structured_data(platform)
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: platform.name,
+        url: platform.url
+      }
+    end
+
+    def community_structured_data(community)
+      data = base_community_structured_data(community)
+      add_community_description(data, community)
+      add_community_logo(data, community)
+      data
+    end
+
+    def event_structured_data(event)
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Event',
+        name: event.name,
+        startDate: event.starts_at&.iso8601,
+        endDate: event.ends_at&.iso8601,
+        url: (event_url(event) if routable_record?(event)),
+        description: event_structured_description(event),
+        location: event_structured_location(event)
+      }.compact
+    end
+
+    def event_structured_description(event)
+      return unless event.respond_to?(:description) && event.description.present?
+
+      plain_text_description(event.description)
+    end
+
+    def event_structured_location(event)
+      return unless event.respond_to?(:location) && event.location.present?
+
+      event.location.to_s
+    end
+
+    private
+
+    def plain_text_description(value)
+      return if value.blank?
+
+      value.respond_to?(:to_plain_text) ? value.to_plain_text : value.to_s
+    end
+
+    def base_community_structured_data(community)
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: community.name,
+        url: (community_url(community) if routable_record?(community))
+      }.compact
+    end
+
+    def add_community_description(data, community)
+      return unless community.respond_to?(:description) && community.description.present?
+
+      data[:description] = plain_text_description(community.description)
+    end
+
+    def add_community_logo(data, community)
+      return unless routable_record?(community) && community.logo.attached?
+
+      attachment = community.respond_to?(:optimized_logo) ? community.optimized_logo : community.logo
+      data[:logo] = rails_storage_proxy_url(attachment)
+    end
+
+    def routable_record?(record)
+      return false if record.blank?
+
+      return record.persisted? if record.respond_to?(:persisted?)
+
+      record.respond_to?(:to_param) && record.to_param.present?
+    end
+  end
+end

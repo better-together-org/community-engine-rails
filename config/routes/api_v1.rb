@@ -5,6 +5,12 @@
 namespace :v1 do # rubocop:disable Metrics/BlockLength
   # People
   get 'people/me', to: 'people#me'
+  get 'me/data_exports', to: 'person_data_exports#index'
+  post 'me/data_exports', to: 'person_data_exports#create'
+  get 'me/data_exports/:id', to: 'person_data_exports#show'
+  get 'me/deletion_requests', to: 'person_deletion_requests#index'
+  post 'me/deletion_requests', to: 'person_deletion_requests#create'
+  delete 'me/deletion_requests/:id', to: 'person_deletion_requests#destroy'
   jsonapi_resources :people
   # NOTE: Relationship routes omitted until all related resources exist
 

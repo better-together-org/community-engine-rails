@@ -11,8 +11,7 @@ module BetterTogether
       authorize [:host_dashboard], :show?, policy_class: HostDashboardPolicy
 
       root_classes = [
-        Community, NavigationArea, Page, Platform, Person, Role, ResourcePermission, User,
-        Conversation, Message, Category
+        Community, NavigationArea, Page, Platform, Role, ResourcePermission, Category
       ]
 
       root_classes.each do |klass|
@@ -94,6 +93,8 @@ module BetterTogether
         # sets @infrastructure_klasses and @infrastructure_klass_count instance variables
         set_resource_variables(klass, prefix: 'infrastructure')
       end
+
+      build_sensitive_directory_cards
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/AbcSize
@@ -106,6 +107,14 @@ module BetterTogether
       instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name.pluralize}",
                             klass.order(created_at: :desc).limit(3))
       instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", klass.count)
+    end
+
+    def build_sensitive_directory_cards
+      @show_people_card = helpers.current_person&.permitted_to?('list_person') || false
+      @show_user_card = helpers.current_person&.permitted_to?('manage_platform_users') || false
+
+      set_resource_variables(Person) if @show_people_card
+      set_resource_variables(User) if @show_user_card
     end
   end
 end

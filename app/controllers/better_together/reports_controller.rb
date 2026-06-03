@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ReportsController < ApplicationController # rubocop:todo Style/Documentation
+  class ReportsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
     before_action :authenticate_user!
     before_action :set_report, only: :show
     after_action :verify_authorized
@@ -13,6 +13,7 @@ module BetterTogether
 
     def show
       authorize @report
+      prepare_report_followup
     end
 
     def new
@@ -53,6 +54,15 @@ module BetterTogether
 
     def set_report
       @report = policy_scope(Report).find(params[:id])
+    end
+
+    def prepare_report_followup
+      @participant_visible_notes = if @report.safety_case.present?
+                                     @report.safety_case.notes.where(visibility: :participant_visible).chronological
+                                   else
+                                     BetterTogether::Safety::Note.none
+                                   end
+      @report_followup = BetterTogether::Safety::Note.new
     end
 
     def report_params

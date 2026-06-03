@@ -6,32 +6,38 @@
     Normal request renders omit both locals and fall back to the live helpers. %>
 <% form_person_id = local_assigns.fetch(:current_user_person_id) { current_user&.person&.id } %>
 <% form_url = local_assigns.key?(:form_action_url) ? local_assigns[:form_action_url] : [conversation, message] %>
+<% e2ee_enabled = BetterTogether.e2ee_messaging_enabled? %>
+<% form_data = { controller: 'better_together--message-form' } %>
+<% content_data = { "data-better_together--message-form-target": "content" } %>
+<% submit_data = {} %>
+<% if e2ee_enabled %>
+  <% form_data[:controller] = "#{form_data[:controller]} better-together--e2e-message-form" %>
+  <% form_data.merge!(
+    "better-together--e2e-message-form-conversation-id-value": conversation.id,
+    "better-together--e2e-message-form-person-id-value": form_person_id,
+    "better-together--e2e-message-form-sender-key-version-value": conversation.sender_key_version,
+    "better-together--e2e-message-form-status-active-label-value": t('better_together.e2e.form.status_active'),
+    "better-together--e2e-message-form-status-waiting-label-value": t('better_together.e2e.form.status_waiting'),
+    "better-together--e2e-message-form-status-error-label-value": t('better_together.e2e.form.status_error')
+  ) %>
+  <% content_data["data-better-together--e2e-message-form-target"] = "content" %>
+  <% submit_data["data-better-together--e2e-message-form-target"] = "submit" %>
+<% end %>
 <div id="e2e_message_form_<%= conversation.id %>">
-  <%= form_with(model: message, url: form_url, local: false,
-      html: {
-        id: "new_message",
-        data: {
-          controller: "better_together--message-form better-together--e2e-message-form",
-          "better-together--e2e-message-form-conversation-id-value": conversation.id,
-          "better-together--e2e-message-form-person-id-value":       form_person_id,
-          "better-together--e2e-message-form-sender-key-version-value": conversation.sender_key_version,
-          "better-together--e2e-message-form-status-active-label-value":  t('better_together.e2e.form.status_active'),
-          "better-together--e2e-message-form-status-waiting-label-value": t('better_together.e2e.form.status_waiting'),
-          "better-together--e2e-message-form-status-error-label-value":   t('better_together.e2e.form.status_error')
-        }
-      }) do |form| %>
+  <%= form_with(model: message, url: form_url, local: false, html: { id: "new_message", data: form_data }) do |form| %>
     <div class="message-box d-flex flex-column">
       <%= form.rich_text_area :content, class: 'form-control', rows: 1,
           placeholder: t('better_together.messages.form.placeholder'),
           required: true,
-          "data-better_together--message-form-target": "content",
-          "data-better-together--e2e-message-form-target": "content" %>
+          **content_data %>
       <div class="d-flex align-items-center mt-2">
-        <small class="text-muted me-auto"
-          data-better-together--e2e-message-form-target="status"></small>
-        <button class="btn btn-primary ms-2" type="submit">
+        <% if e2ee_enabled %>
+          <small class="text-muted me-auto"
+            data-better-together--e2e-message-form-target="status"></small>
+        <% end %>
+        <%= button_tag type: 'submit', class: 'btn btn-primary ms-2', disabled: e2ee_enabled, **submit_data do %>
           <%= t('better_together.messages.form.send') %> <i class="fas fa-paper-plane"></i>
-        </button>
+        <% end %>
       </div>
     </div>
   <% end %>

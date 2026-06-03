@@ -127,20 +127,37 @@ RSpec.feature 'Share Buttons', :js do
     let!(:published_post) do
       create(:better_together_post,
              title: 'Shareable Post',
-             privacy: 'public')
+             privacy: 'public',
+             published_at: 1.day.ago)
     end
 
     scenario 'displays share buttons on post show page' do
       visit better_together.post_path(published_post, locale: I18n.default_locale)
 
-      expect(page).to have_css('.social-share-buttons')
+      expect(page).to have_current_path(
+        better_together.post_path(published_post, locale: I18n.default_locale),
+        wait: 5,
+        ignore_query: true
+      )
+      expect(page).to have_content(published_post.title, wait: 5)
+      expect(page).to have_css('.social-share-buttons', wait: 5)
     end
 
     scenario 'uses post title as share title' do
       visit better_together.post_path(published_post, locale: I18n.default_locale)
 
-      email_button = find('[data-platform="email"]')
-      expect(email_button['data-title']).to eq(published_post.title)
+      expect(page).to have_current_path(
+        better_together.post_path(published_post, locale: I18n.default_locale),
+        wait: 5,
+        ignore_query: true
+      )
+      expect(page).to have_content(published_post.title, wait: 5)
+      expect(page).to have_css('.social-share-buttons', wait: 5)
+
+      within('.social-share-buttons') do
+        email_button = find('[data-platform="email"]', wait: 5)
+        expect(email_button['data-title']).to eq(published_post.title)
+      end
     end
   end
 

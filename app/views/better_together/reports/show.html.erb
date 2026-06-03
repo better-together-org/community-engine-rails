@@ -13,6 +13,12 @@
       <div class="row g-4">
         <div class="col-lg-8">
           <dl class="row mb-0">
+            <dt class="col-sm-4"><%= t('better_together.reports.show.reported_record', default: 'Reported record') %></dt>
+            <dd class="col-sm-8">
+              <%= @report.reportable.class.model_name.human %>:
+              <%= content_actions_resource_name(@report.reportable) %>
+            </dd>
+
             <dt class="col-sm-4"><%= t('better_together.reports.attributes.category') %></dt>
             <dd class="col-sm-8"><%= safety_enum_label('report_categories', @report.category) %></dd>
 
@@ -47,6 +53,64 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 mt-4">
+    <div class="card-body">
+      <h2 class="h5 mb-3">
+        <%= t('better_together.reports.show.followup_title', default: 'More information or appeal') %>
+      </h2>
+      <p class="text-muted">
+        <%= t(
+              'better_together.reports.show.followup_help',
+              default: 'Use this space to add authenticated follow-up evidence, context, or a request for another review without leaving your report history.'
+            ) %>
+      </p>
+
+      <% if @participant_visible_notes.present? %>
+        <div class="list-group mb-4">
+          <% @participant_visible_notes.each do |note| %>
+            <div class="list-group-item">
+              <div class="small text-muted mb-1">
+                <%= note.author.name %> · <%= l(note.created_at, format: :long) %>
+              </div>
+              <%= simple_format(note.body) %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="small text-muted">
+          <%= t(
+                'better_together.reports.show.followup_empty',
+                default: 'No follow-up notes have been added to this report yet.'
+              ) %>
+        </p>
+      <% end %>
+
+      <% if policy(@report).add_followup? %>
+        <%= form_with url: report_followup_path(@report, locale: I18n.locale), scope: :report_followup, local: true do |form| %>
+          <div class="mb-3">
+            <%= form.label :body,
+                           t('better_together.reports.show.followup_label', default: 'Additional evidence or appeal note'),
+                           class: 'form-label' %>
+            <%= form.text_area :body,
+                               rows: 5,
+                               class: 'form-control',
+                               aria: {
+                                 describedby: 'report-followup-help'
+                               } %>
+            <p id="report-followup-help" class="form-text">
+              <%= t(
+                    'better_together.reports.show.followup_field_help',
+                    default: 'Share any updated context, clarifications, or evidence you want a reviewer to consider.'
+                  ) %>
+            </p>
+          </div>
+          <%= form.submit t('better_together.reports.show.followup_submit', default: 'Add follow-up'),
+                          class: 'btn btn-outline-danger' %>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </div>

@@ -8,6 +8,7 @@ module BetterTogether
 
     included do
       skip_before_action :check_platform_setup
+      skip_before_action :check_platform_privacy
       before_action :determine_wizard_outcome
     end
 

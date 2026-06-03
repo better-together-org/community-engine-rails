@@ -3,6 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Calendar do
+  describe 'associations' do
+    it { is_expected.to have_many(:citations).dependent(:destroy) }
+    it { is_expected.to have_many(:claims).dependent(:destroy) }
+  end
+
   describe 'subscription token' do
     let(:community) { create(:community) }
     let(:calendar) { build(:calendar, community: community) }
@@ -46,6 +51,16 @@ RSpec.describe BetterTogether::Calendar do
 
         expect(calendar.subscription_token).not_to eq(original_token)
       end
+    end
+  end
+
+  describe 'evidence selector options' do
+    let(:calendar) { build(:calendar, community: create(:community)) }
+
+    it 'includes the description rich text selector' do
+      expect(calendar.evidence_selector_options).to include(
+        include(value: 'rich_text:description', label: 'Description rich text')
+      )
     end
   end
 end

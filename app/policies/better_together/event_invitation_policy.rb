@@ -21,10 +21,6 @@ module BetterTogether
 
         person_event_ids.or(BetterTogether::Event.where(id: hosted_event_ids)).select(:id)
       end
-
-      def platform_event_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-      end
     end
 
     private
@@ -33,9 +29,6 @@ module BetterTogether
       event = record.invitable
       return false unless event.is_a?(BetterTogether::Event)
       return false unless agent
-
-      # Platform stewards may act across events
-      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
 
       event.creator == agent || event_host_match?(event)
     end

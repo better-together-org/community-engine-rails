@@ -111,7 +111,6 @@ module BetterTogether
 
     def platform_connection_params # rubocop:disable Metrics/MethodLength
       params.require(:platform_connection).permit(
-        :status,
         :connection_kind,
         :content_sharing_policy,
         :federation_auth_policy,

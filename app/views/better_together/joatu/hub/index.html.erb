@@ -59,18 +59,15 @@
           <div class="panel-heading">
             <h2 class="h5 mb-0"><%= t('better_together.joatu.hub.my_agreements', default: 'My Agreements') %></h2>
           </div>
-          <ul class="list-group">
+          <div class="list-group">
             <% if @my_agreements.present? %>
-              <% @my_agreements.first(5).each do |agreement| %>
-                <li class="list-group-item">
-                  <%= link_to "#{agreement.offer.name} ↔ #{agreement.request.name}", joatu_agreement_path(agreement) %>
-                  <span class="badge bg-secondary float-end"><%= agreement.status %></span>
-                </li>
-              <% end %>
+              <%= render partial: 'better_together/joatu/agreements/agreement_list_item',
+                         collection: @my_agreements.first(5),
+                         as: :agreement_list_item %>
             <% else %>
-              <li class="list-group-item text-muted"><%= t('better_together.joatu.hub.empty_agreements', default: 'No agreements yet.') %></li>
+              <div class="list-group-item text-muted"><%= t('better_together.joatu.hub.empty_agreements', default: 'No agreements yet.') %></div>
             <% end %>
-          </ul>
+          </div>
           <div class="panel-footer d-flex justify-content-end">
             <%= link_to t('better_together.joatu.hub.view_all_agreements', default: 'View all agreements'), joatu_agreements_path, class: 'btn btn-link btn-sm' %>
           </div>

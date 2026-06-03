@@ -43,7 +43,8 @@ module BetterTogether
 
         Current.set(platform: connection.target_platform) do
           seeds.each do |seed_data|
-            seed = ::BetterTogether::Seed.import_or_update!(seed_data)
+            ingest_result = ::BetterTogether::Seeds::Ingest.call(seed_data: seed_data, connection: connection)
+            seed = ingest_result.seed_record
             linked_seed = cache_linked_seed(seed)
 
             if linked_seed.nil?

@@ -1,0 +1,17 @@
+flowchart TD
+  A[User opens conversations UI] --> B[e2e_session_controller checks local identity]
+  B --> C{Local keys present?}
+  C -->|No| D[Generate identity and register prekeys]
+  D --> E[Prompt for backup passphrase]
+  E --> F[Upload encrypted key backup]
+  C -->|Yes| G[Check server bundle and backup state]
+  G --> H[Restore on new device if backup exists]
+  H --> I[Re-register restored public keys]
+  F --> J[Ready to send encrypted messages]
+  I --> J
+  J --> K[Client encrypts message]
+  K --> L[Server stores ciphertext in Message]
+  L --> M{Membership changed?}
+  M -->|Yes| N[Bump sender_key_version]
+  M -->|No| O[Continue encrypted conversation]
+  N --> O

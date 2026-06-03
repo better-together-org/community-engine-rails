@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def show?
-      record.privacy_public? || platform_cfi_manager?
+      public_or_member_scoped_community?(record) || platform_cfi_manager?
     end
 
     def create?

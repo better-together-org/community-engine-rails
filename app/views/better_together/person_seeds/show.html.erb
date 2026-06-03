@@ -34,26 +34,26 @@
     <div class="row">
       <div class="col-md-6">
         <dl class="row">
-          <dt class="col-sm-4"><%= Seed.human_attribute_name(:type) %></dt>
+          <dt class="col-sm-4"><%= BetterTogether::Seed.human_attribute_name(:type) %></dt>
           <dd class="col-sm-8"><code><%= @seed.type %></code></dd>
 
-          <dt class="col-sm-4"><%= Seed.human_attribute_name(:identifier) %></dt>
+          <dt class="col-sm-4"><%= BetterTogether::Seed.human_attribute_name(:identifier) %></dt>
           <dd class="col-sm-8"><%= @seed.identifier %></dd>
 
-          <dt class="col-sm-4"><%= Seed.human_attribute_name(:version) %></dt>
+          <dt class="col-sm-4"><%= BetterTogether::Seed.human_attribute_name(:version) %></dt>
           <dd class="col-sm-8"><%= @seed.version %></dd>
 
-          <dt class="col-sm-4"><%= Seed.human_attribute_name(:description) %></dt>
+          <dt class="col-sm-4"><%= BetterTogether::Seed.human_attribute_name(:description) %></dt>
           <dd class="col-sm-8"><%= @seed.description %></dd>
 
-          <dt class="col-sm-4"><%= Seed.human_attribute_name(:created_by) %></dt>
+          <dt class="col-sm-4"><%= BetterTogether::Seed.human_attribute_name(:created_by) %></dt>
           <dd class="col-sm-8"><%= @seed.created_by %></dd>
 
-          <dt class="col-sm-4"><%= Seed.human_attribute_name(:seeded_at) %></dt>
+          <dt class="col-sm-4"><%= BetterTogether::Seed.human_attribute_name(:seeded_at) %></dt>
           <dd class="col-sm-8"><%= l(@seed.seeded_at, format: :long) if @seed.seeded_at %></dd>
 
           <% if @seed.seedable.present? %>
-            <dt class="col-sm-4"><%= Seed.human_attribute_name(:seedable) %></dt>
+            <dt class="col-sm-4"><%= BetterTogether::Seed.human_attribute_name(:seedable) %></dt>
             <dd class="col-sm-8">
               <%= @seed.seedable_type %> #<%= @seed.seedable_id %>
             </dd>
@@ -78,10 +78,10 @@
         <table class="table table-sm table-striped">
           <thead>
             <tr>
-              <th><%= SeedPlanting.human_attribute_name(:status) %></th>
-              <th><%= SeedPlanting.human_attribute_name(:planting_type) %></th>
-              <th><%= SeedPlanting.human_attribute_name(:started_at) %></th>
-              <th><%= SeedPlanting.human_attribute_name(:completed_at) %></th>
+              <th><%= BetterTogether::SeedPlanting.human_attribute_name(:status) %></th>
+              <th><%= BetterTogether::SeedPlanting.human_attribute_name(:planting_type) %></th>
+              <th><%= BetterTogether::SeedPlanting.human_attribute_name(:started_at) %></th>
+              <th><%= BetterTogether::SeedPlanting.human_attribute_name(:completed_at) %></th>
             </tr>
           </thead>
           <tbody>

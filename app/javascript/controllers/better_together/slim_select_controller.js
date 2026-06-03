@@ -57,6 +57,26 @@ export default class extends Controller {
     // Merge with custom options from the element
     const options = { ...defaultOptions, ...optionsData };
 
+    if (options.addable) {
+      const existingEvents = options.events || {};
+      const addableHandler = (value) => {
+        const normalizedValue = (value || '').trim();
+        if (!normalizedValue) return false;
+
+        const hasExistingOption = Array.from(this.element.options).some((option) => option.value === normalizedValue);
+        if (!hasExistingOption) {
+          this.element.add(new Option(normalizedValue, normalizedValue, false, false));
+        }
+
+        return { text: normalizedValue, value: normalizedValue };
+      };
+
+      options.events = {
+        ...existingEvents,
+        addable: existingEvents.addable || addableHandler
+      };
+    }
+
     // Handle AJAX configuration if present
     if (options.ajax) {
       

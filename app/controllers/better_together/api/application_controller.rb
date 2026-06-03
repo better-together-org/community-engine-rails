@@ -19,6 +19,7 @@ module BetterTogether
       # Support both Devise JWT (scp: api_user) and Doorkeeper OAuth2 tokens.
       # devise_for :users inside namespace :api creates the :api_user Warden scope.
       before_action :authenticate_api_user!, unless: :oauth2_authenticated?
+      around_action :with_current_governed_agent_context
 
       # Override JSONAPI's handle_exceptions to convert Pundit errors to 404
       def handle_exceptions(exception)
@@ -72,6 +73,14 @@ module BetterTogether
       # Merges with Pundit::ResourceController's context (current_user, policy_used)
       def context
         super.merge(current_person: current_user&.person)
+      end
+
+      def with_current_governed_agent_context
+        Current.person = current_user&.person
+        Current.governed_agent = Current.person
+        yield
+      ensure
+        Current.reset
       end
 
       # Check if this is a Devise controller (auth endpoints)

@@ -5,7 +5,7 @@ module BetterTogether
     # Authorization policy for moderator safety actions.
     class ActionPolicy < ApplicationPolicy
       def create?
-        agent&.permitted_to?('manage_platform')
+        can_review_safety_disclosures?
       end
 
       def update?

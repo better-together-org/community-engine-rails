@@ -1,0 +1,41 @@
+%% render.orientation: portrait
+flowchart TD
+  subgraph Open["Open path"]
+    direction TB
+    O1[Signed-in person visits a public community] --> O2[Access panel explains Open join]
+    O2 --> O3[Select Join now]
+    O3 --> O4[Create active community membership]
+    O4 --> O5[Person sees joined state]
+    O4 --> O6[Membership created notifier and email]
+  end
+
+  subgraph Request["Request path"]
+    direction TB
+    R1[Guest or signed-in person reaches a request-enabled community] --> R2[Access panel or registration interstitial offers Request to join]
+    R2 --> R3[Submit membership request]
+    R3 --> R4[Reviewer gets in-app and email notification]
+    R4 --> R5[Manager reviews queue and detail screen]
+    R5 -->|Approve signed-in person| R6[Create active membership]
+    R5 -->|Approve email-only visitor| R7[Create community invitation and send email]
+    R5 -->|Decline| R8[Close request and send decline notification/email]
+    R7 --> R9[Visitor registers from invitation]
+    R9 --> R6
+    R6 --> R10[Membership created notifier and email]
+  end
+
+  subgraph Invitation["Invitation path"]
+    direction TB
+    I1[Manager or organizer sends invitation] --> I2{Invitation target}
+    I2 -->|Platform or community| I3[Invitee opens sign-up or acceptance flow]
+    I2 -->|Event| I4[Invitee opens event page with invitation token]
+    I3 --> I5[Register or accept invitation]
+    I4 --> I6[Accept or decline event invitation]
+    I5 --> I7[Membership created]
+    I7 --> I8[Membership confirmation notifier and email]
+    I6 -->|Accept| I9[Attendance or event access granted]
+    I6 -->|Decline| I10[Invitation marked declined]
+    I1 --> I11[Invitation email or in-app notice sent]
+  end
+
+  O6 -. review packet continues .-> R1
+  R10 -. review packet continues .-> I1

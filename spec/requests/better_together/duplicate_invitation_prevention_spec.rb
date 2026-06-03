@@ -5,6 +5,13 @@ require 'rails_helper'
 RSpec.describe 'Duplicate Invitation Prevention', :as_platform_manager do # rubocop:todo RSpec/MultipleDescribes
   let(:community) { create(:better_together_community) }
   let(:email) { 'test@example.com' }
+  let(:platform_manager) do
+    find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+  end
+
+  before do
+    make_community_organizer(platform_manager, community)
+  end
 
   describe 'preventing duplicate invitations' do
     context 'when an invitation is pending' do
@@ -72,6 +79,13 @@ end
 describe 'with existing user', :as_platform_manager do
   let(:community) { create(:better_together_community) }
   let(:person) { create(:better_together_person) }
+  let(:platform_manager) do
+    find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager)
+  end
+
+  before do
+    make_community_organizer(platform_manager, community)
+  end
 
   context 'when an invitation is pending' do
     let!(:pending_invitation) { create(:better_together_community_invitation, invitable: community, invitee: person, status: 'pending') }

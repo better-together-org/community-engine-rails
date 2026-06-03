@@ -4,6 +4,8 @@
 module BetterTogether
   module Metrics
     class LinkClicksController < ApplicationController # rubocop:todo Style/Documentation
+      include PlatformContext
+
       def create
         url = params[:url]
         page_url = params[:page_url] # Get the page URL where the link was clicked
@@ -13,7 +15,14 @@ module BetterTogether
         internal = internal_link?(url)
 
         # Enqueue the background job
-        BetterTogether::Metrics::TrackLinkClickJob.perform_later(url, page_url, locale, internal)
+        BetterTogether::Metrics::TrackLinkClickJob.perform_later(
+          url,
+          page_url,
+          locale,
+          internal,
+          metrics_platform.id,
+          metrics_logged_in?
+        )
 
         # Respond with success
         render json: { success: true }, status: :ok

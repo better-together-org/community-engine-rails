@@ -102,7 +102,7 @@ end
 ### 5. AI Translation System
 
 #### TranslationBot (`app/robots/better_together/translation_bot.rb`)
-- **Provider**: OpenAI GPT integration
+- **Provider Layer**: `ruby_llm` through the CE `llm` adapter subsystem
 - **Features**:
   - Content preprocessing (Trix attachment handling)
   - Context-aware translation prompts
@@ -113,7 +113,7 @@ end
 1. **User Trigger**: Click "AI Translate from [Locale]" dropdown option
 2. **AJAX Request**: Send content to `TranslationsController#translate`
 3. **Processing**: Extract content, handle rich text attachments
-4. **API Call**: Submit to OpenAI with translation prompt
+4. **LLM Call**: Submit to the configured translation robot/provider with the translation prompt
 5. **Response**: Process and restore attachments in translated content
 6. **UI Update**: Populate target locale field with translation
 7. **Validation**: Real-time indicator updates

@@ -1,0 +1,11 @@
+{
+  "name": "joatu_github_contribution_import_browser",
+  "device": "desktop",
+  "url": "http://127.0.0.1:43407/en/exchange/requests/github-backed-joatu-request/edit",
+  "title": "Edit Request | Test Host Community",
+  "captured_at": "2026-04-04T23:14:43Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "joatu_github_contribution_import_browser",
+  "source_spec": "./spec/docs_screenshots/better_together/joatu_github_contribution_import_browser_spec.rb"
+}

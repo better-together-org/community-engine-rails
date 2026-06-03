@@ -4,6 +4,8 @@ module BetterTogether
   module Content
     # Imports or updates a mirrored Post record from a connected remote platform.
     class FederatedPostMirrorService
+      include ::BetterTogether::Federation::MirroredIdentifierResolution
+
       def initialize(connection:, remote_attributes:, remote_id:, preserve_remote_uuid: false, source_updated_at: nil)
         @connection = connection
         @remote_attributes = remote_attributes.to_h.with_indifferent_access
@@ -38,22 +40,21 @@ module BetterTogether
       end
 
       def find_or_initialize_post
-        if preserve_remote_uuid? && uuid?(remote_id)
-          # 1. Already mirrored with the same UUID — most common repeat-sync path.
-          existing = ::BetterTogether::Post.find_by(id: remote_id)
-          return existing if existing
+        return find_or_initialize_post_by_source_id unless mirror_with_remote_uuid?
 
-          # 2. Previously mirrored via the source_id path (e.g. before preserve_remote_uuid
-          #    was enabled on this connection) — prevents duplicate record creation.
-          existing = ::BetterTogether::Post.find_by(
-            platform: connection.source_platform, source_id: remote_id
-          )
-          return existing if existing
+        existing_post_with_remote_uuid || existing_post_by_source_id || ::BetterTogether::Post.new(id: remote_id)
+      end
 
-          ::BetterTogether::Post.new(id: remote_id)
-        else
-          ::BetterTogether::Post.find_or_initialize_by(platform: connection.source_platform, source_id: remote_id)
-        end
+      def find_or_initialize_post_by_source_id
+        ::BetterTogether::Post.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+      end
+
+      def existing_post_with_remote_uuid
+        ::BetterTogether::Post.find_by(id: remote_id, platform: connection.target_platform)
+      end
+
+      def existing_post_by_source_id
+        ::BetterTogether::Post.find_by(platform: connection.target_platform, source_id: remote_id)
       end
 
       def assign_attributes(post)
@@ -68,13 +69,13 @@ module BetterTogether
           privacy: remote_attributes[:privacy].presence || 'public',
           published_at: remote_attributes[:published_at],
           creator_id: remote_attributes[:creator_id],
-          platform: connection.source_platform
+          platform: connection.target_platform
         }.merge(post_sync_attributes)
       end
 
       def post_sync_attributes
         {
-          source_id: preserve_remote_uuid? ? nil : remote_id,
+          source_id: effective_preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current
         }
@@ -89,21 +90,6 @@ module BetterTogether
         identifier_or_namespaced(::BetterTogether::Post, base, post.id)
       end
 
-      # Returns +base+ unchanged when no other record claims it; otherwise prepends the
-      # source platform identifier to prevent a uniqueness validation failure on ingest.
-      def identifier_or_namespaced(model_class, base, exclude_id)
-        return base unless identifier_taken?(model_class, base, exclude_id)
-
-        source_slug = connection.source_platform.identifier.to_s.parameterize.presence || 'remote'
-        "#{source_slug}-#{base}"
-      end
-
-      def identifier_taken?(model_class, identifier, exclude_id)
-        scope = model_class.where(identifier:)
-        scope = scope.where.not(id: exclude_id) if exclude_id.present?
-        scope.exists?
-      end
-
       def normalized_source_updated_at
         return source_updated_at if source_updated_at.present?
         return remote_attributes[:updated_at] if remote_attributes[:updated_at].present?
@@ -113,6 +99,22 @@ module BetterTogether
 
       def preserve_remote_uuid?
         preserve_remote_uuid
+      end
+
+      def effective_preserve_remote_uuid?
+        preserve_remote_uuid? && !shared_target_database?
+      end
+
+      def mirror_with_remote_uuid?
+        effective_preserve_remote_uuid? && uuid?(remote_id)
+      end
+
+      def same_instance_connection?
+        connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
+      end
+
+      def shared_target_database?
+        connection.target_platform.local_hosted?
       end
 
       def uuid?(value)

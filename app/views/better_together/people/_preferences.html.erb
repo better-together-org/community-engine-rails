@@ -45,7 +45,7 @@
     </div>
   </div>
 
-  <!-- Messaging Preferences -->
+  <!-- Messaging and Federation Preferences -->
   <div class="mb-4">
     <h5 class="mb-3">
       <i class="fa-solid fa-envelope me-2" aria-hidden="true"></i>
@@ -56,6 +56,11 @@
     <div class="mb-3">
       <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :receive_messages_from_members} %>
       <small class="form-text text-muted ms-4"><%= t('helpers.hint.person.allow_messages_from_members') %></small>
+    </div>
+
+    <div class="mb-3">
+      <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :federate_content} %>
+      <small class="form-text text-muted ms-4"><%= t('helpers.hint.person.federate_content') %></small>
     </div>
 
     <div class="alert alert-info" role="alert">

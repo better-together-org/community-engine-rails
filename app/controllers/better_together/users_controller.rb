@@ -18,9 +18,6 @@ module BetterTogether
     # GET /users/1
     def show
       render :show
-    rescue StandardError
-      # In admin-only views, prefer responding OK if a non-critical view error occurs
-      head :ok
     end
 
     # GET /users/new
@@ -90,11 +87,6 @@ module BetterTogether
     # Adds a policy check for the user
     def authorize_user
       authorize @user
-    rescue StandardError
-      # If authorization or policy lookup fails unexpectedly, allow platform managers to proceed
-      raise unless current_user&.permitted_to?('manage_platform')
-
-      skip_authorization
     end
 
     def set_user

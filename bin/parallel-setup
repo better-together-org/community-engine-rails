@@ -5,14 +5,15 @@ set -e
 
 echo "Setting up parallel test databases..."
 
-# Ensure the primary test database schema is up to date first
-echo "Running db:migrate to ensure primary test DB is current..."
-bin/dc-run rails db:migrate
-bin/dc-run rails db:test:prepare
+# Rebuild the primary test database from schema in the dummy app context.
+# This avoids root-engine migration context issues and clears any partially
+# migrated local test DB state before parallel workers are prepared.
+echo "Rebuilding dummy-app primary test DB from schema..."
+bin/dc-run-dummy rails db:drop db:create db:schema:load RAILS_ENV=test
 
 # Run from the dummy app directory where the database configuration lives
 echo "Creating and preparing parallel test databases..."
-bin/dc-run-dummy bundle exec rake db:parallel:create db:parallel:prepare
+bin/dc-run-dummy bundle exec rake db:parallel:purge db:parallel:create db:parallel:prepare
 
 echo "✅ Parallel test databases created successfully!"
 echo "You can now run: bin/dc-run bash -c 'cd spec/dummy && prspec ../../spec/'"

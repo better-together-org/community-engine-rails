@@ -73,6 +73,22 @@ module BetterTogether
       client.pull_requests(repo, options)
     end
 
+    # List issues for a repository
+    # @param repo [String] Repository in "owner/name" format
+    # @param options [Hash] Options to pass to Octokit
+    # @return [Array<Sawyer::Resource>] Array of issue objects
+    def issues_for_repository(repo, options = {})
+      client.list_issues(repo, options)
+    end
+
+    # List commits for a repository
+    # @param repo [String] Repository in "owner/name" format
+    # @param options [Hash] Options to pass to Octokit
+    # @return [Array<Sawyer::Resource>] Array of commit objects
+    def commits(repo, options = {})
+      client.commits(repo, options)
+    end
+
     # Check the current rate limit status
     # @return [Sawyer::Resource] Rate limit information
     def rate_limit

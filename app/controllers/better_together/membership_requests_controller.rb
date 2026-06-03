@@ -23,6 +23,7 @@ module BetterTogether
     skip_before_action :check_platform_privacy
 
     before_action :set_community
+    before_action :ensure_membership_requests_enabled!, only: %i[new create]
     before_action :set_membership_request, only: %i[show destroy approve decline]
     after_action :verify_authorized
 
@@ -160,7 +161,7 @@ module BetterTogether
     # POST /c/:community_id/membership_requests/:id/decline
     def decline # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       authorize @membership_request
-      @membership_request.decline!
+      @membership_request.decline!(approver: helpers.current_person)
       flash.now[:notice] = t('better_together.membership_requests.flash.declined',
                              default: 'Membership request declined.')
       respond_to do |format|
@@ -192,6 +193,7 @@ module BetterTogether
     def set_membership_request
       @membership_request = policy_scope(BetterTogether::Joatu::MembershipRequest)
                             .where(target: @community)
+                            .friendly
                             .find(params[:id])
     end
 
@@ -201,6 +203,15 @@ module BetterTogether
       return collection.where(status: status) if status.present?
 
       collection.where(status: 'open')
+    end
+
+    def ensure_membership_requests_enabled!
+      return if @community.membership_requests_enabled?
+
+      respond_to do |format|
+        format.html { head :forbidden }
+        format.turbo_stream { head :forbidden }
+      end
     end
 
     def membership_request_params

@@ -42,6 +42,27 @@ module BetterTogether
       def self.extra_permitted_attributes
         super + %i[media]
       end
+
+      def evidence_selector_options # rubocop:todo Metrics/MethodLength
+        super + [
+          {
+            value: "#{evidence_selector}:media",
+            label: "Image media: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:caption",
+            label: "Image caption: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:alt_text",
+            label: "Image alt text: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:region:*",
+            label: 'Image region selector'
+          }
+        ]
+      end
     end
   end
 end

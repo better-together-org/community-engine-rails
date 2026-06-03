@@ -30,17 +30,25 @@
     <div class="card-body" style="min-height: 100px;">
       <% if collection.any? %>
         <% collection.each do |resource| %>
+          <% resource_label = if show_attr == :to_s
+                                resource.try(:name).presence ||
+                                  resource.try(:title).presence ||
+                                  resource.try(:identifier).presence ||
+                                  resource.model_name.human
+                              else
+                                resource.public_send(show_attr)
+                              end %>
           <div class="d-flex justify-content-between mb-2">							
-            <span class="text-truncate" style="max-width: 70%;" data-bs-toggle="tooltip" title="<%= resource.to_s %>">
+            <span class="text-truncate" style="max-width: 70%;" data-bs-toggle="tooltip" title="<%= resource_label %>">
               <% resource_link_allowed = if local_assigns.key?(:link_resources)
                                            link_resources
                                          else
-                                           policy(resource).show?
+                                            policy(resource).show?
                                          end %>
               <% if resource_link_allowed %>
-                <%= link_to resource, public_send(url_helper, resource), class: "text-decoration-none" %>
+                <%= link_to resource_label, public_send(url_helper, resource), class: "text-decoration-none" %>
               <% else %>
-                <%= resource.public_send(show_attr) %>
+                <%= resource_label %>
               <% end %>
             </span>
             <span class="text-muted small" data-bs-toggle="tooltip" title="<%= l(resource.created_at, format: :long) %>">

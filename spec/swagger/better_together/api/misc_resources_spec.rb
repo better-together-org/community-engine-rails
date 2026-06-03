@@ -104,6 +104,10 @@ RSpec.describe 'Invitations API', :no_auth, type: :request do
             }
           }
         end
+        before do
+          make_community_organizer(pm_user, community)
+        end
+
         run_test!
       end
     end

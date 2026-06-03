@@ -43,6 +43,7 @@ For a comprehensive view of all available documentation, see the **[Complete Tab
 Some documentation serves multiple stakeholder groups and can be found in:
 - **[Shared Documentation](shared/README.md)** - Cross-cutting topics like roles, permissions, and security
 - **[Visual Documentation](diagrams/README.md)** - System diagrams and visual aids
+- **[Release Notes](releases/0.11.0.md)** - Current `0.11.0` release overview and capability map
 - **[Implementation Plans](implementation/README.md)** - Current and planned feature development
 
 ## About Better Together

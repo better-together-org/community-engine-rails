@@ -3,133 +3,42 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Metrics::ReportPolicy, type: :policy do
-  subject(:policy) { described_class.new(user, %i[metrics report]) }
+  def grant_platform_permission(user, permission_identifier)
+    BetterTogether::AccessControlBuilder.seed_data
 
-  let(:user) { create(:user) }
-  let(:platform) { BetterTogether::Platform.find_by(host: true) }
+    host_platform = BetterTogether::Platform.find_by(host: true) ||
+                    create(:better_together_platform, :host, community: user.person.community)
+    role = create(:better_together_role, :platform_role)
+    permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
+    role.assign_resource_permissions([permission.identifier])
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+  end
+
+  let(:record) { :metrics_reports }
+  let(:metrics_viewer) { create(:user) }
+  let(:report_creator) { create(:user) }
+  let(:report_downloader) { create(:user) }
+  let(:manage_only_user) { create(:user) }
 
   before do
-    configure_host_platform
-    BetterTogether::AccessControlBuilder.seed_data
+    grant_platform_permission(metrics_viewer, 'view_metrics_dashboard')
+    grant_platform_permission(report_creator, 'create_metrics_reports')
+    grant_platform_permission(report_downloader, 'download_metrics_reports')
+    grant_platform_permission(manage_only_user, 'manage_platform')
   end
 
-  describe '#index?' do
-    context 'when user is analytics viewer' do
-      before do
-        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
-               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
-        BetterTogether::PersonPlatformMembership.create!(
-          joinable: platform,
-          member: user.person,
-          role: role
-        )
-      end
-
-      it 'allows access' do
-        expect(policy.index?).to be true
-      end
-    end
-
-    context 'when user is platform steward' do
-      before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-               BetterTogether::Role.find_by(identifier: 'platform_manager')
-        BetterTogether::PersonPlatformMembership.create!(
-          joinable: platform,
-          member: user.person,
-          role: role
-        )
-      end
-
-      it 'allows access' do
-        expect(policy.index?).to be true
-      end
-    end
-
-    context 'when user has no metrics permissions' do
-      it 'denies access' do
-        expect(policy.index?).to be false
-      end
-    end
-
-    context 'when user is not authenticated' do
-      let(:user) { nil }
-
-      it 'denies access' do
-        expect(policy.index?).to be false
-      end
-    end
+  it 'requires explicit dashboard permission to view metrics' do
+    expect(described_class.new(metrics_viewer, record).index?).to be(true)
+    expect(described_class.new(manage_only_user, record).index?).to be(false)
   end
 
-  describe '#show?' do
-    context 'when user is analytics viewer' do
-      before do
-        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
-               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
-        BetterTogether::PersonPlatformMembership.create!(
-          joinable: platform,
-          member: user.person,
-          role: role
-        )
-      end
-
-      it 'allows access' do
-        expect(policy.show?).to be true
-      end
-    end
-
-    context 'when user has no permissions' do
-      it 'denies access' do
-        expect(policy.show?).to be false
-      end
-    end
+  it 'requires explicit report creation permission' do
+    expect(described_class.new(report_creator, record).create?).to be(true)
+    expect(described_class.new(manage_only_user, record).create?).to be(false)
   end
 
-  describe '#create?' do
-    context 'when user has create_metrics_reports permission' do
-      before do
-        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
-               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
-        BetterTogether::PersonPlatformMembership.create!(
-          joinable: platform,
-          member: user.person,
-          role: role
-        )
-      end
-
-      it 'allows access' do
-        expect(policy.create?).to be true
-      end
-    end
-
-    context 'when user has no permissions' do
-      it 'denies access' do
-        expect(policy.create?).to be false
-      end
-    end
-  end
-
-  describe '#download?' do
-    context 'when user has download_metrics_reports permission' do
-      before do
-        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
-               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
-        BetterTogether::PersonPlatformMembership.create!(
-          joinable: platform,
-          member: user.person,
-          role: role
-        )
-      end
-
-      it 'allows access' do
-        expect(policy.download?).to be true
-      end
-    end
-
-    context 'when user has no permissions' do
-      it 'denies access' do
-        expect(policy.download?).to be false
-      end
-    end
+  it 'requires explicit report download permission' do
+    expect(described_class.new(report_downloader, record).download?).to be(true)
+    expect(described_class.new(manage_only_user, record).download?).to be(false)
   end
 end

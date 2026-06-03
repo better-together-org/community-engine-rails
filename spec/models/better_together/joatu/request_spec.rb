@@ -5,6 +5,8 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Joatu::Request do
   subject(:request_model) { build(:better_together_joatu_request) }
 
+  it_behaves_like 'an indexed searchable model', :better_together_joatu_request
+
   describe 'Factory' do
     it 'has a valid factory' do
       expect(request_model).to be_valid
@@ -63,5 +65,25 @@ RSpec.describe BetterTogether::Joatu::Request do
   it 'is invalid without categories' do
     request_model.categories = []
     expect(request_model).not_to be_valid
+  end
+
+  it 'records creator contribution as an exchange initiator' do
+    request_record = create(:better_together_joatu_request)
+
+    expect(request_record.contributions.count).to eq(1)
+    expect(request_record.contributions.first.role).to eq('exchange_initiator')
+    expect(request_record.contributions.first.contribution_type).to eq('community_exchange')
+    expect(request_record.contributors_for(:exchange_initiator)).to contain_exactly(request_record.creator)
+  end
+
+  it 'supports citations and claims on the exchange record' do
+    request_record = create(:better_together_joatu_request)
+    citation = create(:better_together_citation, citeable: request_record, reference_key: 'request_source')
+    claim = create(:better_together_claim, claimable: request_record, claim_key: 'request_claim')
+    create(:better_together_evidence_link, claim:, citation:)
+
+    expect(request_record.citations).to contain_exactly(citation)
+    expect(request_record.claims).to contain_exactly(claim)
+    expect(claim.citations).to contain_exactly(citation)
   end
 end

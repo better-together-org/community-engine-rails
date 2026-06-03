@@ -14,11 +14,13 @@
 class AddPlatformIdToNoticedNotifications < ActiveRecord::Migration[7.2]
   def up
     # 1. Add nullable column + index first so the table is still writable.
-    add_reference :noticed_notifications, :platform,
-                  type: :uuid,
-                  null: true,
-                  foreign_key: { to_table: :better_together_platforms },
-                  index: true
+    unless column_exists?(:noticed_notifications, :platform_id)
+      add_reference :noticed_notifications, :platform,
+                    type: :uuid,
+                    null: true,
+                    foreign_key: { to_table: :better_together_platforms },
+                    index: true
+    end
 
     # 2. Backfill via SQL so we avoid loading AR models in a migration.
     #    We join noticed_notifications → noticed_events → the polymorphic
@@ -65,6 +67,8 @@ class AddPlatformIdToNoticedNotifications < ActiveRecord::Migration[7.2]
   end
 
   def down
+    return unless column_exists?(:noticed_notifications, :platform_id)
+
     remove_reference :noticed_notifications, :platform,
                      foreign_key: { to_table: :better_together_platforms },
                      index: true

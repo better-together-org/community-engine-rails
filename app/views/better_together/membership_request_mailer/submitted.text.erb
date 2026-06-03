@@ -1,0 +1,18 @@
+<%= t('.greeting', name: @recipient_name) %>
+
+<%= t('.message', requestor_name: @requestor_name, community_name: @community_name) %>
+
+<% if @requestor_email.present? %>
+<%= t('.requestor_email_label') %> <%= @requestor_email %>
+<% end %>
+
+<% if @request_description.present? %>
+<%= t('.request_message_label') %>
+<%= @request_description %>
+<% end %>
+
+<% if @review_url.present? %>
+<%= t('.review_request') %>: <%= @review_url %>
+<% end %>
+
+<%= t('.signature_text', community_name: @community_name) %>

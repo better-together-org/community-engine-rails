@@ -5,9 +5,11 @@ require 'rails_helper'
 RSpec.describe 'Invitation Resend' do
   let(:community) { create(:better_together_community) }
   let(:invitation) { create(:better_together_community_invitation, invitable: community, status: 'declined') }
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   before do
     configure_host_platform
+    make_community_organizer(manager, community)
     login('manager@example.test', 'SecureTest123!@#')
   end
 

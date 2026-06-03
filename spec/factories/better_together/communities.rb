@@ -19,5 +19,9 @@ FactoryBot.define do
     trait :host do
       host { true }
     end
+
+    trait :membership_requests_enabled do
+      allow_membership_requests { true }
+    end
   end
 end

@@ -20,15 +20,17 @@ module BetterTogether
       def call(post_id:, **params)
         return auth_required_response unless current_user
 
-        with_timezone_scope do
-          post = BetterTogether::Post.find_by(id: post_id)
-          return not_found_response unless post
+        with_current_governed_agent do
+          with_timezone_scope do
+            post = BetterTogether::Post.find_by(id: post_id)
+            return not_found_response unless post
 
-          authorize post, :update?
+            authorize post, :update?
 
-          result = apply_updates_and_respond(post, params)
-          log_invocation('update_post', { post_id: post_id }.merge(params.except(:content)), result.bytesize)
-          result
+            result = apply_updates_and_respond(post, params)
+            log_invocation('update_post', { post_id: post_id }.merge(params.except(:content)), result.bytesize)
+            result
+          end
         end
       rescue Pundit::NotAuthorizedError
         JSON.generate({ error: 'Not authorized to update this post' })

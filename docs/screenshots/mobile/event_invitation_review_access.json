@@ -1,0 +1,11 @@
+{
+  "name": "event_invitation_review_access",
+  "device": "mobile",
+  "url": "/en/events/0deae832-113d-45c0-804c-a450e89185e5?invitation_token=Rf5Gxux5VwM2HkJqgGQwdpGb",
+  "title": "Invitation Review Session | Events | Test Host Community",
+  "locale": "en",
+  "role": "invitee",
+  "feature_set": "event_invitation_workflow",
+  "flow": "event_invitation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/event_invitation_workflow_spec.rb"
+}

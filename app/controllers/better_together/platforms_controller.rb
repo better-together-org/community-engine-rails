@@ -22,6 +22,11 @@ module BetterTogether
       # Preload memberships with policy scope applied to prevent N+1 queries in view
       # Include comprehensive associations for members and roles to eliminate N+1 queries
       @platform_memberships = policy_scope(@platform.memberships_with_associations)
+      return unless helpers.current_person
+
+      @current_person_platform_membership = @platform.person_platform_memberships.find_by(
+        member: helpers.current_person
+      )
     end
 
     # GET /platforms/:id/available_people
@@ -162,14 +167,27 @@ module BetterTogether
     end
 
     def settings_attributes
+      scalar_settings_attributes + csp_array_attributes
+    end
+
+    def scalar_settings_attributes
       %i[
         requires_invitation
+        allow_membership_requests
         software_variant
         network_visibility
         connection_bootstrap_state
         federation_protocol
         oauth_issuer_url
       ]
+    end
+
+    def csp_array_attributes
+      %i[
+        csp_frame_ancestors_text
+        csp_frame_src_text
+        csp_img_src_text
+      ].map { |attribute| { attribute => [] } }
     end
 
     def resource_class

@@ -8,13 +8,26 @@ module BetterTogether
     include Metrics::Viewable
     include Protected
     include Privacy
+    include Searchable
 
     has_many :checklist_items, -> { positioned }, class_name: '::BetterTogether::ChecklistItem', dependent: :destroy
     has_many :person_checklist_items, class_name: '::BetterTogether::PersonChecklistItem', dependent: :destroy
 
     translates :title, type: :string
 
+    settings index: default_elasticsearch_index
+
     slugged :title
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     validates :title, presence: true
 
@@ -41,6 +54,15 @@ module BetterTogether
 
     def to_param
       slug
+    end
+
+    def as_indexed_json(_options = {})
+      {
+        id:,
+        title:,
+        slug:,
+        identifier:
+      }.compact.as_json
     end
   end
 end

@@ -31,7 +31,7 @@ module BetterTogether
       }, prefix: true
 
       belongs_to :report, class_name: 'BetterTogether::Report', inverse_of: :safety_case
-      belongs_to :assigned_reviewer, class_name: 'BetterTogether::Person', optional: true
+      belongs_to :assigned_reviewer, class_name: 'BetterTogether::Person', optional: true, inverse_of: :assigned_safety_cases
 
       has_many :actions, class_name: 'BetterTogether::Safety::Action', dependent: :destroy, inverse_of: :safety_case
       has_many :notes, class_name: 'BetterTogether::Safety::Note', dependent: :destroy, inverse_of: :safety_case

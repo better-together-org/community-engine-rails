@@ -139,5 +139,76 @@ RSpec.describe BetterTogether::CommunityPolicy do
         expect(policy.show?).to be true
       end
     end
+
+    context 'when community is community scoped and user is a member' do
+      let(:community) { create(:better_together_community, privacy: 'community') }
+      let(:user) { create(:better_together_user) }
+      let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+      before do
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community,
+          member: user.person,
+          role: member_role
+        )
+      end
+
+      it 'allows viewing' do
+        expect(policy.show?).to be true
+      end
+    end
+
+    context 'when community is community scoped and user is signed in but not a member' do
+      let(:community) { create(:better_together_community, privacy: 'community') }
+      let(:user) { create(:better_together_user) }
+
+      it 'does not allow viewing' do
+        expect(policy.show?).to be false
+      end
+    end
+
+    context 'when community is community scoped and user is a guest' do
+      let(:community) { create(:better_together_community, privacy: 'community') }
+      let(:user) { nil }
+
+      it 'does not allow viewing' do
+        expect(policy.show?).to be false
+      end
+    end
+  end
+
+  describe 'Scope' do
+    let!(:public_community) { create(:better_together_community, privacy: 'public') }
+    let!(:community_scoped_community) { create(:better_together_community, privacy: 'community') }
+
+    it 'includes community-scoped communities for members' do
+      user = create(:better_together_user)
+      member_role = BetterTogether::Role.find_by(identifier: 'community_member')
+      BetterTogether::PersonCommunityMembership.create!(
+        joinable: community_scoped_community,
+        member: user.person,
+        role: member_role
+      )
+
+      resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community, community_scoped_community)
+    end
+
+    it 'excludes community-scoped communities for signed-in non-members' do
+      user = create(:better_together_user)
+
+      resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community)
+      expect(resolved).not_to include(community_scoped_community)
+    end
+
+    it 'excludes community-scoped communities for guests' do
+      resolved = described_class::Scope.new(nil, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community)
+      expect(resolved).not_to include(community_scoped_community)
+    end
   end
 end

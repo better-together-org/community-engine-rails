@@ -20,7 +20,7 @@ module BetterTogether
 
         # Relationships
         has_one :creator, class_name: 'Person'
-        has_many :members, class_name: 'Person'
+        has_many :members, relation_name: :person_members, class_name: 'Person'
         has_many :person_community_memberships
         # TODO: Enable when corresponding resources are created
         # has_many :calendars

@@ -1,0 +1,15 @@
+<p><%= t('.greeting', name: @recipient_name) %></p>
+
+<p><%= t('.message', community_name: @community_name) %></p>
+
+<% if @decision_actor_name.present? %>
+  <p><%= t('.reviewed_by', decision_actor_name: @decision_actor_name) %></p>
+<% end %>
+
+<% if @review_url.present? %>
+  <p>
+    <%= link_to t('.learn_more'), @review_url, class: 'text-decoration-none' %>
+  </p>
+<% end %>
+
+<p><%= t('.signature_html', community_name: @community_name) %></p>

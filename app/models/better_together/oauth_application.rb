@@ -14,7 +14,8 @@ module BetterTogether
 
     belongs_to :owner,
                class_name: 'BetterTogether::Person',
-               optional: true
+               optional: true,
+               inverse_of: :oauth_applications
 
     validates :name, presence: true
     validate :validate_scopes_for_owner

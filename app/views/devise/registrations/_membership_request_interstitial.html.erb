@@ -1,0 +1,20 @@
+<div class="row justify-content-center mt-4">
+  <div class="col-md-8 col-lg-7">
+    <section class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h3 class="h4 mb-3">
+          <%= t('devise.registrations.new.membership_request_heading', default: 'Request membership instead') %>
+        </h3>
+        <p class="text-muted mb-4">
+          <%= t('devise.registrations.new.membership_request_help_html',
+                community: community.name,
+                default: 'If you do not have an invitation yet, you can send a membership request for <strong>%{community}</strong>. A community reviewer can approve it and invite you into the platform.') %>
+        </p>
+
+        <%= render 'better_together/membership_requests/form',
+                   membership_request: membership_request,
+                   community: community %>
+      </div>
+    </section>
+  </div>
+</div>

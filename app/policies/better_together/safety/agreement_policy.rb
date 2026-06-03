@@ -5,7 +5,7 @@ module BetterTogether
     # Authorization policy for restorative agreements.
     class AgreementPolicy < ApplicationPolicy
       def create?
-        agent&.permitted_to?('manage_platform')
+        can_review_safety_disclosures?
       end
 
       def update?

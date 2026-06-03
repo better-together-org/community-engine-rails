@@ -124,6 +124,120 @@ module BetterTogether
           end
         end
       end
+
+      describe 'notifications' do
+        let(:community) { create(:better_together_community, :membership_requests_enabled) }
+        let(:community_manager_role) do
+          BetterTogether::Role.find_by(identifier: 'community_manager',
+                                       resource_type: 'BetterTogether::Community') ||
+            create(:better_together_role,
+                   identifier: 'community_manager',
+                   name: 'Community Manager',
+                   resource_type: 'BetterTogether::Community')
+        end
+        let(:manager_user) do
+          create(:better_together_user, :confirmed, password: 'SecureTest123!@#')
+        end
+        let(:manager) { manager_user.person }
+        let!(:manager_membership) do
+          create(:better_together_person_community_membership,
+                 :active,
+                 joinable: community,
+                 member: manager,
+                 role: community_manager_role)
+        end
+        let(:reset_test_jobs) do
+          lambda do
+            next unless ActiveJob::Base.queue_adapter.respond_to?(:enqueued_jobs)
+
+            ActiveJob::Base.queue_adapter.enqueued_jobs.clear
+            ActiveJob::Base.queue_adapter.performed_jobs.clear if ActiveJob::Base.queue_adapter.respond_to?(:performed_jobs)
+          end
+        end
+
+        before do
+          ActiveJob::Base.queue_adapter = :test
+          reset_test_jobs.call
+          Noticed::Notification.destroy_all
+        end
+
+        it 'notifies reviewers when a request is submitted' do
+          expect do
+            create(:better_together_joatu_membership_request, target: community)
+          end.to change(Noticed::Notification, :count).by(1)
+
+          notification = Noticed::Notification.last
+          expect(notification.recipient).to eq(manager)
+          expect(notification.event.type).to eq('BetterTogether::MembershipRequestSubmittedNotifier')
+        end
+
+        it 'notifies an authenticated requester when approved' do
+          requester = create(:better_together_user, :confirmed, password: 'SecureTest123!@#').person
+          request = create(
+            :better_together_joatu_membership_request,
+            :with_creator,
+            target: community,
+            creator: requester
+          )
+
+          Noticed::Notification.destroy_all
+          reset_test_jobs.call
+
+          expect do
+            request.approve!(approver: manager)
+          end.to change(Noticed::Notification, :count).by(1)
+
+          notification = Noticed::Notification.last
+          expect(notification.recipient).to eq(requester)
+          expect(notification.event.type).to eq('BetterTogether::MembershipCreatedNotifier')
+        end
+
+        it 'sends an invitation email for an unauthenticated approval' do
+          request = create(:better_together_joatu_membership_request, target: community)
+
+          reset_test_jobs.call
+
+          expect do
+            request.approve!(approver: manager)
+          end.to have_enqueued_mail(BetterTogether::CommunityInvitationsMailer, :invite)
+        end
+
+        it 'notifies an authenticated requester when declined' do
+          requester = create(:better_together_user, :confirmed, password: 'SecureTest123!@#').person
+          request = create(
+            :better_together_joatu_membership_request,
+            :with_creator,
+            target: community,
+            creator: requester
+          )
+
+          Noticed::Notification.destroy_all
+          reset_test_jobs.call
+
+          expect do
+            request.decline!
+          end.to change(Noticed::Notification, :count).by(1)
+
+          enqueued_job = ActiveJob::Base.queue_adapter.enqueued_jobs.last
+          expect(enqueued_job['job_class']).to eq('ActionMailer::MailDeliveryJob')
+          expect(enqueued_job['arguments'][0]).to eq('BetterTogether::MembershipRequestMailer')
+          expect(enqueued_job['arguments'][1]).to eq('declined')
+
+          notification = Noticed::Notification.last
+          expect(notification.recipient).to eq(requester)
+          expect(notification.event.type).to eq('BetterTogether::MembershipRequestDeclinedNotifier')
+        end
+
+        it 'emails an unauthenticated requester when declined' do
+          request = create(:better_together_joatu_membership_request, target: community)
+
+          reset_test_jobs.call
+
+          expect do
+            request.decline!
+          end.to have_enqueued_mail(BetterTogether::MembershipRequestMailer, :declined)
+        end
+      end
     end
   end
 end

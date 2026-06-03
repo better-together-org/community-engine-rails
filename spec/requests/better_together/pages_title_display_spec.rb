@@ -69,6 +69,17 @@ RSpec.describe 'Pages title display', :as_platform_manager do
         expect(response.body).to include('Hero Title')
         expect(response.body).to include('Hero Subtitle')
       end
+
+      it 'still renders governed authors below the hero content' do
+        robot = create(:robot, platform: page_with_hero.platform, name: 'Hero Writer Bot', identifier: 'hero-writer')
+        page_with_hero.authorships.create!(author: robot)
+
+        get better_together.page_path(page_with_hero.slug, locale: I18n.default_locale)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('Hero Writer Bot')
+        expect(response.body).to include('Robot')
+      end
     end
 
     context 'when page has template and no content blocks' do

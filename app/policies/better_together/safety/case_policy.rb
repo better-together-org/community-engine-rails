@@ -5,21 +5,21 @@ module BetterTogether
     # Authorization policy for safety cases.
     class CasePolicy < ApplicationPolicy
       def index?
-        platform_manager?
+        safety_reviewer?
       end
 
       def show?
-        platform_manager?
+        safety_reviewer?
       end
 
       def update?
-        platform_manager?
+        safety_reviewer?
       end
 
       # Limits case visibility to platform managers.
       class Scope < ApplicationPolicy::Scope
         def resolve
-          return scope.all if agent&.permitted_to?('manage_platform')
+          return scope.all if permitted_to?('manage_platform_safety')
 
           scope.none
         end
@@ -27,8 +27,8 @@ module BetterTogether
 
       private
 
-      def platform_manager?
-        agent&.permitted_to?('manage_platform')
+      def safety_reviewer?
+        can_review_safety_disclosures?
       end
     end
   end

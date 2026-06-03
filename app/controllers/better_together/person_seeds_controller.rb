@@ -65,7 +65,7 @@ module BetterTogether
       person = current_user.person
       raise ActiveRecord::RecordNotFound unless person
 
-      @seed = PersonSeedPolicy::Scope.new(current_user, Seed).resolve.find(params[:id])
+      @seed = PersonSeedPolicy::Scope.new(current_user, Seed).resolve.friendly.find(params[:id])
     end
   end
 end

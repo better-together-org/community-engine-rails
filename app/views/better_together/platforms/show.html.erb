@@ -45,6 +45,10 @@
   </div>
 
   <div class="container mt-4">
+    <%= render 'better_together/shared/access_mode_panel',
+               resource: @platform,
+               membership: @current_person_platform_membership %>
+
     <!-- Platform tabbed section -->
     <section class="card tabbed-section shadow-sm border-0">
 
@@ -85,8 +89,8 @@
               <div class="col-md-9"><%= @platform.protected ? 'Yes' : 'No' %></div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3"><strong>Requires Invitation:</strong></div>
-              <div class="col-md-9"><%= @platform.requires_invitation ? 'Yes' : 'No' %></div>
+              <div class="col-md-3"><strong>Access:</strong></div>
+              <div class="col-md-9"><%= access_mode_label(@platform) %></div>
             </div>
           </div>
         </section>

@@ -24,8 +24,8 @@ module BetterTogether
       }, prefix: true
 
       belongs_to :safety_case, class_name: 'BetterTogether::Safety::Case', inverse_of: :actions
-      belongs_to :actor, class_name: 'BetterTogether::Person'
-      belongs_to :approved_by, class_name: 'BetterTogether::Person', optional: true
+      belongs_to :actor, class_name: 'BetterTogether::Person', inverse_of: :acted_safety_actions
+      belongs_to :approved_by, class_name: 'BetterTogether::Person', optional: true, inverse_of: :approved_safety_actions
 
       validates :action_type, presence: true
       validates :status, presence: true

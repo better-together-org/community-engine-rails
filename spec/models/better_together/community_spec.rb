@@ -5,6 +5,8 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Community, :skip_host_setup do
   subject(:community) { build(:better_together_community) }
 
+  it_behaves_like 'an indexed searchable model', :better_together_community
+
   describe 'Factory' do
     it 'has a valid factory' do
       expect(community).to be_valid
@@ -95,6 +97,30 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
   end
 
   describe 'callbacks' do
+    describe '#create_default_calendar' do
+      it 'creates uniquely slugged default calendars for different communities' do
+        first = create(:better_together_community, name: 'Alpha Community')
+        second = create(:better_together_community, name: 'Beta Community')
+        first_calendar = first.calendars.find_by!(identifier: "default-#{first.identifier}")
+        second_calendar = second.calendars.find_by!(identifier: "default-#{second.identifier}")
+
+        expect(first_calendar.slug).to eq("default-#{first.identifier}")
+        expect(second_calendar.slug).to eq("default-#{second.identifier}")
+        expect(first_calendar.slug).not_to eq(second_calendar.slug)
+      end
+
+      it 'is idempotent when invoked again for the same community' do
+        record = create(:better_together_community, name: 'Gamma Community')
+
+        expect do
+          record.send(:create_default_calendar)
+        end.not_to(change { record.calendars.count })
+
+        calendar = record.calendars.find_by!(identifier: "default-#{record.identifier}")
+        expect(calendar.slug).to eq("default-#{record.identifier}")
+      end
+    end
+
     describe '#single_host_record' do
       it 'adds an error if host is set and another host community exists' do
         relation = double('ActiveRecord::Relation', exists?: true) # rubocop:todo RSpec/VerifiedDoubles

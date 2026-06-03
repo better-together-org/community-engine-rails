@@ -21,19 +21,20 @@ RSpec.describe BetterTogether::ImageHelper do
         # Mock profile_image.attached? to return true
         profile_image_double = double('profile_image', attached?: true) # rubocop:todo RSpec/VerifiedDoubles
 
-        # Stub the profile_image_url method to return our test URL
-        allow(person).to receive_messages(profile_image: profile_image_double, profile_image_url: 'http://example.com/optimized.jpg')
+        # Stub the profile_image_url method to return our test proxy path
+        allow(person).to receive_messages(profile_image: profile_image_double,
+                                          profile_image_url: '/rails/active_storage/representations/proxy/test')
       end
 
       it 'uses the optimized profile_image_url method' do
-        allow(person).to receive(:profile_image_url).with(size: 300).and_return('http://example.com/optimized.jpg')
+        allow(person).to receive(:profile_image_url).with(size: 300).and_return('/rails/active_storage/representations/proxy/test')
         result = profile_image_tag(person)
-        expect(result).to include('src="http://example.com/optimized.jpg"')
+        expect(result).to include('src="http://test.host/rails/active_storage/representations/proxy/test"')
         expect(result).to include('class="profile-image rounded-circle')
       end
 
       xit 'respects custom size parameter' do # rubocop:disable RSpec/PendingWithoutReason
-        allow(person).to receive(:profile_image_url).with(size: 150).and_return('http://example.com/optimized.jpg')
+        allow(person).to receive(:profile_image_url).with(size: 150).and_return('/rails/active_storage/representations/proxy/test')
         result = profile_image_tag(person, size: 150)
 
         expect(result).to include('150')

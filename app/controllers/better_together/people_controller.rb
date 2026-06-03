@@ -17,6 +17,13 @@ module BetterTogether
                           :string_translations,
                           blocks: { background_image_file_attachment: :blob }
                         )
+      @contributed_pages = policy_scope(BetterTogether::Page.where(id: @person.contributed_pages.select(:id)))
+                           .includes(
+                             :string_translations,
+                             blocks: { background_image_file_attachment: :blob }
+                           )
+      @contributed_posts = policy_scope(BetterTogether::Post.where(id: @person.contributed_posts.select(:id)))
+      @github_integrations = @person.github_integrations.order(:handle)
 
       # Preload calendar associations to avoid N+1 queries
       @person.preload_calendar_associations!

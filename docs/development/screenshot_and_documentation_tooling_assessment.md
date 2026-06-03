@@ -21,6 +21,11 @@ This assessment records the current-state tooling used for browser accessibility
   - desktop/mobile capture
   - metadata sidecars
 - It should not be merged wholesale because the branch diverges heavily from current `main`.
+- Current `main` now carries the key placement hardening needed for review-safe annotations:
+  - callouts can keep a precise highlight target while separately avoiding a broader parent container
+  - screenshot specs can pass `avoid_container_selector` when the highlighted element is a badge or label inside a larger review surface
+  - screenshot specs can pass `avoid_selectors` for related visible UI such as expanded dropdown menus, popovers, or disclosure panels that must remain readable beside the target
+  - the generated metadata sidecar records both `target` and `avoid` rectangles, which makes placement regressions diagnosable without re-running the browser manually
 
 ## management-tool
 
@@ -56,3 +61,10 @@ This assessment records the current-state tooling used for browser accessibility
 - Community Engine documentation has stale references to accessibility guidance paths.
 - Screenshot generation was previously explored but not carried through into current `main`.
 - No single rubric previously governed both docs and inline help text.
+
+## Review-safe callout contract
+
+- Prefer surrounding whitespace for annotation placement rather than overlaying the reviewed surface.
+- If the selector being highlighted is nested inside a larger card/panel, configure the screenshot spec to avoid the larger container, not just the inner selector.
+- If clicking the target reveals related UI that matters to the review, include that dropdown, popover, or expanded panel in `avoid_selectors` so the annotation does not cover the revealed state.
+- Treat the JSON metadata next to each screenshot as part of the review artifact. It should show a sensible `placement` plus an `avoid` rectangle that matches the real UI component.

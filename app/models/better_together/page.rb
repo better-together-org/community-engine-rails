@@ -6,10 +6,12 @@ module BetterTogether
   # An informational document used to display custom content to the user
   class Page < ApplicationRecord # rubocop:disable Metrics/ClassLength
     include Authorable
+    include Claimable
     # When adding authors via `author_ids=` or association ops, controllers can
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
     include Categorizable
+    include Citable
     include Creatable
     include Identifier
     include Metrics::Viewable
@@ -60,7 +62,7 @@ module BetterTogether
              dependent: :nullify
 
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
-    belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
+    belongs_to :creator, class_name: 'BetterTogether::Person', optional: true, inverse_of: :created_pages
 
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
@@ -75,14 +77,17 @@ module BetterTogether
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 
+    searchable
+
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
 
-    # Automatically grant the page creator an authorship record
-    after_create :add_creator_as_author
+    # Automatically grant the page creator an authorship record only when no
+    # explicit human or robot authors were selected during creation.
+    after_commit :add_creator_as_author, on: :create
 
     # Touch associated navigation_items to invalidate navigation cache when page title changes
     # Use title_previously_changed? for Mobility-translated attributes
@@ -111,7 +116,7 @@ module BetterTogether
       json = as_json(
         only: [:id],
         methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug')
+          attribute.start_with?('title', 'slug', 'content')
         end],
         include: {
           markdown_blocks: {
@@ -216,12 +221,6 @@ module BetterTogether
       return unless host_platform_community_id
 
       BetterTogether::Community.find_by(id: host_platform_community_id)
-    end
-
-    def add_creator_as_author
-      return unless respond_to?(:creator_id) && creator_id.present?
-
-      authorships.find_or_create_by(author_id: creator_id)
     end
 
     # Touch navigation areas for all navigation items that link to this page

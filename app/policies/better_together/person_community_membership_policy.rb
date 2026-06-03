@@ -11,7 +11,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && can_manage_community_members?
+      user.present? && (can_manage_community_members? || self_service_membership_create?)
     end
 
     def edit?
@@ -51,6 +51,10 @@ module BetterTogether
 
     protected
 
+    def me?
+      record.respond_to?(:member) && record.member == agent
+    end
+
     def can_manage_community_members?
       community = record.try(:joinable)
 
@@ -58,8 +62,12 @@ module BetterTogether
         permitted_to?('manage_community_roles', community)
     end
 
-    def me?
-      record.member == agent
+    def self_service_membership_create?
+      return false unless me?
+      return false unless record.joinable.respond_to?(:supports_self_service_membership?)
+
+      joinable = record.joinable
+      joinable.supports_self_service_membership? && (joinable.allows_direct_join? || joinable.membership_requests_enabled?)
     end
 
     def can_manage_any_community_members?

@@ -1,0 +1,37 @@
+<% return unless record.respond_to?(:claims) && record.claims.any? %>
+
+<section class="mt-5 claims-and-evidence" aria-labelledby="<%= dom_id(record, :claims) %>">
+  <h2 id="<%= dom_id(record, :claims) %>" class="h4">Claims and Supporting Evidence</h2>
+
+  <% record.claims.includes(evidence_links: :citation).each do |claim| %>
+    <article id="<%= claim.anchor_id %>" class="mb-4">
+      <h3 class="h5 mb-2"><%= claim.statement %></h3>
+      <div class="small text-muted mb-2">
+        Claim key: <code><%= claim.claim_key %></code>
+        <% if claim.selector.present? %>
+          <span class="ms-2">Selector: <%= claim.selector %></span>
+        <% end %>
+        <span class="ms-2">Status: <%= claim.review_status.humanize %></span>
+      </div>
+
+      <% if claim.evidence_links.any? %>
+        <ul class="mb-0">
+          <% claim.evidence_links.each do |evidence_link| %>
+            <li class="mb-2">
+              <strong><%= evidence_link.relation_type.humanize %>:</strong>
+              <a href="#<%= evidence_link.citation.anchor_id %>"><%= evidence_link.citation.title %></a>
+              <% if evidence_link.locator.present? %>
+                <span class="text-muted">(<%= evidence_link.locator %>)</span>
+              <% end %>
+              <% if evidence_link.quoted_text.present? %>
+                <blockquote class="blockquote small mt-1 mb-0"><%= simple_format(evidence_link.quoted_text) %></blockquote>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-muted small mb-0">No evidence links recorded yet.</p>
+      <% end %>
+    </article>
+  <% end %>
+</section>

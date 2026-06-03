@@ -98,7 +98,7 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportsController, :as_platfo
 
     it 'enqueues TrackDownloadJob when file is attached' do
       expect(BetterTogether::Metrics::TrackDownloadJob).to have_received(:perform_later)
-        .with(fake_report, 'report.csv', 'text/csv', kind_of(Integer), I18n.locale.to_s)
+        .with(fake_report, 'report.csv', 'text/csv', kind_of(Integer), I18n.locale.to_s, kind_of(String), true)
     end
 
     it 'sends the file when attached' do

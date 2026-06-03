@@ -12,13 +12,17 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
   let(:regular_headers) { api_auth_headers(regular_user, token: regular_token) }
 
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   describe 'GET /api/v1/blocks' do
     let(:url) { '/api/v1/blocks' }
     let!(:block) { create(:content_markdown, :simple, privacy: 'public') }
+    let(:manager_jsonapi_headers) { manager_headers.merge(jsonapi_headers) }
 
     context 'when authenticated as platform manager' do
-      before { get url, headers: manager_headers }
+      before { get url, headers: manager_jsonapi_headers }
 
       it 'returns success status' do
         expect(response).to have_http_status(:ok)
@@ -42,7 +46,7 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
         unattached_block = create(:content_markdown, :simple, privacy: 'public')
         create(:better_together_content_page_block, page: page, block: attached_block, position: 0)
 
-        get url, params: { filter: { page_id: page.id } }, headers: manager_headers
+        get url, params: { filter: { page_id: page.id } }, headers: manager_jsonapi_headers
 
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)
@@ -64,9 +68,10 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
   describe 'GET /api/v1/blocks/:id' do
     let(:block) { create(:content_markdown, :simple, privacy: 'public') }
     let(:url) { "/api/v1/blocks/#{block.id}" }
+    let(:manager_jsonapi_headers) { manager_headers.merge(jsonapi_headers) }
 
     context 'when authenticated as platform manager' do
-      before { get url, headers: manager_headers }
+      before { get url, headers: manager_jsonapi_headers }
 
       it 'returns success status' do
         expect(response).to have_http_status(:ok)
@@ -101,7 +106,14 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
     end
 
     context 'when authenticated as platform manager' do
-      before { post url, params: payload, headers: manager_headers.merge(jsonapi_headers) }
+      before do
+        create(:better_together_agreement_participant,
+               agreement: content_publishing_agreement,
+               participant: manager_user.person,
+               accepted_at: Time.current)
+
+        post url, params: payload, headers: manager_headers.merge(jsonapi_headers)
+      end
 
       it 'returns created status' do
         expect(response).to have_http_status(:created)
@@ -159,9 +171,10 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
   describe 'DELETE /api/v1/blocks/:id' do
     let(:block) { create(:content_markdown, :simple) }
     let(:url) { "/api/v1/blocks/#{block.id}" }
+    let(:manager_jsonapi_headers) { manager_headers.merge(jsonapi_headers) }
 
     context 'when authenticated as platform manager' do
-      before { delete url, headers: manager_headers }
+      before { delete url, headers: manager_jsonapi_headers }
 
       it 'returns no content status' do
         expect(response).to have_http_status(:no_content)
@@ -182,7 +195,7 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
 
     it 'persists and returns Content::Css body > 255 chars without truncation' do
       css_block = create(:better_together_content_css, content_text: long_css)
-      get "/api/v1/blocks/#{css_block.id}", headers: manager_headers
+      get "/api/v1/blocks/#{css_block.id}", headers: manager_headers.merge(jsonapi_headers)
 
       expect(response).to have_http_status(:ok)
       returned_content = JSON.parse(response.body).dig('data', 'attributes', 'content_en')
@@ -192,7 +205,7 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
 
     it 'persists and returns Content::Html body > 255 chars without truncation' do
       html_block = create(:content_html, content: long_html)
-      get "/api/v1/blocks/#{html_block.id}", headers: manager_headers
+      get "/api/v1/blocks/#{html_block.id}", headers: manager_headers.merge(jsonapi_headers)
 
       expect(response).to have_http_status(:ok)
       returned_content = JSON.parse(response.body).dig('data', 'attributes', 'content_en')

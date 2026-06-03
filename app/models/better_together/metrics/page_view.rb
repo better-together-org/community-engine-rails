@@ -5,6 +5,7 @@ module BetterTogether
   module Metrics
     class PageView < ApplicationRecord # rubocop:todo Style/Documentation
       include Utf8UrlHandler
+      include PlatformScoped
 
       SENSITIVE_QUERY_PARAMS = %w[token password secret].freeze
 
@@ -13,6 +14,7 @@ module BetterTogether
       # Validations
       validates :viewed_at, presence: true
       validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
+      validates :logged_in, inclusion: { in: [true, false] }
 
       # validates :page_url, presence: true
 
@@ -25,10 +27,10 @@ module BetterTogether
       attr_reader :page_url_query
 
       # Set the page_url if the pageable object doesn't respond to :url
-      def set_page_url # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        url = if pageable.respond_to?(:url)
-                pageable.becomes(pageable.class.base_class).url
-              elsif pageable.present? && page_url.blank?
+      def set_page_url # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+        url = if pageable.present?
+                routing_url_for_pageable || fallback_url_for_pageable || generate_url_for_pageable
+              elsif page_url.blank?
                 generate_url_for_pageable
               else
                 page_url
@@ -45,6 +47,18 @@ module BetterTogether
           # If we can't parse it at all, add an error
           errors.add(:page_url, 'is invalid')
         end
+      end
+
+      def routing_url_for_pageable
+        return unless pageable.respond_to?(:route_url)
+
+        pageable.becomes(pageable.class.base_class).route_url(locale: locale)
+      end
+
+      def fallback_url_for_pageable
+        return unless pageable.respond_to?(:url)
+
+        pageable.becomes(pageable.class.base_class).url
       end
 
       def page_url_without_sensitive_parameters

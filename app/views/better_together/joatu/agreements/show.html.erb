@@ -67,6 +67,10 @@
                         class: 'btn btn-outline-danger', data: { turbo: false } %>
         </div>
       <% end %>
+
+      <%= render 'better_together/shared/claims_and_evidence', record: @joatu_agreement %>
+      <%= render 'better_together/shared/bibliography', record: @joatu_agreement %>
+      <%= render 'better_together/shared/governance_bundle_links', record: @joatu_agreement if @joatu_agreement.bibliography_entries.any? || @joatu_agreement.claims.any? %>
     </div>
 
     <div class="col-md-4">

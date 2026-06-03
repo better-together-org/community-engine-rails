@@ -1,0 +1,11 @@
+{
+  "name": "pr_1486_account_deletion_embedded_after_move",
+  "device": "desktop",
+  "url": "http://127.0.0.1:41009/en/settings#account",
+  "title": "Settings | Test Host Community",
+  "captured_at": "2026-04-03T17:50:10Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "settings_embed_review",
+  "source_spec": "./spec/docs_screenshots/better_together/settings_tab_embed_review_spec.rb"
+}

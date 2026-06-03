@@ -1,0 +1,11 @@
+{
+  "name": "community_page_contribution_summary",
+  "device": "desktop",
+  "url": "http://127.0.0.1:43119/en/c/community-edaeb96b15e7351c27d3",
+  "title": "Community Page Evidence | Communities | Test Host Community",
+  "captured_at": "2026-04-04T22:54:24Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "community_page_contribution_summary",
+  "source_spec": "./spec/docs_screenshots/better_together/community_page_contribution_summary_spec.rb"
+}

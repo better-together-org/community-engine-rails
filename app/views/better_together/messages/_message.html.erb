@@ -6,13 +6,18 @@
 	<div id="<%= dom_id(message) %>" class="<%= dom_class(message, :conversation) %> d-flex mb-3 <% if me %>me<% end %>"
 		data-sender-id="<%= message.sender_id %>">
 		<div class="message-container">
-			<div class="message-header d-flex">
-				<strong class="me-2">
-					<%= message.sender.name %>
-				</strong>
-				<small class="text-muted">
-					<%= l(message.created_at, format: :short) %>
-				</small>
+ 			<div class="message-header d-flex">
+ 				<strong class="me-2">
+ 					<%= message.sender.name %>
+ 				</strong>
+ 				<small class="text-muted">
+ 					<%= l(message.created_at, format: :short) %>
+ 				</small>
+				<div class="ms-auto">
+					<%= render 'shared/content_actions',
+					           record: message,
+					           trigger_classes: 'btn btn-outline-secondary btn-sm py-0 px-2' %>
+				</div>
 			</div>
 			<% if message.e2e? %>
 				<div class="message-bubble p-3 rounded e2e-message"

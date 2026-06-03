@@ -37,9 +37,19 @@ module BetterTogether # :nodoc:
       end
 
       describe '#build_summary' do
-        let!(:confirmed_user) { create(:user, created_at: 2.days.ago, confirmed_at: 1.day.ago) }
-        let!(:unconfirmed_user) { create(:user, created_at: 1.day.ago, confirmed_at: nil) }
-        let(:report) { described_class.new(filters: { from_date: 3.days.ago.to_date, to_date: Date.current }) }
+        let(:window_start) { Date.new(2099, 1, 1) }
+        let(:window_end) { Date.new(2099, 1, 3) }
+        let!(:confirmed_user) do
+          create(
+            :user,
+            created_at: Time.zone.parse('2099-01-01 12:00:00'),
+            confirmed_at: Time.zone.parse('2099-01-02 12:00:00')
+          )
+        end
+        let!(:unconfirmed_user) do
+          create(:user, created_at: Time.zone.parse('2099-01-02 12:00:00'), confirmed_at: nil)
+        end
+        let(:report) { described_class.new(filters: { from_date: window_start, to_date: window_end }) }
         let(:summary) { report.send(:build_summary) }
 
         it 'calculates total accounts created' do

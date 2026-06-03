@@ -30,6 +30,15 @@ module BetterTogether
       @current_invitation = find_invitation_by_token
       @invitations = BetterTogether::CommunityInvitation.where(invitable: @community)
                                                         .order(:status, :created_at)
+      @community_pages = policy_scope(@community.pages)
+                         .includes(
+                           :string_translations,
+                           :contributions,
+                           :citations,
+                           :claims,
+                           blocks: { background_image_file_attachment: :blob }
+                         )
+      set_current_person_community_membership
 
       # Categorize events for display
       categorize_community_events
@@ -101,8 +110,9 @@ module BetterTogether
     # DELETE /communities/1
     def destroy
       @community.destroy
-      redirect_to communities_url, notice: t('flash.generic.destroyed', resource: t('resources.community')),
-                                   status: :see_other
+      redirect_to BetterTogether::Engine.routes.url_helpers.communities_url(**default_url_options),
+                  notice: t('flash.generic.destroyed', resource: t('resources.community')),
+                  status: :see_other
     end
 
     private
@@ -122,9 +132,18 @@ module BetterTogether
 
     def permitted_attributes
       %i[
+        allow_membership_requests
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
         .concat(resource_class.extra_permitted_attributes)
+    end
+
+    def set_current_person_community_membership
+      return unless helpers.current_person
+
+      @current_person_community_membership = @community.person_community_memberships.find_by(
+        member: helpers.current_person
+      )
     end
 
     def resource_class

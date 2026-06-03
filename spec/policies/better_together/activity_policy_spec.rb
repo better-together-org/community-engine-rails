@@ -251,7 +251,7 @@ RSpec.describe BetterTogether::ActivityPolicy, type: :policy do
           end
           let!(:activity) { create_activity_for(unpublished_page) }
 
-          it 'includes the activity (platform stewards see all public activities)' do
+          it 'includes the activity' do
             expect(scope).to include(activity)
           end
         end
@@ -262,7 +262,7 @@ RSpec.describe BetterTogether::ActivityPolicy, type: :policy do
           end
           let!(:activity) { create_activity_for(unpublished_post) }
 
-          it 'includes the activity (platform managers see all public activities)' do
+          it 'includes the activity' do
             expect(scope).to include(activity)
           end
         end
@@ -273,7 +273,7 @@ RSpec.describe BetterTogether::ActivityPolicy, type: :policy do
           end
           let!(:activity) { create_activity_for(draft_event) }
 
-          it 'includes the activity (platform managers see all public activities)' do
+          it 'includes the activity' do
             expect(scope).to include(activity)
           end
         end

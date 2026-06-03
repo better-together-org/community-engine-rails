@@ -22,10 +22,10 @@ RSpec.describe BetterTogether::ElasticsearchIndexJob do
     described_class.perform_now(record, :delete)
   end
 
-  it 'ignores records without elasticsearch support' do
-    plain_record = instance_double(String)
+  it 'delegates to the configured backend even when the record lacks elasticsearch helpers' do
+    plain_record = instance_double(BetterTogether::Platform)
 
-    expect(backend).not_to receive(:index_record)
+    expect(backend).to receive(:index_record).with(plain_record)
 
     described_class.perform_now(plain_record, :index)
   end

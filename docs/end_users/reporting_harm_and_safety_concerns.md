@@ -2,7 +2,7 @@
 
 **Target Audience:** All community members  
 **Document Type:** User Guide  
-**Last Updated:** March 9, 2026
+**Last Updated:** April 8, 2026
 
 ## Overview
 
@@ -19,12 +19,22 @@ The current reporting interface supports a structured report with:
 
 ## Where Reporting Starts
 
-In the current interface, report links are available from:
+In the current interface, reporting starts from a consistent action area on supported content and profile surfaces.
+
+Current entry points include:
 
 - person profile pages
 - post pages
+- page views
+- individual reportable page sections or content blocks
+- community pages
+- event pages
+- conversation messages
+- upload listings when a reportable upload is visible
 
-The reporting system can support additional reportable types internally, but user-facing entry points currently focus on profiles and posts.
+Most surfaces keep the familiar **ellipsis actions menu**. Page views also include a separate **Feedback** bar at the bottom of the page, below the share tools. This keeps page reporting easy to find without adding a large panel above the content.
+
+When you choose **Report safety issue**, the report goes to the **platform safety team**. It is not automatically shared with the content owner, profile owner, or community/page stewards.
 
 ## What The Report Form Asks
 
@@ -87,17 +97,39 @@ The report form also asks:
 - whether restorative options may be considered if appropriate
 - whether you are worried about retaliation or escalation
 
+## Who Can See And Act On A Safety Report
+
+For the current reporting flow:
+
+- the report is sent privately to the platform safety team
+- the people who can review and act on it are platform safety reviewers
+- after submission, it stays visible to you and platform safety reviewers
+- content owners and stewards do not automatically receive the report
+
+This keeps safety disclosures private. Future non-safety feedback, such as correction suggestions or contribution ideas, will use a separate steward-routed workflow.
+
 ## Step-By-Step: How To Submit A Report
 
-1. Open a profile or post that has a **Report** action.
-2. Select **Report**.
-3. Complete the report form.
-4. Review your answers.
-5. Submit the report.
+1. Open the person, post, page, page section, community, event, message, or upload you need to flag.
+2. Open the actions menu for that surface, or use the page-bottom **Feedback** bar on a page view.
+3. Select **Report safety issue**.
+4. Complete the report form.
+5. Review your answers.
+6. Submit the report.
 
-![Report form showing the structured safety fields and help text.](../screenshots/desktop/report_form.png)
+![Feedback area showing the report entry from a post.](../screenshots/desktop/content_reporting_actions_post_menu.png)
 
-[Mobile screenshot of the report form](../screenshots/mobile/report_form.png)
+![Feedback area showing the report entry from an individual content block on a page.](../screenshots/desktop/content_reporting_actions_block_menu.png)
+
+![Page-bottom feedback bar shown below the share tools.](../screenshots/desktop/content_reporting_actions_page_feedback_bar.png)
+
+[Mobile screenshot of the feedback area with the report entry](../screenshots/mobile/content_reporting_actions_post_menu.png)
+
+[Mobile screenshot of the page-bottom feedback bar](../screenshots/mobile/content_reporting_actions_page_feedback_bar.png)
+
+![Report form showing the structured safety fields, help text, and contextual record details.](../screenshots/desktop/content_reporting_actions_report_form.png)
+
+[Mobile screenshot of the contextual report form](../screenshots/mobile/content_reporting_actions_report_form.png)
 
 ## Writing A Helpful Report
 
@@ -127,6 +159,15 @@ Include:
 - whether you want follow-up contact
 
 You can also preserve your own evidence, such as screenshots or notes, in case you need it later.
+
+## After You Submit
+
+After submission, the report detail page remains the main place to:
+
+- confirm what record you reported
+- review your submitted information
+- see participant-visible follow-up notes
+- add additional evidence or an appeal note if the situation changes
 
 ## What Reporting Does Not Replace
 

@@ -27,27 +27,15 @@ module BetterTogether
       private
 
       def can_view_metrics?
-        return false unless user
-
-        user.permitted_to?('view_metrics_dashboard', platform) ||
-          user.permitted_to?('manage_platform_settings', platform) ||
-          user.permitted_to?('manage_platform', platform)
+        user.present? && can_view_metrics_dashboard?(platform)
       end
 
       def can_create_reports?
-        return false unless user
-
-        user.permitted_to?('create_metrics_reports', platform) ||
-          user.permitted_to?('manage_platform_settings', platform) ||
-          user.permitted_to?('manage_platform', platform)
+        user.present? && can_create_metrics_reports?(platform)
       end
 
       def can_download_reports?
-        return false unless user
-
-        user.permitted_to?('download_metrics_reports', platform) ||
-          user.permitted_to?('manage_platform_settings', platform) ||
-          user.permitted_to?('manage_platform', platform)
+        user.present? && can_download_metrics_reports?(platform)
       end
 
       def platform

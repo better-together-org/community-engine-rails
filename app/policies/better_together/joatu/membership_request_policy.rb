@@ -9,7 +9,9 @@ module BetterTogether
     # - manage actions are restricted to platform/community managers
     class MembershipRequestPolicy < RequestPolicy
       # Anyone may submit a membership request — including unauthenticated visitors.
-      def create? = true
+      def create?
+        target_community&.membership_requests_enabled? || false
+      end
       alias new? create?
 
       def show?
@@ -81,6 +83,10 @@ module BetterTogether
       end
 
       private
+
+      def target_community
+        record.target if record.target.is_a?(::BetterTogether::Community)
+      end
 
       def community_manager?
         return false unless user.present? && record.target.is_a?(::BetterTogether::Community)

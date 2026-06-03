@@ -23,9 +23,21 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
   end
 
   describe 'GET /index' do
-    it 'returns success' do
+    it 'returns success with contribution and evidence summaries' do
+      request_record.add_governed_contributor(person, role: 'reviewer')
+      request_record.contributions.first.update!(details: {
+                                                   'github_handle' => 'joatu-request-reviewer',
+                                                   'github_sources' => [{ 'reference_key' => 'issue_1494' }]
+                                                 })
+      create(:claim, claimable: request_record, statement: 'Requests can carry evidence summaries in list views.')
+      create(:citation, citeable: request_record, reference_key: 'joatu_request_summary', title: 'JOATU Request Summary')
+
       get better_together.joatu_requests_path(locale: locale)
       expect(response).to be_successful
+      expect(response.body).to include('Contributors:')
+      expect(response.body).to include('GitHub-linked')
+      expect(response.body).to include('Evidence:')
+      expect(response.body).to include('Governance Bundle')
     end
   end
 

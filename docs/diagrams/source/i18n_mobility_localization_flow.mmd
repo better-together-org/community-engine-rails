@@ -85,8 +85,8 @@ flowchart TD
         AI_REQUEST --> TRANSLATION_BOT[TranslationBot.translate]
         
         TRANSLATION_BOT --> EXTRACT_CONTENT[Extract & Process Content - Handle Trix Attachments]
-        EXTRACT_CONTENT --> OPENAI_API[OpenAI API Call]
-        OPENAI_API --> PROCESS_RESPONSE[Process Translation Response]
+        EXTRACT_CONTENT --> LLM_ADAPTER[LLM Adapter Call]
+        LLM_ADAPTER --> PROCESS_RESPONSE[Process Translation Response]
         PROCESS_RESPONSE --> RESTORE_ATTACHMENTS[Restore Trix Attachments]
         RESTORE_ATTACHMENTS --> AI_RESULT[Return Translated Content]
         
@@ -130,5 +130,5 @@ flowchart TD
     class SET_LOCALE,ROUTE_SCOPE,CONTROLLER_ACTION,YAML_LOOKUP,KV_QUERY,AT_QUERY,DISPLAY_CONTENT process
     class LOCALE_DET,KEY_LOOKUP,KEY_FOUND,MOBILITY_BACKEND,KV_FOUND,AT_FOUND,CHECK_EN,SWITCH_LOCALE decision
     class KV_BACKEND,AT_BACKEND,STORE_KV,STORE_AT storage
-    class AI_TRIGGER,AI_REQUEST,TRANSLATION_BOT,OPENAI_API ai
+    class AI_TRIGGER,AI_REQUEST,TRANSLATION_BOT,LLM_ADAPTER ai
     class FORM_RENDER,TAB_UI,VALIDATION editing

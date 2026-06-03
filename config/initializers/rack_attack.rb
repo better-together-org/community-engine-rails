@@ -19,7 +19,7 @@ module Rack
 
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
-      # ActiveSupport 8.0.3 still initializes ConnectionPool with a positional Hash,
+      # ActiveSupport 8.0 still initializes ConnectionPool with a positional Hash,
       # which breaks with connection_pool 3.x keyword-only initialization.
       rack_attack_redis_pool = ConnectionPool.new(
         size: rack_attack_pool_size,
@@ -115,6 +115,13 @@ module Rack
     # Throttle API password reset endpoint by IP (5 requests per minute)
     throttle('api_password_resets/ip', limit: 5, period: 1.minute) do |req|
       req.ip if req.path.include?('/api/auth/password') && req.post?
+    end
+
+    # Throttle public membership request submissions by IP (5 requests per minute).
+    # This endpoint is intentionally unauthenticated, so it needs a dedicated guard
+    # even when host apps do not wire captcha enforcement yet.
+    throttle('api_membership_requests/ip', limit: 5, period: 1.minute) do |req|
+      req.ip if req.path.include?('/api/v1/membership_requests') && req.post?
     end
 
     # Throttle OAuth token endpoint by IP (10 requests per minute)

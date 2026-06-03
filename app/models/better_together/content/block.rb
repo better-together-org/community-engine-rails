@@ -85,6 +85,23 @@ module BetterTogether
                            end}"
       end
 
+      def citation_target_key
+        [block_name, identifier.presence || id].join(':')
+      end
+
+      def evidence_selector
+        "block:#{citation_target_key}"
+      end
+
+      def evidence_selector_options
+        [
+          {
+            value: evidence_selector,
+            label: "Block: #{self}"
+          }
+        ]
+      end
+
       # Method to return the content used for Elasticsearch indexing
       def cached_content
         {
