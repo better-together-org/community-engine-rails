@@ -59,7 +59,11 @@ module BetterTogether
     isolate_namespace BetterTogether
 
     # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
-    config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+    # Exclude lib/better_together/mcp/ — those files are explicitly required by
+    # lib/better_together/mcp.rb and must NOT be Zeitwerk-autoloaded from a
+    # sub-directory root (which would strip the BetterTogether::Mcp namespace).
+    lib_subdirs = Dir["#{root}/lib/better_together/**/"].reject { |d| d.include?('/lib/better_together/mcp') }
+    config.autoload_paths = Array(config.autoload_paths) + lib_subdirs
 
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
