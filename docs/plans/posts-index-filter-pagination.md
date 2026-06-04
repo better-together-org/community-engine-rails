@@ -1,9 +1,12 @@
 # Plan: Posts Index — Search, Filter Sidebar, Pagination
 
-**Tracking issue:** better-together-org/community-engine-rails#1407
+**v0.12.0 Release** | **Tracking issue:** better-together-org/community-engine-rails#1407
+
 **Related plans:**
 - [Federation authorship opt-in](federation-authorship-opt-in.md) — PR #1408 (`plan/federation-authorship-opt-in`)
-- [Events index search/filter/pagination](events-index-filter-pagination.md) — PR #1410 (`plan/events-index-filter-pagination`)
+- [Events index search/filter/pagination](events-index-filter-pagination.md) — PR #1410 (`plan/events-index-filter-pagination`) — **mirrors this pattern**
+
+**Reference:** [v0.12.0 Stakeholder-Centered Acceptance Criteria Framework](../implementation/STAKEHOLDER_AC_IMPLEMENTATION_GUIDE.md)
 
 ---
 
@@ -32,12 +35,25 @@ Posts should adopt the same pattern.
 
 ---
 
+## v0.12.0 Stakeholder Outcomes
+
+This feature serves three distinct outcomes in the v0.12.0 framework:
+
+| Stakeholder | Need | Success Metric |
+|------------|------|-----------------|
+| **Community Members** | "I can find posts about topics I care about" | Text search + category filter usable; results ≤ 2s |
+| **Platform Managers** | "The index is usable when we have 100+ posts" | Pagination prevents page bloat; default 20/page ≤ 500ms |
+| **Content Creators** | "My posts are discoverable" | Posts sort newest-first by default; option for oldest |
+
+Implementation follows the **test-first cadence**: pending RSpec specs → implement → validate each week.
+
+---
+
 ## Out of Scope
 
-- Full-text search via Elasticsearch (post index may not have ES enabled on all platforms).
-  Use SQL `ILIKE` + Mobility joins as in `Joatu::SearchFilter`.
-- Saved search / bookmarked filters.
-- Map or calendar view modes.
+- Elasticsearch integration (v0.12.0 standardizes on pgsearch/SQL ILIKE across all platforms).
+- Saved search / bookmarked filters (possible v0.12.1 enhancement).
+- Map or calendar view modes (possible v0.12.1+ feature).
 
 ---
 
@@ -89,23 +105,42 @@ Posts should adopt the same pattern.
 
 ---
 
-## Required Tests
+## Test-First Implementation (v0.12.0 Framework)
 
-- [ ] **`PostsSearchFilter` unit spec** (no Rails load; pure AR relation mocking):
-  - no params → returns full unfiltered relation
-  - `q: "hello"` → applies ILIKE condition
-  - `category_ids: [id]` → joins categories and filters
-  - `privacy: "public"` → filters by privacy column
-  - `order_by: "oldest"` → orders ascending
-  - `per_page: 10` → Kaminari `.per(10)` applied
-- [ ] **`PostsController` request spec** (`GET /en/posts`):
-  - returns 200 with no params
-  - filters by `q`, `category_ids`, `privacy` and returns correct subset
-  - paginates: page 2 with per_page 10 returns correct window
-- [ ] **System/feature spec**:
-  - Visit posts index; type search term; assert filtered results
-  - Select a category; assert only posts in that category shown
-  - Navigate to page 2; assert pagination links present and correct posts shown
+All specs are **pending** until implementation week; run with:
+```bash
+rspec spec/acceptance_criteria/posts_index_spec.rb --tag acceptance_criteria --pending
+```
+
+### Required Test Suite: `spec/acceptance_criteria/posts_index_spec.rb`
+
+**Model Layer (Week 1 — Service foundation)**
+- [ ] `PostsSearchFilter.call(relation:, params:)` returns Kaminari-decorated relation
+- [ ] `q: "hello"` applies ILIKE to Mobility title + ActionText content (both locales)
+- [ ] `category_ids: [id]` joins categorizations and returns only tagged posts
+- [ ] `privacy: "public"` filters by posts.privacy column
+- [ ] `order_by: "oldest"` orders `created_at asc` (default is `desc`)
+- [ ] `per_page: 10` applies Kaminari `.per(10)`, defaults to 20
+- [ ] Empty params returns full unfiltered relation (no N+1 joins)
+
+**Request Layer (Week 2 — Controller + authorization)**
+- [ ] `GET /en/posts` with no params returns 200, all visible posts, 20 per page
+- [ ] `?q=foo` filters results, params persist in view
+- [ ] `?category_ids[]=1&category_ids[]=2` multi-select works
+- [ ] `?privacy=community` restricts to community-only posts
+- [ ] `?order_by=oldest` reverses sort order
+- [ ] `?page=2&per_page=10` paginates correctly
+- [ ] Authorization: respects policy scope (user sees only permitted posts)
+
+**Feature Layer (Week 3 — UX + pagination)**
+- [ ] Visit `/en/posts`, see filter sidebar with all controls
+- [ ] Type in search box, submit form, results filter in real-time
+- [ ] Check category checkboxes (multi-select), results update
+- [ ] Select privacy dropdown, results filter
+- [ ] Select per-page, page reloads with new window size
+- [ ] Pagination links present and navigate correctly
+- [ ] "Clear filters" link resets to unfiltered state
+- [ ] Sidebar collapses on mobile (≤768px)
 
 ---
 
@@ -121,32 +156,51 @@ Posts should adopt the same pattern.
 
 ## Implementation Notes
 
+**Search Strategy:** v0.12.0 standardizes on **pgsearch (PostgreSQL ILIKE)** across all platforms. No Elasticsearch detection or fallback; all deployments use SQL joins + ILIKE.
+
 - `FriendlyResourceController#resource_collection` already builds the base policy-scoped
   relation and is the right integration point. Override it in `PostsController` to
   pass through the search filter before returning.
-- The Joatu `SearchFilter` joins are written for `BetterTogether::Joatu::Offer`/`Request`
-  but the Mobility table structure is identical for posts. The join logic can be extracted
-  into a base module `BetterTogether::ContentSearchFilter::MobilityTitleJoin` if both
-  posts and events need it.
-- Category filter for posts: check whether posts are already `Categorizable`; if not,
-  the category filter step is a no-op (handled gracefully in the service).
-- Kaminari is already a dependency — no new gems required.
-- The filter form uses GET (not POST) so filters are bookmarkable and shareable via URL.
+
+- **Mobility joins:** Text search joins `mobility_string_translations` (Mobility title key)
+  and `action_text_rich_texts` (ActionText content), with locale scoping. Reference:
+  `app/services/joatu/search_filter.rb` for join pattern.
+
+- **Category filter:** Posts are `Categorizable`; join `better_together_categorizations`
+  and `better_together_categories`. Multi-select on category IDs.
+
+- **Privacy filter:** Use the `privacy` column directly (enum: public / community / private).
+  Respect policy scope — don't expose filtering ui for states user can't see.
+
+- **Reusable base:** Extract common logic into `BetterTogether::ContentSearchFilter` base
+  class so `EventsSearchFilter` can inherit join + pagination steps. Both will override
+  `#default_order_by` and filter-specific scopes.
+
+- **Kaminari:** Already a dependency; use `.page(params[:page]).per(per_page)`.
+
+- **GET form:** Filter form uses GET (not POST) so filters are bookmarkable (`/posts?q=foo&category_ids[]=1&page=2`).
+
+**Events parity:** PR #1410 (`EventsSearchFilter`) will follow this exact pattern with status filter + date-range order-by instead of privacy + creation-date order-by.
 
 ---
 
-## File Sketch
+## Implementation Sequence
 
 ```
-app/
-  controllers/better_together/posts_controller.rb   (extend index action)
-  services/better_together/posts_search_filter.rb   (new)
-  views/better_together/posts/
-    index.html.erb                                   (update)
-    _list_form.html.erb                              (new)
-config/locales/en.yml                               (add posts.index.* keys)
-spec/
-  services/better_together/posts_search_filter_spec.rb  (new)
-  requests/better_together/posts_spec.rb            (extend)
-  system/better_together/posts_index_spec.rb        (new or extend)
+Week 1: Model + Service Layer
+  spec/acceptance_criteria/posts_index_spec.rb      (new; model specs — pending)
+  app/services/better_together/posts_search_filter.rb  (new)
+  app/services/better_together/content_search_filter.rb  (new base; extract reusable joins)
+
+Week 2: Request + Controller Layer
+  spec/acceptance_criteria/posts_index_spec.rb      (add request specs — pending)
+  app/controllers/better_together/posts_controller.rb  (override resource_collection)
+
+Week 3: View + i18n
+  spec/acceptance_criteria/posts_index_spec.rb      (add feature specs — pending)
+  app/views/better_together/posts/index.html.erb    (update; add sidebar + paginate)
+  app/views/better_together/posts/_list_form.html.erb  (new)
+  config/locales/en.yml                             (add posts.index.* keys)
 ```
+
+**Parallel track (Week 1–3):** PR #1410 (Events) follows the same cadence using the base `ContentSearchFilter` from week 1.
