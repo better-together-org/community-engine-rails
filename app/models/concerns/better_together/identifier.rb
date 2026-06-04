@@ -20,7 +20,7 @@ module BetterTogether
       before_validation :generate_identifier
 
       def identifier=(arg)
-        arg = arg&.parameterize if self.class.parameterize_slug
+        arg = BetterTogether::FriendlySlug.normalize_slug_preserving_namespace(arg) if self.class.parameterize_slug
         self.slug = super(arg&.strip)
       end
 
@@ -56,7 +56,7 @@ module BetterTogether
       return if self[:identifier].blank?
 
       self.slug = loop do
-        autogen_slug = identifier.parameterize
+        autogen_slug = BetterTogether::FriendlySlug.normalize_slug_preserving_namespace(identifier)
         break autogen_slug unless self.class.base_class.exists?(slug: autogen_slug)
 
         autogen_slug = "#{autogen_slug}-#{SecureRandom.alphanumeric(10)}"

@@ -41,6 +41,30 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
     end
   end
 
+  def registration_params(user_params: valid_user_params, invitation_code: nil, with_agreements: true)
+    params = { user: user_params }
+    if with_agreements
+      params[:terms_of_service_agreement] = '1'
+      params[:privacy_policy_agreement] = '1'
+      params[:code_of_conduct_agreement] = '1'
+    end
+    params[:invitation_code] = invitation_code if invitation_code.present?
+    params.merge(bot_defense_payload)
+  end
+
+  def bot_defense_payload(form_id = :registration)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
+    {
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
+      }
+    }
+  end
+
   describe 'when platform requires_invitation is true' do
     let!(:platform) do
       platform = configure_host_platform
@@ -56,12 +80,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
 
       it 'blocks registration and shows error' do
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1'
-          }
+          post '/en/users', params: registration_params
         end.not_to change(BetterTogether::User, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -86,22 +105,37 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
       end
     end
 
-    context 'when the platform allows host-community membership requests' do
+    context 'when only the platform allows host-community membership requests' do
       before do
         platform.update!(allow_membership_requests: true)
       end
 
-      it 'shows the membership request section below the invitation prompt' do
+      it 'keeps the membership request section hidden until the community opts in' do
         get '/en/users/sign-up'
 
         expect(response).to have_http_status(:ok)
-        expect_html_content('Request membership instead')
-        expect(response.body).to include('membership_request_form')
+        expect(response.body).not_to include('Request membership instead')
+        expect(response.body).not_to include('membership_request_form')
       end
     end
 
-    context 'when the host community allows membership requests' do
+    context 'when only the host community allows membership requests' do
       before do
+        platform.primary_community.update!(allow_membership_requests: true)
+      end
+
+      it 'keeps the membership request section hidden until the platform also opts in' do
+        get '/en/users/sign-up'
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('Request membership instead')
+        expect(response.body).not_to include('membership_request_form')
+      end
+    end
+
+    context 'when both the platform and host community allow membership requests' do
+      before do
+        platform.update!(allow_membership_requests: true)
         platform.primary_community.update!(allow_membership_requests: true)
       end
 
@@ -127,13 +161,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
       it 'allows registration and accepts invitation' do
         expect(invitation.reload.status).to eq('pending')
 
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1',
-          invitation_code: invitation.token
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token)
 
         user = BetterTogether::User.find_by(email: invitee_email)
         expect(user).to be_present
@@ -157,6 +185,17 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
         # Hidden field should contain invitation code
         expect(response.body).to include('invitation-code-field')
         expect(response.body).to include(invitation.token)
+      end
+
+      it 'rejects registration when the required agreements are missing' do
+        expect do
+          post '/en/users',
+               params: registration_params(invitation_code: invitation.token, with_agreements: false)
+        end.not_to change(BetterTogether::User, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(invitation.reload.status).to eq('pending')
+        expect_html_content(I18n.t('devise.registrations.new.agreements_required'))
       end
     end
 
@@ -184,12 +223,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
 
         # Then attempt registration
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1'
-          }
+          post '/en/users', params: registration_params
         end.to change(BetterTogether::User, :count).by(1)
 
         user = BetterTogether::User.find_by(email: invitee_email)
@@ -207,15 +241,37 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
                status: 'pending')
       end
 
+      before do
+        platform.update!(allow_membership_requests: true)
+        platform.primary_community.update!(allow_membership_requests: true)
+      end
+
+      it 'shows the registration form on GET new with a community invitation' do
+        get "/en/users/sign-up?invitation_code=#{invitation.token}"
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content(I18n.t('devise.registrations.new.sign_up'))
+        expect(response.body).to include('invitation-code-field')
+        expect(response.body).to include(invitation.token)
+        expect(response.body).not_to include('Request membership instead')
+      end
+
+      it 'keeps the registration form available when the community invitation is stored in session' do
+        get "/en/users/sign-up?invitation_code=#{invitation.token}"
+        expect(response).to have_http_status(:ok)
+
+        get '/en/users/sign-up'
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content(I18n.t('devise.registrations.new.sign_up'))
+        expect(response.body).to include('invitation-code-field')
+        expect(response.body).to include(invitation.token)
+        expect(response.body).not_to include('Request membership instead')
+      end
+
       it 'allows registration with community invitation code' do
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1',
-            invitation_code: invitation.token
-          }
+          post '/en/users', params: registration_params(invitation_code: invitation.token)
         end.to change(BetterTogether::User, :count).by(1)
 
         user = BetterTogether::User.find_by(email: invitee_email)
@@ -239,15 +295,18 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
                status: 'pending')
       end
 
+      it 'shows the registration form on GET new with an event invitation' do
+        get "/en/users/sign-up?invitation_code=#{invitation.token}"
+
+        expect(response).to have_http_status(:ok)
+        expect_html_content(I18n.t('devise.registrations.new.sign_up'))
+        expect(response.body).to include('invitation-code-field')
+        expect(response.body).to include(invitation.token)
+      end
+
       it 'allows registration with event invitation code' do
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1',
-            invitation_code: invitation.token
-          }
+          post '/en/users', params: registration_params(invitation_code: invitation.token)
         end.to change(BetterTogether::User, :count).by(1)
                                                    .and change(BetterTogether::EventAttendance, :count).by(1)
 
@@ -266,13 +325,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
     context 'with invalid invitation code' do
       it 'blocks registration and shows error' do
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1',
-            invitation_code: 'invalid-token-12345'
-          }
+          post '/en/users', params: registration_params(invitation_code: 'invalid-token-12345')
         end.not_to change(BetterTogether::User, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -294,13 +347,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
 
       it 'blocks registration and shows error' do
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1',
-            invitation_code: invitation.token
-          }
+          post '/en/users', params: registration_params(invitation_code: invitation.token)
         end.not_to change(BetterTogether::User, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -321,13 +368,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
 
       it 'blocks registration and shows error' do
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1',
-            invitation_code: invitation.token
-          }
+          post '/en/users', params: registration_params(invitation_code: invitation.token)
         end.not_to change(BetterTogether::User, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -347,12 +388,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
 
     it 'allows open registration without invitation code' do
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1'
-        }
+        post '/en/users', params: registration_params
       end.to change(BetterTogether::User, :count).by(1)
 
       user = BetterTogether::User.find_by(email: invitee_email)
@@ -376,13 +412,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
                           status: 'pending')
 
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1',
-          invitation_code: invitation.token
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token)
       end.to change(BetterTogether::User, :count).by(1)
 
       user = BetterTogether::User.find_by(email: invitee_email)
@@ -410,13 +440,10 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
         # NOTE: Current system allows this - invitation email is for sending the invitation,
         # not for validating who can use it. The token itself is the authorization.
         expect do
-          post '/en/users', params: {
-            user: valid_user_params, # Using different email
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1',
+          post '/en/users', params: registration_params(
+            user_params: valid_user_params,
             invitation_code: invitation.token
-          }
+          )
         end.to change(BetterTogether::User, :count).by(1)
 
         user = BetterTogether::User.find_by(email: invitee_email)
@@ -447,13 +474,7 @@ RSpec.describe 'Invitation-Required Platform Registration', :no_auth, :skip_host
 
         # Then register with platform invitation in params
         expect do
-          post '/en/users', params: {
-            user: valid_user_params,
-            terms_of_service_agreement: '1',
-            privacy_policy_agreement: '1',
-            code_of_conduct_agreement: '1',
-            invitation_code: platform_invitation.token
-          }
+          post '/en/users', params: registration_params(invitation_code: platform_invitation.token)
         end.to change(BetterTogether::User, :count).by(1)
 
         user = BetterTogether::User.find_by(email: invitee_email)

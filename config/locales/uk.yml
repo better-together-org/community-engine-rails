@@ -562,6 +562,10 @@ uk:
                 особи, цільової особи та активного підключення платформи
             target:
               must_be_person: повинна бути особою
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: вже має запис про розрахунок
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -576,8 +580,14 @@ uk:
           attributes:
             active:
               must_be_true_for_primary: повинно бути правдою для основного домену
+              must_be_true_for_share_domain: повинно бути правдою для домену поширення
             primary:
               already_taken_for_platform: вже зайнятий для цієї платформи
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: не є дійсною URL-адресою
+              invalid_scheme: повинна використовувати http або https
     models:
       action_text/encrypted_rich_text: зашифрований багатий текст
       action_text/rich_text: багатий текст
@@ -695,9 +705,17 @@ uk:
           open: Люди можуть створити обліковий запис і приєднатися без очікування
             схвалення.
       form:
-        community_help: Виберіть, чи люди приєднуються одразу, чи спочатку мають подати
-          запит.
+        community_help: Виберіть, чи ця спільнота працює лише за запрошенням, чи може
+          дозволяти запити на членство.
+        community_invitation_help: Спільноти за замовчуванням є лише за запрошенням.
+          Вимикайте це лише тоді, коли свідомо хочете дозволити самостійний вступ
+          або запити на членство.
+        community_invitation_only: Вимагати запрошення, перш ніж людина зможе приєднатися
+          до цієї спільноти
         community_requests: Вимагати запит на доступ перед тим, як людина стане учасником
+        community_requests_hint: Запити на вступ до спільноти залишаються закритими,
+          якщо і ця спільнота, і платформа не дозволяють запити, а режим лише за запрошенням
+          вимкнено.
         platform_help: Виберіть, чи люди можуть створити обліковий запис одразу, чи
           спочатку їм потрібне запрошення.
         platform_invitation_help: Запрошення можуть заздалегідь заповнювати адресу
@@ -737,13 +755,24 @@ uk:
       add: Додати
       title: Умови угоди
     agreements:
+      accept: Я погоджуюся
+      accept_action:
+        accepted: Угоду прийнято.
+        ineligible_flow: Цю угоду неможливо прийняти через цей потік.
+        no_participant: Немає учасника, доступного для прийняття угоди.
+      accept_error: Зараз неможливо зафіксувати прийняття угоди.
+      accepted: Погоджено
+      accepting: Збереження...
       create:
         acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
         successfully_accepted: Дякуємо за прийняття обов'язкових угод.
       form:
+        active_for_consent: Активний для згоди
+        agreement_kind: Тип угоди
         page_help: Якщо встановлено, буде відображено вміст пов'язаної сторінки замість
           умов угоди.
         page_label: Пов'язана сторінка (необов'язково)
+        required_for: Обов’язково для
       no_terms: Умови не визначено.
       notice:
         body: Будь ласка, перегляньте повну угоду перед прийняттям.
@@ -798,6 +827,24 @@ uk:
         view_agreement: Переглянути угоду
     application:
       name: Better Together
+    authorable_contributor_visibility:
+      hints:
+        community: Перевизначає типовий параметр платформи для сторінок цієї спільноти
+          або успадковує параметр платформи.
+        page: Визначає, чи показує ця сторінка підписи учасників у публічних переглядах,
+          чи успадковує параметр спільноти або платформи.
+        platform: Встановлює типову видимість підписів для сторінок і дописів, якщо
+          спільнота або окремий запис не перевизначить її.
+        post: Визначає, чи показує цей допис підписи учасників у публічних переглядах,
+          чи успадковує параметр платформи.
+      labels:
+        community: Видимість учасників для спільноти
+        platform: Типова видимість учасників
+        record: Видимість учасників
+      options:
+        'false': Приховати підписи учасників
+        inherit: Успадкувати
+        'true': Показувати підписи учасників
     authorship_mailer:
       authorship_changed_notification:
         greeting: Привіт %{recipient_name},
@@ -812,9 +859,39 @@ uk:
         subject_removed_by: "%{actor_name} видалив ваше авторство з %{page}"
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
+    bot_defense:
+      errors:
+        expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму
+          та спробуйте ще раз.
+        generic: Не вдалося пройти перевірку безпеки. Спробуйте ще раз.
+        honeypot_triggered: Не вдалося пройти перевірку безпеки. Спробуйте ще раз.
+        invalid_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму
+          та спробуйте ще раз.
+        replayed_challenge: Цю перевірку безпеки вже використано. Перезавантажте форму
+          та спробуйте ще раз.
+        submitted_too_quickly: Будь ласка, витратьте трохи часу на перевірку перед
+          надсиланням.
+      trap_label: Залиште це поле порожнім
     buildings:
       add: Додати
       title: Будівлі
+    c3:
+      balance_card:
+        available: Доступно
+        explainer: Tree Seeds - це кредити за внески до спільноти, які ви отримуєте,
+          ділючись своїм часом, навичками та ресурсами. Вони можуть бути обмінені
+          на послуги, запропоновані іншими членами спільноти.
+        lifetime: Отримано за життя
+        network_available: Мережа доступна
+        network_description: Tree Seeds отримані або отримані на всіх підключених
+          платформах.
+        network_lifetime: Мережа отримана за життя
+        reserved: Зарезервовано для угод
+        show_network_total: Показати мій загальний обсяг Tree Seeds між платформами
+        title: Ваші Tree Seeds
+      tree_seed: Tree Seed
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Календар за замовчуванням для %<community_name>s
       personal_calendar_name: Особистий календар %{name}
@@ -886,11 +963,44 @@ uk:
           для цієї спільноти, коли це дозволяє налаштована модель доступу.
       index:
         new_btn_text: Нова спільнота
+      membership_review:
+        description:
+          few: "%{community_name} має %{count} відкриті запити на членство, готові
+            до розгляду."
+          many: "%{community_name} має %{count} відкритих запитів на членство, готових
+            до розгляду."
+          one: "%{community_name} має 1 відкритий запит на членство, готовий до розгляду."
+          other: "%{community_name} має %{count} відкритого запиту на членство, готового
+            до розгляду."
+        heading: Розгляд запитів на членство
+        open_requests_badge:
+          few: "%{count} відкриті запити"
+          many: "%{count} відкритих запитів"
+          one: 1 відкритий запит
+          other: "%{count} відкритого запиту"
+        review_link: Переглянути запити
       new:
         title: Спільноти
       none-yet: Поки що немає
       show:
+        about:
+          no_description: Опис відсутній.
+        actions:
+          destroy_aria: Видалити спільноту
+          edit_aria: Редагувати спільноту
         create_event: Створити подію
+        events:
+          create_event: Створити подію
+          draft_heading: Чернетка
+        members:
+          add_member_modal:
+            close: Закрити
+            select_person: Вибрати особу *
+            select_person_prompt: Вибрати особу
+            select_role: Вибрати роль *
+            submit: Додати
+            title: Додати нового учасника
+        sections_aria: Розділи спільноти
       tabs:
         buildings: Будівлі
         contact_details: Контактні деталі
@@ -950,8 +1060,12 @@ uk:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: Елементи не налаштовано.
           items_json_help: Масив JSON об'єктів з ключами "question" та "answer".
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Associated Pages
         checklist_block:
           not_found: Контрольний список не знайдено.
@@ -971,10 +1085,22 @@ uk:
           open_in_new_tab: Відкрити вбудований вміст у новій вкладці
         events_block:
           empty: Немає подій для відображення.
+        fields:
+          image:
+            library:
+              empty: У вашій бібліотеці ще немає доступних перевірених завантажень
+                зображень.
+              empty_hint: Спочатку завантажте зображення або перейдіть до людини,
+                яка його завантажила.
+              open: Вибрати з бібліотеки
+              scope_hint: Тут доступні лише ваші перевірені завантаження зображень.
+              title: Вибрати з бібліотеки
+              view_uploads: Переглянути завантаження та статуси перевірки
         hero:
           editor:
             background: Тло
             cta_button: Кнопка заклику до дії
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Укажіть дійсну URL-адресу, що починається з http:// або
               https://.
             heading_color: Колір заголовка
@@ -987,6 +1113,12 @@ uk:
           missing_url: URL iframe не налаштовано.
           url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
             або інше довірене вбудовування зі спільнотного простору.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -1025,8 +1157,14 @@ uk:
             область спільноти та порядок.
           resource_ids_placeholder: Залиште порожнім для відображення останніх записів
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
             "icon" (клас Font Awesome).
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Типовий шаблон
           host_community_contact_details: Контактні дані спільноти-хоста
@@ -1092,6 +1230,21 @@ uk:
         restricted:
           message: "%{filename} наразі обмежено, поки його перевіряє рецензент."
           title: Вкладення обмежено
+    contributions:
+      form:
+        add: Додати учасника
+        contributor: Учасник
+        contributor_type: Тип учасника
+        description: Призначайте людей або роботів для цього запису з чітко визначеними
+          ролями внеску.
+        entry_help: Виберіть тип учасника, самого учасника та роль.
+        heading: Учасники внеску
+        new_entry: Новий учасник
+        person: Людина
+        remove: Видалити учасника
+        robot: Робот
+        role: Роль
+        select_contributor: Виберіть учасника
     conversation_mailer:
       new_message_notification:
         from_address: Нове повідомлення через %{from_address}
@@ -1513,6 +1666,71 @@ uk:
         many: неправильна довжина (точно %{count} символів)
         one: неправильна довжина (точно %{count} символ)
         other: неправильна довжина (точно %{count} символів)
+    feature_access_grants:
+      created: Доступ до функцій створено.
+      edit:
+        title: Редагувати доступ до функцій
+      form:
+        access_level: Рівень доступу
+        current_rollout: Поточний етап розгортання
+        expires_at: Діє до
+        feature: Функція
+        notes: Нотатки
+        person: Людина
+        person_prompt: Знайти людину
+        unknown_rollout: Невідома або вилучена функція
+      index:
+        description: Надавайте beta або alpha доступ окремим людям без розширення
+          дозволів їхньої ролі на платформі.
+        empty: Для цієї платформи ще не створено жодного явного доступу до функцій.
+        new: Новий доступ
+        revoke: Відкликати
+        revoke_confirm: Відкликати цей доступ до функцій?
+        title: Доступи до функцій
+      new:
+        title: Новий доступ до функцій
+      revoked: Доступ до функцій відкликано.
+      status:
+        active: Активний
+        revoked: Неактивний
+      table:
+        access_level: Рівень доступу
+        actions: Дії
+        expires_at: Діє до
+        feature: Функція
+        granted_by: Надано %{name}
+        no_expiry: Без строку дії
+        person: Людина
+        status: Статус
+      updated: Доступ до функцій оновлено.
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: 'Пропущено %{model_name} %{record_id}: конфлікт
+            ідентифікатора для %{identifier}'
+          skipped_missing_source_platform: 'Пропущено %{model_name} %{record_id}:
+            не вдалося визначити платформу-джерело'
+          title: Зворотне заповнення дзеркальних федеративних ідентифікаторів
+      ingest:
+        errors:
+          connection_required: потрібне з'єднання
+          seeds_payload_too_large: Завеликий пакет насіння (%{count} > %{max_count}).
+            Використовуйте FederatedContentPullJob для великих пакетів.
+        sync_summary:
+          few: Федеративне отримання завершилося з %{count} конфліктами дзеркального
+            вмісту
+          many: Федеративне отримання завершилося з %{count} конфліктами дзеркального
+            вмісту
+          one: Федеративне отримання завершилося з 1 конфліктом дзеркального вмісту
+          other: Федеративне отримання завершилося з %{count} конфліктами дзеркального
+            вмісту
+      mirroring:
+        content_types:
+          event: події
+          page: сторінки
+          post: допису
+        errors:
+          not_authorized: 'дзеркалювання %{content_type} не дозволено: %{reason}'
     feedback_routing:
       audience:
         community_stewards: відповідальні за вміст спільноти
@@ -1716,6 +1934,9 @@ uk:
         request: Request
         request_creator: Request Creator
         show:
+          agreement_family: Сімейство угод
+          agreement_type: Тип угоди
+          decision_made_at: Час фіксації рішення
           details: Details
           open_platform_connections: Відкрити з'єднання платформ
           platform_connection: Підключення платформи
@@ -1777,7 +1998,7 @@ uk:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Взаємодопомога
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1830,6 +2051,11 @@ uk:
         placeholders:
           search: Search by title or description
         title: Search
+      settlement:
+        cancelled_html: Резервування %{amount} було повернено до вашого балансу.
+        completed_html: "%{amount} були обмінені %{date}."
+        pending_html: "%{amount} зарезервовано, очікування завершення обміну."
+        status_label: Статус Tree Seeds угоди
       status:
         any: Any
         closed: Closed
@@ -1850,7 +2076,7 @@ uk:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: Нова відповідність Joatu
+        subject: Нова відповідність взаємодопомоги
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
@@ -1904,6 +2130,23 @@ uk:
         signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
         signature_text: З найкращими побажаннями, Команда %{community_name}
         subject: Ваш запит на членство в %{community_name} відхилено
+      digest:
+        greeting: Вітаємо, %{name}!
+        message:
+          few: "%{count} нові запити на членство тепер потребують розгляду для %{community_name}."
+          many: "%{count} нових запитів на членство тепер потребують розгляду для
+            %{community_name}."
+          one: 1 новий запит на членство тепер потребує розгляду для %{community_name}.
+          other: "%{count} нового запиту на членство тепер потребує розгляду для %{community_name}."
+        requestors_label: Нещодавні заявники й заявниці
+        review_requests: Переглянути запити на членство
+        signature_html: З найкращими побажаннями,<br /> Команда %{community_name}
+        signature_text: З найкращими побажаннями, Команда %{community_name}
+        subject:
+          few: "%{count} запити на членство потребують розгляду для %{community_name}"
+          many: "%{count} запитів на членство потребують розгляду для %{community_name}"
+          one: 1 запит на членство потребує розгляду для %{community_name}
+          other: "%{count} запиту на членство потребує розгляду для %{community_name}"
       submitted:
         greeting: Вітаємо, %{name}!
         message: "%{requestor_name} попросив(ла) приєднатися до %{community_name}."
@@ -2107,6 +2350,7 @@ uk:
           medium_results: Середня
           no_results: Без результатів
           result_quality: Середня кількість результатів на пошук
+        loading: Завантаження...
         search_health:
           backend: Backend
           db_count: Кількість у БД
@@ -2143,7 +2387,6 @@ uk:
       shares_controller:
         error_tracking: 'Помилка відстеження поширення:'
         failed_tracking: Не вдалося відстежити поширення.
-        ga_not_initialized: Google Analytics не ініціалізовано.
         unsupported_platform: 'Непідтримувана платформа: %{platform}'
       user_account_reports_controller:
         create:
@@ -2253,15 +2496,21 @@ uk:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_membership_review: Membership Review
+        host_dashboard_platform_connection_review: Federation Review
+        host_dashboard_safety_review: Safety Review
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
         pages: Pages
         people: People
+        platform_connections: Підключення платформ
         platforms: Platforms
+        reports: Звіти
         resource_permissions: Resource Permissions
         roles: Roles
+        safety_cases: Огляд безпеки
         users: Users
       visibility_strategies:
         authenticated: Авторизовані користувачі
@@ -2274,6 +2523,21 @@ uk:
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Насіння дерева зарезервовано для вашої угоди. Вони будуть
+              звільнені, якщо угоду скасують."
+            title: Насіння дерева зарезервовано
+          mailer:
+            activity_header: "%{amount} Насіння дерева мають активність у вашій угоді."
+            view_agreement: Переглянути угоду
+          released:
+            body: "%{amount} Насіння дерева повернено на ваш баланс."
+            title: Резервування Насіння дерева звільнено
+          settled:
+            body: "%{amount} Насіння дерева обміняно. Ваш баланс оновлено."
+            title: Насіння дерева обміняно
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2306,6 +2570,11 @@ uk:
       membership_request_declined:
         body: Ваш запит на приєднання до %{community_name} відхилено
         title: Запит на членство в %{community_name} відхилено
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} попросив(ла) приєднатися до %{community_name}"
         title: Новий запит на членство в %{community_name}
@@ -2324,6 +2593,25 @@ uk:
         body: Нову інтеграцію облікового запису %{provider} підключено %{created_at}
         message: Нову інтеграцію %{provider} підключено %{created_at}
         title: Підключено нову інтеграцію %{provider}
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: "%{time} ago"
     oauth:
       applications:
@@ -2398,12 +2686,8 @@ uk:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
-        new_release_package_draft: Новий чернетковий пакет релізу
         search_by_slug: Search by slug...
         search_by_title: Search by title...
-      release_package_draft:
-        created: 'Створено приватну чернетку пакета релізу. Пов’язаний чернетковий
-          допис: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -2635,7 +2919,15 @@ uk:
           платформи.
         suspended: З'єднання призупинено.
       form:
+        allow_c3_exchange: Дозволити обмін Насінням дерева з цією платформою
         back: Назад
+        c3_exchange_hint: Коли увімкнено, учасники цієї платформи можуть надсилати
+          та отримувати Насіння дерева з %{platform}. Обидві платформи повинні це
+          увімкнути для роботи обміну.
+        c3_exchange_legend: Обмін Насінням дерева
+        c3_exchange_rate_hint: Скільки Насіння дерева тут дорівнює 1 Насінню дерева
+          на %{platform}? Залиште 1.0 для рівної вартості.
+        c3_exchange_rate_label: Курс обміну
         connection_kind_hint: 'Учасник: ця платформа приймає учасників іншої. Партнер:
           рівноправне партнерство між незалежними платформами.'
         content_sharing_policy_hint: Визначає спосіб синхронізації публічного вмісту.
@@ -2769,6 +3061,9 @@ uk:
           завантажувати зображення. Виберіть довірені джерела або введіть новий hostname/джерело
           й натисніть Enter.
         csp_img_src_text_label: Дозволені зовнішні джерела зображень
+        feature_gates_hint: Виберіть, який етап розгортання потрібен для кожної функції
+          на цій платформі.
+        feature_gates_title: Контролі розгортання функцій
         host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
           Використовується для її ідентифікації у федерації та генерації URL-адрес
           OAuth-ендпоінту. Для production має бути HTTPS.
@@ -2925,6 +3220,62 @@ uk:
         none: Ролі не призначено
     resources:
       membership_request: Запит на членство
+    robots:
+      created: Робота успішно створено.
+      destroyed: Робота успішно видалено.
+      edit:
+        subtitle: Налаштуйте провайдера, модель, prompt і параметри виконання для
+          цього робота платформи.
+        title: Редагувати %{name} для %{platform_name}
+      form:
+        assume_model_exists: Вважати, що модель існує
+        assume_model_exists_help: Увімкніть лише тоді, коли ви знаєте, що шлях провайдер/модель
+          існує.
+        cancel: Скасувати
+      index:
+        back_to_platform: Назад до платформи
+        delete: Видалити
+        delete_confirm: Видалити %{name}?
+        edit: Редагувати
+        global_read_only: Глобальний резерв
+        new_robot: Додати робота
+        scope: Обсяг
+        status: Статус
+        subtitle: Керуйте роботами платформи та успадкованими глобальними резервами
+          з одного місця.
+        title: LLM-роботи для %{platform_name}
+      new:
+        subtitle: Створіть перевизначення робота для цієї платформи. Облікові дані
+          залишаються в конфігурації середовища.
+        title: Новий робот для %{platform_name}
+      readiness:
+        configured: Налаштовано
+        credentials_help: Роботи на базі OpenAI і далі використовують середовище розгортання
+          для облікових даних.
+        hidden: Прихована
+        missing: Відсутні
+        no_translation_robot: Для цієї платформи не визначено робота перекладу.
+        openai_credentials: Облікові дані OpenAI
+        ready: Готово
+        shown: Показана
+        translation_provider: Провайдер перекладу
+        translation_ui: Інтерфейс перекладу
+        translation_ui_help: Керування перекладом з'являється лише тоді, коли визначений
+          робот перекладу має доступного провайдера.
+        unavailable: Недоступно
+      scope_labels:
+        global_fallback: Глобальний резерв
+        platform_override: Перевизначення платформи
+      statuses:
+        active: Активний
+        inactive: Неактивний
+        inactive_translation: Неактивний робот перекладу
+        provider_ready: Провайдер доступний
+        provider_unavailable: Провайдер недоступний
+        translation_not_selected: Це не ефективний робот перекладу для цієї платформи
+        translation_ui_disabled: Інтерфейс перекладу приховано для цієї платформи
+        translation_ui_enabled: Інтерфейс перекладу увімкнено для цієї платформи
+      updated: Робота успішно оновлено.
     roles:
       index:
         new_role: Нова роль
@@ -3123,6 +3474,32 @@ uk:
           description: Підключіть і керуйте своїми обліковими записами зовнішніх платформ.
           title: Підключені облікові записи
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Перегляньте дозволи, які ви надали пов'язаним людям,
+                  і ті, які вони надали вам у відповідь.
+                open_link: Відкрити дозволи доступу
+                title: Дозволи доступу
+              linked_seeds:
+                description: Переглядайте синхронізовані дані, поширені через ваші
+                  підтверджені платформні зв'язки.
+                open_link: Відкрити пов'язані seeds
+                title: Пов'язані seeds
+              person_links:
+                description: Перегляньте людей і федеративні зв'язки, які зараз пов'язані
+                  з вашим обліковим записом.
+                open_link: Відкрити пов'язаних людей
+                title: Пов'язані люди
+              person_seeds:
+                description: Відкрийте переносні seed-експорти для розширених сценаріїв
+                  портативності та взаємодії.
+                open_link: Відкрити переносні seed-експорти
+                title: Переносні seed-експорти
+            description: Отримуйте доступ до пов'язаних людей, дозволів доступу, синхронізованих
+              даних та переносних експортів з одного місця.
+            open_link: Відкрити
+            title: Обмін і портативність даних
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -3147,11 +3524,19 @@ uk:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: Цей експорт не вдалося підготувати. Будь ласка, запросіть
+              новий експорт.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Завершено
+              failed: Помилка
+              pending: Очікується
+              processing: Обробляється
+            table_caption: Останні запити на експорт облікового запису
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
@@ -3202,8 +3587,10 @@ uk:
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
+      copy_short_link: Копіювати коротке посилання
       default_title: Check this out!
       facebook: Share on Facebook
+      get_short_link: Отримати коротке посилання
       linkedin: Share on LinkedIn
       pinterest: Pin
       reddit: Share on Reddit
@@ -3219,6 +3606,47 @@ uk:
         name: Enter a name (at least one locale must be filled)
         slug: URL‑friendly identifier (unique across locales)
       unpublished: Unpublished
+    short_links:
+      edit:
+        page_title: Редагувати коротке посилання
+      form:
+        back: Назад до коротких посилань
+        code: Короткий код (залиште порожнім для автоматичної генерації)
+        code_hint: Лише малі літери, цифри та дефіси
+        expires_at: Закінчується (необов'язково)
+        save: Зберегти
+        status: Статус
+        target_url: Цільовий URL
+        view: Переглянути
+      index:
+        copy_url: Копіювати коротке посилання
+        delete: Видалити коротке посилання
+        edit: Редагувати коротке посилання
+        empty: Ще немає коротких посилань.
+        new_btn: Нове коротке посилання
+        page_title: Короткі посилання
+        table:
+          clicks: Кліки
+          code: Код
+          expires: Закінчується
+          status: Статус
+          target: Цільовий URL
+          title: Заголовок
+        view: Переглянути коротке посилання
+      new:
+        page_title: Нове коротке посилання
+      show:
+        back: Назад до коротких посилань
+        clicks: Всього кліків
+        copy: Копіювати
+        created_at: Створено
+        delete: Видалити
+        edit: Редагувати
+        expires_at: Закінчується
+        page_title: Коротке посилання
+        short_url: Короткий URL
+        status: Статус
+        target_url: Цільовий URL
     social_media_accounts:
       add: Додати акаунт соціальних мереж
       handle: Нікнейм
@@ -3277,7 +3705,7 @@ uk:
         table_aria: Storage configurations
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
-      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
       new:
         subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
@@ -3296,6 +3724,7 @@ uk:
         translation_failed: 'Переклад не вдався: %{message}'
         translation_request_failed: Запит на переклад не вдався. Будь ласка, спробуйте
           знову.
+        translation_unavailable: Переклад наразі недоступний для цієї платформи.
     uploads:
       content_security:
         badge:
@@ -3311,6 +3740,15 @@ uk:
           review_required: Це завантаження проходить перевірку, перш ніж його можна
             буде вставити в розширений текст або поширити.
       index:
+        filter_group_aria: Фільтрувати завантаження за статусом перевірки
+        filters:
+          all: Усі (%{count})
+          clean: Готові (%{count})
+          restricted: Обмежені (%{count})
+          review_required: На перевірці (%{count})
+        review_status_description: Тут відображаються підрахунки перевірки, щоб ви
+          могли швидко знайти схвалені, утримані або обмежені завантаження.
+        review_status_heading: Статус перевірки
         storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:
@@ -3945,6 +4383,7 @@ uk:
     joatu:
       agreement:
         accepted: Угоду прийнято
+        fulfilled: Угоду виконано — C3 передано творцю пропозиції.
         rejected: Угоду відхилено
       response_links:
         offer_created: Пропозицію створено у відповідь на запит.
@@ -4014,8 +4453,10 @@ uk:
       attendees: Учасники
       contact: Контакт
       events: Події
+      federation: Федерація
       invitations: Запрошення
       members: Учасники
+      safety: Безпека
     to: До
     'true': так
     undo_clear: Скасувати очищення
@@ -4026,6 +4467,7 @@ uk:
     visible: Видимий
     'yes': Так
   helpers:
+    cancel: Скасувати
     close: Закрити
     errors:
       heading: Помилки форми
@@ -4102,13 +4544,119 @@ uk:
       infrastructure: Інфраструктура
       page_title: Панель керування хоста
       title: Панель керування хоста
+    membership_review:
+      anonymous_requester: Анонімний запитувач
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        few: "%{count} communities with open requests"
+        many: "%{count} communities with open requests"
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        few: "%{count} open requests"
+        many: "%{count} open requests"
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        few: "%{count} open requests"
+        many: "%{count} open requests"
+        one: 1 open request
+        other: "%{count} open requests"
+      page_title: Membership Review
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        few: "%{count} active connections"
+        many: "%{count} active connections"
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      page_title: Federation review
+      pending_badge:
+        few: "%{count} pending requests"
+        many: "%{count} pending requests"
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        few: "%{count} total connections"
+        many: "%{count} total connections"
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: Новий %{resource}
       none_yet: Поки що немає
       total_resources: Всього ресурсів
       view_all: Переглянути всі
+    safety_review:
+      description: Переглядайте чергу безпеки з панелі хоста. У межах видимості є
+        %{open_cases} відкритих кейсів і %{visible_reports} видимих звітів.
+      heading: Черга огляду безпеки
+      open_cases_badge:
+        few: "%{count} відкриті кейси"
+        many: "%{count} відкритих кейсів"
+        one: 1 відкритий кейс
+        other: "%{count} відкритого кейсу"
+      page_title: Огляд безпеки
+      review_queue_link: Відкрити чергу огляду
+      summary:
+        content_review_items: Елементи перевірки контенту
+        participant_updates: Оновлення для учасників
+        retaliation_risk: Ризик помсти
+        unassigned_cases: Потребують призначення
+      summary_label: Підсумок огляду безпеки
+      urgent_cases_badge:
+        few: "%{count} термінові кейси"
+        many: "%{count} термінових кейсів"
+        one: 1 терміновий кейс
+        other: "%{count} термінового кейсу"
+      view_reports_link: Переглянути надіслані звіти
+      visible_reports_badge:
+        few: "%{count} видимі звіти"
+        many: "%{count} видимих звітів"
+        one: 1 видимий звіт
+        other: "%{count} видимого звіту"
   invitations:
     calculating: Обчислення
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Повернутися вгору
+        copyright: "%{community_name} © %{year}. Усі права захищено."
   locale_name: Українська
   locales:
     en: English
@@ -4268,6 +4816,68 @@ uk:
     actions:
       host_dashboard: Панель Керування Хоста
     confirm_delete: Підтвердіть видалення
+    show:
+      about:
+        access: 'Доступ:'
+        identifier: 'Ідентифікатор:'
+        protected: 'Захищена:'
+        protected_no: Ні
+        protected_yes: Так
+        time_zone: 'Часовий пояс:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Видалити платформу
+        edit_aria: Редагувати платформу
+        show_aria: Переглянути платформу
+        view_host_dashboard_aria: Переглянути панель хоста
+      federation:
+        connection_status: Статус
+        description: Перегляньте федеративні та платформні з'єднання, які зараз пов'язані
+          з %{platform}.
+        direction:
+          incoming: Вхідне з'єднання
+          outgoing: Вихідне з'єднання
+        empty_state: Ця платформа ще не має федеративних з'єднань.
+        new_connection: Нове з'єднання
+        open_connections: Відкрити з'єднання
+        summary:
+          active: Активні
+          pending: У черзі
+          total: Усього з'єднань
+        title: Федеративні з'єднання
+        view_connection: Переглянути з'єднання
+      members:
+        add_member_modal:
+          close: Закрити
+          search_placeholder: Шукати людей...
+          select_person: Вибрати особу *
+          select_role: Вибрати роль платформи *
+          submit: Додати
+          title: Додати нового учасника платформи
+      operations:
+        description: Відкривайте операції рівня хоста для цієї платформи без потреби
+          знати точну URL-адресу.
+        feature_access_grants: Керувати доступами до функцій
+        host_dashboard: Панель хоста
+        robot_management: Керувати LLM-роботами
+        storage_configurations: Керувати сховищем
+        title: Операції платформи
+      safety:
+        description: Переглядайте нові звіти, активні кейси безпеки та видимі для
+          учасників подальші кроки для %{platform}.
+        review_queue: Відкрити чергу перевірки
+        summary:
+          content_review_items: Елементи перевірки контенту
+          open_cases: Відкриті кейси
+          participant_updates: Оновлення для учасників
+          repeated_reports: Повторні об'єкти скарг
+          retaliation_risk_cases: Ризик помсти
+          unassigned_cases: Потребують призначення
+          urgent_cases: Термінові
+          visible_reports: Видимі звіти
+        title: Огляд безпеки
+        view_reports: Переглянути надіслані звіти
+      sections_aria: Розділи платформи
   pundit:
     errors:
       create: Вам не дозволено створювати цей %{resource}.

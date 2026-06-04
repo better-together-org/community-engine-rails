@@ -147,6 +147,19 @@ RSpec.describe 'Event Timezone Selector' do
       expect(response).to have_http_status(:success)
       expect(response_text).to include('London')
     end
+
+    it 'uses proxied attachment URLs in the edit form' do
+      event.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'event-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get edit_event_path(event, locale: I18n.default_locale)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(event.cover_image, only_path: true))
+    end
   end
 
   describe 'PATCH /events/:id', :as_platform_manager do

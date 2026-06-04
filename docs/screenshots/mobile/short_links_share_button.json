@@ -1,0 +1,49 @@
+{
+  "name": "short_links_share_button",
+  "device": "mobile",
+  "url": "/en/molestiae-dolores-itaque",
+  "title": "Molestiae dolores itaque. | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "short_links",
+  "flow": "short_links_share_button",
+  "source_spec": "./spec/docs_screenshots/better_together/short_links_spec.rb",
+  "callouts": [
+    {
+      "selector": "[data-better_together--clipboard-url-value]",
+      "title": "Share link button",
+      "bullets": [
+        "Appears in the share panel on any Shortlinkable content.",
+        "Clicking copies the short URL to clipboard — no page reload required."
+      ],
+      "target": {
+        "x": 23.0,
+        "y": 227.390625,
+        "width": 48.0,
+        "height": 38.390625,
+        "right": 71.0,
+        "bottom": 265.78125,
+        "center_x": 47.0,
+        "center_y": 246.5859375
+      },
+      "avoid": {
+        "x": 23.0,
+        "y": 227.390625,
+        "width": 48.0,
+        "height": 38.390625,
+        "right": 71.0,
+        "bottom": 265.78125,
+        "center_x": 47.0,
+        "center_y": 246.5859375
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 285.78,
+        "width": 270.0,
+        "height": 288,
+        "score": 995.21875
+      }
+    }
+  ]
+}

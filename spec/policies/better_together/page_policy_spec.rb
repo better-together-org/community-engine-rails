@@ -57,6 +57,22 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
 
         it { is_expected.to be true }
       end
+
+      context 'authorized robot' do
+        let(:user) do
+          create(
+            :robot,
+            platform: page.platform,
+            settings: {
+              bot_access_enabled: true,
+              bot_access_scopes: %w[read_public_content],
+              bot_access_token_digest: BetterTogether::Robot.bot_access_token_digest('token')
+            }
+          )
+        end
+
+        it { is_expected.to be true }
+      end
       # rubocop:enable RSpec/MultipleMemoizedHelpers
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
@@ -125,6 +141,23 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       end
       # rubocop:enable RSpec/MultipleMemoizedHelpers
     end
+
+    context 'for published private pages and an authorized robot' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:page) { private_published }
+      let(:user) do
+        create(
+          :robot,
+          platform: page.platform,
+          settings: {
+            bot_access_enabled: true,
+            bot_access_scopes: %w[read_private_content],
+            bot_access_token_digest: BetterTogether::Robot.bot_access_token_digest('token')
+          }
+        )
+      end
+
+      it { is_expected.to be true }
+    end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 
@@ -167,14 +200,14 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
   end
 
   describe 'Scope' do # rubocop:todo RSpec/MultipleMemoizedHelpers
-    subject { described_class::Scope.new(user, BetterTogether::Page).resolve }
+    subject(:resolved_scope) { described_class::Scope.new(user, BetterTogether::Page).resolve }
 
     # rubocop:todo RSpec/MultipleMemoizedHelpers
     context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { steward_user }
 
       it 'includes all pages' do
-        expect(subject).to match_array BetterTogether::Page.all # rubocop:todo RSpec/NamedSubject
+        expect(resolved_scope).to match_array BetterTogether::Page.all
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
@@ -184,9 +217,9 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       let(:user) { author_user }
 
       it 'includes authored and published public pages' do
-        expect(subject).to include(public_published, private_unpublished) # rubocop:todo RSpec/NamedSubject
-        expect(subject).not_to include(community_published) # rubocop:todo RSpec/NamedSubject
-        expect(subject).not_to include(public_unpublished, private_published) # rubocop:todo RSpec/NamedSubject
+        expect(resolved_scope).to include(public_published, private_unpublished)
+        expect(resolved_scope).not_to include(community_published)
+        expect(resolved_scope).not_to include(public_unpublished, private_published)
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
@@ -195,8 +228,8 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       let(:user) { editor_user }
 
       it 'includes contributed and published public pages' do
-        expect(subject).to include(public_published, private_unpublished)
-        expect(subject).not_to include(public_unpublished, private_published)
+        expect(resolved_scope).to include(public_published, private_unpublished)
+        expect(resolved_scope).not_to include(public_unpublished, private_published)
       end
     end
 
@@ -205,16 +238,14 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       let(:user) { normal_user }
 
       it 'includes published public pages and nothing else is guaranteed' do
-        expect(subject).to include(public_published) # rubocop:todo RSpec/NamedSubject
-        # rubocop:todo RSpec/NamedSubject
-        expect(subject).not_to include(community_published, public_unpublished, private_published, private_unpublished)
-        # rubocop:enable RSpec/NamedSubject
+        expect(resolved_scope).to include(public_published)
+        expect(resolved_scope).not_to include(community_published, public_unpublished, private_published, private_unpublished)
       end
 
       it 'does not treat a robot-authored private page as authored by an unrelated human user' do
         private_unpublished.authorships.where(author: author_person).delete_all
         private_unpublished.authorships.create!(author: robot_author)
-        expect(subject).not_to include(private_unpublished) # rubocop:todo RSpec/NamedSubject
+        expect(resolved_scope).not_to include(private_unpublished)
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
@@ -224,8 +255,8 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       let(:user) { community_member_user }
 
       it 'includes published pages scoped to the member community' do
-        expect(subject).to include(public_published, community_published) # rubocop:todo RSpec/NamedSubject
-        expect(subject).not_to include(public_unpublished, private_published, private_unpublished) # rubocop:todo RSpec/NamedSubject
+        expect(resolved_scope).to include(public_published, community_published)
+        expect(resolved_scope).not_to include(public_unpublished, private_published, private_unpublished)
       end
     end
 
@@ -234,10 +265,27 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       let(:user) { nil }
 
       it 'includes published public pages and nothing else is guaranteed' do
-        expect(subject).to include(public_published) # rubocop:todo RSpec/NamedSubject
-        # rubocop:todo RSpec/NamedSubject
-        expect(subject).not_to include(community_published, public_unpublished, private_published, private_unpublished)
-        # rubocop:enable RSpec/NamedSubject
+        expect(resolved_scope).to include(public_published)
+        expect(resolved_scope).not_to include(community_published, public_unpublished, private_published, private_unpublished)
+      end
+    end
+
+    context 'authorized robot' do
+      let(:user) do
+        create(
+          :robot,
+          platform: scoped_platform,
+          settings: {
+            bot_access_enabled: true,
+            bot_access_scopes: %w[read_private_content],
+            bot_access_token_digest: BetterTogether::Robot.bot_access_token_digest('token')
+          }
+        )
+      end
+
+      it 'includes published content across public, community, and private visibility levels' do
+        expect(resolved_scope).to include(public_published, community_published, private_published)
+        expect(resolved_scope).not_to include(public_unpublished, private_unpublished)
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers

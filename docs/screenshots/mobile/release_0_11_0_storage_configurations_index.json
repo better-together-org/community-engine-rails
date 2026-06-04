@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_storage_configurations_index",
+  "device": "mobile",
+  "url": "/en/host/platforms/community-engine-host/storage_configurations",
+  "title": "Storage Configurations | Community Engine Host",
+  "locale": "en",
+  "feature_set": "release_0_11_0_storage_adapter",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}

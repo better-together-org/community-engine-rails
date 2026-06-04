@@ -179,6 +179,8 @@ module BetterTogether
             download_metrics_reports
             view_platform_logs
             view_network
+            access_beta_features
+            access_alpha_features
           ],
           'platform_manager' => %w[
             read_platform
@@ -201,6 +203,8 @@ module BetterTogether
             download_metrics_reports
             view_platform_logs
             view_network
+            access_beta_features
+            access_alpha_features
           ],
           'network_admin' => %w[
             read_platform
@@ -238,6 +242,8 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_tech_support' => %w[
             read_platform
@@ -257,6 +263,8 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_developer' => %w[
             read_platform
@@ -276,6 +284,8 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_quality_assurance_lead' => %w[
             read_platform
@@ -295,6 +305,8 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_accessibility_officer' => %w[
             read_platform
@@ -314,6 +326,7 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
           ]
           # Add more mappings as needed...
         }
@@ -691,6 +704,14 @@ module BetterTogether
           {
             action: 'manage', target: 'platform_safety', resource_type: 'BetterTogether::Platform',
             identifier: 'manage_platform_safety', protected: true, position: 25
+          },
+          {
+            action: 'view', target: 'beta_features', resource_type: 'BetterTogether::Platform',
+            identifier: 'access_beta_features', protected: true, position: 26
+          },
+          {
+            action: 'view', target: 'alpha_features', resource_type: 'BetterTogether::Platform',
+            identifier: 'access_alpha_features', protected: true, position: 27
           }
         ]
       end

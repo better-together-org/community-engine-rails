@@ -29,6 +29,10 @@ module BetterTogether
         filter :privacy
         filter :protected
         filter :host
+        filter :slug, apply: lambda { |records, value, _options|
+          matching_ids = records.i18n.where(slug: Array(value)).pluck(:id)
+          records.where(id: matching_ids)
+        }
         filter :creator_id
 
         # Custom attribute methods

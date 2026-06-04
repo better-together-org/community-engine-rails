@@ -20,14 +20,6 @@
       <h1><%= resource_class.model_name.human.pluralize %></h1>
       <div class="d-flex gap-2">
         <% if policy(resource_class).create? %>
-          <%= button_to create_release_package_draft_pages_path,
-                        method: :post,
-                        params: { title: "Release Package #{Date.current.iso8601}" },
-                        class: 'btn btn-outline-primary',
-                        form_class: 'd-inline-block' do %>
-            <i class="fas fa-file-alt"></i> <%= t('better_together.pages.index.new_release_package_draft', default: 'New Release Package Draft') %>
-          <% end %>
-
           <%= link_to new_page_path, class: 'btn btn-primary', 'aria-label' => t('better_together.pages.index.new_page') do %>
             <i class="fas fa-plus"></i> <%= t('better_together.pages.index.new_page') %>
           <% end %>

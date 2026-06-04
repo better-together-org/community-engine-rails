@@ -15,8 +15,6 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     slugged :name
 
     searchable pg_search: {
@@ -88,10 +86,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif card_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        card_image.variant(:optimized_card_png).processed
+        card_image.variant(:optimized_card_png)
       else
         # Otherwise, use the optimized JPG variant
-        card_image.variant(:optimized_card_jpeg).processed
+        card_image.variant(:optimized_card_jpeg)
       end
     end
 
@@ -103,21 +101,11 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif cover_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        cover_image.variant(:optimized_png).processed
+        cover_image.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        cover_image.variant(:optimized_jpeg).processed
+        cover_image.variant(:optimized_jpeg)
       end
-    end
-
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        name:,
-        slug:,
-        identifier:,
-        description: description.present? ? search_text_value(description) : nil
-      }.compact.as_json
     end
 
     include ::BetterTogether::RemoveableAttachment

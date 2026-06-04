@@ -92,7 +92,7 @@ module BetterTogether
       ensure_authenticated!
       return if performed?
 
-      person = helpers.current_person
+      person = current_user&.person || helpers.current_person
       return unless invitee_authorized?(person)
 
       process_invitation_acceptance(person)

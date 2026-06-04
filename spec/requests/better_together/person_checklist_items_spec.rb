@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::PersonChecklistItemsController, :as_user do # rub
   include Devise::Test::IntegrationHelpers
 
   let(:user) { create(:user, :confirmed) }
-  let!(:person) { create(:better_together_person, user: user) }
+  let(:person) { user.person }
   let(:checklist) { create(:better_together_checklist) }
   let(:items) { create_list(:better_together_checklist_item, 3, checklist: checklist) }
 

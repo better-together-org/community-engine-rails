@@ -1,0 +1,50 @@
+<%# locals: (agreement:, acceptance_records:) %>
+<% if acceptance_records.any? %>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Participant</th>
+          <th>Status</th>
+          <th>Accepted</th>
+          <th>Method</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% acceptance_records.each do |acceptance_record| %>
+          <% participant = acceptance_record.participant %>
+          <tr>
+            <td>
+              <strong><%= participant.respond_to?(:name) ? participant.name : participant.to_s %></strong>
+              <div class="text-muted small"><%= acceptance_record.agreement_identifier_snapshot %></div>
+            </td>
+            <td>
+              <span class="badge <%= agreement_acceptance_badge_class(acceptance_record) %>">
+                <%= agreement_acceptance_state_label(acceptance_record) %>
+              </span>
+            </td>
+            <td>
+              <% if acceptance_record.accepted_at.present? %>
+                <%= l(acceptance_record.accepted_at, format: :long) %>
+              <% else %>
+                <span class="text-muted">Not recorded</span>
+              <% end %>
+            </td>
+            <td><%= acceptance_record.acceptance_method.to_s.humanize %></td>
+            <td>
+              <% flow = acceptance_record.audit_context.to_h['flow'].presence %>
+              <% source_path = acceptance_record.audit_context.to_h['source_path'].presence %>
+              <div><%= flow.present? ? flow.humanize : 'Recorded' %></div>
+              <% if source_path.present? %>
+                <div class="text-muted small"><%= source_path %></div>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="text-muted mb-0">No acceptance records yet.</p>
+<% end %>

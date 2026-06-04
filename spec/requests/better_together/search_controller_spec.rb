@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::SearchController', :as_user do
   let(:locale) { I18n.default_locale }
-  let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
+  let(:backend) { instance_double(BetterTogether::Search::BaseBackend, backend_key: :elasticsearch) }
   let(:capture_service) { instance_double(BetterTogether::Metrics::SearchQueryCaptureService, call: captured_query) }
   let(:captured_query) { 'test query' }
   let!(:host_platform) { configure_host_platform }
@@ -179,6 +179,71 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
 
         expect(response).to have_http_status(:ok)
         expect(visible_titles).not_to include('Borgberry Mutual Aid Offer')
+      end
+    end
+
+    context 'when a policy scope includes a polymorphic category preload', :no_auth do
+      let!(:event) do
+        create(
+          :better_together_event,
+          name: 'Community Gathering',
+          privacy: 'public',
+          starts_at: 1.day.from_now,
+          ends_at: 1.day.from_now + 2.hours
+        )
+      end
+      let!(:event_category) { create(:event_category, name: 'Community Events') }
+
+      before do
+        create(:categorization, categorizable: event, category: event_category)
+
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [event],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+      end
+
+      it 'renders visible results without raising on the policy scope preload' do
+        get better_together.search_path(locale:), params: { q: 'community' }
+
+        visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
+
+        expect(response).to have_http_status(:ok)
+        expect(visible_titles).to include('Community Gathering')
+      end
+    end
+
+    context 'when the backend returns a platform result', :no_auth do
+      let!(:platform_result) do
+        create(
+          :better_together_platform,
+          name: 'Community Engine Platform',
+          host_url: 'https://communityengine.app',
+          privacy: 'public'
+        )
+      end
+
+      it 'renders the default platform card instead of a table row partial' do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(
+            records: [platform_result],
+            suggestions: [],
+            status: :ok,
+            backend: :pg_search
+          )
+        )
+
+        get better_together.search_path(locale:), params: { q: 'community engine' }
+
+        platform_dom_id = ActionView::RecordIdentifier.dom_id(platform_result)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(%(div id="#{platform_dom_id}"))
+        expect(response.body).not_to include(%(<tr id="#{platform_dom_id}"))
       end
     end
 

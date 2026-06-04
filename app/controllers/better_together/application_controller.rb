@@ -18,6 +18,7 @@ module BetterTogether
     before_action :set_locale
     around_action :set_time_zone
     before_action :store_user_location!, if: :storable_location?
+    before_action :authenticate_robot_request
     before_action :handle_debug_mode
     before_action :set_debug_headers
 
@@ -27,9 +28,7 @@ module BetterTogether
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.
 
-    before_action do
-      Rack::MiniProfiler.authorize_request if current_user&.permitted_to?('manage_platform')
-    end
+    before_action :authorize_mini_profiler_if_enabled
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     rescue_from ActionController::RoutingError, with: :render_not_found
@@ -37,8 +36,10 @@ module BetterTogether
     rescue_from StandardError, with: :handle_error
 
     helper_method :current_invitation, :default_url_options, :valid_platform_invitation_token_present?,
-                  :turbo_native_app?, :view_preference
+                  :turbo_native_app?, :view_preference, :current_robot, :robot_authenticated?
     helper Rails.application.routes.mounted_helpers
+
+    attr_reader :current_robot
 
     def self.default_url_options
       super.merge(locale: I18n.locale)
@@ -60,6 +61,14 @@ module BetterTogether
       ]
 
       bots.any? { |bot| user_agent&.include?(bot) }
+    end
+
+    def authorize_mini_profiler_if_enabled
+      return unless BetterTogether::Profiling.enabled?
+      return unless defined?(Rack::MiniProfiler)
+      return unless current_user&.permitted_to?('manage_platform')
+
+      Rack::MiniProfiler.authorize_request
     end
 
     def check_platform_setup
@@ -113,6 +122,10 @@ module BetterTogether
       @platform_invitation
     end
 
+    def robot_authenticated?
+      current_robot.present?
+    end
+
     def view_preference(key, default:, allowed:)
       preferences = session[:view_preferences] || {}
       value = preferences[key.to_s]
@@ -123,6 +136,7 @@ module BetterTogether
     def check_platform_privacy
       return if helpers.host_platform.privacy_public?
       return if current_user
+      return if current_robot
       return unless BetterTogether.user_class.any?
       return if valid_platform_invitation_token_present?
 
@@ -139,6 +153,10 @@ module BetterTogether
 
     private
 
+    def pundit_user
+      current_user || current_robot
+    end
+
     def with_current_platform_context
       set_current_platform_context
       yield
@@ -146,11 +164,12 @@ module BetterTogether
       reset_current_platform_context
     end
 
-    def set_current_platform_context
+    def set_current_platform_context # rubocop:todo Metrics/AbcSize
       Current.platform_domain = BetterTogether::PlatformDomain.resolve(request.host)
       Current.platform = Current.platform_domain&.platform || BetterTogether::Platform.find_by(host: true)
       Current.person = current_user&.person
-      Current.governed_agent = Current.person
+      Current.robot = current_robot
+      Current.governed_agent = current_robot || Current.person
       ActiveStorage::Current.url_options = resolved_url_options
     end
 
@@ -194,6 +213,19 @@ module BetterTogether
       response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
       response.headers['Pragma'] = 'no-cache'
       response.headers['Expires'] = '0'
+    end
+
+    def authenticate_robot_request # rubocop:todo Metrics/AbcSize
+      return if current_user.present?
+
+      token = request.headers['X-Better-Together-Robot-Token'].to_s.presence
+      return unless token
+
+      platform = BetterTogether::PlatformDomain.resolve(request.host)&.platform || BetterTogether::Platform.find_by(host: true)
+      @current_robot = BetterTogether::Robot.authenticate_access_token(token, platform:)
+      return if @current_robot.present?
+
+      Rails.logger.warn("Rejected robot token for path=#{request.fullpath} ip=#{request.remote_ip}")
     end
 
     def disallow_robots

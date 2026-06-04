@@ -11,6 +11,7 @@ require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
+require 'better_together/profiling'
 require 'better_together/storage_resolver'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
@@ -21,8 +22,6 @@ require 'devise-i18n'
 require 'devise/jwt'
 require 'devise_zxcvbn'
 require 'doorkeeper'
-require 'elasticsearch/model'
-require 'elasticsearch/rails'
 require 'fast_mcp'
 require 'font-awesome-sass'
 require 'geocoder'
@@ -48,9 +47,9 @@ require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
 require 'turbo-rails'
-require 'rack-mini-profiler'
-require 'memory_profiler'
-require 'stackprof'
+require 'rack-mini-profiler' if BetterTogether::Profiling.enabled?
+require 'memory_profiler' if BetterTogether::Profiling.enabled?
+require 'stackprof' if BetterTogether::Profiling.enabled?
 
 module BetterTogether
   # Engine configuration for BetterTogether
@@ -58,15 +57,23 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
-    # Exclude lib/better_together/mcp/ — those files are explicitly required by
-    # lib/better_together/mcp.rb and must NOT be Zeitwerk-autoloaded from a
-    # sub-directory root (which would strip the BetterTogether::Mcp namespace).
-    lib_subdirs = Dir["#{root}/lib/better_together/**/"].reject { |d| d.include?('/lib/better_together/mcp') }
-    config.autoload_paths = Array(config.autoload_paths) + lib_subdirs
+    # Avoid registering nested lib directories as Zeitwerk roots. Doing so makes
+    # files like lib/better_together/mcp/pundit_context.rb map to PunditContext
+    # instead of BetterTogether::Mcp::PunditContext.
+    config.autoload_paths = Array(config.autoload_paths) + ["#{root}/lib"]
+
+    initializer 'better_together.zeitwerk_ignores', before: :set_autoload_paths do
+      ignored_lib_paths = %w[generators rubocop tasks].map { |dir| root.join('lib', dir).to_s }
+      ignored_lib_files = [root.join('lib/mobility/backends/attachments/backend.rb').to_s]
+
+      Rails.autoloaders.each do |autoloader|
+        autoloader.ignore(*ignored_lib_paths, *ignored_lib_files)
+      end
+    end
 
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/lib",
       "#{root}/app/mailboxes",
       "#{root}/app/tools",
       "#{root}/app/resources",
@@ -190,11 +197,23 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      # Skip if this IS the engine (avoids double-loading in development).
-      # Use exact match so spec/dummy (a subdirectory of the engine) is not
-      # incorrectly excluded — spec/dummy is a distinct app root and needs the
-      # engine's migration path appended just like any external host app.
-      next if app.root.to_s == root.to_s
+      # Skip if this is the engine itself or the in-repo dummy app used for
+      # engine specs. The dummy app already sees the engine migrations through
+      # the normal boot path, and appending them here causes duplicate runtime
+      # migration paths during app:db:test:* tasks.
+      #
+      # Use Pathname#realpath to resolve symlinks and normalize paths, ensuring
+      # accurate comparison even when paths use relative references or symlinks.
+      begin
+        app_root_real = Pathname.new(app.root).realpath
+        engine_root_real = Pathname.new(root).realpath
+        dummy_app_real = Pathname.new(root.join('spec/dummy')).realpath
+
+        next if app_root_real == engine_root_real || app_root_real.to_s.start_with?(dummy_app_real.to_s)
+      rescue Errno::ENOENT
+        # Fallback to string comparison if realpath fails (e.g., in test environments)
+        next if app.root.to_s == root.to_s || app.root.to_s.start_with?(root.join('spec/dummy').to_s)
+      end
 
       # Skip if the host app has already installed CE migrations via
       # `rails better_together:install:migrations`. Installed migrations carry
@@ -203,9 +222,39 @@ module BetterTogether
       # independently and does not need the engine path appended.
       next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
 
+      existing_paths = app.config.paths['db/migrate'].expanded.to_set
+
       config.paths['db/migrate'].expanded.each do |expanded_path|
-        app.config.paths['db/migrate'] << expanded_path unless app.config.paths['db/migrate'].include?(expanded_path)
+        next if existing_paths.include?(expanded_path)
+
+        app.config.paths['db/migrate'] << expanded_path
+        existing_paths << expanded_path
       end
+    end
+
+    initializer 'better_together.content_security', after: :load_config_initializers do |app|
+      content_security = ActiveSupport::OrderedOptions.new
+      malware_scanning = ActiveSupport::OrderedOptions.new
+
+      malware_scanning.enabled = ENV.fetch('BT_MALWARE_SCANNING_ENABLED', 'false') == 'true'
+      malware_scanning.engine = ENV.fetch('BT_MALWARE_SCANNING_ENGINE', 'clamav')
+      malware_scanning.host = ENV.fetch('BT_MALWARE_SCANNING_HOST', '127.0.0.1')
+      malware_scanning.port = ENV.fetch('BT_MALWARE_SCANNING_PORT', 3310).to_i
+      malware_scanning.timeout = ENV.fetch('BT_MALWARE_SCANNING_TIMEOUT', 10).to_f
+      malware_scanning.max_stream_bytes = ENV.fetch('BT_MALWARE_SCANNING_MAX_STREAM_BYTES', 25.megabytes).to_i
+      malware_scanning.fail_mode = ENV.fetch('BT_MALWARE_SCANNING_FAIL_MODE', 'hold_until_clean')
+      malware_scanning.enabled_surfaces = ENV.fetch('BT_MALWARE_SCANNING_SURFACES', 'uploads').split(',').map(&:strip)
+
+      content_security.malware_scanning = malware_scanning
+      app.config.content_security = content_security
+      BetterTogether.content_security = content_security
+    end
+
+    config.to_prepare do
+      ActiveStorage::Blobs::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Blobs::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
     end
 
     rake_tasks do

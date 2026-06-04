@@ -78,7 +78,13 @@ RSpec.describe 'Metrics RBAC Authorization' do
     end
 
     describe 'Content Verification' do
-      it 'includes analytics navigation elements', skip: 'Flaky - race condition with navigation element rendering in parallel execution' do
+      before do
+        # Ensure navigation structure is seeded and cache is cleared
+        BetterTogether::NavigationBuilder.build(clear: false)
+        Rails.cache.clear
+      end
+
+      it 'includes analytics navigation elements' do
         get better_together.metrics_reports_path(locale: locale)
 
         expect(response).to have_http_status(:success)

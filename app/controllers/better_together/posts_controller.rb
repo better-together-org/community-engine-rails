@@ -13,10 +13,29 @@ module BetterTogether
                                               .order(:name)
     end
 
+    def create
+      BetterTogether::Authorship.with_creator(helpers.current_person) do
+        super
+      end
+    end
+
+    def update
+      BetterTogether::Authorship.with_creator(helpers.current_person) do
+        super
+      end
+    end
+
     protected
 
     def resource_class
       ::BetterTogether::Post
+    end
+
+    def resource_collection
+      @resources ||= policy_scope(resource_class)
+                     .includes(*resource_class.card_render_includes)
+
+      instance_variable_set("@#{resource_name(plural: true)}", @resources)
     end
 
     def resource_params
@@ -29,6 +48,16 @@ module BetterTogether
 
     def filter_params
       params.permit(:q, :order_by, :per_page, :page, :privacy, category_ids: [])
+    end
+
+    def permitted_attributes
+      [
+        :privacy,
+        :published_at,
+        :contributors_display_visibility,
+        *resource_class.localized_attribute_list,
+        *resource_class.extra_permitted_attributes
+      ]
     end
   end
 end

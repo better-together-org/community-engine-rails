@@ -32,6 +32,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.update?).to be(true)
       expect(policy.accept?).to be(true)
       expect(policy.reject?).to be(true)
+      expect(policy.fulfill?).to be(true)
       expect(policy.destroy?).to be(true)
     end
   end
@@ -45,6 +46,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.update?).to be(true)
       expect(policy.accept?).to be(true)
       expect(policy.reject?).to be(true)
+      expect(policy.fulfill?).to be(true)
       expect(policy.destroy?).to be(true)
     end
   end
@@ -58,6 +60,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.update?).to be(false)
       expect(policy.accept?).to be(false)
       expect(policy.reject?).to be(false)
+      expect(policy.fulfill?).to be(false)
       expect(policy.destroy?).to be(false)
     end
 
@@ -78,6 +81,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
         expect(policy.update?).to be(false)
         expect(policy.accept?).to be(false)
         expect(policy.reject?).to be(false)
+        expect(policy.fulfill?).to be(false)
         expect(policy.destroy?).to be(false)
       end
     end
@@ -92,6 +96,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
         expect(policy.update?).to be(true)
         expect(policy.accept?).to be(true)
         expect(policy.reject?).to be(true)
+        expect(policy.fulfill?).to be(true)
         expect(policy.destroy?).to be(true)
       end
     end

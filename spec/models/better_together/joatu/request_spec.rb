@@ -5,8 +5,6 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Joatu::Request do
   subject(:request_model) { build(:better_together_joatu_request) }
 
-  it_behaves_like 'an indexed searchable model', :better_together_joatu_request
-
   describe 'Factory' do
     it 'has a valid factory' do
       expect(request_model).to be_valid

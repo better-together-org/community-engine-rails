@@ -6,6 +6,8 @@ set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/docker-compose-env.sh"
 
 ./bin/dc-ensure-services
+./bin/dc-ensure-worktree-writable-paths
+trap './bin/dc-ensure-worktree-writable-paths >/dev/null 2>&1 || true' EXIT
 
 joined_args=" $* "
 if [[ -n "${CE_WORKTREE_DB_SUFFIX:-}" ]] && [[ "$joined_args" == *" rspec "* || "$joined_args" == *" prspec "* || "$joined_args" == *" RAILS_ENV=test "* ]]; then

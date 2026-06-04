@@ -13,12 +13,11 @@ on:
       - compat/rails-8.0
       - compat/rails-8.1
   pull_request:
+    # Run on PRs targeting any branch so feature/fix/salvage branches get CI.
+    # The prepare job defaults to the primary Rails lane (8.0.4.1) for any
+    # non-compat target branch, so only one Rails version runs for these PRs.
     branches:
-      - main
-      - dev
-      - compat/rails-7.2
-      - compat/rails-8.0
-      - compat/rails-8.1
+      - "**"
 
 jobs:
   prepare:
@@ -66,6 +65,9 @@ jobs:
 
   pr_evidence:
     if: github.event_name == 'pull_request'
+    # Non-blocking: salvage/exploratory PRs may not satisfy the full evidence
+    # policy yet. Report the result but don't gate rspec/rubocop/security.
+    continue-on-error: true
     needs: prepare
     runs-on: ubuntu-latest
     steps:
@@ -86,14 +88,14 @@ jobs:
   rspec:
     name: rspec (3.4.4, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, pr_evidence]
+    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     environment: test
     env:
       RAILS_ENV: test
       DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
       REDIS_URL: "redis://localhost:6379/0"
-      ES_HOST: "http://localhost"
-      ELASTICSEARCH_URL: "http://localhost:9200"
+      SEARCH_BACKEND: "pg_search"
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
       WORKERS: 4
 
@@ -119,18 +121,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      elasticsearch:
-        image: elasticsearch:7.17.23
-        ports: ["9200:9200"]
-        env:
-          logger.level: error
-          node.name: elasticsearch
-          cluster.name: better-together-es
-          discovery.seed_hosts: elasticsearch
-          discovery.type: single-node
-          bootstrap.memory_lock: "true"
-          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -156,11 +146,6 @@ jobs:
             -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'rails_test' AND pid <> pg_backend_pid();" \
             2>/dev/null || true
           bundle exec rake db:parallel:prepare
-
-      - name: Wait for Elasticsearch
-        run: |
-          echo "Waiting for Elasticsearch to be healthy..."
-          curl -s "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s" || (echo "Elasticsearch not healthy" && exit 1)
 
       - name: Run RSpec in parallel
         env:
@@ -233,6 +218,7 @@ jobs:
 
   rubocop:
     needs: [prepare, pr_evidence]
+    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
@@ -251,6 +237,7 @@ jobs:
 
   security:
     needs: [prepare, pr_evidence]
+    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}

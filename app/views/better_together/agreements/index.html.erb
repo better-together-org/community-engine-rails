@@ -10,6 +10,9 @@
       <tr>
         <th>#</th>
         <th>Title</th>
+        <th>Lifecycle</th>
+        <th>Required In</th>
+        <th>Participants</th>
         <th>Description</th>
         <th>Actions</th>
       </tr>
@@ -20,9 +23,18 @@
           <td><%= index + 1 %></td>
           <td><%= agreement.title %></td>
           <td>
+            <span class="badge <%= agreement_lifecycle_badge_class(agreement) %>">
+              <%= agreement.lifecycle_display_name %>
+            </span>
+          </td>
+          <td><%= agreement.required_for_display_name %></td>
+          <td><%= agreement.accepted_participants.count %></td>
+          <td>
             <%= agreement.description&.to_plain_text&.truncate(150) %>
+            <% if agreement.change_summary.present? %>
+              <div class="text-muted small mt-1"><strong>Update:</strong> <%= agreement.change_summary %></div>
+            <% end %>
             <div class="mt-2">
-              <%= render 'better_together/shared/record_evidence_summary', record: agreement %>
             </div>
           </td>
           <td>

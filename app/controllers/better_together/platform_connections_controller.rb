@@ -119,11 +119,15 @@ module BetterTogether
         :share_posts,
         :share_pages,
         :share_events,
+        :sync_depth,
+        :min_sync_interval_seconds,
         :allow_identity_scope,
         :allow_profile_read_scope,
         :allow_content_read_scope,
         :allow_linked_content_read_scope,
-        :allow_content_write_scope
+        :allow_content_write_scope,
+        :allow_c3_exchange,
+        :c3_exchange_rate
       )
     end
 

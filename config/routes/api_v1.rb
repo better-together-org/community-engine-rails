@@ -14,6 +14,9 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :people
   # NOTE: Relationship routes omitted until all related resources exist
 
+  # Short Links
+  jsonapi_resources :short_links
+
   # Communities
   jsonapi_resources :communities
   # NOTE: Relationship routes omitted until all related resources exist
@@ -68,6 +71,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :authorships
   jsonapi_resources :page_blocks
 
   # Content Blocks (all STI types — filter by page_id or type)
@@ -76,6 +80,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
   jsonapi_resources :navigation_items
+  jsonapi_resources :robots, only: %i[index show create update]
 
   # Geography (read-only)
   jsonapi_resources :geography_continents, only: %i[index show]
@@ -92,10 +97,33 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_requests
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
+  post 'joatu_agreements/:id/cancel', to: 'joatu_agreements#cancel'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
 
   # Membership requests — create is public (unauthenticated); read/manage require auth
   jsonapi_resources :membership_requests, only: %i[index show create destroy]
+
+  # C3 Community Contribution Token (borgberry fleet integration)
+  namespace :c3 do
+    post 'contributions',   to: 'contributions#create'
+    get  'contributions',   to: 'contributions#index'
+    get  'balance',         to: 'contributions#balance'
+    get  'network_balance', to: 'contributions#network_balance'
+  end
+
+  # Borgberry identity — returns this node's borgberry DID and person identity
+  namespace :borgberry do
+    get 'profile', to: 'profile#show'
+  end
+
+  # Fleet node registry (borgberry fleet agent registration + heartbeat)
+  namespace :fleet do
+    resources :nodes, param: :node_id, only: %i[index show create] do
+      member do
+        post :heartbeat
+      end
+    end
+  end
 
   # Webhook management (outbound subscriptions)
   jsonapi_resources :webhook_endpoints

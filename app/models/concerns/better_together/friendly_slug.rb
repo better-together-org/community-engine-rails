@@ -5,6 +5,16 @@ module BetterTogether
   module FriendlySlug
     extend ActiveSupport::Concern
 
+    module_function
+
+    def normalize_slug_fragment(value)
+      value.to_s.parameterize
+    end
+
+    def normalize_slug_preserving_namespace(value)
+      value.to_s.split('--').map { |fragment| normalize_slug_fragment(fragment) }.reject(&:blank?).join('--').presence
+    end
+
     included do
       include Translatable
       extend ::FriendlyId
@@ -31,7 +41,7 @@ module BetterTogether
       end
 
       def slug=(arg, locale: nil, **options)
-        arg = arg&.parameterize if self.class.parameterize_slug
+        arg = BetterTogether::FriendlySlug.normalize_slug_preserving_namespace(arg) if self.class.parameterize_slug
 
         # Avoid leaking unrelated keywords (like :id from URL helpers) into
         # Mobility/FriendlyId setter, which can be misinterpreted as a locale.

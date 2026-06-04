@@ -85,9 +85,10 @@ module BetterTogether
 
         @shared_community_member_ids = if agent.present?
                                          # Get people who are members of communities that the current person is also a member of # rubocop:disable Layout/LineLength
-                                         agent_community_ids = agent.person_community_memberships.pluck(:joinable_id)
+                                         agent_community_ids = agent.person_community_memberships.active.pluck(:joinable_id)
                                          if agent_community_ids.any?
                                            BetterTogether::PersonCommunityMembership
+                                             .active
                                              .where(joinable_id: agent_community_ids)
                                              .where.not(member_id: agent.id)
                                              .pluck(:member_id)
