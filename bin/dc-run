@@ -18,4 +18,8 @@ elif [[ "${1:-}" == "bin/rails" || "${1:-}" == "./bin/rails" || "${1:-}" == "bin
   set -- ./bin/dummy "$@"
 fi
 
-./bin/dc run --rm --no-deps app "$@"
+if [ -t 1 ]; then
+  ./bin/dc run --rm --no-deps app "$@"
+else
+  ./bin/dc run --rm --no-deps -T app "$@"
+fi
