@@ -44,9 +44,8 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
 
       result = BetterTogether::PostsSearchFilter.call(relation:, params: { q: 'hello' })
 
-      expect(result).to include(post_found)
-      expect(result).not_to include(post_not_found)
-      skip 'Implementation: Mobility title join + ActionText content join with ILIKE "%hello%"'
+      expect(result.map(&:id)).to include(post_found.id)
+      expect(result.map(&:id)).not_to include(post_not_found.id)
     end
 
     # AC3: Category filter via multi-select
@@ -61,9 +60,8 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
         params: { category_ids: [category.id] }
       )
 
-      expect(result).to include(post_categorized)
-      expect(result).not_to include(post_uncategorized)
-      skip 'Implementation: join better_together_categorizations, filter by category_ids'
+      expect(result.map(&:id)).to include(post_categorized.id)
+      expect(result.map(&:id)).not_to include(post_uncategorized.id)
     end
 
     # AC4: Privacy filter
@@ -77,9 +75,8 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
         params: { privacy: 'public' }
       )
 
-      expect(result).to include(post_public)
-      expect(result).not_to include(post_private)
-      skip 'Implementation: filter where privacy = "public"'
+      expect(result.map(&:id)).to include(post_public.id)
+      expect(result.map(&:id)).not_to include(post_private.id)
     end
 
     # AC5: Order-by flexibility
