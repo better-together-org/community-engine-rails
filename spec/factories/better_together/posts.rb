@@ -28,6 +28,28 @@ module BetterTogether # :nodoc:
                           create(:better_together_platform)
         end
       end
+
+      trait :public do
+        privacy { 'public' }
+      end
+
+      trait :community do
+        privacy { 'community' }
+      end
+
+      trait :published do
+        published_at { 1.day.ago }
+      end
+
+      trait :with_categories do
+        transient do
+          categories_count { 2 }
+        end
+
+        after(:build) do |post, evaluator|
+          post.categories = create_list(:better_together_category, evaluator.categories_count)
+        end
+      end
     end
   end
 end

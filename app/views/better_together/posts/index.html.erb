@@ -15,7 +15,6 @@
   <div class="row">
     <!-- Filter Sidebar -->
     <div class="col-lg-3 mb-4">
-      <% @categories = BetterTogether::Category.where(categorizable_type: 'BetterTogether::Post').order(:name) %>
       <%= render 'list_form' %>
     </div>
 

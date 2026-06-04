@@ -24,12 +24,12 @@ module BetterTogether
       allowed = %w[public community private]
       return @relation unless allowed.include?(privacy)
 
-      @relation = relation.where(privacy:)
+      @relation = @relation.where(privacy:)
     end
 
     # Override: Default ordering for Posts is newest-first (created_at desc)
     def default_order_by
-      relation.order(created_at: :desc)
+      @relation.reorder(created_at: :desc)
     end
   end
 end

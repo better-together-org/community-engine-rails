@@ -1,58 +1,65 @@
-<%= form_with url: posts_path, method: :get, class: 'posts-filter-sidebar', local: true do |f| %>
-  <fieldset>
-    <legend><%= t('.filters') %></legend>
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h2 class="h5"><%= t('.filters') %></h2>
+  </div>
+  <div class="panel-body">
+    <%= form_with url: posts_path, method: :get, class: 'posts-filter-sidebar', local: true do |f| %>
+      <div class="mb-3">
+        <%= f.label :q, t('.search_label'), class: 'form-label' %>
+        <%= f.text_field :q, placeholder: t('.search_placeholder'), value: params[:q], class: 'form-control' %>
+      </div>
 
-    <!-- Text Search -->
-    <div class="form-group">
-      <%= f.label :q, t('.search_label') %>
-      <%= f.text_field :q, placeholder: t('.search_placeholder'), value: params[:q] %>
-    </div>
-
-    <!-- Categories -->
-    <% if @categories&.any? %>
-      <div class="form-group">
-        <%= f.label :category_ids, t('.categories_label') %>
-        <div class="checkboxes">
-          <% @categories.each do |category| %>
-            <div class="checkbox">
-              <%= f.check_box :category_ids, { multiple: true, include_hidden: false }, category.id %>
-              <%= f.label :"category_ids_#{category.id}", category.name %>
-            </div>
-          <% end %>
+      <% if @categories&.any? %>
+        <div class="mb-3">
+          <%= f.label :category_ids, t('.categories_label'), class: 'form-label' %>
+          <div>
+            <% @categories.each do |category| %>
+              <div class="form-check">
+                <%= f.check_box :category_ids,
+                               {
+                                 multiple: true,
+                                 include_hidden: false,
+                                 class: 'form-check-input',
+                                 id: "category_ids_#{category.id}",
+                                 checked: Array(params[:category_ids]).map(&:to_s).include?(category.id.to_s)
+                               },
+                               category.id %>
+                <%= f.label :"category_ids_#{category.id}", category.name, class: 'form-check-label' %>
+              </div>
+            <% end %>
+          </div>
         </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :privacy, t('.privacy_label'), class: 'form-label' %>
+        <%= f.select :privacy, options_for_select([
+          [t('.privacy_all'), ''],
+          [t('.privacy_public'), 'public'],
+          [t('.privacy_community'), 'community'],
+          [t('.privacy_private'), 'private']
+        ], params[:privacy]), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :order_by, t('.order_by_label'), class: 'form-label' %>
+        <%= f.select :order_by, options_for_select([
+          [t('.order_newest'), ''],
+          [t('.order_oldest'), 'oldest']
+        ], params[:order_by]), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :per_page, t('.per_page_label'), class: 'form-label' %>
+        <%= f.select :per_page, options_for_select(['10', '20', '50'], params[:per_page] || '20'), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="clearfix">
+        <% if params[:q].present? || params[:privacy].present? || params[:order_by].present? || params[:per_page].present? || params[:category_ids].present? %>
+          <%= link_to t('.clear_filters'), posts_path, class: 'btn btn-outline-secondary', id: 'posts-clear-filters' %>
+        <% end %>
+        <%= f.submit t('.search_button'), class: 'btn btn-primary float-end', id: 'posts-search-submit' %>
       </div>
     <% end %>
-
-    <!-- Privacy Filter -->
-    <div class="form-group">
-      <%= f.label :privacy, t('.privacy_label') %>
-      <%= f.select :privacy, options_for_select([
-        [t('.privacy_all'), ''],
-        [t('.privacy_public'), 'public'],
-        [t('.privacy_community'), 'community'],
-        [t('.privacy_private'), 'private']
-      ], params[:privacy]), { include_blank: false } %>
-    </div>
-
-    <!-- Order By -->
-    <div class="form-group">
-      <%= f.label :order_by, t('.order_by_label') %>
-      <%= f.select :order_by, options_for_select([
-        [t('.order_newest'), ''],
-        [t('.order_oldest'), 'oldest']
-      ], params[:order_by]), { include_blank: false } %>
-    </div>
-
-    <!-- Per Page -->
-    <div class="form-group">
-      <%= f.label :per_page, t('.per_page_label') %>
-      <%= f.select :per_page, options_for_select(['10', '20', '50'], params[:per_page] || '20') %>
-    </div>
-
-    <!-- Submit & Clear -->
-    <div class="form-actions">
-      <%= f.submit t('.search_button'), class: 'btn btn-primary' %>
-      <%= link_to t('.clear_filters'), posts_path, class: 'btn btn-secondary' %>
-    </div>
-  </fieldset>
-<% end %>
+  </div>
+</div>

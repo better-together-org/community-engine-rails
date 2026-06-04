@@ -4,13 +4,8 @@ module BetterTogether
   # CRUD for BetterTogether::Post
   class PostsController < FriendlyResourceController
     def index
-      @posts = PostsSearchFilter.call(
-        resource_class:,
-        relation: resource_collection,
-        params: filter_params
-      )
-      @categories = ::BetterTogether::Category.where(categorizable_type: 'BetterTogether::Post')
-                                              .order(:name)
+      load_posts
+      load_categories
     end
 
     def create
@@ -33,9 +28,19 @@ module BetterTogether
 
     def resource_collection
       @resources ||= policy_scope(resource_class)
-                     .includes(*resource_class.card_render_includes)
+                     .includes(*post_includes)
 
       instance_variable_set("@#{resource_name(plural: true)}", @resources)
+    end
+
+    def post_includes
+      resource_class.card_render_includes.reject do |entry|
+        entry.is_a?(Hash) && entry[:contributions]
+      end
+    end
+
+    def post_index_includes
+      post_includes + [{ categories: :string_translations }]
     end
 
     def resource_params
@@ -48,6 +53,27 @@ module BetterTogether
 
     def filter_params
       params.permit(:q, :order_by, :per_page, :page, :privacy, category_ids: [])
+    end
+
+    def load_posts
+      @posts = PostsSearchFilter.call(
+        relation: policy_scope(resource_class),
+        params: filter_params
+      ).with_translations
+                                .includes(post_index_includes)
+                                .preload(contributions: :author)
+    end
+
+    def load_categories
+      post_category_ids = ::BetterTogether::Categorization
+                          .where(categorizable_type: 'BetterTogether::Post')
+                          .select(:category_id)
+
+      @categories = ::BetterTogether::Category
+                    .where(id: post_category_ids)
+                    .with_translations
+                    .to_a
+                    .sort_by { |category| category.name.to_s.downcase }
     end
 
     def permitted_attributes

@@ -26,20 +26,20 @@ module BetterTogether
 
     private
 
-    attr_reader :resource_class, :relation, :params
+    attr_reader :resource_class, :params
 
     # Subclasses override these methods for resource-specific behavior.
 
     # Called after search_text and filter_by_categories.
     # Subclasses implement privacy, status, or other resource-specific filters here.
     def filter_by_resource_specific_status
-      relation
+      @relation
     end
 
     # Override for resource-specific ordering.
     # Default: created_at desc (newest first)
     def default_order_by
-      relation.order(created_at: :desc)
+      @relation.reorder(created_at: :desc)
     end
 
     # ====== Shared implementations (inherited by subclasses) ======
@@ -86,7 +86,7 @@ module BetterTogether
       condition = lower.call(title_expr).matches(pattern)
                        .or(lower.call(art[:body]).matches(pattern))
 
-      @relation = relation.joins(joins.flatten).where(condition).distinct
+      @relation = @relation.joins(joins.flatten).where(condition).distinct
     end
 
     def filter_by_categories # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
@@ -106,14 +106,14 @@ module BetterTogether
         cat[:id].eq(btc[:category_id])
       ).join_sources
 
-      @relation = relation.joins(joins.flatten)
-                          .where(BetterTogether::Category.table_name => { id: ids })
-                          .distinct
+      @relation = @relation.joins(joins.flatten)
+                           .where(BetterTogether::Category.table_name => { id: ids })
+                           .distinct
     end
 
     def order_by
       @relation = case params[:order_by]
-                  when 'oldest' then relation.order(created_at: :asc)
+                  when 'oldest' then @relation.reorder(created_at: :asc)
                   else default_order_by
                   end
     end
@@ -123,7 +123,7 @@ module BetterTogether
       allowed = %w[10 20 50]
       per_page = allowed.include?(per_page.to_s) ? per_page.to_i : 20
 
-      out = relation
+      out = @relation
       out = out.page(params[:page]) if out.respond_to?(:page)
       out = out.per(per_page) if out.respond_to?(:per)
       @relation = out

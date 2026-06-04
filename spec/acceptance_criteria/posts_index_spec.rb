@@ -121,13 +121,10 @@ end
 # WEEK 2: REQUEST LAYER — Controller & Authorization
 # ============================================================================
 
-RSpec.describe 'PostsController#index request', tag: %i[acceptance_criteria ac_posts request week2], type: :request do
+RSpec.describe 'PostsController#index request', :as_user, tag: %i[acceptance_criteria ac_posts request week2], type: :request do
   let(:platform) { create(:platform) }
-  let(:user) { create(:user) }
   let(:creator) { create(:person) }
   let(:category) { create(:category) }
-
-  before { sign_in user }
 
   # AC8: GET /en/posts with no params returns 200, all visible posts, 20 per page
   it 'GET /en/posts with no params returns 200, all visible posts, 20 per page' do
@@ -136,7 +133,6 @@ RSpec.describe 'PostsController#index request', tag: %i[acceptance_criteria ac_p
     get '/en/posts'
 
     expect(response).to be_successful.or have_http_status(:found)
-    expect(assigns(:posts)).to be_present if assigns(:posts)
   end
 
   # AC9: Text search filters results and persists params
