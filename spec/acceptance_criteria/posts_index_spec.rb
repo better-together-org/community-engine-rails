@@ -62,7 +62,24 @@ RSpec.describe 'PostsSearchFilter service', tag: %i[acceptance_criteria ac_posts
     expect(result.map(&:id)).not_to include(post_uncategorized.id)
   end
 
-  # AC4: Privacy filter
+  # AC4: Author filter
+  it 'author_ids: [id] filters posts by author' do
+    author_one = create(:person)
+    author_two = create(:person)
+    post_by_one = create(:post, platform:, creator: author_one, author: author_one)
+    post_by_two = create(:post, platform:, creator: author_two, author: author_two)
+    relation = BetterTogether::Post.where(platform_id: platform.id)
+
+    result = BetterTogether::PostsSearchFilter.call(
+      relation:,
+      params: { author_ids: [author_one.id] }
+    )
+
+    expect(result.map(&:id)).to include(post_by_one.id)
+    expect(result.map(&:id)).not_to include(post_by_two.id)
+  end
+
+  # AC5: Privacy filter
   it 'privacy: "public" filters by posts.privacy column' do
     post_public = create(:post, platform:, creator:, privacy: :public)
     post_private = create(:post, platform:, creator:, privacy: :private)
@@ -77,7 +94,7 @@ RSpec.describe 'PostsSearchFilter service', tag: %i[acceptance_criteria ac_posts
     expect(result.map(&:id)).not_to include(post_private.id)
   end
 
-  # AC5: Order-by flexibility
+  # AC6: Order-by flexibility
   it 'order_by: "oldest" orders created_at asc (default is desc)' do
     oldest_post = create(:post, platform:, creator:, created_at: 1.week.ago)
     newest_post = create(:post, platform:, creator:, created_at: 1.day.ago)
@@ -92,7 +109,7 @@ RSpec.describe 'PostsSearchFilter service', tag: %i[acceptance_criteria ac_posts
     expect(result_oldest.last).to eq(newest_post)
   end
 
-  # AC6: Pagination via Kaminari
+  # AC7: Pagination via Kaminari
   it 'per_page: 10 applies Kaminari .per(10), defaults to 20' do
     create_list(:post, 25, platform:, creator:)
     relation = BetterTogether::Post.where(platform_id: platform.id)
@@ -106,7 +123,7 @@ RSpec.describe 'PostsSearchFilter service', tag: %i[acceptance_criteria ac_posts
     expect(result.total_pages).to eq(3)
   end
 
-  # AC7: Empty params returns full unfiltered relation (no N+1)
+  # AC8: Empty params returns full unfiltered relation (no N+1)
   it 'Empty params returns full unfiltered relation with no N+1 joins' do
     create_list(:post, 5, platform:, creator:)
     relation = BetterTogether::Post.where(platform_id: platform.id)
@@ -149,28 +166,36 @@ RSpec.describe 'PostsController#index request', :as_user, tag: %i[acceptance_cri
     expect(response).to be_successful.or have_http_status(:found)
   end
 
-  # AC11: Privacy filter
+  # AC11: Author filter
+  it '?author_ids[]=id filters by author' do
+    author = create(:person)
+    create(:post, platform:, creator: author, author: author)
+    get '/en/posts', params: { author_ids: [author.id] }
+    expect(response).to be_successful.or have_http_status(:found)
+  end
+
+  # AC12: Privacy filter
   it '?privacy=community restricts to community-only posts' do
     create(:post, platform:, creator:, privacy: :community)
     get '/en/posts', params: { privacy: 'community' }
     expect(response).to be_successful.or have_http_status(:found)
   end
 
-  # AC12: Order-by flexibility
+  # AC13: Order-by flexibility
   it '?order_by=oldest reverses sort order' do
     create(:post, platform:, creator:, created_at: 1.week.ago)
     get '/en/posts', params: { order_by: 'oldest' }
     expect(response).to be_successful.or have_http_status(:found)
   end
 
-  # AC13: Pagination query params
+  # AC14: Pagination query params
   it '?page=2&per_page=10 paginates correctly' do
     create_list(:post, 25, platform:, creator:)
     get '/en/posts', params: { page: 2, per_page: 10 }
     expect(response).to be_successful.or have_http_status(:found)
   end
 
-  # AC14: Authorization respects policy scope
+  # AC15: Authorization respects policy scope
   it 'Authorization: respects policy scope (user sees only permitted posts)' do
     create(:post, platform:, creator:, privacy: :public)
     get '/en/posts'

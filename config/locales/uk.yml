@@ -3099,6 +3099,8 @@ uk:
       labels:
         privacy: Конфіденційність
       list_form:
+        authors_label: Автори
+        authors_placeholder: Обрати авторів...
         categories_label: Категорії
         clear_filters: Очистити фільтри
         filters: Фільтрувати пости

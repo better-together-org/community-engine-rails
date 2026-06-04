@@ -62,6 +62,6 @@ spec/dummy/config/master.key
 logs/sessions/
 
 # Ignore git worktrees (local development artifacts)
-/worktrees/
+worktrees
 
 spec/dummy/coverage

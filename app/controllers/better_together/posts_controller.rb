@@ -6,6 +6,7 @@ module BetterTogether
     def index
       load_posts
       load_categories
+      load_authors
     end
 
     def create
@@ -52,7 +53,7 @@ module BetterTogether
     private
 
     def filter_params
-      params.permit(:q, :order_by, :per_page, :page, :privacy, category_ids: [])
+      params.permit(:q, :order_by, :per_page, :page, :privacy, category_ids: [], author_ids: [])
     end
 
     def load_posts
@@ -74,6 +75,22 @@ module BetterTogether
                     .with_translations
                     .to_a
                     .sort_by { |category| category.name.to_s.downcase }
+    end
+
+    def load_authors
+      author_ids = ::BetterTogether::Authorship
+                   .where(
+                     authorable_type: resource_class.name,
+                     author_type: 'BetterTogether::Person',
+                     role: ::BetterTogether::Authorship::AUTHOR_ROLE
+                   )
+                   .select(:author_id)
+                   .distinct
+
+      @authors = ::BetterTogether::Person
+                 .where(id: author_ids)
+                 .i18n
+                 .order(:name)
     end
 
     def permitted_attributes

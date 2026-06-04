@@ -3055,6 +3055,8 @@ en:
       labels:
         privacy: Privacy
       list_form:
+        authors_label: Authors
+        authors_placeholder: Select authors...
         categories_label: Categories
         clear_filters: Clear Filters
         filters: Filter Posts

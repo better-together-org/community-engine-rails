@@ -3112,6 +3112,8 @@ es:
       labels:
         privacy: Privacidad
       list_form:
+        authors_label: Autores
+        authors_placeholder: Seleccionar autores...
         categories_label: Categorías
         clear_filters: Limpiar filtros
         filters: Filtrar publicaciones
