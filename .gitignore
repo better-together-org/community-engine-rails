@@ -60,3 +60,6 @@ spec/dummy/config/master.key
 # Prevent accidental commits of test log output files
 *.log
 logs/sessions/
+
+# Ignore git worktrees (local development artifacts)
+/worktrees/
