@@ -12,22 +12,27 @@
       <% if @categories&.any? %>
         <div class="mb-3">
           <%= f.label :category_ids, t('.categories_label'), class: 'form-label' %>
-          <div>
-            <% @categories.each do |category| %>
-              <div class="form-check">
-                <%= f.check_box :category_ids,
-                               {
-                                 multiple: true,
-                                 include_hidden: false,
-                                 class: 'form-check-input',
-                                 id: "category_ids_#{category.id}",
-                                 checked: Array(params[:category_ids]).map(&:to_s).include?(category.id.to_s)
-                               },
-                               category.id %>
-                <%= f.label :"category_ids_#{category.id}", category.name, class: 'form-check-label' %>
-              </div>
-            <% end %>
-          </div>
+          <%= f.select :category_ids,
+                       options_from_collection_for_select(
+                         @categories,
+                         :id,
+                         :name,
+                         Array(params[:category_ids]).map(&:to_s)
+                       ),
+                       { include_hidden: false },
+                       {
+                         multiple: true,
+                         id: 'posts-category-ids',
+                         class: 'form-select',
+                         data: {
+                           controller: 'better-together--slim-select',
+                           'better-together--slim-select-options-value': {
+                             settings: {
+                               closeOnSelect: false
+                             }
+                           }.to_json
+                         }
+                       } %>
         </div>
       <% end %>
 
