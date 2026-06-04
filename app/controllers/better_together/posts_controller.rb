@@ -4,6 +4,8 @@ module BetterTogether
   # CRUD for BetterTogether::Post
   class PostsController < FriendlyResourceController
     def index
+      @available_view_types = %w[card list table calendar map]
+      @view_type = view_preference('index_view', default: 'card', allowed: @available_view_types)
       load_posts
       load_categories
       load_authors

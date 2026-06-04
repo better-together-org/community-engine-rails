@@ -197,22 +197,19 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      # Skip if this is the engine itself or the in-repo dummy app used for
-      # engine specs. The dummy app already sees the engine migrations through
-      # the normal boot path, and appending them here causes duplicate runtime
-      # migration paths during app:db:test:* tasks.
+      # Skip if this is the engine itself. Use Pathname#realpath to resolve
+      # symlinks and normalize paths, ensuring accurate comparison even when
+      # paths use relative references or symlinks.
       #
       # Use Pathname#realpath to resolve symlinks and normalize paths, ensuring
       # accurate comparison even when paths use relative references or symlinks.
       begin
         app_root_real = Pathname.new(app.root).realpath
         engine_root_real = Pathname.new(root).realpath
-        dummy_app_real = Pathname.new(root.join('spec/dummy')).realpath
-
-        next if app_root_real == engine_root_real || app_root_real.to_s.start_with?(dummy_app_real.to_s)
+        next if app_root_real == engine_root_real
       rescue Errno::ENOENT
         # Fallback to string comparison if realpath fails (e.g., in test environments)
-        next if app.root.to_s == root.to_s || app.root.to_s.start_with?(root.join('spec/dummy').to_s)
+        next if app.root.to_s == root.to_s
       end
 
       # Skip if the host app has already installed CE migrations via

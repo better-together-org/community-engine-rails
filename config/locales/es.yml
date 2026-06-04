@@ -3105,10 +3105,17 @@ es:
       edit: Editar publicación
       edit_post: Editar publicación
       index:
+        map_unavailable: La vista de mapa no está disponible para publicaciones sin
+          datos de ubicación.
         new_btn_text: Nueva publicación
         result_count:
           one: "%{count} publicación"
           other: "%{count} publicaciones"
+        table_headers:
+          authors: Autores
+          categories: Categorías
+          published: Publicado
+          title: Título
       labels:
         privacy: Privacidad
       list_form:
@@ -3790,6 +3797,7 @@ es:
         calendar: Calendario
         card: Tarjetas
         list: Lista
+        map: Mapa
         table: Tabla
     webhook_endpoints:
       actions_aria: Acciones del webhook

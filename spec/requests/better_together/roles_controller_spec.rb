@@ -62,7 +62,7 @@ RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
 
     it 'renders table view when preference is set' do
       post better_together.view_preferences_path(locale:), params: {
-        key: 'roles_index',
+        key: 'index_view',
         view_type: 'table',
         allowed: %w[card table]
       }

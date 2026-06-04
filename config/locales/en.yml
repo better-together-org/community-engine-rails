@@ -3048,10 +3048,16 @@ en:
       edit: Edit Post
       edit_post: Edit Post
       index:
+        map_unavailable: Map view is not available for posts without location data.
         new_btn_text: New Post
         result_count:
           one: "%{count} post"
           other: "%{count} posts"
+        table_headers:
+          authors: Authors
+          categories: Categories
+          published: Published
+          title: Title
       labels:
         privacy: Privacy
       list_form:
@@ -3719,6 +3725,7 @@ en:
         calendar: Calendar
         card: Card
         list: List
+        map: Map
         table: Table
     webhook_endpoints:
       actions_aria: Webhook actions

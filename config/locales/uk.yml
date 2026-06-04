@@ -3090,12 +3090,18 @@ uk:
       edit: Редагувати пост
       edit_post: Редагувати пост
       index:
+        map_unavailable: Перегляд мапи недоступний для дописів без даних про місцезнаходження.
         new_btn_text: Новий пост
         result_count:
           few: "%{count} пости"
           many: "%{count} постів"
           one: "%{count} пост"
           other: "%{count} постів"
+        table_headers:
+          authors: Автори
+          categories: Категорії
+          published: Опубліковано
+          title: Заголовок
       labels:
         privacy: Конфіденційність
       list_form:
@@ -3769,6 +3775,7 @@ uk:
         calendar: Календар
         card: Картки
         list: Список
+        map: Мапа
         table: Таблиця
     webhook_endpoints:
       actions_aria: Дії вебхука

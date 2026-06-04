@@ -82,6 +82,44 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     expect(loaded_post.association(rich_text_association)).to be_loaded if rich_text_association
   end
 
+  describe 'guest view switching' do
+    before do
+      logout
+    end
+
+    it 'defaults to card view' do
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('row-cols-md-2')
+      expect(response.body).to include('data-turbo-prefetch="false"')
+    end
+
+    it 'renders table view when preference is set' do
+      post better_together.view_preferences_path(locale:),
+           params: { key: 'index_view', view_type: 'table', allowed: %w[card table list calendar map] },
+           headers: { 'HTTP_REFERER' => better_together.posts_path(locale:) }
+
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('posts-table')
+      expect(response.body).not_to include('posts-list')
+    end
+
+    it 'renders list view when preference is set' do
+      post better_together.view_preferences_path(locale:),
+           params: { key: 'index_view', view_type: 'list', allowed: %w[card table list calendar map] },
+           headers: { 'HTTP_REFERER' => better_together.posts_path(locale:) }
+
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('posts-list')
+      expect(response.body).not_to include('posts-table')
+    end
+  end
+
   it 'keeps contribution and evidence references out of the public show page' do
     citation = create(:citation, citeable: post_record, title: 'Post review notes', reference_key: 'post-review-notes')
     claim = create(:claim, claimable: post_record, statement: 'This post was reviewed against the release checklist.')

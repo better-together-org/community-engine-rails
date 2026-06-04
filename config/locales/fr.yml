@@ -3125,10 +3125,17 @@ fr:
       edit: Modifier la publication
       edit_post: Modifier la publication
       index:
+        map_unavailable: La vue carte n'est pas disponible pour les publications sans
+          données de localisation.
         new_btn_text: Nouvelle publication
         result_count:
           one: "%{count} publication"
           other: "%{count} publications"
+        table_headers:
+          authors: Auteurs
+          categories: Catégories
+          published: Publié
+          title: Titre
       labels:
         privacy: Confidentialité
       list_form:
@@ -3813,6 +3820,7 @@ fr:
         calendar: Calendrier
         card: Cartes
         list: Liste
+        map: Carte
         table: Tableau
     webhook_endpoints:
       actions_aria: Actions du webhook
