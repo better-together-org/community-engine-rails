@@ -3,6 +3,8 @@
 module BetterTogether
   # CRUD for BetterTogether::Post
   class PostsController < FriendlyResourceController
+    include PostsIndexPreload
+
     def index
       @available_view_types = %w[card list table calendar map]
       @view_type = view_preference('index_view', default: 'card', allowed: @available_view_types)
@@ -36,16 +38,6 @@ module BetterTogether
       instance_variable_set("@#{resource_name(plural: true)}", @resources)
     end
 
-    def post_includes
-      resource_class.card_render_includes.reject do |entry|
-        entry.is_a?(Hash) && entry[:contributions]
-      end
-    end
-
-    def post_index_includes
-      post_includes + [{ categories: :string_translations }]
-    end
-
     def resource_params
       super.tap do |attrs|
         attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
@@ -64,7 +56,6 @@ module BetterTogether
         params: filter_params
       ).with_translations
                                 .includes(post_index_includes)
-                                .preload(contributions: :author)
     end
 
     def load_categories
@@ -92,6 +83,7 @@ module BetterTogether
       @authors = ::BetterTogether::Person
                  .where(id: author_ids)
                  .i18n
+                 .includes(:string_translations, profile_image_attachment: :blob)
                  .order(:name)
     end
 
