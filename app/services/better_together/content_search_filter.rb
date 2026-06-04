@@ -21,6 +21,7 @@ module BetterTogether
       filter_by_resource_specific_status
       order_by
       paginate
+      @relation
     end
 
     private
@@ -125,7 +126,7 @@ module BetterTogether
       out = relation
       out = out.page(params[:page]) if out.respond_to?(:page)
       out = out.per(per_page) if out.respond_to?(:per)
-      out
+      @relation = out
     end
 
     # Subclasses override these for resource-specific field names.
