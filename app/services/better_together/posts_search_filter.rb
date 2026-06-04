@@ -6,7 +6,7 @@ module BetterTogether
   # Inherits common search logic from ContentSearchFilter.
   class PostsSearchFilter < ContentSearchFilter
     def self.call(relation:, params:)
-      super(resource_class: BetterTogether::Post, relation:, params:)
+      new(resource_class: BetterTogether::Post, relation:, params:).call
     end
 
     private
