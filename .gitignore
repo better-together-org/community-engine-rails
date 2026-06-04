@@ -63,3 +63,5 @@ logs/sessions/
 
 # Ignore git worktrees (local development artifacts)
 /worktrees/
+
+spec/dummy/coverage
