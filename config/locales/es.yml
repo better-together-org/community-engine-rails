@@ -2822,8 +2822,27 @@ es:
       edit_post: Editar publicación
       index:
         new_btn_text: Nueva publicación
+        result_count:
+          one: "%{count} publicación"
+          other: "%{count} publicaciones"
       labels:
         privacy: Privacidad
+      list_form:
+        categories_label: Categorías
+        clear_filters: Limpiar filtros
+        filters: Filtrar publicaciones
+        order_by_label: Ordenar por
+        order_newest: Más reciente (predeterminado)
+        order_oldest: Más antiguo
+        per_page_label: Publicaciones por página
+        privacy_all: Todos
+        privacy_community: Comunidad
+        privacy_label: Privacidad
+        privacy_private: Privado
+        privacy_public: Público
+        search_button: Buscar
+        search_label: Búsqueda
+        search_placeholder: Buscar por título o contenido...
       new_post: Nueva publicación
       none_body: No hay publicaciones para mostrar en este momento.
       none_title: Aún no hay publicaciones

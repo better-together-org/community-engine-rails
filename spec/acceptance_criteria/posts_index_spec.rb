@@ -148,7 +148,6 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
       expect(response).to have_http_status(:ok)
       expect(assigns(:posts).length).to eq(20)
       expect(assigns(:posts).total_pages).to eq(2)
-      skip 'Implementation: Apply PostsSearchFilter; assign to @posts'
     end
 
     # AC9: Text search filters results and persists params

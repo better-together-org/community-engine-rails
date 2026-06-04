@@ -2796,8 +2796,29 @@ uk:
       edit_post: Редагувати пост
       index:
         new_btn_text: Новий пост
+        result_count:
+          few: "%{count} пости"
+          many: "%{count} постів"
+          one: "%{count} пост"
+          other: "%{count} постів"
       labels:
         privacy: Конфіденційність
+      list_form:
+        categories_label: Категорії
+        clear_filters: Очистити фільтри
+        filters: Фільтрувати пости
+        order_by_label: Сортувати за
+        order_newest: Найновіші (за замовчуванням)
+        order_oldest: Найстаріші
+        per_page_label: Постів на сторінку
+        privacy_all: Всі
+        privacy_community: Спільнота
+        privacy_label: Конфіденційність
+        privacy_private: Приватний
+        privacy_public: Публічний
+        search_button: Пошук
+        search_label: Пошук
+        search_placeholder: Шукати за заголовком або вмістом...
       new_post: Новий пост
       none_body: Наразі немає постів для показу.
       none_title: Постів поки що немає

@@ -3,7 +3,7 @@
 <% end %>
 
 <div class="container my-3">
-  <div class="d-flex justify-content-between align-items-center">
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <h1><%= resource_class.model_name.human.pluralize %></h1>
     <% if policy(resource_class).create? %>
       <%= link_to new_post_path, class: 'btn btn-primary', 'aria-label' => 'Add Post' do %>
@@ -12,7 +12,35 @@
     <% end %>
   </div>
 
-  <div id="posts" class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-    <%= render(@posts) || render('empty') %>
+  <div class="row">
+    <!-- Filter Sidebar -->
+    <div class="col-lg-3 mb-4">
+      <% @categories = BetterTogether::Category.where(categorizable_type: 'BetterTogether::Post').order(:name) %>
+      <%= render 'list_form' %>
+    </div>
+
+    <!-- Posts List -->
+    <div class="col-lg-9">
+      <!-- Result Count -->
+      <% if @posts.any? %>
+        <div class="mb-3">
+          <small class="text-muted">
+            <%= t('better_together.posts.index.result_count', count: @posts.total_count) %>
+          </small>
+        </div>
+      <% end %>
+
+      <!-- Posts Grid -->
+      <div id="posts" class="row row-cols-1 row-cols-md-2">
+        <%= render(@posts) || render('empty') %>
+      </div>
+
+      <!-- Pagination -->
+      <% if @posts.total_pages > 1 %>
+        <nav class="d-flex justify-content-center mt-4">
+          <%= paginate @posts %>
+        </nav>
+      <% end %>
+    </div>
   </div>
 </div>

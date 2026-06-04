@@ -9,6 +9,8 @@ module BetterTogether
         relation: resource_collection,
         params: filter_params
       )
+      @categories = ::BetterTogether::Category.where(categorizable_type: 'BetterTogether::Post')
+                                              .order(:name)
     end
 
     protected

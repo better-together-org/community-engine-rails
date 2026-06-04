@@ -2764,8 +2764,27 @@ en:
       edit_post: Edit Post
       index:
         new_btn_text: New Post
+        result_count:
+          one: "%{count} post"
+          other: "%{count} posts"
       labels:
         privacy: Privacy
+      list_form:
+        categories_label: Categories
+        clear_filters: Clear Filters
+        filters: Filter Posts
+        order_by_label: Order By
+        order_newest: Newest First (default)
+        order_oldest: Oldest First
+        per_page_label: Posts Per Page
+        privacy_all: All
+        privacy_community: Community
+        privacy_label: Privacy
+        privacy_private: Private
+        privacy_public: Public
+        search_button: Search
+        search_label: Search
+        search_placeholder: Search by title or content...
       new_post: New Post
       none_body: There are no posts to show right now.
       none_title: No posts yet
