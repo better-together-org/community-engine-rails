@@ -17,15 +17,15 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
   # WEEK 1: MODEL LAYER — PostsSearchFilter Service Foundation
   # ============================================================================
 
-  describe 'PostsSearchFilter service', tag: %i[acceptance_criteria ac_posts model week1] do
+  describe 'PostsSearchFilter service', tag: %i[acceptance_criteria ac_posts model week1], type: :model do
     let(:platform) { create(:platform) }
-    let(:creator) { create(:person, platform:) }
-    let(:category) { create(:category, platform:) }
+    let(:creator) { create(:person) }
+    let(:category) { create(:category) }
 
     # AC1: Service returns Kaminari-decorated relation
     it 'PostsSearchFilter.call(relation:, params:) returns Kaminari-decorated relation' do
       create_list(:post, 3, platform:, creator:)
-      relation = platform.posts
+      relation = BetterTogether::Post.where(platform_id: platform.id)
 
       result = BetterTogether::PostsSearchFilter.call(relation:, params: {})
 
@@ -39,7 +39,7 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
     it 'q: "hello" applies ILIKE to Mobility title + ActionText content (both locales)' do
       post_found = create(:post, platform:, creator:, title: 'Hello World')
       post_not_found = create(:post, platform:, creator:, title: 'Goodbye Moon')
-      relation = platform.posts
+      relation = BetterTogether::Post.where(platform_id: platform.id)
 
       result = BetterTogether::PostsSearchFilter.call(relation:, params: { q: 'hello' })
 
@@ -52,7 +52,7 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
       post_categorized = create(:post, platform:, creator:)
       post_uncategorized = create(:post, platform:, creator:)
       create(:categorization, post: post_categorized, category:)
-      relation = platform.posts
+      relation = BetterTogether::Post.where(platform_id: platform.id)
 
       result = BetterTogether::PostsSearchFilter.call(
         relation:,
@@ -67,7 +67,7 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
     it 'privacy: "public" filters by posts.privacy column' do
       post_public = create(:post, platform:, creator:, privacy: :public)
       post_private = create(:post, platform:, creator:, privacy: :private)
-      relation = platform.posts
+      relation = BetterTogether::Post.where(platform_id: platform.id)
 
       result = BetterTogether::PostsSearchFilter.call(
         relation:,
@@ -82,7 +82,7 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
     it 'order_by: "oldest" orders created_at asc (default is desc)' do
       oldest_post = create(:post, platform:, creator:, created_at: 1.week.ago)
       newest_post = create(:post, platform:, creator:, created_at: 1.day.ago)
-      relation = platform.posts
+      relation = BetterTogether::Post.where(platform_id: platform.id)
 
       result_oldest = BetterTogether::PostsSearchFilter.call(
         relation:,
@@ -96,7 +96,7 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
     # AC6: Pagination via Kaminari
     it 'per_page: 10 applies Kaminari .per(10), defaults to 20' do
       create_list(:post, 25, platform:, creator:)
-      relation = platform.posts
+      relation = BetterTogether::Post.where(platform_id: platform.id)
 
       result = BetterTogether::PostsSearchFilter.call(
         relation:,
@@ -110,7 +110,7 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
     # AC7: Empty params returns full unfiltered relation (no N+1)
     it 'Empty params returns full unfiltered relation with no N+1 joins' do
       create_list(:post, 5, platform:, creator:)
-      relation = platform.posts
+      relation = BetterTogether::Post.where(platform_id: platform.id)
 
       expect do
         result = BetterTogether::PostsSearchFilter.call(relation:, params: {})
@@ -123,11 +123,11 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
   # WEEK 2: REQUEST LAYER — Controller & Authorization
   # ============================================================================
 
-  describe 'PostsController#index request', tag: %i[acceptance_criteria ac_posts request week2] do
+  describe 'PostsController#index request', tag: %i[acceptance_criteria ac_posts request week2], type: :request do
     let(:platform) { create(:platform) }
-    let(:user) { create(:person, platform:) }
-    let(:creator) { create(:person, platform:) }
-    let(:category) { create(:category, platform:) }
+    let(:user) { create(:person) }
+    let(:creator) { create(:person) }
+    let(:category) { create(:category) }
 
     before { sign_in user }
 
@@ -216,11 +216,11 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
   # WEEK 3: FEATURE LAYER — Views, UX, Pagination, Mobile
   # ============================================================================
 
-  describe 'Posts index UX and pagination', tag: %i[acceptance_criteria ac_posts feature week3] do
+  describe 'Posts index UX and pagination', tag: %i[acceptance_criteria ac_posts feature week3], type: :system do
     let(:platform) { create(:platform) }
-    let(:user) { create(:person, platform:) }
-    let(:creator) { create(:person, platform:) }
-    let(:category) { create(:category, platform:) }
+    let(:user) { create(:person) }
+    let(:creator) { create(:person) }
+    let(:category) { create(:category) }
 
     before do
       sign_in user

@@ -3,7 +3,12 @@
 require 'erb'
 require 'fileutils'
 require 'tempfile'
-require 'vips'
+
+begin
+  require 'vips'
+rescue LoadError
+  # vips is optional for most tests; only needed for screenshot callouts
+end
 
 module BetterTogether # :nodoc:
   module ScreenshotCalloutProcessor # :nodoc:
