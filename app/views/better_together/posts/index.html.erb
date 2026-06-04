@@ -20,6 +20,14 @@
 
     <!-- Posts List -->
     <div class="col-lg-9">
+
+      <!-- Pagination -->
+      <% if @posts.total_pages > 1 %>
+        <nav class="d-flex justify-content-center">
+          <%= paginate @posts %>
+        </nav>
+      <% end %>
+
       <!-- Result Count -->
       <% if @posts.any? %>
         <div class="mb-3">
@@ -33,13 +41,6 @@
       <div id="posts" class="row row-cols-1 row-cols-md-2">
         <%= render(@posts) || render('empty') %>
       </div>
-
-      <!-- Pagination -->
-      <% if @posts.total_pages > 1 %>
-        <nav class="d-flex justify-content-center mt-4">
-          <%= paginate @posts %>
-        </nav>
-      <% end %>
     </div>
   </div>
 </div>
