@@ -33,6 +33,7 @@ RSpec.describe 'Posts Index — Search, Filter & Pagination (v0.12.0)' do
       expect(result).to respond_to(:total_count)
       expect(result).to respond_to(:total_pages)
       expect(result).to respond_to(:current_page)
+      expect(result.count).to eq(3)
     end
 
     # AC2: Text search via ILIKE on Mobility title + ActionText content
