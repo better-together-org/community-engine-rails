@@ -5,6 +5,10 @@ module BetterTogether
   # Filters by text (ILIKE title + content), category, privacy, order, and paginates.
   # Inherits common search logic from ContentSearchFilter.
   class PostsSearchFilter < ContentSearchFilter
+    def self.call(relation:, params:)
+      super(resource_class: BetterTogether::Post, relation:, params:)
+    end
+
     private
 
     # Override: Posts use 'content' as the ActionText field name
