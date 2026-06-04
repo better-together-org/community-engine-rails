@@ -4,17 +4,16 @@ module BetterTogether
   module Content
     # Renders a prominent call-to-action panel with heading, body text, and up to two buttons.
     class CallToActionBlock < Block
+      include Translatable
+
       LAYOUTS = %w[centered left right split].freeze
 
+      translates :heading, :subheading, :primary_button_label, :secondary_button_label,
+                 :primary_button_url, :secondary_button_url, type: :string
+      translates :body_text, type: :text
+
       store_attributes :content_data do
-        heading               String, default: ''
-        subheading            String, default: ''
-        body_text             String, default: ''
-        primary_button_label  String, default: ''
-        primary_button_url    String, default: ''
-        secondary_button_label String, default: ''
-        secondary_button_url  String, default: ''
-        layout                String, default: 'centered'
+        layout String, default: 'centered'
       end
 
       validates :layout, inclusion: { in: LAYOUTS }

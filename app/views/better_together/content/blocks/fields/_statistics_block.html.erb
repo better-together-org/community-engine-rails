@@ -3,8 +3,9 @@
 <div class="statistics-block-fields">
   <div class="row row-cols-1 row-cols-sm-2 mb-3">
     <div class="col mb-3">
-      <%= label_tag "#{scope}[heading]", BetterTogether::Content::Block.human_attribute_name('heading', default: 'Heading (optional)'), class: 'form-label' %>
-      <%= text_field_tag "#{scope}[heading]", block.heading, class: 'form-control', placeholder: 'Our Impact' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'heading',
+                           help_text: 'Optional heading for the statistics' } %>
     </div>
     <div class="col mb-3">
       <%= label_tag "#{scope}[columns]", BetterTogether::Content::Block.human_attribute_name('columns', default: 'Columns'), class: 'form-label' %>
@@ -18,16 +19,18 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <label class="form-label"><%= BetterTogether::Content::Block.human_attribute_name('stats_json', default: 'Statistics') %></label>
+  <%= render layout: 'better_together/content/blocks/fields/shared/translatable_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'stats_json' } do |locale_attribute| %>
+    <div class="mb-3">
+      <label class="form-label"><%= BetterTogether::Content::Block.human_attribute_name('stats_json', default: 'Statistics') %></label>
 
-    <div data-controller="better_together--json-array-rows"
-         data-better_together--json-array-rows-keys-value='["label","value","icon"]'>
+      <div data-controller="better_together--json-array-rows"
+           data-better_together--json-array-rows-keys-value='["label","value","icon"]'>
 
-      <input type="hidden"
-             name="<%= scope %>[stats_json]"
-             data-better_together--json-array-rows-target="jsonField"
-             value="<%= h(block.stats_json) %>">
+        <input type="hidden"
+               name="<%= scope %>[<%= locale_attribute %>]"
+               data-better_together--json-array-rows-target="jsonField"
+               value="<%= h(block.public_send(locale_attribute).presence || '[]') %>">
 
       <div data-better_together--json-array-rows-target="container" class="statistics-rows mb-3"></div>
 
@@ -108,5 +111,6 @@
         <%= t('better_together.content.blocks.json_array_rows.add_item', default: 'Add item') %>
       </button>
     </div>
-  </div>
+    </div>
+  <% end %>
 </div>

@@ -106,11 +106,7 @@
       <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, attribute: 'attribution', scope: } %>
     </div>
     <div class="col mb-3 pb-3 border-bottom">
-      <%= label_tag "#{scope}[attribution_url]", block.class.human_attribute_name('attribution_url') %>
-      <%= url_field_tag "#{scope}[attribution_url]", block.attribution_url, class: 'form-control' %>
-      <div class="invalid-feedback">
-        Please provide a valid url starting with http:// or https://.
-      </div>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, attribute: 'attribution_url', scope:, help_text: 'Link to image source (https://...)' } %>
     </div>
   </div>
 </div>

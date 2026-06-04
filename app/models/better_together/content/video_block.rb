@@ -4,6 +4,8 @@ module BetterTogether
   module Content
     # Renders an embedded video from YouTube, Vimeo, or a raw iframe URL.
     class VideoBlock < Block
+      include Translatable
+
       ASPECT_RATIOS = %w[16x9 4x3 1x1].freeze
 
       YOUTUBE_PATTERN = %r{
@@ -14,9 +16,10 @@ module BetterTogether
 
       VIMEO_PATTERN = %r{vimeo\.com/(?:video/)?(\d+)}
 
+      translates :caption, type: :string
+
       store_attributes :content_data do
         video_url    String, default: ''
-        caption      String, default: ''
         aspect_ratio String, default: '16x9'
       end
 

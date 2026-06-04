@@ -3,8 +3,9 @@
 <div class="accordion-block-fields">
   <div class="row row-cols-1 row-cols-sm-2 mb-3">
     <div class="col mb-3">
-      <%= label_tag "#{scope}[heading]", BetterTogether::Content::Block.human_attribute_name('heading', default: 'Heading (optional)'), class: 'form-label' %>
-      <%= text_field_tag "#{scope}[heading]", block.heading, class: 'form-control', placeholder: 'Frequently Asked Questions' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'heading',
+                           help_text: 'Optional heading for the accordion' } %>
     </div>
     <div class="col mb-3 d-flex align-items-end">
       <div class="form-check">
@@ -17,16 +18,18 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <label class="form-label"><%= BetterTogether::Content::Block.human_attribute_name('accordion_items_json', default: 'Items') %></label>
+  <%= render layout: 'better_together/content/blocks/fields/shared/translatable_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'accordion_items_json' } do |locale_attribute| %>
+    <div class="mb-3">
+      <label class="form-label"><%= BetterTogether::Content::Block.human_attribute_name('accordion_items_json', default: 'Items') %></label>
 
-    <div data-controller="better_together--json-array-rows"
-         data-better_together--json-array-rows-keys-value='["question","answer"]'>
+      <div data-controller="better_together--json-array-rows"
+           data-better_together--json-array-rows-keys-value='["question","answer"]'>
 
-      <input type="hidden"
-             name="<%= scope %>[accordion_items_json]"
-             data-better_together--json-array-rows-target="jsonField"
-             value="<%= h(block.accordion_items_json) %>">
+        <input type="hidden"
+               name="<%= scope %>[<%= locale_attribute %>]"
+               data-better_together--json-array-rows-target="jsonField"
+               value="<%= h(block.public_send(locale_attribute).presence || '[]') %>">
 
       <div data-better_together--json-array-rows-target="container" class="accordion-items-rows mb-3"></div>
 
@@ -98,5 +101,6 @@
         <%= t('better_together.content.blocks.json_array_rows.add_item', default: 'Add item') %>
       </button>
     </div>
-  </div>
+    </div>
+  <% end %>
 </div>

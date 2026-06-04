@@ -8,10 +8,9 @@ module BetterTogether
 
       ASPECT_RATIOS = %w[16x9 4x3 1x1 21x9].freeze
 
-      translates :title, :caption, type: :string
+      translates :title, :caption, :iframe_url, type: :string
 
       store_attributes :content_data do
-        iframe_url String, default: ''
         aspect_ratio String, default: '16x9'
       end
 
