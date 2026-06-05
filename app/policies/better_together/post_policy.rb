@@ -40,10 +40,11 @@ module BetterTogether
 
         base = scope.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
-        visible = community_visible_query(posts_table)
-        return base.where(visible) unless agent
+        visible_posts = visible_privacy_query(posts_table)
+        return base.where(visible_posts) unless agent
 
-        base.where(visible.or(posts_table[:creator_id].eq(agent.id)))
+        creator_posts = posts_table[:creator_id].eq(agent.id)
+        base.where(visible_posts.or(creator_posts))
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -55,24 +56,6 @@ module BetterTogether
 
       def platform_content_manager?
         permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-      end
-
-      # Public posts in accessible communities + community-privacy posts for members.
-      # Using .arel on the AR relation converts it to an Arel SelectManager so
-      # Arel's #in() generates a proper subquery rather than blowing up.
-      def community_visible_query(table)
-        public_posts = table[:privacy].eq('public')
-                                      .and(table[:community_id].in(accessible_community_ids.arel))
-        community_posts = scoped_community_privacy_query(table)
-        community_posts ? public_posts.or(community_posts) : public_posts
-      end
-
-      def accessible_community_ids
-        community_scope = BetterTogether::CommunityPolicy::Scope
-                          .new(user, BetterTogether::Community, invitation_token: invitation_token)
-                          .resolve
-        community_scope = BetterTogether::Community.where(privacy: 'public') if community_scope.none?
-        community_scope.select(:id)
       end
     end
 

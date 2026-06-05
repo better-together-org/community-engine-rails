@@ -3110,6 +3110,13 @@ es:
       delete: Eliminar registro
       edit: Editar publicación
       edit_post: Editar publicación
+      hints:
+        privacy_limited_by_community: Algunas opciones de privacidad están deshabilitadas
+          porque esta comunidad no es pública. Las publicaciones aquí solo pueden
+          ser visibles para los miembros de la comunidad o el autor.
+        privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
+          porque la plataforma no es pública. Las publicaciones solo pueden ser visibles
+          para los miembros de la comunidad o el autor.
       index:
         map_unavailable: La vista de mapa no está disponible para publicaciones sin
           datos de ubicación.

@@ -39,57 +39,50 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     let!(:private_community) do
       create(:better_together_community, privacy: 'private')
     end
-
-    before do
-      configure_host_platform
-      host_community.update!(privacy: 'public')
-
-      create(
-        :better_together_post,
-        title: 'Host Community Post',
-        community: host_community,
-        platform: host_platform,
-        privacy: 'public',
-        published_at: 1.day.ago
-      )
-
-      create(
-        :better_together_post,
-        title: 'Private Community Post',
-        community: private_community,
-        platform: host_platform,
-        privacy: 'public',
-        published_at: 1.day.ago
-      )
+    let!(:public_post) do
+      create(:better_together_post, title: 'Public Post In Private Community',
+                                    community: private_community, platform: host_platform,
+                                    privacy: 'public', published_at: 1.day.ago)
+    end
+    let!(:community_post) do
+      create(:better_together_post, title: 'Community Post In Private Community',
+                                    community: private_community, platform: host_platform,
+                                    privacy: 'community', published_at: 1.day.ago)
     end
 
-    it 'shows only public community posts for guests', :no_auth do
-      logout
+    before { configure_host_platform }
 
+    # Post privacy (public/community/private) is the authoritative visibility gate.
+    # Community privacy controls community membership access, not individual post visibility.
+    it 'shows all public posts to guests regardless of community privacy', :no_auth do
+      logout
       get better_together.posts_path(locale:)
 
       expect(response).to have_http_status(:ok)
-      expect_html_content('Host Community Post')
-      expect_no_html_content('Private Community Post')
+      expect_html_content('Public Post In Private Community')
+      expect_no_html_content('Community Post In Private Community')
     end
 
-    context 'as a community member', :no_auth do
+    context 'as a platform community member', :no_auth do
       let(:regular_user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
 
       before do
         configure_host_platform
         login('user@example.test', 'SecureTest123!@#')
+        # community-privacy posts are scoped by platform membership, not post.community_id.
+        # The post is on host_platform whose community is host_community — so the user
+        # must be a member of host_community to see it.
         create(:better_together_person_community_membership,
                member: regular_user.person,
-               joinable: private_community,
+               joinable: host_community,
                status: 'active')
       end
 
-      it 'includes private community posts for members' do
+      it 'sees community-privacy posts on platforms they are a member of' do
         get better_together.posts_path(locale:)
 
         expect(response).to have_http_status(:ok)
-        expect_html_contents('Host Community Post', 'Private Community Post')
+        expect_html_contents('Public Post In Private Community', 'Community Post In Private Community')
       end
     end
   end

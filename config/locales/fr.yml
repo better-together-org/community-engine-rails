@@ -3130,6 +3130,13 @@ fr:
       delete: Supprimer l'enregistrement
       edit: Modifier la publication
       edit_post: Modifier la publication
+      hints:
+        privacy_limited_by_community: Certaines options de confidentialité sont désactivées
+          car cette communauté n'est pas publique. Les publications ici ne peuvent
+          être visibles que par les membres de la communauté ou l'auteur.
+        privacy_limited_by_platform: Certaines options de confidentialité sont désactivées
+          car la plateforme n'est pas publique. Les publications ne peuvent être visibles
+          que par les membres de la communauté ou l'auteur.
       index:
         map_unavailable: La vue carte n'est pas disponible pour les publications sans
           données de localisation.
