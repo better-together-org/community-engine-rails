@@ -33,6 +33,7 @@ module BetterTogether
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
+    has_many :posts, class_name: 'BetterTogether::Post', dependent: :nullify
     has_many :fleet_node_ownerships,
              as: :owner,
              class_name: 'BetterTogether::Fleet::NodeOwnership',

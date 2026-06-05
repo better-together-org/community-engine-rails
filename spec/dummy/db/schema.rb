@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_02_220138) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_04_121000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1980,6 +1980,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_02_220138) do
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
     t.jsonb "display_settings", default: {}, null: false
+    t.uuid "community_id"
+    t.index ["community_id"], name: "by_better_together_posts_community"
     t.index ["creator_id"], name: "by_better_together_posts_creator"
     t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
     t.index ["platform_id", "source_id"], name: "index_bt_posts_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
@@ -2704,6 +2706,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_02_220138) do
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_platforms", "better_together_storage_configurations", column: "storage_configuration_id", deferrable: :deferred
+  add_foreign_key "better_together_posts", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"

@@ -23,6 +23,9 @@ module BetterTogether
     include Shortlinkable
     include TrackedActivity
     include ::Storext.model
+    include CommunityAssignable
+
+    belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     attachable_cover_image
 
