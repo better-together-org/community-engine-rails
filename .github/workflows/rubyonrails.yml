@@ -252,6 +252,14 @@ jobs:
           bundle config set deployment false
           bundle update rails --conservative
           bundle install --jobs 4 --retry 3
-      - run: bundle binstubs bundler-audit --force
-      - run: bundle exec bundler-audit --update
-      - run: bundle exec brakeman -q -w2
+      - name: Audit dependencies
+        run: bundle binstubs bundler-audit --force
+      - name: Check for dependency vulnerabilities
+        run: bundle exec bundler-audit --update
+      - name: Run Brakeman security scan (fail on HIGH-confidence issues)
+        run: |
+          bundle exec brakeman -q -z -w2 --no-summary
+          # -z: exit with error code if warnings found
+          # -w2: only show Confidence >= 2 (HIGH and MEDIUM)
+          # --no-summary: suppress summary output
+          # This will FAIL the job if HIGH-confidence vulnerabilities are detected
