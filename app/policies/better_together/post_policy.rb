@@ -37,15 +37,13 @@ module BetterTogether
       # rubocop:disable Metrics/AbcSize
       def resolve
         return scope.latest_first if platform_content_manager?
-        return scope.latest_first.where(community_id: managed_community_ids) if agent.present? && managed_community_ids.any?
 
         base = scope.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
-        visible_posts = visible_privacy_query(posts_table)
-        return base.where(visible_posts).where(community_id: accessible_community_ids) unless agent
+        visible = community_visible_query(posts_table)
+        return base.where(visible) unless agent
 
-        creator_posts = posts_table[:creator_id].eq(agent.id)
-        base.where(visible_posts.or(creator_posts)).where(community_id: accessible_community_ids)
+        base.where(visible.or(posts_table[:creator_id].eq(agent.id)))
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -59,22 +57,20 @@ module BetterTogether
         permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
       end
 
-      def managed_community_ids
-        return [] unless agent.present?
-
-        BetterTogether::PersonCommunityMembership
-          .joins(role: { role_resource_permissions: :resource_permission })
-          .where(member_id: agent.id, status: 'active',
-                 better_together_resource_permissions: { identifier: 'manage_community_content' })
-          .distinct
-          .pluck(:joinable_id)
+      # Public posts in accessible communities + community-privacy posts for members.
+      # Using .arel on the AR relation converts it to an Arel SelectManager so
+      # Arel's #in() generates a proper subquery rather than blowing up.
+      def community_visible_query(table)
+        public_posts = table[:privacy].eq('public')
+                                      .and(table[:community_id].in(accessible_community_ids.arel))
+        community_posts = scoped_community_privacy_query(table)
+        community_posts ? public_posts.or(community_posts) : public_posts
       end
 
       def accessible_community_ids
         community_scope = BetterTogether::CommunityPolicy::Scope
                           .new(user, BetterTogether::Community, invitation_token: invitation_token)
                           .resolve
-
         community_scope = BetterTogether::Community.where(privacy: 'public') if community_scope.none?
         community_scope.select(:id)
       end
