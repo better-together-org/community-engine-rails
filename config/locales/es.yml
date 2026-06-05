@@ -4202,6 +4202,10 @@ es:
         update: Actualizar
         we_need_your_current_password_to_confirm_your_changes: necesitamos su contraseña
           actual para confirmar los cambios
+      membership_request_heading: Solicitar membresía en su lugar
+      membership_request_help_html: Si aún no tienes una invitación, puedes enviar
+        una solicitud de membresía para <strong>%{community}</strong>. Un revisor
+        de la comunidad puede aprobarla e invitarte a la plataforma.
       new:
         agreements:
           privacy_policy: Acepto la Política de Privacidad

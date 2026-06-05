@@ -4196,6 +4196,10 @@ uk:
         update: Оновити
         we_need_your_current_password_to_confirm_your_changes: нам потрібен ваш поточний
           пароль для підтвердження змін
+      membership_request_heading: Замість цього запитати членство
+      membership_request_help_html: Якщо у вас ще немає запрошення, ви можете надіслати
+        запит на членство для <strong>%{community}</strong>. Рецензент спільноти може
+        це схвалити та запросити вас на платформу.
       new:
         agreements:
           privacy_policy: Я погоджуюся з Політикою конфіденційності
