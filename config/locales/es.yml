@@ -1428,6 +1428,10 @@ es:
           idle: Inactivo
           running: En ejecución
           succeeded: Completado
+    errors:
+      privacy:
+        exceeds_context_bounds: no puede ser más abierta que '%{max}' — la configuración
+          de la plataforma o comunidad impide este nivel de visibilidad
     event_invitations:
       index:
         invite_member: Invite member

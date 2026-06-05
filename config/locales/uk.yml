@@ -1415,6 +1415,10 @@ uk:
           idle: Неактивний
           running: Виконується
           succeeded: Успішно
+    errors:
+      privacy:
+        exceeds_context_bounds: не може бути відкритішим за '%{max}' — налаштування
+          платформи або спільноти забороняють цей рівень видимості
     event_invitations:
       index:
         invite_member: Invite member

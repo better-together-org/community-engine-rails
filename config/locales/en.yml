@@ -1412,6 +1412,10 @@ en:
           idle: Idle
           running: Running
           succeeded: Succeeded
+    errors:
+      privacy:
+        exceeds_context_bounds: cannot be more open than '%{max}' — the platform or
+          community settings prevent this level of visibility
     event_invitations:
       index:
         invite_member: Invite member
