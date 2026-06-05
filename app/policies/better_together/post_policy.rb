@@ -36,21 +36,16 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        base = scope.latest_first
-        posts = posts_table
+        return scope.latest_first if platform_content_manager?
+        return scope.latest_first.where(community_id: managed_community_ids) if agent.present? && managed_community_ids.any?
 
-        return base.where(posts[:community_id].in(platform_community_ids)) if platform_content_manager?
-        return base.where(posts[:community_id].in(managed_community_ids)) if agent.present? && managed_community_ids.any?
-
-        base = base.published
+        base = scope.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
-        visible_posts = visible_privacy_query(posts)
-        community_filter = posts[:community_id].in(accessible_community_ids)
-        visible_scoped = visible_posts.and(community_filter)
-        return base.where(visible_scoped) unless agent
+        visible_posts = visible_privacy_query(posts_table)
+        return base.where(visible_posts).where(community_id: accessible_community_ids) unless agent
 
-        creator_posts = posts[:creator_id].eq(agent.id).and(community_filter)
-        base.where(visible_scoped.or(creator_posts))
+        creator_posts = posts_table[:creator_id].eq(agent.id)
+        base.where(visible_posts.or(creator_posts)).where(community_id: accessible_community_ids)
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -80,15 +75,8 @@ module BetterTogether
                           .new(user, BetterTogether::Community, invitation_token: invitation_token)
                           .resolve
 
-        if community_scope.none?
-          community_scope = BetterTogether::Community.where(privacy: 'public')
-        end
-
+        community_scope = BetterTogether::Community.where(privacy: 'public') if community_scope.none?
         community_scope.select(:id)
-      end
-
-      def platform_community_ids
-        BetterTogether::Community.all.select(:id)
       end
     end
 
