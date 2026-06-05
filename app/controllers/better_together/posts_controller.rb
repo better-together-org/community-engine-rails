@@ -2,6 +2,7 @@
 
 module BetterTogether
   # CRUD for BetterTogether::Post
+  # rubocop:disable Metrics/ClassLength
   class PostsController < FriendlyResourceController
     include PostsIndexPreload
 
@@ -41,19 +42,32 @@ module BetterTogether
     def resource_params
       super.tap do |attrs|
         attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
+        attrs[:community_id] = community_context&.id if action_name == 'create' && attrs[:community_id].blank?
       end
+    end
+
+    def resource_instance(attrs = {})
+      @resource ||= resource_class.new
+      @resource.assign_attributes(attrs) if attrs.present?
+      @resource.community_id ||= community_context&.id
+
+      instance_variable_set("@#{resource_name}", @resource)
+      @resource
     end
 
     private
 
     def filter_params
-      params.permit(:q, :order_by, :per_page, :page, :privacy, category_ids: [], author_ids: [])
+      params.permit(:q, :order_by, :per_page, :page, :privacy, :community_id, category_ids: [], author_ids: [])
     end
 
     def load_posts
+      search_params = filter_params
+      search_params[:community_ids] = scoped_community_ids if params[:community_id].present?
+
       @posts = PostsSearchFilter.call(
         relation: policy_scope(resource_class),
-        params: filter_params
+        params: search_params
       ).with_translations
                                 .includes(post_index_includes)
     end
@@ -89,6 +103,7 @@ module BetterTogether
 
     def permitted_attributes
       [
+        :community_id,
         :privacy,
         :published_at,
         :contributors_display_visibility,
@@ -96,5 +111,32 @@ module BetterTogether
         *resource_class.extra_permitted_attributes
       ]
     end
+
+    def community_context
+      @community_context ||= resolved_community || helpers.host_community
+    end
+
+    def resolved_community
+      community_id = params[:community_id].presence
+      return if community_id.blank?
+
+      BetterTogether::Community.friendly.find(community_id)
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+
+    def scoped_community_ids
+      return single_community_ids if params[:community_id].present?
+
+      community_ids = policy_scope(BetterTogether::Community).pluck(:id)
+      host = helpers.host_community
+      community_ids << host.id if host && !community_ids.include?(host.id) && policy(host).show?
+      community_ids
+    end
+
+    def single_community_ids
+      community_context ? [community_context.id] : []
+    end
   end
+  # rubocop:enable Metrics/ClassLength
 end

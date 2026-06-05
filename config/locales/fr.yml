@@ -1011,12 +1011,18 @@ fr:
             select_role: Sélectionner un rôle *
             submit: Ajouter
             title: Ajouter un nouveau membre
+        posts:
+          create_post: Créer un article
+          empty_description: Les publications créées pour cette communauté apparaîtront
+            ici.
+          empty_title: Aucune publication
         sections_aria: Sections de la communauté
       tabs:
         buildings: Bâtiments
         contact_details: Détails de contact
         details: Détails
         images: Images
+        posts: Publications
     community_invitations_mailer:
       invite:
         about: À propos
@@ -4494,6 +4500,7 @@ fr:
       federation: Fédération
       invitations: Invitations
       members: Membres
+      posts: Publications
       safety: Sécurité
     to: À
     'true': Oui

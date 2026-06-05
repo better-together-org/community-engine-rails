@@ -3,7 +3,11 @@
     <h2 class="h5"><%= t('.filters') %></h2>
   </div>
   <div class="panel-body">
-    <%= form_with url: posts_path, method: :get, class: 'posts-filter-sidebar', local: true do |f| %>
+    <% filter_path = params[:community_id].present? ? posts_path(community_id: params[:community_id]) : posts_path %>
+    <%= form_with url: filter_path, method: :get, class: 'posts-filter-sidebar', local: true do |f| %>
+      <% if params[:community_id].present? %>
+        <%= f.hidden_field :community_id, value: params[:community_id] %>
+      <% end %>
       <div class="mb-3">
         <%= f.label :q, t('.search_label'), class: 'form-label' %>
         <%= f.text_field :q, placeholder: t('.search_placeholder'), value: params[:q], class: 'form-control' %>
@@ -89,7 +93,7 @@
 
       <div class="clearfix">
         <% if params[:q].present? || params[:privacy].present? || params[:order_by].present? || params[:per_page].present? || params[:category_ids].present? || params[:author_ids].present? %>
-          <%= link_to t('.clear_filters'), posts_path, class: 'btn btn-outline-secondary', id: 'posts-clear-filters' %>
+          <%= link_to t('.clear_filters'), filter_path, class: 'btn btn-outline-secondary', id: 'posts-clear-filters' %>
         <% end %>
         <%= f.submit t('.search_button'), class: 'btn btn-primary float-end', id: 'posts-search-submit' %>
       </div>

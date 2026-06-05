@@ -1002,12 +1002,17 @@ en:
             select_role: Select Role *
             submit: Add
             title: Add New Member
+        posts:
+          create_post: Create Post
+          empty_description: Posts created for this community will show up here.
+          empty_title: No posts yet
         sections_aria: Community sections
       tabs:
         buildings: Buildings
         contact_details: Contact details
         details: Details
         images: Images
+        posts: Posts
     community_invitations_mailer:
       invite:
         about: About
@@ -4378,6 +4383,7 @@ en:
       federation: Federation
       invitations: Invitations
       members: Members
+      posts: Posts
       safety: Safety
     to: To
     'true': true

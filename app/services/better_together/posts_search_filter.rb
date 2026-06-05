@@ -13,6 +13,7 @@ module BetterTogether
       search_text
       filter_by_categories
       filter_by_authors
+      filter_by_communities
       filter_by_resource_specific_status
       order_by
       paginate
@@ -35,6 +36,13 @@ module BetterTogether
       return @relation unless allowed.include?(privacy)
 
       @relation = @relation.where(privacy:)
+    end
+
+    def filter_by_communities
+      return @relation unless params.key?(:community_ids)
+
+      ids = Array(params[:community_ids]).reject(&:blank?)
+      @relation = ids.empty? ? @relation.none : @relation.where(community_id: ids)
     end
 
     def filter_by_authors

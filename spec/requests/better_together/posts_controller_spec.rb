@@ -6,6 +6,8 @@ require 'stringio'
 RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
   let!(:category) { create(:category) }
   let!(:post_record) do
     unique_token = SecureRandom.hex(4)
@@ -13,6 +15,8 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       :better_together_post,
       author: platform_manager.person,
       creator: platform_manager.person,
+      community: host_community,
+      platform: host_platform,
       privacy: 'public',
       published_at: 1.day.ago,
       slug: "contribution-post-#{unique_token}",
@@ -21,6 +25,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
   end
 
   before do
+    host_community.update!(privacy: 'public')
     post_record.categories << category
     category.cover_image.attach(
       io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
@@ -28,6 +33,65 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       content_type: 'image/svg+xml'
     )
     post_record.add_governed_contributor(platform_manager.person, role: 'editor')
+  end
+
+  describe 'community scoping' do
+    let!(:private_community) do
+      create(:better_together_community, privacy: 'private')
+    end
+
+    before do
+      configure_host_platform
+      host_community.update!(privacy: 'public')
+
+      create(
+        :better_together_post,
+        title: 'Host Community Post',
+        community: host_community,
+        platform: host_platform,
+        privacy: 'public',
+        published_at: 1.day.ago
+      )
+
+      create(
+        :better_together_post,
+        title: 'Private Community Post',
+        community: private_community,
+        platform: host_platform,
+        privacy: 'public',
+        published_at: 1.day.ago
+      )
+    end
+
+    it 'shows only public community posts for guests', :no_auth do
+      logout
+
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect_html_content('Host Community Post')
+      expect_no_html_content('Private Community Post')
+    end
+
+    context 'as a community member', :no_auth do
+      let(:regular_user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+
+      before do
+        configure_host_platform
+        login('user@example.test', 'SecureTest123!@#')
+        create(:better_together_person_community_membership,
+               member: regular_user.person,
+               joinable: private_community,
+               status: 'active')
+      end
+
+      it 'includes private community posts for members' do
+        get better_together.posts_path(locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect_html_contents('Host Community Post', 'Private Community Post')
+      end
+    end
   end
 
   it 'renders not found for guests requesting a private unpublished post' do
@@ -82,7 +146,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     expect(loaded_post.association(rich_text_association)).to be_loaded if rich_text_association
   end
 
-  describe 'guest view switching' do
+  describe 'guest view switching', :no_auth do
     before do
       logout
     end

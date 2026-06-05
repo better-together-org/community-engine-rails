@@ -1000,12 +1000,17 @@ uk:
             select_role: Вибрати роль *
             submit: Додати
             title: Додати нового учасника
+        posts:
+          create_post: Створити допис
+          empty_description: Дописи, створені для цієї спільноти, з'являться тут.
+          empty_title: Поки що немає дописів
         sections_aria: Розділи спільноти
       tabs:
         buildings: Будівлі
         contact_details: Контактні деталі
         details: Деталі
         images: Зображення
+        posts: Дописи
     community_invitations_mailer:
       invite:
         about: Про
@@ -4465,6 +4470,7 @@ uk:
       federation: Федерація
       invitations: Запрошення
       members: Учасники
+      posts: Дописи
       safety: Безпека
     to: До
     'true': так

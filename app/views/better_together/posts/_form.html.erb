@@ -1,5 +1,6 @@
 <%= form_with(model: post, class: 'form', id: dom_id(post, 'form'), data: { controller: "better_together--form-validation" }) do |form| %>
   <%= form.hidden_field :creator_id, value: current_person&.id unless form.object.creator_id %>
+  <%= form.hidden_field :community_id, value: post.community_id if post.community_id.present? %>
   <% content_for :resource_toolbar do %>
     <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
       <div class="btn-group me-2" role="group">
