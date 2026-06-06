@@ -53,6 +53,7 @@ module BetterTogether # :nodoc:
       attempts { 0 }
 
       association :webhook_endpoint, factory: :better_together_webhook_endpoint
+      association :platform, factory: :better_together_platform
 
       trait :delivered do
         status { 'delivered' }
