@@ -6,6 +6,7 @@ module BetterTogether
     include Creatable
     include FriendlySlug
     include Metrics::Viewable
+    include PlatformScoped
     include Protected
     include Privacy
     include Searchable

@@ -10,9 +10,12 @@ module BetterTogether
     encrypts :content_screening_summary
     encrypts :content_security_records_json
 
+    include PlatformScoped
+
     belongs_to :inbound_email,
                class_name: 'ActionMailbox::InboundEmail',
                inverse_of: false
+    # Override PlatformScoped's belongs_to: inbound emails may not resolve to a platform.
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :target, polymorphic: true, optional: true
     belongs_to :routed_record, polymorphic: true, optional: true

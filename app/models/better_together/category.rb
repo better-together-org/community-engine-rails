@@ -5,6 +5,7 @@ module BetterTogether
     include Attachments::Images
     include Identifier
     include Metrics::Viewable
+    include PlatformScoped
     include Positioned
     include Protected
     include Translatable

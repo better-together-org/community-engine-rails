@@ -16,6 +16,11 @@ module BetterTogether
                class_name: 'BetterTogether::Person',
                optional: true,
                inverse_of: :oauth_applications
+    belongs_to :platform,
+               class_name: 'BetterTogether::Platform',
+               optional: true
+
+    scope :for_platform, ->(platform) { where(platform: platform) }
 
     validates :name, presence: true
     validate :validate_scopes_for_owner

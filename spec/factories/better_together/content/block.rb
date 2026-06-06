@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :content_block_base, class: 'BetterTogether::Content::Block' do # rubocop:todo Lint/EmptyBlock
+  factory :content_block_base, class: 'BetterTogether::Content::Block' do
+    association :platform, factory: :better_together_platform
   end
 
   factory :content_people_block, class: 'BetterTogether::Content::PeopleBlock' do

@@ -3,6 +3,8 @@
 module BetterTogether
   # allows for communication between people
   class Message < ApplicationRecord
+    include PlatformScoped
+
     belongs_to :conversation, touch: true
     belongs_to :sender, class_name: 'BetterTogether::Person', inverse_of: :sent_messages
 

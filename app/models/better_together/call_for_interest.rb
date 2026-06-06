@@ -9,6 +9,7 @@ module BetterTogether
     include Claimable
     include Creatable
     include Identifier
+    include PlatformScoped
     include Privacy
     include Searchable
 

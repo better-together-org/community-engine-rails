@@ -15,6 +15,8 @@ module BetterTogether
   class WebhookEndpoint < ApplicationRecord
     self.table_name = 'better_together_webhook_endpoints'
 
+    include PlatformScoped
+
     # Encrypt webhook signing secret at rest using Active Record Encryption
     encrypts :secret
 

@@ -49,14 +49,16 @@ module BetterTogether
       user.present? && agent.present?
     end
 
-    # Authorization scope for conversations
+    # Authorization scope for conversations — scoped to current platform.
     class Scope < ApplicationPolicy::Scope
       def resolve
-        scope.includes(participants: [
-                         :string_translations,
-                         :contact_detail,
-                         { profile_image_attachment: :blob }
-                       ])
+        platform = Current.platform || BetterTogether::Platform.find_by(host: true)
+        base = platform ? scope.where(platform_id: platform.id) : scope
+        base.includes(participants: [
+                        :string_translations,
+                        :contact_detail,
+                        { profile_image_attachment: :blob }
+                      ])
       end
     end
 

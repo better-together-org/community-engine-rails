@@ -84,4 +84,6 @@ RSpec.describe BetterTogether::Joatu::Request do
     expect(request_record.claims).to contain_exactly(claim)
     expect(claim.citations).to contain_exactly(citation)
   end
+
+  it_behaves_like 'platform scoped', factory: :joatu_request
 end
