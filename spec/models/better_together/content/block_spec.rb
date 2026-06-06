@@ -248,8 +248,8 @@ module BetterTogether # :nodoc:
           expect(BetterTogether::Content::Image.superclass).to eq(described_class)
         end
       end
+
+      it_behaves_like 'platform scoped', factory: :content_markdown
     end
   end
-
-  it_behaves_like 'platform scoped', factory: :content_markdown
 end
