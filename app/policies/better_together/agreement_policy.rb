@@ -23,10 +23,12 @@ module BetterTogether
       agreement_manager?
     end
 
-    # Filtering and sorting for agreements according to permissions and context
+    # Agreements scoped to the current platform context.
     class Scope < ApplicationPolicy::Scope
       def resolve
-        scope.order(created_at: :desc)
+        platform = Current.platform || BetterTogether::Platform.find_by(host: true)
+        base = platform ? scope.where(platform_id: platform.id) : scope
+        base.order(created_at: :desc)
       end
     end
 

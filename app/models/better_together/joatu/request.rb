@@ -6,6 +6,7 @@ module BetterTogether
     class Request < ApplicationRecord
       include Creatable
       include Exchange
+      include BetterTogether::PlatformScoped
       include Metrics::Viewable
       include ResponseLinkable
       include Searchable

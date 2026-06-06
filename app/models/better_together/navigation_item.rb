@@ -4,6 +4,7 @@ module BetterTogether
   # An element in a navigation tree. Links to an internal or external page
   class NavigationItem < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Identifier
+    include PlatformScoped
     include Positioned
     include Protected
     include Privacy

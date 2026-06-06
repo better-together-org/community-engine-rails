@@ -7,6 +7,7 @@ module BetterTogether
       include BetterTogether::Authorable
       include BetterTogether::Citable
       include BetterTogether::Claimable
+      include BetterTogether::PlatformScoped
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable

@@ -18,7 +18,12 @@ module BetterTogether
       platform_taxonomy_manager?
     end
 
+    # Categories scoped to the current platform context.
     class Scope < ApplicationPolicy::Scope
+      def resolve
+        platform = Current.platform || BetterTogether::Platform.find_by(host: true)
+        platform ? scope.where(platform_id: platform.id) : scope
+      end
     end
 
     private

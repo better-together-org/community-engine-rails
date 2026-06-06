@@ -6,6 +6,7 @@ module BetterTogether
     class Offer < ApplicationRecord
       include Creatable
       include Exchange
+      include BetterTogether::PlatformScoped
       include Metrics::Viewable
       include ResponseLinkable
       include Searchable
