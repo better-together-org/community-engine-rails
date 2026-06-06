@@ -250,4 +250,6 @@ module BetterTogether # :nodoc:
       end
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :content_markdown
 end

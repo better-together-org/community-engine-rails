@@ -7,9 +7,12 @@
 ActiveSupport::Reloader.to_prepare do
   PublicActivity::Config.set do
     table_name 'better_together_activities'
+    # Use the platform-scoped BetterTogether::Activity wrapper so every
+    # audit trail entry is tagged to the platform where it occurred.
+    activity_model 'BetterTogether::Activity'
   end
 
-  # PublicActivity::Activity.include BetterTogether::Privacy
+  # Ensure the custom model's policy_class is accessible via the base class too.
   PublicActivity::Activity.class_eval do
     def self.policy_class
       BetterTogether::ActivityPolicy

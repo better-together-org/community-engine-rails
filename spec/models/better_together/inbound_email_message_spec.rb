@@ -36,4 +36,6 @@ RSpec.describe BetterTogether::InboundEmailMessage do
       expect(message.content_security_records).to eq([{ 'record_type' => 'content_item', 'content_id' => 'csi_test_record' }])
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :better_together_inbound_email_message
 end

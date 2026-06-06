@@ -6,6 +6,7 @@ module BetterTogether
     include BetterTogether::ContentSecurity::ScannableAttachment
     include Creatable
     include Identifier
+    include PlatformScoped
     include Privacy
     include Translatable
 

@@ -14,5 +14,6 @@ FactoryBot.define do
     success_message { 'Thank you. You have successfully completed the wizard' }
     success_path { '/' }
     protected { Faker::Boolean.boolean }
+    association :platform, factory: :better_together_platform
   end
 end
