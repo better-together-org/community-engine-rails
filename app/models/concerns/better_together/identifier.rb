@@ -12,9 +12,13 @@ module BetterTogether
 
       validates :identifier,
                 presence: true,
-                uniqueness: true,
                 length: { maximum: 100 },
                 unless: :skip_validate_identifier?
+
+      # Uniqueness is scoped to platform_id when the model is platform-scoped,
+      # otherwise globally unique. Replaces the bare `uniqueness: true` validator
+      # so the same identifier can exist on different platforms.
+      validate :validate_identifier_uniqueness, unless: :skip_validate_identifier?
 
       before_create :generate_identifier_slug
       before_validation :generate_identifier
@@ -39,16 +43,37 @@ module BetterTogether
 
     protected
 
+    def validate_identifier_uniqueness
+      return if identifier.blank?
+
+      # Scope uniqueness to platform when platform_id column exists on this model.
+      scope = self.class.where(identifier: identifier)
+      scope = scope.where(platform_id: platform_id) if has_attribute?(:platform_id)
+      scope = scope.where.not(id: id) if persisted?
+
+      errors.add(:identifier, :taken) if scope.exists?
+    end
+
     def generate_identifier
       return if identifier.present?
 
       self.identifier = loop do
-        autogen_identifier = slug&.parameterize || SecureRandom.alphanumeric(10)
-        break autogen_identifier unless self.class.exists?(identifier: autogen_identifier)
+        candidate = slug&.parameterize || SecureRandom.alphanumeric(10)
+        break candidate unless identifier_taken?(candidate)
 
-        autogen_identifier = "#{autogen_identifier}-#{SecureRandom.alphanumeric(10)}"
-        break autogen_identifier unless self.class.exists?(identifier: autogen_identifier)
+        candidate = "#{candidate}-#{SecureRandom.alphanumeric(10)}"
+        break candidate unless identifier_taken?(candidate)
       end
+    end
+
+    def identifier_taken?(candidate)
+      identifier_scope.exists?(identifier: candidate)
+    end
+
+    def identifier_scope
+      return self.class.where(platform_id: platform_id) if has_attribute?(:platform_id)
+
+      self.class
     end
 
     def generate_identifier_slug # rubocop:todo Metrics/AbcSize

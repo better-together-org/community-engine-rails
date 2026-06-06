@@ -181,4 +181,6 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect { agreement.cancel! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :'better_together/joatu/agreement'
 end

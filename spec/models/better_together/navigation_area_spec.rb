@@ -20,9 +20,29 @@ RSpec.describe BetterTogether::NavigationArea do
 
   describe 'ActiveModel validations' do
     it { is_expected.to validate_presence_of(:name) }
-    # it { is_expected.to validate_inclusion_of(:visible).in_array([true, false]) }
     it { is_expected.to validate_length_of(:style).is_at_most(255).allow_blank }
+
+    describe 'name uniqueness per platform' do
+      let(:platform_a) { create(:better_together_platform, host: false) }
+      let(:platform_b) { create(:better_together_platform, host: false) }
+      let(:shared_name) { "Nav Area #{SecureRandom.hex(4)}" }
+
+      it 'rejects duplicate name on the same platform' do
+        create(:better_together_navigation_area, name: shared_name, platform: platform_a)
+        dup = build(:better_together_navigation_area, name: shared_name, platform: platform_a)
+        expect(dup).not_to be_valid
+        expect(dup.errors[:name]).to be_present
+      end
+
+      it 'allows the same name on different platforms' do
+        create(:better_together_navigation_area, name: shared_name, platform: platform_a)
+        cross = build(:better_together_navigation_area, name: shared_name, platform: platform_b)
+        expect(cross).to be_valid
+      end
+    end
   end
+
+  it_behaves_like 'platform scoped identifier', factory: :better_together_navigation_area
 
   describe 'Attributes' do
     it { is_expected.to respond_to(:name) }

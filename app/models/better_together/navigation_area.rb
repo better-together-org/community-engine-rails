@@ -17,7 +17,6 @@ module BetterTogether
     has_many :navigation_items, dependent: :destroy
 
     validates :name, presence: true, uniqueness: { scope: :platform_id }
-    validates :identifier, uniqueness: { scope: :platform_id }, allow_blank: true
     validates :style, length: { maximum: 255 }, allow_blank: true
 
     def build_page_navigation_items(pages) # rubocop:todo Metrics/MethodLength
