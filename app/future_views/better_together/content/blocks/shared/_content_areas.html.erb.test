@@ -1,0 +1,67 @@
+<div class="content_areas" data-controller="content-areas" data-content-areas-target="contentAreas">
+  <% block.available_content_areas.each do |class_name, attributes| %>
+    <% content_area_block = class_name.constantize %>
+    <% quantity = attributes[:quantity] || { min: 1, max: 1 } %>
+
+    <!-- Display existing content areas -->
+    <div class="content-area-blocks" data-content-areas-target="areaBlocks">
+      <% block.content_areas.where(block_type: content_area_block.to_s).each_with_index do |content_area, index| %>
+        <div class="content-area-block">
+          <!-- Render Content Area Fields -->
+          <%= fields_for "#{scope}[content_areas_attributes][#{index}]", content_area do |area_form| %>
+
+            <!-- Content Area fields -->
+            <%= area_form.hidden_field :id %>
+            <%# area_form.hidden_field :block_type, value: content_area.block_type %>
+            <%# area_form.hidden_field :block_id, value: content_area.block_id %>
+
+            <!-- Render Contentable Polymorphic Fields -->
+            <%= fields_for "#{area_form.object_name}[contentable_attributes]", block do |contentable_form| %>
+              <%= contentable_form.hidden_field :contentable_type, value: block.class.name %>
+              <%= contentable_form.hidden_field :contentable_id, value: block.id %>
+
+              <!-- You can render specific contentable fields based on the block type -->
+              <% if block.is_a?(SomeSpecificBlockType) %>
+                <%= contentable_form.text_field :specific_field_for_this_block %>
+              <% else %>
+                <!-- Generic contentable fields if needed -->
+              <% end %>
+            <% end %>
+
+            <!-- Render the associated block's specific fields -->
+            <%= render partial: "better_together/content/blocks/fields/#{content_area.block.block_name}", locals: { block: content_area.block, scope: "#{area_form.object_name}[block_attributes]", temp_id: SecureRandom.uuid } %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Automatically render content areas if min > existing count -->
+    <% current_count = block.content_areas.where(block_type: content_area_block.to_s).count %>
+    <% (current_count...quantity[:min]).each do |index| %>
+      <div class="content-area-block new">
+        <!-- Render a new content area block -->
+        <%= fields_for "#{scope}[content_areas_attributes][]", BetterTogether::Content::Area.new(block: content_area_block.new) do |area_form| %>
+          <!-- Content Area fields -->
+          <%= area_form.hidden_field :block_type, value: content_area_block.name %>
+          <%= area_form.hidden_field :contentable_type, value: block.class.name %>
+          <%= area_form.hidden_field :contentable_id, value: block.id %> <!-- New contentable, so no ID yet -->
+          <%= area_form.hidden_field :creator_id, value: current_person&.id %> <!-- New contentable, so no ID yet -->
+          <%= area_form.hidden_field :visible, value: attributes[:visible] %> <!-- New contentable, so no ID yet -->
+
+          <!-- Render the new block fields -->
+          <%= render partial: "better_together/content/blocks/fields/#{content_area_block.block_name}", locals: { block: content_area_block.new, scope: "#{area_form.object_name}[block_attributes]", temp_id: SecureRandom.uuid } %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Add button to allow more content areas if max > min -->
+    <% if quantity[:max] > quantity[:min] %>
+      <button type="button" class="btn btn-secondary add-content-area"
+              data-action="content-areas#addContentArea"
+              data-content-areas-type="<%= class_name %>"
+              data-max="<%= quantity[:max] %>">
+        Add More <%= content_area_block.name.demodulize %>
+      </button>
+    <% end %>
+  <% end %>
+</div>
