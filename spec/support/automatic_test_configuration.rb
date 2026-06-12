@@ -200,7 +200,8 @@ module AutomaticTestConfiguration # :nodoc:
         platform_steward.person.reload
         host_platform.person_platform_memberships.create!(
           member_id: platform_steward.person.id,
-          role_id: platform_steward_role.id
+          role_id: platform_steward_role.id,
+          status: 'active'
         )
       rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, ActiveRecord::StaleObjectError
         nil
@@ -404,6 +405,7 @@ module AutomaticTestConfiguration # :nodoc:
           member: user.person,
           role: platform_steward_role
         )
+        membership.status = 'active'
         membership.save! if membership.new_record? || membership.changed?
       end
     end

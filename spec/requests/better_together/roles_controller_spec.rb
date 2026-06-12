@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
 
   describe 'GET /:locale/.../host/roles' do
     it 'renders index' do
@@ -95,6 +96,18 @@ RSpec.describe 'BetterTogether::RolesController', :as_platform_manager do
         permission.identifier.tr('_', ' ').humanize,
         I18n.t('better_together.roles.permissions.count', count: 1)
       )
+    end
+  end
+
+  describe 'GET /:locale/.../host/roles/:id/edit' do
+    let!(:role) { create(:better_together_role, :platform_role, protected: false) }
+
+    it 'redirects signed-in non-managers away from edit' do
+      sign_in regular_user
+
+      get better_together.edit_role_path(locale:, id: role.slug)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 

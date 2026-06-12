@@ -10,7 +10,8 @@ module BetterTogether
       'content.feed.read' => ->(connection) { connection.api_read_enabled? && connection.mirrored_content_enabled? },
       'linked_content.read' => ->(connection) { connection.linked_content_read_enabled? },
       'content.mirror.write' => ->(connection) { connection.api_write_enabled? && connection.mirrored_content_enabled? },
-      'content.publish.write' => ->(connection) { connection.publish_back_enabled? }
+      'content.publish.write' => ->(connection) { connection.publish_back_enabled? },
+      'c3.exchange' => ->(connection) { connection.allows_c3_exchange? }
     }.freeze
 
     Result = Struct.new(

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.0] – Unreleased
 
+Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
+
 ### Added
 
 #### Multi-Tenant Platform Architecture & Federation MVP
@@ -31,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BlockResource` base model and 19 concrete block type models: text, image, video, audio, map, embed, CTA, divider, accordion, checklist, mermaid diagram, and more (#1376)
 - MCP tools for block management (create, update, delete, reorder)
 - JSON:API endpoints for content blocks and page blocks (#1373)
-- 12 additional content block types added in follow-up (#1350)
+- 12 additional content block types implemented in follow-up, with page-builder rollout deferred until a 0.11.x patch review (#1350)
 - Missing `blocks/new/_mermaid_diagram` partial restored (#1349)
 
 #### Storage Adapter
@@ -47,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Privacy, Consent & Data Rights
 - Member data export workflow with `PersonDataExport` / `PersonDeletionRequest` records for privacy-led self-service and review flows (#1468)
 - Agreement acceptance audit trail with immutable method, identifier/title snapshot, revision timestamp, content digest, and privacy-safe audit context on `AgreementParticipant` (#1469)
+- GDPR-oriented deletion audit inventory, anonymization, manifest, and hard-deletion executor flows, plus account-tab deletion-request cleanup (#1486)
 
 #### Metrics & Reporting
 - Platform-scoped analytics reads and writes across metrics dashboards, reports, summaries, and tracking jobs (#1461)
@@ -62,6 +65,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MembershipRequest` STI model with `pending`/`approved`/`declined` states (#1356)
 - Public JSONAPI endpoint: `POST /api/v1/membership_requests`
 - Pundit policy enforcement; 404-not-403 leak prevention
+
+#### Access Modes & Review Flow
+- Community access-mode surfaces now distinguish open-join and request-to-join states consistently across public community pages, registration interstitials, and organizer review flows (#1500)
+- Membership request review queue/detail evidence and related docs/diagrams now reflect the shipped organizer moderation path instead of leaving that flow implicit (#1500)
+
+#### Inbound Mail Relay
+- Action Mailbox-powered inbound email relay MVP with Better Together router mailboxes, tenant-safe resolution/routing, and persisted inbound message records (#1501)
+
+#### Content Security & Reporting
+- Content-security ingress workflow for uploads and rich-text attachments with under-review/restricted states and a review queue for release decisions (#1504)
+- Refreshed reporting surfaces and guidance: non-page report menus remain in place, page views gain a bottom feedback bar, and safety-routing copy is clearer for reporters and reviewers (#1504)
 
 #### Posts Index — Search, Filter & Pagination
 - New `PostsSearchFilter` service: ILIKE text search (Mobility joins), category filter, privacy filter, order-by, Kaminari pagination (#1409)
@@ -82,9 +96,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configurable Redis connection pool size and timeout for Rack::Attack rate limiting
 
 #### Search
-- Elasticsearch 8 gem upgrade validation (#1398)
-- Audit, health reporting, and live ES validation tooling (#1393)
+- `pg_search`-backed default search backend with database fallback for models that have not yet been upgraded to dedicated `pg_search` scopes
+- Audit and backend-visibility tooling for the registry-backed search lane (#1393)
 - Optional full reindex for all searchable models (#1276)
+- `SearchPagesTool` plus a shared AREL content-search helper for page-oriented MCP search paths (#1273)
 
 #### CI / Developer Experience
 - Rails 8.1 informational CI lane (non-blocking) + versioned bundle helpers (#1391)
@@ -92,8 +107,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dual migration path support + FK ordering fixes (#1401)
 - Share Docker services across worktrees for faster local dev (#1279)
 - Repository write-boundary agent instructions
+- Rails branch maintenance workflows plus native Rails lint-lane fixes (#1281)
+- Tiered PR evidence requirements with validator-backed screenshot/diagram/doc enforcement (#1497)
+
+#### AI / Adapter Infrastructure
+- Provider adapter architecture scaffold for pluggable AI and service backends (#1491)
+- Robot configuration system documentation and resolution-flow artefacts for persisted AI-capable robot records (#1493)
+
+#### C3 Tree Seeds — Community Contribution Token System
+- `BetterTogether::C3::Token` model for recording community contribution credits with platform scoping and cross-platform federation support
+- `BetterTogether::C3::TokenSeed` STI type for federated token-seed distribution via the federation API (`/api/v1/c3/token_seeds`)
+- `BetterTogether::Joatu::Settlement` model + `Agreement#fulfill!` lifecycle method to complete the C3 spending chain
+- Balance locking with decimal-precision arithmetic via `C3::BalanceLock`; `ExpireBalanceLocksJob` handles automatic expiry of stale locks
+- Borgberry fleet integration: migrations, models, and API endpoints for fleet-node contribution tracking and autonomous earning
+- Operator-owned settlement notifications via `C3::SettlementMailer` and `C3::SettlementNotifier`
+- `PlatformConnection` C3 scope + token-origin tracking as federation prerequisites for cross-platform token exchange
+- i18n coverage: C3 and settlement locale keys for English, Spanish, French, and Ukrainian
+- Architecture documentation: `docs/c3/` (what-is-c3, data-model, flows, network-and-security, regulatory considerations), `docs/borgberry-ce-integration.md`, `docs/c3-federation-design.md`
+
+#### Short Links & Share Domain
+- `BetterTogether::ShortLink` model with configurable slug, polymorphic target, optional expiry, and click tracking (#1594)
+- `Shortlinkable` concern: attach a managed share URL to any model with one line
+- Share button UI component with clipboard copy-to-clipboard (Stimulus `clipboard` controller), integrated on post, page, and event surfaces
+- Platform-scoped short-link index and management views (`GET /c/:community/short_links`)
+- Public redirect endpoint at `GET /r/:slug`
+- Stable `dom_id`/`dom_class` DOM identifiers on all new short-link views per the View DOM Identifier Standard
+
+#### Fleet Node Authorization
+- `FleetNodePolicy` + Pundit authorization on `NodesController` to prevent unauthorized fleet-node management via the fleet API
 
 ### Fixed
+- **Content Blocks:** Production readiness fixes for markdown, video, and iframe blocks; restored `content_addable? = true` on 11 regressed block types; all blocks enabled and PR #1492 review findings resolved
+- **Uploads:** Honor upload content-security state toggles; align upload download authorization to the content-security review state
+- **Federation:** Namespace mirrored content imports to prevent cross-tenant identifier collisions (#1597); add idempotent repair migration for federated mirrored identifier backfill; localize federation remediation messages (es/fr/uk)
+- **C3:** Rename `BalanceLocking#lock!` → `lock_c3!` to stop shadowing `ActiveRecord` pessimistic locking; qualify error constant namespacing; validate `lock_ref` upfront before lock acquisition
+- **Provider Gems:** Load provider extension gems as optional non-bundled extensions to keep the core engine bundle clean (#1596)
+- **Assets:** Restore Leaflet vendor assets for importmap compatibility
+- **RC Hardening:** Address 0.11.0 RC merge blockers — scope fixes, route cleanup, and compatibility patches (#1598)
 - **Authoring:** Preload event associations and add pagination to reduce host-side metrics and content list load issues (#1034)
 - **Federation:** Narrow platform connection updates so host dashboards only mutate the intended fields (#1458)
 - **Messaging:** Scope conversation participants to the current platform (#1459)
@@ -106,15 +156,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Federation:** Pass `I18n.locale` to `federation_oauth_token_path` for correct locale-prefixed URLs
 - **Engine:** Use exact match in `append_migrations` to include `spec/dummy` migrations correctly
 - **Migrations:** Fix dual-path support, ordering, and FK bugs in migration loader (#1401)
+- **Migrations:** Avoid platform permission position collisions during the `0.11.0` release-upgrade path
 - **Cache:** Update `RedisCacheStore` pool options for Rails 8 compatibility (#1353)
+- **Navigation:** Correct header/footer visibility cache keys and helper memoization for access-context-sensitive navigation rendering (#1274)
 - **Routing:** Prevent `URI::InvalidURIError` on non-default locale + accented slug URLs (#1351)
 - **Security:** Extend URI encoding; add Rack::Attack bot/scanner blocklists (#1352)
 - **CI:** Restore main mailer and Rubocop green (#1384)
 - **Performance:** Reduce N+1 queries on platform lookup and person profile pages (#1354)
+- **Settings / Privacy:** Move account deletion requests into the account tab and retire the legacy My Data seed section after the deletion-audit rollout
+- **Auth / UX:** Hide OAuth sign-in buttons when provider credentials are not configured
+- **API:** Remove the stray `created_at` attribute from `InvitationResource`
 
 ### Security
 
 - **CVE-2026-32700 (Devise):** Upgraded Devise to 5.0.3 across Rails 7.2, 8.0, and 8.1 compat branches (#1385, #1386, #1387). Existing password-reset tokens will be invalidated on upgrade — users with pending resets will need to re-request a new link.
+- **SSRF (Federation):** Added `ssrf_filter` gem to close SSRF DNS rebinding attack vector in federation outbound HTTP requests; all federated outbound requests are now filtered against private and loopback address ranges.
+
+### Dependencies (post-#1547 updates)
+
+- Devise 5.0.4 (patch after 5.0.3 security release)
+- ruby_llm 1.15.0
+- sidekiq 8.1.5
+- nokogiri 1.19.3
+- active_storage_validations 3.0.5
+- faraday 2.14.2, bootsnap 1.24.4
+- rubocop-rails 2.35.2, selenium-webdriver 4.44.0, parallel_rspec 3.1.0
+- icalendar 2.12.3, css_parser 1.22.0, doorkeeper 5.9.1, jwt 3.2.0
+- aws-sdk-s3 1.223.0
 
 ---
 
@@ -238,7 +306,7 @@ See git history for changes prior to v0.9.0.
 
 ---
 
-[0.11.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.10.0...HEAD
+[0.11.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.10.0...main
 [0.10.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/better-together-org/community-engine-rails/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/better-together-org/community-engine-rails/releases/tag/v0.8.1

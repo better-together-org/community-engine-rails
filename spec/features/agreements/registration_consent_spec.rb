@@ -47,6 +47,7 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
     check 'privacy_policy_agreement'
     check 'code_of_conduct_agreement'
 
+    satisfy_bot_defense_minimum_wait(:registration)
     click_button 'Sign Up'
 
     user = BetterTogether::User.find_by(email: test_email)

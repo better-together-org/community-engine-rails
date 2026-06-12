@@ -90,9 +90,18 @@ echo ""
 echo "📚 Testing documentation references..."
 broken_refs=0
 
-# Check for old-style diagram references (docs/*.mmd instead of docs/diagrams/source/*.mmd)
-if grep -r "docs/[^/]*\.\(mmd\|png\|svg\)" docs/ --exclude-dir=diagrams >/dev/null 2>&1; then
-    old_refs=$(grep -r "docs/[^/]*\.\(mmd\|png\|svg\)" docs/ --exclude-dir=diagrams | wc -l)
+# Check for old-style diagram references in docs content only.
+old_ref_pattern="docs/[^/]*\.\(mmd\|png\|svg\)"
+if grep -r "$old_ref_pattern" docs/ \
+    --exclude-dir=diagrams \
+    --exclude-dir=scripts \
+    --exclude='*.png' \
+    --exclude='*.svg' >/dev/null 2>&1; then
+    old_refs=$(grep -r "$old_ref_pattern" docs/ \
+        --exclude-dir=diagrams \
+        --exclude-dir=scripts \
+        --exclude='*.png' \
+        --exclude='*.svg' | wc -l)
     echo "  ⚠️  Found $old_refs potential old-style diagram references"
     broken_refs=$((broken_refs + old_refs))
 fi

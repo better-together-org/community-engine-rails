@@ -5,26 +5,30 @@ module BetterTogether
   # Owners can view/manage their own applications.
   class OauthApplicationPolicy < ApplicationPolicy
     def index?
-      platform_manager? || user&.person.present?
+      developer_settings_enabled? && (platform_manager? || user&.person.present?)
     end
 
     def show?
-      platform_manager? || owner?
+      developer_settings_enabled? && (platform_manager? || owner?)
     end
 
     def create?
-      platform_manager? || user&.person.present?
+      developer_settings_enabled? && (platform_manager? || user&.person.present?)
     end
 
     def update?
-      platform_manager? || owner?
+      developer_settings_enabled? && (platform_manager? || owner?)
     end
 
     def destroy?
-      platform_manager? || owner?
+      developer_settings_enabled? && (platform_manager? || owner?)
     end
 
     private
+
+    def developer_settings_enabled?
+      feature_enabled?('developer_settings')
+    end
 
     def owner?
       return false unless user&.person
@@ -39,13 +43,17 @@ module BetterTogether
     # Scope: platform managers see all, others see their own
     class Scope < ApplicationPolicy::Scope
       def resolve
-        if user&.person&.permitted_to?('manage_platform')
-          scope.all
-        elsif user&.person
-          scope.where(owner: user.person)
-        else
-          scope.none
-        end
+        return scope.none unless feature_enabled?('developer_settings')
+        return scope.all if platform_manager?
+        return scope.where(owner: user.person) if user&.person
+
+        scope.none
+      end
+
+      private
+
+      def platform_manager?
+        user&.person&.permitted_to?('manage_platform')
       end
     end
   end

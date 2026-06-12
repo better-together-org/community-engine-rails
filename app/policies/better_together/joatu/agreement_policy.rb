@@ -30,7 +30,9 @@ module BetterTogether
         participant? || can_manage_joatu?
       end
       alias accept? update?
+      alias cancel? update?
       alias reject? update?
+      alias fulfill? update?
 
       def destroy?
         return false unless user.present?
@@ -41,9 +43,9 @@ module BetterTogether
       end
 
       def participant?
-        return false unless record&.offer && record.request
+        return false unless record.present?
 
-        [record.offer.creator_id, record.request.creator_id].compact.include?(agent&.id)
+        record.participant_for?(agent)
       end
 
       class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation

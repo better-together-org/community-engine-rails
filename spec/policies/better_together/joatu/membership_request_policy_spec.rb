@@ -19,16 +19,25 @@ RSpec.describe BetterTogether::Joatu::MembershipRequestPolicy, type: :policy do
     end
   end
 
-  context 'when the platform allows membership requests' do
+  context 'when only the platform allows membership requests' do
     let(:platform_allows_requests) { true }
 
-    it 'allows public creation' do
-      expect(described_class.new(user, membership_request).create?).to be(true)
+    it 'still forbids public creation until the community opts in' do
+      expect(described_class.new(user, membership_request).create?).to be(false)
     end
   end
 
-  context 'when the community allows membership requests' do
+  context 'when only the community allows membership requests' do
     let(:community_allows_requests) { true }
+
+    it 'still forbids public creation until the platform opts in' do
+      expect(described_class.new(user, membership_request).create?).to be(false)
+    end
+  end
+
+  context 'when both the platform and community allow membership requests' do
+    let(:community_allows_requests) { true }
+    let(:platform_allows_requests) { true }
 
     it 'allows public creation' do
       expect(described_class.new(user, membership_request).create?).to be(true)

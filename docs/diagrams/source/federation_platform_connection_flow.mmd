@@ -1,0 +1,13 @@
+flowchart TD
+  A[Create local and remote Platform records] --> B[Create PlatformConnection]
+  B --> C[Set connection kind and policy flags]
+  C --> D{Approve connection?}
+  D -->|No| E[Remain pending]
+  D -->|Yes| F[Status becomes active]
+  F --> G[Rotate or confirm OAuth credentials]
+  G --> H[Remote side requests token]
+  H --> I[Connection used for feed access and sync]
+  I --> J{Incident or governance pause?}
+  J -->|Yes| K[Suspend connection]
+  J -->|No| L[Continue sync operations]
+

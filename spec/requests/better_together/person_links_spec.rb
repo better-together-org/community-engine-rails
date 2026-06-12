@@ -14,6 +14,12 @@ RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   let!(:linked_grant) { create(:better_together_person_access_grant, person_link:) }
 
   describe 'GET /person-links' do
+    it 'returns 404 for unauthenticated users' do
+      get better_together.person_links_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'allows the source person to list their links' do
       login(source_user.email, password)
 
@@ -34,6 +40,12 @@ RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   end
 
   describe 'GET /person-links/:id' do
+    it 'returns 404 for unauthenticated users' do
+      get better_together.person_link_path(person_link, locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'allows the target person to view link metadata' do
       login(target_user.email, password)
 
@@ -54,6 +66,12 @@ RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   end
 
   describe 'POST /person-links/:id/revoke' do
+    it 'raises a routing error when unauthenticated because the route is constrained' do
+      expect do
+        post better_together.revoke_person_link_path(person_link, locale:)
+      end.to raise_error(ActionController::RoutingError)
+    end
+
     it 'allows the source person to revoke the link and cascades grant revocation' do
       login(source_user.email, password)
 

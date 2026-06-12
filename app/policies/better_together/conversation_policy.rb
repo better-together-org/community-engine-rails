@@ -107,6 +107,7 @@ module BetterTogether
       return ids unless platform&.host? && platform.community.present?
 
       host_community_ids = BetterTogether::PersonCommunityMembership
+                           .active
                            .where(joinable: platform.community)
                            .pluck(:member_id)
 

@@ -64,14 +64,14 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - **Full Test Suite (USE SPARINGLY):** `bin/dc-run bin/ci`
   - Uses `prspec` (parallel_rspec) for faster execution via parallelization
   - Equivalent: `bin/dc-run bundle exec prspec spec --format documentation`
-  - Alternative (slower, sequential): `bin/dc-run bash -c "cd spec/dummy && bundle exec rspec"`
+  - **No sequential alternative** — bare `rspec` is not permitted without explicit operator authorization
 - **Running specific tests (PREFER THIS):** 
   - **Prefer `prspec`** for all test runs - it's faster than plain `rspec`
   - Single spec file: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
   - Specific line: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb:123`
   - Multiple files: `bin/dc-run bundle exec prspec spec/file1_spec.rb spec/file2_spec.rb`
   - Multiple specific lines: `bin/dc-run bundle exec prspec spec/file1_spec.rb:123 spec/file2_spec.rb:456`
-  - Fallback (if prspec unavailable): Use `rspec` with same arguments
+  - **No rspec fallback** — if `prspec` is unavailable, stop and report; do not fall back to bare `rspec`
   - **Important**: Neither tool supports hyphenated line numbers (e.g., `spec/file_spec.rb:123-456` is INVALID)
   - **Do NOT use `-v` flag**: The `-v` flag displays version information, NOT verbose output. Use `--format documentation` for detailed test descriptions.
   - **Note**: `prspec` always requires a spec path argument (file, directory, or line number)
@@ -117,6 +117,30 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Never write project artifacts to `/tmp` (or any system-wide temp directory) as part of coding tasks.
 - Use repository-scoped temporary paths instead (for example `tmp/` inside the repo, which remains repository-local).
 - If a command or script defaults to `/tmp`, override it to a repository path before running.
+
+## View DOM Identifier Requirements
+
+Every interactive or data-bearing HTML element in a new or modified ERB view **must** carry a
+stable, predictable `id` or semantic `class` attribute. This is enforced at code-review time and
+verified by doc screenshot specs and DOM contract specs.
+
+**Full standard**: [`docs/development/view_dom_identifier_standard.md`](docs/development/view_dom_identifier_standard.md)
+
+Required elements and their patterns:
+
+| Element | Required identifier | Example |
+|---------|--------------------|---------| 
+| Record container | `dom_id(record)` | `id="<%= dom_id(@short_link) %>"` |
+| Index table | `<resource>-table` | `id="short-links-table"` |
+| New CTA button | `new-<resource>-btn` | `id="new-short-link-btn"` |
+| Detail `<dl>` | `dom_id(record, :details)` | `id="<%= dom_id(@resource, :details) %>"` |
+| Detail `<dd>` | `dom_id(record, :field)` or static kebab | `id="short-link-click-count"` |
+| Status badge | `<resource>-status-badge` class | `class="short-link-status-badge bg-success"` |
+| Action group | `<resource>-actions` | `id="short-link-actions"` |
+
+**Agent rule**: Never write a doc screenshot spec `selector:` using `nth-of-type`, `:first-of-type`,
+or other structural pseudo-selectors. Always target a stable `id` or semantic `class`. If the target
+element lacks one, add it to the view first.
 
 ## String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries.
@@ -878,7 +902,7 @@ Each major system must include:
 - **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
-  - Tests: `bin/dc-run bundle exec rspec`
+  - Tests: `bin/dc-run bundle exec prspec spec/` (or `bin/dc-ci` for full suite)
   - Generators: `bin/dc-run rails generate model User`
   - Brakeman: `bin/dc-run bundle exec brakeman`
   - RuboCop: `bin/dc-run bundle exec rubocop`

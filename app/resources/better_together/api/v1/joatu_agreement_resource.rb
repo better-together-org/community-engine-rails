@@ -10,7 +10,7 @@ module BetterTogether
         # Override: demodulize strips 'Joatu::' causing JSONAPI to look for AgreementResource
         def self.resource_klass_for_model(_model) = self
 
-        attributes :slug, :status, :terms, :value, :privacy
+        attributes :slug, :status, :terms, :value, :privacy, :agreement_family, :agreement_type, :participant_ids, :decision_made_at
 
         has_one :offer, class_name: 'JoatuOffer'
         has_one :request, class_name: 'JoatuRequest'

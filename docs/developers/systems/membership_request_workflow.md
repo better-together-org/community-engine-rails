@@ -82,6 +82,64 @@ flowchart TD
 
 Mobile captures are generated alongside the desktop variants in `docs/screenshots/mobile/`.
 
+## Review entry points added by the remediation pass
+
+The original `0.11.0` workflow added the request queue and detail view, but the later remediation work made those review surfaces easier to find from normal stewardship screens.
+
+### Host dashboard membership review tab
+
+![Host dashboard membership review queue](../../screenshots/desktop/membership_review_host_dashboard_queue.png)
+
+- platform managers can now reach membership review from its own host dashboard tab
+- the queue summarizes open-request counts, recent requester activity, and a direct review action
+- this closes the “known URL only” gap without forcing review work into the overview tab
+
+### Community page review shortcut
+
+![Community page membership review shortcut](../../screenshots/desktop/membership_review_community_shortcut.png)
+
+- community managers now get a reviewer-only panel on the community page itself
+- the panel shows the open-request count and links directly to the review queue
+- this keeps request handling connected to the community-management surface people already use
+
+## Reviewer notification digest behavior
+
+The remediation also changed reviewer notifications so repeated request bursts do not pile up as one notification per request forever.
+
+```mermaid
+flowchart TD
+  A[New membership request submitted] --> B[Find community and platform reviewers]
+  B --> C[Count open requests for this community in the last 15 minutes]
+
+  C -->|Fewer than 3 open requests| D[Keep per-request notification path]
+  D --> E[Send MembershipRequestSubmittedNotifier to each reviewer]
+
+  C -->|3 or more open requests| F[Switch to digest path]
+  F --> G[Check whether the last digest email for this reviewer and community is older than 30 minutes]
+  G --> H[Remove unread per-request notifications for this community]
+  H --> I[Replace any unread digest notification for this reviewer and community]
+  I --> J[Create a fresh MembershipRequestDigestNotifier]
+  J --> K{Email cooldown cleared?}
+  K -->|Yes| L[Send one digest email with the community review link]
+  K -->|No| M[Keep the in-app digest only]
+
+  E --> N[Reviewer opens the community review queue]
+  L --> N
+  M --> N
+```
+
+**Diagram files:**
+- [Mermaid Source](../../diagrams/source/membership_review_notification_digest_flow.mmd)
+- [PNG Export](../../diagrams/exports/png/membership_review_notification_digest_flow.png)
+- [SVG Export](../../diagrams/exports/svg/membership_review_notification_digest_flow.svg)
+
+### What the digest flow changes
+
+1. Individual notifications are still used for small volumes of requests.
+2. Once a community accumulates **3 or more** open requests inside a **15 minute** window, unread per-request notifications are collapsed into one digest per reviewer.
+3. Digest emails are rate-limited so the same reviewer does not receive a new digest email for the same community more often than every **30 minutes**.
+4. The digest keeps the same review destination: the community membership review queue.
+
 ## Privacy and Authorization Boundaries
 
 - public visitors may only **create** requests when the target community intake is enabled

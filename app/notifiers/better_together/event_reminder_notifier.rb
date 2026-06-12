@@ -59,10 +59,10 @@ module BetterTogether
       }
     end
 
-    def email_params(_notification)
+    def email_params(notification)
       {
         event: target_event,
-        person: recipient,
+        person: notification.recipient,
         reminder_type: reminder_type
       }
     end
@@ -95,10 +95,7 @@ module BetterTogether
     end
 
     notification_methods do
-      delegate :event, to: :target_event
-      delegate :url, to: :target_event
-      delegate :identifier, to: :target_event
-      delegate :reminder_type, to: :target_event
+      delegate :target_event, :url, :identifier, :reminder_type, to: :event
 
       def send_email_notification?
         recipient.email.present? && recipient.notify_by_email && should_send_email?
@@ -115,15 +112,18 @@ module BetterTogether
       def should_send_email?
         # Check for unread notifications for the recipient for the record's event
         unread_notifications = recipient.notifications.where(
-          event_id: BetterTogether::EventReminderNotifier.where(params: { event_id: target_event.id }).select(:id),
+          event_id: BetterTogether::EventReminderNotifier.where(
+            record: target_event,
+            params: { reminder_type: reminder_type }
+          ).select(:id),
           read_at: nil
         ).order(created_at: :desc)
 
         if unread_notifications.none?
           false
         else
-          # Only send one email per unread notifications per event
-          event.id == unread_notifications.last.event.record_id
+          # Only send one email per unread notifications per event reminder type.
+          target_event.id == unread_notifications.last.event.record_id
         end
       end
     end

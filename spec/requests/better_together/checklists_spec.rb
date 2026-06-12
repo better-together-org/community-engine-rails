@@ -76,6 +76,29 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
       expect(response).to have_http_status(:found)
       expect(BetterTogether::Checklist.where(id: checklist.id)).to be_empty
     end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      checklist = create(:better_together_checklist,
+                         creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
+                         title: 'Original Checklist')
+
+      patch better_together.checklist_path(checklist, locale:),
+            params: { checklist: { title_en: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(checklist.reload.title).to eq('Original Checklist')
+    end
+
+    it 'keeps protected checklists from being destroyed', :aggregate_failures do
+      checklist = create(:better_together_checklist,
+                         creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
+                         protected: true)
+
+      delete better_together.checklist_path(checklist, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(BetterTogether::Checklist.exists?(checklist.id)).to be(true)
+    end
   end
 
   describe 'authorization for update/destroy as creator' do

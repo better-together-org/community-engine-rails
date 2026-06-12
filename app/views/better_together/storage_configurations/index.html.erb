@@ -1,16 +1,16 @@
 <% content_for :page_title do %>
-  <%= t('.title', default: 'Storage Configurations') %>
+  <%= t('.title') %>
 <% end %>
 
 <div class="container my-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <h1><%= t('.title', default: 'Storage Configurations') %></h1>
-      <p class="text-muted mb-0"><%= t('.subtitle', platform_name: @platform.name, default: "Storage backends for #{@platform.name}") %></p>
+      <h1><%= t('.title') %></h1>
+      <p class="text-muted mb-0"><%= t('.subtitle', platform_name: @platform.name) %></p>
     </div>
     <% if policy(::BetterTogether::StorageConfiguration).create? %>
       <%= link_to new_platform_storage_configuration_path(@platform), class: 'btn btn-primary' do %>
-        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn', default: 'Add Storage') %>
+        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn') %>
       <% end %>
     <% end %>
   </div>
@@ -19,32 +19,32 @@
   <div class="card mb-4 border-info">
     <div class="card-header bg-info text-white">
       <i class="fas fa-info-circle" aria-hidden="true"></i>
-      <%= t('.effective_storage_heading', default: 'Currently Effective Storage') %>
+      <%= t('.effective_storage_heading') %>
     </div>
     <div class="card-body">
       <% summary = @resolver.summary %>
       <% if summary[:source] == :platform_config %>
         <p class="mb-1">
-          <strong><%= t('.active_config_label', default: 'Active Configuration:') %></strong>
+          <strong><%= t('.active_config_label') %></strong>
           <%= @platform.active_storage_configuration.name %>
-          <span class="badge bg-success"><%= t('.platform_override_badge', default: 'Platform Override') %></span>
+          <span class="badge bg-success"><%= t('.platform_override_badge') %></span>
         </p>
       <% else %>
         <p class="mb-1">
-          <strong><%= t('.env_config_label', default: 'Source:') %></strong>
-          <%= t('.env_fallback', default: 'Environment variables (no platform override set)') %>
-          <span class="badge bg-secondary"><%= t('.env_badge', default: 'ENV') %></span>
+          <strong><%= t('.env_config_label') %></strong>
+          <%= t('.env_fallback') %>
+          <span class="badge bg-secondary"><%= t('.env_badge') %></span>
         </p>
       <% end %>
       <dl class="row mb-0 mt-2">
-        <dt class="col-sm-3"><%= t('.service_type_label', default: 'Service type') %></dt>
+        <dt class="col-sm-3"><%= t('.service_type_label') %></dt>
         <dd class="col-sm-9"><code><%= summary[:service_type] %></code></dd>
         <% if summary[:bucket].present? %>
-          <dt class="col-sm-3"><%= t('.bucket_label', default: 'Bucket') %></dt>
+          <dt class="col-sm-3"><%= t('.bucket_label') %></dt>
           <dd class="col-sm-9"><code><%= summary[:bucket] %></code></dd>
         <% end %>
         <% if summary[:endpoint].present? %>
-          <dt class="col-sm-3"><%= t('.endpoint_label', default: 'Endpoint') %></dt>
+          <dt class="col-sm-3"><%= t('.endpoint_label') %></dt>
           <dd class="col-sm-9"><code><%= summary[:endpoint] %></code></dd>
         <% end %>
       </dl>
@@ -53,15 +53,15 @@
 
   <% if @storage_configurations.any? %>
     <div class="table-responsive">
-      <table class="table table-hover" aria-label="<%= t('.table_aria', default: 'Storage configurations') %>">
+      <table class="table table-hover" aria-label="<%= t('.table_aria') %>">
         <thead class="table-light">
           <tr>
-            <th scope="col"><%= t('.header_name', default: 'Name') %></th>
-            <th scope="col"><%= t('.header_type', default: 'Type') %></th>
-            <th scope="col"><%= t('.header_bucket', default: 'Bucket / Root') %></th>
-            <th scope="col"><%= t('.header_endpoint', default: 'Endpoint') %></th>
-            <th scope="col"><%= t('.header_status', default: 'Status') %></th>
-            <th scope="col"><span class="visually-hidden"><%= t('.header_actions', default: 'Actions') %></span></th>
+            <th scope="col"><%= t('.header_name') %></th>
+            <th scope="col"><%= t('.header_type') %></th>
+            <th scope="col"><%= t('.header_bucket') %></th>
+            <th scope="col"><%= t('.header_endpoint') %></th>
+            <th scope="col"><%= t('.header_status') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('.header_actions') %></span></th>
           </tr>
         </thead>
         <tbody>
@@ -71,7 +71,7 @@
               <td>
                 <%= config.name %>
                 <% if active %>
-                  <span class="badge bg-success ms-1"><%= t('.active_badge', default: 'Active') %></span>
+                  <span class="badge bg-success ms-1"><%= t('.active_badge') %></span>
                 <% end %>
               </td>
               <td><span class="badge bg-secondary"><%= config.service_type %></span></td>
@@ -79,29 +79,29 @@
               <td><code class="small"><%= config.endpoint.presence || '—' %></code></td>
               <td>
                 <% if active %>
-                  <span class="text-success"><i class="fas fa-check-circle" aria-hidden="true"></i> <%= t('.in_use', default: 'In use') %></span>
+                  <span class="text-success"><i class="fas fa-check-circle" aria-hidden="true"></i> <%= t('.in_use') %></span>
                 <% else %>
-                  <span class="text-muted"><%= t('.not_active', default: 'Not active') %></span>
+                  <span class="text-muted"><%= t('.not_active') %></span>
                 <% end %>
               </td>
               <td class="text-end">
                 <div class="btn-group btn-group-sm" role="group">
                   <% unless active %>
-                    <%= button_to t('.activate_btn', default: 'Set active'),
+                    <%= button_to t('.activate_btn'),
                                   activate_platform_storage_configuration_path(@platform, config),
                                   method: :put,
                                   class: 'btn btn-outline-success btn-sm',
-                                  data: { turbo_confirm: t('.activate_confirm', default: 'Set this as the active storage configuration?') } %>
+                                  data: { turbo_confirm: t('.activate_confirm') } %>
                   <% end %>
-                  <%= link_to t('.edit_btn', default: 'Edit'),
+                  <%= link_to t('.edit_btn'),
                               edit_platform_storage_configuration_path(@platform, config),
                               class: 'btn btn-outline-secondary btn-sm' %>
                   <% unless active %>
-                    <%= button_to t('.delete_btn', default: 'Delete'),
+                    <%= button_to t('.delete_btn'),
                                   platform_storage_configuration_path(@platform, config),
                                   method: :delete,
                                   class: 'btn btn-outline-danger btn-sm',
-                                  data: { turbo_confirm: t('.delete_confirm', default: 'Delete this storage configuration?') } %>
+                                  data: { turbo_confirm: t('.delete_confirm') } %>
                   <% end %>
                 </div>
               </td>
@@ -112,12 +112,12 @@
     </div>
   <% else %>
     <div class="alert alert-info">
-      <%= t('.no_configs', default: 'No storage configurations defined. Environment variables are used by default.') %>
+      <%= t('.no_configs') %>
     </div>
   <% end %>
 
   <div class="mt-3">
-    <%= link_to t('.back_to_platform', default: 'Back to Platform'),
+    <%= link_to t('.back_to_platform'),
                 platform_path(@platform),
                 class: 'btn btn-outline-secondary' %>
   </div>

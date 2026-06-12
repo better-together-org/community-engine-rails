@@ -228,14 +228,27 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         status: :ok,
         generated_at: Time.current,
         unmanaged_model_names: [],
+        report_labels: {
+          collection: 'Indices',
+          identifier: 'Index',
+          documents: 'Indexed Documents',
+          size: 'Store Size'
+        },
+        capabilities: {
+          store_size: true,
+          existence_checks: true
+        },
         entry_results: [
           BetterTogether::Search::AuditService::EntryResult.new(
             model_name: 'BetterTogether::Page',
+            store_identifier: 'better_together-pages',
             index_name: 'better_together-pages',
             db_count: 2,
             document_count: 2,
             drift_count: 0,
             status: :healthy,
+            search_mode: 'elasticsearch',
+            store_exists: true,
             index_exists: true,
             primary_shards: nil,
             replica_shards: nil,
@@ -243,11 +256,14 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
           ),
           BetterTogether::Search::AuditService::EntryResult.new(
             model_name: 'BetterTogether::Post',
+            store_identifier: 'better_together-posts',
             index_name: 'better_together-posts',
             db_count: 3,
             document_count: 2,
             drift_count: 1,
             status: :drifted,
+            search_mode: 'elasticsearch',
+            store_exists: true,
             index_exists: true,
             primary_shards: nil,
             replica_shards: nil,
@@ -270,6 +286,16 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
       expect(json['values']).to eq([0, 1])
       expect(json['backend']).to eq('elasticsearch')
       expect(json['status']).to eq('ok')
+      expect(json['report_labels']).to eq(
+        'collection' => 'Indices',
+        'identifier' => 'Index',
+        'documents' => 'Indexed Documents',
+        'size' => 'Store Size'
+      )
+      expect(json['capabilities']).to eq(
+        'store_size' => true,
+        'existence_checks' => true
+      )
     end
   end
 

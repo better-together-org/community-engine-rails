@@ -17,7 +17,8 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platf
       BetterTogether::PersonCommunityMembership.create!(
         joinable: community,
         member: BetterTogether::User.find_by(email: 'manager@example.test').person,
-        role: coordinator_role
+        role: coordinator_role,
+        status: 'active'
       )
 
       member = create(:better_together_person)
@@ -34,6 +35,7 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platf
       follow_redirect!
       expect(response).to have_http_status(:ok)
     end
+
     # rubocop:enable RSpec/ExampleLength
   end
 
@@ -46,7 +48,8 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platf
       BetterTogether::PersonCommunityMembership.create!(
         joinable: community,
         member: BetterTogether::User.find_by(email: 'manager@example.test').person,
-        role: coordinator_role
+        role: coordinator_role,
+        status: 'active'
       )
 
       member = create(:better_together_person)
@@ -54,7 +57,8 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController', :as_platf
       membership = BetterTogether::PersonCommunityMembership.create!(
         joinable: community,
         member: member,
-        role: target_role
+        role: target_role,
+        status: 'active'
       )
 
       delete better_together.community_person_community_membership_path(locale:, community_id: community.id,
@@ -73,7 +77,7 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController self-servic
   describe 'POST /:locale/.../host/communities/:community_id/person_community_memberships', :as_user do
     # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
     it 'creates an active membership when direct join is allowed' do
-      community = create(:better_together_community, allow_membership_requests: false)
+      community = create(:better_together_community, :open_access)
 
       expect do
         post better_together.community_person_community_memberships_path(locale:, community_id: community.id), params: {
@@ -94,7 +98,8 @@ RSpec.describe 'BetterTogether::PersonCommunityMembershipsController self-servic
 
     # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
     it 'creates a pending membership when request mode is enabled' do
-      community = create(:better_together_community, allow_membership_requests: true)
+      community = create(:better_together_community, :membership_requests_enabled)
+      create(:better_together_platform, :membership_requests_enabled, community: community)
 
       expect do
         post better_together.community_person_community_memberships_path(locale:, community_id: community.id), params: {

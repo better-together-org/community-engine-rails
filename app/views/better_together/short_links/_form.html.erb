@@ -1,0 +1,55 @@
+<%= form_with(model: short_link, class: 'form', id: dom_id(short_link, 'form'),
+              data: { controller: 'better_together--form-validation' }) do |form| %>
+
+  <% content_for :resource_toolbar do %>
+    <div class="btn-toolbar mb-3" role="toolbar">
+      <div class="btn-group me-2">
+        <%= link_to t('.back', default: 'Back to Short Links'), short_links_path, class: 'btn btn-secondary' %>
+      </div>
+      <div class="btn-group me-2">
+        <%= form.submit t('.save', default: 'Save'), class: 'btn btn-primary' %>
+      </div>
+      <% if short_link.persisted? %>
+        <div class="btn-group me-2">
+          <%= link_to t('.view', default: 'View'), short_link_path(short_link), class: 'btn btn-info' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= yield :resource_toolbar %>
+
+  <%= render 'layouts/better_together/errors', object: short_link if short_link.errors.any? %>
+
+  <div class="mb-3">
+    <%= render partial: 'better_together/shared/translated_string_field',
+               locals: { model: short_link, form: form, attribute: 'title' } %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :target_url, t('.target_url', default: 'Target URL'), class: 'form-label' %>
+    <%= form.url_field :target_url, class: 'form-control', placeholder: 'https://example.com/your-long-url', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :code, t('.code', default: 'Short Code (leave blank to auto-generate)'), class: 'form-label' %>
+    <%= form.text_field :code, class: 'form-control', placeholder: 'e.g. abc123',
+                        pattern: '[a-z0-9\-]+',
+                        title: t('.code_hint', default: 'Lowercase letters, numbers, and hyphens only') %>
+    <div class="form-text"><%= t('.code_hint', default: 'Lowercase letters, numbers, and hyphens only. Leave blank to auto-generate.') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :expires_at, t('.expires_at', default: 'Expires At (optional)'), class: 'form-label' %>
+    <%= form.datetime_local_field :expires_at, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :status, t('.status', default: 'Status'), class: 'form-label' %>
+    <%= form.select :status,
+                    BetterTogether::ShortLink.statuses.keys.map { |s| [s.humanize, s] },
+                    {},
+                    class: 'form-select' %>
+  </div>
+
+<% end %>

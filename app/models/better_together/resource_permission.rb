@@ -19,6 +19,7 @@ module BetterTogether
     validates :position, uniqueness: { scope: :resource_type }
 
     scope :positioned, -> { order(:resource_type, :position) }
+    after_commit :expire_affected_member_permission_caches
 
     def position_scope
       :resource_type
@@ -26,6 +27,18 @@ module BetterTogether
 
     def to_s
       identifier
+    end
+
+    private
+
+    def expire_affected_member_permission_caches
+      affected_role_ids = role_resource_permissions.pluck(:role_id)
+      return if affected_role_ids.empty?
+
+      platform_member_ids = BetterTogether::PersonPlatformMembership.where(role_id: affected_role_ids).pluck(:member_id)
+      community_member_ids = BetterTogether::PersonCommunityMembership.where(role_id: affected_role_ids).pluck(:member_id)
+
+      BetterTogether::Person.expire_permission_cache_for_ids(platform_member_ids + community_member_ids)
     end
   end
 end

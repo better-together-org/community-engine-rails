@@ -1,0 +1,49 @@
+{
+  "name": "platform_membership_multi_role_cards",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community",
+  "title": "Test Host Community | Platforms | Test Host Community",
+  "locale": "en",
+  "role": "platform_steward",
+  "feature_set": "stacked_membership_roles",
+  "flow": "platform_members_tab_stacked_roles",
+  "source_spec": "./spec/docs_screenshots/better_together/stacked_membership_roles_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform_members_list",
+      "title": "The same person can now hold more than one active platform role",
+      "bullets": [
+        "Each card represents one membership row, so a person can be both a platform steward and a network admin.",
+        "Permissions come from the union of active rows instead of forcing one role to replace another.",
+        "Removing one card removes only that role assignment, not the person’s other stewardship authority."
+      ],
+      "target": {
+        "x": 16.0,
+        "y": 298.953125,
+        "width": 453.0,
+        "height": 648.0,
+        "right": 469.0,
+        "bottom": 946.953125,
+        "center_x": 242.5,
+        "center_y": 622.953125
+      },
+      "avoid": {
+        "x": 16.0,
+        "y": 298.953125,
+        "width": 453.0,
+        "height": 648.0,
+        "right": 469.0,
+        "bottom": 946.953125,
+        "center_x": 242.5,
+        "center_y": 622.953125
+      },
+      "placement": {
+        "side": "floating",
+        "x": 206.0,
+        "y": 619,
+        "width": 270.0,
+        "height": 618
+      }
+    }
+  ]
+}

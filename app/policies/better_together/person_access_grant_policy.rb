@@ -4,15 +4,15 @@ module BetterTogether
   # Access control for person-to-person access grants.
   class PersonAccessGrantPolicy < ApplicationPolicy
     def index?
-      user.present? && agent.present?
+      user.present? && agent.present? && feature_enabled?('person_access_grants')
     end
 
     def show?
-      user.present? && participant?
+      user.present? && participant? && feature_enabled?('person_access_grants')
     end
 
     def update?
-      user.present? && grantor?
+      user.present? && grantor? && feature_enabled?('person_access_grants')
     end
 
     def revoke?
@@ -23,6 +23,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless agent
+        return scope.none unless feature_enabled?('person_access_grants')
 
         scope.where(grantor_person_id: agent.id).or(scope.where(grantee_person_id: agent.id))
       end

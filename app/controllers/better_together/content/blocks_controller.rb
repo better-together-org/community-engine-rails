@@ -70,7 +70,39 @@ module BetterTogether
         end
       end
 
+      # AJAX endpoint for resource_ids multi-select field in content blocks
+      # Filters available records by resource class and optional search term
+      def resource_search # rubocop:disable Metrics/AbcSize
+        authorize resource_class, :resource_search?
+
+        resource_class_name = params[:resource_class].to_s.strip
+        search_term = params[:search].to_s.strip
+
+        # Resolve class name to actual class constant
+        resource_klass = resource_class_name.safe_constantize
+        return render json: [], status: :unprocessable_content unless resource_klass.present?
+
+        # Get policy-scoped records
+        scope = policy_scope(resource_klass)
+
+        # Filter by search term if provided
+        scope = search_scope(scope, search_term) if search_term.present?
+
+        # Limit results for performance
+        options = scope.limit(50).map { |record| { value: record.id, text: record.to_s } }
+
+        render json: options
+      end
+
       private
+
+      def search_scope(scope, search_term)
+        # Use Arel to safely construct ILIKE query for translation searches
+        translations_table = BetterTogether::StringTranslation.arel_table
+        scope.with_translations.where(
+          translations_table[:value].matches("%#{search_term}%")
+        )
+      end
 
       def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
@@ -79,10 +111,11 @@ module BetterTogether
           *resource_class.storext_keys
         )
 
-        # Handle markdown_source_type: clear the unused field
+        # Handle markdown_source_type: explicitly clear the unused field so DB values are overwritten
         if permitted_params[:markdown_source_type].present?
           if permitted_params[:markdown_source_type] == 'inline'
-            permitted_params.delete(:markdown_file_path)
+            permitted_params[:markdown_file_path] = ''
+            permitted_params[:auto_sync_from_file] = false
           elsif permitted_params[:markdown_source_type] == 'file'
             permitted_params.delete(:markdown_source)
           end

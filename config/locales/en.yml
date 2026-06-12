@@ -544,6 +544,11 @@ en:
           has_many: Cannot delete record because dependent %{record} exist
           has_one: Cannot delete record because a dependent %{record} exists
       models:
+        better_together/content/iframe_block:
+          attributes:
+            iframe_url:
+              csp_not_allowed: URL origin is not in the platform's allowed embed sources
+                — add the origin in Platform settings or contact a developer
         better_together/event:
           attributes:
             event_hosts:
@@ -562,6 +567,10 @@ en:
                 person, target person, and active platform connection
             target:
               must_be_person: must be a person
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: already has a settlement record
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -582,8 +591,14 @@ en:
           attributes:
             active:
               must_be_true_for_primary: must be true for a primary domain
+              must_be_true_for_share_domain: must be true for a share domain
             primary:
               already_taken_for_platform: has already been taken for this platform
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: is not a valid URL
+              invalid_scheme: must use http or https
     models:
       action_text/encrypted_rich_text: Encrypted Rich Text
       action_text/rich_text: Rich Text
@@ -701,8 +716,16 @@ en:
             here.
           open: People can create an account and join without waiting for approval.
       form:
-        community_help: Choose whether people join right away or ask to join first.
+        community_help: Choose whether this community is invitation-only or may allow
+          membership requests.
+        community_invitation_help: Communities default to invitation-only. Turn this
+          off only when you intentionally want self-service joins or membership requests.
+        community_invitation_only: Require an invitation before someone can join this
+          community
         community_requests: Require people to request access before becoming members
+        community_requests_hint: Community membership requests stay closed unless
+          both this community and the platform allow requests, and invitation-only
+          access is turned off.
         platform_help: Choose whether people can create an account directly or need
           an invitation first.
         platform_invitation_help: Invitations can prefill email addresses and assign
@@ -742,13 +765,24 @@ en:
       add: Add
       title: Agreement Terms
     agreements:
+      accept: I agree
+      accept_action:
+        accepted: Agreement accepted.
+        ineligible_flow: This agreement cannot be accepted from this flow.
+        no_participant: No participant is available for agreement acceptance.
+      accept_error: Unable to record agreement acceptance right now.
+      accepted: Accepted
+      accepting: Saving...
       create:
         acceptance_required: You must accept all required agreements to continue.
         successfully_accepted: Thank you for accepting the required agreements.
       form:
+        active_for_consent: Active for consent
+        agreement_kind: Agreement kind
         page_help: When set, the linked page content will be shown instead of the
           agreement terms.
         page_label: Linked Page (optional)
+        required_for: Required for
       no_terms: No terms defined.
       notice:
         body: Please view the full agreement before accepting.
@@ -803,6 +837,24 @@ en:
         view_agreement: View Agreement
     application:
       name: Better Together
+    authorable_contributor_visibility:
+      hints:
+        community: Override the platform default for pages in this community, or inherit
+          the platform setting.
+        page: Choose whether this page shows contributor bylines on public-facing
+          views, or inherits the community/platform setting.
+        platform: Sets the default byline visibility for pages and posts unless a
+          community or record overrides it.
+        post: Choose whether this post shows contributor bylines on public-facing
+          views, or inherits the platform setting.
+      labels:
+        community: Community contributor display
+        platform: Default contributor display
+        record: Contributor display
+      options:
+        'false': Hide contributor bylines
+        inherit: Inherit
+        'true': Show contributor bylines
     authorship_mailer:
       authorship_changed_notification:
         greeting: Hi %{recipient_name},
@@ -817,9 +869,38 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    bot_defense:
+      errors:
+        expired_challenge: Security verification expired. Please reload the form and
+          try again.
+        generic: Security verification failed. Please try again.
+        honeypot_triggered: Security verification failed. Please try again.
+        invalid_challenge: Security verification expired. Please reload the form and
+          try again.
+        replayed_challenge: This security check has already been used. Please reload
+          the form and try again.
+        submitted_too_quickly: Please take a moment to review your submission before
+          sending it.
+      trap_label: Leave this field blank
     buildings:
       add: Add
       title: Buildings
+    c3:
+      balance_card:
+        available: Available
+        explainer: Tree Seeds are community contribution credits you earn by sharing
+          your time, skills, and resources. They can be exchanged for services offered
+          by other community members.
+        lifetime: Lifetime earned
+        network_available: Network available
+        network_description: Tree Seeds earned or received across all connected platforms.
+        network_lifetime: Network lifetime earned
+        reserved: Reserved for agreements
+        show_network_total: Show my cross-platform Tree Seeds total
+        title: Your Tree Seeds
+      tree_seed: Tree Seed
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Default calendar for %<community_name>s
       personal_calendar_name: "%{name}'s Personal Calendar"
@@ -890,11 +971,38 @@ en:
           this community when the configured access model allows it.
       index:
         new_btn_text: New Community
+      membership_review:
+        description:
+          one: "%{community_name} has 1 open membership request ready for review."
+          other: "%{community_name} has %{count} open membership requests ready for
+            review."
+        heading: Membership request review
+        open_requests_badge:
+          one: 1 open request
+          other: "%{count} open requests"
+        review_link: Review requests
       new:
         title: Communities
       none-yet: None-yet
       show:
+        about:
+          no_description: No description available.
+        actions:
+          destroy_aria: Delete community
+          edit_aria: Edit community
         create_event: Create an Event
+        events:
+          create_event: Create an Event
+          draft_heading: Draft
+        members:
+          add_member_modal:
+            close: Close
+            select_person: Select Person *
+            select_person_prompt: Select a person
+            select_role: Select Role *
+            submit: Add
+            title: Add New Member
+        sections_aria: Community sections
       tabs:
         buildings: Buildings
         contact_details: Contact details
@@ -954,8 +1062,12 @@ en:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: No items configured.
           items_json_help: JSON array of objects with "question" and "answer" keys.
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Associated Pages
         checklist_block:
           not_found: Checklist not found.
@@ -975,10 +1087,21 @@ en:
           open_in_new_tab: Open embedded content in a new tab
         events_block:
           empty: No events to display.
+        fields:
+          image:
+            library:
+              empty: No reviewed image uploads are available in your library yet.
+              empty_hint: Upload an image first, or switch to the person who uploaded
+                it.
+              open: Choose from library
+              scope_hint: Only your reviewed image uploads are available here.
+              title: Choose from library
+              view_uploads: View uploads and review statuses
         hero:
           editor:
             background: Background
             cta_button: CTA Button
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Please provide a valid URL starting with http:// or https://.
             heading_color: Heading Color
             overlay_color: Overlay Color
@@ -990,6 +1113,12 @@ en:
           missing_url: No iframe URL configured.
           url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
             another trusted community-space embed.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -1028,8 +1157,14 @@ en:
             the community scope and ordering.
           resource_ids_placeholder: Leave blank to show latest records
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: JSON array of objects with "label", "value", and optional
             "icon" (Font Awesome class) keys.
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Default template
           host_community_contact_details: Host community contact details
@@ -1092,6 +1227,21 @@ en:
         restricted:
           message: "%{filename} is currently restricted while a reviewer checks it."
           title: Attachment restricted
+    contributions:
+      form:
+        add: Add contributor
+        contributor: Contributor
+        contributor_type: Contributor type
+        description: Assign people or robots to this record with explicit contribution
+          roles.
+        entry_help: Choose a contributor type, contributor, and role.
+        heading: Contributors
+        new_entry: New contributor
+        person: Person
+        remove: Remove contributor
+        robot: Robot
+        role: Role
+        select_contributor: Select contributor
     conversation_mailer:
       new_message_notification:
         from_address: New message via %{from_address}
@@ -1495,6 +1645,67 @@ en:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feature_access_grants:
+      created: Feature access grant created.
+      edit:
+        title: Edit Feature Access Grant
+      form:
+        access_level: Access level
+        current_rollout: Current rollout
+        expires_at: Expires at
+        feature: Feature
+        notes: Notes
+        person: Person
+        person_prompt: Search for a person
+        unknown_rollout: Unknown / retired feature
+      index:
+        description: Grant beta or alpha access to specific people without broadening
+          their platform role permissions.
+        empty: No explicit feature access grants have been created for this platform
+          yet.
+        new: New grant
+        revoke: Revoke
+        revoke_confirm: Revoke this feature access grant?
+        title: Feature Access Grants
+      new:
+        title: New Feature Access Grant
+      revoked: Feature access grant revoked.
+      status:
+        active: Active
+        revoked: Inactive
+      table:
+        access_level: Access level
+        actions: Actions
+        expires_at: Expires
+        feature: Feature
+        granted_by: Granted by %{name}
+        no_expiry: No expiry
+        person: Person
+        status: Status
+      updated: Feature access grant updated.
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: 'Skipped %{model_name} %{record_id}: identifier
+            conflict on %{identifier}'
+          skipped_missing_source_platform: 'Skipped %{model_name} %{record_id}: could
+            not determine source platform'
+          title: Backfilling federated mirrored identifiers
+      ingest:
+        errors:
+          connection_required: connection is required
+          seeds_payload_too_large: Seeds payload too large (%{count} > %{max_count}).
+            Use FederatedContentPullJob for large batches.
+        sync_summary:
+          one: Federated ingest completed with 1 mirrored content conflict
+          other: Federated ingest completed with %{count} mirrored content conflicts
+      mirroring:
+        content_types:
+          event: event
+          page: page
+          post: post
+        errors:
+          not_authorized: "%{content_type} mirroring not authorized: %{reason}"
     feedback_routing:
       audience:
         community_stewards: responsible community stewards
@@ -1698,6 +1909,9 @@ en:
         request: Request
         request_creator: Request Creator
         show:
+          agreement_family: Agreement Family
+          agreement_type: Agreement Type
+          decision_made_at: Decision Recorded
           details: Details
           open_platform_connections: Open Platform Connections
           platform_connection: Platform Connection
@@ -1759,7 +1973,7 @@ en:
         title: Potential Matches
       nav:
         agreements: Agreements
-        hub: Hub
+        hub: Mutual Aid
         manage_categories: Manage Categories
         offers: Offers
         requests: Requests
@@ -1812,6 +2026,11 @@ en:
         placeholders:
           search: Search by title or description
         title: Search
+      settlement:
+        cancelled_html: The %{amount} reservation was released back to your balance.
+        completed_html: "%{amount} were exchanged on %{date}."
+        pending_html: "%{amount} are reserved, waiting for the exchange to complete."
+        status_label: Agreement Tree Seeds status
       status:
         any: Any
         closed: Closed
@@ -1832,7 +2051,7 @@ en:
           The %{platform} Team
         subject: A new agreement was created
       new_match:
-        subject: New Joatu match
+        subject: New mutual aid match
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
@@ -1886,6 +2105,18 @@ en:
         signature_html: Best regards,<br /> The %{community_name} Team
         signature_text: Best regards, The %{community_name} Team
         subject: Your membership request for %{community_name} was declined
+      digest:
+        greeting: Hello %{name},
+        message:
+          one: 1 new membership request now needs review for %{community_name}.
+          other: "%{count} new membership requests now need review for %{community_name}."
+        requestors_label: Recent applicants
+        review_requests: Review membership requests
+        signature_html: Best regards,<br /> The %{community_name} Team
+        signature_text: Best regards, The %{community_name} Team
+        subject:
+          one: 1 membership request needs review for %{community_name}
+          other: "%{count} membership requests need review for %{community_name}"
       submitted:
         greeting: Hello %{name},
         message: "%{requestor_name} asked to join %{community_name}."
@@ -2087,6 +2318,7 @@ en:
           medium_results: Medium
           no_results: No results
           result_quality: Avg results per search
+        loading: Loading...
         search_health:
           backend: Backend
           db_count: DB Count
@@ -2123,7 +2355,6 @@ en:
       shares_controller:
         error_tracking: 'Error tracking share:'
         failed_tracking: Failed to track share.
-        ga_not_initialized: Google Analytics not initialized.
         unsupported_platform: 'Unsupported platform: %{platform}'
       user_account_reports_controller:
         create:
@@ -2232,15 +2463,21 @@ en:
         geography_settlements: Settlements
         geography_states: States
         host_dashboard: Host Dashboard
+        host_dashboard_membership_review: Membership Review
+        host_dashboard_platform_connection_review: Federation Review
+        host_dashboard_safety_review: Safety Review
         joatu_offers: Offers
         joatu_requests: Requests
         metrics_reports: Metrics Reports
         navigation_areas: Navigation Areas
         pages: Pages
         people: People
+        platform_connections: Platform Connections
         platforms: Platforms
+        reports: Reports
         resource_permissions: Resource Permissions
         roles: Roles
+        safety_cases: Safety Review
         users: Users
       visibility_strategies:
         authenticated: Signed-in users
@@ -2253,6 +2490,22 @@ en:
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Tree Seeds have been reserved for your agreement. They
+              will be released if the agreement is cancelled."
+            title: Tree Seeds reserved
+          mailer:
+            activity_header: "%{amount} Tree Seeds have activity on your agreement."
+            view_agreement: View agreement
+          released:
+            body: "%{amount} Tree Seeds have been returned to your balance."
+            title: Tree Seeds reservation released
+          settled:
+            body: "%{amount} Tree Seeds have been exchanged. Your balance has been
+              updated."
+            title: Tree Seeds exchanged
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2285,6 +2538,11 @@ en:
       membership_request_declined:
         body: Your request to join %{community_name} was declined
         title: Membership request declined for %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} asked to join %{community_name}"
         title: New membership request for %{community_name}
@@ -2303,6 +2561,25 @@ en:
         body: A new %{provider} account integration was connected on %{created_at}
         message: New %{provider} integration connected on %{created_at}
         title: New %{provider} integration connected
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: "%{time} ago"
     oauth:
       applications:
@@ -2377,11 +2654,8 @@ en:
         clear_filters: Clear Filters
         filter: Filter
         new_page: New page
-        new_release_package_draft: New Release Package Draft
         search_by_slug: Search by slug...
         search_by_title: Search by title...
-      release_package_draft:
-        created: 'Private release package draft created. Companion draft post: %{post_title}'
     people:
       allow_messages_from_members: Allow messages from platform members
       calendar:
@@ -2602,7 +2876,15 @@ en:
         secret_rotated: OAuth client secret rotated. Update the remote platform configuration.
         suspended: Connection suspended.
       form:
+        allow_c3_exchange: Allow Tree Seeds exchange with this platform
         back: Back
+        c3_exchange_hint: When enabled, participants on this platform can send and
+          receive Tree Seeds with %{platform}. Both platforms must opt in for exchange
+          to work.
+        c3_exchange_legend: Tree Seeds exchange
+        c3_exchange_rate_hint: How many Tree Seeds here equal 1 Tree Seed on %{platform}?
+          Leave at 1.0 for equal value.
+        c3_exchange_rate_label: Exchange rate
         connection_kind_hint: 'Member: this platform hosts members of the other. Peer:
           equal partnership between independent platforms.'
         content_sharing_policy_hint: Controls how public content is mirrored. "Mirror
@@ -2736,6 +3018,9 @@ en:
         csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
+        feature_gates_hint: Choose which rollout stage each feature requires on this
+          platform.
+        feature_gates_title: Feature rollout gates
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
@@ -2870,6 +3155,62 @@ en:
         none: No roles assigned
     resources:
       membership_request: Membership request
+    robots:
+      created: Robot was successfully created.
+      destroyed: Robot was successfully deleted.
+      edit:
+        subtitle: Adjust provider, model, prompt, and runtime flags for this platform
+          robot.
+        title: Edit %{name} for %{platform_name}
+      form:
+        assume_model_exists: Assume model exists
+        assume_model_exists_help: Keep this enabled only when the provider/model path
+          is known to exist.
+        cancel: Cancel
+      index:
+        back_to_platform: Back to Platform
+        delete: Delete
+        delete_confirm: Delete %{name}?
+        edit: Edit
+        global_read_only: Global fallback
+        new_robot: Add Robot
+        scope: Scope
+        status: Status
+        subtitle: Manage platform-specific robots and inherited global fallbacks from
+          one place.
+        title: LLM Robots for %{platform_name}
+      new:
+        subtitle: Create a platform-scoped robot override. Credentials stay in environment
+          configuration.
+        title: New Robot for %{platform_name}
+      readiness:
+        configured: Configured
+        credentials_help: OpenAI-backed robots continue to use the deployment environment
+          for credentials.
+        hidden: Hidden
+        missing: Missing
+        no_translation_robot: No translation robot resolves for this platform.
+        openai_credentials: OpenAI Credentials
+        ready: Ready
+        shown: Shown
+        translation_provider: Translation Provider
+        translation_ui: Translation UI
+        translation_ui_help: Translation controls render only when the resolved translation
+          robot has an available provider.
+        unavailable: Unavailable
+      scope_labels:
+        global_fallback: Global fallback
+        platform_override: Platform override
+      statuses:
+        active: Active
+        inactive: Inactive
+        inactive_translation: Inactive translation robot
+        provider_ready: Provider available
+        provider_unavailable: Provider unavailable
+        translation_not_selected: Not the effective translation robot for this platform
+        translation_ui_disabled: Translation UI hidden for this platform
+        translation_ui_enabled: Translation UI enabled for this platform
+      updated: Robot was successfully updated.
     roles:
       index:
         new_role: New role
@@ -3066,6 +3407,32 @@ en:
           description: Connect and manage your external platform accounts.
           title: Connected Accounts
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Review the permissions you have granted to linked people,
+                  and the permissions they have granted back to you.
+                open_link: Open access grants
+                title: Access grants
+              linked_seeds:
+                description: Browse synchronized data shared through your approved
+                  platform links.
+                open_link: Open linked seeds
+                title: Linked seeds
+              person_links:
+                description: Review the people and federated connections currently
+                  linked to your account.
+                open_link: Open linked people
+                title: Linked people
+              person_seeds:
+                description: Open your portable seed exports for advanced portability
+                  and interoperability workflows.
+                open_link: Open portable seed exports
+                title: Portable seed exports
+            description: Reach your linked people, access grants, synchronized data,
+              and portable exports from one place.
+            open_link: Open
+            title: Data sharing and portability
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -3089,11 +3456,18 @@ en:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: This export could not be prepared. Please request a new export.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Completed
+              failed: Failed
+              pending: Pending
+              processing: Processing
+            table_caption: Recent account export requests
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
@@ -3144,8 +3518,10 @@ en:
     share_buttons:
       aria_label: Share on %{platform}
       bluesky: Share on Bluesky
+      copy_short_link: Copy short link
       default_title: Check this out!
       facebook: Share on Facebook
+      get_short_link: Get short link
       linkedin: Share on LinkedIn
       pinterest: Pin
       reddit: Share on Reddit
@@ -3161,6 +3537,47 @@ en:
         name: Enter a name (at least one locale must be filled)
         slug: URL‑friendly identifier (unique across locales)
       unpublished: Unpublished
+    short_links:
+      edit:
+        page_title: Edit Short Link
+      form:
+        back: Back to Short Links
+        code: Short Code (leave blank to auto-generate)
+        code_hint: Lowercase letters, numbers, and hyphens only
+        expires_at: Expires At (optional)
+        save: Save
+        status: Status
+        target_url: Target URL
+        view: View
+      index:
+        copy_url: Copy short URL
+        delete: Delete short link
+        edit: Edit short link
+        empty: No short links yet.
+        new_btn: New Short Link
+        page_title: Short Links
+        table:
+          clicks: Clicks
+          code: Code
+          expires: Expires
+          status: Status
+          target: Target URL
+          title: Title
+        view: View short link
+      new:
+        page_title: New Short Link
+      show:
+        back: Back to Short Links
+        clicks: Total Clicks
+        copy: Copy
+        created_at: Created
+        delete: Delete
+        edit: Edit
+        expires_at: Expires At
+        page_title: Short Link
+        short_url: Short URL
+        status: Status
+        target_url: Target URL
     social_media_accounts:
       add: Add Social Media Account
       handle: Handle
@@ -3219,7 +3636,7 @@ en:
         table_aria: Storage configurations
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
-      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
       new:
         subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
@@ -3237,6 +3654,7 @@ en:
         invalid_target_locale: Invalid target locale
         translation_failed: 'Translation failed: %{message}'
         translation_request_failed: Translation request failed. Please try again.
+        translation_unavailable: Translation is not currently available for this platform.
     uploads:
       content_security:
         badge:
@@ -3253,6 +3671,15 @@ en:
           review_required: This upload is being reviewed before it can be inserted
             into rich text or shared.
       index:
+        filter_group_aria: Filter uploads by review status
+        filters:
+          all: All (%{count})
+          clean: Ready (%{count})
+          restricted: Restricted (%{count})
+          review_required: Under review (%{count})
+        review_status_description: Review counts are shown here to help you quickly
+          find approved, held, or restricted uploads.
+        review_status_heading: Review status
         storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:
@@ -3850,6 +4277,7 @@ en:
     joatu:
       agreement:
         accepted: Agreement accepted
+        fulfilled: Agreement fulfilled — C3 transferred to offer creator.
         rejected: Agreement rejected
       response_links:
         offer_created: Offer created in response to request.
@@ -3919,8 +4347,10 @@ en:
       attendees: Attendees
       contact: Contact
       events: Events
+      federation: Federation
       invitations: Invitations
       members: Members
+      safety: Safety
     to: To
     'true': true
     undo_clear: Undo Clear
@@ -3931,6 +4361,7 @@ en:
     visible: Visible
     'yes': 'Yes'
   helpers:
+    cancel: Cancel
     close: Close
     errors:
       heading: Form Errors
@@ -4004,13 +4435,101 @@ en:
       infrastructure: Infrastructure
       page_title: Host Dashboard
       title: Host Dashboard
+    membership_review:
+      anonymous_requester: Anonymous requester
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      page_title: Membership Review
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      page_title: Federation review
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: New %{resource}
       none_yet: None yet
       total_resources: Total resources
       view_all: View All
+    safety_review:
+      description: Review the current safety queue from the host dashboard. There
+        are %{open_cases} open cases and %{visible_reports} visible reports in scope.
+      heading: Safety review queue
+      open_cases_badge:
+        one: 1 open case
+        other: "%{count} open cases"
+      page_title: Safety review
+      review_queue_link: Open review queue
+      summary:
+        content_review_items: Content review items
+        participant_updates: Participant updates
+        retaliation_risk: Retaliation risk
+        unassigned_cases: Needs assignment
+      summary_label: Safety review summary
+      urgent_cases_badge:
+        one: 1 urgent case
+        other: "%{count} urgent cases"
+      view_reports_link: Review submitted reports
+      visible_reports_badge:
+        one: 1 visible report
+        other: "%{count} visible reports"
   invitations:
     calculating: Calculating
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Back to top
+        copyright: "%{community_name} © %{year}. All rights reserved."
   locale_name: English
   locales:
     en: English
@@ -4168,6 +4687,68 @@ en:
     actions:
       host_dashboard: Host Dashboard
     confirm_delete: Confirm delete
+    show:
+      about:
+        access: 'Access:'
+        identifier: 'Identifier:'
+        protected: 'Protected:'
+        protected_no: 'No'
+        protected_yes: 'Yes'
+        time_zone: 'Time Zone:'
+        url: 'URL:'
+      actions:
+        destroy_aria: Delete platform
+        edit_aria: Edit platform
+        show_aria: Show platform
+        view_host_dashboard_aria: View host dashboard
+      federation:
+        connection_status: Status
+        description: Review the federation and platform connections currently linked
+          to %{platform}.
+        direction:
+          incoming: Incoming connection
+          outgoing: Outgoing connection
+        empty_state: No federation connections involve this platform yet.
+        new_connection: New Connection
+        open_connections: Open Connections
+        summary:
+          active: Active
+          pending: Pending
+          total: Total Connections
+        title: Federation Connections
+        view_connection: View Connection
+      members:
+        add_member_modal:
+          close: Close
+          search_placeholder: Search for people...
+          select_person: Select Person *
+          select_role: Select Platform Role *
+          submit: Add
+          title: Add New Platform Member
+      operations:
+        description: Open host-level operations for this platform without relying
+          on route knowledge alone.
+        feature_access_grants: Feature access grants
+        host_dashboard: Host Dashboard
+        robot_management: Manage LLM robots
+        storage_configurations: Manage storage
+        title: Platform operations
+      safety:
+        description: Review incoming reports, active safety cases, and participant-visible
+          follow-ups for %{platform}.
+        review_queue: Open Review Queue
+        summary:
+          content_review_items: Content Review Items
+          open_cases: Open Cases
+          participant_updates: Participant Updates
+          repeated_reports: Repeated Reportables
+          retaliation_risk_cases: Retaliation Risk
+          unassigned_cases: Needs Assignment
+          urgent_cases: Urgent
+          visible_reports: Visible Reports
+        title: Safety Review
+        view_reports: Review Submitted Reports
+      sections_aria: Platform sections
   pundit:
     errors:
       create: You are not authorized to create this %{resource}.

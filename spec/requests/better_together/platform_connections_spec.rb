@@ -25,7 +25,11 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
     role = create(:better_together_role, :platform_role)
     BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
     host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
-    host_platform.person_platform_memberships.find_or_create_by!(member: approval_operator.person, role:)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: approval_operator.person)
+    membership.role = role
+    membership.status = :active
+    membership.save!
+    approval_operator.person.touch
   end
 
   describe 'GET /index' do
@@ -268,6 +272,43 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
       expect(response).to have_http_status(:not_found)
       expect(platform_connection.reload.federation_auth_policy).not_to eq('api_write')
+    end
+  end
+
+  describe 'PATCH /rotate_secret' do
+    it 'rotates the oauth client secret for network admins' do
+      sign_in network_admin
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(better_together.platform_connection_path(platform_connection, locale:))
+
+      platform_connection.reload
+      expect(platform_connection.oauth_client_secret).not_to eq(old_secret)
+      expect(platform_connection.authenticate_oauth_secret(old_secret)).to be(false)
+      expect(platform_connection.authenticate_oauth_secret(platform_connection.oauth_client_secret)).to be(true)
+    end
+
+    it 'rejects secret rotation for approval-only operators' do
+      sign_in approval_operator
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(platform_connection.reload.oauth_client_secret).to eq(old_secret)
+    end
+
+    it 'rejects secret rotation for regular users' do
+      sign_in regular_user
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(platform_connection.reload.oauth_client_secret).to eq(old_secret)
     end
   end
 

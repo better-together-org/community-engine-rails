@@ -19,7 +19,7 @@ module BetterTogether
         validates :member, presence: true
         validates :role, presence: true
         validates :joinable, presence: true
-        validates :role, uniqueness: {
+        validates :role_id, uniqueness: {
           scope: %i[joinable_id member_id]
         }
       end

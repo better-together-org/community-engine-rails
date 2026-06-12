@@ -35,6 +35,10 @@ module BetterTogether
         user.present?
       end
 
+      def resource_search?
+        platform_content_manager?
+      end
+
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
           scope.includes(:pages).order(

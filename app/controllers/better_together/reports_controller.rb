@@ -2,6 +2,8 @@
 
 module BetterTogether
   class ReportsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include BotProtectedSubmissions
+
     before_action :authenticate_user!
     before_action :set_report, only: :show
     after_action :verify_authorized
@@ -23,11 +25,16 @@ module BetterTogether
       authorize @report
     end
 
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @report = build_report
       return render_invalid_reportable unless valid_reportable_request?
 
       authorize @report
+      return render :new, status: :unprocessable_entity unless bot_protected_submission_valid?(
+        form_id: :safety_report,
+        resource: @report,
+        scope: :authenticated
+      )
 
       if @report.save
         redirect_to report_path(@report, locale: I18n.locale),

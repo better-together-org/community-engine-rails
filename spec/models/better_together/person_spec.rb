@@ -39,6 +39,38 @@ RSpec.describe BetterTogether::Person do
     end
   end
 
+  describe '#optimized_cover_image' do
+    let(:person) { described_class.allocate }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:cover_image) { double('cover_image', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      person.define_singleton_method(:cover_image) { cover_image }
+    end
+
+    context 'when the cover image is a PNG' do
+      let(:content_type) { 'image/png' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(cover_image).to receive(:variant).with(:optimized_png).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(person.optimized_cover_image).to eq(attachment_variant)
+      end
+    end
+
+    context 'when the cover image is a JPEG' do
+      let(:content_type) { 'image/jpeg' }
+
+      it 'returns the JPEG variant without forcing request-time processing' do
+        allow(cover_image).to receive(:variant).with(:optimized_jpeg).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(person.optimized_cover_image).to eq(attachment_variant)
+      end
+    end
+  end
+
   describe 'community action network identity helpers' do
     it 'exposes governed agent metadata for people' do
       expect(person.governed_agent?).to be(true)

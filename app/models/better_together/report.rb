@@ -27,6 +27,8 @@ module BetterTogether
       hate_speech: 'hate_speech',
       discrimination: 'discrimination',
       spam_or_scam: 'spam_or_scam',
+      malware_detected: 'malware_detected',
+      scan_failure: 'scan_failure',
       privacy_violation: 'privacy_violation',
       misinformation: 'misinformation',
       boundary_violation: 'boundary_violation',
@@ -51,7 +53,7 @@ module BetterTogether
       other: 'other'
     }, prefix: true
 
-    belongs_to :reporter, class_name: 'BetterTogether::Person', inverse_of: :reports_made
+    belongs_to :reporter, class_name: 'BetterTogether::Person'
     belongs_to :reportable, polymorphic: true
     has_one :safety_case, class_name: 'BetterTogether::Safety::Case', dependent: :destroy, inverse_of: :report
 
@@ -66,6 +68,7 @@ module BetterTogether
     }
 
     after_create_commit :ensure_safety_case!
+    after_create_commit :notify_safety_reviewers
 
     def case_status
       safety_case&.status || 'submitted'
@@ -84,6 +87,10 @@ module BetterTogether
         consent_to_contact: consent_to_contact.nil? || consent_to_contact,
         consent_to_restorative_process: consent_to_restorative_process || false
       )
+    end
+
+    def notify_safety_reviewers
+      ::BetterTogether::SafetyReportNotificationService.new(self).notify_submission
     end
   end
 end

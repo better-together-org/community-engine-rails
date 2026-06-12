@@ -1,0 +1,26 @@
+<section class="card shadow-sm mt-4" aria-labelledby="community-membership-review-heading">
+  <div class="card-body">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      <div>
+        <h2 id="community-membership-review-heading" class="h4 mb-2">
+          <%= t('better_together.communities.membership_review.heading') %>
+        </h2>
+        <p class="text-muted mb-0">
+          <%= t('better_together.communities.membership_review.description',
+                community_name: community.name,
+                count: open_membership_request_count) %>
+        </p>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <% badge_class = open_membership_request_count.positive? ? 'text-bg-warning' : 'text-bg-success' %>
+        <span class="badge rounded-pill <%= badge_class %> fs-6">
+          <%= t('better_together.communities.membership_review.open_requests_badge', count: open_membership_request_count) %>
+        </span>
+        <%= link_to t('better_together.communities.membership_review.review_link'),
+                    community_membership_requests_path(community),
+                    class: 'btn btn-outline-primary' %>
+      </div>
+    </div>
+  </div>
+</section>

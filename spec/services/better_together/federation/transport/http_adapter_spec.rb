@@ -4,8 +4,39 @@ require 'rails_helper'
 require 'webmock/rspec'
 
 RSpec.describe BetterTogether::Federation::Transport::HttpAdapter do
+  describe '.accessible?' do
+    let(:peer_host) { 'https://example.com' }
+    let(:source_platform) { create(:better_together_platform, :community_engine_peer, host_url: peer_host, oauth_issuer_url: peer_host) }
+    let(:target_platform) { create(:better_together_platform) }
+    let(:connection) do
+      create(
+        :better_together_platform_connection,
+        :active,
+        source_platform:,
+        target_platform:,
+        federation_auth_policy: 'api_read',
+        content_sharing_policy: 'mirror_network_feed',
+        allow_content_read_scope: true
+      )
+    end
+
+    it 'returns true when the remote host accepts TCP connections' do
+      socket = instance_double(BasicSocket, closed?: false, close: nil)
+      allow(Socket).to receive(:tcp).and_yield(socket)
+
+      expect(described_class.accessible?(connection:)).to be(true)
+      expect(Socket).to have_received(:tcp).twice
+    end
+
+    it 'returns false when the remote host cannot be reached' do
+      allow(Socket).to receive(:tcp).and_raise(Errno::ECONNREFUSED)
+
+      expect(described_class.accessible?(connection:)).to be(false)
+    end
+  end
+
   describe '.call' do
-    let(:peer_host) { "https://peer-#{SecureRandom.hex(4)}.example.test" }
+    let(:peer_host) { 'https://example.com' }
     let(:source_platform) { create(:better_together_platform, :community_engine_peer, host_url: peer_host, oauth_issuer_url: peer_host) }
     let(:target_platform) { create(:better_together_platform) }
     let(:connection) do

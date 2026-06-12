@@ -1,0 +1,19 @@
+        flowchart LR
+            EventIndex[GET /events] --> EventScope[EventPolicy::Scope]
+            EventScope --> EventRelation[EventsController resource_collection]
+            EventRelation --> Draft[Event.draft]
+            EventRelation --> Upcoming[Event.upcoming]
+            EventRelation --> Ongoing[Event.ongoing]
+            EventRelation --> Past[Event.past]
+
+            InvitationToken[Invitation token] --> EventScope
+            HostOrAttendance[Creator host attendee context] --> EventScope
+
+            McpList[MCP ListEventsTool] --> McpScope[Optional scope filter]
+            McpScope --> PrivacyFilter[Optional privacy filter]
+            PrivacyFilter --> OrderedJson[Ordered JSON results
+starts_at ASC]
+
+            BranchNote[No dedicated EventsSearchFilter
+service in this worktree]
+            EventIndex --> BranchNote

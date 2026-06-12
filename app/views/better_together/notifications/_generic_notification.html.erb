@@ -1,0 +1,29 @@
+<% event = notification.event %>
+<% notification_title = if event.respond_to?(:title)
+                          event.title
+                        else
+                          notification.try(:title)
+                        end %>
+<% notification_body = if event.respond_to?(:body)
+                         event.body
+                       else
+                         notification.try(:body)
+                       end %>
+<% notification_url = if event.respond_to?(:review_path)
+                        event.review_path
+                      elsif event.respond_to?(:url)
+                        event.url
+                      elsif event.respond_to?(:invitation) && event.invitation.respond_to?(:url_for_review)
+                        event.invitation.url_for_review
+                      elsif event.respond_to?(:invitable)
+                        event.invitable
+                      end %>
+
+<%= render layout: 'better_together/notifications/notification',
+           locals: { notification:, notification_title:, notification_url: } do %>
+  <% cache ["generic_notification_content", notification.cache_key_with_version, I18n.locale] do %>
+    <p class="mb-1">
+      <%= notification_body %>
+    </p>
+  <% end %>
+<% end %>

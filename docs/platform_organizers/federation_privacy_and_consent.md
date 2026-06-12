@@ -158,6 +158,7 @@ Use the smallest role set possible for these permissions. Not every platform org
 
 - [Security and Privacy Management](security_privacy.md)
 - [Platform Administration Guide](platform_administration.md)
+- [Safety and Federation Review Workflow](../developers/systems/safety_and_federation_review_workflow.md)
 - [Privacy-First Principles](../shared/privacy_principles.md)
 - [Federation Consent Gate + Person Identity Plan](../plans/federation-consent-identity.md)
 - [Federated Seed and Sync Handoff](../implementation/multi_tenancy/federated_seed_and_sync_handoff_2026-03-12.md)

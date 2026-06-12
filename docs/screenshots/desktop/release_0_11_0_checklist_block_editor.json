@@ -1,0 +1,12 @@
+{
+  "name": "release_0_11_0_checklist_block_editor",
+  "device": "desktop",
+  "url": "http://127.0.0.1:40941/en/host/pages/release-0-11-0-checklist_block-editor-page/edit",
+  "title": "Edit Release 0.11.0 Checklist Editor | Pages | Test Host Community",
+  "captured_at": "2026-04-03T23:33:43Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_content_block_roster",
+  "flow": "page_block_editor",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_content_block_roster_spec.rb"
+}

@@ -1,0 +1,12 @@
+---
+title: Short Links — Empty State
+audience:
+- platform_manager
+- developer
+journey_step: As a platform manager, I see the empty state before any short links
+  have been created.
+callouts: []
+accessibility_notes: Empty state uses semantic paragraph text with no missing landmark
+  regions.
+slug: short_links_index_empty
+device: desktop

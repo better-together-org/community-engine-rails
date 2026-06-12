@@ -2,6 +2,8 @@
 
 require 'json'
 require 'net/http'
+require 'ssrf_filter'
+require 'socket'
 require 'uri'
 require 'cgi'
 
@@ -12,15 +14,29 @@ module BetterTogether
       class HttpAdapter # rubocop:disable Metrics/ClassLength
         DEFAULT_OPEN_TIMEOUT = 5
         DEFAULT_READ_TIMEOUT = 15
+        DEFAULT_CONNECT_TIMEOUT = 2
+
+        # Raised when an outbound federation request targets a private/loopback address.
+        class SSRFError < StandardError; end
 
         def self.call(connection:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
           new(connection:, cursor:, limit:).call
+        end
+
+        def self.accessible?(connection:)
+          new(connection:).accessible?
         end
 
         def initialize(connection:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
           @connection = connection
           @cursor = cursor
           @limit = limit.to_i.positive? ? limit.to_i : BetterTogether::FederatedContentPullService::DEFAULT_LIMIT
+        end
+
+        def accessible?
+          [feed_uri, token_uri].all? { |uri| host_reachable?(uri) }
+        rescue URI::InvalidURIError, SocketError, SystemCallError, ArgumentError
+          false
         end
 
         def call
@@ -56,18 +72,19 @@ module BetterTogether
         end
 
         def http_get(uri)
-          Net::HTTP.start(
-            uri.host,
-            uri.port,
-            use_ssl: uri.scheme == 'https',
-            open_timeout: DEFAULT_OPEN_TIMEOUT,
-            read_timeout: DEFAULT_READ_TIMEOUT
-          ) do |http|
-            request = Net::HTTP::Get.new(uri.request_uri)
-            request['Authorization'] = "Bearer #{access_token_for_request}"
-            request['Accept'] = 'application/json'
-            http.request(request)
-          end
+          SsrfFilter.get(
+            uri.to_s,
+            headers: {
+              'Authorization' => "Bearer #{access_token_for_request}",
+              'Accept' => 'application/json'
+            },
+            http_options: {
+              open_timeout: DEFAULT_OPEN_TIMEOUT,
+              read_timeout: DEFAULT_READ_TIMEOUT
+            }
+          )
+        rescue SsrfFilter::PrivateIPAddress => e
+          raise SSRFError, e.message
         end
 
         def access_token_for_request
@@ -114,19 +131,30 @@ module BetterTogether
         end
 
         def http_post_form(uri, params)
-          Net::HTTP.start(
-            uri.host,
-            uri.port,
-            use_ssl: uri.scheme == 'https',
-            open_timeout: DEFAULT_OPEN_TIMEOUT,
-            read_timeout: DEFAULT_READ_TIMEOUT
-          ) do |http|
-            request = Net::HTTP::Post.new(uri.request_uri)
-            request['Accept'] = 'application/json'
-            request['Content-Type'] = 'application/x-www-form-urlencoded'
-            request.body = URI.encode_www_form(params)
-            http.request(request)
+          SsrfFilter.post(
+            uri.to_s,
+            headers: {
+              'Accept' => 'application/json',
+              'Content-Type' => 'application/x-www-form-urlencoded'
+            },
+            body: URI.encode_www_form(params),
+            http_options: {
+              open_timeout: DEFAULT_OPEN_TIMEOUT,
+              read_timeout: DEFAULT_READ_TIMEOUT
+            }
+          )
+        rescue SsrfFilter::PrivateIPAddress => e
+          raise SSRFError, e.message
+        end
+
+        def host_reachable?(uri)
+          Socket.tcp(uri.host, uri.port, connect_timeout: DEFAULT_CONNECT_TIMEOUT) do |socket|
+            socket.close unless socket.closed?
           end
+
+          true
+        rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ENETUNREACH, SocketError, Timeout::Error
+          false
         end
       end
     end
