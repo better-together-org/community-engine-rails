@@ -38,6 +38,7 @@ module BetterTogether
                            :claims,
                            blocks: { background_image_file_attachment: :blob }
                          )
+      load_community_posts
       set_current_person_community_membership
       set_membership_request_review_state
 
@@ -308,6 +309,14 @@ module BetterTogether
       @upcoming_events = policy_scope(@community.hosted_events).upcoming
       @ongoing_events = policy_scope(@community.hosted_events).ongoing
       @past_events = policy_scope(@community.hosted_events).past
+    end
+
+    def load_community_posts
+      @community_posts = PostsSearchFilter.call(
+        relation: policy_scope(BetterTogether::Post).where(community: @community),
+        params: { community_ids: [@community.id] }
+      ).with_translations
+       .includes(BetterTogether::Post.card_render_includes)
     end
   end
 end

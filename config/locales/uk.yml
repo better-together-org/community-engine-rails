@@ -1000,12 +1000,17 @@ uk:
             select_role: Вибрати роль *
             submit: Додати
             title: Додати нового учасника
+        posts:
+          create_post: Створити допис
+          empty_description: Дописи, створені для цієї спільноти, з'являться тут.
+          empty_title: Поки що немає дописів
         sections_aria: Розділи спільноти
       tabs:
         buildings: Будівлі
         contact_details: Контактні деталі
         details: Деталі
         images: Зображення
+        posts: Дописи
     community_invitations_mailer:
       invite:
         about: Про
@@ -1410,6 +1415,10 @@ uk:
           idle: Неактивний
           running: Виконується
           succeeded: Успішно
+    errors:
+      privacy:
+        exceeds_context_bounds: не може бути відкритішим за '%{max}' — налаштування
+          платформи або спільноти забороняють цей рівень видимості
     event_invitations:
       index:
         invite_member: Invite member
@@ -3089,10 +3098,46 @@ uk:
       delete: Видалити запис
       edit: Редагувати пост
       edit_post: Редагувати пост
+      hints:
+        privacy_limited_by_community: Деякі параметри конфіденційності вимкнені, оскільки
+          ця спільнота не є публічною. Дописи тут можуть бачити лише члени спільноти
+          або автор.
+        privacy_limited_by_platform: Деякі параметри конфіденційності вимкнені, оскільки
+          платформа не є публічною. Дописи можуть бачити лише члени спільноти або
+          автор.
       index:
+        map_unavailable: Перегляд мапи недоступний для дописів без даних про місцезнаходження.
         new_btn_text: Новий пост
+        result_count:
+          few: "%{count} пости"
+          many: "%{count} постів"
+          one: "%{count} пост"
+          other: "%{count} постів"
+        table_headers:
+          authors: Автори
+          categories: Категорії
+          published: Опубліковано
+          title: Заголовок
       labels:
         privacy: Конфіденційність
+      list_form:
+        authors_label: Автори
+        authors_placeholder: Обрати авторів...
+        categories_label: Категорії
+        clear_filters: Очистити фільтри
+        filters: Фільтрувати пости
+        order_by_label: Сортувати за
+        order_newest: Найновіші (за замовчуванням)
+        order_oldest: Найстаріші
+        per_page_label: Постів на сторінку
+        privacy_all: Всі
+        privacy_community: Спільнота
+        privacy_label: Конфіденційність
+        privacy_private: Приватний
+        privacy_public: Публічний
+        search_button: Пошук
+        search_label: Пошук
+        search_placeholder: Шукати за заголовком або вмістом...
       new_post: Новий пост
       none_body: Наразі немає постів для показу.
       none_title: Постів поки що немає
@@ -3746,6 +3791,7 @@ uk:
         calendar: Календар
         card: Картки
         list: Список
+        map: Мапа
         table: Таблиця
     webhook_endpoints:
       actions_aria: Дії вебхука
@@ -4150,6 +4196,10 @@ uk:
         update: Оновити
         we_need_your_current_password_to_confirm_your_changes: нам потрібен ваш поточний
           пароль для підтвердження змін
+      membership_request_heading: Замість цього запитати членство
+      membership_request_help_html: Якщо у вас ще немає запрошення, ви можете надіслати
+        запит на членство для <strong>%{community}</strong>. Рецензент спільноти може
+        це схвалити та запросити вас на платформу.
       new:
         agreements:
           privacy_policy: Я погоджуюся з Політикою конфіденційності
@@ -4435,6 +4485,7 @@ uk:
       federation: Федерація
       invitations: Запрошення
       members: Учасники
+      posts: Дописи
       safety: Безпека
     to: До
     'true': так

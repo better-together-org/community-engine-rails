@@ -54,6 +54,46 @@ export default class extends Controller {
       }
     };
 
+    if (this.element.dataset.slimSelectAvatar === 'true') {
+      const escapeHtml = (value) => {
+        const div = document.createElement('div');
+        div.textContent = value || '';
+        return div.innerHTML;
+      };
+
+      const avatarTemplate = (data, size) => {
+        if (!data || data.placeholder) {
+          return escapeHtml(data?.text);
+        }
+
+        const avatarUrl = data?.data?.avatarUrl ||
+          data?.data?.avatar_url ||
+          data?.data?.['avatar-url'] ||
+          data?.dataset?.avatarUrl ||
+          data?.dataset?.avatar_url ||
+          data?.dataset?.['avatar-url'] ||
+          data?.element?.dataset?.avatarUrl ||
+          data?.element?.dataset?.avatar_url ||
+          data?.element?.dataset?.['avatar-url'];
+        const label = escapeHtml(data.text);
+        const image = avatarUrl
+          ? `<img src="${avatarUrl}" alt="" class="rounded-circle" width="${size}" height="${size}">`
+          : '';
+
+        return `
+          <div class="d-flex align-items-center gap-2">
+            ${image}
+            <span>${label}</span>
+          </div>
+        `;
+      };
+
+      defaultOptions.render = {
+        option: (data) => avatarTemplate(data, 28),
+        item: (data) => avatarTemplate(data, 20)
+      };
+    }
+
     // Merge with custom options from the element
     const options = { ...defaultOptions, ...optionsData };
 

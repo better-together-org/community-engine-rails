@@ -1011,12 +1011,18 @@ fr:
             select_role: Sélectionner un rôle *
             submit: Ajouter
             title: Ajouter un nouveau membre
+        posts:
+          create_post: Créer un article
+          empty_description: Les publications créées pour cette communauté apparaîtront
+            ici.
+          empty_title: Aucune publication
         sections_aria: Sections de la communauté
       tabs:
         buildings: Bâtiments
         contact_details: Détails de contact
         details: Détails
         images: Images
+        posts: Publications
     community_invitations_mailer:
       invite:
         about: À propos
@@ -1429,6 +1435,10 @@ fr:
           idle: Inactif
           running: En cours
           succeeded: Réussi
+    errors:
+      privacy:
+        exceeds_context_bounds: ne peut pas être plus ouvert que '%{max}' — les paramètres
+          de la plateforme ou de la communauté empêchent ce niveau de visibilité
     event_invitations:
       index:
         invite_member: Invite member
@@ -3124,10 +3134,45 @@ fr:
       delete: Supprimer l'enregistrement
       edit: Modifier la publication
       edit_post: Modifier la publication
+      hints:
+        privacy_limited_by_community: Certaines options de confidentialité sont désactivées
+          car cette communauté n'est pas publique. Les publications ici ne peuvent
+          être visibles que par les membres de la communauté ou l'auteur.
+        privacy_limited_by_platform: Certaines options de confidentialité sont désactivées
+          car la plateforme n'est pas publique. Les publications ne peuvent être visibles
+          que par les membres de la communauté ou l'auteur.
       index:
+        map_unavailable: La vue carte n'est pas disponible pour les publications sans
+          données de localisation.
         new_btn_text: Nouvelle publication
+        result_count:
+          one: "%{count} publication"
+          other: "%{count} publications"
+        table_headers:
+          authors: Auteurs
+          categories: Catégories
+          published: Publié
+          title: Titre
       labels:
         privacy: Confidentialité
+      list_form:
+        authors_label: Auteurs
+        authors_placeholder: Sélectionner des auteurs...
+        categories_label: Catégories
+        clear_filters: Effacer les filtres
+        filters: Filtrer les publications
+        order_by_label: Trier par
+        order_newest: Plus récent (par défaut)
+        order_oldest: Plus ancien
+        per_page_label: Publications par page
+        privacy_all: Tous
+        privacy_community: Communauté
+        privacy_label: Confidentialité
+        privacy_private: Privé
+        privacy_public: Public
+        search_button: Rechercher
+        search_label: Recherche
+        search_placeholder: Rechercher par titre ou contenu...
       new_post: Nouvelle publication
       none_body: Il n'y a pas de publications à afficher pour le moment.
       none_title: Pas encore de publications
@@ -3792,6 +3837,7 @@ fr:
         calendar: Calendrier
         card: Cartes
         list: Liste
+        map: Carte
         table: Tableau
     webhook_endpoints:
       actions_aria: Actions du webhook
@@ -4186,6 +4232,10 @@ fr:
         update: Modifier
         we_need_your_current_password_to_confirm_your_changes: nous avons besoin de
           votre mot de passe actuel pour valider ces modifications
+      membership_request_heading: Demander l'adhésion à la place
+      membership_request_help_html: Si vous n'avez pas encore d'invitation, vous pouvez
+        envoyer une demande d'adhésion pour <strong>%{community}</strong>. Un critique
+        communautaire peut l'approuver et vous inviter sur la plateforme.
       new:
         agreements:
           privacy_policy: J'accepte la Politique de Confidentialité
@@ -4465,6 +4515,7 @@ fr:
       federation: Fédération
       invitations: Invitations
       members: Membres
+      posts: Publications
       safety: Sécurité
     to: À
     'true': Oui

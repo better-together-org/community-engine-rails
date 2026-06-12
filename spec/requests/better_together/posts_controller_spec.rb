@@ -6,6 +6,8 @@ require 'stringio'
 RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
   let!(:category) { create(:category) }
   let!(:post_record) do
     unique_token = SecureRandom.hex(4)
@@ -13,6 +15,8 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       :better_together_post,
       author: platform_manager.person,
       creator: platform_manager.person,
+      community: host_community,
+      platform: host_platform,
       privacy: 'public',
       published_at: 1.day.ago,
       slug: "contribution-post-#{unique_token}",
@@ -21,6 +25,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
   end
 
   before do
+    host_community.update!(privacy: 'public')
     post_record.categories << category
     category.cover_image.attach(
       io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
@@ -28,6 +33,62 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       content_type: 'image/svg+xml'
     )
     post_record.add_governed_contributor(platform_manager.person, role: 'editor')
+  end
+
+  describe 'community scoping' do
+    # The PrivacyCeilingValidatable concern prevents public posts in private communities,
+    # so test scenarios use valid combinations: public posts in public communities and
+    # community-privacy posts (valid in any community since members can share within them).
+    let!(:other_community) do
+      # A separate public community on the same platform — tests cross-community visibility.
+      create(:better_together_community, privacy: 'public')
+    end
+    let!(:public_post) do
+      create(:better_together_post, title: 'Public Post In Other Community',
+                                    community: other_community, platform: host_platform,
+                                    privacy: 'public', published_at: 1.day.ago)
+    end
+    let!(:community_post) do
+      create(:better_together_post, title: 'Community Post In Other Community',
+                                    community: other_community, platform: host_platform,
+                                    privacy: 'community', published_at: 1.day.ago)
+    end
+
+    before { configure_host_platform }
+
+    # Post privacy is the authoritative visibility gate.
+    # Community privacy controls membership access, not individual post visibility.
+    it 'shows all public posts to guests regardless of which community they belong to', :no_auth do
+      logout
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect_html_content('Public Post In Other Community')
+      expect_no_html_content('Community Post In Other Community')
+    end
+
+    context 'as a platform community member', :no_auth do
+      let(:regular_user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+
+      before do
+        configure_host_platform
+        login('user@example.test', 'SecureTest123!@#')
+        # community-privacy posts are scoped by platform membership (scoped_platform_ids),
+        # not post.community_id. The post is on host_platform whose community is
+        # host_community — so the user must be a member of host_community to see it.
+        create(:better_together_person_community_membership,
+               member: regular_user.person,
+               joinable: host_community,
+               status: 'active')
+      end
+
+      it 'sees community-privacy posts on platforms they are a member of' do
+        get better_together.posts_path(locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect_html_contents('Public Post In Other Community', 'Community Post In Other Community')
+      end
+    end
   end
 
   it 'renders not found for guests requesting a private unpublished post' do
@@ -80,6 +141,44 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
 
     rich_text_association = loaded_post.class.reflect_on_association(:rich_text_content)&.name
     expect(loaded_post.association(rich_text_association)).to be_loaded if rich_text_association
+  end
+
+  describe 'guest view switching', :no_auth do
+    before do
+      logout
+    end
+
+    it 'defaults to card view' do
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('row-cols-md-2')
+      expect(response.body).to include('data-turbo-prefetch="false"')
+    end
+
+    it 'renders table view when preference is set' do
+      post better_together.view_preferences_path(locale:),
+           params: { key: 'index_view', view_type: 'table', allowed: %w[card table list calendar map] },
+           headers: { 'HTTP_REFERER' => better_together.posts_path(locale:) }
+
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('posts-table')
+      expect(response.body).not_to include('posts-list')
+    end
+
+    it 'renders list view when preference is set' do
+      post better_together.view_preferences_path(locale:),
+           params: { key: 'index_view', view_type: 'list', allowed: %w[card table list calendar map] },
+           headers: { 'HTTP_REFERER' => better_together.posts_path(locale:) }
+
+      get better_together.posts_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('posts-list')
+      expect(response.body).not_to include('posts-table')
+    end
   end
 
   it 'keeps contribution and evidence references out of the public show page' do

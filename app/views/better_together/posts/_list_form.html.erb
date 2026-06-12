@@ -1,0 +1,102 @@
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h2 class="h5"><%= t('.filters') %></h2>
+  </div>
+  <div class="panel-body">
+    <% filter_path = params[:community_id].present? ? posts_path(community_id: params[:community_id]) : posts_path %>
+    <%= form_with url: filter_path, method: :get, class: 'posts-filter-sidebar', local: true do |f| %>
+      <% if params[:community_id].present? %>
+        <%= f.hidden_field :community_id, value: params[:community_id] %>
+      <% end %>
+      <div class="mb-3">
+        <%= f.label :q, t('.search_label'), class: 'form-label' %>
+        <%= f.text_field :q, placeholder: t('.search_placeholder'), value: params[:q], class: 'form-control' %>
+      </div>
+
+      <% if @categories&.any? %>
+        <div class="mb-3">
+          <%= f.label :category_ids, t('.categories_label'), class: 'form-label' %>
+          <%= f.select :category_ids,
+                       options_from_collection_for_select(
+                         @categories,
+                         :id,
+                         :name,
+                         Array(params[:category_ids]).map(&:to_s)
+                       ),
+                       { include_hidden: false },
+                       {
+                         multiple: true,
+                         id: 'posts-category-ids',
+                         class: 'form-select',
+                         data: {
+                           controller: 'better-together--slim-select',
+                           'better-together--slim-select-options-value': {
+                             settings: {
+                               closeOnSelect: false
+                             }
+                           }.to_json
+                         }
+                       } %>
+        </div>
+      <% end %>
+
+      <% if @authors&.any? %>
+        <div class="mb-3">
+          <%= f.label :author_ids, t('.authors_label'), class: 'form-label' %>
+          <% author_options = @authors.map do |author|
+               [author.select_option_title, author.id, { data: { avatar_url: profile_image_url(author, size: 50) } }]
+             end %>
+          <%= f.select :author_ids,
+                       options_for_select(author_options, Array(params[:author_ids]).map(&:to_s)),
+                       { include_hidden: false },
+                       {
+                         multiple: true,
+                         id: 'posts-author-ids',
+                         class: 'form-select',
+                         data: {
+                           controller: 'better-together--slim-select',
+                           'slim-select-avatar': true,
+                           'better-together--slim-select-options-value': {
+                             settings: {
+                               closeOnSelect: false,
+                               searchPlaceholder: t('.authors_placeholder'),
+                               placeholderText: t('.authors_placeholder')
+                             }
+                           }.to_json
+                         }
+                       } %>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :privacy, t('.privacy_label'), class: 'form-label' %>
+        <%= f.select :privacy, options_for_select([
+          [t('.privacy_all'), ''],
+          [t('.privacy_public'), 'public'],
+          [t('.privacy_community'), 'community'],
+          [t('.privacy_private'), 'private']
+        ], params[:privacy]), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :order_by, t('.order_by_label'), class: 'form-label' %>
+        <%= f.select :order_by, options_for_select([
+          [t('.order_newest'), ''],
+          [t('.order_oldest'), 'oldest']
+        ], params[:order_by]), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :per_page, t('.per_page_label'), class: 'form-label' %>
+        <%= f.select :per_page, options_for_select(['10', '20', '50'], params[:per_page] || '20'), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="clearfix">
+        <% if params[:q].present? || params[:privacy].present? || params[:order_by].present? || params[:per_page].present? || params[:category_ids].present? || params[:author_ids].present? %>
+          <%= link_to t('.clear_filters'), filter_path, class: 'btn btn-outline-secondary', id: 'posts-clear-filters' %>
+        <% end %>
+        <%= f.submit t('.search_button'), class: 'btn btn-primary float-end', id: 'posts-search-submit' %>
+      </div>
+    <% end %>
+  </div>
+</div>

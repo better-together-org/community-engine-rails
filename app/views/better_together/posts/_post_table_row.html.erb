@@ -1,0 +1,29 @@
+<tr id="<%= dom_id(post) %>">
+  <th scope="row">
+    <% if policy(post).show? %>
+      <%= link_to post.title, post, class: 'text-primary text-decoration-none' %>
+    <% else %>
+      <%= post.title %>
+    <% end %>
+  </th>
+  <td>
+    <%= categories_badge(post) %>
+  </td>
+  <td>
+    <% if contributor_display_visible_for?(post) && post.governed_authors.any? %>
+      <%= render 'better_together/shared/governed_authors',
+                 authors: post.governed_authors,
+                 flex_layout: 'flex-row',
+                 flex_align_items: 'center' %>
+    <% else %>
+      <span class="text-muted">-</span>
+    <% end %>
+  </td>
+  <td>
+    <% if post.respond_to?(:published_at) && post.published_at.present? %>
+      <%= t('better_together.posts.published_on', default: 'Published %{date}', date: l(post.published_at, format: :short)) %>
+    <% else %>
+      <%= t('better_together.shared.unpublished', default: 'Unpublished') %>
+    <% end %>
+  </td>
+</tr>

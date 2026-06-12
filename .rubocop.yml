@@ -14,6 +14,7 @@ AllCops:
     - 'worktrees/**/*'         # git worktrees — checked-out branches, not project source
     - 'spec/integration/**/*'  # rswag specs - never run rubocop on these
     - 'rubocop/**/*'           # custom cop source — not subject to self-inspection
+    - 'worktrees/**/*'         # worktrees are separate branches with their own hooks
   NewCops: enable
   TargetRubyVersion: 3.4
 plugins:

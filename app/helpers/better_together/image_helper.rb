@@ -97,22 +97,28 @@ module BetterTogether
         title: image_title
       }
 
-      # Determine if entity has a profile image
+      image_url = profile_image_url(entity, size: image_size, format: image_format)
+      image_tag(image_url, **image_tag_attributes)
+    rescue ActiveStorage::FileNotFoundError
+      image_url = profile_image_url(entity, size: image_size, format: image_format)
+      image_tag(image_url, **image_tag_attributes)
+    end
+
+    def profile_image_url(entity, size: 300, format: 'jpg')
+      image_size = size || 300
+      image_format = format || 'jpg'
+
       if entity.respond_to?(:profile_image) && entity.profile_image.attached?
         attachment = profile_image_attachment_for(entity, image_size)
-        image_url = storage_proxy_url_for(attachment) if attachment
-
-        image_tag(image_url, **image_tag_attributes) if image_url
-      else
-        # Use a default image based on the entity type
-        default_image = default_profile_image(entity, image_format)
-        image_tag(image_url(default_image), **image_tag_attributes)
+        url = storage_proxy_url_for(attachment) if attachment
+        return url if url.present?
       end
+
+      image_url(default_profile_image(entity, image_format))
     rescue ActiveStorage::FileNotFoundError
-      # Use a default image based on the entity type
-      default_image = default_profile_image(entity, image_format)
-      image_tag(image_url(default_image), **image_tag_attributes)
+      image_url(default_profile_image(entity, image_format))
     end
+
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
