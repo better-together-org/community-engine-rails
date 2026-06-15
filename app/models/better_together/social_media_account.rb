@@ -3,6 +3,7 @@
 module BetterTogether
   class SocialMediaAccount < ApplicationRecord # rubocop:todo Style/Documentation
     include Privacy
+    include PlatformScoped
 
     belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 

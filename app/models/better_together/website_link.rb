@@ -3,6 +3,7 @@
 module BetterTogether
   class WebsiteLink < ApplicationRecord # rubocop:todo Style/Documentation
     include Privacy
+    include PlatformScoped
 
     LABELS = %i[
       personal_website blog portfolio resume company_website community_page

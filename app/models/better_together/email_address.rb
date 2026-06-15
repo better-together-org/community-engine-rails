@@ -4,6 +4,7 @@ module BetterTogether
   class EmailAddress < ApplicationRecord # rubocop:todo Style/Documentation
     include PrimaryFlag
     include Privacy
+    include PlatformScoped
 
     primary_flag_scope :contact_detail_id
 

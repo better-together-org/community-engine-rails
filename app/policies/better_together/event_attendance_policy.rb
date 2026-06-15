@@ -3,6 +3,14 @@
 module BetterTogether
   # Access control for event attendance (RSVPs)
   class EventAttendancePolicy < ApplicationPolicy
+    # Scope for platform-scoped access control
+    class Scope < ApplicationPolicy::Scope
+      def resolve
+        platform = BetterTogether::Current.platform || BetterTogether::Platform.find_by(host: true)
+        platform ? scope.where(platform_id: platform.id) : scope.none
+      end
+    end
+
     def create?
       user.present? && event_allows_rsvp?
     end

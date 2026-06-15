@@ -5,6 +5,7 @@ module BetterTogether
     include Geography::Geospatial::One
     include PrimaryFlag
     include Privacy
+    include PlatformScoped
 
     primary_flag_scope :contact_detail_id, allow_blank: true
 

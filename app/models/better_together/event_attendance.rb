@@ -3,6 +3,8 @@
 module BetterTogether
   # Tracks a person's RSVP to an event
   class EventAttendance < ApplicationRecord
+    include PlatformScoped
+
     STATUS = {
       interested: 'interested',
       going: 'going'

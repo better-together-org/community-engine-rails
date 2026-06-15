@@ -9,6 +9,8 @@ module BetterTogether
   # This forces createSenderKeyDistribution on the next group message, excluding any
   # removed member from the new key distribution.
   class ConversationParticipant < ApplicationRecord
+    include PlatformScoped
+
     belongs_to :conversation
     belongs_to :person
 
