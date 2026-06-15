@@ -8,6 +8,8 @@
 # area so the two stay consistent.
 class AddPlatformIdToNavigationItems < ActiveRecord::Migration[7.2]
   def change
+    return if column_exists?(:better_together_navigation_items, :platform_id)
+
     add_reference :better_together_navigation_items, :platform,
                   type: :uuid,
                   null: true,

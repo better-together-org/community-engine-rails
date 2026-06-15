@@ -10,7 +10,7 @@ class AddPlatformIdToJoatuExchanges < ActiveRecord::Migration[7.2]
       better_together_joatu_offers
       better_together_joatu_agreements
     ].each do |table|
-      next unless table_exists?(table)
+      next unless table_exists?(table) && !column_exists?(table, :platform_id)
 
       add_reference table, :platform,
                     type: :uuid,

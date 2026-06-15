@@ -33,8 +33,8 @@ RSpec.describe BetterTogether::Agreement do
       platform_b = create(:better_together_platform, host: false)
       unique_id = "shared-id-#{SecureRandom.hex(4)}"
       create(:agreement, identifier: unique_id, platform: platform_a)
-      cross_platform = build(:agreement, identifier: unique_id, platform: platform_b)
-      expect(cross_platform).to be_valid
+      cross_platform = create(:agreement, identifier: unique_id, platform: platform_b)
+      expect(cross_platform).to be_persisted
     end
 
     it 'requires a valid privacy value' do

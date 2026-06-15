@@ -72,8 +72,8 @@ RSpec.shared_examples 'platform scoped identifier' do |factory:|
 
     it 'allows the same identifier on different platforms' do
       create(factory, identifier: shared_identifier, platform: platform_a)
-      record_b = build(factory, identifier: shared_identifier, platform: platform_b)
-      expect(record_b).to be_valid
+      record_b = create(factory, identifier: shared_identifier, platform: platform_b)
+      expect(record_b).to be_persisted
     end
 
     it 'rejects the same identifier on the same platform' do

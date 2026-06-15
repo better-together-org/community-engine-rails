@@ -5,6 +5,8 @@
 # from their own platform context. Nullable; backfill to host platform.
 class AddPlatformIdToReports < ActiveRecord::Migration[7.2]
   def change
+    return if column_exists?(:better_together_reports, :platform_id)
+
     add_reference :better_together_reports, :platform,
                   type: :uuid,
                   null: true,

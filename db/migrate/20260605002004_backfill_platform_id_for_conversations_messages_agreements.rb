@@ -17,7 +17,7 @@ class BackfillPlatformIdForConversationsMessagesAgreements < ActiveRecord::Migra
 
     execute <<~SQL
       UPDATE better_together_conversations
-      SET    platform_id = '#{host_platform_id}'
+      SET    platform_id = #{quote(host_platform_id)}
       WHERE  platform_id IS NULL
     SQL
 
@@ -31,7 +31,7 @@ class BackfillPlatformIdForConversationsMessagesAgreements < ActiveRecord::Migra
 
     execute <<~SQL
       UPDATE better_together_agreements
-      SET    platform_id = '#{host_platform_id}'
+      SET    platform_id = #{quote(host_platform_id)}
       WHERE  platform_id IS NULL
     SQL
   end

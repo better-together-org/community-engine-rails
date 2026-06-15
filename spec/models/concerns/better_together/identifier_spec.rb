@@ -18,8 +18,8 @@ RSpec.describe BetterTogether::Identifier do
 
     it 'allows the same identifier on two different platforms' do
       create(:agreement, identifier: shared_id, platform: platform_a)
-      cross = build(:agreement, identifier: shared_id, platform: platform_b)
-      expect(cross).to be_valid
+      cross = create(:agreement, identifier: shared_id, platform: platform_b)
+      expect(cross).to be_persisted
     end
 
     it 'rejects the same identifier on the same platform' do
@@ -50,8 +50,8 @@ RSpec.describe BetterTogether::Identifier do
       # accepted when auto-generated on platform_b by building with the same
       # explicit value.
       existing = create(:agreement, platform: platform_a)
-      reused = build(:agreement, identifier: existing.identifier, platform: platform_b)
-      expect(reused).to be_valid
+      reused = create(:agreement, identifier: existing.identifier, platform: platform_b)
+      expect(reused).to be_persisted
     end
   end
 

@@ -22,8 +22,8 @@ class BackfillPlatformIdForCategoriesAndJoatu < ActiveRecord::Migration[7.2]
       next unless table_exists?(table)
 
       execute <<~SQL
-        UPDATE #{table}
-        SET    platform_id = '#{host_platform_id}'
+        UPDATE #{quote_table_name(table)}
+        SET    platform_id = #{quote(host_platform_id)}
         WHERE  platform_id IS NULL
       SQL
     end

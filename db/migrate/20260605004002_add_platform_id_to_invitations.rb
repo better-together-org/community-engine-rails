@@ -16,11 +16,13 @@
 #       platform_id = host platform
 class AddPlatformIdToInvitations < ActiveRecord::Migration[7.2]
   def up
-    add_reference :better_together_invitations, :platform,
-                  type: :uuid,
-                  null: true,
-                  foreign_key: { to_table: :better_together_platforms },
-                  index: true
+    unless column_exists?(:better_together_invitations, :platform_id)
+      add_reference :better_together_invitations, :platform,
+                    type: :uuid,
+                    null: true,
+                    foreign_key: { to_table: :better_together_platforms },
+                    index: true
+    end
 
     host_platform_id = execute(
       "SELECT id FROM better_together_platforms WHERE host = TRUE LIMIT 1"
@@ -49,7 +51,7 @@ class AddPlatformIdToInvitations < ActiveRecord::Migration[7.2]
     # Anything else — assign to host platform
     execute <<~SQL
       UPDATE better_together_invitations
-      SET    platform_id = '#{host_platform_id}'
+      SET    platform_id = #{quote(host_platform_id)}
       WHERE  platform_id IS NULL
     SQL
   end
