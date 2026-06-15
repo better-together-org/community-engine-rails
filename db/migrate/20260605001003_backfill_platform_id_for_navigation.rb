@@ -14,7 +14,7 @@ class BackfillPlatformIdForNavigation < ActiveRecord::Migration[7.2]
 
     execute <<~SQL
       UPDATE better_together_navigation_areas
-      SET    platform_id = '#{host_platform_id}'
+      SET    platform_id = #{quote(host_platform_id)}
       WHERE  platform_id IS NULL
     SQL
 

@@ -53,7 +53,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       def resolve
         platform = Current.platform || BetterTogether::Platform.find_by(host: true)
-        base = platform ? scope.where(platform_id: platform.id) : scope
+        base = platform ? scope.where(platform_id: platform.id) : scope.none
         base.includes(participants: [
                         :string_translations,
                         :contact_detail,

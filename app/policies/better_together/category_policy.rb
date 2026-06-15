@@ -22,7 +22,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope
       def resolve
         platform = Current.platform || BetterTogether::Platform.find_by(host: true)
-        platform ? scope.where(platform_id: platform.id) : scope
+        platform ? scope.where(platform_id: platform.id) : scope.none
       end
     end
 
