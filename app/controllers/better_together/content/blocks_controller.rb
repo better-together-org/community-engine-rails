@@ -5,6 +5,14 @@ module BetterTogether
     # Handles CRUD for content blocks independently of pages.
     # rubocop:todo Metrics/ClassLength
     class BlocksController < ResourceController
+      ALLOWED_RESOURCE_SEARCH_CLASSES = [
+        'BetterTogether::Event',
+        'BetterTogether::Checklist',
+        'BetterTogether::Community',
+        'BetterTogether::Person',
+        'BetterTogether::Post'
+      ].freeze
+
       before_action :authenticate_user!
       before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
@@ -78,8 +86,9 @@ module BetterTogether
         resource_class_name = params[:resource_class].to_s.strip
         search_term = params[:search].to_s.strip
 
-        # Resolve class name to actual class constant
-        resource_klass = resource_class_name.safe_constantize
+        return render json: [], status: :unprocessable_content unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(resource_class_name)
+
+        resource_klass = resource_class_name.constantize
         return render json: [], status: :unprocessable_content unless resource_klass.present?
 
         # Get policy-scoped records
