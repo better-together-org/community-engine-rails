@@ -6,6 +6,8 @@ module BetterTogether
     class Subject < ApplicationRecord
       self.table_name = 'better_together_content_security_subjects'
 
+      include BetterTogether::PlatformScoped
+
       LIFECYCLE_STATES = {
         pending_scan: 'pending_scan',
         pending_private_review: 'pending_private_review',

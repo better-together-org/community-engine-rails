@@ -6,6 +6,8 @@ module BetterTogether
     class Finding < ApplicationRecord
       self.table_name = 'better_together_content_security_findings'
 
+      include BetterTogether::PlatformScoped
+
       belongs_to :item, class_name: 'BetterTogether::ContentSecurity::Item', inverse_of: :findings
       belongs_to :scan_event, class_name: 'BetterTogether::ContentSecurity::ScanEvent', inverse_of: :findings
       belongs_to :safety_case, class_name: 'BetterTogether::Safety::Case', optional: true

@@ -6,6 +6,8 @@ module BetterTogether
     class ScanEvent < ApplicationRecord
       self.table_name = 'better_together_content_security_scan_events'
 
+      include BetterTogether::PlatformScoped
+
       enum :status, {
         started: 'started',
         completed: 'completed',

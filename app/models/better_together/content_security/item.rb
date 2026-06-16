@@ -6,6 +6,8 @@ module BetterTogether
     class Item < ApplicationRecord
       self.table_name = 'better_together_content_security_items'
 
+      include BetterTogether::PlatformScoped
+
       enum :lifecycle_state, {
         pending_scan: 'pending_scan',
         clean: 'clean',
