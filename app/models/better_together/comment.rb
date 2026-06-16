@@ -2,5 +2,6 @@
 
 module BetterTogether
   class Comment < ApplicationRecord
+    include PlatformScoped
   end
 end

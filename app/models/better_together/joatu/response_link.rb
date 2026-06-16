@@ -6,6 +6,7 @@ module BetterTogether
     # Offer/Request and the Offer/Request created in response.
     class ResponseLink < ApplicationRecord
       include Creatable
+      include BetterTogether::PlatformScoped
 
       belongs_to :source, polymorphic: true
       belongs_to :response, polymorphic: true

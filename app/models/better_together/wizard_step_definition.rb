@@ -6,6 +6,7 @@ module BetterTogether
   class WizardStepDefinition < ApplicationRecord
     include Identifier
     include Protected
+    include PlatformScoped
 
     belongs_to :wizard
 

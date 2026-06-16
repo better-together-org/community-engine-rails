@@ -5,6 +5,7 @@ module BetterTogether
   class Claim < ApplicationRecord
     include Positioned
     include BetterTogether::Creatable
+    include PlatformScoped
 
     REVIEW_STATUSES = %w[draft reviewed accepted challenged].freeze
 

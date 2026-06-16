@@ -11,6 +11,8 @@ module BetterTogether
         participant_visible: 'participant_visible'
       }, prefix: true
 
+      include BetterTogether::PlatformScoped
+
       belongs_to :safety_case, class_name: 'BetterTogether::Safety::Case', inverse_of: :notes
       belongs_to :author, class_name: 'BetterTogether::Person', inverse_of: :authored_safety_notes
 

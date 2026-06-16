@@ -13,6 +13,8 @@ module BetterTogether
     class Settlement < ApplicationRecord
       self.table_name = 'better_together_joatu_settlements'
 
+      include BetterTogether::PlatformScoped
+
       STATUSES = %w[pending completed cancelled].freeze
 
       belongs_to :agreement, class_name: 'BetterTogether::Joatu::Agreement'

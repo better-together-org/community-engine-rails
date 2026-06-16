@@ -5,6 +5,7 @@ module BetterTogether
   class Citation < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Positioned
     include BetterTogether::Creatable
+    include PlatformScoped
 
     SOURCE_KINDS = %w[
       article

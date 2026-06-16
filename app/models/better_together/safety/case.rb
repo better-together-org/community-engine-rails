@@ -31,6 +31,8 @@ module BetterTogether
         no_action: 'no_action'
       }, prefix: true
 
+      include BetterTogether::PlatformScoped
+
       belongs_to :report, class_name: 'BetterTogether::Report', inverse_of: :safety_case
       belongs_to :assigned_reviewer, class_name: 'BetterTogether::Person', optional: true
 

@@ -10,6 +10,7 @@ module BetterTogether
     include Positioned
     include Protected
     include Privacy
+    include PlatformScoped
 
     belongs_to :checklist, class_name: '::BetterTogether::Checklist', inverse_of: :checklist_items
     belongs_to :parent, class_name: '::BetterTogether::ChecklistItem', optional: true, inverse_of: :children,

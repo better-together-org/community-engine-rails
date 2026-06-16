@@ -3,6 +3,8 @@
 module BetterTogether
   # Join model between Calendar and Event for future calendar organization
   class CalendarEntry < ApplicationRecord
+    include PlatformScoped
+
     belongs_to :calendar, class_name: 'BetterTogether::Calendar'
     belongs_to :event, class_name: 'BetterTogether::Event'
 

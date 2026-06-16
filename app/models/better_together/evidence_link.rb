@@ -5,6 +5,7 @@ module BetterTogether
   class EvidenceLink < ApplicationRecord
     include Positioned
     include BetterTogether::Creatable
+    include PlatformScoped
 
     RELATION_TYPES = %w[supports contests contextualizes documents].freeze
     REVIEW_STATUSES = BetterTogether::Claim::REVIEW_STATUSES

@@ -5,6 +5,7 @@ require 'storext'
 module BetterTogether
   # A gathering
   class Community < ApplicationRecord # rubocop:todo Metrics/ClassLength
+    include PlatformScoped
     include Contactable
     include HostsEvents
     include Identifier

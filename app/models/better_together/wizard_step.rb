@@ -4,6 +4,8 @@
 module BetterTogether
   # Tracks the user's progression through the wizard
   class WizardStep < ApplicationRecord
+    include PlatformScoped
+
     belongs_to :wizard
     belongs_to :wizard_step_definition
     belongs_to :creator, class_name: '::BetterTogether::Person', optional: true, inverse_of: :created_wizard_steps
