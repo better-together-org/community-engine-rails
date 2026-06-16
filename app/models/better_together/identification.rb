@@ -3,6 +3,8 @@
 module BetterTogether
   # Represents the connection betwen an identity (eg: user) with an agent (eg: person)
   class Identification < ApplicationRecord
+    include PlatformScoped
+
     belongs_to :identity,
                polymorphic: true,
                autosave: true

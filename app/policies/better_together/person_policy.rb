@@ -35,10 +35,16 @@ module BetterTogether
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
-      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         base_scope = scope.with_translations
+        platform = BetterTogether::Current.platform || BetterTogether::Platform.find_by(host: true)
 
-        # Explicit directory access can still see all people.
+        # Platform isolation: all people must belong to current platform
+        return base_scope.none unless platform
+
+        base_scope = base_scope.where(platform_id: platform.id)
+
+        # Explicit directory access can still see all people within platform.
         return base_scope if permitted_to?('list_person')
 
         # Unauthenticated users can only see public profiles

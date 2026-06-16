@@ -34,11 +34,15 @@ module BetterTogether
       record === user # rubocop:todo Style/CaseEquality
     end
 
-    class Scope < Scope # rubocop:todo Style/Documentation
+    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        return scope.where(id: user.id) unless permitted_to?('manage_platform_users')
+        platform = BetterTogether::Current.platform || BetterTogether::Platform.find_by(host: true)
+        return scope.none unless platform
 
-        scope.order(created_at: :desc)
+        platform_scope = scope.where(platform_id: platform.id)
+        return platform_scope.where(id: user.id) unless permitted_to?('manage_platform_users')
+
+        platform_scope.order(created_at: :desc)
       end
     end
   end

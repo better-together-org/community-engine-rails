@@ -3,6 +3,7 @@
 module BetterTogether
   # Authenticates the app user. Uses Devise.
   class User < ApplicationRecord
+    include BetterTogether::PlatformScoped
     include ::BetterTogether::DeviseUser
 
     # Include default devise modules. Others available are:

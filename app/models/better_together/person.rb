@@ -28,6 +28,7 @@ module BetterTogether
     include Viewable
     include Metrics::Viewable
     include ::Storext.model
+    include BetterTogether::PlatformScoped
 
     has_community
 
