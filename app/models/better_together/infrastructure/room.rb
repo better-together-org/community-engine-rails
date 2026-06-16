@@ -10,6 +10,7 @@ module BetterTogether
       include FriendlySlug
       include Geography::Geospatial::One
       include Privacy
+      include PlatformScoped
       include PrimaryCommunity
 
       has_community

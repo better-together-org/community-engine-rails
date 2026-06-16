@@ -8,6 +8,7 @@ module BetterTogether
     include Creatable
     include Identifier
     include Privacy
+    include PlatformScoped
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
     belongs_to :space, class_name: 'BetterTogether::Geography::Space'

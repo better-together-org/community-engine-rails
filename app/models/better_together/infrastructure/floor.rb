@@ -11,6 +11,7 @@ module BetterTogether
       include Geography::Geospatial::One
       include Positioned
       include Privacy
+      include PlatformScoped
       include PrimaryCommunity
 
       has_community

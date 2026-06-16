@@ -10,6 +10,7 @@ module BetterTogether
     include Identifier
     include Privacy
     include Protected
+    include PlatformScoped
     include Viewable
 
     belongs_to :community, class_name: '::BetterTogether::Community'
