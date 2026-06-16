@@ -5,6 +5,7 @@ module BetterTogether
   # Short-lived grant exchanged for an access token.
   class OauthAccessGrant < ApplicationRecord
     include ::Doorkeeper::Orm::ActiveRecord::Mixins::AccessGrant
+    include BetterTogether::PlatformScoped
 
     self.table_name = 'better_together_oauth_access_grants'
   end

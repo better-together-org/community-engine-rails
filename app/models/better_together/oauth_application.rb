@@ -9,6 +9,7 @@ module BetterTogether
   # authorization_code (user-delegated) grant flows.
   class OauthApplication < ApplicationRecord
     include ::Doorkeeper::Orm::ActiveRecord::Mixins::Application
+    include BetterTogether::PlatformScoped
 
     self.table_name = 'better_together_oauth_applications'
 

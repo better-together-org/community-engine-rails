@@ -6,6 +6,7 @@ module BetterTogether
     include Identifier
     include Positioned
     include Protected
+    include PlatformScoped
     include Resourceful
 
     has_many :role_resource_permissions, class_name: 'BetterTogether::RoleResourcePermission', dependent: :destroy

@@ -3,6 +3,8 @@
 module BetterTogether
   # Assigns resource permisisons to roles
   class RoleResourcePermission < ApplicationRecord
+    include BetterTogether::PlatformScoped
+
     belongs_to :role, class_name: 'BetterTogether::Role'
     belongs_to :resource_permission, class_name: 'BetterTogether::ResourcePermission'
 

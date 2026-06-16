@@ -5,6 +5,7 @@ module BetterTogether
   # Issued by Doorkeeper, validated on each API/MCP request.
   class OauthAccessToken < ApplicationRecord
     include ::Doorkeeper::Orm::ActiveRecord::Mixins::AccessToken
+    include BetterTogether::PlatformScoped
 
     self.table_name = 'better_together_oauth_access_tokens'
   end

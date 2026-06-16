@@ -3,6 +3,8 @@
 module BetterTogether
   # Stores member-submitted deletion requests for later human review.
   class PersonDeletionRequest < ApplicationRecord
+    include BetterTogether::PlatformScoped
+
     self.table_name = 'better_together_person_deletion_requests'
 
     STATUS_VALUES = {
