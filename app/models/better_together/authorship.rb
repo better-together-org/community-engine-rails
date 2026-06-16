@@ -7,6 +7,7 @@ module BetterTogether
     include Citable
     include Claimable
     include BetterTogether::Creatable
+    include BetterTogether::PlatformScoped
 
     AUTHOR_ROLE = 'author'
     EDITOR_ROLE = 'editor'
