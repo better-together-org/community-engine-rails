@@ -78,8 +78,6 @@ module BetterTogether
       end
     end
 
-    private
-
     def review_path
       return unless community&.persisted?
 

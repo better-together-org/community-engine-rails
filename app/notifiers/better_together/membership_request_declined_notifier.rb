@@ -50,8 +50,6 @@ module BetterTogether
       delegate :membership_request, :title, :body, :review_path, to: :event
     end
 
-    private
-
     def review_path
       return unless community&.persisted? && membership_request.persisted?
 

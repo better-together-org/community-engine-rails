@@ -46,8 +46,6 @@ module BetterTogether
       delegate :title, :body, :review_path, to: :event
     end
 
-    private
-
     def review_path
       BetterTogether::Engine.routes.url_helpers.platform_connections_path(locale:)
     end
