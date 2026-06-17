@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
+      I18n.locale || I18n.default_locale
     end
 
     def title

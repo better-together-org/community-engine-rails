@@ -8,6 +8,7 @@ module BetterTogether
     include PlatformHost
     include PlatformRegistryDefaults
     include PlatformFederationStatus
+    include PlatformCspConfiguration
     include PlatformCssBlockManagement
     include PlatformMembershipDisplay
     include Creatable
@@ -19,6 +20,7 @@ module BetterTogether
     include Privacy
     include Protected
     include TimezoneAttributeAliasing
+    include RemoveableAttachment
     include ::Storext.model
 
     NETWORK_VISIBILITIES = %w[private peer member public].freeze
@@ -26,16 +28,6 @@ module BetterTogether
     FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
     SOFTWARE_VARIANTS = %w[community_engine generic].freeze
     SEARCH_QUERY_ANALYTICS_MODES = %w[full hashed].freeze
-    DEFAULT_LOCAL_CSP_IMG_SOURCES = [
-      'https://*.tile.openstreetmap.org'
-    ].freeze
-    CSP_SETTING_KEYS = {
-      csp_frame_ancestors_text: 'csp_frame_ancestors',
-      csp_frame_src_text: 'csp_frame_src',
-      csp_img_src_text: 'csp_img_src',
-      csp_script_src_text: 'csp_script_src',
-      csp_connect_src_text: 'csp_connect_src'
-    }.freeze
 
     has_community
 
@@ -89,13 +81,26 @@ module BetterTogether
               inclusion: { in: BetterTogether::Authorable::EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES }
     validates :oauth_issuer_url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
-    validate :validate_csp_origin_text_fields
     validate :require_publishing_agreement_for_public_network_visibility
 
     after_initialize :set_default_requires_invitation, if: :new_record?
     before_validation :apply_platform_registry_defaults
-    before_validation :seed_default_local_csp_settings, on: :create
-    before_validation :persist_csp_origin_settings
+
+    # Class method for permitted attributes - used by controllers for strong parameters
+    # @return [Array] List of permitted attributes and nested hashes
+    def self.permitted_attributes
+      [
+        :name, :slug, :host_url, :time_zone, :external, :protected,
+        :storage_configuration_id,
+        :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text,
+        :csp_script_src_text, :csp_connect_src_text,
+        { settings: %i[requires_invitation allow_membership_requests
+                       software_variant network_visibility connection_bootstrap_state
+                       federation_protocol oauth_issuer_url search_query_analytics_enabled
+                       search_query_analytics_mode contributors_display_visibility
+                       feature_gate_rollouts] }
+      ] + super
+    end
 
     scope :external, -> { where(external: true) }
     scope :internal, -> { where(external: false) }
@@ -137,63 +142,6 @@ module BetterTogether
                class_name: 'BetterTogether::StorageConfiguration',
                foreign_key: :storage_configuration_id,
                optional: true
-
-    # Virtual attributes to track removal
-    attr_accessor :remove_profile_image, :remove_cover_image
-    attr_writer :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text, :csp_script_src_text,
-                :csp_connect_src_text
-
-    # Callbacks to remove images if necessary
-    before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
-    before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
-
-    private
-
-    def set_default_requires_invitation
-      self.requires_invitation = true if requires_invitation.nil?
-    end
-
-    public
-
-    def csp_frame_ancestors
-      csp_setting_values('csp_frame_ancestors')
-    end
-
-    def csp_frame_src
-      csp_setting_values('csp_frame_src')
-    end
-
-    def csp_img_src
-      csp_setting_values('csp_img_src')
-    end
-
-    def csp_script_src
-      csp_setting_values('csp_script_src')
-    end
-
-    def csp_connect_src
-      csp_setting_values('csp_connect_src')
-    end
-
-    def csp_frame_ancestors_text
-      @csp_frame_ancestors_text || csp_frame_ancestors.join("\n")
-    end
-
-    def csp_frame_src_text
-      @csp_frame_src_text || csp_frame_src.join("\n")
-    end
-
-    def csp_img_src_text
-      @csp_img_src_text || csp_img_src.join("\n")
-    end
-
-    def csp_script_src_text
-      @csp_script_src_text || csp_script_src.join("\n")
-    end
-
-    def csp_connect_src_text
-      @csp_connect_src_text || csp_connect_src.join("\n")
-    end
 
     def cache_key
       "#{super}/#{css_block&.updated_at&.to_i}"
@@ -262,6 +210,10 @@ module BetterTogether
 
     private
 
+    def set_default_requires_invitation
+      self.requires_invitation = true if requires_invitation.nil?
+    end
+
     def host_url_ssrf_safe
       BetterTogether::SafeFederationUrlValidator
         .new(attributes: [:host_url])
@@ -284,67 +236,6 @@ module BetterTogether
         record: self,
         actor: Current.governed_agent,
         target_network_visibility: network_visibility
-      )
-    end
-
-    def persist_csp_origin_settings
-      updated_settings = settings.deep_dup
-
-      CSP_SETTING_KEYS.each do |text_attribute, setting_key|
-        next unless instance_variable_defined?(:"@#{text_attribute}")
-
-        normalized_values = BetterTogether::ContentSecurityPolicySources
-                            .parse_origin_list(public_send(text_attribute))
-
-        if normalized_values.empty?
-          updated_settings.delete(setting_key)
-        else
-          updated_settings[setting_key] = normalized_values
-        end
-      end
-
-      self.settings = updated_settings
-    end
-
-    def seed_default_local_csp_settings
-      return if external?
-
-      updated_settings = settings.deep_dup
-      updated_settings['csp_img_src'] = merge_csp_setting_values(
-        updated_settings['csp_img_src'],
-        DEFAULT_LOCAL_CSP_IMG_SOURCES
-      )
-      self.settings = updated_settings
-    end
-
-    def validate_csp_origin_text_fields
-      CSP_SETTING_KEYS.each_key do |text_attribute|
-        next unless instance_variable_defined?(:"@#{text_attribute}")
-
-        invalid_values = BetterTogether::ContentSecurityPolicySources.invalid_origins(public_send(text_attribute))
-        next if invalid_values.empty?
-
-        errors.add(
-          text_attribute,
-          "contains invalid origins: #{invalid_values.join(', ')}. Use HTTPS origins or hostnames only."
-        )
-      end
-    end
-
-    def csp_setting_values(setting_key)
-      Array(settings[setting_key]).filter_map do |value|
-        BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
-      end.uniq
-    end
-
-    def merge_csp_setting_values(existing_values, additional_values)
-      BetterTogether::ContentSecurityPolicySources.merged_sources(
-        Array(existing_values).filter_map do |value|
-          BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
-        end,
-        Array(additional_values).filter_map do |value|
-          BetterTogether::ContentSecurityPolicySources.normalize_origin(value)
-        end
       )
     end
 
