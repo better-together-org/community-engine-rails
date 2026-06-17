@@ -15,7 +15,7 @@ module BetterTogether
     end
 
     def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
+      I18n.locale || I18n.default_locale
     end
 
     def title
@@ -48,8 +48,6 @@ module BetterTogether
     notification_methods do
       delegate :title, :body, :review_path, to: :event
     end
-
-    private
 
     def review_path
       BetterTogether::Engine.routes.url_helpers.platform_connection_path(platform_connection, locale:)

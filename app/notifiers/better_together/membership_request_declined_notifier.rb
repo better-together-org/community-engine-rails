@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
+      I18n.locale || I18n.default_locale
     end
 
     def title
@@ -49,8 +49,6 @@ module BetterTogether
     notification_methods do
       delegate :membership_request, :title, :body, :review_path, to: :event
     end
-
-    private
 
     def review_path
       return unless community&.persisted? && membership_request.persisted?

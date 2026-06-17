@@ -23,7 +23,7 @@ module BetterTogether
     end
 
     def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
+      I18n.locale || I18n.default_locale
     end
 
     def title
@@ -51,8 +51,8 @@ module BetterTogether
       { title:, body:, url: review_path }
     end
 
-    def email_params(_notification)
-      { membership_request:, recipient:, review_url: review_url }
+    def email_params(notification)
+      { membership_request:, recipient: notification.recipient, review_url: review_url }
     end
 
     notification_methods do
@@ -64,8 +64,6 @@ module BetterTogether
            recipient.notification_preferences.fetch('notify_by_email', true))
       end
     end
-
-    private
 
     def review_path
       return unless community&.persisted? && membership_request.persisted?

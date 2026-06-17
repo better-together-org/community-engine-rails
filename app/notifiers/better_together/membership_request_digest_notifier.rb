@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
+      I18n.locale || I18n.default_locale
     end
 
     def membership_requests
@@ -53,10 +53,10 @@ module BetterTogether
       { title:, body:, url: review_path }
     end
 
-    def email_params(_notification)
+    def email_params(notification)
       {
         community:,
-        recipient:,
+        recipient: notification.recipient,
         membership_request_ids: params[:membership_request_ids],
         request_count:,
         requestor_names: Array(params[:requestor_names]),
@@ -77,8 +77,6 @@ module BetterTogether
         event.params.with_indifferent_access[:send_email]
       end
     end
-
-    private
 
     def review_path
       return unless community&.persisted?
