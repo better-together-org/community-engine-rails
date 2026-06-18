@@ -23,6 +23,12 @@ module BetterTogether
         assign_attributes(page)
         page.save!
         page
+      rescue ActiveRecord::RecordNotUnique
+        # Two concurrent syncs raced on INSERT; reload the winner and apply our attributes.
+        page = reload_after_concurrent_insert
+        assign_attributes(page)
+        page.save!
+        page
       end
 
       private
@@ -49,6 +55,16 @@ module BetterTogether
 
       def find_or_initialize_page_by_source_id
         ::BetterTogether::Page.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+      end
+
+      def reload_after_concurrent_insert
+        record = if mirror_with_remote_uuid?
+                   existing_page_with_remote_uuid || existing_page_by_source_id
+                 else
+                   existing_page_by_source_id
+                 end
+        record || raise(ActiveRecord::RecordNotFound,
+                        "Page not found after concurrent INSERT for remote_id=#{remote_id}")
       end
 
       def existing_page_with_remote_uuid

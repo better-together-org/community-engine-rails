@@ -103,6 +103,43 @@ module BetterTogether # :nodoc:
         expect(updated.identifier).to eq("#{source_platform.identifier}--remote-page")
       end
 
+      context 'when a concurrent INSERT wins the UUID primary-key race (TOCTOU)' do
+        it 'reloads the winning record and applies current attributes to it' do
+          remote_id = SecureRandom.uuid
+          external_target = create(:better_together_platform, :community_engine_peer)
+          external_connection = create(
+            :better_together_platform_connection,
+            :active,
+            source_platform:,
+            target_platform: external_target,
+            content_sharing_policy: 'mirror_network_feed',
+            share_pages: true
+          )
+          winning_page = create(:better_together_page, id: remote_id, platform: external_target)
+
+          service = described_class.new(
+            connection: external_connection,
+            remote_attributes:,
+            remote_id:,
+            preserve_remote_uuid: true
+          )
+
+          # Simulate the TOCTOU gap: the pre-check saw nothing, so find_or_initialize_page
+          # returns a new unsaved record with the same UUID. By the time save! runs,
+          # winning_page already holds that primary key.
+          allow(service).to receive(:find_or_initialize_page) # rubocop:todo RSpec/MessageSpies
+            .and_return(BetterTogether::Page.new(id: remote_id))
+
+          result = service.call
+
+          expect(result.id).to eq(remote_id)
+          expect(result.title).to eq(remote_attributes[:title])
+          expect(result.platform).to eq(external_target)
+          expect(result).to be_persisted
+          expect(result.id).to eq(winning_page.id)
+        end
+      end
+
       it 'rejects mirroring when the connection policy does not allow pages' do
         connection.update!(content_sharing_policy: 'none')
 
