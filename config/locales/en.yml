@@ -2524,6 +2524,9 @@ en:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.
           title: Agreement created
+        agreement_status_changed:
+          body: The agreement between "%{offer}" and "%{request}" was %{status}.
+          title: Agreement %{status}
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
       membership_created:
