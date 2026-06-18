@@ -18,10 +18,6 @@ module BetterTogether
       membership_request.target if membership_request.target.is_a?(BetterTogether::Community)
     end
 
-    def locale
-      I18n.locale || I18n.default_locale
-    end
-
     def title
       I18n.with_locale(locale) do
         I18n.t(
@@ -42,8 +38,10 @@ module BetterTogether
       end
     end
 
-    def build_message(_notification)
-      { title:, body:, url: review_path }
+    def build_message(notification)
+      I18n.with_locale(locale_for_notification(notification)) do
+        { title:, body:, url: review_path }
+      end
     end
 
     notification_methods do

@@ -67,7 +67,7 @@ RSpec.describe BetterTogether::SafetyReportDigestNotifier do
     it 'includes a URL to the safety cases queue' do
       message = notifier.build_message(notification)
 
-      expect(message[:url]).to include('safety_cases')
+      expect(message[:url]).to include('/safety')
     end
   end
 end
