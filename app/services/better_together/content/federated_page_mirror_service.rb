@@ -63,8 +63,25 @@ module BetterTogether
                  else
                    existing_page_by_source_id
                  end
-        record || raise(ActiveRecord::RecordNotFound,
-                        "Page not found after concurrent INSERT for remote_id=#{remote_id}")
+
+        return record if record
+
+        raise_uuid_collision_if_applicable!
+        raise ::ActiveRecord::RecordNotFound,
+              "Page not found after concurrent INSERT for remote_id=#{remote_id}"
+      end
+
+      # Raises RecordInvalid when a page with the remote UUID already exists under a
+      # different platform. This is a permanent cross-platform UUID collision, not a
+      # transient race; FederatedContentIngestService treats RecordInvalid with an
+      # identifier:taken error as a mirrored-identifier conflict and continues the batch.
+      def raise_uuid_collision_if_applicable!
+        return unless mirror_with_remote_uuid? && ::BetterTogether::Page.exists?(id: remote_id)
+
+        stub = ::BetterTogether::Page.new
+        stub.errors.add(:identifier, :taken,
+                        message: 'UUID conflicts with an existing page on another platform')
+        raise ::ActiveRecord::RecordInvalid, stub
       end
 
       def existing_page_with_remote_uuid

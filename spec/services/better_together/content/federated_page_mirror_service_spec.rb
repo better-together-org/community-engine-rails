@@ -140,6 +140,37 @@ module BetterTogether # :nodoc:
         end
       end
 
+      context 'when a UUID collision exists under a different platform' do
+        it 'raises RecordInvalid with identifier:taken so the ingest service logs a conflict' do
+          remote_id = SecureRandom.uuid
+          external_target = create(:better_together_platform, :community_engine_peer)
+          other_platform  = create(:better_together_platform, :community_engine_peer)
+          external_connection = create(
+            :better_together_platform_connection,
+            :active,
+            source_platform:,
+            target_platform: external_target,
+            content_sharing_policy: 'mirror_network_feed',
+            share_pages: true
+          )
+          # Same UUID exists on a *different* platform — not the target
+          create(:better_together_page, id: remote_id, platform: other_platform)
+
+          service = described_class.new(
+            connection: external_connection,
+            remote_attributes:,
+            remote_id:,
+            preserve_remote_uuid: true
+          )
+          allow(service).to receive(:find_or_initialize_page) # rubocop:todo RSpec/MessageSpies
+            .and_return(BetterTogether::Page.new(id: remote_id))
+
+          expect { service.call }.to raise_error(ActiveRecord::RecordInvalid) do |e|
+            expect(e.record.errors.details[:identifier]).to include(hash_including(error: :taken))
+          end
+        end
+      end
+
       it 'rejects mirroring when the connection policy does not allow pages' do
         connection.update!(content_sharing_policy: 'none')
 
