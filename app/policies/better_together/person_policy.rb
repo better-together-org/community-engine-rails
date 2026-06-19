@@ -37,7 +37,7 @@ module BetterTogether
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         base_scope = scope.with_translations
-        platform = BetterTogether::Current.platform || BetterTogether::Current.host_platform
+        platform = Current.platform || Current.host_platform
 
         # Platform isolation: all people must belong to current platform
         return base_scope.none unless platform

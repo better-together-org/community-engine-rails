@@ -36,7 +36,7 @@ module BetterTogether
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        platform = BetterTogether::Current.platform || BetterTogether::Current.host_platform
+        platform = Current.platform || Current.host_platform
         return scope.none unless platform
 
         platform_scope = scope.where(platform_id: platform.id)

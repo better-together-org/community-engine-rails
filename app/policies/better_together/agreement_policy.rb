@@ -26,7 +26,7 @@ module BetterTogether
     # Agreements scoped to the current platform context.
     class Scope < ApplicationPolicy::Scope
       def resolve
-        platform = Current.platform || BetterTogether::Current.host_platform
+        platform = Current.platform || Current.host_platform
         base = platform ? scope.where(platform_id: platform.id) : scope.none
         base.order(created_at: :desc)
       end
