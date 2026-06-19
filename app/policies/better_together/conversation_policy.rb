@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for conversations
-  class ConversationPolicy < ApplicationPolicy
+  class ConversationPolicy < PlatformRecordPolicy
     def index?
       user.present? && agent.present?
     end
@@ -50,15 +50,13 @@ module BetterTogether
     end
 
     # Authorization scope for conversations — scoped to current platform.
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        platform = Current.platform || Current.host_platform
-        base = platform ? scope.where(platform_id: platform.id) : scope.none
-        base.includes(participants: [
-                        :string_translations,
-                        :contact_detail,
-                        { profile_image_attachment: :blob }
-                      ])
+        platform_scoped.includes(participants: [
+                                   :string_translations,
+                                   :contact_detail,
+                                   { profile_image_attachment: :blob }
+                                 ])
       end
     end
 
@@ -67,7 +65,7 @@ module BetterTogether
     def platform_steward_ids
       BetterTogether::PersonPlatformMembership
         .active
-        .where(joinable: platform)
+        .where(joinable: current_platform)
         .joins(role: { role_resource_permissions: :resource_permission })
         .where(better_together_resource_permissions: {
                  identifier: %w[manage_platform_members manage_platform_settings manage_platform]
@@ -89,10 +87,6 @@ module BetterTogether
         .distinct
     end
 
-    def platform
-      Current.platform || Current.host_platform
-    end
-
     def platform_people
       BetterTogether::Person
         .includes(:string_translations)
@@ -103,14 +97,14 @@ module BetterTogether
     def current_platform_person_ids
       ids = BetterTogether::PersonPlatformMembership
             .active
-            .where(joinable: platform)
+            .where(joinable: current_platform)
             .pluck(:member_id)
 
-      return ids unless platform&.host? && platform.community.present?
+      return ids unless current_platform&.host? && current_platform.community.present?
 
       host_community_ids = BetterTogether::PersonCommunityMembership
                            .active
-                           .where(joinable: platform.community)
+                           .where(joinable: current_platform.community)
                            .pluck(:member_id)
 
       ids | host_community_ids

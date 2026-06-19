@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CategoryPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class CategoryPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       platform_taxonomy_manager?
     end
@@ -16,14 +16,6 @@ module BetterTogether
 
     def show?
       platform_taxonomy_manager?
-    end
-
-    # Categories scoped to the current platform context.
-    class Scope < ApplicationPolicy::Scope
-      def resolve
-        platform = Current.platform || Current.host_platform
-        platform ? scope.where(platform_id: platform.id) : scope.none
-      end
     end
 
     private

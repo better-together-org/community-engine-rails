@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for agreements
-  class AgreementPolicy < ApplicationPolicy
+  class AgreementPolicy < PlatformRecordPolicy
     def index?
       agreement_manager?
     end
@@ -23,12 +23,9 @@ module BetterTogether
       agreement_manager?
     end
 
-    # Agreements scoped to the current platform context.
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        platform = Current.platform || Current.host_platform
-        base = platform ? scope.where(platform_id: platform.id) : scope.none
-        base.order(created_at: :desc)
+        platform_scoped.order(created_at: :desc)
       end
     end
 

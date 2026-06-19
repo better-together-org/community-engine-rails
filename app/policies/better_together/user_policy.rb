@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class UserPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class UserPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       can_manage_user_accounts?
     end
@@ -34,15 +34,14 @@ module BetterTogether
       record === user # rubocop:todo Style/CaseEquality
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        platform = Current.platform || Current.host_platform
-        return scope.none unless platform
+        return scope.none unless current_platform
 
-        platform_scope = scope.where(platform_id: platform.id)
-        return platform_scope.where(id: user.id) unless permitted_to?('manage_platform_users')
+        base = platform_scoped
+        return base.where(id: user.id) unless permitted_to?('manage_platform_users')
 
-        platform_scope.order(created_at: :desc)
+        base.order(created_at: :desc)
       end
     end
   end
