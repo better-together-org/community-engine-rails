@@ -6,7 +6,7 @@ module BetterTogether
     # Scope for platform-scoped access control
     class Scope < ApplicationPolicy::Scope
       def resolve
-        platform = BetterTogether::Current.platform || BetterTogether::Platform.find_by(host: true)
+        platform = BetterTogether::Current.platform || BetterTogether::Current.host_platform
         platform ? scope.where(platform_id: platform.id) : scope.none
       end
     end

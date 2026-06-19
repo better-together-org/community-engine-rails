@@ -52,7 +52,7 @@ module BetterTogether
     # Authorization scope for conversations — scoped to current platform.
     class Scope < ApplicationPolicy::Scope
       def resolve
-        platform = Current.platform || BetterTogether::Platform.find_by(host: true)
+        platform = Current.platform || BetterTogether::Current.host_platform
         base = platform ? scope.where(platform_id: platform.id) : scope.none
         base.includes(participants: [
                         :string_translations,
@@ -90,7 +90,7 @@ module BetterTogether
     end
 
     def platform
-      Current.platform || BetterTogether::Platform.find_by(host: true)
+      Current.platform || BetterTogether::Current.host_platform
     end
 
     def platform_people

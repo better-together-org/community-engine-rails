@@ -21,7 +21,7 @@ module BetterTogether
     # Categories scoped to the current platform context.
     class Scope < ApplicationPolicy::Scope
       def resolve
-        platform = Current.platform || BetterTogether::Platform.find_by(host: true)
+        platform = Current.platform || BetterTogether::Current.host_platform
         platform ? scope.where(platform_id: platform.id) : scope.none
       end
     end

@@ -39,7 +39,7 @@ module BetterTogether
       end
 
       def platform
-        @platform ||= BetterTogether::Platform.find_by(host: true)
+        @platform ||= BetterTogether::Current.host_platform
       end
     end
   end
