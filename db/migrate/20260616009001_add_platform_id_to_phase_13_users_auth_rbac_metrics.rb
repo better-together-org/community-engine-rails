@@ -2,14 +2,14 @@
 
 # Phase 13 — Users, Auth/OAuth, RBAC, Metrics, Logs, Exports/Deletions
 class AddPlatformIdToPhase13UsersAuthRbacMetrics < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
-  def change # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+  def change # rubocop:disable Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
     # Users: one user per person per platform (from person's platform memberships)
-    return if column_exists?(:better_together_users, :platform_id)
-
-    add_reference :better_together_users, :platform,
-                  type: :uuid, null: true,
-                  foreign_key: { to_table: :better_together_platforms },
-                  index: true
+    unless column_exists?(:better_together_users, :platform_id)
+      add_reference :better_together_users, :platform,
+                    type: :uuid, null: true,
+                    foreign_key: { to_table: :better_together_platforms },
+                    index: true
+    end
 
     # OAuth: applications, access grants, access tokens (platform-scoped auth)
     %w[
@@ -26,12 +26,12 @@ class AddPlatformIdToPhase13UsersAuthRbacMetrics < ActiveRecord::Migration[7.2] 
     end
 
     # JWT deny list (platform-scoped token revocation)
-    return if column_exists?(:better_together_jwt_denylists, :platform_id)
-
-    add_reference :better_together_jwt_denylists, :platform,
-                  type: :uuid, null: true,
-                  foreign_key: { to_table: :better_together_platforms },
-                  index: true
+    unless column_exists?(:better_together_jwt_denylists, :platform_id)
+      add_reference :better_together_jwt_denylists, :platform,
+                    type: :uuid, null: true,
+                    foreign_key: { to_table: :better_together_platforms },
+                    index: true
+    end
 
     # RBAC: roles, permissions, mappings (platform-scoped role definitions)
     %w[

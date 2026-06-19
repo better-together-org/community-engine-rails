@@ -40,7 +40,7 @@ class BackfillPlatformIdPhase5 < ActiveRecord::Migration[7.2]
 
       execute <<~SQL
         UPDATE #{table}
-        SET    platform_id = '#{host_platform_id}'
+        SET    platform_id = #{quote(host_platform_id)}
         WHERE  platform_id IS NULL
       SQL
     end
@@ -67,7 +67,7 @@ class BackfillPlatformIdPhase5 < ActiveRecord::Migration[7.2]
   def backfill_orphaned_deliveries(host_platform_id)
     execute <<~SQL
       UPDATE better_together_webhook_deliveries
-      SET    platform_id = '#{host_platform_id}'
+      SET    platform_id = #{quote(host_platform_id)}
       WHERE  platform_id IS NULL
     SQL
   end

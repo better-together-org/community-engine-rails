@@ -34,6 +34,23 @@ RSpec.describe BetterTogether::Identifier do
       record.title = "Updated title #{SecureRandom.hex(4)}"
       expect(record).to be_valid
     end
+
+    it 'raises ActiveRecord::RecordNotUnique at the DB level for same identifier on same platform' do
+      create(:agreement, identifier: shared_id, platform: platform_a)
+      dup = build(:agreement, identifier: shared_id, platform: platform_a)
+      # Bypass model validation to confirm the composite DB index is enforced independently
+      expect { dup.save(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it 'rejects duplicate identifiers with NULL platform_id at the model level' do
+      # The partial index (WHERE platform_id IS NOT NULL) does not cover NULL platform_ids.
+      # Model validation must catch this gap.
+      create(:agreement, identifier: shared_id, platform: platform_a)
+      dup = build(:agreement, identifier: shared_id)
+      dup.platform_id = nil
+      expect(dup).not_to be_valid
+      expect(dup.errors[:identifier]).to include('has already been taken')
+    end
   end
 
   describe 'auto-generated identifier for platform-scoped models' do

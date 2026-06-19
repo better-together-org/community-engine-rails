@@ -22,8 +22,10 @@ class ReplaceIdentifierUniqueIndexesForPlatformScopedTables < ActiveRecord::Migr
       # Remove the existing unique index on identifier alone
       remove_index table, :identifier
 
-      # Add a new composite unique index on [identifier, platform_id]
-      # The where clause ensures NULL platform_ids don't interfere with uniqueness checks
+      # Add a new composite unique index on [identifier, platform_id].
+      # NOTE: The partial predicate (platform_id IS NOT NULL) means two records with
+      # the same identifier and a NULL platform_id are NOT caught by this index.
+      # The Identifier#validate_identifier_uniqueness model validation covers that gap.
       add_index table, %i[identifier platform_id], unique: true,
                                                    name: "index_#{table}_on_identifier_and_platform_id",
                                                    where: "platform_id IS NOT NULL"
@@ -34,6 +36,7 @@ class ReplaceIdentifierUniqueIndexesForPlatformScopedTables < ActiveRecord::Migr
     if table_exists?(:better_together_categories) &&
        index_exists?(:better_together_categories, %i[identifier type], unique: true)
       remove_index :better_together_categories, %i[identifier type]
+      # Same NULL gap applies: records with platform_id IS NULL rely on model validation.
       add_index :better_together_categories, %i[identifier type platform_id],
                 unique: true,
                 name: "index_better_together_categories_on_identifier_type_and_platform_id",
