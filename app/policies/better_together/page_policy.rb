@@ -3,7 +3,7 @@
 # app/policies/better_together/role_policy.rb
 
 module BetterTogether
-  class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PagePolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       platform_content_manager? || (agent.present? && (agent.authored_pages.any? || agent.contributed_pages.any?))
     end
@@ -34,13 +34,13 @@ module BetterTogether
       platform_content_manager? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Preload title translations and block images for page cards
-        base = scope.with_translations
+        base = platform_scoped(scope.with_translations
                     .includes(
                       blocks: { background_image_file_attachment: :blob }
-                    )
+                    ))
         pt = BetterTogether::Page.arel_table
 
         if platform_content_manager?

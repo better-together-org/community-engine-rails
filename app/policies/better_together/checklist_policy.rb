@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ChecklistPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class ChecklistPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def show?
       # Checklists do not currently resolve a scoped community, so community privacy
       # does not broaden visibility beyond creator/manager access.
@@ -29,9 +29,9 @@ module BetterTogether
       update?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
-        result = scope.with_translations.order(created_at: :desc)
+        result = platform_scoped(scope.with_translations.order(created_at: :desc))
 
         table = scope.arel_table
 

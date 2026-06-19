@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Policy for calls for interest
-  class CallForInterestPolicy < ApplicationPolicy
+  class CallForInterestPolicy < PlatformRecordPolicy
     def index?
       true
     end
@@ -23,7 +23,7 @@ module BetterTogether
       platform_cfi_manager?
     end
 
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
     end
 
     private

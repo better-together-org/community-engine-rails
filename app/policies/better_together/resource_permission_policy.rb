@@ -3,7 +3,7 @@
 # app/policies/better_together/resource_permission_policy.rb
 
 module BetterTogether
-  class ResourcePermissionPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class ResourcePermissionPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       user.present? && can_manage_any_roles?
     end
@@ -32,11 +32,11 @@ module BetterTogether
       user.present? && can_manage_permission_resource_type? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.none unless user.present?
 
-        return scope.positioned if can_manage_any_roles?
+        return platform_scoped.positioned if can_manage_any_roles?
 
         scope.none
       end
