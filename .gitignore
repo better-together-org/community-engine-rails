@@ -68,3 +68,4 @@ logs/sessions/
 worktrees
 
 spec/dummy/coverage
+.vscode

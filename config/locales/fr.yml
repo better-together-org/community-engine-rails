@@ -2591,6 +2591,9 @@ fr:
         agreement_created:
           content: Un accord entre "%{offer}" et "%{request}" a été créé.
           title: Accord créé
+        agreement_status_changed:
+          body: L'accord entre "%{offer}" et "%{request}" est passé à l'état %{status}.
+          title: Accord %{status}
       mark_all_as_read: Tout marquer comme lu
       mark_as_read: Marquer comme lu
       membership_created:
