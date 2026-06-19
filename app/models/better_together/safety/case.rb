@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Operational case opened from a user safety report.
-    class Case < ApplicationRecord
+    class Case < PlatformRecord
       self.table_name = 'better_together_safety_cases'
 
       enum :status, {
@@ -30,8 +30,6 @@ module BetterTogether
         unsupported: 'unsupported',
         no_action: 'no_action'
       }, prefix: true
-
-      include BetterTogether::PlatformScoped
 
       belongs_to :report, class_name: 'BetterTogether::Report', inverse_of: :safety_case
       belongs_to :assigned_reviewer, class_name: 'BetterTogether::Person', optional: true

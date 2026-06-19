@@ -2,8 +2,7 @@
 
 module BetterTogether
   # Used to represent a person's connection to a community with a specific role
-  class PersonCommunityMembership < ApplicationRecord
-    include PlatformScoped
+  class PersonCommunityMembership < PlatformRecord
     include Membership
 
     membership member_class: 'BetterTogether::Person',

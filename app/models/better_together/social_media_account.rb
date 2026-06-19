@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class SocialMediaAccount < ApplicationRecord # rubocop:todo Style/Documentation
+  class SocialMediaAccount < PlatformRecord # rubocop:todo Style/Documentation
     include Privacy
-    include PlatformScoped
 
     belongs_to :contact_detail, class_name: 'BetterTogether::ContactDetail', touch: true
 

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Address < ApplicationRecord # rubocop:todo Style/Documentation
+  class Address < PlatformRecord # rubocop:todo Style/Documentation
     include Geography::Geospatial::One
     include PrimaryFlag
     include Privacy
-    include PlatformScoped
 
     primary_flag_scope :contact_detail_id, allow_blank: true
 

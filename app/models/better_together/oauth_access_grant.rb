@@ -3,9 +3,8 @@
 module BetterTogether
   # OAuth2 access grant for authorization_code flow.
   # Short-lived grant exchanged for an access token.
-  class OauthAccessGrant < ApplicationRecord
+  class OauthAccessGrant < PlatformRecord
     include ::Doorkeeper::Orm::ActiveRecord::Mixins::AccessGrant
-    include BetterTogether::PlatformScoped
 
     self.table_name = 'better_together_oauth_access_grants'
   end

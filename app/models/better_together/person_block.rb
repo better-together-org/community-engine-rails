@@ -4,9 +4,7 @@ module BetterTogether
   # Join model tracking which people block other people.
   # Blocking is per-platform: person A can block person B on Platform 1
   # without affecting their relationship on Platform 2.
-  class PersonBlock < ApplicationRecord
-    include PlatformScoped
-
+  class PersonBlock < PlatformRecord
     belongs_to :blocker, class_name: 'BetterTogether::Person'
     belongs_to :blocked, class_name: 'BetterTogether::Person'
 

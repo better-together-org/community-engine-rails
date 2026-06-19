@@ -2,9 +2,7 @@
 
 module BetterTogether
   # Stores generated account-data export requests and attached export archives.
-  class PersonDataExport < ApplicationRecord
-    include BetterTogether::PlatformScoped
-
+  class PersonDataExport < PlatformRecord
     self.table_name = 'better_together_person_data_exports'
 
     STATUS_VALUES = {

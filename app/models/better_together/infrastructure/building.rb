@@ -3,14 +3,13 @@
 module BetterTogether
   module Infrastructure
     # Represents a building in the real world
-    class Building < ApplicationRecord
+    class Building < PlatformRecord
       include Contactable
       include Creatable
       include Identifier
       include FriendlySlug
       include Geography::Geospatial::One
       include Privacy
-      include PlatformScoped
       include PrimaryCommunity
 
       has_community

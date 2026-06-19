@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ShortLink < ApplicationRecord # rubocop:todo Style/Documentation
-    include PlatformScoped
+  class ShortLink < PlatformRecord # rubocop:todo Style/Documentation
     include Creatable
     include Translatable
 

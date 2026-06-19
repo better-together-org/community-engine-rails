@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # A human being
-  class Person < ApplicationRecord # rubocop:todo Metrics/ClassLength
+  class Person < PlatformRecord # rubocop:todo Metrics/ClassLength
     def self.primary_community_delegation_attrs
       []
     end
@@ -28,7 +28,6 @@ module BetterTogether
     include Viewable
     include Metrics::Viewable
     include ::Storext.model
-    include BetterTogether::PlatformScoped
 
     has_community
 

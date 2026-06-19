@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Moderator-recorded protective or accountability action for a safety case.
-    class Action < ApplicationRecord
+    class Action < PlatformRecord
       self.table_name = 'better_together_safety_actions'
 
       enum :action_type, {
@@ -22,8 +22,6 @@ module BetterTogether
         completed: 'completed',
         cancelled: 'cancelled'
       }, prefix: true
-
-      include BetterTogether::PlatformScoped
 
       belongs_to :safety_case, class_name: 'BetterTogether::Safety::Case', inverse_of: :actions
       belongs_to :actor, class_name: 'BetterTogether::Person', inverse_of: :acted_safety_actions

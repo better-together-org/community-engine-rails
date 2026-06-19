@@ -3,9 +3,8 @@
 # app/models/better_together/wizard.rb
 module BetterTogether
   # Ordered step definitions that the user must complete
-  class Wizard < ApplicationRecord
+  class Wizard < PlatformRecord
     include Identifier
-    include PlatformScoped
     include Protected
 
     has_many :wizard_step_definitions, -> { ordered }, dependent: :destroy

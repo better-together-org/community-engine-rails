@@ -2,10 +2,9 @@
 
 module BetterTogether
   # Structured citation record for auditable evidence and bibliography export.
-  class Citation < ApplicationRecord # rubocop:todo Metrics/ClassLength
+  class Citation < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Positioned
     include BetterTogether::Creatable
-    include PlatformScoped
 
     SOURCE_KINDS = %w[
       article

@@ -2,9 +2,7 @@
 
 module BetterTogether
   # Record of a person reporting inappropriate content or users
-  class Report < ApplicationRecord
-    include PlatformScoped
-
+  class Report < PlatformRecord
     ALLOWED_REPORTABLES = [
       'BetterTogether::Person',
       'BetterTogether::Post',

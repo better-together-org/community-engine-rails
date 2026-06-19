@@ -3,10 +3,8 @@
 module BetterTogether
   module ContentSecurity
     # Tracks CE-local enforcement state for one attachment-bearing subject.
-    class Subject < ApplicationRecord
+    class Subject < PlatformRecord
       self.table_name = 'better_together_content_security_subjects'
-
-      include BetterTogether::PlatformScoped
 
       LIFECYCLE_STATES = {
         pending_scan: 'pending_scan',

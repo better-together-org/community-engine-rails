@@ -4,9 +4,8 @@
 
 module BetterTogether
   # A named list of ordered multi-level navigation items
-  class NavigationArea < ApplicationRecord
+  class NavigationArea < PlatformRecord
     include Identifier
-    include PlatformScoped
     include Protected
     include Visible
 

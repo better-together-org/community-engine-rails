@@ -2,13 +2,12 @@
 
 module BetterTogether
   # Allows for assigning permitted actions to resources
-  class ResourcePermission < ApplicationRecord
+  class ResourcePermission < PlatformRecord
     ACTIONS = %w[create read update delete list manage view download].freeze
 
     include Identifier
     include Positioned
     include Protected
-    include PlatformScoped
     include Resourceful
 
     has_many :role_resource_permissions, class_name: 'BetterTogether::RoleResourcePermission', dependent: :destroy

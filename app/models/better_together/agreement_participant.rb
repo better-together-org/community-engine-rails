@@ -3,9 +3,7 @@
 module BetterTogether
   # Joins governed agents to agreements they have accepted, preserving
   # compatibility with the original person-bound participation model.
-  class AgreementParticipant < ApplicationRecord
-    include PlatformScoped
-
+  class AgreementParticipant < PlatformRecord
     belongs_to :agreement, class_name: 'BetterTogether::Agreement'
     belongs_to :participant, polymorphic: true
     belongs_to :person, class_name: 'BetterTogether::Person', optional: true

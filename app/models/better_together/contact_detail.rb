@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ContactDetail < ApplicationRecord # rubocop:todo Style/Documentation
-    include PlatformScoped
-
+  class ContactDetail < PlatformRecord # rubocop:todo Style/Documentation
     # belongs_to :contactable, polymorphic: true, touch: true
     # Use a manual safe touch to avoid raising ActiveRecord::StaleObjectError in tests when lock_version is out of date
     belongs_to :contactable, polymorphic: true, touch: false

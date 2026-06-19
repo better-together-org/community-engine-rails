@@ -2,10 +2,9 @@
 
 module BetterTogether
   # A specific published or internal assertion that can be linked to evidence.
-  class Claim < ApplicationRecord
+  class Claim < PlatformRecord
     include Positioned
     include BetterTogether::Creatable
-    include PlatformScoped
 
     REVIEW_STATUSES = %w[draft reviewed accepted challenged].freeze
 

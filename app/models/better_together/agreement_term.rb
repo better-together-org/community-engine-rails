@@ -2,11 +2,10 @@
 
 module BetterTogether
   # The terms of an agreement between participants
-  class AgreementTerm < ApplicationRecord
+  class AgreementTerm < PlatformRecord
     include Identifier
     include Positioned
     include Protected
-    include PlatformScoped
 
     belongs_to :agreement, class_name: 'BetterTogether::Agreement'
 

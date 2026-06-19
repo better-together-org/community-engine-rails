@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class WebsiteLink < ApplicationRecord # rubocop:todo Style/Documentation
+  class WebsiteLink < PlatformRecord # rubocop:todo Style/Documentation
     include Privacy
-    include PlatformScoped
 
     LABELS = %i[
       personal_website blog portfolio resume company_website community_page

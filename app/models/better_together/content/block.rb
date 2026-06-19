@@ -5,9 +5,8 @@ require 'storext'
 module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
-    class Block < ApplicationRecord
+    class Block < PlatformRecord
       include ::BetterTogether::Content::BlockAttributes
-      include ::BetterTogether::PlatformScoped
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # An item belonging to a Checklist. Translated label and description.
-  class ChecklistItem < ApplicationRecord
+  class ChecklistItem < PlatformRecord
     include Identifier
     include Creatable
     include FriendlySlug
@@ -10,7 +10,6 @@ module BetterTogether
     include Positioned
     include Protected
     include Privacy
-    include PlatformScoped
 
     belongs_to :checklist, class_name: '::BetterTogether::Checklist', inverse_of: :checklist_items
     belongs_to :parent, class_name: '::BetterTogether::ChecklistItem', optional: true, inverse_of: :children,
