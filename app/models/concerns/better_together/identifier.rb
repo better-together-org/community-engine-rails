@@ -8,19 +8,21 @@ module BetterTogether
     included do
       include FriendlySlug
 
-      slugged :identifier
+      slugged :identifier, slug_uniqueness: false
 
       validates :identifier,
                 presence: true,
                 length: { maximum: 100 },
                 unless: :skip_validate_identifier?
 
-      # Uniqueness is scoped to platform_id when the model is platform-scoped,
-      # otherwise globally unique. Replaces the bare `uniqueness: true` validator
-      # so the same identifier can exist on different platforms.
       validate :validate_identifier_uniqueness, unless: :skip_validate_identifier?
 
+      validates :slug, uniqueness: { scope: :platform_id }, if: -> { has_attribute?(:platform_id) }
+      validates :slug, uniqueness: true, unless: -> { has_attribute?(:platform_id) }
+
       before_create :generate_identifier_slug
+      # Must fire before PlatformScoped's assign_current_platform_if_available overwrites a nil platform_id.
+      before_validation :capture_platform_id_for_uniqueness
       before_validation :generate_identifier
 
       def identifier=(arg)
@@ -43,12 +45,18 @@ module BetterTogether
 
     protected
 
+    def capture_platform_id_for_uniqueness
+      @platform_id_at_validation_start = has_attribute?(:platform_id) ? read_attribute(:platform_id) : nil
+    end
+
     def validate_identifier_uniqueness
       return if identifier.blank?
 
-      # Scope uniqueness to platform when platform_id column exists on this model.
+      original_platform_id = @platform_id_at_validation_start
       scope = self.class.where(identifier: identifier)
-      scope = scope.where(platform_id: platform_id) if has_attribute?(:platform_id)
+      if has_attribute?(:platform_id) && original_platform_id.present?
+        scope = scope.where(platform_id: original_platform_id)
+      end
       scope = scope.where.not(id: id) if persisted?
 
       errors.add(:identifier, :taken) if scope.exists?

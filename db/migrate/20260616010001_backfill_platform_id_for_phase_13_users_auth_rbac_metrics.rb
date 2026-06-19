@@ -3,17 +3,21 @@
 # Phase 13 — Backfill users, auth/oauth, rbac, metrics with platform_id
 class BackfillPlatformIdForPhase13UsersAuthRbacMetrics < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   def up # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity,Metrics/MethodLength
-    # Step 1: Users from person's platform memberships (one user per person per platform)
+    # Step 1: Users from person's platform (via identifications — users have no person_id column;
+    # they link to people through better_together_identifications). This mirrors the logic in
+    # 20260607004002 which ran first; this catches any remaining NULL platform_id values.
     if column_exists?(:better_together_users, :platform_id)
       execute <<~SQL
         UPDATE better_together_users u
-        SET    platform_id = ppm.joinable_id
-        FROM   better_together_people p
-        JOIN   better_together_person_platform_memberships ppm
-          ON   p.id = ppm.member_id
-        WHERE  u.person_id = p.id
+        SET    platform_id = p.platform_id
+        FROM   better_together_identifications i
+        JOIN   better_together_people p
+          ON   p.id = i.identity_id AND i.identity_type = 'BetterTogether::Person'
+        WHERE  i.agent_type = 'BetterTogether::User'
+          AND  i.agent_id    = u.id
+          AND  i.active      = TRUE
           AND  u.platform_id IS NULL
-          AND  ppm.joinable_id IS NOT NULL
+          AND  p.platform_id IS NOT NULL
       SQL
     end
 
@@ -56,18 +60,20 @@ class BackfillPlatformIdForPhase13UsersAuthRbacMetrics < ActiveRecord::Migration
       end
     end
 
-    # Step 5: JWT deny lists from user's platform
+    # Step 5: JWT deny lists — no user_id FK (denylists store only jti/exp tokens).
+    # Assign host platform as these are system-wide revocation records.
     if column_exists?(:better_together_jwt_denylists, :platform_id)
-      # Assume jwt_denylists has user_id or similar relationship
-      # If not, fall back to host platform
-      execute <<~SQL
-        UPDATE better_together_jwt_denylists jdl
-        SET    platform_id = u.platform_id
-        FROM   better_together_users u
-        WHERE  jdl.user_id = u.id
-          AND  jdl.platform_id IS NULL
-          AND  u.platform_id IS NOT NULL
-      SQL
+      jwt_host_platform_id = execute(
+        "SELECT id FROM better_together_platforms WHERE host = TRUE LIMIT 1"
+      ).first&.fetch('id')
+
+      if jwt_host_platform_id
+        execute <<~SQL
+          UPDATE better_together_jwt_denylists
+          SET platform_id = #{quote(jwt_host_platform_id)}
+          WHERE platform_id IS NULL
+        SQL
+      end
     end
 
     # Step 6: Roles to host platform (system roles, customizable per platform)

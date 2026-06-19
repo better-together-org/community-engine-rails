@@ -144,7 +144,7 @@ module BetterTogether
       required_for_first_publish.ordered_for_consent.first || find_by(identifier: 'content_publishing_agreement')
     end
 
-    slugged :title
+    slugged :title, slug_uniqueness: false
 
     private
 

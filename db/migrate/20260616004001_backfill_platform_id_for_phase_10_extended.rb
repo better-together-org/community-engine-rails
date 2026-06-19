@@ -143,16 +143,40 @@ class BackfillPlatformIdForPhase10Extended < ActiveRecord::Migration[7.2] # rubo
       end
     end
 
-    # Step 6: ContentSecurityItems from subject
+    # Step 6: ContentSecurityItems from subject.
+    # content_security_items has no direct subject_id FK — inherit from attachable objects
+    # (Posts, Pages, Events) using the polymorphic attachable_type/attachable_id columns.
     if column_exists?(:better_together_content_security_items, :platform_id)
-      execute <<~SQL
-        UPDATE better_together_content_security_items csi
-        SET    platform_id = css.platform_id
-        FROM   better_together_content_security_subjects css
-        WHERE  csi.subject_id = css.id
-          AND  csi.platform_id IS NULL
-          AND  css.platform_id IS NOT NULL
-      SQL
+      [
+        ["BetterTogether::Post",  "better_together_posts"],
+        ["BetterTogether::Page",  "better_together_pages"],
+        ["BetterTogether::Event", "better_together_events"]
+      ].each do |type_name, parent_table|
+        next unless table_exists?(parent_table) && column_exists?(parent_table, :platform_id)
+
+        execute <<~SQL
+          UPDATE better_together_content_security_items csi
+          SET    platform_id = p.platform_id
+          FROM   #{parent_table} p
+          WHERE  csi.attachable_type = #{quote(type_name)}
+            AND  csi.attachable_id   = p.id
+            AND  csi.platform_id     IS NULL
+            AND  p.platform_id       IS NOT NULL
+        SQL
+      end
+
+      # Host platform fallback for items still without platform_id
+      host_platform_id = execute(
+        "SELECT id FROM better_together_platforms WHERE host = TRUE LIMIT 1"
+      ).first&.fetch('id')
+
+      if host_platform_id
+        execute <<~SQL
+          UPDATE better_together_content_security_items
+          SET platform_id = #{quote(host_platform_id)}
+          WHERE platform_id IS NULL
+        SQL
+      end
     end
 
     # Step 7: ContentSecurityFindings from item

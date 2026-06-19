@@ -64,9 +64,6 @@ end
 RSpec.shared_examples 'platform scoped identifier' do |factory:|
   it_behaves_like 'platform scoped', factory: factory
 
-  let(:platform_a) { create(:better_together_platform, host: false) }
-  let(:platform_b) { create(:better_together_platform, host: false) }
-
   describe 'identifier uniqueness (platform-scoped)' do
     let(:shared_identifier) { "shared-id-#{SecureRandom.hex(6)}" }
 

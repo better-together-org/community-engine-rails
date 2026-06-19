@@ -9,14 +9,16 @@ class ReplaceIdentifierUniqueIndexesForPlatformScopedTables < ActiveRecord::Migr
   def change
     # Platform-scoped tables that have unique indexes on identifier.
     # Categories has a composite index on [identifier, type], so requires special handling.
-    tables_to_migrate = %i[
-      better_together_navigation_areas
-      better_together_navigation_items
-      better_together_agreements
-      better_together_categories
-    ].freeze
+    # Explicit names required — auto-generated names for long table names exceed
+    # PostgreSQL's 63-character index name limit.
+    tables_to_migrate = {
+      better_together_navigation_areas: 'idx_bt_nav_areas_on_identifier_platform_id',
+      better_together_navigation_items: 'idx_bt_nav_items_on_identifier_platform_id',
+      better_together_agreements: 'idx_bt_agreements_on_identifier_platform_id',
+      better_together_categories: 'idx_bt_categories_on_identifier_platform_id'
+    }.freeze
 
-    tables_to_migrate.each do |table|
+    tables_to_migrate.each do |table, index_name|
       next unless table_exists?(table) && index_exists?(table, :identifier, unique: true)
 
       # Remove the existing unique index on identifier alone
@@ -27,7 +29,7 @@ class ReplaceIdentifierUniqueIndexesForPlatformScopedTables < ActiveRecord::Migr
       # the same identifier and a NULL platform_id are NOT caught by this index.
       # The Identifier#validate_identifier_uniqueness model validation covers that gap.
       add_index table, %i[identifier platform_id], unique: true,
-                                                   name: "index_#{table}_on_identifier_and_platform_id",
+                                                   name: index_name,
                                                    where: "platform_id IS NOT NULL"
     end
 
@@ -39,7 +41,7 @@ class ReplaceIdentifierUniqueIndexesForPlatformScopedTables < ActiveRecord::Migr
       # Same NULL gap applies: records with platform_id IS NULL rely on model validation.
       add_index :better_together_categories, %i[identifier type platform_id],
                 unique: true,
-                name: "index_better_together_categories_on_identifier_type_and_platform_id",
+                name: 'idx_bt_categories_on_identifier_type_platform_id',
                 where: "platform_id IS NOT NULL"
     end
   end

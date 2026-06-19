@@ -43,6 +43,21 @@ class BackfillPlatformIdForPeople < ActiveRecord::Migration[7.2]
       SET    platform_id = #{quote(host_platform_id)}
       WHERE  platform_id IS NULL
     SQL
+
+    # Deferred backfill from 20260607002002: contact_details skipped that migration
+    # because people.platform_id didn't exist yet. Now that people have platform_id
+    # set, propagate it to their contact_details.
+    return unless column_exists?(:better_together_contact_details, :platform_id)
+
+    execute <<~SQL
+      UPDATE better_together_contact_details cd
+      SET    platform_id = p.platform_id
+      FROM   better_together_people p
+      WHERE  cd.contactable_type = 'BetterTogether::Person'
+        AND  cd.contactable_id = p.id
+        AND  cd.platform_id IS NULL
+        AND  p.platform_id IS NOT NULL
+    SQL
   end
 
   def down

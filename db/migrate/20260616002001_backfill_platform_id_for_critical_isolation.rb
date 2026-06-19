@@ -14,7 +14,6 @@ class BackfillPlatformIdForCriticalIsolation < ActiveRecord::Migration[7.2] # ru
         WHERE  c.creator_id = p.id
           AND  c.platform_id IS NULL
           AND  ppm.joinable_id IS NOT NULL
-        LIMIT  (SELECT count(*) FROM better_together_conversations WHERE platform_id IS NULL)
       SQL
     end
 

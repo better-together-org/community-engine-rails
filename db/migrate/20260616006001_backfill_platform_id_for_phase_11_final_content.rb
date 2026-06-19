@@ -2,7 +2,7 @@
 
 # Phase 11 — Backfill final content isolation tables
 class BackfillPlatformIdForPhase11FinalContent < ActiveRecord::Migration[7.2]
-  def up
+  def up # rubocop:todo Metrics/CyclomaticComplexity
     # Uploads, Checklists, Wizards, CallsForInterest — all from creator
     %w[
       better_together_uploads
@@ -11,6 +11,7 @@ class BackfillPlatformIdForPhase11FinalContent < ActiveRecord::Migration[7.2]
       better_together_calls_for_interest
     ].each do |table|
       next unless column_exists?(table, :platform_id)
+      next unless column_exists?(table, :creator_id)
 
       execute <<~SQL
         UPDATE #{table} t
