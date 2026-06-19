@@ -2566,6 +2566,9 @@ es:
         agreement_created:
           content: Se ha creado un acuerdo entre "%{offer}" y "%{request}".
           title: Acuerdo creado
+        agreement_status_changed:
+          body: El acuerdo entre "%{offer}" y "%{request}" fue %{status}.
+          title: Acuerdo %{status}
       mark_all_as_read: Marcar todo como leído
       mark_as_read: Marcar como leído
       membership_created:

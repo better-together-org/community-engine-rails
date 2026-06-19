@@ -47,6 +47,9 @@ bower.json
 # Ignore Byebug command history file.
 .byebug_history
 
+# Ignore git worktrees (local development only)
+/worktrees/
+
 # Ignore node_modules
 node_modules/
 
@@ -60,3 +63,4 @@ spec/dummy/config/master.key
 # Prevent accidental commits of test log output files
 *.log
 logs/sessions/
+.vscode

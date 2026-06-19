@@ -67,6 +67,24 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
       expect(connection.last_sync_error_message).to eq('remote failure')
     end
 
+    it 'still records sync failure when the in-memory connection is stale at rescue time' do
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+      allow(BetterTogether::FederatedContentPullService).to receive(:call).and_raise(StandardError, 'concurrent update')
+
+      # Simulate optimistic locking staleness: the first update! (mark_sync_started!)
+      # succeeds and bumps lock_version in the DB, leaving the in-memory object stale.
+      # Without the reload, mark_sync_failed! would raise StaleObjectError.
+      connection.increment!(:lock_version) # DB version is now ahead of the in-memory object
+
+      expect do
+        described_class.perform_now(platform_connection_id: connection.id, cursor: 'cursor-9')
+      end.to raise_error(StandardError, 'concurrent update')
+
+      connection.reload
+      expect(connection).to be_sync_failed
+      expect(connection.last_sync_error_message).to eq('concurrent update')
+    end
+
     it 'can run same-instance pulls without invoking the http adapter directly' do
       direct_result = BetterTogether::FederatedContentPullService::Result.new(connection:, seeds: [], next_cursor: nil)
 

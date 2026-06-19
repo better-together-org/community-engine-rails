@@ -14,10 +14,6 @@ module BetterTogether
       params[:platform_connection] || record
     end
 
-    def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
-    end
-
     def title
       I18n.with_locale(locale) do
         I18n.t(
@@ -38,15 +34,15 @@ module BetterTogether
       end
     end
 
-    def build_message(_notification)
-      { title:, body:, url: review_path }
+    def build_message(notification)
+      I18n.with_locale(locale_for_notification(notification)) do
+        { title:, body:, url: review_path }
+      end
     end
 
     notification_methods do
       delegate :title, :body, :review_path, to: :event
     end
-
-    private
 
     def review_path
       BetterTogether::Engine.routes.url_helpers.platform_connection_path(platform_connection, locale:)
