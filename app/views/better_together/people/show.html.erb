@@ -166,11 +166,24 @@
           <!-- Pages Tab Pane -->
           <% if @authored_pages.any? %>
             <div id="pages" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="pages-tab">
+              <% if @authored_pages.total_pages > 1 %>
+                <nav class="d-flex justify-content-center">
+                  <%= paginate @authored_pages, param_name: :authored_pages_page %>
+                </nav>
+              <% end %>
+              <p class="text-muted small mb-3">
+                <%= t('.memberships.showing_count', shown: @authored_pages.size, total: @authored_pages.total_count) %>
+              </p>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
                 <%= render partial: 'better_together/pages/page',
                            collection: @authored_pages,
                            as: :page %>
               </div>
+              <% if @authored_pages.total_pages > 1 %>
+                <nav class="d-flex justify-content-center">
+                  <%= paginate @authored_pages, param_name: :authored_pages_page %>
+                </nav>
+              <% end %>
             </div>
           <% end %>
 
@@ -179,22 +192,48 @@
               <% if @contributed_pages.any? %>
                 <div class="mb-4">
                   <h3 class="h5"><%= BetterTogether::Page.model_name.human.pluralize %></h3>
+                  <% if @contributed_pages.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
+                      <%= paginate @contributed_pages, param_name: :contributed_pages_page %>
+                    </nav>
+                  <% end %>
+                  <p class="text-muted small mb-3">
+                    <%= t('.memberships.showing_count', shown: @contributed_pages.size, total: @contributed_pages.total_count) %>
+                  </p>
                   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
                     <%= render partial: 'better_together/pages/page',
                                collection: @contributed_pages,
                                as: :page %>
                   </div>
+                  <% if @contributed_pages.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
+                      <%= paginate @contributed_pages, param_name: :contributed_pages_page %>
+                    </nav>
+                  <% end %>
                 </div>
               <% end %>
 
               <% if @contributed_posts.any? %>
                 <div class="mb-4">
                   <h3 class="h5"><%= BetterTogether::Post.model_name.human.pluralize %></h3>
+                  <% if @contributed_posts.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
+                      <%= paginate @contributed_posts, param_name: :contributed_posts_page %>
+                    </nav>
+                  <% end %>
+                  <p class="text-muted small mb-3">
+                    <%= t('.memberships.showing_count', shown: @contributed_posts.size, total: @contributed_posts.total_count) %>
+                  </p>
                   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
                     <%= render partial: 'better_together/posts/post',
                                collection: @contributed_posts,
                                as: :post %>
                   </div>
+                  <% if @contributed_posts.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
+                      <%= paginate @contributed_posts, param_name: :contributed_posts_page %>
+                    </nav>
+                  <% end %>
                 </div>
               <% end %>
             </div>
@@ -202,27 +241,40 @@
 
           <!-- Platforms Tab Pane -->
           <% if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+            <% platform_memberships_shown = @person.person_platform_memberships.first(20) %>
             <div id="platforms" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="platforms-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <%= render partial: 'better_together/person_platform_memberships/person_platform_membership', collection: @person.person_platform_memberships %>
+                <%= render partial: 'better_together/person_platform_memberships/person_platform_membership', collection: platform_memberships_shown %>
               </div>
+              <% if @person.person_platform_memberships.size > 20 %>
+                <p class="text-muted mt-2 small">
+                  <%= t('.memberships.showing_count', shown: platform_memberships_shown.size, total: @person.person_platform_memberships.size) %>
+                </p>
+              <% end %>
             </div>
           <% end %>
 
           <!-- Communities Tab Pane -->
           <% if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
+            <% community_memberships_shown = @person.person_community_memberships.first(20) %>
             <div id="communities" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="communities-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: @person.person_community_memberships, as: :membership %>
+                <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: community_memberships_shown, as: :membership %>
               </div>
+              <% if @person.person_community_memberships.size > 20 %>
+                <p class="text-muted mt-2 small">
+                  <%= t('.memberships.showing_count', shown: community_memberships_shown.size, total: @person.person_community_memberships.size) %>
+                </p>
+              <% end %>
             </div>
           <% end %>
 
           <!-- Permissions Tab Pane -->
           <% if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
+            <% permissions_shown = @person.role_resource_permissions.first(50) %>
             <div id="permissions" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="permissions-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <% @person.role_resource_permissions.each do |role_resource_permission| %>
+                <% permissions_shown.each do |role_resource_permission| %>
                   <div class="col mb-3 role-resource-permission-column">
                     <div class="card shadow-sm border-0 my-3 h-100">
                       <div class="card-body">
@@ -233,6 +285,11 @@
                   </div>
                 <% end %>
               </div>
+              <% if @person.role_resource_permissions.size > 50 %>
+                <p class="text-muted mt-2 small">
+                  <%= t('.memberships.showing_count', shown: permissions_shown.size, total: @person.role_resource_permissions.size) %>
+                </p>
+              <% end %>
             </div>
           <% end %>
 
@@ -242,6 +299,14 @@
               <div class="row">
                 <div class="col-md-12">
                   <h5 class="mb-3" id="agreements-panel-title" title="#{BetterTogether::Agreement.model_name.human.pluralize}"><%= BetterTogether::Agreement.model_name.human.pluralize %></h5>
+                  <% if @agreement_participants.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
+                      <%= paginate @agreement_participants, param_name: :agreements_page %>
+                    </nav>
+                  <% end %>
+                  <p class="text-muted small mb-3">
+                    <%= t('.memberships.showing_count', shown: @agreement_participants.size, total: @agreement_participants.total_count) %>
+                  </p>
                   <ul class="list-group" role="list" aria-labelledby="agreements-panel-title">
                     <% @agreement_participants.each do |participant| %>
                       <% agreement = participant.agreement %>
@@ -274,6 +339,11 @@
                       </li>
                     <% end %>
                   </ul>
+                  <% if @agreement_participants.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
+                      <%= paginate @agreement_participants, param_name: :agreements_page %>
+                    </nav>
+                  <% end %>
                 </div>
               </div>
             </div>

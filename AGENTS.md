@@ -89,6 +89,24 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - **Validation**: `docs/scripts/validate_documentation_tooling.sh` - Validate doc system integrity
 
 ## Security Requirements
+
+### Pre-Commit Security Checks (LOCAL)
+- **Brakeman pre-commit hook**: Install and run automatically on every commit:
+  ```bash
+  chmod +x scripts/install_hooks.sh
+  ./scripts/install_hooks.sh
+  ```
+  This runs `bundle exec brakeman -q -z -w2` before allowing commits, blocking any commits with HIGH-confidence security vulnerabilities.
+  
+- **Bypass (NOT RECOMMENDED)**: `git commit --no-verify` - only use if absolutely necessary and you've reviewed the issues
+
+### Pre-Push Security Checks (CI/CD)
+- **GitHub Actions workflow** (`.github/workflows/rubyonrails.yml`) enforces Brakeman scanning
+- **Blocks on HIGH-confidence issues**: Any HIGH-confidence Brakeman warning will fail the CI pipeline
+- **Pull requests cannot merge** if security job fails
+- **Main branch requires all checks pass** before merge
+
+### Development Practices
 - **Run Brakeman before generating code**: `bin/dc-run bundle exec brakeman --quiet --no-pager` 
 - **Fix high-confidence vulnerabilities immediately** - never ignore security warnings with "High" confidence
 - **Review and address medium-confidence warnings** that are security-relevant
@@ -101,6 +119,13 @@ Instructions for GitHub Copilot and other automated contributors working in this
   - Implement proper authorization checks (Pundit policies)
 - **For reflection-based features**: Create concerns with `included_in_models` class methods for safe dynamic class resolution
 - **Post-generation security check**: Run `bin/dc-run bundle exec brakeman --quiet --no-pager -c UnsafeReflection,SQL,CrossSiteScripting` after major code changes
+
+### Security Gate Status
+- ✅ **LOCAL VALIDATION**: Pre-commit hook blocks HIGH-confidence vulnerabilities (opt-in installation)
+- ✅ **CI ENFORCEMENT**: GitHub Actions blocks PRs with HIGH-confidence issues
+- ✅ **PUSH PROTECTION**: Brakeman runs on all pushes to `main` and all PRs
+- 📊 **MONITORING**: SARIF reports track vulnerabilities over time
+- 📋 **See also**: [SECURITY_GATE_ASSESSMENT.md](SECURITY_GATE_ASSESSMENT.md) for detailed security infrastructure documentation
 
 ## Conventions
 - Make incremental changes with passing tests.

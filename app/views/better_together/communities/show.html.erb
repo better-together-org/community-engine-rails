@@ -72,6 +72,7 @@
           <% if @community_pages.any? %>
             <%= link_to BetterTogether::Page.model_name.human.pluralize, '#pages', class: 'nav-link', id: 'pages-tab', data: { bs_toggle: 'tab', bs_target: '#pages', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'pages', aria_selected: 'false', tabindex: '-1' %>
           <% end %>
+          <%= link_to t('globals.tabs.posts'), '#posts', class: 'nav-link', id: 'posts-tab', data: { bs_toggle: 'tab', bs_target: '#posts', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'posts', aria_selected: 'false', tabindex: '-1' %>
           <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'events', aria_selected: 'true', tabindex: '0' %>
         <% end %>
       </div>
@@ -172,6 +173,28 @@
             </div>
           </div>
         <% end %>
+
+        <div id="posts" class="collapse" aria-labelledby="posts-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+          <% post_record = BetterTogether::Post.new(community: @community, platform: @community.primary_platform) %>
+          <% if policy(post_record).create? %>
+            <%= link_to t('better_together.communities.show.posts.create_post', default: 'Create Post'),
+                        new_post_path(community_id: @community.slug),
+                        class: 'btn btn-primary mb-3',
+                        id: 'community-posts-create-btn' %>
+          <% end %>
+
+          <% if @community_posts.any? %>
+            <div id="community_posts_list" class="mt-3 mb-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+              <%= render partial: 'better_together/posts/post', collection: @community_posts, as: :post %>
+            </div>
+          <% else %>
+            <div class="mt-3">
+              <%= render 'better_together/shared/empty_state',
+                         title: t('better_together.communities.show.posts.empty_title', default: 'No posts yet'),
+                         description: t('better_together.communities.show.posts.empty_description', default: 'Posts created for this community will show up here.') %>
+            </div>
+          <% end %>
+        </div>
 
         <div id="events" class="collapse" aria-labelledby="events-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <% if policy(@resource).create_events? %>

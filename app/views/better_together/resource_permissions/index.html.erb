@@ -8,7 +8,7 @@
     <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
     <div class="d-flex align-items-center gap-2">
       <%= render 'better_together/shared/view_switcher',
-                 view_key: 'resource_permissions_index',
+                 view_key: 'index_view',
                  active_view: @view_type,
                  available_views: @available_view_types,
                  update_path: view_preferences_path(locale: I18n.locale) %>
