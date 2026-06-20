@@ -112,31 +112,6 @@ module BetterTogether
 
     config.time_zone = ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
 
-    config.before_initialize do |app|
-      normalize_path = lambda do |path|
-        Pathname.new(path).realpath.to_s
-      rescue Errno::ENOENT
-        Pathname.new(path).expand_path.to_s
-      end
-
-      app_migration_root = normalize_path.call(app.root.join('db/migrate'))
-      existing = Array(app.config.paths['db/migrate']).map { |p| normalize_path.call(p) }
-      combined = ([app_migration_root] + existing).uniq
-      app.config.paths['db/migrate'] = combined
-      ActiveRecord::Tasks::DatabaseTasks.migrations_paths = combined.dup
-      ActiveRecord::Migrator.migrations_paths = combined.dup
-
-      unless ActiveRecord::MigrationContext.method_defined?(:bt_original_initialize)
-        ActiveRecord::MigrationContext.class_eval do
-          alias_method :bt_original_initialize, :initialize
-
-          def initialize(migrations_paths, schema_migration = nil, internal_metadata = nil)
-            bt_original_initialize(Array(migrations_paths).uniq, schema_migration, internal_metadata)
-          end
-        end
-      end
-    end
-
     initializer 'better_together.configure_active_job' do |app|
       app.config.active_job.queue_adapter = :sidekiq
     end
@@ -222,40 +197,24 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      normalize_path = lambda do |path|
-        Pathname.new(path).realpath.to_s
-      rescue Errno::ENOENT
-        Pathname.new(path).expand_path.to_s
-      end
-
-      app_migration_root = normalize_path.call(app.root.join('db/migrate'))
-
-      # Skip if this is the engine itself. Use Pathname#realpath to resolve
-      # symlinks and normalize paths, ensuring accurate comparison even when
-      # paths use relative references or symlinks.
-      #
-      # Use Pathname#realpath to resolve symlinks and normalize paths, ensuring
-      # accurate comparison even when paths use relative references or symlinks.
       begin
-        app_root_real = Pathname.new(app.root).realpath
-        engine_root_real = Pathname.new(root).realpath
-        next if app_root_real == engine_root_real
+        next if Pathname.new(app.root).realpath == Pathname.new(root).realpath
       rescue Errno::ENOENT
-        # Fallback to string comparison if realpath fails (e.g., in test environments)
         next if app.root.to_s == root.to_s
       end
 
-      # Skip if the host app has already installed CE migrations via
-      # `rails better_together:install:migrations`. Installed migrations carry
-      # the `.better_together.rb` suffix assigned by Rails' install:migrations
-      # task, so their presence signals that the host app manages migrations
-      # independently and does not need the engine path appended.
+      # Skip if the host app manages migrations via `rails better_together:install:migrations`.
+      # Installed migrations carry the `.better_together.rb` suffix, signalling that the host
+      # app tracks CE migrations independently.
       next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
 
-      existing_paths = [app_migration_root].to_set
-      append_engine_migration_paths(app, existing_paths, normalize_path)
-      ActiveRecord::Migrator.migrations_paths = existing_paths.to_a
-      ActiveRecord::Tasks::DatabaseTasks.migrations_paths = existing_paths.to_a
+      excludes = [root.join('worktrees').to_s, root.join('tmp').to_s]
+      config.paths['db/migrate'].existent_directories.each do |expanded_path|
+        next if excludes.any? { |ex| expanded_path.start_with?(ex) }
+        next if app.config.paths['db/migrate'].include?(expanded_path)
+
+        app.config.paths['db/migrate'] << expanded_path
+      end
     end
 
     initializer 'better_together.content_security', after: :load_config_initializers do |app|
@@ -292,22 +251,5 @@ module BetterTogether
         Rake::Task['app:better_together:load_seed'].invoke
       end
     end
-
-    private
-
-    # rubocop:disable Metrics/AbcSize
-    def append_engine_migration_paths(app, existing_paths, normalize_path)
-      excludes = [root.join('worktrees'), root.join('tmp')].map { |p| normalize_path.call(p) }
-
-      config.paths['db/migrate'].existent_directories.each do |raw_path|
-        path = normalize_path.call(raw_path)
-        next if path.start_with?(*excludes)
-        next if existing_paths.include?(path)
-
-        app.config.paths['db/migrate'] << path
-        existing_paths << path
-      end
-    end
-    # rubocop:enable Metrics/AbcSize
   end
 end
