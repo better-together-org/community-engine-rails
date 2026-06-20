@@ -119,6 +119,7 @@ module BetterTogether
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
     before_save :purge_logo, if: -> { remove_logo == '1' }
     after_create :create_default_calendar
+    after_commit :clear_host_community_cache, if: -> { saved_change_to_attribute?(:host) }
 
     validates :name, presence: true
     validates :contributors_display_visibility,
@@ -128,8 +129,20 @@ module BetterTogether
       super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
     end
 
+    def self.host_community
+      @host_community ||= find_by(host: true)
+    end
+
+    def self.reset_host_community_cache!
+      @host_community = nil
+    end
+
     def as_community
       becomes(self.class.base_class)
+    end
+
+    def clear_host_community_cache
+      self.class.reset_host_community_cache!
     end
 
     def membership_requests_enabled?(platform: primary_platform)

@@ -17,7 +17,7 @@ module BetterTogether
       return if community.present?
 
       self.community ||= platform&.community
-      self.community ||= BetterTogether::Community.find_by(host: true)
+      self.community ||= BetterTogether::Community.host_community
       self.community ||= host_platform_community
     end
 

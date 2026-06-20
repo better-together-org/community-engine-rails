@@ -33,14 +33,14 @@
     <div class="col-lg-9">
 
       <!-- Pagination -->
-      <% if @posts.total_pages > 1 %>
+      <% if @posts.respond_to?(:total_pages) && @posts.total_pages > 1 %>
         <nav class="d-flex justify-content-center">
           <%= paginate @posts %>
         </nav>
       <% end %>
 
       <!-- Result Count -->
-      <% if @posts.any? %>
+      <% if @posts.any? && @posts.respond_to?(:total_count) %>
         <div class="mb-3">
           <small class="text-muted">
             <%= t('better_together.posts.index.result_count', count: @posts.total_count) %>
@@ -101,7 +101,7 @@
       <% end %>
 
       <!-- Pagination -->
-      <% if @posts.total_pages > 1 %>
+      <% if @posts.respond_to?(:total_pages) && @posts.total_pages > 1 %>
         <nav class="d-flex justify-content-center">
           <%= paginate @posts %>
         </nav>

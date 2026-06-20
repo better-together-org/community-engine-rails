@@ -36,7 +36,7 @@ module BetterTogether
 
     def resource_collection
       @resources ||= policy_scope(resource_class)
-                     .includes(*post_includes)
+                     .includes(*resource_class.card_render_includes)
 
       instance_variable_set("@#{resource_name(plural: true)}", @resources)
     end
@@ -65,7 +65,7 @@ module BetterTogether
 
     def load_posts
       search_params = filter_params
-      search_params[:community_ids] = scoped_community_ids if params[:community_id].present?
+      search_params[:community_ids] = scoped_community_ids
 
       @posts = PostsSearchFilter.call(
         relation: policy_scope(resource_class),
@@ -75,8 +75,10 @@ module BetterTogether
     end
 
     def load_categories
+      visible_post_ids = policy_scope(resource_class).select(:id)
       post_category_ids = ::BetterTogether::Categorization
-                          .where(categorizable_type: 'BetterTogether::Post')
+                          .where(categorizable_type: 'BetterTogether::Post',
+                                 categorizable_id: visible_post_ids)
                           .select(:category_id)
 
       @categories = ::BetterTogether::Category

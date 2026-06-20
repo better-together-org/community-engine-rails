@@ -78,16 +78,6 @@ module BetterTogether
         end
       end
 
-      # Allowlist for resource_search: only classes that appear in resource-block views
-      # may be resolved. Using a static list instead of safe_constantize prevents
-      # attackers from using this endpoint to load arbitrary constants.
-      RESOURCE_SEARCH_CLASSES = %w[
-        BetterTogether::Community
-        BetterTogether::Event
-        BetterTogether::Person
-        BetterTogether::Post
-      ].freeze
-
       # AJAX endpoint for resource_ids multi-select field in content blocks.
       # Filters available records by resource class and optional search term.
       def resource_search # rubocop:disable Metrics/AbcSize
@@ -96,10 +86,8 @@ module BetterTogether
         resource_class_name = params[:resource_class].to_s.strip
         search_term = params[:search].to_s.strip
 
-        return render json: [], status: :unprocessable_content unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(resource_class_name)
-
-        resource_klass = resource_class_name.constantize
-        return render json: [], status: :unprocessable_content unless resource_klass.present?
+        resource_klass = resolve_resource_class(resource_class_name)
+        return render json: [], status: :unprocessable_content if resource_klass.nil?
 
         scope = policy_scope(resource_klass)
         scope = search_scope(scope, search_term) if search_term.present?
@@ -111,7 +99,7 @@ module BetterTogether
       private
 
       def resolve_resource_class(class_name)
-        return unless RESOURCE_SEARCH_CLASSES.include?(class_name)
+        return unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(class_name)
 
         class_name.constantize
       end
