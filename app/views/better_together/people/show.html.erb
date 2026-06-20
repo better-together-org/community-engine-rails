@@ -171,6 +171,11 @@
                            collection: @authored_pages,
                            as: :page %>
               </div>
+              <% if @authored_pages.respond_to?(:total_pages) && @authored_pages.total_pages > 1 %>
+                <nav class="d-flex justify-content-center mt-3">
+                  <%= paginate @authored_pages, param_name: :authored_pages_page %>
+                </nav>
+              <% end %>
             </div>
           <% end %>
 
@@ -184,6 +189,11 @@
                                collection: @contributed_pages,
                                as: :page %>
                   </div>
+                  <% if @contributed_pages.respond_to?(:total_pages) && @contributed_pages.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center mt-3">
+                      <%= paginate @contributed_pages, param_name: :contributed_pages_page %>
+                    </nav>
+                  <% end %>
                 </div>
               <% end %>
 
@@ -195,6 +205,11 @@
                                collection: @contributed_posts,
                                as: :post %>
                   </div>
+                  <% if @contributed_posts.respond_to?(:total_pages) && @contributed_posts.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center mt-3">
+                      <%= paginate @contributed_posts, param_name: :contributed_posts_page %>
+                    </nav>
+                  <% end %>
                 </div>
               <% end %>
             </div>
@@ -202,27 +217,40 @@
 
           <!-- Platforms Tab Pane -->
           <% if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+            <% platform_memberships_shown = @person.person_platform_memberships.first(20) %>
             <div id="platforms" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="platforms-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <%= render partial: 'better_together/person_platform_memberships/person_platform_membership', collection: @person.person_platform_memberships %>
+                <%= render partial: 'better_together/person_platform_memberships/person_platform_membership', collection: platform_memberships_shown %>
               </div>
+              <% if @person.person_platform_memberships.size > 20 %>
+                <p class="text-muted mt-2 small">
+                  Showing 20 of <%= @person.person_platform_memberships.size %>
+                </p>
+              <% end %>
             </div>
           <% end %>
 
           <!-- Communities Tab Pane -->
           <% if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
+            <% community_memberships_shown = @person.person_community_memberships.first(20) %>
             <div id="communities" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="communities-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: @person.person_community_memberships, as: :membership %>
+                <%= render partial: 'better_together/person_community_memberships/person_community_membership_joinable', collection: community_memberships_shown, as: :membership %>
               </div>
+              <% if @person.person_community_memberships.size > 20 %>
+                <p class="text-muted mt-2 small">
+                  Showing 20 of <%= @person.person_community_memberships.size %>
+                </p>
+              <% end %>
             </div>
           <% end %>
 
           <!-- Permissions Tab Pane -->
           <% if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
+            <% permissions_shown = @person.role_resource_permissions.first(50) %>
             <div id="permissions" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="permissions-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-                <% @person.role_resource_permissions.each do |role_resource_permission| %>
+                <% permissions_shown.each do |role_resource_permission| %>
                   <div class="col mb-3 role-resource-permission-column">
                     <div class="card shadow-sm border-0 my-3 h-100">
                       <div class="card-body">
@@ -233,6 +261,11 @@
                   </div>
                 <% end %>
               </div>
+              <% if @person.role_resource_permissions.size > 50 %>
+                <p class="text-muted mt-2 small">
+                  Showing 50 of <%= @person.role_resource_permissions.size %>
+                </p>
+              <% end %>
             </div>
           <% end %>
 
@@ -274,6 +307,11 @@
                       </li>
                     <% end %>
                   </ul>
+                  <% if @agreement_participants.respond_to?(:total_pages) && @agreement_participants.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center mt-3">
+                      <%= paginate @agreement_participants, param_name: :agreements_page %>
+                    </nav>
+                  <% end %>
                 </div>
               </div>
             </div>
