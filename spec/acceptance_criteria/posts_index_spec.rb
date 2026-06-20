@@ -17,7 +17,7 @@ require 'rails_helper'
 # ============================================================================
 
 RSpec.describe 'PostsSearchFilter service', tag: %i[acceptance_criteria ac_posts model week1], type: :model do
-  let(:platform) { create(:platform) }
+  let(:platform) { create(:platform, :public) }
   let(:creator) { create(:person) }
   let(:category) { create(:category) }
 
@@ -139,7 +139,7 @@ end
 # ============================================================================
 
 RSpec.describe 'PostsController#index request', :as_user, tag: %i[acceptance_criteria ac_posts request week2], type: :request do
-  let(:platform) { create(:platform) }
+  let(:platform) { create(:platform, :public) }
   let(:creator) { create(:person) }
   let(:category) { create(:category) }
 
