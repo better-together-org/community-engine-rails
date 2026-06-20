@@ -32,7 +32,7 @@ RSpec.describe 'Publishing agreement modal integration' do
       post better_together.communities_path(locale: I18n.locale), params: params
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include('The content publishing agreement must be accepted before this can be made public.')
+      expect(response.body).to include('The content publishing agreement must be accepted before this can be published.')
       expect(response.body).to include('agreement-modal-link')
       expect(response.body).to include('data-agreement-mode="direct_accept"')
       expect(response.body).to include(CGI.escapeHTML(better_together.accept_agreement_path(content_publishing_agreement, locale: I18n.locale)))

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Category < ApplicationRecord # rubocop:todo Style/Documentation
+  class Category < PlatformRecord # rubocop:todo Style/Documentation
     include Attachments::Images
     include Identifier
     include Metrics::Viewable

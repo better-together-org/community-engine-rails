@@ -112,7 +112,7 @@ RSpec.describe 'Documentation screenshots for agreement flows',
 
       find("input[type='submit'][value='Create Community'], button[type='submit']", match: :first).click
 
-      expect(page).to have_text('The content publishing agreement must be accepted before this can be made public.', wait: 10)
+      expect(page).to have_text('The content publishing agreement must be accepted before this can be published.', wait: 10)
       expect(page).to have_css('.agreement-modal-link[data-agreement-mode="direct_accept"]', wait: 10)
       expect(page).to have_text('Review and accept the content publishing agreement')
     end

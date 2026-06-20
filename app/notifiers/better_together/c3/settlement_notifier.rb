@@ -79,13 +79,15 @@ module BetterTogether
       end
 
       def build_message(notification)
-        {
-          title:,
-          body:,
-          identifier:,
-          url:,
-          unread_count: notification.recipient.notifications.unread.count
-        }
+        I18n.with_locale(locale_for_notification(notification)) do
+          {
+            title:,
+            body:,
+            identifier:,
+            url:,
+            unread_count: notification.recipient.notifications.unread.count
+          }
+        end
       end
 
       def email_params(notification)
@@ -94,12 +96,6 @@ module BetterTogether
 
       notification_methods do
         delegate :settlement, :event_type, :title, :body, :identifier, :url, to: :event
-
-        def recipient_has_email?
-          recipient.respond_to?(:email) && recipient.email.present? &&
-            (!recipient.respond_to?(:notification_preferences) ||
-             recipient.notification_preferences.fetch('notify_by_email', true))
-        end
       end
 
       private

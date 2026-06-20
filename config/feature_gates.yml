@@ -1,0 +1,37 @@
+features:
+  - key: developer_settings
+    name: Developer Settings
+    description: Exposes developer-focused account settings and token management UI.
+    default_rollout: stable
+    owner_surface: ui
+    category: settings
+  - key: device_permissions
+    name: Device Permissions
+    description: Exposes device permission prompts and diagnostics in account settings.
+    default_rollout: beta
+    owner_surface: both
+    category: settings
+  - key: person_access_grants
+    name: Person Access Grants
+    description: Allows people to review and manage cross-person access grants.
+    default_rollout: stable
+    owner_surface: both
+    category: privacy
+  - key: person_linked_seeds
+    name: Linked Seeds
+    description: Exposes linked seed synchronization records and payload inspection.
+    default_rollout: stable
+    owner_surface: both
+    category: privacy
+  - key: platform_federation_tools
+    name: Platform Federation Tools
+    description: Exposes platform connection and federation management surfaces.
+    default_rollout: stable
+    owner_surface: both
+    category: federation
+  - key: new_content_blocks
+    name: New Content Blocks (v0.11.0)
+    description: Enables all 13 new content block types in the page editor (Accordion, Alert, CallToAction, Checklist, Communities, Events, Iframe, Navigation, People, Posts, Quote, Statistics, Video).
+    default_rollout: alpha
+    owner_surface: ui
+    category: content

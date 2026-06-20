@@ -37,14 +37,18 @@
           <i class="fa-brands fa-github me-2" aria-hidden="true"></i>
           <%= t('.tabs.integrations') %>
         </button>
-        <button class="nav-link text-start" id="developer-tab" data-bs-toggle="pill" data-bs-target="#developer" type="button" role="tab" aria-controls="developer" aria-selected="false" data-better_together--tabs-target="tab">
-          <i class="fa-solid fa-code me-2" aria-hidden="true"></i>
-          <%= t('.tabs.developer') %>
-        </button>
-        <button class="nav-link text-start" id="device-permissions-tab" data-bs-toggle="pill" data-bs-target="#device-permissions" type="button" role="tab" aria-controls="device-permissions" aria-selected="false" data-better_together--tabs-target="tab">
-          <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
-          <%= t('.tabs.device_permissions') %>
-        </button>
+        <% if @show_developer_settings %>
+          <button class="nav-link text-start" id="developer-tab" data-bs-toggle="pill" data-bs-target="#developer" type="button" role="tab" aria-controls="developer" aria-selected="false" data-better_together--tabs-target="tab">
+            <i class="fa-solid fa-code me-2" aria-hidden="true"></i>
+            <%= t('.tabs.developer') %>
+          </button>
+        <% end %>
+        <% if @show_device_permissions %>
+          <button class="nav-link text-start" id="device-permissions-tab" data-bs-toggle="pill" data-bs-target="#device-permissions" type="button" role="tab" aria-controls="device-permissions" aria-selected="false" data-better_together--tabs-target="tab">
+            <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
+            <%= t('.tabs.device_permissions') %>
+          </button>
+        <% end %>
         <button class="nav-link text-start" id="preferences-tab" data-bs-toggle="pill" data-bs-target="#preferences" type="button" role="tab" aria-controls="preferences" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>
           <%= t('.tabs.preferences') %>
@@ -176,25 +180,27 @@
       </div>
 
       <!-- Device Permissions Tab -->
-      <div class="nav-tab-pane tab-pane fade" 
-           id="device-permissions" 
-           role="tabpanel" 
-           aria-labelledby="device-permissions-tab"
-           data-controller="better_together--device-permissions"
-           <%= device_permissions_data_attrs.map { |k, v| "#{k}=\"#{html_escape(v)}\"" }.join(' ').html_safe %>>
-        <div class="card border-0 shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title h5">
-              <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
-              <%= t('.device_permissions.title') %>
-            </h3>
-            <p class="text-muted mb-4"><%= t('.device_permissions.description') %></p>
+      <% if @show_device_permissions %>
+        <div class="nav-tab-pane tab-pane fade" 
+             id="device-permissions" 
+             role="tabpanel" 
+             aria-labelledby="device-permissions-tab"
+             data-controller="better_together--device-permissions"
+             <%= device_permissions_data_attrs.map { |k, v| "#{k}=\"#{html_escape(v)}\"" }.join(' ').html_safe %>>
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <h3 class="card-title h5">
+                <i class="fa-solid fa-mobile-screen me-2" aria-hidden="true"></i>
+                <%= t('.device_permissions.title') %>
+              </h3>
+              <p class="text-muted mb-4"><%= t('.device_permissions.description') %></p>
 
-            <!-- Device permissions content -->
-            <%= render 'better_together/people/device_permissions' %>
+              <!-- Device permissions content -->
+              <%= render 'better_together/people/device_permissions' %>
+            </div>
           </div>
         </div>
-      </div>
+      <% end %>
 
       <!-- Preferences Tab -->
       <div class="nav-tab-pane tab-pane fade" id="preferences" role="tabpanel" aria-labelledby="preferences-tab">
@@ -256,113 +262,116 @@
       </div>
 
       <!-- Developer Tab -->
-      <div class="nav-tab-pane tab-pane fade" id="developer" role="tabpanel" aria-labelledby="developer-tab">
-        <!-- Personal OAuth Applications -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title h5 mb-0">
-              <i class="fa-solid fa-plug me-2" aria-hidden="true"></i>
-              <%= t('.developer.apps.title') %>
-            </h3>
-            <%= link_to new_personal_oauth_application_path(locale: locale),
-                        class: 'btn btn-sm btn-primary',
-                        'aria-label' => t('.developer.apps.new_aria') do %>
-              <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>
-              <%= t('.developer.apps.new_btn') %>
-            <% end %>
-          </div>
-          <div class="card-body">
-            <p class="text-muted small mb-3"><%= t('.developer.apps.description') %></p>
-            <% if @person_oauth_apps.any? %>
-              <div class="list-group list-group-flush">
-                <% @person_oauth_apps.each do |app| %>
-                  <div class="list-group-item px-0">
-                    <div class="d-flex justify-content-between align-items-start">
-                      <div>
-                        <strong><%= app.name %></strong>
-                        <% if app.scopes.present? %>
-                          <div class="mt-1">
-                            <% app.scopes.to_a.each do |scope| %>
-                              <span class="badge bg-light text-dark border me-1"><%= scope %></span>
-                            <% end %>
+      <% if @show_developer_settings %>
+        <div class="nav-tab-pane tab-pane fade" id="developer" role="tabpanel" aria-labelledby="developer-tab">
+          <!-- Personal OAuth Applications -->
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h3 class="card-title h5 mb-0">
+                <i class="fa-solid fa-plug me-2" aria-hidden="true"></i>
+                <%= t('.developer.apps.title') %>
+              </h3>
+              <%= link_to new_personal_oauth_application_path(locale: locale),
+                          class: 'btn btn-sm btn-primary',
+                          'aria-label' => t('.developer.apps.new_aria') do %>
+                <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>
+                <%= t('.developer.apps.new_btn') %>
+              <% end %>
+            </div>
+            <div class="card-body">
+              <p class="text-muted small mb-3"><%= t('.developer.apps.description') %></p>
+              <% if @person_oauth_apps.any? %>
+                <div class="list-group list-group-flush">
+                  <% @person_oauth_apps.each do |app| %>
+                    <div class="list-group-item px-0">
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                          <strong><%= app.name %></strong>
+                          <% if app.scopes.present? %>
+                            <div class="mt-1">
+                              <% app.scopes.to_a.each do |scope| %>
+                                <span class="badge bg-light text-dark border me-1"><%= scope %></span>
+                              <% end %>
+                            </div>
+                          <% end %>
+                          <div class="text-muted small mt-1">
+                            <%= t('.developer.apps.client_id_label') %>:
+                            <code class="small"><%= app.uid.truncate(20) %></code>
                           </div>
-                        <% end %>
-                        <div class="text-muted small mt-1">
-                          <%= t('.developer.apps.client_id_label') %>:
-                          <code class="small"><%= app.uid.truncate(20) %></code>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                          <%= link_to personal_oauth_application_path(app, locale: locale),
+                                      class: 'btn btn-outline-secondary btn-sm',
+                                      'aria-label' => t('.developer.apps.view_aria', name: app.name) do %>
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                          <% end %>
+                          <%= link_to edit_personal_oauth_application_path(app, locale: locale),
+                                      class: 'btn btn-outline-secondary btn-sm',
+                                      'aria-label' => t('.developer.apps.edit_aria', name: app.name) do %>
+                            <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                          <% end %>
                         </div>
                       </div>
-                      <div class="btn-group btn-group-sm">
-                        <%= link_to personal_oauth_application_path(app, locale: locale),
-                                    class: 'btn btn-outline-secondary btn-sm',
-                                    'aria-label' => t('.developer.apps.view_aria', name: app.name) do %>
-                          <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                        <% end %>
-                        <%= link_to edit_personal_oauth_application_path(app, locale: locale),
-                                    class: 'btn btn-outline-secondary btn-sm',
-                                    'aria-label' => t('.developer.apps.edit_aria', name: app.name) do %>
-                          <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                        <% end %>
-                      </div>
                     </div>
-                  </div>
-                <% end %>
-              </div>
-            <% else %>
-              <p class="text-muted mb-0"><%= t('.developer.apps.none') %></p>
-            <% end %>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="text-muted mb-0"><%= t('.developer.apps.none') %></p>
+              <% end %>
+            </div>
           </div>
-        </div>
 
-        <!-- Active Access Tokens -->
-        <div class="card border-0 shadow-sm">
-          <div class="card-header">
-            <h3 class="card-title h5 mb-0">
-              <i class="fa-solid fa-key me-2" aria-hidden="true"></i>
-              <%= t('.developer.tokens.title') %>
-            </h3>
-          </div>
-          <div class="card-body">
-            <p class="text-muted small mb-3"><%= t('.developer.tokens.description') %></p>
-            <% if @access_tokens.any? %>
-              <div class="table-responsive">
-                <table class="table table-sm" aria-label="<%= t('.developer.tokens.table_aria') %>">
-                  <thead class="table-light">
-                    <tr>
-                      <th scope="col"><%= t('.developer.tokens.col_app') %></th>
-                      <th scope="col"><%= t('.developer.tokens.col_scopes') %></th>
-                      <th scope="col"><%= t('.developer.tokens.col_created') %></th>
-                      <th scope="col"><%= t('.developer.tokens.col_expires') %></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% @access_tokens.each do |token| %>
+          <!-- Active Access Tokens -->
+          <div class="card border-0 shadow-sm">
+            <div class="card-header">
+              <h3 class="card-title h5 mb-0">
+                <i class="fa-solid fa-key me-2" aria-hidden="true"></i>
+                <%= t('.developer.tokens.title') %>
+              </h3>
+            </div>
+            <div class="card-body">
+              <p class="text-muted small mb-3"><%= t('.developer.tokens.description') %></p>
+              <% if @access_tokens.any? %>
+                <div class="table-responsive">
+                  <table class="table table-sm" aria-label="<%= t('.developer.tokens.table_aria') %>">
+                    <thead class="table-light">
                       <tr>
-                        <td><%= token.application&.name || t('.developer.tokens.no_app') %></td>
-                        <td>
-                          <% token.scopes.to_a.each do |scope| %>
-                            <span class="badge bg-light text-dark border me-1 small"><%= scope %></span>
-                          <% end %>
-                        </td>
-                        <td class="small text-muted"><%= l(token.created_at, format: :short) %></td>
-                        <td class="small text-muted">
-                          <% if token.expires_in.present? %>
-                            <%= l(token.created_at + token.expires_in.seconds, format: :short) %>
-                          <% else %>
-                            <%= t('.developer.tokens.no_expiry') %>
-                          <% end %>
-                        </td>
+                        <th scope="col"><%= t('.developer.tokens.col_app') %></th>
+                        <th scope="col"><%= t('.developer.tokens.col_scopes') %></th>
+                        <th scope="col"><%= t('.developer.tokens.col_created') %></th>
+                        <th scope="col"><%= t('.developer.tokens.col_expires') %></th>
                       </tr>
-                    <% end %>
-                  </tbody>
-                </table>
-              </div>
-            <% else %>
-              <p class="text-muted mb-0"><%= t('.developer.tokens.none') %></p>
-            <% end %>
+                    </thead>
+                    <tbody>
+                      <% @access_tokens.each do |token| %>
+                        <tr>
+                          <td><%= token.application&.name || t('.developer.tokens.no_app') %></td>
+                          <td>
+                            <% token.scopes.to_a.each do |scope| %>
+                              <span class="badge bg-light text-dark border me-1 small"><%= scope %></span>
+                            <% end %>
+                          </td>
+                          <td class="small text-muted"><%= l(token.created_at, format: :short) %></td>
+                          <td class="small text-muted">
+                            <% if token.expires_in.present? %>
+                              <%= l(token.created_at + token.expires_in.seconds, format: :short) %>
+                            <% else %>
+                              <%= t('.developer.tokens.no_expiry') %>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              <% else %>
+                <p class="text-muted mb-0"><%= t('.developer.tokens.none') %></p>
+              <% end %>
+            </div>
           </div>
+
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </div>

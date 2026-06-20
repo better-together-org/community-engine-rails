@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Access control for Joatu::Request
-    class RequestPolicy < ApplicationPolicy
+    class RequestPolicy < PlatformRecordPolicy
       def index? = user.present?
 
       def show?
@@ -47,7 +47,7 @@ module BetterTogether
         can_manage_joatu? || record.creator_id == agent&.id
       end
 
-      class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+      class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
         MEMBERSHIP_REQUEST_TYPE = 'BetterTogether::Joatu::MembershipRequest'
 
         # rubocop:todo Metrics/MethodLength
@@ -56,12 +56,12 @@ module BetterTogether
 
           # MembershipRequests are governed by MembershipRequestPolicy::Scope.
           # Exclude them here so they never leak through base Request queries.
-          base = scope.where.not(type: MEMBERSHIP_REQUEST_TYPE)
+          base = platform_scoped.where.not(type: MEMBERSHIP_REQUEST_TYPE)
 
           # Platform managers see everything
-          return base.all if permitted_to?('manage_platform')
-          return scope.all if can_manage_joatu?
-          return scope.all if can_manage_network_connections? && connection_request_scope?
+          return base if permitted_to?('manage_platform')
+          return platform_scoped if can_manage_joatu?
+          return platform_scoped if can_manage_network_connections? && connection_request_scope?
 
           agent_id = agent&.id
 

@@ -3,7 +3,7 @@
 module BetterTogether
   # A Schedulable Event
   # rubocop:disable Metrics/ClassLength
-  class Event < ApplicationRecord
+  class Event < PlatformRecord
     include Attachments::Images
     include Categorizable
     include Citable
@@ -18,7 +18,6 @@ module BetterTogether
     include Privacy
     include RecurringSchedulable
     include Searchable
-    include PlatformScoped
     include Seedable
     include Shortlinkable
     include TimezoneAttributeAliasing

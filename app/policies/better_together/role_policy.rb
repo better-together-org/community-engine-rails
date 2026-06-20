@@ -3,7 +3,7 @@
 # app/policies/better_together/role_policy.rb
 
 module BetterTogether
-  class RolePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class RolePolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       user.present?
     end
@@ -32,11 +32,11 @@ module BetterTogether
       user.present? && can_manage_role_resource_type? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.none unless user.present?
 
-        scope.positioned
+        platform_scoped.positioned
       end
     end
 

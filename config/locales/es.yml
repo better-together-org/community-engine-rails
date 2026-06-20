@@ -1352,8 +1352,12 @@ es:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: No hay elementos configurados.
           items_json_help: Arreglo JSON de objetos con claves "question" y "answer".
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Páginas asociadas
         checklist_block:
           not_found: Lista de verificación no encontrada.
@@ -1388,6 +1392,7 @@ es:
           editor:
             background: Fondo
             cta_button: Botón de llamada a la acción
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Proporcione una URL válida que comience con http:// o
               https://.
             heading_color: Color del encabezado
@@ -1400,6 +1405,12 @@ es:
           missing_url: No se ha configurado ninguna URL de iframe.
           url_help: Acepta una URL HTTPS completa de iframe, como una encuesta de
             Formbricks u otra inserción confiable de un espacio comunitario.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Cargar siempre desde archivo (ignorar contenido de base de
@@ -1439,8 +1450,14 @@ es:
             el ámbito de la comunidad y el orden.
           resource_ids_placeholder: Dejar en blanco para mostrar los últimos registros
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: Arreglo JSON de objetos con claves "label", "value" e "icon"
             opcional (clase Font Awesome).
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Plantilla predeterminada
           host_community_contact_details: Detalles de contacto de la comunidad anfitriona
@@ -1935,6 +1952,43 @@ es:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feature_access_grants:
+      created: Acceso a funciones creado.
+      edit:
+        title: Editar acceso a funciones
+      form:
+        access_level: Nivel de acceso
+        current_rollout: Despliegue actual
+        expires_at: Expira el
+        feature: Funcionalidad
+        notes: Notas
+        person: Persona
+        person_prompt: Buscar una persona
+        unknown_rollout: Funcionalidad desconocida o retirada
+      index:
+        description: Otorga acceso beta o alpha a personas concretas sin ampliar los
+          permisos de su rol de plataforma.
+        empty: Todavía no se han creado accesos explícitos a funciones para esta plataforma.
+        new: Nuevo acceso
+        revoke: Revocar
+        revoke_confirm: "¿Revocar este acceso a funciones?"
+        title: Accesos a funciones
+      new:
+        title: Nuevo acceso a funciones
+      revoked: Acceso a funciones revocado.
+      status:
+        active: Activo
+        revoked: Inactivo
+      table:
+        access_level: Nivel de acceso
+        actions: Acciones
+        expires_at: Expira
+        feature: Funcionalidad
+        granted_by: Concedido por %{name}
+        no_expiry: Sin vencimiento
+        person: Persona
+        status: Estado
+      updated: Acceso a funciones actualizado.
     federation:
       backfill:
         messages:
@@ -2795,6 +2849,9 @@ es:
         agreement_created:
           content: Se ha creado un acuerdo entre "%{offer}" y "%{request}".
           title: Acuerdo creado
+        agreement_status_changed:
+          body: El acuerdo entre "%{offer}" y "%{request}" fue %{status}.
+          title: Acuerdo %{status}
       mark_all_as_read: Marcar todo como leído
       mark_as_read: Marcar como leído
       membership_created:
@@ -3306,6 +3363,9 @@ es:
           de CE puede cargar. Selecciona orígenes de confianza o escribe un nuevo
           hostname/origen y presiona Enter.
         csp_img_src_text_label: Orígenes externos de imágenes permitidos
+        feature_gates_hint: Elige qué etapa de despliegue requiere cada funcionalidad
+          en esta plataforma.
+        feature_gates_title: Controles de despliegue de funcionalidades
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
@@ -5050,6 +5110,7 @@ es:
       operations:
         description: Abra las operaciones de nivel anfitrión para esta plataforma
           sin depender solo del conocimiento de la URL.
+        feature_access_grants: Gestionar accesos a funciones
         host_dashboard: Panel del anfitrión
         robot_management: Gestionar robots LLM
         storage_configurations: Gestionar almacenamiento

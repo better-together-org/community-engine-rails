@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # Represents a blog post
-  class Post < ApplicationRecord
+  class Post < PlatformRecord
     include Attachments::Images
     include Authorable
     include BlockFilterable
@@ -18,7 +18,6 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
-    include PlatformScoped
     include Seedable
     include Shortlinkable
     include TrackedActivity

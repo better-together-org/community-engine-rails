@@ -3,7 +3,11 @@
 require 'erb'
 require 'fileutils'
 require 'tempfile'
-require 'vips'
+begin
+  require 'vips'
+rescue LoadError
+  # vips may not be available in test environment
+end
 
 module BetterTogether # :nodoc:
   module ScreenshotCalloutProcessor # :nodoc:

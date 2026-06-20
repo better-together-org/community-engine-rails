@@ -184,6 +184,8 @@ module BetterTogether
         connection_bootstrap_state
         federation_protocol
         oauth_issuer_url
+      ] + [
+        { feature_gate_rollouts: {} }
       ]
     end
 

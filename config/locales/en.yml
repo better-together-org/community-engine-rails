@@ -1334,8 +1334,12 @@ en:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: No items configured.
           items_json_help: JSON array of objects with "question" and "answer" keys.
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Associated Pages
         checklist_block:
           not_found: Checklist not found.
@@ -1369,6 +1373,7 @@ en:
           editor:
             background: Background
             cta_button: CTA Button
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Please provide a valid URL starting with http:// or https://.
             heading_color: Heading Color
             overlay_color: Overlay Color
@@ -1380,6 +1385,12 @@ en:
           missing_url: No iframe URL configured.
           url_help: Accepts a full HTTPS iframe URL, such as a Formbricks survey or
             another trusted community-space embed.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Always load from file (ignore database content)
@@ -1418,8 +1429,14 @@ en:
             the community scope and ordering.
           resource_ids_placeholder: Leave blank to show latest records
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: JSON array of objects with "label", "value", and optional
             "icon" (Font Awesome class) keys.
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Default template
           host_community_contact_details: Host community contact details
@@ -1900,6 +1917,44 @@ en:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+    feature_access_grants:
+      created: Feature access grant created.
+      edit:
+        title: Edit Feature Access Grant
+      form:
+        access_level: Access level
+        current_rollout: Current rollout
+        expires_at: Expires at
+        feature: Feature
+        notes: Notes
+        person: Person
+        person_prompt: Search for a person
+        unknown_rollout: Unknown / retired feature
+      index:
+        description: Grant beta or alpha access to specific people without broadening
+          their platform role permissions.
+        empty: No explicit feature access grants have been created for this platform
+          yet.
+        new: New grant
+        revoke: Revoke
+        revoke_confirm: Revoke this feature access grant?
+        title: Feature Access Grants
+      new:
+        title: New Feature Access Grant
+      revoked: Feature access grant revoked.
+      status:
+        active: Active
+        revoked: Inactive
+      table:
+        access_level: Access level
+        actions: Actions
+        expires_at: Expires
+        feature: Feature
+        granted_by: Granted by %{name}
+        no_expiry: No expiry
+        person: Person
+        status: Status
+      updated: Feature access grant updated.
     federation:
       backfill:
         messages:
@@ -2741,6 +2796,9 @@ en:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.
           title: Agreement created
+        agreement_status_changed:
+          body: The agreement between "%{offer}" and "%{request}" was %{status}.
+          title: Agreement %{status}
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
       membership_created:
@@ -3236,6 +3294,9 @@ en:
         csp_img_src_text_hint: Extra image hosts this CE site may load from. Select
           trusted origins or type a new hostname/origin and press Enter.
         csp_img_src_text_label: Allowed external image origins
+        feature_gates_hint: Choose which rollout stage each feature requires on this
+          platform.
+        feature_gates_title: Feature rollout gates
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
@@ -4947,6 +5008,7 @@ en:
       operations:
         description: Open host-level operations for this platform without relying
           on route knowledge alone.
+        feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
         robot_management: Manage LLM robots
         storage_configurations: Manage storage

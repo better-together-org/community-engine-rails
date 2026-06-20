@@ -12,8 +12,10 @@ module BetterTogether
 
       validates :navigation_area_id, presence: true
 
-      def self.content_addable?
-        true
+      def self.content_addable?(actor: nil)
+        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
+      rescue KeyError
+        false
       end
 
       def self.extra_permitted_attributes

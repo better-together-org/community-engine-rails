@@ -15,14 +15,13 @@ module BetterTogether
       value.to_s.split('--').map { |fragment| normalize_slug_fragment(fragment) }.reject(&:blank?).join('--').presence
     end
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
       include Translatable
       extend ::FriendlyId
 
       class_attribute :parameterize_slug, default: true
 
-      # This method must be called or the class will have validation issues
-      def self.slugged(attribute, **options)
+      def self.slugged(attribute, slug_uniqueness: true, scope: nil, **options) # rubocop:todo Metrics/MethodLength
         translates :slug, type: :string
 
         plugins = %i[slugged history mobility]
@@ -31,13 +30,18 @@ module BetterTogether
 
         friendly_id(
           attribute,
-          **options.except(:min_length)
+          **options.except(:min_length, :scope, :slug_uniqueness)
         )
 
         min_length = options[:min_length] || 3
 
         slug_column = options[:slug_column] || :slug
-        validates slug_column, presence: true, uniqueness: true, length: { minimum: min_length }
+        if slug_uniqueness
+          uniqueness_opts = scope ? { scope: } : true
+          validates slug_column, presence: true, uniqueness: uniqueness_opts, length: { minimum: min_length }
+        else
+          validates slug_column, presence: true, length: { minimum: min_length }
+        end
       end
 
       def slug=(arg, locale: nil, **options)

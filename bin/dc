@@ -12,6 +12,13 @@ source "$repo_root/bin/docker-compose-env.sh"
 
 compose_files=("-f" "docker-compose.yml")
 
+joined_args=" $* "
+if [[ "${CE_SKIP_TEST_DB_PREP:-0}" != "1" ]] \
+  && [[ -n "${CE_WORKTREE_DB_SUFFIX:-}" ]] \
+  && [[ "$joined_args" == *" rspec "* || "$joined_args" == *" prspec "* || "$joined_args" == *" RAILS_ENV=test "* ]]; then
+	"$repo_root/bin/dc-prepare-worktree-test-dbs"
+fi
+
 # Local dev convenience: if a developer has a .env file, layer in
 # docker-compose.dev.yml which opts services into loading it.
 if [[ -f ".env" && -f "docker-compose.dev.yml" ]]; then

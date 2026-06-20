@@ -3,7 +3,7 @@
 # app/policies/better_together/navigation_item_policy.rb
 
 module BetterTogether
-  class NavigationItemPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class NavigationItemPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       true
     end
@@ -32,14 +32,14 @@ module BetterTogether
       platform_navigation_manager? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         if platform_navigation_manager?
-          scope.all
+          platform_scoped
         elsif user.present?
-          scope.where(visibility_strategy: %w[public authenticated]).top_level.positioned.includes(:children)
+          platform_scoped.where(visibility_strategy: %w[public authenticated]).top_level.positioned.includes(:children)
         else
-          scope.visible.top_level.positioned.includes(:children).where(visibility_strategy: 'public')
+          platform_scoped.visible.top_level.positioned.includes(:children).where(visibility_strategy: 'public')
         end
       end
 

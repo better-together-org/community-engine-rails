@@ -18,10 +18,6 @@ module BetterTogether
       params[:community] || record
     end
 
-    def locale
-      recipient&.locale || I18n.locale || I18n.default_locale
-    end
-
     def membership_requests
       BetterTogether::Joatu::MembershipRequest.where(id: params[:membership_request_ids]).order(created_at: :desc)
     end
@@ -49,14 +45,16 @@ module BetterTogether
       end
     end
 
-    def build_message(_notification)
-      { title:, body:, url: review_path }
+    def build_message(notification)
+      I18n.with_locale(locale_for_notification(notification)) do
+        { title:, body:, url: review_path }
+      end
     end
 
-    def email_params(_notification)
+    def email_params(notification)
       {
         community:,
-        recipient:,
+        recipient: notification.recipient,
         membership_request_ids: params[:membership_request_ids],
         request_count:,
         requestor_names: Array(params[:requestor_names]),
@@ -67,18 +65,10 @@ module BetterTogether
     notification_methods do
       delegate :title, :body, :review_path, :email_params, to: :event
 
-      def recipient_has_email?
-        recipient.respond_to?(:email) && recipient.email.present? &&
-          (!recipient.respond_to?(:notification_preferences) ||
-           recipient.notification_preferences.fetch('notify_by_email', true))
-      end
-
       def email_delivery_enabled?
         event.params.with_indifferent_access[:send_email]
       end
     end
-
-    private
 
     def review_path
       return unless community&.persisted?

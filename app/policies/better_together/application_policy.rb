@@ -95,6 +95,11 @@ module BetterTogether
         !!agent&.permitted_to?(permission_identifier, record)
       end
 
+      def feature_enabled?(feature_key, platform: Current.platform)
+        actor = user || agent || robot
+        BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:)
+      end
+
       private
 
       def visible_privacy_query(table)
@@ -232,6 +237,11 @@ module BetterTogether
 
     def can_manage_webhook_endpoints?(target = nil)
       permitted_to?('manage_platform_api', target)
+    end
+
+    def feature_enabled?(feature_key, target: record, platform: Current.platform)
+      actor = user || agent || robot
+      BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:, record: target)
     end
 
     def public_or_member_scoped_community?(target = record)

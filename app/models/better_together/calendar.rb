@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Calendar management and display
-  class Calendar < ApplicationRecord
+  class Calendar < PlatformRecord
     include Citable
     include Claimable
     include Creatable

@@ -7,14 +7,17 @@ RSpec.describe BetterTogether::EventPolicy do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
     let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
     let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
-    let(:community_event) { create(:event, privacy: 'community', platform: scoped_platform) }
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let(:host_community) { host_platform.community }
+    let(:community_event) { create(:event, privacy: 'community') }
 
     it 'allows community members to view community-scoped events with start times' do
       user = create(:better_together_user)
       BetterTogether::PersonCommunityMembership.create!(
-        joinable: scoped_community,
+        joinable: host_community,
         member: user.person,
-        role: community_member_role
+        role: community_member_role,
+        status: 'active'
       )
 
       expect(described_class.new(user, community_event).show?).to be true
@@ -35,15 +38,18 @@ RSpec.describe BetterTogether::EventPolicy do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
     let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
     let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let(:host_community) { host_platform.community }
     let!(:public_event) { create(:event, privacy: 'public') }
-    let!(:community_event) { create(:event, privacy: 'community', platform: scoped_platform) }
+    let!(:community_event) { create(:event, privacy: 'community') }
 
     it 'includes community-scoped events for members' do
       user = create(:better_together_user)
       BetterTogether::PersonCommunityMembership.create!(
-        joinable: scoped_community,
+        joinable: host_community,
         member: user.person,
-        role: community_member_role
+        role: community_member_role,
+        status: 'active'
       )
 
       resolved = described_class::Scope.new(user, BetterTogether::Event).resolve

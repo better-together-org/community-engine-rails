@@ -15,6 +15,7 @@ gem 'bcrypt', '~> 3.1.22'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
+gem 'excon', '>= 1.5.0' # CVE-2026-54171: redact sensitive headers on redirect
 gem 'fog-aws'
 
 # Database adapter for PostgreSQL

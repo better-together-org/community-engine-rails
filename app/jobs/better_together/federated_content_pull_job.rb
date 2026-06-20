@@ -42,10 +42,12 @@ module BetterTogether
         )
       end
     rescue StandardError => e
-      connection&.mark_sync_failed!(
-        message: e.message,
-        cursor:
-      )
+      begin
+        connection&.reload&.mark_sync_failed!(message: e.message, cursor:)
+      rescue ActiveRecord::StaleObjectError, ActiveRecord::RecordNotFound
+        # Connection was deleted or another worker updated it between our reload and save.
+        nil
+      end
       raise
     end
 

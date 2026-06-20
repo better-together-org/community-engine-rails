@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       true # Allow all users to view community index (scope filters appropriately)
     end
@@ -105,7 +105,7 @@ module BetterTogether
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.order(updated_at: :desc).where(permitted_query)
+        platform_scoped.order(updated_at: :desc).where(permitted_query)
       end
 
       protected

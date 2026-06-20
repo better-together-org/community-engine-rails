@@ -5,6 +5,14 @@ module BetterTogether
     # Handles CRUD for content blocks independently of pages.
     # rubocop:todo Metrics/ClassLength
     class BlocksController < ResourceController
+      ALLOWED_RESOURCE_SEARCH_CLASSES = [
+        'BetterTogether::Event',
+        'BetterTogether::Checklist',
+        'BetterTogether::Community',
+        'BetterTogether::Person',
+        'BetterTogether::Post'
+      ].freeze
+
       before_action :authenticate_user!
       before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
@@ -70,7 +78,40 @@ module BetterTogether
         end
       end
 
+      # AJAX endpoint for resource_ids multi-select field in content blocks
+      # Filters available records by resource class and optional search term
+      def resource_search # rubocop:disable Metrics/AbcSize
+        authorize resource_class, :resource_search?
+
+        resource_class_name = params[:resource_class].to_s.strip
+        search_term = params[:search].to_s.strip
+
+        return render json: [], status: :unprocessable_content unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(resource_class_name)
+
+        resource_klass = resource_class_name.constantize
+        return render json: [], status: :unprocessable_content unless resource_klass.present?
+
+        # Get policy-scoped records
+        scope = policy_scope(resource_klass)
+
+        # Filter by search term if provided
+        scope = search_scope(scope, search_term) if search_term.present?
+
+        # Limit results for performance
+        options = scope.limit(50).map { |record| { value: record.id, text: record.to_s } }
+
+        render json: options
+      end
+
       private
+
+      def search_scope(scope, search_term)
+        # Use Arel to safely construct ILIKE query for translation searches
+        translations_table = BetterTogether::StringTranslation.arel_table
+        scope.with_translations.where(
+          translations_table[:value].matches("%#{search_term}%")
+        )
+      end
 
       def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(

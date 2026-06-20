@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Checklist < ApplicationRecord # rubocop:todo Style/Documentation
+  class Checklist < PlatformRecord # rubocop:todo Style/Documentation
     include Identifier
     include Creatable
     include FriendlySlug

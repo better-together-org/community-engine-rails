@@ -43,7 +43,7 @@ PATH
       i18n-timezones
       icalendar (~> 2.10)
       ice_cube (~> 0.16)
-      image_processing (~> 1.2)
+      image_processing (>= 1.2, < 3.0)
       importmap-rails (~> 2.0)
       jsonapi-resources (>= 0.10.0)
       kaminari
@@ -175,9 +175,11 @@ GEM
       mime-types (>= 2.99)
       unf
     ast (2.4.3)
+    auth-sanitizer (0.2.1)
+      version_gem (~> 1.1, >= 1.1.10)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1247.0)
-    aws-sdk-core (3.247.0)
+    aws-partitions (1.1259.0)
+    aws-sdk-core (3.252.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -185,11 +187,11 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.125.0)
-      aws-sdk-core (~> 3, >= 3.247.0)
+    aws-sdk-kms (1.129.0)
+      aws-sdk-core (~> 3, >= 3.248.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.222.0)
-      aws-sdk-core (~> 3, >= 3.247.0)
+    aws-sdk-s3 (1.225.1)
+      aws-sdk-core (~> 3, >= 3.248.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
@@ -224,7 +226,7 @@ GEM
     bindex (0.8.1)
     binding_of_caller (2.0.0)
       debug_inspector (>= 1.2.0)
-    bootsnap (1.24.4)
+    bootsnap (1.24.6)
       msgpack (~> 1.2)
     bootstrap (5.3.8)
       popper_js (>= 2.11.8, < 3)
@@ -305,7 +307,7 @@ GEM
       declarative (>= 0.0.9, < 1.0.0)
       representable (>= 3.1.1, < 4)
     docile (1.4.1)
-    doorkeeper (5.9.0)
+    doorkeeper (5.9.2)
       railties (>= 5)
     drb (2.2.3)
     dry-auto_inject (1.1.0)
@@ -349,7 +351,7 @@ GEM
     et-orbi (1.4.0)
       tzinfo
     event_stream_parser (1.0.0)
-    excon (1.4.2)
+    excon (1.5.0)
       logger
     execjs (2.10.0)
     factory_bot (6.5.5)
@@ -359,13 +361,13 @@ GEM
       railties (>= 6.1.0)
     faker (3.8.0)
       i18n (>= 1.8.11, < 2)
-    faraday (2.14.2)
+    faraday (2.14.3)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
     faraday-multipart (1.2.0)
       multipart-post (~> 2.0)
-    faraday-net_http (3.4.2)
+    faraday-net_http (3.4.4)
       net-http (~> 0.5)
     faraday-retry (2.4.0)
       faraday (~> 2.0)
@@ -376,9 +378,9 @@ GEM
       json (~> 2.0)
       mime-types (~> 3.4)
       rack (>= 2.0, < 4.0)
-    ffi (1.17.3-aarch64-linux-gnu)
-    ffi (1.17.3-arm64-darwin)
-    ffi (1.17.3-x86_64-linux-gnu)
+    ffi (1.17.4-aarch64-linux-gnu)
+    ffi (1.17.4-arm64-darwin)
+    ffi (1.17.4-x86_64-linux-gnu)
     fog-aws (3.33.2)
       base64 (>= 0.2, < 0.4)
       fog-core (~> 2.6)
@@ -467,9 +469,7 @@ GEM
       ostruct
     ice_cube (0.17.0)
     ice_nine (0.11.2)
-    image_processing (1.14.0)
-      mini_magick (>= 4.9.5, < 6)
-      ruby-vips (>= 2.0.17, < 3)
+    image_processing (2.0.2)
     importmap-rails (2.2.3)
       actionpack (>= 6.0.0)
       activesupport (>= 6.0.0)
@@ -481,7 +481,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
-    json (2.19.5)
+    json (2.19.9)
     json-schema (6.2.0)
       addressable (~> 2.8)
       bigdecimal (>= 3.1, < 5)
@@ -489,7 +489,7 @@ GEM
       activerecord (>= 4.1)
       concurrent-ruby
       railties (>= 4.1)
-    jwt (3.1.2)
+    jwt (3.2.0)
       base64
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
@@ -523,7 +523,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.1.0)
+    marcel (1.2.1)
     matrix (0.4.3)
     memory_profiler (1.1.0)
     method_source (1.1.0)
@@ -531,9 +531,6 @@ GEM
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2026.0414)
-    mini_magick (5.2.0)
-      benchmark
-      logger
     mini_mime (1.1.5)
     minitest (5.27.0)
     mobility (1.3.2)
@@ -542,14 +539,14 @@ GEM
     mobility-actiontext (1.1.1)
       actiontext (>= 6.0)
       mobility (~> 1.2)
-    msgpack (1.8.0)
+    msgpack (1.8.1)
     multi_json (1.20.1)
-    multi_xml (0.8.0)
+    multi_xml (0.9.1)
       bigdecimal (>= 3.1, < 5)
     multipart-post (2.4.1)
     net-http (0.9.1)
       uri (>= 0.11.1)
-    net-imap (0.6.4)
+    net-imap (0.6.4.1)
       date
       net-protocol
     net-pop (0.1.2)
@@ -567,14 +564,15 @@ GEM
       racc (~> 1.4)
     noticed (3.0.0)
       rails (>= 6.1.0)
-    oauth2 (2.0.18)
+    oauth2 (2.0.23)
+      auth-sanitizer (~> 0.2, >= 0.2.1)
       faraday (>= 0.17.3, < 4.0)
       jwt (>= 1.0, < 4.0)
       logger (~> 1.2)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
-      snaky_hash (~> 2.0, >= 2.0.3)
-      version_gem (~> 1.1, >= 1.1.9)
+      snaky_hash (~> 2.0, >= 2.0.6)
+      version_gem (~> 1.1, >= 1.1.11)
     octokit (10.0.0)
       faraday (>= 1, < 3)
       sawyer (~> 0.9)
@@ -627,7 +625,7 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
       reline (>= 0.6.0)
-    psych (5.3.1)
+    psych (5.4.0)
       date
       stringio
     public_activity (3.0.2)
@@ -636,7 +634,7 @@ GEM
       i18n (>= 0.5.0)
       railties (>= 6.1)
     public_suffix (7.0.5)
-    puma (8.0.1)
+    puma (8.0.2)
       nio4r (~> 2.0)
     pundit (2.5.2)
       activesupport (>= 3.0.0)
@@ -800,7 +798,7 @@ GEM
     rubocop-factory_bot (2.28.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-rails (2.35.1)
+    rubocop-rails (2.35.4)
       activesupport (>= 4.2.0)
       lint_roller (~> 1.1)
       rack (>= 1.1)
@@ -814,10 +812,7 @@ GEM
       rubocop (~> 1.72, >= 1.72.1)
       rubocop-rspec (~> 3.5)
     ruby-progressbar (1.13.0)
-    ruby-vips (2.2.3)
-      ffi (~> 1.12)
-      logger
-    ruby_llm (1.15.0)
+    ruby_llm (1.16.0)
       base64
       event_stream_parser (~> 1)
       faraday (>= 1.10.0)
@@ -827,7 +822,7 @@ GEM
       marcel (~> 1)
       ruby_llm-schema (~> 0)
       zeitwerk (~> 2)
-    ruby_llm-schema (0.3.0)
+    ruby_llm-schema (0.4.0)
     rubyzip (3.3.0)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
@@ -855,7 +850,7 @@ GEM
       activesupport (>= 3)
     shoulda-matchers (7.0.1)
       activesupport (>= 7.1)
-    sidekiq (8.1.5)
+    sidekiq (8.1.6)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)
       logger (>= 1.7.0)
@@ -874,10 +869,10 @@ GEM
     simplecov_json_formatter (0.1.4)
     sitemap_generator (7.0.1)
       builder (~> 3.0)
-    snaky_hash (2.0.3)
+    snaky_hash (2.0.6)
       hashie (>= 0.1.0, < 6)
       version_gem (>= 1.1.8, < 3)
-    spring (4.5.0)
+    spring (4.6.0)
     spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
       spring (>= 4)
@@ -927,7 +922,7 @@ GEM
     unicode-emoji (4.2.0)
     uri (1.1.1)
     useragent (0.16.11)
-    version_gem (1.1.9)
+    version_gem (1.1.12)
     virtus (2.0.0)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -954,7 +949,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.7.5)
+    zeitwerk (2.8.2)
     zxcvbn (0.1.13)
 
 PLATFORMS
@@ -983,6 +978,7 @@ DEPENDENCIES
   database_cleaner
   database_cleaner-active_record
   easy_translate
+  excon (>= 1.5.0)
   factory_bot_rails
   faker
   faraday-retry

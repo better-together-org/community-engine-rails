@@ -2,16 +2,16 @@
 
 ## Overview
 
-The public publishing agreement gate system is the enforcement layer that prevents Community Engine records from becoming broadly visible until the acting governed agent has accepted the protected `content_publishing_agreement`.
+The public publishing agreement gate system is the enforcement layer that prevents Community Engine records from becoming visible to the community or broader public until the acting governed agent has accepted the protected `content_publishing_agreement`.
 
-This system extends public visibility beyond plain role-based permission checks. It requires:
+This system extends publication governance beyond plain role-based permission checks. It requires:
 
 - an explicit governed agent
 - an accepted publishing agreement
 - the existing authorization to change the record
 - truthful authorship and audit context for governed publication
 
-The goal is to make public publication a consented, reviewable capability rather than an implicit side effect of organizer or manager privileges.
+The goal is to make community and public publication a consented, reviewable capability rather than an implicit side effect of organizer or manager privileges.
 
 ## Diagrams
 
@@ -41,19 +41,19 @@ The gate now applies to:
 
 ## Why This Matters
 
-Before this system, public visibility was effectively granted by existing update permissions and attribute choices such as:
+Before this system, publication was effectively granted by existing update permissions and attribute choices such as:
 
-- `privacy: public`
+- `privacy: public` or `privacy: community`
 - `published_at`
 - platform-level network exposure
 
-That left a governance gap. A person or robot could have enough operational permission to publish without first consenting to the duties and risks of public internet visibility.
+That left a governance gap. A person or robot could have enough operational permission to publish without first consenting to the duties and risks of community or public internet visibility.
 
 The agreement gate closes that gap by making publication depend on:
 
 1. who is acting
 2. whether that actor accepted the publishing agreement
-3. whether the record is being moved into a publicly exposed state
+3. whether the record is being moved into a community or publicly exposed state
 
 ## Remaining Gaps
 

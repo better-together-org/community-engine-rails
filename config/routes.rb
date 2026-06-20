@@ -410,7 +410,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
             # Lists all used content blocks. Allows setting built-in system blocks.
             namespace :content do
-              resources :blocks
+              resources :blocks do
+                collection do
+                  get :resource_search
+                end
+              end
             end
 
             # management for built-in Nav Areas and adding new ones for page sidebars.
@@ -448,6 +452,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               member do
                 get :available_people
               end
+              resources :feature_access_grants, except: :show
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do

@@ -1336,8 +1336,12 @@ uk:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: Елементи не налаштовано.
           items_json_help: Масив JSON об'єктів з ключами "question" та "answer".
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Associated Pages
         checklist_block:
           not_found: Контрольний список не знайдено.
@@ -1372,6 +1376,7 @@ uk:
           editor:
             background: Тло
             cta_button: Кнопка заклику до дії
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Укажіть дійсну URL-адресу, що починається з http:// або
               https://.
             heading_color: Колір заголовка
@@ -1384,6 +1389,12 @@ uk:
           missing_url: URL iframe не налаштовано.
           url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
             або інше довірене вбудовування зі спільнотного простору.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Завжди завантажувати з файлу (ігнорувати вміст бази даних)
@@ -1422,8 +1433,14 @@ uk:
             область спільноти та порядок.
           resource_ids_placeholder: Залиште порожнім для відображення останніх записів
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: Масив JSON об'єктів з ключами "label", "value" та необов'язковим
             "icon" (клас Font Awesome).
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Типовий шаблон
           host_community_contact_details: Контактні дані спільноти-хоста
@@ -1925,6 +1942,43 @@ uk:
         many: неправильна довжина (точно %{count} символів)
         one: неправильна довжина (точно %{count} символ)
         other: неправильна довжина (точно %{count} символів)
+    feature_access_grants:
+      created: Доступ до функцій створено.
+      edit:
+        title: Редагувати доступ до функцій
+      form:
+        access_level: Рівень доступу
+        current_rollout: Поточний етап розгортання
+        expires_at: Діє до
+        feature: Функція
+        notes: Нотатки
+        person: Людина
+        person_prompt: Знайти людину
+        unknown_rollout: Невідома або вилучена функція
+      index:
+        description: Надавайте beta або alpha доступ окремим людям без розширення
+          дозволів їхньої ролі на платформі.
+        empty: Для цієї платформи ще не створено жодного явного доступу до функцій.
+        new: Новий доступ
+        revoke: Відкликати
+        revoke_confirm: Відкликати цей доступ до функцій?
+        title: Доступи до функцій
+      new:
+        title: Новий доступ до функцій
+      revoked: Доступ до функцій відкликано.
+      status:
+        active: Активний
+        revoked: Неактивний
+      table:
+        access_level: Рівень доступу
+        actions: Дії
+        expires_at: Діє до
+        feature: Функція
+        granted_by: Надано %{name}
+        no_expiry: Без строку дії
+        person: Людина
+        status: Статус
+      updated: Доступ до функцій оновлено.
     federation:
       backfill:
         messages:
@@ -2778,6 +2832,9 @@ uk:
         agreement_created:
           content: An agreement between "%{offer}" and "%{request}" has been created.
           title: Agreement created
+        agreement_status_changed:
+          body: Угоду між "%{offer}" та "%{request}" переведено до статусу %{status}.
+          title: Угода %{status}
       mark_all_as_read: Mark all as read
       mark_as_read: Mark as read
       membership_created:
@@ -3284,6 +3341,9 @@ uk:
           завантажувати зображення. Виберіть довірені джерела або введіть новий hostname/джерело
           й натисніть Enter.
         csp_img_src_text_label: Дозволені зовнішні джерела зображень
+        feature_gates_hint: Виберіть, який етап розгортання потрібен для кожної функції
+          на цій платформі.
+        feature_gates_title: Контролі розгортання функцій
         host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
           Використовується для її ідентифікації у федерації та генерації URL-адрес
           OAuth-ендпоінту. Для production має бути HTTPS.
@@ -5059,6 +5119,7 @@ uk:
       operations:
         description: Відкривайте операції рівня хоста для цієї платформи без потреби
           знати точну URL-адресу.
+        feature_access_grants: Керувати доступами до функцій
         host_dashboard: Панель хоста
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем

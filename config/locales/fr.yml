@@ -1363,9 +1363,13 @@ fr:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: Aucun élément configuré.
           items_json_help: Tableau JSON d'objets avec les clés « question » et « answer
             ».
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Pages associées
         checklist_block:
           not_found: Liste de vérification introuvable.
@@ -1403,6 +1407,7 @@ fr:
           editor:
             background: Arrière-plan
             cta_button: Bouton d’appel à l’action
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Veuillez fournir une URL valide commençant par http://
               ou https://.
             heading_color: Couleur du titre
@@ -1416,6 +1421,12 @@ fr:
           missing_url: Aucune URL d'iframe configurée.
           url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
             ou une autre intégration de confiance d'un espace communautaire.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
@@ -1455,8 +1466,14 @@ fr:
             en ignorant la portée de la communauté et l'ordre.
           resource_ids_placeholder: Laisser vide pour afficher les derniers enregistrements
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: Tableau JSON d'objets avec les clés « label », « value
             » et « icon » optionnel (classe Font Awesome).
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Modèle par défaut
           host_community_contact_details: Coordonnées de la communauté hôte
@@ -1950,6 +1967,44 @@ fr:
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
         other: ne fait pas la longueur correcte (%{count} caractères)
+    feature_access_grants:
+      created: Accès aux fonctionnalités créé.
+      edit:
+        title: Modifier l'accès aux fonctionnalités
+      form:
+        access_level: Niveau d'accès
+        current_rollout: Déploiement actuel
+        expires_at: Expire le
+        feature: Fonctionnalité
+        notes: Notes
+        person: Personne
+        person_prompt: Rechercher une personne
+        unknown_rollout: Fonctionnalité inconnue ou retirée
+      index:
+        description: Accordez un accès bêta ou alpha à des personnes précises sans
+          élargir les permissions de leur rôle de plateforme.
+        empty: Aucun accès explicite aux fonctionnalités n'a encore été créé pour
+          cette plateforme.
+        new: Nouvel accès
+        revoke: Révoquer
+        revoke_confirm: Révoquer cet accès aux fonctionnalités ?
+        title: Accès aux fonctionnalités
+      new:
+        title: Nouvel accès aux fonctionnalités
+      revoked: Accès aux fonctionnalités révoqué.
+      status:
+        active: Actif
+        revoked: Inactif
+      table:
+        access_level: Niveau d'accès
+        actions: Actions
+        expires_at: Expire
+        feature: Fonctionnalité
+        granted_by: Accordé par %{name}
+        no_expiry: Sans expiration
+        person: Personne
+        status: Statut
+      updated: Accès aux fonctionnalités mis à jour.
     federation:
       backfill:
         messages:
@@ -2818,6 +2873,9 @@ fr:
         agreement_created:
           content: Un accord entre "%{offer}" et "%{request}" a été créé.
           title: Accord créé
+        agreement_status_changed:
+          body: L'accord entre "%{offer}" et "%{request}" est passé à l'état %{status}.
+          title: Accord %{status}
       mark_all_as_read: Tout marquer comme lu
       mark_as_read: Marquer comme lu
       membership_created:
@@ -3334,6 +3392,9 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
+          fonctionnalité sur cette plateforme.
+        feature_gates_title: Contrôles de déploiement des fonctionnalités
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
@@ -5089,6 +5150,7 @@ fr:
       operations:
         description: Ouvrez les opérations de niveau hôte pour cette plateforme sans
           dépendre uniquement d'une URL directe.
+        feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
         robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage

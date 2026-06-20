@@ -166,7 +166,9 @@ module BetterTogether
 
     def set_current_platform_context # rubocop:todo Metrics/AbcSize
       Current.platform_domain = BetterTogether::PlatformDomain.resolve(request.host)
-      Current.platform = Current.platform_domain&.platform || BetterTogether::Platform.find_by(host: true)
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      Current.host_platform = host_platform
+      Current.platform = Current.platform_domain&.platform || host_platform
       Current.person = current_user&.person
       Current.robot = current_robot
       Current.governed_agent = current_robot || Current.person

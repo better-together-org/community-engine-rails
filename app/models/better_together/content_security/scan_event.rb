@@ -3,7 +3,7 @@
 module BetterTogether
   module ContentSecurity
     # Records a single scanner execution attempt and its outcome for an Item.
-    class ScanEvent < ApplicationRecord
+    class ScanEvent < PlatformRecord
       self.table_name = 'better_together_content_security_scan_events'
 
       enum :status, {

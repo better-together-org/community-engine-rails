@@ -114,7 +114,36 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Provider adapter architecture scaffold for pluggable AI and service backends (#1491)
 - Robot configuration system documentation and resolution-flow artefacts for persisted AI-capable robot records (#1493)
 
+#### C3 Tree Seeds — Community Contribution Token System
+- `BetterTogether::C3::Token` model for recording community contribution credits with platform scoping and cross-platform federation support
+- `BetterTogether::C3::TokenSeed` STI type for federated token-seed distribution via the federation API (`/api/v1/c3/token_seeds`)
+- `BetterTogether::Joatu::Settlement` model + `Agreement#fulfill!` lifecycle method to complete the C3 spending chain
+- Balance locking with decimal-precision arithmetic via `C3::BalanceLock`; `ExpireBalanceLocksJob` handles automatic expiry of stale locks
+- Borgberry fleet integration: migrations, models, and API endpoints for fleet-node contribution tracking and autonomous earning
+- Operator-owned settlement notifications via `C3::SettlementMailer` and `C3::SettlementNotifier`
+- `PlatformConnection` C3 scope + token-origin tracking as federation prerequisites for cross-platform token exchange
+- i18n coverage: C3 and settlement locale keys for English, Spanish, French, and Ukrainian
+- Architecture documentation: `docs/c3/` (what-is-c3, data-model, flows, network-and-security, regulatory considerations), `docs/borgberry-ce-integration.md`, `docs/c3-federation-design.md`
+
+#### Short Links & Share Domain
+- `BetterTogether::ShortLink` model with configurable slug, polymorphic target, optional expiry, and click tracking (#1594)
+- `Shortlinkable` concern: attach a managed share URL to any model with one line
+- Share button UI component with clipboard copy-to-clipboard (Stimulus `clipboard` controller), integrated on post, page, and event surfaces
+- Platform-scoped short-link index and management views (`GET /c/:community/short_links`)
+- Public redirect endpoint at `GET /r/:slug`
+- Stable `dom_id`/`dom_class` DOM identifiers on all new short-link views per the View DOM Identifier Standard
+
+#### Fleet Node Authorization
+- `FleetNodePolicy` + Pundit authorization on `NodesController` to prevent unauthorized fleet-node management via the fleet API
+
 ### Fixed
+- **Content Blocks:** Production readiness fixes for markdown, video, and iframe blocks; restored `content_addable? = true` on 11 regressed block types; all blocks enabled and PR #1492 review findings resolved
+- **Uploads:** Honor upload content-security state toggles; align upload download authorization to the content-security review state
+- **Federation:** Namespace mirrored content imports to prevent cross-tenant identifier collisions (#1597); add idempotent repair migration for federated mirrored identifier backfill; localize federation remediation messages (es/fr/uk)
+- **C3:** Rename `BalanceLocking#lock!` → `lock_c3!` to stop shadowing `ActiveRecord` pessimistic locking; qualify error constant namespacing; validate `lock_ref` upfront before lock acquisition
+- **Provider Gems:** Load provider extension gems as optional non-bundled extensions to keep the core engine bundle clean (#1596)
+- **Assets:** Restore Leaflet vendor assets for importmap compatibility
+- **RC Hardening:** Address 0.11.0 RC merge blockers — scope fixes, route cleanup, and compatibility patches (#1598)
 - **Authoring:** Preload event associations and add pagination to reduce host-side metrics and content list load issues (#1034)
 - **Federation:** Narrow platform connection updates so host dashboards only mutate the intended fields (#1458)
 - **Messaging:** Scope conversation participants to the current platform (#1459)
@@ -141,6 +170,19 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 ### Security
 
 - **CVE-2026-32700 (Devise):** Upgraded Devise to 5.0.3 across Rails 7.2, 8.0, and 8.1 compat branches (#1385, #1386, #1387). Existing password-reset tokens will be invalidated on upgrade — users with pending resets will need to re-request a new link.
+- **SSRF (Federation):** Added `ssrf_filter` gem to close SSRF DNS rebinding attack vector in federation outbound HTTP requests; all federated outbound requests are now filtered against private and loopback address ranges.
+
+### Dependencies (post-#1547 updates)
+
+- Devise 5.0.4 (patch after 5.0.3 security release)
+- ruby_llm 1.15.0
+- sidekiq 8.1.5
+- nokogiri 1.19.3
+- active_storage_validations 3.0.5
+- faraday 2.14.2, bootsnap 1.24.4
+- rubocop-rails 2.35.2, selenium-webdriver 4.44.0, parallel_rspec 3.1.0
+- icalendar 2.12.3, css_parser 1.22.0, doorkeeper 5.9.1, jwt 3.2.0
+- aws-sdk-s3 1.223.0
 
 ---
 
