@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Used to determine the user's access to features and data
-  class Role < ApplicationRecord
+  class Role < PlatformRecord
     include Identifier
     include Positioned
     include Protected

@@ -7,5 +7,6 @@ FactoryBot.define do
     protected { false }
     privacy { 'private' }
     sequence(:title) { |n| "Test Checklist #{n}" }
+    association :platform, factory: :better_together_platform
   end
 end

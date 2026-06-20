@@ -56,4 +56,6 @@ RSpec.describe BetterTogether::Message do
       end
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :message
 end

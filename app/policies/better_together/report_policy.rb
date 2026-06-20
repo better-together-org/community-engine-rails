@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Authorization policy for user safety reports.
-  class ReportPolicy < ApplicationPolicy
+  class ReportPolicy < PlatformRecordPolicy
     def index?
       user.present?
     end
@@ -24,12 +24,12 @@ module BetterTogether
     end
 
     # Restricts report visibility to the reporting person and platform managers.
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
-        return scope.all if permitted_to?('manage_platform_safety')
+        return platform_scoped if permitted_to?('manage_platform_safety')
         return scope.none unless agent
 
-        scope.where(reporter: agent).order(created_at: :desc)
+        platform_scoped.where(reporter: agent).order(created_at: :desc)
       end
     end
 

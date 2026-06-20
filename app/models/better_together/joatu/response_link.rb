@@ -4,7 +4,7 @@ module BetterTogether
   module Joatu
     # ResponseLink represents an explicit user-created link between a source
     # Offer/Request and the Offer/Request created in response.
-    class ResponseLink < ApplicationRecord
+    class ResponseLink < PlatformRecord
       include Creatable
 
       belongs_to :source, polymorphic: true

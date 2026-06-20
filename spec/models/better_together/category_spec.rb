@@ -110,4 +110,6 @@ module BetterTogether # :nodoc:
       end
     end
   end
+
+  it_behaves_like 'platform scoped identifier', factory: :category
 end

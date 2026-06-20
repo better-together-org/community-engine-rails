@@ -3,7 +3,7 @@
 module BetterTogether
   module ContentSecurity
     # Tracks the lifecycle of a scanned attachment blob, from pending scan through clean/quarantined/blocked.
-    class Item < ApplicationRecord
+    class Item < PlatformRecord
       self.table_name = 'better_together_content_security_items'
 
       enum :lifecycle_state, {

@@ -2,9 +2,7 @@
 
 module BetterTogether
   module Metrics
-    class ShortLinkVisit < ApplicationRecord # rubocop:todo Style/Documentation
-      include PlatformScoped
-
+    class ShortLinkVisit < PlatformRecord # rubocop:todo Style/Documentation
       belongs_to :short_link, class_name: 'BetterTogether::ShortLink'
 
       validates :visited_at, presence: true

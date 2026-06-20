@@ -27,7 +27,8 @@ RSpec.describe BetterTogether::PersonBlockPolicy do
       BetterTogether::PersonPlatformMembership.create!(
         joinable: host_platform,
         member: manager_user.person,
-        role: platform_manager_role
+        role: platform_manager_role,
+        status: 'active'
       )
 
       record = BetterTogether::PersonBlock.new(blocker: agent, blocked: manager_user.person)

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Allows for assigning permitted actions to resources
-  class ResourcePermission < ApplicationRecord
+  class ResourcePermission < PlatformRecord
     ACTIONS = %w[create read update delete list manage view download].freeze
 
     include Identifier

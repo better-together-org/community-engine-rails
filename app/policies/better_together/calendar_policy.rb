@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for calendars
-  class CalendarPolicy < ApplicationPolicy
+  class CalendarPolicy < PlatformRecordPolicy
     def index?
       user.present?
     end
@@ -43,7 +43,7 @@ module BetterTogether
     end
 
     # Filtering and sorting for calendars according to permissions and context
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
     end
   end
 end

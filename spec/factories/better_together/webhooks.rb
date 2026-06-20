@@ -15,6 +15,7 @@ module BetterTogether # :nodoc:
       events { [] }
 
       association :person, factory: :better_together_person
+      association :platform, factory: :better_together_platform
 
       trait :inactive do
         active { false }
@@ -52,6 +53,7 @@ module BetterTogether # :nodoc:
       attempts { 0 }
 
       association :webhook_endpoint, factory: :better_together_webhook_endpoint
+      association :platform, factory: :better_together_platform
 
       trait :delivered do
         status { 'delivered' }

@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Policy for API-managed governed contribution records.
-  class AuthorshipPolicy < ApplicationPolicy
+  class AuthorshipPolicy < PlatformRecordPolicy
     def index?
       platform_content_manager?
     end
@@ -24,11 +24,11 @@ module BetterTogether
     end
 
     # Scope for authorship records that may be managed through the API.
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
         return scope.none unless platform_content_manager?
 
-        scope.all
+        platform_scoped
       end
 
       private
