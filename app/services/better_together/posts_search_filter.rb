@@ -9,22 +9,17 @@ module BetterTogether
       new(resource_class: BetterTogether::Post, relation:, params:).call
     end
 
-    def call
-      search_text
-      filter_by_categories
-      filter_by_authors
-      filter_by_communities
-      filter_by_resource_specific_status
-      order_by
-      paginate
-      @relation
-    end
-
     private
 
     # Override: Posts use 'content' as the ActionText field name
     def action_text_field
       'content'
+    end
+
+    # Override: Run author and community filters before the privacy gate
+    def filter_by_resource_specific_associations
+      filter_by_authors
+      filter_by_communities
     end
 
     # Override: Add privacy filtering for Posts

@@ -60,7 +60,7 @@ module BetterTogether
     private
 
     def filter_params
-      params.permit(:q, :order_by, :per_page, :page, :privacy, :community_id, category_ids: [], author_ids: [])
+      params.permit(:q, :order_by, :per_page, :page, :privacy, category_ids: [], author_ids: [])
     end
 
     def load_posts

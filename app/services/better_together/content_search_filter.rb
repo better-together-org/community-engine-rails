@@ -4,6 +4,7 @@ module BetterTogether
   # Base class for content-type search filters (posts, events, pages, etc.)
   # Provides common filtering logic: text search (ILIKE), categories, pagination.
   # Subclasses override filter_by_status, filter_by_privacy, order_by for resource-specific behavior.
+  # rubocop:todo Metrics/ClassLength
   class ContentSearchFilter
     def self.call(resource_class:, relation:, params:)
       new(resource_class:, relation:, params:).call
@@ -18,6 +19,7 @@ module BetterTogether
     def call
       search_text
       filter_by_categories
+      filter_by_resource_specific_associations
       filter_by_resource_specific_status
       order_by
       paginate
@@ -30,7 +32,13 @@ module BetterTogether
 
     # Subclasses override these methods for resource-specific behavior.
 
-    # Called after search_text and filter_by_categories.
+    # Called after filter_by_categories. Subclasses add association-based filters
+    # (e.g. authors, communities) here without duplicating the full call sequence.
+    def filter_by_resource_specific_associations
+      @relation
+    end
+
+    # Called after filter_by_resource_specific_associations.
     # Subclasses implement privacy, status, or other resource-specific filters here.
     def filter_by_resource_specific_status
       @relation
@@ -140,4 +148,5 @@ module BetterTogether
       'title'
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
