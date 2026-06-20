@@ -43,9 +43,7 @@
       <% if @authors&.any? %>
         <div class="mb-3">
           <%= f.label :author_ids, t('.authors_label'), class: 'form-label' %>
-          <% author_options = @authors.map do |author|
-               [author.select_option_title, author.id, { data: { avatar_url: profile_image_url(author, size: 50) } }]
-             end %>
+          <% author_options = @authors.map { |author| [author.select_option_title, author.id] } %>
           <%= f.select :author_ids,
                        options_for_select(author_options, Array(params[:author_ids]).map(&:to_s)),
                        { include_hidden: false },
@@ -55,7 +53,6 @@
                          class: 'form-select',
                          data: {
                            controller: 'better-together--slim-select',
-                           'slim-select-avatar': true,
                            'better-together--slim-select-options-value': {
                              settings: {
                                closeOnSelect: false,
