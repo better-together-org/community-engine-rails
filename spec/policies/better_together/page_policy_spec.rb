@@ -14,7 +14,6 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
       :better_together_page,
       published_at: 1.day.ago,
       privacy: 'community',
-      platform: scoped_platform,
       community: scoped_community
     )
   end
@@ -35,11 +34,12 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # Grant authorship for the private/unpublished page
     private_unpublished.authorships.create!(author: author_person)
     private_unpublished.add_governed_contributor(editor_person, role: 'editor')
-    BetterTogether::PersonCommunityMembership.find_or_create_by!(
+    membership = BetterTogether::PersonCommunityMembership.find_or_create_by!(
       joinable: scoped_community,
       member: community_member_user.person,
       role: community_member_role
     )
+    membership.update!(status: 'active') unless membership.active?
   end
 
   describe '#show?' do # rubocop:todo RSpec/MultipleMemoizedHelpers

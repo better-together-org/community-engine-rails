@@ -18,16 +18,14 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
   end
 
   describe '#index?' do
-    it 'allows users who can update community' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+    it 'allows users who can manage community members' do
+      allow(policy).to receive(:can_manage_any_community_members?).and_return(true) # rubocop:todo RSpec/SubjectStub
       expect(policy.index?).to be true
     end
 
-    it 'allows platform managers' do
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
-      expect(policy.index?).to be true
+    it 'denies users without community member management' do
+      allow(policy).to receive(:can_manage_any_community_members?).and_return(false) # rubocop:todo RSpec/SubjectStub
+      expect(policy.index?).to be false
     end
 
     it 'denies users without permissions' do
@@ -42,27 +40,25 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
       expect(policy.show?).to be true
     end
 
-    it 'allows viewing another membership with update_community permission' do
+    it 'allows viewing another membership with community member management' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       policy = described_class.new(user, other_membership)
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(true)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      allow(policy).to receive(:can_manage_community_members?).and_return(true)
       expect(policy.show?).to be true
     end
 
-    it 'allows viewing another membership as platform manager' do
+    it 'allows viewing another membership with community role management' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       policy = described_class.new(user, other_membership)
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_community_members', anything).and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_community_roles', anything).and_return(true)
       expect(policy.show?).to be true
     end
 
     it 'denies viewing another membership without permission' do
       other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
       policy = described_class.new(user, other_membership)
-      allow(person).to receive(:permitted_to?).with('update_community', nil).and_return(false)
-      allow(person).to receive(:permitted_to?).with('manage_platform', nil).and_return(false)
+      allow(policy).to receive(:can_manage_community_members?).and_return(false)
       expect(policy.show?).to be false
     end
   end
