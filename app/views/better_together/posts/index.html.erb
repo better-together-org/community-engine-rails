@@ -3,16 +3,109 @@
 <% end %>
 
 <div class="container my-3">
-  <div class="d-flex justify-content-between align-items-center">
-    <h1><%= resource_class.model_name.human.pluralize %></h1>
-    <% if policy(resource_class).create? %>
-      <%= link_to new_post_path, class: 'btn btn-primary', 'aria-label' => 'Add Post' do %>
-        <i class="fas fa-plus"></i> <%= t('.new_btn_text', default: 'New Post') %>
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
+    <div class="d-flex align-items-center gap-2">
+      <% if @available_view_types.size > 1 %>
+        <%= render 'better_together/shared/view_switcher',
+                   view_key: 'index_view',
+                   active_view: @view_type,
+                   available_views: @available_view_types,
+                   update_path: view_preferences_path(locale: I18n.locale) %>
       <% end %>
-    <% end %>
+
+      <% if policy(resource_class).create? %>
+        <%= link_to new_post_path(community_id: params[:community_id]), class: 'btn btn-primary',
+                    'aria-label' => t('.new_btn_text', default: 'New Post') do %>
+          <i class="fas fa-plus"></i> <%= t('.new_btn_text', default: 'New Post') %>
+        <% end %>
+      <% end %>
+    </div>
   </div>
 
-  <div id="posts" class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-    <%= render(@posts) || render('empty') %>
+  <div class="row">
+    <!-- Filter Sidebar -->
+    <div class="col-lg-3 mb-4">
+      <%= render 'list_form' %>
+    </div>
+
+    <!-- Posts List -->
+    <div class="col-lg-9">
+
+      <!-- Pagination -->
+      <% if @posts.respond_to?(:total_pages) && @posts.total_pages > 1 %>
+        <nav class="d-flex justify-content-center">
+          <%= paginate @posts %>
+        </nav>
+      <% end %>
+
+      <!-- Result Count -->
+      <% if @posts.any? && @posts.respond_to?(:total_count) %>
+        <div class="mb-3">
+          <small class="text-muted">
+            <%= t('better_together.posts.index.result_count', count: @posts.total_count) %>
+          </small>
+        </div>
+      <% end %>
+
+      <% if @posts.any? %>
+        <% case @view_type %>
+        <% when 'table' %>
+          <div id="posts-table" class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+              <thead>
+                <tr>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.title') %></th>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.categories') %></th>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.authors') %></th>
+                  <th scope="col"><%= t('better_together.posts.index.table_headers.published') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: 'post_table_row', collection: @posts, as: :post %>
+              </tbody>
+            </table>
+          </div>
+        <% when 'list' %>
+          <ul id="posts-list" class="list-group">
+            <%= render partial: 'post_list_item', collection: @posts, as: :post %>
+          </ul>
+        <% when 'calendar' %>
+          <div id="posts-calendar" class="d-flex flex-column gap-3">
+            <% posts_by_date = @posts.group_by { |post| (post.published_at || post.created_at).to_date } %>
+            <% posts_by_date.each do |date, posts| %>
+              <section class="border rounded-3 p-3 bg-body-tertiary">
+                <h2 class="h6 text-uppercase text-muted mb-3"><%= l(date, format: :long) %></h2>
+                <ul class="list-group">
+                  <%= render partial: 'post_list_item', collection: posts, as: :post %>
+                </ul>
+              </section>
+            <% end %>
+          </div>
+        <% when 'map' %>
+          <div id="posts-map" class="d-flex flex-column gap-3">
+            <div class="alert alert-info" role="status">
+              <%= t('better_together.posts.index.map_unavailable') %>
+            </div>
+            <ul class="list-group">
+              <%= render partial: 'post_list_item', collection: @posts, as: :post %>
+            </ul>
+          </div>
+        <% else %>
+          <div id="posts" class="row row-cols-1 row-cols-md-2">
+            <%= render @posts %>
+          </div>
+        <% end %>
+      <% else %>
+        <%= render('empty') %>
+      <% end %>
+
+      <!-- Pagination -->
+      <% if @posts.respond_to?(:total_pages) && @posts.total_pages > 1 %>
+        <nav class="d-flex justify-content-center">
+          <%= paginate @posts %>
+        </nav>
+      <% end %>
+    </div>
   </div>
 </div>

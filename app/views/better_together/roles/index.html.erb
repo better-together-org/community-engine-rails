@@ -9,7 +9,7 @@
 
       <div class="d-flex align-items-center gap-2">
         <%= render 'better_together/shared/view_switcher',
-                   view_key: 'roles_index',
+             view_key: 'index_view',
                    active_view: @view_type,
                    available_views: @available_view_types,
                    update_path: view_preferences_path(locale: I18n.locale) %>

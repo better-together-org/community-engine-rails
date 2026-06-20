@@ -78,32 +78,31 @@ module BetterTogether
         end
       end
 
-      # AJAX endpoint for resource_ids multi-select field in content blocks
-      # Filters available records by resource class and optional search term
+      # AJAX endpoint for resource_ids multi-select field in content blocks.
+      # Filters available records by resource class and optional search term.
       def resource_search # rubocop:disable Metrics/AbcSize
         authorize resource_class, :resource_search?
 
         resource_class_name = params[:resource_class].to_s.strip
         search_term = params[:search].to_s.strip
 
-        return render json: [], status: :unprocessable_content unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(resource_class_name)
+        resource_klass = resolve_resource_class(resource_class_name)
+        return render json: [], status: :unprocessable_content if resource_klass.nil?
 
-        resource_klass = resource_class_name.constantize
-        return render json: [], status: :unprocessable_content unless resource_klass.present?
-
-        # Get policy-scoped records
         scope = policy_scope(resource_klass)
-
-        # Filter by search term if provided
         scope = search_scope(scope, search_term) if search_term.present?
-
-        # Limit results for performance
         options = scope.limit(50).map { |record| { value: record.id, text: record.to_s } }
 
         render json: options
       end
 
       private
+
+      def resolve_resource_class(class_name)
+        return unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(class_name)
+
+        class_name.constantize
+      end
 
       def search_scope(scope, search_term)
         # Use Arel to safely construct ILIKE query for translation searches

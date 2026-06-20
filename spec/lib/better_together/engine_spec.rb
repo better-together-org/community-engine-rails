@@ -16,5 +16,13 @@ module BetterTogether
         expect(described_class.config.eager_load_paths).to include("#{engine_root}/lib")
       end
     end
+
+    describe 'migration paths' do
+      it 'includes engine migrations in the dummy app' do
+        engine_migrations = described_class.root.join('db', 'migrate').to_s
+
+        expect(Rails.application.config.paths['db/migrate'].expanded).to include(engine_migrations)
+      end
+    end
   end
 end

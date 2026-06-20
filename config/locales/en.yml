@@ -1274,12 +1274,17 @@ en:
             select_role: Select Role *
             submit: Add
             title: Add New Member
+        posts:
+          create_post: Create Post
+          empty_description: Posts created for this community will show up here.
+          empty_title: No posts yet
         sections_aria: Community sections
       tabs:
         buildings: Buildings
         contact_details: Contact details
         details: Details
         images: Images
+        posts: Posts
     community_invitations_mailer:
       invite:
         about: About
@@ -1679,6 +1684,10 @@ en:
           idle: Idle
           running: Running
           succeeded: Succeeded
+    errors:
+      privacy:
+        exceeds_context_bounds: cannot be more open than '%{max}' — the platform or
+          community settings prevent this level of visibility
     event_invitations:
       index:
         invite_member: Invite member
@@ -2973,6 +2982,9 @@ en:
           title: Notifications
         time_zone:
           title: Time Zone
+      show:
+        memberships:
+          showing_count: Showing %{shown} of %{total}
       submit:
         save: Save
       tabs:
@@ -3323,10 +3335,44 @@ en:
       delete: Delete Record
       edit: Edit Post
       edit_post: Edit Post
+      hints:
+        privacy_limited_by_community: Some privacy options are disabled because this
+          community is not public. Posts here can only be visible to community members
+          or the author.
+        privacy_limited_by_platform: Some privacy options are disabled because the
+          platform is not public. Posts can only be visible to community members or
+          the author.
       index:
+        map_unavailable: Map view is not available for posts without location data.
         new_btn_text: New Post
+        result_count:
+          one: "%{count} post"
+          other: "%{count} posts"
+        table_headers:
+          authors: Authors
+          categories: Categories
+          published: Published
+          title: Title
       labels:
         privacy: Privacy
+      list_form:
+        authors_label: Authors
+        authors_placeholder: Select authors...
+        categories_label: Categories
+        clear_filters: Clear Filters
+        filters: Filter Posts
+        order_by_label: Order By
+        order_newest: Newest First (default)
+        order_oldest: Oldest First
+        per_page_label: Posts Per Page
+        privacy_all: All
+        privacy_community: Community
+        privacy_label: Privacy
+        privacy_private: Private
+        privacy_public: Public
+        search_button: Search
+        search_label: Search
+        search_placeholder: Search by title or content...
       new_post: New Post
       none_body: There are no posts to show right now.
       none_title: No posts yet
@@ -3974,6 +4020,7 @@ en:
         calendar: Calendar
         card: Card
         list: List
+        map: Map
         table: Table
     webhook_endpoints:
       actions_aria: Webhook actions
@@ -4354,6 +4401,10 @@ en:
         update: Update
         we_need_your_current_password_to_confirm_your_changes: we need your current
           password to confirm your changes
+      membership_request_heading: Request membership instead
+      membership_request_help_html: If you do not have an invitation yet, you can
+        send a membership request for <strong>%{community}</strong>. A community reviewer
+        can approve it and invite you into the platform.
       new:
         agreements:
           privacy_policy: I agree to the Privacy Policy
@@ -4630,6 +4681,7 @@ en:
       federation: Federation
       invitations: Invitations
       members: Members
+      posts: Posts
       safety: Safety
     to: To
     'true': true

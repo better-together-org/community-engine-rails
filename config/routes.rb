@@ -98,6 +98,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Short link generation for public content — guests can generate share links
       post 'short_links/ensure', to: 'short_links#ensure', as: :ensure_content_short_link
 
+      post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :short_links
@@ -176,7 +178,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Help banner preferences
         post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
         post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
-        post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
 
         scope path: 'hub' do
           get '/', to: 'hub#index', as: :hub
