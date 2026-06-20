@@ -141,4 +141,6 @@ RSpec.describe BetterTogether::CallForInterest do
       expect(call.citation_reference_options).to include([citation.reference_key, citation.title])
     end
   end
+
+  it_behaves_like 'platform scoped identifier', factory: :call_for_interest
 end

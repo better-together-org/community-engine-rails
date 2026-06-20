@@ -6,8 +6,18 @@ module BetterTogether
   # automates creation of important built-in navigation and pages
   class NavigationBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
-      def seed_data
-        with_seed_platform_context do
+      # Override Builder.build to accept an optional platform: keyword argument.
+      # When platform: is provided, navigation areas are created and scoped to that
+      # platform instead of the host platform. Defaults to host platform behaviour.
+      def build(clear: false, platform: nil)
+        if clear
+          ActiveRecord::Base.transaction { clear_existing }
+        end
+        seed_data(platform: platform)
+      end
+
+      def seed_data(platform: nil)
+        with_seed_platform_context(platform: platform) do
           I18n.with_locale(:en) do
             build_header
             build_host
@@ -66,7 +76,7 @@ module BetterTogether
               ]
             )
 
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'better-together') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'better-together', platform: Current.platform) do |area|
               area.name = 'Better Together'
               area.slug = 'better-together'
               area.visible = true
@@ -254,7 +264,7 @@ module BetterTogether
             ]
 
             # Create Platform Footer Navigation Area and its Navigation Items
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-footer') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-footer', platform: Current.platform) do |area|
               area.name = 'Platform Footer'
               area.slug = 'platform-footer'
               area.visible = true
@@ -325,7 +335,7 @@ module BetterTogether
             )
 
             # Create Platform Header Navigation Area
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-header') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-header', platform: Current.platform) do |area|
               area.name = 'Platform Header'
               area.slug = 'platform-header'
               area.visible = true
@@ -414,7 +424,7 @@ module BetterTogether
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             # Create Platform Header Host Navigation Area and its Navigation Items
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-host') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-host', platform: Current.platform) do |area|
               area.name = 'Platform Host'
               area.slug = 'platform-host'
               area.visible = true
@@ -601,7 +611,7 @@ module BetterTogether
         delete_navigation_items
         delete_navigation_areas
         puts 'Rebuilding navigation areas...'
-        with_seed_platform_context do
+        with_seed_platform_context(platform: Current.platform) do
           I18n.with_locale(:en) do
             build_header
             build_host
@@ -650,9 +660,9 @@ module BetterTogether
         puts "Navigation area '#{slug}' reset complete!"
       end
 
-      def with_seed_platform_context
+      def with_seed_platform_context(platform: nil)
         previous_platform = Current.platform
-        Current.platform = ensure_host_platform_for_seeds
+        Current.platform = platform || ensure_host_platform_for_seeds
         yield
       ensure
         Current.platform = previous_platform

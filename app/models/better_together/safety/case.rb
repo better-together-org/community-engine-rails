@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Operational case opened from a user safety report.
-    class Case < ApplicationRecord
+    class Case < PlatformRecord
       self.table_name = 'better_together_safety_cases'
 
       enum :status, {

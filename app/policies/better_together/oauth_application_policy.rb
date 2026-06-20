@@ -3,7 +3,7 @@
 module BetterTogether
   # Policy for OauthApplication — platform managers can manage all applications.
   # Owners can view/manage their own applications.
-  class OauthApplicationPolicy < ApplicationPolicy
+  class OauthApplicationPolicy < PlatformRecordPolicy
     def index?
       developer_settings_enabled? && (platform_manager? || user&.person.present?)
     end
@@ -41,11 +41,11 @@ module BetterTogether
     end
 
     # Scope: platform managers see all, others see their own
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
         return scope.none unless feature_enabled?('developer_settings')
-        return scope.all if platform_manager?
-        return scope.where(owner: user.person) if user&.person
+        return platform_scoped if platform_manager?
+        return platform_scoped.where(owner: user.person) if user&.person
 
         scope.none
       end

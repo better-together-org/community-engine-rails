@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Authorization policy for restorative agreements.
-    class AgreementPolicy < ApplicationPolicy
+    class AgreementPolicy < PlatformRecordPolicy
       def create?
         can_review_safety_disclosures?
       end

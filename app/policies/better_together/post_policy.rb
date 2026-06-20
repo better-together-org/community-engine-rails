@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for posts
-  class PostPolicy < ApplicationPolicy
+  class PostPolicy < PlatformRecordPolicy
     def index?
       true
     end
@@ -33,12 +33,12 @@ module BetterTogether
     end
 
     # Scope for resolving visible posts
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        return scope.latest_first if platform_content_manager?
+        return platform_scoped.latest_first if platform_content_manager?
 
-        base = scope.published.latest_first
+        base = platform_scoped.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
         visible_posts = visible_privacy_query(posts_table)
         return base.where(visible_posts) unless agent

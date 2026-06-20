@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Authorization policy for moderator safety actions.
-    class ActionPolicy < ApplicationPolicy
+    class ActionPolicy < PlatformRecordPolicy
       def create?
         can_review_safety_disclosures?
       end

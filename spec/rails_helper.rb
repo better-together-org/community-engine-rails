@@ -239,6 +239,12 @@ RSpec.configure do |config|
 
     # Clear cache again after each test to ensure clean state
     Rails.cache.clear
+
+    # Reset CurrentAttributes so memoized host_platform does not leak between tests.
+    # Without this, tests that lazily load Current.host_platform and then roll back
+    # the platform record leave a dangling AR object; subsequent tests see an empty
+    # platform_scoped because the stale id matches no live row.
+    ActiveSupport::CurrentAttributes.reset_all
   end
 
   # Reset locale to English after each test to prevent test isolation issues

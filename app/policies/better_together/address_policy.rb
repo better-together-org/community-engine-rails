@@ -12,7 +12,7 @@ module BetterTogether
       SQL
 
       def resolve
-        base_scope = scope.includes(:contact_detail)
+        base_scope = platform_scoped(scope.includes(:contact_detail))
         component_scope = base_scope.where(COMPONENT_CONDITION)
 
         return component_scope if platform_manager?

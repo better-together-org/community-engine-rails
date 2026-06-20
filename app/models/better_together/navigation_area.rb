@@ -4,7 +4,7 @@
 
 module BetterTogether
   # A named list of ordered multi-level navigation items
-  class NavigationArea < ApplicationRecord
+  class NavigationArea < PlatformRecord
     include Identifier
     include Protected
     include Visible
@@ -15,7 +15,7 @@ module BetterTogether
     belongs_to :navigable, polymorphic: true, optional: true
     has_many :navigation_items, dependent: :destroy
 
-    validates :name, presence: true, uniqueness: true
+    validates :name, presence: true, uniqueness: { scope: :platform_id }
     validates :style, length: { maximum: 255 }, allow_blank: true
 
     def build_page_navigation_items(pages) # rubocop:todo Metrics/MethodLength

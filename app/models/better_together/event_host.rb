@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Join an event to its host
-  class EventHost < ApplicationRecord
+  class EventHost < PlatformRecord
     belongs_to :event, class_name: 'BetterTogether::Event'
     belongs_to :host, polymorphic: true, required: true
 

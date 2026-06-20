@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # An informational document used to display custom content to the user
-  class Page < ApplicationRecord # rubocop:disable Metrics/ClassLength
+  class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
     include Authorable
     include Claimable
     # When adding authors via `author_ids=` or association ops, controllers can
@@ -19,7 +19,6 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
-    include PlatformScoped
     include Seedable
     include Shortlinkable
     include TrackedActivity

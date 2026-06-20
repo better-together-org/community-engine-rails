@@ -3,9 +3,8 @@
 # app/models/better_together/metrics/page_view.rb
 module BetterTogether
   module Metrics
-    class PageView < ApplicationRecord # rubocop:todo Style/Documentation
+    class PageView < PlatformRecord # rubocop:todo Style/Documentation
       include Utf8UrlHandler
-      include PlatformScoped
 
       SENSITIVE_QUERY_PARAMS = %w[token password secret].freeze
 

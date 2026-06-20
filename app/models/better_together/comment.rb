@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Comment < ApplicationRecord
+  class Comment < PlatformRecord
   end
 end

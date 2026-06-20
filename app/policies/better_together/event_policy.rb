@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for calendars
-  class EventPolicy < ApplicationPolicy
+  class EventPolicy < PlatformRecordPolicy
     def index?
       true
     end
@@ -63,16 +63,16 @@ module BetterTogether
     end
 
     # Filtering and sorting for calendars according to permissions and context
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
-        scope.with_attached_cover_image
-             .includes(:string_translations, :location, :event_hosts, categorizations: {
-                         category: %i[
-                           string_translations cover_image_attachment cover_image_blob
-                         ]
-                       }).order(
-                         starts_at: :desc, created_at: :desc
-                       ).where(permitted_query)
+        platform_scoped.with_attached_cover_image
+                       .includes(:string_translations, :location, :event_hosts, categorizations: {
+                                   category: %i[
+                                     string_translations cover_image_attachment cover_image_blob
+                                   ]
+                                 }).order(
+                                   starts_at: :desc, created_at: :desc
+                                 ).where(permitted_query)
       end
 
       protected
@@ -134,6 +134,12 @@ module BetterTogether
         query
       end
       # rubocop:enable Metrics/MethodLength
+
+      private
+
+      def platform_event_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
     end
 
     def creator_or_platform_steward
@@ -164,15 +170,6 @@ module BetterTogether
 
     def platform_event_manager?
       permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-    end
-
-    # Pundit scope for event record visibility.
-    class Scope < ApplicationPolicy::Scope
-      private
-
-      def platform_event_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-      end
     end
   end
 end
