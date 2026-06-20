@@ -171,8 +171,8 @@
                            collection: @authored_pages,
                            as: :page %>
               </div>
-              <% if @authored_pages.respond_to?(:total_pages) && @authored_pages.total_pages > 1 %>
-                <nav class="d-flex justify-content-center mt-3">
+              <% if @authored_pages.total_pages > 1 %>
+                <nav class="d-flex justify-content-center">
                   <%= paginate @authored_pages, param_name: :authored_pages_page %>
                 </nav>
               <% end %>
@@ -189,8 +189,8 @@
                                collection: @contributed_pages,
                                as: :page %>
                   </div>
-                  <% if @contributed_pages.respond_to?(:total_pages) && @contributed_pages.total_pages > 1 %>
-                    <nav class="d-flex justify-content-center mt-3">
+                  <% if @contributed_pages.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
                       <%= paginate @contributed_pages, param_name: :contributed_pages_page %>
                     </nav>
                   <% end %>
@@ -205,8 +205,8 @@
                                collection: @contributed_posts,
                                as: :post %>
                   </div>
-                  <% if @contributed_posts.respond_to?(:total_pages) && @contributed_posts.total_pages > 1 %>
-                    <nav class="d-flex justify-content-center mt-3">
+                  <% if @contributed_posts.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
                       <%= paginate @contributed_posts, param_name: :contributed_posts_page %>
                     </nav>
                   <% end %>
@@ -307,8 +307,8 @@
                       </li>
                     <% end %>
                   </ul>
-                  <% if @agreement_participants.respond_to?(:total_pages) && @agreement_participants.total_pages > 1 %>
-                    <nav class="d-flex justify-content-center mt-3">
+                  <% if @agreement_participants.total_pages > 1 %>
+                    <nav class="d-flex justify-content-center">
                       <%= paginate @agreement_participants, param_name: :agreements_page %>
                     </nav>
                   <% end %>
