@@ -7,7 +7,7 @@ This guide covers the minimum configuration required to run the current Communit
 - Stripe account with Billing enabled
 - products and recurring prices created in Stripe
 - Community Engine app with the new billing migrations applied
-- a background job backend ready for follow-up work, even though the current webhook sync is inline
+- a background job backend and running workers, because CE-specific Stripe synchronization runs via enqueued Active Job work (not inline)
 
 ## Application Configuration
 

@@ -6,8 +6,9 @@
 #   - synced_to_stripe_at: timestamp of last successful outbound push
 #   - latest_stripe_event_id: Stripe event ID that last mutated the plan via webhook
 #
-# Also adds a unique index on stripe_price_id to prevent ambiguous lookups in
-# StripePriceSync and StripeSubscriptionSync.
+# Also adds a unique index on stripe_product_id to prevent duplicate product
+# associations. The stripe_price_id unique index already exists from the original
+# billing tables migration (idx_bt_billing_plans_stripe_price_id); no change needed.
 class AddStripeSyncFieldsToBillingPlans < ActiveRecord::Migration[7.2]
   TABLE = :better_together_billing_plans
 
