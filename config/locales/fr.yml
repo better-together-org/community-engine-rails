@@ -2771,6 +2771,9 @@ fr:
           title: Notifications
         time_zone:
           title: Fuseau Horaire
+      show:
+        memberships:
+          showing_count: Affichage de %{shown} sur %{total}
       submit:
         save: Enregistrer
       tabs:

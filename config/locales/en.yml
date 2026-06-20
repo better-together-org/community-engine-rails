@@ -2709,6 +2709,9 @@ en:
           title: Notifications
         time_zone:
           title: Time Zone
+      show:
+        memberships:
+          showing_count: Showing %{shown} of %{total}
       submit:
         save: Save
       tabs:

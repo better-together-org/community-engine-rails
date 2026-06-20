@@ -224,7 +224,7 @@
               </div>
               <% if @person.person_platform_memberships.size > 20 %>
                 <p class="text-muted mt-2 small">
-                  Showing 20 of <%= @person.person_platform_memberships.size %>
+                  <%= t('.memberships.showing_count', shown: 20, total: @person.person_platform_memberships.size) %>
                 </p>
               <% end %>
             </div>
@@ -239,7 +239,7 @@
               </div>
               <% if @person.person_community_memberships.size > 20 %>
                 <p class="text-muted mt-2 small">
-                  Showing 20 of <%= @person.person_community_memberships.size %>
+                  <%= t('.memberships.showing_count', shown: 20, total: @person.person_community_memberships.size) %>
                 </p>
               <% end %>
             </div>
@@ -263,7 +263,7 @@
               </div>
               <% if @person.role_resource_permissions.size > 50 %>
                 <p class="text-muted mt-2 small">
-                  Showing 50 of <%= @person.role_resource_permissions.size %>
+                  <%= t('.memberships.showing_count', shown: 50, total: @person.role_resource_permissions.size) %>
                 </p>
               <% end %>
             </div>

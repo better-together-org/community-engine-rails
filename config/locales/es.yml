@@ -2755,6 +2755,9 @@ es:
           title: Notificaciones
         time_zone:
           title: Zona Horaria
+      show:
+        memberships:
+          showing_count: Mostrando %{shown} de %{total}
       submit:
         save: Guardar
       tabs:

@@ -2741,6 +2741,9 @@ uk:
           title: Сповіщення
         time_zone:
           title: Часовий пояс
+      show:
+        memberships:
+          showing_count: Показано %{shown} із %{total}
       submit:
         save: Save
       tabs:
