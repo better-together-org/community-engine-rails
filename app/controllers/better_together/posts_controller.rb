@@ -6,6 +6,8 @@ module BetterTogether
   class PostsController < FriendlyResourceController
     include PostsIndexPreload
 
+    skip_before_action :resource_collection, only: :index
+
     def index
       @available_view_types = %w[card list table calendar map]
       @view_type = view_preference('index_view', default: 'card', allowed: @available_view_types)
@@ -102,14 +104,15 @@ module BetterTogether
     end
 
     def permitted_attributes
-      [
-        :community_id,
+      attrs = [
         :privacy,
         :published_at,
         :contributors_display_visibility,
         *resource_class.localized_attribute_list,
         *resource_class.extra_permitted_attributes
       ]
+      attrs.unshift(:community_id) if action_name == 'create'
+      attrs
     end
 
     def community_context

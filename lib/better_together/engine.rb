@@ -120,9 +120,11 @@ module BetterTogether
       end
 
       app_migration_root = normalize_path.call(app.root.join('db/migrate'))
-      app.config.paths['db/migrate'] = [app_migration_root]
-      ActiveRecord::Tasks::DatabaseTasks.migrations_paths = [app_migration_root]
-      ActiveRecord::Migrator.migrations_paths = [app_migration_root]
+      existing = Array(app.config.paths['db/migrate']).map { |p| normalize_path.call(p) }
+      combined = ([app_migration_root] + existing).uniq
+      app.config.paths['db/migrate'] = combined
+      ActiveRecord::Tasks::DatabaseTasks.migrations_paths = combined.dup
+      ActiveRecord::Migrator.migrations_paths = combined.dup
 
       unless ActiveRecord::MigrationContext.method_defined?(:bt_original_initialize)
         ActiveRecord::MigrationContext.class_eval do

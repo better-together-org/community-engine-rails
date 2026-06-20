@@ -123,9 +123,10 @@ module BetterTogether
         case scope.name
         when 'BetterTogether::Community'
           table[:privacy].eq('community').and(table[:id].in(scoped_community_ids))
-        when 'BetterTogether::Page', 'BetterTogether::Calendar', 'BetterTogether::Platform'
+        when 'BetterTogether::Page', 'BetterTogether::Calendar', 'BetterTogether::Platform',
+             'BetterTogether::Post'
           table[:privacy].eq('community').and(table[:community_id].in(scoped_community_ids))
-        when 'BetterTogether::Post', 'BetterTogether::Event'
+        when 'BetterTogether::Event'
           table[:privacy].eq('community').and(table[:platform_id].in(scoped_platform_ids))
         when 'BetterTogether::CallForInterest'
           scoped_call_for_interest_privacy_query(table)
