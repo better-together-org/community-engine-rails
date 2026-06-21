@@ -174,12 +174,13 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
             view_network
+            access_beta_features
+            access_alpha_features
           ],
           'platform_manager' => %w[
             read_platform
@@ -197,12 +198,13 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
             view_network
+            access_beta_features
+            access_alpha_features
           ],
           'network_admin' => %w[
             read_platform
@@ -240,6 +242,8 @@ module BetterTogether
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_tech_support' => %w[
             read_platform
@@ -255,11 +259,12 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_developer' => %w[
             read_platform
@@ -275,11 +280,12 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_quality_assurance_lead' => %w[
             read_platform
@@ -295,11 +301,12 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
+            access_alpha_features
           ],
           'platform_accessibility_officer' => %w[
             read_platform
@@ -315,11 +322,11 @@ module BetterTogether
             manage_platform_roles
             manage_platform_security
             manage_platform_settings
-            manage_platform_users
             view_metrics_dashboard
             create_metrics_reports
             download_metrics_reports
             view_platform_logs
+            access_beta_features
           ]
           # Add more mappings as needed...
         }
@@ -330,54 +337,17 @@ module BetterTogether
       def assign_person_permissions_to_roles # rubocop:todo Metrics/MethodLength
         # Mapping of platform roles to platform permissions
         person_role_permissions = {
-          'platform_steward' => %w[
-            read_person
-            list_person
-            create_person
-            update_person
-            delete_person
-          ],
-          'platform_manager' => %w[
-            read_person
-            list_person
-            create_person
-            update_person
-            delete_person
-          ],
-          'platform_infrastructure_architect' => %w[
-            read_person
-            list_person
-            create_person
-            update_person
-          ],
-          'platform_tech_support' => %w[
-            read_person
-            list_person
-            create_person
-            update_person
-          ],
-          'platform_developer' => %w[
-            read_person
-            list_person
-            create_person
-            update_person
-          ],
-          'platform_quality_assurance_lead' => %w[
-            read_person
-            list_person
-            create_person
-            update_person
-          ],
-          'platform_accessibility_officer' => %w[
-            read_person
-            list_person
-            create_person
-            update_person
-          ]
-          # Add more mappings as needed...
+          'platform_steward' => [],
+          'platform_manager' => [],
+          'platform_infrastructure_architect' => [],
+          'platform_tech_support' => [],
+          'platform_developer' => [],
+          'platform_quality_assurance_lead' => [],
+          'platform_accessibility_officer' => []
         }
 
         assign_permissions(person_role_permissions)
+        strip_person_permissions_from_default_platform_roles(person_role_permissions.keys)
       end
 
       def assign_permissions(role_permissions)
@@ -385,7 +355,21 @@ module BetterTogether
           role = ::BetterTogether::Role.find_by(identifier: role_identifier)
           next unless role
 
-          role.assign_resource_permissions(permission_identifiers)
+          role.assign_resource_permissions(permission_identifiers, sync: true)
+        end
+      end
+
+      def strip_person_permissions_from_default_platform_roles(role_identifiers)
+        person_permission_ids = ::BetterTogether::ResourcePermission
+                                .where(resource_type: 'BetterTogether::Person')
+                                .pluck(:id)
+        return if person_permission_ids.empty?
+
+        role_identifiers.each do |role_identifier|
+          role = ::BetterTogether::Role.find_by(identifier: role_identifier)
+          next unless role
+
+          role.role_resource_permissions.where(resource_permission_id: person_permission_ids).delete_all
         end
       end
 
@@ -716,6 +700,18 @@ module BetterTogether
           {
             action: 'manage', target: 'federation_auth', resource_type: 'BetterTogether::Platform',
             identifier: 'manage_federation_auth', protected: true, position: 24
+          },
+          {
+            action: 'manage', target: 'platform_safety', resource_type: 'BetterTogether::Platform',
+            identifier: 'manage_platform_safety', protected: true, position: 25
+          },
+          {
+            action: 'view', target: 'beta_features', resource_type: 'BetterTogether::Platform',
+            identifier: 'access_beta_features', protected: true, position: 26
+          },
+          {
+            action: 'view', target: 'alpha_features', resource_type: 'BetterTogether::Platform',
+            identifier: 'access_alpha_features', protected: true, position: 27
           }
         ]
       end

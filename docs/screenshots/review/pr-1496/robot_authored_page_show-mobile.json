@@ -1,0 +1,11 @@
+{
+  "name": "robot_authored_page_show",
+  "device": "mobile",
+  "url": "http://127.0.0.1:38913/en/host/pages/robot-authored-page",
+  "title": "Robot Authored Page | Test Host Community",
+  "captured_at": "2026-04-05T00:14:25Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "robot_authored_page_post_publishing",
+  "source_spec": "./spec/docs_screenshots/better_together/robot_authored_page_post_publishing_spec.rb"
+}

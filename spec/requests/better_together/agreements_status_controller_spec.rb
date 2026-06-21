@@ -56,6 +56,13 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           # Verify we have 3 agreement cards
           expect_element_count('.card.mb-3', 3)
         end
+
+        it 'shows agreement center sections for current obligations and history' do
+          get better_together.agreements_status_path(locale: I18n.locale)
+
+          expect(response.body).to include('Current obligations')
+          expect(response.body).to include('Acceptance history')
+        end
       end
 
       context 'when user has accepted some agreements' do # rubocop:todo RSpec/NestedGroups
@@ -78,6 +85,23 @@ RSpec.describe BetterTogether::AgreementsStatusController do
         end
       end
 
+      context 'when a required agreement was updated and needs re-consent' do # rubocop:todo RSpec/NestedGroups
+        before do
+          privacy_policy.update!(requires_reacceptance: true, change_summary: 'Clarified how consent updates are handled.')
+          create(:better_together_agreement_participant, person: person, agreement: privacy_policy, accepted_at: 2.days.ago)
+          privacy_policy.update!(title: 'Privacy Policy (Updated)')
+        end
+
+        it 'shows the stale agreement as pending again with the update summary' do
+          get better_together.agreements_status_path(locale: I18n.locale)
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include('Needs review again')
+          expect(response.body).to include('Clarified how consent updates are handled.')
+          expect(response.body).to include('Privacy Policy (Updated)')
+        end
+      end
+
       context 'when user has accepted all required agreements' do # rubocop:todo RSpec/NestedGroups
         before do
           [privacy_policy, terms_of_service, code_of_conduct].each do |agreement|
@@ -91,6 +115,13 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           expect(response).to have_http_status(:redirect)
           # Redirects to stored location or default (base path), not person profile
           expect(response.location).to include('/en')
+        end
+
+        it 'ignores an unsafe external return_to param' do
+          get better_together.agreements_status_path(locale: I18n.locale, return_to: 'https://evil.example/phish')
+
+          expect(response).to have_http_status(:redirect)
+          expect(response).not_to redirect_to('https://evil.example/phish')
         end
       end
     end
@@ -122,6 +153,25 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           expect(participant).to be_present
           expect(participant.accepted_at).to be_present
           expect(participant.accepted_at).to be_within(1.second).of(Time.current)
+        end
+
+        it 'records acceptance audit details', :aggregate_failures do
+          post better_together.agreements_status_path(locale: I18n.locale), params: {
+            privacy_policy_agreement: '1',
+            terms_of_service_agreement: '1',
+            code_of_conduct_agreement: '1'
+          }
+
+          participant = BetterTogether::AgreementParticipant.find_by!(person: person, agreement: privacy_policy)
+
+          expect(participant.acceptance_method).to eq('agreement_review')
+          expect(participant.agreement_identifier_snapshot).to eq('privacy_policy')
+          expect(participant.agreement_title_snapshot).to eq('Privacy Policy')
+          expect(participant.agreement_content_digest).to match(/\A\h{64}\z/)
+          expect(participant.audit_context).to include(
+            'locale' => I18n.locale.to_s,
+            'source_path' => better_together.agreements_status_path(locale: I18n.locale)
+          )
         end
       end
 

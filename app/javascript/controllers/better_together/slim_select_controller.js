@@ -57,20 +57,46 @@ export default class extends Controller {
     // Merge with custom options from the element
     const options = { ...defaultOptions, ...optionsData };
 
+    if (options.addable) {
+      const existingEvents = options.events || {};
+      const addableHandler = (value) => {
+        const normalizedValue = (value || '').trim();
+        if (!normalizedValue) return false;
+
+        const hasExistingOption = Array.from(this.element.options).some((option) => option.value === normalizedValue);
+        if (!hasExistingOption) {
+          this.element.add(new Option(normalizedValue, normalizedValue, false, false));
+        }
+
+        return { text: normalizedValue, value: normalizedValue };
+      };
+
+      options.events = {
+        ...existingEvents,
+        addable: existingEvents.addable || addableHandler
+      };
+    }
+
     // Handle AJAX configuration if present
     if (options.ajax) {
-      
+      const isMultiSelectJson = options.multiSelectJson === true;
+
       // Configure SlimSelect with proper AJAX settings
       options.settings.searchFilter = false; // Disable client-side filtering
-      
+
+      // For multiSelectJson mode, prevent closing after selection
+      if (isMultiSelectJson) {
+        options.settings.closeOnSelect = false;
+      }
+
       options.events = {
         search: (search, currentData) => {
           return new Promise((resolve, reject) => {
             const url = new URL(options.ajax.url, window.location.origin);
-            
+
             // Add cache-busting timestamp to prevent stale results
             url.searchParams.append('_', Date.now().toString());
-            
+
             // Add search parameter if search term is provided
             if (search && search.trim().length > 0) {
               url.searchParams.append('search', search.trim());
@@ -98,30 +124,34 @@ export default class extends Controller {
         beforeOpen: () => {
           // Clear any previous validation errors when opening
           this.element.setCustomValidity('');
-          
-          // Reset the select to empty state
-          this.element.value = '';
-          
-          // Force refresh of data every time modal opens to ensure current membership state
-          // Clear existing options except prompt to force fresh data
-          const promptOption = this.element.querySelector('option[value=""]');
-          this.element.innerHTML = '';
-          if (promptOption) {
-            this.element.appendChild(promptOption.cloneNode(true));
-          } else {
-            // Create a prompt option if one doesn't exist
-            const newPromptOption = new Option('Search for people...', '', false, false);
-            this.element.appendChild(newPromptOption);
+
+          // For single-select AJAX (not multiSelectJson), reset and reload fresh data
+          // For multiSelectJson, preserve selected options and only reload to refresh the list
+          if (!isMultiSelectJson) {
+            // Reset the select to empty state
+            this.element.value = '';
+
+            // Force refresh of data every time modal opens to ensure current membership state
+            // Clear existing options except prompt to force fresh data
+            const promptOption = this.element.querySelector('option[value=""]');
+            this.element.innerHTML = '';
+            if (promptOption) {
+              this.element.appendChild(promptOption.cloneNode(true));
+            } else {
+              // Create a prompt option if one doesn't exist
+              const newPromptOption = new Option('Search for people...', '', false, false);
+              this.element.appendChild(newPromptOption);
+            }
+
+            // Reset SlimSelect to show the prompt
+            if (this.slimSelect && typeof this.slimSelect.set === 'function') {
+              this.slimSelect.set('');
+            }
+
+            // Reload fresh results
+            this.loadInitialResults(options.ajax.url);
           }
-          
-          // Reset SlimSelect to show the prompt
-          if (this.slimSelect && typeof this.slimSelect.set === 'function') {
-            this.slimSelect.set('');
-          }
-          
-          // Reload fresh results
-          this.loadInitialResults(options.ajax.url);
-          
+
           // Prevent modal focus trap from interfering
           if (this.isInsideModal()) {
             this.preventModalFocusTrap();
@@ -134,24 +164,45 @@ export default class extends Controller {
           }
         },
         afterChange: (newVal) => {
-          // Ensure the original select element is properly updated
-          if (newVal && newVal.length > 0) {
-            this.element.value = newVal[0].value;
-            // Clear any validation errors since we have a selection
-            this.element.setCustomValidity('');
-            // Trigger change event for form validation
-            this.element.dispatchEvent(new Event('change', { bubbles: true }));
-          } else {
-            this.element.value = '';
-            // Set custom validation message if this field was originally required
-            if (this.wasRequired) {
-              this.element.setCustomValidity('Please select a person.');
+          if (isMultiSelectJson) {
+            // For multiSelectJson mode: serialize all selected values as JSON to hidden field
+            const jsonFieldId = this.element.dataset.slimSelectJsonFieldId;
+            const jsonField = jsonFieldId ? document.getElementById(jsonFieldId) : null;
+
+            if (jsonField) {
+              const selectedValues = (newVal || []).map(opt => opt.value);
+              jsonField.value = JSON.stringify(selectedValues);
+              jsonField.dispatchEvent(new Event('change', { bubbles: true }));
             }
-            this.element.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // Clear validation errors if anything is selected
+            if (newVal && newVal.length > 0) {
+              this.element.setCustomValidity('');
+            }
+          } else {
+            // For single-select: update element value (existing behavior)
+            // Ensure the original select element is properly updated
+            if (newVal && newVal.length > 0) {
+              this.element.value = newVal[0].value;
+              // Clear any validation errors since we have a selection
+              this.element.setCustomValidity('');
+              // Trigger change event for form validation
+              this.element.dispatchEvent(new Event('change', { bubbles: true }));
+            } else {
+              this.element.value = '';
+              // Set custom validation message if this field was originally required
+              if (this.wasRequired) {
+                this.element.setCustomValidity('Please select a person.');
+              }
+              this.element.dispatchEvent(new Event('change', { bubbles: true }));
+            }
           }
         }
       };
     }
+
+    // Store multiSelectJson flag for later use in event handlers
+    this.isMultiSelectJson = optionsData.multiSelectJson === true;
 
     this.slimSelect = new SlimSelect({
       select: this.element,
@@ -162,9 +213,26 @@ export default class extends Controller {
     // (useful when Turbo or server-side rendering supplies selected attributes)
     try {
       if (this.slimSelect && typeof this.slimSelect.set === 'function') {
-        // Pass current selected values from the underlying select
-        const selected = Array.from(this.element.selectedOptions).map(o => o.value);
-        this.slimSelect.set(selected);
+        if (this.isMultiSelectJson) {
+          // For multiSelectJson: parse the hidden field to get pre-selected IDs
+          const jsonFieldId = this.element.dataset.slimSelectJsonFieldId;
+          const jsonField = jsonFieldId ? document.getElementById(jsonFieldId) : null;
+
+          if (jsonField && jsonField.value) {
+            try {
+              const selectedIds = JSON.parse(jsonField.value);
+              if (Array.isArray(selectedIds)) {
+                this.slimSelect.set(selectedIds);
+              }
+            } catch (e) {
+              console.warn('Unable to parse JSON field for pre-selection:', e);
+            }
+          }
+        } else {
+          // Pass current selected values from the underlying select
+          const selected = Array.from(this.element.selectedOptions).map(o => o.value);
+          this.slimSelect.set(selected);
+        }
       }
     } catch (e) {
       // Fail silently - SlimSelect might not support set() in some versions

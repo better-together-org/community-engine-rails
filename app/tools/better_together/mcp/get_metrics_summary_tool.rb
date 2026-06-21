@@ -22,7 +22,7 @@ module BetterTogether
       # @param to_date [String, nil] Optional end date filter
       # @return [String] JSON metrics summary
       def call(from_date: nil, to_date: nil)
-        return auth_required_response unless current_user&.person&.permitted_to?('manage_platform')
+        return auth_required_response unless current_user&.person&.permitted_to?('manage_platform', metrics_platform)
 
         with_timezone_scope do
           scope = build_scope(from_date, to_date)
@@ -40,7 +40,7 @@ module BetterTogether
       end
 
       def build_scope(from_date, to_date)
-        scope = BetterTogether::Metrics::PageView.all
+        scope = BetterTogether::Metrics::PageView.for_platform(metrics_platform)
         if from_date.present? && safe_parse_date(from_date)
           scope = scope.where('viewed_at >= ?',
                               safe_parse_date(from_date))
@@ -65,6 +65,10 @@ module BetterTogether
           total_page_views: scope.count,
           unique_pages: scope.distinct.count(:page_url),
           views_by_locale: scope.group(:locale).count,
+          views_by_logged_in_state: {
+            logged_in: scope.where(logged_in: true).count,
+            anonymous: scope.where(logged_in: false).count
+          },
           top_pages: top_pages(scope),
           period_start: scope.minimum(:viewed_at)&.iso8601,
           period_end: scope.maximum(:viewed_at)&.iso8601
@@ -76,6 +80,10 @@ module BetterTogether
              .order(Arel.sql('count(*) DESC'))
              .limit(20)
              .count
+      end
+
+      def metrics_platform
+        Current.platform || BetterTogether::Platform.find_by(host: true)
       end
     end
   end

@@ -1,0 +1,19 @@
+<div class="row justify-content-center mt-4">
+  <div class="col-md-8 col-lg-7">
+    <section class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h3 class="h4 mb-3">
+          <%= t('devise.registrations.new.membership_request_heading') %>
+        </h3>
+        <p class="text-muted mb-4">
+          <%= sanitize t('devise.registrations.new.membership_request_help_html',
+                community: community.name) %>
+        </p>
+
+        <%= render 'better_together/membership_requests/form',
+                   membership_request: membership_request,
+                   community: community %>
+      </div>
+    </section>
+  </div>
+</div>

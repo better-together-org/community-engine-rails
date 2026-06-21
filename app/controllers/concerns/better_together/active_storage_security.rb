@@ -20,6 +20,7 @@ module BetterTogether
 
     included do
       before_action :authorize_blob_access
+      after_action :apply_media_cache_headers
     end
 
     private
@@ -51,6 +52,21 @@ module BetterTogether
 
     def publicly_accessible?(record)
       record.respond_to?(:privacy_public?) && record.privacy_public?
+    end
+
+    def apply_media_cache_headers
+      return unless @blob.present?
+
+      policy = media_cache_policy_for_blob
+      response.set_header('X-BTS-Cache-Scope', policy.cache_scope)
+
+      return if policy.public?
+
+      response.headers['Cache-Control'] = BetterTogether::MediaCachePolicy::PRIVATE_CACHE_CONTROL
+    end
+
+    def media_cache_policy_for_blob
+      BetterTogether::MediaCachePolicy.for_blob(@blob)
     end
 
     # Runs the record's Pundit policy #download? check if it exists.

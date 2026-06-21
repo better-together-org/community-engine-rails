@@ -71,5 +71,17 @@ RSpec.describe 'Profile Image Performance', type: :request do
 
       Rails.logger.info "profile_image_url method executed in #{execution_time} seconds"
     end
+
+    it 'returns a same-origin proxy path when an image is attached' do
+      person.profile_image.attach(
+        io: StringIO.new('fake image data'),
+        filename: 'avatar.jpg',
+        content_type: 'image/jpeg'
+      )
+
+      result = person.profile_image_url(size: 150)
+
+      expect(result).to start_with('/rails/active_storage/representations/proxy/')
+    end
   end
 end

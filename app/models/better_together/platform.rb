@@ -8,6 +8,7 @@ module BetterTogether
     include PlatformHost
     include PlatformRegistryDefaults
     include PlatformFederationStatus
+    include PlatformCspConfiguration
     include PlatformCssBlockManagement
     include PlatformMembershipDisplay
     include Creatable
@@ -19,12 +20,14 @@ module BetterTogether
     include Privacy
     include Protected
     include TimezoneAttributeAliasing
+    include RemoveableAttachment
     include ::Storext.model
 
     NETWORK_VISIBILITIES = %w[private peer member public].freeze
     CONNECTION_BOOTSTRAP_STATES = %w[pending_host_request pending_review connected opted_out disabled].freeze
     FEDERATION_PROTOCOLS = %w[ce_oauth oauth2 openid_connect custom].freeze
     SOFTWARE_VARIANTS = %w[community_engine generic].freeze
+    SEARCH_QUERY_ANALYTICS_MODES = %w[full hashed].freeze
 
     has_community
 
@@ -44,12 +47,16 @@ module BetterTogether
     slugged :name
 
     store_attributes :settings do
-      requires_invitation Boolean, default: false
+      requires_invitation Boolean, default: true
+      allow_membership_requests Boolean, default: false
+      contributors_display_visibility String, default: 'on'
       software_variant String
       network_visibility String, default: 'private'
       connection_bootstrap_state String
       federation_protocol String
       oauth_issuer_url String
+      search_query_analytics_enabled Boolean, default: true
+      search_query_analytics_mode String, default: 'full'
     end
 
     # Alias the database url column to host_url for clarity
@@ -69,12 +76,31 @@ module BetterTogether
     validates :network_visibility, inclusion: { in: NETWORK_VISIBILITIES }
     validates :connection_bootstrap_state, inclusion: { in: CONNECTION_BOOTSTRAP_STATES }
     validates :federation_protocol, inclusion: { in: FEDERATION_PROTOCOLS }, allow_blank: true
-    validates :oauth_issuer_url,
-              format: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
-              allow_blank: true
+    validates :search_query_analytics_mode, inclusion: { in: SEARCH_QUERY_ANALYTICS_MODES }
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES }
+    validates :oauth_issuer_url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
     validate :oauth_issuer_url_ssrf_safe
+    validate :require_publishing_agreement_for_public_network_visibility
 
+    after_initialize :set_default_requires_invitation, if: :new_record?
     before_validation :apply_platform_registry_defaults
+
+    # Class method for permitted attributes - used by controllers for strong parameters
+    # @return [Array] List of permitted attributes and nested hashes
+    def self.permitted_attributes
+      [
+        :name, :slug, :host_url, :time_zone, :external, :protected,
+        :storage_configuration_id,
+        :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text,
+        :csp_script_src_text, :csp_connect_src_text,
+        { settings: %i[requires_invitation allow_membership_requests
+                       software_variant network_visibility connection_bootstrap_state
+                       federation_protocol oauth_issuer_url search_query_analytics_enabled
+                       search_query_analytics_mode contributors_display_visibility
+                       feature_gate_rollouts] }
+      ] + super
+    end
 
     scope :external, -> { where(external: true) }
     scope :internal, -> { where(external: false) }
@@ -105,17 +131,17 @@ module BetterTogether
              class_name: 'BetterTogether::StorageConfiguration',
              dependent: :destroy
 
+    has_many :robots,
+             class_name: 'BetterTogether::Robot',
+             dependent: :destroy
+    has_many :feature_access_grants,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :destroy
+
     belongs_to :active_storage_configuration,
                class_name: 'BetterTogether::StorageConfiguration',
                foreign_key: :storage_configuration_id,
                optional: true
-
-    # Virtual attributes to track removal
-    attr_accessor :remove_profile_image, :remove_cover_image
-
-    # Callbacks to remove images if necessary
-    before_save :purge_profile_image, if: -> { remove_profile_image == '1' }
-    before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
 
     def cache_key
       "#{super}/#{css_block&.updated_at&.to_i}"
@@ -124,23 +150,58 @@ module BetterTogether
     def primary_platform_domain
       return unless self.class.connection.data_source_exists?('better_together_platform_domains')
 
-      platform_domains.primary.active.first
+      platform_domains.where(primary_flag: true).active.first
+    end
+
+    def share_platform_domain
+      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+
+      platform_domains.share_domain_active.first
+    end
+
+    def share_base_url
+      share_platform_domain&.url || resolved_host_url
     end
 
     def resolved_host_url
       primary_platform_domain&.url || host_url
     end
 
-    # Return the routing URL for this platform (used by metrics tracking)
-    # Returns nil for new records that haven't been persisted yet
-    def url
+    # Route URL for the platform resource within the current host app.
+    # Keep the persisted `url` column available for the platform host URL.
+    def route_url(locale: I18n.locale)
       return nil unless persisted?
 
-      BetterTogether::Engine.routes.url_helpers.platform_url(self, locale: I18n.locale)
+      BetterTogether::Engine.routes.url_helpers.platform_url(self, locale:)
     end
 
     def primary_community_extra_attrs
       { host:, protected: }
+    end
+
+    def membership_requests_enabled_for?(community = primary_community)
+      allow_membership_requests? && (community&.membership_requests_enabled?(platform: self) || false)
+    end
+
+    def feature_gate_rollouts
+      raw_rollouts = settings.fetch('feature_gate_rollouts', {})
+      raw_rollouts.is_a?(Hash) ? raw_rollouts.stringify_keys : {}
+    end
+
+    def feature_gate_rollouts=(value)
+      normalized = value.respond_to?(:to_h) ? value.to_h : value
+      sanitized = sanitize_feature_gate_rollouts(normalized)
+      self.settings = settings.merge('feature_gate_rollouts' => sanitized)
+    end
+
+    def feature_rollout_for(feature_key)
+      registry_entry = BetterTogether::FeatureRegistry.find(feature_key)
+      return 'off' unless registry_entry
+
+      feature_gate_rollouts.fetch(
+        feature_key.to_s,
+        registry_entry.fetch(:default_rollout)
+      )
     end
 
     def to_s
@@ -148,6 +209,10 @@ module BetterTogether
     end
 
     private
+
+    def set_default_requires_invitation
+      self.requires_invitation = true if requires_invitation.nil?
+    end
 
     def host_url_ssrf_safe
       BetterTogether::SafeFederationUrlValidator
@@ -161,6 +226,31 @@ module BetterTogether
       BetterTogether::SafeFederationUrlValidator
         .new(attributes: [:oauth_issuer_url])
         .validate_each(self, :oauth_issuer_url, oauth_issuer_url)
+    end
+
+    def require_publishing_agreement_for_public_network_visibility
+      return unless network_visibility == 'public'
+      return unless new_record? || will_save_change_to_network_visibility?
+
+      BetterTogether::PublicVisibilityGate.allow!(
+        record: self,
+        actor: Current.governed_agent,
+        target_network_visibility: network_visibility
+      )
+    end
+
+    def sanitize_feature_gate_rollouts(value)
+      return {} unless value.is_a?(Hash)
+
+      allowed_keys = BetterTogether::FeatureRegistry.keys
+      allowed_rollouts = BetterTogether::FeatureRegistry::VALID_ROLLOUTS
+
+      value.each_with_object({}) do |(key, rollout), sanitized|
+        next unless allowed_keys.include?(key.to_s)
+        next unless allowed_rollouts.include?(rollout.to_s)
+
+        sanitized[key.to_s] = rollout.to_s
+      end
     end
   end
 end

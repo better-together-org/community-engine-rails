@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'digest'
+
 # rubocop:disable Metrics/ModuleLength, Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 # Automatic Test Configuration
 #
@@ -21,6 +23,8 @@
 module AutomaticTestConfiguration # :nodoc:
   extend ActiveSupport::Concern
   include FactoryBot::Syntax::Methods
+
+  DEFAULT_TEST_USER_PASSWORD = 'SecureTest123!@#'
 
   # Keywords that trigger automatic platform steward authentication
   MANAGER_KEYWORDS = [
@@ -122,9 +126,12 @@ module AutomaticTestConfiguration # :nodoc:
     end
 
     # Ensure it's public and open for registration by default
-    unless host_platform.privacy == 'public' && host_platform.requires_invitation == false
-      host_platform.update!(privacy: 'public', requires_invitation: false)
+    unless host_platform.privacy == 'public' &&
+           host_platform.requires_invitation == false &&
+           host_platform.allow_membership_requests == false
+      host_platform.update!(privacy: 'public', requires_invitation: false, allow_membership_requests: false)
     end
+    host_platform.primary_community&.update!(allow_membership_requests: false) if host_platform.primary_community&.allow_membership_requests?
 
     wizard = BetterTogether::Wizard.find_by(identifier: 'host_setup')
     unless wizard
@@ -151,23 +158,53 @@ module AutomaticTestConfiguration # :nodoc:
     end
     wizard&.mark_completed if wizard&.persisted?
 
-    platform_steward = BetterTogether::User.find_by(email: 'manager@example.test')
+    platform_steward = BetterTogether::User.find_or_initialize_by(email: 'manager@example.test')
+    platform_steward.password = 'SecureTest123!@#' if platform_steward.new_record?
+    platform_steward.confirmed_at ||= Time.zone.now
+    platform_steward.confirmation_sent_at ||= Time.zone.now
+    unless platform_steward.person
+      existing_person = BetterTogether::Person.find_by(identifier: 'manager-example-test')
+      if existing_person
+        platform_steward.person = existing_person
+      else
+        platform_steward.build_person(name: 'Platform Steward', identifier: 'manager-example-test')
+      end
+    end
 
-    unless platform_steward
+    begin
+      if platform_steward.new_record? || platform_steward.changed? || platform_steward.person&.changed?
+        platform_steward.save!
+      end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+      duplicate_email = e.message.include?('Email has already been taken') || e.message.include?('duplicate key')
+      raise e unless duplicate_email
+
+      platform_steward = BetterTogether::User.find_by!(email: 'manager@example.test')
+    end
+
+    platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+    unless platform_steward_role
+      BetterTogether::AccessControlBuilder.seed_data
+      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                              BetterTogether::Role.find_by(identifier: 'platform_manager')
+    end
+
+    if platform_steward_role && platform_steward.person
+      existing_membership = host_platform.person_platform_memberships.find_by(
+        member_id: platform_steward.person.id,
+        role_id: platform_steward_role.id
+      )
+      return host_platform if existing_membership
+
       begin
-        create(
-          :better_together_user, :confirmed, :platform_steward,
-          email: 'manager@example.test',
-          password: 'SecureTest123!@#'
+        platform_steward.person.reload
+        host_platform.person_platform_memberships.create!(
+          member_id: platform_steward.person.id,
+          role_id: platform_steward_role.id,
+          status: 'active'
         )
-      rescue ActiveRecord::RecordInvalid => e
-        # Race condition - another thread created it, that's fine
-        if e.message.include?('Email has already been taken')
-          Rails.logger.debug(
-            "Platform manager already created in parallel thread: #{e.message}"
-          )
-        end
-        raise e unless e.message.include?('Email has already been taken')
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, ActiveRecord::StaleObjectError
+        nil
       end
     end
 
@@ -324,13 +361,55 @@ module AutomaticTestConfiguration # :nodoc:
     respond_to?(:visit) && respond_to?(:page)
   end
 
-  def find_or_create_test_user(email, password, role_type = :user)
-    user = BetterTogether::User.find_by(email: email)
-    user ||= if %i[platform_manager platform_steward].include?(role_type)
-               FactoryBot.create(:better_together_user, :confirmed, :platform_steward, email: email, password: password)
-             else
-               FactoryBot.create(:better_together_user, :confirmed, email: email, password: password)
-             end
+  def find_or_create_test_user(email, _password = DEFAULT_TEST_USER_PASSWORD, role_type = :user)
+    user = BetterTogether::User.find_or_initialize_by(email: email)
+    user.password = DEFAULT_TEST_USER_PASSWORD if user.new_record?
+    user.confirmed_at ||= Time.zone.now
+    user.confirmation_sent_at ||= Time.zone.now
+
+    unless user.person
+      base_identifier = email.split('@').first.parameterize.presence || SecureRandom.hex(6)
+      default_name = role_type == :user ? 'Test User' : 'Platform Steward'
+      identifier = base_identifier
+
+      if BetterTogether::Person.where(identifier: identifier).exists?
+        digest_identifier = "#{base_identifier}-#{Digest::SHA256.hexdigest(email)[0, 8]}"
+        identifier = digest_identifier
+        suffix = 0
+
+        while BetterTogether::Person.where(identifier: identifier).exists?
+          suffix += 1
+          identifier = "#{digest_identifier}-#{suffix}"
+        end
+      end
+
+      user.build_person(name: default_name, identifier: identifier)
+    end
+
+    begin
+      user.save! if user.new_record? || user.changed? || user.person&.changed?
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
+      duplicate_email = e.message.include?('Email has already been taken') || e.message.include?('duplicate key')
+      raise e unless duplicate_email
+
+      user = BetterTogether::User.find_by!(email: email)
+    end
+
+    if %i[platform_manager platform_steward].include?(role_type) && user.person
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                              BetterTogether::Role.find_by(identifier: 'platform_manager')
+
+      if host_platform && platform_steward_role
+        membership = host_platform.person_platform_memberships.find_or_initialize_by(
+          member: user.person,
+          role: platform_steward_role
+        )
+        membership.status = 'active'
+        membership.save! if membership.new_record? || membership.changed?
+      end
+    end
+
     user
   end
 

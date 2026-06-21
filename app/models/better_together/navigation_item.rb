@@ -2,7 +2,7 @@
 
 module BetterTogether
   # An element in a navigation tree. Links to an internal or external page
-  class NavigationItem < ApplicationRecord # rubocop:todo Metrics/ClassLength
+  class NavigationItem < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Identifier
     include Positioned
     include Protected
@@ -28,6 +28,9 @@ module BetterTogether
       geography_regions: 'geography_regions_url',
       geography_settlements: 'geography_settlements_url',
       host_dashboard: 'host_dashboard_url',
+      host_dashboard_membership_review: 'host_dashboard_membership_review_url',
+      host_dashboard_platform_connection_review: 'host_dashboard_platform_connection_review_url',
+      host_dashboard_safety_review: 'host_dashboard_safety_review_url',
       hub: 'hub_url',
       joatu_hub: 'joatu_hub_url',
       joatu_offers: 'joatu_offers_url',
@@ -39,8 +42,11 @@ module BetterTogether
       people: 'people_url',
       posts: 'posts_url',
       platforms: 'platforms_url',
+      platform_connections: 'platform_connections_url',
+      reports: 'reports_url',
       resource_permissions: 'resource_permissions_url',
       roles: 'roles_url',
+      safety_cases: 'safety_cases_url',
       users: 'users_url',
       webhook_endpoints: 'webhook_endpoints_url'
     }
@@ -79,7 +85,7 @@ module BetterTogether
 
     validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
-              format: { with: %r{\A(http|https)://.+\z|\A#|^/*[\w/-]+}, allow_blank: true,
+              format: { with: %r{\A((http|https)://.+|#.*|/+[\w/-]*)\z}, allow_blank: true,
                         message: 'must be a valid URL, "start with #", or be an absolute path' }
     validates :visible, inclusion: { in: [true, false] }
     validates :item_type, inclusion: { in: %w[link dropdown separator], allow_blank: true }
@@ -271,13 +277,15 @@ module BetterTogether
       super + attrs
     end
 
-    def url
+    def url(path_only: false)
       fallback_url = "##{identifier}"
 
       if linkable.present?
         linkable.url
       elsif route_name.present? # If the route_name is present, use the dynamic route
-        retrieve_route(route_name)
+        route = route_name
+        route = route_name.sub('url', 'path') if path_only
+        retrieve_route(route)
       else
         read_attribute(:url) or fallback_url
       end
@@ -310,11 +318,10 @@ module BetterTogether
     end
 
     def retrieve_route(route)
-      # Use `send` to dispatch the correct URL helper
-      Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
+      BetterTogether::Engine.routes.url_helpers.public_send(route, locale: I18n.locale)
     rescue NoMethodError
       begin
-        BetterTogether::Engine.routes.url_helpers.public_send(route, locale: I18n.locale)
+        Rails.application.routes.url_helpers.public_send(route, locale: I18n.locale)
       rescue NoMethodError
         Rails.logger.error("Invalid route name: #{route}")
         nil

@@ -1,0 +1,47 @@
+classDiagram
+    class ContentBlock {
+      +identifier
+      +block_name
+    }
+
+    class ChecklistBlock {
+      +display_style
+      +item_limit
+      +community_scope_id
+      +resource_ids
+      +checklist_id
+    }
+
+    class HeroBlock {
+      +heading
+      +content
+      +heading_color
+      +paragraph_color
+      +cta_text
+      +cta_url
+    }
+
+    class ResourceBlockFieldsPartial {
+      +display_style
+      +item_limit
+      +community_scope_id
+      +resource_ids
+      +show_view_more_link
+      +view_more_url
+    }
+
+    class ChecklistFieldsPartial {
+      +checklist selector
+    }
+
+    class HeroFieldsPartial {
+      +heading color control
+      +paragraph color control
+    }
+
+    ContentBlock <|-- ChecklistBlock
+    ContentBlock <|-- HeroBlock
+    ChecklistBlock --> ResourceBlockFieldsPartial : renders
+    ChecklistBlock --> ChecklistFieldsPartial : renders
+    HeroBlock --> HeroFieldsPartial : renders
+

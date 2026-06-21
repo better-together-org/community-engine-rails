@@ -64,11 +64,14 @@ export default class extends Controller {
     // keys do not live in the JS heap after the user navigates away or signs out.
     this.#boundClearCache = () => clearV1SessionCache()
     window.addEventListener('beforeunload', this.#boundClearCache)
+    this.#setSessionState('initializing')
 
     try {
-      await this.ensureKeysReady()
+      const ready = await this.ensureKeysReady()
+      this.#setSessionState(ready ? 'ready' : 'blocked')
     } catch (err) {
       console.error('[E2E] Key setup error:', err)
+      this.#setSessionState('error')
     }
   }
 
@@ -101,16 +104,16 @@ export default class extends Controller {
             resolve: () => {}
           }
         }))
-        return  // halt — do not proceed to fresh identity generation
+        return false  // halt — do not proceed to fresh identity generation
       }
 
       if (backup) {
-        await this.#restoreFromBackup(backup)
+        return this.#restoreFromBackup(backup)
       } else {
         // Truly new identity — generate, register, and create initial backup.
         await this.#generateAndRegister()
+        return true
       }
-      return
     }
 
     // Keys exist locally. Ensure the server also has them.
@@ -124,6 +127,8 @@ export default class extends Controller {
         console.info('[E2E] Re-registered existing keys with server.')
       }
     }
+
+    return true
   }
 
   // ── New identity flow ────────────────────────────────────────────────────────
@@ -151,7 +156,7 @@ export default class extends Controller {
     if (!passphrase) {
       console.warn('[E2E] Restore skipped — generating fresh identity instead.')
       await this.#generateAndRegister()
-      return
+      return true
     }
 
     try {
@@ -165,13 +170,26 @@ export default class extends Controller {
         await registerPrekeys(this.personIdValue, restoredBundle, { baseUrl: this.baseUrlValue, authToken: this.#authToken() })
         console.info('[E2E] Re-registered restored keys with server.')
       }
+      return true
     } catch (err) {
       console.error('[E2E] Backup restore failed (wrong passphrase or corrupt backup):', err)
       const retry = await this.#confirmFreshIdentity()
       if (retry) {
         await this.#generateAndRegister()
+        return true
       }
+      return false
     }
+  }
+
+  #setSessionState(state) {
+    this.element.dataset.e2eSessionState = state
+    document.dispatchEvent(new CustomEvent('e2e:session-state', {
+      detail: {
+        personId: String(this.personIdValue),
+        state
+      }
+    }))
   }
 
   // ── Backup upload ────────────────────────────────────────────────────────────

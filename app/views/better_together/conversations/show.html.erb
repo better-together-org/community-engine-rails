@@ -4,6 +4,8 @@
   <%= "#{@conversation} | " if @conversation.to_s.present? %><%= @conversation.class.model_name.human.pluralize %>
 <% end %>
 
+<% set_meta_description('conversations.show', conversation_subject: @conversation.to_s, platform_name: host_platform.name) %>
+
 <%= render 'communicator' do %>
   <%= render partial: 'better_together/conversations/conversation_content', locals: { conversation: @conversation, messages: @messages, message: @message } %>
 <% end %>

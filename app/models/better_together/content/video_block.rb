@@ -4,6 +4,8 @@ module BetterTogether
   module Content
     # Renders an embedded video from YouTube, Vimeo, or a raw iframe URL.
     class VideoBlock < Block
+      include Translatable
+
       ASPECT_RATIOS = %w[16x9 4x3 1x1].freeze
 
       YOUTUBE_PATTERN = %r{
@@ -14,9 +16,10 @@ module BetterTogether
 
       VIMEO_PATTERN = %r{vimeo\.com/(?:video/)?(\d+)}
 
+      translates :caption, type: :string
+
       store_attributes :content_data do
         video_url    String, default: ''
-        caption      String, default: ''
         aspect_ratio String, default: '16x9'
       end
 
@@ -45,13 +48,44 @@ module BetterTogether
         end
       end
 
-      def self.content_addable?
-        true
+      def embed_title
+        caption.presence || I18n.t('better_together.content.blocks.video_block.title')
+      end
+
+      def self.content_addable?(actor: nil)
+        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
+      rescue KeyError
+        false
       end
 
       def self.extra_permitted_attributes
         super + %i[video_url caption aspect_ratio]
       end
+
+      def evidence_selector_options
+        super + [
+          {
+            value: "#{evidence_selector}:video",
+            label: "Video embed: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:caption",
+            label: "Video caption: #{self}"
+          },
+          {
+            value: "#{evidence_selector}:timestamp:*",
+            label: 'Video timestamp selector'
+          }
+        ]
+      end
     end
   end
 end
+
+# Register known video provider origins so the CSP-aware iframe embed renders them instead of showing a blocked notice.
+BetterTogether.register_content_security_policy_sources(
+  :frame_src,
+  'https://www.youtube.com',
+  'https://player.vimeo.com',
+  'https://www.youtube-nocookie.com'
+)

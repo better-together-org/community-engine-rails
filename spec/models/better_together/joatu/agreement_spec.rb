@@ -9,6 +9,38 @@ RSpec.describe BetterTogether::Joatu::Agreement do
   let(:request)   { create(:better_together_joatu_request, creator: creator_b) }
 
   describe 'status transitions' do
+    it 'exposes explicit participant and agreement metadata helpers' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+
+      expect(agreement.agreement_family).to eq('transactional_agreement')
+      expect(agreement.agreement_type).to eq('transactional_agreement')
+      expect(agreement.participant_people).to contain_exactly(creator_a, creator_b)
+      expect(agreement.participant_ids).to contain_exactly(creator_a.id, creator_b.id)
+      expect(agreement.participant_names).to contain_exactly(creator_a.name, creator_b.name)
+      expect(agreement.participant_for?(creator_a)).to be(true)
+      expect(agreement.participant_for?(create(:better_together_person))).to be(false)
+      expect(agreement.decision_made_at).to be_nil
+    end
+
+    it 'records both creators as exchange participants' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+
+      expect(agreement.contributions.pluck(:role).uniq).to eq(['exchange_participant'])
+      expect(agreement.contributions.pluck(:contribution_type).uniq).to eq(['community_exchange'])
+      expect(agreement.contributors_for(:exchange_participant)).to contain_exactly(creator_a, creator_b)
+    end
+
+    it 'supports citations and claims on the agreement record' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+      citation = create(:better_together_citation, citeable: agreement, reference_key: 'agreement_source')
+      claim = create(:better_together_claim, claimable: agreement, claim_key: 'agreement_claim')
+      create(:better_together_evidence_link, claim:, citation:)
+
+      expect(agreement.citations).to contain_exactly(citation)
+      expect(agreement.claims).to contain_exactly(claim)
+      expect(claim.citations).to contain_exactly(citation)
+    end
+
     it 'starts pending' do
       agreement = described_class.new(offer:, request:)
       expect(agreement).to be_valid
@@ -80,6 +112,8 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       connection = BetterTogether::PlatformConnection.find_by(source_platform:, target_platform:)
       expect(connection).to be_present
       expect(connection).to be_active
+      expect(agreement.agreement_type).to eq('network_connection_agreement')
+      expect(agreement.decision_made_at).to be_present
     end
 
     it 'creates a person link when accepting a person link request agreement' do
@@ -119,5 +153,34 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect(grant.allow_profile_read).to be(true)
       expect(grant.allow_private_posts).to be(false)
     end
+
+    it 'cancels an accepted C3-priced agreement, releases the lock, and reopens both sides' do
+      priced_offer = create(:better_together_joatu_offer, creator: creator_a, c3_price_millitokens: 20_000)
+      agreement = create(:better_together_joatu_agreement, offer: priced_offer, request:)
+      payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: creator_b)
+      payer_balance.credit!(5.0)
+
+      agreement.accept!
+
+      settlement = agreement.reload.settlement
+      lock = BetterTogether::C3::BalanceLock.find_by!(lock_ref: settlement.lock_ref)
+
+      agreement.cancel!
+
+      expect(agreement.reload.status).to eq('cancelled')
+      expect(settlement.reload.status).to eq('cancelled')
+      expect(lock.reload.status).to eq('released')
+      expect(priced_offer.reload.status).to eq('open')
+      expect(request.reload.status).to eq('open')
+      expect(agreement.decision_made_at).to be_present
+    end
+
+    it 'prevents cancelling an agreement before it is accepted' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+
+      expect { agreement.cancel! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
+
+  it_behaves_like 'platform scoped', factory: :'better_together/joatu/agreement'
 end

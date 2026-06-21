@@ -7,6 +7,145 @@
 
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+        <div>
+          <h2 class="h5 mb-1"><%= t('better_together.safety_cases.index.local_snapshot_title', default: 'Local review snapshot') %></h2>
+          <p class="text-muted mb-0">
+            <%= t(
+                  'better_together.safety_cases.index.local_snapshot_description',
+                  default: 'Deterministic local signals built from reports, cases, and notes. Remote analysis is optional and additive.'
+                ) %>
+          </p>
+        </div>
+        <small class="text-muted">
+          <%= t(
+                'better_together.safety_cases.index.local_snapshot_generated_at',
+                default: 'Generated %{time}',
+                time: l(@local_review_snapshot[:generated_at], format: :long)
+              ) %>
+        </small>
+      </div>
+
+      <div class="row g-3 row-cols-2 row-cols-lg-3">
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.open_cases', default: 'Open cases') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.urgent_open', default: 'Urgent open') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:urgent_open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.unassigned_open', default: 'Unassigned open') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:unassigned_open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.retaliation_risk', default: 'Retaliation risk') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:retaliation_risk_open_cases_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.repeat_reportables', default: 'Repeat reportables') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:repeated_reportables_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.content_review_items', default: 'Held content items') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:content_review_items_count] %></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="border rounded p-3 h-100">
+            <div class="text-muted small text-uppercase"><%= t('better_together.safety_cases.index.snapshot.participant_notes', default: 'Participant-visible notes') %></div>
+            <div class="fs-4 fw-semibold"><%= @local_review_snapshot[:participant_visible_notes_count] %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+        <div>
+          <h2 class="h5 mb-1"><%= t('better_together.safety_cases.index.content_review_title', default: 'Content security review items') %></h2>
+          <p class="text-muted mb-0">
+            <%= t(
+                  'better_together.safety_cases.index.content_review_description',
+                  default: 'Uploads and embedded attachments that are still held for safety or security review appear here before release.'
+                ) %>
+          </p>
+        </div>
+        <span class="badge text-bg-warning">
+          <%= t(
+                'better_together.safety_cases.index.content_review_count',
+                default: '%{count} awaiting review',
+                count: @local_review_snapshot[:content_review_items_count]
+              ) %>
+        </span>
+      </div>
+
+      <% if @content_security_review_items.any? %>
+        <div class="list-group list-group-flush border rounded">
+          <% @content_security_review_items.each do |review_item| %>
+            <div class="list-group-item">
+              <div class="d-flex justify-content-between align-items-start gap-3">
+                <div>
+                  <div class="fw-semibold">
+                    <%= review_item.active_storage_blob&.filename&.to_s.presence || review_item.attachment_name %>
+                  </div>
+                  <div class="small text-muted">
+                    <%= review_item.subject_type.to_s.demodulize.humanize %>
+                    #<%= review_item.subject_id %>
+                    &middot;
+                    <%= t(
+                          'better_together.safety_cases.index.content_review_surface',
+                          default: 'Source: %{surface}',
+                          surface: review_item.source_surface.to_s.humanize
+                        ) %>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div><span class="badge text-bg-warning"><%= review_item.lifecycle_state.to_s.humanize %></span></div>
+                  <div class="small text-muted mt-1"><%= l(review_item.created_at, format: :long) %></div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <% if @local_review_snapshot[:content_review_items_count] > @content_security_review_items.size %>
+          <p class="small text-muted mt-2 mb-0">
+            <%= t(
+                  'better_together.safety_cases.index.content_review_more',
+                  default: 'Showing %{shown} of %{total} held content items.',
+                  shown: @content_security_review_items.size,
+                  total: @local_review_snapshot[:content_review_items_count]
+                ) %>
+          </p>
+        <% end %>
+      <% else %>
+        <p class="text-muted mb-0">
+          <%= t(
+                'better_together.safety_cases.index.content_review_empty',
+                default: 'No uploads or embedded attachments are currently waiting for review.'
+              ) %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
       <%= form_with url: safety_cases_path(locale: I18n.locale), method: :get, local: true, class: 'row g-3 align-items-end' do |form| %>
         <div class="col-md-3">
           <%= form.label :status, t('better_together.safety_cases.attributes.status'), class: 'form-label' %>
@@ -38,20 +177,26 @@
   </div>
 
   <div class="list-group shadow-sm">
-    <% @safety_cases.each do |safety_case| %>
-      <%= link_to safety_case_path(safety_case, locale: I18n.locale),
-                  class: 'list-group-item list-group-item-action' do %>
-        <div class="d-flex justify-content-between align-items-start">
-          <div>
-            <div class="fw-semibold"><%= safety_enum_label('report_categories', safety_case.category) %> / <%= safety_enum_label('case_lanes', safety_case.lane) %></div>
-            <div class="small text-muted"><%= truncate(safety_case.report.reason, length: 120) %></div>
+    <% if @safety_cases.any? %>
+      <% @safety_cases.each do |safety_case| %>
+        <%= link_to safety_case_path(safety_case, locale: I18n.locale),
+                    class: 'list-group-item list-group-item-action' do %>
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold"><%= safety_enum_label('report_categories', safety_case.category) %> / <%= safety_enum_label('case_lanes', safety_case.lane) %></div>
+              <div class="small text-muted"><%= truncate(safety_case.report.reason, length: 120) %></div>
+            </div>
+            <div class="text-end">
+              <div><span class="badge text-bg-dark"><%= safety_enum_label('case_statuses', safety_case.status) %></span></div>
+              <div class="small text-muted mt-1"><%= l(safety_case.created_at, format: :long) %></div>
+            </div>
           </div>
-          <div class="text-end">
-            <div><span class="badge text-bg-dark"><%= safety_enum_label('case_statuses', safety_case.status) %></span></div>
-            <div class="small text-muted mt-1"><%= l(safety_case.created_at, format: :long) %></div>
-          </div>
-        </div>
+        <% end %>
       <% end %>
+    <% else %>
+      <div class="list-group-item text-muted">
+        <%= t('better_together.safety_cases.index.empty', default: 'No safety cases match the current filters.') %>
+      </div>
     <% end %>
   </div>
 </div>

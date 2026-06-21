@@ -40,6 +40,26 @@ RSpec.describe BetterTogether::OauthButtonsHelper do
     end
   end
 
+  describe '#configured_omniauth_providers' do
+    before do
+      allow(ENV).to receive(:fetch).and_call_original
+    end
+
+    it 'omits GitHub when either required credential is missing' do
+      allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return(nil)
+      allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return('client_secret_456')
+
+      expect(helper.configured_omniauth_providers(BetterTogether::User)).to be_empty
+    end
+
+    it 'includes GitHub when both required credentials are present' do
+      allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return('client_id_123')
+      allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return('client_secret_456')
+
+      expect(helper.configured_omniauth_providers(BetterTogether::User)).to eq([:github])
+    end
+  end
+
   describe '#oauth_provider_icon_class' do
     it 'returns fa-brands fa-github for GitHub' do
       expect(helper.oauth_provider_icon_class('github')).to eq('fa-brands fa-github')

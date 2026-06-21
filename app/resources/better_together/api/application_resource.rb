@@ -29,8 +29,9 @@ module BetterTogether
       def attachment_url(attachment_name)
         attachment = @model.send(attachment_name)
         return nil unless attachment.attached?
+        return nil unless BetterTogether::ContentSecurity::BlobAccessPolicy.public_proxy_allowed?(attachment.blob)
 
-        Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment)
+        attachment_proxy_url(attachment)
       rescue ActiveStorage::FileNotFoundError
         nil
       end
@@ -40,14 +41,35 @@ module BetterTogether
       def optimized_attachment_url(attachment_name, variant: :optimized_jpeg)
         attachment = @model.send(attachment_name)
         return nil unless attachment.attached?
+        return nil unless BetterTogether::ContentSecurity::BlobAccessPolicy.public_proxy_allowed?(attachment.blob)
 
         if attachment.content_type == 'image/svg+xml'
-          Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment)
+          attachment_proxy_url(attachment)
         else
-          Rails.application.routes.url_helpers.rails_storage_proxy_url(attachment.variant(variant))
+          variant_proxy_url(attachment.variant(variant))
         end
       rescue ActiveStorage::FileNotFoundError
         nil
+      end
+
+      private
+
+      def attachment_proxy_url(attachment)
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          attachment,
+          url_options: route_url_options
+        )
+      end
+
+      def variant_proxy_url(variant)
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          variant,
+          url_options: route_url_options
+        )
+      end
+
+      def route_url_options
+        @route_url_options ||= Rails.application.routes.default_url_options.symbolize_keys
       end
     end
   end

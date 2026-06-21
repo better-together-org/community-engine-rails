@@ -3,6 +3,7 @@
 # Common route helpers included in request specs.
 module RequestSpecHelper # :nodoc:
   include Rails.application.routes.url_helpers
+  include Rails.application.routes.mounted_helpers
   include BetterTogether::Engine.routes.url_helpers
 
   # Ensure route helpers use default locale
@@ -62,11 +63,7 @@ module RequestSpecHelper # :nodoc:
   # rubocop:todo Metrics/PerceivedComplexity
   def logout
     # Clear session data completely
-    if respond_to?(:reset_session!)
-      # For feature specs (Capybara)
-      reset_session!
-    elsif respond_to?(:reset_session)
-      # For request specs
+    if respond_to?(:reset_session)
       reset_session
     end
 

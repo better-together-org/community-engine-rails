@@ -20,13 +20,15 @@ module BetterTogether
       def call(**params)
         return auth_required_response unless current_user
 
-        with_timezone_scope do
-          post = build_post(params)
-          authorize post, :create?
+        with_current_governed_agent do
+          with_timezone_scope do
+            post = build_post(params)
+            authorize post, :create?
 
-          result = save_and_respond(post, params)
-          log_invocation('create_post', params.except(:content), result.bytesize)
-          result
+            result = save_and_respond(post, params)
+            log_invocation('create_post', params.except(:content), result.bytesize)
+            result
+          end
         end
       rescue Pundit::NotAuthorizedError
         JSON.generate({ error: 'Not authorized to create posts' })
@@ -42,7 +44,7 @@ module BetterTogether
         BetterTogether::Post.new(
           title: params[:title],
           content: params[:content],
-          privacy: params[:privacy] || 'public',
+          privacy: params[:privacy] || 'private',
           published_at: params[:publish] ? Time.current : nil,
           creator: current_user.person
         )

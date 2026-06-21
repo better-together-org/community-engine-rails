@@ -27,4 +27,36 @@ RSpec.describe BetterTogether::PlatformConnectionPolicy do
       expect(policy.update?).to be false
     end
   end
+
+  describe 'for an approval-only operator' do
+    let(:user) { create(:better_together_user, :confirmed) }
+
+    before do
+      permission = BetterTogether::ResourcePermission.find_by(identifier: 'approve_network_connections')
+      role = create(:better_together_role, :platform_role)
+      BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
+      host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+      create(:better_together_person_platform_membership, member: user.person, joinable: host_platform, role:)
+    end
+
+    it 'allows approve but denies generic update' do
+      expect(policy.approve?).to be true
+      expect(policy.update?).to be false
+    end
+  end
+
+  describe 'when the rollout is disabled for the platform' do
+    let(:user) { create(:better_together_user, :network_admin) }
+
+    before do
+      host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+      host_platform.update!(feature_gate_rollouts: { 'platform_federation_tools' => 'off' })
+    end
+
+    it 'denies access even to otherwise authorized operators' do
+      expect(policy.index?).to be false
+      expect(policy.show?).to be false
+      expect(policy.update?).to be false
+    end
+  end
 end

@@ -9,12 +9,11 @@ on:
       - compat/rails-8.0
       - compat/rails-8.1
   pull_request:
+    # Run on PRs targeting any branch so feature/fix/salvage branches get the
+    # same locale-health coverage as rubocop/rspec. Non-compat targets default
+    # to the primary Rails lane in prepare.
     branches:
-      - main
-      - dev
-      - compat/rails-7.2
-      - compat/rails-8.0
-      - compat/rails-8.1
+      - "**"
 
 jobs:
   prepare:
@@ -43,10 +42,10 @@ jobs:
               rails_version="8.1.2"
               ;;
             main|dev|compat/rails-8.0)
-              rails_version="8.0.3"
+              rails_version="8.0.4.1"
               ;;
             *)
-              rails_version="8.0.3"
+              rails_version="8.0.4.1"
               ;;
           esac
 

@@ -68,12 +68,6 @@ module BetterTogether
 
     notification_methods do
       delegate :membership, :member, :joinable, :old_role, :new_role, :title, :body, :url, to: :event
-
-      def recipient_has_email?
-        recipient.respond_to?(:email) && recipient.email.present? &&
-          (!recipient.respond_to?(:notification_preferences) ||
-           recipient.notification_preferences.fetch('notify_by_email', true))
-      end
     end
 
     def url

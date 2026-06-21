@@ -11,6 +11,12 @@ RSpec.describe 'Event Timezone Selector' do
   let(:community) { platform.community }
   let(:user) { BetterTogether::User.find_by(email: 'user@example.test') }
   let(:person) { user.person }
+  let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
+  let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
+  let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   before do
     # Update platform timezone for testing
@@ -57,33 +63,31 @@ RSpec.describe 'Event Timezone Selector' do
 
   describe 'POST /events', :as_platform_manager do
     let(:manager_user) { BetterTogether::User.find_by(email: 'manager@example.test') }
+    let(:manager_person) { manager_user&.person }
     let(:event_params) do
+      starts_at = 1.day.from_now
+
       {
         event: {
           name: 'TDD Event with Timezone',
-          description: 'Testing timezone handling',
           identifier: 'tdd-event-timezone',
           timezone: 'America/New_York',
-          starts_at: 1.day.from_now,
-          ends_at: 1.day.from_now + 2.hours,
-          duration_minutes: 120,
-          registration_url: 'https://example.com/register',
-          privacy: 'public',
-          creator_id: manager_person.id,
-          event_hosts_attributes: {
-            '0' => {
-              host_id: community.id,
-              host_type: 'BetterTogether::Community'
-            }
-          }
+          starts_at: starts_at.iso8601,
+          privacy: 'public'
         }
       }
     end
-    let(:manager_person) { manager_user&.person }
 
     before do
       # Ensure manager exists (automatic test configuration should have created this)
       raise 'Manager user not found - automatic test configuration may have failed' unless manager_user
+
+      [privacy_policy, terms_of_service, code_of_conduct, content_publishing_agreement].each do |agreement|
+        BetterTogether::AgreementParticipant.find_or_create_by!(participant: manager_person, agreement: agreement) do |participant|
+          participant.person = manager_person
+          participant.accepted_at = Time.current
+        end
+      end
     end
 
     it 'creates event with specified timezone' do
@@ -142,6 +146,19 @@ RSpec.describe 'Event Timezone Selector' do
 
       expect(response).to have_http_status(:success)
       expect(response_text).to include('London')
+    end
+
+    it 'uses proxied attachment URLs in the edit form' do
+      event.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'event-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get edit_event_path(event, locale: I18n.default_locale)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(event.cover_image, only_path: true))
     end
   end
 

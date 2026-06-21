@@ -1,0 +1,41 @@
+<li id="<%= dom_id(post) %>" class="list-group-item">
+  <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
+    <div class="flex-grow-1">
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        <h3 class="h6 mb-0">
+          <% if policy(post).show? %>
+            <%= link_to post.title, post, class: 'text-primary text-decoration-none' %>
+          <% else %>
+            <%= post.title %>
+          <% end %>
+        </h3>
+        <%= privacy_badge(post) if respond_to?(:privacy_badge) %>
+      </div>
+
+      <p class="text-muted small mt-2 mb-2">
+        <%= truncate(strip_tags(post.content.to_plain_text), length: 200) %>
+      </p>
+
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        <%= categories_badge(post) %>
+      </div>
+
+      <% if contributor_display_visible_for?(post) && post.governed_authors.any? %>
+        <div class="mt-2">
+          <%= render 'better_together/shared/governed_authors',
+                     authors: post.governed_authors,
+                     flex_layout: 'flex-row',
+                     flex_align_items: 'center' %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="text-muted small text-lg-end">
+      <% if post.respond_to?(:published_at) && post.published_at.present? %>
+        <span><%= t('better_together.posts.published_on', default: 'Published %{date}', date: l(post.published_at, format: :short)) %></span>
+      <% else %>
+        <span><%= t('better_together.shared.unpublished', default: 'Unpublished') %></span>
+      <% end %>
+    </div>
+  </div>
+</li>

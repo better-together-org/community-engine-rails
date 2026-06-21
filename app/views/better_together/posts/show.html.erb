@@ -66,10 +66,12 @@
                   </div>
                 <% end %>
 
-                <%# Authors — use shared partial %>
-                <% if @post.respond_to?(:authors) && @post.authors.any? %>
+                <% if contributor_display_visible_for?(@post) && @post.governed_authors.any? %>
                   <div class="ms-sm-3">
-                    <%= render 'better_together/shared/authors', authors: @post.authors, flex_layout: 'flex-row', flex_align_items: 'center' %>
+                    <%= render 'better_together/shared/governed_authors',
+                               authors: @post.governed_authors,
+                               flex_layout: 'flex-row',
+                               flex_align_items: 'center' %>
                   </div>
                 <% end %>
 
@@ -83,22 +85,18 @@
                          edit_aria_label: t('better_together.posts.edit', default: 'Edit Post'),
                          destroy_path: policy(@post).destroy? ? post_path(@post) : nil,
                          destroy_confirm: t('globals.confirm_delete'),
-                         destroy_aria_label: t('better_together.posts.delete', default: 'Delete Record') %>
-              <% if current_user.present? && current_person != @post.creator %>
-                <%= link_to new_report_path(locale: I18n.locale, reportable_type: @post.class.name, reportable_id: @post.id),
-                            class: 'btn btn-outline-danger btn-sm ms-2' do %>
-                  <i class="fas fa-flag"></i> <%= t('better_together.reports.actions.report', default: 'Report') %>
-                <% end %>
+                         destroy_aria_label: t('better_together.posts.delete', default: 'Delete Record') do %>
+                <%= render 'shared/content_actions', record: @post %>
               <% end %>
-             </div>
-           </header>
+              </div>
+            </header>
 
           <section class="post-content trix-content mb-4" itemprop="articleBody">
             <%= @post.content %>
           </section>
 
           <%# Footer dates removed as requested; actions live in the header toolbar %>
-               </div>
+                </div>
              </article>
 
       <%# Social share buttons (only when post is public) %>

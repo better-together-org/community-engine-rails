@@ -21,6 +21,8 @@ module BetterTogether
 
       before_validation :assign_membership_request_category
       before_validation :generate_name_from_requestor
+      after_create_commit :notify_reviewers_of_submission
+      after_update_commit :notify_requestor_of_decision
 
       validates :target_type, inclusion: { in: ['BetterTogether::Community'] }
       validate :target_community_must_exist
@@ -51,6 +53,7 @@ module BetterTogether
       # @param approver [BetterTogether::Person] the person performing the approval
       # @raise [ActiveRecord::RecordInvalid] if the request cannot be saved
       def approve!(approver: nil)
+        @decision_actor = approver
         # Build a minimal stub so after_agreement_acceptance! has something to work with
         # when it needs the approver (used as invitation sender for unauthenticated path).
         stub_offer = ApprovalOffer.new(creator: approver)
@@ -64,7 +67,8 @@ module BetterTogether
       # Decline the request.
       #
       # @raise [ActiveRecord::RecordInvalid] if the status update fails
-      def decline!
+      def decline!(approver: nil)
+        @decision_actor = approver
         update!(status: 'closed')
       end
 
@@ -120,7 +124,7 @@ module BetterTogether
         approving_person = offer&.creator
         locale = I18n.locale.to_s
 
-        ::BetterTogether::CommunityInvitation.find_or_create_by!(
+        @approval_invitation = ::BetterTogether::CommunityInvitation.find_or_create_by!(
           invitable: target,
           invitee_email: requestor_email
         ) do |invitation|
@@ -133,11 +137,26 @@ module BetterTogether
       end
 
       def create_community_membership!
-        target.person_community_memberships.find_or_create_by!(
+        membership = target.person_community_memberships.find_or_initialize_by(
           member: creator,
           role: default_community_role
-        ) do |membership|
-          membership.status = 'active'
+        )
+
+        membership.status = 'active' if membership.new_record? || membership.status == 'pending'
+        membership.save! if membership.new_record? || membership.changed?
+      end
+
+      def notify_reviewers_of_submission
+        ::BetterTogether::MembershipRequestNotificationService.new(self).notify_submission
+      end
+
+      def notify_requestor_of_decision
+        notification_service = ::BetterTogether::MembershipRequestNotificationService.new(self)
+
+        if saved_change_to_status?(from: 'open', to: 'fulfilled')
+          notification_service.notify_approval(approval_invitation: @approval_invitation)
+        elsif saved_change_to_status?(from: 'open', to: 'closed')
+          notification_service.notify_decline(decision_actor: @decision_actor)
         end
       end
     end

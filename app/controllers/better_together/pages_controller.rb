@@ -60,11 +60,7 @@ module BetterTogether
             end
           else
             format.turbo_stream do
-              render turbo_stream: turbo_stream.update(
-                'form_errors',
-                partial: 'layouts/better_together/errors',
-                locals: { object: @page }
-              )
+              render turbo_stream: re_render_form_with_errors(@page), status: :unprocessable_entity
             end
             format.html { render :new, status: :unprocessable_entity }
           end
@@ -99,12 +95,7 @@ module BetterTogether
             format.html { render :edit }
             format.turbo_stream do
               render turbo_stream: [
-                turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form', locals: { page: @page }),
-                turbo_stream.update(
-                  'form_errors',
-                  partial: 'layouts/better_together/errors',
-                  locals: { object: @page }
-                )
+                re_render_form_with_errors(@page)
               ]
             end
           end
@@ -139,6 +130,10 @@ module BetterTogether
       end
     end
 
+    def page_form_id(page)
+      helpers.dom_id(page, 'form')
+    end
+
     def page
       @page ||= set_page
     end
@@ -159,6 +154,10 @@ module BetterTogether
       @page = preload_page_associations(@page)
     rescue ActiveRecord::RecordNotFound
       render_not_found && return
+    end
+
+    def re_render_form_with_errors(page)
+      turbo_stream.replace(page_form_id(page), partial: 'form', locals: { page: page })
     end
 
     def resource_class
@@ -238,7 +237,7 @@ module BetterTogether
     def basic_page_attributes
       [
         :meta_description, :keywords, :published_at, :sidebar_nav_id,
-        :privacy, :layout, :template, :show_title, *Page.localized_attribute_list,
+        :privacy, :layout, :template, :show_title, :contributors_display_visibility, *Page.localized_attribute_list,
         *Page.extra_permitted_attributes
       ]
     end

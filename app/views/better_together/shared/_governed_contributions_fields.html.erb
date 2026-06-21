@@ -1,0 +1,43 @@
+<div class="mb-4"
+     data-controller="better_together--contribution-assignments"
+     data-better_together--contribution-assignments-person-options-value="<%= governed_contribution_options_json(person_options) %>"
+     data-better_together--contribution-assignments-robot-options-value="<%= governed_contribution_options_json(robot_options) %>"
+     data-better_together--contribution-assignments-select-placeholder-value="<%= t('better_together.contributions.form.select_contributor', default: 'Select contributor') %>">
+  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+    <div>
+      <h5 class="mb-1"><%= t('better_together.contributions.form.heading', default: 'Contributors') %></h5>
+      <p class="text-muted small mb-0">
+        <%= t('better_together.contributions.form.description', default: 'Assign people or robots to this record with explicit contribution roles.') %>
+      </p>
+    </div>
+
+    <button type="button"
+            class="btn btn-outline-primary btn-sm"
+            data-action="click->better_together--contribution-assignments#add">
+      <i class="fas fa-plus" aria-hidden="true"></i>
+      <%= t('better_together.contributions.form.add', default: 'Add contributor') %>
+    </button>
+  </div>
+
+  <div class="row g-3" data-better_together--contribution-assignments-target="container">
+    <% contribution_records.each do |contribution| %>
+      <%= form.fields_for :contributions, contribution do |contribution_form| %>
+        <%= render 'better_together/shared/governed_contribution_fields',
+                   form: contribution_form,
+                   role_options:,
+                   person_options:,
+                   robot_options: %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <template data-better_together--contribution-assignments-target="template">
+    <%= form.fields_for :contributions, new_contribution, child_index: 'NEW_RECORD' do |contribution_form| %>
+      <%= render 'better_together/shared/governed_contribution_fields',
+                 form: contribution_form,
+                 role_options:,
+                 person_options:,
+                 robot_options: %>
+    <% end %>
+  </template>
+</div>

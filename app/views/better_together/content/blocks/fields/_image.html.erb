@@ -1,6 +1,19 @@
 
 <%- scope = local_assigns[:scope] ? local_assigns[:scope] : BetterTogether::Content::Block.block_name %>
-<div class="image-fields" data-controller="better_together--image-preview">
+<% library_uploads = if current_person
+    BetterTogether::Upload
+      .with_creator(current_person)
+      .joins(file_attachment: :blob)
+      .where('active_storage_blobs.content_type LIKE ?', 'image/%')
+      .includes(:content_security_subjects, file_attachment: :blob)
+      .select do |upload|
+        subject = upload.content_security_subjects.detect { |s| s.attachment_name == 'file' }
+        subject.nil? || subject.released_for_human_access?
+      end
+  else
+    []
+  end %>
+<div class="image-fields" data-controller="better_together--image-preview better_together--image-library">
   <%= label_tag do %>
     <%= block.class.human_attribute_name('media') %>
     <% if block.media.attached? %>
@@ -9,6 +22,8 @@
   <% end %>
   <div class="input-group">
     <%= file_field_tag "#{scope}[media]", required: !block.media.attached?, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => "input", data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+    <%= button_tag t('better_together.content.blocks.fields.image.library.open', default: 'Choose from library'),
+                        { type: 'button', class: 'btn btn-outline-secondary', data: { action: 'better_together--image-library#open' } } %>
     <%= hidden_field_tag "#{scope}[remove_media]", { value: '0' }, "data-better_together--image-preview-target" => "deleteField" %>
     <%= button_tag t('globals.clear'),
                         {
@@ -23,9 +38,61 @@
                           "data-better_together--image-preview-target" => "deleteButton",
                         } %>
   </div>
+  <%= hidden_field_tag "#{scope}[media_signed_id]", nil, "data-better_together--image-library-target" => 'signedIdField' %>
   <!-- Image preview container (empty initially) -->
-  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= block.media.url if block.media.attached? %>">
+  <div class="my-3 text-center" data-better_together--image-preview-target="preview" data-url="<%= storage_proxy_url_for(block.media) if block.media.attached? %>">
     <!-- The image preview will be dynamically inserted here -->
+  </div>
+
+  <div class="modal fade" tabindex="-1" data-better_together--image-library-target="modal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><%= t('better_together.content.blocks.fields.image.library.title', default: 'Choose from library') %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <% if library_uploads.any? %>
+            <p class="text-muted small">
+              <%= t('better_together.content.blocks.fields.image.library.scope_hint',
+                    default: 'Only your reviewed image uploads are available here.') %>
+            </p>
+            <div class="row g-2">
+              <% library_uploads.each do |upload| %>
+              <div class="col-3">
+                <% upload_url = storage_proxy_url_for(upload.file) %>
+                <button type="button"
+                        class="p-0 border-0 bg-transparent w-100"
+                        data-action="better_together--image-library#select"
+                        data-signed-id="<%= upload.file.blob.signed_id %>"
+                        data-url="<%= upload_url %>"
+                        aria-label="<%= upload.name %>">
+                  <%= image_tag upload_url, class: 'img-fluid', alt: upload.name %>
+                </button>
+              </div>
+            <% end %>
+            </div>
+          <% else %>
+            <div class="alert alert-light border mb-0" role="status">
+              <p class="mb-2">
+                <%= t('better_together.content.blocks.fields.image.library.empty',
+                      default: 'No reviewed image uploads are available in your library yet.') %>
+              </p>
+              <p class="mb-0 small text-muted">
+                <%= t('better_together.content.blocks.fields.image.library.empty_hint',
+                      default: 'Upload an image first, or switch to the person who uploaded it.') %>
+              </p>
+              <div class="mt-3">
+                <%= link_to t('better_together.content.blocks.fields.image.library.view_uploads',
+                              default: 'View uploads and review statuses'),
+                            file_index_path(locale: I18n.locale),
+                            class: 'btn btn-sm btn-outline-secondary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="row row-cols-1 row-cols-sm-2 align-items-end">
@@ -39,11 +106,7 @@
       <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, attribute: 'attribution', scope: } %>
     </div>
     <div class="col mb-3 pb-3 border-bottom">
-      <%= label_tag "#{scope}[attribution_url]", block.class.human_attribute_name('attribution_url') %>
-      <%= url_field_tag "#{scope}[attribution_url]", block.attribution_url, class: 'form-control' %>
-      <div class="invalid-feedback">
-        Please provide a valid url starting with http:// or https://.
-      </div>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, attribute: 'attribution_url', scope:, help_text: 'Link to image source (https://...)' } %>
     </div>
   </div>
 </div>

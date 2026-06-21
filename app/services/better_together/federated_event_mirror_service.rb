@@ -5,6 +5,8 @@ module BetterTogether
   # rubocop:disable Metrics/ClassLength -- Event service requires timezone validation and
   #   event-host management that the simpler Post/Page services do not.
   class FederatedEventMirrorService
+    include ::BetterTogether::Federation::MirroredIdentifierResolution
+
     def initialize(connection:, remote_attributes:, remote_id:, preserve_remote_uuid: false, source_updated_at: nil)
       @connection = connection
       @remote_attributes = remote_attributes.to_h.with_indifferent_access
@@ -36,26 +38,25 @@ module BetterTogether
 
       return if result.allowed?
 
-      raise ArgumentError, "event mirroring not authorized: #{result.reason}"
+      raise ArgumentError, mirroring_not_authorized_message(result.reason)
     end
 
     def find_or_initialize_event
-      if preserve_remote_uuid? && uuid?(remote_id)
-        # 1. Already mirrored with the same UUID — most common repeat-sync path.
-        existing = ::BetterTogether::Event.find_by(id: remote_id)
-        return existing if existing
+      return find_or_initialize_event_by_source_id unless mirror_with_remote_uuid?
 
-        # 2. Previously mirrored via the source_id path (e.g. before preserve_remote_uuid
-        #    was enabled on this connection) — prevents duplicate record creation.
-        existing = ::BetterTogether::Event.find_by(
-          platform: connection.source_platform, source_id: remote_id
-        )
-        return existing if existing
+      existing_event_with_remote_uuid || existing_event_by_source_id || ::BetterTogether::Event.new(id: remote_id)
+    end
 
-        ::BetterTogether::Event.new(id: remote_id)
-      else
-        ::BetterTogether::Event.find_or_initialize_by(platform: connection.source_platform, source_id: remote_id)
-      end
+    def find_or_initialize_event_by_source_id
+      ::BetterTogether::Event.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+    end
+
+    def existing_event_with_remote_uuid
+      ::BetterTogether::Event.find_by(id: remote_id, platform: connection.target_platform)
+    end
+
+    def existing_event_by_source_id
+      ::BetterTogether::Event.find_by(platform: connection.target_platform, source_id: remote_id)
     end
 
     def assign_attributes(event)
@@ -77,13 +78,19 @@ module BetterTogether
         name: remote_attributes[:name],
         description: remote_attributes[:description],
         identifier: normalized_identifier(record),
-        privacy: remote_attributes[:privacy].presence || 'public',
-        creator_id: remote_attributes[:creator_id],
-        platform: connection.source_platform,
-        source_id: preserve_remote_uuid? ? nil : remote_id,
+        privacy: normalized_privacy,
+        creator_id: local_creator_id,
+        platform: target_platform,
+        source_id: effective_preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
       }
+    end
+
+    def resolve_local_creator(remote_id)
+      return nil if remote_id.blank?
+
+      ::BetterTogether::Person.where(id: remote_id).pick(:id)
     end
 
     def ensure_source_platform_host(event)
@@ -96,22 +103,13 @@ module BetterTogether
       # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
       return event.identifier if event.persisted?
 
-      base = remote_attributes[:identifier].presence ||
-             "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-      identifier_or_namespaced(::BetterTogether::Event, base, event.id)
-    end
-
-    def identifier_or_namespaced(model_class, base, exclude_id)
-      return base unless identifier_taken?(model_class, base, exclude_id)
-
-      source_slug = connection.source_platform.identifier.to_s.parameterize.presence || 'remote'
-      "#{source_slug}-#{base}"
-    end
-
-    def identifier_taken?(model_class, identifier, exclude_id)
-      scope = model_class.where(identifier:)
-      scope = scope.where.not(id: exclude_id) if exclude_id.present?
-      scope.exists?
+      mirrored_identifier_for(
+        content_type: 'event',
+        remote_identifier: remote_attributes[:identifier],
+        remote_id:,
+        model_class: ::BetterTogether::Event,
+        exclude_id: event.id
+      )
     end
 
     def normalized_timezone
@@ -129,12 +127,48 @@ module BetterTogether
       Time.current
     end
 
+    def normalized_privacy
+      remote_attributes[:privacy].presence || 'public'
+    end
+
+    def local_creator_id
+      resolve_local_creator(remote_attributes[:creator_id])
+    end
+
+    def target_platform
+      connection.target_platform
+    end
+
     def preserve_remote_uuid?
       preserve_remote_uuid
     end
 
+    def effective_preserve_remote_uuid?
+      preserve_remote_uuid? && !shared_target_database?
+    end
+
+    def mirror_with_remote_uuid?
+      effective_preserve_remote_uuid? && uuid?(remote_id)
+    end
+
+    def same_instance_connection?
+      connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
+    end
+
+    def shared_target_database?
+      connection.target_platform.local_hosted?
+    end
+
     def uuid?(value)
       /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
+    end
+
+    def mirroring_not_authorized_message(reason)
+      I18n.t(
+        'better_together.federation.mirroring.errors.not_authorized',
+        content_type: I18n.t('better_together.federation.mirroring.content_types.event'),
+        reason:
+      )
     end
   end
 end

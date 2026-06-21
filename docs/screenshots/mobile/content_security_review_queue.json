@@ -1,0 +1,50 @@
+{
+  "name": "content_security_review_queue",
+  "device": "mobile",
+  "url": "/en/host/safety/cases",
+  "title": "Safety cases | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "content_security_review_states",
+  "flow": "review_queue",
+  "source_spec": "./spec/docs_screenshots/better_together/content_security_review_states_spec.rb",
+  "callouts": [
+    {
+      "selector": ".card .list-group",
+      "title": "Held content items surface in the review queue",
+      "bullets": [
+        "The queue lists attachments still waiting for safety or security review.",
+        "The panel explains that uploads and embedded attachments appear here before release.",
+        "Reviewers can see the held filename and source surface in the same dashboard."
+      ],
+      "target": {
+        "x": 28.0,
+        "y": 948.359375,
+        "width": 429.0,
+        "height": 88.0,
+        "right": 457.0,
+        "bottom": 1036.359375,
+        "center_x": 242.5,
+        "center_y": 992.359375
+      },
+      "avoid": {
+        "x": 28.0,
+        "y": 948.359375,
+        "width": 429.0,
+        "height": 88.0,
+        "right": 457.0,
+        "bottom": 1036.359375,
+        "center_x": 242.5,
+        "center_y": 992.359375
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 420.36,
+        "width": 270.0,
+        "height": 508,
+        "score": 948.359375
+      }
+    }
+  ]
+}

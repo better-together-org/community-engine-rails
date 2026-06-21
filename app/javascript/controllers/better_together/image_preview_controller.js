@@ -80,6 +80,14 @@ export default class extends Controller {
     this.updateHeight(); // Update the height of the container
   }
 
+  previewFromUrl(url) {
+    this.existingImageUrl = url;
+    this.clearInput();
+    this.previewExistingImage();
+    this.deleteFieldTarget.value = '0';
+    this.updateDeleteButtonState();
+  }
+
   toggleDelete() {
     if (this.deleteFieldTarget.value === '0' && (this.inputTarget.files.length > 0 || this.existingImageUrl)) {
       this.deleteFieldTarget.value = '1'; // Mark for deletion

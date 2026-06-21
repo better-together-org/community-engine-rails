@@ -11,7 +11,7 @@ module BetterTogether
         BetterTogether::Community
       ].freeze
 
-      def perform(platform, url, locale, shareable_type, shareable_id) # rubocop:todo Metrics/MethodLength
+      def perform(platform, url, locale, shareable_type, shareable_id, platform_id, logged_in) # rubocop:todo Metrics/MethodLength, Metrics/ParameterLists
         shareable = nil
         if shareable_type.present?
           klass = BetterTogether::SafeClassResolver.resolve(shareable_type, allowed: ALLOWED_SHAREABLES)
@@ -27,7 +27,9 @@ module BetterTogether
           url:,
           locale:,
           shared_at: Time.current,
-          shareable:
+          shareable:,
+          platform_id:,
+          logged_in:
         )
       end
     end

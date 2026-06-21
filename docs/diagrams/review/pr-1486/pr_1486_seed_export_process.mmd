@@ -1,0 +1,15 @@
+flowchart TD
+    A[Member opens Settings > My Data] --> B[Request data export]
+    B --> C[PersonDataExportsController#create]
+    C --> D[PersonDataExport record created]
+    D --> E[GeneratePersonDataExportJob]
+    E --> F[PersonDataExportService]
+    F --> G[Seeds::Builder\nprofile: personal_export]
+    G --> H[BetterTogether::Seed persisted]
+    G --> I[Seed hash returned]
+    I --> J[JSON export attached to PersonDataExport]
+    H --> K[My Data seeds list]
+    J --> L[My Data exports table]
+    K --> M[Person seed detail view]
+    L --> N[Download GDPR export JSON]
+

@@ -3,15 +3,26 @@
 module BetterTogether
   module Joatu
     # Offer represents a service or item someone is willing to provide
-    class Offer < ApplicationRecord
+    class Offer < PlatformRecord
       include Creatable
       include Exchange
       include Metrics::Viewable
       include ResponseLinkable
+      include Searchable
 
       has_many :requests, class_name: 'BetterTogether::Joatu::Request', through: :agreements
 
       categorizable class_name: '::BetterTogether::Joatu::Category'
+
+      searchable pg_search: {
+        against: %i[status urgency],
+        using: {
+          tsearch: {
+            prefix: true,
+            dictionary: 'simple'
+          }
+        }
+      }
 
       # Response link associations and nested attributes
       response_linkable

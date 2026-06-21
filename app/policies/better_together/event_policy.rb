@@ -2,13 +2,13 @@
 
 module BetterTogether
   # Access control for calendars
-  class EventPolicy < ApplicationPolicy
+  class EventPolicy < PlatformRecordPolicy
     def index?
       true
     end
 
     def show?
-      (record.privacy_public? && record.starts_at.present?) ||
+      (public_or_member_scoped_community?(record) && record.starts_at.present?) ||
         creator_or_platform_steward ||
         event_host_member? ||
         invitation? ||
@@ -63,27 +63,26 @@ module BetterTogether
     end
 
     # Filtering and sorting for calendars according to permissions and context
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
-        scope.with_attached_cover_image
-             .includes(:string_translations, :location, :event_hosts, categorizations: {
-                         category: %i[
-                           string_translations cover_image_attachment cover_image_blob
-                         ]
-                       }).order(
-                         starts_at: :desc, created_at: :desc
-                       ).where(permitted_query)
+        platform_scoped.with_attached_cover_image
+                       .includes(:string_translations, :location, :event_hosts, categorizations: {
+                                   category: %i[
+                                     string_translations cover_image_attachment cover_image_blob
+                                   ]
+                                 }).order(
+                                   starts_at: :desc, created_at: :desc
+                                 ).where(permitted_query)
       end
 
       protected
 
       # rubocop:todo Metrics/MethodLength
-      def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         events_table = ::BetterTogether::Event.arel_table
         event_hosts_table = ::BetterTogether::EventHost.arel_table
 
-        # Only list events that are public and where the current person is a member or a creator
-        query = events_table[:privacy].eq('public')
+        query = visible_privacy_query(events_table)
 
         if platform_event_manager?
           query = query.or(events_table[:privacy].eq('private'))
@@ -135,6 +134,12 @@ module BetterTogether
         query
       end
       # rubocop:enable Metrics/MethodLength
+
+      private
+
+      def platform_event_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
     end
 
     def creator_or_platform_steward
@@ -165,15 +170,6 @@ module BetterTogether
 
     def platform_event_manager?
       permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-    end
-
-    # Pundit scope for event record visibility.
-    class Scope < ApplicationPolicy::Scope
-      private
-
-      def platform_event_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-      end
     end
   end
 end

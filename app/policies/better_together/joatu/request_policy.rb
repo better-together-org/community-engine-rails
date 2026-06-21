@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Access control for Joatu::Request
-    class RequestPolicy < ApplicationPolicy
+    class RequestPolicy < PlatformRecordPolicy
       def index? = user.present?
 
       def show?
@@ -11,7 +11,7 @@ module BetterTogether
 
         return can_view_network_request? if connection_request?
 
-        true
+        scope_allows_record?
       end
 
       def create?
@@ -47,7 +47,7 @@ module BetterTogether
         can_manage_joatu? || record.creator_id == agent&.id
       end
 
-      class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+      class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
         MEMBERSHIP_REQUEST_TYPE = 'BetterTogether::Joatu::MembershipRequest'
 
         # rubocop:todo Metrics/MethodLength
@@ -56,18 +56,20 @@ module BetterTogether
 
           # MembershipRequests are governed by MembershipRequestPolicy::Scope.
           # Exclude them here so they never leak through base Request queries.
-          base = scope.where.not(type: MEMBERSHIP_REQUEST_TYPE)
+          base = platform_scoped.where.not(type: MEMBERSHIP_REQUEST_TYPE)
 
           # Platform managers see everything
-          return base.all if permitted_to?('manage_platform')
-          return scope.all if can_manage_joatu?
-          return scope.all if can_manage_network_connections? && connection_request_scope?
+          return base if permitted_to?('manage_platform')
+          return platform_scoped if can_manage_joatu?
+          return platform_scoped if can_manage_network_connections? && connection_request_scope?
 
           agent_id = agent&.id
 
           # Requests that are not responses to another resource (no response_link where response is this request)
           # rubocop:todo Layout/LineLength
-          not_responses = base.left_joins(:response_links_as_response).where(better_together_joatu_response_links: { id: nil })
+          public_not_responses = base.where(privacy: 'public')
+                                     .left_joins(:response_links_as_response)
+                                     .where(better_together_joatu_response_links: { id: nil })
           # rubocop:enable Layout/LineLength
 
           # Requests owned by the agent
@@ -90,7 +92,9 @@ module BetterTogether
           response_to_my_offer = base.joins(join_sources).where(offers[:creator_id].eq(agent_id))
 
           # rubocop:todo Layout/LineLength
-          base.where(id: not_responses.select(:id)).or(base.where(id: owned.select(:id))).or(base.where(id: response_to_my_offer.select(:id)))
+          base.where(id: public_not_responses.select(:id))
+              .or(base.where(id: owned.select(:id)))
+              .or(base.where(id: response_to_my_offer.select(:id)))
           # rubocop:enable Layout/LineLength
         end
         # rubocop:enable Metrics/MethodLength
@@ -126,6 +130,10 @@ module BetterTogether
 
       def can_view_network_request?
         can_manage_network_connections? || record.creator_id == agent&.id
+      end
+
+      def scope_allows_record?
+        self.class::Scope.new(user, record.class).resolve.where(id: record.id).exists?
       end
     end
   end

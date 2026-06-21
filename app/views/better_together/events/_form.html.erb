@@ -98,7 +98,13 @@
         <div class="row">
           <!-- Translatable Description Field -->
           <div class="col mb-3 pb-3 border-bottom">
-            <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: event, form: form, attribute: 'description' } %>
+            <%= render partial: 'better_together/shared/translated_rich_text_field',
+                       locals: {
+                         model: event,
+                         form: form,
+                         attribute: 'description',
+                         citation_options: event.citation_reference_options
+                       } %>
           </div>
         </div>
       </div>
@@ -315,7 +321,7 @@
 
             <small class="form-text text-muted"><%= t('helpers.hint.event.cover_image') %></small>
 
-            <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= event.cover_image.url if event.cover_image.attached? %>">
+            <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= storage_proxy_url_for(event.cover_image) if event.cover_image.attached? %>">
             </div>
           </div>
         </div>

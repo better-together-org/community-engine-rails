@@ -17,6 +17,14 @@
         <%= privacy_field(form:, klass: form.object.class) %>
       </div>
     </div>
+    <% if form.object.respond_to?(:file_content_security_held?) && form.object.file_content_security_held? %>
+      <div class="alert alert-warning mt-3 mb-0" role="status">
+        <%= t(
+              'better_together.uploads.content_security.form.review_required',
+              default: 'This file is being reviewed before it can be displayed or downloaded by other people.'
+            ) %>
+      </div>
+    <% end %>
     <% if form.object.attached? %>
       <div class="row mt-3">
         <div class="col">

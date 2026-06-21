@@ -2,7 +2,7 @@
 
 **Target Audience:** All community members  
 **Document Type:** User Guide  
-**Last Updated:** March 9, 2026
+**Last Updated:** April 8, 2026
 
 ## Overview
 
@@ -11,7 +11,7 @@ After you submit a report, the current interface gives you two user-facing place
 - your report history
 - the detail page for an individual report
 
-These pages help you confirm that your report was submitted and show the current user-visible status information available today.
+These pages help you confirm that your report was submitted, show the current user-visible status information, and give you a place to add authenticated follow-up evidence when needed.
 
 ## Where To Find Your Reports
 
@@ -41,14 +41,17 @@ The report detail page currently shows:
 - category
 - harm level
 - requested outcome
+- the record you reported
 - your summary
 - your private details, if you added them
 - the current user-visible status
 - a case summary if one has been added and is visible to the reporter
+- participant-visible notes
+- a follow-up or appeal form for additional evidence
 
-![Report detail page showing the submitted information and the current status panel.](../screenshots/desktop/report_detail.png)
+![Report detail page showing participant-visible notes and the follow-up or appeal form.](../screenshots/desktop/content_reporting_actions_followup.png)
 
-[Mobile screenshot of the report detail page](../screenshots/mobile/report_detail.png)
+[Mobile screenshot of the follow-up or appeal surface](../screenshots/mobile/content_reporting_actions_followup.png)
 
 ## What “Current Status” Means
 
@@ -72,11 +75,20 @@ Someone may contact you if:
 
 If you did **not** allow contact, the platform should rely on the information you provided unless another safety reason requires action.
 
+## Adding More Information Or Appealing
+
+Use the follow-up area on the report detail page when you need to:
+
+- add dates, screenshots, or clarifications
+- explain that the harm continued after the original report
+- respond to participant-visible reviewer context
+- ask for another review of the decision with supporting evidence
+
 ## What To Do While Waiting
 
 - Keep your own notes or screenshots if the issue continues.
 - Use blocking if you need distance right away.
-- If the situation escalates, submit an updated report or follow the steps in [Emergency and Urgent Situations](emergency_and_urgent_situations.md).
+- If the situation escalates, add follow-up evidence to the report and follow the steps in [Emergency and Urgent Situations](emergency_and_urgent_situations.md).
 
 ## If Something Changes After You Report
 
@@ -86,6 +98,8 @@ You may need to make a new report if:
 - a new incident happens
 - the harm becomes more urgent
 - you need to document retaliation risk or escalation
+
+Use follow-up on the existing report for added evidence about the same incident history. Create a new report when the situation is meaningfully different or needs separate triage.
 
 ## Related Guides
 

@@ -1,2 +1,120 @@
-<h1>Files#index</h1>
-<p>Find me in app/views/better_together/files/index.html.erb</p>
+<% content_for :page_title do %>
+  <%= BetterTogether::Upload.model_name.human.pluralize %>
+<% end %>
+
+<% status_counts = upload_content_security_counts(@uploads) %>
+
+<div class="container mt-4" data-controller="better_together--uploads">
+  <div class="row mb-2">
+    <div class="col">
+      <p class="mb-0"><%= t('.storage_usage', size: total_upload_size(@uploads)) %></p>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm">
+      <input type="search" class="form-control" placeholder="Search uploads" data-better_together--uploads-target="search" data-action="input->better_together--uploads#filter">
+    </div>
+    <div class="col-sm-auto">
+      <select class="form-select" data-better_together--uploads-target="sort" data-action="change->better_together--uploads#sort">
+        <option value="created_at">Newest</option>
+        <option value="name">Name</option>
+      </select>
+    </div>
+  </div>
+
+  <section class="mb-4" aria-labelledby="upload-review-status-heading">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+      <div>
+        <h2 id="upload-review-status-heading" class="h5 mb-1"><%= t('.review_status_heading') %></h2>
+        <p class="text-muted mb-0"><%= t('.review_status_description') %></p>
+      </div>
+      <div class="btn-group" role="group" aria-label="<%= t('.filter_group_aria') %>">
+        <button type="button"
+                class="btn btn-outline-secondary active"
+                data-status-filter="all"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="true">
+          <%= t('.filters.all', count: @uploads.size) %>
+        </button>
+        <button type="button"
+                class="btn btn-outline-success"
+                data-status-filter="clean"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="false">
+          <%= t('.filters.clean', count: status_counts['clean']) %>
+        </button>
+        <button type="button"
+                class="btn btn-outline-warning"
+                data-status-filter="review_required"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="false">
+          <%= t('.filters.review_required', count: status_counts['review_required']) %>
+        </button>
+        <button type="button"
+                class="btn btn-outline-danger"
+                data-status-filter="restricted"
+                data-better_together--uploads-target="filterButton"
+                data-action="better_together--uploads#filterByStatus"
+                aria-pressed="false">
+          <%= t('.filters.restricted', count: status_counts['restricted']) %>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="row g-3" data-better_together--uploads-target="list">
+    <% @uploads.each do |upload| %>
+      <div class="col-md-3"
+           data-better_together--uploads-target="item"
+           data-name="<%= upload.name.to_s %>"
+           data-created-at="<%= upload.created_at.iso8601 %>"
+           data-review-state="<%= upload_content_security_state(upload) %>">
+        <div class="card h-100">
+          <% if upload.file.attached? && upload.file.representable? %>
+            <%= image_tag storage_proxy_url_for(upload.file.representation(resize_to_limit: [200, 200])),
+                          class: "card-img-top",
+                          alt: upload.name %>
+          <% end %>
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <h6 class="card-title text-truncate mb-2"><%= upload.name %></h6>
+              <div class="d-flex align-items-start gap-2">
+                <span class="badge <%= upload_content_security_badge_class(upload) %>">
+                  <%= upload_content_security_badge_text(upload) %>
+                </span>
+                <%= render 'shared/content_actions',
+                           record: upload,
+                           trigger_classes: 'btn btn-outline-secondary btn-sm px-2 py-1',
+                           menu_alignment: 'end' %>
+              </div>
+            </div>
+            <ul class="list-unstyled small mb-3">
+              <li><strong>Filename:</strong> <%= upload.filename %></li>
+              <li><strong>Size:</strong> <%= number_to_human_size(upload.byte_size) %></li>
+              <li><strong>Type:</strong> <%= upload.content_type %></li>
+            </ul>
+            <p class="small text-muted" role="status"><%= upload_content_security_status_text(upload) %></p>
+            <div class="mt-auto btn-group">
+              <button class="btn btn-sm btn-outline-secondary"
+                      data-action="better_together--uploads#copy"
+                      data-url="<%= upload.file_content_security_downloadable? ? main_app.url_for(upload.file) : '' %>"
+                      <%= 'disabled aria-disabled=true' unless upload.file_content_security_downloadable? %>>
+                Copy URL
+              </button>
+              <button class="btn btn-sm btn-primary"
+                      data-action="better_together--uploads#insert"
+                      data-signed-id="<%= upload.file_content_security_downloadable? ? upload.file.blob.signed_id : '' %>"
+                      <%= 'disabled aria-disabled=true' unless upload.file_content_security_downloadable? %>>
+                Insert
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

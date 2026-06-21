@@ -15,19 +15,23 @@ gem 'bcrypt', '~> 3.1.22'
 # Bootsnap for faster boot times
 gem 'bootsnap', '>= 1.7.0', require: false
 
+gem 'excon', '>= 1.5.0' # CVE-2026-54171: redact sensitive headers on redirect
 gem 'fog-aws'
 
 # Database adapter for PostgreSQL
 gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
-gem 'puma', '~> 7.2'
+gem 'puma', '~> 8.0'
 
 # Pundit for authorization, custom fork for Better Together
 gem 'pundit-resources', '~> 1.1.4', github: 'better-together-org/pundit-resources', branch: 'fix/rails-8-1-upper-bound-20260320'
 
 # Core Rails gem
 gem 'rack-protection'
-gem 'rails', ENV.fetch('RAILS_VERSION', '8.0.3')
+
+# SSRF protection for outbound HTTP requests
+gem 'rails', ENV.fetch('RAILS_VERSION', '8.0.4.1')
+gem 'ssrf_filter', '~> 1.1'
 
 # Redis for ActionCable and background jobs
 gem 'redis', '~> 5.4'
@@ -35,13 +39,10 @@ gem 'redis', '~> 5.4'
 gem 'rswag'
 
 # Sidekiq 8.1 requires Rack >= 3.2, which is incompatible with the 7.2 CI lane.
-gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.0.3').start_with?('7.2.') ? '~> 7.3.9' : '~> 8.1.1'
+gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.0.4.1').start_with?('7.2.') ? '~> 7.3.9' : '~> 8.1.1'
 # Pin connection_pool to avoid breaking changes in 3.x
 gem 'connection_pool', '~> 3.0.2'
 
-# Error and performance monitoring with Sentry
-gem 'sentry-rails'
-gem 'sentry-ruby'
 gem 'stackprof'
 
 # Sitemap generation

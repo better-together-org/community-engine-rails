@@ -3,7 +3,11 @@
 module BetterTogether
   module Content
     # Imports or updates a mirrored Page record from a connected remote platform.
+    # rubocop:disable Metrics/ClassLength -- shared mirrored-content bookkeeping keeps
+    # the Page service slightly above the default threshold.
     class FederatedPageMirrorService
+      include ::BetterTogether::Federation::MirroredIdentifierResolution
+
       def initialize(connection:, remote_attributes:, remote_id:, preserve_remote_uuid: false, source_updated_at: nil)
         @connection = connection
         @remote_attributes = remote_attributes.to_h.with_indifferent_access
@@ -16,6 +20,12 @@ module BetterTogether
         authorize_mirroring!
 
         page = find_or_initialize_page
+        assign_attributes(page)
+        page.save!
+        page
+      rescue ActiveRecord::RecordNotUnique
+        # Two concurrent syncs raced on INSERT; reload the winner and apply our attributes.
+        page = reload_after_concurrent_insert
         assign_attributes(page)
         page.save!
         page
@@ -34,26 +44,52 @@ module BetterTogether
 
         return if result.allowed?
 
-        raise ArgumentError, "page mirroring not authorized: #{result.reason}"
+        raise ArgumentError, mirroring_not_authorized_message(result.reason)
       end
 
       def find_or_initialize_page
-        if preserve_remote_uuid? && uuid?(remote_id)
-          # 1. Already mirrored with the same UUID — most common repeat-sync path.
-          existing = ::BetterTogether::Page.find_by(id: remote_id)
-          return existing if existing
+        return find_or_initialize_page_by_source_id unless mirror_with_remote_uuid?
 
-          # 2. Previously mirrored via the source_id path (e.g. before preserve_remote_uuid
-          #    was enabled on this connection) — prevents duplicate record creation.
-          existing = ::BetterTogether::Page.find_by(
-            platform: connection.source_platform, source_id: remote_id
-          )
-          return existing if existing
+        existing_page_with_remote_uuid || existing_page_by_source_id || ::BetterTogether::Page.new(id: remote_id)
+      end
 
-          ::BetterTogether::Page.new(id: remote_id)
-        else
-          ::BetterTogether::Page.find_or_initialize_by(platform: connection.source_platform, source_id: remote_id)
-        end
+      def find_or_initialize_page_by_source_id
+        ::BetterTogether::Page.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+      end
+
+      def reload_after_concurrent_insert
+        record = if mirror_with_remote_uuid?
+                   existing_page_with_remote_uuid || existing_page_by_source_id
+                 else
+                   existing_page_by_source_id
+                 end
+
+        return record if record
+
+        raise_uuid_collision_if_applicable!
+        raise ::ActiveRecord::RecordNotFound,
+              "Page not found after concurrent INSERT for remote_id=#{remote_id}"
+      end
+
+      # Raises RecordInvalid when a page with the remote UUID already exists under a
+      # different platform. This is a permanent cross-platform UUID collision, not a
+      # transient race; FederatedContentIngestService treats RecordInvalid with an
+      # identifier:taken error as a mirrored-identifier conflict and continues the batch.
+      def raise_uuid_collision_if_applicable!
+        return unless mirror_with_remote_uuid? && ::BetterTogether::Page.exists?(id: remote_id)
+
+        stub = ::BetterTogether::Page.new
+        stub.errors.add(:identifier, :taken,
+                        message: 'UUID conflicts with an existing page on another platform')
+        raise ::ActiveRecord::RecordInvalid, stub
+      end
+
+      def existing_page_with_remote_uuid
+        ::BetterTogether::Page.find_by(id: remote_id, platform: connection.target_platform)
+      end
+
+      def existing_page_by_source_id
+        ::BetterTogether::Page.find_by(platform: connection.target_platform, source_id: remote_id)
       end
 
       def assign_attributes(page)
@@ -80,14 +116,20 @@ module BetterTogether
           identifier: normalized_identifier(record),
           privacy: remote_attributes[:privacy].presence || 'public',
           published_at: remote_attributes[:published_at],
-          creator_id: remote_attributes[:creator_id]
+          creator_id: resolve_local_creator(remote_attributes[:creator_id])
         }
+      end
+
+      def resolve_local_creator(remote_id)
+        return nil if remote_id.blank?
+
+        ::BetterTogether::Person.where(id: remote_id).pick(:id)
       end
 
       def mirror_tracking_attributes
         {
-          platform: connection.source_platform,
-          source_id: preserve_remote_uuid? ? nil : remote_id,
+          platform: connection.target_platform,
+          source_id: effective_preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current
         }
@@ -97,24 +139,13 @@ module BetterTogether
         # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
         return page.identifier if page.persisted?
 
-        base = remote_attributes[:identifier].presence ||
-               "federated-page-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-        identifier_or_namespaced(::BetterTogether::Page, base, page.id)
-      end
-
-      # Returns +base+ unchanged when no other record claims it; otherwise prepends the
-      # source platform identifier to prevent a uniqueness validation failure on ingest.
-      def identifier_or_namespaced(model_class, base, exclude_id)
-        return base unless identifier_taken?(model_class, base, exclude_id)
-
-        source_slug = connection.source_platform.identifier.to_s.parameterize.presence || 'remote'
-        "#{source_slug}-#{base}"
-      end
-
-      def identifier_taken?(model_class, identifier, exclude_id)
-        scope = model_class.where(identifier:)
-        scope = scope.where.not(id: exclude_id) if exclude_id.present?
-        scope.exists?
+        mirrored_identifier_for(
+          content_type: 'page',
+          remote_identifier: remote_attributes[:identifier],
+          remote_id:,
+          model_class: ::BetterTogether::Page,
+          exclude_id: page.id
+        )
       end
 
       def normalized_source_updated_at
@@ -128,9 +159,34 @@ module BetterTogether
         preserve_remote_uuid
       end
 
+      def effective_preserve_remote_uuid?
+        preserve_remote_uuid? && !shared_target_database?
+      end
+
+      def mirror_with_remote_uuid?
+        effective_preserve_remote_uuid? && uuid?(remote_id)
+      end
+
+      def same_instance_connection?
+        connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
+      end
+
+      def shared_target_database?
+        connection.target_platform.local_hosted?
+      end
+
       def uuid?(value)
         /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
       end
+
+      def mirroring_not_authorized_message(reason)
+        I18n.t(
+          'better_together.federation.mirroring.errors.not_authorized',
+          content_type: I18n.t('better_together.federation.mirroring.content_types.page'),
+          reason:
+        )
+      end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

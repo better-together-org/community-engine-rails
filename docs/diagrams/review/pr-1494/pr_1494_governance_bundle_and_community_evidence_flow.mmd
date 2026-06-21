@@ -1,0 +1,13 @@
+flowchart TD
+  A[Community profile events tab] --> B[Event card]
+  B --> C[Shared record evidence summary]
+  C --> D[Claim count]
+  C --> E[Citation count]
+  C --> F[Imported citation count]
+  B --> G[Citation export endpoint]
+  G --> H[style=bundle]
+  H --> I[Governance citation bundle JSON]
+  I --> J[Citations]
+  I --> K[Claims and evidence links]
+  I --> L[Contribution records]
+  I --> M[Optional provenance notes]

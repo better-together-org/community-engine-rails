@@ -62,6 +62,8 @@ The broader platform also supports privacy controls for some content and profile
 - visible only to community members
 - private
 
+Some settings screens also let you choose whether your public content can be included in approved platform-to-platform federation feeds. When that option is off, your public posts, pages, and events stay local to the current platform.
+
 Because the platform is still evolving, not every older doc page or settings note reflects the exact current UI state. When in doubt, use the visible controls in the interface and rely on the safety guides in this section for currently supported safety actions.
 
 ## Choosing The Right Tool

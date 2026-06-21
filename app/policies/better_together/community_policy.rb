@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       true # Allow all users to view community index (scope filters appropriately)
     end
 
     def show?
-      record.privacy_public? ||
+      public_or_member_scoped_community?(record) ||
         member_of_community? ||
         creator_of_community? ||
         can_manage_community? ||
@@ -82,7 +82,8 @@ module BetterTogether
 
       BetterTogether::PersonCommunityMembership.exists?(
         member: agent,
-        joinable: record
+        joinable: record,
+        status: 'active'
       )
     end
 
@@ -95,7 +96,7 @@ module BetterTogether
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.order(updated_at: :desc).where(permitted_query)
+        platform_scoped.order(updated_at: :desc).where(permitted_query)
       end
 
       protected
@@ -105,8 +106,7 @@ module BetterTogether
         communities_table = ::BetterTogether::Community.arel_table
         person_community_memberships_table = ::BetterTogether::PersonCommunityMembership.arel_table
 
-        # Only list communities that are public and where the current person is a member or a creator
-        query = communities_table[:privacy].eq('public')
+        query = visible_privacy_query(communities_table)
 
         if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
           query = query.or(communities_table[:privacy].eq('private'))
@@ -116,6 +116,7 @@ module BetterTogether
               person_community_memberships_table
                 .where(person_community_memberships_table[:member_id]
                 .eq(agent.id))
+                .where(person_community_memberships_table[:status].eq('active'))
                 .project(:joinable_id)
             )
           ).or(

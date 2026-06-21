@@ -10,10 +10,27 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
   let(:network_admin) do
     create(:better_together_user, :confirmed, :network_admin, email: 'platform-network-admin@example.test')
   end
+  let(:approval_operator) do
+    create(:better_together_user, :confirmed, email: 'platform-approver@example.test')
+  end
   let(:regular_user) { find_or_create_test_user('platform-connection-user@example.test', 'SecureTest123!@#', :user) }
   let!(:platform_connection) { create(:better_together_platform_connection, :active) }
   let(:source_platform) { create(:better_together_platform) }
   let(:target_platform) { create(:better_together_platform) }
+
+  before do
+    permission = BetterTogether::ResourcePermission.find_by(identifier: 'approve_network_connections')
+    next unless permission
+
+    role = create(:better_together_role, :platform_role)
+    BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
+    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: approval_operator.person)
+    membership.role = role
+    membership.status = :active
+    membership.save!
+    approval_operator.person.touch
+  end
 
   describe 'GET /index' do
     it 'allows network admins to view platform connections' do
@@ -40,6 +57,28 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
       get better_together.platform_connections_path(locale:)
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 'does not render edit links for approval-only operators' do
+      sign_in approval_operator
+
+      get better_together.platform_connections_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include(better_together.edit_platform_connection_path(platform_connection))
+    end
+  end
+
+  describe 'GET /show' do
+    it 'shows approve controls but no edit link for approval-only operators' do
+      pending_connection = create(:better_together_platform_connection)
+      sign_in approval_operator
+
+      get better_together.platform_connection_path(pending_connection, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(better_together.approve_platform_connection_path(pending_connection))
+      expect(response.body).not_to include(better_together.edit_platform_connection_path(pending_connection))
     end
   end
 
@@ -152,6 +191,15 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
       expect(response).to have_http_status(:not_found)
       expect(pending_connection.reload.status).to eq('pending')
     end
+
+    it 'allows approval-only operators to approve a pending connection' do
+      sign_in approval_operator
+
+      patch better_together.approve_platform_connection_path(pending_connection, locale:)
+
+      expect(response).to have_http_status(:see_other)
+      expect(pending_connection.reload.status).to eq('active')
+    end
   end
 
   describe 'PATCH /suspend' do
@@ -199,7 +247,7 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
             } }
 
       expect(response).to have_http_status(:see_other)
-      expect(platform_connection.reload.status).to eq('suspended')
+      expect(platform_connection.reload.status).to eq('active')
       expect(platform_connection.content_sharing_enabled).to be true
       expect(platform_connection.content_sharing_policy).to eq('mirror_network_feed')
       expect(platform_connection.share_posts).to be true
@@ -214,6 +262,72 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
       expect(response).to have_http_status(:not_found)
       expect(platform_connection.reload.status).to eq('active')
+    end
+
+    it 'rejects generic updates from approval-only operators' do
+      sign_in approval_operator
+
+      patch better_together.platform_connection_path(platform_connection, locale:),
+            params: { platform_connection: { federation_auth_policy: 'api_write' } }
+
+      expect(response).to have_http_status(:not_found)
+      expect(platform_connection.reload.federation_auth_policy).not_to eq('api_write')
+    end
+  end
+
+  describe 'PATCH /rotate_secret' do
+    it 'rotates the oauth client secret for network admins' do
+      sign_in network_admin
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(better_together.platform_connection_path(platform_connection, locale:))
+
+      platform_connection.reload
+      expect(platform_connection.oauth_client_secret).not_to eq(old_secret)
+      expect(platform_connection.authenticate_oauth_secret(old_secret)).to be(false)
+      expect(platform_connection.authenticate_oauth_secret(platform_connection.oauth_client_secret)).to be(true)
+    end
+
+    it 'rejects secret rotation for approval-only operators' do
+      sign_in approval_operator
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(platform_connection.reload.oauth_client_secret).to eq(old_secret)
+    end
+
+    it 'rejects secret rotation for regular users' do
+      sign_in regular_user
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(platform_connection.reload.oauth_client_secret).to eq(old_secret)
+    end
+  end
+
+  describe 'GET /edit' do
+    it 'does not expose a writable status field in the generic edit form' do
+      sign_in network_admin
+
+      get better_together.edit_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('name="platform_connection[status]"')
+    end
+
+    it 'rejects edit access for approval-only operators' do
+      sign_in approval_operator
+
+      get better_together.edit_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

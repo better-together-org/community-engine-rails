@@ -4,6 +4,8 @@ module BetterTogether
   module Metrics
     # Controller for creating and downloading Link Checker reports
     class LinkCheckerReportsController < ApplicationController
+      include PlatformContext
+
       before_action :set_report, only: %i[download]
 
       def index
@@ -92,7 +94,9 @@ module BetterTogether
             @link_checker_report.report_file.filename.to_s,
             @link_checker_report.report_file.content_type,
             @link_checker_report.report_file.byte_size,
-            I18n.locale.to_s
+            I18n.locale.to_s,
+            metrics_platform.id,
+            metrics_logged_in?
           )
 
           send_data @link_checker_report.report_file.download,

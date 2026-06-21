@@ -59,6 +59,42 @@ RSpec.describe BetterTogether::PersonCommunityMembership do
     end
   end
 
+  describe 'role assignments' do
+    let(:community) { create(:better_together_community) }
+    let(:member) { create(:better_together_person) }
+    let(:first_role) { create(:better_together_role, resource_type: 'BetterTogether::Community') }
+    let(:second_role) { create(:better_together_role, resource_type: 'BetterTogether::Community') }
+
+    it 'allows multiple roles for the same member and community' do
+      create(:better_together_person_community_membership,
+             joinable: community,
+             member: member,
+             role: first_role)
+
+      second_membership = build(:better_together_person_community_membership,
+                                joinable: community,
+                                member: member,
+                                role: second_role)
+
+      expect(second_membership).to be_valid
+    end
+
+    it 'rejects duplicate role assignments for the same member and community' do
+      create(:better_together_person_community_membership,
+             joinable: community,
+             member: member,
+             role: first_role)
+
+      duplicate_membership = build(:better_together_person_community_membership,
+                                   joinable: community,
+                                   member: member,
+                                   role: first_role)
+
+      expect(duplicate_membership).not_to be_valid
+      expect(duplicate_membership.errors[:role_id]).to be_present
+    end
+  end
+
   describe 'notifications' do
     it 'creates a membership created notification for active memberships' do
       membership = build(:better_together_person_community_membership, status: 'active')

@@ -1,0 +1,33 @@
+<%# locals: (block:, iframe_url:, aspect_ratio:, title:, caption: nil, iframe_allow: nil, allow_fullscreen: true) -%>
+<% embed_state = iframe_embed_state(iframe_url) %>
+
+<figure class="iframe-block">
+  <% if embed_state[:status] == :allowed %>
+    <div class="ratio ratio-<%= aspect_ratio %>">
+      <iframe src="<%= iframe_url %>"
+              title="<%= title %>"
+              frameborder="0"
+              <% if iframe_allow.present? %>allow="<%= iframe_allow %>"<% end %>
+              referrerpolicy="strict-origin-when-cross-origin"
+              <% if allow_fullscreen %>allowfullscreen<% end %>></iframe>
+    </div>
+  <% elsif embed_state[:status] == :blocked %>
+    <%= render partial: 'better_together/content/blocks/iframe_blocked_notice',
+               locals: { aspect_ratio:, iframe_url:, embed_state:, title: } %>
+  <% else %>
+    <div class="ratio ratio-<%= aspect_ratio %>">
+      <div class="border rounded d-flex align-items-center justify-content-center p-4 text-center bg-light">
+        <div>
+          <p class="fw-semibold mb-2"><%= t('better_together.content.blocks.embeds.invalid_url_title') %></p>
+          <p class="text-muted mb-0"><%= t('better_together.content.blocks.embeds.invalid_url_body') %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if caption.present? %>
+    <figcaption class="iframe-block__caption text-muted small mt-2 text-center">
+      <%= caption %>
+    </figcaption>
+  <% end %>
+</figure>

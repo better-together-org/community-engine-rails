@@ -4,8 +4,12 @@
     <%= content_tag :div, class: 'hero-background' do %>
       <div class="hero-overlay" style="<%= hero.inline_overlay_styles %>"></div>
       <div class="hero-content mt-3" data-controller="better_together--hero-scroll-indicator">
-        <h1 class="hero-heading"><%= hero.heading %></h1>
-        <div class="hero-paragraph"><%= hero.content %></div>
+        <%= content_tag :h1, hero.heading,
+                        class: 'hero-heading',
+                        style: (hero.heading_color.present? ? "color: #{hero.heading_color}" : nil) %>
+        <%= content_tag :div, hero.content,
+                        class: 'hero-paragraph',
+                        style: (hero.paragraph_color.present? ? "color: #{hero.paragraph_color}" : nil) %>
 
         <% if hero.cta_text.present? && hero.cta_url.present? %>
           <div><%= link_to hero.cta_text, hero.cta_url, class: "hero-cta btn #{hero.cta_button_style}" %></div>

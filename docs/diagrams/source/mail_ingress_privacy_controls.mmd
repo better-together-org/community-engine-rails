@@ -1,0 +1,25 @@
+%% render.orientation: portrait
+flowchart TD
+  start["Inbound address received"]
+  domain["Resolve recipient domain to PlatformDomain"]
+  mapped{"Tenant domain mapped?"}
+  alias{"Alias family recognized?"}
+  community{"Community belongs to resolved tenant?"}
+  agent{"Robot/person belongs to resolved tenant?"}
+  store["Persist InboundEmailMessage\nwith resolved tenant context"]
+  request["Create MembershipRequest"]
+  keep["Keep routed message for community/agent handling"]
+  reject["Reject and retain audit record"]
+
+  start --> domain --> mapped
+  mapped -->|No| reject
+  mapped -->|Yes| alias
+  alias -->|No| reject
+  alias -->|requests+ / community+| community
+  alias -->|agent+| agent
+  community -->|No| reject
+  community -->|Yes| store
+  agent -->|No| reject
+  agent -->|Yes| store
+  store -->|membership request route| request
+  store -->|community or agent route| keep

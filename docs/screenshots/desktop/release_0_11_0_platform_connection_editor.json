@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_platform_connection_editor",
+  "device": "desktop",
+  "url": "/en/platform_connections/648e2b15-202f-4869-befd-2c6249dfcd68/edit",
+  "title": "Edit Platform Connection | Community Engine Host",
+  "locale": "en",
+  "feature_set": "release_0_11_0_federation_platform",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}

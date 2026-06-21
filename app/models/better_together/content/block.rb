@@ -5,14 +5,16 @@ require 'storext'
 module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
-    class Block < ApplicationRecord
+    class Block < PlatformRecord
       include ::BetterTogether::Content::BlockAttributes
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks
 
+      # Platform-scoped uniqueness: the same identifier can exist on different platforms.
+      # The old global unique DB index was removed in migration 20260606001006.
       validates :identifier,
-                uniqueness: true,
+                uniqueness: { scope: :platform_id },
                 length: { maximum: 100 },
                 allow_blank: true
 
@@ -69,7 +71,7 @@ module BetterTogether
         (super + block_attrs + descendants.map(&:extra_permitted_attributes).flatten).uniq
       end
 
-      def self.content_addable?
+      def self.content_addable?(actor: nil) # rubocop:disable Lint/UnusedMethodArgument
         true
       end
 
@@ -85,7 +87,24 @@ module BetterTogether
                            end}"
       end
 
-      # Method to return the content used for Elasticsearch indexing
+      def citation_target_key
+        [block_name, identifier.presence || id].join(':')
+      end
+
+      def evidence_selector
+        "block:#{citation_target_key}"
+      end
+
+      def evidence_selector_options
+        [
+          {
+            value: evidence_selector,
+            label: "Block: #{self}"
+          }
+        ]
+      end
+
+      # Method to return the content used for cached search payloads
       def cached_content
         {
           id: id,

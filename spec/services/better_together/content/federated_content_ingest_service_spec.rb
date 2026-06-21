@@ -127,6 +127,7 @@ module BetterTogether # :nodoc:
           BetterTogether::Event
         )
         expect(result.unsupported_seeds.length).to eq(1)
+        expect(result.conflict_count).to eq(0)
         expect(result.planting).to be_completed
       end
 
@@ -135,16 +136,44 @@ module BetterTogether # :nodoc:
 
         described_class.call(connection:, seeds:)
 
+        mirrored_post = BetterTogether::Post.find_by(identifier: "#{source_platform.identifier}--remote-post")
+        mirrored_page = BetterTogether::Page.find_by(identifier: "#{source_platform.identifier}--remote-page")
+        mirrored_event = BetterTogether::Event.find_by(identifier: "#{source_platform.identifier}--remote-event")
+
         expect(Current.platform).to eq(previous_platform)
-        expect(BetterTogether::Post.find_by(identifier: 'remote-post')).to be_remote_to_platform(target_platform)
-        expect(BetterTogether::Page.find_by(identifier: 'remote-page')).to be_remote_to_platform(target_platform)
-        expect(BetterTogether::Event.find_by(identifier: 'remote-event')).to be_remote_to_platform(target_platform)
+        expect(mirrored_post).to have_attributes(platform: target_platform, source_id: seeds.first.dig('better_together', :payload, :id))
+        expect(mirrored_page).to have_attributes(platform: target_platform, source_id: seeds.second.dig('better_together', :payload, :id))
+        expect(mirrored_event).to have_attributes(platform: target_platform, source_id: seeds.third.dig('better_together', :payload, :id))
+        expect(mirrored_post).to be_mirrored
+        expect(mirrored_page).to be_mirrored
+        expect(mirrored_event).to be_mirrored
+      end
+
+      it 'records mirrored identifier conflicts without failing the batch' do
+        create(
+          :better_together_post,
+          identifier: "#{source_platform.identifier}--remote-post"
+        )
+
+        result = described_class.call(connection:, seeds: [seeds.first, seeds.second])
+
+        expect(result.processed_count).to eq(1)
+        expect(result.conflict_count).to eq(1)
+        expect(result.conflicted_seeds.length).to eq(1)
+        expect(result.conflicted_seeds.first['seed_type']).to eq('post')
+        expect(result.conflicted_seeds.first['existing_local_identifier']).to eq("#{source_platform.identifier}--remote-post")
+        expect(result.planting.metadata['conflict_count']).to eq(1)
+        expect(result.planting.metadata['conflicted_seeds'].length).to eq(1)
+        expect(BetterTogether::Page.find_by(identifier: "#{source_platform.identifier}--remote-page")).to be_present
       end
 
       it 'requires a connection' do
         expect do
           described_class.call(connection: nil, seeds:)
-        end.to raise_error(ArgumentError, /connection is required/)
+        end.to raise_error(
+          ArgumentError,
+          I18n.t('better_together.federation.ingest.errors.connection_required')
+        )
       end
     end
   end

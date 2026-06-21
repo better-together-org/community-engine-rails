@@ -1,0 +1,16 @@
+flowchart TD
+  A[Visitor opens sign-up page] --> B{Platform requires invitation?}
+  B -- Yes, no invitation --> C[Show invitation code prompt]
+  B -- No or valid invitation --> D[Render registration form]
+  D --> E[Show required registration agreements]
+  E --> F[Visitor opens agreement modal]
+  F --> G[Turbo frame loads seeded agreement page]
+  G --> H{Scrolled through full agreement?}
+  H -- No --> I[Checkbox remains locked]
+  H -- Yes --> J[Stimulus unlocks matching checkbox]
+  J --> K[Visitor checks all required agreements]
+  K --> L[Submit registration form]
+  L --> M{All required agreements accepted?}
+  M -- No --> N[Render validation errors]
+  M -- Yes --> O[Create user and agreement participant records]
+  O --> P[Registration completes]

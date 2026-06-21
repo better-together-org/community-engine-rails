@@ -52,10 +52,18 @@ staged_ruby=$(git diff --cached --name-only --diff-filter=ACM \
 if [ -n "$staged_ruby" ]; then
   echo "pre-commit: Running rubocop -A on staged Ruby files…"
 
+  # Prefer bin/dc-run (Docker-based env) so the hook works even when the local
+  # gem environment is stale after a Gemfile.lock update.
+  if [ -x "$(git rev-parse --show-toplevel)/bin/dc-run" ]; then
+    rubocop_cmd="$(git rev-parse --show-toplevel)/bin/dc-run rubocop"
+  else
+    rubocop_cmd="bundle exec rubocop"
+  fi
+
   # Run rubocop -A; capture exit code without aborting via set -e
   rubocop_exit=0
   # shellcheck disable=SC2086
-  bundle exec rubocop -A $staged_ruby || rubocop_exit=$?
+  $rubocop_cmd -A $staged_ruby || rubocop_exit=$?
 
   # Re-stage any files rubocop auto-corrected
   # shellcheck disable=SC2086
@@ -82,8 +90,14 @@ staged_i18n=$(git diff --cached --name-only --diff-filter=ACM \
 if [ -n "$staged_i18n" ]; then
   echo "pre-commit: Running i18n-tasks health…"
 
+  if [ -x "$(git rev-parse --show-toplevel)/bin/dc-run" ]; then
+    i18n_cmd="$(git rev-parse --show-toplevel)/bin/dc-run i18n-tasks"
+  else
+    i18n_cmd="bundle exec i18n-tasks"
+  fi
+
   i18n_exit=0
-  bundle exec i18n-tasks health || i18n_exit=$?
+  $i18n_cmd health || i18n_exit=$?
 
   if [ "$i18n_exit" -ne 0 ]; then
     echo ""

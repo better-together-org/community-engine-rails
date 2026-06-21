@@ -26,7 +26,7 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
       }
     end
 
-    it 'preserves the remote UUID for CE-compatible sources' do
+    it 'uses source_id when the target platform is local hosted' do
       remote_id = SecureRandom.uuid
 
       post = described_class.new(
@@ -36,9 +36,36 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
         preserve_remote_uuid: true
       ).call
 
+      expect(post.id).not_to eq(remote_id)
+      expect(post.platform).to eq(target_platform)
+      expect(post.source_id).to eq(remote_id)
+      expect(post.last_synced_at).to be_present
+    end
+
+    it 'preserves the remote UUID when the target platform is external' do
+      remote_id = SecureRandom.uuid
+      external_target = create(:better_together_platform, :community_engine_peer)
+      external_connection = create(
+        :better_together_platform_connection,
+        :active,
+        source_platform:,
+        target_platform: external_target,
+        content_sharing_policy: 'mirror_network_feed',
+        share_posts: true
+      )
+
+      post = described_class.new(
+        connection: external_connection,
+        remote_attributes:,
+        remote_id:,
+        preserve_remote_uuid: true
+      ).call
+
       expect(post.id).to eq(remote_id)
-      expect(post.platform).to eq(source_platform)
       expect(post.source_id).to be_nil
+      expect(post.platform).to eq(external_target)
+      expect(post.platform).to eq(external_target)
+      expect(post.identifier).to eq("#{source_platform.identifier}--remote-post")
       expect(post.last_synced_at).to be_present
     end
 
@@ -52,7 +79,9 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
 
       expect(post.id).not_to eq('legacy-post-42')
       expect(post.source_id).to eq('legacy-post-42')
-      expect(post.platform).to eq(source_platform)
+      expect(post.platform).to eq(target_platform)
+      expect(post.platform).to eq(target_platform)
+      expect(post.identifier).to eq("#{source_platform.identifier}--remote-post")
     end
 
     it 'updates an existing mirrored post on repeat import' do
@@ -70,6 +99,7 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
 
       expect(updated.id).to eq(existing.id)
       expect(updated.title).to eq('Updated Remote Post')
+      expect(updated.identifier).to eq("#{source_platform.identifier}--remote-post")
     end
 
     it 'rejects mirroring when the connection policy does not allow posts' do
@@ -82,7 +112,14 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
           remote_id: SecureRandom.uuid,
           preserve_remote_uuid: true
         ).call
-      end.to raise_error(ArgumentError, /not authorized/)
+      end.to raise_error(
+        ArgumentError,
+        I18n.t(
+          'better_together.federation.mirroring.errors.not_authorized',
+          content_type: I18n.t('better_together.federation.mirroring.content_types.post'),
+          reason: 'content mirroring not enabled for type'
+        )
+      )
     end
   end
 end

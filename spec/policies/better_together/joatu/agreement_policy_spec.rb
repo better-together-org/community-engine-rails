@@ -12,6 +12,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
 
   let(:agreement) do
     create(:better_together_joatu_agreement,
+           privacy: 'private',
            offer: create(:better_together_joatu_offer, creator: offer_creator.person),
            request: create(:better_together_joatu_request, creator: request_creator.person))
   end
@@ -31,6 +32,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.update?).to be(true)
       expect(policy.accept?).to be(true)
       expect(policy.reject?).to be(true)
+      expect(policy.fulfill?).to be(true)
       expect(policy.destroy?).to be(true)
     end
   end
@@ -44,6 +46,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.update?).to be(true)
       expect(policy.accept?).to be(true)
       expect(policy.reject?).to be(true)
+      expect(policy.fulfill?).to be(true)
       expect(policy.destroy?).to be(true)
     end
   end
@@ -57,7 +60,13 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
       expect(policy.update?).to be(false)
       expect(policy.accept?).to be(false)
       expect(policy.reject?).to be(false)
+      expect(policy.fulfill?).to be(false)
       expect(policy.destroy?).to be(false)
+    end
+
+    it 'allows viewing a public agreement' do
+      agreement.update_column(:privacy, 'public')
+      expect(policy.show?).to be(true)
     end
   end
 
@@ -72,6 +81,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
         expect(policy.update?).to be(false)
         expect(policy.accept?).to be(false)
         expect(policy.reject?).to be(false)
+        expect(policy.fulfill?).to be(false)
         expect(policy.destroy?).to be(false)
       end
     end
@@ -86,6 +96,7 @@ RSpec.describe BetterTogether::Joatu::AgreementPolicy do
         expect(policy.update?).to be(true)
         expect(policy.accept?).to be(true)
         expect(policy.reject?).to be(true)
+        expect(policy.fulfill?).to be(true)
         expect(policy.destroy?).to be(true)
       end
     end

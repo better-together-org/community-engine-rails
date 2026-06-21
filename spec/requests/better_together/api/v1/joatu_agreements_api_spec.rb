@@ -17,7 +17,13 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
 
   describe 'GET /api/v1/joatu_agreements' do
     let(:url) { '/api/v1/joatu_agreements' }
-    let!(:agreement) { create(:better_together_joatu_agreement, offer: offer, request: request_record) }
+    let!(:participant_private_agreement) do
+      create(:better_together_joatu_agreement, privacy: 'private', offer: offer, request: request_record)
+    end
+    let!(:public_agreement) do
+      create(:better_together_joatu_agreement, privacy: 'private').tap { |agreement_record| agreement_record.update_column(:privacy, 'public') }
+    end
+    let!(:other_private_agreement) { create(:better_together_joatu_agreement, privacy: 'private') }
 
     context 'when authenticated as participant' do
       before { get url, headers: auth_headers }
@@ -35,7 +41,8 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
       it 'includes agreements where user is a participant' do
         json = JSON.parse(response.body)
         ids = json['data'].map { |d| d['id'] }
-        expect(ids).to include(agreement.id)
+        expect(ids).to include(participant_private_agreement.id, public_agreement.id)
+        expect(ids).not_to include(other_private_agreement.id)
       end
     end
 
@@ -49,7 +56,7 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
   end
 
   describe 'GET /api/v1/joatu_agreements/:id' do
-    let(:agreement) { create(:better_together_joatu_agreement, offer: offer, request: request_record) }
+    let(:agreement) { create(:better_together_joatu_agreement, privacy: 'private', offer: offer, request: request_record) }
     let(:url) { "/api/v1/joatu_agreements/#{agreement.id}" }
 
     context 'when authenticated as participant' do
@@ -68,8 +75,21 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
         expect(json['data']['attributes']).to include(
           'status' => agreement.status,
           'terms' => agreement.terms,
-          'value' => agreement.value
+          'value' => agreement.value,
+          'agreement_family' => agreement.agreement_family,
+          'agreement_type' => agreement.agreement_type,
+          'participant_ids' => match_array(agreement.participant_ids)
         )
+      end
+    end
+
+    context 'when authenticated for a different private agreement' do
+      let(:agreement) { create(:better_together_joatu_agreement, privacy: 'private') }
+
+      before { get url, headers: auth_headers }
+
+      it 'returns not found' do
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -88,6 +108,7 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
       it 'accepts the agreement' do
         json = JSON.parse(response.body)
         expect(json['data']['attributes']['status']).to eq('accepted')
+        expect(json['data']['attributes']['decision_made_at']).to be_present
       end
     end
 
@@ -114,6 +135,34 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
       it 'rejects the agreement' do
         json = JSON.parse(response.body)
         expect(json['data']['attributes']['status']).to eq('rejected')
+        expect(json['data']['attributes']['decision_made_at']).to be_present
+      end
+    end
+  end
+
+  describe 'POST /api/v1/joatu_agreements/:id/cancel' do
+    let(:priced_offer) { create(:better_together_joatu_offer, creator: person, c3_price_millitokens: 20_000) }
+    let(:other_user) { create(:better_together_user, :confirmed) }
+    let(:other_request) { create(:better_together_joatu_request, creator: other_user.person) }
+    let(:agreement) { create(:better_together_joatu_agreement, offer: priced_offer, request: other_request) }
+    let(:url) { "/api/v1/joatu_agreements/#{agreement.id}/cancel" }
+
+    before do
+      BetterTogether::C3::Balance.find_or_create_by!(holder: other_user.person).credit!(5.0)
+      agreement.accept!
+    end
+
+    context 'when authenticated as participant' do
+      before { post url, headers: auth_headers }
+
+      it 'returns success status' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'cancels the agreement' do
+        json = JSON.parse(response.body)
+        expect(json['data']['attributes']['status']).to eq('cancelled')
+        expect(json['data']['attributes']['decision_made_at']).to be_present
       end
     end
   end

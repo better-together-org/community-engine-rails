@@ -2,12 +2,16 @@
 
 module BetterTogether
   # Record of a person reporting inappropriate content or users
-  class Report < ApplicationRecord
+  class Report < PlatformRecord
     ALLOWED_REPORTABLES = [
       'BetterTogether::Person',
       'BetterTogether::Post',
       'BetterTogether::Event',
+      'BetterTogether::Page',
+      'BetterTogether::Community',
       'BetterTogether::Message',
+      'BetterTogether::Upload',
+      'BetterTogether::Content::Block',
       'BetterTogether::Joatu::Offer',
       'BetterTogether::Joatu::Request',
       'BetterTogether::Joatu::Agreement'
@@ -23,6 +27,8 @@ module BetterTogether
       hate_speech: 'hate_speech',
       discrimination: 'discrimination',
       spam_or_scam: 'spam_or_scam',
+      malware_detected: 'malware_detected',
+      scan_failure: 'scan_failure',
       privacy_violation: 'privacy_violation',
       misinformation: 'misinformation',
       boundary_violation: 'boundary_violation',
@@ -62,6 +68,7 @@ module BetterTogether
     }
 
     after_create_commit :ensure_safety_case!
+    after_create_commit :notify_safety_reviewers
 
     def case_status
       safety_case&.status || 'submitted'
@@ -80,6 +87,10 @@ module BetterTogether
         consent_to_contact: consent_to_contact.nil? || consent_to_contact,
         consent_to_restorative_process: consent_to_restorative_process || false
       )
+    end
+
+    def notify_safety_reviewers
+      ::BetterTogether::SafetyReportNotificationService.new(self).notify_submission
     end
   end
 end

@@ -7,6 +7,7 @@ RSpec.describe BetterTogether::PagesHelper do
     configure_host_platform
     # Stub current_user to avoid Devise/Warden setup
     allow(helper).to receive(:current_user).and_return(nil)
+    helper.define_singleton_method(:nav_permission_cache_stamp) { 'guest' }
   end
 
   describe '#page_show_cache_key' do
@@ -19,6 +20,7 @@ RSpec.describe BetterTogether::PagesHelper do
       expect(cache_key).to include(page.id)
       expect(cache_key).to include(page.updated_at)
       expect(cache_key).to include(I18n.locale)
+      expect(cache_key).to include('guest')
     end
 
     context 'when page has sidebar_nav' do
@@ -76,6 +78,43 @@ RSpec.describe BetterTogether::PagesHelper do
 
         expect(cache_key).to include('page-show')
       end
+    end
+  end
+
+  describe '#render_page_content' do
+    let(:page) { create(:better_together_page) }
+
+    it 'scopes the cache by locale and visibility context' do
+      content_blocks = [instance_double(BetterTogether::Content::Block)]
+      allow(page).to receive(:content_blocks).and_return(content_blocks)
+      allow(helper).to receive(:render).with(content_blocks).and_return('rendered-blocks')
+
+      expect(Rails.cache).to receive(:fetch).with(
+        ['page_content', page.cache_key_with_version,
+         page.page_blocks.maximum(:updated_at),
+         page.blocks.maximum(:updated_at),
+         I18n.locale, 'guest', 'v2'],
+        expires_in: 1.minute
+      ).and_yield
+
+      expect(helper.render_page_content(page)).to eq('rendered-blocks')
+    end
+
+    it 'renders the passed page content blocks rather than relying on @page' do
+      passed_page = create(:better_together_page)
+      assigned_page = create(:better_together_page)
+      passed_blocks = [instance_double(BetterTogether::Content::Block)]
+      assigned_blocks = [instance_double(BetterTogether::Content::Block)]
+
+      allow(passed_page).to receive(:content_blocks).and_return(passed_blocks)
+      allow(assigned_page).to receive(:content_blocks).and_return(assigned_blocks)
+      assign(:page, assigned_page)
+
+      allow(helper).to receive(:render).with(passed_blocks).and_return('passed-page-blocks')
+
+      helper.render_page_content(passed_page)
+
+      expect(helper).to have_received(:render).with(passed_blocks)
     end
   end
 end

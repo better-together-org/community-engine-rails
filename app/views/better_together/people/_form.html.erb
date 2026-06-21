@@ -70,7 +70,7 @@
 
           <small class="form-text text-muted"><%= t('helpers.hint.person.profile_image') %></small>
 
-          <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= person.profile_image.url if person.profile_image.attached? %>">
+          <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= storage_proxy_url_for(person.profile_image) if person.profile_image.attached? %>">
           </div>
         </div>
 
@@ -92,7 +92,7 @@
 
           <small class="form-text text-muted"><%= t('helpers.hint.person.cover_image') %></small>
 
-          <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= person.cover_image.url if person.cover_image.attached? %>">
+          <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= storage_proxy_url_for(person.cover_image) if person.cover_image.attached? %>">
           </div>
         </div>
       </div>

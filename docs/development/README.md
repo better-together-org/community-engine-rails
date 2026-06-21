@@ -5,7 +5,7 @@
 
 ## Getting Started
 
-- [🛠️ Development Setup](dev-setup.md) - Complete local development environment setup guide
+- [Development Setup](dev-setup.md) - Complete local development environment setup guide
 - [Rails Version Branch Maintenance](rails_version_branch_maintenance.md) - Branch strategy, CI flow, and dependency update procedure for Rails compatibility lines
 
 ## Quick Links
@@ -47,6 +47,7 @@ bin/render_diagrams
 ## Accessibility And Documentation Quality
 
 - [Accessibility Testing](accessibility_testing.md) - Capybara, Selenium, and axe-core guidance for WCAG 2.1 AA coverage
+- [Pull Request Evidence Standard](pull_request_evidence_standard.md) - Tiered evidence requirements for docs, backend, and UI PRs
 - [Screenshot And Documentation Tooling Assessment](screenshot_and_documentation_tooling_assessment.md) - Current-state assessment of CE and management-tool automation
 - [Documentation Accessibility Rubric](../shared/documentation_accessibility_rubric.md) - Canonical rubric for user docs, inline help, and hints
 
@@ -58,6 +59,17 @@ bin/render_diagrams
 4. **Code**: Implement feature
 5. **Verify**: Run tests and quality checks
 6. **Commit**: Submit pull request
+
+## Repo-local session wrappers
+
+This repository now includes repo-local wrappers so session logs and linked worktree metadata stay attached to the canonical repository root instead of disposable worktrees.
+
+Useful commands:
+
+```bash
+./scripts/session_command_log.sh init
+./scripts/session_worktree.sh ensure --repo . --agent local --session-id example --storage-mode local
+```
 
 ## Related Documentation
 

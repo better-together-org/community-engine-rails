@@ -1,0 +1,59 @@
+flowchart TD
+    MAIL_ROUTER[BTS public mail router]
+    RELAY[POST /inbound-email/relay]
+    ACTION_MAILBOX[Action Mailbox inbound email]
+    RESOLVE[InboundEmailResolutionService]
+    MESSAGE[InboundEmailMessage encrypted record]
+    MAIL_SCAN[MailScreeningService]
+    ORCHESTRATOR[Content-security orchestrator runner]
+    HOLD[Hold for review]
+    ROUTE[Route to CE target]
+    MEMBERSHIP[Membership request creation]
+
+    UPLOAD[Active Storage upload]
+    SUBJECT[ContentSecurity::Subject]
+    SYNC[AttachmentSubjectSync]
+    BLOB_POLICY[BlobAccessPolicy]
+    BLOB_PROXY[CE blob proxy routes]
+    PRIVATE[Pending/private until released]
+    RELEASED[Released attachment serving]
+
+    RICH_TEXT[Action Text content]
+    VALIDATE[Reject unsupported embeds]
+    RICH_SYNC[RichTextSubjectSync]
+    FILTER[RichTextAttachmentFilter]
+    RENDER[Rendered rich text]
+
+    MAIL_ROUTER --> RELAY
+    RELAY --> ACTION_MAILBOX
+    ACTION_MAILBOX --> RESOLVE
+    RESOLVE --> MESSAGE
+    MESSAGE --> MAIL_SCAN
+    MAIL_SCAN --> ORCHESTRATOR
+    ORCHESTRATOR -->|clean or monitor| ROUTE
+    ORCHESTRATOR -->|review_required restricted quarantined blocked| HOLD
+    ROUTE --> MEMBERSHIP
+
+    UPLOAD --> SUBJECT
+    UPLOAD --> SYNC
+    SYNC --> SUBJECT
+    SUBJECT --> BLOB_POLICY
+    BLOB_POLICY -->|not releasable| PRIVATE
+    BLOB_POLICY -->|releasable| BLOB_PROXY
+    BLOB_PROXY --> RELEASED
+
+    RICH_TEXT --> VALIDATE
+    VALIDATE --> RICH_SYNC
+    RICH_SYNC --> SUBJECT
+    SUBJECT --> FILTER
+    FILTER --> RENDER
+
+    classDef ingress fill:#e3f2fd
+    classDef security fill:#fff3e0
+    classDef hold fill:#ffebee
+    classDef release fill:#e8f5e8
+
+    class MAIL_ROUTER,RELAY,ACTION_MAILBOX,RESOLVE,MESSAGE,UPLOAD,RICH_TEXT ingress
+    class MAIL_SCAN,ORCHESTRATOR,SUBJECT,SYNC,BLOB_POLICY,VALIDATE,RICH_SYNC,FILTER security
+    class HOLD,PRIVATE hold
+    class ROUTE,MEMBERSHIP,BLOB_PROXY,RELEASED,RENDER release

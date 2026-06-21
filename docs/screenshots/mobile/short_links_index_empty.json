@@ -1,0 +1,11 @@
+{
+  "name": "short_links_index_empty",
+  "device": "mobile",
+  "url": "/en/short_links",
+  "title": "Short Links | Daniel Group",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "short_links",
+  "flow": "short_links_index_empty",
+  "source_spec": "./spec/docs_screenshots/better_together/short_links_spec.rb"
+}

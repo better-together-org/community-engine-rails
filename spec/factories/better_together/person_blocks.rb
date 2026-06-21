@@ -6,6 +6,7 @@ module BetterTogether # :nodoc:
     factory :person_block, class: PersonBlock do
       association :blocker, factory: :better_together_person
       association :blocked, factory: :better_together_person
+      association :platform, factory: :better_together_platform
     end
   end
 end

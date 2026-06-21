@@ -1,0 +1,56 @@
+<%# locals: (record:, action_items: nil, presentation: :panel, surface_scope: nil, title: nil, description: nil, container_classes: nil) %>
+<% items = feedback_surface_items_for(record, action_items:) %>
+<% if items.any? %>
+  <%
+    presentation = presentation.to_sym
+    surface_classes = [
+      'bt-feedback-surface',
+      "bt-feedback-surface--#{presentation}",
+      container_classes
+    ].compact.join(' ')
+    scope_label = feedback_surface_scope_label(record, surface_scope:)
+    heading_text = title.presence || feedback_surface_heading(record, surface_scope:)
+    description_text = description.presence || feedback_surface_description(record, surface_scope:)
+  %>
+
+  <section class="<%= surface_classes %>"
+           aria-label="<%= feedback_surface_aria_label(record, surface_scope:) %>">
+    <% unless presentation == :compact %>
+      <div class="bt-feedback-surface__intro">
+        <p class="bt-feedback-surface__scope-label"><%= scope_label %></p>
+        <h2 class="bt-feedback-surface__heading h6 mb-1"><%= heading_text %></h2>
+        <% if description_text.present? %>
+          <p class="bt-feedback-surface__description mb-0"><%= description_text %></p>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="bt-feedback-surface__scope-label mb-0"><%= scope_label %></p>
+    <% end %>
+
+    <div class="bt-feedback-surface__actions"
+         role="list"
+         aria-label="<%= feedback_surface_actions_label(record, surface_scope:) %>">
+      <% items.each do |item| %>
+        <div class="bt-feedback-surface__action" role="listitem">
+          <%= link_to item[:href],
+                      class: feedback_surface_action_link_classes(presentation, item),
+                      data: item[:data] do %>
+            <span class="bt-feedback-surface__action-icon text-danger" aria-hidden="true">
+              <i class="fas <%= item[:icon] %>"></i>
+            </span>
+            <span class="bt-feedback-surface__action-copy">
+              <span class="bt-feedback-surface__action-label"><%= item[:label] %></span>
+              <% if item[:description].present? %>
+                <span class="bt-feedback-surface__action-description"><%= item[:description] %></span>
+              <% end %>
+            </span>
+          <% end %>
+
+          <% if presentation != :compact && item[:policy_note].present? %>
+            <p class="bt-feedback-surface__policy-note mb-0"><%= item[:policy_note] %></p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

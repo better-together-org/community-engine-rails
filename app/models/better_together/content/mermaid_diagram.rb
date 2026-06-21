@@ -39,7 +39,7 @@ module BetterTogether
         ''
       end
 
-      def self.content_addable?
+      def self.content_addable?(actor: nil) # rubocop:disable Lint/UnusedMethodArgument
         true
       end
 

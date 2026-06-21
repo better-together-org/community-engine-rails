@@ -57,6 +57,10 @@ RSpec.describe 'Event Invitations', :as_platform_manager do
       already_invited_user.person.update!(name: 'Already Invited')
       already_invited_person = already_invited_user.person
 
+      host_platform = BetterTogether::Platform.find_by(host: true) || configure_host_platform
+      create(:better_together_person_platform_membership, member: invitable_person, joinable: host_platform)
+      create(:better_together_person_platform_membership, member: already_invited_person, joinable: host_platform)
+
       # Create an invitation for one person
       create(:better_together_event_invitation,
              invitable: event,

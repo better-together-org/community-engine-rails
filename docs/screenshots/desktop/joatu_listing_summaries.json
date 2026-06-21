@@ -1,0 +1,11 @@
+{
+  "name": "joatu_listing_summaries",
+  "device": "desktop",
+  "url": "http://127.0.0.1:44743/en/exchange/requests",
+  "title": "Requests | Test Host Community",
+  "captured_at": "2026-04-04T23:08:29Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "joatu_listing_summaries",
+  "source_spec": "./spec/docs_screenshots/better_together/joatu_listing_summaries_spec.rb"
+}

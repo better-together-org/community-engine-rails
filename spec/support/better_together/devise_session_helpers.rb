@@ -6,6 +6,7 @@ module BetterTogether # :nodoc:
   module CapybaraFeatureHelpers # :nodoc:
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
     include BetterTogether::Engine.routes.url_helpers
 
     # Setup or update a single host platform and return a platform-steward user
@@ -50,14 +51,25 @@ module BetterTogether # :nodoc:
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
 
-      platform_steward = BetterTogether::User.find_by(email: 'manager@example.test')
+      platform_steward = BetterTogether::User.find_or_initialize_by(email: 'manager@example.test')
+      platform_steward.password = 'SecureTest123!@#' if platform_steward.new_record?
+      platform_steward.confirmed_at ||= Time.zone.now
+      platform_steward.confirmation_sent_at ||= Time.zone.now
+      platform_steward.build_person(name: 'Platform Steward', identifier: 'manager-example-test') unless platform_steward.person
+      platform_steward.save! if platform_steward.new_record? || platform_steward.changed? || platform_steward.person&.changed?
 
-      unless platform_steward
-        create(
-          :user, :confirmed, :platform_steward,
-          email: 'manager@example.test',
-          password: 'SecureTest123!@#'
-        )
+      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+      unless platform_steward_role
+        BetterTogether::AccessControlBuilder.seed_data
+        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                                BetterTogether::Role.find_by(identifier: 'platform_manager')
+      end
+
+      if platform_steward_role
+        membership = host_platform.person_platform_memberships.find_or_initialize_by(member: platform_steward.person)
+        membership.role ||= platform_steward_role
+        membership.status = 'active'
+        membership.save! if membership.new_record? || membership.changed?
       end
 
       host_platform
@@ -152,7 +164,8 @@ module BetterTogether # :nodoc:
         check 'user_accept_code_of_conduct'
       end
 
-      click_button 'Sign Up'
+      satisfy_bot_defense_minimum_wait(:registration)
+      click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)
       created_user.confirm

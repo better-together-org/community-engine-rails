@@ -38,7 +38,7 @@ RSpec.describe BetterTogether::ApplicationMailer do
 
       it 'includes the host platform name in the rendered body' do
         host_platform = BetterTogether::Platform.find_by(host: true)
-        expect(test_mail.body.encoded).to include(host_platform.name)
+        expect(test_mail.body.encoded).to include(ERB::Util.html_escape(host_platform.name))
       end
 
       it 'sets the locale from the platform' do
@@ -57,7 +57,7 @@ RSpec.describe BetterTogether::ApplicationMailer do
       end
 
       it 'prefers Current.platform over the host platform fallback' do
-        expect(test_mail.body.encoded).to include(current_platform.name)
+        expect(test_mail.body.encoded).to include(ERB::Util.html_escape(current_platform.name))
       end
     end
 

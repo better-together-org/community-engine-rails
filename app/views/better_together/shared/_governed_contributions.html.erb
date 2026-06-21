@@ -1,0 +1,14 @@
+<%# locals: (record:) %>
+<% return unless record.respond_to?(:contribution_roles_with_contributors) %>
+<% grouped_roles = record.contribution_roles_with_contributors %>
+<% return if grouped_roles.empty? %>
+
+<div class="governed-contributions-list">
+  <% grouped_roles.each do |role, contributors| %>
+    <div class="mb-2">
+      <div class="small text-muted fw-semibold"><%= record.contribution_role_label(role) %></div>
+      <%= render partial: 'better_together/shared/governed_authors',
+                 locals: { authors: contributors, flex_layout: 'flex-row', flex_align_items: 'center' } %>
+    </div>
+  <% end %>
+</div>

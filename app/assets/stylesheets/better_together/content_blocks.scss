@@ -1,4 +1,23 @@
 
+.content-block {
+  position: relative;
+}
+
+.bt-content-block__actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  z-index: 2;
+}
+
+.bt-content-block__actions-extra {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
 .page-block-fields {
   background-color: #f8f9fa; /* Light background color */
   padding: 1rem;

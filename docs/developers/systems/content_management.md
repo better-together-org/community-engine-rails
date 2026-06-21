@@ -194,7 +194,11 @@ timeline
   - Hero: optional page hero with background image.
   - RichText: ActionText content (localized) with `indexed_localized_content` for search.
   - Image / Html / Css / Template: ancillary content types for sections and decoration.
+  - Iframe / Video: CSP-aware embed blocks for approved external content.
 - Ordering: `page_blocks.positioned` controls rendering order.
+- HTML block safety:
+  - `BetterTogether::Content::Html` is sanitized at render time for basic markup only.
+  - Raw `<iframe>` tags are stripped from HTML blocks; use the dedicated `IframeBlock` or `VideoBlock` when an embed is intentional.
 
 ## Caching
 - Fragment caching around blocks in views: `cache block.cache_key_with_version` for Hero/RichText/Html/Image.

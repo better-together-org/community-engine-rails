@@ -10,6 +10,7 @@ module BetterTogether
   class SettingsController < ApplicationController
     before_action :authenticate_user!
     before_action :set_person
+    before_action :set_feature_gate_visibility
 
     def index
       load_developer_tab_data
@@ -39,6 +40,16 @@ module BetterTogether
       render json: { success: true, marked_read: count }
     end
 
+    def my_data
+      @person_data_exports = @person.person_data_exports.with_attached_export_file.latest_first.limit(10)
+      @show_person_links = policy(::BetterTogether::PersonLink).index?
+      @show_person_access_grants = policy(::BetterTogether::PersonAccessGrant).index?
+      @show_person_linked_seeds = policy(::BetterTogether::PersonLinkedSeed).index?
+      @show_person_seeds = ::BetterTogether::PersonSeedPolicy.new(current_user, Seed).index?
+
+      render 'better_together/my_data/show', layout: false
+    end
+
     def update_preferences
       if @person.update(person_params)
         redirect_to settings_path(locale: I18n.locale),
@@ -52,6 +63,8 @@ module BetterTogether
     private
 
     def load_developer_tab_data
+      return unless @show_developer_settings
+
       @person_oauth_apps = OauthApplication.where(owner: @person).order(created_at: :desc)
       @access_tokens = OauthAccessToken
                        .where(resource_owner_id: current_user.id)
@@ -64,11 +77,19 @@ module BetterTogether
       @person = current_user.person
     end
 
+    def set_feature_gate_visibility
+      actor = current_user
+      platform = Current.platform
+      @show_developer_settings = BetterTogether::FeatureGate.enabled?('developer_settings', actor:, platform:)
+      @show_device_permissions = BetterTogether::FeatureGate.enabled?('device_permissions', actor:, platform:)
+    end
+
     def person_params
       params.require(:person).permit(
         :locale,
         :time_zone,
         :receive_messages_from_members,
+        :federate_content,
         :notify_by_email,
         :show_conversation_details
       )

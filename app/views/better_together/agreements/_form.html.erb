@@ -36,7 +36,13 @@
           <%= render partial: 'better_together/shared/translated_string_field', locals: { model: agreement, form: form, attribute: 'title' } %>
         </div>
         <div class="mb-3">
-          <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: agreement, form: form, attribute: 'description' } %>
+          <%= render partial: 'better_together/shared/translated_rich_text_field',
+                     locals: {
+                       model: agreement,
+                       form: form,
+                       attribute: 'description',
+                       citation_options: agreement.citation_reference_options
+                     } %>
         </div>
         <div class="mb-3">
           <%= render partial: 'better_together/shared/translated_string_field', locals: { model: agreement, form: form, attribute: 'slug' } %>
@@ -50,20 +56,53 @@
           <%= form.collection_select :page_id, BetterTogether::Page.all.i18n.order(:title), :id, :title, { include_blank: true }, { class: 'form-select', data: { controller: 'better_together--slim-select' } } %>
           <div class="form-text text-muted"><%= t('better_together.agreements.form.page_help', default: 'When set, the linked page content will be shown instead of the agreement terms.') %></div>
         </div>
+        <div class="mb-3">
+          <%= form.label :agreement_kind, t('better_together.agreements.form.agreement_kind', default: 'Agreement Type'), class: 'form-label' %>
+          <%= form.select :agreement_kind, BetterTogether::Agreement::AGREEMENT_KINDS.keys.map { |value| [value.to_s.humanize, value] }, {}, class: 'form-select' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :required_for, t('better_together.agreements.form.required_for', default: 'Required In Flow'), class: 'form-label' %>
+          <%= form.select :required_for, BetterTogether::Agreement::REQUIRED_FOR_VALUES.keys.map { |value| [value.to_s.humanize, value] }, {}, class: 'form-select' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :lifecycle_state, 'Lifecycle', class: 'form-label' %>
+          <%= form.select :lifecycle_state, BetterTogether::Agreement::LIFECYCLE_STATES.keys.map { |value| [value.to_s.humanize, value] }, {}, class: 'form-select' %>
+          <div class="form-text text-muted">Draft agreements stay editable without driving consent. Active agreements can be enforced. Retired agreements stay visible in history without collecting new acceptance.</div>
+        </div>
+        <div class="mb-3 form-check">
+          <%= form.check_box :active_for_consent, class: 'form-check-input' %>
+          <%= form.label :active_for_consent, t('better_together.agreements.form.active_for_consent', default: 'Active for consent collection'), class: 'form-check-label' %>
+        </div>
+        <div class="mb-3 form-check">
+          <%= form.check_box :requires_reacceptance, class: 'form-check-input' %>
+          <%= form.label :requires_reacceptance, 'Require participants to review updates again', class: 'form-check-label' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :change_summary, 'What changed?', class: 'form-label' %>
+          <%= form.text_area :change_summary, class: 'form-control', rows: 3, placeholder: 'Summarize the update that should be visible in the agreement center when people need to review again.' %>
+          <div class="form-text text-muted">Use this to explain material changes when an active agreement has been revised.</div>
+        </div>
+
+        <%= render 'better_together/shared/citation_fields_section', form:, record: agreement %>
+        <%= render 'better_together/shared/claim_fields_section', form:, record: agreement %>
       </div>
 
       <!-- Terms Tab -->
       <div class="nav-tab-pane tab-pane fade" id="agreement-terms" role="tabpanel" aria-labelledby="agreement-terms-tab">
-        <div class="mb-3">
-          <%= render partial: 'better_together/agreement_terms/agreement_terms', locals: { form: } if agreement.persisted? %>
+        <div class="alert alert-light border mb-3">
+          Structure terms as clauses people can scan in order. If the agreement is linked to a page, that page becomes the public source of truth while these terms remain the fallback structured record.
         </div>
+        <%= render partial: 'better_together/agreement_terms/agreement_terms', locals: { form: } %>
       </div>
 
       <!-- Parties Tab -->
       <div class="nav-tab-pane tab-pane fade" id="agreement-parties" role="tabpanel" aria-labelledby="agreement-parties-tab">
-        <div class="mb-3">
-          Parties
+        <div class="alert alert-light border mb-3">
+          Participation history is captured automatically whenever a person or robot accepts this agreement. Use this view to verify who accepted, whether their acceptance is still current, and what flow recorded it.
         </div>
+        <%= render 'better_together/agreements/acceptance_history',
+                   agreement: agreement,
+                   acceptance_records: agreement.accepted_participants.order(accepted_at: :desc) %>
       </div>
     </div>
   </div>

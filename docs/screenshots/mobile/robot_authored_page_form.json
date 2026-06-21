@@ -1,0 +1,10 @@
+{
+  "name": "robot_authored_page_form",
+  "device": "mobile",
+  "url": "/en/host/pages/robot-authored-page/edit",
+  "title": "Edit Robot Authored Page | Pages | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "robot_authored_page_post_publishing",
+  "source_spec": "./spec/docs_screenshots/better_together/robot_authored_page_post_publishing_spec.rb"
+}

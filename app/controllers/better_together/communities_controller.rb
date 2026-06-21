@@ -25,11 +25,22 @@ module BetterTogether
     end
 
     # GET /communities/1
-    def show
+    def show # rubocop:todo Metrics/MethodLength
       # Check for valid invitation if accessing via invitation token
       @current_invitation = find_invitation_by_token
       @invitations = BetterTogether::CommunityInvitation.where(invitable: @community)
                                                         .order(:status, :created_at)
+      @community_pages = policy_scope(@community.pages)
+                         .includes(
+                           :string_translations,
+                           :contributions,
+                           :citations,
+                           :claims,
+                           blocks: { background_image_file_attachment: :blob }
+                         )
+      load_community_posts
+      set_current_person_community_membership
+      set_membership_request_review_state
 
       # Categorize events for display
       categorize_community_events
@@ -90,7 +101,7 @@ module BetterTogether
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @community }),
-              turbo_stream.update('community_form', partial: 'communities/form',
+              turbo_stream.update('community_form', partial: 'better_together/communities/form',
                                                     locals: { community: @community })
             ]
           end
@@ -101,8 +112,9 @@ module BetterTogether
     # DELETE /communities/1
     def destroy
       @community.destroy
-      redirect_to communities_url, notice: t('flash.generic.destroyed', resource: t('resources.community')),
-                                   status: :see_other
+      redirect_to BetterTogether::Engine.routes.url_helpers.communities_url(**default_url_options),
+                  notice: t('flash.generic.destroyed', resource: t('resources.community')),
+                  status: :see_other
     end
 
     private
@@ -122,9 +134,32 @@ module BetterTogether
 
     def permitted_attributes
       %i[
+        requires_invitation
+        allow_membership_requests
+        contributors_display_visibility
         privacy
       ].concat(BetterTogether::Community.localized_attribute_list)
         .concat(resource_class.extra_permitted_attributes)
+    end
+
+    def set_current_person_community_membership
+      return unless helpers.current_person
+
+      @current_person_community_memberships = @community.person_community_memberships
+                                                      .includes(:role)
+                                                      .where(member: helpers.current_person)
+                                                      .order(Arel.sql("CASE WHEN status = 'active' THEN 0 ELSE 1 END"),
+                                                             :created_at)
+    end
+
+    def set_membership_request_review_state
+      sample_request = BetterTogether::Joatu::MembershipRequest.new(target: @community, status: 'open')
+      @membership_request_review_allowed = policy(sample_request).approve?
+      return unless @membership_request_review_allowed
+
+      @open_membership_request_count = policy_scope(BetterTogether::Joatu::MembershipRequest)
+                                       .where(target: @community, status: 'open')
+                                       .count
     end
 
     def resource_class
@@ -274,6 +309,14 @@ module BetterTogether
       @upcoming_events = policy_scope(@community.hosted_events).upcoming
       @ongoing_events = policy_scope(@community.hosted_events).ongoing
       @past_events = policy_scope(@community.hosted_events).past
+    end
+
+    def load_community_posts
+      @community_posts = PostsSearchFilter.call(
+        relation: policy_scope(BetterTogether::Post).where(community: @community),
+        params: { community_ids: [@community.id] }
+      ).with_translations
+       .includes(BetterTogether::Post.card_render_includes)
     end
   end
 end

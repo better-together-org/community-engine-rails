@@ -4,13 +4,15 @@ require 'rails_helper'
 
 RSpec.feature 'Respond with Offer from Request' do
   include ActiveJob::TestHelper
+  include BetterTogether::DeviseSessionHelpers
 
   let(:owner_user) { create(:user, :confirmed) }
-  let(:responder_user) { create(:user, :confirmed) }
-  let(:request_resource) { create(:better_together_joatu_request, creator: owner_user.person) }
+  let(:responder_user) { create(:user, :confirmed, password: 'MyS3cur3T3st!') }
+  let(:request_resource) { create(:better_together_joatu_request, creator: owner_user.person, privacy: 'public') }
 
   scenario 'shows respond with offer button and redirects with source params' do
     # rubocop:enable RSpec/MultipleExpectations
+    capybara_sign_in_user(responder_user.email, 'MyS3cur3T3st!')
 
     visit better_together.joatu_request_path(request_resource, locale: I18n.locale)
 

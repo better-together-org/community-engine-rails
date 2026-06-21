@@ -79,6 +79,15 @@ RSpec.configure do |config|
 
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Rails.application.routes.url_helpers, type: :controller
+  config.include Rails.application.routes.url_helpers, type: :feature
+  config.include Rails.application.routes.url_helpers, type: :request
+  config.include Rails.application.routes.mounted_helpers, type: :controller
+  config.include Rails.application.routes.mounted_helpers, type: :feature
+  config.include Rails.application.routes.mounted_helpers, type: :request
+  config.include BetterTogether::Engine.routes.url_helpers, type: :controller
+  config.include BetterTogether::Engine.routes.url_helpers, type: :feature
+  config.include BetterTogether::Engine.routes.url_helpers, type: :request
 
   # Enable assigns method in request specs (requires rails-controller-testing gem)
   config.include Rails::Controller::Testing::TestProcess, type: :request
@@ -91,10 +100,12 @@ RSpec.configure do |config|
   # Configure OmniAuth for test mode
   config.before(:suite) do
     OmniAuth.config.test_mode = true
+    OmniauthTestHelpers.reset_failure_handler!
   end
 
   config.after do
     OmniAuth.config.mock_auth[:github] = nil
+    OmniauthTestHelpers.reset_failure_handler!
     # Reset navigation touch flag to prevent test pollution
     BetterTogether.skip_navigation_touches = false
   end
@@ -203,10 +214,18 @@ RSpec.configure do |config|
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
-  config.before do
-    # Always use deletion strategy with essential table preservation
-    # This avoids PostgreSQL FK constraint issues that truncation causes
-    DatabaseCleaner.strategy = :deletion, { except: ESSENTIAL_TABLES }
+  config.before do |example|
+    if %i[controller feature request].include?(example.metadata[:type]) &&
+       !Rails.application.routes.mounted_helpers.respond_to?(:better_together)
+      Rails.application.reload_routes!
+    end
+
+    DatabaseCleaner.strategy =
+      if example.metadata[:js] || example.metadata[:feature] || example.metadata[:system]
+        [:deletion, { except: ESSENTIAL_TABLES }]
+      else
+        :transaction
+      end
 
     DatabaseCleaner.start
 
@@ -220,6 +239,12 @@ RSpec.configure do |config|
 
     # Clear cache again after each test to ensure clean state
     Rails.cache.clear
+
+    # Reset CurrentAttributes so memoized host_platform does not leak between tests.
+    # Without this, tests that lazily load Current.host_platform and then roll back
+    # the platform record leave a dangling AR object; subsequent tests see an empty
+    # platform_scoped because the stale id matches no live row.
+    ActiveSupport::CurrentAttributes.reset_all
   end
 
   # Reset locale to English after each test to prevent test isolation issues

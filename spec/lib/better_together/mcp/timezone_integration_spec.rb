@@ -102,9 +102,14 @@ RSpec.describe 'MCP Timezone Integration', type: :model do
       resource = resource_class.new
       content = JSON.parse(resource.content)
 
-      # Parse the ISO8601 timestamp and verify it's in correct timezone
+      # Parse the ISO8601 timestamp and verify it reflects Europe/London offset
+      # Use DST-aware offset check (same pattern as ListCommunitiesTool test)
+      # Time#zone is unreliable for offset-only parsed Times; utc_offset is stable
       time = Time.parse(content['current_time'])
-      expect(time.zone).to eq('UTC')
+      expected_offset = ActiveSupport::TimeZone['Europe/London']
+                        .period_for_utc(Time.now.utc)
+                        .utc_total_offset
+      expect(time.utc_offset).to eq(expected_offset)
     end
   end
 

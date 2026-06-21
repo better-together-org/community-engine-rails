@@ -4,6 +4,13 @@
 **Related plans:**
 - [Federation authorship opt-in](federation-authorship-opt-in.md) — PR #1408 (`plan/federation-authorship-opt-in`)
 - [Posts index search/filter/pagination](posts-index-filter-pagination.md) — PR #1409 (`plan/posts-index-filter-pagination`)
+**v0.12.0 Release** | **Tracking issue:** better-together-org/community-engine-rails#1410
+
+**Related plans:**
+- [Posts index search/filter/pagination](posts-index-filter-pagination.md) — PR #1409 — **pattern source**
+- [Federation authorship opt-in](federation-authorship-opt-in.md) — PR #1408
+
+**Reference:** [v0.12.0 Stakeholder-Centered Acceptance Criteria Framework](../implementation/STAKEHOLDER_AC_IMPLEMENTATION_GUIDE.md)
 
 ---
 

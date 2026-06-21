@@ -2,14 +2,22 @@
 
 module BetterTogether
   module Content
-    # CRUD for content blocks independently of pages
+    # Handles CRUD for content blocks independently of pages.
+    # rubocop:todo Metrics/ClassLength
     class BlocksController < ResourceController
+      ALLOWED_RESOURCE_SEARCH_CLASSES = [
+        'BetterTogether::Event',
+        'BetterTogether::Checklist',
+        'BetterTogether::Community',
+        'BetterTogether::Person',
+        'BetterTogether::Post'
+      ].freeze
+
       before_action :authenticate_user!
       before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
       before_action :authorize_preview, only: [:preview_markdown]
       before_action only: %i[index], if: -> { Rails.env.development? } do
-        # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
         resource_class.load_all_subclasses
       end
 
@@ -18,7 +26,8 @@ module BetterTogether
       end
 
       def create
-        @block = resource_instance(block_params)
+        @block = resource_class.new(processed_block_params)
+        attach_signed_media(@block)
         authorize_resource
 
         if @block.save
@@ -30,17 +39,10 @@ module BetterTogether
       end
 
       def update
-        if @block.update(block_params)
-          redirect_to content_block_path(@block),
-                      notice: t('flash.generic.updated', resource: t('resources.block'))
+        if persist_prepared_block
+          respond_to { |format| redirect_after_update(format) }
         else
-          respond_to do |format|
-            format.turbo_stream do
-              render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
-                                                                                        locals: { block: @block })
-            end
-            format.html { render :edit }
-          end
+          respond_to { |format| render_update_errors(format) }
         end
       end
 
@@ -76,19 +78,52 @@ module BetterTogether
         end
       end
 
+      # AJAX endpoint for resource_ids multi-select field in content blocks.
+      # Filters available records by resource class and optional search term.
+      def resource_search # rubocop:disable Metrics/AbcSize
+        authorize resource_class, :resource_search?
+
+        resource_class_name = params[:resource_class].to_s.strip
+        search_term = params[:search].to_s.strip
+
+        resource_klass = resolve_resource_class(resource_class_name)
+        return render json: [], status: :unprocessable_content if resource_klass.nil?
+
+        scope = policy_scope(resource_klass)
+        scope = search_scope(scope, search_term) if search_term.present?
+        options = scope.limit(50).map { |record| { value: record.id, text: record.to_s } }
+
+        render json: options
+      end
+
       private
+
+      def resolve_resource_class(class_name)
+        return unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(class_name)
+
+        class_name.constantize
+      end
+
+      def search_scope(scope, search_term)
+        # Use Arel to safely construct ILIKE query for translation searches
+        translations_table = BetterTogether::StringTranslation.arel_table
+        scope.with_translations.where(
+          translations_table[:value].matches("%#{search_term}%")
+        )
+      end
 
       def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
-          :type, :media, :identifier, :markdown_source_type,
+          :type, :media, :identifier, :markdown_source_type, :media_signed_id,
           *resource_class.localized_block_attributes,
           *resource_class.storext_keys
         )
 
-        # Handle markdown_source_type: clear the unused field
+        # Handle markdown_source_type: explicitly clear the unused field so DB values are overwritten
         if permitted_params[:markdown_source_type].present?
           if permitted_params[:markdown_source_type] == 'inline'
-            permitted_params.delete(:markdown_file_path)
+            permitted_params[:markdown_file_path] = ''
+            permitted_params[:auto_sync_from_file] = false
           elsif permitted_params[:markdown_source_type] == 'file'
             permitted_params.delete(:markdown_source)
           end
@@ -98,8 +133,51 @@ module BetterTogether
         permitted_params
       end
 
+      def permitted_block_attributes
+        [
+          :type,
+          :media,
+          :identifier,
+          :markdown_source_type,
+          *resource_class.localized_block_attributes,
+          *resource_class.storext_keys,
+          *resource_class.extra_permitted_attributes
+        ]
+      end
+
+      def processed_block_params
+        block_params.except(:media_signed_id)
+      end
+
+      def persist_prepared_block
+        @block.assign_attributes(processed_block_params)
+        attach_signed_media(@block)
+        @block.save
+      end
+
+      def redirect_after_update(format)
+        notice = t('flash.generic.updated', resource: t('resources.block'))
+
+        format.html { redirect_to content_block_path(@block), notice: }
+        format.turbo_stream { redirect_to content_block_path(@block), notice: }
+      end
+
+      def render_update_errors(format)
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(helpers.dom_id(@block, 'form'), partial: 'form',
+                                                                                    locals: { block: @block }),
+                 status: :unprocessable_entity
+        end
+        format.html { render :edit, status: :unprocessable_entity }
+      end
+
       def set_block
         @block = set_resource_instance
+      end
+
+      def attach_signed_media(record)
+        signed_id = params.dig(:block, :media_signed_id)
+        record.media.attach(signed_id) if signed_id.present?
       end
 
       def resource_class
@@ -114,5 +192,6 @@ module BetterTogether
         authorize(resource_class, :preview_markdown?)
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

@@ -3,9 +3,11 @@
 module BetterTogether
   # A Schedulable Event
   # rubocop:disable Metrics/ClassLength
-  class Event < ApplicationRecord
+  class Event < PlatformRecord
     include Attachments::Images
     include Categorizable
+    include Citable
+    include Claimable
     include Creatable
     include FriendlySlug
     include Identifier
@@ -15,13 +17,13 @@ module BetterTogether
     include Metrics::Viewable
     include Privacy
     include RecurringSchedulable
+    include Searchable
     include Seedable
+    include Shortlinkable
     include TimezoneAttributeAliasing
     include TrackedActivity
 
     attachable_cover_image
-
-    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
                                  foreign_key: :event_id, inverse_of: :event, dependent: :destroy
@@ -47,6 +49,16 @@ module BetterTogether
 
     slugged :name
 
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
+
     validates :name, presence: true
     validates :registration_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) }, allow_blank: true,
                                  allow_nil: true
@@ -60,7 +72,6 @@ module BetterTogether
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
     validate :ends_at_after_starts_at
 
-    before_validation :assign_current_platform_if_available
     before_validation :set_host
     before_validation :set_default_duration
     before_validation :sync_time_duration_relationship
@@ -242,7 +253,7 @@ module BetterTogether
 
     # Callbacks for notifications and reminders
     after_update :send_update_notifications
-    after_update :schedule_reminder_notifications, if: :requires_reminder_scheduling?
+    after_update :schedule_reminder_notifications, if: :should_schedule_reminders_after_save?
     after_update :sync_calendar_entry_times, if: :saved_change_to_temporal_fields?
 
     # Get the host community for calendar functionality
@@ -316,16 +327,6 @@ module BetterTogether
     end
 
     private
-
-    def assign_current_platform_if_available
-      return unless has_attribute?(:platform_id)
-      return if platform_id.present?
-
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
-    end
 
     # Set default duration if not set and start time is present
     def set_default_duration
@@ -424,7 +425,7 @@ module BetterTogether
 
     # Check if we should schedule reminders after save (for updates)
     def should_schedule_reminders_after_save?
-      !new_record? && requires_reminder_scheduling?
+      saved_change_to_temporal_fields? && requires_reminder_scheduling?
     end
 
     # Check if we should schedule reminders after commit (for creates with attendees)

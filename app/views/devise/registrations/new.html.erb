@@ -10,10 +10,14 @@
 %>
 
 <div class="container my-4">
+  <% membership_request_target = host_platform.primary_community %>
+  <% membership_request_enabled = membership_request_target.present? &&
+                                  host_platform.membership_requests_enabled_for?(membership_request_target) %>
+  <% registration_invitation = @platform_invitation || @community_invitation || @event_invitation %>
 
   <%= render partial: 'better_together/platform_invitations/registration', locals: { platform_invitation: @platform_invitation } if @platform_invitation %>
 
-  <% if host_platform.requires_invitation? && @platform_invitation.blank? %>
+  <% if host_platform.requires_invitation? && registration_invitation.blank? %>
     <div class="row justify-content-center">
       <div class="col-md-6">
         <h2 class="mb-4"><%= t('.invitation_required') %></h2>
@@ -29,6 +33,10 @@
         <% end %>
       </div>
     </div>
+
+    <%= render 'devise/registrations/membership_request_interstitial',
+               community: membership_request_target,
+               membership_request: BetterTogether::Joatu::MembershipRequest.new(target: membership_request_target) if membership_request_enabled %>
   <% else %>
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -37,8 +45,8 @@
         <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { id: 'registration-form', class: 'card card-body needs-validation registration-form', novalidate: true }, data: { controller: 'better_together--form-validation', turbo: false }) do |f| %>
           <%= render "devise/shared/error_messages", resource: resource %>
 
-          <% if @platform_invitation %>
-            <%= hidden_field_tag :invitation_code, @platform_invitation.token, id: 'invitation-code-field' %>
+          <% if registration_invitation %>
+            <%= hidden_field_tag :invitation_code, registration_invitation.token, id: 'invitation-code-field' %>
           <% end %>
 
           <!-- Email Field -->
@@ -104,38 +112,24 @@
         <% end %>
       </div>
 
-      <% if @terms_of_service_agreement || @privacy_policy_agreement || @code_of_conduct_agreement %>
+      <% if @required_registration_agreements.present? %>
         <div id="agreements-section" class="agreements-section">
-        <% if @terms_of_service_agreement %>
-          <div id="terms-of-service-agreement-group" class="mb-3 form-check agreement-group">
-            <%= check_box_tag :terms_of_service_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'terms_of_service' }, required: true, aria: { describedby: 'terms-of-service-summary', disabled: 'true' }, id: 'terms_of_service_agreement_checkbox' %>
-            <%= label_tag :terms_of_service_agreement, t('.terms_of_service.label'), class: 'form-check-label', for: 'terms_of_service_agreement_checkbox' %>
-            <%= link_to t('.view', default: 'View'), agreement_path(@terms_of_service_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'terms_of_service' } %>
-            <small id="terms-of-service-summary" class="form-text text-muted"><%= @terms_of_service_agreement.description %></small>
-          </div>
-        <% end %>
-
-        <% if @privacy_policy_agreement %>
-          <div id="privacy-policy-agreement-group" class="mb-3 form-check agreement-group">
-            <%= check_box_tag :privacy_policy_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'privacy_policy' }, required: true, aria: { describedby: 'privacy-policy-summary', disabled: 'true' }, id: 'privacy_policy_agreement_checkbox' %>
-            <%= label_tag :privacy_policy_agreement, t('.privacy_policy.label'), class: 'form-check-label', for: 'privacy_policy_agreement_checkbox' %>
-            <%= link_to t('.view', default: 'View'), agreement_path(@privacy_policy_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'privacy_policy' } %>
-            <small id="privacy-policy-summary" class="form-text text-muted"><%= @privacy_policy_agreement.description %></small>
-          </div>
-        <% end %>
-
-        <% if @code_of_conduct_agreement %>
-          <div id="code-of-conduct-agreement-group" class="mb-3 form-check agreement-group">
-            <%= check_box_tag :code_of_conduct_agreement, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: 'code_of_conduct' }, required: true, aria: { describedby: 'code-of-conduct-summary', disabled: 'true' }, id: 'code_of_conduct_agreement_checkbox' %>
-            <%= label_tag :code_of_conduct_agreement, t('.code_of_conduct.label'), class: 'form-check-label', for: 'code_of_conduct_agreement_checkbox' %>
-            <%= link_to t('.view', default: 'View'), agreement_path(@code_of_conduct_agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: 'code_of_conduct' } %>
-            <small id="code-of-conduct-summary" class="form-text text-muted"><%= @code_of_conduct_agreement.description %></small>
-          </div>
-        <% end %>
+          <% @required_registration_agreements.each do |agreement| %>
+            <% param_name = agreement_acceptance_param_name(agreement) %>
+            <% checkbox_id = agreement_acceptance_checkbox_id(agreement) %>
+            <% summary_id = "#{agreement.identifier.dasherize}-summary" %>
+            <div id="<%= agreement.identifier.dasherize %>-agreement-group" class="mb-3 form-check agreement-group">
+              <%= check_box_tag param_name, '1', false, class: 'form-check-input agreement-checkbox', data: { agreement_identifier: agreement.identifier }, required: true, aria: { describedby: summary_id, disabled: 'true' }, id: checkbox_id %>
+              <%= label_tag param_name, agreement.title, class: 'form-check-label', for: checkbox_id %>
+              <%= link_to t('.view', default: 'View'), agreement_path(agreement, locale: I18n.locale), class: 'ms-2 agreement-modal-link', role: 'button', data: { agreement_identifier: agreement.identifier } %>
+              <small id="<%= summary_id %>" class="form-text text-muted"><%= agreement.description %></small>
+            </div>
+          <% end %>
         </div>
       <% end %>
 
       <!-- Host App Extensible Content (e.g., CAPTCHA, additional fields) -->
+      <%= bot_defense_fields(:registration) %>
       <%= render partial: 'devise/registrations/extra_registration_fields', locals: { form: f, resource: resource } %>
 
       <!-- Submit Button -->
@@ -147,95 +141,10 @@
             </div>
           </div>
         <% end %>
+
+        <%# Render the shared OAuth sign-in buttons after the form so sign-up and sign-in use the same credential gating. %>
+        <%= render "devise/shared/omniauth_buttons" %>
       </div>
     </div>
   <% end %>
 </div>
-
-<!-- Modal for displaying agreements (moved outside form so Turbo works) -->
-<div class="modal fade" id="agreementModal" tabindex="-1" aria-labelledby="agreementModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="agreementModalLabel"><%= t('better_together.agreements.show.title', default: 'Agreement') %></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <turbo-frame id="agreement_modal_frame" data-controller="better_together--modal-anchor better_together--agreement-view">
-          <div class="text-center py-5">
-            <div class="spinner-border" role="status" aria-hidden="true"></div>
-            <span class="visually-hidden"><%= t('better_together.loading', default: 'Loading...') %></span>
-          </div>
-        </turbo-frame>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('helpers.close', default: 'Close') %></button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Agreement notice modal (shown when user attempts to accept without viewing) -->
-<div class="modal fade" id="agreementNoticeModal" tabindex="-1" aria-labelledby="agreementNoticeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="agreementNoticeModalLabel"><%= t('better_together.agreements.notice.title') %></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('better_together.agreements.notice.close') %>"></button>
-      </div>
-      <div class="modal-body">
-        <p><%= t('better_together.agreements.notice.body') %></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t('better_together.agreements.notice.close') %></button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- JS to load agreement content into the modal's turbo frame -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.agreement-modal-link').forEach(function (link) {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        var href = link.getAttribute('href');
-        var frame = document.getElementById('agreement_modal_frame');
-        if (frame) {
-          // set the agreement identifier on the frame so the controller knows
-          // which checkbox to enable when the user reaches the bottom.
-          if (link.dataset && link.dataset.agreementIdentifier) {
-            frame.dataset.agreementIdentifier = link.dataset.agreementIdentifier;
-          } else {
-            frame.removeAttribute('data-agreement-identifier');
-          }
-          frame.setAttribute('src', href);
-        }
-        var modalEl = document.getElementById('agreementModal');
-        if (modalEl) {
-          var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-          modal.show();
-        }
-      });
-    });
-
-    var modalEl = document.getElementById('agreementModal');
-    if (modalEl) {
-      modalEl.addEventListener('hidden.bs.modal', function () {
-        var frame = document.getElementById('agreement_modal_frame');
-        if (frame) frame.removeAttribute('src');
-
-        // Clear any hash fragment introduced by navigation inside the modal frame
-        // so subsequent modal opens start scrolled at the top.
-        if (window && window.location && window.location.hash) {
-          try {
-            var newUrl = window.location.pathname + window.location.search;
-            history.replaceState(null, document.title, newUrl);
-          } catch (e) {
-            // no-op
-          }
-        }
-      });
-    }
-  });
-</script>
