@@ -22,12 +22,6 @@ module BetterTogether
       end
     end
 
-    def update
-      BetterTogether::Authorship.with_creator(helpers.current_person) do
-        super
-      end
-    end
-
     protected
 
     def resource_class
