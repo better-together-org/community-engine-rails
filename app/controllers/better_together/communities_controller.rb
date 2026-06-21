@@ -101,7 +101,7 @@ module BetterTogether
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @community }),
-              turbo_stream.update('community_form', partial: 'communities/form',
+              turbo_stream.update('community_form', partial: 'better_together/communities/form',
                                                     locals: { community: @community })
             ]
           end
