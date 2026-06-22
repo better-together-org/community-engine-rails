@@ -259,7 +259,7 @@ GEM
       descendants_tracker (~> 0.0.1)
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
-    coveralls_reborn (0.29.0)
+    coveralls_reborn (0.29.1)
       simplecov (~> 0.22.0)
       term-ansicolor (~> 1.7)
       thor (~> 1.2)
@@ -548,6 +548,7 @@ GEM
     mime-types-data (3.2026.0414)
     mini_mime (1.1.5)
     minitest (5.27.0)
+    mize (0.6.1)
     mobility (1.3.2)
       i18n (>= 0.6.10, < 2)
       request_store (~> 1.0)
@@ -723,6 +724,8 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
+    readline (0.0.4)
+      reline
     redcarpet (3.6.1)
     redis (5.4.1)
       redis-client (>= 0.22.0)
@@ -885,7 +888,7 @@ GEM
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.13.1)
+    simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
     sitemap_generator (7.0.1)
       builder (~> 3.0)
@@ -908,8 +911,8 @@ GEM
       railties (>= 6.0.0)
     stringio (3.2.0)
     sync (0.5.0)
-    term-ansicolor (1.11.2)
-      tins (~> 1.0)
+    term-ansicolor (1.11.3)
+      tins (~> 1)
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
     thor (1.5.0)
@@ -917,8 +920,10 @@ GEM
     thread_safe (0.3.6)
     tilt (2.6.0)
     timeout (0.6.1)
-    tins (1.38.0)
+    tins (1.54.0)
       bigdecimal
+      mize (~> 0.6)
+      readline
       sync
     trailblazer-option (0.1.2)
     translate_enum (0.2.0)
