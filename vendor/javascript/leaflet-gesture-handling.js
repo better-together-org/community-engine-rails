@@ -1,5 +1,5 @@
 
-import L from 'leaflet'
+import * as L from 'leaflet'
 
 var LanguageContent = {
     //Arabic
