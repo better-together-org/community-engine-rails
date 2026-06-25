@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Access control for Joatu::Offer
-    class OfferPolicy < ApplicationPolicy
+    class OfferPolicy < PlatformRecordPolicy
       def index? = user.present?
 
       def show?
@@ -35,26 +35,26 @@ module BetterTogether
         permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || record.creator_id == agent&.id
       end
 
-      class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+      class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
         # rubocop:todo Metrics/MethodLength
         def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
           # For now, allow authenticated users to see all offers.
           return scope.none unless user.present?
 
           # Platform stewards see everything
-          return scope.all if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+          return platform_scoped if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
 
           agent_id = agent&.id
 
           # Public offers that are not responses to another resource
           # rubocop:todo Layout/LineLength
-          public_not_responses = scope.where(privacy: 'public')
-                                      .left_joins(:response_links_as_response)
-                                      .where(better_together_joatu_response_links: { id: nil })
+          public_not_responses = platform_scoped.where(privacy: 'public')
+                                                .left_joins(:response_links_as_response)
+                                                .where(better_together_joatu_response_links: { id: nil })
           # rubocop:enable Layout/LineLength
 
           # Offers owned by the agent
-          owned = scope.where(creator_id: agent_id)
+          owned = platform_scoped.where(creator_id: agent_id)
 
           # Offers that are responses to a Request where that Request's creator is the agent
           rl = BetterTogether::Joatu::ResponseLink.arel_table
@@ -70,13 +70,13 @@ module BetterTogether
 
           join_sources = offers.join(rl, Arel::Nodes::InnerJoin).on(join_on_rl).join(requests, Arel::Nodes::InnerJoin).on(join_on_requests).join_sources
 
-          response_to_my_request = scope.joins(join_sources).where(requests[:creator_id].eq(agent_id))
+          response_to_my_request = platform_scoped.joins(join_sources).where(requests[:creator_id].eq(agent_id))
 
           # Combine the allowed sets: public non-responses OR owned OR response_to_my_request
           # rubocop:todo Layout/LineLength
-          scope.where(id: public_not_responses.select(:id))
-               .or(scope.where(id: owned.select(:id)))
-               .or(scope.where(id: response_to_my_request.select(:id)))
+          platform_scoped.where(id: public_not_responses.select(:id))
+                         .or(platform_scoped.where(id: owned.select(:id)))
+                         .or(platform_scoped.where(id: response_to_my_request.select(:id)))
           # rubocop:enable Layout/LineLength
         end
         # rubocop:enable Metrics/MethodLength

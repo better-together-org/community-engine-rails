@@ -456,4 +456,6 @@ module BetterTogether # :nodoc:
       end
     end
   end
+
+  it_behaves_like 'platform scoped identifier', factory: :better_together_navigation_item
 end

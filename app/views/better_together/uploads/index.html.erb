@@ -75,7 +75,7 @@
            data-review-state="<%= upload_content_security_state(upload) %>">
         <div class="card h-100">
           <% if upload.file.attached? && upload.file.representable? %>
-            <%= image_tag storage_proxy_url_for(upload.file.representation(resize_to_limit: [200, 200]).processed),
+            <%= image_tag storage_proxy_url_for(upload.file.representation(resize_to_limit: [200, 200])),
                           class: "card-img-top",
                           alt: upload.name %>
           <% end %>

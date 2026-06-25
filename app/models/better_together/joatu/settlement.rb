@@ -10,7 +10,7 @@ module BetterTogether
     #   pending   — created when agreement is accepted; payer's C3 is locked
     #   completed — created when agreement is fulfilled; C3 transferred to recipient
     #   cancelled — created when agreement is cancelled; locked C3 returned to payer
-    class Settlement < ApplicationRecord
+    class Settlement < PlatformRecord
       self.table_name = 'better_together_joatu_settlements'
 
       STATUSES = %w[pending completed cancelled].freeze

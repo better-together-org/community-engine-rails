@@ -1009,12 +1009,18 @@ es:
             select_role: Seleccionar rol *
             submit: Agregar
             title: Agregar nuevo miembro
+        posts:
+          create_post: Crear publicación
+          empty_description: Las publicaciones creadas para esta comunidad aparecerán
+            aquí.
+          empty_title: Sin publicaciones
         sections_aria: Secciones de la comunidad
       tabs:
         buildings: Edificios
         contact_details: Detalles de contacto
         details: Detalles
         images: Imágenes
+        posts: Publicaciones
     community_invitations_mailer:
       invite:
         about: Acerca de
@@ -1422,6 +1428,10 @@ es:
           idle: Inactivo
           running: En ejecución
           succeeded: Completado
+    errors:
+      privacy:
+        exceeds_context_bounds: no puede ser más abierta que '%{max}' — la configuración
+          de la plataforma o comunidad impide este nivel de visibilidad
     event_invitations:
       index:
         invite_member: Invite member
@@ -2566,6 +2576,9 @@ es:
         agreement_created:
           content: Se ha creado un acuerdo entre "%{offer}" y "%{request}".
           title: Acuerdo creado
+        agreement_status_changed:
+          body: El acuerdo entre "%{offer}" y "%{request}" fue %{status}.
+          title: Acuerdo %{status}
       mark_all_as_read: Marcar todo como leído
       mark_as_read: Marcar como leído
       membership_created:
@@ -2742,6 +2755,9 @@ es:
           title: Notificaciones
         time_zone:
           title: Zona Horaria
+      show:
+        memberships:
+          showing_count: Mostrando %{shown} de %{total}
       submit:
         save: Guardar
       tabs:
@@ -3104,10 +3120,45 @@ es:
       delete: Eliminar registro
       edit: Editar publicación
       edit_post: Editar publicación
+      hints:
+        privacy_limited_by_community: Algunas opciones de privacidad están deshabilitadas
+          porque esta comunidad no es pública. Las publicaciones aquí solo pueden
+          ser visibles para los miembros de la comunidad o el autor.
+        privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
+          porque la plataforma no es pública. Las publicaciones solo pueden ser visibles
+          para los miembros de la comunidad o el autor.
       index:
+        map_unavailable: La vista de mapa no está disponible para publicaciones sin
+          datos de ubicación.
         new_btn_text: Nueva publicación
+        result_count:
+          one: "%{count} publicación"
+          other: "%{count} publicaciones"
+        table_headers:
+          authors: Autores
+          categories: Categorías
+          published: Publicado
+          title: Título
       labels:
         privacy: Privacidad
+      list_form:
+        authors_label: Autores
+        authors_placeholder: Seleccionar autores...
+        categories_label: Categorías
+        clear_filters: Limpiar filtros
+        filters: Filtrar publicaciones
+        order_by_label: Ordenar por
+        order_newest: Más reciente (predeterminado)
+        order_oldest: Más antiguo
+        per_page_label: Publicaciones por página
+        privacy_all: Todos
+        privacy_community: Comunidad
+        privacy_label: Privacidad
+        privacy_private: Privado
+        privacy_public: Público
+        search_button: Buscar
+        search_label: Búsqueda
+        search_placeholder: Buscar por título o contenido...
       new_post: Nueva publicación
       none_body: No hay publicaciones para mostrar en este momento.
       none_title: Aún no hay publicaciones
@@ -3769,6 +3820,7 @@ es:
         calendar: Calendario
         card: Tarjetas
         list: Lista
+        map: Mapa
         table: Tabla
     webhook_endpoints:
       actions_aria: Acciones del webhook
@@ -4156,6 +4208,10 @@ es:
         update: Actualizar
         we_need_your_current_password_to_confirm_your_changes: necesitamos su contraseña
           actual para confirmar los cambios
+      membership_request_heading: Solicitar membresía en su lugar
+      membership_request_help_html: Si aún no tienes una invitación, puedes enviar
+        una solicitud de membresía para <strong>%{community}</strong>. Un revisor
+        de la comunidad puede aprobarla e invitarte a la plataforma.
       new:
         agreements:
           privacy_policy: Acepto la Política de Privacidad
@@ -4433,6 +4489,7 @@ es:
       federation: Federación
       invitations: Invitaciones
       members: Miembros
+      posts: Publicaciones
       safety: Seguridad
     to: Para
     'true': Sí

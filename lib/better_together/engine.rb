@@ -197,38 +197,23 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      # Skip if this is the engine itself or the in-repo dummy app used for
-      # engine specs. The dummy app already sees the engine migrations through
-      # the normal boot path, and appending them here causes duplicate runtime
-      # migration paths during app:db:test:* tasks.
-      #
-      # Use Pathname#realpath to resolve symlinks and normalize paths, ensuring
-      # accurate comparison even when paths use relative references or symlinks.
       begin
-        app_root_real = Pathname.new(app.root).realpath
-        engine_root_real = Pathname.new(root).realpath
-        dummy_app_real = Pathname.new(root.join('spec/dummy')).realpath
-
-        next if app_root_real == engine_root_real || app_root_real.to_s.start_with?(dummy_app_real.to_s)
+        next if Pathname.new(app.root).realpath == Pathname.new(root).realpath
       rescue Errno::ENOENT
-        # Fallback to string comparison if realpath fails (e.g., in test environments)
-        next if app.root.to_s == root.to_s || app.root.to_s.start_with?(root.join('spec/dummy').to_s)
+        next if app.root.to_s == root.to_s
       end
 
-      # Skip if the host app has already installed CE migrations via
-      # `rails better_together:install:migrations`. Installed migrations carry
-      # the `.better_together.rb` suffix assigned by Rails' install:migrations
-      # task, so their presence signals that the host app manages migrations
-      # independently and does not need the engine path appended.
+      # Skip if the host app manages migrations via `rails better_together:install:migrations`.
+      # Installed migrations carry the `.better_together.rb` suffix, signalling that the host
+      # app tracks CE migrations independently.
       next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
 
-      existing_paths = app.config.paths['db/migrate'].expanded.to_set
-
-      config.paths['db/migrate'].expanded.each do |expanded_path|
-        next if existing_paths.include?(expanded_path)
+      excludes = [root.join('worktrees').to_s, root.join('tmp').to_s]
+      config.paths['db/migrate'].existent_directories.each do |expanded_path|
+        next if excludes.any? { |ex| expanded_path.start_with?(ex) }
+        next if app.config.paths['db/migrate'].include?(expanded_path)
 
         app.config.paths['db/migrate'] << expanded_path
-        existing_paths << expanded_path
       end
     end
 

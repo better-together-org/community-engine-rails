@@ -4,8 +4,9 @@ require 'rails_helper'
 
 RSpec.describe ApplicationNotifier do
   it 'provides notification partials for every concrete notifier' do
-    notifier_root = Rails.root.join('app/notifiers/better_together')
-    view_root = Rails.root.join('app/views/better_together')
+    engine_root = BetterTogether::Engine.root
+    notifier_root = engine_root.join('app/notifiers/better_together')
+    view_root = engine_root.join('app/views/better_together')
 
     missing = notifier_root.glob('**/*_notifier.rb').filter_map do |path|
       relative = path.relative_path_from(notifier_root)

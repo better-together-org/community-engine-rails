@@ -14,6 +14,9 @@ module BetterTogether
 
     enum :access_level, ACCESS_LEVELS, validate: true
 
+    scope :for_platform, ->(platform) { where(platform:) }
+
+    before_validation :assign_current_platform_if_available
     before_validation :revoke_self_if_expired
     before_validation :revoke_expired_conflicts
 
@@ -92,6 +95,13 @@ module BetterTogether
 
     def expired_grants_predicate
       self.class.arel_table[:expires_at].lteq(Time.current)
+    end
+
+    def assign_current_platform_if_available
+      return if platform_id.present?
+
+      resolved = BetterTogether::Current.platform || BetterTogether::Platform.find_by(host: true)
+      self.platform = resolved if resolved
     end
   end
 end

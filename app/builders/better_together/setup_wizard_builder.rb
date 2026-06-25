@@ -18,7 +18,7 @@ module BetterTogether
                            'Platform manager account created successfully! Please check the email that you  ' \
                            'provided to confirm the ' \
                            'email address before you can sign in.',
-          success_path: '/'
+          success_path: '/users/sign-in'
         )
 
         # byebug

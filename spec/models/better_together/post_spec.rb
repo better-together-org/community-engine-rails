@@ -131,4 +131,101 @@ RSpec.describe BetterTogether::Post do
       expect(post.source_identifier).to eq('remote-123')
     end
   end
+
+  describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+    let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
+    let(:community_platform) { create(:better_together_platform, privacy: 'community') }
+    let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
+    let(:public_community)   { create(:better_together_community, privacy: 'public') }
+    let(:community_community) { create(:better_together_community, privacy: 'community') }
+    let(:private_community) { create(:better_together_community, privacy: 'private') }
+
+    let(:post_for) do
+      lambda { |platform:, community: nil, privacy: 'public'|
+        build(:better_together_post, platform: platform, community: community, privacy: privacy)
+      }
+    end
+
+    context 'public platform + public community' do
+      it 'allows public privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'public')).to be_valid
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'public platform + community-privacy community' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: public_platform, community: community_community, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: public_platform, community: community_community, privacy: 'community')).to be_valid
+      end
+    end
+
+    context 'public platform + private community' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: public_platform, community: private_community, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy (members can still share within the community)' do
+        expect(post_for.call(platform: public_platform, community: private_community, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: public_platform, community: private_community, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'community-privacy platform' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: community_platform, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: community_platform, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: community_platform, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'private platform' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: private_platform, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('private')
+      end
+
+      it 'rejects community privacy' do
+        post = post_for.call(platform: private_platform, privacy: 'community')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('private')
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: private_platform, privacy: 'private')).to be_valid
+      end
+    end
+
+    it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+      post = create(:better_together_post, platform: public_platform, community: public_community, privacy: 'public')
+      post.title = 'Updated title'
+      expect(post).to be_valid
+    end
+  end
 end

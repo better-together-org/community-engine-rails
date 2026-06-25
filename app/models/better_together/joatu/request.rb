@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Request represents a need someone wants fulfilled
-    class Request < ApplicationRecord
+    class Request < PlatformRecord
       include Creatable
       include Exchange
       include Metrics::Viewable

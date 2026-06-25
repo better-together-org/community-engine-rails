@@ -8,15 +8,21 @@ module BetterTogether
     included do
       include FriendlySlug
 
-      slugged :identifier
+      slugged :identifier, slug_uniqueness: false
 
       validates :identifier,
                 presence: true,
-                uniqueness: true,
                 length: { maximum: 100 },
                 unless: :skip_validate_identifier?
 
+      validate :validate_identifier_uniqueness, unless: :skip_validate_identifier?
+
+      validates :slug, uniqueness: { scope: :platform_id }, if: -> { has_attribute?(:platform_id) }
+      validates :slug, uniqueness: true, unless: -> { has_attribute?(:platform_id) }
+
       before_create :generate_identifier_slug
+      # Must fire before PlatformScoped's assign_current_platform_if_available overwrites a nil platform_id.
+      before_validation :capture_platform_id_for_uniqueness
       before_validation :generate_identifier
 
       def identifier=(arg)
@@ -39,16 +45,43 @@ module BetterTogether
 
     protected
 
+    def capture_platform_id_for_uniqueness
+      @platform_id_at_validation_start = has_attribute?(:platform_id) ? read_attribute(:platform_id) : nil
+    end
+
+    def validate_identifier_uniqueness
+      return if identifier.blank?
+
+      original_platform_id = @platform_id_at_validation_start
+      scope = self.class.where(identifier: identifier)
+      if has_attribute?(:platform_id) && original_platform_id.present?
+        scope = scope.where(platform_id: original_platform_id)
+      end
+      scope = scope.where.not(id: id) if persisted?
+
+      errors.add(:identifier, :taken) if scope.exists?
+    end
+
     def generate_identifier
       return if identifier.present?
 
       self.identifier = loop do
-        autogen_identifier = slug&.parameterize || SecureRandom.alphanumeric(10)
-        break autogen_identifier unless self.class.exists?(identifier: autogen_identifier)
+        candidate = slug&.parameterize || SecureRandom.alphanumeric(10)
+        break candidate unless identifier_taken?(candidate)
 
-        autogen_identifier = "#{autogen_identifier}-#{SecureRandom.alphanumeric(10)}"
-        break autogen_identifier unless self.class.exists?(identifier: autogen_identifier)
+        candidate = "#{candidate}-#{SecureRandom.alphanumeric(10)}"
+        break candidate unless identifier_taken?(candidate)
       end
+    end
+
+    def identifier_taken?(candidate)
+      identifier_scope.exists?(identifier: candidate)
+    end
+
+    def identifier_scope
+      return self.class.where(platform_id: platform_id) if has_attribute?(:platform_id)
+
+      self.class
     end
 
     def generate_identifier_slug # rubocop:todo Metrics/AbcSize

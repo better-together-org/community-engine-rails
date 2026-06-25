@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for agreements
-  class AgreementPolicy < ApplicationPolicy
+  class AgreementPolicy < PlatformRecordPolicy
     def index?
       agreement_manager?
     end
@@ -23,10 +23,9 @@ module BetterTogether
       agreement_manager?
     end
 
-    # Filtering and sorting for agreements according to permissions and context
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.order(created_at: :desc)
+        platform_scoped.order(created_at: :desc)
       end
     end
 

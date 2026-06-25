@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # Represents a blog post
-  class Post < ApplicationRecord
+  class Post < PlatformRecord
     include Attachments::Images
     include Authorable
     include BlockFilterable
@@ -18,11 +18,14 @@ module BetterTogether
     include Privacy
     include Publishable
     include Searchable
-    include PlatformScoped
     include Seedable
     include Shortlinkable
     include TrackedActivity
     include ::Storext.model
+    include CommunityAssignable
+    include PrivacyCeilingValidatable
+
+    belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     attachable_cover_image
 

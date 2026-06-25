@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Persists the canonical CE-side record for an inbound email after alias resolution.
-  class InboundEmailMessage < ApplicationRecord
+  class InboundEmailMessage < PlatformRecord
     self.table_name = 'better_together_inbound_email_messages'
 
     encrypts :subject
@@ -13,6 +13,7 @@ module BetterTogether
     belongs_to :inbound_email,
                class_name: 'ActionMailbox::InboundEmail',
                inverse_of: false
+    # Override PlatformScoped's belongs_to: inbound emails may not resolve to a platform.
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :target, polymorphic: true, optional: true
     belongs_to :routed_record, polymorphic: true, optional: true

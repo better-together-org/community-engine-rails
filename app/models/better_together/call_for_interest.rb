@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Calls for interest allow communities to seek responses from parties interested in proposed initiatives
-  class CallForInterest < ApplicationRecord
+  class CallForInterest < PlatformRecord
     self.table_name = :better_together_calls_for_interest
 
     include Citable

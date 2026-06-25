@@ -33,6 +33,13 @@ module BetterTogether
 
       private
 
+      def agreement_url
+        ::BetterTogether::Engine.routes.url_helpers.joatu_agreement_url(
+          @settlement.agreement,
+          locale: I18n.locale
+        )
+      end
+
       def event_copy_for(event_type)
         copies = {
           c3_locked: 'better_together.notifications.c3.settlement.locked.body',

@@ -3,7 +3,7 @@
 # app/models/better_together/wizard_step_definition.rb
 module BetterTogether
   # Defines steps for wizards
-  class WizardStepDefinition < ApplicationRecord
+  class WizardStepDefinition < PlatformRecord
     include Identifier
     include Protected
 
