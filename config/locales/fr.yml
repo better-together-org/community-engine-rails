@@ -4238,10 +4238,6 @@ fr:
         update: Modifier
         we_need_your_current_password_to_confirm_your_changes: nous avons besoin de
           votre mot de passe actuel pour valider ces modifications
-      membership_request_heading: Demander l'adhésion à la place
-      membership_request_help_html: Si vous n'avez pas encore d'invitation, vous pouvez
-        envoyer une demande d'adhésion pour <strong>%{community}</strong>. Un critique
-        communautaire peut l'approuver et vous inviter sur la plateforme.
       new:
         agreements:
           privacy_policy: J'accepte la Politique de Confidentialité
@@ -4263,6 +4259,10 @@ fr:
           veuillez entrer votre code d'invitation dans le champ ci-dessous pour accéder
           au formulaire d'inscription.
         invitation_required: Invitation Requise
+        membership_request_heading: Demander l'adhésion à la place
+        membership_request_help_html: Si vous n'avez pas encore d'invitation, vous
+          pouvez envoyer une demande d'adhésion pour <strong>%{community}</strong>.
+          Un critique communautaire peut l'approuver et vous inviter sur la plateforme.
         password:
           help: Utilisez un mot de passe fort pour la sécurité de votre compte.
           label: Mot de Passe
