@@ -99,7 +99,7 @@
                       aria: { controls: 'agreements', selected: 'false' },
                       tabindex: '-1',
                        title: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}",
-                       aria_label: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" if @agreement_participants.any? %>
+                       aria_label: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" if @agreement_participants.any? && policy(@person).update? %>
         <% end %>
       </div>
 
@@ -294,7 +294,7 @@
           <% end %>
 
           <!-- Agreements Tab Pane -->
-          <% if @agreement_participants.any? %>
+          <% if @agreement_participants.any? && policy(@person).update? %>
             <div id="agreements" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="agreements-tab" aria-label="#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" title="#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}">
               <div class="row">
                 <div class="col-md-12">
