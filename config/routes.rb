@@ -75,6 +75,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      # Public person profile viewing - must be BEFORE authenticated routes
+      resources :people, only: %i[show], path: 'p', as: 'person'
+
       devise_scope :user do
         unauthenticated :user do
           # Avoid clobbering admin users_path helper; keep redirect but rename helper
@@ -254,7 +257,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :people, only: %i[update show edit], path: :p do
+        resources :people, only: %i[update edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end

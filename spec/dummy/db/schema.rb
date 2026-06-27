@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_21_160121) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -2382,13 +2382,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "platform", null: false
+    t.string "platform_name", null: false
     t.string "handle", null: false
     t.string "url"
     t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.uuid "platform_id"
-    t.index ["contact_detail_id", "platform"], name: "index_bt_sma_on_contact_detail_and_platform", unique: true
+    t.index ["contact_detail_id", "platform_name"], name: "index_bt_sma_on_contact_detail_and_platform", unique: true
     t.index ["contact_detail_id"], name: "idx_on_contact_detail_id_6380b64b3b"
     t.index ["platform_id"], name: "index_better_together_social_media_accounts_on_platform_id"
     t.index ["privacy"], name: "by_better_together_social_media_accounts_privacy"
