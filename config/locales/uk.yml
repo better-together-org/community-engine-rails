@@ -1932,8 +1932,11 @@ uk:
     joatu:
       agreements:
         accept: Accept
+        cancel: Скасувати угоду
+        cancel_confirm: Скасувати цю угоду? Зарезервовані насіння будуть повернені.
         create:
           success: Success
+        fulfill: Позначити як виконане
         index:
           title: Agreements
         offer: Offer
@@ -4418,6 +4421,7 @@ uk:
     joatu:
       agreement:
         accepted: Угоду прийнято
+        cancelled: Угоду скасовано — зарезервовані насіння повернено.
         fulfilled: Угоду виконано — C3 передано творцю пропозиції.
         rejected: Угоду відхилено
       response_links:

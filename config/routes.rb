@@ -222,6 +222,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               post :accept
               post :reject
               post :fulfill
+              post :cancel
             end
           end
 

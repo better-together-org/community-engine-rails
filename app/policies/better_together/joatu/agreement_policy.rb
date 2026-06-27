@@ -30,9 +30,24 @@ module BetterTogether
         participant? || can_manage_joatu?
       end
       alias accept? update?
-      alias cancel? update?
       alias reject? update?
-      alias fulfill? update?
+
+      def cancel?
+        return false unless user.present?
+        return false unless record.status_accepted?
+
+        return can_approve_network_connections? if connection_request_agreement?
+
+        participant? || can_manage_joatu?
+      end
+
+      def fulfill?
+        return false unless user.present?
+        return false unless record.status_accepted?
+        return false if connection_request_agreement?
+
+        participant? || can_manage_joatu?
+      end
 
       def destroy?
         return false unless user.present?

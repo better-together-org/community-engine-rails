@@ -1944,8 +1944,11 @@ fr:
     joatu:
       agreements:
         accept: Accepter
+        cancel: Annuler l'accord
+        cancel_confirm: Annuler cet accord ? Les Graines réservées seront retournées.
         create:
           success: Succès
+        fulfill: Marquer comme accompli
         index:
           title: Accords
         offer: Offre
@@ -4447,6 +4450,7 @@ fr:
     joatu:
       agreement:
         accepted: Accord accepté
+        cancelled: Accord annulé — les Graines réservées ont été retournées.
         fulfilled: Accord rempli — C3 transféré au créateur de l'offre.
         rejected: Accord rejeté
       response_links:

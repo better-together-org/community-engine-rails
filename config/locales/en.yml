@@ -1907,8 +1907,11 @@ en:
     joatu:
       agreements:
         accept: Accept
+        cancel: Cancel Agreement
+        cancel_confirm: Cancel this agreement? Any reserved Tree Seeds will be returned.
         create:
           success: Success
+        fulfill: Mark Fulfilled
         index:
           title: Agreements
         offer: Offer
@@ -4331,6 +4334,7 @@ en:
     joatu:
       agreement:
         accepted: Agreement accepted
+        cancelled: Agreement cancelled — any reserved Tree Seeds have been returned.
         fulfilled: Agreement fulfilled — C3 transferred to offer creator.
         rejected: Agreement rejected
       response_links:

@@ -1934,8 +1934,11 @@ es:
     joatu:
       agreements:
         accept: Aceptar
+        cancel: Cancelar acuerdo
+        cancel_confirm: "¿Cancelar este acuerdo? Se devolverán las Semillas reservadas."
         create:
           success: Éxito
+        fulfill: Marcar como cumplido
         index:
           title: Acuerdos
         offer: Oferta
@@ -4415,6 +4418,7 @@ es:
     joatu:
       agreement:
         accepted: Acuerdo aceptado
+        cancelled: Acuerdo cancelado — las Semillas reservadas han sido devueltas.
         fulfilled: Acuerdo cumplido — C3 transferido al creador de la oferta.
         rejected: Acuerdo rechazado
       response_links:

@@ -41,6 +41,9 @@ module BetterTogether
       def complete!(payer_balance:, recipient_balance:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         assert_pending_with_required_lock!
 
+        # Zero-amount settlements have nothing to transfer — mark complete without touching balances.
+        return update!(status: 'completed', completed_at: Time.current) if c3_millitokens.zero?
+
         token = nil
 
         transaction do
