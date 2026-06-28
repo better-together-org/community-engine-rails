@@ -101,6 +101,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
 
+      # Exchange hub and public browsing — must be BEFORE authenticated routes
+      # Hub serves as a public landing page; write/member actions are gated below.
+      namespace :joatu, path: 'exchange' do
+        get '/', to: 'hub#index', as: :hub
+        resources :offers,   only: %i[index show]
+        resources :requests, only: %i[index show]
+      end
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :short_links
@@ -204,14 +212,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         namespace :joatu, path: 'exchange' do
-          # Exchange hub landing page
-          get '/', to: 'hub#index', as: :hub
-          resources :offers do
+          # index + show are declared outside authenticated block for public access
+          resources :offers, except: %i[index show] do
             member do
               get :respond_with_request
             end
           end
-          resources :requests do
+          resources :requests, except: %i[index show] do
             member do
               get :matches
               get :respond_with_offer

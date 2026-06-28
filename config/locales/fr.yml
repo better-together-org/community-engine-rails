@@ -2008,6 +2008,9 @@ fr:
         my_offers: Mes offres
         my_requests: Mes demandes
         none: Aucune correspondance trouvée pour l'instant.
+        recent_offers: Offres récentes
+        recent_requests: Demandes récentes
+        sign_in: Se connecter
         sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
         suggested: Correspondances suggérées
         title: Correspondances potentielles

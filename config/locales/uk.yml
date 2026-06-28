@@ -1996,6 +1996,9 @@ uk:
         my_offers: My Offers
         my_requests: My Requests
         none: No matches found right now.
+        recent_offers: Останні пропозиції
+        recent_requests: Останні запити
+        sign_in: Увійти
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
         title: Potential Matches

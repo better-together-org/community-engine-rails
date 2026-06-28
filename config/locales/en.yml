@@ -1971,6 +1971,9 @@ en:
         my_offers: My Offers
         my_requests: My Requests
         none: No matches found right now.
+        recent_offers: Recent Offers
+        recent_requests: Recent Requests
+        sign_in: Sign in
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
         title: Potential Matches

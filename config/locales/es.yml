@@ -1997,6 +1997,9 @@ es:
         my_offers: Mis ofertas
         my_requests: Mis solicitudes
         none: No se encontraron coincidencias por ahora.
+        recent_offers: Ofertas recientes
+        recent_requests: Solicitudes recientes
+        sign_in: Iniciar sesión
         sign_in_hint: Inicia sesión para ver tus ofertas, solicitudes y acuerdos.
         suggested: Sugerencias
         title: Coincidencias potenciales
