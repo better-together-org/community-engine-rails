@@ -27,15 +27,7 @@ RSpec.describe BetterTogether::PersonDeletionExecutor do
     BetterTogether::Message.create!(conversation:, sender: person, content: 'Retained message')
   end
 
-  # BUG: PersonPurgeAudit has before_update { raise ReadOnlyRecord } but
-  # PersonDeletionExecutor calls audit.update!(status: :completed, ...) and also
-  # audit.update!(status: :failed) in the rescue path. The executor and the model's
-  # immutability constraint are incompatible. The executor should either:
-  #   a) Create the audit in its terminal state at completion rather than updating, or
-  #   b) PersonPurgeAudit should permit a single running → terminal transition.
-  # Until fixed, this spec is marked pending so the failure is visible in CI.
   it 'destroys private records while anonymizing the retained person graph' do
-    pending 'PersonDeletionExecutor calls audit.update! but PersonPurgeAudit is immutable — executor must be refactored'
     audit = described_class.call(person_deletion_request: deletion_request, reviewed_by: reviewer)
 
     expect(BetterTogether::User.exists?(user.id)).to be(false)
