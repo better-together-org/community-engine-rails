@@ -82,6 +82,27 @@ RSpec.describe BetterTogether::Joatu::Settlement do
   end
 
   describe '#complete!' do
+    it 'marks a zero-millitoken settlement complete without touching balances or minting a token' do # rubocop:todo RSpec/MultipleExpectations
+      zero_settlement = described_class.create!(
+        agreement: agreement,
+        payer: payer,
+        recipient: recipient,
+        c3_millitokens: 0,
+        status: 'pending'
+      )
+      before_payer     = payer_balance.reload.available_millitokens
+      before_recipient = recipient_balance.reload.available_millitokens
+
+      expect do
+        zero_settlement.complete!(payer_balance: payer_balance.reload, recipient_balance: recipient_balance.reload)
+      end.not_to change(BetterTogether::C3::Token, :count)
+
+      expect(zero_settlement.reload.status).to eq('completed')
+      expect(zero_settlement.completed_at).to be_present
+      expect(payer_balance.reload.available_millitokens).to eq(before_payer)
+      expect(recipient_balance.reload.available_millitokens).to eq(before_recipient)
+    end
+
     it 'transfers C3 from payer to recipient and mints a token' do
       expect do
         settlement.complete!(payer_balance: payer_balance.reload, recipient_balance: recipient_balance.reload)
