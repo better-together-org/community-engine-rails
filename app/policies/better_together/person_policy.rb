@@ -26,6 +26,10 @@ module BetterTogether
       update?
     end
 
+    def manage_merchant_account?
+      update?
+    end
+
     def destroy?
       user.present? && permitted_to?('delete_person')
     end

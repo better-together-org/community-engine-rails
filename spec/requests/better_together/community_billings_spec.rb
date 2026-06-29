@@ -1,0 +1,662 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'BetterTogether::CommunityBillings' do
+  include ActiveJob::TestHelper
+
+  let(:locale) { I18n.default_locale }
+  let(:platform_manager) do
+    find_or_create_test_user("community-billing-manager-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#', :platform_manager)
+  end
+  let(:community) { create(:better_together_community) }
+  let!(:billing_plan) do
+    create(
+      :better_together_billing_plan,
+      name: 'Stewardship',
+      identifier: 'stewardship',
+      amount_cents: 12_500,
+      stripe_price_id: 'price_test_stewardship',
+      metadata: {
+        'participant_summary' => 'Keeps this community space online and stewarded.',
+        'participant_benefits' => ['Hosted community access', 'Ongoing stewardship support'],
+        'beneficiary_label' => 'Community access',
+        'hosted_access_level' => 'Partner',
+        'support_tier' => 'Priority',
+        'community_capacity_tier' => 'Growth'
+      }
+    )
+  end
+  let!(:one_time_plan) do
+    create(
+      :better_together_billing_plan,
+      name: 'One-time setup',
+      identifier: 'one-time-setup',
+      billing_interval: 'one_time',
+      amount_cents: 25_000,
+      stripe_price_id: 'price_test_one_time_setup'
+    )
+  end
+
+  before do
+    clear_enqueued_jobs
+    sign_in platform_manager
+  end
+
+  def create_owned_billing_subscription(owner:, billing_plan:, status:)
+    pay_customer = create('pay/customer', owner:)
+    pay_subscription = create('pay/subscription', customer: pay_customer, status:)
+
+    create(:better_together_billing_subscription, pay_subscription:, billing_plan:)
+  end
+
+  describe 'GET /:locale/c/:community_id/billing' do
+    it 'renders the billing page and plan catalog' do
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Community Billing')
+      expect(response.body).to include('Stewardship')
+      expect(response.body).to include('Keeps this community space online and stewarded.')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.hosted_plan_scope_heading', default: 'Hosted plans available now')
+      )
+      expect(response.body).not_to include('One-time setup')
+    end
+
+    it 'shows the hosted entitlement derived from the current billing subscription' do
+      create(
+        :better_together_billing_subscription,
+        billing_plan:,
+        billable_owner: community,
+        beneficiary: community,
+        status: 'active'
+      )
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Hosted plan status')
+      expect(response.body).to include('Hosted plan active')
+      expect(response.body).to include('Hosted access level:')
+      expect(response.body).to include('Partner')
+      expect(response.body).to include('Support tier:')
+      expect(response.body).to include('Priority')
+      expect(response.body).to include('Community capacity tier:')
+      expect(response.body).to include('Growth')
+    end
+
+    it 'shows takeover actions when a community subscription is sponsored by a person' do
+      sponsor = platform_manager.person
+      Pay::Customer.create!(owner: sponsor, processor: 'stripe', processor_id: 'cus_person_takeover')
+      create(
+        :better_together_billing_subscription,
+        billing_plan:,
+        billable_owner: sponsor,
+        beneficiary: community
+      )
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('currently sponsored by')
+      expect(response.body).to include('Start replacement checkout for this community')
+    end
+
+    it 'shows community takeover actions when a community subscription is sponsored by another community' do
+      sponsor_community = create(:better_together_community, name: 'Shared Budget')
+      alternate_sponsor = create(:better_together_community, name: 'Collective Fund')
+      Pay::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_shared_budget')
+      Pay::Customer.create!(owner: alternate_sponsor, processor: 'stripe', processor_id: 'cus_collective_fund')
+      create(
+        :better_together_billing_subscription,
+        billing_plan:,
+        billable_owner: sponsor_community,
+        beneficiary: community
+      )
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Start replacement checkout for this community')
+      expect(response.body).to include('Start replacement checkout personally')
+      expect(response.body).to include('Start replacement checkout via Collective Fund')
+    end
+
+    it 'shows merchant account status when one exists' do
+      create(
+        'better_together/billing/merchant_account',
+        :active,
+        owner: community,
+        provider: 'stripe_connect'
+      )
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Merchant account')
+      expect(response.body).to include('stripe_connect')
+      expect(response.body).to include('Refresh merchant status')
+    end
+
+    it 'surfaces merchant disconnect support state on the billing page' do
+      create(
+        'better_together/billing/merchant_account',
+        owner: community,
+        provider: 'stripe_connect',
+        status: 'disconnected',
+        metadata: { 'deauthorized_at' => '2026-05-09T12:00:00Z' }
+      )
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(
+        I18n.t('better_together.billing.merchant_disconnected_heading', default: 'Merchant account disconnected.')
+      )
+      expect(response.body).to include(I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'))
+    end
+
+    it 'surfaces recent ignored billing events for operator visibility' do
+      create(
+        :better_together_billing_event,
+        processor: 'stripe',
+        event_type: 'account.updated',
+        event_id: 'evt_ignored_community_123',
+        billable_owner: community,
+        beneficiary: community,
+        processing_status: 'ignored',
+        attempt_count: 1,
+        last_attempted_at: 8.hours.ago
+      )
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Billing activity alerts')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.unresolved_alert_heading', default: 'Unresolved billing drift may remain.')
+      )
+      expect(response.body).to include(
+        I18n.t(
+          'better_together.billing.unresolved_alert_body',
+          default: '%<count>d failed or ignored events are older than one reconciliation window (%<hours>d hours).',
+          count: 1,
+          hours: BetterTogether::Billing::Event::UNRESOLVED_ALERT_WINDOW / 1.hour
+        )
+      )
+      expect(response.body).to include('account.updated')
+      expect(response.body).to include('The event was recorded but did not map to a local billing update.')
+    end
+
+    it 'shows replay actions for dead-lettered billing events' do
+      create(
+        :better_together_billing_event,
+        processor: 'stripe',
+        event_type: 'invoice.payment_failed',
+        event_id: 'evt_dead_letter_community_123',
+        billable_owner: community,
+        beneficiary: community,
+        processing_status: 'dead_lettered',
+        dead_lettered_at: 1.hour.ago,
+        dead_letter_reason: 'repeated_failures',
+        payload: {
+          'id' => 'evt_dead_letter_community_123',
+          'type' => 'invoice.payment_failed',
+          'data' => { 'object' => { 'id' => 'in_dead_letter_community_123', 'object' => 'invoice' } }
+        }
+      )
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response.body).to include(
+        I18n.t('better_together.billing.dead_letter_alert_heading', default: 'Dead-lettered billing events need review.')
+      )
+      expect(response.body).to include('Replay event')
+    end
+
+    it 'synchronizes a checkout session when one is returned from Stripe' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      sync_result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
+        synced: true,
+        billable_owner: community,
+        beneficiary: community,
+        reason: :synced
+      )
+      sync_service = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync, call: sync_result)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+      allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(sync_service)
+
+      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Stripe checkout was synchronized successfully.')
+      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', beneficiary: community)
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/checkout' do
+    it 'redirects to a hosted Stripe checkout session' do
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/session')
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_community_checkout')
+
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+      post better_together.checkout_community_billing_path(community, locale:), params: { billing_plan_id: billing_plan.identifier }
+
+      expect(response).to redirect_to('https://checkout.stripe.test/session')
+      expect(Stripe::Checkout::Session).to have_received(:create).with(
+        hash_including(
+          customer: 'cus_community_checkout',
+          mode: 'subscription',
+          allow_promotion_codes: true,
+          success_url: satisfy do |url|
+            url.include?('checkout_session_id={CHECKOUT_SESSION_ID}') &&
+              url.include?('stripe_checkout_session_id={CHECKOUT_SESSION_ID}')
+          end,
+          cancel_url: a_string_including('stripe_checkout_session_id={CHECKOUT_SESSION_ID}')
+        ),
+        anything
+      )
+    end
+
+    it 'disables Turbo on checkout actions that redirect to Stripe' do
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response.body).to include('data-turbo="false"')
+    end
+
+    it 'supports person-sponsored checkout for a community beneficiary' do
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/session')
+      sponsor = platform_manager.person
+
+      Pay::Stripe::Customer.create!(owner: sponsor, processor: 'stripe', processor_id: 'cus_person_sponsor_checkout')
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+      post better_together.checkout_community_billing_path(community, locale:),
+           params: { billing_plan_id: billing_plan.identifier, checkout_as: 'person' }
+
+      expect(response).to redirect_to('https://checkout.stripe.test/session')
+      expect(Stripe::Checkout::Session).to have_received(:create).with(
+        hash_including(
+          customer: 'cus_person_sponsor_checkout',
+          client_reference_id: sponsor.id,
+          metadata: hash_including(
+            bt_billable_owner_type: 'BetterTogether::Person',
+            bt_billable_owner_id: sponsor.id,
+            bt_beneficiary_type: 'BetterTogether::Community',
+            bt_beneficiary_id: community.id
+          )
+        ),
+        anything
+      )
+    end
+
+    it 'supports community-sponsored checkout for another community beneficiary' do
+      sponsor_community = create(:better_together_community, name: 'Collective Sponsor')
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/community-session')
+
+      Pay::Stripe::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_collective_sponsor_checkout')
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+      post better_together.checkout_community_billing_path(community, locale:),
+           params: {
+             billing_plan_id: billing_plan.identifier,
+             checkout_as: 'community',
+             billable_owner_community_id: sponsor_community.slug
+           }
+
+      expect(response).to redirect_to('https://checkout.stripe.test/community-session')
+      expect(Stripe::Checkout::Session).to have_received(:create).with(
+        hash_including(
+          customer: 'cus_collective_sponsor_checkout',
+          client_reference_id: sponsor_community.id,
+          metadata: hash_including(
+            bt_billable_owner_type: 'BetterTogether::Community',
+            bt_billable_owner_id: sponsor_community.id,
+            bt_beneficiary_type: 'BetterTogether::Community',
+            bt_beneficiary_id: community.id
+          )
+        ),
+        anything
+      )
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/portal' do
+    it 'redirects to the Stripe billing portal' do
+      portal_session = instance_double(Stripe::BillingPortal::Session, url: 'https://billing.stripe.test/session')
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_community_portal')
+
+      allow(Stripe::BillingPortal::Session).to receive(:create).and_return(portal_session)
+
+      post better_together.portal_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to('https://billing.stripe.test/session')
+    end
+
+    it 'uses the sponsor billing owner when the current community subscription is person-owned' do
+      sponsor = platform_manager.person
+      portal_session = instance_double(Stripe::BillingPortal::Session, url: 'https://billing.stripe.test/sponsored')
+      create(
+        :better_together_billing_subscription,
+        billable_owner: sponsor,
+        beneficiary: community,
+        billing_plan:
+      )
+
+      Pay::Stripe::Customer.create!(owner: sponsor, processor: 'stripe', processor_id: 'cus_person_sponsor_portal')
+      allow(Stripe::BillingPortal::Session).to receive(:create).and_return(portal_session)
+
+      post better_together.portal_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to('https://billing.stripe.test/sponsored')
+      expect(Stripe::BillingPortal::Session).to have_received(:create).with(
+        hash_including(
+          customer: 'cus_person_sponsor_portal',
+          return_url: better_together.community_billing_url(community, locale:)
+        ),
+        anything
+      )
+    end
+
+    it 'uses the sponsoring community billing owner when the current community subscription is community-owned' do
+      sponsor_community = create(:better_together_community, name: 'Shared Budget')
+      portal_session = instance_double(Stripe::BillingPortal::Session, url: 'https://billing.stripe.test/community-sponsored')
+      create(
+        :better_together_billing_subscription,
+        billable_owner: sponsor_community,
+        beneficiary: community,
+        billing_plan:
+      )
+
+      Pay::Stripe::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_community_sponsor_portal')
+      allow(Stripe::BillingPortal::Session).to receive(:create).and_return(portal_session)
+
+      post better_together.portal_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to('https://billing.stripe.test/community-sponsored')
+      expect(Stripe::BillingPortal::Session).to have_received(:create).with(
+        hash_including(
+          customer: 'cus_community_sponsor_portal',
+          return_url: better_together.community_billing_url(community, locale:)
+        ),
+        anything
+      )
+    end
+
+    it 'guides non-sponsor admins to take over billing when portal access is blocked' do
+      sponsor = create(:better_together_person)
+      create(
+        :better_together_billing_subscription,
+        billable_owner: sponsor,
+        beneficiary: community,
+        billing_plan:
+      )
+
+      post better_together.portal_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('This community subscription is billed to another owner.')
+    end
+
+    it 'persists portal failure support state on the billing subscription' do
+      billing_subscription = create(
+        :better_together_billing_subscription,
+        billable_owner: community,
+        beneficiary: community,
+        billing_plan:
+      )
+
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_community_portal_failure')
+      allow(Stripe::BillingPortal::Session).to receive(:create).and_raise(StandardError, 'Stripe portal outage')
+
+      post better_together.portal_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(billing_subscription.reload.last_portal_error_message).to eq('Stripe portal outage')
+
+      get better_together.community_billing_path(community, locale:)
+      expect(response.body).to include(
+        I18n.t('better_together.billing.portal_access_attention', default: 'Billing portal access needs attention.')
+      )
+      expect(response.body).to include('Stripe portal outage')
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/reconcile' do
+    it 'queues a reconciliation job and redirects to billing' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+
+      expect do
+        post better_together.reconcile_community_billing_path(community, locale:)
+      end.to have_enqueued_job(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob).with(community.class.name, community.id)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+    end
+
+    it 'queues reconciliation for the sponsored billable owner when present' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      sponsor = platform_manager.person
+      create(:better_together_billing_subscription, billable_owner: sponsor, beneficiary: community)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+
+      expect do
+        post better_together.reconcile_community_billing_path(community, locale:)
+      end.to have_enqueued_job(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob).with(sponsor.class.name, sponsor.id)
+    end
+
+    it 'queues reconciliation for historical sponsor owners when the current subscription is missing' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      sponsor = platform_manager.person
+      sponsor_community = create(:better_together_community, name: 'Sponsor Collective')
+      create(:better_together_billing_subscription, billable_owner: sponsor, beneficiary: community)
+      create(:better_together_billing_subscription, billable_owner: sponsor_community, beneficiary: community)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+      allow(BetterTogether::Billing::Subscription).to receive(:current_for_beneficiary).with(community).and_return(nil)
+
+      post better_together.reconcile_community_billing_path(community, locale:)
+
+      reconciliation_jobs = enqueued_jobs.filter_map do |job|
+        next unless job[:job] == BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob
+
+        job[:args]
+      end
+
+      expect(reconciliation_jobs).to include([sponsor.class.name, sponsor.id])
+      expect(reconciliation_jobs).to include([sponsor_community.class.name, sponsor_community.id])
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/events/:event_id/replay' do
+    it 'queues replay for a dead-lettered billing event' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      billing_event = create(
+        :better_together_billing_event,
+        processor: 'stripe',
+        event_type: 'invoice.payment_failed',
+        event_id: 'evt_community_replay_123',
+        billable_owner: community,
+        beneficiary: community,
+        processing_status: 'dead_lettered',
+        dead_lettered_at: 1.hour.ago,
+        dead_letter_reason: 'repeated_failures',
+        payload: {
+          'id' => 'evt_community_replay_123',
+          'type' => 'invoice.payment_failed',
+          'data' => { 'object' => { 'id' => 'in_community_replay_123', 'object' => 'invoice' } }
+        }
+      )
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+
+      expect do
+        post better_together.replay_event_community_billing_path(community, event_id: billing_event.id, locale:)
+      end.to have_enqueued_job(BetterTogether::Billing::ProcessStripeEventJob)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(billing_event.reload.processing_status).to eq('replayed')
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/merchant_onboarding' do
+    it 'redirects to the Stripe merchant onboarding link' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      service = instance_double(BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateOnboardingLink)
+      result = instance_double(
+        BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateOnboardingLink::Result,
+        url: 'https://connect.stripe.test/community-onboarding'
+      )
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+      allow(BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateOnboardingLink).to receive(:new).and_return(service)
+      allow(service).to receive(:call).and_return(result)
+
+      post better_together.merchant_onboarding_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to('https://connect.stripe.test/community-onboarding')
+      expect(service).to have_received(:call).with(
+        owner: community,
+        refresh_url: better_together.community_billing_url(community, locale:),
+        return_url: better_together.community_billing_url(community, locale:)
+      )
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/refresh_merchant_account' do
+    it 'refreshes the connected merchant account and redirects back to billing' do
+      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+      merchant_account = create(
+        'better_together/billing/merchant_account',
+        owner: community,
+        provider: 'stripe_connect'
+      )
+      service = instance_double(BetterTogether::Billing::MerchantAccounts::StripeConnect::RefreshAccount, call: true)
+
+      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
+      allow(BetterTogether::Billing::MerchantAccounts::StripeConnect::RefreshAccount).to receive(:new).and_return(service)
+
+      post better_together.refresh_merchant_account_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(service).to have_received(:call).with(merchant_account:, owner: community)
+    end
+  end
+
+  describe 'GET /:locale/c/:community_id/billing/provision_platform' do
+    it 'renders the provisioning form when entitlement is active' do
+      create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
+
+      get better_together.provision_platform_community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Provision hosted platform')
+      expect(response.body).to include('Host URL')
+      expect(response.body).to include('Hosted plan active')
+      expect(response.body).to include('value="America/St_Johns"')
+    end
+
+    it 'redirects to billing with an alert when subscription is past_due' do
+      create_owned_billing_subscription(owner: community, billing_plan:, status: 'past_due')
+
+      get better_together.provision_platform_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(flash[:alert]).to include('active hosted plan is required')
+    end
+
+    it 'redirects to billing with an alert when there is no active subscription' do
+      get better_together.provision_platform_community_billing_path(community, locale:)
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(flash[:alert]).to include('active hosted plan is required')
+    end
+  end
+
+  describe 'POST /:locale/c/:community_id/billing/provision_platform' do
+    let(:provision_params) do
+      {
+        platform_provision: {
+          name: 'Test Hosted Platform',
+          host_url: 'https://testhosted.example.com',
+          time_zone: 'America/St_Johns'
+        }
+      }
+    end
+
+    context 'when the community has an active hosted subscription' do
+      before do
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
+      end
+
+      it 'calls TenantPlatformProvisioningService and redirects on success' do
+        platform_uuid = SecureRandom.uuid
+        platform = BetterTogether::Platform.new(host_url: 'https://testhosted.example.com')
+        allow(platform).to receive(:id).and_return(platform_uuid)
+        result = BetterTogether::TenantPlatformProvisioningService::Result.new(
+          platform, nil, nil, nil, []
+        )
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call).and_return(result)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(BetterTogether::TenantPlatformProvisioningService).to have_received(:call).with(
+          name: 'Test Hosted Platform',
+          host_url: 'https://testhosted.example.com',
+          time_zone: 'America/St_Johns',
+          privacy: 'private'
+        )
+        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+        expect(flash[:provision_platform_id]).to eq(platform_uuid)
+        expect(flash[:notice]).to include('provisioned')
+      end
+
+      it 're-renders the form when provisioning fails' do
+        result = BetterTogether::TenantPlatformProvisioningService::Result.new(
+          nil, nil, nil, nil, ['Host URL has already been taken']
+        )
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call).and_return(result)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include('Provision hosted platform')
+      end
+    end
+
+    context 'when the community has no active subscription' do
+      it 'blocks provisioning and redirects to billing with an alert' do
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(BetterTogether::TenantPlatformProvisioningService).not_to have_received(:call)
+        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+        expect(flash[:alert]).to include('active hosted plan is required')
+      end
+    end
+
+    context 'when the community subscription is past_due' do
+      it 'blocks provisioning and redirects to billing with an alert' do
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'past_due')
+        allow(BetterTogether::TenantPlatformProvisioningService).to receive(:call)
+
+        post better_together.provision_platform_community_billing_path(community, locale:),
+             params: provision_params
+
+        expect(BetterTogether::TenantPlatformProvisioningService).not_to have_received(:call)
+        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+        expect(flash[:alert]).to include('active hosted plan is required')
+      end
+    end
+  end
+end

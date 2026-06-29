@@ -1,0 +1,23 @@
+---
+title: Personal billing overview
+audience:
+- board_member
+- sponsor
+- operator
+journey_step: A person reviews their own billing to see personal access, sponsorship
+  commitments, and any payout onboarding status.
+callouts:
+- :title: Personal subscription
+  :description: This card is the person-facing equivalent of the community subscription
+    card. It focuses on the individual payer and their current hosted support plan.
+- :title: Sponsored communities
+  :description: This is the key new accountability surface for sponsorship. A person
+    can now see which communities their payment is supporting and jump directly to
+    those community billing records.
+- :title: Personal plans
+  :description: Personal recurring plans are separated from community plans so the
+    review packet makes clear who each plan is designed to support.
+accessibility_notes: The sponsored communities list and plan table both use stable
+  identifiers and native list/table semantics for deterministic review coverage.
+slug: pr_1581_person_billing_overview
+device: desktop

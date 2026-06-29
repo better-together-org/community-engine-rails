@@ -39,3 +39,27 @@
   class: "BetterTogether::C3::ExpireBalanceLocksJob"
   queue: "default"
   description: "Release C3 balance locks that have passed their 24-hour expiry — returns reserved Tree Seeds to the payer"
+
+"better_together:billing:stripe_billable_owner_reconciliation_scan":
+  cron: "10 */6 * * *" # every 6 hours at :10 UTC
+  class: "BetterTogether::Billing::ReconcileStripeBillableOwnerBillingScanJob"
+  queue: "maintenance"
+  description: "Scan Stripe-backed billable owners and enqueue focused hosted-billing reconciliation jobs"
+
+"better_together:billing:stripe_merchant_account_reconciliation_scan":
+  cron: "40 */6 * * *" # every 6 hours at :40 UTC
+  class: "BetterTogether::Billing::ReconcileStripeMerchantAccountScanJob"
+  queue: "maintenance"
+  description: "Scan connected Stripe merchant accounts and enqueue focused merchant refresh jobs"
+
+"better_together:billing:redact_expired_event_payloads_daily":
+  cron: "20 4 * * *" # daily at 04:20 UTC
+  class: "BetterTogether::Billing::RedactExpiredEventPayloadsJob"
+  queue: "maintenance"
+  description: "Redact retained Stripe billing event payloads after the short replay window expires"
+
+"better_together:billing:dead_letter_stale_events_hourly":
+  cron: "15 * * * *" # hourly at :15 UTC
+  class: "BetterTogether::Billing::DeadLetterStaleBillingEventsJob"
+  queue: "maintenance"
+  description: "Promote repeatedly failing or stale unresolved billing events into a dead-letter state for operator review"

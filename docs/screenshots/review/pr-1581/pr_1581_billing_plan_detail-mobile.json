@@ -1,0 +1,117 @@
+{
+  "name": "pr_1581_billing_plan_detail",
+  "device": "mobile",
+  "url": "/en/host/billing/plans/8b884d9e-c7c3-4719-b56a-326bd85769d7",
+  "title": "Community Stewardship | Billing Plans | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#summary_card_billing_plan_8b884d9e-c7c3-4719-b56a-326bd85769d7",
+      "title": "Plan summary",
+      "bullets": [
+        "Shows the immutable Stripe-linked pricing identifiers.",
+        "Confirms whether the plan is active."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 189.0,
+        "width": 461.0,
+        "height": 347.0,
+        "right": 473.0,
+        "bottom": 536.0,
+        "center_x": 242.5,
+        "center_y": 362.5
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 189.0,
+        "width": 461.0,
+        "height": 347.0,
+        "right": 473.0,
+        "bottom": 536.0,
+        "center_x": 242.5,
+        "center_y": 362.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 556.0,
+        "width": 270.0,
+        "height": 236,
+        "score": 725.0
+      }
+    },
+    {
+      "selector": "#metadata_card_billing_plan_8b884d9e-c7c3-4719-b56a-326bd85769d7",
+      "title": "Plan metadata",
+      "bullets": [
+        "Explains the plain-language copy shown to subscribers.",
+        "Defines hosted access level, support tier, and eligibility."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 560.0,
+        "width": 461.0,
+        "height": 531.1875,
+        "right": 473.0,
+        "bottom": 1091.1875,
+        "center_x": 242.5,
+        "center_y": 825.59375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 560.0,
+        "width": 461.0,
+        "height": 531.1875,
+        "right": 473.0,
+        "bottom": 1091.1875,
+        "center_x": 242.5,
+        "center_y": 825.59375
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 812.0,
+        "width": 270.0,
+        "height": 288
+      }
+    },
+    {
+      "selector": "#recent_subscribers_card_billing_plan_8b884d9e-c7c3-4719-b56a-326bd85769d7",
+      "title": "Recent subscribers",
+      "bullets": [
+        "Shows who is currently using the plan.",
+        "Helps reviewers connect plan configuration to real stakeholders."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1260.046875,
+        "width": 461.0,
+        "height": 0.953125,
+        "right": 473.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 1260.5234375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1260.046875,
+        "width": 461.0,
+        "height": 0.953125,
+        "right": 473.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 1260.5234375
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 975,
+        "width": 270.0,
+        "height": 262
+      }
+    }
+  ]
+}

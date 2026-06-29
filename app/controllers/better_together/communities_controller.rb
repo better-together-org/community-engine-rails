@@ -16,6 +16,7 @@ module BetterTogether
 
     before_action :set_model_instance, only: %i[show edit update destroy]
     before_action :authorize_community, only: %i[show edit update destroy]
+    before_action :set_hosted_entitlement, only: :edit
     after_action :verify_authorized, except: :index
 
     # GET /communities
@@ -130,6 +131,12 @@ module BetterTogether
     # Adds a policy check for the community
     def authorize_community
       authorize @community
+    end
+
+    def set_hosted_entitlement
+      return unless @community&.persisted?
+
+      @hosted_entitlement = BetterTogether::Billing::HostedEntitlementResolver.new.call(community: @community)
     end
 
     def permitted_attributes

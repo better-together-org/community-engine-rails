@@ -23,6 +23,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       to: 'content_security/active_storage/representations/proxy#show',
       as: :content_security_blob_representation_proxy
 
+  mount Pay::Engine, at: '/pay'
+
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
                      only: :omniauth_callbacks,
@@ -122,7 +124,21 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[create new]
+        # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[edit update destroy], path: 'c' do
+          resource :billing,
+                   only: :show,
+                   controller: 'community_billings' do
+            post :checkout
+            post :portal
+            post :reconcile
+            post :merchant_onboarding
+            post :refresh_merchant_account
+            post 'events/:event_id/replay', action: :replay_event, as: :replay_event
+            get  :provision_platform
+            post :provision_platform, action: :create_platform_provision
+          end
+
           resources :invitations, only: %i[create destroy] do
             collection do
               get :available_people
@@ -143,6 +159,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
+        # rubocop:enable Metrics/BlockLength
 
         resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
@@ -268,6 +285,17 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :people, only: %i[update edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
+
+          resource :billing,
+                   only: :show,
+                   controller: 'person_billings' do
+            post :checkout
+            post :portal
+            post :reconcile
+            post :merchant_onboarding
+            post :refresh_merchant_account
+            post 'events/:event_id/replay', action: :replay_event, as: :replay_event
+          end
         end
 
         resources :person_access_grants, path: 'access-grants', only: %i[index show update] do
@@ -460,6 +488,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               end
             end
             resources :oauth_applications
+
+            # Billing plan management (platform stewards only)
+            namespace :billing do
+              resources :plans
+            end
 
             # Geography Routes for WIP Geography Feature
             namespace :geography do

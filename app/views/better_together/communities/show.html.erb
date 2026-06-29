@@ -36,6 +36,11 @@
                    destroy_confirm: t('partners.confirm_delete'),
                    destroy_aria_label: t('better_together.communities.show.actions.destroy_aria') do %>
           <%= render 'shared/content_actions', record: @resource %>
+          <% if policy(@resource).update? %>
+            <%= link_to t('better_together.communities.show.actions.manage_billing', default: 'Manage billing'),
+                        community_billing_path(@resource, locale: I18n.locale),
+                        class: 'btn btn-outline-info btn-sm me-2' %>
+          <% end %>
         <% end %>
       </div>
     </div>

@@ -1,0 +1,83 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.plans.index_title', default: 'Billing Plans') %>
+<% end %>
+
+<div id="billing-plans-index-page" class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><%= t('better_together.billing.plans.index_title', default: 'Billing Plans') %></h1>
+    <% if policy(BetterTogether::Billing::Plan.new).new? %>
+      <%= link_to t('better_together.billing.plans.new_plan', default: 'New plan'),
+                  new_billing_plan_path(locale: I18n.locale),
+                  class: 'btn btn-primary',
+                  id: 'new-billing-plan-btn' %>
+    <% end %>
+  </div>
+
+  <% if @plans.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-plans-table" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th><%= t('better_together.billing.plans.field_identifier', default: 'Identifier') %></th>
+              <th><%= t('better_together.billing.plans.field_name', default: 'Name') %></th>
+              <th><%= t('better_together.billing.plans.field_billing_interval', default: 'Interval') %></th>
+              <th><%= t('better_together.billing.plans.field_amount_cents', default: 'Price') %></th>
+              <th><%= t('better_together.billing.plans.field_active', default: 'Active') %></th>
+              <th><%= t('better_together.billing.plans.field_pricing_tier', default: 'Pricing tier') %></th>
+              <th><%= t('better_together.billing.plans.subscribers_count_label', default: 'Active subscribers') %></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @plans.each do |plan| %>
+              <tr id="<%= dom_id(plan) %>">
+                <td><code><%= plan.identifier %></code></td>
+                <td><%= plan.name %></td>
+                <td>
+                  <%= t("better_together.billing.plans.interval_#{plan.billing_interval}",
+                        default: plan.billing_interval.humanize) %>
+                </td>
+                <td><%= number_to_currency(plan.amount_cents / 100.0, unit: plan.currency + ' ') %></td>
+                <td>
+                  <% if plan.active? %>
+                    <span class="badge bg-success billing-plan-status-badge"><%= t('better_together.billing.plans.status_active', default: 'Active') %></span>
+                  <% else %>
+                    <span class="badge bg-secondary billing-plan-status-badge"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
+                  <% end %>
+                </td>
+                <td>
+                  <span class="badge <%= plan.solidarity_tier? ? 'bg-info text-dark' : 'bg-secondary' %>">
+                    <%= t("better_together.billing.plans.pricing_tier_#{plan.pricing_tier}",
+                          default: plan.pricing_tier.humanize) %>
+                  </span>
+                </td>
+                <td><%= @active_subscription_counts.fetch(plan.id, 0) %></td>
+                <td class="text-end">
+                  <div class="d-flex gap-2 justify-content-end">
+                    <%= link_to t('globals.view', default: 'View'),
+                                billing_plan_path(plan, locale: I18n.locale),
+                                class: 'btn btn-outline-secondary btn-sm' %>
+                    <%= link_to t('globals.edit', default: 'Edit'),
+                                edit_billing_plan_path(plan, locale: I18n.locale),
+                                class: 'btn btn-outline-primary btn-sm' %>
+                    <%= button_to plan.active? ? t('better_together.billing.plans.toggle_deactivate', default: 'Deactivate') : t('better_together.billing.plans.toggle_activate', default: 'Activate'),
+                                  billing_plan_path(plan, locale: I18n.locale),
+                                  method: :patch,
+                                  params: { billing_plan: { active: !plan.active? } },
+                                  class: plan.active? ? 'btn btn-outline-warning btn-sm' : 'btn btn-outline-success btn-sm',
+                                  data: { turbo_confirm: plan.active? ? t('better_together.billing.plans.deactivate_confirm', default: 'Deactivate this plan? Existing subscribers are unaffected.') : nil } %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <%= t('better_together.billing.plans.no_plans', default: 'No billing plans have been created yet.') %>
+    </div>
+  <% end %>
+</div>

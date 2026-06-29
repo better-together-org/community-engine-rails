@@ -1,0 +1,22 @@
+---
+title: Provision hosted platform
+audience:
+- board_member
+- community_steward
+- operator
+journey_step: A steward provisions a hosted platform only after the community has
+  an active hosted plan.
+callouts:
+- :title: Provision form
+  :description: This is the operational handoff from billing into platform creation.
+    It turns entitlement into a concrete hosted space with a URL and visibility policy.
+- :title: Eligibility checkpoint
+  :description: The entitlement card stays visible here so the reviewer can verify
+    that platform creation is tied to an active hosted subscription.
+- :title: What happens next
+  :description: 'The checklist translates internal provisioning work into community-facing
+    outcomes: a platform record, a linked community, a domain, and stewardship setup.'
+accessibility_notes: The form uses labeled fields, a native select for visibility,
+  and a stable form ID so screenshots and future accessibility checks remain deterministic.
+slug: pr_1581_provision_hosted_platform
+device: mobile
