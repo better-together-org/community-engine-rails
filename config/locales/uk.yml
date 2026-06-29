@@ -1016,6 +1016,17 @@ uk:
           create_post: Створити допис
           empty_description: Дописи, створені для цієї спільноти, з'являться тут.
           empty_title: Поки що немає дописів
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            few: "%{count} members in this role"
+            many: "%{count} members in this role"
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
         sections_aria: Розділи спільноти
       tabs:
         buildings: Будівлі
@@ -4560,6 +4571,7 @@ uk:
       invitations: Запрошення
       members: Учасники
       posts: Дописи
+      roles_and_permissions: Roles & Permissions
       safety: Безпека
     to: До
     'true': так

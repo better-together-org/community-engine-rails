@@ -69,6 +69,9 @@
           <% if policy(@resource).view_members? %>
             <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
           <% end %>
+          <% if policy(@resource).manage_roles? %>
+            <%= link_to t('globals.tabs.roles_and_permissions'), '#roles-and-permissions', class: 'nav-link', id: 'roles-and-permissions-tab', data: { bs_toggle: 'tab', bs_target: '#roles-and-permissions', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'roles-and-permissions', aria_selected: 'false', tabindex: '-1' %>
+          <% end %>
           <% if @community_pages.any? %>
             <%= link_to BetterTogether::Page.model_name.human.pluralize, '#pages', class: 'nav-link', id: 'pages-tab', data: { bs_toggle: 'tab', bs_target: '#pages', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'pages', aria_selected: 'false', tabindex: '-1' %>
           <% end %>
@@ -163,6 +166,15 @@
             <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
               <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
             </div>
+          </div>
+        <% end %>
+
+        <% if policy(@resource).manage_roles? %>
+          <div id="roles-and-permissions" class="collapse" aria-labelledby="roles-and-permissions-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+            <%= render 'better_together/communities/community_roles_tab',
+                       community: @community,
+                       community_roles: @community_roles,
+                       memberships_by_role: @community_memberships_by_role %>
           </div>
         <% end %>
 

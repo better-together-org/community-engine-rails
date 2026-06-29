@@ -62,6 +62,12 @@ module BetterTogether
         can_manage_community?
     end
 
+    def manage_roles?
+      return false unless user.present?
+
+      permitted_to?('manage_community_roles', record) || can_manage_community?
+    end
+
     def edit?
       update?
     end

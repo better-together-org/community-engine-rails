@@ -1028,6 +1028,15 @@ fr:
           empty_description: Les publications créées pour cette communauté apparaîtront
             ici.
           empty_title: Aucune publication
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
         sections_aria: Sections de la communauté
       tabs:
         buildings: Bâtiments
@@ -4590,6 +4599,7 @@ fr:
       invitations: Invitations
       members: Membres
       posts: Publications
+      roles_and_permissions: Roles & Permissions
       safety: Sécurité
     to: À
     'true': Oui

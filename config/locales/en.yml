@@ -1029,6 +1029,15 @@ en:
           create_post: Create Post
           empty_description: Posts created for this community will show up here.
           empty_title: No posts yet
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
         sections_aria: Community sections
       tabs:
         buildings: Buildings
@@ -4487,6 +4496,7 @@ en:
       invitations: Invitations
       members: Members
       posts: Posts
+      roles_and_permissions: Roles & Permissions
       safety: Safety
     to: To
     'true': true

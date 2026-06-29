@@ -44,6 +44,7 @@ module BetterTogether
       load_community_posts
       set_current_person_community_membership
       set_membership_request_review_state
+      load_community_roles_data
 
       # Categorize events for display
       categorize_community_events
@@ -312,6 +313,18 @@ module BetterTogether
       @upcoming_events = policy_scope(@community.hosted_events).upcoming
       @ongoing_events = policy_scope(@community.hosted_events).ongoing
       @past_events = policy_scope(@community.hosted_events).past
+    end
+
+    def load_community_roles_data
+      @community_roles = BetterTogether::Role
+                         .where(resource_type: 'BetterTogether::Community')
+                         .includes(:resource_permissions)
+                         .order(:position)
+
+      @community_memberships_by_role = @community.person_community_memberships
+                                                 .active
+                                                 .includes(:member)
+                                                 .group_by(&:role_id)
     end
 
     def load_community_posts
