@@ -86,7 +86,7 @@ module BetterTogether
     end
 
     def e2ee_messaging_enabled?
-      ::BetterTogether.e2ee_messaging_enabled?
+      ::BetterTogether.e2ee_messaging_enabled? || feature_enabled?('e2ee_messaging')
     end
 
     def e2ee_messaging_enabled_for?(person = current_person)
