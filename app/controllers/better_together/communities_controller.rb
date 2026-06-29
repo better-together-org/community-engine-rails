@@ -4,6 +4,9 @@ module BetterTogether
   class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     include InvitationTokenAuthorization
     include NotificationReadable
+    include ChecksRequiredAgreements
+
+    before_action :check_community_creation_agreement, only: %i[new create]
 
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/ClassLength

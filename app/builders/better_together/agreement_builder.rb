@@ -11,6 +11,7 @@ module BetterTogether
         build_terms_of_service
         build_code_of_conduct
         build_content_publishing_agreement
+        build_community_creation_agreement
       end
 
       def clear_existing
@@ -171,6 +172,57 @@ module BetterTogether
           page_slug: 'content-contributor-agreement',
           template_path: 'better_together/static_pages/content_contributor_agreement'
         )
+      end
+
+      def build_community_creation_agreement # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'community_creation_agreement') do |a|
+          a.protected = true
+          a.title = 'Community Creation Agreement'
+          a.description = 'Responsibilities for creating and managing communities on this platform.'
+          a.privacy = 'public'
+          a.agreement_kind = 'policy_consent'
+          a.required_for = 'none'
+          a.active_for_consent = true
+        end
+
+        agreement.update!(
+          protected: true,
+          title: 'Community Creation Agreement',
+          description: 'Responsibilities for creating and managing communities on this platform.',
+          privacy: 'public',
+          agreement_kind: 'policy_consent',
+          required_for: 'none',
+          active_for_consent: true
+        )
+
+        agreement.agreement_terms.find_or_create_by!(identifier: 'community_creation_agreement_summary') do |term|
+          term.protected = true
+          term.position = 1
+          term.content = <<~CONTENT
+            By creating a community on this platform, you accept the following responsibilities:
+
+            Community Management: You accept responsibility for managing your community in accordance with the
+            platform's values and community guidelines. You agree to maintain an active presence and ensure
+            the community remains a safe, inclusive space for all members.
+
+            Membership and Invitations: You agree to invite and welcome members in good faith. You will not
+            add members without their knowledge or consent, and will manage membership in accordance with
+            privacy expectations and the platform's values.
+
+            Content Standards: All content shared within your community must comply with the platform's
+            content guidelines. You agree to moderate your community and address violations promptly.
+            Community-visible and public content requires all authors to have accepted the content
+            publishing agreement.
+
+            Community Visibility: Private communities are visible only to their members. Changing your
+            community's visibility to community-wide or public requires that you have also accepted the
+            content publishing agreement.
+
+            Accountability: Your actions as a community organizer are logged and auditable by platform
+            stewards. Violations of this agreement may result in role changes, community restrictions,
+            or account suspension.
+          CONTENT
+        end
       end
 
       private

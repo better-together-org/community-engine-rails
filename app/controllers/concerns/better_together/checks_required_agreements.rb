@@ -12,12 +12,15 @@ module BetterTogether
   #
   # To skip checking in specific actions:
   #   skip_before_action :check_required_agreements, only: [:index, :show]
-  module ChecksRequiredAgreements
+  module ChecksRequiredAgreements # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
+
+    COMMUNITY_CREATION_AGREEMENT_IDENTIFIER = 'community_creation_agreement'
 
     included do
       helper_method :current_person_has_unaccepted_agreements? if respond_to?(:helper_method)
       helper_method :current_person_missing_publishing_agreement? if respond_to?(:helper_method)
+      helper_method :current_person_missing_community_creation_agreement? if respond_to?(:helper_method)
     end
 
     def self.required_agreement_identifiers
@@ -43,6 +46,18 @@ module BetterTogether
 
     def self.missing_public_publishing_agreement?(participant)
       !accepted_public_publishing_agreement?(participant)
+    end
+
+    def self.public_community_creation_agreement
+      BetterTogether::Agreement.find_by(identifier: COMMUNITY_CREATION_AGREEMENT_IDENTIFIER)
+    end
+
+    def self.accepted_community_creation_agreement?(participant)
+      accepted_agreement?(participant, identifier: COMMUNITY_CREATION_AGREEMENT_IDENTIFIER)
+    end
+
+    def self.missing_community_creation_agreement?(participant)
+      !accepted_community_creation_agreement?(participant)
     end
 
     # Returns required agreements that a person has not yet accepted.
@@ -117,6 +132,32 @@ module BetterTogether
       ChecksRequiredAgreements.missing_public_publishing_agreement?(current_user.person)
     end
 
+    # Returns true if the current person has not yet accepted the community creation agreement.
+    # @return [Boolean]
+    def current_person_missing_community_creation_agreement?
+      return false unless user_signed_in?
+      return false unless current_user.person.present?
+
+      ChecksRequiredAgreements.missing_community_creation_agreement?(current_user.person)
+    end
+
+    # Redirects to the community creation agreement when the current person hasn't accepted it.
+    # Platform managers are exempt — they can always create communities.
+    # Call this as a before_action on community new/create actions.
+    def check_community_creation_agreement
+      return unless user_signed_in? && current_user.person.present?
+
+      agreement = ChecksRequiredAgreements.public_community_creation_agreement
+      return unless agreement.present? && current_person_missing_community_creation_agreement?
+
+      # Platform managers bypass the community creation agreement requirement
+      return if current_person_is_platform_manager?
+
+      store_location_for(:user, request.fullpath)
+      redirect_to better_together.agreement_path(agreement, locale: I18n.locale),
+                  alert: t('better_together.agreements.community_creation_agreement_required')
+    end
+
     # Helper method to get agreements_status_path
     # @return [String]
     def agreements_status_path
@@ -126,6 +167,26 @@ module BetterTogether
     def redirect_to_publishing_agreement(agreement)
       redirect_to better_together.agreement_path(agreement, locale: I18n.locale),
                   alert: t('better_together.agreements.publishing_agreement_required')
+    end
+
+    # Returns true if the current person holds a platform role with management permissions.
+    # Used to exempt platform managers from community creation agreement requirements.
+    def current_person_is_platform_manager?
+      return false unless user_signed_in? && current_user.person.present?
+
+      manager_permission_ids = BetterTogether::ResourcePermission
+                               .where(identifier: %w[manage_platform_settings manage_platform])
+                               .pluck(:id)
+      return false if manager_permission_ids.empty?
+
+      BetterTogether::PersonPlatformMembership
+        .active
+        .where(member: current_user.person)
+        .joins(role: :role_resource_permissions)
+        .where(
+          better_together_role_resource_permissions: { resource_permission_id: manager_permission_ids }
+        )
+        .exists?
     end
   end
 end

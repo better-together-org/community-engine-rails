@@ -771,6 +771,8 @@ uk:
       accept_error: Зараз неможливо зафіксувати прийняття угоди.
       accepted: Погоджено
       accepting: Збереження...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
         successfully_accepted: Дякуємо за прийняття обов'язкових угод.
@@ -3672,6 +3674,10 @@ uk:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
       publishing_agreement_notice:

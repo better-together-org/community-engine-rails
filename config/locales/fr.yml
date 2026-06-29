@@ -786,6 +786,8 @@ fr:
       accept_error: Impossible d'enregistrer l'acceptation de l'accord pour le moment.
       accepted: Accepté
       accepting: Enregistrement...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: Vous devez accepter tous les accords requis pour continuer.
         successfully_accepted: Merci d'avoir accepté les accords requis.
@@ -3716,6 +3718,10 @@ fr:
       share: Partager
       whatsapp: Partager sur WhatsApp
     shared:
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
       privacy_level: 'Confidentialité: %{privacy}'
       privacy_tooltip: Ce contenu est %{privacy}
       publishing_agreement_notice:

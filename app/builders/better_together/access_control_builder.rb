@@ -70,7 +70,10 @@ module BetterTogether
       end
 
       def assign_community_permissions_to_roles # rubocop:todo Metrics/MethodLength
-        # Mapping of community roles to community permissions
+        # Mapping of community roles to community permissions.
+        # create_community is intentionally absent from all community roles —
+        # community creation is gated by the community_creation_agreement, not a role.
+        # delete_community is reserved for community_organizer only.
         community_role_permissions = {
           'community_member' => %w[
             read_community
@@ -79,25 +82,23 @@ module BetterTogether
           'community_contributor' => %w[
             read_community
             list_community
-            create_community
+            invite_community_members
           ],
           'community_facilitator' => %w[
             read_community
             list_community
-            create_community
-            update_community
-            delete_community
             invite_community_members
+            manage_community_events
           ],
           'community_organizer' => %w[
             read_community
             list_community
-            create_community
             update_community
             delete_community
             manage_community_members
             manage_community_settings
             manage_community_content
+            manage_community_events
             manage_community_roles
             manage_community_notifications
             invite_community_members
@@ -105,12 +106,11 @@ module BetterTogether
           'community_coordinator' => %w[
             read_community
             list_community
-            create_community
             update_community
-            delete_community
             manage_community_members
             manage_community_settings
             manage_community_content
+            manage_community_events
             manage_community_roles
             manage_community_notifications
             invite_community_members
@@ -118,36 +118,26 @@ module BetterTogether
           'community_content_curator' => %w[
             read_community
             list_community
-            create_community
-            update_community
-            delete_community
             manage_community_content
           ],
           'community_strategist' => %w[
             read_community
             list_community
-            create_community
             update_community
-            delete_community
             manage_community_roles
           ],
           'community_legal_advisor' => %w[
             read_community
             list_community
-            create_community
             update_community
-            delete_community
             manage_community_settings
           ],
           'community_governance_council' => %w[
             read_community
             list_community
-            create_community
-            update_community
-            delete_community
+            invite_community_members
             manage_community_members
             manage_community_roles
-            invite_community_members
           ]
           # Add more mappings as needed...
         }
@@ -504,6 +494,10 @@ module BetterTogether
           {
             action: 'manage', target: 'member_invitations', resource_type: 'BetterTogether::Community',
             identifier: 'invite_community_members', protected: true, position: 12
+          },
+          {
+            action: 'manage', target: 'events', resource_type: 'BetterTogether::Community',
+            identifier: 'manage_community_events', protected: true, position: 13
           }
         ]
       end

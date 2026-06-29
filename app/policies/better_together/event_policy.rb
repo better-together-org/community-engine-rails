@@ -28,7 +28,7 @@ module BetterTogether
     end
 
     def create?
-      platform_event_manager? || event_host_member?
+      platform_event_manager? || community_event_manager? || event_host_member?
     end
 
     def available_hosts?
@@ -60,6 +60,22 @@ module BetterTogether
 
       has_common_hosts = record.event_hosts.pluck(:host_id).intersect?(agent.valid_event_host_ids)
       can_represent_host && has_common_hosts
+    end
+
+    def community_event_manager?
+      return false unless user.present?
+
+      community_host_ids = record.event_hosts
+                                 .select { |h| h.host_type == 'BetterTogether::Community' }
+                                 .map(&:host_id)
+      return false if community_host_ids.empty?
+
+      community_host_ids.any? do |community_id|
+        community = BetterTogether::Community.find_by(id: community_id)
+        next false unless community
+
+        permitted_to?('manage_community_events', community)
+      end
     end
 
     # Filtering and sorting for calendars according to permissions and context

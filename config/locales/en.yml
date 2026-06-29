@@ -792,6 +792,8 @@ en:
       accept_error: Unable to record agreement acceptance right now.
       accepted: Accepted
       accepting: Saving...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: You must accept all required agreements to continue.
         successfully_accepted: Thank you for accepting the required agreements.
@@ -3633,6 +3635,10 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
       privacy_level: 'Privacy: %{privacy}'
       privacy_tooltip: This content is %{privacy}
       publishing_agreement_notice:

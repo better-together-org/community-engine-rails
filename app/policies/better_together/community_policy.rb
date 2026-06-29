@@ -16,7 +16,15 @@ module BetterTogether
     end
 
     def create?
-      user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || permitted_to?('create_community'))
+      return false unless user.present?
+
+      # Platform managers can always create communities
+      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+
+      # All other authenticated users must have accepted the community creation agreement
+      return false unless agent.present?
+
+      ChecksRequiredAgreements.accepted_community_creation_agreement?(agent)
     end
 
     def new?
@@ -32,8 +40,17 @@ module BetterTogether
     end
 
     def create_events?
-      update? &&
-        BetterTogether::EventPolicy.new(user, BetterTogether::Event.new).create?
+      return false unless user.present? && agent.present?
+
+      # Platform managers always have event management authority
+      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+
+      # Explicit event management permission for this community
+      return true if permitted_to?('manage_community_events', record)
+
+      # Any active member of this community can host events on its behalf.
+      # This preserves existing venue/community event management behavior (e.g. NL Venues).
+      record.persisted? && agent.valid_event_host_ids.include?(record.id)
     end
 
     def view_members?
