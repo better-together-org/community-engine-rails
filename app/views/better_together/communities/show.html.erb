@@ -164,7 +164,7 @@
             </div>
           <% end %>
             <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-              <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
+              <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @community_memberships, as: :membership %>
             </div>
           </div>
         <% end %>

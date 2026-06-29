@@ -45,6 +45,7 @@ module BetterTogether
       set_current_person_community_membership
       set_membership_request_review_state
       load_community_roles_data
+      load_community_memberships
 
       # Categorize events for display
       categorize_community_events
@@ -325,6 +326,15 @@ module BetterTogether
                                                  .active
                                                  .includes(community_role_member_includes)
                                                  .group_by(&:role_id)
+    end
+
+    def load_community_memberships
+      @community_memberships = @community.person_community_memberships
+                                         .includes(
+                                           :joinable,
+                                           { role: [:string_translations] },
+                                           community_role_member_includes
+                                         )
     end
 
     def community_role_member_includes
