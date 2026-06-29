@@ -7,8 +7,6 @@ module BetterTogether
     include PostsIndexPreload
     include ChecksRequiredAgreements
 
-    before_action :check_publishing_agreement, only: %i[new create]
-
     skip_before_action :resource_collection, only: :index
 
     def index

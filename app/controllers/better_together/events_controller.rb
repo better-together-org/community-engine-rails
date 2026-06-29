@@ -7,8 +7,6 @@ module BetterTogether
     include NotificationReadable
     include ChecksRequiredAgreements
 
-    before_action :check_publishing_agreement, only: %i[new create]
-
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
