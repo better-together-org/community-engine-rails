@@ -812,6 +812,8 @@ es:
         accepted_via: Aceptado mediante %{method}
         agreement_revision: Versión del acuerdo %{timestamp}
         pending: Pendiente
+      publishing_agreement_required: You need to accept the content publishing agreement
+        before creating public or community content. Please review and accept it below.
       show:
         title: Acuerdo
       status:
@@ -3692,6 +3694,10 @@ es:
     shared:
       privacy_level: 'Privacidad: %{privacy}'
       privacy_tooltip: Este contenido es %{privacy}
+      publishing_agreement_notice:
+        accept_link: Review and accept the publishing agreement
+        message: To publish events or posts visible to members or the public, you
+          need to accept the content publishing agreement first.
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un

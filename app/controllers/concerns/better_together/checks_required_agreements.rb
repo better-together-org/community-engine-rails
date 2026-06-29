@@ -17,6 +17,7 @@ module BetterTogether
 
     included do
       helper_method :current_person_has_unaccepted_agreements? if respond_to?(:helper_method)
+      helper_method :current_person_missing_publishing_agreement? if respond_to?(:helper_method)
     end
 
     def self.required_agreement_identifiers
@@ -94,10 +95,37 @@ module BetterTogether
       BetterTogether::ChecksRequiredAgreements.person_has_unaccepted_required_agreements?(current_user.person)
     end
 
+    # Checks if the current user has accepted the content publishing agreement.
+    # Redirects directly to the publishing agreement page when it is missing so
+    # the user can read and accept it before proceeding to content creation.
+    def check_publishing_agreement
+      return unless user_signed_in? && current_user.person.present?
+
+      publishing_agreement = ChecksRequiredAgreements.public_publishing_agreement
+      return unless publishing_agreement.present? && current_person_missing_publishing_agreement?
+
+      store_location_for(:user, request.fullpath)
+      redirect_to_publishing_agreement(publishing_agreement)
+    end
+
+    # Returns true if the current person has not yet accepted the publishing agreement.
+    # @return [Boolean]
+    def current_person_missing_publishing_agreement?
+      return false unless user_signed_in?
+      return false unless current_user.person.present?
+
+      ChecksRequiredAgreements.missing_public_publishing_agreement?(current_user.person)
+    end
+
     # Helper method to get agreements_status_path
     # @return [String]
     def agreements_status_path
       better_together.agreements_status_path(locale: I18n.locale)
+    end
+
+    def redirect_to_publishing_agreement(agreement)
+      redirect_to better_together.agreement_path(agreement, locale: I18n.locale),
+                  alert: t('better_together.agreements.publishing_agreement_required')
     end
   end
 end

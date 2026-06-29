@@ -181,6 +181,7 @@
                         new_post_path(community_id: @community.slug),
                         class: 'btn btn-primary mb-3',
                         id: 'community-posts-create-btn' %>
+            <%= render 'better_together/shared/publishing_agreement_notice' %>
           <% end %>
 
           <% if @community_posts.any? %>
@@ -199,6 +200,7 @@
         <div id="events" class="collapse" aria-labelledby="events-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <% if policy(@resource).create_events? %>
             <%= link_to t('better_together.communities.show.events.create_event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary mb-3' %>
+            <%= render 'better_together/shared/publishing_agreement_notice' %>
           <% end %>
           
           <% if policy(@resource).create_events? && @draft_events.any? %>

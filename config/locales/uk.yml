@@ -796,6 +796,8 @@ uk:
         accepted_via: Прийнято через %{method}
         agreement_revision: Редакція угоди %{timestamp}
         pending: очікує
+      publishing_agreement_required: You need to accept the content publishing agreement
+        before creating public or community content. Please review and accept it below.
       show:
         title: Угода
       status:
@@ -3672,6 +3674,10 @@ uk:
     shared:
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
+      publishing_agreement_notice:
+        accept_link: Review and accept the publishing agreement
+        message: To publish events or posts visible to members or the public, you
+          need to accept the content publishing agreement first.
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
