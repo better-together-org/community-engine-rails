@@ -318,13 +318,26 @@ module BetterTogether
     def load_community_roles_data
       @community_roles = BetterTogether::Role
                          .where(resource_type: 'BetterTogether::Community')
-                         .includes(:resource_permissions)
+                         .includes(:string_translations, :resource_permissions)
                          .order(:position)
 
       @community_memberships_by_role = @community.person_community_memberships
                                                  .active
-                                                 .includes(:member)
+                                                 .includes(community_role_member_includes)
                                                  .group_by(&:role_id)
+    end
+
+    def community_role_member_includes
+      { member: [
+        :string_translations,
+        :text_translations,
+        { profile_image_attachment: {
+          blob: {
+            variant_records: [],
+            preview_image_attachment: { blob: [] }
+          }
+        } }
+      ] }
     end
 
     def load_community_posts
