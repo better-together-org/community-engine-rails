@@ -151,6 +151,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :message_requests, only: %i[index show create] do
+          member do
+            put :accept
+            put :decline
+          end
+        end
+
         resources :events, except: %i[index show] do
           collection do
             get :available_hosts

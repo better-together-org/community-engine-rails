@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_21_160121) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_29_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1360,6 +1360,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_21_160121) do
     t.index ["platform_id"], name: "index_better_together_jwt_denylists_on_platform_id"
   end
 
+  create_table "better_together_message_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "sender_id", null: false
+    t.uuid "recipient_id", null: false
+    t.uuid "platform_id", null: false
+    t.text "note", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "responded_at"
+    t.index ["platform_id"], name: "idx_bt_message_requests_platform"
+    t.index ["recipient_id"], name: "idx_bt_message_requests_recipient"
+    t.index ["sender_id", "recipient_id", "platform_id"], name: "idx_bt_message_requests_sender_recipient_platform"
+    t.index ["sender_id"], name: "idx_bt_message_requests_sender"
+  end
+
   create_table "better_together_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1878,6 +1894,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_21_160121) do
     t.index ["source_person_id"], name: "index_better_together_person_links_on_source_person_id"
     t.index ["status"], name: "index_better_together_person_links_on_status"
     t.index ["target_person_id"], name: "index_better_together_person_links_on_target_person_id"
+  end
+
+  create_table "better_together_person_messaging_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "grantor_id", null: false
+    t.uuid "grantee_id", null: false
+    t.index ["grantee_id"], name: "idx_bt_messaging_grants_grantee"
+    t.index ["grantor_id", "grantee_id"], name: "idx_bt_messaging_grants_grantor_grantee", unique: true
   end
 
   create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2822,6 +2848,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_21_160121) do
   add_foreign_key "better_together_joatu_settlements", "better_together_joatu_agreements", column: "agreement_id", on_delete: :restrict
   add_foreign_key "better_together_joatu_settlements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_jwt_denylists", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_message_requests", "better_together_people", column: "recipient_id", on_delete: :cascade
+  add_foreign_key "better_together_message_requests", "better_together_people", column: "sender_id", on_delete: :cascade
+  add_foreign_key "better_together_message_requests", "better_together_platforms", column: "platform_id", on_delete: :cascade
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
   add_foreign_key "better_together_messages", "better_together_platforms", column: "platform_id"
@@ -2887,6 +2916,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_21_160121) do
   add_foreign_key "better_together_person_links", "better_together_people", column: "source_person_id"
   add_foreign_key "better_together_person_links", "better_together_people", column: "target_person_id"
   add_foreign_key "better_together_person_links", "better_together_platform_connections", column: "platform_connection_id"
+  add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantee_id", on_delete: :cascade
+  add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantor_id", on_delete: :cascade
   add_foreign_key "better_together_person_platform_integrations", "better_together_people", column: "person_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_users", column: "user_id"

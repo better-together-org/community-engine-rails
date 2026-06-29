@@ -65,3 +65,9 @@ features:
     default_rollout: off
     owner_surface: ui
     category: search
+  - key: message_requests
+    name: Message Requests
+    description: Allows members to send a message request with an explanatory note to people who have not granted them direct messaging permission. When accepted, opens a conversation and records an explicit messaging grant. Gated at alpha while the UX for the request inbox is stabilised.
+    default_rollout: alpha
+    owner_surface: both
+    category: messaging

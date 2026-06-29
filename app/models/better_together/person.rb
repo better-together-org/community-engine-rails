@@ -112,6 +112,27 @@ module BetterTogether
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
     has_many :event_invitations, class_name: 'BetterTogether::EventInvitation', as: :invitee, dependent: :destroy
 
+    has_many :messaging_grants_given,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantor_id,
+             dependent: :destroy,
+             inverse_of: :grantor
+    has_many :messaging_grants_received,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantee_id,
+             dependent: :destroy,
+             inverse_of: :grantee
+    has_many :sent_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :sender_id,
+             dependent: :destroy,
+             inverse_of: :sender
+    has_many :received_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :recipient_id,
+             dependent: :destroy,
+             inverse_of: :recipient
+
     has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
     has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
     has_many :person_purge_audits,
