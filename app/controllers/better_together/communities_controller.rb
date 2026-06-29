@@ -24,7 +24,7 @@ module BetterTogether
     # GET /communities
     def index
       authorize resource_class
-      @communities = policy_scope(resource_collection)
+      @communities = policy_scope(resource_collection).includes(community_index_includes)
     end
 
     # GET /communities/1
@@ -326,6 +326,13 @@ module BetterTogether
                                                  .active
                                                  .includes(community_role_member_includes)
                                                  .group_by(&:role_id)
+    end
+
+    def community_index_includes
+      [
+        { cover_image_attachment: { blob: { variant_records: [] } } },
+        { buildings: %i[space address] }
+      ]
     end
 
     def load_community_memberships

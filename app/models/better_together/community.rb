@@ -98,6 +98,8 @@ module BetterTogether
                                          preprocessed: true
     end
 
+    alias card_image cover_image
+
     has_one_attached :logo do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
