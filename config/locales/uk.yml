@@ -2241,8 +2241,11 @@ uk:
         none_pending: You have no pending message requests.
         title: Message Requests
         wants_to_message_you: would like to message you
+      modal_intro: Send %{name} a brief note explaining why you'd like to connect.
+        They can choose to accept and start a conversation, or decline.
       note_label: Why would you like to connect?
       note_placeholder: Introduce yourself and explain why you'd like to start a conversation.
+      request_pending: Request pending
       send_request_btn: Send Message Request
       sent: Your message request has been sent.
       show:
@@ -4495,6 +4498,7 @@ uk:
     cancel: Скасувати
     clear: Очистити
     clear_filter: Очистити фільтр
+    close: Close
     confirm_delete: Ви впевнені, що хочете видалити цей запис?
     create: Створити
     declined: Відхилено

@@ -26,21 +26,75 @@
         <%= privacy_badge(@person) %>
       </div>
       <div class="col-auto">
+        <%
+          conversation           = BetterTogether::Conversation.new
+          is_self                = current_person.present? && current_person == @person
+          can_message_directly   = !is_self && policy(conversation).create?(participants: [@person.id])
+          can_request_messaging  = !is_self && !can_message_directly &&
+                                   current_person.present? &&
+                                   feature_enabled?('message_requests')
+          pending_request        = can_request_messaging &&
+                                   BetterTogether::MessageRequest.pending
+                                                                 .exists?(sender: current_person,
+                                                                          recipient: @person)
+        %>
         <%= render 'shared/resource_toolbar',
                    edit_path: policy(@person).edit? ? edit_person_path(@person) : nil,
                    edit_aria_label: 'Edit Profile',
                    destroy_path: policy(@person).destroy? ? person_path(@person) : nil,
                    destroy_confirm: t('people.confirm_delete'),
                    destroy_aria_label: 'Delete Profile' do %>
-          <% conversation = BetterTogether::Conversation.new %>
-          <% if policy(conversation).create?(participants: [@person.id]) %>
-            <%= link_to new_conversation_path(conversation: { participant_ids: [@person.id] }), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => t('globals.message') do %>
-              <i class="fas fa-envelope"></i> <%= t('globals.message') %>
+          <% if can_message_directly %>
+            <%= link_to new_conversation_path(conversation: { participant_ids: [@person.id] }),
+                        class: 'btn btn-outline-primary btn-sm me-2',
+                        'aria-label' => t('globals.message') do %>
+              <i class="fas fa-envelope" aria-hidden="true"></i> <%= t('globals.message') %>
+            <% end %>
+          <% elsif can_request_messaging %>
+            <% if pending_request %>
+              <span class="btn btn-outline-secondary btn-sm me-2 disabled" aria-disabled="true">
+                <i class="fas fa-clock" aria-hidden="true"></i>
+                <%= t('better_together.message_requests.request_pending') %>
+              </span>
+            <% else %>
+              <button type="button"
+                      class="btn btn-outline-secondary btn-sm me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#messageRequestModal"
+                      aria-haspopup="dialog">
+                <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                <%= t('better_together.message_requests.send_request_btn') %>
+              </button>
             <% end %>
           <% end %>
         <% end %>
         <%= render 'shared/content_actions', record: @person, container_classes: 'me-2' %>
       </div>
+
+      <%# Message request modal — only rendered when the feature is on and the user needs it %>
+      <% if can_request_messaging && !pending_request %>
+        <div class="modal fade" id="messageRequestModal" tabindex="-1"
+             aria-labelledby="messageRequestModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="messageRequestModalLabel">
+                  <%= t('better_together.message_requests.send_request_btn') %>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="<%= t('globals.close') %>"></button>
+              </div>
+              <div class="modal-body">
+                <p class="text-muted small mb-3">
+                  <%= t('better_together.message_requests.modal_intro',
+                        name: @person.name) %>
+                </p>
+                <%= render 'better_together/message_requests/form', recipient: @person %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 
