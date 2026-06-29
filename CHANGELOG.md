@@ -184,6 +184,41 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - icalendar 2.12.3, css_parser 1.22.0, doorkeeper 5.9.1, jwt 3.2.0
 - aws-sdk-s3 1.223.0
 
+### Known Limitations & Deferred Surfaces
+
+The following subsystems shipped their backend model, API, and migration foundations in
+0.11.0 but do **not** yet include organizer or end-user CE UI. They are accessible via
+the JSON:API or Borgberry agent runtime only. Organizer UI is planned for 0.11.x patches.
+
+- **Fleet Nodes (`BetterTogether::Fleet::Node`):** API-only in 0.11.0. No CE admin or
+  organizer views exist for inspecting or managing fleet nodes registered with a platform.
+  Fleet node management operates exclusively through the Borgberry agent runtime.
+- **C3 Token Ledger — Organizer View:** `C3::Token`, `C3::Balance`, and `C3::ExchangeRate`
+  have full API support but no organizer-facing CE UI for inspecting or managing community
+  token balances. Organizers receive C3 activity indirectly through JOATU settlement
+  notifications.
+- **Inbound Mail — Admin Inspection:** The Action Mailbox MVP provides routing and
+  persisted inbound message records but no organizer UI for inspecting routing failures or
+  reviewing delivered messages. This is intentionally a documentation-first runtime
+  surface for 0.11.0.
+- **MermaidDiagram Block — PNG Fallback:** The Mermaid Diagram content block renders
+  correctly in JavaScript-enabled environments. A PNG fallback for non-JavaScript users is
+  not yet implemented; those users will see no diagram content. Targeted for a 0.11.x
+  patch.
+- **Share Button — Open Graph Image:** The share button component ships without an
+  Open Graph image field populated. Share previews on external platforms will not include
+  a thumbnail image. Targeted for a 0.11.x patch.
+- **`DocumentationBuilder` Navigation Item:** The documentation navigation builder is
+  disabled in 0.11.0 pending documentation-tree readiness. The infrastructure is in
+  place; activation will follow documentation content completion.
+- **`AgreementParticipant` Legacy Shim:** A backwards-compatibility shim for
+  `person_id`-based queries remains in `AgreementParticipant` through the 0.11.x series.
+  It will be removed in 0.12.0 once all callers are migrated to the new participant
+  resolution path.
+- **ClamAV Operator Deploy Guide:** A guide for deploying, configuring, and monitoring
+  the ClamAV backend will be added in a 0.11.x docs patch before operators are expected
+  to enable `BETTER_TOGETHER_CONTENT_SECURITY_CLAM_AV_ENABLED`.
+
 ---
 
 ## [0.10.0] – 2026-03-24
