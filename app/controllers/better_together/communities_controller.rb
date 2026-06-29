@@ -330,7 +330,6 @@ module BetterTogether
     def community_role_member_includes
       { member: [
         :string_translations,
-        :text_translations,
         { profile_image_attachment: {
           blob: {
             variant_records: [],
