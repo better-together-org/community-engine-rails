@@ -95,12 +95,12 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
   end
 
   describe '#optimized_cover_image' do
-    let(:community) { described_class.allocate }
+    let(:community) { build(:better_together_community) }
     let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
     let(:cover_image) { double('cover_image', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
 
     before do
-      community.define_singleton_method(:cover_image) { cover_image }
+      allow(community).to receive(:cover_image).and_return(cover_image)
     end
 
     context 'when the cover image is a PNG' do
@@ -116,12 +116,12 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
   end
 
   describe '#optimized_logo' do
-    let(:community) { described_class.allocate }
+    let(:community) { build(:better_together_community) }
     let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
     let(:logo) { double('logo', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
 
     before do
-      community.define_singleton_method(:logo) { logo }
+      allow(community).to receive(:logo).and_return(logo)
     end
 
     context 'when the logo is a JPEG' do
@@ -165,10 +165,37 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
       it 'adds an error if host is set and another host community exists' do
         relation = double('ActiveRecord::Relation', exists?: true) # rubocop:todo RSpec/VerifiedDoubles
         allow(described_class).to receive(:where).and_return(relation)
-        allow(relation).to receive(:not).and_return(relation)
+        allow(relation).to receive_messages(not: relation, where: relation)
         community.host = true
         community.valid?
         expect(community.errors[:host]).to include(I18n.t('errors.models.host_single'))
+      end
+    end
+
+    describe '#membership_requests_enabled?' do
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+      let(:non_host_community) { create(:better_together_community, allow_membership_requests: true) }
+
+      context 'when the community has a primary_platform' do
+        it 'uses the primary_platform setting' do
+          host_platform.update!(allow_membership_requests: true)
+          host_community = described_class.find_by(host: true)
+          host_community.update!(allow_membership_requests: true)
+          expect(host_community.membership_requests_enabled?).to be true
+        end
+      end
+
+      context 'when the community has no primary_platform (non-host community)' do
+        it 'falls back to the host Platform setting when host platform allows requests' do
+          host_platform.update!(allow_membership_requests: true)
+          expect(non_host_community.primary_platform).to be_nil
+          expect(non_host_community.membership_requests_enabled?).to be true
+        end
+
+        it 'returns false when the host Platform disallows requests' do
+          host_platform.update!(allow_membership_requests: false)
+          expect(non_host_community.membership_requests_enabled?).to be false
+        end
       end
     end
   end

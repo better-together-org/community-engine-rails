@@ -147,7 +147,7 @@ module BetterTogether
       self.class.reset_host_community_cache!
     end
 
-    def membership_requests_enabled?(platform: primary_platform)
+    def membership_requests_enabled?(platform: primary_platform || ::BetterTogether::Platform.find_by(host: true))
       ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
         ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
     end
