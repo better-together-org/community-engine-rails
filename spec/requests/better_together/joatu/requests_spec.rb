@@ -87,6 +87,15 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
       expect(response.body).not_to include('Evidence and Citations')
       expect(response.body).not_to include('JOATU Request Notes')
     end
+
+    it 'renders the show page for a MembershipRequest with a nil creator (unauthenticated submission)', :as_platform_manager do
+      membership_request = create(:membership_request)
+      expect(membership_request.creator).to be_nil
+
+      get better_together.joatu_request_path(membership_request, locale: locale)
+      expect(response).to be_successful
+      expect(response.body).to include('Anonymous requester')
+    end
   end
 
   describe 'PATCH /update' do
