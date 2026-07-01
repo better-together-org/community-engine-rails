@@ -159,18 +159,15 @@ module BetterTogether
 
     def optimized_cover_image
       if cover_image.content_type == 'image/svg+xml'
-        # If SVG, return the original without transformation
         cover_image
-
-      # For other formats, analyze to determine transparency
       elsif cover_image.content_type == 'image/png'
-        # If PNG with transparency, return the optimized PNG variant
         cover_image.variant(:optimized_png)
       else
-        # Otherwise, use the optimized JPG variant
         cover_image.variant(:optimized_jpeg)
       end
     end
+
+    alias optimized_card_image optimized_cover_image
 
     def optimized_logo
       if logo.content_type == 'image/svg+xml'

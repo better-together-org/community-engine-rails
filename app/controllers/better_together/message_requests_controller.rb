@@ -9,7 +9,7 @@ module BetterTogether
 
     def index
       @message_requests = policy_scope(MessageRequest)
-                          .where(recipient: current_person)
+                          .where(recipient: helpers.current_person)
                           .pending
                           .order(created_at: :desc)
       authorize MessageRequest
@@ -21,7 +21,7 @@ module BetterTogether
 
     def create
       @message_request = MessageRequest.new(message_request_params.merge(
-                                              sender: current_person,
+                                              sender: helpers.current_person,
                                               platform: current_platform
                                             ))
       authorize @message_request
