@@ -22,7 +22,7 @@ module BetterTogether
     def create
       @message_request = MessageRequest.new(message_request_params.merge(
                                               sender: helpers.current_person,
-                                              platform: current_platform
+                                              platform: Current.platform
                                             ))
       authorize @message_request
 
