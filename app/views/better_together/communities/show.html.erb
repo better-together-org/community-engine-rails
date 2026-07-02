@@ -123,7 +123,7 @@
                 destroy_path_proc: ->(invitation) { better_together.community_invitation_path(@community, invitation) } %>
           <% end %>
 
-          <% if policy(BetterTogether::PersonCommunityMembership).create? %>
+          <% if policy(@community.person_community_memberships.new).create? %>
             <!-- Add Member Button -->
             <div class="mb-3" data-controller="better_together--new-person-community-membership">
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
@@ -146,7 +146,7 @@
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, t('better_together.communities.show.members.add_member_modal.select_person'), class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).distinct, :id, :select_option_title, { prompt: t('better_together.communities.show.members.add_member_modal.select_person_prompt') }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).where.not(id: @resource.person_community_memberships.pluck(:member_id)).distinct, :id, :select_option_title, { prompt: t('better_together.communities.show.members.add_member_modal.select_person_prompt') }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
