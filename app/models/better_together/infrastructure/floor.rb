@@ -3,7 +3,7 @@
 module BetterTogether
   module Infrastructure
     # Represents Floors in a Building
-    class Floor < ApplicationRecord
+    class Floor < PlatformRecord
       include Contactable
       include Creatable
       include Identifier

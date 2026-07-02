@@ -222,6 +222,11 @@ fr:
         conversation: :activerecord.models.conversation
         lock_version: Version de verrouillage
         sender: :activerecord.models.sender
+      better_together/message_request:
+        note: Message
+        recipient_id: Recipient
+        sender_id: Sender
+        status: Status
       better_together/navigation_area:
         identifier: Identifiant
         lock_version: Version de verrouillage
@@ -345,6 +350,9 @@ fr:
         lock_version: Version de verrouillage
         member: :activerecord.models.member
         role: :activerecord.models.role
+      better_together/person_messaging_grant:
+        grantee_id: Grantee
+        grantor_id: Grantor
       better_together/person_platform_membership:
         joinable: :activerecord.models.joinable
         lock_version: Version de verrouillage
@@ -565,6 +573,10 @@ fr:
                 active
             target:
               must_be_person: doit être une personne
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: a déjà un enregistrement de règlement
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -587,8 +599,14 @@ fr:
           attributes:
             active:
               must_be_true_for_primary: doit être vrai pour un domaine principal
+              must_be_true_for_share_domain: doit être vrai pour un domaine de partage
             primary:
               already_taken_for_platform: a déjà été pris pour cette plateforme
+        better_together/short_link:
+          attributes:
+            target_url:
+              invalid: n'est pas une URL valide
+              invalid_scheme: doit utiliser http ou https
     models:
       action_text/encrypted_rich_text: texte enrichi crypté
       action_text/rich_text: texte enrichi
@@ -708,10 +726,18 @@ fr:
             un compte ici.
           open: Les personnes peuvent créer un compte et rejoindre sans attendre d'approbation.
       form:
-        community_help: Choisissez si les personnes rejoignent immédiatement ou si
-          elles doivent d'abord demander l'accès.
+        community_help: Choisissez si cette communauté fonctionne uniquement sur invitation
+          ou si elle peut autoriser des demandes d'adhésion.
+        community_invitation_help: Les communautés sont réservées aux invitations
+          par défaut. Désactivez ceci uniquement si vous souhaitez autoriser les adhésions
+          en libre-service ou les demandes d'adhésion.
+        community_invitation_only: Exiger une invitation avant qu'une personne puisse
+          rejoindre cette communauté
         community_requests: Exiger une demande d'accès avant qu'une personne devienne
           membre
+        community_requests_hint: Les demandes d'adhésion à la communauté restent fermées
+          à moins que cette communauté et la plateforme n'autorisent toutes deux les
+          demandes et que l'accès sur invitation uniquement soit désactivé.
         platform_help: Choisissez si les personnes peuvent créer un compte directement
           ou si elles ont d'abord besoin d'une invitation.
         platform_invitation_help: Les invitations peuvent préremplir les adresses
@@ -752,13 +778,26 @@ fr:
       add: Ajouter
       title: Conditions de l'accord
     agreements:
+      accept: J'accepte
+      accept_action:
+        accepted: Accord accepté.
+        ineligible_flow: Cet accord ne peut pas être accepté depuis ce flux.
+        no_participant: Aucun participant n'est disponible pour accepter l'accord.
+      accept_error: Impossible d'enregistrer l'acceptation de l'accord pour le moment.
+      accepted: Accepté
+      accepting: Enregistrement...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: Vous devez accepter tous les accords requis pour continuer.
         successfully_accepted: Merci d'avoir accepté les accords requis.
       form:
+        active_for_consent: Actif pour le consentement
+        agreement_kind: Type d'accord
         page_help: Lorsqu'une page est définie, son contenu sera affiché à la place
           des conditions de l'accord.
         page_label: Page liée (optionnel)
+        required_for: Requis pour
       no_terms: Aucune condition définie.
       notice:
         body: Veuillez lire l'accord complet avant de l'accepter.
@@ -774,6 +813,8 @@ fr:
         accepted_via: Accepté via %{method}
         agreement_revision: Révision de l’accord %{timestamp}
         pending: en attente
+      publishing_agreement_required: You need to accept the content publishing agreement
+        before creating public or community content. Please review and accept it below.
       show:
         title: Accord
       status:
@@ -813,6 +854,25 @@ fr:
         view_agreement: Voir l'accord
     application:
       name: Better Together
+    authorable_contributor_visibility:
+      hints:
+        community: Remplace le réglage par défaut de la plateforme pour les pages
+          de cette communauté, ou hérite du réglage de la plateforme.
+        page: Choisissez si cette page affiche les signatures des contributeurs dans
+          les vues publiques, ou si elle hérite du réglage de la communauté ou de
+          la plateforme.
+        platform: Définit la visibilité par défaut des signatures pour les pages et
+          les publications, sauf si une communauté ou un enregistrement la remplace.
+        post: Choisissez si cette publication affiche les signatures des contributeurs
+          dans les vues publiques, ou si elle hérite du réglage de la plateforme.
+      labels:
+        community: Affichage des contributeurs de la communauté
+        platform: Affichage des contributeurs par défaut
+        record: Affichage des contributeurs
+      options:
+        'false': Masquer les signatures des contributeurs
+        inherit: Hériter
+        'true': Afficher les signatures des contributeurs
     authorship_mailer:
       authorship_changed_notification:
         greeting: Bonjour %{recipient_name},
@@ -829,9 +889,39 @@ fr:
         subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
+    bot_defense:
+      errors:
+        expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
+          puis réessayez.
+        generic: La vérification de sécurité a échoué. Veuillez réessayer.
+        honeypot_triggered: La vérification de sécurité a échoué. Veuillez réessayer.
+        invalid_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
+          puis réessayez.
+        replayed_challenge: Cette vérification de sécurité a déjà été utilisée. Rechargez
+          le formulaire puis réessayez.
+        submitted_too_quickly: Prenez un moment pour relire votre envoi avant de l'envoyer.
+      trap_label: Laissez ce champ vide
     buildings:
       add: Ajouter
       title: Bâtiments
+    c3:
+      balance_card:
+        available: Disponible
+        explainer: Tree Seeds sont des crédits de contribution communautaire que vous
+          gagnez en partageant votre temps, vos compétences et vos ressources. Ils
+          peuvent être échangés contre des services offerts par d'autres membres de
+          la communauté.
+        lifetime: Guadagné dans la vie
+        network_available: Réseau disponible
+        network_description: Tree Seeds gagnés ou reçus sur toutes les plates-formes
+          connectées.
+        network_lifetime: Réseau gagné dans la vie
+        reserved: Réservé pour les accords
+        show_network_total: Afficher mon total de Tree Seeds entre plates-formes
+        title: Vos Tree Seeds
+      tree_seed: Tree Seed
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Default calendar for %<community_name>s
       personal_calendar_name: Calendrier Personnel de %{name}
@@ -903,16 +993,57 @@ fr:
           pour cette communauté lorsque la configuration d'accès l'autorise.
       index:
         new_btn_text: Nouvelle communauté
+      membership_review:
+        description:
+          one: "%{community_name} a 1 demande d'adhésion ouverte à examiner."
+          other: "%{community_name} a %{count} demandes d'adhésion ouvertes à examiner."
+        heading: Revue des demandes d'adhésion
+        open_requests_badge:
+          one: 1 demande ouverte
+          other: "%{count} demandes ouvertes"
+        review_link: Examiner les demandes
       new:
         title: Nouvelle communauté
       none-yet: Aucune communauté pour l'instant
       show:
+        about:
+          no_description: Aucune description disponible.
+        actions:
+          destroy_aria: Supprimer la communauté
+          edit_aria: Modifier la communauté
         create_event: Créer un événement
+        events:
+          create_event: Créer un événement
+          draft_heading: Brouillon
+        members:
+          add_member_modal:
+            close: Fermer
+            select_person: Sélectionner une personne *
+            select_person_prompt: Sélectionner une personne
+            select_role: Sélectionner un rôle *
+            submit: Ajouter
+            title: Ajouter un nouveau membre
+        posts:
+          create_post: Créer un article
+          empty_description: Les publications créées pour cette communauté apparaîtront
+            ici.
+          empty_title: Aucune publication
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
+        sections_aria: Sections de la communauté
       tabs:
         buildings: Bâtiments
         contact_details: Détails de contact
         details: Détails
         images: Images
+        posts: Publications
     community_invitations_mailer:
       invite:
         about: À propos
@@ -967,9 +1098,13 @@ fr:
     content:
       blocks:
         accordion_block:
+          answer: Answer
+          answer_placeholder: Provide the answer...
           empty: Aucun élément configuré.
           items_json_help: Tableau JSON d'objets avec les clés « question » et « answer
             ».
+          question: Question
+          question_placeholder: What is the question?
         associated_pages: Pages associées
         checklist_block:
           not_found: Liste de vérification introuvable.
@@ -991,10 +1126,23 @@ fr:
           open_in_new_tab: Ouvrir le contenu intégré dans un nouvel onglet
         events_block:
           empty: Aucun événement à afficher.
+        fields:
+          image:
+            library:
+              empty: Aucun téléversement d'image révisé n'est encore disponible dans
+                votre bibliothèque.
+              empty_hint: Téléversez d'abord une image, ou utilisez la personne qui
+                l'a téléversée.
+              open: Choisir depuis la bibliothèque
+              scope_hint: Seuls vos téléversements d'images révisés sont disponibles
+                ici.
+              title: Choisir depuis la bibliothèque
+              view_uploads: Voir les téléversements et leurs statuts de révision
         hero:
           editor:
             background: Arrière-plan
             cta_button: Bouton d’appel à l’action
+            cta_url_help: Button link destination (https://...)
             cta_url_invalid: Veuillez fournir une URL valide commençant par http://
               ou https://.
             heading_color: Couleur du titre
@@ -1008,6 +1156,12 @@ fr:
           missing_url: Aucune URL d'iframe configurée.
           url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
             ou une autre intégration de confiance d'un espace communautaire.
+        json_array_rows:
+          add_item: Add item
+          drag_handle: Drag to reorder
+          move_down: Move down
+          move_up: Move up
+          remove_item: Remove
         markdown:
           fields:
             auto_sync: Toujours charger depuis le fichier (ignorer le contenu de la
@@ -1047,8 +1201,14 @@ fr:
             en ignorant la portée de la communauté et l'ordre.
           resource_ids_placeholder: Laisser vide pour afficher les derniers enregistrements
         statistics_block:
+          icon: Icon (Font Awesome class, optional)
+          icon_placeholder: e.g., fas fa-users
+          label: Label
+          label_placeholder: e.g., Members
           stats_json_help: Tableau JSON d'objets avec les clés « label », « value
             » et « icon » optionnel (classe Font Awesome).
+          value: Value
+          value_placeholder: e.g., 500
         template:
           default: Modèle par défaut
           host_community_contact_details: Coordonnées de la communauté hôte
@@ -1113,6 +1273,21 @@ fr:
           message: "%{filename} est actuellement restreint pendant qu'une personne
             réviseuse le vérifie."
           title: Pièce jointe restreinte
+    contributions:
+      form:
+        add: Ajouter un contributeur
+        contributor: Contributeur
+        contributor_type: Type de contributeur
+        description: Assignez des personnes ou des robots à cet enregistrement avec
+          des rôles de contribution explicites.
+        entry_help: Choisissez un type de contributeur, un contributeur et un rôle.
+        heading: Contributeurs
+        new_entry: Nouveau contributeur
+        person: Personne
+        remove: Retirer le contributeur
+        robot: Robot
+        role: Rôle
+        select_contributor: Sélectionner un contributeur
     conversation_mailer:
       new_message_notification:
         from_address: Nouveau message via %{from_address}
@@ -1281,6 +1456,10 @@ fr:
           idle: Inactif
           running: En cours
           succeeded: Réussi
+    errors:
+      privacy:
+        exceeds_context_bounds: ne peut pas être plus ouvert que '%{max}' — les paramètres
+          de la plateforme ou de la communauté empêchent ce niveau de visibilité
     event_invitations:
       index:
         invite_member: Invite member
@@ -1527,6 +1706,69 @@ fr:
       wrong_length:
         one: ne fait pas la longueur correcte (%{count} caractère)
         other: ne fait pas la longueur correcte (%{count} caractères)
+    feature_access_grants:
+      created: Accès aux fonctionnalités créé.
+      edit:
+        title: Modifier l'accès aux fonctionnalités
+      form:
+        access_level: Niveau d'accès
+        current_rollout: Déploiement actuel
+        expires_at: Expire le
+        feature: Fonctionnalité
+        notes: Notes
+        person: Personne
+        person_prompt: Rechercher une personne
+        unknown_rollout: Fonctionnalité inconnue ou retirée
+      index:
+        description: Accordez un accès bêta ou alpha à des personnes précises sans
+          élargir les permissions de leur rôle de plateforme.
+        empty: Aucun accès explicite aux fonctionnalités n'a encore été créé pour
+          cette plateforme.
+        new: Nouvel accès
+        revoke: Révoquer
+        revoke_confirm: Révoquer cet accès aux fonctionnalités ?
+        title: Accès aux fonctionnalités
+      new:
+        title: Nouvel accès aux fonctionnalités
+      revoked: Accès aux fonctionnalités révoqué.
+      status:
+        active: Actif
+        revoked: Inactif
+      table:
+        access_level: Niveau d'accès
+        actions: Actions
+        expires_at: Expire
+        feature: Fonctionnalité
+        granted_by: Accordé par %{name}
+        no_expiry: Sans expiration
+        person: Personne
+        status: Statut
+      updated: Accès aux fonctionnalités mis à jour.
+    federation:
+      backfill:
+        messages:
+          skipped_identifier_conflict: "%{model_name} %{record_id} ignoré : conflit
+            d'identifiant sur %{identifier}"
+          skipped_missing_source_platform: "%{model_name} %{record_id} ignoré : impossible
+            de déterminer la plateforme source"
+          title: Remplissage des identifiants miroirs fédérés
+      ingest:
+        errors:
+          connection_required: la connexion est requise
+          seeds_payload_too_large: La charge de graines est trop volumineuse (%{count}
+            > %{max_count}). Utilisez FederatedContentPullJob pour les grands lots.
+        sync_summary:
+          one: L'ingestion fédérée s'est terminée avec 1 conflit de contenu miroir
+          other: L'ingestion fédérée s'est terminée avec %{count} conflits de contenu
+            miroir
+      mirroring:
+        content_types:
+          event: événement
+          page: page
+          post: publication
+        errors:
+          not_authorized: 'la mise en miroir de %{content_type} n''est pas autorisée
+            : %{reason}'
     feedback_routing:
       audience:
         community_stewards: responsables du contenu de la communauté
@@ -1723,8 +1965,11 @@ fr:
     joatu:
       agreements:
         accept: Accepter
+        cancel: Annuler l'accord
+        cancel_confirm: Annuler cet accord ? Les Graines réservées seront retournées.
         create:
           success: Succès
+        fulfill: Marquer comme accompli
         index:
           title: Accords
         offer: Offre
@@ -1734,6 +1979,9 @@ fr:
         request: Demande
         request_creator: Créateur de la demande
         show:
+          agreement_family: Famille d'accord
+          agreement_type: Type d'accord
+          decision_made_at: Décision enregistrée
           details: Détails
           open_platform_connections: Ouvrir les connexions de plateforme
           platform_connection: Connexion de plateforme
@@ -1781,6 +2029,9 @@ fr:
         my_offers: Mes offres
         my_requests: Mes demandes
         none: Aucune correspondance trouvée pour l'instant.
+        recent_offers: Offres récentes
+        recent_requests: Demandes récentes
+        sign_in: Se connecter
         sign_in_hint: Connectez-vous pour voir vos offres, demandes et accords.
         suggested: Correspondances suggérées
         title: Correspondances potentielles
@@ -1795,7 +2046,7 @@ fr:
         title: Correspondances potentielles
       nav:
         agreements: Accords
-        hub: Hub
+        hub: Entraide
         manage_categories: Gérer les catégories
         offers: Offres
         requests: Demandes
@@ -1848,6 +2099,11 @@ fr:
         placeholders:
           search: Rechercher par titre ou description
         title: Rechercher
+      settlement:
+        cancelled_html: La réservation de %{amount} a été restituée à votre solde.
+        completed_html: "%{amount} ont été échangés le %{date}."
+        pending_html: "%{amount} sont réservés, en attente de l'échange."
+        status_label: Statut des Tree Seeds de l'accord
       status:
         any: Tous
         closed: Fermé
@@ -1868,7 +2124,7 @@ fr:
           L'équipe de %{platform}
         subject: Un nouvel accord a été créé
       new_match:
-        subject: Nouvelle correspondance Joatu
+        subject: Nouvelle correspondance d'entraide
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
@@ -1931,6 +2187,21 @@ fr:
           L'équipe de %{community_name}
         signature_text: Cordialement, L'équipe de %{community_name}
         subject: Votre demande d'adhésion à %{community_name} a été refusée
+      digest:
+        greeting: Bonjour %{name},
+        message:
+          one: 1 nouvelle demande d'adhésion doit maintenant être examinée pour %{community_name}.
+          other: "%{count} nouvelles demandes d'adhésion doivent maintenant être examinées
+            pour %{community_name}."
+        requestors_label: Personnes demandeuses récentes
+        review_requests: Examiner les demandes d'adhésion
+        signature_html: |-
+          Cordialement,<br />
+          L'équipe de %{community_name}
+        signature_text: Cordialement, L'équipe de %{community_name}
+        subject:
+          one: 1 demande d'adhésion doit être examinée pour %{community_name}
+          other: "%{count} demandes d'adhésion doivent être examinées pour %{community_name}"
       submitted:
         greeting: Bonjour %{name},
         message: "%{requestor_name} a demandé à rejoindre %{community_name}."
@@ -1994,6 +2265,35 @@ fr:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    message_requests:
+      accepted: Message request accepted. A new conversation has been started.
+      declined: Message request declined.
+      index:
+        accept_btn: Accept
+        accept_confirm: Accept this message request and start a conversation?
+        ago: ago
+        decline_btn: Decline
+        none_pending: You have no pending message requests.
+        title: Message Requests
+        wants_to_message_you: would like to message you
+      modal_intro: Send %{name} a brief note explaining why you'd like to connect.
+        They can choose to accept and start a conversation, or decline.
+      note_label: Why would you like to connect?
+      note_placeholder: Introduce yourself and explain why you'd like to start a conversation.
+      request_pending: Request pending
+      send_request_btn: Send Message Request
+      sent: Your message request has been sent.
+      show:
+        accept_btn: Accept & Start Conversation
+        back: Back to Requests
+        decline_btn: Decline
+        from_label: 'From:'
+        note_label: 'Note:'
+        title: Message Request
+      statuses:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
     messages:
       form:
         placeholder: Tapez votre message...
@@ -2138,6 +2438,7 @@ fr:
           medium_results: Moyen
           no_results: Aucun résultat
           result_quality: Moyenne des résultats par recherche
+        loading: Chargement...
         search_health:
           backend: Backend
           db_count: Nombre BD
@@ -2174,7 +2475,6 @@ fr:
       shares_controller:
         error_tracking: 'Erreur lors du suivi du partage :'
         failed_tracking: Impossible de suivre le partage.
-        ga_not_initialized: Google Analytics n'est pas initialisé.
         unsupported_platform: 'Plateforme non supportée : %{platform}'
       user_account_reports_controller:
         create:
@@ -2285,15 +2585,21 @@ fr:
         geography_settlements: Implantations
         geography_states: États
         host_dashboard: Tableau de bord de l'hôte
+        host_dashboard_membership_review: Revue des adhésions
+        host_dashboard_platform_connection_review: Revue de fédération
+        host_dashboard_safety_review: Revue de sécurité
         joatu_offers: Offres
         joatu_requests: Requêtes
         metrics_reports: Rapports de métriques
         navigation_areas: Zones de navigation
         pages: Pages
         people: Personnes
+        platform_connections: Connexions de plateforme
         platforms: Plateformes
+        reports: Signalements
         resource_permissions: Permissions des ressources
         roles: Rôles
+        safety_cases: Revue de sécurité
         users: Utilisateurs
       visibility_strategies:
         authenticated: Utilisateurs connectés
@@ -2306,6 +2612,23 @@ fr:
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Graines d'arbre ont été réservées pour votre accord.
+              Elles seront libérées si l'accord est annulé."
+            title: Graines d'arbre réservées
+          mailer:
+            activity_header: "%{amount} Graines d'arbre ont de l'activité sur votre
+              accord."
+            view_agreement: Voir l'accord
+          released:
+            body: "%{amount} Graines d'arbre ont été restituées à votre solde."
+            title: Réservation de Graines d'arbre libérée
+          settled:
+            body: "%{amount} Graines d'arbre ont été échangées. Votre solde a été
+              mis à jour."
+            title: Graines d'arbre échangées
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -2324,6 +2647,9 @@ fr:
         agreement_created:
           content: Un accord entre "%{offer}" et "%{request}" a été créé.
           title: Accord créé
+        agreement_status_changed:
+          body: L'accord entre "%{offer}" et "%{request}" est passé à l'état %{status}.
+          title: Accord %{status}
       mark_all_as_read: Tout marquer comme lu
       mark_as_read: Marquer comme lu
       membership_created:
@@ -2338,6 +2664,11 @@ fr:
       membership_request_declined:
         body: Votre demande pour rejoindre %{community_name} a été refusée
         title: Demande d'adhésion refusée pour %{community_name}
+      membership_request_digest:
+        body: "%{requestors} submitted %{count} membership requests for %{community_name}"
+        requestor_summary: "%{first_requestor} and %{additional_count} others"
+        title: "%{count} membership requests need review for %{community_name}"
+        unknown_requestors: New applicants
       membership_request_submitted:
         body: "%{requestor_name} a demandé à rejoindre %{community_name}"
         title: Nouvelle demande d'adhésion pour %{community_name}
@@ -2356,6 +2687,25 @@ fr:
         body: Une nouvelle intégration de compte %{provider} a été connectée le %{created_at}
         message: Nouvelle intégration %{provider} connectée le %{created_at}
         title: Nouvelle intégration %{provider} connectée
+      platform_connection_digest:
+        body: "%{count} pending platform connections were added to the federation
+          review queue"
+        title: "%{count} federation connections need review"
+      platform_connection_status:
+        body: "%{source_name} and %{target_name} moved from %{previous_status} to
+          %{current_status}"
+        title: Federation connection %{current_status}
+      platform_connection_submitted:
+        body: "%{source_name} requested a federation connection with %{target_name}"
+        title: New federation connection requires review
+      safety_report_digest:
+        body: "%{urgent_count} urgent reports and %{retaliation_risk_count} retaliation-risk
+          reports were added to the review queue"
+        title: "%{count} safety reports need review"
+      safety_report_submitted:
+        body: A %{harm_level}-priority report about %{reportable_type} is waiting
+          in the safety review queue
+        title: New safety report requires review
       time_ago: il y a %{time}
     oauth:
       applications:
@@ -2432,12 +2782,8 @@ fr:
         clear_filters: Effacer les filtres
         filter: Filtrer
         new_page: Nouvelle page
-        new_release_package_draft: Nouveau brouillon de paquet de publication
         search_by_slug: Rechercher par slug...
         search_by_title: Rechercher par titre...
-      release_package_draft:
-        created: 'Brouillon privé de paquet de publication créé. Publication associée
-          : %{post_title}'
     people:
       allow_messages_from_members: Autoriser les messages des membres de la plateforme
       calendar:
@@ -2481,6 +2827,9 @@ fr:
           title: Notifications
         time_zone:
           title: Fuseau Horaire
+      show:
+        memberships:
+          showing_count: Affichage de %{shown} sur %{total}
       submit:
         save: Enregistrer
       tabs:
@@ -2671,7 +3020,15 @@ fr:
           de la plateforme distante.
         suspended: Connexion suspendue.
       form:
+        allow_c3_exchange: Autoriser l'échange de Graines d'arbre avec cette plateforme
         back: Retour
+        c3_exchange_hint: Lorsqu'il est activé, les participants de cette plateforme
+          peuvent envoyer et recevoir des Graines d'arbre avec %{platform}. Les deux
+          plateformes doivent l'activer pour que l'échange fonctionne.
+        c3_exchange_legend: Échange de Graines d'arbre
+        c3_exchange_rate_hint: Combien de Graines d'arbre ici valent 1 Graine d'arbre
+          sur %{platform} ? Laissez à 1.0 pour une valeur égale.
+        c3_exchange_rate_label: Taux d'échange
         connection_kind_hint: 'Membre : cette plateforme héberge des membres de l''autre.
           Pair : partenariat égal entre plateformes indépendantes.'
         content_sharing_policy_hint: Contrôle comment le contenu public est synchronisé.
@@ -2811,6 +3168,9 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
+          fonctionnalité sur cette plateforme.
+        feature_gates_title: Contrôles de déploiement des fonctionnalités
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
@@ -2836,10 +3196,45 @@ fr:
       delete: Supprimer l'enregistrement
       edit: Modifier la publication
       edit_post: Modifier la publication
+      hints:
+        privacy_limited_by_community: Certaines options de confidentialité sont désactivées
+          car cette communauté n'est pas publique. Les publications ici ne peuvent
+          être visibles que par les membres de la communauté ou l'auteur.
+        privacy_limited_by_platform: Certaines options de confidentialité sont désactivées
+          car la plateforme n'est pas publique. Les publications ne peuvent être visibles
+          que par les membres de la communauté ou l'auteur.
       index:
+        map_unavailable: La vue carte n'est pas disponible pour les publications sans
+          données de localisation.
         new_btn_text: Nouvelle publication
+        result_count:
+          one: "%{count} publication"
+          other: "%{count} publications"
+        table_headers:
+          authors: Auteurs
+          categories: Catégories
+          published: Publié
+          title: Titre
       labels:
         privacy: Confidentialité
+      list_form:
+        authors_label: Auteurs
+        authors_placeholder: Sélectionner des auteurs...
+        categories_label: Catégories
+        clear_filters: Effacer les filtres
+        filters: Filtrer les publications
+        order_by_label: Trier par
+        order_newest: Plus récent (par défaut)
+        order_oldest: Plus ancien
+        per_page_label: Publications par page
+        privacy_all: Tous
+        privacy_community: Communauté
+        privacy_label: Confidentialité
+        privacy_private: Privé
+        privacy_public: Public
+        search_button: Rechercher
+        search_label: Recherche
+        search_placeholder: Rechercher par titre ou contenu...
       new_post: Nouvelle publication
       none_body: Il n'y a pas de publications à afficher pour le moment.
       none_title: Pas encore de publications
@@ -2951,6 +3346,64 @@ fr:
         none: Aucun rôle attribué
     resources:
       membership_request: Demande d'adhésion
+    robots:
+      created: Le robot a été créé avec succès.
+      destroyed: Le robot a été supprimé avec succès.
+      edit:
+        subtitle: Ajustez le fournisseur, le modèle, le prompt et les options d'exécution
+          de ce robot de plateforme.
+        title: Modifier %{name} pour %{platform_name}
+      form:
+        assume_model_exists: Supposer que le modèle existe
+        assume_model_exists_help: N'activez ceci que si vous savez que la combinaison
+          fournisseur/modèle existe.
+        cancel: Annuler
+      index:
+        back_to_platform: Retour à la plateforme
+        delete: Supprimer
+        delete_confirm: Supprimer %{name} ?
+        edit: Modifier
+        global_read_only: Repli global
+        new_robot: Ajouter un robot
+        scope: Portée
+        status: Statut
+        subtitle: Gérez les robots propres à la plateforme et les replis globaux hérités
+          depuis un seul endroit.
+        title: Robots LLM pour %{platform_name}
+      new:
+        subtitle: Créez une surcharge de robot limitée à la plateforme. Les identifiants
+          restent gérés par l'environnement.
+        title: Nouveau robot pour %{platform_name}
+      readiness:
+        configured: Configuré
+        credentials_help: Les robots adossés à OpenAI continuent d'utiliser l'environnement
+          de déploiement pour les identifiants.
+        hidden: Masquée
+        missing: Manquants
+        no_translation_robot: Aucun robot de traduction ne se résout pour cette plateforme.
+        openai_credentials: Identifiants OpenAI
+        ready: Prêt
+        shown: Affichée
+        translation_provider: Fournisseur de traduction
+        translation_ui: Interface de traduction
+        translation_ui_help: Les contrôles de traduction ne s'affichent que lorsque
+          le robot de traduction résolu dispose d'un fournisseur disponible.
+        unavailable: Indisponible
+      scope_labels:
+        global_fallback: Repli global
+        platform_override: Surcharge de plateforme
+      statuses:
+        active: Actif
+        inactive: Inactif
+        inactive_translation: Robot de traduction inactif
+        provider_ready: Fournisseur disponible
+        provider_unavailable: Fournisseur indisponible
+        translation_not_selected: Ce n'est pas le robot de traduction effectif pour
+          cette plateforme
+        translation_ui_disabled: L'interface de traduction est masquée pour cette
+          plateforme
+        translation_ui_enabled: L'interface de traduction est activée pour cette plateforme
+      updated: Le robot a été mis à jour avec succès.
     roles:
       index:
         new_role: Nouveau rôle
@@ -3150,6 +3603,32 @@ fr:
           description: Connectez et gérez vos comptes de plateformes externes.
           title: Comptes Connectés
         my_data:
+          connections:
+            cards:
+              access_grants:
+                description: Consultez les permissions que vous avez accordées aux
+                  personnes liées et celles qu'elles vous ont accordées en retour.
+                open_link: Ouvrir les autorisations d'accès
+                title: Autorisations d'accès
+              linked_seeds:
+                description: Parcourez les données synchronisées partagées via vos
+                  liens de plateforme approuvés.
+                open_link: Ouvrir les seeds liés
+                title: Seeds liés
+              person_links:
+                description: Consultez les personnes et connexions fédérées actuellement
+                  liées à votre compte.
+                open_link: Ouvrir les personnes liées
+                title: Personnes liées
+              person_seeds:
+                description: Ouvrez vos exports seed portables pour les flux avancés
+                  de portabilité et d'interopérabilité.
+                open_link: Ouvrir les exports seed portables
+                title: Exports seed portables
+            description: Accédez à vos personnes liées, autorisations d'accès, données
+              synchronisées et exports portables depuis un seul endroit.
+            open_link: Ouvrir
+            title: Partage et portabilité des données
           deletion:
             actions: Actions
             cancel: Cancel request
@@ -3174,11 +3653,19 @@ fr:
               agreements, and other account-linked records.
             download: Download
             empty: You have not requested any account exports yet.
+            failed_help: Cet export n'a pas pu être préparé. Veuillez demander un
+              nouvel export.
             pending: Export in progress
             request: Request export
             requested_at: Requested
             requesting: Requesting export...
             status: Status
+            status_values:
+              completed: Terminé
+              failed: Échoué
+              pending: En attente
+              processing: En cours
+            table_caption: Demandes récentes d'export de compte
             title: Downloadable account exports
           seeds:
             description: Earlier personal exports remain available here for advanced
@@ -3230,16 +3717,26 @@ fr:
     share_buttons:
       aria_label: Partager sur %{platform}
       bluesky: Partager sur Bluesky
+      copy_short_link: Copier le lien court
       default_title: Découvrez ceci !
       facebook: Partager sur Facebook
+      get_short_link: Obtenir le lien court
       linkedin: Partager sur LinkedIn
       pinterest: Épingler
       reddit: Partager sur Reddit
       share: Partager
       whatsapp: Partager sur WhatsApp
     shared:
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
       privacy_level: 'Confidentialité: %{privacy}'
       privacy_tooltip: Ce contenu est %{privacy}
+      publishing_agreement_notice:
+        accept_link: Review and accept the publishing agreement
+        message: To publish events or posts visible to members or the public, you
+          need to accept the content publishing agreement first.
       translated_field_hints:
         description: Description courte (au moins une langue doit être remplie)
         description_html: Description enrichie (mise en forme possible); au moins
@@ -3247,6 +3744,47 @@ fr:
         name: Entrez un nom (au moins une langue doit être remplie)
         slug: Identifiant URL-friendly (unique entre les langues)
       unpublished: Non publié
+    short_links:
+      edit:
+        page_title: Modifier le lien court
+      form:
+        back: Retour aux liens courts
+        code: Code court (laisser vide pour générer automatiquement)
+        code_hint: Lettres minuscules, chiffres et tirets uniquement
+        expires_at: Expire le (facultatif)
+        save: Enregistrer
+        status: Statut
+        target_url: URL cible
+        view: Voir
+      index:
+        copy_url: Copier l'URL courte
+        delete: Supprimer le lien court
+        edit: Modifier le lien court
+        empty: Aucun lien court pour l'instant.
+        new_btn: Nouveau lien court
+        page_title: Liens courts
+        table:
+          clicks: Clics
+          code: Code
+          expires: Expire
+          status: Statut
+          target: URL cible
+          title: Titre
+        view: Voir le lien court
+      new:
+        page_title: Nouveau lien court
+      show:
+        back: Retour aux liens courts
+        clicks: Clics totaux
+        copy: Copier
+        created_at: Créé le
+        delete: Supprimer
+        edit: Modifier
+        expires_at: Expire le
+        page_title: Lien court
+        short_url: URL courte
+        status: Statut
+        target_url: URL cible
     social_media_accounts:
       add: Ajouter un compte de réseaux sociaux
       handle: Pseudonyme
@@ -3262,6 +3800,8 @@ fr:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
+        Other app processes will pick up the change on their next restart."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
@@ -3276,10 +3816,19 @@ fr:
       index:
         activate_btn: Set active
         activate_confirm: Set this as the active storage configuration?
+        activation_blob_migration_note: Existing files remain on the previous backend.
+          Blob migration between backends is a manual operator step and is not performed
+          automatically.
+        activation_restart_note: Activating a new configuration rebinds storage in
+          the current process immediately. Other app processes will pick up the change
+          on their next restart (tmp/restart.txt has been touched).
+        activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
+        asset_host_label: Asset Host (ASSET_HOST)
         back_to_platform: Back to Platform
         bucket_label: Bucket
+        cdn_host_label: CDN Host (FOG_HOST)
         delete_btn: Delete
         delete_confirm: Delete this storage configuration?
         edit_btn: Edit
@@ -3305,7 +3854,7 @@ fr:
         table_aria: Storage configurations
         title: Storage Configurations
       name_hint: A human-readable label for this storage backend.
-      name_placeholder: e.g., Primary S3, Local Dev, Garage bts-5
+      name_placeholder: e.g., Primary S3, Local Dev, Edge Archive
       new:
         subtitle: Add a storage backend for %{platform_name}
         title: New Storage Configuration
@@ -3323,6 +3872,8 @@ fr:
         invalid_target_locale: Langue cible non valide
         translation_failed: 'La traduction a échoué : %{message}'
         translation_request_failed: La demande de traduction a échoué. Veuillez réessayer.
+        translation_unavailable: La traduction n'est pas disponible actuellement pour
+          cette plateforme.
     uploads:
       content_security:
         badge:
@@ -3339,6 +3890,16 @@ fr:
           review_required: Ce téléversement est en cours de révision avant de pouvoir
             être inséré dans un texte enrichi ou partagé.
       index:
+        filter_group_aria: Filtrer les téléversements par statut de révision
+        filters:
+          all: Tous (%{count})
+          clean: Prêts (%{count})
+          restricted: Restreints (%{count})
+          review_required: En révision (%{count})
+        review_status_description: Les comptes de révision sont affichés ici pour
+          vous aider à trouver rapidement les téléversements approuvés, retenus ou
+          restreints.
+        review_status_heading: Statut de révision
         storage_usage: Vous utilisez %{size} de stockage
     validators:
       safe_federation_url:
@@ -3357,6 +3918,7 @@ fr:
         calendar: Calendrier
         card: Cartes
         list: Liste
+        map: Carte
         table: Tableau
     webhook_endpoints:
       actions_aria: Actions du webhook
@@ -3772,6 +4334,10 @@ fr:
           veuillez entrer votre code d'invitation dans le champ ci-dessous pour accéder
           au formulaire d'inscription.
         invitation_required: Invitation Requise
+        membership_request_heading: Demander l'adhésion à la place
+        membership_request_help_html: Si vous n'avez pas encore d'invitation, vous
+          pouvez envoyer une demande d'adhésion pour <strong>%{community}</strong>.
+          Un critique communautaire peut l'approuver et vous inviter sur la plateforme.
         password:
           help: Utilisez un mot de passe fort pour la sécurité de votre compte.
           label: Mot de Passe
@@ -3956,6 +4522,8 @@ fr:
     joatu:
       agreement:
         accepted: Accord accepté
+        cancelled: Accord annulé — les Graines réservées ont été retournées.
+        fulfilled: Accord rempli — C3 transféré au créateur de l'offre.
         rejected: Accord rejeté
       response_links:
         offer_created: Offre créée en réponse à la demande.
@@ -3980,6 +4548,7 @@ fr:
     cancel: Annuler
     clear: Effacer
     clear_filter: Effacer le filtre
+    close: Close
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
     create: Créer
     declined: Refusé
@@ -4026,8 +4595,12 @@ fr:
       attendees: Participants
       contact: Contact
       events: Événements
+      federation: Fédération
       invitations: Invitations
       members: Membres
+      posts: Publications
+      roles_and_permissions: Roles & Permissions
+      safety: Sécurité
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement
@@ -4038,6 +4611,7 @@ fr:
     visible: Visible
     'yes': Oui
   helpers:
+    cancel: Annuler
     close: Fermer
     errors:
       heading: Titre
@@ -4114,13 +4688,102 @@ fr:
       infrastructure: Infrastructure
       page_title: Tableau de bord de l'hôte
       title: Tableau de bord de l'hôte
+    membership_review:
+      anonymous_requester: Personne anonyme
+      columns:
+        actions: Actions
+        community: Community
+        latest_activity: Latest activity
+        open_requests: Open requests
+        request_mode: Request mode
+      communities_badge:
+        one: 1 community with open requests
+        other: "%{count} communities with open requests"
+      description: Review every community's current membership queue from one place.
+        There are %{open_requests} open requests across %{communities} communities.
+      heading: Membership review queue
+      no_communities: No communities are available for review yet.
+      no_recent_requests: No recent requests
+      open_requests_badge:
+        one: 1 open request
+        other: "%{count} open requests"
+      open_requests_count:
+        one: 1 open request
+        other: "%{count} open requests"
+      page_title: Revue des adhésions
+      request_mode_closed: Intake closed
+      request_mode_open: Intake open
+      requested_at: requested %{time} ago
+      review_link: Review queue
+      summary_label: Membership review summary
+      table_caption: Communities and their current membership review status
+    platform_connection_review:
+      active_badge:
+        one: 1 active connection
+        other: "%{count} active connections"
+      columns:
+        actions: Actions
+        connection: Connected platform
+        kind: Kind
+        latest_activity: Latest activity
+        status: Status
+      description: Review host-platform federation connections from the dashboard.
+        There are %{total_connections} total connections, including %{pending_connections}
+        pending requests.
+      direction:
+        incoming: Incoming to the host platform
+        outgoing: Outgoing from the host platform
+      heading: Federation review queue
+      no_connections: No host-platform federation connections need review yet.
+      page_title: Revue de fédération
+      pending_badge:
+        one: 1 pending request
+        other: "%{count} pending requests"
+      review_link: Review connections
+      status_updated_at: updated %{time} ago
+      summary_label: Federation review summary
+      table_caption: Host-platform federation connections and their current review
+        status
+      total_badge:
+        one: 1 total connection
+        other: "%{count} total connections"
+      unknown_platform: Unknown platform
+      view_link: View connection
     resource_card:
       new_resource: Nouveau %{resource}
       none_yet: Aucun pour l'instant
       total_resources: Total des ressources
       view_all: Voir tout
+    safety_review:
+      description: Consultez la file de sécurité depuis le tableau de bord hôte. Il
+        y a %{open_cases} dossiers ouverts et %{visible_reports} signalements visibles
+        dans le périmètre.
+      heading: File de revue de sécurité
+      open_cases_badge:
+        one: 1 dossier ouvert
+        other: "%{count} dossiers ouverts"
+      page_title: Revue de sécurité
+      review_queue_link: Ouvrir la file de revue
+      summary:
+        content_review_items: Éléments de revue de contenu
+        participant_updates: Mises à jour participant·e
+        retaliation_risk: Risque de représailles
+        unassigned_cases: À attribuer
+      summary_label: Résumé de la revue de sécurité
+      urgent_cases_badge:
+        one: 1 dossier urgent
+        other: "%{count} dossiers urgents"
+      view_reports_link: Consulter les signalements
+      visible_reports_badge:
+        one: 1 signalement visible
+        other: "%{count} signalements visibles"
   invitations:
     calculating: Calcul en cours
+  layouts:
+    better_together:
+      footer:
+        back_to_top: Retour en haut
+        copyright: "%{community_name} © %{year}. Tous droits réservés."
   locale_name: Français
   locales:
     en: English
@@ -4281,6 +4944,68 @@ fr:
     actions:
       host_dashboard: Tableau de Bord Hôte
     confirm_delete: Confirmer la suppression
+    show:
+      about:
+        access: 'Accès :'
+        identifier: 'Identifiant :'
+        protected: 'Protégée :'
+        protected_no: Non
+        protected_yes: Oui
+        time_zone: 'Fuseau horaire :'
+        url: 'URL :'
+      actions:
+        destroy_aria: Supprimer la plateforme
+        edit_aria: Modifier la plateforme
+        show_aria: Afficher la plateforme
+        view_host_dashboard_aria: Voir le tableau de bord hôte
+      federation:
+        connection_status: Statut
+        description: Passez en revue les connexions de fédération et de plateforme
+          actuellement liées à %{platform}.
+        direction:
+          incoming: Connexion entrante
+          outgoing: Connexion sortante
+        empty_state: Aucune connexion de fédération n'implique encore cette plateforme.
+        new_connection: Nouvelle connexion
+        open_connections: Ouvrir les connexions
+        summary:
+          active: Actives
+          pending: En attente
+          total: Connexions totales
+        title: Connexions de fédération
+        view_connection: Voir la connexion
+      members:
+        add_member_modal:
+          close: Fermer
+          search_placeholder: Rechercher des personnes...
+          select_person: Sélectionner une personne *
+          select_role: Sélectionner un rôle de plateforme *
+          submit: Ajouter
+          title: Ajouter un nouveau membre de la plateforme
+      operations:
+        description: Ouvrez les opérations de niveau hôte pour cette plateforme sans
+          dépendre uniquement d'une URL directe.
+        feature_access_grants: Gérer les accès aux fonctionnalités
+        host_dashboard: Tableau de bord hôte
+        robot_management: Gérer les robots LLM
+        storage_configurations: Gérer le stockage
+        title: Opérations de la plateforme
+      safety:
+        description: Consultez les signalements entrants, les dossiers de sécurité
+          actifs et les suivis visibles par les participant·e·s pour %{platform}.
+        review_queue: Ouvrir la file de révision
+        summary:
+          content_review_items: Éléments de révision de contenu
+          open_cases: Dossiers ouverts
+          participant_updates: Mises à jour participant·e
+          repeated_reports: Signalements répétés
+          retaliation_risk_cases: Risque de représailles
+          unassigned_cases: À attribuer
+          urgent_cases: Urgents
+          visible_reports: Signalements visibles
+        title: Revue de sécurité
+        view_reports: Consulter les signalements
+      sections_aria: Sections de la plateforme
   pundit:
     errors:
       create: Vous n'êtes pas autorisé à créer ce %{resource}.

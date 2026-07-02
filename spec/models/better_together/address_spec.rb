@@ -179,6 +179,20 @@ RSpec.describe BetterTogether::Address do
       expect(short).to include('62 Broadway')
       expect(short).not_to include('Suite 100') # line2 excluded in short format
     end
+
+    it 'builds a select option title from the label and short address' do
+      person = create(:person)
+      contact_detail = create(:contact_detail, contactable: person)
+      address = create(:address,
+                       contact_detail: contact_detail,
+                       label: 'main',
+                       line1: '62 Broadway',
+                       line2: 'Suite 100',
+                       city_name: 'Corner Brook',
+                       state_province_name: 'NL')
+
+      expect(address.select_option_title).to eq('Main — 62 Broadway, Corner Brook, NL, A2H 4C2, Canada')
+    end
   end
 
   describe 'permitted_attributes' do
@@ -186,6 +200,32 @@ RSpec.describe BetterTogether::Address do
       attrs = described_class.permitted_attributes
       expect(attrs).to include(:physical, :postal, :line1, :line2, :city_name,
                                :state_province_name, :postal_code, :country_name, :primary_flag)
+    end
+  end
+
+  describe 'geocoding callbacks' do
+    it 'enqueues geocoding when a new address can be geocoded' do
+      allow(BetterTogether::Geography::GeocodingJob).to receive(:perform_later)
+
+      create(:address,
+             line1: '62 Broadway',
+             city_name: 'Corner Brook',
+             state_province_name: 'NL',
+             country_name: 'Canada')
+
+      expect(BetterTogether::Geography::GeocodingJob).to have_received(:perform_later).with(instance_of(described_class))
+    end
+
+    it 'does not geocode when there is no address content' do
+      address = build(:address,
+                      line1: nil,
+                      line2: nil,
+                      city_name: nil,
+                      state_province_name: nil,
+                      postal_code: nil,
+                      country_name: nil)
+
+      expect(address.should_geocode?).to be(false)
     end
   end
 end

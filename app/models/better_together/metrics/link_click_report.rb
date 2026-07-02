@@ -3,9 +3,7 @@
 module BetterTogether
   module Metrics
     # LinkClickReport records tracking instances of reports run against the BetterTogether::Metrics::LinkClick records.
-    class LinkClickReport < ApplicationRecord # rubocop:todo Metrics/ClassLength
-      include PlatformScoped
-
+    class LinkClickReport < PlatformRecord # rubocop:todo Metrics/ClassLength
       # Associations
       belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :link_click_reports, optional: true
 

@@ -5,6 +5,7 @@ module BetterTogether
   # These methods facilitate access to common resources like the current user,
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
+    include C3Helper
     include MetricsHelper
     include StructuredDataHelper
 
@@ -26,6 +27,26 @@ module BetterTogether
       build_url_for_path(base_url, "/#{I18n.locale}")
     end
 
+    # rubocop:disable Style/ArgumentsForwarding
+    def storage_proxy_url_for(attachment, **options)
+      return unless attachment.present?
+
+      media_url_options = default_url_options.except(:locale, 'locale')
+      request_base_url = request&.base_url
+
+      url_builder_options = {
+        url_options: media_url_options,
+        **options
+      }
+      url_builder_options[:base_url] = request_base_url if request_base_url.present?
+
+      BetterTogether::MediaUrlBuilder.proxy_url_for(
+        attachment,
+        **url_builder_options
+      )
+    end
+    # rubocop:enable Style/ArgumentsForwarding
+
     # Returns the base path configured for BetterTogether.
     def base_path
       ::BetterTogether.base_path
@@ -39,7 +60,7 @@ module BetterTogether
     # Returns the current active identity for the user.
     # This is a placeholder and should be updated to support active identity features.
     def current_identity
-      @current_identity ||= current_person
+      @current_identity ||= current_person || (respond_to?(:current_robot) ? current_robot : nil)
     end
 
     # Retrieves the current person associated with the signed-in user.
@@ -65,7 +86,7 @@ module BetterTogether
     end
 
     def e2ee_messaging_enabled?
-      ::BetterTogether.e2ee_messaging_enabled?
+      ::BetterTogether.e2ee_messaging_enabled? || feature_enabled?('e2ee_messaging')
     end
 
     def e2ee_messaging_enabled_for?(person = current_person)
@@ -82,6 +103,21 @@ module BetterTogether
       current_person.permitted_to?(permission_identifier)
     end
 
+    def feature_enabled?(feature_key, actor: current_person || current_robot, platform: Current.platform, record: nil)
+      BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:, record:)
+    rescue KeyError
+      false
+    end
+
+    def contributor_display_visible_for?(record)
+      return false unless record.respond_to?(:contributors_display_visible?)
+      return true if record.contributors_display_visible?
+
+      policy(record).edit?
+    rescue Pundit::NotDefinedError, NoMethodError
+      false
+    end
+
     def help_banner_hidden?(banner_id)
       return false unless current_person.respond_to?(:preferences)
 
@@ -95,6 +131,30 @@ module BetterTogether
     #   <%= help_banner id: 'with-icon', i18n_key: 'key', icon: 'fas fa-question-circle text-primary' %>
     def help_banner(id:, i18n_key: nil, text: nil, **)
       render('better_together/shared/help_banner', id:, i18n_key:, text:, **)
+    end
+
+    def agreement_lifecycle_badge_class(agreement)
+      return 'bg-secondary' unless agreement.respond_to?(:lifecycle_state)
+
+      case agreement.lifecycle_state
+      when 'draft' then 'bg-warning text-dark'
+      when 'retired' then 'bg-secondary'
+      else 'bg-success'
+      end
+    end
+
+    def agreement_acceptance_badge_class(agreement_participant)
+      return 'bg-secondary' unless agreement_participant.present?
+      return 'bg-warning text-dark' if agreement_participant.stale_for_agreement?
+
+      'bg-success'
+    end
+
+    def agreement_acceptance_state_label(agreement_participant)
+      return 'Pending' unless agreement_participant.present?
+      return 'Needs review' if agreement_participant.stale_for_agreement?
+
+      'Accepted'
     end
 
     # Finds the platform marked as host or returns a new default host platform instance.
@@ -118,6 +178,17 @@ module BetterTogether
                           ::BetterTogether::Community.new(name: 'Better Together')
     end
 
+    # Returns the preferred public email for the host community, if any.
+    def host_community_primary_email
+      contact_detail = host_community.contact_detail
+      return unless contact_detail
+
+      public_emails = contact_detail.email_addresses.privacy_public.to_a
+      primary = public_emails.find(&:primary_flag?)
+
+      primary&.email || public_emails.first&.email
+    end
+
     # Returns the proxied URL for the host community logo if attached.
     def host_community_logo_url
       return unless host_community.logo.attached?
@@ -128,7 +199,7 @@ module BetterTogether
                      host_community.logo
                    end
 
-      rails_storage_proxy_url(attachment)
+      storage_proxy_url_for(attachment)
     end
 
     # Sets a translated meta description for the current view. Provide the
@@ -147,7 +218,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
-                content_for(:meta_description) # rubocop:todo Layout/IndentationWidth
+                      content_for(:meta_description)
                     elsif content_for?(:og_description)
                       content_for(:og_description)
                     else
@@ -176,13 +247,22 @@ module BetterTogether
       tag.meta(name: 'robots', content: meta_content)
     end
 
+    def render_provider_head_tags
+      fragments = ::BetterTogether.head_tag_providers.values.filter_map do |provider|
+        fragment = provider.call(self)
+        fragment.presence
+      end
+
+      safe_join(fragments, "\n")
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
-             content_for(:og_title) # rubocop:todo Layout/IndentationWidth
+                   content_for(:og_title)
                  elsif content_for?(:page_title)
                    t('og.page.title', title: content_for(:page_title), platform_name: host_platform.name)
                  else

@@ -109,17 +109,80 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
 
-    def privacy_field(form:, klass:, html_options: {})
-      options = { class: 'form-select', required: true }
-      if html_options[:class].present?
-        options[:class] = "#{options[:class]} #{html_options[:class]}".strip
-        html_options = html_options.except(:class)
-      end
-      options.merge!(html_options)
+    # Ordered from most restrictive to most open — used to compute the ceiling
+    # privacy a post may have given its platform and community context.
+    PRIVACY_ORDER = %w[private community public].freeze
 
-      form.select :privacy, klass.privacies.keys.map { |privacy|
-        [privacy.humanize, privacy]
-      }, {}, options
+    def privacy_field(form:, klass:, html_options: {}, max_privacy: nil)
+      select_opts = build_privacy_select_options(klass, max_privacy, form.object.privacy)
+      form.select :privacy, select_opts, {}, build_privacy_html_options(html_options)
+    end
+
+    # Returns the most open privacy level a post may carry given its wrapping
+    # platform and community.  Rules:
+    #   - Platform non-public  → ceiling is platform privacy
+    #   - Platform public + community non-public → ceiling is 'community'
+    #     (members of a private/community community can still see community posts)
+    #   - Platform public + community public → ceiling is 'public'
+    def max_allowed_post_privacy(platform:, community:)
+      platform_level = PRIVACY_ORDER.index(platform&.privacy) || (PRIVACY_ORDER.length - 1)
+      community_level = community_privacy_max_level(community)
+      PRIVACY_ORDER[[platform_level, community_level].min]
+    end
+
+    # Returns a translated hint string when privacy options are constrained,
+    # or nil when there is no restriction (all options open).
+    def privacy_constraint_hint(platform:, community:)
+      if platform.present? && !platform.privacy_public?
+        t('better_together.posts.hints.privacy_limited_by_platform')
+      elsif community.present? && !community.privacy_public?
+        t('better_together.posts.hints.privacy_limited_by_community')
+      end
+    end
+
+    private
+
+    def community_privacy_max_level(community)
+      return PRIVACY_ORDER.length - 1 unless community
+
+      # A public community allows public posts; any other community privacy
+      # (community or private) caps post visibility at 'community'.
+      community.privacy_public? ? PRIVACY_ORDER.length - 1 : PRIVACY_ORDER.index('community')
+    end
+
+    def build_privacy_select_options(klass, max_privacy, selected)
+      max_level = max_privacy ? PRIVACY_ORDER.index(max_privacy) : PRIVACY_ORDER.length - 1
+      options = klass.privacies.keys.map do |key|
+        level = PRIVACY_ORDER.index(key) || 0
+        [key.humanize, key, level > max_level ? { disabled: true } : {}]
+      end
+      options_for_select(options, selected)
+    end
+
+    def build_privacy_html_options(html_options)
+      opts = { class: 'form-select', required: true }
+      return opts.merge(html_options.except(:class)) unless html_options[:class].present?
+
+      opts[:class] = "#{opts[:class]} #{html_options[:class]}".strip
+      opts.merge(html_options.except(:class))
+    end
+
+    public
+
+    def contributor_display_visibility_field(form:, include_inherit:, label:, hint:, html_options: {})
+      values = contributor_display_visibility_values(include_inherit:)
+      options = contributor_display_visibility_html_options(html_options)
+
+      content_tag(:div) do
+        concat form.label(:contributors_display_visibility, label)
+        concat form.select(
+          :contributors_display_visibility,
+          contributor_display_visibility_select_options(form:, values:),
+          {},
+          options
+        )
+        concat content_tag(:small, hint, class: 'form-text text-muted mt-2')
+      end
     end
 
     # rubocop:todo Metrics/MethodLength
@@ -224,6 +287,37 @@ module BetterTogether
       html_opts = { class: 'form-select', name: "invitation[#{field_name}]" }.merge(html_options)
 
       form.collection_select(field_name, roles, :id, :name, {}, html_opts)
+    end
+
+    private
+
+    def contributor_display_visibility_values(include_inherit:)
+      if include_inherit
+        BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES
+      else
+        BetterTogether::Authorable::EFFECTIVE_CONTRIBUTOR_DISPLAY_VISIBILITIES
+      end
+    end
+
+    def contributor_display_visibility_html_options(html_options)
+      options = { class: 'form-select' }
+      return options.merge(html_options) unless html_options[:class].present?
+
+      options[:class] = "#{options[:class]} #{html_options[:class]}".strip
+      options.merge(html_options.except(:class))
+    end
+
+    def contributor_display_visibility_select_options(form:, values:)
+      selected_value = if form.object.respond_to?(:contributors_display_visibility)
+                         form.object.contributors_display_visibility
+                       end
+
+      options_for_select(
+        values.map do |value|
+          [t("better_together.authorable_contributor_visibility.options.#{value}"), value]
+        end,
+        selected_value
+      )
     end
   end
 end

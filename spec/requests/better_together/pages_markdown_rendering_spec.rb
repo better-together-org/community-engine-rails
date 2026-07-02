@@ -30,6 +30,20 @@ RSpec.describe 'Markdown pages' do
       expect(response.body).not_to include('# Markdown Heading')
     end
 
+    context 'when the page mixes markdown and alert blocks' do
+      let(:alert_block) { create(:content_alert_block, heading: 'Important', body_text: 'Please read this notice.') }
+      let!(:alert_page_block) { BetterTogether::Content::PageBlock.create!(page:, block: alert_block, position: 1) }
+
+      it 'renders both block types without raising a template locals error' do
+        get page_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Markdown Heading')
+        expect(response.body).to include('Important')
+        expect(response.body).to include('Please read this notice.')
+      end
+    end
+
     context 'when markdown content is loaded from a file' do
       let(:markdown_file_path) { Rails.root.join('spec/fixtures/files/page_markdown_render.md') }
       let(:markdown_block) do

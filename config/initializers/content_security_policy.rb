@@ -9,7 +9,7 @@ Rails.application.configure do
     p.default_src :self
     p.base_uri    :self
 
-    # Allow JS from self (importmap), blob for ES module shims, CDN sources used by importmap pins,
+    # Allow JS from self (importmap), blob for trusted module/runtime use, CDN sources used by importmap pins,
     # and the configured asset host when host apps serve digested assets from a separate CDN domain.
     p.script_src(*BetterTogether::ContentSecurityPolicySources.script_sources)
     p.style_src(*BetterTogether::ContentSecurityPolicySources.style_sources)
@@ -18,8 +18,7 @@ Rails.application.configure do
     p.img_src(*BetterTogether::ContentSecurityPolicySources.img_sources)
     p.font_src(*BetterTogether::ContentSecurityPolicySources.font_sources)
     p.frame_src(*BetterTogether::ContentSecurityPolicySources.frame_sources)
-    p.connect_src :self,
-                  :wss # ActionCable WebSocket connections
+    p.connect_src(*BetterTogether::ContentSecurityPolicySources.connect_sources)
     p.form_action :self
     p.frame_ancestors(*BetterTogether::ContentSecurityPolicySources.frame_ancestor_sources)
     p.object_src :none

@@ -12,7 +12,11 @@
 
   <div class="mb-2 d-flex align-items-center">
     <div class="">
-      <%= render 'better_together/people/mention', person: @joatu_request.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+      <% if @joatu_request.creator %>
+        <%= render 'better_together/people/mention', person: @joatu_request.creator, flex_layout: 'flex-row', flex_align_items: 'center' %>
+      <% else %>
+        <span class="text-muted fst-italic"><%= t('host_dashboard.membership_review.anonymous_requester') %></span>
+      <% end %>
     </div>
   <small class="text-muted">| <%= l(@joatu_request.created_at, format: :long) if @joatu_request.created_at %> | <%= @joatu_request.status %> | <%= @joatu_request.urgency %></small>
   </div>
@@ -21,9 +25,6 @@
     <%= @joatu_request.description %>
   </div>
 
-  <%= render 'better_together/shared/claims_and_evidence', record: @joatu_request %>
-  <%= render 'better_together/shared/bibliography', record: @joatu_request %>
-  <%= render 'better_together/shared/governance_bundle_links', record: @joatu_request if @joatu_request.bibliography_entries.any? || @joatu_request.claims.any? %>
 
   <% if @joatu_request.is_a?(BetterTogether::Joatu::ConnectionRequest) && @joatu_request.target.is_a?(BetterTogether::Platform) %>
     <div class="alert alert-info">

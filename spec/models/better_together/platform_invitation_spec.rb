@@ -204,4 +204,6 @@ RSpec.describe BetterTogether::PlatformInvitation do
       end
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :platform_invitation
 end

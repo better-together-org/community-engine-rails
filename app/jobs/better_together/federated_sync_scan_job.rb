@@ -10,16 +10,22 @@ module BetterTogether
   class FederatedSyncScanJob < ApplicationJob
     LOCK_KEY = 'bt:federation:scan_lock'
     LOCK_TTL = 10.minutes.to_i
+    INACCESSIBLE_MESSAGE = 'source platform is not reachable for federated sync'
 
     queue_as :platform_sync
 
-    def perform(connection_limit: nil, pull_limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
+    def perform(connection_limit: nil, pull_limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT) # rubocop:disable Metrics/MethodLength
       acquired = Sidekiq.redis { |r| r.set(LOCK_KEY, job_id, nx: true, ex: LOCK_TTL) }
       return unless acquired
 
       begin
         connections = connection_limit ? eligible_connections.limit(connection_limit) : eligible_connections
         connections.find_each do |connection|
+          unless dispatchable_connection?(connection)
+            connection.mark_sync_failed!(message: inaccessible_message_for(connection))
+            next
+          end
+
           ::BetterTogether::FederatedContentPullJob.perform_later(
             platform_connection_id: connection.id,
             cursor: connection.sync_cursor.presence,
@@ -42,7 +48,23 @@ module BetterTogether
       ::BetterTogether::PlatformConnection.active
                                           .content_read_capable
                                           .not_syncing
+                                          .due_for_sync
                                           .where(sharing_policies)
+    end
+
+    def dispatchable_connection?(connection)
+      resolution = ::BetterTogether::Federation::Transport::TransportResolver.call(connection:)
+      adapter_class = resolution.adapter_class
+      return true unless adapter_class.respond_to?(:accessible?)
+
+      adapter_class.accessible?(connection:)
+    end
+
+    def inaccessible_message_for(connection)
+      host = connection.source_platform&.resolved_host_url.presence || connection.source_platform&.host_url
+      return INACCESSIBLE_MESSAGE if host.blank?
+
+      "#{INACCESSIBLE_MESSAGE}: #{host}"
     end
 
     # Atomically release the Redis lock only if this job still owns it.

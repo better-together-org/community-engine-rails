@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Used to represent a person's connection to a community with a specific role
-  class PersonCommunityMembership < ApplicationRecord
+  class PersonCommunityMembership < PlatformRecord
     include Membership
 
     membership member_class: 'BetterTogether::Person',
@@ -16,6 +16,7 @@ module BetterTogether
     enum :status, STATUS_LEVELS, default: 'pending'
 
     after_create_commit :notify_member_of_creation_if_active
+    after_commit :expire_member_permission_cache
     before_update :store_old_role_for_notification
     after_update_commit :notify_member_of_role_update
     after_update_commit :notify_member_of_activation
@@ -84,6 +85,10 @@ module BetterTogether
         record_type: @cleanup_info[:record_type],
         record_id: @cleanup_info[:record_id]
       )
+    end
+
+    def expire_member_permission_cache
+      member&.expire_permission_cache!
     end
   end
 end

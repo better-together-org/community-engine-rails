@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunityPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       true # Allow all users to view community index (scope filters appropriately)
     end
@@ -16,7 +16,15 @@ module BetterTogether
     end
 
     def create?
-      user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || permitted_to?('create_community'))
+      return false unless user.present?
+
+      # Platform managers can always create communities
+      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+
+      # All other authenticated users must have accepted the community creation agreement
+      return false unless agent.present?
+
+      ChecksRequiredAgreements.accepted_community_creation_agreement?(agent)
     end
 
     def new?
@@ -32,8 +40,17 @@ module BetterTogether
     end
 
     def create_events?
-      update? &&
-        BetterTogether::EventPolicy.new(user, BetterTogether::Event.new).create?
+      return false unless user.present? && agent.present?
+
+      # Platform managers always have event management authority
+      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+
+      # Explicit event management permission for this community
+      return true if permitted_to?('manage_community_events', record)
+
+      # Any active member of this community can host events on its behalf.
+      # This preserves existing venue/community event management behavior (e.g. NL Venues).
+      record.persisted? && agent.valid_event_host_ids.include?(record.id)
     end
 
     def view_members?
@@ -43,6 +60,12 @@ module BetterTogether
         creator_of_community? ||
         permitted_to?('manage_community_members', record) ||
         can_manage_community?
+    end
+
+    def manage_roles?
+      return false unless user.present?
+
+      permitted_to?('manage_community_roles', record) || can_manage_community?
     end
 
     def edit?
@@ -82,7 +105,8 @@ module BetterTogether
 
       BetterTogether::PersonCommunityMembership.exists?(
         member: agent,
-        joinable: record
+        joinable: record,
+        status: 'active'
       )
     end
 
@@ -95,7 +119,7 @@ module BetterTogether
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.order(updated_at: :desc).where(permitted_query)
+        platform_scoped.order(updated_at: :desc).where(permitted_query)
       end
 
       protected
@@ -115,6 +139,7 @@ module BetterTogether
               person_community_memberships_table
                 .where(person_community_memberships_table[:member_id]
                 .eq(agent.id))
+                .where(person_community_memberships_table[:status].eq('active'))
                 .project(:joinable_id)
             )
           ).or(

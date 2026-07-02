@@ -18,7 +18,7 @@ module BetterTogether
         resource_permissions: ::BetterTogether::ResourcePermission.count
       }
       @available_view_types = %w[card table]
-      @view_type = view_preference('roles_index', default: 'card', allowed: @available_view_types)
+      @view_type = view_preference('index_view', default: 'card', allowed: @available_view_types)
     end
 
     # GET /roles/1

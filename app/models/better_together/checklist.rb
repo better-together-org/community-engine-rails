@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Checklist < ApplicationRecord # rubocop:todo Style/Documentation
+  class Checklist < PlatformRecord # rubocop:todo Style/Documentation
     include Identifier
     include Creatable
     include FriendlySlug
@@ -14,8 +14,6 @@ module BetterTogether
     has_many :person_checklist_items, class_name: '::BetterTogether::PersonChecklistItem', dependent: :destroy
 
     translates :title, type: :string
-
-    settings index: default_elasticsearch_index
 
     slugged :title
 
@@ -54,15 +52,6 @@ module BetterTogether
 
     def to_param
       slug
-    end
-
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        title:,
-        slug:,
-        identifier:
-      }.compact.as_json
     end
   end
 end

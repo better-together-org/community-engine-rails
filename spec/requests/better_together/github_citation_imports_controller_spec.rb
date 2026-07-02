@@ -13,6 +13,7 @@ RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_platform_m
         password: 'SecureTest123!@#'
       )
   end
+  let(:regular_user) { create(:better_together_user, :confirmed) }
   let!(:github_platform) do
     BetterTogether::Platform.external.find_or_create_by!(identifier: 'github') do |platform|
       platform.name = 'GitHub'
@@ -106,5 +107,51 @@ RSpec.describe 'BetterTogether::GithubCitationImportsController', :as_platform_m
     json = JSON.parse(response.body)
     expect(json['citation']['reference_key']).to eq('pull_request_1494')
     expect(page.reload.citations.find(json['citation']['id']).metadata['repository_name']).to eq('better-together-org/community-engine-rails')
+  end
+
+  it 'returns not found for invalid citeable keys' do
+    page = create(:better_together_page)
+
+    post better_together.import_github_citation_path(
+      citeable_key: 'unknown',
+      id: page.slug,
+      locale:,
+      format: :json
+    ), params: {
+      source: {
+        reference_key: 'pull_request_1494',
+        source_kind: 'pull_request',
+        title: 'Governed publishing and evidence chain',
+        source_author: 'linked-reviewer',
+        publisher: 'GitHub',
+        source_url: 'https://github.com/better-together-org/community-engine-rails/pull/1494'
+      }
+    }, as: :json
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'returns not found for signed-in users who cannot update the citeable' do
+    page = create(:better_together_page)
+    sign_in regular_user
+
+    post better_together.import_github_citation_path(
+      citeable_key: 'page',
+      id: page.slug,
+      locale:,
+      format: :json
+    ), params: {
+      source: {
+        reference_key: 'pull_request_1494',
+        source_kind: 'pull_request',
+        title: 'Governed publishing and evidence chain',
+        source_author: 'linked-reviewer',
+        publisher: 'GitHub',
+        source_url: 'https://github.com/better-together-org/community-engine-rails/pull/1494'
+      }
+    }, as: :json
+
+    expect(response).to redirect_to(better_together.home_page_path(locale:))
+    expect(flash[:error]).to be_present
   end
 end

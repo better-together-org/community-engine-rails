@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # A human being
-  class Person < ApplicationRecord # rubocop:todo Metrics/ClassLength
+  class Person < PlatformRecord # rubocop:todo Metrics/ClassLength
     def self.primary_community_delegation_attrs
       []
     end
@@ -78,6 +78,15 @@ module BetterTogether
                                             class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantor_person
     has_many :received_person_access_grants, foreign_key: :grantee_person_id, dependent: :destroy,
                                              class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantee_person
+    has_many :feature_access_grants,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :destroy,
+             inverse_of: :person
+    has_many :granted_feature_access_grants,
+             foreign_key: :granted_by_person_id,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :nullify,
+             inverse_of: :granted_by_person
     has_many :person_linked_seeds, foreign_key: :recipient_person_id, dependent: :destroy,
                                    class_name: 'BetterTogether::PersonLinkedSeed', inverse_of: :recipient_person
     has_many :webhook_endpoints,
@@ -89,11 +98,40 @@ module BetterTogether
              foreign_key: :owner_id,
              dependent: :destroy,
              inverse_of: :owner
+    has_many :fleet_node_ownerships,
+             as: :owner,
+             class_name: 'BetterTogether::Fleet::NodeOwnership',
+             dependent: :destroy,
+             inverse_of: :owner
+    has_many :fleet_nodes,
+             through: :fleet_node_ownerships,
+             source: :node
 
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
     has_many :event_invitations, class_name: 'BetterTogether::EventInvitation', as: :invitee, dependent: :destroy
+
+    has_many :messaging_grants_given,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantor_id,
+             dependent: :destroy,
+             inverse_of: :grantor
+    has_many :messaging_grants_received,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantee_id,
+             dependent: :destroy,
+             inverse_of: :grantee
+    has_many :sent_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :sender_id,
+             dependent: :destroy,
+             inverse_of: :sender
+    has_many :received_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :recipient_id,
+             dependent: :destroy,
+             inverse_of: :recipient
 
     has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
     has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
@@ -122,6 +160,18 @@ module BetterTogether
     # @return [ActiveRecord::Relation<BetterTogether::Agreement>] unaccepted required agreements
     def unaccepted_required_agreements
       BetterTogether::ChecksRequiredAgreements.unaccepted_required_agreements(self)
+    end
+
+    def accepted_agreement_participants
+      agreement_participants.accepted.includes(:agreement).order(accepted_at: :desc)
+    end
+
+    def current_agreement_participants
+      accepted_agreement_participants.select(&:current_for_agreement?)
+    end
+
+    def stale_agreement_participants
+      accepted_agreement_participants.select(&:stale_for_agreement?)
     end
 
     # Returns true if this person has unaccepted required agreements
@@ -153,6 +203,17 @@ module BetterTogether
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
     end
+
+    # Borgberry fleet identity — portable person identity used across fleets.
+    # Fleet node ownership is tracked separately through BetterTogether::Fleet::NodeOwnership.
+    # borgberry_did: W3C DID derived from operator GPG key (e.g. did:key:z6Mk...)
+    #
+    # Deterministic encryption preserves find_by(borgberry_did:) lookups while
+    # preventing the plaintext DID from being exposed in a database extract.
+    # After adding this declaration, existing plaintext values must be re-encrypted
+    # via migration 20260415050000_reencrypt_person_borgberry_did.rb.
+    encrypts :borgberry_did, deterministic: true
+    attr_accessor :borgberry_did_raw # used during enrollment only
 
     # Ensure proper coercion and persistence for preferences store attributes
     def locale=(value)
@@ -209,12 +270,16 @@ module BetterTogether
     end
 
     has_one_attached :profile_image
-    has_one_attached :cover_image
+    has_one_attached :cover_image do |attachable|
+      attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600], preprocessed: true
+      attachable.variant :optimized_png, resize_to_limit: [2400, 600], preprocessed: true
+    end
 
     scope :anonymized, -> { where.not(anonymized_at: nil) }
 
     # Resize the profile image before rendering (non-blocking version)
     def profile_image_variant(size)
+      return profile_image if profile_image.content_type == 'image/svg+xml'
       return profile_image.variant(resize_to_fill: [size, size]) unless Rails.env.production?
 
       # In production, avoid blocking .processed calls
@@ -225,16 +290,31 @@ module BetterTogether
     def profile_image_url(size: 300)
       return nil unless profile_image.attached?
 
-      variant = profile_image.variant(resize_to_fill: [size, size])
+      variant = if profile_image.content_type == 'image/svg+xml'
+                  profile_image
+                else
+                  profile_image.variant(resize_to_fill: [size, size])
+                end
 
-      Rails.application.routes.url_helpers.rails_storage_proxy_path(variant, only_path: true)
+      BetterTogether::MediaUrlBuilder.proxy_path_for(variant)
     rescue ActiveStorage::FileNotFoundError
       nil
     end
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
+    end
+
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        cover_image
+      elsif cover_image.content_type == 'image/png'
+        cover_image.variant(:optimized_png)
+      else
+        cover_image.variant(:optimized_jpeg)
+      end
     end
 
     def description_html(locale: I18n.locale)

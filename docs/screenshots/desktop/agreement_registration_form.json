@@ -1,0 +1,10 @@
+{
+  "name": "agreement_registration_form",
+  "device": "desktop",
+  "url": "/en/users/sign-up",
+  "title": "Sign Up | Test Host Community",
+  "locale": "en",
+  "role": "public",
+  "flow": "registration",
+  "source_spec": "./spec/docs_screenshots/better_together/agreement_flows_spec.rb"
+}

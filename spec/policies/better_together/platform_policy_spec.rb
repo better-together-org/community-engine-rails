@@ -13,7 +13,8 @@ RSpec.describe BetterTogether::PlatformPolicy do
       BetterTogether::PersonCommunityMembership.create!(
         joinable: scoped_community,
         member: user.person,
-        role: community_member_role
+        role: community_member_role,
+        status: 'active'
       )
 
       expect(described_class.new(user, community_platform).show?).to be true
@@ -37,7 +38,8 @@ RSpec.describe BetterTogether::PlatformPolicy do
       BetterTogether::PersonCommunityMembership.create!(
         joinable: scoped_community,
         member: user.person,
-        role: community_member_role
+        role: community_member_role,
+        status: 'active'
       )
 
       resolved = described_class::Scope.new(user, BetterTogether::Platform).resolve

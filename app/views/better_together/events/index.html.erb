@@ -11,6 +11,7 @@
         <a href="<%= new_event_path %>" class="btn btn-success">Add New Event</a>
       </div>
     </div>
+    <%= render 'better_together/shared/publishing_agreement_notice' %>
     <h2>Draft</h2>
     <div class="row">
       <%= render(@draft_events) || render('none') %>
@@ -51,6 +52,7 @@
               Events are a great way to meet like-minded people, share knowledge, and have fun together.
             </p>
             <% if policy(::BetterTogether::Event.new).create? %>
+              <%= render 'better_together/shared/publishing_agreement_notice' %>
               <a href="<%= new_event_path %>" class="btn btn-primary mt-3">Publish an Event</a>
             <% end %>
           </div>

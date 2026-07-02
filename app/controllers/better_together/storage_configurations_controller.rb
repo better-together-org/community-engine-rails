@@ -78,10 +78,11 @@ module BetterTogether
 
       @platform.update!(storage_configuration_id: @storage_configuration.id)
       rebind_active_storage_service(@platform.reload)
+      touch_restart_txt
 
       redirect_to platform_storage_configurations_path(@platform),
                   status: :see_other,
-                  notice: t('better_together.storage_configurations.activated',
+                  notice: t('better_together.storage_configurations.activated_with_restart',
                             name: @storage_configuration.name)
     end
 
@@ -112,9 +113,17 @@ module BetterTogether
       p
     end
 
+    # Signals Puma (and other process managers) to restart workers by touching
+    # tmp/restart.txt so they pick up the new storage binding on their next cycle.
+    def touch_restart_txt
+      FileUtils.touch(Rails.root.join('tmp', 'restart.txt'))
+    rescue StandardError => e
+      Rails.logger.warn("[StorageConfigurationsController] Could not touch tmp/restart.txt: #{e.message}")
+    end
+
     # Rebinds the Active Storage service in this process immediately after activation
     # so new uploads use the updated config without waiting for a restart.
-    # Other processes pick it up on their next restart (e.g. touch tmp/restart.txt).
+    # Other processes pick it up on their next restart (triggered by touch_restart_txt).
     def rebind_active_storage_service(platform)
       resolver = StorageResolver.new(platform)
       service_name = resolver.service_name

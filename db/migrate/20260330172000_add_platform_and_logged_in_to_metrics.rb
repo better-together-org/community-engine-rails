@@ -20,32 +20,48 @@ class AddPlatformAndLoggedInToMetrics < ActiveRecord::Migration[7.2]
 
   def up
     RAW_METRIC_TABLES.each do |table|
-      add_reference table, :platform, type: :uuid, foreign_key: { to_table: :better_together_platforms }, index: true
-      add_column table, :logged_in, :boolean, default: false, null: false
+      ensure_platform_reference!(table)
+      ensure_logged_in!(table)
     end
 
     REPORT_TABLES.each do |table|
-      add_reference table, :platform, type: :uuid, foreign_key: { to_table: :better_together_platforms }, index: true
+      ensure_platform_reference!(table)
     end
 
     backfill_platform_ids!
 
     (RAW_METRIC_TABLES + REPORT_TABLES).each do |table|
-      change_column_null table, :platform_id, false
+      change_column_null table, :platform_id, false if column_exists?(table, :platform_id)
     end
   end
 
   def down
     (RAW_METRIC_TABLES + REPORT_TABLES).reverse_each do |table|
-      remove_reference table, :platform, foreign_key: { to_table: :better_together_platforms }, index: true
+      remove_foreign_key table, column: :platform_id if foreign_key_exists?(table, :better_together_platforms, column: :platform_id)
+      remove_index table, :platform_id if index_exists?(table, :platform_id)
+      remove_column table, :platform_id if column_exists?(table, :platform_id)
     end
 
     RAW_METRIC_TABLES.reverse_each do |table|
-      remove_column table, :logged_in
+      remove_column table, :logged_in if column_exists?(table, :logged_in)
     end
   end
 
   private
+
+  def ensure_platform_reference!(table)
+    add_column table, :platform_id, :uuid unless column_exists?(table, :platform_id)
+    add_index table, :platform_id unless index_exists?(table, :platform_id)
+    return if foreign_key_exists?(table, :better_together_platforms, column: :platform_id)
+
+    add_foreign_key table, :better_together_platforms, column: :platform_id
+  end
+
+  def ensure_logged_in!(table)
+    return if column_exists?(table, :logged_in)
+
+    add_column table, :logged_in, :boolean, default: false, null: false
+  end
 
   def backfill_platform_ids!
     host_platform_id = Platform.where(host: true).pick(:id)

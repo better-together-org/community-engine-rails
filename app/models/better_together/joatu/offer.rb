@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # Offer represents a service or item someone is willing to provide
-    class Offer < ApplicationRecord
+    class Offer < PlatformRecord
       include Creatable
       include Exchange
       include Metrics::Viewable
@@ -13,8 +13,6 @@ module BetterTogether
       has_many :requests, class_name: 'BetterTogether::Joatu::Request', through: :agreements
 
       categorizable class_name: '::BetterTogether::Joatu::Category'
-
-      settings index: default_elasticsearch_index
 
       searchable pg_search: {
         against: %i[status urgency],
@@ -31,17 +29,6 @@ module BetterTogether
 
       def self.permitted_attributes(id: true, destroy: false)
         super + response_link_permitted_attributes
-      end
-
-      def as_indexed_json(_options = {})
-        {
-          id:,
-          name:,
-          slug:,
-          description: description.present? ? search_text_value(description) : nil,
-          status:,
-          urgency:
-        }.compact.as_json
       end
     end
   end

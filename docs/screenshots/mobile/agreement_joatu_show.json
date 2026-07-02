@@ -1,0 +1,10 @@
+{
+  "name": "agreement_joatu_show",
+  "device": "mobile",
+  "url": "/en/exchange/agreements/laptop-repair-help-need-laptop-repair",
+  "title": "Laptop Repair Help ↔ Need Laptop Repair | Agreements | Test Host Community",
+  "locale": "en",
+  "role": "participant",
+  "flow": "joatu",
+  "source_spec": "./spec/docs_screenshots/better_together/agreement_flows_spec.rb"
+}

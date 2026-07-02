@@ -38,7 +38,7 @@ module BetterTogether
 
       return if result.allowed?
 
-      raise ArgumentError, "event mirroring not authorized: #{result.reason}"
+      raise ArgumentError, mirroring_not_authorized_message(result.reason)
     end
 
     def find_or_initialize_event
@@ -78,13 +78,19 @@ module BetterTogether
         name: remote_attributes[:name],
         description: remote_attributes[:description],
         identifier: normalized_identifier(record),
-        privacy: remote_attributes[:privacy].presence || 'public',
-        creator_id: remote_attributes[:creator_id],
-        platform: connection.target_platform,
+        privacy: normalized_privacy,
+        creator_id: local_creator_id,
+        platform: target_platform,
         source_id: effective_preserve_remote_uuid? ? nil : remote_id,
         source_updated_at: normalized_source_updated_at,
         last_synced_at: Time.current
       }
+    end
+
+    def resolve_local_creator(remote_id)
+      return nil if remote_id.blank?
+
+      ::BetterTogether::Person.where(id: remote_id).pick(:id)
     end
 
     def ensure_source_platform_host(event)
@@ -97,9 +103,13 @@ module BetterTogether
       # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
       return event.identifier if event.persisted?
 
-      base = remote_attributes[:identifier].presence ||
-             "federated-event-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-      identifier_or_namespaced(::BetterTogether::Event, base, event.id)
+      mirrored_identifier_for(
+        content_type: 'event',
+        remote_identifier: remote_attributes[:identifier],
+        remote_id:,
+        model_class: ::BetterTogether::Event,
+        exclude_id: event.id
+      )
     end
 
     def normalized_timezone
@@ -115,6 +125,18 @@ module BetterTogether
       return remote_attributes[:updated_at] if remote_attributes[:updated_at].present?
 
       Time.current
+    end
+
+    def normalized_privacy
+      remote_attributes[:privacy].presence || 'public'
+    end
+
+    def local_creator_id
+      resolve_local_creator(remote_attributes[:creator_id])
+    end
+
+    def target_platform
+      connection.target_platform
     end
 
     def preserve_remote_uuid?
@@ -139,6 +161,14 @@ module BetterTogether
 
     def uuid?(value)
       /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
+    end
+
+    def mirroring_not_authorized_message(reason)
+      I18n.t(
+        'better_together.federation.mirroring.errors.not_authorized',
+        content_type: I18n.t('better_together.federation.mirroring.content_types.event'),
+        reason:
+      )
     end
   end
 end

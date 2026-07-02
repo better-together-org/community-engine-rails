@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Stores member-submitted deletion requests for later human review.
-  class PersonDeletionRequest < ApplicationRecord
+  class PersonDeletionRequest < PlatformRecord
     self.table_name = 'better_together_person_deletion_requests'
 
     STATUS_VALUES = {
@@ -13,6 +13,8 @@ module BetterTogether
     }.freeze
 
     belongs_to :person, class_name: 'BetterTogether::Person', inverse_of: :person_deletion_requests
+    # Captures the platform where the deletion was requested — audit trail only.
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :reviewed_by,
                class_name: 'BetterTogether::Person',
                optional: true,
@@ -60,6 +62,10 @@ module BetterTogether
       return unless self.class.active.where(person_id: person_id).exists?
 
       errors.add(:base, 'already has a pending deletion request')
+    end
+
+    def capture_current_platform
+      self.platform ||= Current.platform || BetterTogether::Platform.find_by(host: true)
     end
   end
 end

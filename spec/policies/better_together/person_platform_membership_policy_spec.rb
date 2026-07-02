@@ -28,7 +28,8 @@ RSpec.describe BetterTogether::PersonPlatformMembershipPolicy, type: :policy do
     BetterTogether::PersonPlatformMembership.create!(
       joinable: platform,
       member: manager_person,
-      role: platform_steward_role
+      role: platform_steward_role,
+      status: 'active'
     )
   end
 

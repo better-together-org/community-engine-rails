@@ -47,13 +47,13 @@ module BetterTogether
       )
     end
 
-    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current)
+    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current, message: nil)
       update!(
         sync_cursor: normalized_cursor(cursor),
         last_sync_status: 'succeeded',
         last_synced_at: synced_at.iso8601,
         last_sync_error_at: '',
-        last_sync_error_message: '',
+        last_sync_error_message: message.to_s.truncate(500),
         last_sync_item_count: item_count.to_i
       )
     end

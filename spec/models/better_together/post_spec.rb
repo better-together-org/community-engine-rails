@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Post do
   it_behaves_like 'an authorable model'
-  it_behaves_like 'an indexed searchable model', :better_together_post
 
   it 'has a valid factory' do
     expect(build(:better_together_post)).to be_valid
@@ -21,15 +20,6 @@ RSpec.describe BetterTogether::Post do
     it 'returns the title' do
       post = build(:better_together_post, title: 'Example')
       expect(post.to_s).to eq 'Example'
-    end
-  end
-
-  describe '#as_indexed_json' do
-    it 'includes localized search fields as string keys' do
-      post = create(:better_together_post, title_en: 'English Title', title_fr: 'Titre Francais')
-      indexed_json = post.as_indexed_json
-
-      expect(indexed_json).to include('title_en', 'title_fr')
     end
   end
 
@@ -100,6 +90,24 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe '#resolved_contributors_display_visibility' do
+    it 'inherits the platform default for posts' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:)
+
+      expect(post.resolved_contributors_display_visibility).to eq('off')
+      expect(post).not_to be_contributors_display_visible
+    end
+
+    it 'lets the post override the platform default' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:, contributors_display_visibility: 'on')
+
+      expect(post.resolved_contributors_display_visibility).to eq('on')
+      expect(post).to be_contributors_display_visible
+    end
+  end
+
   describe 'federation provenance' do
     it 'assigns Current.platform when available' do
       platform = create(:better_together_platform)
@@ -121,6 +129,103 @@ RSpec.describe BetterTogether::Post do
       expect(post.remote_to_platform?(local_platform)).to be true
       expect(post.local_to_platform?(remote_platform)).to be true
       expect(post.source_identifier).to eq('remote-123')
+    end
+  end
+
+  describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+    let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
+    let(:community_platform) { create(:better_together_platform, privacy: 'community') }
+    let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
+    let(:public_community)   { create(:better_together_community, privacy: 'public') }
+    let(:community_community) { create(:better_together_community, privacy: 'community') }
+    let(:private_community) { create(:better_together_community, privacy: 'private') }
+
+    let(:post_for) do
+      lambda { |platform:, community: nil, privacy: 'public'|
+        build(:better_together_post, platform: platform, community: community, privacy: privacy)
+      }
+    end
+
+    context 'public platform + public community' do
+      it 'allows public privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'public')).to be_valid
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'public platform + community-privacy community' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: public_platform, community: community_community, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: public_platform, community: community_community, privacy: 'community')).to be_valid
+      end
+    end
+
+    context 'public platform + private community' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: public_platform, community: private_community, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy (members can still share within the community)' do
+        expect(post_for.call(platform: public_platform, community: private_community, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: public_platform, community: private_community, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'community-privacy platform' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: community_platform, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: community_platform, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: community_platform, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'private platform' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: private_platform, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('private')
+      end
+
+      it 'rejects community privacy' do
+        post = post_for.call(platform: private_platform, privacy: 'community')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('private')
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: private_platform, privacy: 'private')).to be_valid
+      end
+    end
+
+    it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+      post = create(:better_together_post, platform: public_platform, community: public_community, privacy: 'public')
+      post.title = 'Updated title'
+      expect(post).to be_valid
     end
   end
 end

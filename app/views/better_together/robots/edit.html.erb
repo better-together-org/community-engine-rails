@@ -1,0 +1,16 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= t('better_together.robots.edit.title', name: @robot.name, platform_name: @platform.name) %>
+  <% end %>
+
+  <div class="container my-4">
+    <h1 class="mb-1"><%= t('better_together.robots.edit.title', name: @robot.name, platform_name: @platform.name) %></h1>
+    <p class="text-muted mb-4"><%= t('better_together.robots.edit.subtitle') %></p>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body">
+        <%= render 'form' %>
+      </div>
+    </div>
+  </div>
+<% end %>

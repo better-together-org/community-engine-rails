@@ -34,6 +34,7 @@ RSpec.describe 'Sitemap' do
         get sitemap_index_path
 
         expect(response).to have_http_status(:redirect)
+        expect(response.location).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(sitemap.file, only_path: true))
         expect(response.location).to include('sitemap')
         expect(response.location).to include('.xml.gz')
       end
@@ -67,6 +68,9 @@ RSpec.describe 'Sitemap' do
             get sitemap_path(locale: test_locale)
 
             expect(response).to have_http_status(:redirect)
+            expect(response.location).to include(
+              Rails.application.routes.url_helpers.rails_storage_proxy_path(sitemap.file, only_path: true)
+            )
             expect(response.location).to include('sitemap')
             expect(response.location).to include('.xml.gz')
           end

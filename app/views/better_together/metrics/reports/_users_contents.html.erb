@@ -56,7 +56,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="userAccountsOverviewChart"
-                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-data="<%= @user_accounts_daily_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.user_accounts_created', default: 'User Accounts') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.accounts', default: 'Accounts') %>">
@@ -65,7 +65,8 @@
           <%= render 'datetime_filter',
               chart_type: 'userAccountsOverviewChart',
               data_url: user_accounts_daily_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
+              initial_data_loaded: false %>
         </div>
 
         <div id="chart-user-confirmations" class="metrics-chart-block">
@@ -75,7 +76,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="userConfirmationsChart"
-                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-data="<%= @user_confirmation_rate_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.user_confirmations', default: 'Confirmation Rate') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.confirmations', default: 'Rate (%)') %>">
@@ -84,7 +85,8 @@
           <%= render 'datetime_filter',
               chart_type: 'userConfirmationsChart',
               data_url: user_confirmation_rate_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
+              initial_data_loaded: false %>
         </div>
 
         <div id="chart-registration-sources" class="metrics-chart-block">
@@ -94,7 +96,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="registrationSourcesChart"
-                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-data="<%= @user_registration_sources_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.registration_sources', default: 'Registration Sources') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.source', default: 'Source') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.accounts', default: 'Accounts') %>">
@@ -103,7 +105,8 @@
           <%= render 'datetime_filter',
               chart_type: 'registrationSourcesChart',
               data_url: user_registration_sources_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
+              initial_data_loaded: false %>
         </div>
 
         <div id="chart-cumulative-growth" class="metrics-chart-block">
@@ -113,7 +116,7 @@
           </div>
           <canvas class="metrics-chart"
                   data-better_together--metrics-charts-target="cumulativeGrowthChart"
-                  data-chart-data="<%= {labels: [], datasets: []}.to_json %>"
+                  data-chart-data="<%= @user_cumulative_growth_chart_data.to_json %>"
                   data-chart-label="<%= t('better_together.metrics.reports.csv_headers.cumulative_growth', default: 'Total Users') %>"
                   data-axis-x-label="<%= t('better_together.metrics.reports.axis_labels.date') %>"
                   data-axis-y-label="<%= t('better_together.metrics.reports.axis_labels.total_users', default: 'Total Users') %>">
@@ -122,7 +125,8 @@
           <%= render 'datetime_filter',
               chart_type: 'cumulativeGrowthChart',
               data_url: user_cumulative_growth_data_metrics_reports_path(locale: I18n.locale),
-              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago %>
+              min_date: @min_dates&.dig(:user_accounts) || 30.days.ago,
+              initial_data_loaded: false %>
         </div>
       </div>
 

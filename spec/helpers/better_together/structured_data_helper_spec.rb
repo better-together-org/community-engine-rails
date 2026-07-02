@@ -18,8 +18,12 @@ RSpec.describe BetterTogether::StructuredDataHelper do
   describe '#structured_data_tag' do
     it 'wraps JSON-LD data in a script tag' do
       data = platform_structured_data(platform)
-      html = structured_data_tag(data)
+      allow(helper).to receive(:content_security_policy_nonce).and_return('test-nonce')
+
+      html = helper.structured_data_tag(data)
+
       expect(html).to include('application/ld+json')
+      expect(html).to include('nonce="test-nonce"')
       expect(html).to include('Platform')
     end
   end

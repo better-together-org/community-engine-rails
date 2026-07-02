@@ -41,6 +41,7 @@ module BetterTogether
 
     def new
       @page = resource_class.new
+      @page.community_id = community_context&.id
       authorize @page
     end
 
@@ -60,33 +61,12 @@ module BetterTogether
             end
           else
             format.turbo_stream do
-              render turbo_stream: turbo_stream.update(
-                'form_errors',
-                partial: 'layouts/better_together/errors',
-                locals: { object: @page }
-              )
+              render turbo_stream: re_render_form_with_errors(@page), status: :unprocessable_entity
             end
             format.html { render :new, status: :unprocessable_entity }
           end
         end
       end
-    end
-
-    def create_release_package_draft
-      authorize resource_class
-
-      result = BetterTogether::ReleasePackageDraftBuilder.new(
-        creator: helpers.current_person,
-        title: release_package_draft_title,
-        robot_author_ids: params[:robot_author_ids]
-      ).call
-
-      redirect_to edit_page_path(result.page),
-                  notice: t(
-                    'better_together.pages.release_package_draft.created',
-                    default: 'Private release package draft created. Companion draft post: %<post_title>s',
-                    post_title: result.post.title
-                  )
     end
 
     def edit
@@ -116,12 +96,7 @@ module BetterTogether
             format.html { render :edit }
             format.turbo_stream do
               render turbo_stream: [
-                turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form', locals: { page: @page }),
-                turbo_stream.update(
-                  'form_errors',
-                  partial: 'layouts/better_together/errors',
-                  locals: { object: @page }
-                )
+                re_render_form_with_errors(@page)
               ]
             end
           end
@@ -156,6 +131,10 @@ module BetterTogether
       end
     end
 
+    def page_form_id(page)
+      helpers.dom_id(page, 'form')
+    end
+
     def page
       @page ||= set_page
     end
@@ -176,6 +155,10 @@ module BetterTogether
       @page = preload_page_associations(@page)
     rescue ActiveRecord::RecordNotFound
       render_not_found && return
+    end
+
+    def re_render_form_with_errors(page)
+      turbo_stream.replace(page_form_id(page), partial: 'form', locals: { page: page })
     end
 
     def resource_class
@@ -248,20 +231,36 @@ module BetterTogether
       params.require(:page).permit(
         basic_page_attributes + page_blocks_permitted_attributes
       ).tap do |attrs|
-        attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
+        apply_create_defaults(attrs) if action_name == 'create'
       end
     end
 
-    def basic_page_attributes
-      [
-        :meta_description, :keywords, :published_at, :sidebar_nav_id,
-        :privacy, :layout, :template, :show_title, *Page.localized_attribute_list,
-        *Page.extra_permitted_attributes
-      ]
+    def apply_create_defaults(attrs)
+      attrs[:creator_id] = helpers.current_person&.id
+      attrs[:community_id] = community_context&.id if attrs[:community_id].blank?
     end
 
-    def release_package_draft_title
-      params[:title].presence || "Release Package #{Date.current.iso8601}"
+    def basic_page_attributes
+      attrs = [
+        :meta_description, :keywords, :published_at, :sidebar_nav_id,
+        :privacy, :layout, :template, :show_title, :contributors_display_visibility, *Page.localized_attribute_list,
+        *Page.extra_permitted_attributes
+      ]
+      attrs.unshift(:community_id) if action_name == 'create'
+      attrs
+    end
+
+    def community_context
+      @community_context ||= resolved_community || helpers.host_community
+    end
+
+    def resolved_community
+      community_id = params[:community_id].presence
+      return if community_id.blank?
+
+      BetterTogether::Community.friendly.find(community_id)
+    rescue ActiveRecord::RecordNotFound
+      nil
     end
 
     def page_blocks_permitted_attributes

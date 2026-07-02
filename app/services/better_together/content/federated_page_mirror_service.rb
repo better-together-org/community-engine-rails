@@ -23,6 +23,12 @@ module BetterTogether
         assign_attributes(page)
         page.save!
         page
+      rescue ActiveRecord::RecordNotUnique
+        # Two concurrent syncs raced on INSERT; reload the winner and apply our attributes.
+        page = reload_after_concurrent_insert
+        assign_attributes(page)
+        page.save!
+        page
       end
 
       private
@@ -38,7 +44,7 @@ module BetterTogether
 
         return if result.allowed?
 
-        raise ArgumentError, "page mirroring not authorized: #{result.reason}"
+        raise ArgumentError, mirroring_not_authorized_message(result.reason)
       end
 
       def find_or_initialize_page
@@ -49,6 +55,33 @@ module BetterTogether
 
       def find_or_initialize_page_by_source_id
         ::BetterTogether::Page.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+      end
+
+      def reload_after_concurrent_insert
+        record = if mirror_with_remote_uuid?
+                   existing_page_with_remote_uuid || existing_page_by_source_id
+                 else
+                   existing_page_by_source_id
+                 end
+
+        return record if record
+
+        raise_uuid_collision_if_applicable!
+        raise ::ActiveRecord::RecordNotFound,
+              "Page not found after concurrent INSERT for remote_id=#{remote_id}"
+      end
+
+      # Raises RecordInvalid when a page with the remote UUID already exists under a
+      # different platform. This is a permanent cross-platform UUID collision, not a
+      # transient race; FederatedContentIngestService treats RecordInvalid with an
+      # identifier:taken error as a mirrored-identifier conflict and continues the batch.
+      def raise_uuid_collision_if_applicable!
+        return unless mirror_with_remote_uuid? && ::BetterTogether::Page.exists?(id: remote_id)
+
+        stub = ::BetterTogether::Page.new
+        stub.errors.add(:identifier, :taken,
+                        message: 'UUID conflicts with an existing page on another platform')
+        raise ::ActiveRecord::RecordInvalid, stub
       end
 
       def existing_page_with_remote_uuid
@@ -83,8 +116,14 @@ module BetterTogether
           identifier: normalized_identifier(record),
           privacy: remote_attributes[:privacy].presence || 'public',
           published_at: remote_attributes[:published_at],
-          creator_id: remote_attributes[:creator_id]
+          creator_id: resolve_local_creator(remote_attributes[:creator_id])
         }
+      end
+
+      def resolve_local_creator(remote_id)
+        return nil if remote_id.blank?
+
+        ::BetterTogether::Person.where(id: remote_id).pick(:id)
       end
 
       def mirror_tracking_attributes
@@ -100,9 +139,13 @@ module BetterTogether
         # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
         return page.identifier if page.persisted?
 
-        base = remote_attributes[:identifier].presence ||
-               "federated-page-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-        identifier_or_namespaced(::BetterTogether::Page, base, page.id)
+        mirrored_identifier_for(
+          content_type: 'page',
+          remote_identifier: remote_attributes[:identifier],
+          remote_id:,
+          model_class: ::BetterTogether::Page,
+          exclude_id: page.id
+        )
       end
 
       def normalized_source_updated_at
@@ -134,6 +177,14 @@ module BetterTogether
 
       def uuid?(value)
         /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
+      end
+
+      def mirroring_not_authorized_message(reason)
+        I18n.t(
+          'better_together.federation.mirroring.errors.not_authorized',
+          content_type: I18n.t('better_together.federation.mirroring.content_types.page'),
+          reason:
+        )
       end
     end
     # rubocop:enable Metrics/ClassLength
