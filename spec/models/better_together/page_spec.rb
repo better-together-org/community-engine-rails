@@ -139,8 +139,8 @@ module BetterTogether # :nodoc:
 
       describe '#resolved_contributors_display_visibility' do
         it 'uses the community override before the platform default' do
-          platform = create(:better_together_platform)
-          community = create(:better_together_community)
+          platform = create(:better_together_platform, :public)
+          community = create(:better_together_community, privacy: 'public')
           page = create(:better_together_page, platform:, community:)
 
           platform.update!(contributors_display_visibility: 'on')
@@ -151,8 +151,8 @@ module BetterTogether # :nodoc:
         end
 
         it 'uses the record override before the community setting' do
-          platform = create(:better_together_platform)
-          community = create(:better_together_community)
+          platform = create(:better_together_platform, :public)
+          community = create(:better_together_community, privacy: 'public')
           page = create(:better_together_page, platform:, community:, contributors_display_visibility: 'on')
 
           platform.update!(contributors_display_visibility: 'on')

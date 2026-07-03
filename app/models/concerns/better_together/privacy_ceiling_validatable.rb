@@ -46,13 +46,33 @@ module BetterTogether
     end
 
     def privacy_ceiling
-      wrapping_platform  = respond_to?(:platform)  ? platform  : nil
-      wrapping_community = respond_to?(:community) ? community : nil
+      wrapping_platform  = wrapping_privacy_ceiling_platform
+      wrapping_community = wrapping_privacy_ceiling_community
       return nil unless wrapping_platform || wrapping_community
+      return nil if external_wrapping_platform?(wrapping_platform)
 
       platform_idx  = CEILING_ORDER.index(wrapping_platform&.privacy) || (CEILING_ORDER.length - 1)
       community_idx = ceiling_community_level(wrapping_community)
       CEILING_ORDER[[platform_idx, community_idx].min]
+    end
+
+    def wrapping_privacy_ceiling_platform
+      respond_to?(:platform) ? platform : nil
+    end
+
+    def wrapping_privacy_ceiling_community
+      respond_to?(:community) ? community : nil
+    end
+
+    # External platforms (federation peers, OAuth identity providers) are
+    # structural registry entries, not real local visibility containers, and
+    # their auto-created primary community is a private placeholder (see
+    # PrimaryCommunity#primary_community_privacy) rather than a real
+    # community. Content whose platform is external (e.g. a mirrored
+    # federated post) isn't locally contained, so no ceiling applies —
+    # mirrors the exemption Platform itself gets via privacy_ceiling_exempt?.
+    def external_wrapping_platform?(wrapping_platform)
+      wrapping_platform.respond_to?(:external?) && wrapping_platform.external?
     end
 
     def ceiling_community_level(community)

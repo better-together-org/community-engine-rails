@@ -144,7 +144,7 @@ RSpec.describe BetterTogether::Platform do
     end
 
     describe 'Multi-platform reference cleanup' do
-      let(:other_platform) { create(:better_together_platform) }
+      let(:other_platform) { create(:better_together_platform, :public) }
 
       it 'destroys incoming connections when platform is destroyed' do
         connection = create(:better_together_platform_connection,

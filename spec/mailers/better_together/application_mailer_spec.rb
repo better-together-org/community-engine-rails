@@ -49,7 +49,7 @@ RSpec.describe BetterTogether::ApplicationMailer do
     context 'when Current.platform is set (web/API request context)' do
       let(:current_platform) do
         # Platform has no locale column — do not pass locale: here
-        create(:better_together_platform, name: 'Request Platform', time_zone: 'America/Toronto')
+        create(:better_together_platform, :public, name: 'Request Platform', time_zone: 'America/Toronto')
       end
 
       around do |example|

@@ -53,7 +53,7 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   end
 
   describe 'GET /calendars/:id/feed' do
-    let(:community) { create(:community) }
+    let(:community) { create(:community, privacy: 'public') }
     let(:calendar) { create('better_together/calendar', community:, privacy: 'private') }
     let(:first_event) do
       create(:event,

@@ -179,6 +179,17 @@ module BetterTogether
       { host:, protected: }
     end
 
+    # External platforms (OAuth identity providers like GitHub) always get a
+    # private primary community regardless of their own `privacy` value (see
+    # PrimaryCommunity#primary_community_privacy) — that community is a
+    # structural placeholder, never a real user-facing space. Exempt these
+    # platforms from the ceiling check so their own `privacy` (e.g. 'public',
+    # used for federation/display purposes) isn't blocked by their
+    # intentionally-private placeholder community.
+    def privacy_ceiling_exempt?
+      external?
+    end
+
     def membership_requests_enabled_for?(community = primary_community)
       allow_membership_requests? && (community&.membership_requests_enabled?(platform: self) || false)
     end
