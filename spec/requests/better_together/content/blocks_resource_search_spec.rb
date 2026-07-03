@@ -6,10 +6,7 @@ RSpec.describe 'Content Blocks Resource Search', :as_platform_manager do
   describe 'GET /content/blocks/resource_search' do
     context 'with valid resource_class' do
       it 'returns policy-scoped communities' do
-        community = BetterTogether::Platform.host.communities.create!(
-          name: 'Test Community',
-          privacy: :public
-        )
+        community = create(:better_together_community, name: 'Test Community', privacy: :public)
         get better_together.resource_search_content_blocks_path(
           resource_class: 'BetterTogether::Community',
           locale: I18n.default_locale
@@ -23,14 +20,8 @@ RSpec.describe 'Content Blocks Resource Search', :as_platform_manager do
       end
 
       it 'filters by search term' do
-        BetterTogether::Platform.host.communities.create!(
-          name: 'Matching Community',
-          privacy: :public
-        )
-        BetterTogether::Platform.host.communities.create!(
-          name: 'Other Community',
-          privacy: :public
-        )
+        create(:better_together_community, name: 'Matching Community', privacy: :public)
+        create(:better_together_community, name: 'Other Community', privacy: :public)
         get better_together.resource_search_content_blocks_path(
           resource_class: 'BetterTogether::Community',
           search: 'Matching',
