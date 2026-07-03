@@ -7,12 +7,17 @@ module BetterTogether
 
     protected
 
+    # Scoped to resource_collection's ids (policy_scope, itself platform-scoped for
+    # platform-scoped resource types) so a slug that's reused across two different
+    # platforms (allowed — slug uniqueness is scoped to platform_id, not global)
+    # can't resolve to the wrong platform's record.
     def find_by_translatable(translatable_type: translatable_resource_type, friendly_id: id_param)
       Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
         translatable_type:,
         key: 'slug',
         value: friendly_id,
-        locale: I18n.available_locales
+        locale: I18n.available_locales,
+        translatable_id: resource_collection.select(:id)
       ).includes(:translatable).last&.translatable
     end
 
@@ -31,7 +36,8 @@ module BetterTogether
         translation = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.where(
           translatable_type: resource_class.name,
           key: 'slug',
-          value: id_param
+          value: id_param,
+          translatable_id: resource_collection.select(:id)
         ).includes(:translatable).first
 
         @resource ||= translation&.translatable

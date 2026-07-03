@@ -74,16 +74,16 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       before do
         configure_host_platform
         login('user@example.test', 'SecureTest123!@#')
-        # community-privacy posts are scoped by platform membership (scoped_platform_ids),
-        # not post.community_id. The post is on host_platform whose community is
-        # host_community — so the user must be a member of host_community to see it.
+        # PostPolicy::Scope's scoped_community_privacy_query filters community-privacy
+        # posts by post.community_id (not platform membership) — the user must be a
+        # member of the post's own community (other_community here), not host_community.
         create(:better_together_person_community_membership,
                member: regular_user.person,
-               joinable: host_community,
+               joinable: other_community,
                status: 'active')
       end
 
-      it 'sees community-privacy posts on platforms they are a member of' do
+      it 'sees community-privacy posts in communities they are a member of' do
         get better_together.posts_path(locale:)
 
         expect(response).to have_http_status(:ok)
