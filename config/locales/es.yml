@@ -3887,6 +3887,7 @@ es:
         review_status_description: Los recuentos de revisión se muestran aquí para
           que puedas encontrar rápidamente las cargas aprobadas, retenidas o restringidas.
         review_status_heading: Estado de revisión
+        sort_by_aria: Ordenar cargas por
         storage_usage: Estás usando %{size} de almacenamiento
     validators:
       safe_federation_url:

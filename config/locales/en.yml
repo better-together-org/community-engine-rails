@@ -3828,6 +3828,7 @@ en:
         review_status_description: Review counts are shown here to help you quickly
           find approved, held, or restricted uploads.
         review_status_heading: Review status
+        sort_by_aria: Sort uploads by
         storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:

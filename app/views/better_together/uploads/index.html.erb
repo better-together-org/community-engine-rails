@@ -16,7 +16,7 @@
       <input type="search" class="form-control" placeholder="Search uploads" data-better_together--uploads-target="search" data-action="input->better_together--uploads#filter">
     </div>
     <div class="col-sm-auto">
-      <select class="form-select" data-better_together--uploads-target="sort" data-action="change->better_together--uploads#sort">
+      <select class="form-select" aria-label="<%= t('.sort_by_aria') %>" data-better_together--uploads-target="sort" data-action="change->better_together--uploads#sort">
         <option value="created_at">Newest</option>
         <option value="name">Name</option>
       </select>
@@ -47,7 +47,7 @@
           <%= t('.filters.clean', count: status_counts['clean']) %>
         </button>
         <button type="button"
-                class="btn btn-outline-warning"
+                class="btn btn-outline-warning text-dark"
                 data-status-filter="review_required"
                 data-better_together--uploads-target="filterButton"
                 data-action="better_together--uploads#filterByStatus"

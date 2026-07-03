@@ -3868,6 +3868,7 @@ uk:
         review_status_description: Тут відображаються підрахунки перевірки, щоб ви
           могли швидко знайти схвалені, утримані або обмежені завантаження.
         review_status_heading: Статус перевірки
+        sort_by_aria: Сортувати завантаження за
         storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:

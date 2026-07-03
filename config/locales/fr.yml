@@ -3910,6 +3910,7 @@ fr:
           vous aider à trouver rapidement les téléversements approuvés, retenus ou
           restreints.
         review_status_heading: Statut de révision
+        sort_by_aria: Trier les téléchargements par
         storage_usage: Vous utilisez %{size} de stockage
     validators:
       safe_federation_url:
