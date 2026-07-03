@@ -333,6 +333,7 @@ en:
         notification_mentions: Notification mentions
         notifications: Notifications
         notify_by_email: Receive email notifications
+        notify_on_comments: Notify me about comments
         person_community_memberships: Person community memberships
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
@@ -987,6 +988,23 @@ en:
         completed_message: Checklist complete
         items_title: Items
         no_items: No items to display
+    comment_mailer:
+      added:
+        greeting: Hello %{recipient_name},
+        intro: "%{commenter_name} left a comment on your content:"
+        signature_html: "— The %{platform} team"
+        subject: You have a new comment
+        view_link: View comment
+    comments:
+      delete: Delete comment
+      deleted_author: Former member
+      form:
+        label: Add a comment
+        placeholder: Write a comment…
+        submit: Post comment
+      report: Report comment
+      section_heading: Comments
+      sign_in_to_comment: Sign in to join the conversation.
     communities:
       form:
         allow_membership_requests: Allow membership requests
@@ -2582,6 +2600,9 @@ en:
             body: "%{amount} Tree Seeds have been exchanged. Your balance has been
               updated."
             title: Tree Seeds exchanged
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} commented on your content"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -4534,6 +4555,7 @@ en:
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
+        notify_on_comments: Send an email when someone comments on your content.
         profile_image: Upload a profile image for the person.
         show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.

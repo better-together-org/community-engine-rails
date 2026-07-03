@@ -1,0 +1,19 @@
+<%# locals: (comment:) %>
+<div id="<%= dom_id(comment) %>" class="comment mb-3" data-comment-id="<%= comment.id %>">
+  <div class="comment-header d-flex align-items-center">
+    <strong class="me-2"><%= comment.creator&.name || t('better_together.comments.deleted_author', default: 'Former member') %></strong>
+    <small class="text-muted"><%= l(comment.created_at, format: :short) %></small>
+
+    <div class="ms-auto">
+      <%# comment_action_items adds delete (creator/moderator); shared/content_actions itself adds
+          report (any other signed-in person) since BetterTogether::Comment is Report-whitelisted.
+          Both checks use current_user/current_person (not Pundit's policy() helper) because this
+          partial is also rendered by Comment#after_create_commit's broadcast_append_to, which uses
+          a bare renderer with no Warden/current_user context. %>
+      <%= render 'shared/content_actions', record: comment, action_items: comment_action_items(comment),
+                                            trigger_classes: 'btn btn-outline-secondary btn-sm py-0 px-2' %>
+    </div>
+  </div>
+
+  <div class="comment-body"><%= simple_format(h(comment.content)) %></div>
+</div>

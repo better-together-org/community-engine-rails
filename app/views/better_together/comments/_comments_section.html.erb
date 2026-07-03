@@ -1,0 +1,20 @@
+<%# locals: (commentable:) %>
+<section class="comments-section mt-4" aria-labelledby="<%= dom_id(commentable, :comments_heading) %>">
+  <h4 id="<%= dom_id(commentable, :comments_heading) %>" class="mb-3">
+    <%= t('better_together.comments.section_heading', default: 'Comments') %>
+  </h4>
+
+  <%= turbo_stream_from commentable %>
+
+  <div id="<%= dom_id(commentable, :comments) %>" data-controller="better_together--comments">
+    <%= render partial: 'better_together/comments/comment',
+               collection: policy_scope(commentable.comments),
+               as: :comment %>
+  </div>
+
+  <% if policy(BetterTogether::Comment.new(commentable:)).create? %>
+    <%= render 'better_together/comments/form', commentable: commentable, comment: BetterTogether::Comment.new %>
+  <% else %>
+    <p class="text-muted small"><%= t('better_together.comments.sign_in_to_comment', default: 'Sign in to join the conversation.') %></p>
+  <% end %>
+</section>

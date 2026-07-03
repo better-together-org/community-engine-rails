@@ -1,0 +1,19 @@
+<%# locals: (commentable:, comment: BetterTogether::Comment.new) %>
+<div id="new_comment">
+  <%= form_with model: comment, url: comments_path, local: false, html: { data: { controller: 'better_together--comment-form' } } do |form| %>
+    <%# Top-level (not comment[...]-namespaced) so the controller can resolve the
+        commentable the same way ReportsController resolves reportable_type/reportable_id. %>
+    <%= hidden_field_tag :commentable_type, commentable.class.base_class.name %>
+    <%= hidden_field_tag :commentable_id, commentable.id %>
+
+    <div class="mb-2">
+      <%# Explicit id/for: this app's form_with config doesn't auto-generate field ids. %>
+      <%= form.label :content, t('better_together.comments.form.label', default: 'Add a comment'),
+                      for: 'comment_content', class: 'visually-hidden' %>
+      <%= form.text_area :content, id: 'comment_content', class: 'form-control', rows: 2, required: true,
+                          placeholder: t('better_together.comments.form.placeholder', default: 'Write a comment…') %>
+    </div>
+
+    <%= form.submit t('better_together.comments.form.submit', default: 'Post comment'), class: 'btn btn-primary btn-sm' %>
+  <% end %>
+</div>

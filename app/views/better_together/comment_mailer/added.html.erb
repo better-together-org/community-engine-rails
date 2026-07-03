@@ -1,0 +1,11 @@
+<!-- app/views/better_together/comment_mailer/added.html.erb -->
+
+<p><%= t('.greeting', recipient_name: @recipient.name) %></p>
+
+<p><%= t('.intro', commenter_name: @comment.creator&.name || t('better_together.comments.deleted_author', default: 'A member')) %></p>
+
+<blockquote><%= simple_format(h(@comment.content.to_s.truncate(280))) %></blockquote>
+
+<p><%= link_to t('.view_link'), polymorphic_url(@commentable, anchor: dom_id(@comment)) %></p>
+
+<p><%= t('.signature_html', platform: @platform.name) %></p>

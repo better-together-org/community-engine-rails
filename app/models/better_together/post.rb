@@ -12,6 +12,7 @@ module BetterTogether
     include FriendlySlug
     include Categorizable
     include Citable
+    include Commentable
     include Creatable
     include Identifier
     include Metrics::Viewable

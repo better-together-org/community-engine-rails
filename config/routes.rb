@@ -293,6 +293,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         resources :posts
 
+        resources :comments, only: %i[create destroy]
+
         resources :platforms, only: %i[index show new create edit update] do
           resources :platform_invitations, only: %i[index create destroy] do
             member do

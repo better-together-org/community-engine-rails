@@ -202,6 +202,7 @@ module BetterTogether
     store_attributes :notification_preferences do
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
+      notify_on_comments Boolean, default: true
     end
 
     # Borgberry fleet identity — portable person identity used across fleets.
@@ -250,6 +251,12 @@ module BetterTogether
     def show_conversation_details=(value)
       prefs = (notification_preferences || {}).dup
       prefs['show_conversation_details'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
+    end
+
+    def notify_on_comments=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['notify_on_comments'] = ActiveModel::Type::Boolean.new.cast(value)
       self.notification_preferences = prefs
     end
 

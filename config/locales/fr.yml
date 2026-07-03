@@ -333,6 +333,7 @@ fr:
         notification_mentions: Mentions de notification
         notifications: Notifications
         notify_by_email: Recevoir des notifications par e-mail
+        notify_on_comments: Me notifier des commentaires
         person_community_memberships: Adhésions communautaires de personnes
         person_platform_memberships: Adhésions aux plateformes de personnes
         platform_roles: Rôles de plateforme
@@ -986,6 +987,23 @@ fr:
         completed_message: Liste de contrôle complète
         items_title: Éléments
         no_items: Aucun élément à afficher
+    comment_mailer:
+      added:
+        greeting: Bonjour %{recipient_name},
+        intro: "%{commenter_name} a laissé un commentaire sur votre contenu :"
+        signature_html: "— L'équipe %{platform}"
+        subject: Vous avez un nouveau commentaire
+        view_link: Voir le commentaire
+    comments:
+      delete: Supprimer le commentaire
+      deleted_author: Ancien membre
+      form:
+        label: Ajouter un commentaire
+        placeholder: Écrivez un commentaire…
+        submit: Publier le commentaire
+      report: Signaler le commentaire
+      section_heading: Commentaires
+      sign_in_to_comment: Connectez-vous pour participer à la conversation.
     communities:
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
@@ -2629,6 +2647,9 @@ fr:
             body: "%{amount} Graines d'arbre ont été échangées. Votre solde a été
               mis à jour."
             title: Graines d'arbre échangées
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} a commenté votre contenu"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -4638,6 +4659,7 @@ fr:
         name: Entrez le nom complet de la personne.
         notify_by_email: Envoyer un e-mail lorsqu'une conversation contient un message
           non lu.
+        notify_on_comments: Envoyer un e-mail lorsque quelqu'un commente votre contenu.
         profile_image: Téléchargez une image de profil pour la personne.
         show_conversation_details: Afficher le titre de la conversation et le nom
           de l'expediteur dans les notifications.

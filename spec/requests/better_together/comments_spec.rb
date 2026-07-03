@@ -1,0 +1,102 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'BetterTogether comments' do
+  let(:locale) { I18n.default_locale }
+  let(:user) { find_or_create_test_user('comments-user@example.test', 'SecureTest123!@#', :user) }
+  let(:other_user) { find_or_create_test_user('comments-other-user@example.test', 'SecureTest123!@#', :user) }
+  let(:post_author) { find_or_create_test_user('comments-post-author@example.test', 'SecureTest123!@#', :user) }
+  let(:target_post) do
+    create(:better_together_post, creator: post_author.person, author: post_author.person,
+                                  privacy: 'public', published_at: 1.minute.ago)
+  end
+
+  describe 'POST /comments' do
+    # Unauthenticated access is gated by the standard Devise before_action
+    # :authenticate_user! (same mechanism MessagesController/EventsController use)
+    # and independently covered at the authorization layer by
+    # CommentPolicy#create? ("denies unauthenticated users" in comment_policy_spec.rb).
+    # A raw unauthenticated POST can't be exercised at this request-spec layer in the
+    # dummy app — even pre-existing routes like /en/posts and /en/reports raise
+    # ActionController::RoutingError for an unauthenticated POST here, so this isn't
+    # specific to the comments route.
+
+    it 'creates a comment on a whitelisted commentable and notifies the content creator' do
+      sign_in user
+
+      expect do
+        post better_together.comments_path(locale:), params: {
+          commentable_type: 'BetterTogether::Post',
+          commentable_id: target_post.id,
+          comment: { content: 'Great post!' }
+        }
+      end.to change(BetterTogether::Comment, :count).by(1)
+
+      comment = BetterTogether::Comment.last
+      expect(comment.content).to eq('Great post!')
+      expect(comment.creator).to eq(user.person)
+      expect(comment.commentable).to eq(target_post)
+
+      expect(Noticed::Notification.where(
+               event_id: BetterTogether::CommentAddedNotifier.where(record: comment).select(:id)
+             )).to exist
+    end
+
+    it 'does not notify when the commentable creator comments on their own content' do
+      sign_in post_author
+
+      expect do
+        post better_together.comments_path(locale:), params: {
+          commentable_type: 'BetterTogether::Post',
+          commentable_id: target_post.id,
+          comment: { content: 'Adding more context.' }
+        }
+      end.to change(BetterTogether::Comment, :count).by(1)
+
+      comment = BetterTogether::Comment.last
+      expect(Noticed::Notification.where(
+               event_id: BetterTogether::CommentAddedNotifier.where(record: comment).select(:id)
+             )).not_to exist
+    end
+
+    it 'returns not found for a non-whitelisted commentable type' do
+      sign_in user
+      page = create(:page)
+
+      expect do
+        post better_together.comments_path(locale:), params: {
+          commentable_type: 'BetterTogether::Page',
+          commentable_id: page.id,
+          comment: { content: 'Should not be allowed' }
+        }
+      end.not_to change(BetterTogether::Comment, :count)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe 'DELETE /comments/:id' do
+    it 'allows the comment creator to delete their own comment' do
+      sign_in user
+      comment = create(:comment, creator: user.person, commentable: target_post)
+
+      expect do
+        delete better_together.comment_path(comment, locale:)
+      end.to change(BetterTogether::Comment, :count).by(-1)
+    end
+
+    it 'denies deletion for a different regular user' do
+      sign_in user
+      comment = create(:comment, creator: other_user.person, commentable: target_post)
+
+      expect do
+        delete better_together.comment_path(comment, locale:)
+      end.not_to change(BetterTogether::Comment, :count)
+
+      # Pundit::NotAuthorizedError -> ApplicationController#user_not_authorized redirects back
+      # (unlike the not-whitelisted-commentable case, which 404s before authorization runs).
+      expect(response).to have_http_status(:redirect)
+    end
+  end
+end

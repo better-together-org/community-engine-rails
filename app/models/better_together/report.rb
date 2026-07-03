@@ -9,6 +9,7 @@ module BetterTogether
       'BetterTogether::Event',
       'BetterTogether::Page',
       'BetterTogether::Community',
+      'BetterTogether::Comment',
       'BetterTogether::Message',
       'BetterTogether::Upload',
       'BetterTogether::Content::Block',

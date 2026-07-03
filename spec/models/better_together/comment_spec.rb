@@ -74,23 +74,88 @@ RSpec.describe BetterTogether::Comment do
       expect(comment).to respond_to(:commentable_id)
     end
 
-    it 'can store different commentable types' do
+    it 'stores a whitelisted commentable type' do
       post = create(:post)
-      page = create(:page)
 
-      comment1 = described_class.create!(
+      comment = described_class.create!(
         commentable_type: 'BetterTogether::Post',
         commentable_id: post.id,
         content: 'Comment on post'
       )
-      comment2 = described_class.create!(
+
+      expect(comment.commentable_type).to eq('BetterTogether::Post')
+      expect(comment.commentable).to eq(post)
+    end
+
+    # MVP scope: comments only apply to Posts (see ALLOWED_COMMENTABLES).
+    # The commentable_type/commentable_id columns stay genuinely polymorphic at
+    # the DB layer so future types can be added by extending the whitelist —
+    # this validation is the application-level gate, mirroring Report::ALLOWED_REPORTABLES.
+    it 'rejects a commentable type outside ALLOWED_COMMENTABLES' do
+      page = create(:page)
+
+      comment = described_class.new(
         commentable_type: 'BetterTogether::Page',
         commentable_id: page.id,
         content: 'Comment on page'
       )
 
-      expect(comment1.commentable_type).to eq('BetterTogether::Post')
-      expect(comment2.commentable_type).to eq('BetterTogether::Page')
+      expect(comment).not_to be_valid
+      expect(comment.errors[:commentable_type]).to be_present
+    end
+  end
+
+  describe 'ALLOWED_COMMENTABLES' do
+    it 'only allows Post for the MVP' do
+      expect(described_class::ALLOWED_COMMENTABLES).to eq(['BetterTogether::Post'])
+    end
+  end
+
+  describe 'associations' do
+    let(:post) { create(:post) }
+
+    it 'belongs to a commentable' do
+      comment = described_class.create!(content: 'Test', commentable: post)
+      expect(comment.commentable).to eq(post)
+    end
+
+    it 'belongs to a creator via Creatable' do
+      person = create(:person)
+      comment = described_class.create!(content: 'Test', commentable: post, creator: person)
+      expect(comment.creator).to eq(person)
+    end
+
+    it 'has many reports_received for the safety system' do
+      comment = create(:comment, commentable: post)
+      report = create(:report, reportable: comment, reporter: create(:person))
+      expect(comment.reports_received).to include(report)
+    end
+  end
+
+  describe 'validations' do
+    it 'requires content' do
+      comment = described_class.new(commentable: create(:post), content: '')
+      expect(comment).not_to be_valid
+      expect(comment.errors[:content]).to be_present
+    end
+  end
+
+  describe 'broadcasts' do
+    let(:post) { create(:post) }
+
+    # Real-time delivery over the turbo_stream_from(post) subscription is exercised
+    # end-to-end by spec/features/better_together/comments_spec.rb; here we only
+    # confirm the callbacks are wired to the right target/streamable.
+    it 'appends to the commentable stream on create' do
+      comment = build(:comment, commentable: post)
+      expect(comment).to receive(:broadcast_append_later_to).with(post, target: comment.comments_stream_target)
+      comment.save!
+    end
+
+    it 'removes from the commentable stream on destroy' do
+      comment = create(:comment, commentable: post)
+      expect(comment).to receive(:broadcast_remove_to).with(post)
+      comment.destroy!
     end
   end
 
