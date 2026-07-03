@@ -47,7 +47,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
     context 'with valid token and earner found' do
       it 'returns 201 applied: true and credits the earner' do
         expect do
-          post better_together.c3_token_seed_path,
+          post better_together.federation_c3_token_seed_path,
                params: valid_payload, headers: auth_headers, as: :json
         end.to change(BetterTogether::C3::TokenSeed, :count).by(1)
 
@@ -60,7 +60,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
 
     context 'when earner_did not found on this platform' do
       it 'returns 202 with reason earner_did_not_found_locally' do
-        post better_together.c3_token_seed_path,
+        post better_together.federation_c3_token_seed_path,
              params: valid_payload.deep_merge(c3_token_seed: { earner_did: 'did:key:zUnknown123' }),
              headers: auth_headers, as: :json
 
@@ -73,11 +73,11 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
 
     context 'with a duplicate token_id' do
       it 'returns 200 and does not duplicate the applied transfer on second submission' do
-        post better_together.c3_token_seed_path,
+        post better_together.federation_c3_token_seed_path,
              params: valid_payload, headers: auth_headers, as: :json
 
         expect do
-          post better_together.c3_token_seed_path,
+          post better_together.federation_c3_token_seed_path,
                params: valid_payload, headers: auth_headers, as: :json
         end.not_to change(BetterTogether::C3::Token, :count)
 
@@ -95,7 +95,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
         deferred_payload = valid_payload.deep_merge(c3_token_seed: { earner_did: deferred_did })
 
         expect do
-          post better_together.c3_token_seed_path,
+          post better_together.federation_c3_token_seed_path,
                params: deferred_payload, headers: auth_headers, as: :json
         end.to change(BetterTogether::C3::TokenSeed, :count).by(1)
 
@@ -104,7 +104,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
         create(:better_together_person, borgberry_did: deferred_did)
 
         expect do
-          post better_together.c3_token_seed_path,
+          post better_together.federation_c3_token_seed_path,
                params: deferred_payload, headers: auth_headers, as: :json
         end.to change(BetterTogether::C3::Token, :count).by(1)
 
@@ -117,7 +117,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
 
     context 'without an auth token' do
       it 'returns 401' do
-        post better_together.c3_token_seed_path, params: valid_payload, as: :json
+        post better_together.federation_c3_token_seed_path, params: valid_payload, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -129,7 +129,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
           requested_scopes: 'content.feed.read'
         ).access_token
 
-        post better_together.c3_token_seed_path,
+        post better_together.federation_c3_token_seed_path,
              params: valid_payload,
              headers: { 'Authorization' => "Bearer #{wrong_scope_token}" },
              as: :json
@@ -158,7 +158,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
           requested_scopes: 'content.feed.read'
         ).access_token
 
-        post better_together.c3_token_seed_path,
+        post better_together.federation_c3_token_seed_path,
              params: valid_payload,
              headers: { 'Authorization' => "Bearer #{non_c3_token}" },
              as: :json
@@ -176,7 +176,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
         earner_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: earner)
         before_millitokens = earner_balance.available_millitokens
 
-        post better_together.c3_token_seed_path,
+        post better_together.federation_c3_token_seed_path,
              params: valid_payload, headers: auth_headers, as: :json
 
         expect(response).to have_http_status(:created)
