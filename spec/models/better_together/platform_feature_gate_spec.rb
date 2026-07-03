@@ -81,7 +81,7 @@ RSpec.describe BetterTogether::Platform do
     end
 
     describe BetterTogether::FeatureGate, '.enabled?' do
-      let(:host_platform) { create(:better_together_platform, host: true) }
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, host: true) }
       let(:other_platform) { create(:better_together_platform) }
       let(:user) { create(:better_together_user) }
       let(:person) { user.person }
@@ -112,10 +112,9 @@ RSpec.describe BetterTogether::Platform do
         it 'returns true for users with alpha permission' do
           # Grant alpha access via role
           alpha_role = create(:better_together_role, identifier: 'test_alpha_role')
-          create(:better_together_role_resource_permission,
-                 role: alpha_role,
-                 resource_permission: create(:better_together_resource_permission,
-                                             identifier: 'access_alpha_features'))
+          alpha_permission = BetterTogether::ResourcePermission.find_by(identifier: 'access_alpha_features') ||
+                             create(:better_together_resource_permission, identifier: 'access_alpha_features')
+          alpha_role.resource_permissions << alpha_permission
 
           BetterTogether::PersonPlatformMembership.find_or_create_by!(
             joinable: host_platform,
@@ -156,10 +155,9 @@ RSpec.describe BetterTogether::Platform do
         it 'returns true for users with beta permission' do
           # Grant beta access via role
           beta_role = create(:better_together_role, identifier: 'test_beta_role')
-          create(:better_together_role_resource_permission,
-                 role: beta_role,
-                 resource_permission: create(:better_together_resource_permission,
-                                             identifier: 'access_beta_features'))
+          beta_permission = BetterTogether::ResourcePermission.find_by(identifier: 'access_beta_features') ||
+                            create(:better_together_resource_permission, identifier: 'access_beta_features')
+          beta_role.resource_permissions << beta_permission
 
           BetterTogether::PersonPlatformMembership.find_or_create_by!(
             joinable: host_platform,

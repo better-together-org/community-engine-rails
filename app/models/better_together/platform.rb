@@ -195,7 +195,7 @@ module BetterTogether
     end
 
     def feature_gate_rollouts
-      raw_rollouts = settings.fetch('feature_gate_rollouts', {})
+      raw_rollouts = settings&.fetch('feature_gate_rollouts', {})
       raw_rollouts.is_a?(Hash) ? raw_rollouts.stringify_keys : {}
     end
 
