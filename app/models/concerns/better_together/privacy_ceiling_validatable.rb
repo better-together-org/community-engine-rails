@@ -5,12 +5,13 @@ module BetterTogether
   # imposed by its wrapping platform and community.
   #
   # Ceiling rules (most → most open: private → community → public):
-  #   - Platform non-public      → ceiling = platform.privacy
-  #   - Platform public + community non-public → ceiling = 'community'
   #   - Platform public + community public     → ceiling = 'public'
+  #   - Platform public + community non-public → ceiling = 'community'
+  #   - Platform non-public                    → ceiling = 'community'
   #
-  # A private community caps content at 'community' (not 'private') because
-  # members of a private community can still write community-scoped content.
+  # A private/non-public platform or community caps content at 'community'
+  # (not 'private') because members of a locked-down platform or community
+  # can still write community-scoped content.
   module PrivacyCeilingValidatable
     extend ActiveSupport::Concern
 
@@ -51,7 +52,7 @@ module BetterTogether
       return nil unless wrapping_platform || wrapping_community
       return nil if external_wrapping_platform?(wrapping_platform)
 
-      platform_idx  = CEILING_ORDER.index(wrapping_platform&.privacy) || (CEILING_ORDER.length - 1)
+      platform_idx  = ceiling_platform_level(wrapping_platform)
       community_idx = ceiling_community_level(wrapping_community)
       CEILING_ORDER[[platform_idx, community_idx].min]
     end
@@ -73,6 +74,12 @@ module BetterTogether
     # mirrors the exemption Platform itself gets via privacy_ceiling_exempt?.
     def external_wrapping_platform?(wrapping_platform)
       wrapping_platform.respond_to?(:external?) && wrapping_platform.external?
+    end
+
+    def ceiling_platform_level(platform)
+      return CEILING_ORDER.length - 1 unless platform
+
+      platform.privacy_public? ? CEILING_ORDER.length - 1 : CEILING_ORDER.index('community')
     end
 
     def ceiling_community_level(community)

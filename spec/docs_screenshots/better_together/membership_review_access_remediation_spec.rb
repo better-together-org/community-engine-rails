@@ -40,10 +40,14 @@ RSpec.describe 'Documentation screenshots for membership review remediation',
            password:,
            person_attributes: { name: 'Community Review Steward' })
   end
+  # privacy: 'community' — host_platform is intentionally private above, and
+  # the ceiling only allows 'community' under a private/locked-down platform
+  # (see PrivacyCeilingValidatable). Reviewers in this spec are always
+  # authenticated managers, so this doesn't change what's actually exercised.
   let!(:review_community) do
     create(:better_together_community,
            name: 'Harbour Gardeners',
-           privacy: 'public',
+           privacy: 'community',
            allow_membership_requests: false)
   end
 
