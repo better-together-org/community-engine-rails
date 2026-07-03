@@ -915,7 +915,9 @@ es:
         reserved: Reservado para acuerdos
         show_network_total: Mostrar mi total de Tree Seeds entre plataformas
         title: Tus Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:

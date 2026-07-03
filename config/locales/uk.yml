@@ -901,7 +901,11 @@ uk:
         reserved: Зарезервовано для угод
         show_network_total: Показати мій загальний обсяг Tree Seeds між платформами
         title: Ваші Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        few: Tree Seeds
+        many: Tree Seeds
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:

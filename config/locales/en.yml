@@ -921,7 +921,9 @@ en:
         reserved: Reserved for agreements
         show_network_total: Show my cross-platform Tree Seeds total
         title: Your Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
