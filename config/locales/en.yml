@@ -3176,6 +3176,14 @@ en:
       updated_on_short: Updated
       view_post: View Post
     primary: Primary
+    privacy:
+      hints:
+        privacy_limited_by_community: Some privacy options are disabled because this
+          community is not public. Content here can only be visible to community members
+          or the author.
+        privacy_limited_by_platform: Some privacy options are disabled because the
+          platform is not public. Content can only be visible to community members
+          or the author.
     rbac:
       nav:
         resource_permissions: Resource permissions

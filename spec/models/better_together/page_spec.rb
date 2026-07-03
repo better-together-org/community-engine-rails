@@ -319,5 +319,102 @@ module BetterTogether # :nodoc:
         end
       end
     end
+
+    describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+      let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
+      let(:community_platform) { create(:better_together_platform, privacy: 'community') }
+      let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
+      let(:public_community)   { create(:better_together_community, privacy: 'public') }
+      let(:community_community) { create(:better_together_community, privacy: 'community') }
+      let(:private_community) { create(:better_together_community, privacy: 'private') }
+
+      let(:page_for) do
+        lambda { |platform:, community: nil, privacy: 'public'|
+          build(:better_together_page, platform: platform, community: community, privacy: privacy)
+        }
+      end
+
+      context 'public platform + public community' do
+        it 'allows public privacy' do
+          expect(page_for.call(platform: public_platform, community: public_community, privacy: 'public')).to be_valid
+        end
+
+        it 'allows community privacy' do
+          expect(page_for.call(platform: public_platform, community: public_community, privacy: 'community')).to be_valid
+        end
+
+        it 'allows private privacy' do
+          expect(page_for.call(platform: public_platform, community: public_community, privacy: 'private')).to be_valid
+        end
+      end
+
+      context 'public platform + community-privacy community' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: public_platform, community: community_community, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('community')
+        end
+
+        it 'allows community privacy' do
+          expect(page_for.call(platform: public_platform, community: community_community, privacy: 'community')).to be_valid
+        end
+      end
+
+      context 'public platform + private community' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: public_platform, community: private_community, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('community')
+        end
+
+        it 'allows community privacy (members can still share within the community)' do
+          expect(page_for.call(platform: public_platform, community: private_community, privacy: 'community')).to be_valid
+        end
+
+        it 'allows private privacy' do
+          expect(page_for.call(platform: public_platform, community: private_community, privacy: 'private')).to be_valid
+        end
+      end
+
+      context 'community-privacy platform' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: community_platform, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('community')
+        end
+
+        it 'allows community privacy' do
+          expect(page_for.call(platform: community_platform, privacy: 'community')).to be_valid
+        end
+
+        it 'allows private privacy' do
+          expect(page_for.call(platform: community_platform, privacy: 'private')).to be_valid
+        end
+      end
+
+      context 'private platform' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: private_platform, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('private')
+        end
+
+        it 'rejects community privacy' do
+          page = page_for.call(platform: private_platform, privacy: 'community')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('private')
+        end
+
+        it 'allows private privacy' do
+          expect(page_for.call(platform: private_platform, privacy: 'private')).to be_valid
+        end
+      end
+
+      it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+        page = create(:better_together_page, platform: public_platform, community: public_community, privacy: 'public')
+        page.title = 'Updated title'
+        expect(page).to be_valid
+      end
+    end
   end
 end

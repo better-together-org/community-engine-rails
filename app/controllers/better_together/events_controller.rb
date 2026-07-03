@@ -7,6 +7,11 @@ module BetterTogether
     include NotificationReadable
     include ChecksRequiredAgreements
 
+    # Prepended so this runs before the inherited :authorize_resource
+    # before_action — otherwise Pundit's denial (via #authorize_resource,
+    # overridden below) wins first and this friendlier redirect never fires.
+    prepend_before_action :check_content_publishing_agreement, only: %i[new create]
+
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
@@ -24,7 +29,12 @@ module BetterTogether
       Rails.application.eager_load!
     end
 
-    before_action :build_event_hosts, only: :new
+    # build_event_hosts is invoked explicitly from #authorize_resource below
+    # (not as a separate before_action) — the inherited :authorize_resource
+    # before_action runs before any subclass-registered before_action, so a
+    # bare `before_action :build_event_hosts, only: :new` would authorize an
+    # empty event_hosts collection, making self-service host authorization
+    # (EventPolicy#event_host_member?) always fail on GET .../events/new.
     before_action :process_recurrence_attributes, only: %i[create update]
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
 
@@ -196,6 +206,11 @@ module BetterTogether
 
     # Override the parent's authorize_resource method to include invitation token context
     def authorize_resource
+      # Build event_hosts before authorizing so EventPolicy#create?/new? (via
+      # event_host_member?) sees the actual submitted/defaulted hosts, not an
+      # empty collection.
+      build_event_hosts if action_name == 'new'
+
       # Set invitation token for authorization
       invitation_token = params[:invitation_token] || session[:event_invitation_token]
       self.current_invitation_token = invitation_token

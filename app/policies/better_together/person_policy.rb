@@ -2,6 +2,8 @@
 
 module BetterTogether
   class PersonPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+    include SelfServicePublishablePolicy
+
     def index?
       user.present?
     end
@@ -11,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && (permitted_to?('create_person') || permitted_to?('manage_platform'))
+      user.present? && (permitted_to?('create_person') || platform_manager?)
     end
 
     def new?

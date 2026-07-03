@@ -11,8 +11,12 @@
 # concern's platform-aware validate_identifier_uniqueness method.
 
 RSpec.shared_examples 'platform scoped' do |factory:|
-  let(:platform_a) { create(:better_together_platform, host: false) }
-  let(:platform_b) { create(:better_together_platform, host: false) }
+  # :public — factories for Privacy-including models commonly default to
+  # `privacy: 'public'`; a private platform would make that default exceed
+  # the platform's own privacy ceiling (see PrivacyCeilingValidatable) for
+  # reasons unrelated to what these shared examples are actually testing.
+  let(:platform_a) { create(:better_together_platform, host: false, privacy: 'public') }
+  let(:platform_b) { create(:better_together_platform, host: false, privacy: 'public') }
 
   describe 'PlatformScoped concern' do
     it 'belongs to a platform' do
@@ -22,30 +26,30 @@ RSpec.shared_examples 'platform scoped' do |factory:|
     end
 
     it 'auto-assigns Current.platform on validation when platform_id is blank' do
-      BetterTogether::Current.platform = platform_a
+      Current.platform = platform_a
       record = build(factory, platform: nil)
       record.valid?
       expect(record.platform).to eq(platform_a)
     ensure
-      BetterTogether::Current.platform = nil
+      Current.platform = nil
     end
 
     it 'falls back to the host platform when Current.platform is nil' do
       host_platform = BetterTogether::Platform.find_by(host: true) ||
                       create(:better_together_platform, host: true)
-      BetterTogether::Current.platform = nil
+      Current.platform = nil
       record = build(factory, platform: nil)
       record.valid?
       expect(record.platform_id).to eq(host_platform.id)
     end
 
     it 'does not override an explicitly assigned platform' do
-      BetterTogether::Current.platform = platform_a
+      Current.platform = platform_a
       record = build(factory, platform: platform_b)
       record.valid?
       expect(record.platform).to eq(platform_b)
     ensure
-      BetterTogether::Current.platform = nil
+      Current.platform = nil
     end
 
     describe '.for_platform scope' do
@@ -62,6 +66,13 @@ RSpec.shared_examples 'platform scoped' do |factory:|
 end
 
 RSpec.shared_examples 'platform scoped identifier' do |factory:|
+  # :public — factories for Privacy-including models commonly default to
+  # `privacy: 'public'`; a private platform would make that default exceed
+  # the platform's own privacy ceiling (see PrivacyCeilingValidatable) for
+  # reasons unrelated to what these shared examples are actually testing.
+  let(:platform_a) { create(:better_together_platform, host: false, privacy: 'public') }
+  let(:platform_b) { create(:better_together_platform, host: false, privacy: 'public') }
+
   it_behaves_like 'platform scoped', factory: factory
 
   describe 'identifier uniqueness (platform-scoped)' do

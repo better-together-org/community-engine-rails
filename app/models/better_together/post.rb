@@ -23,7 +23,6 @@ module BetterTogether
     include TrackedActivity
     include ::Storext.model
     include CommunityAssignable
-    include PrivacyCeilingValidatable
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 

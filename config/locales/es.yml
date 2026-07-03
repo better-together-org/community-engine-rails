@@ -3224,6 +3224,14 @@ es:
       updated_on_short: Actualizado
       view_post: Ver publicación
     primary: Primario
+    privacy:
+      hints:
+        privacy_limited_by_community: Algunas opciones de privacidad están deshabilitadas
+          porque esta comunidad no es pública. El contenido aquí solo puede ser visible
+          para miembros de la comunidad o el autor.
+        privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
+          porque la plataforma no es pública. El contenido solo puede ser visible
+          para miembros de la comunidad o el autor.
     rbac:
       nav:
         resource_permissions: Permisos de recursos

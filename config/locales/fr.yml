@@ -3244,6 +3244,14 @@ fr:
       updated_on_short: Mis à jour
       view_post: Voir la publication
     primary: Principal
+    privacy:
+      hints:
+        privacy_limited_by_community: Certains paramètres de confidentialité sont
+          désactivés car cette communauté n'est pas publique. Le contenu peut seulement
+          être visible pour les membres de la communauté ou l'auteur.
+        privacy_limited_by_platform: Certains paramètres de confidentialité sont désactivés
+          car la plateforme n'est pas publique. Le contenu peut seulement être visible
+          pour les membres de la communauté ou l'auteur.
     rbac:
       nav:
         resource_permissions: Autorisations de ressources

@@ -2,6 +2,8 @@
 
 module BetterTogether
   class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+    include SelfServicePublishablePolicy
+
     def index?
       true # Allow all users to view community index (scope filters appropriately)
     end
@@ -19,12 +21,12 @@ module BetterTogether
       return false unless user.present?
 
       # Platform managers can always create communities
-      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      return true if platform_manager?
 
       # All other authenticated users must have accepted the community creation agreement
       return false unless agent.present?
 
-      ChecksRequiredAgreements.accepted_community_creation_agreement?(agent)
+      accepted_agreement?(ChecksRequiredAgreements::COMMUNITY_CREATION_AGREEMENT_IDENTIFIER)
     end
 
     def new?
@@ -112,9 +114,7 @@ module BetterTogether
 
     # Check if the user is the creator of this specific community
     def creator_of_community?
-      return false unless agent.present?
-
-      record.creator_id == agent.id
+      creator_of?(record)
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
@@ -168,8 +168,7 @@ module BetterTogether
     def can_manage_community?
       permitted_to?('manage_community_settings', record) ||
         permitted_to?('manage_community_members', record) ||
-        permitted_to?('manage_platform_settings') ||
-        permitted_to?('manage_platform')
+        platform_manager?
     end
   end
 end

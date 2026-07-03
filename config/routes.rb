@@ -293,6 +293,21 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         resources :posts
 
+        # Pages: open to any authenticated user at the routing layer, same as
+        # events/posts/communities above — PagePolicy already does the
+        # fine-grained per-action authorization (platform/community content
+        # manager, or creator/editable_contributor for their own pages, or
+        # self-service community member + accepted publishing agreement for
+        # create?). Previously nested under the platform-manager-only host
+        # dashboard scope, which blocked self-service creators from ever
+        # reaching new/create, and would have also blocked them from viewing
+        # or editing a page they'd created.
+        resources :pages do
+          scope module: 'content' do
+            resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
+          end
+        end
+
         resources :platforms, only: %i[index show new create edit update] do
           resources :platform_invitations, only: %i[index create destroy] do
             member do
@@ -417,12 +432,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            # Content Management
-            resources :pages do
-              scope module: 'content' do
-                resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
-              end
-            end
+            # Pages moved to the generic authenticated scope above — see the
+            # comment there. PagePolicy governs access; this host dashboard
+            # section stays platform-manager-only for everything else.
 
             # Seed data management
             resources :seeds

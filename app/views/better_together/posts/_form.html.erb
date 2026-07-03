@@ -33,7 +33,7 @@
     <%= form.label :privacy, t('better_together.posts.labels.privacy', default: 'Privacy') %>
     <% _post_platform = post.platform || Current.platform %>
     <% _post_community = post.community %>
-    <% _max_privacy = max_allowed_post_privacy(platform: _post_platform, community: _post_community) %>
+    <% _max_privacy = max_allowed_privacy(platform: _post_platform, community: _post_community) %>
     <%= privacy_field(form:, klass: post.class, max_privacy: _max_privacy) %>
     <% if (hint = privacy_constraint_hint(platform: _post_platform, community: _post_community)) %>
       <small class="form-text text-muted mt-1" id="<%= dom_id(post, :privacy_hint) %>">

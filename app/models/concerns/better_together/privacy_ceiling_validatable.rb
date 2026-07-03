@@ -18,7 +18,15 @@ module BetterTogether
 
     included do
       validate :privacy_within_platform_community_bounds,
-               if: -> { privacy.present? && (new_record? || will_save_change_to_privacy?) }
+               if: -> { privacy.present? && (new_record? || will_save_change_to_privacy?) && !privacy_ceiling_exempt? }
+    end
+
+    # Escape hatch for models whose `privacy` value isn't actually used for
+    # visibility gating (e.g. Agreement — its policy shows records to everyone
+    # regardless of `privacy`) and so shouldn't be constrained by a platform's
+    # or community's own privacy tier. Override to return true in such models.
+    def privacy_ceiling_exempt?
+      false
     end
 
     private

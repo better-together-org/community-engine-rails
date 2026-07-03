@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether::EventsController', :as_user do
   let(:locale) { I18n.default_locale }
   let!(:publishing_agreement) do
@@ -610,3 +611,52 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     end
   end
 end
+
+RSpec.describe 'BetterTogether::EventsController self-service publishing agreement gate' do
+  let(:locale) { I18n.default_locale }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
+  let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+  let(:member_user) { create(:better_together_user, :confirmed) }
+
+  before do
+    BetterTogether::PersonCommunityMembership.create!(
+      joinable: host_community, member: member_user.person, role: member_role, status: 'active'
+    )
+    login(member_user.email, 'SecureTest123!@#')
+  end
+
+  it 'redirects GET new to the publishing agreement page when the member has not accepted it' do
+    get better_together.new_event_path(locale:)
+
+    expect(response).to redirect_to(%r{/agreements/})
+  end
+
+  it 'allows the member to self-host an event once the agreement is accepted' do
+    grant_content_publishing_agreement(member_user.person)
+
+    expect do
+      post better_together.events_path(locale:), params: {
+        event: {
+          name: 'Member Hosted Event',
+          starts_at: 1.week.from_now,
+          ends_at: 1.week.from_now + 2.hours,
+          identifier: SecureRandom.uuid,
+          privacy: 'private',
+          event_hosts_attributes: [{ host_type: 'BetterTogether::Community', host_id: host_community.id }]
+        }
+      }
+    end.to change(BetterTogether::Event, :count).by(1)
+  end
+end
+
+RSpec.describe 'BetterTogether::EventsController self-service gate platform manager bypass', :as_platform_manager do
+  let(:locale) { I18n.default_locale }
+
+  it 'GET new succeeds for a platform manager without any agreement acceptance' do
+    get better_together.new_event_path(locale:)
+
+    expect(response).to have_http_status(:ok)
+  end
+end
+# rubocop:enable RSpec/MultipleDescribes

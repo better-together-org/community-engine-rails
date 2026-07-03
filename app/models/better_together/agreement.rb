@@ -145,6 +145,14 @@ module BetterTogether
 
     slugged :title, slug_uniqueness: false
 
+    # Agreement#show? already shows records to everyone regardless of
+    # `privacy` — this field isn't used for visibility gating on this model,
+    # so it shouldn't be constrained by the platform's privacy tier (a
+    # private platform's own Terms of Service must stay readable).
+    def privacy_ceiling_exempt?
+      true
+    end
+
     private
 
     def apply_default_consent_metadata # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

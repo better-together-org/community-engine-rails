@@ -141,21 +141,50 @@ module BetterTogether
       ChecksRequiredAgreements.missing_community_creation_agreement?(current_user.person)
     end
 
+    # Generic, identifier-parameterized pre-emptive agreement gate. Redirects
+    # to the agreement's page when the current person hasn't accepted it.
+    # @param identifier [String] the Agreement#identifier to require
+    # @param alert_key [String] i18n key for the flash alert
+    # @param bypass [Proc, nil] optional no-arg proc; if it returns true, the
+    #   check is skipped (e.g. a platform-manager exemption)
+    def check_agreement(identifier:, alert_key:, bypass: nil) # rubocop:todo Metrics/AbcSize
+      return unless user_signed_in? && current_user.person.present?
+
+      agreement = BetterTogether::Agreement.find_by(identifier: identifier)
+      return unless agreement.present? && agreement_missing_for_current_person?(identifier)
+      return if bypass&.call
+
+      store_location_for(:user, request.fullpath)
+      redirect_to better_together.agreement_path(agreement, locale: I18n.locale), alert: t(alert_key)
+    end
+
+    def agreement_missing_for_current_person?(identifier)
+      !ChecksRequiredAgreements.accepted_agreement?(current_user.person, identifier: identifier)
+    end
+
     # Redirects to the community creation agreement when the current person hasn't accepted it.
     # Platform managers are exempt — they can always create communities.
     # Call this as a before_action on community new/create actions.
     def check_community_creation_agreement
-      return unless user_signed_in? && current_user.person.present?
+      check_agreement(
+        identifier: COMMUNITY_CREATION_AGREEMENT_IDENTIFIER,
+        alert_key: 'better_together.agreements.community_creation_agreement_required',
+        bypass: -> { current_person_is_platform_manager? }
+      )
+    end
 
-      agreement = ChecksRequiredAgreements.public_community_creation_agreement
-      return unless agreement.present? && current_person_missing_community_creation_agreement?
-
-      # Platform managers bypass the community creation agreement requirement
-      return if current_person_is_platform_manager?
-
-      store_location_for(:user, request.fullpath)
-      redirect_to better_together.agreement_path(agreement, locale: I18n.locale),
-                  alert: t('better_together.agreements.community_creation_agreement_required')
+    # Redirects to the content publishing agreement when the current person
+    # hasn't accepted it. Platform managers are exempt.
+    # Call this as a before_action on content new/create actions (e.g. posts,
+    # events, pages) for good UX symmetry with community creation — the model
+    # layer (Privacy#require_publishing_agreement_for_public_visibility) still
+    # enforces this as the hard backstop regardless.
+    def check_content_publishing_agreement
+      check_agreement(
+        identifier: PublicVisibilityGate::AGREEMENT_IDENTIFIER,
+        alert_key: 'better_together.agreements.publishing_agreement_required',
+        bypass: -> { current_person_is_platform_manager? }
+      )
     end
 
     # Helper method to get agreements_status_path
