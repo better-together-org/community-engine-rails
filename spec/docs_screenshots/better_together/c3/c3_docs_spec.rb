@@ -54,8 +54,7 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
   let!(:agreement) do
     create(
       :joatu_agreement,
-      offer: c3_offer,
-      c3_price_millitokens: 3_000
+      offer: c3_offer
     )
   end
 
@@ -85,13 +84,14 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
   end
 
   let!(:peer_platform) do
-    create(:platform, name: 'Newcomer Navigator NL', identifier: 'newcomernavigatornl')
+    BetterTogether::Platform.find_by(identifier: 'newcomernavigatornl') ||
+      create(:platform, name: 'Newcomer Navigator NL', identifier: 'newcomernavigatornl')
   end
 
   let!(:platform_connection) do
     create(
       :platform_connection,
-      source_platform: BetterTogether::Platform.host,
+      source_platform: BetterTogether::Platform.find_by(host: true),
       target_platform: peer_platform,
       status: 'active',
       allow_c3_exchange: false,
