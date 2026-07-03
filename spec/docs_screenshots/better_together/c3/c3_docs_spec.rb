@@ -45,7 +45,7 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
     create(
       :joatu_offer,
       creator: provider_user.person,
-      title: 'Help setting up your home network',
+      name: 'Help setting up your home network',
       description: 'I can help you set up a secure home network. One session, 1-2 hours.',
       c3_price_millitokens: 3_000
     )
