@@ -15,13 +15,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
   describe 'GET /events/:id.ics' do
     let(:test_event) do
-      BetterTogether::Event.create!(
-        name: 'Community Gathering',
-        starts_at: 2.days.from_now,
-        ends_at: 3.days.from_now,
-        identifier: SecureRandom.uuid,
-        privacy: 'public'
-      )
+      create(:better_together_event,
+             name: 'Community Gathering',
+             starts_at: 2.days.from_now,
+             ends_at: 3.days.from_now,
+             identifier: SecureRandom.uuid,
+             privacy: 'public')
     end
 
     context 'with a published event (starts_at present)' do
@@ -60,13 +59,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
     context 'with a draft event (starts_at nil)' do
       let(:draft_event) do
-        BetterTogether::Event.create!(
-          name: 'Draft Event',
-          starts_at: nil,
-          ends_at: nil,
-          identifier: SecureRandom.uuid,
-          privacy: 'public'
-        )
+        create(:better_together_event,
+               name: 'Draft Event',
+               starts_at: nil,
+               ends_at: nil,
+               identifier: SecureRandom.uuid,
+               privacy: 'public')
       end
 
       it 'denies access to .ics format' do
@@ -83,14 +81,13 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       let(:draft_event) do
-        BetterTogether::Event.create!(
-          name: 'Draft Event by Manager',
-          starts_at: nil,
-          ends_at: nil,
-          identifier: SecureRandom.uuid,
-          privacy: 'public',
-          creator: manager_user.person
-        )
+        create(:better_together_event,
+               name: 'Draft Event by Manager',
+               starts_at: nil,
+               ends_at: nil,
+               identifier: SecureRandom.uuid,
+               privacy: 'public',
+               creator: manager_user.person)
       end
 
       it 'denies access to .ics format even for creator' do
@@ -104,13 +101,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
   describe 'GET /events/:id/ics (standalone ics action)' do
     context 'with a published event (starts_at present)' do
       let(:test_event) do
-        BetterTogether::Event.create!(
-          name: 'Community Gathering',
-          starts_at: 2.days.from_now,
-          ends_at: 3.days.from_now,
-          identifier: SecureRandom.uuid,
-          privacy: 'public'
-        )
+        create(:better_together_event,
+               name: 'Community Gathering',
+               starts_at: 2.days.from_now,
+               ends_at: 3.days.from_now,
+               identifier: SecureRandom.uuid,
+               privacy: 'public')
       end
 
       it 'returns successful response' do
@@ -122,13 +118,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
     context 'with a draft event (starts_at nil)' do
       let(:draft_event) do
-        BetterTogether::Event.create!(
-          name: 'Draft Event',
-          starts_at: nil,
-          ends_at: nil,
-          identifier: SecureRandom.uuid,
-          privacy: 'public'
-        )
+        create(:better_together_event,
+               name: 'Draft Event',
+               starts_at: nil,
+               ends_at: nil,
+               identifier: SecureRandom.uuid,
+               privacy: 'public')
       end
 
       it 'denies access to standalone ics action' do
@@ -146,13 +141,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     end
 
     let(:event) do
-      BetterTogether::Event.create!(
-        name: 'Neighborhood Clean-up',
-        starts_at: 1.day.from_now,
-        identifier: SecureRandom.uuid,
-        privacy: 'public',
-        creator: manager_user.person
-      )
+      create(:better_together_event,
+             name: 'Neighborhood Clean-up',
+             starts_at: 1.day.from_now,
+             identifier: SecureRandom.uuid,
+             privacy: 'public',
+             creator: manager_user.person)
     end
 
     context 'as platform manager', :as_platform_manager do
@@ -197,16 +191,16 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     let(:user_email) { 'manager@example.test' }
     let(:password) { 'SecureTest123!@#' }
     let(:event) do
-      BetterTogether::Event.create!(name: 'RSVP Test', starts_at: 1.day.from_now, identifier: SecureRandom.uuid)
+      create(:better_together_event, name: 'RSVP Test', starts_at: 1.day.from_now, identifier: SecureRandom.uuid)
     end
 
-    it 'requires login' do
+    it 'requires login', :no_auth do
       post better_together.rsvp_going_event_path(event, locale:)
 
       expect(response).to have_http_status(:found)
     end
 
-    it 'prevents RSVP creation without login' do
+    it 'prevents RSVP creation without login', :no_auth do
       post better_together.rsvp_going_event_path(event, locale:)
 
       expect(BetterTogether::EventAttendance.where(event:).count).to eq(0)
@@ -237,7 +231,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
       context 'with draft events' do # rubocop:todo RSpec/NestedGroups
         let(:draft_event) do
-          BetterTogether::Event.create!(name: 'Draft RSVP Test', identifier: SecureRandom.uuid)
+          create(:better_together_event, name: 'Draft RSVP Test', identifier: SecureRandom.uuid, starts_at: nil)
         end
 
         it 'prevents RSVP for draft events' do # rubocop:todo RSpec/MultipleExpectations
@@ -285,6 +279,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: 1.day.from_now.iso8601,
             identifier: SecureRandom.uuid,
             privacy: 'public',
+            creator_id: manager_user.person.id,
             location_attributes: {
               name: 'Community Hall'
             }
@@ -313,6 +308,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: 1.day.from_now.iso8601,
             identifier: SecureRandom.uuid,
             privacy: 'public',
+            creator_id: manager_user.person.id,
             location_attributes: {
               location_id: address.id,
               location_type: 'BetterTogether::Address'
@@ -343,6 +339,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: 1.day.from_now.iso8601,
             identifier: SecureRandom.uuid,
             privacy: 'public',
+            creator_id: manager_user.person.id,
             location_attributes: {
               location_id: building.id,
               location_type: 'BetterTogether::Infrastructure::Building'
@@ -369,7 +366,8 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
           event: {
             name: 'Draft Event Without Location',
             identifier: SecureRandom.uuid,
-            privacy: 'public'
+            privacy: 'public',
+            creator_id: manager_user.person.id
             # intentionally omit starts_at to keep it a draft and omit location_attributes
           },
           locale: locale
@@ -461,7 +459,8 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: '2026-03-15T14:00',  # 2:00 PM in local time
             ends_at: '2026-03-15T16:00',    # 4:00 PM in local time
             identifier: SecureRandom.uuid,
-            privacy: 'public'
+            privacy: 'public',
+            creator_id: BetterTogether::User.find_by(email: 'manager@example.test').person.id
           },
           locale: locale
         }
