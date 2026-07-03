@@ -14,6 +14,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
       target_platform: source_platform,
       federation_auth_policy: 'api_read',
       allow_identity_scope: true,
+      allow_content_read_scope: true,
       allow_c3_exchange: true
     )
   end
@@ -126,7 +127,7 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
       it 'returns 401 unauthorized' do
         wrong_scope_token = BetterTogether::FederationAccessTokenIssuer.call(
           connection: connection,
-          requested_scopes: 'content.feed.read'
+          requested_scopes: 'identity.read'
         ).access_token
 
         post better_together.federation_c3_token_seed_path,
@@ -152,10 +153,10 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
       end
 
       it 'returns 401 unauthorized' do
-        # Issue token with content.feed.read scope (only non-c3 scope available on this connection)
+        # Issue token with identity.read scope (only non-c3 scope available on this connection)
         non_c3_token = BetterTogether::FederationAccessTokenIssuer.call(
           connection: connection,
-          requested_scopes: 'content.feed.read'
+          requested_scopes: 'identity.read'
         ).access_token
 
         post better_together.federation_c3_token_seed_path,
@@ -173,7 +174,10 @@ RSpec.describe 'BetterTogether::Federation::C3TokenSeeds', :no_auth do
       end
 
       it 'credits the earner with rate-adjusted millitokens' do
-        earner_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: earner)
+        # apply_direct_credit! scopes the recipient balance to origin_platform: connection.source_platform
+        # (peer_platform here) for federated per-origin accounting — the lookup must match.
+        earner_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: earner, community: nil,
+                                                                        origin_platform: peer_platform)
         before_millitokens = earner_balance.available_millitokens
 
         post better_together.federation_c3_token_seed_path,
