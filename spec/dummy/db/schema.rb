@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_02_200000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_03_171020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1705,7 +1705,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_02_200000) do
     t.datetime "last_synced_at"
     t.index ["community_id"], name: "by_better_together_pages_community"
     t.index ["creator_id"], name: "index_better_together_pages_on_creator_id"
-    t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_pages_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id", "source_id"], name: "index_bt_pages_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_pages_on_platform_id"
     t.index ["privacy"], name: "by_better_together_pages_privacy"

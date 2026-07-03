@@ -396,13 +396,14 @@ module BetterTogether # :nodoc:
         it 'rejects public privacy' do
           page = page_for.call(platform: private_platform, privacy: 'public')
           expect(page).not_to be_valid
-          expect(page.errors[:privacy].join).to include('private')
+          expect(page.errors[:privacy].join).to include('community')
         end
 
-        it 'rejects community privacy' do
-          page = page_for.call(platform: private_platform, privacy: 'community')
-          expect(page).not_to be_valid
-          expect(page.errors[:privacy].join).to include('private')
+        it 'allows community privacy' do
+          # A private/non-public platform's ceiling floors at 'community', not
+          # 'private' — members of a locked-down platform can still write
+          # community-scoped content (see PrivacyCeilingValidatable).
+          expect(page_for.call(platform: private_platform, privacy: 'community')).to be_valid
         end
 
         it 'allows private privacy' do

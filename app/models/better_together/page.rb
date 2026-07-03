@@ -71,7 +71,7 @@ module BetterTogether
 
     translates :content, backend: :action_text
 
-    slugged :title, min_length: 1
+    slugged :title, min_length: 1, slug_uniqueness: false
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 

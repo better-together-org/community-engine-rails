@@ -10,8 +10,14 @@ RSpec.describe 'Multi-platform request isolation', :skip_host_setup do
   end
 
   let(:other_platform) { create(:better_together_platform, :public) }
+  # Platform#sync_primary_platform_domain! (after_commit) already creates a
+  # primary domain from host_url — update it to the desired test hostname
+  # rather than creating a second primary domain for the same platform.
   let!(:other_domain) do
-    create(:better_together_platform_domain, :primary, platform: other_platform, hostname: 'other.example.test')
+    domain = BetterTogether::PlatformDomain.find_by(platform: other_platform, primary_flag: true) ||
+             create(:better_together_platform_domain, :primary, platform: other_platform)
+    domain.update!(hostname: 'other.example.test')
+    domain
   end
 
   describe 'Current.platform resolution' do
