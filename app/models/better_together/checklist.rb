@@ -55,5 +55,14 @@ module BetterTogether
     def to_param
       slug
     end
+
+    # Payload for search indexing (database fallback and future external backends).
+    def as_indexed_json
+      {
+        title: title,
+        identifier: identifier,
+        items: checklist_items.map(&:label)
+      }
+    end
   end
 end

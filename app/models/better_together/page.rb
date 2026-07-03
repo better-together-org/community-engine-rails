@@ -115,6 +115,19 @@ module BetterTogether
       hero_block&.background_image_file
     end
 
+    # Payload for search indexing (database fallback and future external backends).
+    # Includes block content so full-text search can match text that only lives
+    # inside a block (e.g. markdown source) rather than a direct Page column.
+    def as_indexed_json
+      {
+        title: title,
+        meta_description: meta_description,
+        keywords: keywords,
+        content: content&.to_plain_text,
+        blocks: content_blocks.filter_map { |block| indexed_block_text(block) }
+      }
+    end
+
     def published?
       published_at.present? && published_at < Time.zone.now
     end
@@ -155,6 +168,13 @@ module BetterTogether
     end
 
     private
+
+    def indexed_block_text(block)
+      return block.rendered_plain_text if block.respond_to?(:rendered_plain_text)
+      return block.content if block.respond_to?(:content) && block.content.is_a?(String)
+
+      nil
+    end
 
     def refresh_sitemap
       return if Rails.env.test?
