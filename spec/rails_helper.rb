@@ -177,13 +177,16 @@ RSpec.configure do |config|
       end
     end
 
-    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: false) }
-
-    # Seed a host community + platform before NavigationBuilder.
-    # NavigationBuilder creates Page records that validate platform_id: presence: true.
-    # The Page#assign_current_platform_if_available callback resolves via
+    # Seed a host community + platform before AccessControlBuilder/NavigationBuilder.
+    # Both builders create records (ResourcePermission, Page, ...) that resolve
+    # platform_id via PlatformScoped#assign_current_platform_if_available:
     # Current.platform, Platform.find_by(host: true), or Platform.first — all nil
-    # on a fresh database. find_or_create_by! is idempotent across parallel workers.
+    # on a fresh database. Production db/seeds.rb creates the host platform before
+    # calling AccessControlBuilder for exactly this reason; do the same here so
+    # seeded ResourcePermission rows aren't left with a permanently-nil platform_id
+    # (which silently hides them from any platform-scoped policy, e.g.
+    # ResourcePermissionPolicy::Scope#resolve). find_or_create_by! is idempotent
+    # across parallel workers.
     build_with_retry do
       host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
         c.name       = 'Test Host Community'
@@ -203,9 +206,11 @@ RSpec.configure do |config|
       end
     end
 
-    # Set Current.platform so Page#assign_current_platform_if_available resolves
-    # correctly during NavigationBuilder (belt + suspenders alongside find_by(host:true)).
+    # Set Current.platform so assign_current_platform_if_available resolves
+    # correctly during AccessControlBuilder/NavigationBuilder (belt + suspenders
+    # alongside find_by(host: true)).
     Current.platform = BetterTogether::Platform.find_by(host: true)
+    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: false) }
     build_with_retry { BetterTogether::NavigationBuilder.build(clear: false) }
     Current.platform = nil
     build_with_retry { BetterTogether::CategoryBuilder.build(clear: false) }

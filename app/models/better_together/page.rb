@@ -124,8 +124,9 @@ module BetterTogether
         meta_description: meta_description,
         keywords: keywords,
         content: content&.to_plain_text,
-        blocks: content_blocks.filter_map { |block| indexed_block_text(block) }
-      }
+        blocks: content_blocks.filter_map { |block| indexed_block_text(block) },
+        template_blocks: template_blocks.map { |block| indexed_template_block(block) }
+      }.with_indifferent_access
     end
 
     def published?
@@ -174,6 +175,15 @@ module BetterTogether
       return block.content if block.respond_to?(:content) && block.content.is_a?(String)
 
       nil
+    end
+
+    # Template blocks render their content from a file rather than storing it directly,
+    # so their rendered text (per locale) has to be indexed separately from indexed_block_text.
+    def indexed_template_block(block)
+      {
+        template_path: block.template_path,
+        indexed_localized_content: block.indexed_localized_content
+      }
     end
 
     def refresh_sitemap

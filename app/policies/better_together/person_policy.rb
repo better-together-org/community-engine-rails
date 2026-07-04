@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && (me? || permitted_to?('update_person'))
+      user.present? && (me? || permitted_to?('update_person') || platform_manager?)
     end
 
     def edit?

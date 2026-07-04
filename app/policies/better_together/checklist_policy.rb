@@ -39,7 +39,13 @@ module BetterTogether
           query = visible_privacy_query(table)
 
           if platform_checklist_manager?
-            query = query.or(table[:privacy].eq('private'))
+            # Managers have unrestricted show/update/destroy authority over checklists
+            # (see #show?, #update?, #destroy? above) regardless of privacy tier, so the
+            # scope must surface 'private' and 'community' checklists to them too, not
+            # just 'private' — otherwise a manager-owned 'community' checklist is
+            # invisible to policy_scope-backed lookups (e.g. FriendlyResourceController)
+            # even though #show?/#update? would authorize it.
+            query = query.or(table[:privacy].in(%w[private community]))
           elsif agent
             if scope.ancestors.include?(BetterTogether::Joinable) && scope.membership_class.present?
               membership_table = scope.membership_class.arel_table
