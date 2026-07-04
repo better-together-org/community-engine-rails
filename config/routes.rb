@@ -103,6 +103,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # Exchange hub and public browsing — must be BEFORE authenticated routes
       # Hub serves as a public landing page; write/member actions are gated below.
+      #
+      # The two explicit `new` routes just below are declared here, ahead of the
+      # `show` resources, so they win the literal path segment `/exchange/requests/new`
+      # (and `/offers/new`). The authenticated block further down also declares
+      # `resources ... except: %i[index show]` (which includes its own `new` with the
+      # same name/path — harmless duplication, see note there) — Rails tries routes in
+      # declaration order, so without these earlier entries the literal "new" segment
+      # would match the `show` route first (with id == "new", since Offers/Requests
+      # use FriendlySlug and `:id` is normally a slug string, not a format-restricted
+      # UUID — a plain id constraint can't safely exclude just "new" without an
+      # unreliable regex lookahead). Declared with an explicit controller/path (not
+      # nested in `namespace :joatu`) so `as:` isn't double-prefixed with "joatu_".
+      # Access control for these actions is still fully enforced by
+      # OfferPolicy#new?/RequestPolicy#new? in the controller regardless of route order.
+      get 'exchange/offers/new',   to: 'joatu/offers#new',   as: :new_joatu_offer
+      get 'exchange/requests/new', to: 'joatu/requests#new', as: :new_joatu_request
+
       namespace :joatu, path: 'exchange' do
         get '/', to: 'hub#index', as: :hub
         resources :offers,   only: %i[index show]
@@ -219,7 +236,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         namespace :joatu, path: 'exchange' do
-          # index + show are declared outside authenticated block for public access
+          # index + show are declared outside authenticated block for public access.
+          # The `new` action for offers/requests is ALSO pre-declared, unauthenticated,
+          # near the top of routes.rb (see comment there) so it wins the literal path
+          # segment over the `show` route, which is tried first in table order — the
+          # `new` routes generated here are unreachable duplicates kept only so
+          # `resources` continues to read naturally; harmless (same controller/action).
           resources :offers, except: %i[index show] do
             member do
               get :respond_with_request
