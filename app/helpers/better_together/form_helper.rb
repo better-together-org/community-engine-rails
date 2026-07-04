@@ -176,9 +176,13 @@ module BetterTogether
     def contributor_display_visibility_field(form:, include_inherit:, label:, hint:, html_options: {})
       values = contributor_display_visibility_values(include_inherit:)
       options = contributor_display_visibility_html_options(html_options)
+      # `form_with` does not auto-generate id/for pairs in this app, so build an explicit,
+      # stable id to keep the <select> an accessible, labelled form control (WCAG select-name).
+      field_id = options[:id] || "#{dom_id(form.object)}_contributors_display_visibility"
+      options = options.merge(id: field_id)
 
       content_tag(:div) do
-        concat form.label(:contributors_display_visibility, label)
+        concat form.label(:contributors_display_visibility, label, for: field_id)
         concat form.select(
           :contributors_display_visibility,
           contributor_display_visibility_select_options(form:, values:),

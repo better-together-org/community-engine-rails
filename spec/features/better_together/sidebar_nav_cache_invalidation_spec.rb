@@ -52,8 +52,6 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Page title changes' do
     it 'invalidates sidebar cache when linked page title is updated', :accessibility do
-      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
-
       # Visit a page that displays the sidebar navigation
       visit better_together.page_path(current_page, locale: I18n.default_locale)
 
@@ -152,8 +150,6 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Cache key behavior' do
     it 'generates different cache keys for different current pages' do
-      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
-
       # Create another page to serve as a different current_page (with unique slug)
       other_page = create(:better_together_page,
                           slug: "other-page-#{unique_suffix}",

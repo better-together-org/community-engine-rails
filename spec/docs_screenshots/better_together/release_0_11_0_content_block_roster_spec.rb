@@ -148,9 +148,14 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       visit better_together.edit_page_path(chooser_page.slug, locale: I18n.default_locale)
       click_button 'Add Block'
 
+      # The 0.11.0 content block families are gated behind the `new_content_blocks`
+      # feature (alpha rollout — see config/feature_gates.yml), not unconditionally
+      # hidden. `platform_manager` (the role used for docs capture) holds
+      # `access_alpha_features` by design, so these blocks are correctly visible
+      # here as an alpha-tier preview of the upcoming rollout.
       within('#available-block-types') do
         block_definitions.each do |definition|
-          expect(page).to have_no_link(definition[:label])
+          expect(page).to have_link(definition[:label])
         end
       end
     end
