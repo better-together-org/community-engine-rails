@@ -19,8 +19,8 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
            email: "review-operations-safety-#{SecureRandom.hex(4)}@example.test",
            password:)
   end
-  let!(:reported_person) { create(:better_together_person, name: 'Safety Review Reported Person') }
-  let!(:report_record) do
+  let(:reported_person) { create(:better_together_person, name: 'Safety Review Reported Person') }
+  let(:report_record) do
     create(:report,
            reporter: create(:better_together_person, name: 'Safety Review Reporter'),
            reportable: reported_person,
@@ -30,7 +30,7 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
            requested_outcome: 'boundary_support',
            reason: 'Repeated unwanted contact in shared spaces')
   end
-  let!(:safety_case) do
+  let(:safety_case) do
     BetterTogether::Safety::Case.create!(
       report: report_record,
       category: report_record.category,
@@ -41,12 +41,12 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
       consent_to_restorative_process: report_record.consent_to_restorative_process
     )
   end
-  let!(:federation_target_one) do
+  let(:federation_target_one) do
     create(:better_together_platform,
            name: 'Neighbourhood Commons',
            identifier: "neighbourhood-commons-#{SecureRandom.hex(4)}")
   end
-  let!(:federation_target_two) do
+  let(:federation_target_two) do
     create(:better_together_platform,
            name: 'Coastal Mutual Aid',
            identifier: "coastal-mutual-aid-#{SecureRandom.hex(4)}")

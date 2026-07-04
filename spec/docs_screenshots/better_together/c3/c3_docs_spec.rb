@@ -17,11 +17,11 @@ require 'rails_helper'
 # Each screenshot is paired with a JSON sidecar (metadata, URL, viewport, timestamp).
 RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Metrics/BlockLength
                :as_admin, :docs_screenshot, :js, retry: 0, type: :feature do
-  let!(:admin_user) { find_or_create_test_user('admin@example.test', 'SecureAdmin123!@#', :administrator) }
-  let!(:earner_user) { find_or_create_test_user('earner@example.test', 'SecureTest123!@#', :user) }
-  let!(:provider_user) { find_or_create_test_user('provider@example.test', 'SecureTest123!@#', :user) }
+  let(:admin_user) { find_or_create_test_user('admin@example.test', 'SecureAdmin123!@#', :administrator) }
+  let(:earner_user) { find_or_create_test_user('earner@example.test', 'SecureTest123!@#', :user) }
+  let(:provider_user) { find_or_create_test_user('provider@example.test', 'SecureTest123!@#', :user) }
 
-  let!(:earner_balance) do
+  let(:earner_balance) do
     create(
       :c3_balance,
       holder: earner_user.person,
@@ -31,7 +31,7 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
     )
   end
 
-  let!(:provider_balance) do
+  let(:provider_balance) do
     create(
       :c3_balance,
       holder: provider_user.person,
@@ -41,7 +41,7 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
     )
   end
 
-  let!(:c3_offer) do
+  let(:c3_offer) do
     create(
       :joatu_offer,
       creator: provider_user.person,
@@ -51,14 +51,14 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
     )
   end
 
-  let!(:agreement) do
+  let(:agreement) do
     create(
       :joatu_agreement,
       offer: c3_offer
     )
   end
 
-  let!(:settlement) do
+  let(:settlement) do
     create(
       :joatu_settlement,
       agreement: agreement,
@@ -69,7 +69,7 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
     )
   end
 
-  let!(:c3_tokens) do
+  let(:c3_tokens) do
     [
       create(:c3_token, earner: earner_user.person, contribution_type: :compute_cpu,
                         c3_millitokens: 10_000, source_system: 'borgberry',
@@ -83,12 +83,12 @@ RSpec.describe 'Documentation screenshots for C3 Tree Seeds', # rubocop:todo Met
     ]
   end
 
-  let!(:peer_platform) do
+  let(:peer_platform) do
     BetterTogether::Platform.find_by(identifier: 'newcomernavigatornl') ||
       create(:platform, name: 'Newcomer Navigator NL', identifier: 'newcomernavigatornl')
   end
 
-  let!(:platform_connection) do
+  let(:platform_connection) do
     create(
       :platform_connection,
       source_platform: BetterTogether::Platform.find_by(host: true),

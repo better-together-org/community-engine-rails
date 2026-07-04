@@ -6,7 +6,7 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
                :docs_screenshot, :js, :skip_host_setup, retry: 0, type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:chooser_page) do
+  let(:chooser_page) do
     BetterTogether::Page.find_by(identifier: 'release-0-11-0-content-block-picker') ||
       create(
         :better_together_page,
@@ -19,13 +19,13 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
         published_at: 1.day.ago
       )
   end
-  let!(:release_checklist) do
+  let(:release_checklist) do
     create(:better_together_checklist, title: 'Release 0.11.0 Launch Checklist')
   end
-  let!(:release_checklist_item) do
+  let(:release_checklist_item) do
     create(:better_together_checklist_item, checklist: release_checklist, label: 'Publish updated docs', position: 0)
   end
-  let!(:release_community) do
+  let(:release_community) do
     BetterTogether::Community.find_by(identifier: 'release-0-11-0-community') ||
       create(
         :better_together_community,
@@ -35,7 +35,7 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
         privacy: 'public'
       )
   end
-  let!(:release_person) do
+  let(:release_person) do
     BetterTogether::Person.find_by(identifier: 'release-0-11-0-community-steward') ||
       create(
         :better_together_person,
@@ -46,7 +46,7 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
         community: release_community
       )
   end
-  let!(:release_post) do
+  let(:release_post) do
     BetterTogether::Post.find_by(identifier: 'release-0-11-0-product-brief') ||
       create(
         :better_together_post,
@@ -57,7 +57,7 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
         author: release_person
       )
   end
-  let!(:release_event) do
+  let(:release_event) do
     BetterTogether::Event.find_by(identifier: 'release-0-11-0-planning-circle') ||
       create(
         :event,
@@ -72,7 +72,7 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
         creator: release_person
       )
   end
-  let!(:release_navigation_area) do
+  let(:release_navigation_area) do
     create(
       :navigation_area,
       name: "Release 0.11.0 Quick Links #{SecureRandom.hex(4)}",
@@ -83,7 +83,7 @@ RSpec.describe 'Documentation screenshots for the 0.11.0 content block roster',
       protected: false
     )
   end
-  let!(:release_navigation_item) do
+  let(:release_navigation_item) do
     create(
       :navigation_item,
       navigation_area: release_navigation_area,
