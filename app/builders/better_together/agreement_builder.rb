@@ -32,6 +32,19 @@ module BetterTogether
           a.active_for_consent = true
         end
 
+        # Must run before the plain-fields update! below: Postgres validates the row's
+        # FK constraints on every UPDATE, not just columns that actually changed, so a
+        # dangling page_id (e.g. left over after a prior :js/:feature spec's cleanup
+        # deleted the linked page — see spec/rails_helper.rb) would otherwise fail the
+        # unrelated field update before ever reaching the code that heals it.
+        ensure_agreement_page_link!(
+          agreement:,
+          page_identifier: 'privacy_policy',
+          page_title: 'Privacy Policy',
+          page_slug: 'privacy-policy',
+          template_path: 'better_together/static_pages/privacy'
+        )
+
         agreement.update!(
           protected: true,
           title: 'Privacy Policy',
@@ -47,14 +60,6 @@ module BetterTogether
           term.position = 1
           term.content = 'We respect your privacy and protect your personal information.'
         end
-
-        ensure_agreement_page_link!(
-          agreement:,
-          page_identifier: 'privacy_policy',
-          page_title: 'Privacy Policy',
-          page_slug: 'privacy-policy',
-          template_path: 'better_together/static_pages/privacy'
-        )
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -69,6 +74,15 @@ module BetterTogether
           a.required_for = 'registration'
           a.active_for_consent = true
         end
+
+        # See build_privacy_policy for why this must run before the plain-fields update!.
+        ensure_agreement_page_link!(
+          agreement:,
+          page_identifier: 'terms_of_service',
+          page_title: 'Terms of Service',
+          page_slug: 'terms-of-service',
+          template_path: 'better_together/static_pages/terms_of_service'
+        )
 
         agreement.update!(
           protected: true,
@@ -85,14 +99,6 @@ module BetterTogether
           term.position = 1
           term.content = 'Use the platform responsibly and respectfully.'
         end
-
-        ensure_agreement_page_link!(
-          agreement:,
-          page_identifier: 'terms_of_service',
-          page_title: 'Terms of Service',
-          page_slug: 'terms-of-service',
-          template_path: 'better_together/static_pages/terms_of_service'
-        )
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -107,6 +113,15 @@ module BetterTogether
           a.required_for = 'registration'
           a.active_for_consent = true
         end
+
+        # See build_privacy_policy for why this must run before the plain-fields update!.
+        ensure_agreement_page_link!(
+          agreement:,
+          page_identifier: 'code_of_conduct',
+          page_title: 'Code of Conduct',
+          page_slug: 'code-of-conduct',
+          template_path: 'better_together/static_pages/code_of_conduct'
+        )
 
         agreement.update!(
           protected: true,
@@ -123,14 +138,6 @@ module BetterTogether
           term.position = 1
           term.content = 'Be respectful, inclusive, and considerate to other community members.'
         end
-
-        ensure_agreement_page_link!(
-          agreement:,
-          page_identifier: 'code_of_conduct',
-          page_title: 'Code of Conduct',
-          page_slug: 'code-of-conduct',
-          template_path: 'better_together/static_pages/code_of_conduct'
-        )
       end
       # rubocop:enable Metrics/MethodLength
 
@@ -144,6 +151,15 @@ module BetterTogether
           a.required_for = 'first_publish'
           a.active_for_consent = true
         end
+
+        # See build_privacy_policy for why this must run before the plain-fields update!.
+        ensure_agreement_page_link!(
+          agreement:,
+          page_identifier: 'content_contributor_agreement',
+          page_title: 'Content Contributor Agreement',
+          page_slug: 'content-contributor-agreement',
+          template_path: 'better_together/static_pages/content_contributor_agreement'
+        )
 
         agreement.update!(
           protected: true,
@@ -164,14 +180,6 @@ module BetterTogether
             and must not expose other people or communities without authorization.
           CONTENT
         end
-
-        ensure_agreement_page_link!(
-          agreement:,
-          page_identifier: 'content_contributor_agreement',
-          page_title: 'Content Contributor Agreement',
-          page_slug: 'content-contributor-agreement',
-          template_path: 'better_together/static_pages/content_contributor_agreement'
-        )
       end
 
       def build_community_creation_agreement # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
