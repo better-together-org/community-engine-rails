@@ -6,7 +6,7 @@ require BetterTogether::Engine.root.join('db/migrate/20260516193000_backfill_fed
 RSpec.describe 'Federated mirrored identifier backfill' do # rubocop:disable RSpec/DescribeClass
   let(:migration) { BackfillFederatedMirroredIdentifiers.new }
   let(:source_platform) { create(:better_together_platform, :community_engine_peer) }
-  let(:target_platform) { create(:better_together_platform, identifier: 'local-platform') }
+  let(:target_platform) { create(:better_together_platform, :public, identifier: 'local-platform') }
 
   it 'backfills mirrored identifiers and leaves native records unchanged' do
     create(

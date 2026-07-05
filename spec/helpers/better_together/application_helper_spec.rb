@@ -78,8 +78,7 @@ RSpec.describe BetterTogether::ApplicationHelper do
       expect(BetterTogether::MediaUrlBuilder).to have_received(:proxy_url_for).with(
         attachment,
         base_url: 'https://communityengine.app',
-        host: 'communityengine.app',
-        protocol: 'https',
+        url_options: { host: 'communityengine.app', protocol: 'https' },
         disposition: 'attachment'
       )
       expect(helper.storage_proxy_url_for(attachment, disposition: 'attachment')).to eq(

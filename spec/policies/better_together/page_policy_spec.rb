@@ -161,6 +161,65 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
 
+  describe '#create?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+    subject { described_class.new(user, page).create? }
+
+    let(:page) do
+      p = BetterTogether::Page.new
+      p.community_id = scoped_community.id
+      p
+    end
+
+    context 'platform steward' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { steward_user }
+
+      it { is_expected.to be true }
+    end
+
+    context 'community content manager permission holder without any agreement' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { community_member_user }
+
+      before do
+        role = create(:better_together_role, :community_role)
+        permission = BetterTogether::ResourcePermission.find_by!(identifier: 'manage_community_content')
+        role.assign_resource_permissions([permission.identifier])
+        BetterTogether::PersonCommunityMembership.find_by!(
+          joinable: scoped_community, member: user.person
+        ).update!(role: role)
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context 'active community member who has accepted the content publishing agreement' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { community_member_user }
+
+      before { grant_content_publishing_agreement(user.person) }
+
+      it { is_expected.to be true }
+    end
+
+    context 'active community member who has not accepted the content publishing agreement' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { community_member_user }
+
+      it { is_expected.to be false }
+    end
+
+    context 'non-member even with the content publishing agreement accepted' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { normal_user }
+
+      before { grant_content_publishing_agreement(user.person) }
+
+      it { is_expected.to be false }
+    end
+
+    context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
+      let(:user) { nil }
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe '#update?' do # rubocop:todo RSpec/MultipleMemoizedHelpers
     subject { described_class.new(user, page).update? }
 

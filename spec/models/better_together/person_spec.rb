@@ -45,7 +45,8 @@ RSpec.describe BetterTogether::Person do
     let(:cover_image) { double('cover_image', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
 
     before do
-      person.define_singleton_method(:cover_image) { cover_image }
+      stubbed_cover_image = cover_image
+      person.define_singleton_method(:cover_image) { stubbed_cover_image }
     end
 
     context 'when the cover image is a PNG' do
@@ -151,9 +152,11 @@ RSpec.describe BetterTogether::Person do
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') { |a| a.title = 'Terms of Service' } }
 
       before do
-        allow(BetterTogether::Agreement).to receive(:exists?)
-          .with(identifier: 'code_of_conduct')
-          .and_return(false)
+        # unaccepted_required_agreements scopes via Agreement.required_for_registration
+        # (a DB query), not Agreement.exists?, so simulate "code_of_conduct isn't
+        # required" by excluding it from that scope directly.
+        BetterTogether::Agreement.where(identifier: 'code_of_conduct')
+                                 .update_all(required_for: BetterTogether::Agreement::REQUIRED_FOR_VALUES[:none]) # rubocop:disable Rails/SkipsModelValidations
       end
 
       it 'returns only privacy_policy and terms_of_service' do

@@ -16,6 +16,21 @@ module BetterTogether
 
       attributes :created_at, :updated_at
 
+      # Override pundit-resources' default `records` to skip its `warn_if_show_defined`
+      # check. That check assumes policies never define `show?` because pundit-resources
+      # relies solely on the policy's Scope class for filtering — but our policies
+      # legitimately define `show?` too, since it's used directly by the regular
+      # (non-JSONAPI) HTML controllers via Pundit's `authorize resource_instance`.
+      # Without this override, every API resource whose policy defines `show?` would
+      # print a "WARN: pundit-resources does not use the show? action." line to
+      # stdout on every `.records` call — pure noise in test/CI output and logs.
+      # Behavior is otherwise identical to the gem's implementation.
+      def self.records(options = {})
+        context = options[:context]
+        context[:policy_used]&.call
+        Pundit.policy_scope!(context[:current_user], _model_class)
+      end
+
       # Helper method for defining translatable attributes
       # Usage: translatable_attribute :name
       def self.translatable_attribute(attr_name)

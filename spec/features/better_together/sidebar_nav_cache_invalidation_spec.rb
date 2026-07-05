@@ -52,8 +52,6 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Page title changes' do
     it 'invalidates sidebar cache when linked page title is updated', :accessibility do
-      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
-
       # Visit a page that displays the sidebar navigation
       visit better_together.page_path(current_page, locale: I18n.default_locale)
 
@@ -115,8 +113,6 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Multiple updates' do
     it 'consistently invalidates cache across multiple changes' do
-      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
-
       # Visit a page that displays the sidebar navigation
       visit better_together.page_path(current_page, locale: I18n.default_locale)
 
@@ -131,19 +127,32 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
       expect(page).to have_content('First Update')
 
       # Second update: Change linkable to different page
-      nav_item.update!(linkable: page_two)
+      # Reload first: page_one.update! above touched this navigation_item's
+      # navigation_area cache-invalidation record via touch_navigation_items,
+      # which bumps lock_version in the DB out from under this in-memory
+      # reference (real controller actions always re-find a fresh record).
+      nav_item.reload.update!(linkable: page_two)
       visit better_together.page_path(current_page, locale: I18n.default_locale)
       expect(page).to have_css('#sidebar_nav_accordion', wait: 10)
       expect(page).to have_content('Alternative Page')
 
       # Third update: Change the new page's title
-      page_two.update!(title: 'Second Update')
+      # Reload first: the linkable reassignment above touches page_two via
+      # belongs_to :linkable, touch: true, bumping its lock_version in the DB
+      # out from under this in-memory reference.
+      page_two.reload.update!(title: 'Second Update')
       visit better_together.page_path(current_page, locale: I18n.default_locale)
       expect(page).to have_css('#sidebar_nav_accordion', wait: 10)
       expect(page).to have_content('Second Update')
 
-      # Fourth update: Switch back to original page
-      nav_item.update!(linkable: page_one)
+      # Fourth update: Switch back to original page. Reload nav_item for the
+      # same stale lock_version reason as above; also reload page_one because
+      # Rails' belongs_to touch:true callback touches the *new* linkable using
+      # the object reference passed in (not a fresh query, unlike the old
+      # linkable which it re-finds by id) - page_one's DB row was touched
+      # again when nav_item's linkable moved away from it above, so our
+      # in-memory page_one is stale too.
+      nav_item.reload.update!(linkable: page_one.reload)
       visit better_together.page_path(current_page, locale: I18n.default_locale)
       expect(page).to have_css('#sidebar_nav_accordion', wait: 10)
       expect(page).to have_content('First Update')
@@ -152,8 +161,6 @@ RSpec.describe 'Sidebar Navigation Cache Invalidation', :as_user, :js, retry: 0 
 
   describe 'Cache key behavior' do
     it 'generates different cache keys for different current pages' do
-      skip 'Sidebar nav not rendering in feature test environment - investigating test setup'
-
       # Create another page to serve as a different current_page (with unique slug)
       other_page = create(:better_together_page,
                           slug: "other-page-#{unique_suffix}",

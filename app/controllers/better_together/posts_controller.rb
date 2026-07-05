@@ -7,6 +7,11 @@ module BetterTogether
     include PostsIndexPreload
     include ChecksRequiredAgreements
 
+    # Prepended so this runs before the inherited :authorize_resource
+    # before_action — otherwise Pundit's plain 404 (via authorize_resource's
+    # local rescue) wins first and this friendlier redirect never fires.
+    prepend_before_action :check_content_publishing_agreement, only: %i[new create]
+
     skip_before_action :resource_collection, only: :index
 
     def index

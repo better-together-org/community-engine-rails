@@ -11,7 +11,9 @@ RSpec.describe 'BetterTogether::Safety::Cases' do
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:) do |membership|
+      membership.status = 'active'
+    end
   end
 
   let(:locale) { I18n.default_locale }
@@ -20,6 +22,13 @@ RSpec.describe 'BetterTogether::Safety::Cases' do
   let!(:held_upload) { create(:better_together_upload, creator: platform_manager.person, name: 'Held upload') }
 
   before do
+    # Malware scanning / content-security enrollment is gated by
+    # ContentSecurity::Configuration.enabled? (and enabled_for_surface?), which
+    # default to false in the test environment. Without stubbing these, attaching
+    # a file never creates the ContentSecurity::Subject the safety queue expects
+    # to find in its review queue (see local_review_snapshot_service_spec.rb).
+    allow(BetterTogether::ContentSecurity::Configuration).to receive_messages(enabled?: true,
+                                                                              enabled_for_surface?: true)
     held_upload.file.attach(io: StringIO.new('held upload'), filename: 'held.txt', content_type: 'text/plain')
     held_upload.save!
     grant_platform_permission(platform_manager, 'manage_platform_safety')

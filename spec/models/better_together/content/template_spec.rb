@@ -62,7 +62,7 @@ RSpec.describe BetterTogether::Content::Template do
   end
 
   describe '#indexed_localized_content' do
-    let(:template) { create(:better_together_content_template, template_path: 'better_together/static_pages/privacy') }
+    let(:template) { create(:content_template, template_path: 'better_together/static_pages/privacy') }
 
     it 'returns a hash of locale to rendered content' do
       result = template.indexed_localized_content

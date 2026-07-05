@@ -28,7 +28,7 @@ module BetterTogether
         community_resource_permission_attrs.each do |attrs|
           perm = ::BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attrs[:identifier])
           perm.assign_attributes(attrs)
-          perm.save! if perm.changed?
+          perm.save! if perm.changed? || perm.platform_id.blank?
         end
       end
 
@@ -36,7 +36,7 @@ module BetterTogether
         platform_resource_permission_attrs.each do |attrs|
           perm = ::BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attrs[:identifier])
           perm.assign_attributes(attrs)
-          perm.save! if perm.changed?
+          perm.save! if perm.changed? || perm.platform_id.blank?
         end
       end
 
@@ -52,7 +52,7 @@ module BetterTogether
         person_resource_permission_attrs.each do |attrs|
           perm = ::BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attrs[:identifier])
           perm.assign_attributes(attrs)
-          perm.save! if perm.changed?
+          perm.save! if perm.changed? || perm.platform_id.blank?
         end
       end
 

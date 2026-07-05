@@ -14,6 +14,8 @@ RSpec.describe BetterTogether::EventReminderScanJob do
   end
 
   describe '#perform' do
+    before { configure_host_platform }
+
     let(:upcoming_event) { create('better_together/event', :upcoming) }
 
     it 'enqueues EventReminderSchedulerJob for each upcoming event' do
@@ -35,8 +37,8 @@ RSpec.describe BetterTogether::EventReminderScanJob do
     end
 
     it 'scopes to a platform_id when provided' do
-      platform_a = create(:better_together_platform)
-      platform_b = create(:better_together_platform)
+      platform_a = create(:better_together_platform, :public)
+      platform_b = create(:better_together_platform, :public)
       event_a = create('better_together/event', :upcoming, platform: platform_a)
       event_b = create('better_together/event', :upcoming, platform: platform_b)
 

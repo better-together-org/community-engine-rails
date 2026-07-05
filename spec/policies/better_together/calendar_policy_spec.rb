@@ -7,7 +7,10 @@ RSpec.describe BetterTogether::CalendarPolicy, type: :policy do
   let(:creator_person) { create(:better_together_person) }
   let(:creator_user) { create(:better_together_user, person: creator_person) }
   let(:normal_user) { create(:better_together_user) }
-  let(:host_community) { create(:better_together_community) }
+  # privacy: 'public' — the calendar below is created with privacy: 'public',
+  # which would exceed this community's own (otherwise default-private)
+  # privacy ceiling (see PrivacyCeilingValidatable).
+  let(:host_community) { create(:better_together_community, privacy: 'public') }
   let(:calendar) { create(:better_together_calendar, creator: creator_person, community: host_community, privacy: 'public') }
 
   describe '#index?' do

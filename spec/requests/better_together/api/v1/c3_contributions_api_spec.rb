@@ -40,9 +40,15 @@ RSpec.describe 'BetterTogether::Api::V1::C3::Contributions', :no_auth do
     end
   end
   let(:fake_balance_class) do
-    Struct.new(:available_c3, keyword_init: true) do
-      def credit!(amount)
-        self.available_c3 += amount
+    Struct.new(:available_millitokens, keyword_init: true) do
+      # Mirrors BetterTogether::C3::Balance#credit_millitokens!, which the
+      # controller calls directly (avoiding round-trip float conversion).
+      def credit_millitokens!(amount)
+        self.available_millitokens = (available_millitokens || 0) + amount.to_i
+      end
+
+      def available_c3
+        available_millitokens.to_f / 10_000
       end
 
       def reload
@@ -76,6 +82,14 @@ RSpec.describe 'BetterTogether::Api::V1::C3::Contributions', :no_auth do
     token_class = Class.new
     token_class.const_set(:MILLITOKEN_SCALE, 10_000)
     token_class.singleton_class.attr_accessor :stored_token, :create_calls
+    # Mirrors BetterTogether::C3::Token's safe c3_amount <-> millitokens
+    # conversions, which the controller calls directly on the class.
+    token_class.define_singleton_method(:c3_to_millitokens) do |c3_amount|
+      (BigDecimal(c3_amount.to_s) * token_class::MILLITOKEN_SCALE).to_i
+    end
+    token_class.define_singleton_method(:millitokens_to_c3) do |millitokens|
+      (millitokens.to_f / token_class::MILLITOKEN_SCALE).round(4)
+    end
     token_class.define_singleton_method(:transaction) { |&block| block.call }
     token_class.define_singleton_method(:find_or_create_by!) do |source_system:, source_ref:, &block|
       self.create_calls ||= 0
@@ -97,7 +111,7 @@ RSpec.describe 'BetterTogether::Api::V1::C3::Contributions', :no_auth do
     balance_class = Class.new
     balance_class.singleton_class.attr_accessor :stored_balance
     balance_class.define_singleton_method(:find_or_create_by!) do |**|
-      self.stored_balance ||= balance_struct.new(available_c3: 0.0)
+      self.stored_balance ||= balance_struct.new(available_millitokens: 0)
     end
     balance_class.define_singleton_method(:find_by!) { |**| stored_balance }
 

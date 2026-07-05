@@ -8,6 +8,44 @@ RSpec.describe BetterTogether::CommunityPolicy do
   let(:community) { create(:better_together_community) }
   let(:user) { nil }
 
+  describe '#create?' do
+    subject(:policy) { described_class.new(user, BetterTogether::Community) }
+
+    context 'when user is a platform manager' do
+      let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
+
+      it 'allows creation without accepting the community creation agreement' do
+        expect(policy.create?).to be true
+      end
+    end
+
+    context 'when user has accepted the community creation agreement' do
+      let(:user) { create(:better_together_user, :confirmed) }
+
+      before { grant_community_creation_agreement(user.person) }
+
+      it 'allows creation' do
+        expect(policy.create?).to be true
+      end
+    end
+
+    context 'when user has not accepted the community creation agreement' do
+      let(:user) { create(:better_together_user, :confirmed) }
+
+      it 'denies creation' do
+        expect(policy.create?).to be false
+      end
+    end
+
+    context 'when user is not authenticated' do
+      let(:user) { nil }
+
+      it 'denies creation' do
+        expect(policy.create?).to be false
+      end
+    end
+  end
+
   describe '#view_members?' do
     context 'when user is not authenticated' do
       let(:user) { nil }

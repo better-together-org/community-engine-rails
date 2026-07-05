@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::CallForInterestPolicy do
   describe '#show?' do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
-    let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
+    let(:scoped_platform) { create(:better_together_platform, community: scoped_community, privacy: 'public') }
     let(:scoped_event) { create(:event, platform: scoped_platform) }
     let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
     let(:community_call) { create(:call_for_interest, :with_event, privacy: 'community', interestable: scoped_event, platform: scoped_platform) }
@@ -35,7 +35,7 @@ RSpec.describe BetterTogether::CallForInterestPolicy do
 
   describe 'Scope' do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
-    let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
+    let(:scoped_platform) { create(:better_together_platform, community: scoped_community, privacy: 'public') }
     let(:scoped_event) { create(:event, platform: scoped_platform) }
     let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
     let(:host_platform) { BetterTogether::Platform.find_by(host: true) }

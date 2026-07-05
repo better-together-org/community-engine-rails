@@ -12,15 +12,15 @@ RSpec.describe 'Documentation screenshots for feature access grants and develope
 
   let(:locale) { I18n.default_locale }
   let(:password) { 'SecureTest123!@#' }
-  let!(:host_platform) { configure_host_platform }
-  let!(:platform_manager) { find_or_create_test_user('manager@example.test', password, :platform_steward) }
-  let!(:regular_user) { find_or_create_test_user('user@example.test', password, :user) }
-  let!(:managed_platform) do
+  let(:host_platform) { configure_host_platform }
+  let(:platform_manager) { find_or_create_test_user('manager@example.test', password, :platform_steward) }
+  let(:regular_user) { find_or_create_test_user('user@example.test', password, :user) }
+  let(:managed_platform) do
     create(:better_together_platform,
            identifier: "docs-feature-gate-platform-#{SecureRandom.hex(4)}",
            host_url: "https://docs-feature-gate-platform-#{SecureRandom.hex(4)}.example.test")
   end
-  let!(:managed_role) { role_with_permissions('manage_platform_settings') }
+  let(:managed_role) { role_with_permissions('manage_platform_settings') }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'

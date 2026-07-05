@@ -11,7 +11,10 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
   let(:base_storext_keys) { BetterTogether::Content::Block.storext_definitions.keys.map(&:to_s) }
   let(:internal_nonlocalized_fields) do
     {
-      'BetterTogether::Content::Html' => %w[html_content]
+      'BetterTogether::Content::Html' => %w[html_content],
+      # active_source is derived from the markdown_source_type radio choice via
+      # the sync_active_source before_save callback — never submitted directly.
+      'BetterTogether::Content::Markdown' => %w[active_source]
     }.freeze
   end
 

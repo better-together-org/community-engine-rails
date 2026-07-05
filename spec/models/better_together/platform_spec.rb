@@ -97,7 +97,10 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       expect(platform).to be_valid
       expect(platform.csp_frame_ancestors).to eq(['https://bebettertogether.ca', 'https://forms.btsdev.ca'])
       expect(platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
-      expect(platform.csp_img_src).to eq(['https://images.example.com'])
+      # csp_img_src merges the explicit value with the seeded local Leaflet tile origin
+      # (this platform is non-external, so seed_default_local_csp_settings applies).
+      expect(platform.csp_img_src).to contain_exactly('https://images.example.com',
+                                                      'https://*.tile.openstreetmap.org')
       expect(platform.csp_script_src).to eq(['https://scripts.example.com'])
       expect(platform.csp_connect_src).to eq(['https://collector.example.com'])
     end

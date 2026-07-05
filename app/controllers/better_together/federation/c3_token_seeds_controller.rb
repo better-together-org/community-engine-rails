@@ -25,7 +25,14 @@ module BetterTogether
                         status: :forbidden
         end
 
-        identifier = "c3_token:#{seed_params[:token_id]}"
+        # The Identifier concern's `identifier=` setter parameterizes its argument
+        # (via FriendlySlug.normalize_slug_preserving_namespace) before persisting,
+        # so lookups must normalize the same way or a retried/replayed request with
+        # the same token_id would silently miss the existing record and attempt a
+        # duplicate create.
+        identifier = BetterTogether::FriendlySlug.normalize_slug_preserving_namespace(
+          "c3_token:#{seed_params[:token_id]}"
+        )
         seed = BetterTogether::C3::TokenSeed.find_by(
           type: 'BetterTogether::C3::TokenSeed',
           identifier: identifier

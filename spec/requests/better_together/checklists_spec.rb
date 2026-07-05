@@ -9,7 +9,14 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
   end
 
   describe 'GET /checklists/:id' do
-    let(:checklist) { create(:better_together_checklist, title: 'My List', privacy: 'public') }
+    # The :better_together_checklist factory pins its own independent :public
+    # platform by default. FriendlyResourceController scopes lookups by
+    # policy_scope, which is platform_scoped to Current.platform (the host
+    # platform in request specs) — without this override the record 404s.
+    let(:checklist) do
+      create(:better_together_checklist, title: 'My List', privacy: 'public',
+                                         platform: BetterTogether::Platform.find_by(host: true))
+    end
 
     it 'shows a public checklist' do # rubocop:todo RSpec/MultipleExpectations
       get better_together.checklist_path(checklist, locale:)
@@ -33,7 +40,8 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
     it 'renders the community privacy option on the edit form' do # rubocop:todo RSpec/MultipleExpectations
       checklist = create(:better_together_checklist,
                          creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
-                         privacy: 'community')
+                         privacy: 'community',
+                         platform: BetterTogether::Platform.find_by(host: true))
 
       get better_together.edit_checklist_path(checklist, locale:)
 
@@ -56,7 +64,8 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
     it 'updates a checklist' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       checklist = create(:better_together_checklist,
-                         creator: BetterTogether::User.find_by(email: 'manager@example.test').person)
+                         creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
+                         platform: BetterTogether::Platform.find_by(host: true))
 
       patch better_together.checklist_path(checklist, locale:),
             params: { checklist: { privacy: 'public', title_en: 'Updated' } }
@@ -69,7 +78,8 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
 
     it 'destroys an unprotected checklist' do # rubocop:todo RSpec/MultipleExpectations
       checklist = create(:better_together_checklist,
-                         creator: BetterTogether::User.find_by(email: 'manager@example.test').person)
+                         creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
+                         platform: BetterTogether::Platform.find_by(host: true))
 
       delete better_together.checklist_path(checklist, locale:)
 
@@ -80,7 +90,8 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
     it 'renders edit when update params are invalid', :aggregate_failures do
       checklist = create(:better_together_checklist,
                          creator: BetterTogether::User.find_by(email: 'manager@example.test').person,
-                         title: 'Original Checklist')
+                         title: 'Original Checklist',
+                         platform: BetterTogether::Platform.find_by(host: true))
 
       patch better_together.checklist_path(checklist, locale:),
             params: { checklist: { title_en: '' } }
@@ -106,7 +117,8 @@ RSpec.describe 'BetterTogether::ChecklistsController' do
     it 'allows creator to update their checklist' do # rubocop:todo RSpec/MultipleExpectations
       # rubocop:enable RSpec/MultipleExpectations
       user = create(:better_together_user, :confirmed, password: 'SecureTest123!@#')
-      checklist = create(:better_together_checklist, creator: user.person)
+      checklist = create(:better_together_checklist, creator: user.person,
+                                                     platform: BetterTogether::Platform.find_by(host: true))
 
       # sign in as that user
       login(user.email, 'SecureTest123!@#')

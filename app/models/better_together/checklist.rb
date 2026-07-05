@@ -15,7 +15,9 @@ module BetterTogether
 
     translates :title, type: :string
 
-    slugged :title
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    slugged :title, slug_uniqueness: false
 
     searchable pg_search: {
       against: [:identifier],
@@ -52,6 +54,15 @@ module BetterTogether
 
     def to_param
       slug
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    def as_indexed_json
+      {
+        title: title,
+        identifier: identifier,
+        items: checklist_items.map(&:label)
+      }
     end
   end
 end

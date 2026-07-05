@@ -71,7 +71,10 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
   end
 
   def scanner_result(verdict: 'clean', finding_summary: nil)
-    finding = finding_summary.present? ? [{ 'summary' => finding_summary }] : []
+    # Matches the real shape produced by RuleEngine.build_finding: summary lives under
+    # evidence, not as a flat top-level key. MailScreeningService#summary_for reads it
+    # via finding.dig('evidence', 'summary').
+    finding = finding_summary.present? ? [{ 'evidence' => { 'summary' => finding_summary } }] : []
 
     {
       'content_item' => { 'aggregate_verdict' => verdict },
@@ -164,7 +167,10 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     message = BetterTogether::InboundEmailMessage.last
     expect(message).to be_route_kind_unresolved
     expect(message).to be_status_rejected
-    expect(message.platform).to be_nil
+    # platform_id is NOT NULL at the DB level, so PlatformScoped's
+    # assign_current_platform_if_available before_validation callback falls back
+    # to the host platform when no tenant platform resolves for the recipient domain.
+    expect(message.platform).to eq(BetterTogether::Platform.find_by(host: true))
     expect(message.target).to be_nil
     expect(BetterTogether::Joatu::MembershipRequest.count).to eq(0)
   end
