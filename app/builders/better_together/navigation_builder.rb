@@ -117,151 +117,149 @@ module BetterTogether
         # rubocop:todo Metrics/BlockLength
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
+            footer_page_attrs = [
+              {
+                title_en: 'FAQ',
+                slug_en: 'faq',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/faq',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Privacy Policy',
+                slug_en: 'privacy-policy',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/privacy',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Terms of Service',
+                slug_en: 'terms-of-service',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/terms_of_service',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Code of Conduct',
+                slug_en: 'code-of-conduct',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/code_of_conduct',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Accessibility',
+                slug_en: 'accessibility',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/accessibility',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Cookie Policy',
+                slug_en: 'cookie-policy',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/cookie_consent',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              },
+              {
+                title_en: 'Contact Us',
+                slug_en: 'contact',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::RichText',
+                      # rubocop:todo Lint/CopDirectiveSyntax
+                      content_en: <<-HTML
+                          <p>This is a default contact page for your platform. Be sure to write a real one!</p>
+                      HTML
+                      # rubocop:enable Lint/CopDirectiveSyntax
+                    }
+                  },
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/content/blocks/template/host_community_contact_details',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              }
+            ].freeze
+
             # build_footer is called more than once across a process lifetime (initial
             # seed, then again by any code path that re-runs NavigationBuilder.build) —
-            # unlike ensure_static_page! below, this bulk Page.create! has no existence
-            # check, so a second call always failed with "Slug has already been taken".
-            # Reuse the existing pages by slug instead of re-creating them.
-            existing_footer_pages = ::BetterTogether::Page.i18n.where(slug: FOOTER_PAGE_SLUGS)
-                                                          .index_by(&:slug)
-
-            # Create Platform Footer Pages
-            footer_pages = if FOOTER_PAGE_SLUGS.all? { |slug| existing_footer_pages.key?(slug) }
-                             FOOTER_PAGE_SLUGS.map { |slug| existing_footer_pages.fetch(slug) }
-                           else
-                             ::BetterTogether::Page.create!(
-                               [
-                                 {
-                                   title_en: 'FAQ',
-                                   slug_en: 'faq',
-                                   published_at: Time.zone.now,
-                                   privacy: 'public',
-                                   protected: true,
-                                   show_title: false,
-                                   page_blocks_attributes: [
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::Template',
-                                         template_path: 'better_together/static_pages/faq',
-                                         css_settings: { container_class: '', css_classes: 'my-4' }
-                                       }
-                                     }
-                                   ]
-                                 },
-                                 {
-                                   title_en: 'Privacy Policy',
-                                   slug_en: 'privacy-policy',
-                                   published_at: Time.zone.now,
-                                   privacy: 'public',
-                                   protected: true,
-                                   show_title: false,
-                                   page_blocks_attributes: [
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::Template',
-                                         template_path: 'better_together/static_pages/privacy',
-                                         css_settings: { container_class: '', css_classes: 'my-4' }
-                                       }
-                                     }
-                                   ]
-                                 },
-                                 {
-                                   title_en: 'Terms of Service',
-                                   slug_en: 'terms-of-service',
-                                   published_at: Time.zone.now,
-                                   privacy: 'public',
-                                   protected: true,
-                                   show_title: false,
-                                   page_blocks_attributes: [
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::Template',
-                                         template_path: 'better_together/static_pages/terms_of_service',
-                                         css_settings: { container_class: '', css_classes: 'my-4' }
-                                       }
-                                     }
-                                   ]
-                                 },
-                                 {
-                                   title_en: 'Code of Conduct',
-                                   slug_en: 'code-of-conduct',
-                                   published_at: Time.zone.now,
-                                   privacy: 'public',
-                                   protected: true,
-                                   show_title: false,
-                                   page_blocks_attributes: [
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::Template',
-                                         template_path: 'better_together/static_pages/code_of_conduct',
-                                         css_settings: { container_class: '', css_classes: 'my-4' }
-                                       }
-                                     }
-                                   ]
-                                 },
-                                 {
-                                   title_en: 'Accessibility',
-                                   slug_en: 'accessibility',
-                                   published_at: Time.zone.now,
-                                   privacy: 'public',
-                                   protected: true,
-                                   show_title: false,
-                                   page_blocks_attributes: [
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::Template',
-                                         template_path: 'better_together/static_pages/accessibility',
-                                         css_settings: { container_class: '', css_classes: 'my-4' }
-                                       }
-                                     }
-                                   ]
-                                 },
-                                 {
-                                   title_en: 'Cookie Policy',
-                                   slug_en: 'cookie-policy',
-                                   published_at: Time.zone.now,
-                                   privacy: 'public',
-                                   protected: true,
-                                   show_title: false,
-                                   page_blocks_attributes: [
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::Template',
-                                         template_path: 'better_together/static_pages/cookie_consent',
-                                         css_settings: { container_class: '', css_classes: 'my-4' }
-                                       }
-                                     }
-                                   ]
-                                 },
-                                 {
-                                   title_en: 'Contact Us',
-                                   slug_en: 'contact',
-                                   published_at: Time.zone.now,
-                                   privacy: 'public',
-                                   protected: true,
-                                   page_blocks_attributes: [
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::RichText',
-                                         # rubocop:todo Lint/CopDirectiveSyntax
-                                         content_en: <<-HTML
-                          <p>This is a default contact page for your platform. Be sure to write a real one!</p>
-                                         HTML
-                                         # rubocop:enable Lint/CopDirectiveSyntax
-                                       }
-                                     },
-                                     {
-                                       block_attributes: {
-                                         type: 'BetterTogether::Content::Template',
-                                         template_path: 'better_together/content/blocks/template/host_community_contact_details',
-                                         css_settings: { container_class: '', css_classes: 'my-4' }
-                                       }
-                                     }
-                                   ]
-                                 }
-                               ]
-                             )
-                           end
+            # a bulk Page.create! over this whole array has no existence check, so a
+            # second call always failed with "Slug has already been taken" for whichever
+            # pages already existed. Reuse each existing page by slug individually
+            # instead of re-creating it, and only create the ones that are missing —
+            # this also correctly handles a partial state (some footer pages already
+            # seeded, others not yet).
+            existing_footer_pages = ::BetterTogether::Page.i18n.where(slug: FOOTER_PAGE_SLUGS).index_by(&:slug)
+            footer_pages = footer_page_attrs.map do |attrs|
+              existing_footer_pages[attrs[:slug_en]] || ::BetterTogether::Page.create!(attrs)
+            end
 
             # Create contributor agreement pages separately for nested navigation
             contributor_agreement_pages = [

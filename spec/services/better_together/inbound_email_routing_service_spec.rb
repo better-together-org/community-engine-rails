@@ -71,7 +71,10 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
   end
 
   def scanner_result(verdict: 'clean', finding_summary: nil)
-    finding = finding_summary.present? ? [{ 'summary' => finding_summary }] : []
+    # Matches the real shape produced by RuleEngine.build_finding: summary lives under
+    # evidence, not as a flat top-level key. MailScreeningService#summary_for reads it
+    # via finding.dig('evidence', 'summary').
+    finding = finding_summary.present? ? [{ 'evidence' => { 'summary' => finding_summary } }] : []
 
     {
       'content_item' => { 'aggregate_verdict' => verdict },
