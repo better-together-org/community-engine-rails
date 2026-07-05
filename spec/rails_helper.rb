@@ -237,6 +237,35 @@ RSpec.configure do |config|
     # Clear Rails cache to prevent permission/data pollution between parallel workers
     # This is critical for RBAC specs that cache permission checks for 12 hours
     Rails.cache.clear
+
+    # Re-seed essential data if a prior :js/:feature/:system example's :deletion
+    # cleanup wiped it. This must run in a `before` hook, AFTER DatabaseCleaner.start
+    # above: RSpec's `after` hooks run in reverse registration order, so anything
+    # restored from an `after` hook here would immediately be wiped again by the
+    # DatabaseCleaner.clean `after` hook below, since that hook is registered
+    # earlier and therefore runs later. Checking at the start of the next example
+    # instead avoids that ordering trap entirely.
+    unless BetterTogether::Role.exists?
+      Rails.logger.debug '🔄 Re-seeding essential data after a prior :js/:feature/:system test'
+      BetterTogether::AccessControlBuilder.build(clear: false)
+      BetterTogether::NavigationBuilder.build(clear: false)
+      BetterTogether::CategoryBuilder.build(clear: false)
+      BetterTogether::SetupWizardBuilder.build(clear: false)
+      BetterTogether::AgreementBuilder.build(clear: false)
+    end
+
+    # Agreement is in ESSENTIAL_TABLES (never cleaned by the :deletion strategy
+    # used for :js/:feature/:system specs), but the Pages its optional `page`
+    # association points to are not — so once any :js/:feature/:system spec's
+    # cleanup pass wipes the Page table, every seeded Agreement#page_id becomes
+    # a dangling foreign key for the rest of this run, crashing later
+    # `agreement.update!` calls with PG::ForeignKeyViolation. AgreementBuilder
+    # is idempotent (recreates a missing page and re-links it), so just check
+    # whether one of its known seeded pages still exists.
+    unless BetterTogether::Page.exists?(identifier: 'privacy_policy')
+      Rails.logger.debug '🔄 Re-linking agreement pages after a prior :js/:feature/:system test'
+      BetterTogether::AgreementBuilder.build(clear: false)
+    end
   end
 
   config.after do
@@ -255,19 +284,6 @@ RSpec.configure do |config|
   # Reset locale to English after each test to prevent test isolation issues
   config.after do
     I18n.locale = I18n.default_locale
-  end
-
-  # Ensure essential data is available after JS tests
-  config.after(:each, :js) do
-    # Check if essential data exists, re-seed if missing
-    unless BetterTogether::Role.exists?
-      Rails.logger.debug '🔄 Re-seeding essential data after JS test'
-      BetterTogether::AccessControlBuilder.build(clear: false)
-      BetterTogether::NavigationBuilder.build(clear: false)
-      BetterTogether::CategoryBuilder.build(clear: false)
-      BetterTogether::SetupWizardBuilder.build(clear: false)
-      BetterTogether::AgreementBuilder.build(clear: false)
-    end
   end
 end
 
