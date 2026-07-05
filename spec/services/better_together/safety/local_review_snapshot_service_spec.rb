@@ -12,6 +12,13 @@ RSpec.describe BetterTogether::Safety::LocalReviewSnapshotService do
     let!(:held_upload) { create(:better_together_upload) }
 
     before do
+      # Malware scanning / content-security enrollment is gated by
+      # ContentSecurity::Configuration.enabled? (and enabled_for_surface?), which
+      # default to false in the test environment. Without stubbing these, attaching
+      # a file never creates the ContentSecurity::Subject this example expects to
+      # find in the review queue.
+      allow(BetterTogether::ContentSecurity::Configuration).to receive_messages(enabled?: true,
+                                                                                enabled_for_surface?: true)
       held_upload.file.attach(io: StringIO.new('held upload'), filename: 'held.txt', content_type: 'text/plain')
       held_upload.save!
       resolved_report.safety_case.update!(status: 'resolved')

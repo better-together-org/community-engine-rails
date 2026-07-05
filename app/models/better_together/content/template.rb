@@ -25,6 +25,11 @@ module BetterTogether
       end
 
       validates :template_path, presence: true, inclusion: { in: ->(template) { template.class.available_templates } }
+
+      # Hash of locale => rendered plain text, for search indexing.
+      def indexed_localized_content
+        BetterTogether::TemplateRendererService.new(template_path).render_for_all_locales
+      end
     end
   end
 end

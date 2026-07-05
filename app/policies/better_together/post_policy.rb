@@ -3,6 +3,8 @@
 module BetterTogether
   # Access control for posts
   class PostPolicy < PlatformRecordPolicy
+    include SelfServicePublishablePolicy
+
     def index?
       true
     end
@@ -19,7 +21,9 @@ module BetterTogether
     end
 
     def create?
-      platform_content_manager? || community_content_manager?
+      return false unless user.present?
+
+      platform_manager? || community_content_manager? || self_service_content_creator?
     end
     alias new? create?
 
@@ -61,10 +65,6 @@ module BetterTogether
 
     private
 
-    def platform_content_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-    end
-
     def community_content_manager?
       target_community = if record.is_a?(Class)
                            Current.platform&.community
@@ -77,7 +77,7 @@ module BetterTogether
     end
 
     def creator_or_platform_steward?
-      record.creator == agent || platform_content_manager?
+      creator_of?(record) || platform_manager?
     end
 
     def creator_platform_steward_or_editor?

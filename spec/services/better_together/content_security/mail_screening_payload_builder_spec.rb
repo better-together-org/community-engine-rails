@@ -109,6 +109,16 @@ RSpec.describe BetterTogether::ContentSecurity::MailScreeningPayloadBuilder, typ
       it 'sets the source surface to mail' do
         expect(payload[:source][:surface]).to eq('mail')
       end
+
+      it 'includes the raw decoded attachment bytes for malware scanning' do
+        expect(payload[:raw_content]).to eq('binary content')
+      end
+    end
+
+    describe 'message payload raw_content' do
+      it 'is nil for the message body payload' do
+        expect(payloads.first[:raw_content]).to be_nil
+      end
     end
 
     context 'when the resolution has no platform' do

@@ -916,7 +916,9 @@ es:
         reserved: Reservado para acuerdos
         show_network_total: Mostrar mi total de Tree Seeds entre plataformas
         title: Tus Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
@@ -3245,6 +3247,14 @@ es:
       updated_on_short: Actualizado
       view_post: Ver publicación
     primary: Primario
+    privacy:
+      hints:
+        privacy_limited_by_community: Algunas opciones de privacidad están deshabilitadas
+          porque esta comunidad no es pública. El contenido aquí solo puede ser visible
+          para miembros de la comunidad o el autor.
+        privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
+          porque la plataforma no es pública. El contenido solo puede ser visible
+          para miembros de la comunidad o el autor.
     rbac:
       nav:
         resource_permissions: Permisos de recursos
@@ -3898,6 +3908,7 @@ es:
         review_status_description: Los recuentos de revisión se muestran aquí para
           que puedas encontrar rápidamente las cargas aprobadas, retenidas o restringidas.
         review_status_heading: Estado de revisión
+        sort_by_aria: Ordenar cargas por
         storage_usage: Estás usando %{size} de almacenamiento
     validators:
       safe_federation_url:

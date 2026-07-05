@@ -143,6 +143,26 @@ RSpec.describe BetterTogether::PostPolicy do
     it 'denies unauthenticated users' do
       expect(described_class.new(nil, BetterTogether::Post)).not_to be_create
     end
+
+    it 'allows an active community member who has accepted the content publishing agreement' do
+      grant_content_publishing_agreement(community_member_user.person)
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(community_member_user, new_post).create?).to be true
+    end
+
+    it 'denies an active community member who has not accepted the content publishing agreement' do
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(community_member_user, new_post).create?).to be false
+    end
+
+    it 'denies a non-member even with the content publishing agreement accepted' do
+      grant_content_publishing_agreement(regular_user.person)
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(regular_user, new_post).create?).to be false
+    end
   end
 
   describe '#update?' do

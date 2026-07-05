@@ -50,7 +50,8 @@ RSpec.describe 'Markdown pages' do
         FileUtils.mkdir_p(markdown_file_path.dirname)
         File.write(markdown_file_path, "# File Heading\n\nFile paragraph with **formatting**.")
 
-        create(:content_markdown, markdown_source: nil, markdown_file_path: markdown_file_path.to_s)
+        create(:content_markdown, markdown_source: nil, markdown_file_path: markdown_file_path.to_s,
+                                  auto_sync_from_file: true)
       end
 
       after do

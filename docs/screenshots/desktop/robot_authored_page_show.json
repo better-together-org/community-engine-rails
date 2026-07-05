@@ -1,7 +1,7 @@
 {
   "name": "robot_authored_page_show",
   "device": "desktop",
-  "url": "/en/host/pages/robot-authored-page",
+  "url": "/en/pages/robot-authored-page",
   "title": "Robot Authored Page | Test Host Community",
   "locale": "en",
   "role": "platform_manager",

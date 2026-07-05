@@ -11,6 +11,11 @@ RSpec.describe 'Event host association migration' do # rubocop:disable RSpec/Des
   end
 
   it 'removes unrepairable rows and enforces required columns idempotently' do
+    # The dummy app's schema already reflects this migration having run (columns are
+    # NOT NULL from the start), so relax the constraints first to recreate the
+    # pre-migration state before inserting a deliberately invalid (all-NULL) row.
+    migration.down
+
     valid_event_host = create(:better_together_event_host)
     invalid_id = SecureRandom.uuid
 

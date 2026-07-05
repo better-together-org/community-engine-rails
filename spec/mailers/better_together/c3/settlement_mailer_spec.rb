@@ -22,7 +22,7 @@ RSpec.describe BetterTogether::C3::SettlementMailer do
 
     expect(mail.to).to eq(['recipient@example.test'])
     expect(mail.subject).to include('Tree Seeds')
-    expect(mail.body.encoded).to include('1.25 Tree Seeds')
+    expect(mail.body.encoded).to include('12.5 Tree Seeds')
     expect(mail.body.encoded).to include('View agreement')
   end
 end

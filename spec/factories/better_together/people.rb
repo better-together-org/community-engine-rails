@@ -13,7 +13,13 @@ module BetterTogether # :nodoc:
       identifier { "person-#{SecureRandom.hex(10)}" }
       privacy { 'private' } # Explicit default to match database migration
 
-      community
+      # No explicit `community` here (deliberately) — Person's own
+      # create_primary_community callback (PrimaryCommunity concern)
+      # auto-builds one matching this person's own privacy value when none
+      # is given. A hardcoded factory-built community here would always
+      # default to 'private' regardless of the person's own privacy,
+      # exceeding the privacy ceiling (PrivacyCeilingValidatable) whenever a
+      # test overrides `privacy: 'public'`/`'community'`.
 
       # Add email address after creation since Person model likely requires it for mailer
       after(:create) do |person|

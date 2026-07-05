@@ -902,7 +902,11 @@ uk:
         reserved: Зарезервовано для угод
         show_network_total: Показати мій загальний обсяг Tree Seeds між платформами
         title: Ваші Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        few: Tree Seeds
+        many: Tree Seeds
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
@@ -3232,6 +3236,14 @@ uk:
       updated_on_short: Оновлено
       view_post: Переглянути пост
     primary: Основний
+    privacy:
+      hints:
+        privacy_limited_by_community: Деякі параметри конфіденційності вимкнено, оскільки
+          ця спільнота не є публічною. Вміст тут можуть бачити лише учасники спільноти
+          або автор.
+        privacy_limited_by_platform: Деякі параметри конфіденційності вимкнено, оскільки
+          платформа не є публічною. Вміст можуть бачити лише учасники спільноти або
+          автор.
     rbac:
       nav:
         resource_permissions: Дозволи ресурсів
@@ -3877,6 +3889,7 @@ uk:
         review_status_description: Тут відображаються підрахунки перевірки, щоб ви
           могли швидко знайти схвалені, утримані або обмежені завантаження.
         review_status_heading: Статус перевірки
+        sort_by_aria: Сортувати завантаження за
         storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:

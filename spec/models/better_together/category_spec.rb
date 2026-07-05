@@ -109,7 +109,7 @@ module BetterTogether # :nodoc:
         expect(category.icon).to eq('fas fa-star')
       end
     end
-  end
 
-  it_behaves_like 'platform scoped identifier', factory: :category
+    it_behaves_like 'platform scoped identifier', factory: :category
+  end
 end

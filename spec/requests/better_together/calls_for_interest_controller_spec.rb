@@ -15,7 +15,14 @@ RSpec.describe 'BetterTogether::CallsForInterestController', :as_user do
 
   describe 'GET /calls_for_interest/:id' do
     let(:call_for_interest) do
-      create(:call_for_interest, privacy: 'public', starts_at: 1.day.from_now)
+      # The :call_for_interest factory pins its own independent :public platform
+      # by default (intentional for multi-platform isolation tests elsewhere).
+      # FriendlyResourceController's #show scopes lookups through
+      # CallForInterestPolicy::Scope, which is platform_scoped to Current.platform
+      # (the host platform in request specs) — without this override the record
+      # is invisible to the request and 404s instead of rendering.
+      create(:call_for_interest, privacy: 'public', starts_at: 1.day.from_now,
+                                 platform: BetterTogether::Platform.find_by(host: true))
     end
 
     before do

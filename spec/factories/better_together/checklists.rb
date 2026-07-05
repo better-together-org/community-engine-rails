@@ -7,6 +7,9 @@ FactoryBot.define do
     protected { false }
     privacy { 'private' }
     sequence(:title) { |n| "Test Checklist #{n}" }
-    association :platform, factory: :better_together_platform
+    # :public — the base platform factory defaults to 'private', which would
+    # make an overridden 'public'/'community' checklist privacy exceed its
+    # platform's privacy ceiling (see PrivacyCeilingValidatable).
+    association :platform, factory: %i[better_together_platform public]
   end
 end

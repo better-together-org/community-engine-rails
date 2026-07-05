@@ -24,14 +24,28 @@ RSpec.describe 'BetterTogether::Api::V1::Fleet::Nodes', :no_auth do
     }
   end
   let(:last_seen_at) { Time.current }
-  let(:node_record) do
+  # Defined as a class (rather than instantiated directly) so it can be
+  # stub_const'd as BetterTogether::Fleet::Node below. That gives instances
+  # a #class.name of 'BetterTogether::Fleet::Node', which Pundit's
+  # PolicyFinder needs to resolve the real BetterTogether::Fleet::NodePolicy
+  # for `authorize node, :update?` in the heartbeat action. An anonymous
+  # struct instance whose class was never named as a constant fails that
+  # lookup with Pundit::NotDefinedError.
+  let(:node_class) do
     Struct.new(:node_id, :hardware, :compute, :services, :last_seen_at, :owner, keyword_init: true) do
+      def self.find_by(*)
+        nil
+      end
+
       def mark_online!; end
 
       def update!(*); end
 
       def assign_owner!(*); end
-    end.new(
+    end
+  end
+  let(:node) do
+    node_class.new(
       node_id: 'test-node-1',
       hardware: { 'ram_gb' => 32 },
       compute: { 'cpu' => 'm2' },
@@ -40,14 +54,9 @@ RSpec.describe 'BetterTogether::Api::V1::Fleet::Nodes', :no_auth do
       owner: nil
     )
   end
-  let(:node) { node_record }
 
   before do
-    stub_const('BetterTogether::Fleet::Node', Class.new do
-      def self.find_by(*)
-        nil
-      end
-    end)
+    stub_const('BetterTogether::Fleet::Node', node_class)
     allow(BetterTogether::Fleet::Node).to receive(:find_by).with(node_id: 'test-node-1').and_return(node)
     allow(node).to receive(:mark_online!)
     allow(node).to receive(:update!)

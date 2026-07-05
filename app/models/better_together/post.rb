@@ -24,7 +24,6 @@ module BetterTogether
     include TrackedActivity
     include ::Storext.model
     include CommunityAssignable
-    include PrivacyCeilingValidatable
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
@@ -122,6 +121,14 @@ module BetterTogether
 
     def short_link_target_url
       BetterTogether::Engine.routes.url_helpers.post_url(self, locale: I18n.locale)
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    def as_indexed_json
+      {
+        title: title,
+        content: content&.to_plain_text
+      }
     end
   end
 end

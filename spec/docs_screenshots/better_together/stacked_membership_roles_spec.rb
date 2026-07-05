@@ -10,46 +10,46 @@ RSpec.describe 'Documentation screenshots for stacked membership roles',
                type: :feature do
   let(:locale) { I18n.default_locale }
   let(:password) { 'SecureTest123!@#' }
-  let!(:host_platform) do
+  let(:host_platform) do
     configure_host_platform.tap do |platform|
       platform.update!(privacy: 'private', requires_invitation: true, allow_membership_requests: false)
       platform.primary_community&.update!(allow_membership_requests: false)
     end
   end
-  let!(:platform_steward_role) do
+  let(:platform_steward_role) do
     BetterTogether::Role.find_by(identifier: 'platform_steward', resource_type: 'BetterTogether::Platform') ||
       BetterTogether::Role.find_by(identifier: 'platform_manager', resource_type: 'BetterTogether::Platform') ||
       create(:better_together_role, :platform_manager)
   end
-  let!(:network_admin_role) do
+  let(:network_admin_role) do
     BetterTogether::Role.find_by(identifier: 'network_admin', resource_type: 'BetterTogether::Platform') ||
       create(:better_together_role, identifier: 'network_admin', name: 'Network Admin',
                                     resource_type: 'BetterTogether::Platform')
   end
-  let!(:community_organizer_role) do
+  let(:community_organizer_role) do
     BetterTogether::Role.find_by(identifier: 'community_organizer', resource_type: 'BetterTogether::Community') ||
       create(:better_together_role, identifier: 'community_organizer', name: 'Community Organizer',
                                     resource_type: 'BetterTogether::Community')
   end
-  let!(:community_coordinator_role) do
+  let(:community_coordinator_role) do
     BetterTogether::Role.find_by(identifier: 'community_coordinator', resource_type: 'BetterTogether::Community') ||
       create(:better_together_role, identifier: 'community_coordinator', name: 'Community Coordinator',
                                     resource_type: 'BetterTogether::Community')
   end
-  let!(:platform_viewer) do
+  let(:platform_viewer) do
     create(:better_together_user, :confirmed,
            email: "stacked-platform-viewer-#{SecureRandom.hex(4)}@example.test",
            password:,
            person_attributes: { name: 'Platform Operations Lead' })
   end
-  let!(:community_viewer) do
+  let(:community_viewer) do
     create(:better_together_user, :confirmed,
            email: "stacked-community-viewer-#{SecureRandom.hex(4)}@example.test",
            password:,
            person_attributes: { name: 'Community Operations Lead' })
   end
-  let!(:dual_role_person) { create(:better_together_person, name: 'Robin Steward') }
-  let!(:review_community) do
+  let(:dual_role_person) { create(:better_together_person, name: 'Robin Steward') }
+  let(:review_community) do
     create(:better_together_community,
            name: 'Harbour Gardeners',
            privacy: 'private',

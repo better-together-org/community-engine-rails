@@ -7,7 +7,10 @@ FactoryBot.define do
     description { Faker::Lorem.paragraph(sentence_count: 3) }
     privacy { 'public' }
     association :creator, factory: :person
-    association :platform, factory: :better_together_platform
+    # Explicitly :public — the base platform factory defaults to 'private',
+    # which would make this record's own 'public' privacy default exceed the
+    # platform's privacy ceiling (see PrivacyCeilingValidatable).
+    association :platform, factory: %i[better_together_platform public]
     starts_at { 1.week.from_now }
     ends_at { 2.weeks.from_now }
 

@@ -10,17 +10,17 @@ RSpec.describe 'Documentation screenshots for membership review remediation',
                type: :feature do
   let(:locale) { I18n.default_locale }
   let(:password) { 'SecureTest123!@#' }
-  let!(:host_platform) do
+  let(:host_platform) do
     configure_host_platform.tap do |platform|
       platform.update!(privacy: 'private', requires_invitation: true, allow_membership_requests: false)
       platform.primary_community.update!(allow_membership_requests: false)
     end
   end
-  let!(:platform_manager_role) do
+  let(:platform_manager_role) do
     BetterTogether::Role.find_by(identifier: 'platform_manager', resource_type: 'BetterTogether::Platform') ||
       create(:better_together_role, :platform_manager)
   end
-  let!(:community_manager_role) do
+  let(:community_manager_role) do
     BetterTogether::Role.find_by(identifier: 'community_manager',
                                  resource_type: 'BetterTogether::Community') ||
       create(:better_together_role,
@@ -28,22 +28,26 @@ RSpec.describe 'Documentation screenshots for membership review remediation',
              name: 'Community Manager',
              resource_type: 'BetterTogether::Community')
   end
-  let!(:platform_manager) do
+  let(:platform_manager) do
     create(:better_together_user, :confirmed,
            email: "membership-review-platform-manager-#{SecureRandom.hex(4)}@example.test",
            password:,
            person_attributes: { name: 'Platform Review Steward' })
   end
-  let!(:community_manager) do
+  let(:community_manager) do
     create(:better_together_user, :confirmed,
            email: "membership-review-community-manager-#{SecureRandom.hex(4)}@example.test",
            password:,
            person_attributes: { name: 'Community Review Steward' })
   end
-  let!(:review_community) do
+  # privacy: 'community' — host_platform is intentionally private above, and
+  # the ceiling only allows 'community' under a private/locked-down platform
+  # (see PrivacyCeilingValidatable). Reviewers in this spec are always
+  # authenticated managers, so this doesn't change what's actually exercised.
+  let(:review_community) do
     create(:better_together_community,
            name: 'Harbour Gardeners',
-           privacy: 'public',
+           privacy: 'community',
            allow_membership_requests: false)
   end
 

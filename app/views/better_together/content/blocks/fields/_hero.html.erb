@@ -19,7 +19,15 @@
     </div>
 
     <div class="cta-url-field align-self-end mb-3">
-      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'cta_url', help_text: t('better_together.content.blocks.hero.editor.cta_url_help', default: 'Button link destination (https://...)') } %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: {
+                   model: block, scope: scope, temp_id: temp_id, attribute: 'cta_url',
+                   help_text: t('better_together.content.blocks.hero.editor.cta_url_help', default: 'Button link destination (https://...)'),
+                   input_options: {
+                     pattern: 'https?://.+',
+                     title: t('better_together.content.blocks.hero.editor.cta_url_invalid')
+                   }
+                 } %>
     </div>
 
     <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field', locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'cta_text' } %>

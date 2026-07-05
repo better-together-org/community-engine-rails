@@ -81,7 +81,12 @@ module BetterTogether
 
     translates :title, type: :string
 
-    slugged :title
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    # Leaving this default (true) adds a second, unscoped uniqueness validator
+    # on the same column, which rejects legitimate same-slug records on
+    # different platforms even though Identifier's own scoping would allow it.
+    slugged :title, slug_uniqueness: false
 
     validates :title, presence: true, length: { maximum: 255 }, unless: :linkable_provides_title?
     validates :url,
@@ -211,8 +216,14 @@ module BetterTogether
       self.visibility_strategy ||= 'authenticated'
     end
 
+    # Defaults to the most open privacy level allowed by the platform's own
+    # ceiling (see PrivacyCeilingValidatable, mixed in via Privacy), falling
+    # back to 'public' only if no ceiling can be resolved (e.g. platform not
+    # yet set). Previously hardcoded to 'public' unconditionally, which broke
+    # the moment PrivacyCeilingValidatable became active on every Privacy
+    # model — a private/community platform would reject its own default.
     def set_default_privacy
-      self.privacy ||= 'public'
+      self.privacy ||= privacy_ceiling || 'public'
     end
 
     def title(options = {})

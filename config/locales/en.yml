@@ -922,7 +922,9 @@ en:
         reserved: Reserved for agreements
         show_network_total: Show my cross-platform Tree Seeds total
         title: Your Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
@@ -3197,6 +3199,14 @@ en:
       updated_on_short: Updated
       view_post: View Post
     primary: Primary
+    privacy:
+      hints:
+        privacy_limited_by_community: Some privacy options are disabled because this
+          community is not public. Content here can only be visible to community members
+          or the author.
+        privacy_limited_by_platform: Some privacy options are disabled because the
+          platform is not public. Content can only be visible to community members
+          or the author.
     rbac:
       nav:
         resource_permissions: Resource permissions
@@ -3839,6 +3849,7 @@ en:
         review_status_description: Review counts are shown here to help you quickly
           find approved, held, or restricted uploads.
         review_status_heading: Review status
+        sort_by_aria: Sort uploads by
         storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:

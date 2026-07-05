@@ -18,9 +18,13 @@ module BetterTogether
 
       validates :columns, inclusion: { in: COLUMN_OPTIONS }
 
+      after_initialize do |record|
+        record.stats_json = '[]' if record.stats_json.blank?
+      end
+
       # Returns an array of stat hashes with symbolized keys, or [] on parse failure.
       def parsed_stats
-        JSON.parse(stats_json).map(&:symbolize_keys)
+        JSON.parse(stats_json.presence || '[]').map(&:symbolize_keys)
       rescue JSON::ParserError
         []
       end

@@ -56,7 +56,8 @@ RSpec.describe 'Host nav visibility for analytics viewer', :no_auth do
     BetterTogether::PersonPlatformMembership.create!(
       member: user.person,
       joinable: host_platform,
-      role: role
+      role: role,
+      status: 'active'
     )
 
     host_nav.update!(
@@ -140,7 +141,7 @@ RSpec.describe 'Host nav visibility for analytics viewer', :no_auth do
     safety_permission = BetterTogether::ResourcePermission.find_by!(identifier: 'manage_platform_safety')
     safety_role = create(:better_together_role, :platform_role)
     safety_role.assign_resource_permissions([safety_permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role: safety_role)
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role: safety_role, status: 'active')
 
     BetterTogether::NavigationItem.find_or_create_by!(
       identifier: 'host-dashboard-safety-review',
@@ -169,7 +170,7 @@ RSpec.describe 'Host nav visibility for analytics viewer', :no_auth do
     manage_platform_permission = BetterTogether::ResourcePermission.find_by!(identifier: 'manage_platform')
     manage_platform_role = create(:better_together_role, :platform_role)
     manage_platform_role.assign_resource_permissions([manage_platform_permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role: manage_platform_role)
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role: manage_platform_role, status: 'active')
 
     BetterTogether::NavigationItem.find_or_create_by!(
       identifier: 'host-dashboard-membership-review',
@@ -198,7 +199,7 @@ RSpec.describe 'Host nav visibility for analytics viewer', :no_auth do
     network_permission = BetterTogether::ResourcePermission.find_by!(identifier: 'approve_network_connections')
     network_role = create(:better_together_role, :platform_role)
     network_role.assign_resource_permissions([network_permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role: network_role)
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role: network_role, status: 'active')
 
     BetterTogether::NavigationItem.find_or_create_by!(
       identifier: 'host-dashboard-platform-connection-review',

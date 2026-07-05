@@ -384,6 +384,60 @@ entries:
     action: destroy
     reverse_association: ai_translation_logs
 
+  - key: BetterTogether::PersonMessagingGrant#grantor
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonMessagingGrant
+    association: grantor
+    foreign_key: grantor_id
+    action: destroy
+    reverse_association: messaging_grants_given
+
+  - key: BetterTogether::PersonMessagingGrant#grantee
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PersonMessagingGrant
+    association: grantee
+    foreign_key: grantee_id
+    action: destroy
+    reverse_association: messaging_grants_received
+
+  - key: BetterTogether::FeatureAccessGrant#person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::FeatureAccessGrant
+    association: person
+    foreign_key: person_id
+    action: destroy
+    reverse_association: feature_access_grants
+
+  - key: BetterTogether::FeatureAccessGrant#granted_by_person
+    kind: model_reference
+    owner: person
+    model: BetterTogether::FeatureAccessGrant
+    association: granted_by_person
+    foreign_key: granted_by_person_id
+    action: retain
+    reverse_association: granted_feature_access_grants
+
+  - key: BetterTogether::MessageRequest#sender
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MessageRequest
+    association: sender
+    foreign_key: sender_id
+    action: destroy
+    reverse_association: sent_message_requests
+
+  - key: BetterTogether::MessageRequest#recipient
+    kind: model_reference
+    owner: person
+    model: BetterTogether::MessageRequest
+    association: recipient
+    foreign_key: recipient_id
+    action: destroy
+    reverse_association: received_message_requests
+
   - key: BetterTogether::Creatable#creator
     kind: creatable_creator_reference
     owner: person

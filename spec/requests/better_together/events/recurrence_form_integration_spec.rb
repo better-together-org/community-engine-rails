@@ -34,6 +34,7 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
       starts_at: starts_at.iso8601,
       timezone: 'America/New_York',
       privacy: 'public',
+      creator_id: user.person.id,
       category_ids: []
     }
   end

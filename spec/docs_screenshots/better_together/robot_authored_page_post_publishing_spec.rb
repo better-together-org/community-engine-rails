@@ -8,14 +8,14 @@ RSpec.describe 'Documentation screenshots for robot-authored page and post publi
                :js,
                retry: 0,
                type: :feature do
-  let!(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
-  let!(:robot) do
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:robot) do
     create(:robot,
            platform: Current.platform || BetterTogether::Platform.find_by(host: true) || create(:better_together_platform),
            name: 'BTS Publishing Robot',
            identifier: 'bts-publishing-robot')
   end
-  let!(:page_record) do
+  let(:page_record) do
     create(:better_together_page,
            title: 'Robot Authored Page',
            slug: 'robot-authored-page',
@@ -28,7 +28,7 @@ RSpec.describe 'Documentation screenshots for robot-authored page and post publi
       page.page_blocks.create!(block: markdown, position: 0)
     end
   end
-  let!(:post_record) do
+  let(:post_record) do
     create(:better_together_post,
            title: 'Robot Authored Post',
            slug: 'robot-authored-post',

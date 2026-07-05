@@ -74,6 +74,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'reform-rails', '>= 0.2', '< 0.4'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.18.0'
   spec.add_dependency 'ruby_llm'
+  spec.add_dependency 'ruby-vips', '~> 2.2'
   spec.add_dependency 'sidekiq-scheduler'
   spec.add_dependency 'simple_calendar'
   spec.add_dependency 'sitemap_generator'

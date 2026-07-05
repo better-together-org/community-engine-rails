@@ -8,7 +8,7 @@ RSpec.describe 'Documentation screenshots for 0.11.0 bot safety',
                :skip_host_setup,
                retry: 0,
                type: :feature do
-  let!(:community_manager_role) do
+  let(:community_manager_role) do
     BetterTogether::Role.find_by(identifier: 'community_manager',
                                  resource_type: 'BetterTogether::Community') ||
       create(:better_together_role,

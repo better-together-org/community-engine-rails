@@ -18,6 +18,16 @@ module BetterTogether
 
           class OwnerAuthorizationError < StandardError; end
 
+          # Custom (non-JSONAPI::Resources) actions authorize via bare Pundit
+          # `authorize`/`policy_scope` calls, which never set the @policy_used
+          # flag that Pundit::ResourceController#enforce_policy_use checks for.
+          # Skip its verification here, matching the established pattern used
+          # by other custom-action API controllers (see c3/contributions_controller,
+          # borgberry/profile_controller, prekeys_controller, etc.).
+          skip_after_action :verify_authorized, raise: false
+          skip_after_action :verify_policy_scoped, raise: false
+          skip_after_action :enforce_policy_use, raise: false
+
           require_oauth_scopes :read, only: %i[index show]
           require_oauth_scopes :write, only: %i[create heartbeat]
           before_action :require_fleet_service_access!
