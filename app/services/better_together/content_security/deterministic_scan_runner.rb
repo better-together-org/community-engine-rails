@@ -20,11 +20,12 @@ module BetterTogether
                    malware_findings(payload)
 
         aggregate = RuleEngine.aggregate_content_state(findings)
+        stringified_findings = findings.map(&:deep_stringify_keys)
 
         {
           'content_item' => aggregate.deep_stringify_keys,
-          'findings' => findings.map(&:deep_stringify_keys),
-          'records' => findings.map(&:deep_stringify_keys)
+          'findings' => stringified_findings,
+          'records' => stringified_findings
         }
       end
 
@@ -51,17 +52,8 @@ module BetterTogether
         Tempfile.create('bt-mail-scan', binmode: true) do |file|
           file.write(raw_content)
           file.flush
-          build_clam_av_client.scan_file(file.path)
+          Configuration.build_client.scan_file(file.path)
         end
-      end
-
-      def build_clam_av_client
-        ClamAvClient.new(
-          host: Configuration.host,
-          port: Configuration.port,
-          timeout: Configuration.timeout,
-          max_stream_bytes: Configuration.max_stream_bytes
-        )
       end
 
       def malware_finding(filename, signature_name)

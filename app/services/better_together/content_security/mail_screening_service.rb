@@ -49,6 +49,11 @@ module BetterTogether
       end
 
       def persist_scanner_error(message, error)
+        Rails.logger.error(
+          "[ContentSecurity::MailScreeningService] scan failed for message ##{message.id}: " \
+          "#{error.class}: #{error.message}"
+        )
+
         message.update!(
           screening_state: 'error',
           screening_verdict: 'review_required',
