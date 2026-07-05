@@ -29,12 +29,27 @@ module BetterTogether # :nodoc:
 
       base = Vips::Image.new_from_file(image_path.to_s, access: :sequential)
       base = base.bandjoin(255) unless base.has_alpha?
-      overlay = Vips::Image.svgload_buffer(build_overlay_svg(base.width, base.height, prepared))
+      overlay = with_svg_load_allowed { Vips::Image.svgload_buffer(build_overlay_svg(base.width, base.height, prepared)) }
       write_processed_image(base.composite2(overlay, :over), image_path)
       prepared
     end
 
     private
+
+    # The image_processing gem calls Vips.block_untrusted(true) as a security default
+    # whenever ActiveStorage's :vips variant processor loads (guarding against malicious
+    # *user-uploaded* SVGs) — this blocks svgload_buffer process-wide for every caller,
+    # including this one. The overlay SVG here is entirely self-generated from callout
+    # coordinates, never user input, so it's safe to temporarily lift the block for this
+    # one call and restore it immediately after.
+    def with_svg_load_allowed
+      return yield unless defined?(::Vips) && ::Vips.respond_to?(:block_untrusted)
+
+      ::Vips.block_untrusted(false)
+      yield
+    ensure
+      ::Vips.block_untrusted(true) if defined?(::Vips) && ::Vips.respond_to?(:block_untrusted)
+    end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def prepare_callouts(callouts, image_path:)
