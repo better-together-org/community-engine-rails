@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::PersonDeletionExecutor do
   before do
     create(:better_together_person_data_export, person:)
 
-    platform = create(:better_together_platform)
+    platform = create(:better_together_platform, :public)
     page = create(:better_together_page, creator: person, platform:)
 
     BetterTogether::Authorship.create!(author: person, authorable: page)

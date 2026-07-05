@@ -11,6 +11,9 @@ RSpec.describe 'uploads gallery', :js do # rubocop:disable Metrics/BlockLength
   before do
     configure_host_platform
     login_as_platform_manager
+    # Malware scanning is disabled by default (ENV-gated) — this spec exercises
+    # the content-security review/release workflow, so it must be enabled.
+    allow(BetterTogether::ContentSecurity::Configuration).to receive_messages(enabled?: true, enabled_for_surface?: true)
   end
 
   def create_upload(name, creator:, created_at: Time.current, released: true)

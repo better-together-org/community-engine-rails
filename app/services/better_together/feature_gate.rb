@@ -48,7 +48,11 @@ module BetterTogether
     end
 
     def rollout
-      return feature.fetch(:default_rollout) unless platform.present?
+      # `feature` validates feature_key against the registry (raising KeyError for an
+      # unknown key) — always resolve it, even when platform.feature_rollout_for below
+      # would otherwise silently degrade an unknown key to 'off'.
+      default_rollout = feature.fetch(:default_rollout)
+      return default_rollout unless platform.present?
 
       platform.feature_rollout_for(feature_key)
     end

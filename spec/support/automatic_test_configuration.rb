@@ -372,12 +372,16 @@ module AutomaticTestConfiguration # :nodoc:
       default_name = role_type == :user ? 'Test User' : 'Platform Steward'
       identifier = base_identifier
 
-      if BetterTogether::Person.where(identifier: identifier).exists?
+      reserved_words = BetterTogether::Person.friendly_id_config.reserved_words || []
+      identifier_taken = BetterTogether::Person.where(identifier: identifier).exists? ||
+                         reserved_words.include?(identifier)
+
+      if identifier_taken
         digest_identifier = "#{base_identifier}-#{Digest::SHA256.hexdigest(email)[0, 8]}"
         identifier = digest_identifier
         suffix = 0
 
-        while BetterTogether::Person.where(identifier: identifier).exists?
+        while BetterTogether::Person.where(identifier: identifier).exists? || reserved_words.include?(identifier)
           suffix += 1
           identifier = "#{digest_identifier}-#{suffix}"
         end

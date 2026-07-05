@@ -15,7 +15,9 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    slugged :name
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    slugged :name, slug_uniqueness: false
 
     searchable pg_search: {
       against: [:identifier],

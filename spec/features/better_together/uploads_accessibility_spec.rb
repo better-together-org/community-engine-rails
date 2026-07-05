@@ -15,7 +15,7 @@ RSpec.describe 'uploads accessibility', :accessibility, :js, retry: 0 do
   end
 
   def create_image_upload(name, creator:)
-    image_path = File.expand_path('../../app/assets/images/better_together/unsplash-community-1.jpeg', __dir__)
+    image_path = File.expand_path('../../../app/assets/images/better_together/unsplash-community-1.jpeg', __dir__)
     create(:better_together_upload, name:, creator:).tap do |upload|
       File.open(image_path, 'rb') do |file|
         upload.file.attach(io: file, filename: "#{name.parameterize}.jpeg", content_type: 'image/jpeg')
@@ -46,6 +46,9 @@ RSpec.describe 'uploads accessibility', :accessibility, :js, retry: 0 do
   before do
     configure_host_platform
     login_as_platform_manager
+    # Malware scanning is disabled by default (ENV-gated) — this spec exercises
+    # the content-security review/release workflow, so it must be enabled.
+    allow(BetterTogether::ContentSecurity::Configuration).to receive_messages(enabled?: true, enabled_for_surface?: true)
   end
 
   describe 'uploads index page' do
@@ -56,7 +59,9 @@ RSpec.describe 'uploads accessibility', :accessibility, :js, retry: 0 do
       restrict_upload!(restricted)
 
       visit file_index_path(locale: I18n.default_locale)
-      find('[data-better_together--uploads-target="item"]', wait: 10)
+      # Just a page-load readiness wait — three uploads render, so multiple
+      # elements legitimately match; grab the first rather than requiring one.
+      find('[data-better_together--uploads-target="item"]', wait: 10, match: :first)
     end
 
     it 'passes WCAG 2.1 AA on the uploads gallery page' do

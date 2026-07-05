@@ -7,6 +7,11 @@ module BetterTogether
     include NotificationReadable
     include ChecksRequiredAgreements
 
+    # Prepended so this runs before the inherited :authorize_resource
+    # before_action — otherwise Pundit's denial (via #authorize_resource,
+    # overridden below) wins first and this friendlier redirect never fires.
+    prepend_before_action :check_content_publishing_agreement, only: %i[new create]
+
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
@@ -24,7 +29,12 @@ module BetterTogether
       Rails.application.eager_load!
     end
 
-    before_action :build_event_hosts, only: :new
+    # build_event_hosts is invoked explicitly from #authorize_resource below
+    # (not as a separate before_action) — the inherited :authorize_resource
+    # before_action runs before any subclass-registered before_action, so a
+    # bare `before_action :build_event_hosts, only: :new` would authorize an
+    # empty event_hosts collection, making self-service host authorization
+    # (EventPolicy#event_host_member?) always fail on GET .../events/new.
     before_action :process_recurrence_attributes, only: %i[create update]
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
 
@@ -196,6 +206,11 @@ module BetterTogether
 
     # Override the parent's authorize_resource method to include invitation token context
     def authorize_resource
+      # Build event_hosts before authorizing so EventPolicy#create?/new? (via
+      # event_host_member?) sees the actual submitted/defaulted hosts, not an
+      # empty collection.
+      build_event_hosts if action_name == 'new'
+
       # Set invitation token for authorization
       invitation_token = params[:invitation_token] || session[:event_invitation_token]
       self.current_invitation_token = invitation_token
@@ -296,6 +311,29 @@ module BetterTogether
       @event = @resource if @resource.is_a?(BetterTogether::Event)
     end
 
+    # A private Event that's excluded from the policy-scoped resource_collection
+    # (no valid invitation token, not a host/creator/steward) still exists on this
+    # platform — for an unauthenticated visitor that reads as "please sign in",
+    # not a blanket 404 (which would also incorrectly apply to genuinely missing
+    # events / events on another platform).
+    def handle_resource_not_found
+      return super if current_user.present? || current_robot.present?
+
+      event = platform_scoped_event_ignoring_privacy
+      return super unless event
+
+      redirect_to new_user_session_path(locale: I18n.locale)
+    end
+
+    def platform_scoped_event_ignoring_privacy
+      platform = Current.platform || Current.host_platform
+      return nil unless platform
+
+      resource_class.where(platform_id: platform.id).friendly.find(id_param)
+    rescue ActiveRecord::RecordNotFound, StandardError
+      nil
+    end
+
     # rubocop:todo Metrics/MethodLength
     def rsvp_update(status) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       set_resource_instance
@@ -312,10 +350,14 @@ module BetterTogether
         return
       end
 
-      # Ensure current_person exists before creating attendance
+      # Ensure current_person exists before creating attendance. Redirect to
+      # sign-in (not back to @event) — for a private event the visitor may
+      # only have been able to view it via a one-time invitation token, and
+      # bouncing back to that same URL without the token would just 404/loop.
       current_person = helpers.current_person
       unless current_person
-        redirect_to @event, alert: t('better_together.events.login_required', default: 'Please log in to RSVP.')
+        redirect_to new_user_session_path(locale: I18n.locale),
+                    alert: t('better_together.events.login_required', default: 'Please log in to RSVP.')
         return
       end
 

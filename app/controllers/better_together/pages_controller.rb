@@ -3,9 +3,20 @@
 module BetterTogether
   # Responds to requests for pages
   class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    include ChecksRequiredAgreements
+
     before_action :set_page, only: %i[show edit update destroy]
+    before_action :check_content_publishing_agreement, only: %i[new create]
 
     skip_before_action :check_platform_setup, unless: -> { ::BetterTogether::Platform.where(host: true).any? }
+
+    # #new (below) already builds @page with community_id set and calls
+    # `authorize @page` itself. The inherited :authorize_resource before_action
+    # runs before #new's body, so without this skip it would authorize a
+    # communityless instance first — making PagePolicy's community-dependent
+    # self-service check always fail before #new ever gets a chance to
+    # populate community_id.
+    skip_before_action :authorize_resource, only: %i[new]
 
     before_action only: %i[new edit], if: -> { Rails.env.development? } do
       # Make sure that all BLock subclasses are loaded in dev to generate new block buttons

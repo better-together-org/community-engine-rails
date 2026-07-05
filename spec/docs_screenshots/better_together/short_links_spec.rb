@@ -18,13 +18,13 @@ RSpec.describe 'Documentation screenshots for Short Links',
                type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
-  let!(:host_platform) do
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:host_platform) do
     configure_host_platform.tap do |platform|
       platform.update!(privacy: 'public', requires_invitation: false, allow_membership_requests: false)
     end
   end
-  let!(:active_short_link) do
+  let(:active_short_link) do
     BetterTogether::ShortLink.create!(
       code: 'abc123',
       target_url: 'https://bettertogethersolutions.com/',
@@ -34,7 +34,7 @@ RSpec.describe 'Documentation screenshots for Short Links',
       creator: manager.person
     )
   end
-  let!(:expired_short_link) do
+  let(:expired_short_link) do
     BetterTogether::ShortLink.create!(
       code: 'exp999',
       target_url: 'https://example.com/old-page',

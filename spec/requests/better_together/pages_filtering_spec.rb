@@ -34,7 +34,7 @@ RSpec.describe 'Pages filtering and sorting', :as_platform_manager do
     end
   end
 
-  describe 'POST /host/pages' do
+  describe 'POST /pages' do
     let(:valid_params) do
       {
         page: {

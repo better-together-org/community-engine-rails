@@ -33,6 +33,7 @@ RSpec.describe 'Metrics RBAC Authorization' do
         member: user.person
       ) do |membership|
         membership.role = analytics_viewer_role
+        membership.status = 'active'
       end
 
       Rails.cache.clear

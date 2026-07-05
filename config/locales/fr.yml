@@ -919,7 +919,9 @@ fr:
         reserved: Réservé pour les accords
         show_network_total: Afficher mon total de Tree Seeds entre plates-formes
         title: Vos Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
@@ -3244,6 +3246,14 @@ fr:
       updated_on_short: Mis à jour
       view_post: Voir la publication
     primary: Principal
+    privacy:
+      hints:
+        privacy_limited_by_community: Certains paramètres de confidentialité sont
+          désactivés car cette communauté n'est pas publique. Le contenu peut seulement
+          être visible pour les membres de la communauté ou l'auteur.
+        privacy_limited_by_platform: Certains paramètres de confidentialité sont désactivés
+          car la plateforme n'est pas publique. Le contenu peut seulement être visible
+          pour les membres de la communauté ou l'auteur.
     rbac:
       nav:
         resource_permissions: Autorisations de ressources
@@ -3900,6 +3910,7 @@ fr:
           vous aider à trouver rapidement les téléversements approuvés, retenus ou
           restreints.
         review_status_heading: Statut de révision
+        sort_by_aria: Trier les téléchargements par
         storage_usage: Vous utilisez %{size} de stockage
     validators:
       safe_federation_url:

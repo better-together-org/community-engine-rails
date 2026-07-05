@@ -9,7 +9,9 @@ module BetterTogether
     include Protected
     include Visible
 
-    slugged :name
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    slugged :name, slug_uniqueness: false
     translates :name, type: :string
 
     belongs_to :navigable, polymorphic: true, optional: true

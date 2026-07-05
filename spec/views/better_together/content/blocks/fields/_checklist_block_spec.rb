@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'better_together/content/blocks/fields/_checklist_block.html.erb' do
   helper BetterTogether::Content::BlocksHelper
+  helper BetterTogether::TranslatableFieldsHelper
 
   let(:scope) { 'block' }
   let(:temp_id) { 'checklist-block-spec' }

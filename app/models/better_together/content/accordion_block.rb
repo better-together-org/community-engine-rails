@@ -14,9 +14,13 @@ module BetterTogether
         open_first String, default: 'true'
       end
 
+      after_initialize do |record|
+        record.accordion_items_json = '[]' if record.accordion_items_json.blank?
+      end
+
       # Returns an array of item hashes with symbolized keys, or [] on parse failure.
       def parsed_accordion_items
-        JSON.parse(accordion_items_json).map(&:symbolize_keys)
+        JSON.parse(accordion_items_json.presence || '[]').map(&:symbolize_keys)
       rescue JSON::ParserError
         []
       end

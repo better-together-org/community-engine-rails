@@ -148,7 +148,12 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
     let(:url) { "/api/v1/joatu_agreements/#{agreement.id}/cancel" }
 
     before do
-      BetterTogether::C3::Balance.find_or_create_by!(holder: other_user.person).credit!(5.0)
+      # priced_offer carries a c3_price_millitokens of 20_000 (20 Tree Seeds).
+      # agreement.accept! locks that full price from the payer (request.creator,
+      # i.e. other_user.person) via Balance#lock_millitokens!, so the payer's
+      # balance must be credited with at least that much up front or the lock
+      # raises BetterTogether::C3::Balance::InsufficientBalance.
+      BetterTogether::C3::Balance.find_or_create_by!(holder: other_user.person).credit!(20.0)
       agreement.accept!
     end
 

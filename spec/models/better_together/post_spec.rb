@@ -208,13 +208,14 @@ RSpec.describe BetterTogether::Post do
       it 'rejects public privacy' do
         post = post_for.call(platform: private_platform, privacy: 'public')
         expect(post).not_to be_valid
-        expect(post.errors[:privacy].join).to include('private')
+        expect(post.errors[:privacy].join).to include('community')
       end
 
-      it 'rejects community privacy' do
-        post = post_for.call(platform: private_platform, privacy: 'community')
-        expect(post).not_to be_valid
-        expect(post.errors[:privacy].join).to include('private')
+      it 'allows community privacy' do
+        # A private/non-public platform's ceiling floors at 'community', not
+        # 'private' — members of a locked-down platform can still write
+        # community-scoped content (see PrivacyCeilingValidatable).
+        expect(post_for.call(platform: private_platform, privacy: 'community')).to be_valid
       end
 
       it 'allows private privacy' do

@@ -124,6 +124,13 @@ module BetterTogether
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
+    # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
+    # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
+    # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.
+    initializer 'better_together.active_storage_variant_processor' do |app|
+      app.config.active_storage.variant_processor = :vips
+    end
+
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true

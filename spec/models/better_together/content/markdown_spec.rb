@@ -100,7 +100,10 @@ RSpec.describe BetterTogether::Content::Markdown do
 
     context 'when using markdown_file_path' do
       let(:file_path) { Rails.root.join('spec/fixtures/files/content_test.md') }
-      let(:markdown) { described_class.new(markdown_file_path: file_path.to_s) }
+      # active_source only syncs from markdown_file_path via a before_save
+      # callback (sync_active_source) — this instance is unsaved, so set it
+      # explicitly for #content to pick the file-loading branch.
+      let(:markdown) { described_class.new(markdown_file_path: file_path.to_s, active_source: 'file') }
       let(:file_content) { "# File Content\n\nThis is from a file." }
 
       before do
@@ -119,7 +122,7 @@ RSpec.describe BetterTogether::Content::Markdown do
 
     context 'when using relative file path' do
       let(:file_path) { 'spec/fixtures/files/relative_test.md' }
-      let(:markdown) { described_class.new(markdown_file_path: file_path) }
+      let(:markdown) { described_class.new(markdown_file_path: file_path, active_source: 'file') }
       let(:full_path) { Rails.root.join(file_path) }
       let(:file_content) { '# Relative Path Test' }
 

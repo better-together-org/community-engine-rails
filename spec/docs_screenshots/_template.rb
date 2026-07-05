@@ -29,8 +29,8 @@ RSpec.describe 'Documentation screenshots for <Feature Name>', # rubocop:disable
   include BetterTogether::CapybaraFeatureHelpers
 
   # Adjust let! blocks to match your feature's prerequisites.
-  let!(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
-  let!(:host_platform) do
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:host_platform) do
     configure_host_platform.tap do |platform|
       platform.update!(privacy: 'public', requires_invitation: false, allow_membership_requests: false)
     end

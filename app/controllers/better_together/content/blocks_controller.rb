@@ -106,8 +106,8 @@ module BetterTogether
 
       def search_scope(scope, search_term)
         # Use Arel to safely construct ILIKE query for translation searches
-        translations_table = BetterTogether::StringTranslation.arel_table
-        scope.with_translations.where(
+        translations_table = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.arel_table
+        scope.with_translations.references(:string_translations).where(
           translations_table[:value].matches("%#{search_term}%")
         )
       end

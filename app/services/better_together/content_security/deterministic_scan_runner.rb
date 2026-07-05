@@ -52,8 +52,17 @@ module BetterTogether
         Tempfile.create('bt-mail-scan', binmode: true) do |file|
           file.write(raw_content)
           file.flush
-          Configuration.build_client.scan_file(file.path)
+          build_clam_av_client.scan_file(file.path)
         end
+      end
+
+      def build_clam_av_client
+        ClamAvClient.new(
+          host: Configuration.host,
+          port: Configuration.port,
+          timeout: Configuration.timeout,
+          max_stream_bytes: Configuration.max_stream_bytes
+        )
       end
 
       def malware_finding(filename, signature_name)

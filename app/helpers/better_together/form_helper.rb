@@ -110,7 +110,8 @@ module BetterTogether
     # rubocop:enable Metrics/PerceivedComplexity
 
     # Ordered from most restrictive to most open — used to compute the ceiling
-    # privacy a post may have given its platform and community context.
+    # privacy a privacy-scoped record may have given its platform and
+    # community context.
     PRIVACY_ORDER = %w[private community public].freeze
 
     def privacy_field(form:, klass:, html_options: {}, max_privacy: nil)
@@ -118,25 +119,28 @@ module BetterTogether
       form.select :privacy, select_opts, {}, build_privacy_html_options(html_options)
     end
 
-    # Returns the most open privacy level a post may carry given its wrapping
-    # platform and community.  Rules:
+    # Returns the most open privacy level a record may carry given its
+    # wrapping platform and community.  Rules:
     #   - Platform non-public  → ceiling is platform privacy
     #   - Platform public + community non-public → ceiling is 'community'
-    #     (members of a private/community community can still see community posts)
+    #     (members of a private/community community can still see community-level content)
     #   - Platform public + community public → ceiling is 'public'
-    def max_allowed_post_privacy(platform:, community:)
+    def max_allowed_privacy(platform:, community:)
       platform_level = PRIVACY_ORDER.index(platform&.privacy) || (PRIVACY_ORDER.length - 1)
       community_level = community_privacy_max_level(community)
       PRIVACY_ORDER[[platform_level, community_level].min]
     end
+    # Deprecated alias kept for compatibility with any host-app view overrides
+    # written against the Post-specific name before this helper was generalized.
+    alias max_allowed_post_privacy max_allowed_privacy
 
     # Returns a translated hint string when privacy options are constrained,
     # or nil when there is no restriction (all options open).
     def privacy_constraint_hint(platform:, community:)
       if platform.present? && !platform.privacy_public?
-        t('better_together.posts.hints.privacy_limited_by_platform')
+        t('better_together.privacy.hints.privacy_limited_by_platform')
       elsif community.present? && !community.privacy_public?
-        t('better_together.posts.hints.privacy_limited_by_community')
+        t('better_together.privacy.hints.privacy_limited_by_community')
       end
     end
 
@@ -172,9 +176,13 @@ module BetterTogether
     def contributor_display_visibility_field(form:, include_inherit:, label:, hint:, html_options: {})
       values = contributor_display_visibility_values(include_inherit:)
       options = contributor_display_visibility_html_options(html_options)
+      # `form_with` does not auto-generate id/for pairs in this app, so build an explicit,
+      # stable id to keep the <select> an accessible, labelled form control (WCAG select-name).
+      field_id = options[:id] || "#{dom_id(form.object)}_contributors_display_visibility"
+      options = options.merge(id: field_id)
 
       content_tag(:div) do
-        concat form.label(:contributors_display_visibility, label)
+        concat form.label(:contributors_display_visibility, label, for: field_id)
         concat form.select(
           :contributors_display_visibility,
           contributor_display_visibility_select_options(form:, values:),
