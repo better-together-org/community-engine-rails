@@ -51,6 +51,12 @@ RSpec.describe BetterTogether::PersonDeletionAnonymizer, type: :service do
       expect(prefs['notify_by_email']).to be false
     end
 
+    it 'sets default notification preferences disabling comment notifications' do
+      described_class.call(person: person)
+      prefs = person.reload.notification_preferences
+      expect(prefs['notify_on_comments']).to be false
+    end
+
     it 'sets default preferences disabling federation' do
       described_class.call(person: person)
       prefs = person.reload.preferences

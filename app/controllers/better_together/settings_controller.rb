@@ -91,7 +91,8 @@ module BetterTogether
         :receive_messages_from_members,
         :federate_content,
         :notify_by_email,
-        :show_conversation_details
+        :show_conversation_details,
+        :notify_on_comments
       )
     end
   end

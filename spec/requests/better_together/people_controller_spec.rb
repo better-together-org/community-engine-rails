@@ -246,6 +246,22 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
       expect(person.reload.name).to eq('Updated Name')
     end
 
+    it 'persists the notify_on_comments toggle, including when unchecked ("0")', :aggregate_failures do
+      person.update!(notify_on_comments: true)
+
+      patch better_together.person_path(locale:, id: person.slug), params: {
+        person: { notify_on_comments: '0' }
+      }, as: :json
+
+      expect(person.reload.notification_preferences['notify_on_comments']).to be false
+
+      patch better_together.person_path(locale:, id: person.slug), params: {
+        person: { notify_on_comments: '1' }
+      }, as: :json
+
+      expect(person.reload.notification_preferences['notify_on_comments']).to be true
+    end
+
     it 'updates nested contact details and persists the changes', :aggregate_failures do
       existing_email = person.contact_detail.email_addresses.first ||
                        create(:better_together_email_address, contact_detail: person.contact_detail)
