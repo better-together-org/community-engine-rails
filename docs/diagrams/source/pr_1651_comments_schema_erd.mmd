@@ -1,0 +1,44 @@
+%% PR #1651 — MVP comment system + remediation. Entity/schema view.
+erDiagram
+  EXT_PERSON o|--o{ COMMENTS : "creator / creator_id"
+  EXT_POST ||--o{ COMMENTS : "commentable / commentable_id (Post only, ALLOWED_COMMENTABLES)"
+  EXT_PERSON o|--o{ REPORTS : "reporter / reporter_id"
+  COMMENTS o|--o{ REPORTS : "reportable / reportable_id (no dependent — survives comment delete)"
+  REPORTS ||--o| SAFETY_CASES : "report / report_id"
+
+  COMMENTS {
+    uuid id PK
+    string commentable_type "whitelisted: BetterTogether::Post"
+    uuid commentable_id FK
+    uuid creator_id FK "nullable"
+    text content
+    uuid platform_id FK
+  }
+
+  EXT_PERSON {
+    uuid id PK
+    jsonb notification_preferences "notify_by_email, show_conversation_details, notify_on_comments"
+  }
+
+  EXT_POST {
+    uuid id PK
+    uuid creator_id FK "Creatable — may differ from credited author"
+    string privacy
+  }
+
+  REPORTS {
+    uuid id PK
+    uuid reporter_id FK
+    string reportable_type "polymorphic, no DB FK constraint"
+    uuid reportable_id "orphaned pointer once a Comment is deleted"
+    string category
+    string harm_level
+  }
+
+  SAFETY_CASES {
+    uuid id PK
+    uuid report_id FK
+    string status
+    string lane
+    text closure_summary
+  }

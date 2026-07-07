@@ -1,0 +1,86 @@
+%% PR #1651 — MVP comment system + remediation. Domain/object relation view.
+classDiagram
+    class Comment {
+      +content
+      +commentable
+      +creator
+      +to_s()
+      +comments_stream_target()
+    }
+
+    class Commentable {
+      <<concern>>
+      +comments
+    }
+
+    class Post {
+      +creator
+      +governed_authors
+      +privacy
+    }
+
+    class Authorable {
+      <<concern>>
+      +governed_authors
+      +add_creator_as_author()
+    }
+
+    class Person {
+      +notification_preferences
+      +notify_on_comments
+      +governed_authors_via
+      +accepted_agreement?(identifier)
+    }
+
+    class CommentPolicy {
+      +show?()
+      +create?()
+      +destroy?()
+    }
+
+    class SelfServicePublishablePolicy {
+      <<concern>>
+      +platform_manager?()
+      +creator_of?(target)
+      +accepted_content_publishing_agreement?()
+    }
+
+    class CommentsController {
+      +create()
+      +destroy()
+      -save_comment_and_notify()
+      -notify_commentable_owners(comment)
+    }
+
+    class ChecksRequiredAgreements {
+      <<concern>>
+      +check_content_publishing_agreement()
+    }
+
+    class CommentAddedNotifier {
+      +recipient_allows_comment_notifications?()
+    }
+
+    class Report {
+      +reportable
+      +reporter
+      +safety_case
+    }
+
+    class SafetyCase {
+      +status
+      +closure_summary
+    }
+
+    Post ..|> Commentable : includes
+    Post ..|> Authorable : includes
+    Comment --> Post : commentable (ALLOWED_COMMENTABLES)
+    Comment --> Person : creator
+    Comment --> "0..*" Report : reports_received (no cascade destroy)
+    Report --> "1" SafetyCase : has_one, auto-created
+    CommentPolicy ..|> SelfServicePublishablePolicy : includes
+    CommentsController ..|> ChecksRequiredAgreements : includes
+    CommentsController --> CommentPolicy : authorize
+    CommentsController --> CommentAddedNotifier : deliver_later(recipients)
+    CommentAddedNotifier --> Person : governed_authors, fallback creator
+    Person --> Post : governed_authors (Authorable)

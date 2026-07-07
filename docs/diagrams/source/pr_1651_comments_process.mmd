@@ -1,0 +1,28 @@
+%% PR #1651 — MVP comment system + remediation. Comment lifecycle process view.
+flowchart TD
+    A[Member views a Post] --> B{Signed in?}
+    B -->|No| C[Sign-in prompt shown]
+    B -->|Yes| D{Accepted content<br/>publishing agreement?}
+    D -->|No| E[Redirect + flash on submit;<br/>fallback message links to<br/>agreements_status_path]
+    D -->|Yes| F{Blocked by<br/>commentable creator?}
+    F -->|Yes| G[Comment form hidden]
+    F -->|No| H[Comment form shown]
+    H --> I[Member submits content]
+    I --> J{content.blank?}
+    J -->|Yes| K[Flash + inline alert-danger<br/>error, field preserved]
+    J -->|No| L[Comment saved]
+    L --> M[Broadcast append via Turbo Stream<br/>to all open viewers]
+    L --> N{governed_authors present?}
+    N -->|Yes| O[Notify each credited author,<br/>excluding the commenter]
+    N -->|No fallback| P[Notify commentable.creator]
+    O --> Q{recipient_allows_comment_notifications?}
+    P --> Q
+    Q -->|No| R[No action_cable or email delivery]
+    Q -->|Yes| S[Deliver in-app + email notification]
+
+    L --> T[Comment visible to other viewers,<br/>subject to block-scope filtering]
+    T --> U{Another member reports it}
+    U --> V[Report + auto-created Safety::Case]
+    V --> W{Comment later deleted<br/>by creator or moderator}
+    W --> X[Comment row removed]
+    X --> Y[Report + Safety::Case survive<br/>— reportable becomes nil,<br/>audit trail preserved]
