@@ -3330,6 +3330,7 @@ es:
         pending_copy: Este caso sigue en curso. Una persona moderadora puede comunicarse
           contigo según tus preferencias de consentimiento.
         reported_record: Registro reportado
+        reported_record_unavailable: Este contenido ya no está disponible.
         status: Estado actual
         summary: Resumen del caso
         title: Reporte de seguridad

@@ -3352,6 +3352,7 @@ fr:
         pending_copy: Ce dossier est toujours en cours. Un modérateur peut vous contacter
           selon vos préférences de consentement.
         reported_record: Enregistrement signalé
+        reported_record_unavailable: Ce contenu n'est plus disponible.
         status: Statut actuel
         summary: Résumé du dossier
         title: Signalement de sécurité

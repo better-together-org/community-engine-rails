@@ -130,6 +130,18 @@ RSpec.describe BetterTogether::Comment do
       report = create(:report, reportable: comment, reporter: create(:person))
       expect(comment.reports_received).to include(report)
     end
+
+    it 'does not destroy reports_received (and their safety_case) when the comment is destroyed' do
+      comment = create(:comment, commentable: post)
+      report = create(:report, reportable: comment, reporter: create(:person))
+      safety_case = report.safety_case
+
+      comment.destroy!
+
+      expect(BetterTogether::Report.exists?(report.id)).to be true
+      expect(report.reload.reportable).to be_nil
+      expect(BetterTogether::Safety::Case.exists?(safety_case.id)).to be true if safety_case
+    end
   end
 
   describe 'validations' do

@@ -3277,6 +3277,7 @@ en:
         pending_copy: This case is still in progress. A moderator may follow up based
           on your consent settings.
         reported_record: Reported record
+        reported_record_unavailable: This content is no longer available.
         status: Current status
         summary: Case summary
         title: Safety report

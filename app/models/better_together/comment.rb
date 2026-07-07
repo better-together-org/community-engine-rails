@@ -6,13 +6,19 @@ module BetterTogether
     include Creatable
     include BlockFilterable
 
+    # App-layer whitelist only, no DB constraint (same pattern as Report::ALLOWED_REPORTABLES) —
+    # tracked as a follow-up to consider hardening if a bulk-write/import path is ever added.
     ALLOWED_COMMENTABLES = [
       'BetterTogether::Post'
     ].freeze
 
     belongs_to :commentable, polymorphic: true
 
-    has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
+    # No dependent: option deliberately — Report/Safety::Case are the moderation audit trail and
+    # must survive the reported Comment being deleted (matches how Post/Page/Event/Community/
+    # Message, the other Report::ALLOWED_REPORTABLES, already behave: none of them declare a
+    # reports_received association at all, so their reports already survive deletion).
+    has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report'
 
     validates :content, presence: true
     validates :commentable_type, inclusion: { in: ALLOWED_COMMENTABLES }
