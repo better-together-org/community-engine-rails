@@ -55,5 +55,31 @@ RSpec.describe BetterTogether::CommentAddedNotifier do
         described_class.with(record: comment, comment: comment).deliver_later(post_creator)
       end.to change(Noticed::Notification, :count).by(1)
     end
+
+    it 'accepts multiple recipients in one deliver_later call' do
+      other_author = create(:better_together_person)
+
+      expect do
+        described_class.with(record: comment, comment: comment).deliver_later([post_creator, other_author])
+      end.to change(Noticed::Notification, :count).by(2)
+    end
+  end
+
+  describe '#recipient_allows_comment_notifications? (gates both action_cable and email)' do
+    it 'is true by default (notify_on_comments defaults to true)' do
+      described_class.with(record: comment, comment: comment).deliver(post_creator)
+      notification = post_creator.notifications.order(created_at: :desc).first
+
+      expect(notification.recipient_allows_comment_notifications?).to be(true)
+    end
+
+    it 'is false once the recipient opts out of notify_on_comments' do
+      post_creator.update!(notify_on_comments: false)
+
+      described_class.with(record: comment, comment: comment).deliver(post_creator)
+      notification = post_creator.notifications.order(created_at: :desc).first
+
+      expect(notification.recipient_allows_comment_notifications?).to be(false)
+    end
   end
 end

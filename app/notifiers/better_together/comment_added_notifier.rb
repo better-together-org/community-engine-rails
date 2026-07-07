@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Notifies a commentable's creator when someone else comments on their content.
+  # Notifies a commentable's credited authors (or creator, as a fallback) when someone
+  # else comments on their content.
   class CommentAddedNotifier < ApplicationNotifier
     deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message,
-                              queue: :notifications
+                              queue: :notifications do |config|
+      config.if = -> { recipient_allows_comment_notifications? }
+    end
     deliver_by :email, mailer: 'BetterTogether::CommentMailer', method: :added, params: :email_params,
                        queue: :mailers do |config|
-      config.if = -> { recipient_has_email? && recipient_allows_comment_email? }
+      config.if = -> { recipient_has_email? && recipient_allows_comment_notifications? }
     end
 
     required_param :comment
@@ -59,7 +62,7 @@ module BetterTogether
     notification_methods do
       delegate :comment, :commentable, :commenter_name, :title, :body, :email_params, to: :event
 
-      def recipient_allows_comment_email?
+      def recipient_allows_comment_notifications?
         !recipient.respond_to?(:notification_preferences) ||
           recipient.notification_preferences.fetch('notify_on_comments', true)
       end

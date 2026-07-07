@@ -60,6 +60,27 @@ RSpec.describe 'BetterTogether comments' do
              )).not_to exist
     end
 
+    it 'notifies the post\'s credited author, not just its DB-row creator, when they differ' do
+      staff_creator = find_or_create_test_user('comments-staff-creator@example.test', 'SecureTest123!@#', :user)
+      credited_author = create(:better_together_person)
+      staff_post = create(:better_together_post, creator: staff_creator.person, author: credited_author,
+                                                 privacy: 'public', published_at: 1.minute.ago)
+
+      sign_in user
+
+      post better_together.comments_path(locale:), params: {
+        commentable_type: 'BetterTogether::Post',
+        commentable_id: staff_post.id,
+        comment: { content: 'Great post!' }
+      }
+
+      comment = BetterTogether::Comment.last
+      event_ids = BetterTogether::CommentAddedNotifier.where(record: comment).select(:id)
+
+      expect(Noticed::Notification.where(recipient: credited_author, event_id: event_ids)).to exist
+      expect(Noticed::Notification.where(recipient: staff_creator.person, event_id: event_ids)).not_to exist
+    end
+
     it 'returns not found for a non-whitelisted commentable type' do
       sign_in user
       page = create(:page)

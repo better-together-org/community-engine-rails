@@ -15,7 +15,7 @@ module BetterTogether
       @comment.creator = helpers.current_person
       authorize @comment
 
-      notify_commentable_creator(@comment) if @comment.save
+      notify_commentable_owners(@comment) if @comment.save
 
       respond_to do |format|
         format.turbo_stream
@@ -59,11 +59,16 @@ module BetterTogether
       params.require(:comment).permit(:content)
     end
 
-    def notify_commentable_creator(comment)
-      recipient = comment.commentable.try(:creator)
-      return if recipient.blank? || recipient == comment.creator
+    # Notifies the commentable's credited authors (not just its DB-row creator) — a Post's
+    # creator and its Authorable authors can diverge (staff-assisted or co-authored posts),
+    # and the author(s) are who this feature is meant to reach.
+    def notify_commentable_owners(comment)
+      commentable = comment.commentable
+      recipients = commentable.respond_to?(:governed_authors) ? commentable.governed_authors : [commentable.try(:creator)]
+      recipients = recipients.compact.uniq - [comment.creator]
+      return if recipients.empty?
 
-      BetterTogether::CommentAddedNotifier.with(record: comment, comment: comment).deliver_later(recipient)
+      BetterTogether::CommentAddedNotifier.with(record: comment, comment: comment).deliver_later(recipients)
     end
   end
 end
