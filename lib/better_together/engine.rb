@@ -215,6 +215,14 @@ module BetterTogether
       # app tracks CE migrations independently.
       next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
 
+      # Skip when running via this engine's own bin/rails or `rake` from the engine root
+      # (e.g. `bin/dc-run rails db:migrate` against spec/dummy). In that mode Rails sets the
+      # global ENGINE_ROOT constant, and ActiveRecord::Railtie's `db:load_config` task already
+      # injects this engine's db/migrate path into DatabaseTasks.migrations_paths on its own
+      # (see activerecord/lib/active_record/railtie.rb). Appending it here too would add the
+      # same directory twice and raise ActiveRecord::DuplicateMigrationNameError.
+      next if defined?(::ENGINE_ROOT)
+
       excludes = [root.join('worktrees').to_s, root.join('tmp').to_s]
       config.paths['db/migrate'].existent_directories.each do |expanded_path|
         next if excludes.any? { |ex| expanded_path.start_with?(ex) }

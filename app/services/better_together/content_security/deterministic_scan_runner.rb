@@ -20,11 +20,12 @@ module BetterTogether
                    malware_findings(payload)
 
         aggregate = RuleEngine.aggregate_content_state(findings)
+        stringified_findings = findings.map(&:deep_stringify_keys)
 
         {
           'content_item' => aggregate.deep_stringify_keys,
-          'findings' => findings.map(&:deep_stringify_keys),
-          'records' => findings.map(&:deep_stringify_keys)
+          'findings' => stringified_findings,
+          'records' => stringified_findings
         }
       end
 
