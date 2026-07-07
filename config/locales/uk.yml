@@ -981,12 +981,15 @@ uk:
         subject: У вас новий коментар
         view_link: Переглянути коментар
     comments:
+      accept_agreement_link: прийняти угоду про публікацію контенту
       delete: Видалити коментар
       deleted_author: Колишній учасник
       form:
+        error_summary: Не вдалося опублікувати коментар
         label: Додати коментар
         placeholder: Напишіть коментар…
         submit: Опублікувати коментар
+      publishing_agreement_required_html: Ви повинні %{link}, перш ніж зможете коментувати.
       report: Поскаржитися на коментар
       section_heading: Коментарі
       sign_in_to_comment: Увійдіть, щоб долучитися до розмови.

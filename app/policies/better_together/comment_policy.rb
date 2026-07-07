@@ -12,6 +12,7 @@ module BetterTogether
     def create?
       return false unless user.present?
       return false if blocked_by_commentable_creator?
+      return false unless platform_manager? || accepted_content_publishing_agreement?
 
       Pundit.policy(user, record.commentable)&.show? || false
     end

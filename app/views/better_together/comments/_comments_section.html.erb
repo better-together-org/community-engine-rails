@@ -14,6 +14,13 @@
 
   <% if policy(BetterTogether::Comment.new(commentable:)).create? %>
     <%= render 'better_together/comments/form', commentable: commentable, comment: BetterTogether::Comment.new %>
+  <% elsif current_person_missing_publishing_agreement? %>
+    <p class="text-muted small">
+      <%= t('better_together.comments.publishing_agreement_required_html',
+            default: 'You must %{link} before you can comment.',
+            link: link_to(t('better_together.comments.accept_agreement_link', default: 'accept the content publishing agreement'),
+                           agreements_status_path(locale: I18n.locale))) %>
+    </p>
   <% else %>
     <p class="text-muted small"><%= t('better_together.comments.sign_in_to_comment', default: 'Sign in to join the conversation.') %></p>
   <% end %>

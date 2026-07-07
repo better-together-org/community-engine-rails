@@ -16,6 +16,7 @@ RSpec.describe 'Post comments', :accessibility, :js, retry: 0 do
   before { host_platform }
 
   it 'lets a signed-in member post a comment that appears live, without a full page reload' do
+    grant_content_publishing_agreement(user.person)
     capybara_login_as_user
 
     visit better_together.post_path(target_post, locale: I18n.default_locale)
@@ -26,6 +27,23 @@ RSpec.describe 'Post comments', :accessibility, :js, retry: 0 do
 
     expect(page).to have_css('.comment', text: 'Nicely written post!', wait: 10)
     expect(page).to have_field(t_comment_form_field, with: '')
+
+    expect(page).to be_axe_clean
+      .within('.comments-section')
+      .according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
+  end
+
+  it 'shows a visible error and does not clear the field when a comment is only whitespace' do
+    grant_content_publishing_agreement(user.person)
+    capybara_login_as_user
+
+    visit better_together.post_path(target_post, locale: I18n.default_locale)
+
+    fill_in t_comment_form_field, with: '   '
+    click_button t_comment_submit
+
+    expect(page).to have_css('.alert-danger', wait: 10)
+    expect(page).to have_field(t_comment_form_field, with: '   ')
 
     expect(page).to be_axe_clean
       .within('.comments-section')

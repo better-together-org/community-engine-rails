@@ -998,12 +998,15 @@ en:
         subject: You have a new comment
         view_link: View comment
     comments:
+      accept_agreement_link: accept the content publishing agreement
       delete: Delete comment
       deleted_author: Former member
       form:
+        error_summary: This comment could not be posted
         label: Add a comment
         placeholder: Write a comment…
         submit: Post comment
+      publishing_agreement_required_html: You must %{link} before you can comment.
       report: Report comment
       section_heading: Comments
       sign_in_to_comment: Sign in to join the conversation.

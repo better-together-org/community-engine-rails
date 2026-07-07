@@ -997,12 +997,15 @@ fr:
         subject: Vous avez un nouveau commentaire
         view_link: Voir le commentaire
     comments:
+      accept_agreement_link: accepter l'accord de publication de contenu
       delete: Supprimer le commentaire
       deleted_author: Ancien membre
       form:
+        error_summary: Ce commentaire n'a pas pu être publié
         label: Ajouter un commentaire
         placeholder: Écrivez un commentaire…
         submit: Publier le commentaire
+      publishing_agreement_required_html: Vous devez %{link} avant de pouvoir commenter.
       report: Signaler le commentaire
       section_heading: Commentaires
       sign_in_to_comment: Connectez-vous pour participer à la conversation.

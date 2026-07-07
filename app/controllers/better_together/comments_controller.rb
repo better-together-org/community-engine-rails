@@ -3,8 +3,11 @@
 module BetterTogether
   # Handles creating and removing comments on commentable records (MVP: posts).
   class CommentsController < ApplicationController
+    include ChecksRequiredAgreements
+
     before_action :authenticate_user!
     before_action :disallow_robots
+    before_action :check_content_publishing_agreement, only: :create
     before_action :set_comment, only: :destroy
 
     def create
@@ -15,7 +18,7 @@ module BetterTogether
       @comment.creator = helpers.current_person
       authorize @comment
 
-      notify_commentable_owners(@comment) if @comment.save
+      save_comment_and_notify
 
       respond_to do |format|
         format.turbo_stream
@@ -35,6 +38,14 @@ module BetterTogether
     end
 
     private
+
+    def save_comment_and_notify
+      if @comment.save
+        notify_commentable_owners(@comment)
+      else
+        flash[:alert] = @comment.errors.full_messages.to_sentence
+      end
+    end
 
     def set_comment
       @comment = policy_scope(Comment).find(params[:id])

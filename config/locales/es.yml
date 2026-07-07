@@ -992,12 +992,15 @@ es:
         subject: Tienes un nuevo comentario
         view_link: Ver comentario
     comments:
+      accept_agreement_link: aceptar el acuerdo de publicación de contenido
       delete: Eliminar comentario
       deleted_author: Miembro anterior
       form:
+        error_summary: Este comentario no pudo ser publicado
         label: Añadir un comentario
         placeholder: Escribe un comentario…
         submit: Publicar comentario
+      publishing_agreement_required_html: Debes %{link} antes de poder comentar.
       report: Reportar comentario
       section_heading: Comentarios
       sign_in_to_comment: Inicia sesión para participar en la conversación.

@@ -33,7 +33,8 @@ RSpec.describe BetterTogether::CommentPolicy do
   end
 
   describe '#create?' do
-    it 'allows a signed-in user who can view the commentable' do
+    it 'allows a signed-in user who can view the commentable and has accepted the publishing agreement' do
+      grant_content_publishing_agreement(regular_user.person)
       new_comment = BetterTogether::Comment.new(commentable: public_post)
       expect(described_class.new(regular_user, new_comment).create?).to be true
     end
@@ -44,10 +45,21 @@ RSpec.describe BetterTogether::CommentPolicy do
     end
 
     it 'denies a user blocked by the commentable creator' do
+      grant_content_publishing_agreement(regular_user.person)
       create(:person_block, blocker: creator_user.person, blocked: regular_user.person)
       new_comment = BetterTogether::Comment.new(commentable: public_post)
 
       expect(described_class.new(regular_user, new_comment).create?).to be false
+    end
+
+    it 'denies a user who has not accepted the content publishing agreement' do
+      new_comment = BetterTogether::Comment.new(commentable: public_post)
+      expect(described_class.new(regular_user, new_comment).create?).to be false
+    end
+
+    it 'allows a platform manager to comment without accepting the content publishing agreement' do
+      new_comment = BetterTogether::Comment.new(commentable: public_post)
+      expect(described_class.new(platform_manager_user, new_comment).create?).to be true
     end
   end
 

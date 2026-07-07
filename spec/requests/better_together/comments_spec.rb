@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether comments' do
   let(:locale) { I18n.default_locale }
   let(:user) { find_or_create_test_user('comments-user@example.test', 'SecureTest123!@#', :user) }
@@ -23,6 +24,7 @@ RSpec.describe 'BetterTogether comments' do
     # specific to the comments route.
 
     it 'creates a comment on a whitelisted commentable and notifies the content creator' do
+      grant_content_publishing_agreement(user.person)
       sign_in user
 
       expect do
@@ -44,6 +46,7 @@ RSpec.describe 'BetterTogether comments' do
     end
 
     it 'does not notify when the commentable creator comments on their own content' do
+      grant_content_publishing_agreement(post_author.person)
       sign_in post_author
 
       expect do
@@ -66,6 +69,7 @@ RSpec.describe 'BetterTogether comments' do
       staff_post = create(:better_together_post, creator: staff_creator.person, author: credited_author,
                                                  privacy: 'public', published_at: 1.minute.ago)
 
+      grant_content_publishing_agreement(user.person)
       sign_in user
 
       post better_together.comments_path(locale:), params: {
@@ -82,6 +86,7 @@ RSpec.describe 'BetterTogether comments' do
     end
 
     it 'returns not found for a non-whitelisted commentable type' do
+      grant_content_publishing_agreement(user.person)
       sign_in user
       page = create(:page)
 
@@ -94,6 +99,21 @@ RSpec.describe 'BetterTogether comments' do
       end.not_to change(BetterTogether::Comment, :count)
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 'does not persist a blank comment and surfaces the error in the turbo_stream response' do
+      grant_content_publishing_agreement(user.person)
+      sign_in user
+
+      expect do
+        post better_together.comments_path(locale:), params: {
+          commentable_type: 'BetterTogether::Post',
+          commentable_id: target_post.id,
+          comment: { content: '   ' }
+        }, as: :turbo_stream
+      end.not_to change(BetterTogether::Comment, :count)
+
+      expect(response.body).to include('alert-danger')
     end
   end
 
@@ -121,3 +141,40 @@ RSpec.describe 'BetterTogether comments' do
     end
   end
 end
+
+RSpec.describe 'BetterTogether::CommentsController self-service publishing agreement gate' do
+  let(:locale) { I18n.default_locale }
+  let(:commenter) { find_or_create_test_user('comments-gate-user@example.test', 'SecureTest123!@#', :user) }
+  let(:post_author) { find_or_create_test_user('comments-gate-post-author@example.test', 'SecureTest123!@#', :user) }
+  let(:target_post) do
+    create(:better_together_post, creator: post_author.person, author: post_author.person,
+                                  privacy: 'public', published_at: 1.minute.ago)
+  end
+
+  before { sign_in commenter }
+
+  it 'redirects to the publishing agreement page when the commenter has not accepted it' do
+    expect do
+      post better_together.comments_path(locale:), params: {
+        commentable_type: 'BetterTogether::Post',
+        commentable_id: target_post.id,
+        comment: { content: 'Great post!' }
+      }
+    end.not_to change(BetterTogether::Comment, :count)
+
+    expect(response).to redirect_to(%r{/agreements/})
+  end
+
+  it 'allows commenting once the agreement is accepted' do
+    grant_content_publishing_agreement(commenter.person)
+
+    expect do
+      post better_together.comments_path(locale:), params: {
+        commentable_type: 'BetterTogether::Post',
+        commentable_id: target_post.id,
+        comment: { content: 'Great post!' }
+      }
+    end.to change(BetterTogether::Comment, :count).by(1)
+  end
+end
+# rubocop:enable RSpec/MultipleDescribes
