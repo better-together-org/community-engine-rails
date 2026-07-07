@@ -3,6 +3,8 @@
 module BetterTogether
   # Access control for comments
   class CommentPolicy < PlatformRecordPolicy
+    include SelfServicePublishablePolicy
+
     def show?
       Pundit.policy(user, record.commentable)&.show? || false
     end
@@ -16,26 +18,18 @@ module BetterTogether
     alias new? create?
 
     def destroy?
-      creator_of_record? || community_content_manager? || platform_manager?
+      creator_of?(record) || community_content_manager? || platform_manager?
     end
 
     # Scope for resolving visible comments
     class Scope < PlatformRecordPolicy::Scope
       def resolve
-        base = platform_scoped.oldest_first
+        base = platform_scoped.oldest_first.include_creator
         agent ? base.excluding_blocked_for(agent) : base
       end
     end
 
     private
-
-    def creator_of_record?
-      agent.present? && record.creator == agent
-    end
-
-    def platform_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-    end
 
     def community_content_manager?
       target_community = resolved_community_for(record.commentable)

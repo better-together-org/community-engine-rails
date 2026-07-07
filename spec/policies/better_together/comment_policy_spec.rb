@@ -100,5 +100,15 @@ RSpec.describe BetterTogether::CommentPolicy do
 
       expect(scope.resolve.where(id: [first.id, second.id]).to_a).to eq([first, second])
     end
+
+    it 'eager-loads creator to avoid N+1 when rendering a comment list' do
+      create(:comment, commentable: public_post)
+
+      scope = described_class::Scope.new(regular_user, BetterTogether::Comment)
+      resolved = scope.resolve.to_a
+
+      expect(resolved).to be_present
+      expect(resolved.first.association(:creator).loaded?).to be true
+    end
   end
 end
