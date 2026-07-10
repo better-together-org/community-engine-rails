@@ -30,6 +30,28 @@ RSpec.describe BetterTogether::CommentPolicy do
     it "delegates to the commentable's own show? policy" do
       expect(described_class.new(regular_user, comment).show?).to be true
     end
+
+    it 'denies viewing when comment_visibility is community and the agent is not a member' do
+      host_post = create(:better_together_post, creator: creator_user.person, author: creator_user.person,
+                                                community: scoped_community, privacy: 'public',
+                                                published_at: 1.minute.ago)
+      host_post.comment_visibility = 'community'
+      host_post.save!
+      restricted_comment = create(:comment, creator: creator_user.person, commentable: host_post)
+
+      expect(described_class.new(regular_user, restricted_comment).show?).to be false
+    end
+
+    it 'allows viewing when comment_visibility is community and the agent is an active member' do
+      host_post = create(:better_together_post, creator: creator_user.person, author: creator_user.person,
+                                                community: host_community, privacy: 'public',
+                                                published_at: 1.minute.ago)
+      host_post.comment_visibility = 'community'
+      host_post.save!
+      restricted_comment = create(:comment, creator: creator_user.person, commentable: host_post)
+
+      expect(described_class.new(regular_user, restricted_comment).show?).to be true
+    end
   end
 
   describe '#create?' do
@@ -60,6 +82,38 @@ RSpec.describe BetterTogether::CommentPolicy do
     it 'allows a platform manager to comment without accepting the content publishing agreement' do
       new_comment = BetterTogether::Comment.new(commentable: public_post)
       expect(described_class.new(platform_manager_user, new_comment).create?).to be true
+    end
+
+    it 'denies posting when comment_permission is disabled, with no bypass for platform managers' do
+      public_post.comment_permission = 'disabled'
+      public_post.save!
+      new_comment = BetterTogether::Comment.new(commentable: public_post)
+
+      expect(described_class.new(platform_manager_user, new_comment).create?).to be false
+    end
+
+    it 'denies posting when comment_permission is community and the agent is not a member' do
+      grant_content_publishing_agreement(regular_user.person)
+      host_post = create(:better_together_post, creator: creator_user.person, author: creator_user.person,
+                                                community: scoped_community, privacy: 'public',
+                                                published_at: 1.minute.ago)
+      host_post.comment_permission = 'community'
+      host_post.save!
+      new_comment = BetterTogether::Comment.new(commentable: host_post)
+
+      expect(described_class.new(regular_user, new_comment).create?).to be false
+    end
+
+    it 'allows posting when comment_permission is community and the agent is an active member' do
+      grant_content_publishing_agreement(regular_user.person)
+      host_post = create(:better_together_post, creator: creator_user.person, author: creator_user.person,
+                                                community: host_community, privacy: 'public',
+                                                published_at: 1.minute.ago)
+      host_post.comment_permission = 'community'
+      host_post.save!
+      new_comment = BetterTogether::Comment.new(commentable: host_post)
+
+      expect(described_class.new(regular_user, new_comment).create?).to be true
     end
   end
 
@@ -121,6 +175,32 @@ RSpec.describe BetterTogether::CommentPolicy do
 
       expect(resolved).to be_present
       expect(resolved.first.association(:creator).loaded?).to be true
+    end
+
+    it 'excludes comments on a commentable whose comment_visibility restricts to community members, for a non-member' do
+      host_post = create(:better_together_post, creator: creator_user.person, author: creator_user.person,
+                                                community: scoped_community, privacy: 'public',
+                                                published_at: 1.minute.ago)
+      host_post.comment_visibility = 'community'
+      host_post.save!
+      restricted_comment = create(:comment, creator: creator_user.person, commentable: host_post)
+
+      scope = described_class::Scope.new(regular_user, host_post.comments)
+
+      expect(scope.resolve).not_to include(restricted_comment)
+    end
+
+    it 'includes comments on a commentable whose comment_visibility restricts to community members, for a member' do
+      host_post = create(:better_together_post, creator: creator_user.person, author: creator_user.person,
+                                                community: host_community, privacy: 'public',
+                                                published_at: 1.minute.ago)
+      host_post.comment_visibility = 'community'
+      host_post.save!
+      restricted_comment = create(:comment, creator: creator_user.person, commentable: host_post)
+
+      scope = described_class::Scope.new(regular_user, host_post.comments)
+
+      expect(scope.resolve).to include(restricted_comment)
     end
   end
 end

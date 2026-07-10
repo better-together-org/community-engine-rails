@@ -984,6 +984,20 @@ es:
         completed_message: Lista de verificación completa
         items_title: Elementos
         no_items: No hay elementos para mostrar
+    comment_config:
+      hints:
+        permission: Controla quién puede publicar nuevos comentarios.
+        visibility: Controla quién puede ver el hilo de comentarios.
+      labels:
+        permission: Quién puede comentar
+        visibility: Quién puede ver los comentarios
+      permission_options:
+        community: Solo miembros de la comunidad
+        disabled: Nadie (comentarios deshabilitados)
+        inherit: Cualquiera que pueda ver esto
+      visibility_options:
+        community: Solo miembros de la comunidad
+        inherit: Cualquiera que pueda ver esto
     comment_mailer:
       added:
         greeting: Hola %{recipient_name},
@@ -995,6 +1009,10 @@ es:
       accept_agreement_link: aceptar el acuerdo de publicación de contenido
       delete: Eliminar comentario
       deleted_author: Miembro anterior
+      denial_reasons:
+        community_required: Solo los miembros de la comunidad pueden comentar en esta
+          publicación.
+        disabled: Los comentarios están deshabilitados para esta publicación.
       form:
         error_summary: Este comentario no pudo ser publicado
         label: Añadir un comentario

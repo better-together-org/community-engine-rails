@@ -193,6 +193,52 @@ module BetterTogether
       end
     end
 
+    # `form` here is the nested comment_config fields_for builder (form.fields_for
+    # :comment_config, commentable.comment_config || commentable.build_comment_config
+    # in the calling view — mirrors _recurrence_fields.html.erb's fields_for wrapping,
+    # since this is a separate polymorphic model, not a direct attribute on commentable).
+    def comment_permission_field(form:, commentable:)
+      comment_settings_select_field(
+        form:, commentable:, attribute: :permission,
+        values: BetterTogether::CommentConfig.permissions.keys,
+        translation_scope: 'better_together.comment_config.permission_options',
+        label: t('better_together.comment_config.labels.permission', default: 'Who can comment'),
+        hint: t('better_together.comment_config.hints.permission',
+                default: 'Controls who is allowed to post new comments.')
+      )
+    end
+
+    def comment_visibility_field(form:, commentable:)
+      comment_settings_select_field(
+        form:, commentable:, attribute: :visibility,
+        values: BetterTogether::CommentConfig.visibilities.keys,
+        translation_scope: 'better_together.comment_config.visibility_options',
+        label: t('better_together.comment_config.labels.visibility', default: 'Who can see comments'),
+        hint: t('better_together.comment_config.hints.visibility',
+                default: 'Controls who can see the comment thread.')
+      )
+    end
+
+    private
+
+    def comment_settings_select_field(form:, commentable:, attribute:, values:, translation_scope:, label:, hint:) # rubocop:todo Metrics/ParameterLists
+      field_id = "#{dom_id(commentable)}_comment_#{attribute}"
+      selected = form.object.public_send(attribute)
+
+      content_tag(:div, class: 'mb-2') do
+        concat form.label(attribute, label, for: field_id, class: 'form-label')
+        concat form.select(
+          attribute,
+          options_for_select(values.map { |v| [t("#{translation_scope}.#{v}"), v] }, selected),
+          {},
+          { class: 'form-select', id: field_id }
+        )
+        concat content_tag(:small, hint, class: 'form-text text-muted mt-1')
+      end
+    end
+
+    public
+
     # rubocop:todo Metrics/MethodLength
     # Accepts an optional label_text override which, when provided, will be used
     # instead of the model's human_attribute_name for the field. This is useful

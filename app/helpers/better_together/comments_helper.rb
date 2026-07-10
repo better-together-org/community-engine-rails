@@ -20,7 +20,33 @@ module BetterTogether
       false
     end
 
+    # Returns a symbol explaining why the current person can't post a new comment on
+    # `commentable`, or nil if they can. Only called once the caller has already
+    # confirmed the comment thread itself is visible to them (comment_visibility
+    # permits) — this is about the *create*-specific gate, not thread visibility.
+    # One place to compute this instead of the view re-deriving policy state ad hoc
+    # across several if/elsif branches.
+    def comment_denial_reason(commentable)
+      return nil if policy(BetterTogether::Comment.new(commentable:)).create?
+      return :sign_in_required unless current_user.present?
+
+      permission_reason = comment_permission_denial_reason(commentable)
+      return permission_reason if permission_reason
+      return :publishing_agreement_required if current_person_missing_publishing_agreement?
+
+      :sign_in_required
+    end
+
     private
+
+    def comment_permission_denial_reason(commentable)
+      return unless commentable.respond_to?(:comment_permission)
+
+      case commentable.comment_permission
+      when 'disabled' then :disabled
+      when 'community' then :community_required
+      end
+    end
 
     def delete_comment_action_item(comment)
       {

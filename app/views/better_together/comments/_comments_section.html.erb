@@ -1,27 +1,32 @@
 <%# locals: (commentable:) %>
-<section class="comments-section mt-4" aria-labelledby="<%= dom_id(commentable, :comments_heading) %>">
-  <h4 id="<%= dom_id(commentable, :comments_heading) %>" class="mb-3">
-    <%= t('better_together.comments.section_heading', default: 'Comments') %>
-  </h4>
+<% if policy(BetterTogether::Comment.new(commentable:)).show? %>
+  <section class="comments-section mt-4" aria-labelledby="<%= dom_id(commentable, :comments_heading) %>">
+    <h4 id="<%= dom_id(commentable, :comments_heading) %>" class="mb-3">
+      <%= t('better_together.comments.section_heading', default: 'Comments') %>
+    </h4>
 
-  <%= turbo_stream_from commentable %>
+    <%= turbo_stream_from commentable %>
 
-  <div id="<%= dom_id(commentable, :comments) %>" data-controller="better_together--comments">
-    <%= render partial: 'better_together/comments/comment',
-               collection: policy_scope(commentable.comments),
-               as: :comment %>
-  </div>
+    <div id="<%= dom_id(commentable, :comments) %>" data-controller="better_together--comments">
+      <%= render partial: 'better_together/comments/comment',
+                 collection: policy_scope(commentable.comments),
+                 as: :comment %>
+    </div>
 
-  <% if policy(BetterTogether::Comment.new(commentable:)).create? %>
-    <%= render 'better_together/comments/form', commentable: commentable, comment: BetterTogether::Comment.new %>
-  <% elsif current_person_missing_publishing_agreement? %>
-    <p class="text-muted small" id="comments-publishing-agreement-required">
-      <%= t('better_together.comments.publishing_agreement_required_html',
-            default: 'You must %{link} before you can comment.',
-            link: link_to(t('better_together.comments.accept_agreement_link', default: 'accept the content publishing agreement'),
-                           agreements_status_path(locale: I18n.locale))) %>
-    </p>
-  <% else %>
-    <p class="text-muted small" id="comments-sign-in-required"><%= t('better_together.comments.sign_in_to_comment', default: 'Sign in to join the conversation.') %></p>
-  <% end %>
-</section>
+    <% denial_reason = comment_denial_reason(commentable) %>
+    <% if denial_reason.nil? %>
+      <%= render 'better_together/comments/form', commentable: commentable, comment: BetterTogether::Comment.new %>
+    <% elsif denial_reason == :publishing_agreement_required %>
+      <p class="text-muted small" id="comments-publishing-agreement-required">
+        <%= t('better_together.comments.publishing_agreement_required_html',
+              default: 'You must %{link} before you can comment.',
+              link: link_to(t('better_together.comments.accept_agreement_link', default: 'accept the content publishing agreement'),
+                             agreements_status_path(locale: I18n.locale))) %>
+      </p>
+    <% else %>
+      <p class="text-muted small" id="comments-<%= denial_reason.to_s.dasherize %>">
+        <%= t("better_together.comments.denial_reasons.#{denial_reason}") %>
+      </p>
+    <% end %>
+  </section>
+<% end %>

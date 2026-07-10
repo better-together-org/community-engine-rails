@@ -990,6 +990,20 @@ en:
         completed_message: Checklist complete
         items_title: Items
         no_items: No items to display
+    comment_config:
+      hints:
+        permission: Controls who is allowed to post new comments.
+        visibility: Controls who can see the comment thread.
+      labels:
+        permission: Who can comment
+        visibility: Who can see comments
+      permission_options:
+        community: Community members only
+        disabled: Nobody (comments disabled)
+        inherit: Anyone who can view this
+      visibility_options:
+        community: Community members only
+        inherit: Anyone who can view this
     comment_mailer:
       added:
         greeting: Hello %{recipient_name},
@@ -1001,6 +1015,9 @@ en:
       accept_agreement_link: accept the content publishing agreement
       delete: Delete comment
       deleted_author: Former member
+      denial_reasons:
+        community_required: Only community members can comment on this post.
+        disabled: Comments are disabled for this post.
       form:
         error_summary: This comment could not be posted
         label: Add a comment

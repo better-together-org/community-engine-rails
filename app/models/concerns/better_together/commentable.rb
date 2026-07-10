@@ -7,6 +7,28 @@ module BetterTogether
 
     included do
       has_many :comments, as: :commentable, class_name: 'BetterTogether::Comment', dependent: :destroy
+      has_one :comment_config, as: :commentable, class_name: 'BetterTogether::CommentConfig', dependent: :destroy
+      accepts_nested_attributes_for :comment_config
+    end
+
+    # Lazy reads: every comment-creation/visibility check reads these, so the default
+    # ('inherit', today's behavior) must be answerable without a CommentConfig row
+    # existing — unlike Recurrence/RecurringSchedulable, where absence just means "not
+    # recurring" and callers check `.recurrence&.rule` directly.
+    def comment_permission
+      comment_config&.permission || 'inherit'
+    end
+
+    def comment_permission=(value)
+      (comment_config || build_comment_config).permission = value
+    end
+
+    def comment_visibility
+      comment_config&.visibility || 'inherit'
+    end
+
+    def comment_visibility=(value)
+      (comment_config || build_comment_config).visibility = value
     end
 
     # Dynamic extension point: a host app opts a model into comments solely by including

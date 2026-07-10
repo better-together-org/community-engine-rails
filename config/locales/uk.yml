@@ -973,6 +973,20 @@ uk:
         completed_message: Чек-лист завершено
         items_title: Елементи
         no_items: Немає елементів для відображення
+    comment_config:
+      hints:
+        permission: Визначає, хто може публікувати нові коментарі.
+        visibility: Визначає, хто може бачити гілку коментарів.
+      labels:
+        permission: Хто може коментувати
+        visibility: Хто може бачити коментарі
+      permission_options:
+        community: Тільки члени спільноти
+        disabled: Ніхто (коментарі вимкнені)
+        inherit: Будь-хто, хто може це бачити
+      visibility_options:
+        community: Тільки члени спільноти
+        inherit: Будь-хто, хто може це бачити
     comment_mailer:
       added:
         greeting: Вітаємо, %{recipient_name},
@@ -984,6 +998,9 @@ uk:
       accept_agreement_link: прийняти угоду про публікацію контенту
       delete: Видалити коментар
       deleted_author: Колишній учасник
+      denial_reasons:
+        community_required: Тільки члени спільноти можуть коментувати цю публікацію.
+        disabled: Коментарі вимкнені для цієї публікації.
       form:
         error_summary: Не вдалося опублікувати коментар
         label: Додати коментар

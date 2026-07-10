@@ -86,5 +86,38 @@ module BetterTogether # :nodoc:
         expect(hint).to be_present
       end
     end
+
+    describe '#comment_permission_field / #comment_visibility_field' do
+      let(:post) { create(:better_together_post) }
+      let(:comment_config) { post.build_comment_config }
+      let(:cc_form) { ActionView::Helpers::FormBuilder.new(:comment_config, comment_config, helper, {}) }
+
+      it 'renders a labelled select for permission with the current value selected' do
+        comment_config.permission = 'community'
+        rendered = helper.comment_permission_field(form: cc_form, commentable: post)
+
+        expect(rendered).to include('<select')
+        expect(rendered).to include('name="comment_config[permission]"')
+        selected_option = rendered[/<option[^>]*value="community"[^>]*>/]
+        expect(selected_option).to include('selected')
+      end
+
+      it 'renders a labelled select for visibility with the current value selected' do
+        comment_config.visibility = 'community'
+        rendered = helper.comment_visibility_field(form: cc_form, commentable: post)
+
+        expect(rendered).to include('name="comment_config[visibility]"')
+        selected_option = rendered[/<option[^>]*value="community"[^>]*>/]
+        expect(selected_option).to include('selected')
+      end
+
+      it 'gives each field a stable, unique id (this app does not auto-generate form ids)' do
+        permission_field = helper.comment_permission_field(form: cc_form, commentable: post)
+        visibility_field = helper.comment_visibility_field(form: cc_form, commentable: post)
+
+        expect(permission_field).to include("id=\"#{helper.dom_id(post)}_comment_permission\"")
+        expect(visibility_field).to include("id=\"#{helper.dom_id(post)}_comment_visibility\"")
+      end
+    end
   end
 end

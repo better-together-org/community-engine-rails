@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # Represents a blog post
-  class Post < PlatformRecord
+  class Post < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Attachments::Images
     include Authorable
     include BlockFilterable
@@ -90,6 +90,12 @@ module BetterTogether
 
     def self.extra_permitted_attributes
       super + %i[contributors_display_visibility]
+    end
+
+    def self.permitted_attributes(id: false, destroy: false)
+      super + [
+        { comment_config_attributes: BetterTogether::CommentConfig.permitted_attributes(id:, destroy:) }
+      ]
     end
 
     def to_s

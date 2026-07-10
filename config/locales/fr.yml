@@ -989,6 +989,20 @@ fr:
         completed_message: Liste de contrôle complète
         items_title: Éléments
         no_items: Aucun élément à afficher
+    comment_config:
+      hints:
+        permission: Détermine qui est autorisé à publier de nouveaux commentaires.
+        visibility: Détermine qui peut voir le fil de commentaires.
+      labels:
+        permission: Qui peut commenter
+        visibility: Qui peut voir les commentaires
+      permission_options:
+        community: Membres de la communauté uniquement
+        disabled: Personne (commentaires désactivés)
+        inherit: Tous ceux qui peuvent voir ceci
+      visibility_options:
+        community: Membres de la communauté uniquement
+        inherit: Tous ceux qui peuvent voir ceci
     comment_mailer:
       added:
         greeting: Bonjour %{recipient_name},
@@ -1000,6 +1014,10 @@ fr:
       accept_agreement_link: accepter l'accord de publication de contenu
       delete: Supprimer le commentaire
       deleted_author: Ancien membre
+      denial_reasons:
+        community_required: Seuls les membres de la communauté peuvent commenter cette
+          publication.
+        disabled: Les commentaires sont désactivés pour cette publication.
       form:
         error_summary: Ce commentaire n'a pas pu être publié
         label: Ajouter un commentaire
