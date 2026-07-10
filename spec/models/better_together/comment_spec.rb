@@ -87,11 +87,12 @@ RSpec.describe BetterTogether::Comment do
       expect(comment.commentable).to eq(post)
     end
 
-    # MVP scope: comments only apply to Posts (see ALLOWED_COMMENTABLES).
-    # The commentable_type/commentable_id columns stay genuinely polymorphic at
-    # the DB layer so future types can be added by extending the whitelist —
-    # this validation is the application-level gate, mirroring Report::ALLOWED_REPORTABLES.
-    it 'rejects a commentable type outside ALLOWED_COMMENTABLES' do
+    # A host app opts a model into comments solely by `include BetterTogether::Commentable` —
+    # there is no separate gem-owned allow-list to edit. The commentable_type/commentable_id
+    # columns are genuinely polymorphic at the DB layer; this validation just requires the
+    # target class to actually include the concern, dynamically (see
+    # docs/developers/architecture/polymorphic_allowlist_extension_audit.md).
+    it 'rejects a commentable type whose class does not include Commentable' do
       page = create(:page)
 
       comment = described_class.new(
@@ -105,9 +106,13 @@ RSpec.describe BetterTogether::Comment do
     end
   end
 
-  describe 'ALLOWED_COMMENTABLES' do
-    it 'only allows Post for the MVP' do
-      expect(described_class::ALLOWED_COMMENTABLES).to eq(['BetterTogether::Post'])
+  describe 'Commentable.included_in_models' do
+    it 'includes Post, which explicitly includes the concern' do
+      expect(BetterTogether::Commentable.included_in_models).to include(BetterTogether::Post)
+    end
+
+    it 'excludes Page, which does not include the concern' do
+      expect(BetterTogether::Commentable.included_in_models).not_to include(BetterTogether::Page)
     end
   end
 

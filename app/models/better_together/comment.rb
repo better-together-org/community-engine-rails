@@ -3,25 +3,19 @@
 module BetterTogether
   # A short text comment posted on a commentable record (MVP: BetterTogether::Post).
   class Comment < PlatformRecord
-    include Creatable
     include BlockFilterable
-
-    # App-layer whitelist only, no DB constraint (same pattern as Report::ALLOWED_REPORTABLES) —
-    # tracked as a follow-up to consider hardening if a bulk-write/import path is ever added.
-    ALLOWED_COMMENTABLES = [
-      'BetterTogether::Post'
-    ].freeze
+    include Creatable
+    include Reportable
 
     belongs_to :commentable, polymorphic: true
 
-    # No dependent: option deliberately — Report/Safety::Case are the moderation audit trail and
-    # must survive the reported Comment being deleted (matches how Post/Page/Event/Community/
-    # Message, the other Report::ALLOWED_REPORTABLES, already behave: none of them declare a
-    # reports_received association at all, so their reports already survive deletion).
-    has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report'
-
     validates :content, presence: true
-    validates :commentable_type, inclusion: { in: ALLOWED_COMMENTABLES }
+    # Dynamic extension point, not a gem-owned allow-list: a host app opts a model into
+    # comments by including BetterTogether::Commentable, nothing else. See
+    # docs/developers/architecture/polymorphic_allowlist_extension_audit.md
+    validates :commentable_type, inclusion: {
+      in: ->(_record) { BetterTogether::Commentable.included_in_models.map(&:name) }
+    }
 
     scope :oldest_first, -> { order(created_at: :asc) }
 

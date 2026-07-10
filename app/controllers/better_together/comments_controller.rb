@@ -54,7 +54,7 @@ module BetterTogether
     def resolve_commentable
       klass = BetterTogether::SafeClassResolver.resolve(
         params[:commentable_type],
-        allowed: BetterTogether::Comment::ALLOWED_COMMENTABLES
+        allowed: BetterTogether::Commentable.included_in_models.map(&:name)
       )
       return nil unless klass
 

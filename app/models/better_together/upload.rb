@@ -7,6 +7,7 @@ module BetterTogether
     include Creatable
     include Identifier
     include Privacy
+    include Reportable
     include Translatable
 
     has_one_attached :file

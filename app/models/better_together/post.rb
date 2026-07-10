@@ -15,9 +15,11 @@ module BetterTogether
     include Commentable
     include Creatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
     include Seedable
     include Shortlinkable

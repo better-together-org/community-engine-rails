@@ -90,7 +90,7 @@ module BetterTogether
     def resolved_reportable(reportable_type, reportable_id)
       klass = BetterTogether::SafeClassResolver.resolve!(
         reportable_type,
-        allowed: BetterTogether::Report::ALLOWED_REPORTABLES,
+        allowed: BetterTogether::Reportable.included_in_models.map(&:name),
         error_class: SecurityError
       )
 

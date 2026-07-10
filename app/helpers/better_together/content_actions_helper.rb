@@ -49,7 +49,7 @@ module BetterTogether
     private
 
     def reportable_record?(record)
-      BetterTogether::Report::ALLOWED_REPORTABLES.include?(record.class.base_class.name)
+      record.class.include?(BetterTogether::Reportable)
     end
 
     def owned_by_current_person?(record)

@@ -3,21 +3,6 @@
 module BetterTogether
   # Record of a person reporting inappropriate content or users
   class Report < PlatformRecord
-    ALLOWED_REPORTABLES = [
-      'BetterTogether::Person',
-      'BetterTogether::Post',
-      'BetterTogether::Event',
-      'BetterTogether::Page',
-      'BetterTogether::Community',
-      'BetterTogether::Comment',
-      'BetterTogether::Message',
-      'BetterTogether::Upload',
-      'BetterTogether::Content::Block',
-      'BetterTogether::Joatu::Offer',
-      'BetterTogether::Joatu::Request',
-      'BetterTogether::Joatu::Agreement'
-    ].freeze
-
     # Intake fields should be chosen by the reporter, not silently filled from DB defaults.
     attribute :category, :string
     attribute :harm_level, :string
@@ -62,7 +47,12 @@ module BetterTogether
     validates :category, presence: true
     validates :harm_level, presence: true
     validates :requested_outcome, presence: true
-    validates :reportable_type, inclusion: { in: ALLOWED_REPORTABLES }
+    # Dynamic extension point, not a gem-owned allow-list: a host app opts a model into
+    # the safety/Report pipeline by including BetterTogether::Reportable, nothing else. See
+    # docs/developers/architecture/polymorphic_allowlist_extension_audit.md
+    validates :reportable_type, inclusion: {
+      in: ->(_record) { BetterTogether::Reportable.included_in_models.map(&:name) }
+    }
     validates :reportable_id, uniqueness: {
       scope: %i[reporter_id reportable_type],
       message: ->(_report, _data) { I18n.t('better_together.reports.errors.already_reported_by_you') }

@@ -14,9 +14,11 @@ module BetterTogether
     include Geography::Geospatial::One
     include Geography::Locatable::One
     include Invitable
+    include Metrics::Shareable
     include Metrics::Viewable
     include Privacy
     include RecurringSchedulable
+    include Reportable
     include Searchable
     include Seedable
     include Shortlinkable
