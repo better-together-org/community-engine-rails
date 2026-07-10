@@ -1,4 +1,4 @@
-%% PR #1651 — MVP comment system + remediation. Domain/object relation view.
+%% PR #1651 — MVP comment system + CommentConfig permission/visibility controls. Domain/object relation view.
 classDiagram
     class Comment {
       +content
@@ -11,6 +11,19 @@ classDiagram
     class Commentable {
       <<concern>>
       +comments
+      +comment_config
+      +comment_permission
+      +comment_permission=(value)
+      +comment_visibility
+      +comment_visibility=(value)
+      +self.included_in_models()
+    }
+
+    class CommentConfig {
+      +commentable
+      +permission: inherit|community|disabled
+      +visibility: inherit|community
+      +self.permitted_attributes()
     }
 
     class Post {
@@ -36,6 +49,15 @@ classDiagram
       +show?()
       +create?()
       +destroy?()
+      -commentable_visible_to_agent?(commentable)
+      -commentable_visibility_permits?(commentable)
+      -commentable_accepts_new_comments?(commentable)
+    }
+
+    class CommentPolicyScope {
+      <<Scope>>
+      +resolve()
+      -restrict_to_visible_and_permitted(relation)
     }
 
     class SelfServicePublishablePolicy {
@@ -74,13 +96,20 @@ classDiagram
 
     Post ..|> Commentable : includes
     Post ..|> Authorable : includes
-    Comment --> Post : commentable (ALLOWED_COMMENTABLES)
+    Comment --> Post : commentable (dynamic extension point via Commentable.included_in_models, not a hardcoded allow-list)
     Comment --> Person : creator
     Comment --> "0..*" Report : reports_received (no cascade destroy)
     Report --> "1" SafetyCase : has_one, auto-created
+    Commentable --> "0..1" CommentConfig : has_one, dependent destroy, lazy-built
+    CommentPolicy --> CommentPolicyScope : nested Scope class
+    CommentPolicy --> CommentConfig : reads comment_permission/comment_visibility via commentable
     CommentPolicy ..|> SelfServicePublishablePolicy : includes
+    CommentPolicyScope --> CommentPolicy : delegates per-pair visibility to show?()
     CommentsController ..|> ChecksRequiredAgreements : includes
     CommentsController --> CommentPolicy : authorize
     CommentsController --> CommentAddedNotifier : deliver_later(recipients)
     CommentAddedNotifier --> Person : governed_authors, fallback creator
     Person --> Post : governed_authors (Authorable)
+
+    note for CommentPolicy "show?/Scope#resolve now resolve visibility through\nPundit.policy_scope(user, commentable.class) rather than a\nbare Pundit.policy(user, commentable)&.show? boolean —\nkeeps comment visibility consistent with the viewer's own\nscoped list for that commentable type."
+    note for CommentConfig "Default state (all enums 'inherit') is readable with\nzero rows in the table — Commentable#comment_permission/\n#comment_visibility fall back to 'inherit' via &.permission\nwhen no CommentConfig row exists yet."

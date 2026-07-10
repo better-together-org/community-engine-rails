@@ -1,10 +1,15 @@
-%% PR #1651 — MVP comment system + remediation. Comment lifecycle process view.
+%% PR #1651 — MVP comment system + CommentConfig permission/visibility controls. Comment lifecycle process view.
 flowchart TD
-    A[Member views a Post] --> B{Signed in?}
-    B -->|No| C[Sign-in prompt shown]
-    B -->|Yes| D{Accepted content<br/>publishing agreement?}
+    Z[Member views a Post] --> ZA{comment_visibility<br/>== 'community'?}
+    ZA -->|Yes, not a member| ZB[Entire Comments section hidden —<br/>CommentPolicy#show? false via<br/>commentable_visibility_permits?]
+    ZA -->|No, or an active member| A{Signed in?}
+    A -->|No| C[Sign-in prompt shown]
+    A -->|Yes| D{Accepted content<br/>publishing agreement?}
     D -->|No| E[Redirect + flash on submit;<br/>fallback message links to<br/>agreements_status_path]
-    D -->|Yes| F{Blocked by<br/>commentable creator?}
+    D -->|Yes| DA{comment_permission?}
+    DA -->|'disabled'| DB["'comments-disabled' denial message,<br/>no manager bypass"]
+    DA -->|'community', not a member| DC["'comments-community-required' denial message"]
+    DA -->|'inherit', or 'community' + member| F{Blocked by<br/>commentable creator?}
     F -->|Yes| G[Comment form hidden]
     F -->|No| H[Comment form shown]
     H --> I[Member submits content]
