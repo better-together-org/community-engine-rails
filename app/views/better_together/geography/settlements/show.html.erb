@@ -1,29 +1,21 @@
 <div class="container">
-  <div class="card">
-    <div class="card-body">
-      <h3 class="card-title mb-3"><%= @geography_settlement.name %></h3>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Identifier:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.identifier %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Name:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.name %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Description:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.description %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Slug:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.slug %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Protected:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.protected ? 'Yes' : 'No' %></div>
-      </div>
+
+  <div class="event-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <%= cover_image_tag(@geography_settlement) %>
+
     </div>
   </div>
+
+  <div class="event-info-container container">
+    <div class="row align-items-end">
+      <div class="col">
+        <h1 class="event-name mt-3"><%= @geography_settlement.name %></h1>
+      </div>  
+    </div>
+  </div>
+
 
   <div class="mt-3">
     <% if policy(@geography_settlement).edit? %>
@@ -36,4 +28,70 @@
       <%= button_to "Destroy this settlement", [@geography_settlement], method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
     <% end %>
   </div>
+
+  <!-- Event tabbed section with members -->
+  <section class="card tabbed-section" data-controller="better_together--tabs">
+    <div class="card-header">
+      <!-- Navigation tabs -->
+      <%# Initialize the active tab state with accessible attributes %>
+      <%= content_tag :div, id: 'eventTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Event Sections' do %>
+        <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
+              
+
+        <%# VICKI ATTEMPTING TO ADD A TAB %>
+        <%= link_to t('globals.tabs.test'), '#test', class: 'nav-link', id: 'test-tab', data: { bs_toggle: 'tab', bs_target: '#test', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'test', selected: 'true' }, tabindex: '0' %>
+      
+      <% end %>
+    </div>
+
+    <%# Tabbed content using Bootstrap tab panes so nav links activate panes correctly %>
+    <div class="card-body" id="eventSections" role="tabpanel">
+      <div class="tab-content">
+        <!-- Person About Tab Pane -->
+        <div id="about" class="nav-tab-pane tab-pane fade show active" role="tabpanel" aria-labelledby="about-tab">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Identifier:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.identifier %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Name:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.name %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Description:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.description %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Slug:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.slug %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Protected:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.protected ? 'Yes' : 'No' %></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+ 
+        <!-- VICKIS TEST TAB  -->
+        <div id="test" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="test-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <p>This is a test tab</p>
+
+              <!-- <div class="event-datetime card-text text-muted mt-2">
+                <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@event) %> -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
 </div>
