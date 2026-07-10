@@ -215,6 +215,95 @@ RSpec.describe 'Documentation screenshots for comment permission controls',
     expect(result[:mobile]).to end_with('docs/screenshots/mobile/comment_permission_controls_post_edit_fields.png')
   end
 
+  it 'captures the in-app bell notification for a new comment' do
+    recipient = find_or_create_test_user('recipient@example.test', 'SecureTest123!@#', :user)
+    commenter = create(:better_together_person, name: 'Neighbourhood Reader')
+    post_record = create(
+      :better_together_post,
+      title: 'Fall Cleanup Schedule',
+      author: recipient.person,
+      platform: host_platform,
+      community: host_community,
+      privacy: 'public',
+      published_at: 1.day.ago
+    )
+    comment = create(:comment,
+                     creator: commenter,
+                     commentable: post_record,
+                     content: 'Could we add a rain date in case Saturday gets washed out?')
+    BetterTogether::CommentAddedNotifier.with(record: comment, comment:).deliver(recipient.person)
+    notification = recipient.person.notifications.last
+
+    result = capture_docs_screenshot(
+      'comment_permission_controls_notification',
+      flow: 'comment_added_notification',
+      callouts: [
+        {
+          selector: "##{ActionView::RecordIdentifier.dom_id(notification)}",
+          title: 'In-app notification for a new comment',
+          bullets: [
+            'Delivered to the post\'s credited author(s) via governed_authors, not just its DB-row creator.',
+            'Only sent if the recipient has not turned off "notify_on_comments" in their preferences — the same check gates the email below.',
+            'Links straight to the comment via its dom_id anchor on the post.'
+          ]
+        }
+      ]
+    ) do
+      capybara_sign_in_user('recipient@example.test', 'SecureTest123!@#')
+      visit better_together.notifications_path(locale:)
+
+      expect(page).to have_text('commented on your content')
+      expect(page).to have_selector("##{ActionView::RecordIdentifier.dom_id(notification)}")
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/comment_permission_controls_notification.png')
+    expect(result[:mobile]).to end_with('docs/screenshots/mobile/comment_permission_controls_notification.png')
+  end
+
+  it 'captures the email notification for a new comment' do
+    recipient = create(:better_together_person, name: 'Harbourview Author', locale: 'en')
+    commenter = create(:better_together_person, name: 'Marina Volunteer')
+    post_record = create(
+      :better_together_post,
+      title: 'Dock Repairs Volunteer List',
+      author: recipient,
+      platform: host_platform,
+      community: host_community,
+      privacy: 'public',
+      published_at: 1.day.ago
+    )
+    comment = create(:comment,
+                     creator: commenter,
+                     commentable: post_record,
+                     content: 'Signed up for the Saturday shift — see you all there!')
+    mail = BetterTogether::CommentMailer.with(comment:, recipient:).added
+    html_path = Rails.root.join('tmp', 'comment_permission_controls_notification_email.html')
+    File.write(html_path, mail.html_part&.body&.to_s || mail.body.to_s)
+
+    result = capture_docs_screenshot(
+      'comment_permission_controls_email',
+      flow: 'comment_added_email',
+      callouts: [
+        {
+          selector: 'blockquote',
+          title: 'Email notification body',
+          bullets: [
+            'Quotes the new comment (truncated to 280 characters) alongside the commenter\'s name.',
+            'The view link anchors directly to the comment via dom_id, same target as the in-app notification.',
+            'Gated by the same notify_on_comments preference as the in-app notification, checked independently per channel.'
+          ]
+        }
+      ]
+    ) do
+      visit "file://#{html_path}"
+
+      expect(page).to have_text('Signed up for the Saturday shift')
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/comment_permission_controls_email.png')
+    expect(result[:mobile]).to end_with('docs/screenshots/mobile/comment_permission_controls_email.png')
+  end
+
   private
 
   def capture_docs_screenshot(name, flow:, callouts: [], &)
