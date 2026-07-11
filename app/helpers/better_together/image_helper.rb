@@ -80,6 +80,15 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
 
+    # True only when rendering a mailer view (controller is the ActionMailer::Base
+    # instance there, same as it's the real controller for an ordinary request) —
+    # false for a normal browser-rendered page and for Comment's bare
+    # broadcast_append_later_to render, both of which have the app's own CSS
+    # already loaded and should stay in charge of sizing.
+    def mailer_view?
+      respond_to?(:controller) && controller.is_a?(ActionMailer::Base)
+    end
+
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/CyclomaticComplexity
     # rubocop:todo Metrics/AbcSize
@@ -89,14 +98,17 @@ module BetterTogether
       image_format = options[:format] || 'jpg'
       image_alt = options[:alt] || 'Profile Image'
       image_title = options[:title] || 'Profile Image'
-      # width/height attributes plus an inline size style (not just the CSS class) so
-      # this renders at the correct size in a mailer view — most email clients strip
-      # <style>/external stylesheets and only honor inline styles and width/height
-      # attributes, unlike a normal browser-rendered page.
-      size_style = "width: #{image_size}px; height: #{image_size}px; object-fit: cover;"
+      # width/height attributes are always safe to add — the app's CSS (which sets
+      # size per context/class) always wins over a bare HTML attribute, same as a UA
+      # default. An inline *style*, though, beats app CSS on specificity, so that's
+      # only added in a mailer view — most email clients strip <style>/external
+      # stylesheets and only honor inline styles and width/height attributes, unlike
+      # a normal browser-rendered page where the app's own CSS should stay in charge.
+      inline_style = options[:style].to_s
+      inline_style = "width: #{image_size}px; height: #{image_size}px; object-fit: cover; #{inline_style}".strip if mailer_view?
       image_tag_attributes = {
         class: image_classes,
-        style: "#{size_style} #{options[:style]}".strip,
+        style: inline_style,
         width: image_size,
         height: image_size,
         alt: image_alt,

@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#comment_added_notifier_notification_dc3e1f20-969e-479e-a2d9-0f7167c025f4",
+      "selector": "#comment_added_notifier_notification_eaca3d25-818a-4f1b-a110-ccbe1663fdf9",
       "title": "In-app notification for a new comment",
       "bullets": [
         "Delivered to the post's credited author(s) via governed_authors, not just its DB-row creator.",
@@ -19,31 +19,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 251.390625,
+        "y": 195.390625,
         "width": 476.0,
-        "height": 229.375,
+        "height": 211.375,
         "right": 488.0,
-        "bottom": 480.765625,
+        "bottom": 406.765625,
         "center_x": 250.0,
-        "center_y": 366.078125
+        "center_y": 301.078125
       },
       "avoid": {
         "x": 12.0,
-        "y": 251.390625,
+        "y": 195.390625,
         "width": 476.0,
-        "height": 229.375,
+        "height": 211.375,
         "right": 488.0,
-        "bottom": 480.765625,
+        "bottom": 406.765625,
         "center_x": 250.0,
-        "center_y": 366.078125
+        "center_y": 301.078125
       },
       "placement": {
         "side": "below",
         "x": 115.0,
-        "y": 500.77,
+        "y": 426.77,
         "width": 270.0,
         "height": 612,
-        "score": 780.234375
+        "score": 854.234375
       }
     }
   ]
