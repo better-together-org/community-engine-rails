@@ -1001,7 +1001,7 @@ es:
     comment_mailer:
       added:
         greeting: Hola %{recipient_name},
-        intro: "%{commenter_name} dejó un comentario en tu contenido:"
+        intro: 'Tienes un nuevo comentario en tu contenido:'
         signature_html: "— El equipo de %{platform}"
         subject: Tienes un nuevo comentario
         view_link: Ver comentario

@@ -1,7 +1,7 @@
 {
   "name": "comment_permission_controls_post_edit_fields",
   "device": "desktop",
-  "url": "/en/posts/sample-post-1/edit",
+  "url": "/en/posts/sample-post-3/edit",
   "title": "Edit Post | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#post_e41fe78a-356b-43b2-a222-f3fc30dc3c13_comment_permission",
+      "selector": "#post_e0cf0b40-f5ae-43bf-b46b-66128164a0c6_comment_permission",
       "title": "Who can comment",
       "bullets": [
         "Nested comment_config fieldset added next to the existing privacy field.",
@@ -46,7 +46,7 @@
       }
     },
     {
-      "selector": "#post_e41fe78a-356b-43b2-a222-f3fc30dc3c13_comment_visibility",
+      "selector": "#post_e0cf0b40-f5ae-43bf-b46b-66128164a0c6_comment_visibility",
       "title": "Who can see the comment thread",
       "bullets": [
         "Independent from the posting permission above — a thread can stay visible to everyone while restricting who may add to it.",

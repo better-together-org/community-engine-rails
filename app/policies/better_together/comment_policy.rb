@@ -32,7 +32,11 @@ module BetterTogether
     # Scope for resolving visible comments
     class Scope < PlatformRecordPolicy::Scope
       def resolve
-        base = platform_scoped.oldest_first.include_creator
+        # Richer than plain include_creator: the comment list renders each creator via
+        # the people/mention partial, which needs the creator's translated slug (for
+        # person_path) and profile image — same shape as ConversationPolicy::Scope's
+        # participant eager-loading, to avoid an N+1 per comment on both fronts.
+        base = platform_scoped.oldest_first.includes(creator: [:string_translations, { profile_image_attachment: :blob }])
         base = base.excluding_blocked_for(agent) if agent
         restrict_to_visible_and_permitted(base)
       end

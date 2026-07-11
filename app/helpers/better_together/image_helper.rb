@@ -114,9 +114,26 @@ module BetterTogether
         return url if url.present?
       end
 
-      image_url(default_profile_image(entity, image_format))
+      default_profile_image_url(entity, image_format)
     rescue ActiveStorage::FileNotFoundError
-      image_url(default_profile_image(entity, image_format))
+      default_profile_image_url(entity, image_format)
+    end
+
+    # image_url resolves an absolute URL from the current request automatically, but
+    # there's no request in a mailer (or Comment's bare broadcast_append_later_to
+    # render) — it falls back to a host-relative path there, broken in an email with
+    # no current page to resolve against. Build the absolute URL from url_options
+    # (the mailer's platform-derived host) directly in that case instead.
+    def default_profile_image_url(entity, image_format)
+      path = default_profile_image(entity, image_format)
+      return image_url(path) if respond_to?(:request) && request.present?
+
+      host = url_options[:host]
+      return image_path(path) unless host.present?
+
+      protocol = url_options[:protocol] || 'http'
+      port_suffix = url_options[:port] ? ":#{url_options[:port]}" : ''
+      "#{protocol}://#{host}#{port_suffix}#{image_path(path)}"
     end
 
     # rubocop:enable Metrics/AbcSize

@@ -2,7 +2,13 @@
 
 <p><%= t('.greeting', recipient_name: @recipient.name) %></p>
 
-<p><%= t('.intro', commenter_name: @comment.creator&.name || t('better_together.comments.deleted_author', default: 'A member')) %></p>
+<p><%= t('.intro') %></p>
+
+<% if @comment.creator.present? %>
+  <%= render partial: 'better_together/people/mention', locals: { person: @comment.creator, linked: false } %>
+<% else %>
+  <p><%= t('better_together.comments.deleted_author', default: 'A member') %></p>
+<% end %>
 
 <blockquote><%= simple_format(h(@comment.content.to_s.truncate(280))) %></blockquote>
 

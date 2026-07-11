@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#comments_post_4ce8ad3c-45a6-45bc-bafe-37383b80255b",
+      "selector": "#comments_post_cef8904b-a1e4-40db-8949-0174d91a5177",
       "title": "Comment thread — default (inherit) settings",
       "bullets": [
         "Every existing comment renders oldest-first with the author name, timestamp, and body.",
@@ -20,21 +20,21 @@
         "x": 12.0,
         "y": 1102.6875,
         "width": 461.0,
-        "height": 48.0,
+        "height": 72.0,
         "right": 473.0,
-        "bottom": 1150.6875,
+        "bottom": 1174.6875,
         "center_x": 242.5,
-        "center_y": 1126.6875
+        "center_y": 1138.6875
       },
       "avoid": {
         "x": 12.0,
         "y": 1102.6875,
         "width": 461.0,
-        "height": 48.0,
+        "height": 72.0,
         "right": 473.0,
-        "bottom": 1150.6875,
+        "bottom": 1174.6875,
         "center_x": 242.5,
-        "center_y": 1126.6875
+        "center_y": 1138.6875
       },
       "placement": {
         "side": "above",
@@ -54,23 +54,23 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 1166.6875,
+        "y": 1190.6875,
         "width": 461.0,
-        "height": 94.3125,
+        "height": 70.3125,
         "right": 473.0,
         "bottom": 1261.0,
         "center_x": 242.5,
-        "center_y": 1213.84375
+        "center_y": 1225.84375
       },
       "avoid": {
         "x": 12.0,
-        "y": 1166.6875,
+        "y": 1190.6875,
         "width": 461.0,
-        "height": 94.3125,
+        "height": 70.3125,
         "right": 473.0,
         "bottom": 1261.0,
         "center_x": 242.5,
-        "center_y": 1213.84375
+        "center_y": 1225.84375
       },
       "placement": {
         "side": "right",

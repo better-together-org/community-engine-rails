@@ -276,6 +276,20 @@ RSpec.describe 'Documentation screenshots for comment permission controls',
                      creator: commenter,
                      commentable: post_record,
                      content: 'Signed up for the Saturday shift — see you all there!')
+    # Point the platform at the live Capybara test server so the commenter's profile
+    # image URL — generated from @platform&.url — actually resolves for the headless
+    # browser instead of pointing at the unrouteable host_url used elsewhere in specs.
+    # A throwaway visit forces the Puma test server up first; Capybara.server_port
+    # stays nil even after that (it only reflects an explicit Capybara.server_port=
+    # config, not the auto-assigned port), so the real host:port is parsed from
+    # current_url instead. update_column bypasses Platform's private/reserved-IP
+    # validation, which exists to keep production platforms from being pointed at a
+    # loopback address — not relevant here, since this is a throwaway value scoped to
+    # one screenshot capture.
+    visit better_together.posts_path(locale:)
+    live_server_uri = URI.parse(current_url)
+    live_server_url = "#{live_server_uri.scheme}://#{live_server_uri.host}:#{live_server_uri.port}"
+    host_platform.update_column(:host_url, live_server_url) # rubocop:disable Rails/SkipsModelValidations
     mail = BetterTogether::CommentMailer.with(comment:, recipient:).added
     html_path = Rails.root.join('tmp', 'comment_permission_controls_notification_email.html')
     File.write(html_path, mail.html_part&.body&.to_s || mail.body.to_s)

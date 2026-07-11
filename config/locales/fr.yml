@@ -1006,7 +1006,7 @@ fr:
     comment_mailer:
       added:
         greeting: Bonjour %{recipient_name},
-        intro: "%{commenter_name} a laissé un commentaire sur votre contenu :"
+        intro: 'Vous avez un nouveau commentaire sur votre contenu :'
         signature_html: "— L'équipe %{platform}"
         subject: Vous avez un nouveau commentaire
         view_link: Voir le commentaire

@@ -1,8 +1,12 @@
 <%# locals: (comment:) %>
 <div id="<%= dom_id(comment) %>" class="comment mb-3" data-comment-id="<%= comment.id %>">
   <div class="comment-header d-flex align-items-center">
-    <strong class="me-2"><%= comment.creator&.name || t('better_together.comments.deleted_author', default: 'Former member') %></strong>
-    <small class="text-muted"><%= l(comment.created_at, format: :short) %></small>
+    <% if comment.creator.present? %>
+      <%= render partial: 'better_together/people/mention', locals: { person: comment.creator, flex_layout: 'flex-row', flex_align_items: 'center' } %>
+    <% else %>
+      <strong class="me-2"><%= t('better_together.comments.deleted_author', default: 'Former member') %></strong>
+    <% end %>
+    <small class="text-muted ms-2"><%= l(comment.created_at, format: :short) %></small>
 
     <div class="ms-auto">
       <%# comment_action_items adds delete (creator/moderator); shared/content_actions itself adds

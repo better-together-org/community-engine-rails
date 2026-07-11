@@ -990,7 +990,7 @@ uk:
     comment_mailer:
       added:
         greeting: Вітаємо, %{recipient_name},
-        intro: "%{commenter_name} залишив(ла) коментар до вашого контенту:"
+        intro: 'У вас новий коментар до вашого контенту:'
         signature_html: "— Команда %{platform}"
         subject: У вас новий коментар
         view_link: Переглянути коментар
