@@ -5,7 +5,7 @@
 <p><%= t('.intro') %></p>
 
 <% if @comment.creator.present? %>
-  <%= render partial: 'better_together/people/mention', locals: { person: @comment.creator, linked: false } %>
+  <%= render partial: 'better_together/people/mention', locals: { person: @comment.creator } %>
 <% else %>
   <p><%= t('better_together.comments.deleted_author', default: 'A member') %></p>
 <% end %>

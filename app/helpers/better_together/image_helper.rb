@@ -85,14 +85,20 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize
     def profile_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       image_classes = "profile-image rounded-circle #{options[:class]}"
-      image_style = options[:style].to_s
       image_size = options[:size] || 300
       image_format = options[:format] || 'jpg'
       image_alt = options[:alt] || 'Profile Image'
       image_title = options[:title] || 'Profile Image'
+      # width/height attributes plus an inline size style (not just the CSS class) so
+      # this renders at the correct size in a mailer view — most email clients strip
+      # <style>/external stylesheets and only honor inline styles and width/height
+      # attributes, unlike a normal browser-rendered page.
+      size_style = "width: #{image_size}px; height: #{image_size}px; object-fit: cover;"
       image_tag_attributes = {
         class: image_classes,
-        style: image_style,
+        style: "#{size_style} #{options[:style]}".strip,
+        width: image_size,
+        height: image_size,
         alt: image_alt,
         title: image_title
       }

@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#post_e0cf0b40-f5ae-43bf-b46b-66128164a0c6_comment_permission",
+      "selector": "#post_aa9952be-de4b-4447-b8a1-3668f17ac6cd_comment_permission",
       "title": "Who can comment",
       "bullets": [
         "Nested comment_config fieldset added next to the existing privacy field.",
@@ -46,7 +46,7 @@
       }
     },
     {
-      "selector": "#post_e0cf0b40-f5ae-43bf-b46b-66128164a0c6_comment_visibility",
+      "selector": "#post_aa9952be-de4b-4447-b8a1-3668f17ac6cd_comment_visibility",
       "title": "Who can see the comment thread",
       "bullets": [
         "Independent from the posting permission above — a thread can stay visible to everyone while restricting who may add to it.",

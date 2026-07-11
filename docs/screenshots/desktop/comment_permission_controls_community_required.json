@@ -1,7 +1,7 @@
 {
   "name": "comment_permission_controls_community_required",
   "device": "desktop",
-  "url": "/en/posts/sample-post-1",
+  "url": "/en/posts/sample-post-4",
   "title": "Members-Only Planning Notes | Posts | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -18,31 +18,31 @@
       ],
       "target": {
         "x": 72.0,
-        "y": 1105.578125,
+        "y": 1139.578125,
         "width": 1296.0,
         "height": 21.0,
         "right": 1368.0,
-        "bottom": 1126.578125,
+        "bottom": 1160.578125,
         "center_x": 720.0,
-        "center_y": 1116.078125
+        "center_y": 1150.078125
       },
       "avoid": {
         "x": 72.0,
-        "y": 1105.578125,
+        "y": 1139.578125,
         "width": 1296.0,
         "height": 21.0,
         "right": 1368.0,
-        "bottom": 1126.578125,
+        "bottom": 1160.578125,
         "center_x": 720.0,
-        "center_y": 1116.078125
+        "center_y": 1150.078125
       },
       "placement": {
         "side": "above",
         "x": 530.0,
-        "y": 713.58,
+        "y": 747.58,
         "width": 380,
         "height": 372,
-        "score": 1105.578125
+        "score": 1139.578125
       }
     }
   ]

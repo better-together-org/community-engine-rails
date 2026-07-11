@@ -12,7 +12,8 @@
   <% cache ['comment_added_notification_content', notification.cache_key_with_version, I18n.locale] do %>
     <% if notification.comment&.creator.present? %>
       <%= render partial: 'better_together/people/mention',
-                 locals: { person: notification.comment.creator, flex_layout: 'flex-row', flex_align_items: 'center' } %>
+                 locals: { person: notification.comment.creator, flex_layout: 'flex-row', flex_align_items: 'left',
+                           justify_content: 'start' } %>
     <% end %>
     <p class="mb-1"><%= event.respond_to?(:body) ? event.body : notification.try(:body) %></p>
   <% end %>

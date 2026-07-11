@@ -1,7 +1,7 @@
 {
   "name": "comment_permission_controls_open_thread",
   "device": "desktop",
-  "url": "/en/posts/sample-post-2",
+  "url": "/en/posts/sample-post-1",
   "title": "Harbour Cleanup Volunteers Needed | Posts | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#comments_post_cef8904b-a1e4-40db-8949-0174d91a5177",
+      "selector": "#comments_post_b7fa4d36-7382-402d-bec1-f84693ad691f",
       "title": "Comment thread — default (inherit) settings",
       "bullets": [
         "Every existing comment renders oldest-first with the author name, timestamp, and body.",
@@ -18,31 +18,31 @@
       ],
       "target": {
         "x": 64.5,
-        "y": 1105.578125,
+        "y": 1139.578125,
         "width": 1296.0,
-        "height": 72.0,
+        "height": 90.0,
         "right": 1360.5,
-        "bottom": 1177.578125,
+        "bottom": 1229.578125,
         "center_x": 712.5,
-        "center_y": 1141.578125
+        "center_y": 1184.578125
       },
       "avoid": {
         "x": 64.5,
-        "y": 1105.578125,
+        "y": 1139.578125,
         "width": 1296.0,
-        "height": 72.0,
+        "height": 90.0,
         "right": 1360.5,
-        "bottom": 1177.578125,
+        "bottom": 1229.578125,
         "center_x": 712.5,
-        "center_y": 1141.578125
+        "center_y": 1184.578125
       },
       "placement": {
         "side": "above",
         "x": 522.5,
-        "y": 707.58,
+        "y": 741.58,
         "width": 380,
         "height": 378,
-        "score": 1105.578125
+        "score": 1139.578125
       }
     },
     {
@@ -54,23 +54,23 @@
       ],
       "target": {
         "x": 64.5,
-        "y": 1193.578125,
+        "y": 1245.578125,
         "width": 1296.0,
         "height": 101.0,
         "right": 1360.5,
-        "bottom": 1294.578125,
+        "bottom": 1346.578125,
         "center_x": 712.5,
-        "center_y": 1244.078125
+        "center_y": 1296.078125
       },
       "avoid": {
         "x": 64.5,
-        "y": 1193.578125,
+        "y": 1245.578125,
         "width": 1296.0,
         "height": 101.0,
         "right": 1360.5,
-        "bottom": 1294.578125,
+        "bottom": 1346.578125,
         "center_x": 712.5,
-        "center_y": 1244.078125
+        "center_y": 1296.078125
       },
       "placement": {
         "side": "right",
