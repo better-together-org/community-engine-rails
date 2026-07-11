@@ -10,11 +10,18 @@ RSpec.describe BetterTogether::Joatu::AgreementNotifier do
 
   it 'notifies both offer and request creators when agreement is created' do
     # rubocop:enable RSpec/MultipleExpectations
+    agreement = nil
+
     expect do
-      create(:joatu_agreement, offer:, request:)
+      agreement = create(:joatu_agreement, offer:, request:)
     end.to change(Noticed::Notification, :count).by(2)
 
-    recipients = Noticed::Notification.last(2).map(&:recipient)
+    # Scope to the event created for this specific agreement rather than the
+    # global `.last(2)` notifications, since the shared test database is not
+    # truncated between isolated spec runs and may contain unrelated leftovers.
+    event = Noticed::Event.find_by(record_type: agreement.class.name, record_id: agreement.id)
+    expect(event).to be_present
+    recipients = event.notifications.map(&:recipient)
     expect(recipients).to contain_exactly(offer_user.person, request_user.person)
   end
 

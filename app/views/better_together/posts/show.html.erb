@@ -104,6 +104,8 @@
         <%= share_buttons(shareable: @post) if @post.privacy_public? %>
       </div>
 
+      <%= render 'better_together/comments/comments_section', commentable: @post %>
+
     </main>
   </div>
 </div>

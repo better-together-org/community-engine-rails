@@ -110,7 +110,8 @@ module BetterTogether
     # rubocop:enable Metrics/PerceivedComplexity
 
     # Ordered from most restrictive to most open — used to compute the ceiling
-    # privacy a post may have given its platform and community context.
+    # privacy a privacy-scoped record may have given its platform and
+    # community context.
     PRIVACY_ORDER = %w[private community public].freeze
 
     def privacy_field(form:, klass:, html_options: {}, max_privacy: nil)
@@ -118,25 +119,28 @@ module BetterTogether
       form.select :privacy, select_opts, {}, build_privacy_html_options(html_options)
     end
 
-    # Returns the most open privacy level a post may carry given its wrapping
-    # platform and community.  Rules:
+    # Returns the most open privacy level a record may carry given its
+    # wrapping platform and community.  Rules:
     #   - Platform non-public  → ceiling is platform privacy
     #   - Platform public + community non-public → ceiling is 'community'
-    #     (members of a private/community community can still see community posts)
+    #     (members of a private/community community can still see community-level content)
     #   - Platform public + community public → ceiling is 'public'
-    def max_allowed_post_privacy(platform:, community:)
+    def max_allowed_privacy(platform:, community:)
       platform_level = PRIVACY_ORDER.index(platform&.privacy) || (PRIVACY_ORDER.length - 1)
       community_level = community_privacy_max_level(community)
       PRIVACY_ORDER[[platform_level, community_level].min]
     end
+    # Deprecated alias kept for compatibility with any host-app view overrides
+    # written against the Post-specific name before this helper was generalized.
+    alias max_allowed_post_privacy max_allowed_privacy
 
     # Returns a translated hint string when privacy options are constrained,
     # or nil when there is no restriction (all options open).
     def privacy_constraint_hint(platform:, community:)
       if platform.present? && !platform.privacy_public?
-        t('better_together.posts.hints.privacy_limited_by_platform')
+        t('better_together.privacy.hints.privacy_limited_by_platform')
       elsif community.present? && !community.privacy_public?
-        t('better_together.posts.hints.privacy_limited_by_community')
+        t('better_together.privacy.hints.privacy_limited_by_community')
       end
     end
 
@@ -172,9 +176,13 @@ module BetterTogether
     def contributor_display_visibility_field(form:, include_inherit:, label:, hint:, html_options: {})
       values = contributor_display_visibility_values(include_inherit:)
       options = contributor_display_visibility_html_options(html_options)
+      # `form_with` does not auto-generate id/for pairs in this app, so build an explicit,
+      # stable id to keep the <select> an accessible, labelled form control (WCAG select-name).
+      field_id = options[:id] || "#{dom_id(form.object)}_contributors_display_visibility"
+      options = options.merge(id: field_id)
 
       content_tag(:div) do
-        concat form.label(:contributors_display_visibility, label)
+        concat form.label(:contributors_display_visibility, label, for: field_id)
         concat form.select(
           :contributors_display_visibility,
           contributor_display_visibility_select_options(form:, values:),
@@ -184,6 +192,52 @@ module BetterTogether
         concat content_tag(:small, hint, class: 'form-text text-muted mt-2')
       end
     end
+
+    # `form` here is the nested comment_config fields_for builder (form.fields_for
+    # :comment_config, commentable.comment_config || commentable.build_comment_config
+    # in the calling view — mirrors _recurrence_fields.html.erb's fields_for wrapping,
+    # since this is a separate polymorphic model, not a direct attribute on commentable).
+    def comment_permission_field(form:, commentable:)
+      comment_settings_select_field(
+        form:, commentable:, attribute: :permission,
+        values: BetterTogether::CommentConfig.permissions.keys,
+        translation_scope: 'better_together.comment_config.permission_options',
+        label: t('better_together.comment_config.labels.permission', default: 'Who can comment'),
+        hint: t('better_together.comment_config.hints.permission',
+                default: 'Controls who is allowed to post new comments.')
+      )
+    end
+
+    def comment_visibility_field(form:, commentable:)
+      comment_settings_select_field(
+        form:, commentable:, attribute: :visibility,
+        values: BetterTogether::CommentConfig.visibilities.keys,
+        translation_scope: 'better_together.comment_config.visibility_options',
+        label: t('better_together.comment_config.labels.visibility', default: 'Who can see comments'),
+        hint: t('better_together.comment_config.hints.visibility',
+                default: 'Controls who can see the comment thread.')
+      )
+    end
+
+    private
+
+    def comment_settings_select_field(form:, commentable:, attribute:, values:, translation_scope:, label:, hint:) # rubocop:todo Metrics/ParameterLists
+      field_id = "#{dom_id(commentable)}_comment_#{attribute}"
+      selected = form.object.public_send(attribute)
+
+      content_tag(:div, class: 'mb-2') do
+        concat form.label(attribute, label, for: field_id, class: 'form-label')
+        concat form.select(
+          attribute,
+          options_for_select(values.map { |v| [t("#{translation_scope}.#{v}"), v] }, selected),
+          {},
+          { class: 'form-select', id: field_id }
+        )
+        concat content_tag(:small, hint, class: 'form-text text-muted mt-1')
+      end
+    end
+
+    public
 
     # rubocop:todo Metrics/MethodLength
     # Accepts an optional label_text override which, when provided, will be used

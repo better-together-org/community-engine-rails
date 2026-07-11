@@ -4,6 +4,9 @@ module BetterTogether
   class CommunitiesController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
     include InvitationTokenAuthorization
     include NotificationReadable
+    include ChecksRequiredAgreements
+
+    before_action :check_community_creation_agreement, only: %i[new create]
 
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/ClassLength
@@ -22,7 +25,7 @@ module BetterTogether
     # GET /communities
     def index
       authorize resource_class
-      @communities = policy_scope(resource_collection)
+      @communities = policy_scope(resource_collection).includes(community_index_includes)
     end
 
     # GET /communities/1
@@ -42,6 +45,8 @@ module BetterTogether
       load_community_posts
       set_current_person_community_membership
       set_membership_request_review_state
+      load_community_roles_data
+      load_community_memberships
 
       # Categorize events for display
       categorize_community_events
@@ -102,7 +107,7 @@ module BetterTogether
             render turbo_stream: [
               turbo_stream.update('form_errors', partial: 'layouts/better_together/errors',
                                                  locals: { object: @community }),
-              turbo_stream.update('community_form', partial: 'communities/form',
+              turbo_stream.update('community_form', partial: 'better_together/communities/form',
                                                     locals: { community: @community })
             ]
           end
@@ -316,6 +321,46 @@ module BetterTogether
       @upcoming_events = policy_scope(@community.hosted_events).upcoming
       @ongoing_events = policy_scope(@community.hosted_events).ongoing
       @past_events = policy_scope(@community.hosted_events).past
+    end
+
+    def load_community_roles_data
+      @community_roles = BetterTogether::Role
+                         .where(resource_type: 'BetterTogether::Community')
+                         .includes(:string_translations, :resource_permissions)
+                         .order(:position)
+
+      @community_memberships_by_role = @community.person_community_memberships
+                                                 .active
+                                                 .includes(community_role_member_includes)
+                                                 .group_by(&:role_id)
+    end
+
+    def community_index_includes
+      [
+        { cover_image_attachment: { blob: { variant_records: [] } } },
+        { buildings: %i[space address] }
+      ]
+    end
+
+    def load_community_memberships
+      @community_memberships = @community.person_community_memberships
+                                         .includes(
+                                           :joinable,
+                                           { role: [:string_translations] },
+                                           community_role_member_includes
+                                         )
+    end
+
+    def community_role_member_includes
+      { member: [
+        :string_translations,
+        { profile_image_attachment: {
+          blob: {
+            variant_records: [],
+            preview_image_attachment: { blob: [] }
+          }
+        } }
+      ] }
     end
 
     def load_community_posts

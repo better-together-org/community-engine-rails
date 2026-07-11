@@ -80,19 +80,37 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
 
+    # True only when rendering a mailer view (controller is the ActionMailer::Base
+    # instance there, same as it's the real controller for an ordinary request) —
+    # false for a normal browser-rendered page and for Comment's bare
+    # broadcast_append_later_to render, both of which have the app's own CSS
+    # already loaded and should stay in charge of sizing.
+    def mailer_view?
+      respond_to?(:controller) && controller.is_a?(ActionMailer::Base)
+    end
+
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/CyclomaticComplexity
     # rubocop:todo Metrics/AbcSize
     def profile_image_tag(entity, options = {}) # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       image_classes = "profile-image rounded-circle #{options[:class]}"
-      image_style = options[:style].to_s
       image_size = options[:size] || 300
       image_format = options[:format] || 'jpg'
       image_alt = options[:alt] || 'Profile Image'
       image_title = options[:title] || 'Profile Image'
+      # width/height attributes are always safe to add — the app's CSS (which sets
+      # size per context/class) always wins over a bare HTML attribute, same as a UA
+      # default. An inline *style*, though, beats app CSS on specificity, so that's
+      # only added in a mailer view — most email clients strip <style>/external
+      # stylesheets and only honor inline styles and width/height attributes, unlike
+      # a normal browser-rendered page where the app's own CSS should stay in charge.
+      inline_style = options[:style].to_s
+      inline_style = "width: #{image_size}px; height: #{image_size}px; object-fit: cover; #{inline_style}".strip if mailer_view?
       image_tag_attributes = {
         class: image_classes,
-        style: image_style,
+        style: inline_style,
+        width: image_size,
+        height: image_size,
         alt: image_alt,
         title: image_title
       }
@@ -114,9 +132,26 @@ module BetterTogether
         return url if url.present?
       end
 
-      image_url(default_profile_image(entity, image_format))
+      default_profile_image_url(entity, image_format)
     rescue ActiveStorage::FileNotFoundError
-      image_url(default_profile_image(entity, image_format))
+      default_profile_image_url(entity, image_format)
+    end
+
+    # image_url resolves an absolute URL from the current request automatically, but
+    # there's no request in a mailer (or Comment's bare broadcast_append_later_to
+    # render) — it falls back to a host-relative path there, broken in an email with
+    # no current page to resolve against. Build the absolute URL from url_options
+    # (the mailer's platform-derived host) directly in that case instead.
+    def default_profile_image_url(entity, image_format)
+      path = default_profile_image(entity, image_format)
+      return image_url(path) if respond_to?(:request) && request.present?
+
+      host = url_options[:host]
+      return image_path(path) unless host.present?
+
+      protocol = url_options[:protocol] || 'http'
+      port_suffix = url_options[:port] ? ":#{url_options[:port]}" : ''
+      "#{protocol}://#{host}#{port_suffix}#{image_path(path)}"
     end
 
     # rubocop:enable Metrics/AbcSize

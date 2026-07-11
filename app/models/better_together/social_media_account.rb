@@ -21,18 +21,21 @@ module BetterTogether
     }.freeze
 
     # Validations
-    validates :platform, presence: true, inclusion: { in: PLATFORMS }
+    validates :platform_name, presence: true,
+                              inclusion: { in: PLATFORMS },
+                              uniqueness: {
+                                scope: :contact_detail_id,
+                                message: 'account already exists for this contact'
+                              }
     validates :handle, presence: true, unless: ->(obj) { obj.url.present? }
     validates :url, format: URI::DEFAULT_PARSER.make_regexp(%w[http https]), allow_blank: true
-    validates :platform,
-              uniqueness: { scope: :contact_detail_id, message: 'account already exists for this contact detail' }
 
     before_validation :generate_url, if: lambda {
-      (handle.present? && (handle_changed? || url.blank?)) || (platform_changed? && handle.present? && url.blank?)
+      (handle.present? && (handle_changed? || url.blank?)) || (platform_name_changed? && handle.present? && url.blank?)
     }
 
     def to_s
-      "#{platform}: #{handle}"
+      "#{platform_name}: #{handle}"
     end
 
     private
@@ -40,7 +43,7 @@ module BetterTogether
     def generate_url
       return if url.present?
 
-      template = URL_TEMPLATES[platform]
+      template = URL_TEMPLATES[platform_name]
       if template
         formatted_handle = sanitize_handle(handle)
         self.url = format(template, handle: formatted_handle)

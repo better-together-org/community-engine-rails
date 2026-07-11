@@ -3,6 +3,7 @@
 require 'rails_helper'
 require 'stringio'
 
+# rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
@@ -73,16 +74,16 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       before do
         configure_host_platform
         login('user@example.test', 'SecureTest123!@#')
-        # community-privacy posts are scoped by platform membership (scoped_platform_ids),
-        # not post.community_id. The post is on host_platform whose community is
-        # host_community — so the user must be a member of host_community to see it.
+        # PostPolicy::Scope's scoped_community_privacy_query filters community-privacy
+        # posts by post.community_id (not platform membership) — the user must be a
+        # member of the post's own community (other_community here), not host_community.
         create(:better_together_person_community_membership,
                member: regular_user.person,
-               joinable: host_community,
+               joinable: other_community,
                status: 'active')
       end
 
-      it 'sees community-privacy posts on platforms they are a member of' do
+      it 'sees community-privacy posts in communities they are a member of' do
         get better_together.posts_path(locale:)
 
         expect(response).to have_http_status(:ok)
@@ -303,3 +304,46 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     end
   end
 end
+
+RSpec.describe 'BetterTogether::PostsController self-service publishing agreement gate' do
+  let(:locale) { I18n.default_locale }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
+  let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+  let(:member_user) { create(:better_together_user, :confirmed) }
+
+  before do
+    BetterTogether::PersonCommunityMembership.create!(
+      joinable: host_community, member: member_user.person, role: member_role, status: 'active'
+    )
+    login(member_user.email, 'SecureTest123!@#')
+  end
+
+  it 'redirects GET new to the publishing agreement page when the member has not accepted it' do
+    get better_together.new_post_path(locale:, community_id: host_community.id)
+
+    expect(response).to redirect_to(%r{/agreements/})
+  end
+
+  it 'allows the member to create a post once the agreement is accepted' do
+    grant_content_publishing_agreement(member_user.person)
+
+    expect do
+      post better_together.posts_path(locale:), params: {
+        post: { title_en: 'Member Post', content_en: 'Written by a self-service member', privacy: 'private',
+                community_id: host_community.id }
+      }
+    end.to change(BetterTogether::Post, :count).by(1)
+  end
+end
+
+RSpec.describe 'BetterTogether::PostsController self-service gate platform manager bypass', :as_platform_manager do
+  let(:locale) { I18n.default_locale }
+
+  it 'GET new succeeds for a platform manager without any agreement acceptance' do
+    get better_together.new_post_path(locale:)
+
+    expect(response).to have_http_status(:ok)
+  end
+end
+# rubocop:enable RSpec/MultipleDescribes

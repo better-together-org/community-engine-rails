@@ -11,6 +11,8 @@ module BetterTogether
     helper BetterTogether::ApplicationHelper
     helper BetterTogether::ContactDetailsHelper
     helper BetterTogether::NavigationItemsHelper
+    helper BetterTogether::ImageHelper
+    helper BetterTogether::PeopleHelper
 
     layout 'better_together/mailer'
 

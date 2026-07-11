@@ -145,6 +145,14 @@ module BetterTogether
 
     slugged :title, slug_uniqueness: false
 
+    # Agreement#show? already shows records to everyone regardless of
+    # `privacy` — this field isn't used for visibility gating on this model,
+    # so it shouldn't be constrained by the platform's privacy tier (a
+    # private platform's own Terms of Service must stay readable).
+    def privacy_ceiling_exempt?
+      true
+    end
+
     private
 
     def apply_default_consent_metadata # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -155,10 +163,12 @@ module BetterTogether
       case identifier.to_s
       when 'privacy_policy', 'terms_of_service', 'code_of_conduct'
         self.agreement_kind ||= AGREEMENT_KINDS[:policy_consent]
-        self.required_for ||= REQUIRED_FOR_VALUES[:registration]
+        # `required_for` has a model-level default of 'none', so a plain `||=` never fires here.
+        # Only override while it's still at that unset default so an explicit caller override is respected.
+        self.required_for = REQUIRED_FOR_VALUES[:registration] if required_for.blank? || required_for == REQUIRED_FOR_VALUES[:none]
       when 'content_publishing_agreement'
         self.agreement_kind ||= AGREEMENT_KINDS[:publishing_consent]
-        self.required_for ||= REQUIRED_FOR_VALUES[:first_publish]
+        self.required_for = REQUIRED_FOR_VALUES[:first_publish] if required_for.blank? || required_for == REQUIRED_FOR_VALUES[:none]
       else
         self.agreement_kind ||= AGREEMENT_KINDS[:policy_consent]
         self.required_for ||= REQUIRED_FOR_VALUES[:none]

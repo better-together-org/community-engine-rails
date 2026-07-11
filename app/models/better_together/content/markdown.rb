@@ -70,7 +70,7 @@ module BetterTogether
       private
 
       def sync_active_source
-        self.active_source = markdown_file_path.present? ? 'file' : 'inline'
+        self.active_source = markdown_file_path.present? && auto_sync_from_file? ? 'file' : 'inline'
       end
 
       def markdown_source_or_file_path_present

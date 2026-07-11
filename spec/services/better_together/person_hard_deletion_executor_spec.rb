@@ -9,7 +9,7 @@ RSpec.describe BetterTogether::PersonHardDeletionExecutor do
   let(:person) { user.person }
   let(:reviewer) { create(:better_together_person) }
   let!(:owned_community) { create(:better_together_community, creator: person, protected: true) }
-  let!(:platform) { create(:better_together_platform) }
+  let!(:platform) { create(:better_together_platform, :public) }
   let!(:deletion_request) { create(:better_together_person_deletion_request, person:) }
 
   before do

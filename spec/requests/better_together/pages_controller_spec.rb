@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
 
@@ -308,3 +309,50 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
     end
   end
 end
+
+RSpec.describe 'BetterTogether::PagesController self-service publishing agreement gate' do
+  let(:locale) { I18n.default_locale }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
+  let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+  let(:member_user) { create(:better_together_user, :confirmed) }
+
+  before do
+    BetterTogether::PersonCommunityMembership.create!(
+      joinable: host_community, member: member_user.person, role: member_role, status: 'active'
+    )
+    login(member_user.email, 'SecureTest123!@#')
+  end
+
+  it 'redirects GET new to the publishing agreement page when the member has not accepted it' do
+    get better_together.new_page_path(locale:, community_id: host_community.id)
+
+    expect(response).to redirect_to(%r{/agreements/})
+  end
+
+  it 'allows the member to create a page once the agreement is accepted, and to edit it afterward' do
+    grant_content_publishing_agreement(member_user.person)
+
+    expect do
+      post better_together.pages_path(locale:), params: {
+        page: { title: 'Member Page', privacy: 'private', community_id: host_community.id }
+      }
+    end.to change(BetterTogether::Page, :count).by(1)
+
+    page_record = BetterTogether::Page.order(:created_at).last
+    get better_together.edit_page_path(locale:, id: page_record.id)
+
+    expect(response).to have_http_status(:ok)
+  end
+end
+
+RSpec.describe 'BetterTogether::PagesController self-service gate platform manager bypass', :as_platform_manager do
+  let(:locale) { I18n.default_locale }
+
+  it 'GET new succeeds for a platform manager without any agreement acceptance' do
+    get better_together.new_page_path(locale:)
+
+    expect(response).to have_http_status(:ok)
+  end
+end
+# rubocop:enable RSpec/MultipleDescribes

@@ -222,6 +222,11 @@ en:
         conversation: :activerecord.models.conversation
         lock_version: Lock version
         sender: :activerecord.models.sender
+      better_together/message_request:
+        note: Message
+        recipient_id: Recipient
+        sender_id: Sender
+        status: Status
       better_together/navigation_area:
         identifier: Identifier
         lock_version: Lock version
@@ -328,6 +333,7 @@ en:
         notification_mentions: Notification mentions
         notifications: Notifications
         notify_by_email: Receive email notifications
+        notify_on_comments: Notify me about comments
         person_community_memberships: Person community memberships
         person_platform_memberships: Person platform memberships
         platform_roles: Platform roles
@@ -345,6 +351,9 @@ en:
         lock_version: Lock version
         member: :activerecord.models.member
         role: :activerecord.models.role
+      better_together/person_messaging_grant:
+        grantee_id: Grantee
+        grantor_id: Grantor
       better_together/person_platform_membership:
         joinable: :activerecord.models.joinable
         lock_version: Lock version
@@ -571,6 +580,13 @@ en:
           attributes:
             agreement_id:
               already_settled: already has a settlement record
+        better_together/message_request:
+          attributes:
+            recipient_id:
+              cannot_request_self: cannot send a message request to yourself
+            sender_id:
+              already_pending: you already have a pending message request to this
+                person
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -581,6 +597,10 @@ en:
           attributes:
             recipient_person:
               must_match_grantee: must match the access grant grantee person
+        better_together/person_messaging_grant:
+          attributes:
+            grantee_id:
+              cannot_grant_self: cannot grant messaging permission to yourself
         better_together/person_platform_integration:
           attributes:
             provider:
@@ -773,6 +793,8 @@ en:
       accept_error: Unable to record agreement acceptance right now.
       accepted: Accepted
       accepting: Saving...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: You must accept all required agreements to continue.
         successfully_accepted: Thank you for accepting the required agreements.
@@ -798,6 +820,8 @@ en:
         accepted_via: Accepted via %{method}
         agreement_revision: Agreement revision %{timestamp}
         pending: pending
+      publishing_agreement_required: You need to accept the content publishing agreement
+        before creating public or community content. Please review and accept it below.
       show:
         title: Agreement
       status:
@@ -1168,7 +1192,9 @@ en:
         reserved: Reserved for agreements
         show_network_total: Show my cross-platform Tree Seeds total
         title: Your Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
@@ -1234,6 +1260,43 @@ en:
         completed_message: Checklist complete
         items_title: Items
         no_items: No items to display
+    comment_config:
+      hints:
+        permission: Controls who is allowed to post new comments.
+        visibility: Controls who can see the comment thread.
+      labels:
+        permission: Who can comment
+        visibility: Who can see comments
+      permission_options:
+        community: Community members only
+        disabled: Nobody (comments disabled)
+        inherit: Anyone who can view this
+      visibility_options:
+        community: Community members only
+        inherit: Anyone who can view this
+    comment_mailer:
+      added:
+        greeting: Hello %{recipient_name},
+        intro: 'You have a new comment on your content:'
+        signature_html: "— The %{platform} team"
+        subject: You have a new comment
+        view_link: View comment
+    comments:
+      accept_agreement_link: accept the content publishing agreement
+      delete: Delete comment
+      deleted_author: Former member
+      denial_reasons:
+        community_required: Only community members can comment on this post.
+        disabled: Comments are disabled for this post.
+      form:
+        error_summary: This comment could not be posted
+        label: Add a comment
+        placeholder: Write a comment…
+        submit: Post comment
+      publishing_agreement_required_html: You must %{link} before you can comment.
+      report: Report comment
+      section_heading: Comments
+      sign_in_to_comment: Sign in to join the conversation.
     communities:
       edit_heading: Editing Community
       form:
@@ -1278,6 +1341,15 @@ en:
           create_post: Create Post
           empty_description: Posts created for this community will show up here.
           empty_title: No posts yet
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
         sections_aria: Community sections
       tabs:
         buildings: Buildings
@@ -2179,8 +2251,11 @@ en:
     joatu:
       agreements:
         accept: Accept
+        cancel: Cancel Agreement
+        cancel_confirm: Cancel this agreement? Any reserved Tree Seeds will be returned.
         create:
           success: Success
+        fulfill: Mark Fulfilled
         index:
           title: Agreements
         offer: Offer
@@ -2240,6 +2315,9 @@ en:
         my_offers: My Offers
         my_requests: My Requests
         none: No matches found right now.
+        recent_offers: Recent Offers
+        recent_requests: Recent Requests
+        sign_in: Sign in
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
         title: Potential Matches
@@ -2457,6 +2535,35 @@ en:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    message_requests:
+      accepted: Message request accepted. A new conversation has been started.
+      declined: Message request declined.
+      index:
+        accept_btn: Accept
+        accept_confirm: Accept this message request and start a conversation?
+        ago: ago
+        decline_btn: Decline
+        none_pending: You have no pending message requests.
+        title: Message Requests
+        wants_to_message_you: would like to message you
+      modal_intro: Send %{name} a brief note explaining why you'd like to connect.
+        They can choose to accept and start a conversation, or decline.
+      note_label: Why would you like to connect?
+      note_placeholder: Introduce yourself and explain why you'd like to start a conversation.
+      request_pending: Request pending
+      send_request_btn: Send Message Request
+      sent: Your message request has been sent.
+      show:
+        accept_btn: Accept & Start Conversation
+        back: Back to Requests
+        decline_btn: Decline
+        from_label: 'From:'
+        note_label: 'Note:'
+        title: Message Request
+      statuses:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
     messages:
       form:
         placeholder: Type your message...
@@ -2787,6 +2894,9 @@ en:
             body: "%{amount} Tree Seeds have been exchanged. Your balance has been
               updated."
             title: Tree Seeds exchanged
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} commented on your content"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -3382,6 +3492,14 @@ en:
       updated_on_short: Updated
       view_post: View Post
     primary: Primary
+    privacy:
+      hints:
+        privacy_limited_by_community: Some privacy options are disabled because this
+          community is not public. Content here can only be visible to community members
+          or the author.
+        privacy_limited_by_platform: Some privacy options are disabled because the
+          platform is not public. Content can only be visible to community members
+          or the author.
     rbac:
       nav:
         resource_permissions: Resource permissions
@@ -3452,6 +3570,7 @@ en:
         pending_copy: This case is still in progress. A moderator may follow up based
           on your consent settings.
         reported_record: Reported record
+        reported_record_unavailable: This content is no longer available.
         status: Current status
         summary: Case summary
         title: Safety report
@@ -3850,8 +3969,16 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
       privacy_level: 'Privacy: %{privacy}'
       privacy_tooltip: This content is %{privacy}
+      publishing_agreement_notice:
+        accept_link: Review and accept the publishing agreement
+        message: To publish events or posts visible to members or the public, you
+          need to accept the content publishing agreement first.
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -3915,6 +4042,8 @@ en:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
+        Other app processes will pick up the change on their next restart."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
@@ -3928,11 +4057,23 @@ en:
         is set.
       index:
         activate_btn: Set active
-        activate_confirm: Set this as the active storage configuration?
+        activate_confirm: Activate this configuration? The current process rebinds
+          immediately. Other app processes require a restart to pick up the change.
+          Existing files stay on the old backend — blob migration is a separate manual
+          step.
+        activation_blob_migration_note: Existing files remain on the previous backend.
+          Blob migration between backends is a manual operator step and is not performed
+          automatically.
+        activation_restart_note: Activating a new configuration rebinds storage in
+          the current process immediately. Other app processes will pick up the change
+          on their next restart (tmp/restart.txt has been touched).
+        activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
+        asset_host_label: Asset Host (ASSET_HOST)
         back_to_platform: Back to Platform
         bucket_label: Bucket
+        cdn_host_label: CDN Host (FOG_HOST)
         delete_btn: Delete
         delete_confirm: Delete this storage configuration?
         edit_btn: Edit
@@ -4002,6 +4143,7 @@ en:
         review_status_description: Review counts are shown here to help you quickly
           find approved, held, or restricted uploads.
         review_status_heading: Review status
+        sort_by_aria: Sort uploads by
         storage_usage: You're using %{size} of storage
     validators:
       safe_federation_url:
@@ -4401,10 +4543,6 @@ en:
         update: Update
         we_need_your_current_password_to_confirm_your_changes: we need your current
           password to confirm your changes
-      membership_request_heading: Request membership instead
-      membership_request_help_html: If you do not have an invitation yet, you can
-        send a membership request for <strong>%{community}</strong>. A community reviewer
-        can approve it and invite you into the platform.
       new:
         agreements:
           privacy_policy: I agree to the Privacy Policy
@@ -4425,6 +4563,10 @@ en:
           enter your invitation code in the field below to access the registration
           form.
         invitation_required: Invitation Required
+        membership_request_heading: Request membership instead
+        membership_request_help_html: If you do not have an invitation yet, you can
+          send a membership request for <strong>%{community}</strong>. A community
+          reviewer can approve it and invite you into the platform.
         password:
           help: Use a strong password for your account security.
           label: Password
@@ -4606,6 +4748,7 @@ en:
     joatu:
       agreement:
         accepted: Agreement accepted
+        cancelled: Agreement cancelled — any reserved Tree Seeds have been returned.
         fulfilled: Agreement fulfilled — C3 transferred to offer creator.
         rejected: Agreement rejected
       response_links:
@@ -4631,6 +4774,7 @@ en:
     cancel: Cancel
     clear: Clear
     clear_filter: Clear filter
+    close: Close
     confirm_delete: Are you sure you want to delete this record?
     create: Create
     declined: Declined
@@ -4682,6 +4826,7 @@ en:
       invitations: Invitations
       members: Members
       posts: Posts
+      roles_and_permissions: Roles & Permissions
       safety: Safety
     to: To
     'true': true
@@ -4719,6 +4864,7 @@ en:
         locale: Select the preferred language for the person.
         name: Enter the full name of the person.
         notify_by_email: Send an email when a conversation has an unread message.
+        notify_on_comments: Send an email when someone comments on your content.
         profile_image: Upload a profile image for the person.
         show_conversation_details: Show conversation title and sender name in notifications.
         slug: A URL-friendly identifier, typically auto-generated.

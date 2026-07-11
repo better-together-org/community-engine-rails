@@ -7,6 +7,7 @@ module BetterTogether
       include Creatable
       include Exchange
       include Metrics::Viewable
+      include Reportable
       include ResponseLinkable
       include Searchable
 

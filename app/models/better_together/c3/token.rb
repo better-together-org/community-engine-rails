@@ -50,7 +50,7 @@ module BetterTogether
       #
       # @param c3_amount [String, Numeric] Tree Seed amount (e.g., "1.5", 1.5, 1)
       # @return [Integer] Millitokens value
-      # @raise [ArgumentError] if amount is negative, exceeds max, or has more than 4 decimal places
+      # @raise [ArgumentError] if amount is negative, exceeds max, or has more than 3 decimal places
       def self.c3_to_millitokens(c3_amount)
         decimal_amount = BigDecimal(c3_amount.to_s)
         raise ArgumentError, 'C3 amount must be non-negative' if decimal_amount.negative?
@@ -67,17 +67,23 @@ module BetterTogether
         raise ArgumentError, "Invalid C3 amount '#{c3_amount}': #{e.message}"
       end
 
-      # Validates that the amount has at most 4 decimal places.
+      # Validates that the amount has at most 3 decimal places.
       # @param c3_amount [String, Numeric] Amount to validate
-      # @raise [ArgumentError] if amount has more than 4 decimal places
+      # @raise [ArgumentError] if amount has more than 3 decimal places
       private_class_method def self.validate_decimal_places!(c3_amount)
         string_repr = c3_amount.to_s.strip
         return unless string_repr.include?('.')
 
-        decimal_part = string_repr.split('.')[1]
-        return unless decimal_part.length > 4
+        # Trailing zeros carry no precision (e.g. "1.2000" is exactly "1.2"), so strip
+        # them before measuring significant decimal digits.
+        decimal_part = string_repr.split('.')[1].sub(/0+\z/, '')
+        # MILLITOKEN_SCALE is 1_000 (3 decimal places of resolution) — a 4th
+        # significant decimal digit is sub-millitoken and would be silently truncated
+        # by (decimal_amount * MILLITOKEN_SCALE).to_i below, losing precision in a
+        # financial calculation. Reject it outright instead.
+        return unless decimal_part.length > 3
 
-        raise ArgumentError, 'C3 amount must have at most 4 decimal places'
+        raise ArgumentError, 'C3 amount must have at most 3 decimal places'
       end
 
       # Validates that millitokens doesn't exceed the maximum transaction amount.

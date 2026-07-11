@@ -15,7 +15,9 @@ module BetterTogether
     include PlatformHost
     include Protected
     include Privacy
+    include Metrics::Shareable
     include Metrics::Viewable
+    include Reportable
     include Searchable
     include Shortlinkable
     include ::Storext.model
@@ -109,6 +111,8 @@ module BetterTogether
                                          preprocessed: true
     end
 
+    alias card_image cover_image
+
     has_one_attached :logo do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
@@ -156,7 +160,7 @@ module BetterTogether
       self.class.reset_host_community_cache!
     end
 
-    def membership_requests_enabled?(platform: primary_platform)
+    def membership_requests_enabled?(platform: primary_platform || ::BetterTogether::Platform.find_by(host: true))
       ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
         ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
     end
@@ -194,18 +198,15 @@ module BetterTogether
 
     def optimized_cover_image
       if cover_image.content_type == 'image/svg+xml'
-        # If SVG, return the original without transformation
         cover_image
-
-      # For other formats, analyze to determine transparency
       elsif cover_image.content_type == 'image/png'
-        # If PNG with transparency, return the optimized PNG variant
         cover_image.variant(:optimized_png)
       else
-        # Otherwise, use the optimized JPG variant
         cover_image.variant(:optimized_jpeg)
       end
     end
+
+    alias optimized_card_image optimized_cover_image
 
     def optimized_logo
       if logo.content_type == 'image/svg+xml'

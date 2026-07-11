@@ -73,7 +73,12 @@ RSpec.describe 'Event Timezone Selector' do
           identifier: 'tdd-event-timezone',
           timezone: 'America/New_York',
           starts_at: starts_at.iso8601,
-          privacy: 'public'
+          privacy: 'public',
+          # Mirrors the hidden creator_id field submitted by the real event form
+          # (app/views/better_together/events/_form.html.erb) — Event#set_host builds
+          # the default EventHost from `creator`, so a direct request-spec POST
+          # (bypassing form rendering) must supply it explicitly.
+          creator_id: manager_person.id
         }
       }
     end

@@ -18,7 +18,7 @@ module BetterTogether
 
       def initialize(scanner_runner: nil, **context)
         @context = context
-        @scanner_runner = scanner_runner || BetterTogether::ContentSecurity::OrchestratorRunner.new
+        @scanner_runner = scanner_runner || BetterTogether::ContentSecurity::DeterministicScanRunner.new
       end
 
       def screen!(message)
@@ -27,7 +27,7 @@ module BetterTogether
         screening_state = PASSABLE_VERDICTS.include?(verdict) ? 'passed' : 'held'
 
         persist_screening_result(message, results:, verdict:, screening_state:)
-      rescue BetterTogether::ContentSecurity::OrchestratorRunner::Error => e
+      rescue StandardError => e
         persist_scanner_error(message, e)
       end
 
@@ -49,6 +49,11 @@ module BetterTogether
       end
 
       def persist_scanner_error(message, error)
+        Rails.logger.error(
+          "[ContentSecurity::MailScreeningService] scan failed for message ##{message.id}: " \
+          "#{error.class}: #{error.message}"
+        )
+
         message.update!(
           screening_state: 'error',
           screening_verdict: 'review_required',
@@ -65,7 +70,7 @@ module BetterTogether
       end
 
       def summary_for(results, verdict)
-        finding_summaries = results.flat_map { |result| Array(result['findings']).map { |finding| finding['summary'] } }.compact
+        finding_summaries = results.flat_map { |result| Array(result['findings']).map { |finding| finding.dig('evidence', 'summary') } }.compact
         if finding_summaries.blank? && PASSABLE_VERDICTS.include?(verdict)
           return 'Content safety screening passed for inbound email and attachments.'
         end

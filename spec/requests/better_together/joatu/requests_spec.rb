@@ -87,6 +87,15 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
       expect(response.body).not_to include('Evidence and Citations')
       expect(response.body).not_to include('JOATU Request Notes')
     end
+
+    it 'renders the show page for a MembershipRequest with a nil creator (unauthenticated submission)', :as_platform_manager do
+      membership_request = create(:membership_request)
+      expect(membership_request.creator).to be_nil
+
+      get better_together.joatu_request_path(membership_request, locale: locale)
+      expect(response).to be_successful
+      expect(response.body).to include('Anonymous requester')
+    end
   end
 
   describe 'PATCH /update' do
@@ -130,6 +139,28 @@ RSpec.describe 'BetterTogether::Joatu::Requests', :as_user do
           source_id: request_record.id
         )
       )
+    end
+  end
+
+  context 'as guest (unauthenticated)', :no_auth do
+    let(:public_request) do
+      create(:joatu_request).tap { |r| r.update_column(:privacy, 'public') }
+    end
+    let(:private_request) { create(:joatu_request) }
+
+    it 'allows browsing the request index without signing in' do
+      get better_together.joatu_requests_path(locale:)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'allows viewing a public request without signing in' do
+      get better_together.joatu_request_path(public_request, locale:)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'redirects to sign-in when viewing a private request' do
+      get better_together.joatu_request_path(private_request, locale:)
+      expect(response).to redirect_to(new_user_session_path(locale: I18n.locale))
     end
   end
   # rubocop:enable Metrics/BlockLength

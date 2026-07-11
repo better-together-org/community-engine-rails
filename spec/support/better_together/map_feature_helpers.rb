@@ -50,12 +50,15 @@ module BetterTogether
 
     def geolocation_stub_js
       <<~JS
+        const stubbedLatitude = arguments[0]
+        const stubbedLongitude = arguments[1]
+        const stubbedAccuracy = arguments[2]
         Object.defineProperty(window.navigator, 'geolocation', {
           configurable: true,
           value: {
             getCurrentPosition(success) {
               success({
-                coords: { latitude: arguments[0], longitude: arguments[1], accuracy: arguments[2] },
+                coords: { latitude: stubbedLatitude, longitude: stubbedLongitude, accuracy: stubbedAccuracy },
                 timestamp: Date.now()
               })
             }

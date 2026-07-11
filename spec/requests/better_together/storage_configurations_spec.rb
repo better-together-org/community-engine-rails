@@ -294,8 +294,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       # I18n value contains single quotes which Rails HTML-escapes to &#39;
       # in the rendered flash partial; use expect_html_content so Nokogiri
       # decodes entities before the string comparison.
+      #
+      # The controller's activate action sets the notice from the
+      # `activated_with_restart` key (it also touches restart.txt and rebinds
+      # the active storage service so other app processes pick up the
+      # change) - not the older, simpler `activated` key this spec was still
+      # asserting against.
       expect_html_content(
-        I18n.t('better_together.storage_configurations.activated', name: config.name)
+        I18n.t('better_together.storage_configurations.activated_with_restart', name: config.name)
       )
     end
   end

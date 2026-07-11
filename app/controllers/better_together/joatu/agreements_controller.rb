@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # AgreementsController manages offer-request agreements
-    class AgreementsController < JoatuController
+    class AgreementsController < JoatuController # rubocop:todo Metrics/ClassLength
       # POST /joatu/requests/:request_id/agreements
       def create # rubocop:todo Metrics/MethodLength
         resource_instance(resource_params)
@@ -101,6 +101,21 @@ module BetterTogether
         rescue BetterTogether::C3::Balance::InsufficientBalance => e
           redirect_to joatu_agreement_path(@joatu_agreement),
                       alert: e.message
+        end
+      end
+
+      # POST /joatu/agreements/:id/cancel
+      def cancel
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        begin
+          @joatu_agreement.cancel!
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.cancelled',
+                                default: 'Agreement cancelled — any reserved Tree Seeds have been returned.')
+        rescue ActiveRecord::RecordInvalid => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to cancel agreement'
         end
       end
 

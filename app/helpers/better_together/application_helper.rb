@@ -71,22 +71,45 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    # current_user/user_signed_in? need Warden, which isn't present in two render
+    # contexts this engine actually uses: Comment/Message's broadcast_append_later_to
+    # (a bare renderer, no request/session) and Devise-less view/helper specs. Every
+    # helper that needed to tolerate that used to add its own
+    # `rescue Devise::MissingWarden` — ContentActionsHelper, CommentsHelper,
+    # PeopleHelper, and this method's own former version all duplicated it
+    # independently. Centralized here so call sites just use the safe accessor and
+    # never need their own rescue for this specific case.
+    def safe_current_user
+      return nil unless respond_to?(:user_signed_in?)
+
+      current_user if user_signed_in?
+    rescue Devise::MissingWarden
+      nil
+    end
+
+    def safe_current_person
+      return nil unless respond_to?(:user_signed_in?)
+
+      current_person
+    rescue Devise::MissingWarden
+      nil
+    end
+
     # Generates a short-lived Devise JWT for the current web-session user so that
     # in-browser JavaScript can call Devise JWT-protected API endpoints (e.g.
     # /api/v1/people/:id/key_backup) without re-authenticating via the API.
     # Returns nil when no user is signed in or JWT generation fails.
     def current_user_api_token
-      return nil unless user_signed_in? && current_user
+      user = safe_current_user
+      return nil unless user
 
-      Warden::JWTAuth::UserEncoder.new.call(current_user, :api_user, nil).first
-    rescue Devise::MissingWarden, StandardError
-      # Devise::MissingWarden is raised in view specs where the Warden
-      # middleware is not present in the stack.
+      Warden::JWTAuth::UserEncoder.new.call(user, :api_user, nil).first
+    rescue StandardError
       nil
     end
 
     def e2ee_messaging_enabled?
-      ::BetterTogether.e2ee_messaging_enabled?
+      ::BetterTogether.e2ee_messaging_enabled? || feature_enabled?('e2ee_messaging')
     end
 
     def e2ee_messaging_enabled_for?(person = current_person)

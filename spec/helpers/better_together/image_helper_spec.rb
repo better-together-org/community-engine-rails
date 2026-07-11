@@ -38,6 +38,23 @@ RSpec.describe BetterTogether::ImageHelper do
         expect(result).to include('class="profile-image rounded-circle')
         expect(result).to include('alt="Profile Image"')
       end
+
+      it 'always includes width/height attributes, which app CSS still overrides by specificity' do
+        result = profile_image_tag(person, size: 42)
+        expect(result).to include('width="42"')
+        expect(result).to include('height="42"')
+      end
+
+      it 'does not add an inline size style outside a mailer view' do
+        result = profile_image_tag(person)
+        expect(result).not_to match(/style="[^"]*width:/)
+      end
+
+      it 'adds an inline size style only in a mailer view, where external CSS is stripped' do
+        allow(self).to receive(:controller).and_return(ActionMailer::Base.new)
+        result = profile_image_tag(person, size: 42)
+        expect(result).to match(/style="width: 42px; height: 42px;/)
+      end
     end
 
     context 'when person has a profile image variant' do

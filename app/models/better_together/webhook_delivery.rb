@@ -34,7 +34,7 @@ module BetterTogether
     validate :platform_matches_endpoint
 
     scope :recent, -> { order(created_at: :desc) }
-    scope :for_platform, ->(platform) { where(platform: platform) }
+    scope :for_platform, ->(platform) { where(platform_id: platform) }
 
     # Mark as successfully delivered
     # @param code [Integer] HTTP response code

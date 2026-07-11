@@ -44,7 +44,7 @@ module BetterTogether
         end
 
         def scan_with_clamav(blob)
-          execute_clamav_scan(build_clamav_client, blob)
+          execute_clamav_scan(Configuration.build_client, blob)
         rescue ClamAvClient::ConnectionError => e
           failure_result('clamav_connection_error', e.message)
         rescue ClamAvClient::Error => e
@@ -61,15 +61,6 @@ module BetterTogether
 
             infected_result(response.fetch(:signature_name), scanner_version)
           end
-        end
-
-        def build_clamav_client
-          ClamAvClient.new(
-            host: Configuration.host,
-            port: Configuration.port,
-            timeout: Configuration.timeout,
-            max_stream_bytes: Configuration.max_stream_bytes
-          )
         end
 
         def clean_result(scanner_version = nil)

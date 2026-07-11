@@ -2,6 +2,8 @@
 
 module BetterTogether
   class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+    include SelfServicePublishablePolicy
+
     def index?
       true # Allow all users to view community index (scope filters appropriately)
     end
@@ -16,7 +18,15 @@ module BetterTogether
     end
 
     def create?
-      user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || permitted_to?('create_community'))
+      return false unless user.present?
+
+      # Platform managers can always create communities
+      return true if platform_manager?
+
+      # All other authenticated users must have accepted the community creation agreement
+      return false unless agent.present?
+
+      accepted_agreement?(ChecksRequiredAgreements::COMMUNITY_CREATION_AGREEMENT_IDENTIFIER)
     end
 
     def new?
@@ -41,8 +51,17 @@ module BetterTogether
     end
 
     def create_events?
-      update? &&
-        BetterTogether::EventPolicy.new(user, BetterTogether::Event.new).create?
+      return false unless user.present? && agent.present?
+
+      # Platform managers always have event management authority
+      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+
+      # Explicit event management permission for this community
+      return true if permitted_to?('manage_community_events', record)
+
+      # Any active member of this community can host events on its behalf.
+      # This preserves existing venue/community event management behavior (e.g. NL Venues).
+      record.persisted? && agent.valid_event_host_ids.include?(record.id)
     end
 
     def view_members?
@@ -52,6 +71,12 @@ module BetterTogether
         creator_of_community? ||
         permitted_to?('manage_community_members', record) ||
         can_manage_community?
+    end
+
+    def manage_roles?
+      return false unless user.present?
+
+      permitted_to?('manage_community_roles', record) || can_manage_community?
     end
 
     def edit?
@@ -98,9 +123,7 @@ module BetterTogether
 
     # Check if the user is the creator of this specific community
     def creator_of_community?
-      return false unless agent.present?
-
-      record.creator_id == agent.id
+      creator_of?(record)
     end
 
     class Scope < Scope # rubocop:todo Style/Documentation
@@ -154,8 +177,7 @@ module BetterTogether
     def can_manage_community?
       permitted_to?('manage_community_settings', record) ||
         permitted_to?('manage_community_members', record) ||
-        permitted_to?('manage_platform_settings') ||
-        permitted_to?('manage_platform')
+        platform_manager?
     end
   end
 end

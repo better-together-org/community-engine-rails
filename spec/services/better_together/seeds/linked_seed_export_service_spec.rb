@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Seeds::LinkedSeedExportService do
   describe '#call' do
-    let(:source_platform) { create(:better_together_platform) }
-    let(:target_platform) { create(:better_together_platform) }
+    let(:source_platform) { create(:better_together_platform, :public) }
+    let(:target_platform) { create(:better_together_platform, :public) }
     let(:connection) do
       create(
         :better_together_platform_connection,

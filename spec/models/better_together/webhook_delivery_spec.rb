@@ -54,8 +54,14 @@ RSpec.describe BetterTogether::WebhookDelivery do
     describe '.for_platform' do
       let(:platform_a) { create(:better_together_platform, host: false) }
       let(:platform_b) { create(:better_together_platform, host: false) }
-      let!(:delivery_a) { create(:webhook_delivery, platform: platform_a) }
-      let!(:delivery_b) { create(:webhook_delivery, platform: platform_b) }
+      let!(:delivery_a) do
+        create(:webhook_delivery, webhook_endpoint: create(:webhook_endpoint, platform: platform_a),
+                                  platform_id: platform_a.id)
+      end
+      let!(:delivery_b) do
+        create(:webhook_delivery, webhook_endpoint: create(:webhook_endpoint, platform: platform_b),
+                                  platform_id: platform_b.id)
+      end
 
       it 'returns deliveries for the given platform' do
         expect(described_class.for_platform(platform_a)).to include(delivery_a)
@@ -116,38 +122,38 @@ RSpec.describe BetterTogether::WebhookDelivery do
 
     describe 'platform_matches_endpoint validation' do
       it 'rejects platform_id mismatching endpoint platform' do
-        delivery = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform: platform_b)
+        delivery = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform_id: platform_b.id)
         expect(delivery).not_to be_valid
         expect(delivery.errors[:platform_id]).to include('must match webhook endpoint platform')
       end
 
       it 'allows platform_id matching endpoint platform' do
-        delivery = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform: platform_a)
+        delivery = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform_id: platform_a.id)
         expect(delivery).to be_valid
       end
 
       it 'allows nil platform_id if endpoint has nil platform' do
-        endpoint_a.update!(platform_id: nil)
+        endpoint_a.update_column(:platform_id, nil)
         delivery = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform_id: nil)
         expect(delivery).to be_valid
       end
 
       it 'skips validation if endpoint platform is nil' do
-        endpoint_a.update!(platform_id: nil)
-        delivery = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform: platform_a)
+        endpoint_a.update_column(:platform_id, nil)
+        delivery = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform_id: platform_a.id)
         expect(delivery).to be_valid
       end
     end
 
     describe 'cross-platform safety' do
       it 'prevents platform B delivery from accessing platform A endpoint' do
-        delivery_b = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform: platform_b)
+        delivery_b = build(:webhook_delivery, webhook_endpoint: endpoint_a, platform_id: platform_b.id)
         expect(delivery_b).not_to be_valid
       end
 
       it 'allows each platform to have independent deliveries' do
-        delivery_a1 = create(:webhook_delivery, webhook_endpoint: endpoint_a, platform: platform_a)
-        delivery_a2 = create(:webhook_delivery, webhook_endpoint: endpoint_a, platform: platform_a)
+        delivery_a1 = create(:webhook_delivery, webhook_endpoint: endpoint_a, platform_id: platform_a.id)
+        delivery_a2 = create(:webhook_delivery, webhook_endpoint: endpoint_a, platform_id: platform_a.id)
 
         expect([delivery_a1, delivery_a2]).to all(be_valid)
       end

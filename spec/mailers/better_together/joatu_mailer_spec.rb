@@ -16,7 +16,7 @@ module BetterTogether # :nodoc:
       let(:mail) { described_class.new_match(recipient_user.person, offer:, request:) }
 
       it 'renders the headers' do # rubocop:todo RSpec/MultipleExpectations
-        expect(mail.subject).to eq('New Joatu match')
+        expect(mail.subject).to eq('New mutual aid match')
         expect(mail.to).to include(recipient_user.email)
       end
     end

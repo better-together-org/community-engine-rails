@@ -24,9 +24,18 @@ class AddCommunityToBetterTogetherPosts < ActiveRecord::Migration[7.2]
   private
 
   def backfill_posts_with_host_community
-    community_class = Class.new(ActiveRecord::Base) { self.table_name = 'better_together_communities' }
-    platform_class  = Class.new(ActiveRecord::Base) { self.table_name = 'better_together_platforms' }
-    post_class      = Class.new(ActiveRecord::Base) { self.table_name = 'better_together_posts' }
+    community_class = Class.new(ActiveRecord::Base) do
+      self.table_name = 'better_together_communities'
+      self.inheritance_column = :_type_disabled
+    end
+    platform_class = Class.new(ActiveRecord::Base) do
+      self.table_name = 'better_together_platforms'
+      self.inheritance_column = :_type_disabled
+    end
+    post_class = Class.new(ActiveRecord::Base) do
+      self.table_name = 'better_together_posts'
+      self.inheritance_column = :_type_disabled
+    end
 
     host_community = community_class.find_by(host: true) ||
                      host_from_platform(community_class, platform_class)

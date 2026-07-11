@@ -19,7 +19,7 @@ RSpec.describe BetterTogether::PersonBlock do
     role = BetterTogether::Role.find_by(identifier: 'platform_manager', resource_type: 'BetterTogether::Platform') ||
            create(:better_together_role, identifier: 'platform_manager', resource_type: 'BetterTogether::Platform',
                                          name: 'Platform Manager')
-    BetterTogether::PersonPlatformMembership.create!(member: blocked, joinable: platform, role:)
+    BetterTogether::PersonPlatformMembership.create!(member: blocked, joinable: platform, role:, status: 'active')
 
     block = described_class.new(blocker:, blocked:)
     expect(block).not_to be_valid

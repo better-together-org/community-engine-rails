@@ -21,8 +21,10 @@ module BetterTogether
       validates :slug, uniqueness: true, unless: -> { has_attribute?(:platform_id) }
 
       before_create :generate_identifier_slug
-      # Must fire before PlatformScoped's assign_current_platform_if_available overwrites a nil platform_id.
-      before_validation :capture_platform_id_for_uniqueness
+      # prepend: true so this genuinely fires before PlatformScoped's assign_current_platform_if_available
+      # (registered earlier, in the parent PlatformRecord class) overwrites a nil platform_id — Rails
+      # before_validation chains run in registration order, and parent-class callbacks register first.
+      before_validation :capture_platform_id_for_uniqueness, prepend: true
       before_validation :generate_identifier
 
       def identifier=(arg)

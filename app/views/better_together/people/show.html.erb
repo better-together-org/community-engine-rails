@@ -26,21 +26,75 @@
         <%= privacy_badge(@person) %>
       </div>
       <div class="col-auto">
+        <%
+          conversation           = BetterTogether::Conversation.new
+          is_self                = current_person.present? && current_person == @person
+          can_message_directly   = !is_self && policy(conversation).create?(participants: [@person.id])
+          can_request_messaging  = !is_self && !can_message_directly &&
+                                   current_person.present? &&
+                                   feature_enabled?('message_requests')
+          pending_request        = can_request_messaging &&
+                                   BetterTogether::MessageRequest.pending
+                                                                 .exists?(sender: current_person,
+                                                                          recipient: @person)
+        %>
         <%= render 'shared/resource_toolbar',
                    edit_path: policy(@person).edit? ? edit_person_path(@person) : nil,
                    edit_aria_label: 'Edit Profile',
                    destroy_path: policy(@person).destroy? ? person_path(@person) : nil,
                    destroy_confirm: t('people.confirm_delete'),
                    destroy_aria_label: 'Delete Profile' do %>
-          <% conversation = BetterTogether::Conversation.new %>
-          <% if policy(conversation).create?(participants: [@person.id]) %>
-            <%= link_to new_conversation_path(conversation: { participant_ids: [@person.id] }), class: 'btn btn-outline-primary btn-sm me-2', 'aria-label' => t('globals.message') do %>
-              <i class="fas fa-envelope"></i> <%= t('globals.message') %>
+          <% if can_message_directly %>
+            <%= link_to new_conversation_path(conversation: { participant_ids: [@person.id] }),
+                        class: 'btn btn-outline-primary btn-sm me-2',
+                        'aria-label' => t('globals.message') do %>
+              <i class="fas fa-envelope" aria-hidden="true"></i> <%= t('globals.message') %>
+            <% end %>
+          <% elsif can_request_messaging %>
+            <% if pending_request %>
+              <span class="btn btn-outline-secondary btn-sm me-2 disabled" aria-disabled="true">
+                <i class="fas fa-clock" aria-hidden="true"></i>
+                <%= t('better_together.message_requests.request_pending') %>
+              </span>
+            <% else %>
+              <button type="button"
+                      class="btn btn-outline-secondary btn-sm me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#messageRequestModal"
+                      aria-haspopup="dialog">
+                <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                <%= t('better_together.message_requests.send_request_btn') %>
+              </button>
             <% end %>
           <% end %>
         <% end %>
         <%= render 'shared/content_actions', record: @person, container_classes: 'me-2' %>
       </div>
+
+      <%# Message request modal — only rendered when the feature is on and the user needs it %>
+      <% if can_request_messaging && !pending_request %>
+        <div class="modal fade" id="messageRequestModal" tabindex="-1"
+             aria-labelledby="messageRequestModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="messageRequestModalLabel">
+                  <%= t('better_together.message_requests.send_request_btn') %>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="<%= t('globals.close') %>"></button>
+              </div>
+              <div class="modal-body">
+                <p class="text-muted small mb-3">
+                  <%= t('better_together.message_requests.modal_intro',
+                        name: @person.name) %>
+                </p>
+                <%= render 'better_together/message_requests/form', recipient: @person %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 
@@ -87,9 +141,9 @@
                         aria: { controls: 'contributions', selected: 'false' },
                         tabindex: '-1' %>
           <% end %>
-          <%= link_to BetterTogether::Platform.model_name.human.pluralize, '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'platforms', selected: 'false' }, tabindex: '-1' if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
-          <%= link_to BetterTogether::Community.model_name.human.pluralize, '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'communities', selected: 'false' }, tabindex: '-1' if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
-          <%= link_to BetterTogether::ResourcePermission.model_name.human.pluralize, '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'permissions', selected: 'false' }, tabindex: '-1' if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+          <%= link_to BetterTogether::Platform.model_name.human.pluralize, '#platforms', class: 'nav-link', id: 'platforms-tab', data: { bs_toggle: 'tab', bs_target: '#platforms', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'platforms', selected: 'false' }, tabindex: '-1' if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person&.permitted_to?('manage_platform')) %>
+          <%= link_to BetterTogether::Community.model_name.human.pluralize, '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'communities', selected: 'false' }, tabindex: '-1' if @person.person_community_memberships.size > 0 && (current_person == @person || current_person&.permitted_to?('manage_platform')) %>
+          <%= link_to BetterTogether::ResourcePermission.model_name.human.pluralize, '#permissions', class: 'nav-link', id: 'permissions-tab', data: { bs_toggle: 'tab', bs_target: '#permissions', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'permissions', selected: 'false' }, tabindex: '-1' if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person&.permitted_to?('manage_platform')) %>
           <%= link_to BetterTogether::Agreement.model_name.human.pluralize,
                       '#agreements',
                       class: 'nav-link',
@@ -99,7 +153,7 @@
                       aria: { controls: 'agreements', selected: 'false' },
                       tabindex: '-1',
                        title: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}",
-                       aria_label: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" if @agreement_participants.any? %>
+                       aria_label: "#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" if @agreement_participants.any? && policy(@person).update? %>
         <% end %>
       </div>
 
@@ -240,7 +294,7 @@
           <% end %>
 
           <!-- Platforms Tab Pane -->
-          <% if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person.permitted_to?('manage_platform')) %>
+          <% if @person.person_platform_memberships.size > 0 && (current_person == @person || current_person&.permitted_to?('manage_platform')) %>
             <% platform_memberships_shown = @person.person_platform_memberships.first(20) %>
             <div id="platforms" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="platforms-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
@@ -255,7 +309,7 @@
           <% end %>
 
           <!-- Communities Tab Pane -->
-          <% if @person.person_community_memberships.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
+          <% if @person.person_community_memberships.size > 0 && (current_person == @person || current_person&.permitted_to?("manage_platform")) %>
             <% community_memberships_shown = @person.person_community_memberships.first(20) %>
             <div id="communities" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="communities-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
@@ -270,7 +324,7 @@
           <% end %>
 
           <!-- Permissions Tab Pane -->
-          <% if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person.permitted_to?("manage_platform")) %>
+          <% if @person.role_resource_permissions.size > 0 && (current_person == @person || current_person&.permitted_to?("manage_platform")) %>
             <% permissions_shown = @person.role_resource_permissions.first(50) %>
             <div id="permissions" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="permissions-tab">
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
@@ -294,7 +348,7 @@
           <% end %>
 
           <!-- Agreements Tab Pane -->
-          <% if @agreement_participants.any? %>
+          <% if @agreement_participants.any? && policy(@person).update? %>
             <div id="agreements" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="agreements-tab" aria-label="#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}" title="#{BetterTogether::Agreement.model_name.human.pluralize} for #{@person.name}">
               <div class="row">
                 <div class="col-md-12">
