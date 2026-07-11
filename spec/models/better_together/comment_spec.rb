@@ -155,6 +155,17 @@ RSpec.describe BetterTogether::Comment do
       expect(comment).not_to be_valid
       expect(comment.errors[:content]).to be_present
     end
+
+    it 'rejects content over 10,000 characters' do
+      comment = described_class.new(commentable: create(:post), content: 'a' * 10_001)
+      expect(comment).not_to be_valid
+      expect(comment.errors[:content]).to be_present
+    end
+
+    it 'accepts content at exactly the 10,000 character limit' do
+      comment = described_class.new(commentable: create(:post), content: 'a' * 10_000)
+      expect(comment).to be_valid
+    end
   end
 
   describe 'broadcasts' do

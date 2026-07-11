@@ -47,8 +47,12 @@ module BetterTogether
       end
     end
 
+    # Plain find, not policy_scope(Comment).find: the Scope's excluding_blocked_for(agent)
+    # would 404 a moderator trying to delete a comment from someone they've personally
+    # blocked, even though authorize below (community_content_manager?/platform_manager?)
+    # would otherwise permit it. policy_scope stays reserved for the visible-comments list.
     def set_comment
-      @comment = policy_scope(Comment).find(params[:id])
+      @comment = Comment.find(params[:id])
     end
 
     def resolve_commentable

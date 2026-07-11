@@ -139,6 +139,21 @@ RSpec.describe 'BetterTogether comments' do
       # (unlike the not-whitelisted-commentable case, which 404s before authorization runs).
       expect(response).to have_http_status(:redirect)
     end
+
+    it 'allows a platform manager to delete a comment from someone they have personally blocked' do
+      manager = find_or_create_test_user('comments-manager@example.test', 'SecureTest123!@#', :platform_manager)
+      comment = create(:comment, creator: other_user.person, commentable: target_post)
+      create(:person_block, blocker: manager.person, blocked: other_user.person)
+
+      sign_in manager
+
+      # set_comment uses a plain Comment.find, not policy_scope(Comment).find — the
+      # policy Scope's excluding_blocked_for(agent) would otherwise 404 this request
+      # before authorize ever got a chance to permit it via platform_manager?.
+      expect do
+        delete better_together.comment_path(comment, locale:)
+      end.to change(BetterTogether::Comment, :count).by(-1)
+    end
   end
 end
 

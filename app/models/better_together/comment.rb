@@ -9,7 +9,7 @@ module BetterTogether
 
     belongs_to :commentable, polymorphic: true
 
-    validates :content, presence: true
+    validates :content, presence: true, length: { maximum: 10_000 }
     # Dynamic extension point, not a gem-owned allow-list: a host app opts a model into
     # comments by including BetterTogether::Commentable, nothing else. See
     # docs/developers/architecture/polymorphic_allowlist_extension_audit.md

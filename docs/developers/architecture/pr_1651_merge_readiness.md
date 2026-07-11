@@ -54,11 +54,9 @@ matching the proposed design almost exactly:
   sign-in-required / agreement-required / disabled / community-required via
   `CommentsHelper#comment_denial_reason`
 
-**Not yet reflected on GitHub**: this work landed after the review comment was posted and
-has not yet been pushed as a reply/resolve on the design-review thread. Before merge, post
-a resolution comment on the original design-review issue comment summarizing the
-`CommentConfig` implementation (mirroring the format used for the 8-angle review's
-per-finding replies).
+**RESOLVED on GitHub**: posted as a follow-up comment on the PR summarizing the
+`CommentConfig` implementation, with annotated screenshots of all four permission/visibility
+states and the post-edit fields.
 
 ### 2.2 "Structural suggestion — Turbo Frame `CommentsController#index`"
 
@@ -80,9 +78,9 @@ Two distinct parts were bundled in this suggestion:
 
 | Finding | Status | Notes |
 |---------|--------|-------|
-| `set_comment` uses `policy_scope(Comment).find` for `destroy` — a moderator who has personally blocked the comment's author gets `RecordNotFound` even though `community_content_manager?`/`platform_manager?` would authorize the destroy | **OPEN** | Verified against current `comments_controller.rb:51` — unchanged. Real, reproducible gap: `Scope#resolve`'s `excluding_blocked_for(agent)` removes the row before `authorize` ever runs. Fix is small (`Comment.find(params[:id])` + `authorize @comment`, matching the review's own suggested fix) and low-risk — **recommend fixing before merge** |
+| `set_comment` uses `policy_scope(Comment).find` for `destroy` — a moderator who has personally blocked the comment's author gets `RecordNotFound` even though `community_content_manager?`/`platform_manager?` would authorize the destroy | **RESOLVED** | `comments_controller.rb`'s `set_comment` now uses a plain `Comment.find(params[:id])`; `authorize @comment` (already present in `destroy`) does the actual permission check. New request spec: "allows a platform manager to delete a comment from someone they have personally blocked" |
 | `blocked_by_commentable_creator?`/notification recipient divergence for creator ≠ author | **Partially addressed** | Notification routing now prefers `governed_authors` (finding #3 above), but `blocked_by_commentable_creator?` still checks only `creator_id`, not `governed_authors`. Documented in the original review as "worth a decision either way, even if it's just documenting this as a known MVP limitation" — acceptable to ship as-is, but should be called out explicitly in the PR description as a known limitation rather than left implicit |
-| `Comment#content` has no max-length validation | **OPEN** | `comment.rb:12` still only `validates :content, presence: true`. Low-risk, non-blocking, but cheap to add (`length: { maximum: N }`) before merge |
+| `Comment#content` has no max-length validation | **RESOLVED** | `comment.rb` now `validates :content, presence: true, length: { maximum: 10_000 }`. New model specs cover both the over-limit rejection and the at-limit acceptance |
 | `comment_added_notifier_spec.rb` missing the preference-off path | **RESOLVED** | `spec/notifiers/better_together/comment_added_notifier_spec.rb:68-83` now covers both `recipient_allows_comment_notifications?` true/false paths |
 | `CommentPolicy#destroy?` RBAC lookup not memoized per-comment (N+1-shaped, not a query N+1) | **OPEN — explicitly deferred in the original review** | "Considered and deferred... not worth building yet since `CommentPolicy` is the only consumer today" — no action needed |
 | `PersonDeletionAnonymizer` omits `notify_on_comments` | **RESOLVED** | `person_deletion_anonymizer.rb:80` includes `'notify_on_comments' => false` (landed alongside `9dbf547f5`, not separately called out in that commit's own message) |
@@ -93,15 +91,11 @@ Two distinct parts were bundled in this suggestion:
 
 Ranked by whether they block merge:
 
-**Recommended before merge (small, low-risk, closes a real gap):**
-1. Fix `CommentsController#set_comment` to use `Comment.find(params[:id])` + `authorize @comment`
-   for `destroy`, not `policy_scope(Comment).find` — closes the moderator-blocked-by-own-block
-   gap identified in the original design review.
-2. Add a length validation to `Comment#content` (e.g. `length: { maximum: 10_000 }`, matching
-   the scale of other free-text fields in this engine).
-3. Post a resolution comment on the original design-review issue comment documenting that the
-   `CommentConfig` proposal has been implemented (commit `3cc99ade7`), so the PR's GitHub
-   thread history accurately reflects current state.
+**Fixed:**
+1. ~~Fix `CommentsController#set_comment` to use `Comment.find(params[:id])` + `authorize @comment`
+   for `destroy`, not `policy_scope(Comment).find`~~ — done.
+2. ~~Add a length validation to `Comment#content`~~ — done (`maximum: 10_000`).
+3. ~~Post a resolution comment on the original design-review issue comment~~ — done.
 
 **Acceptable to ship as documented MVP limitations (no code change required, but should be
 stated explicitly in the PR description):**
@@ -152,6 +146,6 @@ changes; the screenshot spec (tracked separately) can target these directly.
   cross-cutting, out of scope for a comments-specific PR).
 - The design-review's primary ask (comment permission/visibility controls) is now fully
   implemented via `CommentConfig`, including the "bundled" `show?`/`Scope` authorization fix.
-- 2 small, low-risk fixes recommended before merge (`set_comment` policy_scope gap, content
-  length validation); everything else is either resolved, an acceptable documented
-  limitation, or explicitly deferred follow-up work.
+- Both pre-merge recommendations (`set_comment` policy_scope gap, content length validation)
+  are now fixed and covered by new specs; everything else is either resolved, an acceptable
+  documented limitation, or explicitly deferred follow-up work.
