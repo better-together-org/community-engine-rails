@@ -23,6 +23,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Reportable
     include Seedable
     include TimezoneAttributeAliasing
     include Viewable
@@ -53,6 +54,8 @@ module BetterTogether
     has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
 
     has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
+    # Overrides Reportable's default (no dependent:) to preserve this model's pre-existing
+    # cascade-delete behavior for reports filed against a person.
     has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
 
     # Metrics reports created by this person
@@ -202,6 +205,7 @@ module BetterTogether
     store_attributes :notification_preferences do
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
+      notify_on_comments Boolean, default: true
     end
 
     # Borgberry fleet identity — portable person identity used across fleets.
@@ -250,6 +254,12 @@ module BetterTogether
     def show_conversation_details=(value)
       prefs = (notification_preferences || {}).dup
       prefs['show_conversation_details'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
+    end
+
+    def notify_on_comments=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['notify_on_comments'] = ActiveModel::Type::Boolean.new.cast(value)
       self.notification_preferences = prefs
     end
 

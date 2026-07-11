@@ -315,6 +315,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         resources :posts
 
+        resources :comments, only: %i[create destroy]
         # Pages: open to any authenticated user at the routing layer, same as
         # events/posts/communities above — PagePolicy already does the
         # fine-grained per-action authorization (platform/community content

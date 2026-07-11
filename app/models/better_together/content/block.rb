@@ -7,6 +7,7 @@ module BetterTogether
     # Base class from which all other content blocks types inherit
     class Block < PlatformRecord
       include ::BetterTogether::Content::BlockAttributes
+      include ::BetterTogether::Reportable
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks

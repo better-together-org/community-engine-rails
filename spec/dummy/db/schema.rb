@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_03_171020) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_10_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -498,6 +498,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_03_171020) do
     t.index ["claimable_type", "claimable_id"], name: "idx_bt_claims_on_claimable"
     t.index ["creator_id"], name: "index_better_together_claims_on_creator_id"
     t.index ["platform_id"], name: "index_better_together_claims_on_platform_id"
+  end
+
+  create_table "better_together_comment_configs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "commentable_type", null: false
+    t.uuid "commentable_id", null: false
+    t.string "permission", default: "inherit", null: false
+    t.string "visibility", default: "inherit", null: false
+    t.index ["commentable_type", "commentable_id"], name: "bt_comment_configs_on_commentable", unique: true
   end
 
   create_table "better_together_comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

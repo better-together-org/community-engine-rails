@@ -14,10 +14,12 @@ module BetterTogether
     include Citable
     include Creatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Protected
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
     include Seedable
     include Shortlinkable

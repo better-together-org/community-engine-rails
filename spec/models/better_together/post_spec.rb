@@ -16,6 +16,28 @@ RSpec.describe BetterTogether::Post do
     expect(post.errors[:content]).to include("can't be blank")
   end
 
+  describe 'Commentable comment_permission/comment_visibility (lazy accessors)' do
+    let(:post) { create(:better_together_post) }
+
+    it 'reads inherit for both without a CommentConfig row existing' do
+      expect(post.comment_config).to be_nil
+      expect(post.comment_permission).to eq('inherit')
+      expect(post.comment_visibility).to eq('inherit')
+    end
+
+    it 'lazily builds a CommentConfig row on write' do
+      expect { post.comment_permission = 'disabled' }.to change { post.comment_config.present? }.from(false).to(true)
+      expect(post.comment_permission).to eq('disabled')
+    end
+
+    it 'persists the built config alongside the post' do
+      post.comment_visibility = 'community'
+      post.save!
+
+      expect(post.reload.comment_visibility).to eq('community')
+    end
+  end
+
   describe '#to_s' do
     it 'returns the title' do
       post = build(:better_together_post, title: 'Example')

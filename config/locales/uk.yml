@@ -333,6 +333,7 @@ uk:
         notification_mentions: Згадки в сповіщеннях
         notifications: Сповіщення
         notify_by_email: Отримувати сповіщення електронною поштою
+        notify_on_comments: Повідомляти мене про коментарі
         person_community_memberships: Членство особи в спільноті
         person_platform_memberships: Членство особи в платформі
         platform_roles: Ролі на платформі
@@ -972,6 +973,43 @@ uk:
         completed_message: Чек-лист завершено
         items_title: Елементи
         no_items: Немає елементів для відображення
+    comment_config:
+      hints:
+        permission: Визначає, хто може публікувати нові коментарі.
+        visibility: Визначає, хто може бачити гілку коментарів.
+      labels:
+        permission: Хто може коментувати
+        visibility: Хто може бачити коментарі
+      permission_options:
+        community: Тільки члени спільноти
+        disabled: Ніхто (коментарі вимкнені)
+        inherit: Будь-хто, хто може це бачити
+      visibility_options:
+        community: Тільки члени спільноти
+        inherit: Будь-хто, хто може це бачити
+    comment_mailer:
+      added:
+        greeting: Вітаємо, %{recipient_name},
+        intro: 'У вас новий коментар до вашого контенту:'
+        signature_html: "— Команда %{platform}"
+        subject: У вас новий коментар
+        view_link: Переглянути коментар
+    comments:
+      accept_agreement_link: прийняти угоду про публікацію контенту
+      delete: Видалити коментар
+      deleted_author: Колишній учасник
+      denial_reasons:
+        community_required: Тільки члени спільноти можуть коментувати цю публікацію.
+        disabled: Коментарі вимкнені для цієї публікації.
+      form:
+        error_summary: Не вдалося опублікувати коментар
+        label: Додати коментар
+        placeholder: Напишіть коментар…
+        submit: Опублікувати коментар
+      publishing_agreement_required_html: Ви повинні %{link}, перш ніж зможете коментувати.
+      report: Поскаржитися на коментар
+      section_heading: Коментарі
+      sign_in_to_comment: Увійдіть, щоб долучитися до розмови.
     communities:
       form:
         allow_membership_requests: Дозволити запити на членство
@@ -2609,6 +2647,9 @@ uk:
           settled:
             body: "%{amount} Насіння дерева обміняно. Ваш баланс оновлено."
             title: Насіння дерева обміняно
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} прокоментував(ла) ваш контент"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -3295,6 +3336,7 @@ uk:
         pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з
           вами залежно від ваших параметрів згоди.
         reported_record: Повідомлений запис
+        reported_record_unavailable: Цей контент більше недоступний.
         status: Поточний статус
         summary: Підсумок справи
         title: Звіт про безпеку
@@ -4624,6 +4666,7 @@ uk:
         name: Введіть повне ім'я особи.
         notify_by_email: Надсилати електронний лист, коли в розмові є непрочитане
           повідомлення.
+        notify_on_comments: Надсилати електронний лист, коли хтось коментує ваш контент.
         profile_image: Завантажте зображення профілю для особи.
         show_conversation_details: Показувати назву розмови та ім'я відправника в
           сповіщеннях.

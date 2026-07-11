@@ -61,6 +61,9 @@ module BetterTogether
         if person_params_raw.key?(:show_conversation_details)
           toggles[:show_conversation_details] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:show_conversation_details])
         end
+        if person_params_raw.key?(:notify_on_comments)
+          toggles[:notify_on_comments] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:notify_on_comments])
+        end
         if person_params_raw.key?(:receive_messages_from_members)
           toggles[:receive_messages_from_members] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:receive_messages_from_members])
         end
@@ -168,8 +171,8 @@ module BetterTogether
     def person_params
       params.require(:person).permit(
         :name, :description, :profile_image, :slug, :locale, :notify_by_email,
-        :show_conversation_details, :profile_image, :cover_image, :remove_profile_image,
-        :remove_cover_image,
+        :show_conversation_details, :notify_on_comments, :profile_image, :cover_image,
+        :remove_profile_image, :remove_cover_image,
         *resource_class.permitted_attributes
       )
     end

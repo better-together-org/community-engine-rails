@@ -10,6 +10,7 @@ module BetterTogether
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable
+      include BetterTogether::Reportable
 
       STATUS_VALUES = {
         pending: 'pending',

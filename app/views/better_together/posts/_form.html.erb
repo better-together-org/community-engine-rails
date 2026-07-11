@@ -68,6 +68,13 @@
   </div>
 
   <div class="mb-3">
+    <%= form.fields_for :comment_config, (post.comment_config || post.build_comment_config) do |cc_form| %>
+      <%= comment_permission_field(form: cc_form, commentable: post) %>
+      <%= comment_visibility_field(form: cc_form, commentable: post) %>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
     <%= form.label :published_at %>
     <%= form.datetime_field :published_at, include_seconds: false, class: 'form-control' %>
   </div>

@@ -333,6 +333,7 @@ es:
         notification_mentions: Menciones de notificación
         notifications: Notificaciones
         notify_by_email: Recibir notificaciones por correo electrónico
+        notify_on_comments: Notificarme sobre comentarios
         person_community_memberships: Membresías de la comunidad de personas
         person_platform_memberships: Membresías de plataformas personales
         platform_roles: Roles de plataforma
@@ -983,6 +984,44 @@ es:
         completed_message: Lista de verificación completa
         items_title: Elementos
         no_items: No hay elementos para mostrar
+    comment_config:
+      hints:
+        permission: Controla quién puede publicar nuevos comentarios.
+        visibility: Controla quién puede ver el hilo de comentarios.
+      labels:
+        permission: Quién puede comentar
+        visibility: Quién puede ver los comentarios
+      permission_options:
+        community: Solo miembros de la comunidad
+        disabled: Nadie (comentarios deshabilitados)
+        inherit: Cualquiera que pueda ver esto
+      visibility_options:
+        community: Solo miembros de la comunidad
+        inherit: Cualquiera que pueda ver esto
+    comment_mailer:
+      added:
+        greeting: Hola %{recipient_name},
+        intro: 'Tienes un nuevo comentario en tu contenido:'
+        signature_html: "— El equipo de %{platform}"
+        subject: Tienes un nuevo comentario
+        view_link: Ver comentario
+    comments:
+      accept_agreement_link: aceptar el acuerdo de publicación de contenido
+      delete: Eliminar comentario
+      deleted_author: Miembro anterior
+      denial_reasons:
+        community_required: Solo los miembros de la comunidad pueden comentar en esta
+          publicación.
+        disabled: Los comentarios están deshabilitados para esta publicación.
+      form:
+        error_summary: Este comentario no pudo ser publicado
+        label: Añadir un comentario
+        placeholder: Escribe un comentario…
+        submit: Publicar comentario
+      publishing_agreement_required_html: Debes %{link} antes de poder comentar.
+      report: Reportar comentario
+      section_heading: Comentarios
+      sign_in_to_comment: Inicia sesión para participar en la conversación.
     communities:
       form:
         allow_membership_requests: Permitir solicitudes de membresía
@@ -2616,6 +2655,9 @@ es:
             body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha
               sido actualizado."
             title: Semillas de árbol intercambiadas
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} comentó en tu contenido"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -3309,6 +3351,7 @@ es:
         pending_copy: Este caso sigue en curso. Una persona moderadora puede comunicarse
           contigo según tus preferencias de consentimiento.
         reported_record: Registro reportado
+        reported_record_unavailable: Este contenido ya no está disponible.
         status: Estado actual
         summary: Resumen del caso
         title: Reporte de seguridad
@@ -4618,6 +4661,8 @@ es:
         name: Ingrese el nombre completo de la persona.
         notify_by_email: Envía un correo electrónico cuando una conversación tiene
           un mensage no leído.
+        notify_on_comments: Envía un correo electrónico cuando alguien comenta tu
+          contenido.
         profile_image: Sube una imagen de perfil para la persona.
         show_conversation_details: Mostrar el título de la conversación y el nombre
           del remitente en las notificaciones.

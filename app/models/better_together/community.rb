@@ -15,7 +15,9 @@ module BetterTogether
     include PlatformHost
     include Protected
     include Privacy
+    include Metrics::Shareable
     include Metrics::Viewable
+    include Reportable
     include Searchable
     include Shortlinkable
     include ::Storext.model
