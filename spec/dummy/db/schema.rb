@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_10_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -381,7 +381,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.uuid "platform_id"
     t.index ["creator_id"], name: "by_better_together_calls_for_interest_creator"
     t.index ["ends_at"], name: "bt_calls_for_interest_by_ends_at"
-    t.index ["identifier"], name: "index_better_together_calls_for_interest_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_calls_for_interest_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["interestable_type", "interestable_id"], name: "index_better_together_calls_for_interest_on_interestable"
     t.index ["platform_id"], name: "index_better_together_calls_for_interest_on_platform_id"
     t.index ["privacy"], name: "by_better_together_calls_for_interest_privacy"
@@ -450,7 +450,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.boolean "directional", default: false, null: false
     t.uuid "platform_id"
     t.index ["creator_id"], name: "by_better_together_checklists_creator"
-    t.index ["identifier"], name: "index_better_together_checklists_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_checklists_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_checklists_on_platform_id"
     t.index ["privacy"], name: "by_better_together_checklists_privacy"
   end
@@ -498,6 +498,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.index ["claimable_type", "claimable_id"], name: "idx_bt_claims_on_claimable"
     t.index ["creator_id"], name: "index_better_together_claims_on_creator_id"
     t.index ["platform_id"], name: "index_better_together_claims_on_platform_id"
+  end
+
+  create_table "better_together_comment_configs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "commentable_type", null: false
+    t.uuid "commentable_id", null: false
+    t.string "permission", default: "inherit", null: false
+    t.string "visibility", default: "inherit", null: false
+    t.index ["commentable_type", "commentable_id"], name: "bt_comment_configs_on_commentable", unique: true
   end
 
   create_table "better_together_comments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1360,6 +1371,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.index ["platform_id"], name: "index_better_together_jwt_denylists_on_platform_id"
   end
 
+  create_table "better_together_message_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "sender_id", null: false
+    t.uuid "recipient_id", null: false
+    t.uuid "platform_id", null: false
+    t.text "note", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "responded_at"
+    t.index ["platform_id"], name: "idx_bt_message_requests_platform"
+    t.index ["recipient_id"], name: "idx_bt_message_requests_recipient"
+    t.index ["sender_id", "recipient_id", "platform_id"], name: "idx_bt_message_requests_sender_recipient_platform"
+    t.index ["sender_id"], name: "idx_bt_message_requests_sender"
+  end
+
   create_table "better_together_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1689,7 +1716,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.datetime "last_synced_at"
     t.index ["community_id"], name: "by_better_together_pages_community"
     t.index ["creator_id"], name: "index_better_together_pages_on_creator_id"
-    t.index ["identifier"], name: "index_better_together_pages_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_pages_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id", "source_id"], name: "index_bt_pages_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_pages_on_platform_id"
     t.index ["privacy"], name: "by_better_together_pages_privacy"
@@ -1878,6 +1905,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.index ["source_person_id"], name: "index_better_together_person_links_on_source_person_id"
     t.index ["status"], name: "index_better_together_person_links_on_status"
     t.index ["target_person_id"], name: "index_better_together_person_links_on_target_person_id"
+  end
+
+  create_table "better_together_person_messaging_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "grantor_id", null: false
+    t.uuid "grantee_id", null: false
+    t.index ["grantee_id"], name: "idx_bt_messaging_grants_grantee"
+    t.index ["grantor_id", "grantee_id"], name: "idx_bt_messaging_grants_grantor_grantee", unique: true
   end
 
   create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2382,13 +2419,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "platform", null: false
+    t.string "platform_name", null: false
     t.string "handle", null: false
     t.string "url"
     t.string "privacy", limit: 50, default: "private", null: false
     t.uuid "contact_detail_id", null: false
     t.uuid "platform_id"
-    t.index ["contact_detail_id", "platform"], name: "index_bt_sma_on_contact_detail_and_platform", unique: true
+    t.index ["contact_detail_id", "platform_name"], name: "index_bt_sma_on_contact_detail_and_platform", unique: true
     t.index ["contact_detail_id"], name: "idx_on_contact_detail_id_6380b64b3b"
     t.index ["platform_id"], name: "index_better_together_social_media_accounts_on_platform_id"
     t.index ["privacy"], name: "by_better_together_social_media_accounts_privacy"
@@ -2420,7 +2457,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.string "type", default: "BetterTogether::Upload", null: false
     t.uuid "platform_id"
     t.index ["creator_id"], name: "by_better_together_files_creator"
-    t.index ["identifier"], name: "index_better_together_uploads_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_uploads_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_uploads_on_platform_id"
     t.index ["privacy"], name: "by_better_together_files_privacy"
   end
@@ -2563,7 +2600,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
     t.text "success_message", default: "Thank you. You have successfully completed the wizard", null: false
     t.string "success_path", default: "/", null: false
     t.uuid "platform_id"
-    t.index ["identifier"], name: "index_better_together_wizards_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_wizards_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_wizards_on_platform_id"
   end
 
@@ -2822,6 +2859,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
   add_foreign_key "better_together_joatu_settlements", "better_together_joatu_agreements", column: "agreement_id", on_delete: :restrict
   add_foreign_key "better_together_joatu_settlements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_jwt_denylists", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_message_requests", "better_together_people", column: "recipient_id", on_delete: :cascade
+  add_foreign_key "better_together_message_requests", "better_together_people", column: "sender_id", on_delete: :cascade
+  add_foreign_key "better_together_message_requests", "better_together_platforms", column: "platform_id", on_delete: :cascade
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
   add_foreign_key "better_together_messages", "better_together_platforms", column: "platform_id"
@@ -2887,6 +2927,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_16_010001) do
   add_foreign_key "better_together_person_links", "better_together_people", column: "source_person_id"
   add_foreign_key "better_together_person_links", "better_together_people", column: "target_person_id"
   add_foreign_key "better_together_person_links", "better_together_platform_connections", column: "platform_connection_id"
+  add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantee_id", on_delete: :cascade
+  add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantor_id", on_delete: :cascade
   add_foreign_key "better_together_person_platform_integrations", "better_together_people", column: "person_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_users", column: "user_id"

@@ -1,5 +1,5 @@
 <div class="container my-3">
-  <%= turbo_frame_tag 'host-dashboard-tab-content' do %>
+  <%= turbo_frame_tag 'host-dashboard-tab-content', target: '_top' do %>
     <%= render partial: content_partial %>
   <% end %>
 </div>

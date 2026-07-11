@@ -14,10 +14,12 @@ module BetterTogether
     include Citable
     include Creatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Protected
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
     include Seedable
     include Shortlinkable
@@ -71,7 +73,7 @@ module BetterTogether
 
     translates :content, backend: :action_text
 
-    slugged :title, min_length: 1
+    slugged :title, min_length: 1, slug_uniqueness: false
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 
@@ -115,6 +117,20 @@ module BetterTogether
       hero_block&.background_image_file
     end
 
+    # Payload for search indexing (database fallback and future external backends).
+    # Includes block content so full-text search can match text that only lives
+    # inside a block (e.g. markdown source) rather than a direct Page column.
+    def as_indexed_json
+      {
+        title: title,
+        meta_description: meta_description,
+        keywords: keywords,
+        content: content&.to_plain_text,
+        blocks: content_blocks.filter_map { |block| indexed_block_text(block) },
+        template_blocks: template_blocks.map { |block| indexed_template_block(block) }
+      }.with_indifferent_access
+    end
+
     def published?
       published_at.present? && published_at < Time.zone.now
     end
@@ -155,6 +171,22 @@ module BetterTogether
     end
 
     private
+
+    def indexed_block_text(block)
+      return block.rendered_plain_text if block.respond_to?(:rendered_plain_text)
+      return block.content if block.respond_to?(:content) && block.content.is_a?(String)
+
+      nil
+    end
+
+    # Template blocks render their content from a file rather than storing it directly,
+    # so their rendered text (per locale) has to be indexed separately from indexed_block_text.
+    def indexed_template_block(block)
+      {
+        template_path: block.template_path,
+        indexed_localized_content: block.indexed_localized_content
+      }
+    end
 
     def refresh_sitemap
       return if Rails.env.test?

@@ -1,7 +1,7 @@
 {
   "name": "robot_authored_page_form",
   "device": "desktop",
-  "url": "/en/host/pages/robot-authored-page/edit",
+  "url": "/en/pages/robot-authored-page/edit",
   "title": "Edit Robot Authored Page | Pages | Test Host Community",
   "locale": "en",
   "role": "platform_manager",

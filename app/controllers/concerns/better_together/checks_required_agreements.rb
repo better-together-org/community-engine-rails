@@ -12,11 +12,15 @@ module BetterTogether
   #
   # To skip checking in specific actions:
   #   skip_before_action :check_required_agreements, only: [:index, :show]
-  module ChecksRequiredAgreements
+  module ChecksRequiredAgreements # rubocop:todo Metrics/ModuleLength
     extend ActiveSupport::Concern
+
+    COMMUNITY_CREATION_AGREEMENT_IDENTIFIER = 'community_creation_agreement'
 
     included do
       helper_method :current_person_has_unaccepted_agreements? if respond_to?(:helper_method)
+      helper_method :current_person_missing_publishing_agreement? if respond_to?(:helper_method)
+      helper_method :current_person_missing_community_creation_agreement? if respond_to?(:helper_method)
     end
 
     def self.required_agreement_identifiers
@@ -42,6 +46,18 @@ module BetterTogether
 
     def self.missing_public_publishing_agreement?(participant)
       !accepted_public_publishing_agreement?(participant)
+    end
+
+    def self.public_community_creation_agreement
+      BetterTogether::Agreement.find_by(identifier: COMMUNITY_CREATION_AGREEMENT_IDENTIFIER)
+    end
+
+    def self.accepted_community_creation_agreement?(participant)
+      accepted_agreement?(participant, identifier: COMMUNITY_CREATION_AGREEMENT_IDENTIFIER)
+    end
+
+    def self.missing_community_creation_agreement?(participant)
+      !accepted_community_creation_agreement?(participant)
     end
 
     # Returns required agreements that a person has not yet accepted.
@@ -94,10 +110,112 @@ module BetterTogether
       BetterTogether::ChecksRequiredAgreements.person_has_unaccepted_required_agreements?(current_user.person)
     end
 
+    # Checks if the current user has accepted the content publishing agreement.
+    # Redirects directly to the publishing agreement page when it is missing so
+    # the user can read and accept it before proceeding to content creation.
+    def check_publishing_agreement
+      return unless user_signed_in? && current_user.person.present?
+
+      publishing_agreement = ChecksRequiredAgreements.public_publishing_agreement
+      return unless publishing_agreement.present? && current_person_missing_publishing_agreement?
+
+      store_location_for(:user, request.fullpath)
+      redirect_to_publishing_agreement(publishing_agreement)
+    end
+
+    # Returns true if the current person has not yet accepted the publishing agreement.
+    # @return [Boolean]
+    def current_person_missing_publishing_agreement?
+      return false unless user_signed_in?
+      return false unless current_user.person.present?
+
+      ChecksRequiredAgreements.missing_public_publishing_agreement?(current_user.person)
+    end
+
+    # Returns true if the current person has not yet accepted the community creation agreement.
+    # @return [Boolean]
+    def current_person_missing_community_creation_agreement?
+      return false unless user_signed_in?
+      return false unless current_user.person.present?
+
+      ChecksRequiredAgreements.missing_community_creation_agreement?(current_user.person)
+    end
+
+    # Generic, identifier-parameterized pre-emptive agreement gate. Redirects
+    # to the agreement's page when the current person hasn't accepted it.
+    # @param identifier [String] the Agreement#identifier to require
+    # @param alert_key [String] i18n key for the flash alert
+    # @param bypass [Proc, nil] optional no-arg proc; if it returns true, the
+    #   check is skipped (e.g. a platform-manager exemption)
+    def check_agreement(identifier:, alert_key:, bypass: nil) # rubocop:todo Metrics/AbcSize
+      return unless user_signed_in? && current_user.person.present?
+
+      agreement = BetterTogether::Agreement.find_by(identifier: identifier)
+      return unless agreement.present? && agreement_missing_for_current_person?(identifier)
+      return if bypass&.call
+
+      store_location_for(:user, request.fullpath)
+      redirect_to better_together.agreement_path(agreement, locale: I18n.locale), alert: t(alert_key)
+    end
+
+    def agreement_missing_for_current_person?(identifier)
+      !ChecksRequiredAgreements.accepted_agreement?(current_user.person, identifier: identifier)
+    end
+
+    # Redirects to the community creation agreement when the current person hasn't accepted it.
+    # Platform managers are exempt — they can always create communities.
+    # Call this as a before_action on community new/create actions.
+    def check_community_creation_agreement
+      check_agreement(
+        identifier: COMMUNITY_CREATION_AGREEMENT_IDENTIFIER,
+        alert_key: 'better_together.agreements.community_creation_agreement_required',
+        bypass: -> { current_person_is_platform_manager? }
+      )
+    end
+
+    # Redirects to the content publishing agreement when the current person
+    # hasn't accepted it. Platform managers are exempt.
+    # Call this as a before_action on content new/create actions (e.g. posts,
+    # events, pages) for good UX symmetry with community creation — the model
+    # layer (Privacy#require_publishing_agreement_for_public_visibility) still
+    # enforces this as the hard backstop regardless.
+    def check_content_publishing_agreement
+      check_agreement(
+        identifier: PublicVisibilityGate::AGREEMENT_IDENTIFIER,
+        alert_key: 'better_together.agreements.publishing_agreement_required',
+        bypass: -> { current_person_is_platform_manager? }
+      )
+    end
+
     # Helper method to get agreements_status_path
     # @return [String]
     def agreements_status_path
       better_together.agreements_status_path(locale: I18n.locale)
+    end
+
+    def redirect_to_publishing_agreement(agreement)
+      redirect_to better_together.agreement_path(agreement, locale: I18n.locale),
+                  alert: t('better_together.agreements.publishing_agreement_required')
+    end
+
+    # Returns true if the current person holds a platform role with management permissions.
+    # Used to exempt platform managers from community creation agreement requirements.
+    def current_person_is_platform_manager?
+      return false unless user_signed_in? && current_user.person.present?
+
+      manager_permission_ids = BetterTogether::ResourcePermission
+                               .where(identifier: %w[manage_platform_settings manage_platform])
+                               .pluck(:id)
+      return false if manager_permission_ids.empty?
+
+      BetterTogether::PersonPlatformMembership
+        .active
+        .where(member: current_user.person)
+        .joins(role: :role_resource_permissions)
+        .where(
+          better_together_role_resource_permissions: { resource_permission_id: manager_permission_ids }
+        )
+        .exists?
     end
   end
 end

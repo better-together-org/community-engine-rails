@@ -27,6 +27,16 @@ module BetterTogether
         has_one :creator, class_name: 'Person'
         has_many :attendees, class_name: 'Person'
 
+        # Assign creator from the JWT/OAuth-authenticated API user when the request doesn't
+        # explicitly supply one. Event#set_host builds an EventHost from `creator` before
+        # validation, so without this the API create path fails with
+        # "event_hosts.host - must exist" (mirrors MembershipRequestResource's pattern).
+        def self.create(context)
+          resource = super
+          resource._model.creator ||= context[:current_user]&.person
+          resource
+        end
+
         # Filters
         filter :privacy
         filter :creator_id

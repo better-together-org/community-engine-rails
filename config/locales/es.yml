@@ -222,6 +222,11 @@ es:
         conversation: :activerecord.models.conversation
         lock_version: Versión de bloqueo
         sender: :activerecord.models.sender
+      better_together/message_request:
+        note: Message
+        recipient_id: Recipient
+        sender_id: Sender
+        status: Status
       better_together/navigation_area:
         identifier: Identificador
         lock_version: Versión de bloqueo
@@ -328,6 +333,7 @@ es:
         notification_mentions: Menciones de notificación
         notifications: Notificaciones
         notify_by_email: Recibir notificaciones por correo electrónico
+        notify_on_comments: Notificarme sobre comentarios
         person_community_memberships: Membresías de la comunidad de personas
         person_platform_memberships: Membresías de plataformas personales
         platform_roles: Roles de plataforma
@@ -345,6 +351,9 @@ es:
         lock_version: Versión de bloqueo
         member: :activerecord.models.member
         role: :activerecord.models.role
+      better_together/person_messaging_grant:
+        grantee_id: Grantee
+        grantor_id: Grantor
       better_together/person_platform_membership:
         joinable: :activerecord.models.joinable
         lock_version: Versión de bloqueo
@@ -779,6 +788,8 @@ es:
       accept_error: No se puede registrar la aceptación del acuerdo en este momento.
       accepted: Aceptado
       accepting: Guardando...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: Debe aceptar todos los acuerdos requeridos para continuar.
         successfully_accepted: Gracias por aceptar los acuerdos requeridos.
@@ -804,6 +815,8 @@ es:
         accepted_via: Aceptado mediante %{method}
         agreement_revision: Versión del acuerdo %{timestamp}
         pending: Pendiente
+      publishing_agreement_required: You need to accept the content publishing agreement
+        before creating public or community content. Please review and accept it below.
       show:
         title: Acuerdo
       status:
@@ -903,7 +916,9 @@ es:
         reserved: Reservado para acuerdos
         show_network_total: Mostrar mi total de Tree Seeds entre plataformas
         title: Tus Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
@@ -969,6 +984,44 @@ es:
         completed_message: Lista de verificación completa
         items_title: Elementos
         no_items: No hay elementos para mostrar
+    comment_config:
+      hints:
+        permission: Controla quién puede publicar nuevos comentarios.
+        visibility: Controla quién puede ver el hilo de comentarios.
+      labels:
+        permission: Quién puede comentar
+        visibility: Quién puede ver los comentarios
+      permission_options:
+        community: Solo miembros de la comunidad
+        disabled: Nadie (comentarios deshabilitados)
+        inherit: Cualquiera que pueda ver esto
+      visibility_options:
+        community: Solo miembros de la comunidad
+        inherit: Cualquiera que pueda ver esto
+    comment_mailer:
+      added:
+        greeting: Hola %{recipient_name},
+        intro: 'Tienes un nuevo comentario en tu contenido:'
+        signature_html: "— El equipo de %{platform}"
+        subject: Tienes un nuevo comentario
+        view_link: Ver comentario
+    comments:
+      accept_agreement_link: aceptar el acuerdo de publicación de contenido
+      delete: Eliminar comentario
+      deleted_author: Miembro anterior
+      denial_reasons:
+        community_required: Solo los miembros de la comunidad pueden comentar en esta
+          publicación.
+        disabled: Los comentarios están deshabilitados para esta publicación.
+      form:
+        error_summary: Este comentario no pudo ser publicado
+        label: Añadir un comentario
+        placeholder: Escribe un comentario…
+        submit: Publicar comentario
+      publishing_agreement_required_html: Debes %{link} antes de poder comentar.
+      report: Reportar comentario
+      section_heading: Comentarios
+      sign_in_to_comment: Inicia sesión para participar en la conversación.
     communities:
       form:
         allow_membership_requests: Permitir solicitudes de membresía
@@ -1014,6 +1067,15 @@ es:
           empty_description: Las publicaciones creadas para esta comunidad aparecerán
             aquí.
           empty_title: Sin publicaciones
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
         sections_aria: Secciones de la comunidad
       tabs:
         buildings: Edificios
@@ -1934,8 +1996,11 @@ es:
     joatu:
       agreements:
         accept: Aceptar
+        cancel: Cancelar acuerdo
+        cancel_confirm: "¿Cancelar este acuerdo? Se devolverán las Semillas reservadas."
         create:
           success: Éxito
+        fulfill: Marcar como cumplido
         index:
           title: Acuerdos
         offer: Oferta
@@ -1994,6 +2059,9 @@ es:
         my_offers: Mis ofertas
         my_requests: Mis solicitudes
         none: No se encontraron coincidencias por ahora.
+        recent_offers: Ofertas recientes
+        recent_requests: Solicitudes recientes
+        sign_in: Iniciar sesión
         sign_in_hint: Inicia sesión para ver tus ofertas, solicitudes y acuerdos.
         suggested: Sugerencias
         title: Coincidencias potenciales
@@ -2226,6 +2294,35 @@ es:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    message_requests:
+      accepted: Message request accepted. A new conversation has been started.
+      declined: Message request declined.
+      index:
+        accept_btn: Accept
+        accept_confirm: Accept this message request and start a conversation?
+        ago: ago
+        decline_btn: Decline
+        none_pending: You have no pending message requests.
+        title: Message Requests
+        wants_to_message_you: would like to message you
+      modal_intro: Send %{name} a brief note explaining why you'd like to connect.
+        They can choose to accept and start a conversation, or decline.
+      note_label: Why would you like to connect?
+      note_placeholder: Introduce yourself and explain why you'd like to start a conversation.
+      request_pending: Request pending
+      send_request_btn: Send Message Request
+      sent: Your message request has been sent.
+      show:
+        accept_btn: Accept & Start Conversation
+        back: Back to Requests
+        decline_btn: Decline
+        from_label: 'From:'
+        note_label: 'Note:'
+        title: Message Request
+      statuses:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
     messages:
       form:
         placeholder: Escribe tu mensaje...
@@ -2558,6 +2655,9 @@ es:
             body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha
               sido actualizado."
             title: Semillas de árbol intercambiadas
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} comentó en tu contenido"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -3168,6 +3268,14 @@ es:
       updated_on_short: Actualizado
       view_post: Ver publicación
     primary: Primario
+    privacy:
+      hints:
+        privacy_limited_by_community: Algunas opciones de privacidad están deshabilitadas
+          porque esta comunidad no es pública. El contenido aquí solo puede ser visible
+          para miembros de la comunidad o el autor.
+        privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
+          porque la plataforma no es pública. El contenido solo puede ser visible
+          para miembros de la comunidad o el autor.
     rbac:
       nav:
         resource_permissions: Permisos de recursos
@@ -3243,6 +3351,7 @@ es:
         pending_copy: Este caso sigue en curso. Una persona moderadora puede comunicarse
           contigo según tus preferencias de consentimiento.
         reported_record: Registro reportado
+        reported_record_unavailable: Este contenido ya no está disponible.
         status: Estado actual
         summary: Resumen del caso
         title: Reporte de seguridad
@@ -3647,8 +3756,16 @@ es:
       share: Compartir
       whatsapp: Compartir en WhatsApp
     shared:
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
       privacy_level: 'Privacidad: %{privacy}'
       privacy_tooltip: Este contenido es %{privacy}
+      publishing_agreement_notice:
+        accept_link: Review and accept the publishing agreement
+        message: To publish events or posts visible to members or the public, you
+          need to accept the content publishing agreement first.
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un
@@ -3712,6 +3829,8 @@ es:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
+        Other app processes will pick up the change on their next restart."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
@@ -3726,10 +3845,19 @@ es:
       index:
         activate_btn: Set active
         activate_confirm: Set this as the active storage configuration?
+        activation_blob_migration_note: Existing files remain on the previous backend.
+          Blob migration between backends is a manual operator step and is not performed
+          automatically.
+        activation_restart_note: Activating a new configuration rebinds storage in
+          the current process immediately. Other app processes will pick up the change
+          on their next restart (tmp/restart.txt has been touched).
+        activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
+        asset_host_label: Asset Host (ASSET_HOST)
         back_to_platform: Back to Platform
         bucket_label: Bucket
+        cdn_host_label: CDN Host (FOG_HOST)
         delete_btn: Delete
         delete_confirm: Delete this storage configuration?
         edit_btn: Edit
@@ -3802,6 +3930,7 @@ es:
         review_status_description: Los recuentos de revisión se muestran aquí para
           que puedas encontrar rápidamente las cargas aprobadas, retenidas o restringidas.
         review_status_heading: Estado de revisión
+        sort_by_aria: Ordenar cargas por
         storage_usage: Estás usando %{size} de almacenamiento
     validators:
       safe_federation_url:
@@ -4208,10 +4337,6 @@ es:
         update: Actualizar
         we_need_your_current_password_to_confirm_your_changes: necesitamos su contraseña
           actual para confirmar los cambios
-      membership_request_heading: Solicitar membresía en su lugar
-      membership_request_help_html: Si aún no tienes una invitación, puedes enviar
-        una solicitud de membresía para <strong>%{community}</strong>. Un revisor
-        de la comunidad puede aprobarla e invitarte a la plataforma.
       new:
         agreements:
           privacy_policy: Acepto la Política de Privacidad
@@ -4233,6 +4358,10 @@ es:
           su código de invitación en el campo a continuación para acceder al formulario
           de registro.
         invitation_required: Invitación Requerida
+        membership_request_heading: Solicitar membresía en su lugar
+        membership_request_help_html: Si aún no tienes una invitación, puedes enviar
+          una solicitud de membresía para <strong>%{community}</strong>. Un revisor
+          de la comunidad puede aprobarla e invitarte a la plataforma.
         password:
           help: Use una contraseña fuerte para la seguridad de su cuenta.
           label: Contraseña
@@ -4415,6 +4544,7 @@ es:
     joatu:
       agreement:
         accepted: Acuerdo aceptado
+        cancelled: Acuerdo cancelado — las Semillas reservadas han sido devueltas.
         fulfilled: Acuerdo cumplido — C3 transferido al creador de la oferta.
         rejected: Acuerdo rechazado
       response_links:
@@ -4440,6 +4570,7 @@ es:
     cancel: Cancelar
     clear: Borrar
     clear_filter: Limpiar filtro
+    close: Close
     confirm_delete: "¿Está seguro de que desea eliminar este registro?"
     create: Crear
     declined: Rechazado
@@ -4490,6 +4621,7 @@ es:
       invitations: Invitaciones
       members: Miembros
       posts: Publicaciones
+      roles_and_permissions: Roles & Permissions
       safety: Seguridad
     to: Para
     'true': Sí
@@ -4529,6 +4661,8 @@ es:
         name: Ingrese el nombre completo de la persona.
         notify_by_email: Envía un correo electrónico cuando una conversación tiene
           un mensage no leído.
+        notify_on_comments: Envía un correo electrónico cuando alguien comenta tu
+          contenido.
         profile_image: Sube una imagen de perfil para la persona.
         show_conversation_details: Mostrar el título de la conversación y el nombre
           del remitente en las notificaciones.

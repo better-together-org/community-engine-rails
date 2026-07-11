@@ -75,5 +75,22 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', :as_user do
       end.to change(BetterTogether::Joatu::Agreement, :count).by(-1)
     end
   end
+
+  describe 'POST /cancel' do
+    it 'cancels an accepted agreement and redirects to show' do # rubocop:todo RSpec/MultipleExpectations
+      agreement.update_columns(status: 'accepted')
+
+      post better_together.cancel_joatu_agreement_path(agreement, locale: I18n.locale)
+      expect(response).to redirect_to(
+        better_together.joatu_agreement_path(agreement, locale: I18n.locale)
+      )
+      expect(agreement.reload.status).to eq('cancelled')
+    end
+
+    it 'does not cancel a pending agreement (policy denies)' do
+      post better_together.cancel_joatu_agreement_path(agreement, locale: I18n.locale)
+      expect(agreement.reload.status).to eq('pending')
+    end
+  end
   # rubocop:enable Metrics/BlockLength
 end

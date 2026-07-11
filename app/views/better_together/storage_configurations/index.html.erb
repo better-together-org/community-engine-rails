@@ -47,7 +47,24 @@
           <dt class="col-sm-3"><%= t('.endpoint_label') %></dt>
           <dd class="col-sm-9"><code><%= summary[:endpoint] %></code></dd>
         <% end %>
+        <% if summary[:asset_host].present? %>
+          <dt class="col-sm-3"><%= t('.asset_host_label') %></dt>
+          <dd class="col-sm-9"><code><%= summary[:asset_host] %></code></dd>
+        <% end %>
+        <% if summary[:cdn_host].present? %>
+          <dt class="col-sm-3"><%= t('.cdn_host_label') %></dt>
+          <dd class="col-sm-9"><code><%= summary[:cdn_host] %></code></dd>
+        <% end %>
       </dl>
+    </div>
+  </div>
+
+  <div class="alert alert-warning d-flex align-items-start gap-2 mb-4" role="note">
+    <i class="fas fa-triangle-exclamation mt-1" aria-hidden="true"></i>
+    <div>
+      <strong><%= t('.activation_warning_heading') %></strong>
+      <%= t('.activation_restart_note') %>
+      <%= t('.activation_blob_migration_note') %>
     </div>
   </div>
 

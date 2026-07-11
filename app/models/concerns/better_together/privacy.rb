@@ -13,6 +13,7 @@ module BetterTogether
 
     included do
       include ::TranslateEnum
+      include PrivacyCeilingValidatable
 
       attribute :privacy, :string
       enum :privacy, PRIVACY_LEVELS, prefix: :privacy

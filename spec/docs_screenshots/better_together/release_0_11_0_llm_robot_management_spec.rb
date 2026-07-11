@@ -10,8 +10,8 @@ RSpec.describe 'Documentation screenshots for platform LLM robot management',
                type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
-  let!(:host_platform) { configure_host_platform }
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:host_platform) { configure_host_platform }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'

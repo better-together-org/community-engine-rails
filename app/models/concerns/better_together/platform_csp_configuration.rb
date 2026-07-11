@@ -21,8 +21,14 @@ module BetterTogether
                 :csp_script_src_text, :csp_connect_src_text
 
     included do
-      before_validation :seed_default_local_csp_settings, on: :create
+      # persist_csp_origin_settings must run before seed_default_local_csp_settings:
+      # it fully replaces settings[setting_key] from any explicitly-assigned text
+      # attribute, so if it ran second on create it would clobber the seeded
+      # defaults merged in by seed_default_local_csp_settings. Running it first lets
+      # the create-time seeding merge with (rather than get overwritten by) any
+      # csp_img_src_text explicitly provided at create.
       before_validation :persist_csp_origin_settings
+      before_validation :seed_default_local_csp_settings, on: :create
       validate :validate_csp_origin_text_fields
     end
 

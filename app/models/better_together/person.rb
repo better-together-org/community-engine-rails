@@ -23,6 +23,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Reportable
     include Seedable
     include TimezoneAttributeAliasing
     include Viewable
@@ -53,6 +54,8 @@ module BetterTogether
     has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
 
     has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
+    # Overrides Reportable's default (no dependent:) to preserve this model's pre-existing
+    # cascade-delete behavior for reports filed against a person.
     has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
 
     # Metrics reports created by this person
@@ -111,6 +114,27 @@ module BetterTogether
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
     has_many :event_invitations, class_name: 'BetterTogether::EventInvitation', as: :invitee, dependent: :destroy
+
+    has_many :messaging_grants_given,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantor_id,
+             dependent: :destroy,
+             inverse_of: :grantor
+    has_many :messaging_grants_received,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantee_id,
+             dependent: :destroy,
+             inverse_of: :grantee
+    has_many :sent_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :sender_id,
+             dependent: :destroy,
+             inverse_of: :sender
+    has_many :received_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :recipient_id,
+             dependent: :destroy,
+             inverse_of: :recipient
 
     has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
     has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
@@ -181,6 +205,7 @@ module BetterTogether
     store_attributes :notification_preferences do
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
+      notify_on_comments Boolean, default: true
     end
 
     # Borgberry fleet identity — portable person identity used across fleets.
@@ -229,6 +254,12 @@ module BetterTogether
     def show_conversation_details=(value)
       prefs = (notification_preferences || {}).dup
       prefs['show_conversation_details'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
+    end
+
+    def notify_on_comments=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['notify_on_comments'] = ActiveModel::Type::Boolean.new.cast(value)
       self.notification_preferences = prefs
     end
 

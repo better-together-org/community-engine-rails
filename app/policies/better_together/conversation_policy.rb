@@ -40,9 +40,11 @@ module BetterTogether
       show? # Delegates to participant check
     end
 
-    # Returns the people that the agent is permitted to message
+    # Returns the people that the agent is permitted to message.
+    # Includes platform stewards, people who opted in globally, and people who
+    # have explicitly granted the current agent a messaging permission.
     def permitted_participants
-      admin_and_opted_in_participants
+      admin_and_opted_in_participants.or(explicitly_granted_participants)
     end
 
     def new?
@@ -85,6 +87,13 @@ module BetterTogether
         .where(id: platform_steward_ids)
         .or(opted_in_participants)
         .distinct
+    end
+
+    def explicitly_granted_participants
+      granted_grantor_ids = BetterTogether::PersonMessagingGrant
+                            .where(grantee: agent)
+                            .pluck(:grantor_id)
+      platform_people.where(id: granted_grantor_ids)
     end
 
     def platform_people

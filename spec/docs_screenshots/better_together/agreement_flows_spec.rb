@@ -9,46 +9,46 @@ RSpec.describe 'Documentation screenshots for agreement flows',
                type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:host_platform) { configure_host_platform }
-  let!(:terms_of_service) { BetterTogether::Agreement.find_by!(identifier: 'terms_of_service') }
-  let!(:privacy_policy) { BetterTogether::Agreement.find_by!(identifier: 'privacy_policy') }
-  let!(:code_of_conduct) { BetterTogether::Agreement.find_by!(identifier: 'code_of_conduct') }
-  let!(:content_publishing_agreement) do
+  let(:host_platform) { configure_host_platform }
+  let(:terms_of_service) { BetterTogether::Agreement.find_by!(identifier: 'terms_of_service') }
+  let(:privacy_policy) { BetterTogether::Agreement.find_by!(identifier: 'privacy_policy') }
+  let(:code_of_conduct) { BetterTogether::Agreement.find_by!(identifier: 'code_of_conduct') }
+  let(:content_publishing_agreement) do
     BetterTogether::Agreement.find_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
   end
-  let!(:pending_user) do
+  let(:pending_user) do
     create(:user, :confirmed, email: "agreements-pending-#{SecureRandom.hex(4)}@example.test", password: 'SecureTest123!@#')
   end
-  let!(:publisher_user) do
+  let(:publisher_user) do
     find_or_create_test_user("agreements-publisher-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#', :platform_manager)
   end
-  let!(:publisher_person) { publisher_user.person }
-  let!(:joatu_participant_user) do
+  let(:publisher_person) { publisher_user.person }
+  let(:joatu_participant_user) do
     create(:user,
            :confirmed,
            email: "agreements-joatu-#{SecureRandom.hex(4)}@example.test",
            password: 'SecureTest123!@#')
   end
-  let!(:joatu_offer_creator) do
+  let(:joatu_offer_creator) do
     create(:person, name: 'Offer Steward', identifier: "offer-steward-#{SecureRandom.hex(3)}")
   end
-  let!(:joatu_request_creator) do
+  let(:joatu_request_creator) do
     create(:person, name: 'Request Steward', identifier: "request-steward-#{SecureRandom.hex(3)}")
   end
-  let!(:joatu_offer) do
+  let(:joatu_offer) do
     create(:better_together_joatu_offer,
            name: 'Laptop Repair Help',
            creator: joatu_offer_creator,
            privacy: 'public')
   end
-  let!(:joatu_request) do
+  let(:joatu_request) do
     create(:better_together_joatu_request,
            name: 'Need Laptop Repair',
            creator: joatu_request_creator,
            privacy: 'public',
            target: joatu_offer.target)
   end
-  let!(:joatu_agreement) do
+  let(:joatu_agreement) do
     create(:better_together_joatu_agreement,
            offer: joatu_offer,
            request: joatu_request,

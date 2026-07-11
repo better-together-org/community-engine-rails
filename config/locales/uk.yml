@@ -222,6 +222,11 @@ uk:
         conversation: :activerecord.models.conversation
         lock_version: Версія блокування
         sender: :activerecord.models.sender
+      better_together/message_request:
+        note: Message
+        recipient_id: Recipient
+        sender_id: Sender
+        status: Status
       better_together/navigation_area:
         identifier: Ідентифікатор
         lock_version: Версія блокування
@@ -328,6 +333,7 @@ uk:
         notification_mentions: Згадки в сповіщеннях
         notifications: Сповіщення
         notify_by_email: Отримувати сповіщення електронною поштою
+        notify_on_comments: Повідомляти мене про коментарі
         person_community_memberships: Членство особи в спільноті
         person_platform_memberships: Членство особи в платформі
         platform_roles: Ролі на платформі
@@ -345,6 +351,9 @@ uk:
         lock_version: Версія блокування
         member: :activerecord.models.member
         role: :activerecord.models.role
+      better_together/person_messaging_grant:
+        grantee_id: Grantee
+        grantor_id: Grantor
       better_together/person_platform_membership:
         joinable: :activerecord.models.joinable
         lock_version: Версія блокування
@@ -763,6 +772,8 @@ uk:
       accept_error: Зараз неможливо зафіксувати прийняття угоди.
       accepted: Погоджено
       accepting: Збереження...
+      community_creation_agreement_required: You need to accept the community creation
+        agreement before creating a community. Please review and accept it below.
       create:
         acceptance_required: Ви повинні прийняти всі обов'язкові угоди, щоб продовжити.
         successfully_accepted: Дякуємо за прийняття обов'язкових угод.
@@ -788,6 +799,8 @@ uk:
         accepted_via: Прийнято через %{method}
         agreement_revision: Редакція угоди %{timestamp}
         pending: очікує
+      publishing_agreement_required: You need to accept the content publishing agreement
+        before creating public or community content. Please review and accept it below.
       show:
         title: Угода
       status:
@@ -889,7 +902,11 @@ uk:
         reserved: Зарезервовано для угод
         show_network_total: Показати мій загальний обсяг Tree Seeds між платформами
         title: Ваші Tree Seeds
-      tree_seed: Tree Seed
+      tree_seed:
+        few: Tree Seeds
+        many: Tree Seeds
+        one: Tree Seed
+        other: Tree Seeds
       tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
       tree_seed_emoji: " 🌱"
     calendars:
@@ -956,6 +973,43 @@ uk:
         completed_message: Чек-лист завершено
         items_title: Елементи
         no_items: Немає елементів для відображення
+    comment_config:
+      hints:
+        permission: Визначає, хто може публікувати нові коментарі.
+        visibility: Визначає, хто може бачити гілку коментарів.
+      labels:
+        permission: Хто може коментувати
+        visibility: Хто може бачити коментарі
+      permission_options:
+        community: Тільки члени спільноти
+        disabled: Ніхто (коментарі вимкнені)
+        inherit: Будь-хто, хто може це бачити
+      visibility_options:
+        community: Тільки члени спільноти
+        inherit: Будь-хто, хто може це бачити
+    comment_mailer:
+      added:
+        greeting: Вітаємо, %{recipient_name},
+        intro: 'У вас новий коментар до вашого контенту:'
+        signature_html: "— Команда %{platform}"
+        subject: У вас новий коментар
+        view_link: Переглянути коментар
+    comments:
+      accept_agreement_link: прийняти угоду про публікацію контенту
+      delete: Видалити коментар
+      deleted_author: Колишній учасник
+      denial_reasons:
+        community_required: Тільки члени спільноти можуть коментувати цю публікацію.
+        disabled: Коментарі вимкнені для цієї публікації.
+      form:
+        error_summary: Не вдалося опублікувати коментар
+        label: Додати коментар
+        placeholder: Напишіть коментар…
+        submit: Опублікувати коментар
+      publishing_agreement_required_html: Ви повинні %{link}, перш ніж зможете коментувати.
+      report: Поскаржитися на коментар
+      section_heading: Коментарі
+      sign_in_to_comment: Увійдіть, щоб долучитися до розмови.
     communities:
       form:
         allow_membership_requests: Дозволити запити на членство
@@ -1004,6 +1058,17 @@ uk:
           create_post: Створити допис
           empty_description: Дописи, створені для цієї спільноти, з'являться тут.
           empty_title: Поки що немає дописів
+        roles:
+          empty_title: No community roles defined
+          member_count_aria:
+            few: "%{count} members in this role"
+            many: "%{count} members in this role"
+            one: 1 member in this role
+            other: "%{count} members in this role"
+          members_heading: Members
+          no_members: No members assigned to this role
+          no_permissions: No permissions assigned
+          permissions_heading: Permissions
         sections_aria: Розділи спільноти
       tabs:
         buildings: Будівлі
@@ -1932,8 +1997,11 @@ uk:
     joatu:
       agreements:
         accept: Accept
+        cancel: Скасувати угоду
+        cancel_confirm: Скасувати цю угоду? Зарезервовані насіння будуть повернені.
         create:
           success: Success
+        fulfill: Позначити як виконане
         index:
           title: Agreements
         offer: Offer
@@ -1993,6 +2061,9 @@ uk:
         my_offers: My Offers
         my_requests: My Requests
         none: No matches found right now.
+        recent_offers: Останні пропозиції
+        recent_requests: Останні запити
+        sign_in: Увійти
         sign_in_hint: Sign in to see your offers, requests, and agreements.
         suggested: Suggested Matches
         title: Potential Matches
@@ -2216,6 +2287,35 @@ uk:
         body: Thank you! We've received your membership request and will be in touch
           soon.
         heading: Request Received
+    message_requests:
+      accepted: Message request accepted. A new conversation has been started.
+      declined: Message request declined.
+      index:
+        accept_btn: Accept
+        accept_confirm: Accept this message request and start a conversation?
+        ago: ago
+        decline_btn: Decline
+        none_pending: You have no pending message requests.
+        title: Message Requests
+        wants_to_message_you: would like to message you
+      modal_intro: Send %{name} a brief note explaining why you'd like to connect.
+        They can choose to accept and start a conversation, or decline.
+      note_label: Why would you like to connect?
+      note_placeholder: Introduce yourself and explain why you'd like to start a conversation.
+      request_pending: Request pending
+      send_request_btn: Send Message Request
+      sent: Your message request has been sent.
+      show:
+        accept_btn: Accept & Start Conversation
+        back: Back to Requests
+        decline_btn: Decline
+        from_label: 'From:'
+        note_label: 'Note:'
+        title: Message Request
+      statuses:
+        accepted: Accepted
+        declined: Declined
+        pending: Pending
     messages:
       form:
         placeholder: Type your message...
@@ -2547,6 +2647,9 @@ uk:
           settled:
             body: "%{amount} Насіння дерева обміняно. Ваш баланс оновлено."
             title: Насіння дерева обміняно
+      comment_added:
+        body: "%{content}"
+        title: "%{commenter_name} прокоментував(ла) ваш контент"
       event_invitation:
         body: Invitation to %{event_name}
         title: You have been invited to an event
@@ -3153,6 +3256,14 @@ uk:
       updated_on_short: Оновлено
       view_post: Переглянути пост
     primary: Основний
+    privacy:
+      hints:
+        privacy_limited_by_community: Деякі параметри конфіденційності вимкнено, оскільки
+          ця спільнота не є публічною. Вміст тут можуть бачити лише учасники спільноти
+          або автор.
+        privacy_limited_by_platform: Деякі параметри конфіденційності вимкнено, оскільки
+          платформа не є публічною. Вміст можуть бачити лише учасники спільноти або
+          автор.
     rbac:
       nav:
         resource_permissions: Дозволи ресурсів
@@ -3225,6 +3336,7 @@ uk:
         pending_copy: Ця справа все ще розглядається. Модератор може зв'язатися з
           вами залежно від ваших параметрів згоди.
         reported_record: Повідомлений запис
+        reported_record_unavailable: Цей контент більше недоступний.
         status: Поточний статус
         summary: Підсумок справи
         title: Звіт про безпеку
@@ -3627,8 +3739,16 @@ uk:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_creation_agreement_notice:
+        accept_link: Review and accept the community creation agreement
+        message: To create a community, you need to accept the community creation
+          agreement first.
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
+      publishing_agreement_notice:
+        accept_link: Review and accept the publishing agreement
+        message: To publish events or posts visible to members or the public, you
+          need to accept the content publishing agreement first.
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -3692,6 +3812,8 @@ uk:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_with_restart: "'%{name}' activated. This process has rebound immediately.
+        Other app processes will pick up the change on their next restart."
       cancel: Cancel
       cannot_destroy_active: Cannot delete the currently active storage configuration.
         Activate another first.
@@ -3706,10 +3828,19 @@ uk:
       index:
         activate_btn: Set active
         activate_confirm: Set this as the active storage configuration?
+        activation_blob_migration_note: Existing files remain on the previous backend.
+          Blob migration between backends is a manual operator step and is not performed
+          automatically.
+        activation_restart_note: Activating a new configuration rebinds storage in
+          the current process immediately. Other app processes will pick up the change
+          on their next restart (tmp/restart.txt has been touched).
+        activation_warning_heading: 'Before switching storage backends:'
         active_badge: Active
         active_config_label: 'Active Configuration:'
+        asset_host_label: Asset Host (ASSET_HOST)
         back_to_platform: Back to Platform
         bucket_label: Bucket
+        cdn_host_label: CDN Host (FOG_HOST)
         delete_btn: Delete
         delete_confirm: Delete this storage configuration?
         edit_btn: Edit
@@ -3779,6 +3910,7 @@ uk:
         review_status_description: Тут відображаються підрахунки перевірки, щоб ви
           могли швидко знайти схвалені, утримані або обмежені завантаження.
         review_status_heading: Статус перевірки
+        sort_by_aria: Сортувати завантаження за
         storage_usage: Ви використовуєте %{size} сховища
     validators:
       safe_federation_url:
@@ -4202,10 +4334,6 @@ uk:
         update: Оновити
         we_need_your_current_password_to_confirm_your_changes: нам потрібен ваш поточний
           пароль для підтвердження змін
-      membership_request_heading: Замість цього запитати членство
-      membership_request_help_html: Якщо у вас ще немає запрошення, ви можете надіслати
-        запит на членство для <strong>%{community}</strong>. Рецензент спільноти може
-        це схвалити та запросити вас на платформу.
       new:
         agreements:
           privacy_policy: Я погоджуюся з Політикою конфіденційності
@@ -4226,6 +4354,10 @@ uk:
           запрошення перед реєстрацією. Якщо вас було запрошено, будь ласка, введіть
           ваш код запрошення в поле нижче для доступу до форми реєстрації.
         invitation_required: Потрібне запрошення
+        membership_request_heading: Замість цього запитати членство
+        membership_request_help_html: Якщо у вас ще немає запрошення, ви можете надіслати
+          запит на членство для <strong>%{community}</strong>. Рецензент спільноти
+          може це схвалити та запросити вас на платформу.
         password:
           help: Використовуйте сильний пароль для безпеки вашого облікового запису.
           label: Пароль
@@ -4418,6 +4550,7 @@ uk:
     joatu:
       agreement:
         accepted: Угоду прийнято
+        cancelled: Угоду скасовано — зарезервовані насіння повернено.
         fulfilled: Угоду виконано — C3 передано творцю пропозиції.
         rejected: Угоду відхилено
       response_links:
@@ -4443,6 +4576,7 @@ uk:
     cancel: Скасувати
     clear: Очистити
     clear_filter: Очистити фільтр
+    close: Close
     confirm_delete: Ви впевнені, що хочете видалити цей запис?
     create: Створити
     declined: Відхилено
@@ -4492,6 +4626,7 @@ uk:
       invitations: Запрошення
       members: Учасники
       posts: Дописи
+      roles_and_permissions: Roles & Permissions
       safety: Безпека
     to: До
     'true': так
@@ -4531,6 +4666,7 @@ uk:
         name: Введіть повне ім'я особи.
         notify_by_email: Надсилати електронний лист, коли в розмові є непрочитане
           повідомлення.
+        notify_on_comments: Надсилати електронний лист, коли хтось коментує ваш контент.
         profile_image: Завантажте зображення профілю для особи.
         show_conversation_details: Показувати назву розмови та ім'я відправника в
           сповіщеннях.

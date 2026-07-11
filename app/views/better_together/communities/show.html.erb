@@ -69,6 +69,9 @@
           <% if policy(@resource).view_members? %>
             <%= link_to t('globals.tabs.members'), '#members', class: 'nav-link', id: 'members-tab', data: { bs_toggle: 'tab', bs_target: '#members', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'members', aria_selected: 'false', tabindex: '-1' %>
           <% end %>
+          <% if policy(@resource).manage_roles? %>
+            <%= link_to t('globals.tabs.roles_and_permissions'), '#roles-and-permissions', class: 'nav-link', id: 'roles-and-permissions-tab', data: { bs_toggle: 'tab', bs_target: '#roles-and-permissions', bs_parent: '#communitySections' }, role: 'tab', aria_controls: 'roles-and-permissions', aria_selected: 'false', tabindex: '-1' %>
+          <% end %>
           <% if @community_pages.any? %>
             <%= link_to BetterTogether::Page.model_name.human.pluralize, '#pages', class: 'nav-link', id: 'pages-tab', data: { bs_toggle: 'tab', bs_target: '#pages', bs_parent: '#profileSections' }, role: 'tab', aria_controls: 'pages', aria_selected: 'false', tabindex: '-1' %>
           <% end %>
@@ -120,7 +123,7 @@
                 destroy_path_proc: ->(invitation) { better_together.community_invitation_path(@community, invitation) } %>
           <% end %>
 
-          <% if policy(BetterTogether::PersonCommunityMembership).create? %>
+          <% if policy(@community.person_community_memberships.new).create? %>
             <!-- Add Member Button -->
             <div class="mb-3" data-controller="better_together--new-person-community-membership">
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
@@ -143,7 +146,7 @@
 
                         <div class="mb-3" id="member_select">
                           <%= form.label :member_id, t('better_together.communities.show.members.add_member_modal.select_person'), class: "form-label" %>
-                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).distinct, :id, :select_option_title, { prompt: t('better_together.communities.show.members.add_member_modal.select_person_prompt') }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
+                          <%= form.collection_select :member_id, ::BetterTogether::Person.includes(:string_translations).where.not(id: @resource.person_community_memberships.pluck(:member_id)).distinct, :id, :select_option_title, { prompt: t('better_together.communities.show.members.add_member_modal.select_person_prompt') }, { class: "form-select", required: true, data: { controller: 'better_together--slim-select' } } %>
                         </div>
 
                         <div class="mb-3">
@@ -161,8 +164,17 @@
             </div>
           <% end %>
             <div id="members_list" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
-              <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @resource.person_community_memberships, as: :membership %>
+              <%= render partial: 'better_together/person_community_memberships/person_community_membership_member', collection: @community_memberships, as: :membership %>
             </div>
+          </div>
+        <% end %>
+
+        <% if policy(@resource).manage_roles? %>
+          <div id="roles-and-permissions" class="collapse" aria-labelledby="roles-and-permissions-tab" aria-expanded="true" data-bs-parent="#communityTabs">
+            <%= render 'better_together/communities/community_roles_tab',
+                       community: @community,
+                       community_roles: @community_roles,
+                       memberships_by_role: @community_memberships_by_role %>
           </div>
         <% end %>
 
@@ -181,6 +193,7 @@
                         new_post_path(community_id: @community.slug),
                         class: 'btn btn-primary mb-3',
                         id: 'community-posts-create-btn' %>
+            <%= render 'better_together/shared/publishing_agreement_notice' %>
           <% end %>
 
           <% if @community_posts.any? %>
@@ -199,6 +212,7 @@
         <div id="events" class="collapse" aria-labelledby="events-tab" aria-expanded="true" data-bs-parent="#communityTabs">
           <% if policy(@resource).create_events? %>
             <%= link_to t('better_together.communities.show.events.create_event'), new_event_path(host_id: @resource.id, host_type: resource_class), class: 'btn btn-primary mb-3' %>
+            <%= render 'better_together/shared/publishing_agreement_notice' %>
           <% end %>
           
           <% if policy(@resource).create_events? && @draft_events.any? %>

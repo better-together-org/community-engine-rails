@@ -1,0 +1,50 @@
+{
+  "name": "comment_permission_controls_disabled",
+  "device": "mobile",
+  "url": "/en/posts/sample-post-3",
+  "title": "Board Meeting Minutes — June | Posts | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "comment_permission_controls",
+  "flow": "comment_thread_disabled",
+  "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
+  "callouts": [
+    {
+      "selector": "#comments-disabled",
+      "title": "Comments disabled for this post",
+      "bullets": [
+        "The author or a community content manager set comment_permission to \"disabled\" via the post edit form.",
+        "No manager bypass: even a platform manager cannot post here while this is set — only the denial message renders.",
+        "Existing comments (if any) and moderation/delete rights are unaffected — only new comments are blocked."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1102.6875,
+        "width": 461.0,
+        "height": 21.0,
+        "right": 473.0,
+        "bottom": 1123.6875,
+        "center_x": 242.5,
+        "center_y": 1113.1875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1102.6875,
+        "width": 461.0,
+        "height": 21.0,
+        "right": 473.0,
+        "bottom": 1123.6875,
+        "center_x": 242.5,
+        "center_y": 1113.1875
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 450.69,
+        "width": 270.0,
+        "height": 632,
+        "score": 1102.6875
+      }
+    }
+  ]
+}

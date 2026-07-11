@@ -1,0 +1,10 @@
+<%# Appends directly for the requester's own tab (matches messages/create.turbo_stream.erb) —
+    ActionCable delivery (BetterTogether::Comment#after_create_commit's broadcast_append_to)
+    handles every other open viewer. The anchor_id target is unique per comment, so a
+    same-tab WS echo would be a harmless no-op replace rather than a duplicate append in Turbo 8. %>
+<% if @comment.persisted? %>
+  <%= turbo_stream.append @commentable.comments_stream_target,
+                            partial: 'better_together/comments/comment', locals: { comment: @comment } %>
+<% end %>
+<%= turbo_stream.replace 'new_comment', partial: 'better_together/comments/form',
+                          locals: { commentable: @commentable, comment: @comment.persisted? ? BetterTogether::Comment.new : @comment } %>

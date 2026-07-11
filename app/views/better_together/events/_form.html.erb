@@ -69,7 +69,14 @@
           <!-- Privacy Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= form.label :privacy, t('better_together.events.labels.privacy') %>
-            <%= privacy_field(form:, klass: event.class) %>
+            <% _event_platform = event.platform || Current.platform %>
+            <% _max_privacy = max_allowed_privacy(platform: _event_platform, community: nil) %>
+            <%= privacy_field(form:, klass: event.class, max_privacy: _max_privacy) %>
+            <% if (hint = privacy_constraint_hint(platform: _event_platform, community: nil)) %>
+              <small class="form-text text-muted mt-1" id="<%= dom_id(event, :privacy_hint) %>">
+                <%= hint %>
+              </small>
+            <% end %>
             <% if event.errors[:privacy].any? %>
               <div class="invalid-feedback">
                 <%= event.errors[:privacy].join(", ") %>

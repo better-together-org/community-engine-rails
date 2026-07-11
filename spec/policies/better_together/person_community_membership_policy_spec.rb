@@ -77,6 +77,16 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
     it 'denies users without permissions' do
       expect(policy.create?).to be false
     end
+
+    it 'allows the community creator even without any membership role' do
+      community.creator = person
+      expect(policy.create?).to be true
+    end
+
+    it 'denies a non-creator without any membership role or permission' do
+      community.creator = other_person
+      expect(policy.create?).to be false
+    end
   end
 
   describe '#edit?' do
@@ -92,6 +102,13 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
 
     it 'denies users without permissions' do
       expect(policy.edit?).to be false
+    end
+
+    it 'allows the community creator even without any membership role' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      other_membership.joinable.creator = person
+      policy = described_class.new(user, other_membership)
+      expect(policy.edit?).to be true
     end
   end
 
@@ -123,6 +140,20 @@ RSpec.describe BetterTogether::PersonCommunityMembershipPolicy, type: :policy do
       allow(person).to receive(:permitted_to?).with('manage_community_members', other_membership.joinable).and_return(true)
       allow(other_person).to receive(:permitted_to?).with('manage_community_roles', other_membership.joinable).and_return(true)
       expect(policy.destroy?).to be false
+    end
+
+    it 'allows the community creator to remove another member even without any membership role' do
+      other_membership = build_stubbed(:better_together_person_community_membership, member: other_person)
+      other_membership.joinable.creator = person
+      policy = described_class.new(user, other_membership)
+      expect(policy.destroy?).to be true
+    end
+  end
+
+  describe '#can_manage_community_members?' do
+    it 'returns false when the record has no joinable community' do
+      unattached_policy = described_class.new(user, BetterTogether::PersonCommunityMembership.new)
+      expect(unattached_policy.send(:can_manage_community_members?)).to be false
     end
   end
 

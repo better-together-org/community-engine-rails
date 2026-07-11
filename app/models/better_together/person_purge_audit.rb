@@ -30,7 +30,12 @@ module BetterTogether
     validates :inventory_snapshot, presence: true
     validates :execution_snapshot, presence: true
 
-    before_update { raise ActiveRecord::ReadOnlyRecord, 'PersonPurgeAudit records are immutable' }
+    before_update do
+      # Allow exactly one status transition: running → completed or running → failed.
+      # After reaching a terminal state the record is fully immutable.
+      allowed = status_was == 'running' && %w[completed failed].include?(status)
+      raise ActiveRecord::ReadOnlyRecord, 'PersonPurgeAudit records are immutable after completion' unless allowed
+    end
     before_destroy { raise ActiveRecord::ReadOnlyRecord, 'PersonPurgeAudit records are immutable' }
   end
 end

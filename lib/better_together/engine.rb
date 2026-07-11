@@ -124,6 +124,13 @@ module BetterTogether
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
+    # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
+    # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
+    # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.
+    initializer 'better_together.active_storage_variant_processor' do |app|
+      app.config.active_storage.variant_processor = :vips
+    end
+
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true
@@ -207,6 +214,14 @@ module BetterTogether
       # Installed migrations carry the `.better_together.rb` suffix, signalling that the host
       # app tracks CE migrations independently.
       next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
+
+      # Skip when running via this engine's own bin/rails or `rake` from the engine root
+      # (e.g. `bin/dc-run rails db:migrate` against spec/dummy). In that mode Rails sets the
+      # global ENGINE_ROOT constant, and ActiveRecord::Railtie's `db:load_config` task already
+      # injects this engine's db/migrate path into DatabaseTasks.migrations_paths on its own
+      # (see activerecord/lib/active_record/railtie.rb). Appending it here too would add the
+      # same directory twice and raise ActiveRecord::DuplicateMigrationNameError.
+      next if defined?(::ENGINE_ROOT)
 
       excludes = [root.join('worktrees').to_s, root.join('tmp').to_s]
       config.paths['db/migrate'].existent_directories.each do |expanded_path|

@@ -18,29 +18,29 @@
         "Removing one card removes only that role assignment, not the person’s other stewardship authority."
       ],
       "target": {
-        "x": 16.0,
-        "y": 298.953125,
-        "width": 453.0,
+        "x": 0.0,
+        "y": 451.953125,
+        "width": 485.0,
         "height": 648.0,
-        "right": 469.0,
-        "bottom": 946.953125,
+        "right": 485.0,
+        "bottom": 1099.953125,
         "center_x": 242.5,
-        "center_y": 622.953125
+        "center_y": 775.953125
       },
       "avoid": {
-        "x": 16.0,
-        "y": 298.953125,
-        "width": 453.0,
+        "x": 0.0,
+        "y": 451.953125,
+        "width": 485.0,
         "height": 648.0,
-        "right": 469.0,
-        "bottom": 946.953125,
+        "right": 485.0,
+        "bottom": 1099.953125,
         "center_x": 242.5,
-        "center_y": 622.953125
+        "center_y": 775.953125
       },
       "placement": {
         "side": "floating",
-        "x": 206.0,
-        "y": 619,
+        "x": 24.0,
+        "y": 44,
         "width": 270.0,
         "height": 618
       }

@@ -73,11 +73,14 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
 
   describe 'Primary domain canonical link generation' do
     let(:platform) { create(:better_together_platform, :public) }
+    # Platform#sync_primary_platform_domain! (after_commit) already created a
+    # primary domain from host_url — update it rather than creating a second
+    # primary domain for the same platform.
     let(:primary_domain) do
-      create(:better_together_platform_domain,
-             :primary,
-             platform:,
-             hostname: 'primary.example.test')
+      domain = BetterTogether::PlatformDomain.find_by(platform:, primary_flag: true) ||
+               create(:better_together_platform_domain, :primary, platform:)
+      domain.update!(hostname: 'primary.example.test')
+      domain
     end
 
     let(:alias_domain) do
@@ -194,26 +197,25 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
     it 'allows only one primary domain per platform' do
       platform = create(:better_together_platform, :public)
 
-      create(:better_together_platform_domain,
-             :primary,
-             platform:,
-             hostname: 'first.example.test')
+      # Platform#sync_primary_platform_domain! (after_commit) already created a
+      # primary domain from host_url — update it rather than creating a second
+      # primary domain for the same platform.
+      BetterTogether::PlatformDomain.find_by(platform:, primary_flag: true)
+                                    .update!(hostname: 'first.example.test')
 
-      # Attempting to create a second primary should update the first or raise
-      primary2 = create(:better_together_platform_domain,
-                        :primary,
-                        platform:,
-                        hostname: 'second.example.test')
+      # PrimaryFlag#only_one_primary_flag enforces this via a validation, not
+      # an auto-demote — attempting a second primary for the same platform
+      # is rejected outright.
+      expect do
+        create(:better_together_platform_domain, :primary, platform:, hostname: 'second.example.test')
+      end.to raise_error(ActiveRecord::RecordInvalid, /Primary flag/)
 
-      # Reload and check: only one should have primary_flag: true
+      # The original primary domain remains the only one.
       platform.reload
-      primary_domains = BetterTogether::PlatformDomain.where(
-        platform:,
-        primary_flag: true
-      )
+      primary_domains = BetterTogether::PlatformDomain.where(platform:, primary_flag: true)
 
       expect(primary_domains.count).to eq(1)
-      expect(primary_domains.first.hostname).to eq(primary2.hostname)
+      expect(primary_domains.first.hostname).to eq('first.example.test')
     end
   end
 end

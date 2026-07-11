@@ -3,9 +3,20 @@
 module BetterTogether
   # Responds to requests for pages
   class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    include ChecksRequiredAgreements
+
     before_action :set_page, only: %i[show edit update destroy]
+    before_action :check_content_publishing_agreement, only: %i[new create]
 
     skip_before_action :check_platform_setup, unless: -> { ::BetterTogether::Platform.where(host: true).any? }
+
+    # #new (below) already builds @page with community_id set and calls
+    # `authorize @page` itself. The inherited :authorize_resource before_action
+    # runs before #new's body, so without this skip it would authorize a
+    # communityless instance first — making PagePolicy's community-dependent
+    # self-service check always fail before #new ever gets a chance to
+    # populate community_id.
+    skip_before_action :authorize_resource, only: %i[new]
 
     before_action only: %i[new edit], if: -> { Rails.env.development? } do
       # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
@@ -41,6 +52,7 @@ module BetterTogether
 
     def new
       @page = resource_class.new
+      @page.community_id = community_context&.id
       authorize @page
     end
 
@@ -230,16 +242,36 @@ module BetterTogether
       params.require(:page).permit(
         basic_page_attributes + page_blocks_permitted_attributes
       ).tap do |attrs|
-        attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
+        apply_create_defaults(attrs) if action_name == 'create'
       end
     end
 
+    def apply_create_defaults(attrs)
+      attrs[:creator_id] = helpers.current_person&.id
+      attrs[:community_id] = community_context&.id if attrs[:community_id].blank?
+    end
+
     def basic_page_attributes
-      [
+      attrs = [
         :meta_description, :keywords, :published_at, :sidebar_nav_id,
         :privacy, :layout, :template, :show_title, :contributors_display_visibility, *Page.localized_attribute_list,
         *Page.extra_permitted_attributes
       ]
+      attrs.unshift(:community_id) if action_name == 'create'
+      attrs
+    end
+
+    def community_context
+      @community_context ||= resolved_community || helpers.host_community
+    end
+
+    def resolved_community
+      community_id = params[:community_id].presence
+      return if community_id.blank?
+
+      BetterTogether::Community.friendly.find(community_id)
+    rescue ActiveRecord::RecordNotFound
+      nil
     end
 
     def page_blocks_permitted_attributes

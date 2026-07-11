@@ -19,18 +19,16 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   context 'when viewing calendar show page' do
     let(:calendar) { create('better_together/calendar', privacy: 'public') }
     let(:upcoming_event) do
-      BetterTogether::Event.create!(
-        name: 'Upcoming',
-        starts_at: 2.days.from_now,
-        identifier: SecureRandom.uuid
-      )
+      create(:better_together_event,
+             name: 'Upcoming',
+             starts_at: 2.days.from_now,
+             identifier: SecureRandom.uuid)
     end
     let(:past_event) do
-      BetterTogether::Event.create!(
-        name: 'Past',
-        starts_at: 3.days.ago,
-        identifier: SecureRandom.uuid
-      )
+      create(:better_together_event,
+             name: 'Past',
+             starts_at: 3.days.ago,
+             identifier: SecureRandom.uuid)
     end
 
     before do
@@ -53,7 +51,7 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   end
 
   describe 'GET /calendars/:id/feed' do
-    let(:community) { create(:community) }
+    let(:community) { create(:community, privacy: 'public') }
     let(:calendar) { create('better_together/calendar', community:, privacy: 'private') }
     let(:first_event) do
       create(:event,
