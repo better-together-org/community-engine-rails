@@ -115,13 +115,17 @@ stated explicitly in the PR description):**
    `Commentable#comments_stream_target` (moved from `Comment`) and new `Comment#anchor_id`.
 
 **Deferred, tracked as separate follow-up work (not blocking this PR):**
-9. `CommentsController#index` + Turbo Frame restructuring for lazy-loaded, paginated comments.
-   Left deferred deliberately — unlike 6-8, this is a genuine feature addition (new route,
-   new controller action, `_comments_section.html.erb` becomes a thin frame stub with
-   `loading: lazy`), not a refactor of existing behavior. It would also change every existing
-   spec that visits a post page expecting comments synchronously present in the initial
-   response, well beyond the comments-specific spec files touched by everything else in this
-   PR. Worth doing, but as its own PR with its own review pass.
+9. `CommentsController#index` + Turbo Frame restructuring for paginated comments — tracked as
+   [issue #1661](https://github.com/better-together-org/community-engine-rails/issues/1661).
+   Left deferred deliberately — unlike 6-8, this is a genuine feature addition (new route, new
+   controller action, view restructuring), not a refactor of existing behavior, and would touch
+   spec assumptions on the post-show page well beyond the comments-specific files this PR
+   otherwise limits itself to. The issue also documents why the original "make the whole thread
+   `loading: lazy`" suggestion was revised: real SEO drawbacks (lazy content is invisible to
+   non-JS crawlers and not reliably indexed even by Googlebot) and mixed caching tradeoffs (an
+   extra mandatory round-trip vs. a longer-cacheable post page) argue for eager-rendering the
+   first page of comments and reserving the turbo-frame for pagination beyond that, not for
+   hiding the entire thread behind a client-side fetch.
 
 ## 4. View inventory — all ERB templates changed in this branch
 
