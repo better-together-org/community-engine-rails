@@ -101,10 +101,14 @@ RSpec.describe BetterTogether::PersonPlatformMembership do
         membership.save!
       end.to change(Noticed::Notification, :count).by(1)
 
-      notification = Noticed::Notification.last
+      # Scope to this membership's own event rather than the global `.last` notification:
+      # the shared test database is not truncated between examples, so unrelated leftover
+      # notifications may exist and be more recent.
+      event = Noticed::Event.where(record: membership).last
+      notification = event.notifications.last
       expect(notification.recipient).to eq(membership.member)
-      expect(notification.event.type).to eq('BetterTogether::MembershipCreatedNotifier')
-      expect(notification.event.record).to eq(membership)
+      expect(event.type).to eq('BetterTogether::MembershipCreatedNotifier')
+      expect(event.record).to eq(membership)
     end
 
     it 'does not create notification for pending memberships' do
@@ -122,17 +126,20 @@ RSpec.describe BetterTogether::PersonPlatformMembership do
         membership.activate!
       end.to change(Noticed::Notification, :count).by(1)
 
-      notification = Noticed::Notification.last
+      event = Noticed::Event.where(record: membership).last
+      notification = event.notifications.last
       expect(notification.recipient).to eq(membership.member)
-      expect(notification.event.type).to eq('BetterTogether::MembershipCreatedNotifier')
-      expect(notification.event.record).to eq(membership)
+      expect(event.type).to eq('BetterTogether::MembershipCreatedNotifier')
+      expect(event.record).to eq(membership)
     end
 
     it 'cleans up related notifications when membership is destroyed' do
       membership = create(:better_together_person_platform_membership, status: 'active')
 
-      # Verify notification was created
-      expect(Noticed::Notification.count).to eq(1)
+      # Verify a notification was created for this membership specifically — the shared
+      # test database is not truncated between examples, so a global count would be fragile.
+      event = Noticed::Event.where(record: membership).last
+      expect(event.notifications.count).to eq(1)
 
       # Expect cleanup job to be enqueued
       expect do
@@ -199,20 +206,26 @@ RSpec.describe BetterTogether::PersonPlatformMembership do
 
     it 'creates notification when membership is destroyed' do
       membership = create(:better_together_person_platform_membership, status: 'active')
+      joinable = membership.joinable
 
-      # Initial notification from creation
-      expect(Noticed::Notification.count).to eq(1)
+      # Initial notification from creation, scoped to this membership specifically — the
+      # shared test database is not truncated between examples, so a global count would
+      # be fragile.
+      creation_event = Noticed::Event.where(record: membership).last
+      expect(creation_event.notifications.count).to eq(1)
 
       expect do
         membership.destroy!
       end.to change(Noticed::Notification, :count).by(1)
 
-      # Should have removal notification sent to the member
-      notifications = Noticed::Notification.all
-      removal_notification = notifications.find { |n| n.event.type == 'BetterTogether::MembershipRemovedNotifier' }
+      # Should have removal notification sent to the member. The removal event's record is
+      # the joinable platform (not the now-destroyed membership), and each example creates
+      # its own fresh joinable, so scoping to it isolates from unrelated leftover data.
+      removal_event = Noticed::Event.where(record: joinable, type: 'BetterTogether::MembershipRemovedNotifier').last
+      expect(removal_event).to be_present
+      removal_notification = removal_event.notifications.find_by(recipient: membership.member)
       expect(removal_notification).to be_present
-      expect(removal_notification.recipient).to eq(membership.member)
-      expect(removal_notification.event.record).to eq(membership.joinable)
+      expect(removal_event.record).to eq(joinable)
     end
 
     it 'does not create notification when other attributes are updated' do

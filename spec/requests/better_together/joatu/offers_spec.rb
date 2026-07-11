@@ -149,5 +149,27 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       )
     end
   end
+
+  context 'as guest (unauthenticated)', :no_auth do
+    let(:public_offer) do
+      create(:joatu_offer).tap { |o| o.update_column(:privacy, 'public') }
+    end
+    let(:private_offer) { create(:joatu_offer) }
+
+    it 'allows browsing the offer index without signing in' do
+      get better_together.joatu_offers_path(locale: I18n.locale)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'allows viewing a public offer without signing in' do
+      get better_together.joatu_offer_path(public_offer, locale: I18n.locale)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'redirects to sign-in when viewing a private offer' do
+      get better_together.joatu_offer_path(private_offer, locale: I18n.locale)
+      expect(response).to redirect_to(new_user_session_path(locale: I18n.locale))
+    end
+  end
   # rubocop:enable Metrics/BlockLength
 end

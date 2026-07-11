@@ -75,6 +75,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      # Public person profile viewing - must be BEFORE authenticated routes
+      resources :people, only: %i[show], path: 'p', as: 'person'
+
       devise_scope :user do
         unauthenticated :user do
           # Avoid clobbering admin users_path helper; keep redirect but rename helper
@@ -95,6 +98,33 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       # Short link generation for public content — guests can generate share links
       post 'short_links/ensure', to: 'short_links#ensure', as: :ensure_content_short_link
+
+      post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
+
+      # Exchange hub and public browsing — must be BEFORE authenticated routes
+      # Hub serves as a public landing page; write/member actions are gated below.
+      #
+      # The two explicit `new` routes just below are declared here, ahead of the
+      # `show` resources, so they win the literal path segment `/exchange/requests/new`
+      # (and `/offers/new`). The authenticated block further down also declares
+      # `resources ... except: %i[index show]` (which includes its own `new` with the
+      # same name/path — harmless duplication, see note there) — Rails tries routes in
+      # declaration order, so without these earlier entries the literal "new" segment
+      # would match the `show` route first (with id == "new", since Offers/Requests
+      # use FriendlySlug and `:id` is normally a slug string, not a format-restricted
+      # UUID — a plain id constraint can't safely exclude just "new" without an
+      # unreliable regex lookahead). Declared with an explicit controller/path (not
+      # nested in `namespace :joatu`) so `as:` isn't double-prefixed with "joatu_".
+      # Access control for these actions is still fully enforced by
+      # OfferPolicy#new?/RequestPolicy#new? in the controller regardless of route order.
+      get 'exchange/offers/new',   to: 'joatu/offers#new',   as: :new_joatu_offer
+      get 'exchange/requests/new', to: 'joatu/requests#new', as: :new_joatu_request
+
+      namespace :joatu, path: 'exchange' do
+        get '/', to: 'hub#index', as: :hub
+        resources :offers,   only: %i[index show]
+        resources :requests, only: %i[index show]
+      end
 
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
@@ -138,6 +168,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :message_requests, only: %i[index show create] do
+          member do
+            put :accept
+            put :decline
+          end
+        end
+
         resources :events, except: %i[index show] do
           collection do
             get :available_hosts
@@ -159,7 +196,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Help banner preferences
         post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
         post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
-        post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
 
         scope path: 'hub' do
           get '/', to: 'hub#index', as: :hub
@@ -200,14 +236,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         namespace :joatu, path: 'exchange' do
-          # Exchange hub landing page
-          get '/', to: 'hub#index', as: :hub
-          resources :offers do
+          # index + show are declared outside authenticated block for public access.
+          # The `new` action for offers/requests is ALSO pre-declared, unauthenticated,
+          # near the top of routes.rb (see comment there) so it wins the literal path
+          # segment over the `show` route, which is tried first in table order — the
+          # `new` routes generated here are unreachable duplicates kept only so
+          # `resources` continues to read naturally; harmless (same controller/action).
+          resources :offers, except: %i[index show] do
             member do
               get :respond_with_request
             end
           end
-          resources :requests do
+          resources :requests, except: %i[index show] do
             member do
               get :matches
               get :respond_with_offer
@@ -218,6 +258,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               post :accept
               post :reject
               post :fulfill
+              post :cancel
             end
           end
 
@@ -253,7 +294,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :people, only: %i[update show edit], path: :p do
+        resources :people, only: %i[update edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
@@ -273,6 +314,22 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :person_platform_integrations
 
         resources :posts
+
+        resources :comments, only: %i[create destroy]
+        # Pages: open to any authenticated user at the routing layer, same as
+        # events/posts/communities above — PagePolicy already does the
+        # fine-grained per-action authorization (platform/community content
+        # manager, or creator/editable_contributor for their own pages, or
+        # self-service community member + accepted publishing agreement for
+        # create?). Previously nested under the platform-manager-only host
+        # dashboard scope, which blocked self-service creators from ever
+        # reaching new/create, and would have also blocked them from viewing
+        # or editing a page they'd created.
+        resources :pages do
+          scope module: 'content' do
+            resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
+          end
+        end
 
         resources :platforms, only: %i[index show new create edit update] do
           resources :platform_invitations, only: %i[index create destroy] do
@@ -398,12 +455,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            # Content Management
-            resources :pages do
-              scope module: 'content' do
-                resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
-              end
-            end
+            # Pages moved to the generic authenticated scope above — see the
+            # comment there. PagePolicy governs access; this host dashboard
+            # section stays platform-manager-only for everything else.
 
             # Seed data management
             resources :seeds

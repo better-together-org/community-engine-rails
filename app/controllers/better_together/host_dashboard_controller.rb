@@ -42,13 +42,23 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def build_overview_resources
       root_classes = [
-        Community, NavigationArea, Page, Platform, Role, ResourcePermission, Category
+        NavigationArea, Page, Platform, Role, ResourcePermission, Category
       ]
 
       root_classes.each do |klass|
         # sets @klasses and @klass_count instance variables
         set_resource_variables(klass)
       end
+
+      # Community gets its own handling (rather than the generic
+      # set_resource_variables(Community) call) so we can exclude each
+      # Person's auto-created primary/personal community (see
+      # BetterTogether::PrimaryCommunity#create_primary_community). Those
+      # communities are named after the person and otherwise leak a private
+      # person's name into the "recent communities" overview card even when
+      # the viewer lacks the list_person permission that gates the people
+      # directory itself.
+      set_organizational_community_variables
 
       engagement_classes = [
         Post, Comment, CallForInterest
@@ -108,13 +118,21 @@ module BetterTogether
 
       geography_classes = [
         Geography::Continent, Geography::Country, Geography::State, Geography::Region, Geography::Settlement,
-        Geography::Map, Geography::Space
+        Geography::Space
       ]
 
       geography_classes.each do |klass|
         # sets @geography_klasses and @geography_klass_count instance variables
         set_resource_variables(klass, prefix: 'geography')
       end
+
+      # Geography::Map gets its own handling (rather than the generic
+      # set_resource_variables(Geography::Map, prefix: 'geography') call):
+      # Geography::Map#title delegates to `mappable.to_s` whenever a mappable
+      # is present, so a Map auto-created for a Person's personal community
+      # (see set_organizational_community_variables above) would otherwise
+      # display that private person's name here too.
+      set_organizational_geography_map_variables
 
       infrastructure_classes = [
         Infrastructure::Building, Infrastructure::Floor, Infrastructure::Room
@@ -134,6 +152,30 @@ module BetterTogether
       instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name.pluralize}",
                             klass.order(created_at: :desc).limit(3))
       instance_variable_set(:"@#{"#{prefix}_" if prefix}#{variable_name}_count", klass.count)
+    end
+
+    def set_organizational_community_variables
+      scope = organizational_communities_scope
+      @communities = scope.order(created_at: :desc).limit(3)
+      @community_count = scope.count
+    end
+
+    def organizational_communities_scope
+      Community.where.not(id: ::BetterTogether::Person.where.not(community_id: nil).select(:community_id))
+    end
+
+    def set_organizational_geography_map_variables
+      scope = organizational_geography_maps_scope
+      @geography_maps = scope.order(created_at: :desc).limit(3)
+      @geography_map_count = scope.count
+    end
+
+    def organizational_geography_maps_scope
+      personal_community_ids = ::BetterTogether::Person.where.not(community_id: nil).select(:community_id)
+
+      ::BetterTogether::Geography::Map.where.not(
+        mappable_type: 'BetterTogether::Community', mappable_id: personal_community_ids
+      )
     end
 
     def build_sensitive_directory_cards

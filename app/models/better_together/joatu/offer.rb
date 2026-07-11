@@ -3,10 +3,11 @@
 module BetterTogether
   module Joatu
     # Offer represents a service or item someone is willing to provide
-    class Offer < ApplicationRecord
+    class Offer < PlatformRecord
       include Creatable
       include Exchange
       include Metrics::Viewable
+      include Reportable
       include ResponseLinkable
       include Searchable
 

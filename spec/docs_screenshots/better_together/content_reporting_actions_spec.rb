@@ -11,13 +11,13 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
   include BetterTogether::CapybaraFeatureHelpers
 
   let(:locale) { I18n.default_locale }
-  let!(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
-  let!(:host_platform) do
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+  let(:host_platform) do
     configure_host_platform.tap do |platform|
       platform.update!(privacy: 'public', host_url: 'http://www.example.com')
     end
   end
-  let!(:post_record) do
+  let(:post_record) do
     create(
       :better_together_post,
       title: 'Community Garden Update',
@@ -27,7 +27,7 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
       published_at: 1.day.ago
     )
   end
-  let!(:page_record) do
+  let(:page_record) do
     create(:better_together_page,
            title: 'Shared Kitchen Guide',
            slug: 'shared-kitchen-guide',
@@ -35,14 +35,14 @@ RSpec.describe 'Documentation screenshots for content reporting actions',
            protected: false,
            published_at: 1.day.ago)
   end
-  let!(:page_block_record) do
+  let(:page_block_record) do
     create(
       :better_together_content_rich_text,
       content_html: '<h3>Kitchen safety note</h3><p>Keep walkways clear for mobility devices.</p>'
     )
   end
-  let!(:community_record) { create(:better_together_community, name: 'Harbour Neighbours', privacy: 'public') }
-  let!(:report_record) do
+  let(:community_record) { create(:better_together_community, name: 'Harbour Neighbours', privacy: 'public') }
+  let(:report_record) do
     create(:report, reporter: user.person, reportable: page_record, reason: 'Needs a closer review').tap do |report|
       report.safety_case.notes.create!(
         author: create(:better_together_person, name: 'Safety Reviewer'),

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Category < ApplicationRecord # rubocop:todo Style/Documentation
+  class Category < PlatformRecord # rubocop:todo Style/Documentation
     include Attachments::Images
     include Identifier
     include Metrics::Viewable
@@ -17,7 +17,12 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    slugged :name
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    # Leaving this default (true) adds a second, unscoped uniqueness validator
+    # on the same column, which rejects legitimate same-slug records on
+    # different platforms even though Identifier's own scoping would allow it.
+    slugged :name, slug_uniqueness: false
 
     validates :name, presence: true
     validates :type, presence: true

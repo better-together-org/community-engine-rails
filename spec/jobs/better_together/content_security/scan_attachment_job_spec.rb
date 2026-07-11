@@ -87,7 +87,13 @@ RSpec.describe BetterTogether::ContentSecurity::ScanAttachmentJob do
     )
     allow(BetterTogether::ContentSecurity::Scanner).to receive(:scan_blob).and_return(result)
 
-    expect { described_class.perform_now(item.id) }.to raise_error(
+    # Call #perform directly rather than .perform_now: retry_on's rescue_from wraps
+    # perform_now and swallows the exception by enqueuing a retry (since executions
+    # hasn't reached the configured attempts limit yet), so the raise never bubbles
+    # out of perform_now on a fresh item. Calling #perform verifies the job body
+    # itself raises the connection error, which is what allows ActiveJob's retry_on
+    # machinery to catch and retry it in production.
+    expect { described_class.new.perform(item.id) }.to raise_error(
       BetterTogether::ContentSecurity::ClamAvClient::ConnectionError
     )
 

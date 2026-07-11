@@ -66,9 +66,10 @@ module BetterTogether
       end
 
       def self.included_in_models
-        included_module = self
-        Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
-        ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
+        @included_in_models ||= begin
+          Rails.application.eager_load! unless Rails.env.production?
+          ActiveRecord::Base.descendants.select { |model| model.include?(self) }
+        end
       end
 
       # Return matching counterpart records (requests for offers, offers for requests)

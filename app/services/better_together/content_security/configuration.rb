@@ -42,6 +42,15 @@ module BetterTogether
           Array(malware_scanning.enabled_surfaces).map(&:to_s)
         end
 
+        def build_client
+          ClamAvClient.new(
+            host: host,
+            port: port,
+            timeout: timeout,
+            max_stream_bytes: max_stream_bytes
+          )
+        end
+
         private
 
         def malware_scanning

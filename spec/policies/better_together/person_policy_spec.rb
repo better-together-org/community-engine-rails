@@ -22,11 +22,51 @@ RSpec.describe BetterTogether::PersonPolicy do
 
   let(:platform_manager) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:people_reviewer) { create(:better_together_user, :confirmed) }
-  let(:public_person) { create(:better_together_person, privacy: 'public') }
+  # community: explicit — the factory's own bare `community` association
+  # always builds a fresh (default-private) community per person, which
+  # would cap this person's 'public' privacy at the privacy ceiling
+  # regardless of the host platform's own privacy (see PrivacyCeilingValidatable).
+  let(:public_person) do
+    create(:better_together_person, privacy: 'public', community: create(:better_together_community, privacy: 'public'))
+  end
   let(:private_person) { create(:better_together_person, privacy: 'private') }
 
   before do
+    # This spec tests person-level privacy independent of platform/community
+    # privacy — ensure the default host platform (and its community) are
+    # public so a person's own 'public' privacy never exceeds the privacy
+    # ceiling (see PrivacyCeilingValidatable) for reasons unrelated to what
+    # these examples are actually testing.
+    BetterTogether::AccessControlBuilder.seed_data
+    host_platform = BetterTogether::Platform.find_by(host: true)
+    if host_platform
+      host_platform.update!(privacy: 'public') unless host_platform.privacy_public?
+      host_platform.community&.update!(privacy: 'public') if host_platform.community && !host_platform.community.privacy_public?
+    end
+
     grant_platform_permission(people_reviewer, 'read_person')
+  end
+
+  describe '#create?' do
+    it 'allows platform managers' do
+      expect(described_class.new(platform_manager, BetterTogether::Person).create?).to be true
+    end
+
+    it 'allows an explicit create_person permission holder' do
+      grant_platform_permission(people_reviewer, 'create_person')
+
+      expect(described_class.new(people_reviewer, BetterTogether::Person).create?).to be true
+    end
+
+    it 'denies a regular user without the permission' do
+      regular_user = create(:better_together_user, :confirmed)
+
+      expect(described_class.new(regular_user, BetterTogether::Person).create?).to be false
+    end
+
+    it 'denies unauthenticated users' do
+      expect(described_class.new(nil, BetterTogether::Person).create?).to be false
+    end
   end
 
   it 'allows guests to view public profiles' do

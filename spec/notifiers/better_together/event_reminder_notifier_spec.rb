@@ -4,7 +4,7 @@ require 'rails_helper'
 
 module BetterTogether # :nodoc:
   RSpec.describe EventReminderNotifier do
-    let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:recipient) { double('Person', locale: nil) } # rubocop:todo RSpec/VerifiedDoubles
 
     let(:event_class) do
       Class.new do

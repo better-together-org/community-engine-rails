@@ -3,7 +3,9 @@
 # app/policies/better_together/role_policy.rb
 
 module BetterTogether
-  class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PagePolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+    include SelfServicePublishablePolicy
+
     def index?
       platform_content_manager? || (agent.present? && (agent.authored_pages.any? || agent.contributed_pages.any?))
     end
@@ -15,7 +17,9 @@ module BetterTogether
     end
 
     def create?
-      platform_content_manager?
+      return false unless user.present?
+
+      platform_content_manager? || self_service_content_creator?
     end
 
     def new?
@@ -34,13 +38,13 @@ module BetterTogether
       platform_content_manager? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Preload title translations and block images for page cards
-        base = scope.with_translations
+        base = platform_scoped(scope.with_translations
                     .includes(
                       blocks: { background_image_file_attachment: :blob }
-                    )
+                    ))
         pt = BetterTogether::Page.arel_table
 
         if platform_content_manager?
@@ -100,9 +104,7 @@ module BetterTogether
     # of that specific community can edit/destroy the page. This intentionally differs from
     # Scope#platform_content_manager? which falls back to the host community for list queries.
     def platform_content_manager?
-      permitted_to?('manage_platform_settings') ||
-        permitted_to?('manage_platform') ||
-        permitted_to?('manage_community_content', record.community)
+      platform_manager? || permitted_to?('manage_community_content', record.community)
     end
   end
 end

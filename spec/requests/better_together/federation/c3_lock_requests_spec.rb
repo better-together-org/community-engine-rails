@@ -14,6 +14,7 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
       target_platform: source_platform,
       federation_auth_policy: 'api_read',
       allow_identity_scope: true,
+      allow_content_read_scope: true,
       allow_c3_exchange: true
     )
   end
@@ -26,7 +27,8 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
   let(:auth_headers) { { 'Authorization' => "Bearer #{token}" } }
 
   let(:payer_balance) do
-    BetterTogether::C3::Balance.find_or_create_by!(holder: payer).tap { |b| b.credit!(10.0) }
+    # valid_payload locks 20_000 millitokens (20.0 C3) — credit enough to cover it.
+    BetterTogether::C3::Balance.find_or_create_by!(holder: payer).tap { |b| b.credit!(30.0) }
   end
 
   let(:valid_payload) do
@@ -48,7 +50,7 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
     context 'with valid token and sufficient balance' do
       it 'returns 200 with lock_ref and decrements available balance' do
         expect do
-          post better_together.c3_lock_request_path,
+          post better_together.federation_c3_lock_request_path,
                params: valid_payload, headers: auth_headers, as: :json
         end.to change { payer_balance.reload.locked_millitokens }.by(20_000)
                                                                  .and change { payer_balance.reload.available_millitokens }.by(-20_000)
@@ -60,7 +62,7 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
       end
 
       it 'creates a BalanceLock record with the correct source_platform' do
-        post better_together.c3_lock_request_path,
+        post better_together.federation_c3_lock_request_path,
              params: valid_payload, headers: auth_headers, as: :json
 
         lock_ref = JSON.parse(response.body)['lock_ref']
@@ -74,20 +76,20 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
     context 'with insufficient balance' do
       before { payer_balance.update!(available_millitokens: 0, lifetime_earned_millitokens: 0) }
 
-      it 'returns 402 payment_required' do
-        post better_together.c3_lock_request_path,
+      it 'returns 422 with a generic error (no balance details exposed to the peer)' do
+        post better_together.federation_c3_lock_request_path,
              params: valid_payload, headers: auth_headers, as: :json
 
-        expect(response).to have_http_status(:payment_required)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body['error']).to be_present
-        expect(body['available_c3']).to eq(0.0)
+        expect(body).not_to have_key('available_c3')
       end
     end
 
     context 'when payer_did is not found' do
       it 'returns 422 with a generic error (no DID in body)' do
-        post better_together.c3_lock_request_path,
+        post better_together.federation_c3_lock_request_path,
              params: valid_payload.deep_merge(c3_lock_request: { payer_did: 'did:key:zUnknown' }),
              headers: auth_headers, as: :json
 
@@ -100,7 +102,7 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
 
     context 'without auth token' do
       it 'returns 401' do
-        post better_together.c3_lock_request_path, params: valid_payload, as: :json
+        post better_together.federation_c3_lock_request_path, params: valid_payload, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -109,10 +111,10 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
       it 'returns 401 unauthorized' do
         wrong_scope_token = BetterTogether::FederationAccessTokenIssuer.call(
           connection: connection,
-          requested_scopes: 'content.feed.read'
+          requested_scopes: 'identity.read'
         ).access_token
 
-        post better_together.c3_lock_request_path,
+        post better_together.federation_c3_lock_request_path,
              params: valid_payload,
              headers: { 'Authorization' => "Bearer #{wrong_scope_token}" },
              as: :json
@@ -137,10 +139,10 @@ RSpec.describe 'BetterTogether::Federation::C3LockRequests', :no_auth do
       it 'returns 401 unauthorized' do
         non_c3_token = BetterTogether::FederationAccessTokenIssuer.call(
           connection: connection,
-          requested_scopes: 'content.feed.read'
+          requested_scopes: 'identity.read'
         ).access_token
 
-        post better_together.c3_lock_request_path,
+        post better_together.federation_c3_lock_request_path,
              params: valid_payload,
              headers: { 'Authorization' => "Bearer #{non_c3_token}" },
              as: :json

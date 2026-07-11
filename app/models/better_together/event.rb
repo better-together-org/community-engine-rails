@@ -3,7 +3,7 @@
 module BetterTogether
   # A Schedulable Event
   # rubocop:disable Metrics/ClassLength
-  class Event < ApplicationRecord
+  class Event < PlatformRecord
     include Attachments::Images
     include Categorizable
     include Citable
@@ -14,11 +14,12 @@ module BetterTogether
     include Geography::Geospatial::One
     include Geography::Locatable::One
     include Invitable
+    include Metrics::Shareable
     include Metrics::Viewable
     include Privacy
     include RecurringSchedulable
+    include Reportable
     include Searchable
-    include PlatformScoped
     include Seedable
     include Shortlinkable
     include TimezoneAttributeAliasing

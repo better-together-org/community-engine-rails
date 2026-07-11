@@ -10,6 +10,15 @@ module BetterTogether
                            dependent: :destroy
     end
 
+    # Dynamic extension point: a host app opts a model into short links solely by
+    # including this concern — no gem-owned allow-list to edit. See
+    # docs/developers/architecture/polymorphic_allowlist_extension_audit.md
+    def self.included_in_models
+      included_module = self
+      Rails.application.eager_load! unless Rails.env.production?
+      ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
+    end
+
     def ensure_short_link!
       return short_link if short_link&.active_and_unexpired?
 

@@ -2,13 +2,6 @@
 
 module BetterTogether
   class ShortLinksController < ResourceController # rubocop:todo Style/Documentation
-    LINKABLE_TYPES = %w[
-      BetterTogether::Page
-      BetterTogether::Event
-      BetterTogether::Community
-      BetterTogether::Post
-    ].freeze
-
     skip_before_action :authenticate_user!, only: [:ensure], raise: false
     rescue_from ActionController::BadRequest, with: :render_bad_request
     rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
@@ -47,10 +40,14 @@ module BetterTogether
     end
 
     def resolve_linkable
-      type = params.require(:linkable_type)
-      raise ActionController::BadRequest unless LINKABLE_TYPES.include?(type)
-
-      klass = type.constantize
+      # Dynamic extension point, not a gem-owned allow-list: a host app opts a model into
+      # short links by including BetterTogether::Shortlinkable, nothing else. See
+      # docs/developers/architecture/polymorphic_allowlist_extension_audit.md
+      klass = BetterTogether::SafeClassResolver.resolve!(
+        params.require(:linkable_type),
+        allowed: BetterTogether::Shortlinkable.included_in_models.map(&:name),
+        error_class: ActionController::BadRequest
+      )
       scope = klass.column_names.include?('platform_id') ? klass.where(platform: Current.platform) : klass
       scope.find(params.require(:linkable_id))
     end

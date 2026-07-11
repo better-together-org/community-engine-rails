@@ -2,11 +2,12 @@
 
 module BetterTogether
   # Represents an uploaded file
-  class Upload < ApplicationRecord
+  class Upload < PlatformRecord
     include BetterTogether::ContentSecurity::ScannableAttachment
     include Creatable
     include Identifier
     include Privacy
+    include Reportable
     include Translatable
 
     has_one_attached :file

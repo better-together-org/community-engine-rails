@@ -87,7 +87,9 @@ module BetterTogether
         service_type: active_config.service_type,
         endpoint: active_config.endpoint,
         bucket: active_config.bucket,
-        region: active_config.region
+        region: active_config.region,
+        asset_host: ENV.fetch('ASSET_HOST', nil),
+        cdn_host: ENV.fetch('FOG_HOST', nil)
       }
     end
 
@@ -97,7 +99,9 @@ module BetterTogether
         service_type: env_service_name,
         endpoint: ENV.fetch('S3_ENDPOINT', nil),
         bucket: ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil)),
-        region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1'))
+        region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1')),
+        asset_host: ENV.fetch('ASSET_HOST', nil),
+        cdn_host: ENV.fetch('FOG_HOST', nil)
       }
     end
 

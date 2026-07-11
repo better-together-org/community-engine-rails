@@ -12,15 +12,23 @@ RSpec.describe 'BetterTogether::Api::V1::Authorships', :no_auth do
 
   describe 'POST /api/v1/authorships' do
     it 'creates a governed robot authorship for a page' do
+      # Force-create `robot` and `page` before measuring the Authorship count
+      # delta below. `page` auto-grants its creator an authorship via
+      # `Page#add_creator_as_author` (an after_commit :on create callback), so
+      # creating it lazily inside the `expect { }.to change(...)` block would
+      # inflate the observed delta with that unrelated authorship.
+      robot_id = robot.id
+      page_id = page.id
+
       expect do
         post '/api/v1/authorships',
              params: {
                data: {
                  type: 'authorships',
                  attributes: {
-                   author_id: robot.id,
+                   author_id: robot_id,
                    author_type: 'BetterTogether::Robot',
-                   authorable_id: page.id,
+                   authorable_id: page_id,
                    authorable_type: 'BetterTogether::Page',
                    role: 'author',
                    contribution_type: 'documentation',

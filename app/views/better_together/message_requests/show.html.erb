@@ -1,0 +1,37 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.title') %></h1>
+  <div class="card">
+    <div class="card-body">
+      <p>
+        <strong><%= t('.from_label') %></strong>
+        <%= @message_request.sender.name %>
+      </p>
+      <p>
+        <strong><%= t('.note_label') %></strong>
+        <%= @message_request.note %>
+      </p>
+      <p>
+        <span class="badge bg-<%= @message_request.pending? ? 'warning' : (@message_request.accepted? ? 'success' : 'secondary') %>">
+          <%= t("better_together.message_requests.statuses.#{@message_request.status}") %>
+        </span>
+      </p>
+      <% if @message_request.pending? && policy(@message_request).accept? %>
+        <div class="d-flex gap-2">
+          <%= button_to t('.accept_btn'),
+                        accept_message_request_path(@message_request),
+                        method: :put,
+                        class: 'btn btn-success' %>
+          <%= button_to t('.decline_btn'),
+                        decline_message_request_path(@message_request),
+                        method: :put,
+                        class: 'btn btn-outline-secondary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <%= link_to t('.back'), message_requests_path, class: 'btn btn-outline-secondary mt-3' %>
+</div>

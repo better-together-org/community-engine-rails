@@ -20,12 +20,28 @@ module BetterTogether
     end
 
     # Pundit scope for PersonAccessGrant visibility.
+    # Scoped to the current platform's connections so grants are only visible within
+    # the federation context where they were issued.
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless agent
         return scope.none unless feature_enabled?('person_access_grants')
 
-        scope.where(grantor_person_id: agent.id).or(scope.where(grantee_person_id: agent.id))
+        person_scope = participant_scope
+        return person_scope unless current_platform
+
+        person_scope.for_platform(current_platform)
+      end
+
+      private
+
+      def participant_scope
+        scope.where(grantor_person_id: agent.id)
+             .or(scope.where(grantee_person_id: agent.id))
+      end
+
+      def current_platform
+        Current.platform || Current.host_platform
       end
     end
 

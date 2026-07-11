@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Calls for interest allow communities to seek responses from parties interested in proposed initiatives
-  class CallForInterest < ApplicationRecord
+  class CallForInterest < PlatformRecord
     self.table_name = :better_together_calls_for_interest
 
     include Citable
@@ -15,7 +15,9 @@ module BetterTogether
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    slugged :name
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    slugged :name, slug_uniqueness: false
 
     searchable pg_search: {
       against: [:identifier],

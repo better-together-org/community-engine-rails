@@ -21,7 +21,8 @@ RSpec.describe BetterTogether::CommunityInvitationPolicy, :as_platform_steward d
     BetterTogether::PersonCommunityMembership.create!(
       joinable: community,
       member: user.person,
-      role: coordinator_role
+      role: coordinator_role,
+      status: 'active'
     )
   end
 

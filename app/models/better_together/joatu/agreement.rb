@@ -3,13 +3,14 @@
 module BetterTogether
   module Joatu
     # Agreement connects an offer and request and tracks value exchange
-    class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
+    class Agreement < PlatformRecord # rubocop:todo Metrics/ClassLength
       include BetterTogether::Authorable
       include BetterTogether::Citable
       include BetterTogether::Claimable
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable
+      include BetterTogether::Reportable
 
       STATUS_VALUES = {
         pending: 'pending',
@@ -175,16 +176,21 @@ module BetterTogether
 
       private
 
-      def ensure_accept_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # Raise if the agreement is already in a terminal or non-pending state.
+      # Shared guard for accept! and reject! — both require the agreement to still be pending.
+      def ensure_not_terminal!
         if status_accepted?
           errors.add(:base, 'Agreement already accepted')
           raise ActiveRecord::RecordInvalid, self
         end
+        return unless status_rejected?
 
-        if status_rejected?
-          errors.add(:base, 'Agreement already rejected')
-          raise ActiveRecord::RecordInvalid, self
-        end
+        errors.add(:base, 'Agreement already rejected')
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      def ensure_accept_allowed!
+        ensure_not_terminal!
 
         if offer.respond_to?(:status_closed?) && offer.status_closed?
           errors.add(:offer, 'is already closed')
@@ -197,26 +203,11 @@ module BetterTogether
         raise ActiveRecord::RecordInvalid, self
       end
 
-      def ensure_reject_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        if status_accepted?
-          errors.add(:base, 'Agreement already accepted')
-          raise ActiveRecord::RecordInvalid, self
-        end
-
-        if status_rejected?
-          errors.add(:base, 'Agreement already rejected')
-          raise ActiveRecord::RecordInvalid, self
-        end
-
-        if offer.respond_to?(:status_closed?) && offer.status_closed?
-          errors.add(:offer, 'is already closed')
-          raise ActiveRecord::RecordInvalid, self
-        end
-
-        return unless request.respond_to?(:status_closed?) && request.status_closed?
-
-        errors.add(:request, 'is already closed')
-        raise ActiveRecord::RecordInvalid, self
+      # Reject only requires the agreement to be non-terminal — the underlying offer/request
+      # may already be closed (e.g. another agreement on the same offer was accepted) and
+      # we still need to be able to reject the now-stale pending agreement.
+      def ensure_reject_allowed!
+        ensure_not_terminal!
       end
 
       def ensure_cancel_allowed!

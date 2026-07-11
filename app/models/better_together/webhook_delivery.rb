@@ -4,6 +4,12 @@ module BetterTogether
   # Tracks individual webhook delivery attempts.
   # Each delivery represents one POST to a WebhookEndpoint for a specific event.
   #
+  # PLATFORM SCOPING:
+  # - platform_id is denormalized from webhook_endpoint.platform_id for query performance.
+  # - Platform integrity is enforced by validate :platform_matches_endpoint.
+  # - WebhookDelivery does NOT include PlatformScoped concern (it's read-only denormalized data).
+  # - Always query via endpoint.webhook_deliveries or WebhookDelivery.for_platform(platform).
+  #
   # Statuses:
   # - pending:   queued for delivery
   # - delivered:  successfully delivered (2xx response)
@@ -25,8 +31,10 @@ module BetterTogether
     }
 
     validates :status, presence: true
+    validate :platform_matches_endpoint
 
     scope :recent, -> { order(created_at: :desc) }
+    scope :for_platform, ->(platform) { where(platform_id: platform) }
 
     # Mark as successfully delivered
     # @param code [Integer] HTTP response code
@@ -59,6 +67,16 @@ module BetterTogether
         status: 'retrying',
         attempts: attempts + 1
       )
+    end
+
+    private
+
+    def platform_matches_endpoint
+      return unless webhook_endpoint&.platform_id.present? && platform_id.present?
+
+      return unless platform_id != webhook_endpoint.platform_id
+
+      errors.add(:platform_id, 'must match webhook endpoint platform')
     end
   end
 end

@@ -39,7 +39,10 @@ RSpec.describe 'BetterTogether::FeatureAccessGrantsController', :as_platform_man
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Feature Access Grants')
-      expect(response.body).to include(grant.person.select_option_title)
+      # Faker-generated names occasionally contain an apostrophe (e.g. "O'Connell"),
+      # which the view's HTML escaping renders as `&#39;` — compare against the
+      # escaped form to match what's actually in the response body.
+      expect(response.body).to include(CGI.escapeHTML(grant.person.select_option_title))
     end
 
     it 'redirects signed-in non-managers away from the route' do

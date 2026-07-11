@@ -58,9 +58,9 @@ RSpec.describe BetterTogether::C3::Token do
     end
 
     context 'with invalid C3 amounts' do
-      it 'raises ArgumentError for amounts with more than 4 decimal places' do
+      it 'raises ArgumentError for amounts with more than 3 decimal places' do
         expect { described_class.c3_to_millitokens('0.00001') }
-          .to raise_error(ArgumentError, /must have at most 4 decimal places/)
+          .to raise_error(ArgumentError, /must have at most 3 decimal places/)
       end
 
       it 'raises ArgumentError for negative amounts' do
@@ -206,22 +206,36 @@ RSpec.describe BetterTogether::C3::Token do
   end
 
   describe 'Edge cases and boundary conditions' do
-    it 'handles very large amounts correctly' do
-      # Test with 1 million Tree Seeds
+    it 'raises when the amount exceeds the single-transaction maximum' do
+      # MAX_SINGLE_TRANSACTION_MILLITOKENS is 10_000 Tree Seeds — 1 million
+      # Tree Seeds is 100x over that limit and is correctly rejected.
       large_amount = 1_000_000
-      millitokens = described_class.c3_to_millitokens(large_amount)
-      expect(millitokens).to eq(1_000_000_000)
+      expect { described_class.c3_to_millitokens(large_amount) }
+        .to raise_error(ArgumentError, /exceeds maximum/)
     end
 
-    it 'converts the maximum 4-decimal precision value' do
-      # 0.9999 is the maximum sub-unit amount
-      millitokens = described_class.c3_to_millitokens('0.9999')
-      expect(millitokens).to eq(999.9)
+    it 'handles the largest amount allowed in a single transaction' do
+      max_amount = described_class::MAX_SINGLE_TRANSACTION_MILLITOKENS / scale
+      millitokens = described_class.c3_to_millitokens(max_amount)
+      expect(millitokens).to eq(described_class::MAX_SINGLE_TRANSACTION_MILLITOKENS)
+    end
+
+    it 'converts the maximum 3-decimal precision value' do
+      # MILLITOKEN_SCALE is 1_000 (3 decimal places of resolution) —
+      # 0.999 is the maximum sub-unit amount representable without
+      # sub-millitoken truncation.
+      millitokens = described_class.c3_to_millitokens('0.999')
+      expect(millitokens).to eq(999)
+    end
+
+    it 'rejects amounts with more precision than a millitoken can represent' do
+      expect { described_class.c3_to_millitokens('1.2345') }
+        .to raise_error(ArgumentError, /at most 3 decimal places/)
     end
 
     it 'does not lose precision with repeated conversions' do
-      # Start with an exact value
-      original = 1.2345
+      # Start with an exact value at millitoken resolution (3 decimals)
+      original = 1.234
 
       # Convert to millitokens and back multiple times
       millitokens = described_class.c3_to_millitokens(original)

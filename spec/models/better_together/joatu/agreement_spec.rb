@@ -61,10 +61,16 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect { agreement.accept! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it 'prevents rejecting when either side is already closed' do
+    it 'allows rejecting a stale pending agreement even when either side is already closed' do
+      # Rejection only requires the agreement itself to still be pending — the underlying
+      # offer/request may already be closed (e.g. another agreement on the same offer was
+      # accepted first) and we still need to be able to reject the now-stale agreement.
+      # See ensure_reject_allowed! in app/models/better_together/joatu/agreement.rb.
       agreement = create(:better_together_joatu_agreement, offer:, request:)
       request.status_closed!
-      expect { agreement.reject! }.to raise_error(ActiveRecord::RecordInvalid)
+
+      expect { agreement.reject! }.not_to raise_error
+      expect(agreement.reload.status).to eq('rejected')
     end
 
     it 'prevents rejecting after accepted or already rejected' do
@@ -158,7 +164,9 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       priced_offer = create(:better_together_joatu_offer, creator: creator_a, c3_price_millitokens: 20_000)
       agreement = create(:better_together_joatu_agreement, offer: priced_offer, request:)
       payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: creator_b)
-      payer_balance.credit!(5.0)
+      # credit! takes Tree Seeds (not millitokens); must cover the 20_000-millitoken
+      # (20 Tree Seed) offer price, so credit comfortably above that amount.
+      payer_balance.credit!(25.0)
 
       agreement.accept!
 
@@ -181,4 +189,6 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect { agreement.cancel! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :'better_together/joatu/agreement'
 end

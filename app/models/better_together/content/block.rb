@@ -5,14 +5,17 @@ require 'storext'
 module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
-    class Block < ApplicationRecord
+    class Block < PlatformRecord
       include ::BetterTogether::Content::BlockAttributes
+      include ::BetterTogether::Reportable
 
       has_many :page_blocks, foreign_key: :block_id, dependent: :destroy
       has_many :pages, through: :page_blocks
 
+      # Platform-scoped uniqueness: the same identifier can exist on different platforms.
+      # The old global unique DB index was removed in migration 20260606001006.
       validates :identifier,
-                uniqueness: true,
+                uniqueness: { scope: :platform_id },
                 length: { maximum: 100 },
                 allow_blank: true
 

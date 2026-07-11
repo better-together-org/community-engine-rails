@@ -6,8 +6,18 @@ module BetterTogether
   # automates creation of important built-in navigation and pages
   class NavigationBuilder < Builder # rubocop:todo Metrics/ClassLength
     class << self
-      def seed_data
-        with_seed_platform_context do
+      # Override Builder.build to accept an optional platform: keyword argument.
+      # When platform: is provided, navigation areas are created and scoped to that
+      # platform instead of the host platform. Defaults to host platform behaviour.
+      def build(clear: false, platform: nil)
+        if clear
+          ActiveRecord::Base.transaction { clear_existing }
+        end
+        seed_data(platform: platform)
+      end
+
+      def seed_data(platform: nil)
+        with_seed_platform_context(platform: platform) do
           I18n.with_locale(:en) do
             build_header
             build_host
@@ -66,7 +76,7 @@ module BetterTogether
               ]
             )
 
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'better-together') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'better-together', platform: Current.platform) do |area|
               area.name = 'Better Together'
               area.slug = 'better-together'
               area.visible = true
@@ -99,143 +109,157 @@ module BetterTogether
       end
       # rubocop:enable Metrics/AbcSize
 
+      FOOTER_PAGE_SLUGS = %w[
+        faq privacy-policy terms-of-service code-of-conduct accessibility cookie-policy contact
+      ].freeze
+
       def build_footer # rubocop:todo Metrics/MethodLength, Metrics/AbcSize, Metrics/BlockLength
         # rubocop:todo Metrics/BlockLength
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
-            # Create Platform Footer Pages
-            footer_pages = ::BetterTogether::Page.create!(
-              [
-                {
-                  title_en: 'FAQ',
-                  slug_en: 'faq',
-                  published_at: Time.zone.now,
-                  privacy: 'public',
-                  protected: true,
-                  show_title: false,
-                  page_blocks_attributes: [
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::Template',
-                        template_path: 'better_together/static_pages/faq',
-                        css_settings: { container_class: '', css_classes: 'my-4' }
-                      }
+            footer_page_attrs = [
+              {
+                title_en: 'FAQ',
+                slug_en: 'faq',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/faq',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
-                  ]
-                },
-                {
-                  title_en: 'Privacy Policy',
-                  slug_en: 'privacy-policy',
-                  published_at: Time.zone.now,
-                  privacy: 'public',
-                  protected: true,
-                  show_title: false,
-                  page_blocks_attributes: [
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::Template',
-                        template_path: 'better_together/static_pages/privacy',
-                        css_settings: { container_class: '', css_classes: 'my-4' }
-                      }
+                  }
+                ]
+              },
+              {
+                title_en: 'Privacy Policy',
+                slug_en: 'privacy-policy',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/privacy',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
-                  ]
-                },
-                {
-                  title_en: 'Terms of Service',
-                  slug_en: 'terms-of-service',
-                  published_at: Time.zone.now,
-                  privacy: 'public',
-                  protected: true,
-                  show_title: false,
-                  page_blocks_attributes: [
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::Template',
-                        template_path: 'better_together/static_pages/terms_of_service',
-                        css_settings: { container_class: '', css_classes: 'my-4' }
-                      }
+                  }
+                ]
+              },
+              {
+                title_en: 'Terms of Service',
+                slug_en: 'terms-of-service',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/terms_of_service',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
-                  ]
-                },
-                {
-                  title_en: 'Code of Conduct',
-                  slug_en: 'code-of-conduct',
-                  published_at: Time.zone.now,
-                  privacy: 'public',
-                  protected: true,
-                  show_title: false,
-                  page_blocks_attributes: [
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::Template',
-                        template_path: 'better_together/static_pages/code_of_conduct',
-                        css_settings: { container_class: '', css_classes: 'my-4' }
-                      }
+                  }
+                ]
+              },
+              {
+                title_en: 'Code of Conduct',
+                slug_en: 'code-of-conduct',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/code_of_conduct',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
-                  ]
-                },
-                {
-                  title_en: 'Accessibility',
-                  slug_en: 'accessibility',
-                  published_at: Time.zone.now,
-                  privacy: 'public',
-                  protected: true,
-                  show_title: false,
-                  page_blocks_attributes: [
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::Template',
-                        template_path: 'better_together/static_pages/accessibility',
-                        css_settings: { container_class: '', css_classes: 'my-4' }
-                      }
+                  }
+                ]
+              },
+              {
+                title_en: 'Accessibility',
+                slug_en: 'accessibility',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/accessibility',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
-                  ]
-                },
-                {
-                  title_en: 'Cookie Policy',
-                  slug_en: 'cookie-policy',
-                  published_at: Time.zone.now,
-                  privacy: 'public',
-                  protected: true,
-                  show_title: false,
-                  page_blocks_attributes: [
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::Template',
-                        template_path: 'better_together/static_pages/cookie_consent',
-                        css_settings: { container_class: '', css_classes: 'my-4' }
-                      }
+                  }
+                ]
+              },
+              {
+                title_en: 'Cookie Policy',
+                slug_en: 'cookie-policy',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                show_title: false,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/static_pages/cookie_consent',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
                     }
-                  ]
-                },
-                {
-                  title_en: 'Contact Us',
-                  slug_en: 'contact',
-                  published_at: Time.zone.now,
-                  privacy: 'public',
-                  protected: true,
-                  page_blocks_attributes: [
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::RichText',
-                        # rubocop:todo Lint/CopDirectiveSyntax
-                        content_en: <<-HTML
+                  }
+                ]
+              },
+              {
+                title_en: 'Contact Us',
+                slug_en: 'contact',
+                published_at: Time.zone.now,
+                privacy: 'public',
+                protected: true,
+                page_blocks_attributes: [
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::RichText',
+                      # rubocop:todo Lint/CopDirectiveSyntax
+                      content_en: <<-HTML
                           <p>This is a default contact page for your platform. Be sure to write a real one!</p>
-                        HTML
-                        # rubocop:enable Lint/CopDirectiveSyntax
-                      }
-                    },
-                    {
-                      block_attributes: {
-                        type: 'BetterTogether::Content::Template',
-                        template_path: 'better_together/content/blocks/template/host_community_contact_details',
-                        css_settings: { container_class: '', css_classes: 'my-4' }
-                      }
+                      HTML
+                      # rubocop:enable Lint/CopDirectiveSyntax
                     }
-                  ]
-                }
-              ]
-            )
+                  },
+                  {
+                    block_attributes: {
+                      type: 'BetterTogether::Content::Template',
+                      template_path: 'better_together/content/blocks/template/host_community_contact_details',
+                      css_settings: { container_class: '', css_classes: 'my-4' }
+                    }
+                  }
+                ]
+              }
+            ].freeze
+
+            # build_footer is called more than once across a process lifetime (initial
+            # seed, then again by any code path that re-runs NavigationBuilder.build) —
+            # a bulk Page.create! over this whole array has no existence check, so a
+            # second call always failed with "Slug has already been taken" for whichever
+            # pages already existed. Reuse each existing page by slug individually
+            # instead of re-creating it, and only create the ones that are missing —
+            # this also correctly handles a partial state (some footer pages already
+            # seeded, others not yet).
+            existing_footer_pages = ::BetterTogether::Page.i18n.where(slug: FOOTER_PAGE_SLUGS).index_by(&:slug)
+            footer_pages = footer_page_attrs.map do |attrs|
+              existing_footer_pages[attrs[:slug_en]] || ::BetterTogether::Page.create!(attrs)
+            end
 
             # Create contributor agreement pages separately for nested navigation
             contributor_agreement_pages = [
@@ -254,7 +278,7 @@ module BetterTogether
             ]
 
             # Create Platform Footer Navigation Area and its Navigation Items
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-footer') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-footer', platform: Current.platform) do |area|
               area.name = 'Platform Footer'
               area.slug = 'platform-footer'
               area.visible = true
@@ -325,7 +349,7 @@ module BetterTogether
             )
 
             # Create Platform Header Navigation Area
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-header') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-header', platform: Current.platform) do |area|
               area.name = 'Platform Header'
               area.slug = 'platform-header'
               area.visible = true
@@ -414,7 +438,7 @@ module BetterTogether
         with_navigation_touch_suppressed do
           I18n.with_locale(:en) do # rubocop:todo Metrics/BlockLength
             # Create Platform Header Host Navigation Area and its Navigation Items
-            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-host') do |area|
+            area = ::BetterTogether::NavigationArea.find_or_create_by!(identifier: 'platform-host', platform: Current.platform) do |area|
               area.name = 'Platform Host'
               area.slug = 'platform-host'
               area.visible = true
@@ -601,7 +625,7 @@ module BetterTogether
         delete_navigation_items
         delete_navigation_areas
         puts 'Rebuilding navigation areas...'
-        with_seed_platform_context do
+        with_seed_platform_context(platform: Current.platform) do
           I18n.with_locale(:en) do
             build_header
             build_host
@@ -650,9 +674,9 @@ module BetterTogether
         puts "Navigation area '#{slug}' reset complete!"
       end
 
-      def with_seed_platform_context
+      def with_seed_platform_context(platform: nil)
         previous_platform = Current.platform
-        Current.platform = ensure_host_platform_for_seeds
+        Current.platform = platform || ensure_host_platform_for_seeds
         yield
       ensure
         Current.platform = previous_platform

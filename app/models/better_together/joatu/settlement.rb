@@ -10,7 +10,7 @@ module BetterTogether
     #   pending   — created when agreement is accepted; payer's C3 is locked
     #   completed — created when agreement is fulfilled; C3 transferred to recipient
     #   cancelled — created when agreement is cancelled; locked C3 returned to payer
-    class Settlement < ApplicationRecord
+    class Settlement < PlatformRecord
       self.table_name = 'better_together_joatu_settlements'
 
       STATUSES = %w[pending completed cancelled].freeze
@@ -40,6 +40,9 @@ module BetterTogether
       # in Agreement#create_settlement_if_c3_priced!) so the BalanceLock is marked settled.
       def complete!(payer_balance:, recipient_balance:) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         assert_pending_with_required_lock!
+
+        # Zero-amount settlements have nothing to transfer — mark complete without touching balances.
+        return update!(status: 'completed', completed_at: Time.current) if c3_millitokens.zero?
 
         token = nil
 

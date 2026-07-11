@@ -66,10 +66,12 @@ module BetterTogether
       def exportable_posts
         apply_cursor(
           consent_scoped(
-            ::BetterTogether::Post.where(platform: connection.source_platform, privacy: 'public')
-                                  .where(source_id: nil)
-                                  .where.not(published_at: nil)
-                                  .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
+            ::BetterTogether::Post
+              .with_translations
+              .where(platform: connection.source_platform, privacy: 'public')
+              .where(source_id: nil)
+              .where.not(published_at: nil)
+              .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
           )
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
@@ -77,10 +79,12 @@ module BetterTogether
       def exportable_pages
         apply_cursor(
           consent_scoped(
-            ::BetterTogether::Page.where(platform: connection.source_platform, privacy: 'public')
-                                  .where(source_id: nil)
-                                  .where.not(published_at: nil)
-                                  .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
+            ::BetterTogether::Page
+              .with_translations
+              .where(platform: connection.source_platform, privacy: 'public')
+              .where(source_id: nil)
+              .where.not(published_at: nil)
+              .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
           )
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
@@ -88,9 +92,11 @@ module BetterTogether
       def exportable_events
         apply_cursor(
           consent_scoped(
-            ::BetterTogether::Event.where(platform: connection.source_platform, privacy: 'public')
-                                   .where(source_id: nil)
-                                   .where.not(starts_at: nil)
+            ::BetterTogether::Event
+              .with_translations
+              .where(platform: connection.source_platform, privacy: 'public')
+              .where(source_id: nil)
+              .where.not(starts_at: nil)
           )
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end

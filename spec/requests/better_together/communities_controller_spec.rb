@@ -107,6 +107,16 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
              privacy: 'public',
              creator: platform_manager.person)
     end
+    let!(:community_post) do
+      create(
+        :better_together_post,
+        title: 'Community Post Title',
+        community: community,
+        platform: BetterTogether::Platform.find_by(host: true),
+        privacy: 'public',
+        published_at: 1.day.ago
+      )
+    end
 
     it 'renders show page using slug' do
       get better_together.community_path(locale:, id: community.slug)
@@ -116,6 +126,14 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     it 'displays community name' do
       get better_together.community_path(locale:, id: community.slug)
       expect_html_content('Test Community')
+    end
+
+    it 'renders community posts tab content' do
+      get better_together.community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect_html_content('Community Post Title')
+      expect(response.body).to include('community-posts-create-btn')
     end
 
     it 'finds community by slug across locales' do

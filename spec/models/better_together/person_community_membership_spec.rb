@@ -103,10 +103,15 @@ RSpec.describe BetterTogether::PersonCommunityMembership do
         membership.save!
       end.to change(Noticed::Notification, :count).by(1)
 
-      notification = Noticed::Notification.last
+      # Scope to this membership's own event rather than the global `.last` notification:
+      # the shared test database is not truncated between (or within, given
+      # after_commit-created records) examples, so unrelated notifications from other
+      # concurrently-running specs may exist and be more recent.
+      event = Noticed::Event.where(record: membership).last
+      notification = event.notifications.last
       expect(notification.recipient).to eq(membership.member)
-      expect(notification.event.type).to eq('BetterTogether::MembershipCreatedNotifier')
-      expect(notification.event.record).to eq(membership)
+      expect(event.type).to eq('BetterTogether::MembershipCreatedNotifier')
+      expect(event.record).to eq(membership)
     end
 
     it 'does not create notification for pending memberships' do
@@ -124,17 +129,23 @@ RSpec.describe BetterTogether::PersonCommunityMembership do
         membership.activate!
       end.to change(Noticed::Notification, :count).by(1)
 
-      notification = Noticed::Notification.last
+      # Scope to this membership's own event rather than the global `.last` notification:
+      # the shared test database is not truncated between examples, so unrelated leftover
+      # notifications may exist and be more recent.
+      event = Noticed::Event.where(record: membership).last
+      notification = event.notifications.last
       expect(notification.recipient).to eq(membership.member)
-      expect(notification.event.type).to eq('BetterTogether::MembershipCreatedNotifier')
-      expect(notification.event.record).to eq(membership)
+      expect(event.type).to eq('BetterTogether::MembershipCreatedNotifier')
+      expect(event.record).to eq(membership)
     end
 
     it 'cleans up related notifications when membership is destroyed' do
       membership = create(:better_together_person_community_membership, status: 'active')
 
-      # Verify notification was created
-      expect(Noticed::Notification.count).to eq(1)
+      # Verify a notification was created for this membership specifically — the shared
+      # test database is not truncated between examples, so a global count would be fragile.
+      event = Noticed::Event.where(record: membership).last
+      expect(event.notifications.count).to eq(1)
 
       # Expect cleanup job to be enqueued
       expect do

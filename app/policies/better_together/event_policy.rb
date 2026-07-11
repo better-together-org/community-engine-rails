@@ -2,7 +2,9 @@
 
 module BetterTogether
   # Access control for calendars
-  class EventPolicy < ApplicationPolicy
+  class EventPolicy < PlatformRecordPolicy
+    include SelfServicePublishablePolicy
+
     def index?
       true
     end
@@ -28,12 +30,14 @@ module BetterTogether
     end
 
     def create?
-      platform_event_manager? || event_host_member?
+      return false unless user.present?
+
+      platform_manager? || community_event_manager? || self_service_event_creator?
     end
 
     def available_hosts?
       # Users who can create or edit events can view available hosts
-      user.present? && (platform_event_manager? || agent.valid_event_host_ids.any?)
+      user.present? && (platform_manager? || agent.valid_event_host_ids.any?)
     end
 
     def destroy?
@@ -58,21 +62,51 @@ module BetterTogether
 
       can_represent_host = user.present? && record.event_hosts.any? && agent.valid_event_host_ids.any?
 
-      has_common_hosts = record.event_hosts.pluck(:host_id).intersect?(agent.valid_event_host_ids)
+      # .map (not .pluck) — pluck always hits the DB directly, which returns
+      # empty for a new/unsaved record's in-memory .build'd event_hosts
+      # (e.g. during authorization on the `new`/`create` actions, before the
+      # event is persisted).
+      has_common_hosts = record.event_hosts.map(&:host_id).intersect?(agent.valid_event_host_ids)
       can_represent_host && has_common_hosts
     end
 
+    # Self-serve event creation: any person who could represent one of the
+    # submitted event_hosts (via community membership), gated by having
+    # accepted the content publishing agreement. Deliberately bespoke rather
+    # than the shared module's #self_service_content_creator?, since Event
+    # has no direct :community association and event_host_member? already
+    # correctly resolves host-standing against the submitted event_hosts.
+    def self_service_event_creator?
+      event_host_member? && accepted_content_publishing_agreement?
+    end
+
+    def community_event_manager?
+      return false unless user.present?
+
+      community_host_ids = record.event_hosts
+                                 .select { |h| h.host_type == 'BetterTogether::Community' }
+                                 .map(&:host_id)
+      return false if community_host_ids.empty?
+
+      community_host_ids.any? do |community_id|
+        community = BetterTogether::Community.find_by(id: community_id)
+        next false unless community
+
+        permitted_to?('manage_community_events', community)
+      end
+    end
+
     # Filtering and sorting for calendars according to permissions and context
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
-        scope.with_attached_cover_image
-             .includes(:string_translations, :location, :event_hosts, categorizations: {
-                         category: %i[
-                           string_translations cover_image_attachment cover_image_blob
-                         ]
-                       }).order(
-                         starts_at: :desc, created_at: :desc
-                       ).where(permitted_query)
+        platform_scoped.with_attached_cover_image
+                       .includes(:string_translations, :location, :event_hosts, categorizations: {
+                                   category: %i[
+                                     string_translations cover_image_attachment cover_image_blob
+                                   ]
+                                 }).order(
+                                   starts_at: :desc, created_at: :desc
+                                 ).where(permitted_query)
       end
 
       protected
@@ -134,10 +168,16 @@ module BetterTogether
         query
       end
       # rubocop:enable Metrics/MethodLength
+
+      private
+
+      def platform_event_manager?
+        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      end
     end
 
     def creator_or_platform_steward
-      user.present? && (record.creator == agent || platform_event_manager?)
+      user.present? && (creator_of?(record) || platform_manager?)
     end
 
     def invitation?
@@ -160,19 +200,6 @@ module BetterTogether
       )
 
       invitation.present? && invitation.status_pending?
-    end
-
-    def platform_event_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-    end
-
-    # Pundit scope for event record visibility.
-    class Scope < ApplicationPolicy::Scope
-      private
-
-      def platform_event_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
-      end
     end
   end
 end

@@ -455,5 +455,7 @@ module BetterTogether # :nodoc:
         expect(navigation_area.reload.updated_at).to be > original_updated_at
       end
     end
+
+    it_behaves_like 'platform scoped identifier', factory: :better_together_navigation_item
   end
 end

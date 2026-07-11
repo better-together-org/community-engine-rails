@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CategoryPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class CategoryPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       platform_taxonomy_manager?
     end
@@ -16,9 +16,6 @@ module BetterTogether
 
     def show?
       platform_taxonomy_manager?
-    end
-
-    class Scope < ApplicationPolicy::Scope
     end
 
     private

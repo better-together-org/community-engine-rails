@@ -3,9 +3,9 @@
 module BetterTogether
   # Persists view-type preferences in the session
   class ViewPreferencesController < ApplicationController
-    VIEW_TYPES = %w[card table list calendar].freeze
-
-    before_action :authenticate_user!
+    VIEW_TYPES = %w[card table list calendar map].freeze
+    ALLOWED_KEYS = %w[index_view].freeze
+    MAX_PREFERENCES = 10
 
     def update
       key = view_preference_key
@@ -34,7 +34,7 @@ module BetterTogether
     end
 
     def valid_view_preference?(key, view_type, allowed)
-      key.present? && allowed.include?(view_type)
+      key.present? && ALLOWED_KEYS.include?(key) && allowed.include?(view_type)
     end
 
     def render_invalid_view_type
@@ -42,8 +42,11 @@ module BetterTogether
     end
 
     def store_view_preference(key, view_type)
-      preferences = session[:view_preferences] || {}
+      preferences = (session[:view_preferences] || {}).slice(*ALLOWED_KEYS)
       preferences[key] = view_type
+      if preferences.size > MAX_PREFERENCES
+        preferences = preferences.to_a.last(MAX_PREFERENCES).to_h
+      end
       session[:view_preferences] = preferences
     end
 
@@ -54,8 +57,8 @@ module BetterTogether
     def respond_with_view_preference
       respond_to do |format|
         format.json { head :ok }
-        format.turbo_stream { redirect_back fallback_location: main_app.root_path }
-        format.html { redirect_back fallback_location: main_app.root_path }
+        format.turbo_stream { redirect_back fallback_location: main_app.root_path, status: :see_other }
+        format.html { redirect_back fallback_location: main_app.root_path, status: :see_other }
       end
     end
   end

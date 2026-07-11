@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Joins a claim to a structured citation with relation semantics.
-  class EvidenceLink < ApplicationRecord
+  class EvidenceLink < PlatformRecord
     include Positioned
     include BetterTogether::Creatable
 

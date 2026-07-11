@@ -1,0 +1,20 @@
+<%# locals: () -%>
+<% community_creation_agreement = BetterTogether::ChecksRequiredAgreements.public_community_creation_agreement %>
+<% if community_creation_agreement.present? && BetterTogether::ChecksRequiredAgreements.missing_community_creation_agreement?(current_person) %>
+  <div class="alert alert-info d-flex align-items-start gap-2 mb-3" role="alert">
+    <i class="fas fa-people-group mt-1" aria-hidden="true"></i>
+    <div>
+      <p class="mb-2"><%= t('.message') %></p>
+      <%= link_to t('.accept_link'),
+                  better_together.agreement_path(community_creation_agreement, locale: I18n.locale),
+                  class: 'btn btn-sm btn-outline-info agreement-modal-link',
+                  role: 'button',
+                  data: {
+                    agreement_identifier: community_creation_agreement.identifier,
+                    agreement_mode: 'direct_accept',
+                    agreement_accept_url: better_together.accept_agreement_path(community_creation_agreement,
+                                                                                locale: I18n.locale)
+                  } %>
+    </div>
+  </div>
+<% end %>

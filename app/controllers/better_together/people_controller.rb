@@ -61,6 +61,9 @@ module BetterTogether
         if person_params_raw.key?(:show_conversation_details)
           toggles[:show_conversation_details] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:show_conversation_details])
         end
+        if person_params_raw.key?(:notify_on_comments)
+          toggles[:notify_on_comments] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:notify_on_comments])
+        end
         if person_params_raw.key?(:receive_messages_from_members)
           toggles[:receive_messages_from_members] = ActiveModel::Type::Boolean.new.cast(person_params_raw[:receive_messages_from_members])
         end
@@ -168,8 +171,8 @@ module BetterTogether
     def person_params
       params.require(:person).permit(
         :name, :description, :profile_image, :slug, :locale, :notify_by_email,
-        :show_conversation_details, :profile_image, :cover_image, :remove_profile_image,
-        :remove_cover_image,
+        :show_conversation_details, :notify_on_comments, :profile_image, :cover_image,
+        :remove_profile_image, :remove_cover_image,
         *resource_class.permitted_attributes
       )
     end
@@ -199,11 +202,38 @@ module BetterTogether
       @past_events = all_events.select(&:past?)
     end
 
+    PROFILE_TAB_PER_PAGE = 12
+
     def load_profile_content_collections
-      @authored_pages = pages_for_profile(@person.authored_pages)
-      @contributed_pages = pages_for_profile(BetterTogether::Page.where(id: @person.contributed_pages.select(:id)))
-      @contributed_posts = posts_for_profile(BetterTogether::Post.where(id: @person.contributed_posts.select(:id)))
-      @agreement_participants = @person.agreement_participants.includes(:agreement).to_a
+      @authored_pages         = load_authored_pages
+      @contributed_pages      = load_contributed_pages
+      @contributed_posts      = load_contributed_posts
+      @agreement_participants = load_agreement_participants
+    end
+
+    def load_authored_pages
+      pages_for_profile(@person.authored_pages, page: params[:authored_pages_page])
+    end
+
+    def load_contributed_pages
+      pages_for_profile(
+        BetterTogether::Page.where(id: @person.contributed_pages.select(:id)),
+        page: params[:contributed_pages_page]
+      )
+    end
+
+    def load_contributed_posts
+      posts_for_profile(
+        BetterTogether::Post.where(id: @person.contributed_posts.select(:id)),
+        page: params[:contributed_posts_page]
+      )
+    end
+
+    def load_agreement_participants
+      @person.agreement_participants
+             .includes(:agreement)
+             .page(params[:agreements_page])
+             .per(PROFILE_TAB_PER_PAGE)
     end
 
     def load_calendar_collections
@@ -212,19 +242,19 @@ module BetterTogether
       categorize_person_events(@all_calendar_events)
     end
 
-    def pages_for_profile(scope)
+    def pages_for_profile(scope, page: nil)
       policy_scope(scope)
         .includes(
           :string_translations,
           blocks: { background_image_file_attachment: :blob }
         )
-        .to_a
+        .page(page).per(PROFILE_TAB_PER_PAGE)
     end
 
-    def posts_for_profile(scope)
+    def posts_for_profile(scope, page: nil)
       policy_scope(scope)
         .includes(*BetterTogether::Post.card_render_includes)
-        .to_a
+        .page(page).per(PROFILE_TAB_PER_PAGE)
     end
   end
 end

@@ -11,9 +11,11 @@ module BetterTogether
     #
     # Returns:
     #   200 { locked: true, lock_ref: <uuid>, locked_c3: <float> }
-    #   402 { error: 'insufficient balance', available_c3: ... }
-    #   404 { error: 'payer not found' }
+    #   422 { error: <generic message> } — insufficient balance or payer not found.
+    #     Deliberately generic and status-identical for both cases to avoid letting a
+    #     peer platform enumerate DID existence or balance state on this platform.
     #   403 { error: 'c3_exchange not enabled' }
+    #   401 — missing/invalid token or token lacks the c3.exchange scope
     class C3LockRequestsController < ::BetterTogether::Federation::ApiController
       def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         return head :unauthorized unless connection

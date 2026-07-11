@@ -122,4 +122,6 @@ RSpec.describe BetterTogether::Wizard do
       end
     end
   end
+
+  it_behaves_like 'platform scoped identifier', factory: :better_together_wizard
 end

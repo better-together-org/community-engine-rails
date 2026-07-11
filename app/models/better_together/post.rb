@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # Represents a blog post
-  class Post < ApplicationRecord
+  class Post < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Attachments::Images
     include Authorable
     include BlockFilterable
@@ -12,17 +12,22 @@ module BetterTogether
     include FriendlySlug
     include Categorizable
     include Citable
+    include Commentable
     include Creatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
-    include PlatformScoped
     include Seedable
     include Shortlinkable
     include TrackedActivity
     include ::Storext.model
+    include CommunityAssignable
+
+    belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     attachable_cover_image
 
@@ -87,6 +92,12 @@ module BetterTogether
       super + %i[contributors_display_visibility]
     end
 
+    def self.permitted_attributes(id: false, destroy: false)
+      super + [
+        { comment_config_attributes: BetterTogether::CommentConfig.permitted_attributes(id:, destroy:) }
+      ]
+    end
+
     def to_s
       title
     end
@@ -118,6 +129,14 @@ module BetterTogether
 
     def short_link_target_url
       BetterTogether::Engine.routes.url_helpers.post_url(self, locale: I18n.locale)
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    def as_indexed_json
+      {
+        title: title,
+        content: content&.to_plain_text
+      }
     end
   end
 end

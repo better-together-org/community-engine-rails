@@ -5,7 +5,14 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   let(:locale) { I18n.default_locale }
   let(:password) { 'SecureTest123!@#' }
-  let(:person_link) { create(:better_together_person_link) }
+  # PersonLinkPolicy::Scope filters by `for_platform(current_platform)`, so the
+  # platform_connection must involve the host platform the request runs against,
+  # not an arbitrary unrelated platform pair.
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:person_link) do
+    create(:better_together_person_link,
+           platform_connection: create(:better_together_platform_connection, :active, source_platform: host_platform))
+  end
   let(:source_person) { person_link.source_person }
   let(:target_person) { person_link.target_person }
   let(:source_user) { create(:better_together_user, :confirmed, person: source_person, password:) }

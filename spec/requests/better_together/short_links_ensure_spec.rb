@@ -62,7 +62,7 @@ RSpec.describe 'ShortLinks#ensure' do
     end
 
     context 'with a linkable_id from a different platform' do
-      let(:other_platform) { create(:better_together_platform) }
+      let(:other_platform) { create(:better_together_platform, :public) }
       let!(:other_page) do
         create(:better_together_page, platform: other_platform, privacy: 'public',
                                       published_at: 1.day.ago)
