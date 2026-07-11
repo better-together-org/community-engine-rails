@@ -7,7 +7,7 @@
 
     <%= turbo_stream_from commentable %>
 
-    <div id="<%= dom_id(commentable, :comments) %>" data-controller="better_together--comments">
+    <div id="<%= commentable.comments_stream_target %>" data-controller="better_together--comments">
       <%= render partial: 'better_together/comments/comment',
                  collection: policy_scope(commentable.comments),
                  as: :comment %>

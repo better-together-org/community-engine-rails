@@ -6,6 +6,7 @@ module BetterTogether
     include BlockFilterable
     include Creatable
     include Reportable
+    include Broadcastable
 
     belongs_to :commentable, polymorphic: true
 
@@ -19,20 +20,22 @@ module BetterTogether
 
     scope :oldest_first, -> { order(created_at: :asc) }
 
-    # _later (job-queued) matches Message's pattern — broadcast_append_to's synchronous
-    # render happens via the host app's bare ApplicationController.render (Rails engines
-    # don't get their own render context here), which has none of this engine's helpers/
-    # Pundit mixed in. broadcast_remove_to is unaffected (Turbo passes render: false for
-    # removals, so no template is ever rendered for it).
-    after_create_commit -> { broadcast_append_later_to commentable, target: comments_stream_target }
-    after_destroy_commit -> { broadcast_remove_to commentable }
+    broadcasts_async_to :commentable, target: :comments_stream_target, on_destroy: true
 
     def to_s
       content
     end
 
     def comments_stream_target
-      ActionView::RecordIdentifier.dom_id(commentable, :comments)
+      commentable.comments_stream_target
+    end
+
+    # Single source of truth for this comment's own dom id, mirroring
+    # Commentable#comments_stream_target — previously recomputed independently via
+    # dom_id(comment)/dom_id(@comment) in _comment.html.erb,
+    # CommentAddedNotifier#comment_url, and comment_mailer/added.html.erb.
+    def anchor_id
+      ActionView::RecordIdentifier.dom_id(self)
     end
   end
 end

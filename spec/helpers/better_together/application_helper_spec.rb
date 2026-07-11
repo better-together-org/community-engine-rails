@@ -11,6 +11,19 @@ RSpec.describe BetterTogether::ApplicationHelper do
     BetterTogether.head_tag_providers = original_providers
   end
 
+  describe '#safe_current_user and #safe_current_person' do
+    it 'return nil instead of raising when Warden middleware is not present (helper specs have none)' do
+      expect(helper.safe_current_user).to be_nil
+      expect(helper.safe_current_person).to be_nil
+    end
+  end
+
+  describe '#current_user_api_token' do
+    it 'returns nil instead of raising when Warden middleware is not present' do
+      expect(helper.current_user_api_token).to be_nil
+    end
+  end
+
   describe '#host_community_primary_email' do
     before { configure_host_platform }
 

@@ -31,6 +31,15 @@ module BetterTogether
       (comment_config || build_comment_config).visibility = value
     end
 
+    # Single source of truth for this dom id — previously recomputed independently via
+    # dom_id(commentable, :comments) in Comment#comments_stream_target,
+    # _comments_section.html.erb (container + turbo_stream_from target), and
+    # create.turbo_stream.erb (append target). All 4 now call this instead, so a
+    # future change to the id scheme only has one place to update.
+    def comments_stream_target
+      ActionView::RecordIdentifier.dom_id(self, :comments)
+    end
+
     # Dynamic extension point: a host app opts a model into comments solely by including
     # this concern — no gem-owned allow-list to edit. See
     # docs/developers/architecture/polymorphic_allowlist_extension_audit.md

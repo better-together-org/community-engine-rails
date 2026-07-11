@@ -1,7 +1,7 @@
 {
   "name": "comment_permission_controls_open_thread",
   "device": "desktop",
-  "url": "/en/posts/sample-post-6",
+  "url": "/en/posts/sample-post-4",
   "title": "Harbour Cleanup Volunteers Needed | Posts | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#comments_post_6d86da87-c767-44ae-b9f1-1fe5b65de2db",
+      "selector": "#comments_post_5a700529-5f75-49a6-b0fe-9ec82d832a6f",
       "title": "Comment thread — default (inherit) settings",
       "bullets": [
         "Every existing comment renders oldest-first with the author name, timestamp, and body.",

@@ -73,7 +73,7 @@ module BetterTogether
 
       BetterTogether::Engine.routes.url_helpers.polymorphic_url(
         commentable,
-        anchor: ActionView::RecordIdentifier.dom_id(comment),
+        anchor: comment.anchor_id,
         locale:
       )
     end

@@ -185,6 +185,17 @@ RSpec.describe BetterTogether::Comment do
       expect(comment).to receive(:broadcast_remove_to).with(post)
       comment.destroy!
     end
+
+    it 'delegates comments_stream_target to the commentable, the single source of truth for that id' do
+      comment = create(:comment, commentable: post)
+      expect(comment.comments_stream_target).to eq(post.comments_stream_target)
+      expect(comment.comments_stream_target).to eq(ActionView::RecordIdentifier.dom_id(post, :comments))
+    end
+
+    it 'exposes a stable anchor_id, the single source of truth for this comment\'s own dom id' do
+      comment = create(:comment, commentable: post)
+      expect(comment.anchor_id).to eq(ActionView::RecordIdentifier.dom_id(comment))
+    end
   end
 
   describe 'creator field' do

@@ -4,7 +4,7 @@ module BetterTogether
   # Helper methods for rendering comment moderation controls safely both in a
   # normal request/view context and in the bare renderer Turbo uses for
   # background broadcast_append_to/broadcast_remove_to jobs (no Warden/current_user
-  # there — mirrors ContentActionsHelper#can_report_record?'s rescue pattern).
+  # there — see ApplicationHelper#safe_current_user/#safe_current_person).
   module CommentsHelper
     def comment_action_items(comment)
       return [] unless can_delete_comment?(comment)
@@ -13,11 +13,10 @@ module BetterTogether
     end
 
     def can_delete_comment?(comment)
-      return false unless current_user.present? && current_person.present?
+      user = safe_current_user
+      return false unless user.present? && safe_current_person.present?
 
-      BetterTogether::CommentPolicy.new(current_user, comment).destroy?
-    rescue Devise::MissingWarden
-      false
+      BetterTogether::CommentPolicy.new(user, comment).destroy?
     end
 
     # Returns a symbol explaining why the current person can't post a new comment on

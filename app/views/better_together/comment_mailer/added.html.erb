@@ -12,6 +12,6 @@
 
 <blockquote><%= simple_format(h(@comment.content.to_s.truncate(280))) %></blockquote>
 
-<p><%= link_to t('.view_link'), polymorphic_url(@commentable, anchor: dom_id(@comment)) %></p>
+<p><%= link_to t('.view_link'), polymorphic_url(@commentable, anchor: @comment.anchor_id) %></p>
 
 <p><%= t('.signature_html', platform: @platform.name) %></p>

@@ -23,17 +23,17 @@ tracked alongside this file.
 | 5 | MEDIUM | `comment_policy.rb` | Reimplemented `SelfServicePublishablePolicy` instead of including it | **RESOLVED** (`dc3ff3ee3`), **verified intact** after the later CommentConfig rewrite | Current file (`comment_policy.rb:6`) still `include SelfServicePublishablePolicy`, uses `creator_of?(record)` |
 | 6 | MEDIUM | `comments_controller.rb` | No failure branch on `@comment.save == false` | **RESOLVED** (`cc1371ff9`) | `save_comment_and_notify` branches on save result; `_form.html.erb:9-20` renders `comment.errors` |
 | 7 | MEDIUM | `comment.rb` | `ALLOWED_COMMENTABLES` enforced only at the app layer, no DB constraint | **RESOLVED as documentation, then superseded** | `ALLOWED_COMMENTABLES` no longer exists — replaced entirely by dynamic `Commentable.included_in_models` (session's `included_in_models` refactor, `951e02460`). A DB check constraint is now structurally inapplicable to a dynamic extension point; the single-layer-enforcement tradeoff is documented in `docs/developers/architecture/polymorphic_allowlist_extension_audit.md` |
-| 8 | MEDIUM | `comment.rb:27` | `broadcast_append_later_to` Pundit-context workaround duplicated with `Message` | **OPEN — intentionally deferred** | No change since the review; needs an engine-level `BroadcastableRenderer`-style fix, out of scope for this PR |
-| 9 | MEDIUM | `comments_helper.rb:19` | `rescue Devise::MissingWarden` triplicated (3rd instance) | **OPEN — intentionally deferred** | No change since the review; needs a cross-cutting fix touching `ContentActionsHelper`/`ApplicationHelper` too |
+| 8 | MEDIUM | `comment.rb:27` | `broadcast_append_later_to` Pundit-context workaround duplicated with `Message` | **RESOLVED** | New `Broadcastable` concern (`app/models/concerns/better_together/broadcastable.rb`) centralizes the always-async broadcast pattern and its rationale in one place; `Comment` and `Message` both `include Broadcastable` and declare `broadcasts_async_to` instead of duplicating the `after_create_commit`/`_later` workaround |
+| 9 | MEDIUM | `comments_helper.rb:19` | `rescue Devise::MissingWarden` triplicated (3rd instance) | **RESOLVED** | `ApplicationHelper#safe_current_user`/`#safe_current_person` centralize the guard; `ContentActionsHelper`, `CommentsHelper`, and `PeopleHelper` all use them now instead of their own local rescues |
 | 10 | MEDIUM | `comment_added_notifier.rb` | `:action_cable` channel had no preference gate | **RESOLVED** (`d4bd2733e`) | Both channels now gated by `recipient_allows_comment_notifications?`; notifier spec covers both true/false paths |
-| 11 | MEDIUM/LOW | `comment.rb:35` | `dom_id`/stream-target computed independently in 3+ places | **OPEN — intentionally deferred** | Still 3 independent `dom_id(comment)`/`dom_id(@comment)` call sites (`_comment.html.erb:2`, `comment_added_notifier.rb`, `comment_mailer/added.html.erb:9`) |
+| 11 | MEDIUM/LOW | `comment.rb:35` | `dom_id`/stream-target computed independently in 3+ places | **RESOLVED** | `Commentable#comments_stream_target` and new `Comment#anchor_id` are the single source of truth now; `_comments_section.html.erb`, `create.turbo_stream.erb`, `_comment.html.erb`, `CommentAddedNotifier#comment_url`, and `comment_mailer/added.html.erb` all call them instead of recomputing `dom_id` independently |
 | 12 | LOW | `_form.html.erb` | Dead reference to unregistered Stimulus controller | **RESOLVED** (`cc1371ff9`) | `data: { controller: 'better_together--comment-form' }` removed from current `_form.html.erb` |
 
-**9 of 12 resolved, 3 explicitly deferred as tracked follow-ups (not blocking).** All 3 deferrals
-are pre-existing structural patterns this PR didn't introduce (the `Message` broadcast
-workaround, the `Devise::MissingWarden` rescue, and one other unrelated helper) — the
-comprehensive review's own framing already treats them as separate, focused follow-up PRs
-rather than something this PR must fix.
+**12 of 12 resolved.** The 3 that were previously deferred (broadcast workaround, `Devise::MissingWarden`
+centralization, `dom_id` duplication) are now fixed — see §3 for what changed and why each was safe
+to do without expanding this PR's blast radius. The remaining deferred item, `CommentsController#index`
++ Turbo Frame restructuring (§2.2), is a genuine feature addition rather than a fix and is tracked
+separately (see §3 for the reasoning on why it's not bundled here).
 
 ## 2. Design-review comment — comment-permission-controls proposal
 
@@ -103,12 +103,25 @@ stated explicitly in the PR description):**
    blocked staff-creator doesn't propagate the block to co-authored content.
 5. `render_invalid_commentable`'s silent `head :not_found` for a mid-session invalid commentable.
 
+**Fixed (previously deferred):**
+6. ~~Engine-level fix for the `broadcast_append_later_to` Pundit-render-context workaround
+   (shared with `Message`)~~ — done. New `Broadcastable` concern (`broadcasts_async_to`),
+   included by both `Comment` and `Message`. `Message` had no test coverage for its broadcast
+   wiring before; added one alongside the refactor.
+7. ~~Centralizing the `rescue Devise::MissingWarden` pattern (3rd occurrence)~~ — done.
+   `ApplicationHelper#safe_current_user`/`#safe_current_person`, used by `ContentActionsHelper`,
+   `CommentsHelper`, and `PeopleHelper`.
+8. ~~Centralizing `dom_id`/stream-target computation (3+ independent call sites)~~ — done.
+   `Commentable#comments_stream_target` (moved from `Comment`) and new `Comment#anchor_id`.
+
 **Deferred, tracked as separate follow-up work (not blocking this PR):**
-6. Engine-level fix for the `broadcast_append_later_to` Pundit-render-context workaround
-   (shared with `Message`).
-7. Centralizing the `rescue Devise::MissingWarden` pattern (3rd occurrence).
-8. Centralizing `dom_id`/stream-target computation (3+ independent call sites).
 9. `CommentsController#index` + Turbo Frame restructuring for lazy-loaded, paginated comments.
+   Left deferred deliberately — unlike 6-8, this is a genuine feature addition (new route,
+   new controller action, `_comments_section.html.erb` becomes a thin frame stub with
+   `loading: lazy`), not a refactor of existing behavior. It would also change every existing
+   spec that visits a post page expecting comments synchronously present in the initial
+   response, well beyond the comments-specific spec files touched by everything else in this
+   PR. Worth doing, but as its own PR with its own review pass.
 
 ## 4. View inventory — all ERB templates changed in this branch
 
@@ -142,10 +155,15 @@ changes; the screenshot spec (tracked separately) can target these directly.
 
 ## 5. Summary
 
-- 9 of 12 comprehensive-review findings resolved; 3 explicitly deferred (pre-existing,
-  cross-cutting, out of scope for a comments-specific PR).
+- 12 of 12 comprehensive-review findings resolved.
 - The design-review's primary ask (comment permission/visibility controls) is now fully
   implemented via `CommentConfig`, including the "bundled" `show?`/`Scope` authorization fix.
 - Both pre-merge recommendations (`set_comment` policy_scope gap, content length validation)
-  are now fixed and covered by new specs; everything else is either resolved, an acceptable
-  documented limitation, or explicitly deferred follow-up work.
+  are fixed and covered by new specs.
+- All 3 items previously deferred as cross-cutting cleanup (broadcast workaround duplication,
+  `Devise::MissingWarden` centralization, `dom_id` duplication) are now fixed too — each turned
+  out to be a contained refactor (a new concern + call-site updates) rather than something that
+  needed its own PR.
+- One item remains deliberately deferred: `CommentsController#index` + Turbo Frame
+  restructuring. It's a feature addition, not a fix, and touches spec assumptions well beyond
+  comments-specific files — tracked as separate follow-up work rather than folded in here.

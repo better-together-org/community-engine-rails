@@ -1,5 +1,5 @@
 <%# locals: (comment:) %>
-<div id="<%= dom_id(comment) %>" class="comment mb-3" data-comment-id="<%= comment.id %>">
+<div id="<%= comment.anchor_id %>" class="comment mb-3" data-comment-id="<%= comment.id %>">
   <div class="comment-header d-flex align-items-center">
     <% if comment.creator.present? %>
       <%= render partial: 'better_together/people/mention', locals: { person: comment.creator, flex_layout: 'flex-row', flex_align_items: 'center' } %>
