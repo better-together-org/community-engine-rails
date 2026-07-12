@@ -46,7 +46,7 @@ RSpec.describe BetterTogether::PersonPlatformIntegrationCreatedNotifier do
 
     it 'uses locale-aware translation' do
       I18n.with_locale(:en) do
-        expect(notifier.body).to match(/A new Github account integration was connected on/)
+        expect(notifier.body).to include('A new Github account integration was connected on')
       end
     end
   end

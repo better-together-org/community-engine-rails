@@ -1591,6 +1591,9 @@ uk:
         slug: Дружній до URL ідентифікатор для цієї події
         starts_at: Коли починається подія. Весь час вказано в часовому поясі, вибраному
           вище.
+        status: Чернетки подій бачите лише ви, ваші співорганізатори та менеджери
+          платформи. Підтвердіть подію, щоб опублікувати її у списку подій; скасуйте,
+          щоб позначити її як відмінену.
         timezone: Часовий пояс, де відбудеться ця подія
       hosted_by: Організатор
       hosts:
@@ -1626,6 +1629,14 @@ uk:
           24_hours: 'Нагадування: %{event_name} починається через 24 години'
           at_start: "%{event_name} починається зараз"
         view_details_url: URL деталей перегляду
+      index:
+        new_btn_text: Нова подія
+        result_count:
+          few: "%{count} події"
+          many: "%{count} подій"
+          one: "%{count} подія"
+          other: "%{count} події"
+        toggle_filters: Фільтри
       labels:
         duration_minutes: Тривалість
         ends_at: Закінчується о
@@ -1636,9 +1647,29 @@ uk:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
         starts_at: Починається о
+        status: Статус
         timezone: Часовий Пояс Події
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      list_form:
+        categories_label: Категорії
+        clear_filters: Очистити фільтри
+        filters: Фільтрувати події
+        order_by_label: Сортувати за
+        order_latest: Найвіддаленіші
+        order_newest: Найновіші
+        order_oldest: Найстаріші
+        order_soonest: Найближчі
+        past_label: Минулі події
+        per_page_label: Подій на сторінку
+        search_button: Пошук
+        search_label: Пошук
+        search_placeholder: Пошук за назвою або описом...
+        status_all: Усі
+        status_cancelled: Скасовано
+        status_confirmed: Підтверджено
+        status_draft: Чернетка
+        status_label: Статус
       location: Місце
       location_types:
         address: Адреса
@@ -1711,6 +1742,10 @@ uk:
       rsvp_saved: RSVP збережено
       rsvp_unavailable_draft: RSVP буде доступним після планування цієї події.
       save_event: Зберегти подію
+      statuses:
+        cancelled: Скасовано
+        confirmed: Підтверджено
+        draft: Чернетка
       tabs:
         details: Деталі
         hosts: Господарі

@@ -1,19 +1,31 @@
         flowchart LR
-            EventIndex[GET /events] --> EventScope[EventPolicy::Scope]
-            EventScope --> EventRelation[EventsController resource_collection]
-            EventRelation --> Draft[Event.draft]
-            EventRelation --> Upcoming[Event.upcoming]
-            EventRelation --> Ongoing[Event.ongoing]
-            EventRelation --> Past[Event.past]
-
+            EventIndex[GET /events] --> LoadEvents[EventsController#index load_events]
             InvitationToken[Invitation token] --> EventScope
-            HostOrAttendance[Creator host attendee context] --> EventScope
+            HostOrAttendance[Creator host attendee invitee context] --> EventScope
+
+            LoadEvents --> EventScope[EventPolicy::Scope
+privacy + status != draft
+unless connected or manager]
+            EventScope --> Filter[EventsSearchFilter]
+
+            Filter --> SearchText[search_text
+ILIKE Mobility name + ActionText description]
+            SearchText --> Categories[filter_by_categories
+categorizations.category_id IN ids]
+            Categories --> Status[filter_by_status
+draft / confirmed / cancelled
+single value or union]
+            Status --> DateWindow[filter_by_date_range
+default starts_at >= now
+past=1 flips window]
+            DateWindow --> OrderBy[order_by
+soonest default / latest / newest / oldest]
+            OrderBy --> Paginate[paginate
+Kaminari 10 / 20 / 50 default 20]
+            Paginate --> EventsView[events/index.html.erb
+_list_form sidebar + event cards + paginate]
 
             McpList[MCP ListEventsTool] --> McpScope[Optional scope filter]
             McpScope --> PrivacyFilter[Optional privacy filter]
             PrivacyFilter --> OrderedJson[Ordered JSON results
 starts_at ASC]
-
-            BranchNote[No dedicated EventsSearchFilter
-service in this worktree]
-            EventIndex --> BranchNote

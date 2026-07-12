@@ -1599,6 +1599,9 @@ es:
         slug: Identificador amigable para URL de este evento
         starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
           seleccionada arriba.
+        status: Los eventos en borrador solo son visibles para ti, tus coanfitriones
+          y los gestores de la plataforma. Confirma el evento para publicarlo en la
+          lista de eventos; cancélalo para marcarlo como suspendido.
         timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
       hosts:
@@ -1633,6 +1636,12 @@ es:
           24_hours: 'Recordatorio: %{event_name} comienza en 24 horas'
           at_start: "%{event_name} está comenzando ahora"
         view_details_url: View details url
+      index:
+        new_btn_text: Nuevo evento
+        result_count:
+          one: "%{count} evento"
+          other: "%{count} eventos"
+        toggle_filters: Filtros
       labels:
         duration_minutes: Duración
         ends_at: Termina en
@@ -1643,9 +1652,29 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
         starts_at: Comienza en
+        status: Estado
         timezone: Zona Horaria del Evento
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
+      list_form:
+        categories_label: Categorías
+        clear_filters: Borrar filtros
+        filters: Filtrar eventos
+        order_by_label: Ordenar por
+        order_latest: Más lejano
+        order_newest: Más reciente
+        order_oldest: Más antiguo
+        order_soonest: Más próximo
+        past_label: Eventos pasados
+        per_page_label: Eventos por página
+        search_button: Buscar
+        search_label: Buscar
+        search_placeholder: Buscar por nombre o descripción...
+        status_all: Todos
+        status_cancelled: Cancelado
+        status_confirmed: Confirmado
+        status_draft: Borrador
+        status_label: Estado
       location: Ubicación
       location_types:
         address: Dirección
@@ -1718,6 +1747,10 @@ es:
       rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
         programado.
       save_event: Save Event
+      statuses:
+        cancelled: Cancelado
+        confirmed: Confirmado
+        draft: Borrador
       tabs:
         details: Detalles
         hosts: Anfitriones

@@ -62,25 +62,19 @@ module BetterTogether
 
         # Override records to avoid polymorphic eager loading issues
         # EventPolicy::Scope#resolve includes categorizations with polymorphic :category
-        # which ActiveRecord cannot eagerly load via includes(). We apply an API-specific
-        # scope that provides the same authorization without the problematic includes.
-        def self.records(options = {}) # rubocop:disable Metrics/AbcSize
+        # which ActiveRecord cannot eagerly load via includes(). We apply the same
+        # privacy/status/connection predicate (EventPolicy::Scope#permitted_query,
+        # made public for exactly this reuse) directly, instead of a bare .includes(),
+        # so this resource can never drift from the HTML index's authorization rule.
+        def self.records(options = {})
           context = options[:context]
           context[:policy_used]&.call
 
-          events = BetterTogether::Event.includes(:string_translations, :creator)
-          person = context&.dig(:current_person)
+          policy_scope = ::BetterTogether::EventPolicy::Scope.new(context&.dig(:current_user), ::BetterTogether::Event)
 
-          if person
-            events.where(
-              events.arel_table[:privacy].eq('public')
-                .or(events.arel_table[:creator_id].eq(person.id))
-            ).order(starts_at: :desc, created_at: :desc)
-          else
-            events.where(privacy: 'public')
-                  .where.not(starts_at: nil)
-                  .order(starts_at: :desc, created_at: :desc)
-          end
+          BetterTogether::Event.includes(:string_translations, :creator)
+                               .where(policy_scope.permitted_query)
+                               .order(starts_at: :desc, created_at: :desc)
         end
 
         # Custom attribute methods

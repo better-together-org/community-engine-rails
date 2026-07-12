@@ -22,7 +22,7 @@ RSpec.describe 'Duplicate Invitation Prevention', :as_platform_manager do # rubo
              params: { invitation: { invitee_email: email } }
 
         expect(response).to redirect_to(community)
-        expect(flash[:alert]).to match(/has already been invited and the invitation is still pending/)
+        expect(flash[:alert]).to include('has already been invited and the invitation is still pending')
       end
     end
 
@@ -36,7 +36,7 @@ RSpec.describe 'Duplicate Invitation Prevention', :as_platform_manager do # rubo
              params: { invitation: { invitee_email: email } }
 
         expect(response).to redirect_to(community)
-        expect(flash[:alert]).to match(/has already accepted an invitation/)
+        expect(flash[:alert]).to include('has already accepted an invitation')
       end
     end
 
@@ -50,7 +50,7 @@ RSpec.describe 'Duplicate Invitation Prevention', :as_platform_manager do # rubo
              params: { invitation: { invitee_email: email } }
 
         expect(response).to redirect_to(community)
-        expect(flash[:alert]).to match(/has previously declined an invitation/)
+        expect(flash[:alert]).to include('has previously declined an invitation')
       end
     end
 
@@ -95,7 +95,7 @@ describe 'with existing user', :as_platform_manager do
            params: { invitation: { invitee_id: person.id } }
 
       expect(response).to redirect_to(community)
-      expect(flash[:alert]).to match(/has already been invited and the invitation is still pending/)
+      expect(flash[:alert]).to include('has already been invited and the invitation is still pending')
     end
   end
 

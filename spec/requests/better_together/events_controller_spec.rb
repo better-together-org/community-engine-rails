@@ -596,17 +596,14 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'paginates draft, upcoming, and past event groups independently' do # rubocop:todo RSpec/MultipleExpectations
-      create_list(:event, 3, :draft)
-      create_list(:event, 3, starts_at: 2.days.from_now)
-      create_list(:event, 3, starts_at: 2.days.ago)
+    it 'paginates the unified events collection' do # rubocop:todo RSpec/MultipleExpectations
+      create_list(:event, 3, starts_at: 2.days.from_now, ends_at: 2.days.from_now + 2.hours)
 
-      get better_together.events_path(locale:, draft_page: 2, upcoming_page: 2, past_page: 2, per: 2)
+      get better_together.events_path(locale:, page: 1, per_page: 10)
 
       expect(response).to have_http_status(:ok)
-      expect(assigns(:draft_events).current_page).to eq(2)
-      expect(assigns(:upcoming_events).current_page).to eq(2)
-      expect(assigns(:past_events).current_page).to eq(2)
+      expect(assigns(:events).current_page).to eq(1)
+      expect(assigns(:events).limit_value).to eq(10)
     end
   end
 end

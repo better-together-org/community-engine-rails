@@ -97,26 +97,29 @@ module BetterTogether
       @relation = @relation.joins(joins.flatten).where(condition).distinct
     end
 
-    def filter_by_categories # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    # Filters on categorizations.category_id directly (no join to the
+    # categories table): a where hash keyed by the categories table name
+    # would force relations that preload polymorphic category associations
+    # (e.g. the events policy scope) into eager-loading and raise
+    # ActiveRecord::EagerLoadPolymorphicError.
+    def filter_by_categories
       ids = Array(params[:category_ids]).reject(&:blank?)
       return @relation if ids.empty?
 
-      btc = Arel::Table.new(:better_together_categorizations)
-      cat = Arel::Table.new(:better_together_categories)
+      categorizations = Arel::Table.new(:better_together_categorizations)
+
+      @relation = @relation.joins(categorizations_join(categorizations))
+                           .where(categorizations[:category_id].in(ids))
+                           .distinct
+    end
+
+    def categorizations_join(categorizations)
       main = resource_class.arel_table
 
-      joins = []
-      joins << main.join(btc, Arel::Nodes::OuterJoin).on(
-        btc[:categorizable_type].eq(resource_class.name)
-           .and(btc[:categorizable_id].eq(main[:id]))
+      main.join(categorizations, Arel::Nodes::OuterJoin).on(
+        categorizations[:categorizable_type].eq(resource_class.name)
+           .and(categorizations[:categorizable_id].eq(main[:id]))
       ).join_sources
-      joins << btc.join(cat, Arel::Nodes::OuterJoin).on(
-        cat[:id].eq(btc[:category_id])
-      ).join_sources
-
-      @relation = @relation.joins(joins.flatten)
-                           .where(BetterTogether::Category.table_name => { id: ids })
-                           .distinct
     end
 
     def order_by
