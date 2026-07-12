@@ -53,6 +53,23 @@ module BetterTogether # :nodoc:
       it { is_expected.to validate_uniqueness_of(:source_id).scoped_to(:platform_id).allow_blank }
     end
 
+    describe 'status enum' do
+      it 'defaults new events to draft (explicit publish step)' do
+        expect(described_class.new.status).to eq('draft')
+      end
+
+      it 'exposes draft, confirmed, and cancelled values' do
+        expect(described_class.statuses.values).to contain_exactly('draft', 'confirmed', 'cancelled')
+      end
+
+      it 'uses prefixed accessors so the timing-derived draft scope is preserved' do
+        event = build(:event, status: 'cancelled')
+
+        expect(event).to be_status_cancelled
+        expect(event.draft?).to be(false) # timing predicate: starts_at present
+      end
+    end
+
     describe 'scopes' do
       describe '.past' do
         it 'returns events that have ended' do

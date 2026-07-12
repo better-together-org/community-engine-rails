@@ -2,14 +2,15 @@
 
 # Adds an explicit lifecycle status (draft/confirmed/cancelled) to events.
 # Previously "draft" was derived from starts_at being NULL; status is stored
-# state, orthogonal to scheduling. Existing unscheduled events are backfilled
-# as drafts; everything else is confirmed.
+# state, orthogonal to scheduling. New events default to draft (explicit
+# publish step); existing scheduled events are backfilled as confirmed so
+# already-published events stay visible.
 class AddStatusToBetterTogetherEvents < ActiveRecord::Migration[7.2]
   def up
     unless column_exists?(:better_together_events, :status)
-      add_column :better_together_events, :status, :string, null: false, default: 'confirmed'
+      add_column :better_together_events, :status, :string, null: false, default: 'draft'
       execute <<~SQL.squish
-        UPDATE better_together_events SET status = 'draft' WHERE starts_at IS NULL
+        UPDATE better_together_events SET status = 'confirmed' WHERE starts_at IS NOT NULL
       SQL
     end
 

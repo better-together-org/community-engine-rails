@@ -814,7 +814,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
-    t.string "status", default: "confirmed", null: false
+    t.string "status", default: "draft", null: false
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true

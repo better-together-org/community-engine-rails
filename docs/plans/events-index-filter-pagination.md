@@ -165,8 +165,9 @@ rspec spec/acceptance_criteria/events_index_spec.rb --tag acceptance_criteria --
 column — "draft" was derived from `starts_at IS NULL` (scopes `draft`/`scheduled`/
 `upcoming`/`ongoing`/`past`). This plan and the acceptance spec assume a real
 draft/confirmed/cancelled state, so migration `20260711000000_add_status_to_better_together_events`
-adds a string `status` column (default `confirmed`, `NOT NULL`, indexed) and backfills
-`starts_at IS NULL → 'draft'`. The enum is declared with `prefix: :status`
+adds a string `status` column (default `draft`, `NOT NULL`, indexed) and backfills
+`starts_at IS NOT NULL → 'confirmed'` so already-published events stay visible. The enum
+is declared with `prefix: :status`
 (`status_draft?`, `Event.status_confirmed`, ...) so it does not collide with the
 timing-derived `Event.draft` scope and `#draft?` predicate, which are load-bearing
 elsewhere (MCP list tool, JSONAPI resource, people/communities controllers, RSVP
@@ -175,9 +176,11 @@ be confirmed AND past, or cancelled AND upcoming.
 
 **Draft visibility:** `EventPolicy::Scope` now excludes `status = 'draft'` events from
 the base visibility query; creators, hosts, attendees, invitees, and platform event
-managers still see them. New events default to `confirmed`, so existing creation flows
-keep publishing immediately; drafting is an explicit choice (`status` is mass-assignable
-via `Event.permitted_attributes`, though the event form does not yet expose it).
+managers still see them. New events default to **`draft`** — publishing is an explicit
+step (`status` is mass-assignable via `Event.permitted_attributes`). ⚠️ The event form
+does not yet expose a status control, so until one is added, events created through the
+UI stay drafts visible only to their creator/hosts/managers; a status field on the event
+form (or a confirm action) is needed before this reaches end users.
 
 **Deviations from the original plan text:**
 - `filter_by_status` and `filter_by_date_range` are implemented inside the
