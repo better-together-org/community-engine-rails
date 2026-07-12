@@ -120,38 +120,42 @@ module BetterTogether
 
         if platform_event_manager?
           query = query.or(events_table[:privacy].eq('private'))
-        elsif agent
-          query = query.or(
-            events_table[:creator_id].eq(agent.id)
-          )
-
-          if agent.valid_event_host_ids.any?
-            event_ids = event_hosts_table
-                        .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
-                        .project(:event_id)
-            query = query.or(
-              events_table[:id].in(event_ids)
-            )
-          end
-
-          if agent.event_attendances.any?
-            event_ids = agent.event_attendances.pluck(:event_id)
-            query = query.or(
-              events_table[:id].in(event_ids)
-            )
-          end
-
-          if agent.event_invitations.any?
-            event_ids = agent.event_invitations.pluck(:invitable_id)
-            query = query.or(
-              events_table[:id].in(event_ids)
-            )
-          end
-
-          query
         else
-          # Events must have a start time to be shown to people who aren't connected to the event
-          query = query.and(events_table[:starts_at].not_eq(nil))
+          # Draft events are only visible to people connected to them
+          # (creator, hosts, attendees, invitees) or platform event managers.
+          query = query.and(events_table[:status].not_eq('draft'))
+
+          if agent
+            query = query.or(
+              events_table[:creator_id].eq(agent.id)
+            )
+
+            if agent.valid_event_host_ids.any?
+              event_ids = event_hosts_table
+                          .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
+                          .project(:event_id)
+              query = query.or(
+                events_table[:id].in(event_ids)
+              )
+            end
+
+            if agent.event_attendances.any?
+              event_ids = agent.event_attendances.pluck(:event_id)
+              query = query.or(
+                events_table[:id].in(event_ids)
+              )
+            end
+
+            if agent.event_invitations.any?
+              event_ids = agent.event_invitations.pluck(:invitable_id)
+              query = query.or(
+                events_table[:id].in(event_ids)
+              )
+            end
+          else
+            # Events must have a start time to be shown to people who aren't connected to the event
+            query = query.and(events_table[:starts_at].not_eq(nil))
+          end
         end
 
         # Add logic for invitation token access

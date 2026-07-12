@@ -38,13 +38,11 @@ module BetterTogether
     before_action :process_recurrence_attributes, only: %i[create update]
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
 
-    def index
-      @events = @events.includes(:categories, cover_image_attachment: :blob)
+    skip_before_action :resource_collection, only: :index
 
-      @draft_events = paginated_events(@events.draft, params[:draft_page])
-      @upcoming_events = paginated_events(@events.upcoming, params[:upcoming_page])
-      @ongoing_events = @events.ongoing
-      @past_events = paginated_events(@events.past, params[:past_page])
+    def index
+      load_events
+      load_categories
     end
 
     def show
@@ -151,10 +149,6 @@ module BetterTogether
                 disposition: 'attachment'
     end
 
-    def paginated_events(scope, page)
-      scope.page(page).per(params[:per])
-    end
-
     def load_invitations
       @current_invitation = find_invitation_by_token
       @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: helpers.current_person)
@@ -229,6 +223,38 @@ module BetterTogether
     end
 
     private
+
+    def filter_params
+      # :status is permitted both as a scalar (?status=draft) and as an
+      # array (?status[]=draft&status[]=confirmed) for union filtering.
+      params.permit(:q, :order_by, :per_page, :page, :past, :status,
+                    category_ids: [], status: [])
+    end
+
+    def load_events
+      # Preserve invitation-token context for the policy scope, as
+      # resource_collection (skipped for :index) would otherwise do.
+      self.current_invitation_token = params[:invitation_token] || session[:event_invitation_token]
+
+      @events = EventsSearchFilter.call(
+        relation: policy_scope(resource_class),
+        params: filter_params
+      ).with_translations.includes(:categories, cover_image_attachment: :blob)
+    end
+
+    def load_categories
+      visible_event_ids = policy_scope(resource_class).select(:id)
+      event_category_ids = ::BetterTogether::Categorization
+                           .where(categorizable_type: resource_class.name,
+                                  categorizable_id: visible_event_ids)
+                           .select(:category_id)
+
+      @categories = ::BetterTogether::Category
+                    .where(id: event_category_ids)
+                    .with_translations
+                    .to_a
+                    .sort_by { |category| category.name.to_s.downcase }
+    end
 
     # Template method implementations for InvitationTokenAuthorization
     def invitation_resource_name

@@ -1,0 +1,77 @@
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h2 class="h5"><%= t('.filters') %></h2>
+  </div>
+  <div class="panel-body">
+    <%= form_with url: events_path, method: :get, class: 'events-filter-sidebar', local: true do |f| %>
+      <div class="mb-3">
+        <%= f.label :q, t('.search_label'), class: 'form-label' %>
+        <%= f.text_field :q, placeholder: t('.search_placeholder'), value: params[:q], class: 'form-control' %>
+      </div>
+
+      <% if @categories&.any? %>
+        <div class="mb-3">
+          <%= f.label :category_ids, t('.categories_label'), class: 'form-label' %>
+          <%= f.select :category_ids,
+                       options_from_collection_for_select(
+                         @categories,
+                         :id,
+                         :name,
+                         Array(params[:category_ids]).map(&:to_s)
+                       ),
+                       { include_hidden: false },
+                       {
+                         multiple: true,
+                         id: 'events-category-ids',
+                         class: 'form-select',
+                         data: {
+                           controller: 'better-together--slim-select',
+                           'better-together--slim-select-options-value': {
+                             settings: {
+                               closeOnSelect: false
+                             }
+                           }.to_json
+                         }
+                       } %>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :status, t('.status_label'), class: 'form-label' %>
+        <%= f.select :status, options_for_select([
+          [t('.status_all'), ''],
+          [t('.status_draft'), 'draft'],
+          [t('.status_confirmed'), 'confirmed'],
+          [t('.status_cancelled'), 'cancelled']
+        ], params[:status].presence || ''), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :order_by, t('.order_by_label'), class: 'form-label' %>
+        <%= f.select :order_by, options_for_select([
+          [t('.order_soonest'), ''],
+          [t('.order_latest'), 'latest'],
+          [t('.order_newest'), 'newest'],
+          [t('.order_oldest'), 'oldest']
+        ], params[:order_by].presence || ''), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :per_page, t('.per_page_label'), class: 'form-label' %>
+        <%= f.select :per_page, options_for_select(['10', '20', '50'], params[:per_page] || '20'), { include_blank: false }, class: 'form-select' %>
+      </div>
+
+      <div class="mb-3 form-check">
+        <%= f.check_box :past, { checked: params[:past].present?, class: 'form-check-input', id: 'events-past' }, '1', nil %>
+        <%= f.label :past, t('.past_label'), class: 'form-check-label', for: 'events-past' %>
+      </div>
+
+      <div class="clearfix">
+        <% if params[:q].present? || params[:status].present? || params[:order_by].present? || params[:per_page].present? || params[:category_ids].present? || params[:past].present? %>
+          <%= link_to t('.clear_filters'), events_path, class: 'btn btn-outline-secondary', id: 'events-clear-filters' %>
+        <% end %>
+        <%= f.submit t('.search_button'), class: 'btn btn-primary float-end', id: 'events-search-submit' %>
+      </div>
+    <% end %>
+  </div>
+</div>

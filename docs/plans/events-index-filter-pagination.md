@@ -56,45 +56,45 @@ Implementation follows the **test-first cadence**: pending RSpec specs → imple
 
 ### Controller (`EventsController#index`)
 
-- [ ] `EventsController#index` applies an `EventsSearchFilter` to the policy-scoped collection before rendering.
-- [ ] Accepted params: `q` (text search), `category_ids[]`, `status` (draft/confirmed/cancelled/all), `order_by` (soonest/latest/newest/oldest), `per_page` (10/20/50), `page`.
-- [ ] Params are passed through to the view for form state persistence (selected filters remain checked/filled on page reload).
-- [ ] Default: upcoming events (start_at ≥ now), soonest-first, 20 per page, status=confirmed+upcoming (exclude past + draft unless explicitly selected).
+- [x] `EventsController#index` applies an `EventsSearchFilter` to the policy-scoped collection before rendering.
+- [x] Accepted params: `q` (text search), `category_ids[]`, `status` (draft/confirmed/cancelled/all), `order_by` (soonest/latest/newest/oldest), `per_page` (10/20/50), `page`.
+- [x] Params are passed through to the view for form state persistence (selected filters remain checked/filled on page reload).
+- [x] Default: upcoming events (start_at ≥ now), soonest-first, 20 per page, status=confirmed+upcoming (exclude past + draft unless explicitly selected).
 
 ### Search / filter service (`EventsSearchFilter`)
 
-- [ ] Implemented as a service object under `BetterTogether::`, inheriting from `BetterTogether::ContentSearchFilter` (from PR #1409).
-- [ ] `search_text` step: ILIKE join on Mobility `mobility_string_translations` (title key) and ActionText `action_text_rich_texts` (description name), with locale fallback (inherited from base).
-- [ ] `filter_by_categories` step: joins `better_together_categorizations` and `better_together_categories` when `params[:category_ids]` is present (inherited from base).
-- [ ] `filter_by_status` step: filters by `status` enum (draft/confirmed/cancelled) or union of statuses.
-- [ ] `filter_by_date_range` step: default scope filters to `start_at >= Time.current` (upcoming); optional `past` flag for historical events.
-- [ ] `order_by` step: flexible date-based ordering:
+- [x] Implemented as a service object under `BetterTogether::`, inheriting from `BetterTogether::ContentSearchFilter` (from PR #1409).
+- [x] `search_text` step: ILIKE join on Mobility `mobility_string_translations` (title key) and ActionText `action_text_rich_texts` (description name), with locale fallback (inherited from base).
+- [x] `filter_by_categories` step: joins `better_together_categorizations` and `better_together_categories` when `params[:category_ids]` is present (inherited from base).
+- [x] `filter_by_status` step: filters by `status` enum (draft/confirmed/cancelled) or union of statuses.
+- [x] `filter_by_date_range` step: default scope filters to `start_at >= Time.current` (upcoming); optional `past` flag for historical events.
+- [x] `order_by` step: flexible date-based ordering:
   - `soonest` (default): `start_at asc` — earliest events first
   - `latest`: `start_at desc` — furthest events first
   - `newest`: `created_at desc` — most recently created events first
   - `oldest`: `created_at asc` — earliest created events first
-- [ ] `paginate` step: `.page(params[:page]).per(per_page)` via Kaminari (inherited from base).
-- [ ] Returns a Kaminari-decorated relation.
+- [x] `paginate` step: `.page(params[:page]).per(per_page)` via Kaminari (inherited from base).
+- [x] Returns a Kaminari-decorated relation.
 
 ### View
 
-- [ ] `app/views/better_together/events/index.html.erb` updated to:
+- [x] `app/views/better_together/events/index.html.erb` updated to:
   - Render `_list_form` sidebar partial (GET form, consistent with Posts/Joatu style).
   - Render paginated event cards / list items (replace four hardcoded `@*_events` partials).
   - Show `paginate @events` Kaminari navigation.
   - Show result count: "X events" (with active filter indicator if filters applied).
-- [ ] `app/views/better_together/events/_list_form.html.erb` new partial:
+- [x] `app/views/better_together/events/_list_form.html.erb` new partial:
   - Text search input (`q`).
   - Category checkboxes (dynamically loaded from `BetterTogether::Category` scoped to events).
   - Status select (All / Draft / Confirmed / Cancelled).
   - Order-by select (Soonest / Latest / Newest / Oldest).
   - Per-page select (10 / 20 / 50).
   - Submit button; clear-filters link.
-- [ ] Filter sidebar is collapsible on mobile (consistent with Posts + Joatu implementation).
+- [x] Filter sidebar is collapsible on mobile (consistent with Posts + Joatu implementation).
 
 ### i18n
 
-- [ ] All new UI strings added to `config/locales/en.yml` under `better_together.events.index.*`.
+- [x] All new UI strings added to `config/locales/en.yml` under `better_together.events.index.*`.
 
 ---
 
@@ -108,37 +108,37 @@ rspec spec/acceptance_criteria/events_index_spec.rb --tag acceptance_criteria --
 ### Required Test Suite: `spec/acceptance_criteria/events_index_spec.rb`
 
 **Model Layer (Week 1 — Service foundation; can run in parallel with Posts Week 1)**
-- [ ] `EventsSearchFilter.call(relation:, params:)` returns Kaminari-decorated relation
-- [ ] `q: "community"` applies ILIKE to Mobility title + ActionText description (both locales)
-- [ ] `category_ids: [id]` joins categorizations and returns only tagged events
-- [ ] `status: "draft"` filters by events.status enum
-- [ ] `status: ["draft", "confirmed"]` supports status union (multiple statuses)
-- [ ] `order_by: "latest"` orders `start_at desc` (furthest events first)
-- [ ] `order_by: "newest"` orders `created_at desc` (most recently created)
-- [ ] `order_by: "soonest"` (default) orders `start_at asc` (earliest start first)
-- [ ] Empty params returns upcoming events only (start_at ≥ now), soonest-first
-- [ ] No N+1 queries on empty params (pre-load associations correctly)
+- [x] `EventsSearchFilter.call(relation:, params:)` returns Kaminari-decorated relation
+- [x] `q: "community"` applies ILIKE to Mobility title + ActionText description (both locales)
+- [x] `category_ids: [id]` joins categorizations and returns only tagged events
+- [x] `status: "draft"` filters by events.status enum
+- [x] `status: ["draft", "confirmed"]` supports status union (multiple statuses)
+- [x] `order_by: "latest"` orders `start_at desc` (furthest events first)
+- [x] `order_by: "newest"` orders `created_at desc` (most recently created)
+- [x] `order_by: "soonest"` (default) orders `start_at asc` (earliest start first)
+- [x] Empty params returns upcoming events only (start_at ≥ now), soonest-first
+- [x] No N+1 queries on empty params (pre-load associations correctly)
 
 **Request Layer (Week 2 — Controller + authorization)**
-- [ ] `GET /en/events` with no params returns 200, upcoming events, soonest-first, 20 per page
-- [ ] `?q=yoga` filters results by title/description, params persist in view
-- [ ] `?category_ids[]=1&category_ids[]=2` multi-select works
-- [ ] `?status=draft` shows only drafts
-- [ ] `?status[]=draft&status[]=confirmed` shows drafts + confirmed (union)
-- [ ] `?order_by=latest` orders furthest-first
-- [ ] `?page=2&per_page=10` paginates correctly
-- [ ] Authorization: respects policy scope (user sees only permitted events; organizer sees own drafts)
+- [x] `GET /en/events` with no params returns 200, upcoming events, soonest-first, 20 per page
+- [x] `?q=yoga` filters results by title/description, params persist in view
+- [x] `?category_ids[]=1&category_ids[]=2` multi-select works
+- [x] `?status=draft` shows only drafts
+- [x] `?status[]=draft&status[]=confirmed` shows drafts + confirmed (union)
+- [x] `?order_by=latest` orders furthest-first
+- [x] `?page=2&per_page=10` paginates correctly
+- [x] Authorization: respects policy scope (user sees only permitted events; organizer sees own drafts)
 
 **Feature Layer (Week 3 — UX + pagination)**
-- [ ] Visit `/en/events`, see filter sidebar with all controls
-- [ ] Type in search box, submit form, results filter by title + description
-- [ ] Check category checkboxes (multi-select), results update
-- [ ] Select status dropdown, results filter
-- [ ] Select order-by, results re-sort immediately (soonest/latest/newest/oldest all work)
-- [ ] Select per-page, page reloads with new window size
-- [ ] Pagination links present and navigate correctly
-- [ ] "Clear filters" link resets to default state (upcoming, soonest, 20 per page)
-- [ ] Sidebar collapses on mobile (≤768px)
+- [x] Visit `/en/events`, see filter sidebar with all controls
+- [x] Type in search box, submit form, results filter by title + description
+- [x] Check category checkboxes (multi-select), results update
+- [x] Select status dropdown, results filter
+- [x] Select order-by, results re-sort immediately (soonest/latest/newest/oldest all work)
+- [x] Select per-page, page reloads with new window size
+- [x] Pagination links present and navigate correctly
+- [x] "Clear filters" link resets to default state (upcoming, soonest, 20 per page)
+- [x] Sidebar collapses on mobile (≤768px)
 
 ---
 
@@ -154,6 +154,47 @@ rspec spec/acceptance_criteria/events_index_spec.rb --tag acceptance_criteria --
 ---
 
 ## Implementation Notes
+
+### As-built notes (2026-07-11)
+
+**Status column decision:** `better_together_events` previously had **no** `status`
+column — "draft" was derived from `starts_at IS NULL` (scopes `draft`/`scheduled`/
+`upcoming`/`ongoing`/`past`). This plan and the acceptance spec assume a real
+draft/confirmed/cancelled state, so migration `20260711000000_add_status_to_better_together_events`
+adds a string `status` column (default `confirmed`, `NOT NULL`, indexed) and backfills
+`starts_at IS NULL → 'draft'`. The enum is declared with `prefix: :status`
+(`status_draft?`, `Event.status_confirmed`, ...) so it does not collide with the
+timing-derived `Event.draft` scope and `#draft?` predicate, which are load-bearing
+elsewhere (MCP list tool, JSONAPI resource, people/communities controllers, RSVP
+view/validation) and remain unchanged. Status is orthogonal to timing: an event can
+be confirmed AND past, or cancelled AND upcoming.
+
+**Draft visibility:** `EventPolicy::Scope` now excludes `status = 'draft'` events from
+the base visibility query; creators, hosts, attendees, invitees, and platform event
+managers still see them. New events default to `confirmed`, so existing creation flows
+keep publishing immediately; drafting is an explicit choice (`status` is mass-assignable
+via `Event.permitted_attributes`, though the event form does not yet expose it).
+
+**Deviations from the original plan text:**
+- `filter_by_status` and `filter_by_date_range` are implemented inside the
+  `filter_by_resource_specific_status` hook that `ContentSearchFilter` actually
+  exposes (the base class has no separate status/date hooks).
+- The default view applies `starts_at >= Time.current` literally (per AC10/AC12):
+  **ongoing** events (already started, not yet ended) drop out of the default view
+  the moment they start, and unscheduled events (NULL `starts_at`) never appear in
+  the date-windowed views. A `past=1` param (checkbox in the sidebar) flips the
+  window to historical events, replacing the old "Recent events" section.
+- The default view does **not** restrict status (a cancelled upcoming event is
+  listed with a "Cancelled" badge); others' drafts are hidden by the policy scope,
+  not by a default status filter.
+- `ContentSearchFilter#filter_by_categories` (shared with Posts) now predicates on
+  `categorizations.category_id` instead of joining the categories table — a where
+  hash keyed by the categories table name forced the events policy scope's
+  polymorphic category preloads into eager loading (`EagerLoadPolymorphicError`).
+- Spec corrections at activation time: Event translates `:name` (not `:title`),
+  column is `starts_at` (not `start_at`), events have `creator:` (not `organizer:`),
+  categorizations take `categorizable:`. AC15's draft belongs to the signed-in
+  person, since others' drafts are correctly hidden by the policy scope.
 
 **Search Strategy:** v0.12.0 standardizes on **pgsearch (PostgreSQL ILIKE)** across all platforms. No Elasticsearch detection or fallback; all deployments use SQL joins + ILIKE.
 
@@ -248,16 +289,16 @@ Both can proceed in parallel after the base is available.
 
 Implementation is **complete** when:
 
-- [ ] All 20 pending specs in `events_index_spec.rb` pass ✓
-- [ ] `EventsController#index` applies `EventsSearchFilter` before render ✓
-- [ ] Four partition variables (`@*_events`) removed; replaced with single `@events` ✓
-- [ ] Filter sidebar renders; all controls functional ✓
-- [ ] Pagination works; default 20/page, soonest-first ✓
-- [ ] Authorization respected (policy scope + status visibility) ✓
-- [ ] Default view shows upcoming events only (excludes past + draft unless explicitly selected) ✓
-- [ ] i18n keys added under `better_together.events.index.*` ✓
-- [ ] Mobile sidebar collapses ≤768px ✓
-- [ ] Posts mirror (PR #1409) also complete, both share `ContentSearchFilter` base ✓
+- [x] All 28 specs in `events_index_spec.rb` pass ✓
+- [x] `EventsController#index` applies `EventsSearchFilter` before render ✓
+- [x] Four partition variables (`@*_events`) removed; replaced with single `@events` ✓
+- [x] Filter sidebar renders; all controls functional ✓
+- [x] Pagination works; default 20/page, soonest-first ✓
+- [x] Authorization respected (policy scope + status visibility) ✓
+- [x] Default view shows upcoming events only (excludes past + draft unless explicitly selected) ✓
+- [x] i18n keys added under `better_together.events.index.*` ✓
+- [x] Mobile sidebar collapses ≤768px ✓
+- [x] Posts mirror (PR #1409) also complete, both share `ContentSearchFilter` base ✓
 
 ---
 

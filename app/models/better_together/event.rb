@@ -51,6 +51,14 @@ module BetterTogether
 
     slugged :name
 
+    # Explicit lifecycle status, orthogonal to the timing-derived scopes below
+    # (draft/scheduled/upcoming/ongoing/past): an event can be confirmed AND
+    # past, or cancelled AND upcoming. Prefixed accessors (status_draft?,
+    # Event.status_confirmed, ...) avoid colliding with the timing-based
+    # `draft` scope and `#draft?` predicate that other callers rely on.
+    STATUS_VALUES = { draft: 'draft', confirmed: 'confirmed', cancelled: 'cancelled' }.freeze
+    enum :status, STATUS_VALUES, prefix: :status
+
     searchable pg_search: {
       against: [:identifier],
       using: {
@@ -187,7 +195,7 @@ module BetterTogether
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        starts_at ends_at duration_minutes registration_url timezone
+        starts_at ends_at duration_minutes registration_url timezone status
       ] + [
         {
           location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,

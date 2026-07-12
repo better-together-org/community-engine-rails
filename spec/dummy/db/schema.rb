@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_10_180000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -814,6 +814,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_10_180000) do
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
+    t.string "status", default: "confirmed", null: false
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
@@ -821,6 +822,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_10_180000) do
     t.index ["platform_id"], name: "index_better_together_events_on_platform_id"
     t.index ["privacy"], name: "by_better_together_events_privacy"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
+    t.index ["status"], name: "by_better_together_events_status"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
   end
 
