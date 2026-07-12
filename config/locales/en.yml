@@ -1621,6 +1621,12 @@ en:
           24_hours: 'Reminder: %{event_name} starts in 24 hours'
           at_start: "%{event_name} is starting now"
         view_details_url: View details url
+      index:
+        new_btn_text: New Event
+        result_count:
+          one: "%{count} event"
+          other: "%{count} events"
+        toggle_filters: Filters
       labels:
         duration_minutes: Duration
         ends_at: Ends at
@@ -1634,6 +1640,25 @@ en:
         timezone: Event Timezone
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      list_form:
+        categories_label: Categories
+        clear_filters: Clear Filters
+        filters: Filter Events
+        order_by_label: Order By
+        order_latest: Latest
+        order_newest: Newest
+        order_oldest: Oldest
+        order_soonest: Soonest
+        past_label: Past events
+        per_page_label: Events Per Page
+        search_button: Search
+        search_label: Search
+        search_placeholder: Search by name or description...
+        status_all: All
+        status_cancelled: Cancelled
+        status_confirmed: Confirmed
+        status_draft: Draft
+        status_label: Status
       location: Location
       location_types:
         address: Address
@@ -1703,6 +1728,10 @@ en:
       rsvp_saved: RSVP saved
       rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
       save_event: Save Event
+      statuses:
+        cancelled: Cancelled
+        confirmed: Confirmed
+        draft: Draft
       tabs:
         details: Details
         hosts: Hosts
