@@ -1605,6 +1605,10 @@ fr:
         slug: Identifiant convivial pour l'URL de cet événement
         starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
           horaire sélectionné ci-dessus.
+        status: Les événements en brouillon ne sont visibles que par vous, vos co-organisateurs
+          et les gestionnaires de la plateforme. Confirmez l'événement pour le publier
+          dans la liste des événements ; annulez-le pour indiquer qu'il n'aura pas
+          lieu.
         timezone: Le fuseau horaire où cet événement aura lieu
       hosted_by: Organisé par
       hosts:
@@ -1655,6 +1659,7 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
         starts_at: Débute à
+        status: Statut
         timezone: Fuseau Horaire de l'Événement
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}

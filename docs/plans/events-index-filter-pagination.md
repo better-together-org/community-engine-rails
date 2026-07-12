@@ -177,10 +177,9 @@ be confirmed AND past, or cancelled AND upcoming.
 **Draft visibility:** `EventPolicy::Scope` now excludes `status = 'draft'` events from
 the base visibility query; creators, hosts, attendees, invitees, and platform event
 managers still see them. New events default to **`draft`** — publishing is an explicit
-step (`status` is mass-assignable via `Event.permitted_attributes`). ⚠️ The event form
-does not yet expose a status control, so until one is added, events created through the
-UI stay drafts visible only to their creator/hosts/managers; a status field on the event
-form (or a confirm action) is needed before this reaches end users.
+step. The event form's Details tab exposes a SlimSelect status field (label + hint,
+`#event-status-field`) so organizers publish by setting the event to Confirmed;
+`status` is mass-assignable via `Event.permitted_attributes` for API/import flows.
 
 **Deviations from the original plan text:**
 - `filter_by_status` and `filter_by_date_range` are implemented inside the

@@ -1599,6 +1599,9 @@ es:
         slug: Identificador amigable para URL de este evento
         starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
           seleccionada arriba.
+        status: Los eventos en borrador solo son visibles para ti, tus coanfitriones
+          y los gestores de la plataforma. Confirma el evento para publicarlo en la
+          lista de eventos; cancélalo para marcarlo como suspendido.
         timezone: La zona horaria donde tendrá lugar este evento
       hosted_by: Organizado Por
       hosts:
@@ -1649,6 +1652,7 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
         starts_at: Comienza en
+        status: Estado
         timezone: Zona Horaria del Evento
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}

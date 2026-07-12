@@ -84,6 +84,24 @@
             <% end %>
           </div>
 
+          <!-- Status Field -->
+          <div class="col mb-3 pb-3 border-bottom" id="event-status-field">
+            <%= form.label :status, t('better_together.events.labels.status'), class: 'form-label' %>
+            <%= form.select :status,
+              options_for_select(
+                resource_class.statuses.values.map { |value| [t("better_together.events.statuses.#{value}"), value] },
+                event.status
+              ),
+              {},
+              class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+            <small class="form-text text-muted" id="<%= dom_id(event, :status_hint) %>"><%= t('better_together.events.hints.status') %></small>
+            <% if event.errors[:status].any? %>
+              <div class="invalid-feedback">
+                <%= event.errors[:status].join(", ") %>
+              </div>
+            <% end %>
+          </div>
+
           <div class="col mb-3 pb-3 border-bottom">
             <%= required_label form, :categories %>
             <%= form.select :category_ids,
