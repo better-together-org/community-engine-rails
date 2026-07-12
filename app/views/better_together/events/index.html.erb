@@ -19,7 +19,7 @@
   <div class="row">
     <!-- Filter Sidebar -->
     <div class="col-lg-3 mb-4">
-      <button class="btn btn-outline-secondary d-lg-none mb-2 sidebar-toggle" type="button"
+      <button id="events-filter-toggle" class="btn btn-outline-secondary d-lg-none mb-2 sidebar-toggle" type="button"
               data-bs-toggle="collapse" data-bs-target="#events-filter-sidebar"
               aria-expanded="false" aria-controls="events-filter-sidebar">
         <i class="fas fa-filter" aria-hidden="true"></i> <%= t('.toggle_filters') %>
@@ -34,14 +34,14 @@
 
       <!-- Pagination -->
       <% if @events.respond_to?(:total_pages) && @events.total_pages > 1 %>
-        <nav class="d-flex justify-content-center">
+        <nav id="events-pagination" class="d-flex justify-content-center">
           <%= paginate @events %>
         </nav>
       <% end %>
 
       <!-- Result Count -->
       <% if @events.any? && @events.respond_to?(:total_count) %>
-        <div class="mb-3">
+        <div id="events-result-count" class="mb-3">
           <small class="text-muted">
             <%= t('.result_count', count: @events.total_count) %>
           </small>

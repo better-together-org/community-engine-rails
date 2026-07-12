@@ -6,7 +6,7 @@
     <%= form_with url: events_path, method: :get, class: 'events-filter-sidebar', local: true do |f| %>
       <div class="mb-3">
         <%= f.label :q, t('.search_label'), class: 'form-label' %>
-        <%= f.text_field :q, placeholder: t('.search_placeholder'), value: params[:q], class: 'form-control' %>
+        <%= f.text_field :q, placeholder: t('.search_placeholder'), value: params[:q], class: 'form-control', id: 'events-q' %>
       </div>
 
       <% if @categories&.any? %>
@@ -43,7 +43,7 @@
           [t('.status_draft'), 'draft'],
           [t('.status_confirmed'), 'confirmed'],
           [t('.status_cancelled'), 'cancelled']
-        ], params[:status].presence || ''), { include_blank: false }, class: 'form-select' %>
+        ], params[:status].presence || ''), { include_blank: false }, class: 'form-select', id: 'events-status' %>
       </div>
 
       <div class="mb-3">
@@ -53,12 +53,12 @@
           [t('.order_latest'), 'latest'],
           [t('.order_newest'), 'newest'],
           [t('.order_oldest'), 'oldest']
-        ], params[:order_by].presence || ''), { include_blank: false }, class: 'form-select' %>
+        ], params[:order_by].presence || ''), { include_blank: false }, class: 'form-select', id: 'events-order-by' %>
       </div>
 
       <div class="mb-3">
         <%= f.label :per_page, t('.per_page_label'), class: 'form-label' %>
-        <%= f.select :per_page, options_for_select(['10', '20', '50'], params[:per_page] || '20'), { include_blank: false }, class: 'form-select' %>
+        <%= f.select :per_page, options_for_select(['10', '20', '50'], params[:per_page] || '20'), { include_blank: false }, class: 'form-select', id: 'events-per-page' %>
       </div>
 
       <div class="mb-3 form-check">
