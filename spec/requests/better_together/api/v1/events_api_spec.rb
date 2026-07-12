@@ -106,6 +106,38 @@ RSpec.describe 'BetterTogether::Api::V1::Events', :no_auth do
         expect(event_ids).to include(draft_public_event.id)
       end
     end
+
+    context 'when a private event exists' do
+      let(:event_creator_user) { create(:better_together_user, :confirmed) }
+      let!(:private_event) do
+        create(:event, privacy: 'private', creator: event_creator_user.person,
+                       starts_at: 1.week.from_now, ends_at: 1.week.from_now + 2.hours)
+      end
+
+      it 'excludes it for an unconnected authenticated person' do
+        get url, headers: auth_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).not_to include(private_event.id)
+      end
+
+      it 'includes it for a platform event manager (matches the HTML index policy scope)' do
+        get url, headers: platform_manager_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).to include(private_event.id)
+      end
+
+      it 'includes it for a connected event host even though it is private (matches the HTML index policy scope)' do
+        host_person = person
+        create(:better_together_event_host, event: private_event, host: host_person)
+
+        get url, headers: auth_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).to include(private_event.id)
+      end
+    end
   end
 
   describe 'GET /api/v1/events/:id' do

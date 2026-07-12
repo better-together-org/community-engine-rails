@@ -62,55 +62,19 @@ module BetterTogether
 
         # Override records to avoid polymorphic eager loading issues
         # EventPolicy::Scope#resolve includes categorizations with polymorphic :category
-        # which ActiveRecord cannot eagerly load via includes(). We apply an API-specific
-        # scope that provides the same authorization without the problematic includes.
-        def self.records(options = {}) # rubocop:disable Metrics/AbcSize
+        # which ActiveRecord cannot eagerly load via includes(). We apply the same
+        # privacy/status/connection predicate (EventPolicy::Scope#permitted_query,
+        # made public for exactly this reuse) directly, instead of a bare .includes(),
+        # so this resource can never drift from the HTML index's authorization rule.
+        def self.records(options = {})
           context = options[:context]
           context[:policy_used]&.call
 
-          events = BetterTogether::Event.includes(:string_translations, :creator)
-          person = context&.dig(:current_person)
+          policy_scope = ::BetterTogether::EventPolicy::Scope.new(context&.dig(:current_user), ::BetterTogether::Event)
 
-          if person
-            events.where(person_visibility_query(events, person)).order(starts_at: :desc, created_at: :desc)
-          else
-            events.where(privacy: 'public')
-                  .where.not(starts_at: nil)
-                  .where.not(status: 'draft')
-                  .order(starts_at: :desc, created_at: :desc)
-          end
-        end
-
-        # Mirrors EventPolicy::Scope's draft-visibility rule (creators, hosts,
-        # attendees, invitees, and platform event managers can see draft events
-        # they're connected to) without EventPolicy::Scope#resolve's polymorphic
-        # categorization includes, which #records avoids for the eager-loading
-        # reasons noted above. Otherwise a public event with status: 'draft'
-        # and a future starts_at is hidden from the HTML index but still
-        # returned here to any authenticated person.
-        def self.person_visibility_query(events, person) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-          table = events.arel_table
-          base = table[:privacy].eq('public').or(table[:creator_id].eq(person.id))
-
-          return base if platform_event_manager?(person)
-
-          query = base.and(table[:status].not_eq('draft')).or(table[:creator_id].eq(person.id))
-
-          connected_event_ids = connected_event_ids_for(person)
-          query = query.or(table[:privacy].eq('public').and(table[:id].in(connected_event_ids))) if connected_event_ids.any?
-
-          query
-        end
-
-        def self.connected_event_ids_for(person)
-          ids = ::BetterTogether::EventHost.where(host_id: person.valid_event_host_ids).pluck(:event_id)
-          ids += person.event_attendances.pluck(:event_id)
-          ids += person.event_invitations.pluck(:invitable_id)
-          ids.uniq
-        end
-
-        def self.platform_event_manager?(person)
-          person.permitted_to?('manage_platform_settings') || person.permitted_to?('manage_platform')
+          BetterTogether::Event.includes(:string_translations, :creator)
+                               .where(policy_scope.permitted_query)
+                               .order(starts_at: :desc, created_at: :desc)
         end
 
         # Custom attribute methods
