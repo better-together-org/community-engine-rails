@@ -40,7 +40,7 @@ RSpec.describe BetterTogether::C3::SettlementNotifier do
     end
 
     it 'body does not include DID or UUID identifiers' do
-      expect(notifier.body).not_to match(/did:key:/)
+      expect(notifier.body).not_to include('did:key:')
       expect(notifier.body).not_to match(/[0-9a-f]{8}-[0-9a-f]{4}/)
     end
   end

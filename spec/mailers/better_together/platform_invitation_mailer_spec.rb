@@ -52,7 +52,7 @@ module BetterTogether # :nodoc:
         end
 
         it 'includes greeting text' do
-          expect(mail.body.encoded).to match(/Welcome to our platform/)
+          expect(mail.body.encoded).to include('Welcome to our platform')
         end
       end
 
@@ -145,7 +145,7 @@ module BetterTogether # :nodoc:
         end
 
         it 'includes HTML content' do
-          expect(mail.content_type).to match(/html/)
+          expect(mail.content_type).to include('html')
         end
       end
 
@@ -178,7 +178,7 @@ module BetterTogether # :nodoc:
         end
 
         it 'assigns @invitation_url' do
-          expect(mail.body.encoded).to match(/invitation/)
+          expect(mail.body.encoded).to include('invitation')
         end
       end
     end
