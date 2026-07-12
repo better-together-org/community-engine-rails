@@ -87,6 +87,42 @@ module BetterTogether # :nodoc:
       end
     end
 
+    describe '.used_by' do
+      it 'returns distinct categories used by a relation, alphabetically sorted' do
+        page1 = create(:page)
+        page2 = create(:page)
+        uncategorized_page = create(:page)
+        category_b = create(:category, name: 'Bravo')
+        category_a = create(:category, name: 'Alpha')
+        create(:categorization, category: category_b, categorizable: page1)
+        create(:categorization, category: category_a, categorizable: page2)
+
+        result = described_class.used_by(BetterTogether::Page.where(id: [page1.id, page2.id, uncategorized_page.id]))
+
+        expect(result).to eq([category_a, category_b])
+      end
+
+      it 'does not duplicate a category used by multiple records in the relation' do
+        page1 = create(:page)
+        page2 = create(:page)
+        category = create(:category)
+        create(:categorization, category:, categorizable: page1)
+        create(:categorization, category:, categorizable: page2)
+
+        result = described_class.used_by(BetterTogether::Page.where(id: [page1.id, page2.id]))
+
+        expect(result).to eq([category])
+      end
+
+      it 'returns an empty array when the relation has no categorized records' do
+        page = create(:page)
+
+        result = described_class.used_by(BetterTogether::Page.where(id: page.id))
+
+        expect(result).to eq([])
+      end
+    end
+
     describe 'identifier behavior' do
       it 'generates unique identifiers' do
         cat1 = create(:category)

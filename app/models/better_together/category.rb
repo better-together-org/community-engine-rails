@@ -33,6 +33,25 @@ module BetterTogether
       ]
     end
 
+    # Distinct categories in use across a relation of categorizable records
+    # (e.g. a policy-scoped Posts or Events relation), alphabetically sorted
+    # by translated name. Centralizes the "in-use categories" sidebar query
+    # so every categorized-resource index shares one join + sort instead of
+    # each controller re-deriving it — a locale-fallback-safe or null-safe
+    # sort fix made here reaches all callers instead of only one copy.
+    #
+    # Sorted in Ruby (not a DB-level ORDER BY on the Mobility translation
+    # join) deliberately: category counts per index are small, and this
+    # avoids a locale-fallback join subtler than the one search_text already
+    # does in ContentSearchFilter.
+    def self.used_by(relation)
+      category_ids = ::BetterTogether::Categorization
+                     .where(categorizable_type: relation.klass.name, categorizable_id: relation.select(:id))
+                     .select(:category_id)
+
+      where(id: category_ids).with_translations.to_a.sort_by { |category| category.name.to_s.downcase }
+    end
+
     def as_category
       becomes(self.class.base_class)
     end

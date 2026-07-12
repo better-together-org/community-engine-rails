@@ -191,10 +191,7 @@ module BetterTogether
     end
 
     def resource_collection
-      # Set invitation token for policy scope
-      invitation_token = params[:invitation_token] || session[:event_invitation_token]
-      self.current_invitation_token = invitation_token
-
+      restore_invitation_token_context
       super.includes(:categories)
     end
 
@@ -231,29 +228,37 @@ module BetterTogether
                     category_ids: [], status: [])
     end
 
+    # index skips the :resource_collection before_action (see
+    # skip_before_action above) because that callback's includes(:categories)
+    # is sized for a single unfiltered show/edit-style collection, not the
+    # search-filtered, paginated one this action needs — but it still shares
+    # resource_collection's invitation-token side effect, restored here via
+    # the same method resource_collection calls, so the two never drift.
+    # Authorization itself doesn't need resource_collection at all:
+    # ResourceController's authorize_resource_class before_action (only:
+    # :index) runs independently, and verify_authorized excludes :index.
     def load_events
-      # Preserve invitation-token context for the policy scope, as
-      # resource_collection (skipped for :index) would otherwise do.
-      self.current_invitation_token = params[:invitation_token] || session[:event_invitation_token]
+      restore_invitation_token_context
 
       @events = EventsSearchFilter.call(
-        relation: policy_scope(resource_class),
+        relation: policy_scoped_resources,
         params: filter_params
       ).with_translations.includes(:categories, cover_image_attachment: :blob)
     end
 
     def load_categories
-      visible_event_ids = policy_scope(resource_class).select(:id)
-      event_category_ids = ::BetterTogether::Categorization
-                           .where(categorizable_type: resource_class.name,
-                                  categorizable_id: visible_event_ids)
-                           .select(:category_id)
+      @categories = ::BetterTogether::Category.used_by(policy_scoped_resources)
+    end
 
-      @categories = ::BetterTogether::Category
-                    .where(id: event_category_ids)
-                    .with_translations
-                    .to_a
-                    .sort_by { |category| category.name.to_s.downcase }
+    # Memoized so load_categories reuses load_events' policy_scope(resource_class)
+    # call instead of re-running EventPolicy::Scope's host/attendance/invitation
+    # OR-branch subqueries a second time on every index request.
+    def policy_scoped_resources
+      @policy_scoped_resources ||= policy_scope(resource_class)
+    end
+
+    def restore_invitation_token_context
+      self.current_invitation_token = params[:invitation_token] || session[:event_invitation_token]
     end
 
     # Template method implementations for InvitationTokenAuthorization

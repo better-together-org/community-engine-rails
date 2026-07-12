@@ -68,24 +68,21 @@ module BetterTogether
       search_params[:community_ids] = scoped_community_ids
 
       @posts = PostsSearchFilter.call(
-        relation: policy_scope(resource_class),
+        relation: policy_scoped_resources,
         params: search_params
       ).with_translations
                                 .includes(post_index_includes)
     end
 
     def load_categories
-      visible_post_ids = policy_scope(resource_class).select(:id)
-      post_category_ids = ::BetterTogether::Categorization
-                          .where(categorizable_type: 'BetterTogether::Post',
-                                 categorizable_id: visible_post_ids)
-                          .select(:category_id)
+      @categories = ::BetterTogether::Category.used_by(policy_scoped_resources)
+    end
 
-      @categories = ::BetterTogether::Category
-                    .where(id: post_category_ids)
-                    .with_translations
-                    .to_a
-                    .sort_by { |category| category.name.to_s.downcase }
+    # Memoized so load_categories reuses load_posts' policy_scope(resource_class)
+    # call instead of re-running the policy scope's query a second time on
+    # every index request.
+    def policy_scoped_resources
+      @policy_scoped_resources ||= policy_scope(resource_class)
     end
 
     def load_authors
