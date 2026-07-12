@@ -115,9 +115,9 @@ RSpec.describe BetterTogether::TemplateRendererService do
     it 'removes HTML tags' do
       result = service.render_for_current_locale
 
-      expect(result).not_to match(/<p>/)
-      expect(result).not_to match(/<div>/)
-      expect(result).not_to match(/<h1>/)
+      expect(result).not_to include('<p>')
+      expect(result).not_to include('<div>')
+      expect(result).not_to include('<h1>')
       expect(result).not_to match(/<a[^>]*>/)
     end
 

@@ -1,0 +1,50 @@
+{
+  "name": "events_form_status",
+  "device": "desktop",
+  "url": "/en/events/4f8c6435-3810-40d4-8e22-395e15020c9a/edit",
+  "title": "Edit Draft Winter Market Planning | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "events_index_filters",
+  "flow": "events_form_status",
+  "source_spec": "./spec/docs_screenshots/better_together/events_form_status_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event-status-field",
+      "title": "Event status",
+      "bullets": [
+        "New events start as Draft — visible only to the creator, co-hosts, and platform managers.",
+        "Selecting Confirmed publishes the event to the events list; Cancelled marks it as called off.",
+        "SlimSelect-enhanced, same pattern as the categories field."
+      ],
+      "target": {
+        "x": 885.0,
+        "y": 528.0,
+        "width": 495.0,
+        "height": 159.0,
+        "right": 1380.0,
+        "bottom": 687.0,
+        "center_x": 1132.5,
+        "center_y": 607.5
+      },
+      "avoid": {
+        "x": 885.0,
+        "y": 528.0,
+        "width": 495.0,
+        "height": 159.0,
+        "right": 1380.0,
+        "bottom": 687.0,
+        "center_x": 1132.5,
+        "center_y": 607.5
+      },
+      "placement": {
+        "side": "left",
+        "x": 485.0,
+        "y": 424.5,
+        "width": 380,
+        "height": 366,
+        "score": 885.0
+      }
+    }
+  ]
+}

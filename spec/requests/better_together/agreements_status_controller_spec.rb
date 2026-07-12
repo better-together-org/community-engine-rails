@@ -79,7 +79,7 @@ RSpec.describe BetterTogether::AgreementsStatusController do
           expect_element_with_text('.card-title', code_of_conduct.title)
           # Privacy Policy should not appear in any card title (already accepted)
           card_titles = parsed_response.css('.card-title').map(&:text)
-          expect(card_titles).not_to include(match(/Privacy Policy/))
+          expect(card_titles).not_to include(include('Privacy Policy'))
           # Verify we have only 2 agreement cards
           expect_element_count('.card.mb-3', 2)
         end

@@ -53,7 +53,7 @@ RSpec.describe BetterTogether::ImageHelper do
       it 'adds an inline size style only in a mailer view, where external CSS is stripped' do
         allow(self).to receive(:controller).and_return(ActionMailer::Base.new)
         result = profile_image_tag(person, size: 42)
-        expect(result).to match(/style="width: 42px; height: 42px;/)
+        expect(result).to include('style="width: 42px; height: 42px;')
       end
     end
 

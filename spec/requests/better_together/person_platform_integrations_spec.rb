@@ -333,7 +333,7 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
           delete better_together.person_platform_integration_path(last_integration, locale: I18n.default_locale),
                  headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
-          expect(response.content_type).to match(/turbo-stream/)
+          expect(response.content_type).to include('turbo-stream')
           expect(response.body).to include('turbo-stream')
           expect(response.body).to include('flash_messages')
         end

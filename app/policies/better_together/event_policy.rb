@@ -109,8 +109,13 @@ module BetterTogether
                                  ).where(permitted_query)
       end
 
-      protected
-
+      # Public (not protected) so EventResource (JSON:API) can build an
+      # EventPolicy::Scope instance and reuse this exact privacy/status/
+      # connection predicate, instead of hand-duplicating it. #resolve above
+      # isn't reusable as-is for that purpose: its .includes(categorizations:
+      # { category: ... }) is a polymorphic association ActiveRecord cannot
+      # eagerly load via includes(), which is why EventResource needs the
+      # predicate alone, applied to its own relation.
       # rubocop:todo Metrics/MethodLength
       def permitted_query # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         events_table = ::BetterTogether::Event.arel_table
@@ -120,38 +125,42 @@ module BetterTogether
 
         if platform_event_manager?
           query = query.or(events_table[:privacy].eq('private'))
-        elsif agent
-          query = query.or(
-            events_table[:creator_id].eq(agent.id)
-          )
-
-          if agent.valid_event_host_ids.any?
-            event_ids = event_hosts_table
-                        .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
-                        .project(:event_id)
-            query = query.or(
-              events_table[:id].in(event_ids)
-            )
-          end
-
-          if agent.event_attendances.any?
-            event_ids = agent.event_attendances.pluck(:event_id)
-            query = query.or(
-              events_table[:id].in(event_ids)
-            )
-          end
-
-          if agent.event_invitations.any?
-            event_ids = agent.event_invitations.pluck(:invitable_id)
-            query = query.or(
-              events_table[:id].in(event_ids)
-            )
-          end
-
-          query
         else
-          # Events must have a start time to be shown to people who aren't connected to the event
-          query = query.and(events_table[:starts_at].not_eq(nil))
+          # Draft events are only visible to people connected to them
+          # (creator, hosts, attendees, invitees) or platform event managers.
+          query = query.and(events_table[:status].not_eq('draft'))
+
+          if agent
+            query = query.or(
+              events_table[:creator_id].eq(agent.id)
+            )
+
+            if agent.valid_event_host_ids.any?
+              event_ids = event_hosts_table
+                          .where(event_hosts_table[:host_id].in(agent.valid_event_host_ids))
+                          .project(:event_id)
+              query = query.or(
+                events_table[:id].in(event_ids)
+              )
+            end
+
+            if agent.event_attendances.any?
+              event_ids = agent.event_attendances.pluck(:event_id)
+              query = query.or(
+                events_table[:id].in(event_ids)
+              )
+            end
+
+            if agent.event_invitations.any?
+              event_ids = agent.event_invitations.pluck(:invitable_id)
+              query = query.or(
+                events_table[:id].in(event_ids)
+              )
+            end
+          else
+            # Events must have a start time to be shown to people who aren't connected to the event
+            query = query.and(events_table[:starts_at].not_eq(nil))
+          end
         end
 
         # Add logic for invitation token access

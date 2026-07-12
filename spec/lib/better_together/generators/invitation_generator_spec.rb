@@ -130,8 +130,8 @@ RSpec.describe BetterTogether::Generators::InvitationGenerator, type: :generator
         expect(migration_files.length).to eq(1)
 
         migration_content = File.read(migration_files.first)
-        expect(migration_content).to match(/class CreateBetterTogetherProjectInvitations/)
-        expect(migration_content).to match(/create_bt_table :project_invitations/)
+        expect(migration_content).to include('class CreateBetterTogetherProjectInvitations')
+        expect(migration_content).to include('create_bt_table :project_invitations')
       end
     end
   end

@@ -101,12 +101,12 @@ module BetterTogether # :nodoc:
 
           it 'includes DTSTART' do
             result = generator.generate
-            expect(result).to match(/DTSTART/)
+            expect(result).to include('DTSTART')
           end
 
           it 'includes DTEND' do
             result = generator.generate
-            expect(result).to match(/DTEND/)
+            expect(result).to include('DTEND')
           end
 
           it 'includes UID' do

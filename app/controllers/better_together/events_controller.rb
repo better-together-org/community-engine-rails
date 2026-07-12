@@ -38,13 +38,11 @@ module BetterTogether
     before_action :process_recurrence_attributes, only: %i[create update]
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
 
-    def index
-      @events = @events.includes(:categories, cover_image_attachment: :blob)
+    skip_before_action :resource_collection, only: :index
 
-      @draft_events = paginated_events(@events.draft, params[:draft_page])
-      @upcoming_events = paginated_events(@events.upcoming, params[:upcoming_page])
-      @ongoing_events = @events.ongoing
-      @past_events = paginated_events(@events.past, params[:past_page])
+    def index
+      load_events
+      load_categories
     end
 
     def show
@@ -151,10 +149,6 @@ module BetterTogether
                 disposition: 'attachment'
     end
 
-    def paginated_events(scope, page)
-      scope.page(page).per(params[:per])
-    end
-
     def load_invitations
       @current_invitation = find_invitation_by_token
       @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: helpers.current_person)
@@ -197,10 +191,7 @@ module BetterTogether
     end
 
     def resource_collection
-      # Set invitation token for policy scope
-      invitation_token = params[:invitation_token] || session[:event_invitation_token]
-      self.current_invitation_token = invitation_token
-
+      restore_invitation_token_context
       super.includes(:categories)
     end
 
@@ -229,6 +220,46 @@ module BetterTogether
     end
 
     private
+
+    def filter_params
+      # :status is permitted both as a scalar (?status=draft) and as an
+      # array (?status[]=draft&status[]=confirmed) for union filtering.
+      params.permit(:q, :order_by, :per_page, :page, :past, :status,
+                    category_ids: [], status: [])
+    end
+
+    # index skips the :resource_collection before_action (see
+    # skip_before_action above) because that callback's includes(:categories)
+    # is sized for a single unfiltered show/edit-style collection, not the
+    # search-filtered, paginated one this action needs — but it still shares
+    # resource_collection's invitation-token side effect, restored here via
+    # the same method resource_collection calls, so the two never drift.
+    # Authorization itself doesn't need resource_collection at all:
+    # ResourceController's authorize_resource_class before_action (only:
+    # :index) runs independently, and verify_authorized excludes :index.
+    def load_events
+      restore_invitation_token_context
+
+      @events = EventsSearchFilter.call(
+        relation: policy_scoped_resources,
+        params: filter_params
+      ).with_translations.includes(:categories, cover_image_attachment: :blob)
+    end
+
+    def load_categories
+      @categories = ::BetterTogether::Category.used_by(policy_scoped_resources)
+    end
+
+    # Memoized so load_categories reuses load_events' policy_scope(resource_class)
+    # call instead of re-running EventPolicy::Scope's host/attendance/invitation
+    # OR-branch subqueries a second time on every index request.
+    def policy_scoped_resources
+      @policy_scoped_resources ||= policy_scope(resource_class)
+    end
+
+    def restore_invitation_token_context
+      self.current_invitation_token = params[:invitation_token] || session[:event_invitation_token]
+    end
 
     # Template method implementations for InvitationTokenAuthorization
     def invitation_resource_name
