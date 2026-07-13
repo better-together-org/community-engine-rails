@@ -25,7 +25,7 @@ module BetterTogether
         it 'generates a filename containing the date range' do
           described_class.perform_now(report.id)
           filename = report.reload.report_file.filename.to_s
-          expect(filename).to match(/billing_subscription_summary_/)
+          expect(filename).to include('billing_subscription_summary_')
         end
       end
     end
