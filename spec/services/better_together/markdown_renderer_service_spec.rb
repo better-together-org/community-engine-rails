@@ -288,13 +288,13 @@ RSpec.describe BetterTogether::MarkdownRendererService do
 
       it 'removes HTML tags completely' do
         plain = service.render_plain_text
-        expect(plain).not_to match(/<h1>/)
-        expect(plain).not_to match(/<strong>/)
-        expect(plain).not_to match(/<em>/)
-        expect(plain).not_to match(/<ul>/)
-        expect(plain).not_to match(/<li>/)
+        expect(plain).not_to include('<h1>')
+        expect(plain).not_to include('<strong>')
+        expect(plain).not_to include('<em>')
+        expect(plain).not_to include('<ul>')
+        expect(plain).not_to include('<li>')
         expect(plain).not_to match(/<a[^>]*>/)
-        expect(plain).not_to match(/<code>/)
+        expect(plain).not_to include('<code>')
       end
 
       it 'includes code content as plain text' do
@@ -323,12 +323,12 @@ RSpec.describe BetterTogether::MarkdownRendererService do
 
       it 'removes table HTML tags' do
         plain = service.render_plain_text
-        expect(plain).not_to match(/<table>/)
-        expect(plain).not_to match(/<thead>/)
-        expect(plain).not_to match(/<tbody>/)
-        expect(plain).not_to match(/<tr>/)
-        expect(plain).not_to match(/<th>/)
-        expect(plain).not_to match(/<td>/)
+        expect(plain).not_to include('<table>')
+        expect(plain).not_to include('<thead>')
+        expect(plain).not_to include('<tbody>')
+        expect(plain).not_to include('<tr>')
+        expect(plain).not_to include('<th>')
+        expect(plain).not_to include('<td>')
       end
     end
 
