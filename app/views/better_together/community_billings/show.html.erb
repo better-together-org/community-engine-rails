@@ -167,21 +167,23 @@
       <div id="<%= dom_id(@community, :merchant_account_card) %>" class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center gap-2">
           <strong><%= t('better_together.billing.merchant_account', default: 'Merchant account') %></strong>
-          <div class="d-flex gap-2">
-            <% if @merchant_account.present? %>
-              <%= button_to t('better_together.billing.refresh_merchant_account', default: 'Refresh merchant status'),
-                            refresh_merchant_account_community_billing_path(@community, locale: I18n.locale),
+          <% if policy(@community).manage_merchant_account? %>
+            <div class="d-flex gap-2">
+              <% if @merchant_account.present? %>
+                <%= button_to t('better_together.billing.refresh_merchant_account', default: 'Refresh merchant status'),
+                              refresh_merchant_account_community_billing_path(@community, locale: I18n.locale),
+                              method: :post,
+                              class: 'btn btn-outline-secondary btn-sm' %>
+              <% end %>
+              <%= button_to t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'),
+                            merchant_onboarding_community_billing_path(@community, locale: I18n.locale),
                             method: :post,
-                            class: 'btn btn-outline-secondary btn-sm' %>
-            <% end %>
-            <%= button_to t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'),
-                          merchant_onboarding_community_billing_path(@community, locale: I18n.locale),
-                          method: :post,
-                          class: 'btn btn-outline-primary btn-sm',
-                          data: { turbo: false,
-                                  turbo_confirm: t('better_together.billing.merchant_onboarding_confirm',
-                                                   default: 'This will create a Stripe-managed merchant account linked to this community. Stripe\'s data practices apply. Proceed?') } %>
-          </div>
+                            class: 'btn btn-outline-primary btn-sm',
+                            data: { turbo: false,
+                                    turbo_confirm: t('better_together.billing.merchant_onboarding_confirm',
+                                                     default: 'This will create a Stripe-managed merchant account linked to this community. Stripe\'s data practices apply. Proceed?') } %>
+            </div>
+          <% end %>
         </div>
         <div class="card-body">
           <% if @merchant_account.present? %>
@@ -234,12 +236,21 @@
                     default: 'No merchant account is connected yet.'
                   ) %>
             </p>
-            <p class="mb-0 text-muted">
-              <%= t(
-                    'better_together.billing.merchant_connect_explainer_community',
-                    default: 'Connect Stripe so this community can complete onboarding and receive payouts in later commerce flows.'
-                  ) %>
-            </p>
+            <% if policy(@community).manage_merchant_account? %>
+              <p class="mb-0 text-muted">
+                <%= t(
+                      'better_together.billing.merchant_connect_explainer_community',
+                      default: 'Connect Stripe so this community can complete onboarding and receive payouts in later commerce flows.'
+                    ) %>
+              </p>
+            <% else %>
+              <p class="mb-0 text-muted">
+                <%= t(
+                      'better_together.billing.merchant_onboarding_admin_only_community',
+                      default: 'Payout onboarding for future commerce flows is managed by a community settings administrator or platform steward, not by general community stewardship access.'
+                    ) %>
+              </p>
+            <% end %>
           <% end %>
         </div>
       </div>

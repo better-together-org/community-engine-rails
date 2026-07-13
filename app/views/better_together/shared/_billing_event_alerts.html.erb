@@ -61,75 +61,84 @@
         </div>
       <% end %>
 
-      <div class="alert alert-warning mb-3">
-        <%= t(
-              'better_together.billing.activity_alerts_explainer',
-              default: 'Recent Stripe webhook issues were recorded for this billing record. Review the latest events below and run reconciliation if local state looks stale.'
-            ) %>
-      </div>
+      <details id="billing-activity-alerts-technical-details" class="mt-2">
+        <summary class="text-muted">
+          <%= t(
+                'better_together.billing.activity_alerts_technical_summary',
+                default: 'Technical details (Stripe webhook activity log)'
+              ) %>
+        </summary>
 
-      <div class="table-responsive">
-        <table id="billing-activity-alerts-table" class="table align-middle mb-0">
-          <thead>
-            <tr>
-              <th><%= t('better_together.billing.event_type', default: 'Event') %></th>
-              <th><%= t('better_together.billing.status', default: 'Status') %></th>
-              <th><%= t('better_together.billing.last_attempt', default: 'Last attempt') %></th>
-              <th><%= t('better_together.billing.details', default: 'Details') %></th>
-              <th class="text-end"><%= t('globals.actions', default: 'Actions') %></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% billing_alert_events.each do |billing_event| %>
-              <tr id="<%= dom_id(billing_event) %>">
-                <td>
-                  <strong><%= billing_event.event_type %></strong>
-                  <div class="text-muted small"><%= billing_event.event_id %></div>
-                </td>
-                <td>
-                  <span class="badge <%= billing_event.status_badge_class %> billing-event-status-badge">
-                    <%= billing_event.processing_status %>
-                  </span>
-                  <% if billing_event.retrying? %>
-                    <div class="text-muted small">
-                      <%= t(
-                            'better_together.billing.retry_count',
-                            default: '%<count>d attempts',
-                            count: billing_event.attempt_count
-                          ) %>
-                    </div>
-                  <% end %>
-                </td>
-                <td><%= l(billing_event.last_attempted_at, format: :long) if billing_event.last_attempted_at %></td>
-                <td>
-                  <% if billing_event.dead_lettered? %>
-                    <%= billing_event.dead_letter_reason.presence || t('better_together.billing.dead_letter_reason_unknown', default: 'This billing event was promoted into the dead-letter queue after retry/reconciliation thresholds were exceeded.') %>
-                  <% elsif billing_event.failed? %>
-                    <%= billing_event.error_message.presence || t('better_together.billing.failed_without_message', default: 'The processor reported a failure without an error message.') %>
-                  <% else %>
-                    <%= t(
-                          'better_together.billing.ignored_event_explainer',
-                          default: 'The event was recorded but did not map to a local billing update.'
-                    ) %>
-                  <% end %>
-                </td>
-                <td class="text-end">
-                  <% if billing_event.dead_lettered? && billing_event.replayable_payload? && local_assigns[:replay_billing_event_path].present? %>
-                    <%= button_to t('better_together.billing.replay_event', default: 'Replay event'),
-                                  replay_billing_event_path.call(billing_event),
-                                  method: :post,
-                                  class: 'btn btn-outline-danger btn-sm' %>
-                  <% elsif billing_event.dead_lettered? %>
-                    <span class="text-muted small">
-                      <%= t('better_together.billing.replay_unavailable', default: 'Replay unavailable') %>
-                    </span>
-                  <% end %>
-                </td>
+        <div class="alert alert-warning mt-3 mb-3">
+          <%= t(
+                'better_together.billing.activity_alerts_explainer',
+                default: 'Recent Stripe webhook issues were recorded for this billing record. Review the latest events below and run reconciliation if local state looks stale.'
+              ) %>
+        </div>
+
+        <div class="table-responsive">
+          <table id="billing-activity-alerts-table" class="table align-middle mb-0">
+            <thead>
+              <tr>
+                <th><%= t('better_together.billing.event_type', default: 'Event') %></th>
+                <th><%= t('better_together.billing.status', default: 'Status') %></th>
+                <th><%= t('better_together.billing.last_attempt', default: 'Last attempt') %></th>
+                <th><%= t('better_together.billing.details', default: 'Details') %></th>
+                <th class="text-end"><%= t('globals.actions', default: 'Actions') %></th>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              <% billing_alert_events.each do |billing_event| %>
+                <tr id="<%= dom_id(billing_event) %>">
+                  <td>
+                    <strong><%= billing_event.event_type %></strong>
+                    <div class="text-muted small"><%= billing_event.event_id %></div>
+                  </td>
+                  <td>
+                    <span class="badge <%= billing_event.status_badge_class %> billing-event-status-badge">
+                      <%= billing_event.processing_status %>
+                    </span>
+                    <% if billing_event.retrying? %>
+                      <div class="text-muted small">
+                        <%= t(
+                              'better_together.billing.retry_count',
+                              default: '%<count>d attempts',
+                              count: billing_event.attempt_count
+                            ) %>
+                      </div>
+                    <% end %>
+                  </td>
+                  <td><%= l(billing_event.last_attempted_at, format: :long) if billing_event.last_attempted_at %></td>
+                  <td>
+                    <% if billing_event.dead_lettered? %>
+                      <%= billing_event.dead_letter_reason.presence || t('better_together.billing.dead_letter_reason_unknown', default: 'This billing event was promoted into the dead-letter queue after retry/reconciliation thresholds were exceeded.') %>
+                    <% elsif billing_event.failed? %>
+                      <%= billing_event.error_message.presence || t('better_together.billing.failed_without_message', default: 'The processor reported a failure without an error message.') %>
+                    <% else %>
+                      <%= t(
+                            'better_together.billing.ignored_event_explainer',
+                            default: 'The event was recorded but did not map to a local billing update.'
+                      ) %>
+                    <% end %>
+                  </td>
+                  <td class="text-end">
+                    <% if billing_event.dead_lettered? && billing_event.replayable_payload? && local_assigns[:replay_billing_event_path].present? %>
+                      <%= button_to t('better_together.billing.replay_event', default: 'Replay event'),
+                                    replay_billing_event_path.call(billing_event),
+                                    method: :post,
+                                    class: 'btn btn-outline-danger btn-sm' %>
+                    <% elsif billing_event.dead_lettered? %>
+                      <span class="text-muted small">
+                        <%= t('better_together.billing.replay_unavailable', default: 'Replay unavailable') %>
+                      </span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </details>
     <% elsif last_billing_event.present? %>
       <p class="mb-1">
         <%= t('better_together.billing.last_webhook_event', default: 'Last webhook event:') %>

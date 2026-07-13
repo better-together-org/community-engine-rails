@@ -117,19 +117,21 @@
       <div id="<%= dom_id(@person, :merchant_account_card) %>" class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center gap-2">
           <strong><%= t('better_together.billing.merchant_account', default: 'Merchant account') %></strong>
-          <div class="d-flex gap-2">
-            <% if @merchant_account.present? %>
-              <%= button_to t('better_together.billing.refresh_merchant_account', default: 'Refresh merchant status'),
-                            refresh_merchant_account_person_billing_path(@person, locale: I18n.locale),
+          <% if policy(@person).manage_merchant_account? %>
+            <div class="d-flex gap-2">
+              <% if @merchant_account.present? %>
+                <%= button_to t('better_together.billing.refresh_merchant_account', default: 'Refresh merchant status'),
+                              refresh_merchant_account_person_billing_path(@person, locale: I18n.locale),
+                              method: :post,
+                              class: 'btn btn-outline-secondary btn-sm' %>
+              <% end %>
+              <%= button_to t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'),
+                            merchant_onboarding_person_billing_path(@person, locale: I18n.locale),
                             method: :post,
-                            class: 'btn btn-outline-secondary btn-sm' %>
-            <% end %>
-            <%= button_to t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'),
-                          merchant_onboarding_person_billing_path(@person, locale: I18n.locale),
-                          method: :post,
-                          class: 'btn btn-outline-primary btn-sm',
-                          data: { turbo: false } %>
-          </div>
+                            class: 'btn btn-outline-primary btn-sm',
+                            data: { turbo: false } %>
+            </div>
+          <% end %>
         </div>
         <div class="card-body">
           <% if @merchant_account.present? %>
@@ -182,12 +184,21 @@
                     default: 'No merchant account is connected yet.'
                   ) %>
             </p>
-            <p class="mb-0 text-muted">
-              <%= t(
-                    'better_together.billing.merchant_connect_explainer_person',
-                    default: 'Connect Stripe if you want this person to receive payouts for future commerce flows.'
-                  ) %>
-            </p>
+            <% if policy(@person).manage_merchant_account? %>
+              <p class="mb-0 text-muted">
+                <%= t(
+                      'better_together.billing.merchant_connect_explainer_person',
+                      default: 'Connect Stripe if you want this person to receive payouts for future commerce flows.'
+                    ) %>
+              </p>
+            <% else %>
+              <p class="mb-0 text-muted">
+                <%= t(
+                      'better_together.billing.merchant_onboarding_admin_only_person',
+                      default: 'Payout onboarding for future commerce flows is not open to individual members yet. Contact a platform administrator if this changes.'
+                    ) %>
+              </p>
+            <% end %>
           <% end %>
         </div>
       </div>

@@ -28,8 +28,10 @@ module BetterTogether
       update?
     end
 
+    # Payout onboarding is a higher-trust action than managing one's own profile —
+    # mirrors CommunityPolicy#manage_merchant_account?'s platform-level fallback tier.
     def manage_merchant_account?
-      update?
+      user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform'))
     end
 
     def destroy?

@@ -9,6 +9,11 @@ RSpec.describe 'BetterTogether::PersonBillings' do
   let(:user) do
     find_or_create_test_user("person-billing-user-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#', :user)
   end
+  let(:platform_manager) do
+    find_or_create_test_user(
+      "person-billing-platform-manager-#{SecureRandom.hex(4)}@example.test", 'SecureTest123!@#', :platform_manager
+    )
+  end
   let(:person) { user.person }
   let!(:billing_plan) do
     create(
@@ -73,7 +78,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response.body).to include('Manage billing')
     end
 
-    it 'shows merchant account status when one exists' do
+    it 'shows merchant account status when one exists, without payout-onboarding actions for an ordinary member' do
       create(
         'better_together/billing/merchant_account',
         :person_owned,
@@ -87,7 +92,45 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Merchant account')
       expect(response.body).to include('stripe_connect')
+      expect(response.body).not_to include('Refresh merchant status')
+      expect(response.body).not_to include(
+        I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding')
+      )
+    end
+
+    it 'shows payout-onboarding actions to a platform-level administrator' do
+      create(
+        'better_together/billing/merchant_account',
+        :person_owned,
+        :active,
+        owner: person,
+        provider: 'stripe_connect'
+      )
+      sign_in platform_manager
+
+      get better_together.person_billing_path(person, locale:)
+
+      expect(response).to have_http_status(:ok)
       expect(response.body).to include('Refresh merchant status')
+      expect(response.body).to include(
+        I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding')
+      )
+    end
+
+    it 'explains that payout onboarding is not open to ordinary members yet, when no merchant account exists' do
+      get better_together.person_billing_path(person, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include(
+        I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding')
+      )
+      expect(response.body).to include(
+        I18n.t(
+          'better_together.billing.merchant_onboarding_admin_only_person',
+          default: 'Payout onboarding for future commerce flows is not open to individual members yet. ' \
+                   'Contact a platform administrator if this changes.'
+        )
+      )
     end
 
     it 'surfaces merchant disconnect support state on the billing page' do
@@ -106,7 +149,6 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response.body).to include(
         I18n.t('better_together.billing.merchant_disconnected_heading', default: 'Merchant account disconnected.')
       )
-      expect(response.body).to include(I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'))
     end
 
     it 'surfaces recent failed billing events for operator visibility' do
@@ -307,7 +349,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
   end
 
   describe 'POST /:locale/p/:person_id/billing/merchant_onboarding' do
-    it 'redirects to the Stripe merchant onboarding link' do
+    it 'redirects to the Stripe merchant onboarding link for a platform-level administrator' do
       friendly_scope = instance_double(ActiveRecord::Relation, find: person)
       service = instance_double(BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateOnboardingLink)
       result = instance_double(
@@ -318,6 +360,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       allow(BetterTogether::Person).to receive(:friendly).and_return(friendly_scope)
       allow(BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateOnboardingLink).to receive(:new).and_return(service)
       allow(service).to receive(:call).and_return(result)
+      sign_in platform_manager
 
       post better_together.merchant_onboarding_person_billing_path(person, locale:)
 
@@ -328,10 +371,19 @@ RSpec.describe 'BetterTogether::PersonBillings' do
         return_url: better_together.person_billing_url(person, locale:)
       )
     end
+
+    it 'denies an ordinary member managing their own payout onboarding' do
+      expect(BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateOnboardingLink).not_to receive(:new)
+
+      post better_together.merchant_onboarding_person_billing_path(person, locale:)
+
+      expect(response).to have_http_status(:found)
+      expect(flash[:error]).to be_present
+    end
   end
 
   describe 'POST /:locale/p/:person_id/billing/refresh_merchant_account' do
-    it 'refreshes the connected merchant account and redirects back to billing' do
+    it 'refreshes the connected merchant account and redirects back to billing for a platform-level administrator' do
       friendly_scope = instance_double(ActiveRecord::Relation, find: person)
       merchant_account = create(
         'better_together/billing/merchant_account',
@@ -343,11 +395,27 @@ RSpec.describe 'BetterTogether::PersonBillings' do
 
       allow(BetterTogether::Person).to receive(:friendly).and_return(friendly_scope)
       allow(BetterTogether::Billing::MerchantAccounts::StripeConnect::RefreshAccount).to receive(:new).and_return(service)
+      sign_in platform_manager
 
       post better_together.refresh_merchant_account_person_billing_path(person, locale:)
 
       expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
       expect(service).to have_received(:call).with(merchant_account:, owner: person)
+    end
+
+    it 'denies an ordinary member refreshing their own merchant account' do
+      create(
+        'better_together/billing/merchant_account',
+        :person_owned,
+        owner: person,
+        provider: 'stripe_connect'
+      )
+      expect(BetterTogether::Billing::MerchantAccounts::StripeConnect::RefreshAccount).not_to receive(:new)
+
+      post better_together.refresh_merchant_account_person_billing_path(person, locale:)
+
+      expect(response).to have_http_status(:found)
+      expect(flash[:error]).to be_present
     end
   end
 end

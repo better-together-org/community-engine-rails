@@ -892,6 +892,8 @@ es:
       activity_alerts_explainer: Se registraron problemas recientes de webhooks de
         Stripe para este registro de facturacion. Revisa abajo los eventos mas recientes
         y ejecuta una conciliacion si el estado local parece desactualizado.
+      activity_alerts_technical_summary: Detalles tecnicos (registro de actividad
+        de webhook de Stripe)
       available_plans: Planes disponibles
       billed_to: 'Facturado a:'
       breadcrumb_label: Facturacion
@@ -962,6 +964,12 @@ es:
         a completar la incorporacion antes de depender de pagos o futuros flujos comerciales.
       merchant_disconnected_heading: Cuenta comercial desconectada
       merchant_not_connected: Todavia no hay una cuenta comercial conectada.
+      merchant_onboarding_admin_only_community: La incorporacion de pagos para futuros
+        flujos comerciales la gestiona un administrador de configuracion de la comunidad
+        o un responsable de la plataforma, no el acceso general de gestion comunitaria.
+      merchant_onboarding_admin_only_person: La incorporacion de pagos para futuros
+        flujos comerciales aun no esta disponible para miembros individuales. Contacta
+        a un administrador de la plataforma si esto cambia.
       merchant_onboarding_confirm: Esto creara una cuenta comercial gestionada por
         Stripe vinculada a esta comunidad. Se aplican las practicas de datos de Stripe.
         Continuar?

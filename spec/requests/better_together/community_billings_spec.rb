@@ -157,6 +157,76 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response.body).to include(I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'))
     end
 
+    it 'hides payout-onboarding actions from a community steward without settings-tier access' do
+      facilitator = find_or_create_test_user("community-billing-facilitator-#{SecureRandom.hex(4)}@example.test",
+                                             'SecureTest123!@#', :user)
+      facilitator_role = BetterTogether::Role.find_by(identifier: 'community_facilitator')
+      # This worktree's test database can carry a stale community_facilitator permission set
+      # from an earlier seed run; assign explicitly so this reflects the role defined in source.
+      facilitator_role.assign_resource_permissions(
+        %w[read_community list_community create_community update_community delete_community
+           invite_community_members],
+        sync: true
+      )
+      BetterTogether::PersonCommunityMembership.create!(
+        joinable: community,
+        member: facilitator.person,
+        role: facilitator_role,
+        status: 'active'
+      )
+      sign_in facilitator
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Merchant account')
+      expect(response.body).not_to include('Refresh merchant status')
+      expect(response.body).not_to include(
+        I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding')
+      )
+      expect(response.body).to include(
+        I18n.t(
+          'better_together.billing.merchant_onboarding_admin_only_community',
+          default: 'Payout onboarding for future commerce flows is managed by a community settings ' \
+                   'administrator or platform steward, not by general community stewardship access.'
+        )
+      )
+    end
+
+    it 'still shows read-only merchant status to a community steward without settings-tier access, when an account exists' do
+      create(
+        'better_together/billing/merchant_account',
+        :active,
+        owner: community,
+        provider: 'stripe_connect'
+      )
+      facilitator = find_or_create_test_user("community-billing-facilitator-status-#{SecureRandom.hex(4)}@example.test",
+                                             'SecureTest123!@#', :user)
+      facilitator_role = BetterTogether::Role.find_by(identifier: 'community_facilitator')
+      facilitator_role.assign_resource_permissions(
+        %w[read_community list_community create_community update_community delete_community
+           invite_community_members],
+        sync: true
+      )
+      BetterTogether::PersonCommunityMembership.create!(
+        joinable: community,
+        member: facilitator.person,
+        role: facilitator_role,
+        status: 'active'
+      )
+      sign_in facilitator
+
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Merchant account')
+      expect(response.body).to include('stripe_connect')
+      expect(response.body).not_to include('Refresh merchant status')
+      expect(response.body).not_to include(
+        I18n.t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding')
+      )
+    end
+
     it 'surfaces recent ignored billing events for operator visibility' do
       create(
         :better_together_billing_event,

@@ -895,6 +895,8 @@ fr:
       activity_alerts_explainer: Des problemes recents de webhook Stripe ont ete enregistres
         pour cet enregistrement de facturation. Consultez les derniers evenements
         ci-dessous et lancez une reconciliation si l'etat local semble stale.
+      activity_alerts_technical_summary: Details techniques (journal d'activite de
+        webhook de Stripe)
       available_plans: Plans disponibles
       billed_to: 'Facture a :'
       breadcrumb_label: Facturation
@@ -968,6 +970,13 @@ fr:
         l''integration avant de compter sur les versements ou sur de futurs flux commerciaux.
       merchant_disconnected_heading: Compte marchand deconnecte
       merchant_not_connected: Aucun compte marchand n''est encore connecte.
+      merchant_onboarding_admin_only_community: L'integration des paiements pour de
+        futurs flux commerciaux est geree par un administrateur des parametres de
+        la communaute ou un responsable de la plateforme, pas par l'acces general
+        a la gestion communautaire.
+      merchant_onboarding_admin_only_person: L'integration des paiements pour de futurs
+        flux commerciaux n'est pas encore ouverte aux membres individuels. Contactez
+        un administrateur de la plateforme si cela change.
       merchant_onboarding_confirm: Cela creera un compte marchand gere par Stripe
         lie a cette communaute. Les pratiques de donnees de Stripe s''appliquent.
         Continuer?

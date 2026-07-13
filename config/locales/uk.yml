@@ -877,6 +877,8 @@ uk:
       activity_alerts_explainer: Dlia tsoho billing zapysu zafiksovano neshchodavni
         problemy webhookiv Stripe. Perehlian ostanni podii nyzhche ta zapusti reconciliatsiiu,
         yakshcho lokalnyi stan vyhliadaie zastarilym.
+      activity_alerts_technical_summary: Технічні деталі (журнал активності вебхуків
+        Stripe)
       available_plans: Dostupni taryfy
       billed_to: 'Vystavleno dlia:'
       breadcrumb_label: Billing
@@ -948,6 +950,12 @@ uk:
         onboarding persh nizh pokladatysia na vyplaty chy maibutni komertsiini potoky.
       merchant_disconnected_heading: Merchant account vidkliucheno
       merchant_not_connected: Merchant account shche ne pidkliucheno.
+      merchant_onboarding_admin_only_community: Введення виплат для майбутніх потоків
+        торгівлі керується адміністратором налаштувань спільноти або керівником платформи,
+        а не загальним доступом до керування спільнотою.
+      merchant_onboarding_admin_only_person: Введення виплат для майбутніх потоків
+        торгівлі ще не доступне для індивідуальних учасників. Зв'яжіться з адміністратором
+        платформи, якщо це зміниться.
       merchant_onboarding_confirm: Tse stvoryt merchant account, kerovanyi Stripe,
         pov'yazany z tsiyeyu spilnotoyu. Zastosouyutsya praktyky danykh Stripe. Prodovzhyty?
       merchant_onboarding_unavailable: 'Merchant onboarding shche nedostupnyi: %<message>s'

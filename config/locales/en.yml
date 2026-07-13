@@ -898,6 +898,8 @@ en:
       activity_alerts_explainer: Recent Stripe webhook issues were recorded for this
         billing record. Review the latest events below and run reconciliation if local
         state looks stale.
+      activity_alerts_technical_summary: Technical details (Stripe webhook activity
+        log)
       available_plans: Available plans
       billed_to: 'Billed to:'
       breadcrumb_label: Billing
@@ -969,6 +971,12 @@ en:
         onboarding before relying on payouts or later commerce flows.
       merchant_disconnected_heading: Merchant account disconnected
       merchant_not_connected: No merchant account is connected yet.
+      merchant_onboarding_admin_only_community: Payout onboarding for future commerce
+        flows is managed by a community settings administrator or platform steward,
+        not by general community stewardship access.
+      merchant_onboarding_admin_only_person: Payout onboarding for future commerce
+        flows is not open to individual members yet. Contact a platform administrator
+        if this changes.
       merchant_onboarding_confirm: This will create a Stripe-managed merchant account
         linked to this community. Stripe's data practices apply. Proceed?
       merchant_onboarding_unavailable: 'Merchant onboarding is not available yet:
