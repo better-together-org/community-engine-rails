@@ -108,8 +108,8 @@ RSpec.describe BetterTogether::Privacy do # rubocop:todo RSpec/SpecFilePathForma
     it 'has translations for all supported locales' do
       I18n.available_locales.each do |locale|
         I18n.with_locale(locale) do
-          expect(I18n.t('attributes.privacy_list.public')).not_to match(/translation missing/)
-          expect(I18n.t('attributes.privacy_list.community')).not_to match(/translation missing/)
+          expect(I18n.t('attributes.privacy_list.public')).not_to include('translation missing')
+          expect(I18n.t('attributes.privacy_list.community')).not_to include('translation missing')
         end
       end
     end

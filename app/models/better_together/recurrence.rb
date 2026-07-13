@@ -72,7 +72,7 @@ module BetterTogether
     # @param date [Date] Date to exclude
     def add_exception_date(date)
       self.exception_dates ||= []
-      self.exception_dates << date unless exception_dates.include?(date)
+      exception_dates << date unless exception_dates.include?(date)
     end
 
     # Remove an exception date

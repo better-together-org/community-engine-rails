@@ -44,7 +44,7 @@ module BetterTogether # :nodoc:
         end
 
         it 'returns translated content as JSON' do
-          expect(response.content_type).to match(%r{application/json})
+          expect(response.content_type).to include('application/json')
           json_response = JSON.parse(response.body)
           expect(json_response['translation']).to eq(translated_content)
         end
