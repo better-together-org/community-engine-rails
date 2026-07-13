@@ -27,6 +27,7 @@ PATH
       activerecord-import
       activerecord-postgis-adapter
       bootstrap (~> 5.3.2)
+      css_parser (>= 3.0.0)
       dartsass-sprockets (~> 3.1)
       devise
       devise-i18n
