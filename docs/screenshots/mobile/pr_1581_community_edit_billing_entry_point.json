@@ -1,0 +1,82 @@
+{
+  "name": "pr_1581_community_edit_billing_entry_point",
+  "device": "mobile",
+  "url": "/en/c/harbour-voices-818b02f7/edit",
+  "title": "Edit Harbour Voices | Communities | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#community-manage-billing-btn",
+      "title": "Manage billing",
+      "bullets": [
+        "Jumps from community settings directly to the community billing page.",
+        "Only shown once the community record is persisted."
+      ],
+      "target": {
+        "x": 171.0625,
+        "y": 165.390625,
+        "width": 142.875,
+        "height": 38.0,
+        "right": 313.9375,
+        "bottom": 203.390625,
+        "center_x": 242.5,
+        "center_y": 184.390625
+      },
+      "avoid": {
+        "x": 171.0625,
+        "y": 165.390625,
+        "width": 142.875,
+        "height": 38.0,
+        "right": 313.9375,
+        "bottom": 203.390625,
+        "center_x": 242.5,
+        "center_y": 184.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 223.39,
+        "width": 270.0,
+        "height": 288,
+        "score": 1057.609375
+      }
+    },
+    {
+      "selector": "#hosted-entitlement-card",
+      "title": "Hosted plan status",
+      "bullets": [
+        "Repeats the hosted entitlement summary on the edit screen so stewards see billing context while editing settings."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 227.390625,
+        "width": 461.0,
+        "height": 253.0,
+        "right": 473.0,
+        "bottom": 480.390625,
+        "center_x": 242.5,
+        "center_y": 353.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 227.390625,
+        "width": 461.0,
+        "height": 253.0,
+        "right": 473.0,
+        "bottom": 480.390625,
+        "center_x": 242.5,
+        "center_y": 353.890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 548,
+        "width": 270.0,
+        "height": 262,
+        "score": 0
+      }
+    }
+  ]
+}

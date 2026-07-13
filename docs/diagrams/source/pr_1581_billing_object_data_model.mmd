@@ -10,6 +10,7 @@ flowchart LR
   Subscription["Billing Subscription<br/>Local record linking a plan, payer, and beneficiary"]:::record
   Merchant["Merchant Account<br/>Optional payout onboarding for future commerce"]:::record
   Event["Billing Event<br/>Recorded Stripe webhook activity and replay state"]:::record
+  Report["Subscription Summary Report<br/>Point-in-time CSV export of subscription/MRR/event health"]:::record
   Hosted["Hosted Entitlement<br/>Calculated answer: is hosted access active?"]:::outcome
   Stripe["Stripe<br/>External billing and payout provider"]:::external
 
@@ -23,6 +24,9 @@ flowchart LR
   Person -->|may connect| Merchant
   Merchant -->|syncs with| Stripe
   Event -->|helps repair| Subscription
+  Person -->|requests, as creator| Report
+  Subscription -->|aggregated into| Report
+  Event -->|aggregated into| Report
 
   subgraph PlainLanguage["How to read this model"]
     DirectionNote["A payer is who gets charged.<br/>A beneficiary is who receives the hosted service.<br/>They can be the same record or different records."]:::outcome

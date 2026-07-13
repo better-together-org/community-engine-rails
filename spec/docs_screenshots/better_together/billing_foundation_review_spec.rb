@@ -249,6 +249,108 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
     end
   end
 
+  it 'captures the community edit billing entry point' do
+    capture_docs_screenshot(
+      'pr_1581_community_edit_billing_entry_point',
+      callouts: [
+        { selector: '#community-manage-billing-btn', title: 'Manage billing',
+          bullets: ['Jumps from community settings directly to the community billing page.', 'Only shown once the community record is persisted.'] },
+        { selector: '#hosted-entitlement-card', title: 'Hosted plan status',
+          bullets: ['Repeats the hosted entitlement summary on the edit screen so stewards see billing context while editing settings.'] }
+      ],
+      narrative: {
+        title: 'Community settings — billing entry point',
+        audience: %w[board_member community_steward operator],
+        journey_step: 'A steward editing community settings needs a direct path to billing without hunting through navigation.',
+        callouts: [
+          { title: 'Manage billing',
+            description: 'This link is the primary cross-link from community administration into the new billing subsystem introduced by this PR.' },
+          { title: 'Hosted plan status',
+            description: 'Surfacing entitlement status inline on the edit form means a steward changing settings can see, without navigating away, whether hosted access is currently active.' }
+        ],
+        accessibility_notes: 'The billing link and entitlement card both use stable IDs; the link is a standard focusable anchor styled as a button.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.edit_community_path(community, locale: I18n.default_locale)
+      expect(page).to have_css('#community-manage-billing-btn')
+      expect(page).to have_css('#hosted-entitlement-card')
+    end
+  end
+
+  it 'captures the community show billing entry point' do
+    capture_docs_screenshot(
+      'pr_1581_community_show_billing_entry_point',
+      callouts: [
+        { selector: '#community-show-manage-billing-btn', title: 'Manage billing',
+          bullets: ['Gives stewards with update permission a direct path to billing from the public community page toolbar.'] }
+      ],
+      narrative: {
+        title: 'Community profile — billing entry point',
+        audience: %w[community_steward operator],
+        journey_step: 'A steward viewing the community profile page needs the same one-click path into billing that exists on the edit screen.',
+        callouts: [
+          { title: 'Manage billing',
+            description: 'This button only renders when the viewer is authorized to update the community, so billing management is not exposed to ordinary members browsing the profile.' }
+        ],
+        accessibility_notes: 'The button is conditionally rendered based on policy authorization and uses a stable ID for deterministic review coverage.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.community_path(community, locale: I18n.default_locale)
+      expect(page).to have_css('#community-show-manage-billing-btn')
+    end
+  end
+
+  it 'captures the person edit billing entry point' do
+    capture_docs_screenshot(
+      'pr_1581_person_edit_billing_entry_point',
+      callouts: [
+        { selector: '#person-manage-billing-btn', title: 'Manage billing',
+          bullets: ['Jumps from personal profile settings directly to the person billing page.', 'Only shown once the person record is persisted.'] }
+      ],
+      narrative: {
+        title: 'Profile settings — billing entry point',
+        audience: %w[sponsor operator],
+        journey_step: 'A person editing their own profile needs a direct path to personal billing, including any communities they sponsor.',
+        callouts: [
+          { title: 'Manage billing',
+            description: 'This is the person-facing equivalent of the community edit billing link, keeping the same cross-link pattern for both billable owner types.' }
+        ],
+        accessibility_notes: 'The link uses a stable ID and standard focusable anchor markup consistent with the community edit entry point.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.edit_person_path(id: platform_manager.person.slug, locale: I18n.default_locale)
+      expect(page).to have_css('#person-manage-billing-btn')
+    end
+  end
+
+  it 'captures the new billing plan form' do
+    capture_docs_screenshot(
+      'pr_1581_billing_plan_new_form',
+      callouts: [
+        { selector: '#billing-plan-form', title: 'New plan form',
+          bullets: ['Same field set as the plan editor: pricing, Stripe linkage, and subscriber-facing metadata.', 'Identifier and Stripe Price ID are only editable before the plan is first saved.'] }
+      ],
+      narrative: {
+        title: 'New billing plan',
+        audience: %w[operator board_member],
+        journey_step: 'A host steward creates a new recurring plan before it can appear in the plan catalog or be selected during checkout.',
+        callouts: [
+          { title: 'New plan form',
+            description: 'This is the creation path for the same form used by the plan editor. Reviewers should confirm identifier and Stripe Price ID stay immutable once a plan is persisted.' }
+        ],
+        accessibility_notes: 'The form reuses the shared billing plan partial, so the same stable IDs and label associations apply here as on the editor.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.new_billing_plan_path(locale: I18n.default_locale)
+      expect(page).to have_css('#billing-plan-form')
+      expect(page).to have_text('New Billing Plan')
+    end
+  end
+
   private
 
   def capture_docs_screenshot(slug, callouts:, narrative:, &)

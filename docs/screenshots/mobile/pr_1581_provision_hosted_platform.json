@@ -1,7 +1,7 @@
 {
   "name": "pr_1581_provision_hosted_platform",
   "device": "mobile",
-  "url": "/en/c/harbour-voices-d05a2d21/billing/provision_platform",
+  "url": "/en/c/harbour-voices-9feece8c/billing/provision_platform",
   "title": "Provision Hosted Platform | Harbour Voices | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
@@ -79,7 +79,7 @@
       }
     },
     {
-      "selector": "#provision_platform_next_steps_community_6983a381-a4d8-4a13-97d0-4070fa019555",
+      "selector": "#provision_platform_next_steps_community_ab6421d7-95fe-4b95-b702-3fcffb5624ef",
       "title": "What happens next",
       "bullets": [
         "Explains the plain-language outcome of provisioning.",

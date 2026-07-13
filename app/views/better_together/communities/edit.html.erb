@@ -9,6 +9,7 @@
     <% if @community.persisted? %>
       <%= link_to t('better_together.billing.manage_link', default: 'Manage billing'),
                   community_billing_path(@community, locale: I18n.locale),
+                  id: 'community-manage-billing-btn',
                   class: 'btn btn-outline-primary' %>
     <% end %>
   </div>

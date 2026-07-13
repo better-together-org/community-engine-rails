@@ -1,14 +1,14 @@
 {
   "name": "pr_1581_billing_plan_detail",
   "device": "desktop",
-  "url": "/en/host/billing/plans/8b884d9e-c7c3-4719-b56a-326bd85769d7",
+  "url": "/en/host/billing/plans/b87fbce5-9808-4e20-af92-04bcf6955681",
   "title": "Community Stewardship | Billing Plans | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
   "callouts": [
     {
-      "selector": "#summary_card_billing_plan_8b884d9e-c7c3-4719-b56a-326bd85769d7",
+      "selector": "#summary_card_billing_plan_b87fbce5-9808-4e20-af92-04bcf6955681",
       "title": "Plan summary",
       "bullets": [
         "Shows the immutable Stripe-linked pricing identifiers.",
@@ -44,7 +44,7 @@
       }
     },
     {
-      "selector": "#metadata_card_billing_plan_8b884d9e-c7c3-4719-b56a-326bd85769d7",
+      "selector": "#metadata_card_billing_plan_b87fbce5-9808-4e20-af92-04bcf6955681",
       "title": "Plan metadata",
       "bullets": [
         "Explains the plain-language copy shown to subscribers.",
@@ -80,7 +80,7 @@
       }
     },
     {
-      "selector": "#recent_subscribers_card_billing_plan_8b884d9e-c7c3-4719-b56a-326bd85769d7",
+      "selector": "#recent_subscribers_card_billing_plan_b87fbce5-9808-4e20-af92-04bcf6955681",
       "title": "Recent subscribers",
       "bullets": [
         "Shows who is currently using the plan.",

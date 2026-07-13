@@ -90,5 +90,37 @@ RSpec.describe 'Billing foundation DOM contracts', :skip_host_setup, type: :feat
     expect(page).to have_css('#community-platform-provision-form')
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :provision_platform_next_steps)}")
   end
+
+  it 'community edit exposes a stable billing entry point anchor' do
+    capybara_login_as_platform_manager
+
+    visit better_together.edit_community_path(community, locale: I18n.default_locale)
+
+    expect(page).to have_css('#community-manage-billing-btn')
+  end
+
+  it 'community show exposes a stable billing entry point anchor' do
+    capybara_login_as_platform_manager
+
+    visit better_together.community_path(community, locale: I18n.default_locale)
+
+    expect(page).to have_css('#community-show-manage-billing-btn')
+  end
+
+  it 'person edit exposes a stable billing entry point anchor' do
+    capybara_login_as_platform_manager
+
+    visit better_together.edit_person_path(id: platform_manager.person.slug, locale: I18n.default_locale)
+
+    expect(page).to have_css('#person-manage-billing-btn')
+  end
+
+  it 'new billing plan form exposes stable review anchors' do
+    capybara_login_as_platform_manager
+
+    visit better_together.new_billing_plan_path(locale: I18n.default_locale)
+
+    expect(page).to have_css('#billing-plan-form')
+  end
 end
 # rubocop:enable Layout/LineLength

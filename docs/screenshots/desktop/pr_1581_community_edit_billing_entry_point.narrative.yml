@@ -1,0 +1,20 @@
+---
+title: Community settings — billing entry point
+audience:
+- board_member
+- community_steward
+- operator
+journey_step: A steward editing community settings needs a direct path to billing
+  without hunting through navigation.
+callouts:
+- :title: Manage billing
+  :description: This link is the primary cross-link from community administration
+    into the new billing subsystem introduced by this PR.
+- :title: Hosted plan status
+  :description: Surfacing entitlement status inline on the edit form means a steward
+    changing settings can see, without navigating away, whether hosted access is currently
+    active.
+accessibility_notes: The billing link and entitlement card both use stable IDs; the
+  link is a standard focusable anchor styled as a button.
+slug: pr_1581_community_edit_billing_entry_point
+device: desktop
