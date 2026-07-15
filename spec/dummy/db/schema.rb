@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_15_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -976,8 +976,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.string "locatable_type", null: false
     t.uuid "locatable_id", null: false
     t.string "name"
+    t.string "resolution_method"
+    t.datetime "resolved_at"
     t.index ["creator_id"], name: "by_better_together_geography_locatable_locations_creator"
     t.index ["locatable_id", "locatable_type", "location_id", "location_type"], name: "locatable_locations"
+    t.index ["locatable_type", "locatable_id", "location_type"], name: "index_locatable_locations_on_locatable_and_location_type", unique: true
     t.index ["locatable_type", "locatable_id"], name: "locatable_location_by_locatable"
     t.index ["location_type", "location_id"], name: "locatable_location_by_location"
     t.index ["name"], name: "locatable_location_by_name"
@@ -1059,6 +1062,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.float "longitude"
     t.jsonb "properties", default: {}
     t.jsonb "metadata", default: {}
+    t.geography "boundary", limit: {srid: 4326, type: "multi_polygon", geographic: true}
+    t.index ["boundary"], name: "index_better_together_geography_spaces_on_boundary", using: :gist
     t.index ["creator_id"], name: "by_better_together_geography_spaces_creator"
     t.index ["identifier"], name: "index_better_together_geography_spaces_on_identifier", unique: true
   end

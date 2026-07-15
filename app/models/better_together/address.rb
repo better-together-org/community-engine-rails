@@ -3,6 +3,7 @@
 module BetterTogether
   class Address < PlatformRecord # rubocop:todo Style/Documentation
     include Geography::Geospatial::One
+    include Geography::Locatable::Many
     include PrimaryFlag
     include Privacy
 

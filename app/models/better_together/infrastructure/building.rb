@@ -9,6 +9,7 @@ module BetterTogether
       include Identifier
       include FriendlySlug
       include Geography::Geospatial::One
+      include Geography::Locatable::Many
       include Privacy
       include PrimaryCommunity
 
