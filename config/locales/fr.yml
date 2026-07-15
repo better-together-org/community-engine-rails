@@ -1605,6 +1605,10 @@ fr:
         slug: Identifiant convivial pour l'URL de cet événement
         starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
           horaire sélectionné ci-dessus.
+        status: Les événements en brouillon ne sont visibles que par vous, vos co-organisateurs
+          et les gestionnaires de la plateforme. Confirmez l'événement pour le publier
+          dans la liste des événements ; annulez-le pour indiquer qu'il n'aura pas
+          lieu.
         timezone: Le fuseau horaire où cet événement aura lieu
       hosted_by: Organisé par
       hosts:
@@ -1639,6 +1643,12 @@ fr:
           24_hours: 'Rappel : %{event_name} commence dans 24 heures'
           at_start: "%{event_name} commence maintenant"
         view_details_url: Voir l'URL des détails
+      index:
+        new_btn_text: Nouvel événement
+        result_count:
+          one: "%{count} événement"
+          other: "%{count} événements"
+        toggle_filters: Filtres
       labels:
         duration_minutes: Durée
         ends_at: Se termine à
@@ -1649,9 +1659,29 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
         starts_at: Débute à
+        status: Statut
         timezone: Fuseau Horaire de l'Événement
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      list_form:
+        categories_label: Catégories
+        clear_filters: Effacer les filtres
+        filters: Filtrer les événements
+        order_by_label: Trier par
+        order_latest: Le plus lointain
+        order_newest: Le plus récent
+        order_oldest: Le plus ancien
+        order_soonest: Le plus proche
+        past_label: Événements passés
+        per_page_label: Événements par page
+        search_button: Rechercher
+        search_label: Rechercher
+        search_placeholder: Rechercher par nom ou description...
+        status_all: Tous
+        status_cancelled: Annulé
+        status_confirmed: Confirmé
+        status_draft: Brouillon
+        status_label: Statut
       location: Lieu
       location_types:
         address: Adresse
@@ -1724,6 +1754,10 @@ fr:
       rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera
         programmé.
       save_event: Enregistrer l'événement
+      statuses:
+        cancelled: Annulé
+        confirmed: Confirmé
+        draft: Brouillon
       tabs:
         details: Détails
         hosts: Hôtes

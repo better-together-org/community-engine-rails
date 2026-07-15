@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'active_storage_svg_sanitizer'
   spec.add_dependency 'active_storage_validations'
   spec.add_dependency 'bootstrap', '~> 5.3.2'
+  spec.add_dependency 'css_parser', '>= 3.0.0' # CVE-2026-53727 / GHSA-9pmc-p236-855h SSRF+LFI fix; premailer alone allows 1.19.0+
   spec.add_dependency 'dartsass-sprockets', '~> 3.1'
   spec.add_dependency 'devise'
   spec.add_dependency 'devise-i18n'

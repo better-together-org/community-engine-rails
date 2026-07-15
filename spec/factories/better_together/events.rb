@@ -12,6 +12,9 @@ FactoryBot.define do
     ends_at { 1.week.from_now + 2.hours }
     registration_url { Faker::Internet.url }
     privacy { 'public' }
+    # DB default is 'draft' (explicit publish step); the factory represents a
+    # published event, so confirm it unless a spec overrides status.
+    status { 'confirmed' }
     timezone { 'America/New_York' }
 
     association :creator, factory: :person
@@ -54,6 +57,7 @@ FactoryBot.define do
     end
 
     trait :draft do
+      status { 'draft' }
       starts_at { nil }
       ends_at { nil }
     end
